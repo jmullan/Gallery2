@@ -1,0 +1,76 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This view will show the confirmation that an user has been edited successfully
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class ItemAddChildrenConfirmationView extends GalleryView {
+
+    /**
+     * @see GalleryView::renderBody
+     */
+    function renderBody($form, $status) {
+	global $gallery;
+
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/*
+	 * We know what kind of operation happened, but for now let's compress
+	 * it down so that the template doesn't have to know.
+	 */
+	if (!empty($status)) {
+	    if (isset($status['addFromLocalServer'])) {
+		$status = $status['addFromLocalServer'];
+	    } else if (isset($status['addFromBrowser'])) {
+		$status = $status['addFromBrowser'];
+	    }
+	    $count = sizeof($status);
+	} else {
+	    $count = 0;
+	}
+
+	/* Render the HTML body */
+	$template = $this->_getTemplate();
+	$template->setVariable('status', $status);
+	$template->setVariable('count', $count);
+	$template->setVariable('item', $item->getMemberData());
+	$html = $template->render('ItemAddChildrenConfirmation.tpl');
+
+	return array(GalleryStatus::success(), $html);
+    }
+}
+?>

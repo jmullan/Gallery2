@@ -71,7 +71,8 @@ class ItemAddChildrenController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
-	
+
+	$status = array();
 	if (isset($form['action']['addFromBrowser'])) {
 	    
 	    /* Upload any new files */
@@ -101,6 +102,9 @@ class ItemAddChildrenController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    $status['addFromBrowser'][] = array('fileName' => $file['name'],
+							'id' => $newItem->getId());
 		}
 
 		if ($albumNeedsThumbnail) {
@@ -114,12 +118,12 @@ class ItemAddChildrenController extends GalleryController {
 
 	    /* Figure out where to redirect upon success */
 	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemAddChildren';
+	    $redirectParams['subView'] = 'core:ItemAddChildrenConfirmation';
 	    $redirectParams['itemId'] = $itemId;
 
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFilesFromLocalServer'])) {
+	} else if (isset($form['action']['addFromLocalServer'])) {
 	    /* Delegate back to the same view */
 	    $dir = $form['localServerPath'];
 	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
@@ -146,12 +150,16 @@ class ItemAddChildrenController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    $albumNeedsThumbnail = false;
+
 		}
+
+		$status['addFromLocalServer'][] = array('fileName' => $basename,
+							'id' => $newItem->getId());
 	    }
 
 	    /* Figure out where to redirect upon success */
 	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemAddChildren';
+	    $redirectParams['subView'] = 'core:ItemAddChildrenConfirmation';
 	    $redirectParams['itemId'] = $itemId;
 	}
 
@@ -160,9 +168,17 @@ class ItemAddChildrenController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if (!empty($status)) {
+	    $session =& $gallery->getSession();
+	    list ($ret, $redirectParams['statusId']) = $session->putStatus($status);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	if (!empty($redirectParams)) {
 	    $urlGenerator = $gallery->getUrlGenerator();
-	    $results['redirect'] = $urlGenerator->generateUrl($redirectParams);
+	    $results['redirect'] = $redirectParams;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';
@@ -278,17 +294,19 @@ class ItemAddChildrenView extends GalleryView {
 			if (!$platform->is_dir($filePath) && $platform->is_readable($filePath)){
 			    $mimeType = GalleryUtilities::getMimeType($fileName);
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
-				list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
+				list ($ret, $mimeTypeItemMap[$mimeType]) =
+				    GalleryItemHelper::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 			    }
 			    
-			    $form['localServerFiles'][] = array('dirName' => $path,
-								'fileName' => $fileName,
-								'stat' => $platform->stat($filePath),
-								'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
-								'fileKey' => base64_encode($fileName));
+			    $form['localServerFiles'][] =
+				array('dirName' => $path,
+				      'fileName' => $fileName,
+				      'stat' => $platform->stat($filePath),
+				      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+				      'fileKey' => base64_encode($fileName));
 			}
 		    }
 		    closedir($handle);
@@ -304,11 +322,12 @@ class ItemAddChildrenView extends GalleryView {
 
 		    $dirName = dirname($path);
 		    $fileName = basename($path);
-		    $form['localServerFiles'][] = array('dirName' => $dirName,
-							'fileName' => $fileName,
-							'stat' => $platform->stat($path),
-							'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
-							'fileKey' => htmlentities($fileName));
+		    $form['localServerFiles'][] =
+			array('dirName' => $dirName,
+			      'fileName' => $fileName,
+			      'stat' => $platform->stat($path),
+			      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+			      'fileKey' => htmlentities($fileName));
 		}
 	    }
 	}

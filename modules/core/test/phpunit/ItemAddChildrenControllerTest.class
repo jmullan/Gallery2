@@ -95,10 +95,48 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemAddChildren',
-				    'itemId' => $this->_rootAlbum->getId()),
-			      $results);
+	$status = $this->assertRedirect(array('view' => 'core:ItemAdmin',
+					      'subView' => 'core:ItemAddChildrenConfirmation',
+					      'itemId' => $this->_rootAlbum->getId()),
+					$results);
+
+	/* We don't know the ids, but we can verify everything else */
+	$i = 0;
+	foreach ($files as $file) {
+	    $this->assertEquals($status['addFromBrowser'][$i]['fileName'], $file);
+	    $i++;
+	}
+    }
+
+    function testAddChildrenFromLocalServer() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.action.addFromLocalServer', 1);
+
+	$platform = $gallery->getPlatform();
+	$baseDir = dirname(__FILE__) . '/../data/';
+	$fileKeys = array();
+	GalleryUtilities::putRequestVariable('form.localServerPath', $baseDir);
+	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif');
+	foreach ($files as $fileName) {
+	    GalleryUtilities::putRequestVariable('form.localServerFiles.' . base64_encode($fileName), 1);
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$status = $this->assertRedirect(array('view' => 'core:ItemAdmin',
+					      'subView' => 'core:ItemAddChildrenConfirmation',
+					      'itemId' => $this->_rootAlbum->getId()),
+					$results);
+
+	/* We don't know the ids, but we can verify everything else */
+	$i = 0;
+	foreach ($files as $file) {
+	    $this->assertEquals($status['addFromLocalServer'][$i]['fileName'], $file);
+	    $i++;
+	}
     }
 }
 ?>
