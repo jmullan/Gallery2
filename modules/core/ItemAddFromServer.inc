@@ -189,8 +189,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileName' => $fileName,
 					  'stat' => $platform->stat($filePath),
 					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-					  'unknown' => GalleryCoreApi::isA($mimeTypeItemMap[$mimeType]['instance'],
-									   'GalleryUnknownItem'),
+					  'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'],
+									     'GalleryUnknownItem'),
 					  'fileKey' => $fileName);
 			    }
 			}
@@ -214,8 +214,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 			array('fileName' => $fileName,
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-			      'unknown' => GalleryCoreApi::isA($mimeTypeItemMap[$mimeType]['instance'],
-							       'GalleryUnknownItem'),
+			      'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'],
+								 'GalleryUnknownItem'),
 			      'fileKey' => htmlentities($fileName));
 		}
 	    }
