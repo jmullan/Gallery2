@@ -20,8 +20,9 @@
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
 var image = new Image(), timer, iDelay = 15000, iDir = 1, iSize = 0;
-var bPause = 0, bShowText = 0, linkStop, spanPause, spanText;
-var textBanner, spanTitle, spanSummary, spanDate, spanDescription;
+var bPause = 0, bShowText = 0, bShowTools = 1;
+var linkStop, spanPause, spanText, toolText;
+var toolBar, textBanner, spanTitle, spanSummary, spanDate, spanDescription;
 var index = {$SlideShow.start}, count = {$SlideShow.count};
 var is_cached = new Array(count), item_map = new Array(count);
 for (i=0; i < count; i++) is_cached[i] = new Array(0,0,0,0,0,0);
@@ -117,8 +118,23 @@ function new_delay(delay) {
   iDelay = delay*1000;
   jump(-1);
 }
+function tools_onoff() {
+  bShowTools = bShowTools ? 0 : 1;
+  toolBar.style.visibility = bShowTools ? 'visible' : 'hidden';
+  toolBar.style.position = bShowTools ? 'static' : 'absolute';
+  toolText.innerHTML = bShowTools ? {/literal}'{g->text text="[-]"}'
+                                 : '{g->text text="[+]"}'; {literal}
+}
 {/literal}
 </script>
+<div style="float:left">
+{g->link onClick="tools_onoff();return false"}
+  <span id="tools" class="breadcrumb_item" style="margin:0px;padding:0px">
+    {g->text text="[-]"}
+  </span>
+{/g->link}
+</div>
+<div id="toolbar">
 {g->main}
   {g->breadcrumb}
     {g->item}
@@ -169,6 +185,8 @@ function new_delay(delay) {
       {/g->title}
     {/g->item}
   {/g->breadcrumb}
+{/g->main}</div>
+{g->main}
   {g->pagebox}
     {g->box style="canvas"}
       {g->itemview}
@@ -193,6 +211,8 @@ function new_delay(delay) {
   linkStop = document.getElementById('stop');
   spanPause = document.getElementById('pause');
   spanText = document.getElementById('moreInfo');
+  toolText = document.getElementById('tools');
+  toolBar = document.getElementById('toolbar');
   textBanner = document.getElementById('textBanner');
   spanTitle = document.getElementById('title');
   spanSummary = document.getElementById('summary');
