@@ -1,0 +1,151 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @package Cart
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+require_once(dirname(__FILE__) . '/CartMap.class');
+
+/**
+ * A helper class for Carts
+ *
+ * Utility functions useful in managing Carts
+ *
+ * @package Cart
+ * @subpackage Classes
+ */
+class CartHelper {
+
+    /**
+     * Return the ids of the items in the cart
+     *
+     * @return array object GalleryStatus a status code
+     *               array (itemId => count, itemId => count)
+     */
+    function fetchCartItemCounts() {
+	global $gallery;
+
+	$session =& $gallery->getSession();
+	$storage = $gallery->getStorage();
+	
+	$query = '
+        SELECT
+          [CartMap::itemIds]
+        FROM
+          [CartMap]
+        WHERE
+          [CartMap::sessionId] = ?
+        ';
+	$data = array();
+	$data[] = $session->getSessionId();
+
+	list ($ret, $searchResults) =
+	    $gallery->search($query, $data, array('limit' => array('count' => 1)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 1) {
+	    $result = $searchResults->nextResult();
+	    $cartItemIds = unserialize($result[0]);
+	    if (!is_array($cartItemIds)) {
+		$gallery->debug('Fixing broken cart data');
+		$cartItemIds = array();
+	    }
+	} else {
+	    $cartItemIds = array();
+	}
+
+	return array(GalleryStatus::success(), $cartItemIds);
+    }
+
+    /**
+     * Add the item ids to the user's cart
+     * 
+     * @param array int item ids
+     * @return object GalleryStatus a status code
+     */
+    function addItemsToCart($ids) {
+	global $gallery;
+
+	$session =& $gallery->getSession();
+	
+	list ($ret, $cartItemIds) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($ids as $id) {
+	    if (isset($cartItemIds[$id])) {
+		$cartItemIds[$id]++;
+	    } else {
+		$cartItemIds[$id] = 1;
+	    }
+	}
+
+	$ret = CartHelper::setCartItemCounts($cartItemIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	    
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Add the item ids to the user's cart
+     * 
+     * @param array int item ids
+     * @return object GalleryStatus a status code
+     */
+    function setCartItemCounts($cartItemIds) {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	list ($ret, $originalCartItemIds) = CartHelper::fetchCartItemCounts();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (empty($cartItemIds)) {
+	    if (!empty($originalCartItemIds)) {
+		$ret = CartMap::removeMapEntry(array('sessionId' => $session->getSessionId()));
+	    }
+	} else {
+	    if (empty($originalCartItemIds)) {
+		$ret = CartMap::addMapEntry(array('sessionId' => $session->getSessionId(),
+						  'itemIds' => serialize($cartItemIds)));
+	    } else {
+		$ret = CartMap::updateMapEntry(array('sessionId' => $session->getSessionId()),
+					       array('itemIds' => serialize($cartItemIds)));
+	    }
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	    
+	return GalleryStatus::success();
+    }
+}
+?>
