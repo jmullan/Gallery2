@@ -150,7 +150,7 @@ class GallerySession {
 	    $searchEngineId = GalleryUtilities::identifySearchEngine();
 	    if (isset($searchEngineId)) {
 		$this->_isUsingCookies = true;
-		$this->_sessionId = $searchEngineId;
+		$this->_sessionId = sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
 	    } else {
 		$this->_isUsingCookies = false;
 		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);

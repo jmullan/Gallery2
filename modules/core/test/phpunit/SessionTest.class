@@ -350,7 +350,6 @@ class SessionTest extends GalleryTestCase {
     }
 
     function testSameSessionDifferentRemoteIdentifier() {
-
 	foreach (array('with-cookies', 'without-cookies') as $type) {
 	    if ($type == 'with-cookies') {
 		GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
@@ -455,6 +454,19 @@ class SessionTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+    }
+
+    function testSearchEngineCrawlerSessions() {
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
+	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('google1234', $session->getSessionId());
     }
 
     function testCompareIdentifiers() {
