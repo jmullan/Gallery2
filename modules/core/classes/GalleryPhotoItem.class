@@ -235,7 +235,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 			   $params['id'] ? ' id="' . $params['id'] . '"' : '',
 			   $params['imgmap'] ? ' imgmap="' . $params['imgmap'] . '"' : '',
 			   $this->getTitle() ? $this->getTitle() : $this->getPathComponent(),
-			   $this->getDescription());
+			   preg_replace('/[\r\n]+/', ' ', $this->getDescription()));
 
 	default:
 	    return null;

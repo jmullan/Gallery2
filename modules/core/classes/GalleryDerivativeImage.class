@@ -105,8 +105,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	global $gallery;
 
 	if ($derivativeType != DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
-	        $derivativeType != DERIVATIVE_TYPE_IMAGE_RESIZE &&
-	        $derivativeType != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+		$derivativeType != DERIVATIVE_TYPE_IMAGE_RESIZE &&
+		$derivativeType != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__,
 					"Unknown derivative type: $derivativeType");
@@ -117,15 +117,15 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $derivativeType == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
 
 	    $query = '
-            SELECT
-              COUNT([GalleryChildEntity::id])
-            FROM
-              [GalleryChildEntity], [GalleryDerivative]
-            WHERE
-              ([GalleryChildEntity::parentId] = ?
-               AND [GalleryDerivative::derivativeType] = ?)
-              AND ([GalleryChildEntity::id] = [GalleryDerivative::id])
-            ';
+	    SELECT
+	      COUNT([GalleryChildEntity::id])
+	    FROM
+	      [GalleryChildEntity], [GalleryDerivative]
+	    WHERE
+	      ([GalleryChildEntity::parentId] = ?
+	       AND [GalleryDerivative::derivativeType] = ?)
+	      AND ([GalleryChildEntity::id] = [GalleryDerivative::id])
+	    ';
 
 	    list($ret, $searchResults) =
 		$gallery->search($query, array($parentId, $derivativeType));
@@ -136,9 +136,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $result = $searchResults->nextResult();
 	    if ($result[0] > 0) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
-					    sprintf('Too many thumbnails or preferreds (type: %s, count: %d)',
-						    $derivativeType,
-						    $result[0]));
+		    sprintf('Too many thumbnails or preferreds (type: %s, count: %d)',
+			    $derivativeType, $result[0]));
 	    }
 	}
 
@@ -247,7 +246,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 			   $params['id'] ? ' id="' . $params['id'] . '"' : '',
 			   $params['imgmap'] ? ' imgmap="' . $params['imgmap'] . '"' : '',
 			   $item->getTitle() ? $item->getTitle() : $item->getPathComponent(),
-			   $item->getDescription());
+			   preg_replace('/[\r\n]+/', ' ', $item->getDescription()));
 
 	default:
 	    return null;
