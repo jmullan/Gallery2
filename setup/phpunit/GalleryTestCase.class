@@ -69,7 +69,16 @@ class GalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	list ($ret, $this->_rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$gallery->clearDebugBuffer();
+    }
+
+    function _getRootId() {
+	return $this->_rootAlbumId;
     }
 
     function assert($boolean, $message=null) {
@@ -117,8 +126,12 @@ class GalleryTestCase extends TestCase {
      *               object GalleryAlbumItem
      * @access private
      */
-    function _createRandomAlbum($parentId=null) {
+    function _createRandomAlbum($parentId) {
 	global $gallery;
+
+	if (empty($parentId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 	
 	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
@@ -129,16 +142,12 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
-	if (isset($parentId)) {
-	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    $ret = $album->create($parentId, 'albumtest' . rand());
-	} else {
-	    $ret = $album->createRoot('albumtest' . rand());
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	
+	$ret = $album->create($parentId, 'albumtest' . rand());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -40,7 +40,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum(null);
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -217,9 +217,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
     function testReorderItemsWithoutPermissions() {
 	global $gallery;
 
-	$ret = GalleryPermissionMap::removeUserPermission($this->_parentAlbum->getId(),
-							  $gallery->getActiveUserId(),
-							  'core.edit');
+	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

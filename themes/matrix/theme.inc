@@ -94,8 +94,7 @@ class MatrixTheme extends GalleryTheme {
  
  	$params = $context['params'];
  	$src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
- 						'itemId' => $params['image']['id'],
-						'serial' => $params['image']['serialNumber']));
+ 						'itemId' => $params['image']['id']));
 
 	/* Shrink down images that we display in the sidebar */
  	if (in_array('sidebar', $context['stack'])) {
@@ -548,14 +547,16 @@ class MatrixTheme extends GalleryTheme {
 	}
 
 	foreach ($element_array as $element) {
-	    switch($element['params']['style']) {
-	    case 'emphasized':
-		$style = $class . '_element_' . $element['params']['style'];
-		break;
-
-	    default:
-		$style = $class . '_element';
-		break;
+	    if (isset($element['params']['style'])) {
+		switch($element['params']['style']) {
+		case 'emphasized':
+		    $style = $class . '_element_' . $element['params']['style'];
+		    break;
+		    
+		default:
+		    $style = $class . '_element';
+		    break;
+		}
 	    }
 	    
 	    $buf .= '<tr> <td class="' . $style . '"> ' . $element['content'] . '</td> </tr>';

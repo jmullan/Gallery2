@@ -1,7 +1,7 @@
 {g->pagebox}
   {g->banner}
     {g->title}
-      Gallery Modules
+      {g->text text="Gallery Modules"}
     {/g->title}
   {/g->banner}
 

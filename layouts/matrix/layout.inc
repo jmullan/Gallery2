@@ -321,7 +321,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['peers'] = $peers;
 	$layout['navigator'] = $navigator;
 	$layout['jumprange'] = $jumprange;
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__));
+	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
 	if (!empty($parents)) {
 	    $layout['parent'] = $parents[sizeof($parents)-1];
@@ -516,7 +516,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
-	$layout['baseUrl'] = GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__));
+	$layout['baseUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
 	$layout['peers'] = $peers;
 	if (!empty($parents)) {

@@ -44,7 +44,7 @@ class ItemOrderTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(null);
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -94,24 +94,21 @@ function GalleryMain($startTime) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Configure our url Generator for standalone mode. */
+    $urlGenerator = new GalleryUrlGenerator('main.php');
+    $gallery->setUrlGenerator($urlGenerator);
+
     /* Do the second pass of initialization */
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     
-    /*
-     * Specify the base URL to the Gallery.  In standalone mode this will be the
-     * empty string (since everything is relative to main.php).  But when we're
-     * embedded, we need to put in the relative path from the outer app to the
-     * Gallery directory (eg for PostNuke it might be 'modules/gallery')
-     */
-    $gallery->setConfig('url.gallery.base', '');
-
-    /* Configure out url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'),
-					    'main.php');
-    $gallery->setUrlGenerator($urlGenerator);
+    /* Let our url generator process the query string */
+    $ret = $urlGenerator->parseCurrentUrl();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
 
     /* Figure out the target module/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');

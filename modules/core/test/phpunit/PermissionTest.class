@@ -56,7 +56,7 @@ class PermissionTest extends GalleryTestCase {
 	parent::setUp();
 
 	/* Create some items that we can assign permissions to */
-	$parentId = null;
+	$parentId = $this->_getRootId();
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_albums[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret->isError()) {

@@ -36,6 +36,10 @@ function main() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Configure our url Generator for the test harness */
+    $urlGenerator = new GalleryUrlGenerator('../../main.php');
+    $gallery->setUrlGenerator($urlGenerator);
+
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);

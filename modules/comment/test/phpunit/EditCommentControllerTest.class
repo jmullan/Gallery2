@@ -39,14 +39,9 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Create two random items */
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

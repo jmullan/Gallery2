@@ -1129,8 +1129,8 @@ class Gallery {
      *
      * @param object GalleryUrlGenerator
      */
-    function setUrlGenerator($urlGenerator) {
-	$this->_urlGenerator = $urlGenerator;
+    function setUrlGenerator(&$urlGenerator) {
+	$this->_urlGenerator =& $urlGenerator;
     }
 
     /**
@@ -1138,7 +1138,7 @@ class Gallery {
      *
      * @return object GalleryUrlGenerator
      */
-    function getUrlGenerator() {
+    function &getUrlGenerator() {
 	return $this->_urlGenerator;
     }
 

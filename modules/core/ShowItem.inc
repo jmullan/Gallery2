@@ -119,5 +119,50 @@ class ShowItemView extends GalleryView {
 		     'modules/core/templates/ShowItemHead.tpl',
 		     'modules/core/templates/ShowItem.tpl');
     }
+
+    /**
+     * @see GalleryView::rewriteQueryString
+     */
+    function rewriteQueryString($params) {
+	global $gallery;
+	
+	/* We know who we are */
+	unset($params['view']);
+
+	/* Transform the id into a path */
+	$buf = '';
+	list ($ret, $entity) = $gallery->loadEntitiesById($params['itemId']);
+	if ($ret->isSuccess()) {
+	    list ($ret, $path) = $entity->fetchLogicalPath();
+	    if ($ret->isSuccess()) {
+		$buf .= $path;
+		unset($params['itemId']);
+	    }
+	}
+
+	/* Add in anything else as a standard query element */
+	if (!empty($params)) {
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $buf .= $urlGenerator->buildQueryString($params);
+	}
+
+	return $buf;
+    }
+
+    /**
+     * @see GalleryView::parseQueryString()
+     */
+    function parseQueryString($queryString) {
+
+	/* Treat the input as a path and get the right item id out */
+	list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath($queryString);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $itemId);
+	return GalleryStatus::success();
+    }
+    
 }
 ?>

@@ -35,6 +35,40 @@
 class GalleryFileSystemEntityHelper {
 
     /**
+     * Given a complete logical path, return the item id that it refers to.
+     *
+     * @param string the path
+     * @return array object GalleryStatus a status code
+     *               int the item id
+     */
+    function fetchItemIdByPath($path) {
+	global $gallery;
+	if (empty($path)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($path == '/') {
+	    return array(GalleryStatus::success(), $rootId);
+	}
+
+	$currentId = $rootId;
+	foreach (preg_split('|/|', $path, -1, PREG_SPLIT_NO_EMPTY) as $pathComponent) {
+	    list ($ret, $currentId) =
+		GalleryFileSystemEntityHelper::fetchChildIdByPathComponent($currentId, $pathComponent);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $currentId);
+    }
+
+    /**
      * Returns the id of the child filesystem entity that matches the given
      * path component.
      *

@@ -142,33 +142,10 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * Let the parent do its work, then add any initialization specific to this
      * class.
      *
-     * @param int the id of the parent GalleryChildEntity
      * @return object GalleryStatus a status code
      */
-    function createRoot($path) {
+    function createRoot() {
 	global $gallery;
-
-	if (empty($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	$platform = $gallery->getPlatform();
-
-	if (!$platform->isLegalPathComponent($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	list ($ret, $isCollision) = $this->_checkPathCollision($path);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($isCollision) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
-	}
 
 	/* No collision -- proceed! */
 	$ret = parent::createRoot();
@@ -176,8 +153,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Set our path component */
-	$this->setPathComponent($path);
+	/* The root has no path component */
+	$this->setPathComponent(NULL);
 
 	return GalleryStatus::success();
     }
@@ -378,15 +355,15 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function isContainer() {
 	return false;
     }
-    
+
     /**
-     * Return the full path of this item.  Note that this path is only valid as
+     * Return the logical path to this item.  Note that this path is only valid as
      * long as the entire tree is at least read locked.
      *
      * @access public
      * @return array a GalleryStatus status, string a path
      */
-    function fetchPath() {
+    function fetchLogicalPath() {
 	global $gallery;
 
 	$parentId = $this->getParentId();
@@ -396,17 +373,44 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list($ret, $path) = $parent->fetchPath();
+	    list($ret, $parentPath) = $parent->fetchLogicalPath();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
-	    global $gallery;
-	    $path = $gallery->getConfig('data.gallery.albums');
+	    $parentPath = '';
 	}
 
-	return array(GalleryStatus::success(),
-		     $path . $this->_pathComponent . '/');
+	$path = $parentPath . $this->_pathComponent;
+	if ($this->isContainer()) {
+	    $path .= '/';
+	}
+
+	return array(GalleryStatus::success(), $path);
+    }
+
+    /**
+     * Return the full path of this item.  Note that this path is only valid as
+     * long as the entire tree is at least read locked.
+     *
+     * @access public
+     * @return array a GalleryStatus status, string a path
+     */
+    function fetchPath() {
+	global $gallery;
+	$absolutePath = $gallery->getConfig('data.gallery.albums');
+	list ($ret, $logicalPath) = $this->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * The album path ends with a slash, and the logical path starts with one (because the root path
+	 * component is empty) so we'll have two slashes, unless we remove one of them.
+	 */
+	$logicalPath = substr($logicalPath, 1);
+	
+	return array(GalleryStatus::success(), $absolutePath . $logicalPath);
     }
 
     /**

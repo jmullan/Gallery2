@@ -41,20 +41,32 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
-	$this->_urlGenerator = new GalleryUrlGenerator('dir/', 'test.php');
+	global $HTTP_SERVER_VARS;
+	$this->_save = $HTTP_SERVER_VARS['REQUEST_URI'];
+
+	$HTTP_SERVER_VARS['REQUEST_URI'] = 'http://example.com/gallery2/phpunit_test.php?foo=bar';
+
+	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
 	parent::setUp();
+    }
+
+    function tearDown() {
+	$HTTP_SERVER_VARS['REQUEST_URI'] = $this->_save;
+	
+	parent::tearDown();
     }
 
     function testGenerateUrl() {
 	global $gallery;
+
+	$params['a'] = 123;
+	$params['b'] = 'bBbB';
+	$params['c'] = serialize(array(1, 2, 3));
+	$actual = $this->_urlGenerator->generateUrl($params);
 	
-	$actual = $this->_urlGenerator->generateUrl(array('a' => 123,
-							  'b' => 'bBbB',
-							  'c' => serialize(array(1, 2, 3))));
-	
-	$values = array('g2_a=123',
-			'g2_b=bBbB',
-			'g2_c=a%3A3%3A%7Bi%3A0%3Bi%3A1%3Bi%3A1%3Bi%3A2%3Bi%3A2%3Bi%3A3%3B%7D');
+	$values = array('g2_a=' . htmlentities($params['a']),
+			'g2_b=' . htmlentities($params['b']),
+			'g2_c=' . htmlentities($params['c']));
 
 	// If we're not using cookies, expect there to be an additional value
 	$session = $gallery->getSession();
@@ -62,9 +74,17 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
 	    $values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
 	}
-	$expected = 'dir/test.php?' . join('&amp;', $values);
+	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
 
 	$this->assertEquals($expected, $actual);
+    }
+
+    function testGetCurrentUrl() {
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?foo=bar', $this->_urlGenerator->getCurrentUrl());
+    }
+
+    function testGetCurrentUrlDir() {
+	$this->assertEquals('http://example.com/gallery2/', $this->_urlGenerator->getCurrentUrlDir());
     }
 }
 

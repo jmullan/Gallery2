@@ -275,6 +275,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->input($context, $self['content']);
 
+
         $tagData = array('name' => 'input', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -314,6 +315,7 @@ class GalleryTemplateAdapter {
         $self['content'] = $content;
 
         $content = $this->_theme->form($context, $self['content']);
+
 
         $tagData = array('name' => 'form', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -355,6 +357,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->select($context, $self['content']);
 
+
         $tagData = array('name' => 'select', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -394,6 +397,7 @@ class GalleryTemplateAdapter {
         $self['content'] = $content;
 
         $content = $this->_theme->textarea($context, $self['content']);
+
 
         $tagData = array('name' => 'textarea', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -435,6 +439,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->link($context, $self['content']);
 
+
         $tagData = array('name' => 'link', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -474,6 +479,7 @@ class GalleryTemplateAdapter {
         $self['content'] = $content;
 
         $content = $this->_theme->success($context, $self['content']);
+
 
         $tagData = array('name' => 'success', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -515,6 +521,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->warning($context, $self['content']);
 
+
         $tagData = array('name' => 'warning', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -554,6 +561,7 @@ class GalleryTemplateAdapter {
         $self['content'] = $content;
 
         $content = $this->_theme->error($context, $self['content']);
+
 
         $tagData = array('name' => 'error', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -605,6 +613,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->listing($context, $self['item']);
 
+
         $tagData = array('name' => 'listing', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -644,6 +653,7 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
 
         $content = $this->_theme->breadcrumb($context, $self['item']);
+
 
         $tagData = array('name' => 'breadcrumb', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -701,6 +711,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->linkset($context, $self['title'], $self['item']);
 
+
         $tagData = array('name' => 'linkset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -757,6 +768,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->actionset($context, $self['title'], $self['actionitem']);
 
+
         $tagData = array('name' => 'actionset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -797,6 +809,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->infoset($context, $self['item']);
 
+
         $tagData = array('name' => 'infoset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -836,6 +849,7 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
 
         $content = $this->_theme->tabset($context, $self['item']);
+
 
         $tagData = array('name' => 'tabset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -885,6 +899,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->table($context, $self['row']);
 
+
         $tagData = array('name' => 'table', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -932,6 +947,7 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
 
         $content = $this->_theme->row($context, $self['column']);
+
 
         $tagData = array('name' => 'row', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -991,6 +1007,8 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
         $self['content'] = $content;
 
+
+
         $tagData = array('name' => 'column', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1029,6 +1047,8 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
         $self['content'] = $content;
 
+
+
         $tagData = array('name' => 'element', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1061,6 +1081,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
         $self['content'] = $content;
+
+
 
         $tagData = array('name' => 'title', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1095,6 +1117,8 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
         $self['content'] = $content;
 
+
+
         $tagData = array('name' => 'subtitle', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1127,6 +1151,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
         $self['content'] = $content;
+
+
 
         $tagData = array('name' => 'description', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1161,6 +1187,8 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
         $self['content'] = $content;
 
+
+
         $tagData = array('name' => 'footer', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1194,6 +1222,8 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
         $self['content'] = $content;
 
+
+
         $tagData = array('name' => 'media', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1226,6 +1256,9 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
         $self['content'] = $content;
+
+
+        $content = trim($self['content']);
 
         $tagData = array('name' => 'value', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1284,6 +1317,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->main($context, $self['breadcrumb'], $self['sidebar'], $self['pagebox']);
 
+
         $tagData = array('name' => 'main', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1331,6 +1365,7 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
 
         $content = $this->_theme->sidebar($context, $self['element']);
+
 
         $tagData = array('name' => 'sidebar', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1429,6 +1464,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->itemthumbnail($context, $self['title'], $self['description'], $self['media'], $self['infoset'], $self['actionset']);
 
+
         $tagData = array('name' => 'itemthumbnail', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1515,6 +1551,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->itemview($context, $self['title'], $self['description'], $self['media'], $self['footer']);
 
+
         $tagData = array('name' => 'itemview', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1576,6 +1613,7 @@ class GalleryTemplateAdapter {
 
 
         $content = $this->_theme->tabbedbox($context, $self['tabset'], $self['footer'], $self['element']);
+
 
         $tagData = array('name' => 'tabbedbox', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1666,6 +1704,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->box($context, $self['title'], $self['subtitle'], $self['description'], $self['footer'], $self['element']);
 
+
         $tagData = array('name' => 'box', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1710,6 +1749,7 @@ class GalleryTemplateAdapter {
 	$self = $this->stackPop();
 
         $content = $this->_theme->pagebox($context, $self['element']);
+
 
         $tagData = array('name' => 'pagebox', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1772,6 +1812,7 @@ class GalleryTemplateAdapter {
 
 
         $content = $this->_theme->banner($context, $self['title'], $self['description'], $self['element']);
+
 
         $tagData = array('name' => 'banner', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1837,6 +1878,7 @@ class GalleryTemplateAdapter {
 
         $content = $this->_theme->item($context, $self['title'], $self['subtitle']);
 
+
         $tagData = array('name' => 'item', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
             return $content;
@@ -1895,6 +1937,7 @@ class GalleryTemplateAdapter {
 	}
 
         $content = $this->_theme->actionitem($context, $self['title'], $self['value']);
+
 
         $tagData = array('name' => 'actionitem', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {

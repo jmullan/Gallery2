@@ -70,7 +70,7 @@ class GalleryTheme {
      */
     function GalleryTheme($themeDir) {
 	$this->_baseDir = $themeDir;
-	$this->_baseUrl = GalleryUtilities::convertPathToRelativeUrl($themeDir) . '/';
+	$this->_baseUrl = GalleryUtilities::convertPathToUrl($themeDir) . '/';
     }
 
     /**

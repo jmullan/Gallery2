@@ -130,31 +130,29 @@ class GalleryAlbumItem_core extends GalleryItem {
     /**
      * Create a new root level album 
      *
-     * Also create the album directory on the filesystem
-     *
      * @return object GalleryStatus a status code
      */
-    function createRoot($albumName) {
+    function createRoot() {
 	global $gallery;
 
-	if (empty($albumName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-				       __FILE__, __LINE__);
+	/* See if we already have a root */
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($rootId)) {
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
-	$ret = parent::createRoot($albumName);
+	$ret = parent::createRoot();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Root album can contain children */
 	$this->setCanContainChildren(true);
-
-	$parentPath = $gallery->getConfig('data.gallery.albums');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	/* Create default preferences */
 	/* XXX: parameterize this */
@@ -172,11 +170,6 @@ class GalleryAlbumItem_core extends GalleryItem {
 		  'itemId' => $this->getId(),
 		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
 		  'derivativeOperations' => 'scale|640'));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $this->_createDir($parentPath . $albumName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

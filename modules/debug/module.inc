@@ -140,7 +140,7 @@ class DebugModule extends GalleryModule {
 
 	    if (isset($permissions['core.all'])) {
 		$links[$item->getId()][] =
-		    array('text' => "show debug tree",
+		    array('text' => $this->translate('show debug tree'),
 			  'params' => array('view' => 'debug:ShowTree',
 					    'itemId' => $item->getId()));
 	    }

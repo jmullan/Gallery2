@@ -39,12 +39,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($rootId);
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -40,12 +40,7 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $this->_album) = $this->_createRandomAlbum($rootId);
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -42,12 +42,6 @@ class PhotoTest extends GalleryTestCase {
     function testCreateAndDeletePhoto() {
 	global $gallery;
 	
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
 	/*
 	 * Create the photo
 	 */
@@ -56,12 +50,12 @@ class PhotoTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $lockId) = $gallery->acquireReadLock($rootId);
+	list ($ret, $lockId) = $gallery->acquireReadLock($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $photo->create($rootId,
+	$ret = $photo->create($this->_getRootId(),
 			      dirname(__FILE__) . '/../data/test1.jpg',
 			      'image/jpeg');
 	if ($ret->isError()) {

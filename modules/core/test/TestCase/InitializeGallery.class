@@ -74,7 +74,8 @@ class InitializeGalleryTestCase extends TestCase {
 		       '_session',
 		       '_profile',
 		       '_debugLogFile',
-		       '_debugBuffer') as $member) {
+		       '_debugBuffer',
+		       '_urlGenerator') as $member) {
 	    $gallery->$member = $oldGallery->$member;
 	}
 

@@ -42,13 +42,7 @@ class AlbumTest extends GalleryTestCase {
     function testLoadRootAlbum() {
 	global $gallery;
 
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($rootId);
+	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -61,13 +55,7 @@ class AlbumTest extends GalleryTestCase {
     function testCreateAndDeleteAlbum() {
 	global $gallery;
 
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $album) = $this->_createRandomAlbum($rootId);
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -88,13 +76,7 @@ class AlbumTest extends GalleryTestCase {
     function testCreateRenameAndDeleteAlbum() {
 	global $gallery;
 
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	list ($ret, $album) = $this->_createRandomAlbum($rootId);
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -152,7 +134,7 @@ class AlbumTest extends GalleryTestCase {
 
 	$lockIds = array();
 	$iterations = 5;
-	$parentId = null;
+	$parentId = $this->_getRootId();
 	for ($i = 0; $i < $iterations; $i++) {
 	    $gallery->guaranteeTimeLimit(5);
 
@@ -187,12 +169,7 @@ class AlbumTest extends GalleryTestCase {
 
 	$lockIds = array();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $album0) = $this->_createRandomAlbum($rootId);
+	list ($ret, $album0) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -203,7 +180,7 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Read lock the root, write lock the two new albums */
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($rootId));
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($this->_getRootId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -224,13 +201,13 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Move the album */
-	$ret = $album1->move($rootId);
+	$ret = $album1->move($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Save it */
-	$ret = $album1->save($rootId);
+	$ret = $album1->save($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -259,13 +236,7 @@ class AlbumTest extends GalleryTestCase {
     function testFetchParents() {
 	global $gallery;
 
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $nested[0]) = $gallery->loadEntitiesById($rootId);
+	list ($ret, $nested[0]) = $gallery->loadEntitiesById($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -314,13 +285,7 @@ class AlbumTest extends GalleryTestCase {
     function testFetchChildren() {
 	global $gallery;
 
-	list ($ret, $rootId) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $parent) = $this->_createRandomAlbum($rootId);
+	list ($ret, $parent) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

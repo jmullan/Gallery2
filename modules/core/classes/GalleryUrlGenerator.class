@@ -39,13 +39,20 @@ class GalleryUrlGenerator {
      */
 
     /**  
-     * The base Gallery URL.  Everything else is an argument to this.
-     * 
+     * The base filename for the application
      *
-     * @var array $_baseUrl
+     * @var array $_baseFile
      * @access private
      */
-    var $_baseUrl;
+    var $_baseFile;
+
+    /**
+     * A registry of rewrite prefixes to their corresponding View names
+     *
+     * @var array $_viewPrefixRegistry
+     * @access private
+     */
+    var $_viewPrefixRegistry;
 
     /*
      * ****************************************
@@ -58,11 +65,108 @@ class GalleryUrlGenerator {
      *
      * @param string the base URL
      */
-    function GalleryUrlGenerator($baseUrl, $baseFile) {
-	$this->_baseUrl = $baseUrl;
+    function GalleryUrlGenerator($baseFile) {
 	$this->_baseFile = $baseFile;
     }
 
+    /**
+     * Associate a prefix (eg "view") with a view (eg "core:ShowItem") so that when we
+     * encounter a url like this:
+     *
+     *   http://example.com/gallery2/main.php/view/blah/blah/blah
+     *
+     * We know to pass it to the core:ShowItem view
+     *
+     * @param string the prefix
+     * @param string the view name
+     * @return object GalleryStatus a status code
+     */
+    function registerViewPrefix($prefix, $viewName) {
+	if (isset($this->_viewPrefixRegistry[$prefix])) {
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE, __LINE__);
+	}
+
+	$this->_viewPrefixRegistry['forward'][$prefix] = $viewName;
+	$this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
+    }
+
+    /**
+     * Return the complete current URL
+     *
+     * @return string the current URL
+     */
+    function getCurrentUrl() {
+	global $HTTP_SERVER_VARS;
+	return $HTTP_SERVER_VARS['REQUEST_URI'];
+    }
+
+    /**
+     * Return the current URL's directory.  Eg, if the url is:
+     *   http://example.com/gallery2/main.php
+     *
+     * Then we return:
+     *   http://example.com/gallery2/
+     *
+     * @return string the current URL directory
+     */
+    function getCurrentUrlDir() {
+	$url = $this->getCurrentUrl();
+
+	/*
+	 * Search for our short query strings, which contain information after the base file, eg:
+	 *
+	 *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
+	 *
+	 * Extract everything up to but not including main.php:
+	 *
+	 *    http://example.com/gallery2/
+	 */
+	$url = preg_replace('|' . $this->_baseFile . '.*|', '', $url);
+	return $url;
+    }
+
+    /**
+     * Parse our current url since it may be in our compressed format
+     *
+     * @return object GalleryStatus a status code
+     */
+    function parseCurrentUrl() {
+	$url = $this->getCurrentUrl();
+
+	/* Ignore anything after the '?', as PHP will handle that */
+	$url = preg_replace('/\?.*/', '', $url);
+	
+	/* Search for data after our base file */
+	if (preg_match('|' . $this->_baseFile . '(/.*)|', $url, $regs)) {
+	    preg_match('|/(.*?)(/.*)|', $regs[1], $regs);
+	    list ($prefix, $queryString) = array($regs[1], $regs[2]);
+
+	    if (empty($prefix)) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    }
+
+	    if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    }
+
+	    $viewName = $this->_viewPrefixRegistry['forward'][$prefix];
+	    list ($ret, $view) = GalleryView::loadView($viewName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $view->parseQueryString($queryString);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Wire in the view */
+	    GalleryUtilities::putRequestVariable('view', $viewName);
+	}
+
+	return GalleryStatus::success();
+    }
+    
     /**
      * Return a valid Gallery URL.
      */
@@ -74,33 +178,82 @@ class GalleryUrlGenerator {
 	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
 	    $params[$sessionKey] = $sessionId;
 	}
-	    
-	foreach ($params as $key => $value) {
-	    switch($key) {
-	    case 'href':
-		continue;
 
-	    case 'return':
-		$value = GalleryUtilities::getCurrentUrl();
-		/* Fall through */
+	/* If the url specifies a full href, then let's use that */
+	if (isset($params['href'])) {
+	    $url = $params['href'];
+	    unset($params['href']);
 
-	    default: 
-		$args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=" . urlencode($value);
-		break;
+	    /* Prepend our current URL dir to all relative urls */
+	    $components = parse_url($url);
+	    if (!isset($components['host']) && (isset($components['path']) && $components['path'][0] != '/')) {
+		/* It's a relative URL */
+		$url = $this->getCurrentUrlDir() . $url;
+	    }
+	} else {
+	    /* Else start with our regular URL */
+	    $url = $this->getCurrentUrlDir() . $this->_baseFile;
+	}
+
+	/* Swap in the actual url for the 'return' placeholder, if necessary */
+	if (isset($params['return'])) {
+	    $params['return'] = $this->getCurrentUrl();
+	}
+
+	/* Escape all values */
+	foreach (array_keys($params) as $key) {
+	    $params[$key] = htmlentities($params[$key]);
+	}
+	
+	/* Give our view a chance to rewrite the query string */
+	$queryString = null;
+	if (isset($params['view'])) {
+	    $viewName = $params['view'];
+	    if (isset($this->_viewPrefixRegistry['reverse'][$viewName])) {
+		$prefix = $this->_viewPrefixRegistry['reverse'][$viewName];
+		list ($ret, $view) = GalleryView::loadView($viewName);
+		if ($ret->isError()) {
+		    /*
+		     * Swallow this error.  It's unfortunate, but almost everything that calls this function is in
+		     * the business of speaking right to the presentation layer (like the templating code) and
+		     * isn't in a position to properly provide an error.  Besides, we know that we have a working
+		     * URL anyway, so if rewriting doesn't work just fall back on that.
+		     */
+		} else {
+		    $rewritten = $view->rewriteQueryString($params);
+		    if (!empty($rewritten)) {
+			$queryString = '/' . $prefix . $rewritten;
+		    }
+		}
 	    }
 	}
 
-	if (isset($params['href'])) {
-	    $url = $this->_baseUrl . $params['href'];
-	} else {
-	    $url = $this->_baseUrl . $this->_baseFile;
-	}
-
-	if (isset($args)) {
-	    $url .= '?' . join('&amp;', $args);
+	if (isset($queryString)) {
+	    $url .= $queryString;
+	} else if (!empty($params)) {
+	    $url .= $this->buildQueryString($params);
 	}
 	    
 	return $url;
+    }
+
+    /**
+     * Build a query string out of the given params
+     *
+     * @params array key value pairs (where keys are not prefixed by our form variable prefix)
+     * @return string the query string, prefixed with a '?' and using & as a separator
+     */
+    function buildQueryString($params) {
+	if (empty($params)) {
+	    return '';
+	}
+
+	$args = array();
+	foreach ($params as $key => $value) {
+	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . $key . '=' . $value;
+	}
+
+	return '?' . join('&amp;', $args);
     }
 }
 

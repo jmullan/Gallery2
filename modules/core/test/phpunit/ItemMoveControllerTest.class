@@ -40,12 +40,7 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$parentId = $rootId;
+	$parentId = $this->_getRootId();
 	for ($i = 0; $i < 5; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($parentId);
 	    if ($ret->isError()) {

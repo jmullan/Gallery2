@@ -56,11 +56,6 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -70,7 +65,7 @@ class CommentSearchTest extends GalleryTestCase {
 
 	$this->_item = array();
 	for ($j = 0; $j < 4; $j++) {
-	    list ($ret, $this->_item[$j]) = $this->_createRandomDataItem($rootId);
+	    list ($ret, $this->_item[$j]) = $this->_createRandomDataItem($this->_getRootId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

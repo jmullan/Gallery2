@@ -52,80 +52,82 @@
 		  {assign var="colspan" value="1"}
 		{/if}
 		{g->column colspan=$colspan}
-		  {strip}
-		    {g->itemthumbnail style=$style}
-		      {g->title}
-			{if $child.canContainChildren}
-			  {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
-			{else}
-			  {$child.title|default:$child.pathComponent}
-			{/if}
-		      {/g->title}
-		      {g->description}
-			{$child.description|truncate:512}
-		      {/g->description}
-		      {g->media}
-			{g->link url_view="core:ShowItem" url_itemId=$child.id}
+		  {g->itemthumbnail style=$style}
+		    {g->title}
+		      {if $child.canContainChildren}
+			{g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
+		      {else}
+			{$child.title|default:$child.pathComponent}
+		      {/if}
+		    {/g->title}
+		    {g->description}
+		      {$child.description|truncate:512}
+		    {/g->description}
+		    {g->media}
+		      {g->link url_view="core:ShowItem" url_itemId=$child.id}
+			{if isset($child.thumbnail)}
 			  {g->image item=$child image=$child.thumbnail}
-			{/g->link url_view="core:ShowItem" url_itemId=$child.id}
-		      {/g->media}
-		      {g->infoset}
-			{g->item}
-			  {capture name=modificationTimestamp}
-			    {g->date timestamp=$child.modificationTimestamp}
-			  {/capture}
-			  {g->title}
-			    {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
-			  {/g->title}
-			{/g->item}
+			{else}
+			  {g->text text="no thumbnail"}
+			{/if}
+		      {/g->link url_view="core:ShowItem" url_itemId=$child.id}
+		    {/g->media}
+		    {g->infoset}
+		      {g->item}
+			{capture name=modificationTimestamp}
+			  {g->date timestamp=$child.modificationTimestamp}
+			{/capture}
+			{g->title}
+			  {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+			{/g->title}
+		      {/g->item}
 
-			{g->item}
-			  {g->title}
-			    {assign var="ownerId" value=$child.ownerId}
-			    {assign var="owner" value=$layout.owners.$ownerId}
-			    {g->text text="Owner: %s" arg1=$owner.fullName|default:$owner.userName}
-			  {/g->title}
-			{/g->item}
+		      {g->item}
+			{g->title}
+			  {assign var="ownerId" value=$child.ownerId}
+			  {assign var="owner" value=$layout.owners.$ownerId}
+			  {g->text text="Owner: %s" arg1=$owner.fullName|default:$owner.userName}
+			{/g->title}
+		      {/g->item}
 
-			{g->item}
-			  {g->title}
-			    {g->text one="Size: %d item"
-			    many="Size: %d items"
-			    count=$child.childCount
-			    arg1=$child.childCount}
-			  {/g->title}
-			{/g->item}
-		      {/g->infoset}
-		      {g->actionset}
-			{g->actionitem}
-			  {g->title}
-			    {if $child.canContainChildren} 
-			      {g->text text="&laquo; manage album &raquo;"}
-			    {else}
-			      {g->text text="&laquo; edit item &raquo;"}
-			    {/if}
-			  {/g->title}
-			  {g->url}
-			    &nbsp;
-			  {/g->url}
-			{/g->actionitem}
-			{assign var="childId" value=$child.id}
-			{foreach from=$layout.moduleItemLinks.$childId key=module item=links}
-			  {foreach from=$links item=link}
-			    {g->actionitem}
-			      {g->title}
-				{$link.text}
-			      {/g->title}
-			      
-			      {g->value}
-				{$link.url}
-			      {/g->value}
-			    {/g->actionitem}
-			  {/foreach}
+		      {g->item}
+			{g->title}
+			  {g->text one="Size: %d item"
+			  many="Size: %d items"
+			  count=$child.childCount
+			  arg1=$child.childCount}
+			{/g->title}
+		      {/g->item}
+		    {/g->infoset}
+		    {g->actionset}
+		      {g->actionitem}
+			{g->title}
+			  {if $child.canContainChildren} 
+			    {g->text text="&laquo; manage album &raquo;"}
+			  {else}
+			    {g->text text="&laquo; edit item &raquo;"}
+			  {/if}
+			{/g->title}
+			{g->value}
+			  &nbsp;
+			{/g->value}
+		      {/g->actionitem}
+		      {assign var="childId" value=$child.id}
+		      {foreach from=$layout.moduleItemLinks.$childId key=module item=links}
+			{foreach from=$links item=link}
+			  {g->actionitem}
+			    {g->title}
+			      {$link.text}
+			    {/g->title}
+			    
+			    {g->value}
+			      {$link.url}
+			    {/g->value}
+			  {/g->actionitem}
 			{/foreach}
-		      {/g->actionset}
-		    {/g->itemthumbnail}
-		  {/strip}
+		      {/foreach}
+		    {/g->actionset}
+		  {/g->itemthumbnail}
 		{/g->column}
 	      {/foreach}
 	    {/g->row}

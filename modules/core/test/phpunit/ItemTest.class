@@ -54,7 +54,13 @@ class ItemTest extends GalleryTestCase {
 	$groupIds = array_keys($groupIds);
 	$groupId = $groupIds[0];
 
-	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(null);
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Remove all permissions */
+	$ret = GalleryPermissionMap::removeItemPermissions($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

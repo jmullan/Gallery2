@@ -56,11 +56,6 @@ class CoreSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -71,7 +66,7 @@ class CoreSearchTest extends GalleryTestCase {
 	$this->_item = array();
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $this->_item[$i]) =
-		$this->_createRandomDataItem($rootId,
+		$this->_createRandomDataItem($this->_getRootId(),
 					     'application/unknown',
 					     array('title' => 'Title ' . $this->_randomKey,
 						   'description' => 'Description ' . $this->_randomKey,

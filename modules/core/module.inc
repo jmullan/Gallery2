@@ -207,6 +207,11 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Register our URL rewriting views */
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$urlGenerator->registerViewPrefix('view', 'core:ShowItem');
+	$urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
 	
 	return GalleryStatus::success();
     }
@@ -979,7 +984,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $album->createRoot('root');
+	$ret = $album->createRoot();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

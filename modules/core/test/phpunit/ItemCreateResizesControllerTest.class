@@ -40,11 +40,6 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 
 	parent::setUp();
 	
-	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Register a mock data item type */
 	GalleryFactory::registerImplementation('GalleryItem',
 					       'ItemCreateResizesTestItem',
@@ -84,7 +79,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Create a mock data item */
-	list ($ret, $lockId) = $gallery->acquireReadLock($this->_rootId);
+	list ($ret, $lockId) = $gallery->acquireReadLock($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -95,7 +90,7 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = $this->_item->create($this->_rootId,
+	$ret = $this->_item->create($this->_getRootId(),
 				    dirname(__FILE__) . '/../data/test1.jpg',
 				    'image/jpeg');
 	if ($ret->isError()) {

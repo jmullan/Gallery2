@@ -59,13 +59,7 @@ class LockTest extends GalleryTestCase {
     function testManyWriteLocks() {
 	global $gallery;
 
-	$ids = array($gallery->getActiveUserId());
-
-	list ($ret, $ids[]) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
 
 	list ($ret, $lockId) = $gallery->acquireWriteLock($ids);
 	if ($ret->isError()) {
@@ -103,13 +97,7 @@ class LockTest extends GalleryTestCase {
     function testManyReadLocks() {
 	global $gallery;
 
-	$ids = array($gallery->getActiveUserId());
-
-	list ($ret, $ids[]) =
-	    $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$ids = array($gallery->getActiveUserId(), $this->_getRootId());
 
 	list ($ret, $lockId) = $gallery->acquireReadLock($ids);
 	if ($ret->isError()) {

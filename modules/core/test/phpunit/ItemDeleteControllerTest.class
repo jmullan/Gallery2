@@ -39,11 +39,6 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	parent::setUp();
-	
-	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function tearDown() {
@@ -60,7 +55,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 
 
 	/* Create a random album */
-	list ($ret, $album) = $this->_createRandomAlbum($this->_rootId);
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -91,7 +86,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 
 	/* Perform the request and verify that we failed */

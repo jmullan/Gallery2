@@ -24,6 +24,10 @@ function GalleryMain(&$testSuite, $filter) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
+    /* Configure out url Generator for phpunit mode. */
+    $urlGenerator = new GalleryUrlGenerator('../../main.php');
+    $gallery->setUrlGenerator($urlGenerator);
+    
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -37,11 +41,6 @@ function GalleryMain(&$testSuite, $filter) {
      */
     $gallery->setConfig('url.gallery.base', '');
 
-    /* Configure out url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator($gallery->getConfig('url.gallery.base'),
-					    'main.php');
-    $gallery->setUrlGenerator($urlGenerator);
-    
     /*
      * Commit our transaction here because we're going to have a new
      * transaction for every test.
@@ -211,7 +210,7 @@ print "</pre>";
     Enter a filter string in the box below to restrict testing to classes containing 
     that text in their name.
     <br>
-    Class Filter: <input type="text" name="filter" value="<?php echo $filter ?>"> <i>(regular expressions are ok)</i>
+    Class Filter: <input type="text" name="filter" size="60" value="<?php echo $filter ?>"> <i>(regular expressions are ok)</i>
     </form>
 
     <h2>Modules</h2>

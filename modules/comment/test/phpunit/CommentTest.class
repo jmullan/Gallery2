@@ -47,12 +47,7 @@ class CommentTest extends GalleryTestCase {
 	
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $this->_item) = $this->_createRandomDataItem($rootId);
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

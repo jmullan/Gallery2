@@ -89,7 +89,7 @@
 		{if ($SearchShowAll.results.count > 0)}
 		  {if ($form.page > 1)}
 		    {g->input type="submit" name="form.action.previousPage"}
-		      {g->text text="<< Previous"}
+		      {g->text text="&laquo; Back"}
 		    {/g->input}
 		  {/if}
 		  
@@ -102,7 +102,7 @@
 		{/if}
 		{if ($form.page < $SearchShowAll.maxPages)}
 		  {g->input type="submit" name="form.action.nextPage"}
-		    {g->text text="Next >>"}
+		    {g->text text="Next &raquo;"}
 		  {/g->input}
 		{/if}
 	      {/g->title}

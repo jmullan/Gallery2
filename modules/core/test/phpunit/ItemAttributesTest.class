@@ -40,12 +40,7 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_rootId);
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -45,7 +45,7 @@ class DerivativeTest extends GalleryTestCase {
 	parent::setUp();
 
 	/* Create a little tree of mixed items/entities */
-	list ($ret, $this->_root) = $this->_createRandomAlbum(null);
+	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

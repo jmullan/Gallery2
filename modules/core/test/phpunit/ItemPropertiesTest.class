@@ -46,7 +46,7 @@ class ItemPropertiesTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 	
-	list ($ret, $this->_item) = $this->_createRandomAlbum(null);
+	list ($ret, $this->_item) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

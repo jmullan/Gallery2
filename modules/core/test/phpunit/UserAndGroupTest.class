@@ -434,12 +434,7 @@ class UserAndGroupTest extends GalleryTestCase {
     function testAssertHasItemPermission() {
 	global $gallery;
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryUserHelper::assertHasItemPermission($rootId, 'core.view');
+	$ret = GalleryUserHelper::assertHasItemPermission($this->_getRootId(), 'core.view');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -448,13 +443,8 @@ class UserAndGroupTest extends GalleryTestCase {
     function testHasItemPermission() {
 	global $gallery;
 	
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	list ($ret, $hasPermission) =
-	    GalleryUserHelper::hasItemPermission($rootId, $gallery->getActiveUserId(), 'core.view');
+	    GalleryUserHelper::hasItemPermission($this->_getRootId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

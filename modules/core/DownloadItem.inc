@@ -118,5 +118,58 @@ class DownloadItemView extends GalleryView {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * @see GalleryView::rewriteQueryString
+     */
+    function rewriteQueryString($params) {
+	global $gallery;
+	
+	/* We know who we are */
+	unset($params['view']);
+
+	$itemId = $params['itemId'];
+	unset($params['itemId']);
+	
+	$buf = '/' . $itemId;
+
+	list ($ret, $entity) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isSuccess()) {
+	    $buf .= '-' . $entity->getSerialNumber();
+
+	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
+		$mimeType = $entity->getMimeType();
+	    } else {
+		$mimeType = $entity->getDerivativeMimeType();
+	    }
+
+	    $extension = GalleryUtilities::convertMimeToExtension($mimeType);
+	    if (!empty($extension)) {
+		$buf .= '.' . $extension;
+	    }
+	}
+
+	/* Add in anything else as a standard query element */
+	if (!empty($params)) {
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $buf .= $urlGenerator->buildQueryString($params);
+	}
+
+	return $buf;
+    }
+
+    /**
+     * @see GalleryView::parseQueryString()
+     */
+    function parseQueryString($queryString) {
+
+	/*
+	 * Expect the path to be in the format /<itemid>-<serial>.<extension>
+	 * We only care about the item id
+	 */
+	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
+	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
+	return GalleryStatus::success();
+    }
 }
 ?>

@@ -23,6 +23,12 @@
 $contracted_tag['style'] = 1;
 $contracted_tag['image'] = 1;
 
+/*
+ * Not all attribute tags are trimmed -- we don't want to trim "column" for example because it makes the HTML
+ * very hard to read.
+ */
+$trimmed_tag['value'] = 1;
+
 $attribute_tag['title'] = 1;
 $attribute_tag['subtitle'] = 1;
 $attribute_tag['description'] = 1;
@@ -116,6 +122,7 @@ $smarty->template_dir = dirname(__FILE__) . '/templates';
 $smarty->assign('tags', $tags);
 $smarty->assign('contracted_tag', $contracted_tag);
 $smarty->assign('attribute_tag', $attribute_tag);
+$smarty->assign('trimmed_tag', $trimmed_tag);
 $smarty->assign('builtin_tag', $builtin_tag);
 
 $fd = fopen("GalleryTemplateAdapter.inc", "w");

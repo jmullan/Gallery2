@@ -40,13 +40,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	parent::setUp();
 
-	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -54,7 +49,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	}
 
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($rootId);
+	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($this->_getRootId());
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -265,15 +265,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @param string the path component of this new object
      * @return object GalleryStatus a status code
      */
-    function createRoot($path) {
+    function createRoot() {
 	global $gallery;
 
-	if (!isset($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	$ret = parent::createRoot($path);
+	$ret = parent::createRoot();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
