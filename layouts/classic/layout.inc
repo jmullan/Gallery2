@@ -133,10 +133,15 @@ class ClassicLayout extends MatrixLayout {
      * @see MatrixLayout::_loadAlbumTemplate
      */
     function _loadAlbumTemplate(&$template, $item, $properties) {
-	list ($ret, $matrixBodyFile) = parent::_loadAlbumTemplate($template, $item, $properties);
+	list ($ret, $matrixResult) = parent::_loadAlbumTemplate($template, $item, $properties);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	if (is_array($matrixResult)) {
+	    // Return now if we are doing a redirect..
+	    return array(GalleryStatus::success(), $matrixResult);
+	}
+
 	$layout =& $template->getVariableByReference('layout');
 	$layout['showSubalbums'] = $properties['showSubalbums'];
 
