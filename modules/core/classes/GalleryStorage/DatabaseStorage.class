@@ -1215,6 +1215,7 @@ class DatabaseStorage extends GalleryStorage {
      * @param array an associative array of data about the entry
      */
     function removeMapEntry($mapName, $entry) {
+	global $gallery;
 
 	$mapInfo = $this->_describeMapMembers($mapName);
 	$tableName = $this->_prefixTableName($mapName);
@@ -1227,8 +1228,9 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
-	if (sizeof($where) == 0) {
-	    return GalleryStatus::error(ERROR_BAD_DATA,
+	if (empty($where)) {
+	    $gallery->debug("Missing where clause");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
