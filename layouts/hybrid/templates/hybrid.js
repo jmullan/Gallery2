@@ -6,12 +6,14 @@ var app_is_ie = app_agent.indexOf('msie')>=0 && app_agent.indexOf('opera')<0;
 var app_is_safari = app_agent.indexOf('safari')>=0;
 function app_getwinsize() {
  var obj = document.getElementById('album').offsetParent;
- if (obj && obj.tagName != 'BODY') {
+ if (obj && obj.tagName != 'BODY' && obj.tagName != 'HTML') {
   app_ww = obj.offsetWidth; app_wh = obj.offsetHeight;
   app_wx = obj.offsetLeft;  app_wy = obj.offsetTop;
  } else {
   if (typeof(window.innerWidth)=='number') {
    app_ww = window.innerWidth; app_wh = window.innerHeight;
+  } else if (document.documentElement.clientHeight) {
+   app_ww = document.documentElement.clientWidth; app_wh = document.documentElement.clientHeight;
   } else {
    app_ww = document.body.clientWidth; app_wh = document.body.clientHeight;
   }
@@ -40,7 +42,6 @@ function app_init() {
  if (app_is_ie) { //For IE:
   document.body.onresize = app_onresize;
   document.onkeydown = app_onkeydown;
-  document.getElementById('album').style.height = '100%';
   album_div.style.width = '100%';
  }
  if (app_is_safari) { //For Safari:
@@ -189,7 +190,7 @@ function sidebar_onoff() {
  ui_vis('sidebar', (sidebar_on = sidebar_on?0:1), 1);
  album_setsize(1);
 }
-//Class image :: div image :: span image_view
+//Class image :: div image :: div image_view
 var image_on=0; // Image is visible
 var image_index=0; // Index of visible image
 var image_zoomon=0; // Image is zoomed to full size
@@ -245,7 +246,7 @@ function image_fit(getstr) {
   if (getstr || !a) image_zoom(0,1);
   else { image_zoom(1); return; }
  }
- document.getElementById('image').style.paddingTop = Math.floor((ah-h)/2)+'px';
+ document.getElementById('image_view').style.paddingTop = Math.floor((ah-h)/2)+'px';
  document.fit_size.className = 'off';
  document.full_size.className = a?'on':'off';
  if (getstr) {

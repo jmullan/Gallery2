@@ -185,7 +185,7 @@
 </div
 
 ><div id="image" style="visibility:hidden" onclick="image_vis(0)"
-><span id="image_view"></span></div
+><div id="image_view"></div></div
 
 ><div id="toolbar" style="visibility:hidden"><div id="tools_left"
 ><img name="text_on" src="{$layout.layoutUrl}/images/up.png" width="18" height="18" class="on" onclick="text_onoff()" alt="Show text" title="Show text"
