@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryPermissionSetMap (
+    CREATE TABLE DB_TABLE_PREFIXPermissionSetMap (
   DB_COLUMN_PREFIXmodule
       VARCHAR(
       
@@ -38,8 +38,8 @@
     );
 
   
-    CREATE UNIQUE INDEX GalleryPermissionSetMap_permission 
-    ON DB_TABLE_PREFIXGalleryPermissionSetMap
+    CREATE UNIQUE INDEX PermissionSetMap_permission 
+    ON DB_TABLE_PREFIXPermissionSetMap
     (DB_COLUMN_PREFIXpermission);
 
   
@@ -49,7 +49,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryPermissionSetMap',
+      'PermissionSetMap',
       1,
       0
       );

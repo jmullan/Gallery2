@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryDerivative (
+    CREATE TABLE DB_TABLE_PREFIXDerivative (
   DB_COLUMN_PREFIXid
       int(11)
     
@@ -67,7 +67,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryDerivative',
+      'Derivative',
       1,
       0
       );

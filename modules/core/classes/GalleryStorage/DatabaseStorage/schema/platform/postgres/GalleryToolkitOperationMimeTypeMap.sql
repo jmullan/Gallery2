@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryToolkitOperationMimeTypeMap (
+    CREATE TABLE DB_TABLE_PREFIXToolkitOperationMimeTypeMap (
   DB_COLUMN_PREFIXoperationName
       VARCHAR(
       
@@ -30,13 +30,13 @@
     );
 
   
-    CREATE INDEX GalleryToolkitOperationMimeTypeMap_operationName 
-    ON DB_TABLE_PREFIXGalleryToolkitOperationMimeTypeMap
+    CREATE INDEX ToolkitOperationMimeTypeMap_operationName 
+    ON DB_TABLE_PREFIXToolkitOperationMimeTypeMap
     (DB_COLUMN_PREFIXoperationName);
 
   
-    CREATE INDEX GalleryToolkitOperationMimeTypeMap_mimeType 
-    ON DB_TABLE_PREFIXGalleryToolkitOperationMimeTypeMap
+    CREATE INDEX ToolkitOperationMimeTypeMap_mimeType 
+    ON DB_TABLE_PREFIXToolkitOperationMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
 
   
@@ -46,7 +46,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryToolkitOperationMimeTypeMap',
+      'ToolkitOperationMimeTypeMap',
       1,
       0
       );

@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryUser (
+    CREATE TABLE DB_TABLE_PREFIXUser (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -54,13 +54,13 @@
     );
 
   
-    CREATE INDEX GalleryUser_id 
-    ON DB_TABLE_PREFIXGalleryUser
+    CREATE INDEX User_id 
+    ON DB_TABLE_PREFIXUser
     (DB_COLUMN_PREFIXid);
 
   
-    CREATE UNIQUE INDEX GalleryUser_userName 
-    ON DB_TABLE_PREFIXGalleryUser
+    CREATE UNIQUE INDEX User_userName 
+    ON DB_TABLE_PREFIXUser
     (DB_COLUMN_PREFIXuserName);
 
   
@@ -70,7 +70,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryUser',
+      'User',
       1,
       0
       );

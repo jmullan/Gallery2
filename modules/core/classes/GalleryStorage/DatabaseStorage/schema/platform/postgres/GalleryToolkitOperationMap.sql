@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryToolkitOperationMap (
+    CREATE TABLE DB_TABLE_PREFIXToolkitOperationMap (
   DB_COLUMN_PREFIXname
       VARCHAR(
       
@@ -38,15 +38,15 @@
     );
 
   
-    CREATE UNIQUE INDEX GalleryToolkitOperationMap_name_parametersCrc 
-    ON DB_TABLE_PREFIXGalleryToolkitOperationMap
+    CREATE UNIQUE INDEX ToolkitOperationMap_name_parametersCrc 
+    ON DB_TABLE_PREFIXToolkitOperationMap
     (DB_COLUMN_PREFIXname
         ,
       DB_COLUMN_PREFIXparametersCrc);
 
   
-    CREATE UNIQUE INDEX GalleryToolkitOperationMap_name 
-    ON DB_TABLE_PREFIXGalleryToolkitOperationMap
+    CREATE UNIQUE INDEX ToolkitOperationMap_name 
+    ON DB_TABLE_PREFIXToolkitOperationMap
     (DB_COLUMN_PREFIXname);
 
   
@@ -56,7 +56,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryToolkitOperationMap',
+      'ToolkitOperationMap',
       1,
       0
       );

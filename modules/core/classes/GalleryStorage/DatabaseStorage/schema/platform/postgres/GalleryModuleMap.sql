@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryModuleMap (
+    CREATE TABLE DB_TABLE_PREFIXModuleMap (
   DB_COLUMN_PREFIXmoduleName
       VARCHAR(
       
@@ -18,8 +18,8 @@
     );
 
   
-    CREATE UNIQUE INDEX GalleryModuleMap_moduleName 
-    ON DB_TABLE_PREFIXGalleryModuleMap
+    CREATE UNIQUE INDEX ModuleMap_moduleName 
+    ON DB_TABLE_PREFIXModuleMap
     (DB_COLUMN_PREFIXmoduleName);
 
   
@@ -29,7 +29,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryModuleMap',
+      'ModuleMap',
       1,
       0
       );

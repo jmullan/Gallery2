@@ -17,6 +17,7 @@ foreach my $file (@ARGV) {
   my $base = basename($file);
   $base =~ s/\..*?$//;
   my $xml = $OUTFILE || "$base.xml";
+  my $schemaName = undef;
 
   open(IFD, "<$file") || die;
   open(OFD, ">$xml") || die;
@@ -26,6 +27,14 @@ foreach my $file (@ARGV) {
     if (s/.*\@g2\s*//) {
       $tagCount++;
       print OFD $_;
+
+      if (m|<class-name>(.*)</class-name>|) {
+	($schemaName = $1) =~ s/^Gallery//;
+      }
+
+      if (m|<schema>|) {
+	print OFD "<schema-name>$schemaName</schema-name>\n";
+      }
     }
   }
   close(IFD);

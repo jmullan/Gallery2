@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryDataItem (
+    CREATE TABLE DB_TABLE_PREFIXDataItem (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -24,8 +24,8 @@
     );
 
   
-    CREATE INDEX GalleryDataItem_id 
-    ON DB_TABLE_PREFIXGalleryDataItem
+    CREATE INDEX DataItem_id 
+    ON DB_TABLE_PREFIXDataItem
     (DB_COLUMN_PREFIXid);
 
   
@@ -35,7 +35,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryDataItem',
+      'DataItem',
       1,
       0
       );

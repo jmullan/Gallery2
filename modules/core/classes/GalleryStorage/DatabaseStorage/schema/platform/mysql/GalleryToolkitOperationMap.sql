@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryToolkitOperationMap (
+    CREATE TABLE DB_TABLE_PREFIXToolkitOperationMap (
   DB_COLUMN_PREFIXname
       varchar(
       
@@ -53,7 +53,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryToolkitOperationMap',
+      'ToolkitOperationMap',
       1,
       0
       );

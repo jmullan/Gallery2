@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryModuleParameterMap (
+    CREATE TABLE DB_TABLE_PREFIXModuleParameterMap (
   DB_COLUMN_PREFIXmoduleName
       varchar(
       
@@ -41,7 +41,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryModuleParameterMap',
+      'ModuleParameterMap',
       1,
       0
       );

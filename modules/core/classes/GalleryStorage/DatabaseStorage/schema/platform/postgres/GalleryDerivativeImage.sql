@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryDerivativeImage (
+    CREATE TABLE DB_TABLE_PREFIXDerivativeImage (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -20,8 +20,8 @@
     );
 
   
-    CREATE INDEX GalleryDerivativeImage_id 
-    ON DB_TABLE_PREFIXGalleryDerivativeImage
+    CREATE INDEX DerivativeImage_id 
+    ON DB_TABLE_PREFIXDerivativeImage
     (DB_COLUMN_PREFIXid);
 
   
@@ -31,7 +31,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryDerivativeImage',
+      'DerivativeImage',
       1,
       0
       );

@@ -9,7 +9,7 @@
 
   <xsl:template match="class">
     <table>
-      <table-name><xsl:value-of select="class-name"/></table-name>
+      <table-name><xsl:value-of select="schema/schema-name"/></table-name>
 
       <xsl:apply-templates select="schema"/>
 

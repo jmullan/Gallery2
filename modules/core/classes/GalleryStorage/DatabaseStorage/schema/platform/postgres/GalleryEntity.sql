@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryEntity (
+    CREATE TABLE DB_TABLE_PREFIXEntity (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -40,18 +40,18 @@
     );
 
   
-    CREATE INDEX GalleryEntity_id 
-    ON DB_TABLE_PREFIXGalleryEntity
+    CREATE INDEX Entity_id 
+    ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXid);
 
   
-    CREATE INDEX GalleryEntity_creationTimestamp 
-    ON DB_TABLE_PREFIXGalleryEntity
+    CREATE INDEX Entity_creationTimestamp 
+    ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXcreationTimestamp);
 
   
-    CREATE INDEX GalleryEntity_modificationTimestamp 
-    ON DB_TABLE_PREFIXGalleryEntity
+    CREATE INDEX Entity_modificationTimestamp 
+    ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXmodificationTimestamp);
 
   
@@ -61,7 +61,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryEntity',
+      'Entity',
       1,
       0
       );

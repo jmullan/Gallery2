@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryItemPropertiesMap (
+    CREATE TABLE DB_TABLE_PREFIXItemPropertiesMap (
   DB_COLUMN_PREFIXitemId
       int(11)
     
@@ -33,7 +33,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryItemPropertiesMap',
+      'ItemPropertiesMap',
       1,
       0
       );

@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGallerySession (
+    CREATE TABLE DB_TABLE_PREFIXSession (
   DB_COLUMN_PREFIXsessionId
       varchar(
       
@@ -39,7 +39,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GallerySession',
+      'Session',
       1,
       0
       );

@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryItem (
+    CREATE TABLE DB_TABLE_PREFIXItem (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -92,28 +92,28 @@
     );
 
   
-    CREATE INDEX GalleryItem_id 
-    ON DB_TABLE_PREFIXGalleryItem
+    CREATE INDEX Item_id 
+    ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXid);
 
   
-    CREATE INDEX GalleryItem_keywords 
-    ON DB_TABLE_PREFIXGalleryItem
+    CREATE INDEX Item_keywords 
+    ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXkeywords);
 
   
-    CREATE INDEX GalleryItem_ownerId 
-    ON DB_TABLE_PREFIXGalleryItem
+    CREATE INDEX Item_ownerId 
+    ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXownerId);
 
   
-    CREATE INDEX GalleryItem_summary 
-    ON DB_TABLE_PREFIXGalleryItem
+    CREATE INDEX Item_summary 
+    ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXsummary);
 
   
-    CREATE INDEX GalleryItem_title 
-    ON DB_TABLE_PREFIXGalleryItem
+    CREATE INDEX Item_title 
+    ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXtitle);
 
   
@@ -123,7 +123,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryItem',
+      'Item',
       1,
       0
       );

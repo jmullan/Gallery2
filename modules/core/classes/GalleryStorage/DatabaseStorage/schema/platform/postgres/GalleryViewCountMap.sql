@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryViewCountMap (
+    CREATE TABLE DB_TABLE_PREFIXViewCountMap (
   DB_COLUMN_PREFIXitemId
       INTEGER
     
@@ -14,8 +14,8 @@
     );
 
   
-    CREATE UNIQUE INDEX GalleryViewCountMap_itemId 
-    ON DB_TABLE_PREFIXGalleryViewCountMap
+    CREATE UNIQUE INDEX ViewCountMap_itemId 
+    ON DB_TABLE_PREFIXViewCountMap
     (DB_COLUMN_PREFIXitemId);
 
   
@@ -25,7 +25,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryViewCountMap',
+      'ViewCountMap',
       1,
       0
       );

@@ -1672,6 +1672,17 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixTableName($tableName) {
+
+	/*
+	 * Remove the the ubiquitous "Gallery" prefix, since it's not part of
+	 * the schema name.  For now we automatically translate the class name
+	 * into the schema name by doing this.  If this ever becomes a problem,
+	 * we should start hand-writing the schema name instead and then
+	 * pushing that into the interface classes so that we don't have to
+	 * automatically generate the schema name (and get it wrong).
+	 */
+	$tableName = str_replace('Gallery', '', $tableName);
+	
 	return $this->_tablePrefix . $tableName;
     }
 

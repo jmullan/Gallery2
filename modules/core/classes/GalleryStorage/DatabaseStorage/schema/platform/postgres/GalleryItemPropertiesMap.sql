@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryItemPropertiesMap (
+    CREATE TABLE DB_TABLE_PREFIXItemPropertiesMap (
   DB_COLUMN_PREFIXitemId
       INTEGER
     
@@ -22,8 +22,8 @@
     );
 
   
-    CREATE UNIQUE INDEX GalleryItemPropertiesMap_itemId_key 
-    ON DB_TABLE_PREFIXGalleryItemPropertiesMap
+    CREATE UNIQUE INDEX ItemPropertiesMap_itemId_key 
+    ON DB_TABLE_PREFIXItemPropertiesMap
     (DB_COLUMN_PREFIXitemId
         ,
       DB_COLUMN_PREFIXkey);
@@ -35,7 +35,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryItemPropertiesMap',
+      'ItemPropertiesMap',
       1,
       0
       );

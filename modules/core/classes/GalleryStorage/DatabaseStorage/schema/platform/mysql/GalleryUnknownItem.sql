@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryUnknownItem (
+    CREATE TABLE DB_TABLE_PREFIXUnknownItem (
   DB_COLUMN_PREFIXid
       int(11)
     
@@ -21,7 +21,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryUnknownItem',
+      'UnknownItem',
       1,
       0
       );

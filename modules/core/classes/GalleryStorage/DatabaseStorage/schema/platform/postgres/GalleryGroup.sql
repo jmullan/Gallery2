@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryGroup (
+    CREATE TABLE DB_TABLE_PREFIXGroup (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -24,13 +24,13 @@
     );
 
   
-    CREATE INDEX GalleryGroup_id 
-    ON DB_TABLE_PREFIXGalleryGroup
+    CREATE INDEX Group_id 
+    ON DB_TABLE_PREFIXGroup
     (DB_COLUMN_PREFIXid);
 
   
-    CREATE UNIQUE INDEX GalleryGroup_groupName 
-    ON DB_TABLE_PREFIXGalleryGroup
+    CREATE UNIQUE INDEX Group_groupName 
+    ON DB_TABLE_PREFIXGroup
     (DB_COLUMN_PREFIXgroupName);
 
   
@@ -40,7 +40,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryGroup',
+      'Group',
       1,
       0
       );

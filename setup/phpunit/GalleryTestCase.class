@@ -215,6 +215,58 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $item);
     }
     
+    function _createRandomUser() {
+	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($user)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}  
+
+	$ret = $user->create('testuser-' . rand());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$user->setFullName('User 1');
+	$user->changePassword('password');
+	$user->setEmail('user1@gallery.com');
+
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $user);
+    }
+
+    function _createRandomGroup() {
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	if ($ret->isError()) {
+	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
+	}
+
+	if (!isset($group)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	
+	$ret = $group->create('testgroup-' . rand());
+	if ($ret->isError()) {
+	    return array($this->failWithStatus($ret->wrap(__FILE__, __LINE__)), null);
+	}
+
+	$group->setGroupName('Test Group ' . rand());
+
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return array(GalleryStatus::success(), $group);
+    }
+    
     function _createDerivative($parentId, $type, $operations='test-operation|100') {
 	global $gallery;
 

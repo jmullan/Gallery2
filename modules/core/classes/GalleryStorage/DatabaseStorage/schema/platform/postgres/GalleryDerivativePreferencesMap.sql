@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryDerivativePreferencesMap (
+    CREATE TABLE DB_TABLE_PREFIXDerivativePreferencesMap (
   DB_COLUMN_PREFIXitemId
       INTEGER
     
@@ -26,23 +26,23 @@
     );
 
   
-    CREATE INDEX GalleryDerivativePreferencesMap_itemId 
-    ON DB_TABLE_PREFIXGalleryDerivativePreferencesMap
+    CREATE INDEX DerivativePreferencesMap_itemId 
+    ON DB_TABLE_PREFIXDerivativePreferencesMap
     (DB_COLUMN_PREFIXitemId);
 
   
-    CREATE INDEX GalleryDerivativePreferencesMap_order 
-    ON DB_TABLE_PREFIXGalleryDerivativePreferencesMap
+    CREATE INDEX DerivativePreferencesMap_order 
+    ON DB_TABLE_PREFIXDerivativePreferencesMap
     (DB_COLUMN_PREFIXorder);
 
   
-    CREATE INDEX GalleryDerivativePreferencesMap_derivativeType 
-    ON DB_TABLE_PREFIXGalleryDerivativePreferencesMap
+    CREATE INDEX DerivativePreferencesMap_derivativeType 
+    ON DB_TABLE_PREFIXDerivativePreferencesMap
     (DB_COLUMN_PREFIXderivativeType);
 
   
-    CREATE INDEX GalleryDerivativePreferencesMap_derivativeOperations 
-    ON DB_TABLE_PREFIXGalleryDerivativePreferencesMap
+    CREATE INDEX DerivativePreferencesMap_derivativeOperations 
+    ON DB_TABLE_PREFIXDerivativePreferencesMap
     (DB_COLUMN_PREFIXderivativeOperations);
 
   
@@ -52,7 +52,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryDerivativePreferencesMap',
+      'DerivativePreferencesMap',
       1,
       0
       );

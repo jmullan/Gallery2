@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXGalleryChildEntity (
+    CREATE TABLE DB_TABLE_PREFIXChildEntity (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -16,13 +16,13 @@
     );
 
   
-    CREATE INDEX GalleryChildEntity_id 
-    ON DB_TABLE_PREFIXGalleryChildEntity
+    CREATE INDEX ChildEntity_id 
+    ON DB_TABLE_PREFIXChildEntity
     (DB_COLUMN_PREFIXid);
 
   
-    CREATE INDEX GalleryChildEntity_parentId 
-    ON DB_TABLE_PREFIXGalleryChildEntity
+    CREATE INDEX ChildEntity_parentId 
+    ON DB_TABLE_PREFIXChildEntity
     (DB_COLUMN_PREFIXparentId);
 
   
@@ -32,7 +32,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryChildEntity',
+      'ChildEntity',
       1,
       0
       );
