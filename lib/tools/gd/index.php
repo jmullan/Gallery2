@@ -33,7 +33,9 @@
  * @author Ernesto Baschny <ernst@baschny.de>
  */
 
-include('../security.inc');
+if (isset($_SERVER['HTTP_HOST'])) {
+    include('../security.inc');
+}
 
 /*
  * Gets a lot of information about our GD installation and return it as a
@@ -172,7 +174,8 @@ function getGdLibraryInfo() {
     $phpinfo = ob_get_contents();
     ob_end_clean();
     $phpinfo = htmlspecialchars($phpinfo);
-    $out .= "\t" . sprintf('\'php_info(8)\' => \'%s\',', $phpinfo) . "\n";
+    $phpinfo = preg_replace('/\'/', '\\\'', $phpinfo);
+    $out .= "\t" . sprintf('\'phpinfo(8)\' => \'%s\',', $phpinfo) . "\n";
 
     /* Functions defined in this GD module */    
     $functions = get_extension_funcs('gd');
@@ -203,9 +206,7 @@ $gdInfo = getGdLibraryInfo();
 <html>
   <head>
     <title>GD Library information gathering</title>
-    <STYLE TYPE="text/css">
-      <?php include ("stylesheet.css"); ?>
-    </STYLE>
+    <link rel="stylesheet" href="stylesheet.css" />
   </head>
   <body>
    <h1>GD library information gathering</h1>
