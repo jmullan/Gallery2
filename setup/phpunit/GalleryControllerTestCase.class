@@ -66,7 +66,10 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	list ($ret, $results) = $this->_controller->handleRequest($form);
 	if ($errorCode != null) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		$this->assert(false,
+			      sprintf('Expected error code (%s) but received (%s)',
+				      join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
 	} else if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
