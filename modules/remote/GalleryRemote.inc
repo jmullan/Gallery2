@@ -284,7 +284,7 @@ class GalleryRemoteController extends GalleryController {
 	    }
 	    $parentId = $parentItem->getId();
 	    unset($parentItem);
-	} else if (!empty($form['set_albumPath']) {
+	} else if (!empty($form['set_albumPath'])) {
 	    list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath(urldecode($form['set_albumName']));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

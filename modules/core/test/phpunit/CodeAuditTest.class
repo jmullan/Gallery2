@@ -74,6 +74,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$this->_errorCount = 0;
 
 	$this->_lineEnding = $platform->getLineEnding();
+
+	/*	
+	 * Windows CVS appends a CRLF after ?>, so allow for it
+	 */
+	$this->_phpEndFile = '/\?>(' . $this->_lineEnding . ')?$/';
     }
 
     /**
@@ -145,9 +150,13 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    }
 	}
 
-	/* Check that php files end with ?> */
+	/*
+	 * Check that php files end with ?>
+	 * As noted in the constructor, Windows CVS will append a CRLF to
+	 * the end of the file, so we allow for that.
+	 */
 	if (!isset($this->_exception['endphp'][basename($fileName)])
-		&& !preg_match('/\?>$/', $buffer)) {
+		&& !preg_match($this->_phpEndFile, $buffer)) {
 	    $this->_errorCount++;
 	    $this->assert(false, $fileName . ' does not end with ?&gt;');
 	}

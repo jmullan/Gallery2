@@ -155,7 +155,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 
 	$platform = $gallery->getPlatform();
-	$baseDir = dirname(__FILE__) . '/../data/';
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
 	$fileKeys = array();
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
@@ -230,7 +231,11 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
      * in pathComponent, title and summary
      */
     function testAddFromServerFilenameToFields() {
-	$baseDir = dirname(__FILE__) . '/../data/';
+    	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
+	
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	GalleryUtilities::putRequestVariable('form[set][title]', 1);
@@ -261,16 +266,21 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
  */
 class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function ItemAddFromServerTestPlatform($delegate, $symlinkSupported) {
+    	global $gallery;
+    	$platform = $gallery->getPlatform();
+    	$dirSep = $platform->getDirectorySeparator();
+    	
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
+	$this->_baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
     }
 
     function file_exists($path) {
 	switch ($path) {
-	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
-	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
-	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	case $this->_baseDir . '\\apo\'strophe.jpg':
 	    return true;
 
 	default:
@@ -280,11 +290,11 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function copy($source, $dest) {
 	switch ($source) {
-	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
-	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
-	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
-	    $source = dirname(__FILE__) . '/../data/test1.jpg';
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	    $source = $this->_baseDir . 'test1.jpg';
 	    break;
 	}
 	return $this->_delegate->copy($source, $dest);
@@ -292,11 +302,11 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function symlink($source, $dest) {
 	switch ($source) {
-	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
-	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
-	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
-	    $source = dirname(__FILE__) . '/../data/test1.jpg';
+	case $this->_baseDir . 'apo\'strophe.jpg':
+	    $source = $this->_baseDir . 'test1.jpg';
 	    break;
 	}
 
