@@ -275,11 +275,15 @@ class GalleryAlbumItem_core extends GalleryItem {
 	/*
 	 * Read lock the parent so that we don't have a race condition below.
 	 */
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if (GalleryCoreApi::isReadLocked($this->getParentId()) || GalleryCoreApi::isWriteLocked($this->getParentId())) {
+	    $lockId = null;
+	} else {
+	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
-
+	
 	$platform = $gallery->getPlatform();
 
 	/*
