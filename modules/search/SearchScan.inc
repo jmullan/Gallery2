@@ -85,9 +85,11 @@ class SearchScanController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else if (isset($form['action']['showAll'])) {
-	    $results['delegate']['view'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'core:Navigation';
+	    $results['delegate']['subView'] = 'search:SearchShowAll';
 	} else {
-	    $results['delegate']['view'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'core:Navigation';
+	    $results['delegate']['subView'] = 'search:SearchScan';
 	}
 
 	$results['status'] = array();
@@ -137,7 +139,7 @@ class SearchScanView extends GalleryView {
 	if ($form['formName'] == 'SearchScan' ||
 	    $form['formName'] == 'SearchShowAll' ||
 	    $form['formName'] == 'SearchSystemContent') {
-	    
+
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
@@ -145,7 +147,7 @@ class SearchScanView extends GalleryView {
 		$form['searchCriteria'] =
 		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
 		
-		if (isset($form['useDefaultSettings']) || $form['formName'] == 'SearchShowAll') {
+		if ($form['formName'] == 'SearchShowAll') {
 		    foreach ($searchInstances as $id => $instance) {
 			$form['options'][$id] = $modules[$id]['options'];
 		    }
@@ -201,6 +203,9 @@ class SearchScanView extends GalleryView {
 	    }
 	} else {
 	    $form['searchCriteria'] = '';
+	    foreach ($searchInstances as $id => $instance) {
+		$form['options'][$id] = $modules[$id]['options'];
+	    }
 	}
 
 	$ids = GalleryCoreApi::getAllFactoryImplementationIds('SlideshowInterface_1_0');

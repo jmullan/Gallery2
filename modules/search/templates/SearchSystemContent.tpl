@@ -23,7 +23,8 @@ function checkForm() {ldelim}
 <div class="gbMenu">
   <form id="SearchSystemContent" name="SearchSystemContent" action="{g->url}" method="post">
     <p>
-      <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.view}"/>
+      <input type="hidden" name="{g->formVar var="view"}" value="core:Navigation"/>
+      <input type="hidden" name="{g->formVar var="subView"}" value="{$SearchSystemContent.subView}"/>
       <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent"/>
       <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="this.style.background='#fff';this.value='';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#ccc';"/>
       <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1"/>
@@ -32,7 +33,7 @@ function checkForm() {ldelim}
 	  </a>
     </p>
     <p>
-	  <a href="javascript:document.getElementById('SearchSystemContent').submit()">advanced search</a>
+      <a href="{g->url arg1="view=core:Navigation" arg2="subView=search:SearchScan" arg3="form[useDefaultSettings]=1"}">{g->text text="advanced search"}</a>
     </p>
   </form>
 </div>
