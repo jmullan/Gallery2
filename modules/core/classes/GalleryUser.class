@@ -75,10 +75,10 @@ class GalleryUser_core extends GalleryEntity {
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var string $_fullname
+     * @var string $_fullName
      * @access private
      */
-    var $_fullname;
+    var $_fullName;
 
     /**
      * The User's password in a hashed form.
@@ -179,24 +179,6 @@ class GalleryUser_core extends GalleryEntity {
      */
     function changePassword($newPassword) {
 	$this->setHashedPassword(md5($newPassword));
-    }
-
-    /**
-     * Return a map of userNames => userids
-     *
-     * You can specify how many usernames to list, and where the windows is in
-     * the list of all users.
-     *
-     * @param int the number of usernames desired
-     * @param int the start of the range
-     */
-    function fetchUserNames($count=null, $start=null, $offset=null) {
-	global $gallery;
-
-	return $gallery->search(
-	    array('select' => '[GalleryUser::id] [GalleryUser::userName]',
-		  'limit' => array('count' => $count,
-				   'offset' => $offset)));
     }
 
     /**
