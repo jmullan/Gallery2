@@ -64,8 +64,8 @@
 	  {/if}
 
 	  {if ($ConfirmImport.illegalAlbumNames.$albumName) != ''}
-	  {g->text text="This album has an illegal name and will be renamed to <i>%s</i>" 
-	           arg1=$ConfirmImport.illegalAlbumNames.$albumName}
+	  {g->text text="This album has an illegal name and will be renamed to <i>%s</i>"
+		   arg1=$ConfirmImport.illegalAlbumNames.$albumName}
 	  <br />
 	  {/if}
 
@@ -92,7 +92,8 @@
 	{g->text text="Description: %s" arg1=$ConfirmImport.targetAlbum.description|default:""}
       </span>
     </div>
-    <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}" value="{$ConfirmImport.destinationAlbumID}"/>
+    <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}"
+     value="{$ConfirmImport.destinationAlbumID}"/>
   </div>
   <div class="gbAdmin">
     <div class="giDescription">
@@ -104,7 +105,8 @@
       </span>
     </div>
   </div>
-  <input type="hidden" name="{g->formVar var="form[sourceEncoding]"}" value="{$form.sourceEncoding}"/>
+  <input type="hidden" name="{g->formVar var="form[sourceEncoding]"}"
+   value="{$form.sourceEncoding}"/>
   {if isset($form.urlRedirect)}
     <div class="gbAdmin">
       <p class="giDescription">
@@ -116,14 +118,73 @@
   {if isset($form.generateThumbnails)}
   <div class="gbAdmin">
     <p class="giDescription">
-    <input type="hidden" name="{g->formVar var="form[generateThumbnails]"}" value="{$form.generateThumbnails}" />
+    <input type="hidden" name="{g->formVar var="form[generateThumbnails]"}"
+     value="{$form.generateThumbnails}"/>
     {g->text text="Thumbnails will be generated during migration"}
-    </p> 
+    </p>
   </div>
   {/if}
+  <div class="gbAdmin">
+    <input type="hidden" name="{g->formVar var="form[set][title]"}" value="{$form.set.title}"/>
+    <input type="hidden" name="{g->formVar var="form[set][summary]"}" value="{$form.set.summary}"/>
+    <input type="hidden" name="{g->formVar var="form[set][description]"}"
+     value="{$form.set.description}"/>
+    {if isset($form.customfield.title)}
+      <input type="hidden" name="{g->formVar var="form[customfield][title]"}"
+       value="{$form.customfield.title}"/>
+    {/if}
+    {if isset($form.customfield.summary)}
+      <input type="hidden" name="{g->formVar var="form[customfield][summary]"}"
+       value="{$form.customfield.summary}"/>
+    {/if}
+    {if isset($form.customfield.description)}
+      <input type="hidden" name="{g->formVar var="form[customfield][description]"}"
+       value="{$form.customfield.description}"/>
+    {/if}
+    {if isset($form.set.defaultDescription)}
+      <input type="hidden" name="{g->formVar var="form[set][defaultDescription]"}"
+       value="{$form.set.defaultDescription}"/>
+    {/if}
+
+    <p class="giDescription">
+      {g->text text="Item fields will be imported from:"}
+    </p>
+    <table class="gbDataTable">
+      <tr><td>
+	{g->text text="Title"} =
+	{if $form.set.title=="filename"} {g->text text="Base filename"}
+	{elseif $form.set.title=="caption"} {g->text text="Caption"}
+	{elseif $form.set.title=="custom"} {g->text text="Custom field:"}
+					   {$form.customfield.title}
+	{else} {g->text text="Blank"}
+	{/if}
+      </td></tr><tr><td>
+	{g->text text="Summary"} =
+	{if $form.set.summary=="filename"} {g->text text="Base filename"}
+	{elseif $form.set.summary=="caption"} {g->text text="Caption"}
+	{elseif $form.set.summary=="custom"} {g->text text="Custom field:"}
+					     {$form.customfield.summary}
+	{else} {g->text text="Blank"}
+	{/if}
+      </td></tr><tr><td>
+	{g->text text="Description"} =
+	{if $form.set.description=="filename"} {g->text text="Base filename"}
+	{elseif $form.set.description=="caption"} {g->text text="Caption"}
+	{elseif $form.set.description=="custom"} {g->text text="Custom field:"}
+						 {$form.customfield.description}
+	  {if !empty($form.set.defaultDescription)}
+	    {g->text text="(Default to summary value if not set)"}
+	  {/if}
+	{else} {g->text text="Blank"}
+	{/if}
+      </td></tr>
+    </table>
+  </div>
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="albumsPath"}" value="{$ConfirmImport.albumsPath}"/>
-    <input type="submit" name="{g->formVar var="form[action][import]"}" value="{g->text text="Import"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][import]"}"
+     value="{g->text text="Import"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}"
+     value="{g->text text="Cancel"}"/>
   </div>
 </div>
