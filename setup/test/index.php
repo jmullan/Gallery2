@@ -223,7 +223,7 @@ function runTest($moduleId, $testName, $iterations) {
     /* Run the test */
     ob_start();
 
-    $gallery->setTimeLimit(30);
+    $gallery->guaranteeTimeLimit(30);
     list ($timing, $ret1) = $class->start($iterations);
     $ret2 = $class->cleanup();
 
