@@ -467,7 +467,7 @@ class CoreModuleExtras {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
 
-	$userName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('admin'));
+	$userName = GalleryUtilities::utf8ToUnicodeEntities('admin');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery Administrator'));
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
