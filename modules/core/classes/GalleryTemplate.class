@@ -349,11 +349,10 @@ class GalleryTemplate {
     function _getActualTemplateName($templateName) {
 	global $gallery;
 	
-	list ($base, $ext) = GalleryUtilities::getFileNameComponents($templateName);
         $platform = $gallery->getPlatform();
 	
-	/* New style overrides:  file.local.ext */
-        $localTemplateName = $base . '.local.' . $ext;
+	/* New style overrides:  local/file.ext */
+        $localTemplateName = dirname($templateName) . '/local/' . basename($templateName);
         if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
 	    return $localTemplateName;
 	}
