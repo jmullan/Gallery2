@@ -95,6 +95,7 @@ class ItemMakeHighlightController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+
 	    foreach ($preferences as $preference) {
 		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		    $derivativeOperations = $preference['derivativeOperations'];
@@ -144,6 +145,13 @@ class ItemMakeHighlightController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+	    } else {
+		$ret = $gallery->releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
 	    }
 	    
 	    /* Figure out where to redirect upon success */
