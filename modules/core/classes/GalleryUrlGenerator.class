@@ -243,6 +243,10 @@ class GalleryUrlGenerator {
 	if ($path{strlen($path)-1} != '/') {
 	    $path .= '/';
 	}
+
+	/* Convert %7E back into ~ so that it matches the URL */
+	$path = str_replace('%7E', '~', $path);
+	
 	return $path;
     }
 
