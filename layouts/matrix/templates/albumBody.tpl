@@ -14,7 +14,7 @@
 {include file="gallery:layouts/matrix/templates/pathbar.tpl"}
 
 <div id="gsContents">
-  {include file="gallery:templates/sidebar.tpl"}
+  {include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}
 
   <div id="gsAlbumContents">
     

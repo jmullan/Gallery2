@@ -116,7 +116,7 @@
 {/capture}
 
 <div id="options" style="visibility:hidden">
-  {include file="gallery:templates/sidebar.tpl"}
+  {include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}
 </div>
 
 <script type="text/javascript">app_init();</script>

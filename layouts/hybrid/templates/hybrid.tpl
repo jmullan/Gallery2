@@ -152,7 +152,7 @@
     </li></ul>
   </div>
 {/capture}
-<div id="sidebar">{include file="gallery:templates/sidebar.tpl"}</div>
+<div id="sidebar">{include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}</div>
 <div id="image" style="visibility:hidden" onclick="image_vis(0)"
 ><div id="image_view"></div></div
 

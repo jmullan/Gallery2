@@ -6,7 +6,7 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div id="gsContents">
-{include file="gallery:templates/sidebar.tpl"}
+{include file="gallery:templates/sidebar.tpl" l10Domain="modules_core"}
 
 <div id="gsAlbumContents">
 <noscript><p class="giError">
