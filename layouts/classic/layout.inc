@@ -264,16 +264,23 @@ class ClassicLayout extends GalleryLayout {
 	 */
 	$imageViews = array();
 
-	/* If the user can see resized versions, add those to the list */
-	list($ret, $hasPermission) =
-	    GalleryUserHelper::hasItemPermission($item->getId(),
-						 $gallery->getActiveUserId(),
-						 array('core.viewResizes'));
+	list ($ret, $permissions) =
+	    GalleryItemHelper::getPermissions($item->getId(),
+					      $gallery->getActiveUserId());
+	   
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($hasPermission) {
+	/* Can we see this item at all? */
+	if (!isset($permissions['core.all']) &&
+	        !isset($permissions['core.view']) &&
+	        !isset($permissions['core.viewAll'])) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	}
+
+	/* If the user can see resized versions, add those to the list */
+	if (isset($permissions['core.viewAll']) || isset($permissions['core.viewResizes'])) {
 	    /* Load the resizes */
 	    list ($ret, $resizes) =
 		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
@@ -293,15 +300,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* If the user can see the full version, add it to the list */
-	list($ret, $hasPermission) =
-	    GalleryUserHelper::hasItemPermission($item->getId(),
-						 $gallery->getActiveUserId(),
-						 array('core.viewSource'));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($hasPermission) {
+	if (isset($permissions['core.viewAll']) || isset($permissions['core.viewSource'])) {
 	    /* Add the full version */
 	    list ($ret, $preferred) =
 		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
@@ -336,16 +335,10 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/*
-	 * If all else fails, try to just show the thumbnail.
+	 * If all else fails, just show the thumbnail.
 	 */
 	if (empty($imageViews)) {
 
-	    /* Make sure we can view the item at all */
-	    list($ret, $hasPermission) =
-		GalleryUserHelper::hasItemPermission($item->getId(),
-						     $gallery->getActiveUserId(),
-						     array('core.view'));
-	    
 	    /* Load the thumbnail */
 	    list ($ret, $thumbnails) =
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
@@ -391,7 +384,7 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	$totalPeerCount = sizeof($peerIds);
-	
+
 	for ($i = 0; $i < $totalPeerCount; $i++) {
 	    if ($peerIds[$i] == $item->getId()) {
 		$itemIndex = $i;
