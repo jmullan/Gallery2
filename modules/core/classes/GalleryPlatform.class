@@ -286,7 +286,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("fopen($filename, $mode, $use_include_path)");
 	}
-	
+
 	return fopen($filename, $mode, $use_include_path);
     }
 
@@ -608,6 +608,109 @@ class GalleryPlatform {
 	 * all platforms.
 	 */
 	assert(false);
+    }
+
+    /**
+     * Initiates a socket connection to the resource specified by target.
+     * @see http://php.net/fsockopen
+     *
+     * @param string the hostname
+     * @param int the port
+     * @param int the error number (out)
+     * @param string the error string (out)
+     * @param int the timeout
+     * @return resource a file descriptor
+     */
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fsockopen($target, $port, $errno, $errstr, $timeout)");
+	}
+
+	return fsockopen($target, $port, $errno, $errstr, $timeout);
+    }
+
+    /**
+     * Write the contents of string to the file stream pointed to by handle.
+     *
+     * @param resource the handle
+     * @param string the buffer
+     * @param int how many bytes to write (optional)
+     * @return int the number of bytes written
+     */
+    function fwrite($handle, $string, $length=null) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fwrite($handle, ..., $length)");
+	}
+
+	if (isset($length)) {
+	    return fwrite($handle, $string, $length);
+	} else {
+	    return fwrite($handle, $string);
+	}
+    }
+
+    /**
+     * Closes an open file pointer
+     *
+     * @param resource the handle
+     * @return boolean true on success, false on failure
+     */
+    function fclose($handle) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fclose($handle)");
+	}
+
+	return fclose($handle);
+    }
+
+    /**
+     * Tests for end-of-file on a file pointer
+     *
+     * @param resource the handle
+     * @return boolean true if the file pointer is at EOF
+     */
+    function feof($handle) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("feof($handle)");
+	}
+
+	return feof($handle);
+    }
+
+    /**
+     * Tests for end-of-file on a file pointer
+     *
+     * @param resource the handle
+     * @param int the length
+     * @return string the bytes read
+     */
+    function fread($handle, $length) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fread($handle, $length)");
+	}
+
+	return fread($handle, $length);
+    }
+
+    /**
+     * Gets line from file pointer
+     *
+     * @param resource the file handle
+     * @param int the optional max line length
+     * @return the string or FALSE on eof
+     */
+    function fgets($handle, $length=0) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fgets($handle, $length)");
+	}
+
+	return fgets($handle, $length);
     }
 }
 ?>

@@ -225,6 +225,80 @@ class PlatformTest extends GalleryTestCase {
     function testIsRestrictedByOpenBaseDir() {
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
     }
+
+    /**
+     * Try opening a socket to the current web server
+     */
+    function testFsockopen() {
+	global $gallery;
+	global $HTTP_SERVER_VARS;
+	$platform = $gallery->getPlatform();
+	$fd = $platform->fsockopen($HTTP_SERVER_VARS['SERVER_NAME'],
+				   $HTTP_SERVER_VARS['SERVER_PORT'],
+				   $errno, $errstr, 30);
+	$this->assert("File descriptor should not be null", isset($fd));
+    }
+
+    /**
+     * Try opening a socket to the current web server
+     */
+    function testFsockopenBadHost() {
+	global $gallery;
+	global $HTTP_SERVER_VARS;
+	$platform = $gallery->getPlatform();
+
+	/* We know this is going to bomb so unset PHPunit's error handler */
+	restore_error_handler();
+	
+	$fd = @$platform->fsockopen('www.BOGUSBOGUSBOGUS.com',
+				    $HTTP_SERVER_VARS['SERVER_PORT'],
+				    $errno, $errstr, 30);
+	$this->assert("File descriptor should be null", !isset($fd));
+    }
+
+    /**
+     * Verify that we can write a few bytes to a file
+     */
+    function testOpenWriteAndClose() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$fd = $platform->fopen($this->_destFile, 'wb');
+	$this->assert("File descriptor should not be null", isset($fd));
+
+	$buf = 'this is a test';
+	$bytesWritten = $platform->fwrite($fd, $buf, strlen($buf));
+	$this->assertEquals(strlen($buf), $bytesWritten);
+
+	$closed = $platform->fclose($fd);
+	$this->assert($closed);
+    }
+
+    function testOpenAndReadTillEof() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$fd = $platform->fopen($this->_sourceFile, 'rb');
+	$this->assert("File descriptor should not be null", isset($fd));
+
+	$buf = '';
+	while (!$platform->feof($fd)) {
+	    $buf .= $platform->fread($fd, 512);
+	}
+
+	$this->assert(1083, strlen($buf));
+	$this->assert($platform->fclose($fd));
+    }
+
+    function testOpenMissingFile() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	/* We know this is going to bomb so unset PHPunit's error handler */
+	restore_error_handler();
+
+	/* And suppress warnings when we call fopen */ 
+	$fd = @$platform->fopen(sprintf('%s_BOGUS_BOGUS', __FILE__), 'rb');
+	$this->assertEquals(false, $fd);
+    }
 }
 
 ?>
