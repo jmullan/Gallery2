@@ -340,11 +340,12 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(),
-						       $this->_childItems[0]->getId());
+	list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(),
+									$this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assert($success, 'should be able to set thumbnail');
 
 	list ($ret, $thumbTable) =
 	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
@@ -358,6 +359,60 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals($newDerivative->getDerivativeSourceId(), $derivative->getId());
     }
 
+    /*
+     * Exercise a bug: if you add an unknown item to a new album, it tries to make
+     * that item the thumbnail, but we can't thumbnail-ify it so we wind up throwing
+     * an ERROR_UNSUPPORTED_OPERATION.  Don't let that happen!
+     */
+    function testSetThumbnailFromUnknownItem() {
+	global $gallery;
+	
+	/* Lock and refresh parent */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_parentItem) = $this->_parentItem->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$unknownItem = new GalleryUnknownItem();
+	$ret = $unknownItem->create($this->_parentItem->getId(), __FILE__, 'application/unknown');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $unknownItem->save();
+
+	/* Unlock parent */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $success) =
+	    GalleryItemHelper::setThumbnailFromItem($this->_childItems[1]->getId(), $unknownItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$success, 'should not be able to set thumbnail');
+
+	list ($ret, $thumbTable) =
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!isset($thumbTable[$this->_childItems[1]->getId()]));
+
+	$ret = $gallery->deleteEntityById($unknownItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
     function testAddItemToAlbum() {
 	global $gallery;
 
@@ -405,6 +460,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(isset($weights[$newItem->getId()]));
 	$this->assert($weights[$newItem->getId()] > $maxWeight);
     }
+
 }
 
 // Dummy test toolkit

@@ -109,11 +109,11 @@ class ItemAddChildrenController extends GalleryController {
 		}
 
 		if ($albumNeedsThumbnail) {
-		    $ret = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+		    list ($ret, $albumNeedsThumbnail) =
+			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $albumNeedsThumbnail = false;
 		}
 	    }
 
@@ -147,12 +147,8 @@ class ItemAddChildrenController extends GalleryController {
 		}
 		
 		if ($albumNeedsThumbnail) {
-		    $ret = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
-		    if ($ret->isSuccess()) {
-			$albumNeedsThumbnail = false;
-		    } else if ($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION) {
-			// Ok, we couldn't make a thumbnail out of that one.
-		    } else {
+		    list ($ret, $albumNeedsThumbnail) = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}

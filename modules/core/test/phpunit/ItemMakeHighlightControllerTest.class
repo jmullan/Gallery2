@@ -112,17 +112,6 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-    
-    /**
-     * Test making a highlight item
-     */
-    function testMakeHighlightItemUnsupportedType() {
-	global $gallery;
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[1]->getId());
-	GalleryUtilities::putRequestVariable('form.action.makeHighlight', 1);
-
-	$results = $this->handleRequest(ERROR_UNSUPPORTED_OPERATION);
-    }
 }
 
 // Dummy test toolkit

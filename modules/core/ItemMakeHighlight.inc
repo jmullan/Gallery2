@@ -57,11 +57,12 @@ class ItemMakeHighlightController extends GalleryController {
 	$status = array();
 	$error = array();
 	if (isset($form['action']['makeHighlight'])) {
-	    $ret = GalleryItemHelper::setThumbnailFromItem($parentId, $itemId);
+	    /* XXX: What should we do if this fails? */
+	    list ($ret, $success) = GalleryItemHelper::setThumbnailFromItem($parentId, $itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    /* Figure out where to redirect upon success */
 	    $redirect['view'] = 'core:ItemAdmin';
 	    $redirect['itemId'] = $item->getId();

@@ -472,7 +472,7 @@ class GalleryItemHelper {
 	list ($ret, $thumbnailTable) =
 	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId, $fromItemId));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
 	/*
@@ -489,7 +489,7 @@ class GalleryItemHelper {
 	/* 1. The fromItem's preferred derivative's source id */
 	list ($ret, $derivatives) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($fromItemId));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!empty($derivatives[$fromItemId])) {
 	    $source = $derivatives[$fromItemId];
@@ -508,7 +508,7 @@ class GalleryItemHelper {
 	if (!$sourceMimeType) {
 	    list ($ret, $fromItem) = $gallery->loadEntitiesById($fromItemId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
 	    if (GalleryUtilities::isA($fromItem, 'GalleryDataItem')) {
@@ -524,7 +524,7 @@ class GalleryItemHelper {
 	if (isset($source)) {
 	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($source->getId());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Reuse the existing derivative, if one exists */
@@ -534,27 +534,29 @@ class GalleryItemHelper {
 		/* Modify existing thumbnail */
 		list ($ret, $lockIds[]) = $gallery->acquireWriteLock($derivative->getId());
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		$success = true;
 	    } else {
 		/* Create a new one */
 		list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($derivative)) {
-		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		}  
 
 		$ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    
 		/*
@@ -567,7 +569,7 @@ class GalleryItemHelper {
 		 */
 		list ($ret, $preferences) = GalleryDerivativePreferencesMap::fetchPreferencesForItem($itemId);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
 		foreach ($preferences as $preference) {
@@ -577,7 +579,7 @@ class GalleryItemHelper {
 		    }
 		}
 		if (empty($derivativeOperations)) {
-		    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+		    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 		}
 
 		/*
@@ -588,40 +590,36 @@ class GalleryItemHelper {
 		    GalleryToolkitHelper::isSupportedOperationSequence($sourceMimeType,
 								       $derivativeOperations);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		if ($isSupported == false) {
-		    if (isset($lockIds)) {
-			$ret = $gallery->releaseLocks($lockIds);
-			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
-			}
-		    }
-		
-		    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+		if ($isSupported) {
+		    $success = true;
+		    $derivative->setDerivativeOperations($derivativeOperations);
+		    $derivative->setDerivativeMimeType($outputMimeType);
+		} else {
+		    $success = false;
 		}
-		
-		$derivative->setDerivativeOperations($derivativeOperations);
-		$derivative->setDerivativeMimeType($outputMimeType);
 	    }
-		
-	    $derivative->setDerivativeSourceId($source->getId());
+
+	    if ($success) {
+		$derivative->setDerivativeSourceId($source->getId());
 	    
-	    $ret = $derivative->save();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		$ret = $derivative->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    if (isset($lockIds)) {
 		$ret = $gallery->releaseLocks($lockIds);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $success);
     }
 }
 ?>
