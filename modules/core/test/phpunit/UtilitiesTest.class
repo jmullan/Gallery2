@@ -40,30 +40,16 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     /**
-     * Save our _GET, _POST and _POST_FILES vars
+     *
      */
     function setUp() {
-	global $HTTP_GET_VARS;
-	global $HTTP_POST_VARS;
-	global $HTTP_POST_FILES;
-
 	parent::setUp();
-
-	$this->_save = array($HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_POST_FILES);
-	$HTTP_GET_VARS = array();
-	$HTTP_POST_VARS = array();
-	$HTTP_POST_FILES = array();
     }
 
     /**
-     * Remove our _GET, _POST and _POST_FILES vars
+     *
      */
     function tearDown() {
-	global $HTTP_GET_VARS;
-	global $HTTP_POST_VARS;
-	global $HTTP_POST_FILES;
-
-	list ($HTTP_GET_VARS, $HTTP_POST_VARS, $HTTP_POST_FILES) = $this->_save;
 	parent::tearDown();
     }
 
@@ -115,13 +101,15 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGetFormVariables2() {
 	global $HTTP_POST_FILES;
+
 	$HTTP_POST_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest_fileupload'] =
 	    array('name' => 'DSCF0001.JPG',
 		  'type' => 'image/pjpeg',
 		  'tmp_name' => 'c:/apache/tmp\\php195.tmp',
 		  'error' => 0,
 		  'size' => 1779802);
-	$this->assertEquals(array("fileupload" =>
+
+	$this->assertEquals(array('fileupload' =>
 				  array('name' => 'DSCF0001.JPG',
 					'type' => 'image/pjpeg',
 					'tmp_name' => 'c:/apache/tmp\php195.tmp',
