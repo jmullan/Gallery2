@@ -22,8 +22,15 @@
     </ul>
   </div>
 
+  {* Search form, if module's activated *}
+  {if isset($Navigation.moduleSystemContentFiles.search)}
+	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
+  {/if}
+
   {* Extra modules system content *}
   {foreach from=$Navigation.moduleSystemContentFiles key=moduleId item=moduleFile}
+  {if ($moduleId != 'search')}
   {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
+  {/if}
   {/foreach}
 </div>
