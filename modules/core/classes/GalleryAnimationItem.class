@@ -196,7 +196,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
     function render($format, $params) {
 	global $gallery;
 	
-	$fallback = trim($params['fallback']);
+	$fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
 	
 	switch($format) {
 	case 'HTML':
@@ -208,7 +208,8 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
 	    case 'application/x-shockwave-flash':
-		return sprintf('<script type="text/javascript" language="javascript">
+		return sprintf('<script type="text/javascript">
+                                  // <![CDATA[
                                   if (window.ActiveXObject) {
                                       document.write(\'<object id="animation"\');
                                       document.write(\'        %s\');
@@ -238,6 +239,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
                                       document.write(\'  %s\');
                                       document.write(\'</object>\');
                                   }
+                                  //]]>
                                   </script>',
 
 			       // IE Object
@@ -257,7 +259,8 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 			       $fallback);
 
 	    case 'application/x-director':
-		return sprintf('<script type="text/javascript" language="javascript">
+		return sprintf('<script type="text/javascript">
+                                  // <![CDATA[
                                   if (window.ActiveXObject) {
                                       document.write(\'<object id="animation"\');
                                       document.write(\'        %s\');
@@ -285,6 +288,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
                                       document.write(\'  %s\');
                                       document.write(\'</object>\');
                                   }
+                                  //]]>
                                   </script>',
 
 			       // IE Object
@@ -300,7 +304,6 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 			       $src,
 			       $width,
 			       $height,
-			       $src,
 			       $fallback);
 	    default:
 		return sprintf('[Render for %s not implemented yet]', $this->getMimeType());

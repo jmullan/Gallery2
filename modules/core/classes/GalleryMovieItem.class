@@ -212,7 +212,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
     function render($format, $params) {
 	global $gallery;
 
-	$fallback = trim($params['fallback']);
+	$fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
 	
 	switch($format) {
 	case 'HTML':
@@ -224,7 +224,8 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
 	    case 'video/quicktime':
-		return sprintf('<script type="text/javascript" language="javascript">
+		return sprintf('<script type="text/javascript">
+                                  // <![CDATA[
                                   if (window.ActiveXObject) {
                                       document.write(\'<object id="movie"\');
                                       document.write(\'        %s\');
@@ -250,6 +251,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
                                       document.write(\'  %s\');
                                       document.write(\'</object>\');
                                   }
+                                  //]]>
                                   </script>',
 
 			       // IE object
@@ -269,7 +271,8 @@ class GalleryMovieItem_core extends GalleryDataItem {
 
 	    case 'video/mpeg':
 	    case 'video/x-msvideo':
-		return sprintf('<script type="text/javascript" language="javascript">
+		return sprintf('<script type="text/javascript">
+                                  // <![CDATA[
                                   if (window.ActiveXObject) {
                                       document.write(\'<object id="movie"\');
                                       document.write(\'        %s\');
@@ -294,6 +297,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
                                       document.write(\'%s\');
                                       document.write(\'</object>\');
                                   }
+                                  //]]>
                                   </script>',
 			       
 			       // IE object
