@@ -37,9 +37,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item, $options) {
-	global $gallery;
-
+    function handleRequest($form, &$item) {
 	$status = array();
 	$error = array();
 	if (isset($form['action']['addFromBrowser'])) {
@@ -81,19 +79,9 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    $warnings = array();
-		    foreach ($options as $option) {
-			list ($ret, $optionErrors, $optionWarnings) = $option->handleRequestAfterAdd($form, $newItem);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-			$error = array_merge($error, $optionErrors);
-			$warnings = array_merge($warnings, $optionWarnings);
-		    }
-
 		    $status['addedFiles'][] = array('fileName' => $file['name'],
 						    'id' => $newItem->getId(),
-						    'warnings' => $warnings);
+						    'warnings' => array());
 		}
 	    }
 	}
@@ -105,8 +93,6 @@ class ItemAddFromBrowser extends ItemAddPlugin {
      * @see ItemAdd:loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	global $gallery;
-
 	$fileUploadsBool = GalleryUtilities::getPhpIniBool('file_uploads');
 	$totalUploadSize = ini_get('post_max_size');
 	if (preg_match("/(\d+)M/", $totalUploadSize, $matches)) {

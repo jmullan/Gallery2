@@ -93,7 +93,8 @@ class ItemAddLiveImageTest extends ItemAddPluginTestCase {
 	$this->assertEquals(array(), $results[0], 'no error');
 	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
 	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
-	$this->assertEquals(array('fileName', 'id'), array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals(array('fileName', 'id', 'warnings'),
+			    array_keys($results[1]['addedFiles'][0]), 'key');
 	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
     }
 
@@ -138,7 +139,7 @@ class ItemAddLiveImageTestPlatform {
     }
 
     function fwrite($handle, $string, $length=0) {
-        if ($handle == 'test-resource-1') {
+	if ($handle == 'test-resource-1') {
 	    switch ($string) {
 	    case "GET /test.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
 		$status = 'HTTP/1.1 200 OK';

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,34 +38,28 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function tearDown() {
-	global $gallery;
-
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
 	parent::tearDown();
     }
 
@@ -86,7 +80,7 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    if (get_magic_quotes_gpc()) {
 		$fullPath = addslashes($fullPath);
 	    }
-	    
+
 	    GalleryUtilities::putRequestVariable('form[name][' . $i . ']', $file);
 	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']',
 						 GalleryCoreApi::getMimeType($fullPath));
@@ -122,14 +116,14 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
-	    
+
 	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
 	    $seenWeights[$orderWeight] = 1;
-	}	    
+	}
     }
 
     function testAddUnknownChildFromBrowser() {
@@ -169,42 +163,5 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	}
 	$this->assertEquals(0, $viewCount);
     }
-
-    function testAddWithOption() {
-	global $gallery;
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
-
-	$platform = $gallery->getPlatform();
-	$fullPath = dirname(__FILE__) . '/../data/test1.gif';
-	if (get_magic_quotes_gpc()) {
-	    $fullPath = addslashes($fullPath);
-	}
-	    
-	GalleryUtilities::putRequestVariable('form[name][1]', basename($fullPath));
-	GalleryUtilities::putRequestVariable('form[type][1]',
-					     GalleryCoreApi::getMimeType($fullPath));
-	GalleryUtilities::putRequestVariable('form[tmp_name][1]', $fullPath);
-	GalleryUtilities::putRequestVariable('form[size][1]', $platform->filesize($fullPath));
-	GalleryUtilities::putRequestVariable('form[error][1]', 0);
-	GalleryUtilities::putRequestVariable('form[caption][1]', 'this is a caption for ' . basename($fullPath));
-	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', 1);
-
-	/* Perform the request and verify that our option got called */
-	$option = new ItemAddPluginTestOption();
-	$option->addError('an error');
-	$option->addWarning('a warning');
-	$results = $this->handleRequest($this->_rootAlbum, null, array($option));
-
-	/* Check that warnings and errors came through from the option */
-	$this->assertEquals(array('an error'), $results[0]);
-	$this->assertEquals('a warning', $results[1]['addedFiles'][0]['warnings'][0]);
-	
-	list ($form, $item) = $option->getData();
-	$this->assertEquals($platform->filesize($fullPath), $item->getSize());
-	$this->assert(isset($form['action']['addFromBrowser']));
-    }
 }
-
 ?>

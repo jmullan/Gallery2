@@ -38,7 +38,7 @@ class ItemAddFromServer extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item, $options) {
+    function handleRequest($form, &$item) {
 	global $gallery;
 
 	$status = array();
@@ -92,19 +92,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    $warnings = array();
-		    foreach ($options as $option) {
-			list ($ret, $optionErrors, $optionWarnings) = $option->handleRequestAfterAdd($form, $newItem);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-			$error = array_merge($error, $optionErrors);
-			$warnings = array_merge($warnings, $optionWarnings);
-		    }
-
 		    $status['addedFiles'][] = array('fileName' => $filename,
 						    'id' => $newItem->getId(),
-						    'warnings' => $warnings);
+						    'warnings' => array());
 		}
 	    }
 	}

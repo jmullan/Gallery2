@@ -38,7 +38,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item, $options) {
+    function handleRequest($form, &$item) {
 	global $gallery;
 
 	$status = array();
@@ -95,23 +95,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    $warnings = array();
-		    foreach ($options as $option) {
-			list ($ret, $optionErrors, $optionWarnings) = $option->handleRequestAfterAdd($form, $newItem);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-			$error = array_merge($error, $optionErrors);
-			$warnings = array_merge($warnings, $optionWarnings);
-		    }
-
 		    $status['addedFiles'][] = array('fileName' => $url,
 						    'id' => $newItem->getId(),
-						    'warnings' => $warnings);
+						    'warnings' => array());
 		}
 		@$platform->unlink($tmpFile);
 	    }
-        }
+	}
 
 	return array(GalleryStatus::success(), $error, $status);
     }
@@ -297,13 +287,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	    }
 	}
 
-        if (isset($form['action']['addFromWebPage']) && (!isset($form['webPageUrls'])
-                || !is_array($form['webPageUrls']) || !count($form['webPageUrls']))) {
-        }
+	if (isset($form['action']['addFromWebPage']) && (!isset($form['webPageUrls'])
+		|| !is_array($form['webPageUrls']) || !count($form['webPageUrls']))) {
+	}
 
 	if (!isset($form['set'])) {
 	    $form['set'] = array('title' => 1, 'summary' => 0, 'description' => 0);
-	}                    
+	}
 
 	$ItemAddFromWeb = array();
 	$ItemAddFromWeb['webPageUrlCount'] = isset($webPageUrlCount) ? $webPageUrlCount : 0;

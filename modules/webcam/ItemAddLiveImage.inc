@@ -79,7 +79,8 @@ class ItemAddLiveImage extends ItemAddPlugin {
 		    }
 
 		    $status['addedFiles'][] = array('fileName' => basename($form['imageUrl']),
-						    'id' => $newItem->getId());
+						    'id' => $newItem->getId(),
+						    'warnings' => array());
 		} else {
 		    $ret = GalleryCoreApi::deleteEntityById($newItem->getId());
 		    if ($ret->isError()) {

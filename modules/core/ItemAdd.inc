@@ -69,12 +69,7 @@ class ItemAddController extends GalleryController {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $error, $status) = $plugin->handleRequest($form, $item, $optionInstances);
+	list ($ret, $error, $status) = $plugin->handleRequest($form, $item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -85,6 +80,29 @@ class ItemAddController extends GalleryController {
 	}
 
 	if (empty($error) && isset($status['addedFiles'])) {
+	    /* Allow ItemAddOptions to process added item(s) */
+	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    foreach (array_keys($status['addedFiles']) as $key) {
+		$file =& $status['addedFiles'][$key];
+		list ($ret, $addedItem) = GalleryCoreApi::loadEntitiesById($file['id']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($optionInstances as $option) {
+		    list ($ret, $optionErrors, $optionWarnings) =
+			$option->handleRequestAfterAdd($form, $addedItem);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $error = array_merge($error, $optionErrors);
+		    $file['warnings'] = array_merge($file['warnings'], $optionWarnings);
+		}
+	    }
+
 	    $results['redirect'] = array('view' => 'core:ItemAdmin',
 					 'subView' => 'core:ItemAddConfirmation',
 					 'itemId' => $item->getId());
@@ -255,7 +273,7 @@ class ItemAddPlugin {
      *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -264,12 +282,13 @@ class ItemAddPlugin {
      *
      * @param array the form values
      * @param the item
-     * @param array object ItemAddOption add options to apply to each item added
      * @return array object GalleryStatus a status code
      *               array error messages
-     *               array files that were added: array(array('file' => '...', 'id' => ##), ...)
+     *               array status data, 'addedFiles' entry should contain:
+     *                                   array(array('fileName' => '...', 'id' => ##,
+     *                                               'warnings' => array of strings), ...)
      */
-    function handleRequest($form, &$item, $options) {
+    function handleRequest($form, &$item) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
@@ -372,7 +391,7 @@ class ItemAddOption {
      * Is this option appropriate at this time?
      *
      * @return array object GalleryStatus a status code
-     *               boolean true or false 
+     *               boolean true or false
      */
     function isAppropriate() {
 	return array(GalleryStatus::success(), false);
