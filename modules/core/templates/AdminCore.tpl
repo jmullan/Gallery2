@@ -51,7 +51,7 @@
 
 	{g->column}
 	  {g->select name="form.default.layout"}
-	    {html_options values=$AdminCore.layoutList selected=$form.default.layout output=$AdminCore.layoutList}
+	    {html_options options=$AdminCore.layoutList selected=$form.default.layout}
 	  {/g->select}
 	{/g->column}
       {/g->row}
@@ -63,7 +63,7 @@
 
 	{g->column}
 	  {g->select name="form.default.theme"}
-	    {html_options values=$AdminCore.themeList selected=$form.default.theme output=$AdminCore.themeList}
+	    {html_options options=$AdminCore.themeList selected=$form.default.theme}
 	  {/g->select}
 	{/g->column}
       {/g->row}

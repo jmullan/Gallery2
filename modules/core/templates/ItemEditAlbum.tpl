@@ -42,7 +42,7 @@
     {/g->description}
     {g->element}
       {g->select name="form.layout"}
-	{html_options values=$ItemEditAlbum.layoutList selected=$form.layout output=$ItemEditAlbum.layoutList}
+	{html_options options=$ItemEditAlbum.layoutList selected=$form.layout}
       {/g->select}
     {/g->element}
   {/g->box}
@@ -56,7 +56,7 @@
     {/g->description}
     {g->element}
       {g->select name="form.theme"}
-	{html_options values=$ItemEditAlbum.themeList selected=$form.theme output=$ItemEditAlbum.themeList}
+	{html_options options=$ItemEditAlbum.themeList selected=$form.theme}
       {/g->select}
     {/g->element}
   {/g->box}

@@ -358,6 +358,33 @@ class GalleryLayout {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
+
+    /**
+     * Get an array of available layout-names
+     *
+     * @static
+     * @return array string name of the themes
+     */
+    function getLayoutList() {
+	global $gallery;
+	 
+	$platform = $gallery->getPlatform();
+	$layoutList = array();
+	$layoutDir = $gallery->getConfig('code.gallery.layouts');
+	if ($dir = $platform->opendir($layoutDir)) {
+	    while (($file = readdir($dir)) !== false) {
+		if ($file{0} == '.' || $file == 'CVS') {
+		    continue;
+		}
+		$layoutInc = "$layoutDir$file/layout.inc";
+		if ($platform->file_exists($layoutInc)) {
+		    $layoutList[$file] = $file;
+		}
+	    }
+	    closedir($dir);
+	}
+	return $layoutList;
+    }
 }
 
 ?>

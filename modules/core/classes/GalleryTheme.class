@@ -110,7 +110,7 @@ class GalleryTheme {
 		if ($platform->is_dir("$themeDir$subdir")) {
 		    $file = "$themeDir$subdir/theme.inc";
 		    if ($platform->file_exists($file)) {
-			$themeList[] = $subdir;
+			$themeList[$subdir] = $subdir;
 		    }
 		}
 	    }

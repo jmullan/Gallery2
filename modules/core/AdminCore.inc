@@ -219,22 +219,6 @@ class AdminCoreView extends GalleryView {
 
 	$platform = $gallery->getPlatform();
 
-	/* Set up our layout selection list */
-	$layoutList = array();
-	$layoutDir = $gallery->getConfig('code.gallery.layouts');
-	if ($dir = $platform->opendir($layoutDir)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file{0} == '.' || $file == 'CVS') {
-		    continue;
-		}
-		$layoutInc = "$layoutDir$file/layout.inc";
-		if ($platform->file_exists($layoutInc)) {
-		    $layoutList[] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
-
 	/* Set up our language selection list */
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
@@ -298,7 +282,7 @@ class AdminCoreView extends GalleryView {
 	}
 
 	$AdminCore = array();
-	$AdminCore['layoutList'] = $layoutList;
+	$AdminCore['layoutList'] = GalleryLayout::getLayoutList();
 	$AdminCore['themeList'] = GalleryTheme::getThemeList();
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['languageList'] = $languageList;

@@ -403,23 +403,16 @@ class ItemEditAlbumView extends GalleryView {
 	$orderDirectionList[ORDER_DESCENDING] = $module->translate("Descending");
 
 	/* Set up our layout selection list */
-	$layoutList = array();
-	$layoutDir = $gallery->getConfig('code.gallery.layouts');
-	if ($dir = $platform->opendir($layoutDir)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file{0} == '.' || $file == 'CVS') {
-		    continue;
-		}
-		$layoutInc = "$layoutDir$file/layout.inc";
-		if ($platform->file_exists($layoutInc)) {
-		    $layoutList[] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
-	
+	$layoutList = GalleryLayout::getLayoutList();
+	$layoutList = array_merge(array('' => $module->translate('&laquo; default layout &raquo;')),
+				  $layoutList);
+
+	$themeList = GalleryTheme::getThemeList();
+	$themeList = array_merge(array('' => $module->translate('&laquo; default theme &raquo;')),
+				 $themeList);
+
 	$ItemEditAlbum['layoutList'] = $layoutList;
-	$ItemEditAlbum['themeList'] = GalleryTheme::getThemeList();
+	$ItemEditAlbum['themeList'] = $themeList;
 	$ItemEditAlbum['orderByList'] = $orderByList;
 	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;
 	
