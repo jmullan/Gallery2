@@ -78,6 +78,7 @@
       {foreach from=$ItemDelete.selectedIds item=selectedId}
 	{g->input type="hidden" name="form[selectedIds][$selectedId]"}on{/g->input}
       {/foreach}
+      {g->input type="hidden" name="form[numPerPage]"}{$ItemDelete.numPerPage}{/g->input}
     {/g->box}
 
     {g->box style="admin"}

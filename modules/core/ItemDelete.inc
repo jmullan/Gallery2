@@ -27,8 +27,6 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-define('DELETE_NUM_PER_PAGE', 30);
-
 /**
  * This controller will handle the deletion of an item
  *
@@ -106,7 +104,7 @@ class ItemDeleteController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $numPages = ceil(sizeof($peerIds) / DELETE_NUM_PER_PAGE);
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = min($page + 1, $numPages);
@@ -151,6 +149,7 @@ class ItemDeleteView extends GalleryView {
 	    }
 	    $form['destination'] = '';
 	    $form['formName'] = 'ItemDelete';
+	    $form['numPerPage'] = 30;
 	}
 	
 	list($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -168,19 +167,19 @@ class ItemDeleteView extends GalleryView {
 	$peerTypes = array();
 	$peerDescendentCounts = array();
 	if (!empty($peerIds)) {
-	    $numPages = ceil(sizeof($peerIds) / DELETE_NUM_PER_PAGE);
+	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    if (empty($page)) {
 		/* determine which page we're on */
 		$page = 1;
 		for ($i = 0; $i < sizeof($peerIds); $i++) {
 		    if ($peerIds[$i] == $selectedId) {
-			$page = ceil(($i + 1) / DELETE_NUM_PER_PAGE);
+			$page = ceil(($i + 1) / $form['numPerPage']);
 		    }
 		}
 	    }
 
-	    $start = DELETE_NUM_PER_PAGE * ($page - 1);
-	    $peerIds = array_slice($peerIds, $start, DELETE_NUM_PER_PAGE);
+	    $start = $form['numPerPage'] * ($page - 1);
+	    $peerIds = array_slice($peerIds, $start, $form['numPerPage']);
 	    $selectedIds = array();
 	    if (isset($form['selectedIds'])) {
 		$selectedIds = $form['selectedIds'];
@@ -223,6 +222,7 @@ class ItemDeleteView extends GalleryView {
 	$ItemDelete['peerDescendentCounts'] = $peerDescendentCounts;
 	$ItemDelete['page'] = $page;
 	$ItemDelete['numPages'] = $numPages;
+	$ItemDelete['numPerPage'] = $form['numPerPage'];
 	$ItemDelete['selectedIds'] = array_keys($selectedIds);
 
 	$template->setVariable('controller', 'core:ItemDelete');

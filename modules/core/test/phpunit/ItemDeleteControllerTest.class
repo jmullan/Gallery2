@@ -97,7 +97,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 
 	/* create random items */
 	$items = array();
-	for ($i = 0; $i < DELETE_NUM_PER_PAGE + 1; $i++) {
+	for ($i = 0; $i < 5; $i++) {
 	    if (($i % 2) == 0) {
 		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
 	    } else {
@@ -115,6 +115,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('form[numPerPage]', 3);
 	GalleryUtilities::putRequestVariable('page', 3);	
 	GalleryUtilities::putRequestVariable('form[action][next]', 1);
 	
