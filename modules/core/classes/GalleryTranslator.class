@@ -153,7 +153,12 @@ class GalleryTranslator {
 	    }
 
 	    putenv("LANG=${language}_${country}");
-	    setlocale(LC_ALL, "${language}_${country}", "${language}");
+
+	    // XXX: we'd like to say:
+	    //    setlocale(LC_ALL, "${language}_${country}", "${language}");
+	    // but the setlocale() call doesn't accept fallbacks until PHP 4.3+
+	    
+	    setlocale(LC_ALL, "${language}_${country}");
 	}
 
 	return GalleryStatus::success();
