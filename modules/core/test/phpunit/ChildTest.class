@@ -142,12 +142,10 @@ class ChildTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	/*
 	$ret = $gallery->deleteEntityById($this->_root->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	*/
 	
 	parent::tearDown();
     }
