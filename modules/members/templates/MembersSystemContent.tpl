@@ -13,7 +13,11 @@
 
   <ul>
     <li>
-    {g->text text="There are %s registered members" arg1=$MembersSystemContent.membersCount}
+    {g->text one="%s member" 
+	     many="%s members"
+	     count=$MembersSystemContent.membersCount
+	     arg1=$MembersSystemContent.membersCount}
+
     </li>
   {foreach from=$MembersSystemContent.links item=link}
     <li>
