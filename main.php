@@ -362,7 +362,7 @@ function _GalleryMain($returnHtml=false) {
 	}
 	$main['validationUri'] = urlencode($main['validationUri']);
 
-	$main['gallery']['version'] = '2.0-alpha-2 (Farva)';
+	$main['gallery']['version'] = '2.0-alpha-3 (Farva)';
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 
