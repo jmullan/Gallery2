@@ -363,7 +363,7 @@ class TestSuite /* implements Test */ {
   var $fClassname;
   var $fModuleName;
 
-  function TestSuite($classname=false,$modulename=false) {
+  function TestSuite($classname=false,$modulename=false,$filter=null) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
 
@@ -383,6 +383,7 @@ class TestSuite /* implements Test */ {
       return;
     $this->fClassname = $classname;
     $this->fModuleName = $modulename;
+    $this->fFilter = $filter;
 
     if (floor(phpversion()) >= 4) {
       // PHP4 introspection, submitted by Dylan Kuhn
@@ -398,10 +399,11 @@ class TestSuite /* implements Test */ {
             // Anyone got a better way?)
 
             //print "skipping $method<br>";
-          }
-          else {
-	    $test->setModuleName($this->fModuleName);
-            $this->addTest($test);
+          } else {
+	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$classname.$method")) {
+	      $test->setModuleName($this->fModuleName);
+	      $this->addTest($test);
+	    }
           }
         }
       }
@@ -411,9 +413,8 @@ class TestSuite /* implements Test */ {
       $names = (array) $dummy;
       while (list($key, $value) = each($names)) {
         $type = gettype($value);
-        if ($type == "user function" && preg_match('/^test/', $key)
-        && $key != "testcase") {  
-          $this->addTest(new $classname($key));
+        if ($type == "user function" && preg_match('/^test/', $key) && $key != "testcase") {
+	  $this->addTest(new $classname($key));
         }
       }
     }
@@ -452,9 +453,11 @@ class TestFailure {
   /* Record failure of a single TestCase, associating it with the
      exception that occurred */
   var $fFailedTestName;
+  var $fFailedClassName;
   var $fException;
 
   function TestFailure(&$test, &$exception) {
+    $this->fFailedClassName = $test->classname();
     $this->fFailedTestName = $test->name();
     $this->fException = $exception;
   }
@@ -469,6 +472,10 @@ class TestFailure {
 
   function getTestName() {
     return $this->fFailedTestName;
+  }
+
+  function getClassName() {
+    return $this->fFailedClassName;
   }
 }
 
@@ -662,6 +669,14 @@ class PrettyTestResult extends TestResult {
       print("</ul>");
     }
     print("</ol>\n");
+
+    $newFilter = array();
+    foreach ($failures as $failure) {
+	$newFilter[] = $failure->getClassName() . '.' . $failure->getTestName();
+    }
+
+    //    printf('<input type="button" onClick="javascript:setFilter(\'%s\'); document.forms[0].submit\'" value="Re-run broken tests">', '(' . join('|', $newFilter) . ')');
+    printf('<input type="button" onClick="javascript:reRun(\'%s\');" value="Re-run broken tests">', '(' . join('|', $newFilter) . ')');
   }
 
   function _startTest($test) {

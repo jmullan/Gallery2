@@ -81,9 +81,9 @@ function GalleryMain(&$testSuite, $filter) {
 		$dir = $platform->opendir($testDir)) {
 
 		if (empty($filter)) {
-		    $filterRegexp = "/.*/i";
+		    $filterRegexp = '.*';
 		} else {
-		    $filterRegexp = "/$filter/i";
+		    $filterRegexp = $filter;
 		}
 
 		while (($file = readdir($dir)) != false) {
@@ -91,12 +91,9 @@ function GalleryMain(&$testSuite, $filter) {
 			require_once($testDir . '/' . $file);
 
 			$className = $matches[1];
-			if (preg_match($filterRegexp, $className) || preg_match($filterRegexp, $moduleName)) {
-			    if (class_exists($className) &&
-				GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
-
-				$suiteArray[$className] = new TestSuite($className, $moduleName);
-			    }
+			if (class_exists($className) &&
+			        GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
+			    $suiteArray[$className] = new TestSuite($className, $moduleName, $filterRegexp);
 			}
 		    }
 		}
@@ -165,6 +162,15 @@ print "</pre>";
     </STYLE>
   </head>
   <body>
+    <script type="text/javascript" language="javascript">
+    function setFilter(value) {
+        document.forms[0].filter.value=value;
+    }
+    function reRun(value) {
+	setFilter(value);
+	document.forms[0].submit();
+    }
+    </script>
     <center>
     <h1>Gallery Unit Tests</h1>
     </center>
@@ -208,21 +214,22 @@ print "</pre>";
     <?php } ?>
     <h2>Filtering</h2>
     Enter a filter string in the box below to restrict testing to classes containing 
-    that text in their name.
+    that text in their test class name and test method.
     <br>
-    Class Filter: <input type="text" name="filter" size="60" value="<?php echo $filter ?>"> <i>(regular expressions are ok)</i>
+    Examples:
+    <a href="javascript:setFilter('AddCommentControllerTest.testAddComment')">AddCommentControllerTest.testAddComment</a>, <a href="javascript:setFilter('AddCommentControllerTest.testAdd')">AddCommentControllerTest.testAdd</a>, <a href="javascript:setFilter('AddCommentControllerTest')">AddCommentControllerTest</a>, <a href="javascript:setFilter('comment')">comment</a> </i>
+    <p>
+    Filter: <input type="text" name="filter" size="60" value="<?php echo $filter ?>"> <i>(regular expressions are ok)</i>
+    
     </form>
 
     <h2>Modules</h2>
-    <a href="../../main.php?g2_view=core:SiteAdmin&g2_subView=core:AdminModules&g2_return.view=core:ShowItem">[ modules admin ]</a>
     <table cellspacing="1" cellpadding="1" border="0" width="90%" align="center" class="details">
     <tr>
     <th> Module Name </th>
     <th> Active </th>
     <th> Installed </th>
     </tr>
-    <pre>
-    </pre>
     <?php foreach ($moduleStatusList as $moduleName => $moduleStatus) { ?>
     <tr>
     <td>
