@@ -48,12 +48,9 @@ class LoginController extends GalleryController {
 	if (isset($form['action']['login'])) {
 
 	    if (!empty($form['password']) && !empty($form['username'])) {
-		list ($ret, $user) =
-		    GalleryUserHelper::fetchUserByUsername($form['username']);
-		if ($ret->isError()) {
-		    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+		list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($form['username']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if ($user != null && $user->isCorrectPassword($form['password'])) {
