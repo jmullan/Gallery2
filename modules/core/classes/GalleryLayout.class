@@ -377,7 +377,7 @@ class GalleryLayout {
      *      ^if childIds non-empty also set descendentCount on each child that canContainChildren
      *   parents = array of ancestor data; also set parent key (direct parent data)
      *   peers = array of peer data (first, last and a window of peers around this item),
-     *           also set peerCount = total number of peers, peerItemIndex = index of this item
+     *      also set peerIds(of all peers), peerCount(total count), peerItemIndex(index of this item)
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
      *   systemContentFiles = array of moduleId => template file path
      *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
@@ -582,6 +582,7 @@ class GalleryLayout {
 	// 'peers'
 	if (isset($load['peers'])) {
 	    $layout['peers'] = array();
+	    $layout['peerIds'] = $peerIds;
 	    $layout['peerCount'] = count($peerIds);
 	    $layout['peerItemIndex'] = isset($peerItemIndex) ? $peerItemIndex : 0;
 	    foreach ($peers as $i => $id) {

@@ -474,16 +474,16 @@ class MatrixLayout extends GalleryLayout {
 	$itemIndex = $layout['peerItemIndex'];
 	if ($itemIndex > 0) {
 	    $navigator['first'] = array('view' => 'core:ShowItem',
-					'itemId' => $layout['peers'][0]['id']);
+					'itemId' => $layout['peerIds'][0]);
 	    $navigator['back'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peers'][$itemIndex-1]['id']);
+				       'itemId' => $layout['peerIds'][$itemIndex-1]);
 	}
 
 	if ($itemIndex < $layout['peerCount']-1) {
 	    $navigator['next'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peers'][$itemIndex+1]['id']);
+				       'itemId' => $layout['peerIds'][$itemIndex+1]);
 	    $navigator['last'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peers'][count($layout['peers'])-1]['id']);
+				       'itemId' => $layout['peerIds'][$layout['peerCount']-1]);
 	}
 
 	/* Load the EXIF data */
