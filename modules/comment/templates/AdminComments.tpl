@@ -3,7 +3,7 @@
 
     <tr>
       <td colspan="2" align="center">
-	<h2>{galleryText text="Comments Settings"}</h2>
+	{galleryBiggerFont}{galleryText text="Comments Settings"}{/galleryBiggerFont}
       </td>
     </tr>
 
