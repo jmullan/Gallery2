@@ -596,7 +596,7 @@ class ConfirmImportController extends GalleryController {
 			     *    [hidden] =>
 			     *   +[highlight] => 1
 			     *   +[isAlbumName] =>
-			     *   +[clicks] =>
+			     *    [clicks] =>
 			     *   +[keywords] =>
 			     *    [comments] =>
 			     *   +[uploadDate] => 1056014783

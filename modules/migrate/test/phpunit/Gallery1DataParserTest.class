@@ -227,6 +227,26 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
                                   'uid' => '1057837115_2072132305'),
 			    $fields);
     }
+    function testGetUserFieldsByMissingUid() {
+        // monkey is the target username
+        list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1057837154_228147420');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+	
+        $this->assertEquals(array('username' => 'phpunit_foobar',
+                                  'fullname' => 'Foo Bar',
+                                  'password' => 'd53ebf1ed8bfa13e116a08e48f9ea26e',
+                                  'email' => 'foobar@baz.org',
+                                  'isAdmin' => 1,
+                                  'canCreateAlbums' => 0,
+                                  'uid' => '1057837154_228147420'),
+			    $fields);
+    }
+    function testGetUserFieldsByReallyMissingUid() {
+        list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($this->_albumsDir, '1054014347_123456789');
+        $this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER);
+    }
     function testIsValidUid() {
 	$valid = Gallery1DataParser::isValidUid('1057837115_2072132305');
 	$this->assertEquals($valid,TRUE);	

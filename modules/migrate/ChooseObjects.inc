@@ -95,7 +95,8 @@ class ChooseObjectsView extends GalleryView {
 	foreach($allUsers as $uid => $userName) {
 	    list($ret, $testUser) = GalleryCoreApi::fetchUserByUsername($userName);
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), 'Your userdb.dat includes '
+			     . $userName . ' but doesn\'t include the associated file: ' . $uid);
 	    }
 
 	    if ($testUser) {

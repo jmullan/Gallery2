@@ -78,9 +78,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 		print "<p><b>ERROR collision $tempAlbumName</b></p>";
 		print $ret->getAsHtml();
 	    } else {
-		print "<p><b>ERROR creating album $tempAlbumName</b> in $rootId</p><pre>";
-		print_r($ret);
-		print "</pre>";
+		print "<p><b>ERROR creating album $tempAlbumName</b> in $rootId</p>";
 		print $ret->getAsHtml();		
 	    }
 	}
