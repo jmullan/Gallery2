@@ -114,7 +114,7 @@
       {if ($AdminLayouts.mode == "editLayout")}
 	{g->box style="admin"}
 	  {g->title}
-	    {g->text text="%s Layout Settings" arg1=$layout.name}
+	    {g->text text="%s Layout Settings" arg1=$AdminLayouts.layouts[$AdminLayouts.layoutId].name}
 	  {/g->title}
 
 	  {g->description}
