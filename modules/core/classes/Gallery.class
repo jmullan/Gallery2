@@ -103,14 +103,6 @@ class Gallery {
     var $_platform;
 
     /**
-     * The current profiling mode.
-     * 
-     * @var bool $_profile
-     * @access private
-     */
-    var $_profile;
-    
-    /**
      * Storage for all session variables.  
      *
      * @var object GallerySession $_session
@@ -550,24 +542,6 @@ class Gallery {
 	     */
 	    $ret = GalleryCoreApi::refreshLocks($this->_timeLimit);
 	}
-    }
-
-    /**
-     * Change the profiling state
-     *
-     * @param bool
-     */
-    function setProfile($profile=null) {
-	$this->_profile = $profile ? true : false;
-    }
-
-    /**
-     * Get the profiling state
-     *
-     * @return bool
-     */
-    function isProfiling() {
-	return $this->_profile;
     }
 
     /**
