@@ -51,16 +51,29 @@ class TemplateTest extends GalleryTestCase {
 	$mockPlatform = new TemplatetestMockPlatform();
 	$gallery->setPlatform($mockPlatform);
 	$mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.tpl.local', false);
+	$mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.local.tpl', false);
 	$success = $template->resourceGetTemplate('templateThatHasNoLocal.tpl', $templateSource, $mockSmarty);
 	$this->assert($success, "Didn't return success");
 	$this->assertEquals('/legal/path/templateThatHasNoLocal.tpl', $templateSource);
 
-	/* Test retrieving an overridden template */
+	/* Test retrieving an old-style (deprecated) overridden template */
+	$mockPlatform = new TemplatetestMockPlatform();
+	$gallery->setPlatform($mockPlatform);
+	$mockPlatform->set('file_exists', '/legal/path/template.local.tpl', false);
 	$mockPlatform->set('file_exists', '/legal/path/template.tpl.local', true);
 	$mockPlatform->set('is_readable', '/legal/path/template.tpl.local', true);
 	$success = $template->resourceGetTemplate('template.tpl', $templateSource, $mockSmarty);
 	$this->assert($success, "Didn't return success");
 	$this->assertEquals('/legal/path/template.tpl.local', $templateSource);
+
+	/* Test retrieving a new-style overridden template */
+	$mockPlatform = new TemplatetestMockPlatform();
+	$gallery->setPlatform($mockPlatform);
+	$mockPlatform->set('file_exists', '/legal/path/template.local.tpl', true);
+	$mockPlatform->set('is_readable', '/legal/path/template.local.tpl', true);
+	$success = $template->resourceGetTemplate('template.tpl', $templateSource, $mockSmarty);
+	$this->assert($success, "Didn't return success");
+	$this->assertEquals('/legal/path/template.local.tpl', $templateSource);
     }
 
     function testResourceGetTimestamp() {
@@ -73,16 +86,31 @@ class TemplateTest extends GalleryTestCase {
 	$mockPlatform = new TemplatetestMockPlatform();
 	$gallery->setPlatform($mockPlatform);
 	$mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.tpl.local', false);
+	$mockPlatform->set('file_exists', '/legal/path/templateThatHasNoLocal.local.tpl', false);
 	$mockPlatform->set('stat', '/legal/path/templateThatHasNoLocal.tpl',
 			   array(0, 0, 0, 0, 0, 0, 0, 0, 0, 98765));
 	$success = $template->resourceGetTimestamp('templateThatHasNoLocal.tpl', $templateTimestamp, $mockSmarty);
 	$this->assert($success, "Didn't return success");
 	$this->assertEquals(98765, $templateTimestamp);
 
-	/* Test retrieving an overridden template */
+	/* Test retrieving an old-style (deprecated) overridden template */
+	$mockPlatform = new TemplatetestMockPlatform();
+	$gallery->setPlatform($mockPlatform);
+	$mockPlatform->set('file_exists', '/legal/path/template.local.tpl', false);
 	$mockPlatform->set('file_exists', '/legal/path/template.tpl.local', true);
 	$mockPlatform->set('is_readable', '/legal/path/template.tpl.local', true);
 	$mockPlatform->set('stat', '/legal/path/template.tpl.local',
+			   array(0, 0, 0, 0, 0, 0, 0, 0, 0, 45324));
+	$success = $template->resourceGetTimestamp('template.tpl', $templateTimestamp, $mockSmarty);
+	$this->assert($success, "Didn't return success");
+	$this->assertEquals(45324, $templateTimestamp);
+
+	/* Test retrieving an new-style overridden template */
+	$mockPlatform = new TemplatetestMockPlatform();
+	$gallery->setPlatform($mockPlatform);
+	$mockPlatform->set('file_exists', '/legal/path/template.local.tpl', true);
+	$mockPlatform->set('is_readable', '/legal/path/template.local.tpl', true);
+	$mockPlatform->set('stat', '/legal/path/template.local.tpl',
 			   array(0, 0, 0, 0, 0, 0, 0, 0, 0, 12345));
 	$success = $template->resourceGetTimestamp('template.tpl', $templateTimestamp, $mockSmarty);
 	$this->assert($success, "Didn't return success");

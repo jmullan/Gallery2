@@ -313,16 +313,7 @@ class GalleryTemplate {
     * templates with our own copies without modifying the original.
     */
    function resourceGetTemplate($templateName, &$templateSource, &$smarty) {
-        global $gallery;
-
-        $platform = $gallery->getPlatform();
-        
-        $templateName = $smarty->template_dir . '/' . $templateName;
-        $localTemplateName = $templateName . '.local';
-        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
-            $templateName = $localTemplateName;
-        }
-        
+        $templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
         $templateSource = $smarty->_read_file($templateName);
 
         return true;
@@ -337,13 +328,8 @@ class GalleryTemplate {
     */
     function resourceGetTimestamp($templateName, &$templateTimestamp, &$smarty) {
         global $gallery;
-
         $platform = $gallery->getPlatform();
-        $templateName = $smarty->template_dir . '/' . $templateName;
-        $localTemplateName = $templateName . '.local';
-        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
-            $templateName = $localTemplateName;
-        }
+        $templateName = $this->_getActualTemplateName($smarty->template_dir . '/' . $templateName);
 
 	$stat = $platform->stat($templateName);
         $templateTimestamp = $stat[9];
@@ -351,17 +337,51 @@ class GalleryTemplate {
         return true;
     }
 
-   /**
-    * @see http://smarty.php.net/manual/en/template.resources.php
-    */
+    /**
+     * Given a template name (/foo/bar.tpl), return one of the following
+     * strings (in order of precedence).
+     *   1.  /foo/bar.local.tpl  (if it exists)
+     *   2.  /foo/bar.tpl.local  (if it exists -- deprecated old style)
+     *   3.  /foo/bar.tpl        (whether or not it exists)
+     *
+     * @return string
+     */
+    function _getActualTemplateName($templateName) {
+	global $gallery;
+	
+	list ($base, $ext) = GalleryUtilities::getFileNameComponents($templateName);
+        $platform = $gallery->getPlatform();
+	
+	/* New style overrides:  file.local.ext */
+        $localTemplateName = $base . '.local.' . $ext;
+        if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
+	    return $localTemplateName;
+	}
+
+	/*
+	 * Fall back to old style overrides:  file.local.ext
+	 * TODO: Get rid of this format
+	 */
+	$localTemplateName = $templateName . '.local';
+	if ($platform->file_exists($localTemplateName) && $platform->is_readable($localTemplateName)) {
+	    return $localTemplateName;
+	}
+
+	/* Stick with whatever they gave us */
+	return $templateName;
+    }
+
+    /**
+     * @see http://smarty.php.net/manual/en/template.resources.php
+     */
     function resourceGetSecure($templateName, &$smarty) {
 	// Assume all templates are secure
         return true;
     }
 
-   /**
-    * @see http://smarty.php.net/manual/en/template.resources.php
-    */
+    /**
+     * @see http://smarty.php.net/manual/en/template.resources.php
+     */
     function resourceGetTrusted($templateName, &$smarty) {
 	// Not used for templates
     }
