@@ -604,7 +604,6 @@ class CoreModuleExtras {
 
 	case '0.9.6':
 	    /* Added GalleryMaintenance table */
-	    break;
 	     
 	case '0.9.7':
 	    /*
