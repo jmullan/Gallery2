@@ -41,6 +41,7 @@
 
 require_once(dirname(__FILE__) . '/GalleryStub.class');
 require_once(dirname(__FILE__) . '/InstallStep.class');
+require_once(dirname(dirname(__FILE__)) . "/modules/core/classes/GalleryUtilities.class");
 
 /*
  * if gettext isn't enabled, subvert the _() text translation function

@@ -1280,5 +1280,27 @@ class GalleryUtilities {
 	}
 	return $keys;
     }
+
+    /**
+     * Get a php.ini value and return its boolean value
+     *
+     * @param string Name of the php.ini value to be retrieved
+     * @return bool
+     * @static
+     */
+    function getPhpIniBool($ini_string) {
+	$value = ini_get($ini_string);
+
+	if (!strcasecmp('on', $value) || $value == true) {
+	    return true;
+	}
+
+	if (!strcasecmp('off', $value) || $value == false) {
+	    return false;
+	}
+
+	/* Catchall */
+	return false;
+    }
 }
 ?>

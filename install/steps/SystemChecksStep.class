@@ -77,7 +77,7 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	// Make sure that safe mode is not enabled
-	if ((bool)ini_get('safe_mode')) {
+	if (GalleryUtilities::getPhpIniBool('safe_mode')) {
 	    $templateData['check'][] =
 		array('title' => _('Safe mode disabled'),
 		      'error' => true,
@@ -89,7 +89,7 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	// Make sure session.auto_start is OFF during the installer
-	if ((bool)ini_get('session.auto_start')) {
+	if (GalleryUtilities::getPhpIniBool('session.auto_start')) {
 	    $templateData['check'][] =
 		array('title' => _('Session auto-start disabled'),
 		      'error' => true,
@@ -143,11 +143,11 @@ class SystemChecksStep extends InstallStep {
 	}
 
 	// Warning if file_uploads are not allowed
-	if (! (bool)ini_get('file_uploads')) {
+	if (! GalleryUtilities::getPhpIniBool('file_uploads')) {
 	    $templateData['check'][] =
 		array('title' => 'File uploads allowed',
 		      'warning' => true,
-		      'notice' => _('Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser.'),
+		      'notice' =>  _('Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser.'),
 		);
 	    $suggestedHtaccess[] = 'php_flag file_uploads on';
 	} else {
