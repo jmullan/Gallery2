@@ -44,6 +44,7 @@ class UnixPlatform extends GalleryPlatform {
      */
     function exec($cmdArray, $returnErrorOutput=false) {
 	global $gallery;
+	$gallery->guaranteeTimeLimit(5);
 
 	/* Assemble the command array into a pipeline */
 	$command = '';
