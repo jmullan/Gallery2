@@ -126,7 +126,7 @@ class ItemAddChildrenController extends GalleryController {
 		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
-								       $base,
+								       $filename,
 								       $base,
 								       $base,
 								       $base,
@@ -172,7 +172,7 @@ class ItemAddChildrenController extends GalleryController {
 		    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
-									   $base,
+									   basename($url),
 									   $base,
 									   $base,
 									   $base,
