@@ -1,7 +1,9 @@
 <?php
 /*
+ * $RCSfile
+ *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2002 Bharat Mediratta
+ * Copyright (C) 2000-2003 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +31,7 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @version $Id$
+ * @version $Revision$ $Date$
  * @package GalleryCoreInterfaces
  * @author Bharat Mediratta <bharat@menalto.com>
  */
