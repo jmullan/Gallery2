@@ -156,7 +156,7 @@
       </div>
 
       <div id="toolbar">
-	<a href="{g->url id="stop" arg1="view=core:ShowItem" arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}">
+	<a id="stop" href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}">
 	  {g->text text="Stop"}
 	</a>
 	&nbsp;
