@@ -1,14 +1,18 @@
-{*
- * Form input widget.  
+{* 
+ * input.tpl - Input widget (eg, HTML form widget)
+ * 
+ * Input variables:
  *
- * Variables:
- *   $params.type is one of:
- *       text, password, hidden, checkbox, radio, submit or file
+ *  $params.type (string)
+ *    One of text, password, hidden, checkbox, radio, submit or file
  *
- *   $params.name:  the form widget name
- *   $params.value: the form widget value
+ *  $params.name (string)
+ *    The widget name
+ * 
+ *  $params.value (string)
+ *    The initial value of the widget
+ * 
  *}
-
 {if ($params.type == 'checkbox' || $params.type == 'radio')}
 {if empty($params.value)}
 <input type="{$params.type}" name="{$params.name}">

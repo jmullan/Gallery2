@@ -1,3 +1,24 @@
+{* 
+ * threeDFrame.tpl - draw a 3D frame around the content provided
+ * 
+ * Input variables:
+ *
+ *  $params.width (int)
+ *     The width of the content
+ *
+ *  $params.height (int)
+ *     The height of the content
+ *     
+ *  $params.borderWidth (int)
+ *     The height of the content
+ *
+ *  $params.borderHeight (int)
+ *     The height of the content
+ *
+ *  $content (string)
+ *     Any HTML content
+ * 
+ *}
   {strip}
   <table width="1" border="0" cellspacing="0" cellpadding="0">
     <tr>
@@ -25,7 +46,7 @@
       <td width="5" height="3">
 	<img src="{$theme.url}/images/bottomLeft.gif" width="5" height="3">
       </td>
-      <td width="{$width}" height="3">
+      <td width="{$params.width}" height="3">
 	<img src="{$theme.url}/images/bottomCenter.gif" width="{$params.width}" height="3">
       </td>
       <td>
