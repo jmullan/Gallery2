@@ -74,7 +74,6 @@ if (isset($_SESSION['visited'])) {
 }
 $status[0] = true;
 $visited[0] = true;
-$visited[$step] = true;
 
 // authentication key download
 if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
@@ -280,6 +279,7 @@ if ($step < 1) {
     Welcome();
 }
 
+$visited[$step] = true;
 $_SESSION['status'] = $status;
 $_SESSION['visited'] = $visited;
 
