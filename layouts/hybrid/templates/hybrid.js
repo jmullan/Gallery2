@@ -163,7 +163,9 @@ function album_setsize(x) {
 function album_detailsonoff() {
  album_detailson = album_detailson?0:1;
  album_setsize(2);
- document.getElementById('album_details').style.visibility =
+ document.getElementById('album_info').style.visibility =
+  album_detailson ? 'inherit' : 'hidden';
+ document.getElementById('album_summary').style.visibility =
   album_detailson ? 'inherit' : 'hidden';
  document.getElementById('album_titlebar').style.height =
   album_detailson ? '' : (album_title_minht-album_title_borderht)+'px';

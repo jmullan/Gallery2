@@ -6,12 +6,13 @@
 ><img name="slide__rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ><img name="slide__rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ></div>
-<table id="album_details" cellspacing="0"><tr><td>
-<span id="album_title" style="visibility:visible">{$layout.title|markup}</span>
-{if isset($layout.item.summary)}<br>
-<span class="text">{$layout.item.summary|markup}</span>{/if}
+<table cellspacing="0"><tr><td>
+<span id="album_title">{$layout.title|markup}</span>
+<span id="album_summary" class="text">{if isset($layout.item.summary)}
+<br>{$layout.item.summary|markup}{/if}</span>
 </td><td>
-<span class="info">{g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
+<span id="album_info" class="info">{g->text text="Owner: %s"
+ arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
 {g->text one="Viewed: %d time" many="Viewed: %d times"
     count=$layout.viewCounts[$layout.item.id]
     arg1=$layout.viewCounts[$layout.item.id]}</span>
