@@ -382,14 +382,20 @@ class GalleryPlatform {
      * @return bool true on success, false on failure
      * @access public
      */
-    function mkdir($path, $perms=0700) {
+    function mkdir($path, $perms=0755) {
 	global $gallery;
 
 	$path = $this->importPath($path);
 	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $perms));
 	
 	$umask = umask(0);
-	$results = mkdir($path, $perms);
+
+	/* Convert string permission representation to octal, if necessary */
+	if (is_string($perms)) {
+	    $perms = octdec($perms);
+	}
+	
+	$results = mkdir($path, (int)$perms);
 	umask($umask);
 	return $results;
     }

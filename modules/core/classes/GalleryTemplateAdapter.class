@@ -1,0 +1,173 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class GalleryTemplateAdapter {
+
+    /**
+     * The base URL to be used in all template methods
+     *
+     * @var $_baseUrl
+     * @access private
+     */
+    var $_baseUrl;
+
+    /**
+     * The active theme
+     *
+     * @var object GalleryTheme a theme instance
+     * @access private
+     */
+    var $_theme;
+
+    /**
+     * Set the base URL to be used in all template methods
+     *
+     * @param string the base URL
+     */
+    function setBaseUrl($baseUrl) {
+	$this->_baseUrl = $baseUrl;
+    }
+
+    /**
+     * Get the base URL
+     *
+     * @return string the base URL
+     */
+    function getBaseUrl() {
+	return $this->_baseUrl;
+    }
+
+    /**
+     * Return a valid URL for a standalone Gallery.
+     *
+     * @param array data in key/value pairs
+     * @return string a URL
+     */
+    function url($params) {
+	global $gallery;
+
+	$baseUrl = $this->getBaseUrl();
+	
+	foreach ($params as $key => $value) {
+	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
+	}
+	return $baseUrl . '?' . join('&', $args);
+    }
+
+    /**
+     * Return an HTML form 
+     *
+     * @param array data in key/value pairs
+     * @param string HTML content to go inside the form
+     * @return string a complete HTML form
+     */
+    function form($params, $content) {
+
+	/*
+	 * This function gets called twice.  Once at the beginning of the block
+	 * (without any content) and once at the end.  For simplicity we'll just
+	 * ignore the beginning call and print out everything at the end.
+	 */
+	$result = "";
+	if ($content) {
+	    if (empty($params['method'])) {
+		$method = 'POST';
+	    } else {
+		$method = $params['method'];
+		unset($params['method']);
+	    }
+
+	    $result .= '<form method="' . $method . '" action="main.php">';
+	    $result .= "\n";
+	    foreach ($params as $key => $value) {
+		$result .= '<input type="hidden" ' .
+		    'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
+		    'value="' . $value . '">';
+		$result .= "\n";
+	    }
+	    $result .= $content;
+	    $result .= "\n";
+	    $result .= '</form>';
+	}
+
+	return $result;
+    }
+
+    /**
+     * Translate a string into a localized version
+     *
+     * @see Gallery::translate()
+     * @param array data in key/value pairs
+     * @return string a translated string
+     */
+    function text($params) {
+	global $gallery;
+	return $gallery->translate($params);
+    }
+
+    /**
+     * Call a specific template method.
+     *
+     * @param string the method name (like 'galleryStyle')
+     * @param array key => value attributes
+     * @param string content
+     */
+    function callMethod($method, $params, $content) {
+	global $gallery;
+
+	if (!strncmp($method, 'gallery', 7)) {
+	    $method = substr($method, 7); // get rid of the 'gallery' part
+
+	    /* Check first to see if this class can handle the method */
+	    if (method_exists($this, $method)) {
+		return $this->$method($params, $content);
+	    } else if (isset($this->_theme)) {
+		/* See if the theme can handle it */
+		if (method_exists($this->_theme, $method)) {
+		    return $this->_theme->$method($params, $content);
+		}
+	    }
+	}
+
+	$result = "Unknown template method: $method";
+	if (!isset($this->_theme)) {
+	    $result .= " [no theme specified]";
+	}
+	return $result;
+    }
+
+    /**
+     * Set the active theme
+     *
+     * @param object GalleryTheme
+     */ 
+    function setTheme($theme) {
+	$this->_theme = $theme;
+    }
+
+    /**
+     * Get the active theme
+     *
+     * @return object GalleryTheme
+     */ 
+    function getTheme() {
+	return $this->_theme;
+    }
+}

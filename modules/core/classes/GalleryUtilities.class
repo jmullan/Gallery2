@@ -21,9 +21,9 @@
 /**
  * The prefix for all HTTP GET/POST arguments
  *
- * @constant GALLERY_ARGUMENT_PREFIX
+ * @constant GALLERY_FORM_VARIABLE_PREFIX
  */
-define('GALLERY_ARGUMENT_PREFIX', 'g2_');
+define('GALLERY_FORM_VARIABLE_PREFIX', 'g2_');
 
 /**
  * A collection of useful utilities that have no obvious home
@@ -122,13 +122,14 @@ class GalleryUtilities {
      * Sanitize the input data
      */
     function getRequestVariables() {
+	global $gallery;
 	global $HTTP_POST_VARS;
 	global $HTTP_GET_VARS;
 
 	$values = array();
 	foreach (func_get_args() as $argName) {
 	    /* Prepend our prefix here */
-	    $argName = GALLERY_ARGUMENT_PREFIX . $argName;
+	    $argName = GALLERY_FORM_VARIABLE_PREFIX . $argName;
 
 	    /*
 	     * Convert dots to underscores.  Some versions of PHP seem to do
@@ -386,7 +387,8 @@ class GalleryUtilities {
     /**
      * Convert a filesystem path inside the gallery directory to a relative URL
      *
-     *  ie /path/to/gallery/styles/classic/style.css => styles/classic/style.css
+     *  ie /path/to/gallery/themes/classic/styles/style.css =>
+     *             themes/classic/styles/style.css
      *
      * @param string path to a file in the gallery directory tree
      * @return string a relative url

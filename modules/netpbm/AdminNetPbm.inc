@@ -34,6 +34,21 @@ class AdminNetPbmController extends GalleryController {
 	/* Set the form values */
 	foreach (array('path', 'jpegQuality') as $key) {
 	    $value = GalleryUtilities::getRequestVariables($key);
+
+	    /* Normalize the path */
+	    if ($key == 'path') {
+		list ($ret, $platform) = $gallery->getPlatform();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$value = $platform->exportPath($value);
+
+		/* Guarantee a trailing slash */
+		if ($value{strlen($value)-1} != '/') {
+		    $value .= '/';
+		}
+	    }
 	    
 	    $ret = $gallery->setModuleParameter('netpbm', $key, $value);
 	    if ($ret->isError()) {
@@ -64,10 +79,37 @@ class AdminNetPbmController extends GalleryController {
 	    }
 	}
 
+	list($ret, $module) = $gallery->loadModule('netpbm');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $needsConfiguration) = $module->needsConfiguration();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($needsConfiguration) {
+	    /*
+	     * If we get this far successfully, assume that the user has made
+	     * at least a token effort to configure the module correctly.  The
+	     * test code in AdminNetPbmView should indicate whether or not they
+	     * got it right.  So, update our version in the map accordingly.
+	     */
+	    $ret = $gallery->setModuleParameter($module->getName(),
+						'version', $module->getVersion());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	
+
 	/* Figure out where to redirect upon success */
 	$stateVariables['view'] = 'core:SiteAdmin';
 	$stateVariables['subView'] = 'netpbm:AdminNetPbm';
-	$results['redirect'] = galleryUrlGenerator($stateVariables);
+
+	$templateAdapter = $gallery->getTemplateAdapter();
+	$results['redirect'] = $templateAdapter->generateUrl($stateVariables);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -76,9 +118,9 @@ class AdminNetPbmController extends GalleryController {
 class AdminNetPbmView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 
 	foreach (array('path', 'jpegQuality') as $key) {
@@ -92,7 +134,7 @@ class AdminNetPbmView extends GalleryView {
 	}
 
 	/* Set up our jpeg quality selection list */
-	for ($i = 50; $i <= 95; $i += 5) {
+	for ($i = 95; $i >= 50; $i -= 5) {
 	    $jpegQualityList[] = $i;
 	}
 
@@ -119,7 +161,7 @@ class AdminNetPbmView extends GalleryView {
 		       'pnmrotate',
 		       'pnmflip') as $binary) {
 
-	    $cmd = array($path . '/' . $binary, '--version');
+	    $cmd = array($path . $binary, '--version');
 	    list ($ret, $results) = GalleryUtilities::exec(array($cmd));
 	    $tests[] = array('name' => $binary,
 			     'status' => $ret,

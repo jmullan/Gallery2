@@ -21,26 +21,28 @@
 class SiteAdminView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	global $gallery;
 	
-	/* Get our style */
-	list ($ret, $style) = $gallery->getModuleParameter('core', 'default.style');
+	/* Make sure we have adequate permissions */
+	$ret = $this->_assertSiteAdministrator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get our theme in place */
+	$ret = $this->_initTheme();
 	if ($ret->isError()) {
 	    return $ret;
 	}
-
-	$style = $gallery->getConfig('code.gallery.styles') . $style . '/style.css';
-	$style = GalleryUtilities::convertPathToRelativeUrl($style);
 	
 	/* Render the HTML head */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->assign('style', $style);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
 	$html = $smarty->fetch('SiteAdminHead.tpl');
 
@@ -48,22 +50,23 @@ class SiteAdminView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
-	list ($ret, $inGroup) =
-	    GalleryUserGroupMap::isUserInAdminGroup($gallery->getActiveUserId());
+	$ret = $this->_assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!$inGroup) {
-	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
-			 null);
-	}
 
+	/* Get our theme in place */
+	$ret = $this->_initTheme();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
@@ -108,7 +111,7 @@ class SiteAdminView extends GalleryView {
 	    $viewClassName = $class . 'View';
 	    $view = new $viewClassName();
 
-	    list ($ret, $subViewHtml) = $view->fetchBody();
+	    list ($ret, $subViewHtml) = $view->renderBody();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -128,6 +131,29 @@ class SiteAdminView extends GalleryView {
 	$html = $smarty->fetch('SiteAdmin.tpl');
 
 	return array(GalleryStatus::success(), $html);
-    }    
+    }
+
+    /**
+     * Initialize our theme
+     *
+     * @access private
+     */
+    function _initTheme() {
+	global $gallery;
+	
+	/* Get our theme */
+	list ($ret, $themeName) = $gallery->getModuleParameter('core', 'default.theme');
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Activate the theme */
+	$ret = $this->_activateTheme($themeName);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>

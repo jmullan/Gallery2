@@ -79,7 +79,9 @@ class AdminCommentsController extends GalleryController {
 	/* Figure out where to redirect upon success */
 	$stateVariables['view'] = 'core:SiteAdmin';
 	$stateVariables['subView'] = 'comment:AdminComments';
-	$results['redirect'] = galleryUrlGenerator($stateVariables);
+
+	$templateAdapter = $gallery->getTemplateAdapter();
+	$results['redirect'] = $templateAdapter->generateUrl($stateVariables);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -88,16 +90,16 @@ class AdminCommentsController extends GalleryController {
 class AdminCommentsView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	return array(GalleryStatus::success(), false);
     }
     
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 
 	list($ret, $module) = $gallery->loadModule('comment');

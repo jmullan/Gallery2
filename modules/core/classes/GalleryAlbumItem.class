@@ -136,7 +136,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	return $this->_createDir($parentPath . '/' . $albumName);
+	return $this->_createDir($parentPath . $albumName);
     }
 
     /**

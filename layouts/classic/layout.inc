@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class ClassicLayout /* extends GalleryLayout */ {
+class ClassicLayout extends GalleryLayout {
 
     /**
      * Render the item
@@ -30,6 +30,7 @@ class ClassicLayout /* extends GalleryLayout */ {
      *         string the html body
      */
     function render($item) {
+
 	/* Look up my properties */
 	//list ($ret, $properties) =
 	//GalleryLayoutPropertiesMap::getProperties('BasicLayout');
@@ -162,7 +163,7 @@ class ClassicLayout /* extends GalleryLayout */ {
 	$smarty->assign('pageNumber', $pageNumber);
 	$smarty->assign('totalPageCount', $totalPages);
 	$smarty->assign('totalChildCount', $totalChildCount);
-	$smarty->assign('layoutUrl', $this->_getLayoutUrl(__FILE__));
+	$smarty->assign('layoutUrl', GalleryUtilities::convertPathToRelativeUrl(__FILE__));
 	$smarty->assign('parents', $parents);
 
 	/* Parse the body template and send it back */
@@ -280,7 +281,7 @@ class ClassicLayout /* extends GalleryLayout */ {
 
 	/* Tell Smarty about everything we've learned */
 	$smarty->assign('navigator', $navigator);
-	$smarty->assign('layoutUrl', $this->_getLayoutUrl(__FILE__));
+	$smarty->assign('layoutUrl', GalleryUtilities::convertPathToRelativeUrl(__FILE__));
 	$smarty->assign('parents', $parents);
 	$smarty->assign('itemIndex', $itemIndex+1);
 	$smarty->assign('totalPeerCount', $totalPeerCount);
@@ -291,93 +292,5 @@ class ClassicLayout /* extends GalleryLayout */ {
 		     $smarty->fetch('singleBody.tpl'));
     }
 
-    /* Move this into the engine somewhere */
-    function _getLayoutUrl($file) {
-	global $gallery;
-
-	$dirbase = $gallery->getConfig('code.gallery.base');
-	$relative = str_replace($dirbase, '', dirname($file));
-
-	$urlbase = $gallery->getConfig('url.gallery.base');
-	if (!empty($urlbase)) {
-	    return $urlbase . '/' . $relative;
-	} else {
-	    return $relative;
-	}
-    }
-
-    /* Move this into the engine somewhere */
-    function _loadParents($item) {
-	global $gallery;
-
-	$parents = array();
-	$parentId = $item->getParentId();
-	while (!empty($parentId)) {
-
-	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    array_unshift($parents, $parent->getMemberData());
-	    $parentId = $parent->getParentId();
-	}
-
-	return array(GalleryStatus::success(), $parents);
-    }
-
-    /* Move this into the engine somewhere */
-    function _loadDerivativeImages($ids, $imageTypes) {
-	global $gallery;
-	
-	if (!is_array($ids)) {
-	    $ids = array($ids);
-	}
-
-	if (!is_array($imageTypes)) {
-	    $imageTypes = array($imageTypes);
-	}
-	    
-	/* Look up the ids of all their thumbnail images */
-	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$imageTypeMarkers = GalleryUtilities::makeMarkers(sizeof($imageTypes));
-	$data = array_merge(array('GalleryDerivativeImage'),
-			    $imageTypes,
-			    $ids);
-	list ($ret, $searchResults) = $gallery->search(
-            array('select' => ('[GalleryDerivativeImage::id], ' .
-			       '[GalleryChildEntity::parentId]'),
-		  'where' => ('[GalleryEntity::entityType]=? AND ' .
-			      '[GalleryDerivativeImage::imageType] IN (' .
-			      $imageTypeMarkers . ') AND ' .
-			      '[GalleryChildEntity::parentId] IN (' .
-			      $idMarkers . ')')),
-            $data);
-	    
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$imageTable = array();
-	if ($searchResults->resultCount() > 0) {
-	    $imageIds = array();
-	    while ($result = $searchResults->nextResult()) {
-		$imageIds[] = $result[0];
-	    }
-		
-	    /* Load all the derivative images */
-	    list ($ret, $imageEntities) = $gallery->loadEntitiesById($imageIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-		
-	    /* Create a table of child id -> image data */
-	    foreach ($imageEntities as $image) {
-		$imageTable[$image->getParentId()][] = $image->getMemberData();
-	    }
-	}
-
-	return array(GalleryStatus::success(), $imageTable);
-    }
 }
 ?>

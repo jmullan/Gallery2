@@ -37,7 +37,7 @@ class AdminCoreController extends GalleryController {
 		       'default.orderBy',
 		       'default.orderDirection',
 		       'default.layout',
-		       'default.style',
+		       'default.theme',
 		       'graphics.type') as $key) {
 	    $value = GalleryUtilities::getRequestVariables($key);
 
@@ -52,7 +52,9 @@ class AdminCoreController extends GalleryController {
 	/* Figure out where to redirect upon success */
 	$stateVariables['view'] = 'core:SiteAdmin';
 	$stateVariables['subView'] = 'core:AdminCore';
-	$results['redirect'] = galleryUrlGenerator($stateVariables);
+
+	$templateAdapter = $gallery->getTemplateAdapter();
+	$results['redirect'] = $templateAdapter->url($stateVariables);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -61,16 +63,16 @@ class AdminCoreController extends GalleryController {
 class AdminCoreView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	return array(GalleryStatus::success(), false);
     }
     
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 	
 	$ret = $this->_assertSiteAdministrator();
@@ -85,7 +87,7 @@ class AdminCoreView extends GalleryView {
 		       'default.orderBy',
 		       'default.orderDirection',
 		       'default.layout',
-		       'default.style',
+		       'default.theme',
 		       'graphics.type') as $key) {
 
 	    list ($ret, $value) =
@@ -128,20 +130,20 @@ class AdminCoreView extends GalleryView {
 	    closedir($dir);
 	}
 	
-	/* Set up our style selection list */
-	$styleList = array();
+	/* Set up our theme selection list */
+	$themeList = array();
 	list ($ret, $platform) = $gallery->getPlatform();
-	$styleDir = $gallery->getConfig('code.gallery.styles');
-	if ($dir = $platform->opendir($styleDir)) {
+	$themeDir = $gallery->getConfig('code.gallery.themes');
+	if ($dir = $platform->opendir($themeDir)) {
 	    while (($subdir = readdir($dir)) !== false) {
 		if ($subdir{0} == '.' || $subdir == 'CVS') {
 		    continue;
 		}
 
-		if ($platform->is_dir("$styleDir$subdir")) {
-		    $file = "$styleDir$subdir/style.css";
+		if ($platform->is_dir("$themeDir$subdir")) {
+		    $file = "$themeDir$subdir/theme.inc";
 		    if ($platform->file_exists($file)) {
-			$styleList[] = $subdir;
+			$themeList[] = $subdir;
 		    }
 		}
 	    }
@@ -162,7 +164,7 @@ class AdminCoreView extends GalleryView {
 	}
 	$smarty->assign('form', $form);
 	$smarty->assign('layoutList', $layoutList);
-	$smarty->assign('styleList', $styleList);
+	$smarty->assign('themeList', $themeList);
 	$smarty->assign('orderByList', $orderByList);
 	$smarty->assign('orderDirectionList', $orderDirectionList);
 	$smarty->assign('permissionsDirectoryList', $permissionsDirectoryList);

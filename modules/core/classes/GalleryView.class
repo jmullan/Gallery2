@@ -61,7 +61,7 @@ class GalleryView {
      * @return array object GalleryStatus a status code
      *               string html content
      */
-    function fetchHead() {
+    function renderHead() {
 	return false;
     }
 
@@ -75,7 +75,7 @@ class GalleryView {
      * @return array object GalleryStatus a status code
      *               string html content
      */
-    function fetchBody() {
+    function renderBody() {
 	return false;
     }
 
@@ -85,13 +85,13 @@ class GalleryView {
      * @return array object GalleryStatus a status code
      *               array ('head' => head HTML, 'body' => body html)
      */
-    function fetchHeadAndBody() {
-	list ($ret, $head) = $this->fetchHead();
+    function renderHeadAndBody() {
+	list ($ret, $head) = $this->renderHead();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $body) = $this->fetchBody();
+	list ($ret, $body) = $this->renderBody();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -124,5 +124,58 @@ class GalleryView {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Load the theme with the given name
+     *
+     * @param string a theme name
+     * @return array object GalleryStatus a status code
+     *               object GalleryTheme a theme
+     */
+    function _activateTheme($themeName) {
+	global $gallery;
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	require_once($gallery->getConfig('code.gallery.themes') .
+		     $themeName . '/theme.inc');
+	$themeClassName = $themeName . 'Theme';
+	if (!class_exists($themeClassName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTheme(new $themeClassName());
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Load the layout with the given name
+     *
+     * @param string a theme name
+     * @return array object GalleryStatus a status code
+     *               object GalleryLayout a theme
+     */
+    function _loadLayout($layoutName) {
+	global $gallery;
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	require_once($gallery->getConfig('code.gallery.layouts') .
+		     $layoutName . '/layout.inc');
+	$layoutClassName = $layout . 'Layout';
+	if (!class_exists($layoutClassName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), new $layoutClassName());
+    }
+    
 }
 ?>

@@ -48,7 +48,7 @@ class AdminModulesController extends GalleryController {
 
 		/* Can't activate if we're already active! */
 		if ($isActive) {
-		    return array(GalleryStatus::error(ERROR_BAD_DATA, __FILE__, __LINE__),
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 				 null);
 		}
 
@@ -59,7 +59,7 @@ class AdminModulesController extends GalleryController {
 		
 		/* Can't activate if we need to be configured! */
 		if ($needsConfiguration) {
-		    return array(GalleryStatus::error(ERROR_BAD_DATA, __FILE__, __LINE__),
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 				 null);
 		}
 		
@@ -73,7 +73,7 @@ class AdminModulesController extends GalleryController {
 
 		/* Can't deactivate if we're not active! */
 		if (!$isActive) {
-		    return array(GalleryStatus::error(ERROR_BAD_DATA, __FILE__, __LINE__),
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 				 null);
 		}
 
@@ -84,7 +84,7 @@ class AdminModulesController extends GalleryController {
 		break;
 
 	    default:
-		return array(GalleryStatus::error(ERROR_BAD_DATA, __FILE__, __LINE__),
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			     null);
 	    }
 	}
@@ -92,7 +92,9 @@ class AdminModulesController extends GalleryController {
 	/* Figure out where to redirect upon success */
 	$stateVariables['view'] = 'core:SiteAdmin';
 	$stateVariables['subView'] = 'core:AdminModules';
-	$results['redirect'] = galleryUrlGenerator($stateVariables);
+
+	$templateAdapter = $gallery->getTemplateAdapter();
+	$results['redirect'] = $templateAdapter->generateUrl($stateVariables);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -101,16 +103,16 @@ class AdminModulesController extends GalleryController {
 class AdminModulesView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	return array(GalleryStatus::success(), false);
     }
     
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 	
 	$ret = $this->_assertSiteAdministrator();

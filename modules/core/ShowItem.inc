@@ -21,9 +21,9 @@
 class ShowItemView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	global $gallery;
 
 	list ($ret, $item) = $this->_getItem();
@@ -31,17 +31,27 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Figure out what style sheet to use and calculate its relative URL */
-	$style = $item->getStyle();
-	if (empty($style)) {
-	    list ($ret, $style) =
-		$gallery->getModuleParameter('core', 'default.style');
+	/* Figure out what theme to use and calculate its relative URL */
+	$themeName = $item->getTheme();
+
+	list ($ret, $themeName) = $item->getTheme();
+	if (empty($themeName)) {
+	    list ($ret, $themeName) =
+		$gallery->getModuleParameter('core', 'default.theme');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$style = $gallery->getConfig('code.gallery.styles') . $style . '/style.css';
-	$style = GalleryUtilities::convertPathToRelativeUrl($style);
+
+	list ($ret, $theme) = $this->_loadTheme($themeName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $style) = $theme->getStyleUrl();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	/* Render the HTML head */
 	list ($ret, $smarty) = $gallery->getSmarty();
@@ -57,9 +67,9 @@ class ShowItemView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 
 	list ($ret, $item) = $this->_getItem();
@@ -74,24 +84,20 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Find the right layout for this item  */
-	$layout = $item->getLayout();
-	if (empty($layout)) {
-	    list ($ret, $layout) =
-		$gallery->getModuleParameter('core', 'default.layout');
+	$layoutName = $item->getLayout();
+	if (empty($layoutName)) {
+	    list ($ret, $layoutName) =
+		$gallery->getModuleParameter('core', 'default.layouts');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	/* Load the correct layout */
-	require_once($gallery->getConfig('code.gallery.layouts') .
-		     $layout . '/layout.inc');
-	$layoutClassName = $layout . 'Layout';
-	if (!class_exists($layoutClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__), null);
+	list ($ret, $layout) = $this->_loadLayout($layoutName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$layout = new $layoutClassName();
 
 	/* Render and retrieve the body */
 	list ($ret, $html) = $layout->render($item);

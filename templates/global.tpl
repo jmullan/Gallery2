@@ -25,7 +25,7 @@
 	</tr>
 	<tr>
 	  <td>
-	    {$master.debug}
+	    <pre>{$master.debug}</pre>
 	  </td>
 	</tr>
     </table>

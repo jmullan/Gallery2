@@ -1,0 +1,241 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class GalleryTheme {
+
+    /**
+     * Return a themed <input> tag
+     *
+     * @param array key => value attributes
+     * @return HTML content
+     */
+    function input($params, $content) {
+	if ($content) {
+	    $params['value'] = $content;
+	}
+	return $this->_createFormTag('input', $params);
+    }
+
+    /**
+     * Return a themed <select> .. </select> block
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function select($params, $content) {
+	return $this->_createFormTag('select', $params) .
+	    $content .
+	    '</select>';
+    }
+    
+    /**
+     * Return a themed <textarea> .. </textarea> block
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function textarea($params, $content) {
+	return $this->_createFormTag('textarea', $params) .
+	    $content .
+	    '</textarea>';
+    }
+
+    /**
+     * Return 1 or more <style> blocks
+     *
+     * @param array key => value attributes
+     * @return HTML content
+     */
+    function style($params) {
+	return "";
+    }
+
+    /**
+     * Return the given content as in a very small font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function smallestFont($params, $content) {
+	return "<font size=\"-3\">$content</font>";
+    }
+
+    /**
+     * Return the given content as in a smaller font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function smallerFont($params, $content) {
+	return "<font size=\"-2\">$content</font>";
+    }
+
+    /**
+     * Return the given content as in a small font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function smallFont($params, $content) {
+	return "<font size=\"-1\">$content</font>";
+    }
+
+    /**
+     * Return the given content as in a large font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function bigFont($params, $content) {
+	return "<font size=\"+1\">$content</font>";
+    }
+
+    /**
+     * Return the given content as in a larger font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function biggerFont($params, $content) {
+	return "<font size=\"+2\">$content</font>";
+    }
+
+    /**
+     * Return the given content as in a very large font
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function biggestFont($params, $content) {
+	return "<font size=\"+3\">$content</font>";
+    }
+
+    /**
+     * Return the given content in a "happy" font color
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function successFontColor($params, $content) {
+	return "<font color=\"green\">$content</font>";
+    }
+
+    /**
+     * Return the given content in a "pay attention!" font color
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function warningFontColor($params, $content) {
+	return "<font color=\"orange\">$content</font>";
+    }
+
+    /**
+     * Return the given content in a "this is bad!" font color
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function errorFontColor($params, $content) {
+	return "<font color=\"red\">$content</font>";
+    }
+
+    /**
+     * Return the given content inside a light themed frame
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function lightFrame($params, $content) {
+	return $content;
+    }
+
+    /**
+     * Return the given content inside a heavy themed frame
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function heavyFrame($params, $content) {
+	return $content;
+    }
+
+    /**
+     * Return the given content inside a 3D themed frame
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function threeDFrame($params, $content) {
+	return $content;
+    }
+
+    /**
+     * Create a tag for use inside a form.
+     *
+     * Put all attributes into the tag as key => value pairs
+     * Prefix the tag's name attribute with our form variable prefix
+     * Force the style of the tag to be "gallery"
+     *
+     * @param string the type of tag (eg, "input", "select")
+     * @param array key => value attributes
+     * @return HTML content
+     * @access private
+     */
+    function _createFormTag($tag, $params) {
+	global $gallery;
+	
+	/* Translate the form variable name */
+	if (!empty($params['name'])) {
+	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	}
+
+	/* Force the style class */
+	if ($tag == 'input' && !empty($params['type'])) {
+	    $params['class'] = 'gallery-' . $params['type'];
+	} else {
+	    $params['class'] = 'gallery';
+	}
+
+	/* Build our tag */
+	$result = "<$tag";
+	foreach ($params as $key => $value) {
+	    $result .= " $key=\"$value\"";
+	}
+	$result .= ">";
+
+	return $result;
+    }
+    
+}

@@ -62,7 +62,7 @@
     NOT NULL
   
       ,
-    COLUMN_PREFIXstyle
+    COLUMN_PREFIXtheme
       varchar(
       
           32

@@ -702,6 +702,24 @@ class Gallery {
     }
 
     /**
+     * Register a template adapter.
+     *
+     * @param object GalleryTemplateAdapter 
+     */
+    function setTemplateAdapter($templateAdapter) {
+	$this->_templateAdapter = $templateAdapter;
+    }
+
+    /**
+     * Return the registered template adapter.
+     *
+     * @return object GalleryTemplateAdapter 
+     */
+    function &getTemplateAdapter() {
+	return $this->_templateAdapter;
+    }
+
+    /**
      * Return a properly configured instance of Smarty
      *
      * Create and configure one, if it does not exist.
@@ -727,11 +745,18 @@ class Gallery {
 		$this->_smarty->debugging = true;
 	    }
 
-	    /* Set up some hooks */
-	    $this->_smarty->register_function('galleryUrl', 'galleryUrlGenerator');
-	    $this->_smarty->register_function('galleryText', 'galleryTranslator');
-	    $this->_smarty->register_function('galleryFormVar', 'galleryFormVarGenerator');
-	    $this->_smarty->register_block('galleryForm', 'galleryFormGenerator');
+	    /* Set up core Smarty hooks */
+	    foreach (array('Url', 'Text', 'Style') as $method) {
+		$this->_smarty->register_function('gallery' . $method, 'galleryTemplateCallback');
+	    }
+	    
+	    foreach (array('LightFrame', 'HeavyFrame', 'ThreeDFrame',
+			   'SmallestFont', 'SmallerFont', 'SmallFont',
+			   'BigFont', 'BiggerFont', 'BiggestFont',
+			   'SuccessFontColor', 'WarningFontColor', 'ErrorFontColor',
+			   'Form', 'Input', 'Select', 'TextArea') as $method) {
+		$this->_smarty->register_block('gallery' . $method, 'galleryTemplateCallback');
+	    }
 	}
 
 	return array(GalleryStatus::success(), $this->_smarty);
@@ -1176,5 +1201,6 @@ class Gallery {
 
 	return $codes;
     }
+
 }
 ?>

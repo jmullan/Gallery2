@@ -77,6 +77,9 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryModuleParameterMap.class');
 	require_once($classDir . 'GalleryView.class');
 	require_once($classDir . 'GalleryController.class');
+	require_once($classDir . 'GalleryTemplateAdapter.class');
+	require_once($classDir . 'GalleryLayout.class');
+	require_once($classDir . 'GalleryTheme.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because

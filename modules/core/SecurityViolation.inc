@@ -21,9 +21,9 @@
 class SecurityViolationView extends GalleryView {
 
     /**
-     * @see GalleryView::fetchHead
+     * @see GalleryView::renderHead
      */
-    function fetchHead() {
+    function renderHead() {
 	global $gallery;
 
 	$text = $gallery->translate("Security Violation!");
@@ -33,9 +33,9 @@ class SecurityViolationView extends GalleryView {
 
 
     /**
-     * @see GalleryView::fetchBody
+     * @see GalleryView::renderBody
      */
-    function fetchBody() {
+    function renderBody() {
 	global $gallery;
 
 	$text = $gallery->translate("Security Violation!");

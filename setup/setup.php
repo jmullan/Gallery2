@@ -178,7 +178,7 @@ foreach (array('permissions.directory' => '0755',
 	       'default.orderBy' => 'id',
 	       'default.orderDirection' => '1',
 	       'default.layout' => 'classic',
-	       'default.style' => 'classic.css',
+	       'default.theme' => 'classic',
 	       'graphics.type' => 'netpbm')
 	 as $key => $value) {
 
@@ -188,7 +188,7 @@ foreach (array('permissions.directory' => '0755',
 	return;
     }
 
-    if (isset($oldValue)) {
+    if ($oldValue == '') {
 	$ret = $gallery->setModuleParameter('core', $key, $value);
 	if ($ret->isError()) {
 	    error('unknownError', array('error' => $ret));

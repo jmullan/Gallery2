@@ -465,6 +465,9 @@ class Smarty_Compiler extends Smarty {
                 $arg_list[] = "'$arg_name' => $arg_value";
             }
 
+	    /* Add the function name to the argument list --BM 9/21/2002 */
+	    $arg_list[] = "'__function' => '$tag_command'";
+	    
             $output = "<?php \$this->_tag_stack[] = array('$tag_command', array(".implode(',', (array)$arg_list).")); \$this->_plugins['block']['$tag_command'][0](array(".implode(',', (array)$arg_list)."), null, \$this); ob_start(); ?>";
         } else {
             $output = "<?php \$this->_block_content = ob_get_contents(); ob_end_clean(); \$this->_plugins['block']['$tag_command'][0](\$this->_tag_stack[count(\$this->_tag_stack)-1][1], \$this->_block_content, \$this); array_pop(\$this->_tag_stack); ?>";
@@ -490,6 +493,9 @@ class Smarty_Compiler extends Smarty {
             $arg_list[] = "'$arg_name' => $arg_value";
         }
 
+	/* Add the function name to the argument list --BM 9/21/2002 */
+	$arg_list[] = "'__function' => '$tag_command'";
+	
         return "<?php \$this->_plugins['function']['$tag_command'][0](array(".implode(',', (array)$arg_list)."), \$this); if(\$this->_extract) { extract(\$this->_tpl_vars); \$this->_extract=false; } ?>";
     }
 

@@ -53,6 +53,14 @@ function GalleryMain() {
      */
     $gallery->setConfig('url.gallery.base', '');
 
+    /*
+     * Create, configure and register our template adapter.
+     */
+    $templateAdapter = new GalleryTemplateAdapter();
+    $templateAdapter->setBaseUrl($gallery->getConfig('url.gallery.base') .
+				 'main.php');
+    $gallery->setTemplateAdapter($templateAdapter);
+
     /* Figure out the target module/controller */
     list($viewName, $controllerName) =
 	GalleryUtilities::getRequestVariables('view', 'controller');
@@ -127,7 +135,7 @@ function GalleryMain() {
 	    $showGlobal = false;
 	}
     } else {
-	list ($ret, $master['view']) = $view->fetchHeadAndBody();
+	list ($ret, $master['view']) = $view->renderHeadAndBody();
 	if ($ret->isError()) {
 	    $master['error'] = $ret->getAsHtml();
 	}
@@ -160,102 +168,5 @@ function GalleryMain() {
     }
 
     return GalleryStatus::success();
-}
-
-/*
- * Define our URL generator hook
- */
-function galleryUrlGenerator($params) {
-    global $gallery;
-    
-    $baseUrl = $gallery->getConfig('url.gallery.base');
-    
-    foreach ($params as $key => $value) {
-	$args[] = GALLERY_ARGUMENT_PREFIX . "$key=$value";
-    }
-    $result = $baseUrl . 'main.php?' . join('&', $args);
-
-    if (func_num_args() == 2) {
-	/* Executed from within Smarty */
-	print $result;
-    } else {
-	return $result;
-    }
-}
-
-/*
- * Define our form variable hook.
- */
-function galleryFormVarGenerator($params) {
-    /*
-     * Convert dots to underscores.  Some versions of PHP seem to do
-     * this when processing POST data, so we force the issue here so
-     * that we get consistent behaviour across all versions.
-     */
-    $var = strtr($params['var'], '.', '_');
-    $result = GALLERY_ARGUMENT_PREFIX . $var;
-    
-    if (func_num_args() == 2) {
-	/* Executed from within Smarty */
-	print $result;
-    } else {
-	return $result;
-    }
-}
-
-/*
- * Define our form open generator
- */
-function galleryFormGenerator($params, $content) {
-
-    /*
-     * This function gets called twice.  Once at the beginning of the block
-     * (without any content) and once at the end.  For simplicity we'll just
-     * ignore the beginning call and print out everything at the end.
-     */
-    $result = "";
-    if ($content) {
-	if (empty($params['method'])) {
-	    $method = 'POST';
-	} else {
-	    $method = $params['method'];
-	    unset($params['method']);
-	}
-
-	$result .= '<form method="' . $method . '" action="main.php">';
-	$result .= "\n";
-	foreach ($params as $key => $value) {
-	    $result .= '<input type="hidden" ' .
-		'name="' . GALLERY_ARGUMENT_PREFIX . $key . '" ' .
-		'value="' . $value . '">';
-	    $result .= "\n";
-	}
-	$result .= $content;
-	$result .= "\n";
-	$result .= '</form>';
-    }
-
-    if (func_num_args() == 3) {
-	/* Executed from within Smarty */
-	print $result;
-    } else {
-	return $result;
-    }
-}
-
-/*
- * Define our translator hook
- */
-function galleryTranslator($params) {
-    global $gallery;
-    $result = $gallery->translate($params);
-
-    if (func_num_args() == 2) {
-	/* Executed from within Smarty */
-	print $result;
-    } else {
-	return $result;
-    }
-    
 }
 ?>
