@@ -100,9 +100,8 @@
  {if ($i is odd)}</tr>{/if}
 {/foreach}
 {if count($layout.children) is odd}<td></td><td></td></tr>{/if}
-</table></div></div
+</table></div></div>
 
->
 {capture name="sidebarInsert_2"}
   <div class="gbMenu">
     <h3 class="giTitle"> {g->text text="Display Options"} </h3>
@@ -114,7 +113,7 @@
 	<a id="lnk_link" href="" onclick="album_itemlinksonoff();this.blur();return false">{g->text text="hide item links"}</a>
       </li>
     </ul>
-    <ul>
+    <ul style="margin-top:4px">
       <li>
         <strong>{g->text text="Slideshow Options"}:</strong>
       </li>
