@@ -22,7 +22,7 @@
     {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
     {g->text one="Viewed: %d time" many="Viewed: %d times"
              count=$layout.viewCount arg1=$layout.viewCount}<br>
-    {g->text text="Date: "}{g->date timestamp=$layout.item.creationTimestamp}<br>
+    {g->text text="Date: "}{g->date timestamp=$layout.item.originationTimestamp}<br>
     {if isset($layout.item.keywords)}
       {g->text text="Keywords: "}{$layout.item.keywords|markup}<br>
     {/if}

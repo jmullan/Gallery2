@@ -62,7 +62,7 @@ class ClassicLayout extends MatrixLayout {
 	$params = array_merge(
 	    array('rows' => 10, 'columns' => 1, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
 		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'showSubalbums' => 1,
-		  'subalbumDepth' => 0, 'useCaptureDate' => 0),
+		  'subalbumDepth' => 0),
 	    $params);
 
 	$settings = array();
@@ -93,10 +93,6 @@ class ClassicLayout extends MatrixLayout {
 			    'name' => $gallery->i18n('Show album owners'),
 			    'type' => 'checkbox',
 			    'value' => $params['showAlbumOwner']);
-	$settings[] = array('key' => 'useCaptureDate',
-			    'name' => $gallery->i18n('Use capture date (needs an active exif module)'),
-			    'type' => 'checkbox',
-			    'value' => $params['useCaptureDate']);
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
