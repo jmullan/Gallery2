@@ -18,7 +18,7 @@
   <p class="giDescription">
     {g->text text="You must enter your current password to prove that it's you, then enter your new password twice to make sure that you didn't make a mistake."}
   </p>
-  
+
   <div>
     <h4>
       {g->text text="Current Password"}
@@ -65,7 +65,7 @@
 	{g->text text="(required)"}
       </span>
     </h4>
-        
+
     <input type="password" name="{g->formVar var="form[password2]"}"/>
 
     {if isset($form.error.password2.missing)}

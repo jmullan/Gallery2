@@ -17,7 +17,7 @@
     <p class="giDescription">
       {g->text text="The name of this item on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes."}
     </p>
-    
+
     {strip}
     {foreach from=$ItemAdmin.parents item=parent}
     {if empty($parent.parentId)}
@@ -55,8 +55,8 @@
       {g->text text="The title of this item."}
     </p>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	     viewL10domain="modules_core" 
+    {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	     viewL10domain="modules_core"
 	     element="title" firstMarkupBar=true}
 
     <input type="text" id="title" size="60"
@@ -76,8 +76,8 @@
       {g->text text="The summary of this item."}
     </p>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	     viewL10domain="modules_core" 
+    {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	     viewL10domain="modules_core"
 	     element="summary"}
     <input type="text" id="summary" size="60"
      name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
@@ -101,8 +101,8 @@
       {g->text text="This is the long description of the item."}
     </p>
 
-    {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	     viewL10domain="modules_core" 
+    {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	     viewL10domain="modules_core"
 	     element="description"}
     <textarea id="description" rows="4" cols="60"
      name="{g->formVar var="form[description]"}">{$form.description}</textarea>

@@ -11,7 +11,7 @@
 <div class="gbBlock">
   <h3>
     {if isset($ItemAddConfirmation.count)}
-      {g->text one="Successfully added %d file." many="Successfully added %d files." 
+      {g->text one="Successfully added %d file." many="Successfully added %d files."
 	       count=$ItemAddConfirmation.count arg1=$ItemAddConfirmation.count}
     {else}
       {g->text text="No files added."}

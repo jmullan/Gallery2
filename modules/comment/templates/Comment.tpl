@@ -47,13 +47,13 @@
   <p class="giInfo">
     {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
     {if isset($can) && $can.edit}
-      {g->text text="Posted by %s on %s (%s)" 
+      {g->text text="Posted by %s on %s (%s)"
 	       arg1=$user.fullName|default:$user.userName
 	       arg2=$smarty.capture.date
 	       arg3=$comment.host}
 
     {else}
-      {g->text text="Posted by %s on %s" 
+      {g->text text="Posted by %s on %s"
 	       arg1=$user.fullName|default:$user.userName
 	       arg2=$smarty.capture.date}
     {/if}

@@ -40,7 +40,7 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -68,8 +68,8 @@ class FfmpegModule extends GalleryModule {
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'FfmpegToolkit', 'Ffmpeg',
-            'modules/ffmpeg/classes/FfmpegToolkit.class', 'ffmpeg', null);
+	    'GalleryToolkit', 'FfmpegToolkit', 'Ffmpeg',
+	    'modules/ffmpeg/classes/FfmpegToolkit.class', 'ffmpeg', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

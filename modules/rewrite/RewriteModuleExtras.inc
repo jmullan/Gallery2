@@ -151,6 +151,7 @@ class RewriteModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '0.9.0':
 	    break;
 
 	default:

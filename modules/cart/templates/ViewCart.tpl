@@ -26,7 +26,7 @@
 <table width="100%" cellspacing="0" cellpadding="0">
   <colgroup width="1*,*"/>
   <tr valign="top"><td>
-    {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
+    {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
   </td><td>
 
     <div id="gsContent" class="gcBorder1">
@@ -99,11 +99,11 @@
 	  </td><td>
 	    <ul>
               <li>
-		<strong>{g->text text="Title:"}</strong> 
+		<strong>{g->text text="Title:"}</strong>
 		 {$item.title|markup}
 	      </li>
 	      <li>
-		<strong>{g->text text="Summary:"}</strong> 
+		<strong>{g->text text="Summary:"}</strong>
 		{$item.summary|markup}
 	      </li>
 	    </ul>

@@ -54,7 +54,7 @@
 
     <input type="hidden" name="{g->formVar var="form[imageUrl]"}" value="{$form.imageUrl}"/>
 </div>
-  
+
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][addWebCam]"}" value="{g->text text="Add Image"}"/>

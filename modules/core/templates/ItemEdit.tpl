@@ -36,7 +36,7 @@
 {/if}
 
 <ul class="gbTabBar">
-  {foreach from=$ItemEdit.plugins item=plugin} 
+  {foreach from=$ItemEdit.plugins item=plugin}
     {if $plugin.isSelected}
       <li class="giSelected"><span>
 	{$plugin.title}

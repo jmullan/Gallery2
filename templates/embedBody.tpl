@@ -11,7 +11,7 @@
   <div id="gsFooter">
     <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img
        src="{g->url href="images/xhtml10.png"}"
-       alt="{g->text text="This page is valid XHTML 1.0"}" 
+       alt="{g->text text="This page is valid XHTML 1.0"}"
        style="border: none" width="80" height="15"/></a>
     <a href="http://gallery.sourceforge.net"><img
        src="{g->url href="images/gallery.gif"}"

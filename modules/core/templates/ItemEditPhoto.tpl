@@ -6,18 +6,18 @@
  *}
 <div class="gbBlock">
   <h3> {g->text text="Thumbnail"} </h3>
-  
+
   <p class="giDescription">
     {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value. Leave this field blank if you don't want a thumbnail."}
   </p>
-  
+
   {if $ItemEditPhoto.editSizes.can.createThumbnail}
     <input type="text" size="6"
      name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
   {else}
     <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify a thumbnail."}
-    {if $ItemEditPhoto.isAdmin} 
+    {if $ItemEditPhoto.isAdmin}
       <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
 	{g->text text="site admin"}
       </a>
@@ -68,7 +68,7 @@
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify resized versions."}
-    {if $ItemEditPhoto.isAdmin} 
+    {if $ItemEditPhoto.isAdmin}
       <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
 	{g->text text="site admin"}
       </a>

@@ -38,7 +38,7 @@ class ZipCartModule extends GalleryModule {
 	$this->setId('zipcart');
 	$this->setName('Zip Download');
 	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -52,7 +52,7 @@ class ZipCartModule extends GalleryModule {
 	/* Register our cart plugin */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'CartPluginInterface_1_0', 'ZipCartPlugin', 'zipcart',
-            'modules/zipcart/classes/ZipCartPlugin.class', 'zipcart', null);
+	    'modules/zipcart/classes/ZipCartPlugin.class', 'zipcart', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -37,7 +37,7 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setId('albumselect');
 	$this->setName('Album Select');
 	$this->setDescription($gallery->i18n('Jump directly to any album using a select box'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|loadSystemContent|registerEventListeners');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -66,7 +66,7 @@ class AlbumSelectModule extends GalleryModule {
 	GalleryCoreApi::registerEventListener(
 	    'Gallery::ViewableTreeChange', new AlbumSelectModule());
     }
-    
+
     /**
      * @see GalleryModule::upgrade()
      */
@@ -117,12 +117,12 @@ class AlbumSelectModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* If it's the anonymous user, try to load it from the cache */
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
 	    $cachePathInfo = array('type' => 'module-data',
-		                   'module' => 'albumselect',
-		                   'key' => 'loadSystemContent_guest');
+				   'module' => 'albumselect',
+				   'key' => 'loadSystemContent_guest');
 	    list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 	}
 
@@ -159,12 +159,12 @@ class AlbumSelectModule extends GalleryModule {
 		GalleryDataCache::putToDisk($cachePathInfo, $dataToCache);
 	    }
 	}
-	
+
 	$template->setVariable('AlbumSelectSystemContent',
 	    array('tree' => $treeList,
 		  'titles' => $titles,
 		  'template' => 'modules/albumselect/templates/AlbumSelect.tpl'));
-	
+
 	return array(GalleryStatus::success(),
 		     $params['show'] ? 'modules/albumselect/templates/AlbumSelect.tpl' : null);
     }
@@ -177,11 +177,11 @@ class AlbumSelectModule extends GalleryModule {
     function handleEvent($event) {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
 	    $cachePathInfo = array('type' => 'module-data',
-		                   'module' => 'albumselect',
-		                   'key' => 'loadSystemContent_guest');
+				   'module' => 'albumselect',
+				   'key' => 'loadSystemContent_guest');
 	    GalleryDataCache::removeFromDisk($cachePathInfo);
 	}
-	
+
 	return array(GalleryStatus::success(), null);
     }
 

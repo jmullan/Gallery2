@@ -35,7 +35,7 @@
 
 <div class="gbBlock">
   <h3> {g->text text="GD library version"} </h3>
-    
+
   {if $AdminGd.gdVersion}
     <table class="gbDataTable"><tr>
       <th> {g->text text="GD version"} </th>
@@ -75,7 +75,7 @@
 {if $AdminGd.mimeTypes}
 <div class="gbBlock">
   <h3> {g->text text="Supported MIME Types"} </h3>
-    
+
   <p class="giDescription">
     {g->text text="The Gd module will support files with the following MIME types:"}
   </p>

@@ -16,7 +16,7 @@
       <input type="text" size="5" name="{g->formVar var="form[width]"}" value="{$form.width}"/>
     </td>
   </tr>
-    
+
   {if isset($form.error.width.invalid)}
   <tr><td colspan="2" class="giError">
     {g->text text="You must enter a value greater than or equal to 0"}

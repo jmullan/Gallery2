@@ -207,23 +207,13 @@ class GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
-	/*
-	 * XXX TEMPORARY HACK XXX
-	 * Hardcode new layout/theme CSS for non-layout views.
-	 */
-	if ($this->useDefaultStyle()) {
-	    $template->style("themes/matrix/themeNew.css");
-	} else {
 
 	/* Theme style */
 	$template->style("themes/$themeName/theme.css");
-	} //HACK
 
 	/* Use default layout style if applicable */
 	if ($this->useDefaultStyle()) {
-//HACK	    $template->style('templates/layout.css');
-	    $template->style('templates/layoutNew.css');
-	/* XXX END TEMPORARY HACK */
+	    $template->style('templates/layout.css');
 	}
 
 	/* Get our form variables */

@@ -56,7 +56,7 @@
     <a href="javascript:invertCheck()">{g->text text="Invert Selection"}</a>
   </span>
 
-  {if (sizeof($ChooseObjects.newUsers) > 0)} 
+  {if (sizeof($ChooseObjects.newUsers) > 0)}
     <table class="gbDataTable"><tr>
       <th> {g->text text="Select"} </th>
       <th> {g->text text="Username"} </th>
@@ -68,10 +68,10 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
     {foreach name=users key=uid item=username from=$ChooseObjects.newUsers}
       <td>
-	<input type="checkbox" id="user_{$uid}"{if $form.migrateUser.$uid} checked="checked"{/if}
+	<input type="checkbox" id="cbUser_{$uid}"{if $form.migrateUser.$uid} checked="checked"{/if}
 	 name="{g->formVar var="form[migrateUser][$uid]"}"/>
       </td><td>
-	<label for="user_{$uid}"> {$username} </label>
+	<label for="cbUser_{$uid}"> {$username} </label>
       </td>
 
       {if ($smarty.foreach.users.iteration % 3) == 0 && !$smarty.foreach.users.last}
@@ -169,24 +169,24 @@
       {g->text text="Gallery 2 has the following fields for all items and albums: title, summary text shown with thumbnails and description text shown in item or album view. G1 albums already have these three items (though the names of summary and description are reversed). G1 items have only a filename and caption. For items imported into G2:"}
     </p>
 
-    <table class="gbDataEntry"><tr>
+    <table class="gbDataTable"><tr>
       <td style="vertical-align:top">
 	{g->text text="Set title from:"}
       </td><td>
-	<input type="radio" id="setTitleFilename" onclick="clickit('Title')"
+	<input type="radio" id="rbTitleFilename" onclick="clickit('Title')"
 	 {if $form.set.title=="filename"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][title]"}" value="filename"/>
-	<label for="setTitleFilename"> {g->text text="Base filename"} </label>
+	<label for="rbTitleFilename"> {g->text text="Base filename"} </label>
 	<br/>
-	<input type="radio" id="setTitleCaption" onclick="clickit('Title')"
+	<input type="radio" id="rbTitleCaption" onclick="clickit('Title')"
 	 {if $form.set.title=="caption"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][title]"}" value="caption"/>
-	<label for="setTitleCaption"> {g->text text="Caption"} </label>
+	<label for="rbTitleCaption"> {g->text text="Caption"} </label>
 	<br/>
-	<input type="radio" id="setTitleCustom" onclick="clickit('Title', 1)"
+	<input type="radio" id="rbTitleCustom" onclick="clickit('Title', 1)"
 	 {if $form.set.title=="custom"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][title]"}" value="custom"/>
-	<label for="setTitleCustom"> {g->text text="Custom Field:"} </label>
+	<label for="rbTitleCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][title]"}" size="20"
 	 {if isset($form.customfield.title)}value="{$form.customfield.title}"
 	 {/if}id="customTitle" style="margin-left:0.6em"{if $form.set.title!="custom"}
@@ -195,29 +195,29 @@
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
 	<br/>
-	<input type="radio" id="setTitleBlank" onclick="clickit('Title')"
+	<input type="radio" id="rbTitleBlank" onclick="clickit('Title')"
 	 {if $form.set.title=="blank"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][title]"}" value="blank"/>
-	<label for="setTitleCustom"> {g->text text="Blank"} </label>
+	<label for="rbTitleBlank"> {g->text text="Blank"} </label>
       </td>
     </tr><tr>
       <td style="vertical-align:top">
 	{g->text text="Set summary from:"}
       </td><td>
-	<input type="radio" id="setSummaryFilename" onclick="clickit('Summary')"
+	<input type="radio" id="rbSummaryFilename" onclick="clickit('Summary')"
 	 {if $form.set.summary=="filename"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][summary]"}" value="filename"/>
-	<label for="setSummaryFilename"> {g->text text="Base filename"} </label>
+	<label for="rbSummaryFilename"> {g->text text="Base filename"} </label>
 	<br/>
-	<input type="radio" id="setSummaryCaption" onclick="clickit('Summary')"
+	<input type="radio" id="rbSummaryCaption" onclick="clickit('Summary')"
 	 {if $form.set.summary=="caption"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][summary]"}" value="caption"/>
-	<label for="setSummaryCaption"> {g->text text="Caption"} </label>
+	<label for="rbSummaryCaption"> {g->text text="Caption"} </label>
 	<br/>
-	<input type="radio" id="setSummaryCustom" onclick="clickit('Summary', 1)"
+	<input type="radio" id="rbSummaryCustom" onclick="clickit('Summary', 1)"
 	 {if $form.set.summary=="custom"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][summary]"}" value="custom"/>
-	<label for="setSummaryCustom"> {g->text text="Custom Field:"} </label>
+	<label for="rbSummaryCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][summary]"}" size="20"
 	 {if isset($form.customfield.summary)}value="{$form.customfield.summary}"
 	 {/if}id="customSummary" style="margin-left:0.6em"{if $form.set.summary!="custom"}
@@ -226,29 +226,29 @@
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
 	<br/>
-	<input type="radio" id="setSummaryBlank" onclick="clickit('Summary')"
+	<input type="radio" id="rbSummaryBlank" onclick="clickit('Summary')"
 	 {if $form.set.summary=="blank"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][summary]"}" value="blank"/>
-	<label for="setSummaryCustom"> {g->text text="Blank"} </label>
+	<label for="rbSummaryBlank"> {g->text text="Blank"} </label>
       </td>
     </tr><tr>
       <td style="vertical-align:top">
 	{g->text text="Set description from:"}
       </td><td>
-	<input type="radio" id="setDescriptionFilename" onclick="clickit('Description')"
+	<input type="radio" id="rbDescriptionFilename" onclick="clickit('Description')"
 	 {if $form.set.description=="filename"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][description]"}" value="filename"/>
-	<label for="setDescriptionFilename"> {g->text text="Base filename"} </label>
+	<label for="rbDescriptionFilename"> {g->text text="Base filename"} </label>
 	<br/>
-	<input type="radio" id="setDescriptionCaption" onclick="clickit('Description')"
+	<input type="radio" id="rbDescriptionCaption" onclick="clickit('Description')"
 	 {if $form.set.description=="caption"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][description]"}" value="caption"/>
-	<label for="setDescriptionCaption"> {g->text text="Caption"} </label>
+	<label for="rbDescriptionCaption"> {g->text text="Caption"} </label>
 	<br/>
-	<input type="radio" id="setDescriptionCustom" onclick="clickit('Description', 1)"
+	<input type="radio" id="rbDescriptionCustom" onclick="clickit('Description', 1)"
 	 {if $form.set.description=="custom"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][description]"}" value="custom"/>
-	<label for="setDescriptionCustom"> {g->text text="Custom Field:"} </label>
+	<label for="rbDescriptionCustom"> {g->text text="Custom Field:"} </label>
 	<input type="text" name="{g->formVar var="form[customfield][description]"}" size="20"
 	 {if isset($form.customfield.description)}value="{$form.customfield.description}"
 	 {/if}id="customDescription" style="margin-left:0.6em"{if $form.set.description!="custom"}
@@ -257,18 +257,18 @@
 	  <span class="giError"> {g->text text="Enter a custom field name"} </span>
 	{/if}
 	<br/>
-	<input type="checkbox" id="defaultDescription"
+	<input type="checkbox" id="cbDefaultDescription"
 	 name="{g->formVar var="form[set][defaultDescription]"}" style="margin-left:2em"
 	 {if !empty($form.set.defaultDescription)}checked="checked"
 	 {/if}{if $form.set.description!="custom"}disabled="disabled"{/if}/>
-	<label for="defaultDescription">
+	<label for="cbDefaultDescription">
 	  {g->text text="Default to same as summary if custom field not set"}
 	</label>
 	<br/>
-	<input type="radio" id="setDescriptionBlank" onclick="clickit('Description')"
+	<input type="radio" id="rbDescriptionBlank" onclick="clickit('Description')"
 	 {if $form.set.description=="blank"}checked="checked"
 	 {/if}name="{g->formVar var="form[set][description]"}" value="blank"/>
-	<label for="setDescriptionCustom"> {g->text text="Blank"} </label>
+	<label for="rbDescriptionBlank"> {g->text text="Blank"} </label>
       </td>
     </tr></table>
     <script type="text/javascript">{literal}
@@ -277,7 +277,7 @@
 	  var txt = document.getElementById('custom' + which);
 	  txt.disabled = on?0:1;
 	  if (which == 'Description') {
-	    document.getElementById('defaultDescription').disabled = on?0:1;
+	    document.getElementById('cbDefaultDescription').disabled = on?0:1;
 	  }
 	  if (on) { txt.focus(); }
 	}

@@ -6,7 +6,7 @@
  *}
 <form action="{g->url}" method="post"
       enctype="{$UserAdmin.enctype|default:"application/x-www-form-urlencoded"}">
-  <div>      
+  <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
@@ -60,12 +60,12 @@
 	  {/foreach}
 	</ul>
       </div>
-      
+
       <div class="gbBlock">
 	<h2> {g->text text="Navigation"} </h2>
 	<ul>
 	  {foreach from=$UserAdmin.navigationLinks item=link}
-	    <li> 
+	    <li>
 	      <a href="{$link.url}">
 		{$link.name}
 	      </a>

@@ -38,7 +38,7 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName('Registration');
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -73,8 +73,8 @@ class RegisterModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryEntity', 'GalleryPendingUser', 'GalleryPendingUser',
-            'modules/register/classes/GalleryPendingUser.class', 'register', null);
+	    'GalleryEntity', 'GalleryPendingUser', 'GalleryPendingUser',
+	    'modules/register/classes/GalleryPendingUser.class', 'register', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

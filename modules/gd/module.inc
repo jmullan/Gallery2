@@ -40,7 +40,7 @@ class GdModule extends GalleryModule {
 	$this->setId('gd');
 	$this->setName('Gd');
 	$this->setDescription($gallery->i18n('Gd Graphics Toolkit'));
-	$this->setVersion('0.8.8');
+	$this->setVersion('0.8.9');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -68,12 +68,12 @@ class GdModule extends GalleryModule {
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'GdToolkit', 'Gd',
-            'modules/gd/classes/GdToolkit.class', 'gd', null);
+	    'GalleryToolkit', 'GdToolkit', 'Gd',
+	    'modules/gd/classes/GdToolkit.class', 'gd', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 

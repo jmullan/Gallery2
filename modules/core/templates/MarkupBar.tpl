@@ -47,19 +47,19 @@
 {/if}
 
 <div class="gbMarkupBar">
-  <input type="button" class="inputTypeButton" value="{g->text text="B"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="B"}"
 	 onclick="javascript:openOrCloseTextElement('{$element}', 'b', this, '{g->text text="B"}')"
 	 style="font-weight: bold;"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="i"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="i"}"
 	 onclick="javascript:openOrCloseTextElement('{$element}', 'i', this, '{g->text text="i"}')"
 	 style="font-style: italic; padding-left: 1px; padding-right: 4px"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="list"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="list"}"
 	 onclick="javascript:openOrCloseTextElement('{$element}', 'list', this, '{g->text text="list"}')"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="bullet"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="bullet"}"
 	 onclick="javascript:appendTextElement('{$element}', '*', this)"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="url"}" 
+  <input type="button" class="inputTypeButton" value="{g->text text="url"}"
 	 onclick="javascript:appendUrlElement('{$element}', this)"/>
-  <input type="button" class="inputTypeButton" value="{g->text text="image"}"  
+  <input type="button" class="inputTypeButton" value="{g->text text="image"}"
 	 onclick="javascript:appendImageElement('{$element}', this)"/>
 </div>
 {/if}

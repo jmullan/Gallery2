@@ -41,7 +41,7 @@
 	    <th bgcolor="#9999CC"> Timing
 	    <th bgcolor="#9999CC"> Description
 	  </tr>
-	  
+
 	  {cycle assign=rowClass values="oddRow,evenRow"}
           {foreach from=$tests[$moduleId] item=test}
           {cycle assign=rowClass}

@@ -49,23 +49,23 @@
    name="{g->formVar var="form[items][`$item.id`][serialNumber]"}" value="{$item.serialNumber}"/>
 
   {if isset($item.thumbnail)}{strip}
-  <div class="giThumbImage" style="float: right">
+  <div style="float: right">
     <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
-      {g->image item=$item image=$item.thumbnail maxSize=150}
+      {g->image item=$item image=$item.thumbnail maxSize=150 class="giThumbnail"}
     </a>
   </div>
   {/strip}{/if}
 
   <h4> {g->text text="Title"} </h4>
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="title_`$item.id`" firstMarkupBar=$smarty.foreach.itemLoop.first}
   <input type="text" id="title_{$item.id}" size="60"
    name="{g->formVar var="form[items][`$item.id`][title]"}" value="{$item.title}"/>
 
   <h4> {g->text text="Summary"} </h4>
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="summary_`$item.id`" firstMarkupBar=false}
   <input type="text" id="summary_{$item.id}" size="60"
    name="{g->formVar var="form[items][`$item.id`][summary]"}" value="{$item.summary}"/>
@@ -75,8 +75,8 @@
    name="{g->formVar var="form[items][`$item.id`][keywords]"}">{$item.keywords}</textarea>
 
   <h4> {g->text text="Description"} </h4>
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="description_`$item.id`" firstMarkupBar=false}
   <textarea id="description_{$item.id}" rows="4" cols="60"
    name="{g->formVar var="form[items][`$item.id`][description]"}">{$item.description}</textarea>

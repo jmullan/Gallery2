@@ -28,7 +28,7 @@
   <p class="giDescription">
    {g->text text="The Registration module can accept new user registrations instantly, require the user to click a confirmation link in an email that is sent by the module, or require account activation by a site administrator."}
   </p>
-    
+
   {g->text text="Choose policy:"}
   <select name="{g->formVar var="form[confirmation]"}">
     {html_options options=$SelfRegistration.emailConfirmationList selected=$form.confirmation}

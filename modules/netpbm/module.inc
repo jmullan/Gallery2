@@ -40,7 +40,7 @@ class NetPbmModule extends GalleryModule {
 	$this->setId('netpbm');
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
-	$this->setVersion('0.8.8');
+	$this->setVersion('0.8.9');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -73,8 +73,8 @@ class NetPbmModule extends GalleryModule {
     function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'NetPbmToolkit', 'NetPBM',
-            'modules/netpbm/classes/NetPbmToolkit.class', 'netpbm', null);
+	    'GalleryToolkit', 'NetPbmToolkit', 'NetPBM',
+	    'modules/netpbm/classes/NetPbmToolkit.class', 'netpbm', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -125,7 +125,7 @@ class NetPbmModule extends GalleryModule {
 		$paths[] = $path;
 	    }
 
-            /*
+	    /*
 	     * Double-quoting the paths removes any ambiguity about the
 	     * double-slashes being escaped or not
 	     */

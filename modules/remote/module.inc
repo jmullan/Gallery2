@@ -32,7 +32,7 @@ class RemoteModule extends GalleryModule {
 	$this->setId('remote');
 	$this->setName('Remote');
 	$this->setDescription($gallery->i18n('Implementation for the remote control protocol'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -70,7 +70,7 @@ class RemoteModule extends GalleryModule {
 		}
 	    }
 	}
- 
+
 	return GalleryStatus::success();
     }
 
@@ -80,8 +80,8 @@ class RemoteModule extends GalleryModule {
     function performFactoryRegistrations() {
 	/* Register our item add plugins */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemAddPlugin', 'ItemAddGalleryRemote', 'ItemAddGalleryRemote',
-            'modules/remote/ItemAddGalleryRemote.inc', 'remote', null);
+	    'ItemAddPlugin', 'ItemAddGalleryRemote', 'ItemAddGalleryRemote',
+	    'modules/remote/ItemAddGalleryRemote.inc', 'remote', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -40,7 +40,7 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName('Panorama');
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -71,29 +71,30 @@ class PanoramaModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
-            'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);
+	    'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
+	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryEntity', 'PanoramaPhotoItem', 'PanoramaPhotoItem',
-            'modules/panorama/classes/PanoramaPhotoItem.class', 'panorama', null);
+	    'GalleryEntity', 'PanoramaPhotoItem', 'PanoramaPhotoItem',
+	    'modules/panorama/classes/PanoramaPhotoItem.class', 'panorama', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryDerivative', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
-            'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', array('PanoramaPhotoItem'));
+	    'GalleryDerivative', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
+	    'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama',
+	    array('PanoramaPhotoItem'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemEditOption', 'PanoramaOption', 'PanoramaOption',
-            'modules/panorama/PanoramaOption.inc', 'panorama', array('ItemEditPhoto'));
+	    'ItemEditOption', 'PanoramaOption', 'PanoramaOption',
+	    'modules/panorama/PanoramaOption.inc', 'panorama', array('ItemEditPhoto'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -172,8 +173,8 @@ class PanoramaModule extends GalleryModule {
 		$width = $image->getWidth();
 		/* Applet supports jpeg and gif images */
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
-		        !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
-		        preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
+			!GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
+			preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
 			$width > $param['width'] &&
 			($image->getHeight() / $width < 0.6)) {
 		    $links[$item->getId()][] =

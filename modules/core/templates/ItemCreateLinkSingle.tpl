@@ -20,7 +20,7 @@
   <p class="giDescription">
     {g->text text="Choose a destination album"}
   </p>
-     
+
   <select name="{g->formVar var="form[destination]"}"
    onchange="javascript:checkPermissions(this.form)">
     {foreach from=$ItemCreateLinkSingle.albumTree item=album}
@@ -37,7 +37,7 @@
   </div>
   {/if}
 </div>
-   
+
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>

@@ -42,7 +42,7 @@ class MatrixLayout extends GalleryLayout {
 	$this->setId('matrix');
 	$this->setName('Matrix');
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setL10Domain('layouts_matrix');
 	$this->setRequiredLayoutApi(array(0, 9));
 	$this->setRequiredCoreApi(array(4, 0));
@@ -196,6 +196,7 @@ class MatrixLayout extends GalleryLayout {
 	} else {
 	    $template->head('layouts/matrix/templates/head.tpl');
 	    $template->style('templates/layout.css');
+	    $template->style('layouts/matrix/layout.css');
 	    return array(GalleryStatus::success(), array('body' => $bodyFile));
 	}
     }

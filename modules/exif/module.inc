@@ -40,7 +40,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8.8');
+	$this->setVersion('0.8.9');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -78,7 +78,7 @@ class ExifModule extends GalleryModule {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 	    case '0.8.4':
 	    case '0.8.5':
 	    case '0.8.6':
@@ -95,25 +95,25 @@ class ExifModule extends GalleryModule {
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
-            'modules/exif/classes/ExifExtractor.class', 'exif', null);
+	    'modules/exif/classes/ExifExtractor.class', 'exif', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'ExifToolkit', 'Exif',
-            'modules/exif/classes/ExifToolkit.class', 'exif', null);
+	    'GalleryToolkit', 'ExifToolkit', 'Exif',
+	    'modules/exif/classes/ExifToolkit.class', 'exif', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddOption',
 	    'ExifDescriptionOption', 'ExifDescriptionOption',
-            'modules/exif/ExifDescriptionOption.inc', 'exif', null);
+	    'modules/exif/ExifDescriptionOption.inc', 'exif', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 

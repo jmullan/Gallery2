@@ -30,11 +30,11 @@
   </p>
   <table class="gbDataTable"><tr>
     <td>
-      <label for="new">
+      <label for="txtNew">
 	{g->text text="New:"}
       </label>
     </td><td>
-      <input type="text" id="new" size="5"
+      <input type="text" id="txtNew" size="5"
        name="{g->formVar var="form[days][new]"}" value="{$form.days.new}"/>
 
       {if isset($form.error.new)}
@@ -45,11 +45,11 @@
     </td>
   </tr><tr>
     <td>
-      <label for="updated">
+      <label for="txtUpdated">
 	{g->text text="Updated:"}
       </label>
     </td><td>
-      <input type="text" id="updated" size="5"
+      <input type="text" id="txtUpdated" size="5"
        name="{g->formVar var="form[days][updated]"}" value="{$form.days.updated}"/>
 
       {if isset($form.error.updated)}

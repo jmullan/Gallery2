@@ -35,7 +35,7 @@
       {$item.name}
     </td><td>
       {g->image item=$item image=$item maxSize=150}
-    </td><td> 
+    </td><td>
       <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditUser"
        arg3="userId=`$item.ownerId`"}">
 	{$WatermarkSiteAdmin.owners[$item.ownerId].fullName|default:$WatermarkSiteAdmin.owners[$item.ownerId].userName}

@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName('URL Rewrite');
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -65,7 +65,7 @@ class RewriteModule extends GalleryModule {
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 		'GalleryUrlGenerator', 'RewriteUrlGenerator', 'RewriteUrlGenerator',
-        	'modules/rewrite/classes/RewriteUrlGenerator.class', 'rewrite', null, 2);
+		'modules/rewrite/classes/RewriteUrlGenerator.class', 'rewrite', null, 2);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

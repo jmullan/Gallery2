@@ -75,9 +75,9 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	static $simpleFrames;
 	if (!isset($simpleFrames)) {
 	    $simpleFrames = array(
-		'none' => array('type' => 'style', 'style' => 'border:none'),
+		'none' => array('type' => 'style', 'style' => 'border-style: none'),
 		'solid' => array('type' => 'style',
-				 'style' => 'border:thin solid black !important'));
+				 'style' => 'border: 1px solid black !important'));
 	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $templateAdapter->register_block('imageframe', array($this, 'renderImageFrame'));
 	    $template->setVariable('ImageFrameData', array());

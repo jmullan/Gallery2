@@ -11,7 +11,7 @@
 <div class="gbBlock">
   <h2 class="giSuccess">
   {if ($ImportResults.counts.userImportSuccess)}
-    {g->text one="Successfully imported %d user." many="Successfully imported %d users." 
+    {g->text one="Successfully imported %d user." many="Successfully imported %d users."
 	     count=$ImportResults.counts.userImportSuccess
              arg1=$ImportResults.counts.userImportSuccess}
   {else}
@@ -34,7 +34,7 @@
 <div class="gbBlock">
   <h2 class="giError">
   {if ($ImportResults.counts.userImportFailure)}
-    {g->text one="Error while importing %d user." many="Errors while importing %d users." 
+    {g->text one="Error while importing %d user." many="Errors while importing %d users."
 	     count=$ImportResults.counts.userImportFailure
 	     arg1=$ImportResults.counts.userImportFailure}
   {/if}
@@ -53,7 +53,7 @@
 <div class="gbBlock">
   <h2 class="giSuccess">
     {if ($ImportResults.counts.albumImportSuccess)}
-      {g->text one="Successfully imported %d album." many="Successfully imported %d albums." 
+      {g->text one="Successfully imported %d album." many="Successfully imported %d albums."
 	       count=$ImportResults.counts.albumImportSuccess
 	       arg1=$ImportResults.counts.albumImportSuccess}
     {else}
@@ -76,7 +76,7 @@
 <div class="gbBlock">
   <h2 class="giError">
     {if ($ImportResults.counts.albumImportFailure)}
-      {g->text one="Error while importing %d album." many="Errors while importing %d albums." 
+      {g->text one="Error while importing %d album." many="Errors while importing %d albums."
 	       count=$ImportResults.counts.albumImportFailure
 	       arg1=$ImportResults.counts.albumImportFailure}
     {/if}

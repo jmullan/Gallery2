@@ -83,7 +83,7 @@
     <input type="hidden" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}"/>
     <br/>
 
-    {g->text one="%d url found" many="%d urls found" 
+    {g->text one="%d url found" many="%d urls found"
 	     count=$ItemAddFromWeb.webPageUrlCount arg1=$ItemAddFromWeb.webPageUrlCount}
 
     <table class="gbDataTable" style="margin-top: 0.5em"><tr>
@@ -109,7 +109,7 @@
       </th>
       <th colspan="2">
 	{g->text text="(Un)check all"}
-      </th>     
+      </th>
     </tr></table>
   </div>
 
@@ -118,19 +118,19 @@
       {g->text text="Copy base filenames to:"}
       <br/>
 
-      <input type="checkbox" id="setTitle"{if $form.set.title} checked="checked"{/if}
+      <input type="checkbox" id="cbTitle"{if $form.set.title} checked="checked"{/if}
        name="{g->formVar var="form[set][title]"}"/>
-      <label for="setTitle"> {g->text text="Title"} </label>
+      <label for="cbTitle"> {g->text text="Title"} </label>
       &nbsp;
 
-      <input type="checkbox"{if $form.set.summary} checked="checked"{/if}
+      <input type="checkbox" id="cbSummary"{if $form.set.summary} checked="checked"{/if}
        name="{g->formVar var="form[set][summary]"}"/>
-      <label for="setSummary"> {g->text text="Summary"} </label>
+      <label for="cbSummary"> {g->text text="Summary"} </label>
       &nbsp;
 
-      <input type="checkbox"{if $form.set.description} checked="checked"{/if}
+      <input type="checkbox" id="cbDescription"{if $form.set.description} checked="checked"{/if}
        name="{g->formVar var="form[set][description]"}"/>
-      <label for="setDescription"> {g->text text="Description"} </label>
+      <label for="cbDescription"> {g->text text="Description"} </label>
     </p>
 
     {capture name="submitButtons"}
@@ -147,7 +147,7 @@
     {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
   {/foreach}
 {/if}
-  
+
 <div class="gbBlock gcBackground1">
   {$smarty.capture.submitButtons}
 </div>

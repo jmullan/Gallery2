@@ -47,7 +47,7 @@
   {/if}
 
   {if ($AdminLayouts.mode == 'defaults')}
-    <li class="giSelectedTab"><span>
+    <li class="giSelected"><span>
       {g->text text="Defaults"}
     </span></li>
   {else}
@@ -60,7 +60,7 @@
   {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
   {if $layout.active}
     {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
-      <li class="giSelectedTab"><span>
+      <li class="giSelected"><span>
 	{g->text text=$layout.name l10Domain=$layout.l10Domain}
       </span></li>
     {else}

@@ -9,9 +9,9 @@
 
   <p class="giDescription">
   {if isset($CustomThumbnailOption.thumbnail)}
-    <input type="checkbox" id="CustomThumbnailOption.delete"
+    <input type="checkbox" id="CustomThumbnailOption_delete"
 	   name="{g->formVar var="form[CustomThumbnailOption][delete]"}"/>
-    <label for="CustomThumbnailOption.delete">
+    <label for="CustomThumbnailOption_delete">
       {g->text text="Remove custom thumbnail for this item"}
     </label>
   </p>

@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.81.6');
+	$this->setVersion('0.81.7');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
@@ -62,7 +62,7 @@ class CommentModule extends GalleryModule {
 				   0, array());
 	    $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
 	    $permissions[] = array('all', $gallery->i18n('[comment] All access'),
-                GALLERY_PERMISSION_COMPOSITE,
+		GALLERY_PERMISSION_COMPOSITE,
 		array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
 	    $permissions[] = array('search', $gallery->i18n('[comment] Search comments'),
 		GALLERY_PERMISSION_COMPOSITE,
@@ -85,15 +85,15 @@ class CommentModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryEntity', 'GalleryComment', 'GalleryComment',
-            'modules/comment/classes/GalleryComment.class', 'comment', null);
+	    'GalleryEntity', 'GalleryComment', 'GalleryComment',
+	    'modules/comment/classes/GalleryComment.class', 'comment', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GallerySearchInterface_1_0', 'GalleryCommentSearch', 'comment',
-            'modules/comment/classes/GalleryCommentSearch.class', 'comment', null);
+	    'GallerySearchInterface_1_0', 'GalleryCommentSearch', 'comment',
+	    'modules/comment/classes/GalleryCommentSearch.class', 'comment', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -283,14 +283,14 @@ class CommentModule extends GalleryModule {
 	}
 
 	if (isset($permissions['comment.add'])) {
-	        $views[] = array('name' => $this->translate('Add Comment'),
+		$views[] = array('name' => $this->translate('Add Comment'),
 				 'view' => 'comment:AddComment');
 	}
 
 	if (isset($permissions['comment.edit']) ||
 	    isset($permissions['comment.delete']) ||
 	    isset($permissions['comment.view'])) {
-	        $views[] = array('name' => $this->translate('View Comments'),
+		$views[] = array('name' => $this->translate('View Comments'),
 				 'view' => 'comment:ShowComments');
 	}
 

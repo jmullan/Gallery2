@@ -5,11 +5,11 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {if !empty($CustomFieldItemDetails.fields)}
-<div class="gbCustomFields">
-  <h2 class="giTitle"> {g->text text="Custom Fields"} </h2>
-  <span class="giDescription">
+<div id="gsCustomFields" class="gbBlock">
+  <h3> {g->text text="Custom Fields"} </h3>
+  <p class="giDescription">
     {foreach from=$CustomFieldItemDetails.fields key=field item=value}{$field}: {$value}<br/>
     {/foreach}
-  </span>
+  </p>
 </div>
 {/if}

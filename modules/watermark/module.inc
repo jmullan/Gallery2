@@ -40,7 +40,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.8.8');
+	$this->setVersion('0.8.9');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -52,22 +52,22 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryEntity', 'WatermarkImage', 'WatermarkImage',
-            'modules/watermark/classes/WatermarkImage.class', 'watermark', null);
+	    'GalleryEntity', 'WatermarkImage', 'WatermarkImage',
+	    'modules/watermark/classes/WatermarkImage.class', 'watermark', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemEditPlugin', 'ItemEditWatermark', 'ItemEditWatermark',
-            'modules/watermark/ItemEditWatermark.inc', 'watermark', null);
+	    'ItemEditPlugin', 'ItemEditWatermark', 'ItemEditWatermark',
+	    'modules/watermark/ItemEditWatermark.inc', 'watermark', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemAddOption', 'WatermarkOption', 'WatermarkOption',
-            'modules/watermark/WatermarkOption.inc', 'watermark', null);
+	    'ItemAddOption', 'WatermarkOption', 'WatermarkOption',
+	    'modules/watermark/WatermarkOption.inc', 'watermark', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

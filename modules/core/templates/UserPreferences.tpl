@@ -38,7 +38,7 @@
       {/if}
       </span>
     </h4>
-      
+
     <input type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
 
     {if isset($form.error.email.missing)}
@@ -52,7 +52,7 @@
     </div>
     {/if}
   </div>
-      
+
   {if $UserPreferences.translationsSupported}
   <div>
     <h4> {g->text text="Language"} </h4>

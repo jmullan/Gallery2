@@ -7,10 +7,10 @@
 <div class="gbBlock">
   <h3> {g->text text="Random Highlight"} </h3>
 
-  <input type="checkbox" id="isRandomHighlight"
+  <input type="checkbox" id="RandomHighlight_cb"
    name="{g->formVar var="form[RandomHighlightOption][isRandomHighlight]"}"
    {if $form.RandomHighlightOption.isRandomHighlight}checked="checked"{/if}/>
-  <label for="isRandomHighlight">
+  <label for="RandomHighlight_cb">
     {g->text text="Activate random highlight for this album"}
   </label>
 </div>

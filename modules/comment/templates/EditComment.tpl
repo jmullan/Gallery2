@@ -27,16 +27,16 @@
   <input type="hidden" name="{g->formVar var="commentId"}" value="{$EditComment.comment.id}"/>
   <input type="text" name="{g->formVar var="form[commenterName]"}" value="{$form.commenterName}"/>
 
-  {if isset($form.error.commenterName.missing)} 
+  {if isset($form.error.commenterName.missing)}
   <div class="giError">
     {g->text text="You must enter a username."}
   </div>
-  {/if} 
-  {if isset($form.error.commenterName.invalid)} 
+  {/if}
+  {if isset($form.error.commenterName.invalid)}
   <div class="giError">
     {g->text text="The username you entered is invalid."}
   </div>
-  {/if} 
+  {/if}
 
   <h4> {g->text text="Host"} </h4>
   <input type="text" name="{g->formVar var="form[host]"}" value="{$form.host}"/>
@@ -48,24 +48,24 @@
 
   <input type="text" name="{g->formVar var="form[date]"}" value="{$form.date}"/>
 
-  {if isset($form.error.date.invalid)} 
+  {if isset($form.error.date.invalid)}
   <div class="giError">
     {g->text text="The date you entered is invalid."}
   </div>
-  {/if} 
-  {if isset($form.error.date.missing)} 
+  {/if}
+  {if isset($form.error.date.missing)}
   <div class="giError">
     {g->text text="You must enter a date"}
   </div>
-  {/if} 
+  {/if}
 
   <h4>
     {g->text text="Subject"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="subject" firstMarkupBar=true}
 
   <input type="text" id="subject" size="60" class="gcBackground1"
@@ -76,30 +76,30 @@
     document.forms[0]['{g->formVar var="form[subject]"}'].focus();
   </script>
 
-  {if isset($form.error.subject.missing)} 
+  {if isset($form.error.subject.missing)}
   <div class="giError">
     {g->text text="You must enter a subject"}
   </div>
-  {/if} 
+  {/if}
 
   <h4>
     {g->text text="Comment"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="comment"}
 
   <textarea rows="15" cols="60" id="comment" class="gcBackground1"
    name="{g->formVar var="form[comment]"}"
    onfocus="this.className=''" onblur="this.className='gcBackground1'">{$form.comment}</textarea>
 
-  {if isset($form.error.comment.missing)} 
+  {if isset($form.error.comment.missing)}
   <div class="giError">
     {g->text text="You must enter a comment"}
   </div>
-  {/if} 
+  {/if}
 </div>
 
 <div class="gbBlock gcBackground1">

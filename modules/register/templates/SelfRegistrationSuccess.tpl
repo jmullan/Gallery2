@@ -30,7 +30,7 @@
       {g->text text="You can now"}
       <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin"}">
 	{g->text text="login"}
-      </a> 
+      </a>
       {g->text text="to your account with your username and password."}
   </p>
 {else}
@@ -46,6 +46,6 @@
     {/strip}{/capture}
     {g->text text="This page has been requested before and can only be called once. Probable you have hit the Reload button. Please proceed to %s." arg1=$smarty.capture.loginLink}
   </p>
-  
+
 {/if}
 </div>

@@ -9,37 +9,32 @@
 </div>
 
 <div class="gbBlock">
-  <div>
-    <h4>
-      {g->text text="Username"}
-      <span class="giSubtitle"> {g->text text="(required)"} </span>
-    </h4>
+  <h4>
+    {g->text text="Username"}
+    <span class="giSubtitle"> {g->text text="(required)"} </span>
+  </h4>
 
-    <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
-    <input type="text" id="giFormUsername" size="30"
-     name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
+  <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
+  <input type="text" id="giFormUsername" size="30"
+   name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
 
-    {if isset($form.error.userName.duplicate)}
-    <div class="giError">
-      {g->text text="That username is already in use"}
-    </div>
-    {/if}
-    {if isset($form.error.userName.missing)}
-    <div class="giError">
-      {g->text text="You must enter a new username"}
-    </div>
-    {/if}
+  {if isset($form.error.userName.duplicate)}
+  <div class="giError">
+    {g->text text="That username is already in use"}
   </div>
-
-  <div>
-    <h4> {g->text text="Full Name"} </h4>
-
-    <input type="text" size="32"
-     name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
+  {/if}
+  {if isset($form.error.userName.missing)}
+  <div class="giError">
+    {g->text text="You must enter a new username"}
   </div>
+  {/if}
+
+  <h4> {g->text text="Full Name"} </h4>
+
+  <input type="text" size="32"
+   name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
 
   {if $AdminEditUser.show.email}
-  <div>
     <h4>
       {g->text text="E-mail Address"}
       <span class="giSubtitle"> {g->text text="(suggested)"} </span>
@@ -57,21 +52,17 @@
       {g->text text="Invalid email address"}
     </div>
     {/if}
-  </div>
   {/if}
 
   {if $AdminEditUser.show.language}
-  <div>
     <h4> {g->text text="Language"} </h4>
 
     <select name="{g->formVar var="form[language]"}">
       {html_options options=$AdminEditUser.languageList selected=$form.language}
     </select>
-  </div>
   {/if}
 
   {if $AdminEditUser.show.password}
-  <div class="gbDataEntry">
     <h4>
       {g->text text="Password"}
       <span class="giSubtitle"> {g->text text="(required)"} </span>
@@ -84,9 +75,7 @@
       {g->text text="You must enter a password"}
     </div>
     {/if}
-  </div>
 
-  <div>
     <h4>
       {g->text text="Verify Password"}
       <span class="giSubtitle"> {g->text text="(required)"} </span>
@@ -104,7 +93,6 @@
       {g->text text="The passwords you entered did not match"}
     </div>
     {/if}
-  </div>
   {/if}
 </div>
 

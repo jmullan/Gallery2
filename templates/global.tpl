@@ -22,10 +22,10 @@
     {* Content that G2 wants to display inside the <head> element *}
     {g->head}
   </head>
-  <body style="margin: 0; padding: 0;">
+  <body class="gallery">
     <div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>
       <div id="gsHeader">
-        <img src="{g->url href="images/galleryLogo_sm.gif"}" alt="" />
+        <img src="{g->url href="images/galleryLogo_sm.gif"}" alt=""/>
       </div>
 
       {* Content that G2 wants to display inside the <body> element *}
@@ -35,13 +35,13 @@
 	<a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img
 	  src="{g->url href="images/xhtml10.png"}"
 	  alt="{g->text text="This page is valid XHTML 1.0"}"
-	  style="border: none" width="80" height="15"/></a>
+	  style="border-style: none" width="80" height="15"/></a>
 
 	<a href="http://gallery.sourceforge.net"><img
 	  src="{g->url href="images/gallery.gif"}"
 	  alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  title="{g->text text="Gallery %s" arg1=$main.gallery.version}"
-	  style="border: none" width="80" height="15"/></a>
+	  style="border-style: none" width="80" height="15"/></a>
       </div>
     </div>
 

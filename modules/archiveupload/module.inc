@@ -41,7 +41,7 @@ class ArchiveUploadModule extends GalleryModule {
 	$this->setId('archiveupload');
 	$this->setName('Archive Upload');
 	$this->setDescription($gallery->i18n('Extract items from uploaded zip files'));
-	$this->setVersion('0.4.1');
+	$this->setVersion('0.4.2');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -154,22 +154,22 @@ class ArchiveUploadModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-            
+
     /**
      * @see GalleryModule::deactivate()
-     */  
+     */
     function deactivate() {
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-         
+
 	/* Unregister all of our properties and operations */
 	$ret = GalleryCoreApi::unregisterToolkit('ArchiveUpload');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-        
+
 	return array(GalleryStatus::success(), $redirect);
     }
 

@@ -18,7 +18,7 @@
 <table width="100%" cellspacing="0" cellpadding="0">
   <colgroup width="1*,*"/>
   <tr valign="top"><td>
-    {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	
+    {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}
   </td><td>
 
   <div id="gsContent" class="gcBorder1">
@@ -35,7 +35,7 @@
 	  <input type="hidden"
 	   name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
 	  <input type="hidden"
-	   name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/> 	
+	   name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
 	  {if ($form.list.page > 1)}
 	    <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=1"}">
@@ -80,7 +80,7 @@
 	<th> {g->text text="Full Name"} </th>
 	<th> {g->text text="Member Since"} </th>
       </tr>
-    
+
       {foreach from=$MembersList.users item=user name=MembersListLoop}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>

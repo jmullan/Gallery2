@@ -48,7 +48,7 @@
       </form>
     </div>
     <?php endif; ?>
-    
+
     <script type="text/javascript">
       examplesVisible = false;
       function toggleFilterExamples() {
@@ -78,7 +78,7 @@
         modulesListingVisible = !modulesListingVisible;
       }
     </script>
-	
+
     <h2>Filter</h2>
     <div class="section">
       <form>
@@ -89,11 +89,11 @@
 	<input style="margin-top: 0.3em; margin-bottom: 0.3em" type="text" name="filter" size="60" value="<?php echo $displayFilter ?>" />
 
 	<br/>
-        <span id="filter_examples_toggle" 
-          href="#" 
+        <span id="filter_examples_toggle"
+          href="#"
           onclick="toggleFilterExamples()">
           Help/Examples
-          <span id="filter_examples_toggle_indicator" 
+          <span id="filter_examples_toggle_indicator"
             style="padding-left: .3em; padding-right: 0.3em; border: solid #a6caf0; border-width: 1px; background: #eee">
             +
           </span>
@@ -101,9 +101,9 @@
 
         <div id="help_and_examples" style="display: none">
          <br/>
-	  Enter a regular expression string to restrict testing to classes containing 
-          that text in their class name or test method.  If you use an exclamation before a 
-          module/class/test name(s) encapsulated in parenthesis and separated with bars, this will 
+	  Enter a regular expression string to restrict testing to classes containing
+          that text in their class name or test method.  If you use an exclamation before a
+          module/class/test name(s) encapsulated in parenthesis and separated with bars, this will
           exclude the matching tests. Use ":#-#" to restrict which matching tests are actually run.
           You can also specify multiple spans with ":#-#,#-#,#-#".
 
@@ -146,14 +146,14 @@
       </form>
     </div>
 
-    <h2> 
+    <h2>
       Modules
     </h2>
 
     <div class="section" style="width: 100%">
       <?php
       $activeCount = 0;
-      foreach ($moduleStatusList as $moduleId => $moduleStatus) { 
+      foreach ($moduleStatusList as $moduleId => $moduleStatus) {
         if (!empty($moduleStatus['active'])) {
           $activeCount++;
         }
@@ -165,7 +165,7 @@
       </span>
       <br/>
       <table cellspacing="1" cellpadding="1" border="0"
-        width="800" align="center" class="details" 
+        width="800" align="center" class="details"
         id="modules_listing"
         style="display: none">
         <tr>
@@ -185,10 +185,10 @@
             <?php print !empty($moduleStatus['available']) ? "installed" : "not available" ?>
           </td>
         </tr>
-        <?php endforeach; ?> 
+        <?php endforeach; ?>
       </table>
     </div>
-	
+
     <?php
     $result = new PrettyTestResult();
     $testSuite->run($result, $range);

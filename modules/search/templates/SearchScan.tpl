@@ -36,7 +36,7 @@
       function setCheck(val) {ldelim}
 	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
 	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	    document.getElementById('cb.{$moduleId}.{$optionId}').checked = val;
+	    document.getElementById('cb_{$moduleId}_{$optionId}').checked = val;
 	  {/foreach}
 	{/foreach}
       {rdelim}
@@ -45,7 +45,7 @@
 	var o;
 	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
 	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	    o = document.getElementById('cb.{$moduleId}.{$optionId}'); o.checked = !o.checked;
+	    o = document.getElementById('cb_{$moduleId}_{$optionId}'); o.checked = !o.checked;
 	  {/foreach}
 	{/foreach}
       {rdelim}
@@ -67,10 +67,10 @@
       <div style="margin: 0.5em 0">
 	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
 	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	  <input type="checkbox" id="cb.{$moduleId}.{$optionId}"
+	  <input type="checkbox" id="cb_{$moduleId}_{$optionId}"
 	   name="{g->formVar var="form[options][$moduleId][$optionId]"}"
 	   {if isset($form.options.$moduleId.$optionId)}checked="checked"{/if}/>
-	  <label for="cb.{$moduleId}.{$optionId}">
+	  <label for="cb_{$moduleId}_{$optionId}">
 	    {$optionInfo.description}
 	  </label>
 	  {/foreach}

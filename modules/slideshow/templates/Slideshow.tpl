@@ -16,8 +16,8 @@
 {foreach from=$SlideShow.itemList key=i item=it}
 <div style="visibility:hidden;position:absolute">
   {foreach from=$it.sources key=j item=source}
-    <a id="item_{$i}_{$j}" 
-     href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$source.id`" 
+    <a id="item_{$i}_{$j}"
+     href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$source.id`"
 		   arg3="serialNumber=`$source.serialNumber`"}"></a>
   {/foreach}
 
@@ -150,7 +150,7 @@
 
 <div style="float:left">
   <a onclick="tools_onoff();return false">
-    <span id="tools" class="breadcrumb_item" style="margin:0;padding:0">
+    <span id="tools" style="margin:0;padding:0">
       {g->text text="[-]"}
     </span>
   </a>

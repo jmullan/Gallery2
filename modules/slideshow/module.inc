@@ -37,7 +37,7 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName('Slideshow');
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -50,7 +50,7 @@ class SlideshowModule extends GalleryModule {
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'SlideshowInterface_1_0', 'SlideshowImpl', 'Slideshow',
-            'modules/slideshow/classes/SlideshowImpl.class', 'slideshow', null);
+	    'modules/slideshow/classes/SlideshowImpl.class', 'slideshow', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

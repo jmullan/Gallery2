@@ -32,7 +32,7 @@ class UploadAppletModule extends GalleryModule {
 	$this->setId('uploadapplet');
 	$this->setName('Upload Applet');
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -44,8 +44,8 @@ class UploadAppletModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemAddPlugin', 'ItemAddUploadApplet', 'ItemAddUploadApplet',
-            'modules/uploadapplet/ItemAddUploadApplet.inc', 'uploadapplet', null);
+	    'ItemAddPlugin', 'ItemAddUploadApplet', 'ItemAddUploadApplet',
+	    'modules/uploadapplet/ItemAddUploadApplet.inc', 'uploadapplet', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

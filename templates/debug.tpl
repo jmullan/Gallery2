@@ -10,16 +10,10 @@
  * You shouldn't have to modify this page unless you're a G2 developer.
  *}
 <div id="gpDebug">
-  <div class="giTitle">
-      {g->text text="Gallery Debug Output"} 
-  </div>
+  <h3> {g->text text="Gallery Debug Output"} </h3>
 
   {if isset($main.debug)}
-  <span>
-      <pre>
-      {$main.debug}
-      </pre>
-  </span>
+    <pre>{$main.debug}</pre>
   {/if}
 
   {if isset($main.profile)}

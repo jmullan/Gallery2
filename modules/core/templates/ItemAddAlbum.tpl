@@ -53,8 +53,8 @@
     {g->text text="This is the album title."}
   </p>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="title" firstMarkupBar=true}
 
   <input type="text" id="title" size="40"
@@ -65,8 +65,8 @@
     {g->text text="This is the album summary."}
   </p>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="summary"}
 
   <input type="text" id="summary" size="40"
@@ -85,8 +85,8 @@
     {g->text text="This is the long description of the album."}
   </p>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="description"}
 
   <textarea id="description" rows="4" cols="60"

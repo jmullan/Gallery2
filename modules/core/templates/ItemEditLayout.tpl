@@ -14,7 +14,7 @@
   {include file="gallery:`$ItemEditLayout.customTemplate`"
 	   l10Domain=$ItemEditLayout.layout.l10Domain}
 
-{else}  
+{else}
   {if !empty($ItemEditLayout.settings)}
   <table class="gbDataTable"><tr>
     <th> {g->text text="Setting"} </th>
@@ -38,7 +38,7 @@
 	  </select>
 	{elseif ($setting.type == 'checkbox')}
 	  <input type="checkbox" onchange="javascript:changeSetting('{$settingKey}')"
-	   name="{g->formVar var="form[key][$settingKey]"}" 
+	   name="{g->formVar var="form[key][$settingKey]"}"
 	   {if !empty($setting.value)}checked="checked"{/if}/>
 	{/if}
       </td>

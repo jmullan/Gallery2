@@ -30,7 +30,7 @@
       {/foreach}
 
       <li {if empty($ItemAdmin.parents)}class="firstChild"{/if}>
-	<a href="{g->url arg1="view=core:ShowItem" 
+	<a href="{g->url arg1="view=core:ShowItem"
 	   arg2="itemId=`$ItemAdmin.item.id`"}">{$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup}</a>
       </li>
     </ul>
@@ -70,7 +70,7 @@
 	<h2> {g->text text="Navigation"} </h2>
 	<ul>
 	  {foreach from=$ItemAdmin.navigationLinks item=link}
-	    <li> 
+	    <li>
 	      <a href="{$link.url}">
 		{$link.name}
 	      </a>

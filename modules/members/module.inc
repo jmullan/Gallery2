@@ -38,7 +38,7 @@ class MembersModule extends GalleryModule {
 	$this->setId('members');
 	$this->setName('Members');
 	$this->setDescription($gallery->i18n('Members List and Profiles'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('loadSystemContent|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -87,9 +87,9 @@ class MembersModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-        return array(GalleryStatus::success(),
-	             array(array('name' => $this->translate('Members'),
-		                 'view' => 'members:AdminMembers')));
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Members'),
+				 'view' => 'members:AdminMembers')));
     }
 
     /**
@@ -105,17 +105,18 @@ class MembersModule extends GalleryModule {
 	}
 
 	/* The "Members List" link */
-        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
-        list ($ret, $canView) = GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-        if ($ret->isError()) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
+	list ($ret, $canView) =
+	    GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$links = array();
-        if ($canView) {
+	if ($canView) {
 	    $links[] = array('text' => $this->translate('Members List'),
-                             'params' => array('view' => 'members:MembersList',
+			     'params' => array('view' => 'members:MembersList',
 					       'return' => true));
-        }
+	}
 	$MembersSystemContent['links'] = $links;
 
 	/* The members count */

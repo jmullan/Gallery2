@@ -38,17 +38,17 @@
 	  {$MembersProfile.user.fullName}
 	</td>
       </tr>
-  
-      {if $MembersProfile.canViewProfileEmail}	
+
+      {if $MembersProfile.canViewProfileEmail}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
 	  {g->text text="E-mail:"}
 	</td><td>
-	  {if sizeof($MembersProfile.user.email)} 
+	  {if sizeof($MembersProfile.user.email)}
 	    {mailto address=$MembersProfile.user.email encode="hex"}
 	  {else}
 	    {g->text text="None"}
-	  {/if}        
+	  {/if}
 	</td>
       </tr>
       {/if}
@@ -62,8 +62,8 @@
 	    {g->text one="(%d day)" many="(%d days)"
                    count=$MembersProfile.daysSinceCreation arg1=$MembersProfile.daysSinceCreation}
 	  {elseif $MembersProfile.daysSinceCreation == 0}
-	    {g->text text="(today)"}                
-	  {/if}                 
+	    {g->text text="(today)"}
+	  {/if}
 	</td>
       </tr>
 

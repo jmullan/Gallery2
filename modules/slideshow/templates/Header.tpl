@@ -15,8 +15,8 @@
     //<![CDATA[
     var agent = navigator.userAgent.toLowerCase();
     var appver = parseInt(navigator.appVersion);
-    var bCanBlend = (agent.indexOf('msie') != -1) && (agent.indexOf('opera') == -1) && 
-                    (appver >= 4) && (agent.indexOf('msie 4') == -1) && 
+    var bCanBlend = (agent.indexOf('msie') != -1) && (agent.indexOf('opera') == -1) &&
+                    (appver >= 4) && (agent.indexOf('msie 4') == -1) &&
                     (agent.indexOf('msie 5.0') == -1);
     var filterNames = new Array(16), filters = new Array(16);
     filterNames[0] = '{g->text text="Blend" forJavascript="1"}';

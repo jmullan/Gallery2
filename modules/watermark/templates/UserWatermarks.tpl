@@ -44,7 +44,7 @@
     </td><td>
       {g->image item=$item image=$item maxSize=150}
     </td><td>
-      <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=watermark:UserWatermarkEdit" 
+      <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=watermark:UserWatermarkEdit"
        arg3="itemId=`$item.id`"}">
 	{g->text text="edit"}
       </a>

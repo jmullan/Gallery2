@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="Register As New User"} </h2> 
+  <h2> {g->text text="Register As New User"} </h2>
 </div>
 
 <div class="gbBlock">
@@ -28,7 +28,7 @@
   {/if}
 
   <h4>
-    {g->text text="Full Name"} 
+    {g->text text="Full Name"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
@@ -41,7 +41,7 @@
   {/if}
 
   <h4>
-    {g->text text="Email Address"} 
+    {g->text text="Email Address"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
@@ -62,11 +62,11 @@
       <h4> {g->text text="Language"} </h4>
       <select name="g->formVar var="form[language]"}">
 	{html_options options=$AdminCreateUser.languageList selected=$form.language}
-      </select>	
+      </select>
     {/if}
 
   <h4>
-    {g->text text="Password"} 
+    {g->text text="Password"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
@@ -79,7 +79,7 @@
   {/if}
 
   <h4>
-    {g->text text="Verify Password"} 
+    {g->text text="Verify Password"}
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 

@@ -1,4 +1,7 @@
-/** Temporary file for new CSS until all views are converted **/
+/* ********************************************************************************
+ * Blue version of Matrix Theme
+ * by Alan Harder
+ */
 
 /* ********************************************************************************
  * Building blocks
@@ -17,38 +20,41 @@
 #gallery {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 62.5%;
-    color: #333;
-    background-color: #fff;
+    color: #000;
+    background-color: #babaf8;
+}
+body.gallery {
+    background-color: #babaf8;
 }
 
 .gcBackground1 {
-    background-color: #eee;
+    background-color: #aaaae8;
 }
 
 .gcBackground2 {
-    background-color: #e7e7e7;
+    background-color: #9a9ad8;
 }
 
 .gcBorder1 {
-    border: 0px solid #ccc;
+    border: 0px solid #8888c8;
 }
 
 .gcBorder2 {
-    border: 0px solid #888;
+    border: 0px solid #9999d8;
 }
 
 #gallery a {
     font-weight: bold;
     text-decoration: none;
-    color: #6b8cb7;
+    color: #336;
 }
 #gallery a:hover {
     text-decoration: underline;
-    color: #f4560f;
+    color: #366;
 }
 #gallery a:active {
     text-decoration: none;
-    color: #f9c190;
+    color: #399;
 }
 
 #gallery img {
@@ -65,10 +71,15 @@
 
 #gallery input.inputTypeSubmit, #gallery input.inputTypeButton {  /* No input[type=submit] in IE */
     color: #333;
-    background-color: #eee;
+    background-color: #cce;
     border-width: 2px;
     border-style: solid;
     border-color: #e7e7e7 #666 #666 #e7e7e7;
+}
+
+#gallery select {
+    font-size: 1em;
+    background-color: #ddf;
 }
 
 .giTitle, #gallery h2, #gallery h3, #gallery h4 {
@@ -94,16 +105,16 @@
 
 .giInfo {
     font-size: 0.9em;
-    color: #888;
+    color: #103;
 }
 
 .giSuccess, .giWarning, .giError  {
     font-weight: bold;
 }
 
-.giSuccess { color: #5c0; }
-.giWarning { color: #c50; }
-.giError { color: #a44; }
+.giSuccess { color: #190; }
+.giWarning { color: #b31; }
+.giError { color: #d14; }
 
 
 ul.gbBreadCrumb {
@@ -124,24 +135,24 @@ ul.gbBreadCrumb li.firstChild {   /* no :first-child in IE */
 
 table.gbDataTable th {
     text-align: left;
-    background-color: #e7e7e7;
+    background-color: #9a9ad8;
 }
 
 .gbEven {
-    background-color: #fff;
+    background-color: #babaf8;
 }
 
 .gbOdd {
-    background-color: #eee;
+    background-color: #aaaae8;
 }
 
 
 ul.gbTabBar {
-    margin: 0.8em 0 0;
     font-size: 0.9em;
     font-weight: bold;
+    margin: 0.8em 0 0;
     padding: 6px;
-    background: #eee url('../matrix/images/tab_bg.jpg') repeat-x bottom;
+    background: url('../matrix/images/tab_bg.gif') repeat-x bottom;
 }
 
 ul.gbTabBar li {
@@ -186,7 +197,6 @@ ul.gbTabBar li.giSelected span {
     border: 1px solid #ccc;
     border-top-style: none;
     margin: 0;
-    font-size: 1.1em;
 }
 
 .autoCompleteHighlight {
@@ -248,7 +258,7 @@ ul.gbTabBar li.giSelected span {
 #gsSidebar div ul ul { font-size: 1.0em; }
 
 #gsSidebar ul span {
-    color: #999;
+    color: #67b;
 }
 
 #giFormUsername, .giFormUsername {

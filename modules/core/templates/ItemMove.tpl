@@ -123,11 +123,9 @@
     <tr>
       <td align="center">
 	{if isset($peer.thumbnail)}
-	<div class="giThumbImage">
 	  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peerItemId`"}">
-	    {g->image item=$peer image=$peer.thumbnail maxSize=50}
+	    {g->image item=$peer image=$peer.thumbnail maxSize=50 class="giThumbnail"}
 	  </a>
-	</div>
 	{else}
 	  &nbsp;
 	{/if}

@@ -55,15 +55,15 @@
     </td>
   </tr><tr>
     <td> {g->text text="Login page"} </td>
-    <td> <input type="checkbox" id="loginRedirect" name="{g->formVar var="form[loginRedirect]"}"
+    <td> <input type="checkbox" id="cbLoginRedirect" name="{g->formVar var="form[loginRedirect]"}"
 	  {if !empty($form.loginRedirect)}checked="checked"{/if}/>
-	 <label for="loginRedirect"> {g->text text="Jump to user album after login"} </label>
+	 <label for="cbLoginRedirect"> {g->text text="Jump to user album after login"} </label>
     </td>
       </tr><tr>
     <td> {g->text text="Link to user album"} </td>
-    <td> <input type="checkbox" id="homeLink" name="{g->formVar var="form[homeLink]"}"
+    <td> <input type="checkbox" id="cbHomeLink" name="{g->formVar var="form[homeLink]"}"
 	  {if !empty($form.homeLink)}checked="checked"{/if}/>
-	 <label for="homeLink"> {g->text text="Show link"} </label>
+	 <label for="cbHomeLink"> {g->text text="Show link"} </label>
     </td>
   </tr></table>
 </div>

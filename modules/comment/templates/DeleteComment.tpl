@@ -24,5 +24,5 @@
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
-{include file="gallery:modules/comment/templates/Comment.tpl" 
+{include file="gallery:modules/comment/templates/Comment.tpl"
 	 item=$ItemAdmin.item comment=$DeleteComment.comment user=$DeleteComment.commenter}

@@ -41,14 +41,14 @@
       // <![CDATA[
       function setCheck(val) {ldelim}
 	{foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
-	  document.getElementById('cb.{$optionId}').checked = val;
+	  document.getElementById('cb_{$optionId}').checked = val;
 	{/foreach}
       {rdelim}
 
       function invertCheck() {ldelim}
 	var o;
 	{foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
-	  o = document.getElementById('cb.{$optionId}'); o.checked = !o.checked;
+	  o = document.getElementById('cb_{$optionId}'); o.checked = !o.checked;
 	{/foreach}
       {rdelim}
       // ]]>
@@ -70,10 +70,10 @@
 
       <div style="margin: 0.5em 0">
 	{foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
-	  <input id="cb.{$optionId}" type="checkbox"
+	  <input id="cb_{$optionId}" type="checkbox"
 	   name="{g->formVar var="form[options][`$SearchShowAll.moduleId`][$optionId]"}"
 	   {if isset($form.options[$SearchShowAll.moduleId].$optionId)}checked="checked"{/if}/>
-	  <label for="cb.{$optionId}">
+	  <label for="cb_{$optionId}">
 	    {$optionInfo.description}
 	  </label>
 	{/foreach}

@@ -37,7 +37,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('useralbum');
 	$this->setName('User Albums');
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.8.9');
+	$this->setVersion('0.8.10');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getSystemLinks');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -145,7 +145,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($createMode == 'immediate') {
-		    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
+		    GalleryCoreApi::requireOnce(dirname(__FILE__) .
 						'/classes/UserAlbumHelper.class');
 
 		    $ret = UserAlbumHelper::createUserAlbum($user);
@@ -185,7 +185,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		 * Delete the albumid value from the ParameterMap so we don't get
 		 * MISSING_OBJECT errors when the user clicks their 'Your Album' link
 		 */
-		$ret = GalleryCoreApi::removePluginParameterByValue('module', 'useralbum', 
+		$ret = GalleryCoreApi::removePluginParameterByValue('module', 'useralbum',
 								    'albumId', $entity->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);

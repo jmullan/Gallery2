@@ -11,7 +11,7 @@
     RewriteEngine On
 
     RewriteBase {$Htaccess.galleryDirectory}
-    
+
     # Only redirect to Gallery base file if there's no such file already, and
     # make sure gallery_remote2.php gets generates a 404 in order to be compatible
     # with Gallery Remote.

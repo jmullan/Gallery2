@@ -38,7 +38,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -50,15 +50,15 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemEditPlugin', 'ItemEditThumbPage', 'ItemEditThumbPage',
-            'modules/thumbpage/ItemEditThumbPage.inc', 'thumbpage', null);
+	    'ItemEditPlugin', 'ItemEditThumbPage', 'ItemEditThumbPage',
+	    'modules/thumbpage/ItemEditThumbPage.inc', 'thumbpage', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemEditPlugin', 'ItemEditThumbOffset', 'ItemEditThumbOffset',
-            'modules/thumbpage/ItemEditThumbOffset.inc', 'thumbpage', null);
+	    'ItemEditPlugin', 'ItemEditThumbOffset', 'ItemEditThumbOffset',
+	    'modules/thumbpage/ItemEditThumbOffset.inc', 'thumbpage', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -208,7 +208,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	/*
 	 * We're going to deactivate this module which will generate another
 	 * Gallery::DeactivatePlugin event, so make sure that we don't handle
-	 * *that* event and get into an infinite loop! 
+	 * *that* event and get into an infinite loop!
 	 */
 	$data = $event->getData();
 	if ($event->getEventName() == 'Gallery::DeactivatePlugin' &&

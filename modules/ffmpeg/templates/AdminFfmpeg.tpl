@@ -21,7 +21,7 @@
 
   {g->text text="Path to FFMPEG:"}
   <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
-      
+
   {if isset($form.error.path.missing)}
   <div class="giError">
     {g->text text="You must enter a path to your FFMPEG binary"}

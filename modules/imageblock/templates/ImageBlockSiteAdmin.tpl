@@ -17,86 +17,86 @@
 <div class="gbBlock">
   <h3> {g->text text="Image Blocks"} </h3>
 
-  <input type="checkbox" id="randomImage"
+  <input type="checkbox" id="cbRandomImage"
    name="{g->formVar var="form[randomImage]"}" {if $form.randomImage}checked="checked"{/if}/>
- <label for="randomImage">
+ <label for="cbRandomImage">
     {g->text text="Random Image"}
   </label>
   <br/>
 
-  <input type="checkbox" id="recentImage"
+  <input type="checkbox" id="cbRecentImage"
    name="{g->formVar var="form[recentImage]"}" {if $form.recentImage}checked="checked"{/if}/>
-  <label for="recentImage">
+  <label for="cbRecentImage">
     {g->text text="Newest Image"}
   </label>
   <br/>
 
-  <input type="checkbox" id="viewedImage"
+  <input type="checkbox" id="cbViewedImage"
    name="{g->formVar var="form[viewedImage]"}" {if $form.viewedImage}checked="checked"{/if}/>
-  <label for="viewedImage">
+  <label for="cbViewedImage">
     {g->text text="Most Viewed Image"}
   </label>
   <br/>
 
-  <input type="checkbox" id="randomAlbum"
+  <input type="checkbox" id="cbRandomAlbum"
    name="{g->formVar var="form[randomAlbum]"}" {if $form.randomAlbum}checked="checked"{/if}/>
-  <label for="randomAlbum">
+  <label for="cbRandomAlbum">
     {g->text text="Random Album"}
   </label>
   <br/>
 
-  <input type="checkbox" id="recentAlbum"
+  <input type="checkbox" id="cbRecentAlbum"
    name="{g->formVar var="form[recentAlbum]"}" {if $form.recentAlbum}checked="checked"{/if}/>
-  <label for="recentAlbum">
+  <label for="cbRecentAlbum">
     {g->text text="Newest Album"}
   </label>
   <br/>
 
-  <input type="checkbox" id="viewedAlbum"
+  <input type="checkbox" id="cbViewedAlbum"
    name="{g->formVar var="form[viewedAlbum]"}" {if $form.viewedAlbum}checked="checked"{/if}/>
-  <label for="viewedAlbum">
+  <label for="cbViewedAlbum">
     {g->text text="Most Viewed Album"}
   </label>
   <br/>
 
-  <input type="checkbox" id="dailyImage"
+  <input type="checkbox" id="cbDailyImage"
    name="{g->formVar var="form[dailyImage]"}" {if $form.dailyImage}checked="checked"{/if}/>
-  <label for="dailyImage">
+  <label for="cbDailyImage">
     {g->text text="Picture of the Day"}
   </label>
   <br/>
 
-  <input type="checkbox" id="weeklyImage"
+  <input type="checkbox" id="cbWeeklyImage"
    name="{g->formVar var="form[weeklyImage]"}" {if $form.weeklyImage}checked="checked"{/if}/>
-  <label for="weeklyImage">
+  <label for="cbWeeklyImage">
     {g->text text="Picture of the Week"}
   </label>
   <br/>
 
-  <input type="checkbox" id="monthlyImage"
+  <input type="checkbox" id="cbMonthlyImage"
    name="{g->formVar var="form[monthlyImage]"}" {if $form.monthlyImage}checked="checked"{/if}/>
-  <label for="monthlyImage">
+  <label for="cbMonthlyImage">
     {g->text text="Picture of the Month"}
   </label>
   <br/>
 
-  <input type="checkbox" id="dailyAlbum"
+  <input type="checkbox" id="cbDailyAlbum"
    name="{g->formVar var="form[dailyAlbum]"}" {if $form.dailyAlbum}checked="checked"{/if}/>
-  <label for="dailyAlbum">
+  <label for="cbDailyAlbum">
     {g->text text="Album of the Day"}
   </label>
   <br/>
 
-  <input type="checkbox" id="weeklyAlbum"
+  <input type="checkbox" id="cbWeeklyAlbum"
    name="{g->formVar var="form[weeklyAlbum]"}" {if $form.weeklyAlbum}checked="checked"{/if}/>
-  <label for="weeklyAlbum">
+  <label for="cbWeeklyAlbum">
     {g->text text="Album of the Week"}
   </label>
   <br/>
 
-  <input type="checkbox" id="monthlyAlbum"
+  <input type="checkbox" id="cbMonthlyAlbum"
    name="{g->formVar var="form[monthlyAlbum]"}" {if $form.monthlyAlbum}checked="checked"{/if}/>
-  <label for="monthlyAlbum">
+  <label for="cbMonthlyAlbum">
     {g->text text="Album of the Month"}
   </label>
   <br/>
@@ -105,30 +105,30 @@
 <div class="gbBlock">
   <h3> {g->text text="Show"} </h3>
 
-  <input type="checkbox" id="title"
+  <input type="checkbox" id="cbTitle"
    name="{g->formVar var="form[title]"}" {if $form.title}checked="checked"{/if}/>
-  <label for="title">
+  <label for="cbTitle">
     {g->text text="Title"}
   </label>
   <br/>
 
-  <input type="checkbox" id="date"
+  <input type="checkbox" id="cbDate"
    name="{g->formVar var="form[date]"}" {if $form.date}checked="checked"{/if}/>
-  <label for="date">
+  <label for="cbDate">
     {g->text text="Date"}
   </label>
   <br/>
 
-  <input type="checkbox" id="views"
+  <input type="checkbox" id="cbViews"
    name="{g->formVar var="form[views]"}" {if $form.views}checked="checked"{/if}/>
-  <label for="views">
+  <label for="cbViews">
     {g->text text="View Count"}
   </label>
   <br/>
 
-  <input type="checkbox" id="owner"
+  <input type="checkbox" id="cbOwner"
    name="{g->formVar var="form[owner]"}" {if $form.owner}checked="checked"{/if}/>
-  <label for="owner">
+  <label for="cbOwner">
     {g->text text="Owner"}
   </label>
   <br/>

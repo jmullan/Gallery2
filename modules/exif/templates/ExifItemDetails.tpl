@@ -4,35 +4,29 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbExif">
-  <h2 class="giTitle">
-    {g->text text="Photo Properties"}
-  </h2>
+<div id="gsExif" class="gbBlock">
+  <h3> {g->text text="Photo Properties"} </h3>
 
   {if isset($ExifItemDetails.mode)}
-
-  <ul class="giHorizontalLinks">
-    <li>
-      {if ($ExifItemDetails.mode == 'summary')}
+  <div>
+    {if ($ExifItemDetails.mode == 'summary')}
       {g->text text="summary"}
-      {else}
-      <a href="{g->url arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=summary"}">
-        {g->text text="summary"}
+    {else}
+      <a href="{g->url arg1="controller=exif:SwitchDetailMode" arg2="mode=summary"
+       arg3="return=true"}">
+	{g->text text="summary"}
       </a>
-      {/if}
-    </li>
+    {/if}
 
-    <li>
-      {if ($ExifItemDetails.mode == 'detailed')}
+    {if ($ExifItemDetails.mode == 'detailed')}
       {g->text text="details"}
-      {else}
-      <a href="{g->url arg1="return=true" arg2="controller=exif:SwitchDetailMode" arg3="mode=detailed"}">
-        {g->text text="details"}
+    {else}
+      <a href="{g->url arg1="controller=exif:SwitchDetailMode" arg2="mode=detailed"
+       arg3="return=true"}">
+	{g->text text="details"}
       </a>
-      {/if}
-    </li>
-  </ul>
-
+    {/if}
+  </div>
   {/if}
 
   {if !empty($ExifItemDetails.exifData)}

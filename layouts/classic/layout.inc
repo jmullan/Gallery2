@@ -46,7 +46,7 @@ class ClassicLayout extends MatrixLayout {
 	$this->setName('Classic');
 	$this->setDescription(
 	    $gallery->i18n('Columns for thumbnails, item info and links to subalbums'));
-	$this->setVersion('0.5.2');
+	$this->setVersion('0.5.3');
 	$this->setL10Domain('layouts_classic');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(4, 0));

@@ -18,7 +18,7 @@
   {/if}
 </h2></div>
 {/if}
-  
+
 <div class="gbBlock">
   <h3> {g->text text="Gallery base URL"} </h3>
 
@@ -58,7 +58,7 @@
       <div class="giError">
 	{g->text text="Because of your server configuration, we are unable to properly test whether mod_rewrite is properly installed."}
       </div>
-    
+
       <p class="giDescription">
 	{g->text text="This is a result of trying to install gallery in a non standard directory. You need to edit <b>line 6</b> in <b>%s</b> and make sure it reads" arg1=$SetupRewrite.customFile}
 	<b>{$SetupRewrite.customLine}</b>

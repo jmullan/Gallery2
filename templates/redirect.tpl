@@ -6,10 +6,10 @@
  *}
 {*
  * This template is only used for debugging purposes.  When G2 redirects
- * you to a new page, sometimes the developers want to see the debug output 
+ * you to a new page, sometimes the developers want to see the debug output
  * from the code that generated the redirect, so we have this intermediate
  * page that shows the debug output and a link you can click to complete
- * the redirect.  
+ * the redirect.
  *
  * You shouldn't have to modify this page unless you're a G2 developer.
  *}
@@ -24,12 +24,12 @@
   <body>
     {g->text text="You are in debug mode so we are not automatically redirecting."}
     <br/>
-      <a href="{$main.redirectUrl}">[continue]</a>
-      <br/>
-	<font size="-1"><i>{$main.redirectUrl}</i></font>
+    <a href="{$main.redirectUrl}">[continue]</a>
+    <br/>
+    <font size="-1"><i>{$main.redirectUrl}</i></font>
 
-	{if isset($main.debug)}
-	{include file="gallery:templates/debug.tpl"}
-      {/if}
+    {if isset($main.debug)}
+      {include file="gallery:templates/debug.tpl"}
+    {/if}
   </body>
 </html>

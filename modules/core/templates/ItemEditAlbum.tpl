@@ -117,16 +117,16 @@
     {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
   </p>
 
-  <input type="checkbox" id="recreateThumbnails"{if $form.recreateThumbnails} checked="checked"{/if}
+  <input type="checkbox" id="cbRecreateThumbs"{if $form.recreateThumbnails} checked="checked"{/if}
    name="{g->formVar var="form[recreateThumbnails]"}"/>
-  <label for="recreateThumbnails">
+  <label for="cbRecreateThumbs">
     {g->text text="Recreate thumbnails"}
   </label>
   <br/>
 
-  <input type="checkbox" id="recreateResizes"{if $form.recreateResizes} checked="checked"{/if}
+  <input type="checkbox" id="cbRecreateResizes"{if $form.recreateResizes} checked="checked"{/if}
    name="{g->formVar var="form[recreateResizes]"}"/>
-  <label for="recreateResizes">
+  <label for="cbRecreateResizes">
     {g->text text="Recreate resized images"}
   </label>
 </div>

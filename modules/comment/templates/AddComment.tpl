@@ -27,8 +27,8 @@
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="subject" firstMarkupBar=true}
 
   <input type="text" id="subject" size="60" class="gcBackground1"
@@ -50,8 +50,8 @@
     <span class="giSubtitle"> {g->text text="(required)"} </span>
   </h4>
 
-  {include file="gallery:modules/core/templates/MarkupBar.tpl" 
-	   viewL10domain="modules_core" 
+  {include file="gallery:modules/core/templates/MarkupBar.tpl"
+	   viewL10domain="modules_core"
 	   element="comment"}
 
   <textarea rows="15" cols="60" id="comment" class="gcBackground1"
