@@ -117,8 +117,8 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	// Invalid username
-	$_POST['Username'] = 'this is an invalid username';
-	$_POST['Password'] = 'x';
+	GalleryUtilities::putRequestVariable('Username', 'this is an invalid username', false);
+	GalleryUtilities::putRequestVariable('Password', 'x', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Login'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN),
@@ -127,8 +127,8 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_saveUser, $gallery->getActiveUser(), 'active user 1');
 
 	// Invalid password
-	$_POST['Username'] = $this->_user->getUserName();
-	$_POST['Password'] = 'wrong password';
+	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
+	GalleryUtilities::putRequestVariable('Password', 'wrong password', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Login'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_AUTH),
@@ -137,8 +137,8 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_saveUser, $gallery->getActiveUser(), 'active user 2');
 
 	// Valid credentials
-	$_POST['Username'] = $this->_user->getUserName();
-	$_POST['Password'] = $this->_password;
+	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
+	GalleryUtilities::putRequestVariable('Password', $this->_password, false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'nokiaupload:Login'), $results['delegate'], 'delegate');
 	$this->assertEquals(array(), $results['error'], 'error');

@@ -25,12 +25,6 @@
  * These are defined in the Image Upload Server API document
  * available at forum.nokia.com.
  */
-
-/* Set this to true to make Upload module read parameters from GET.
- * Normally they are only read from POST but if you allow GET, 
- * you can use desktop browser for easier debugging. */
-define('NOKIAUPLOAD_DEBUG', false);
-
 define('NOKIAUPLOAD_ERR_NOERR', '0');
 define('NOKIAUPLOAD_ERR_UNKNOWN', '1');
 
@@ -64,11 +58,11 @@ class ImageUploadHelper {
     /**
      * Log user in.
      *
-     * Gets username and password from POST and checks that they are valid. Returns
+     * Gets username and password from request and checks that they are valid. Returns
      * an address for the remote storage capabilities query, name of the sessionId parameter
      * and its value. If remote storage capabilities are available returns them as well
      * to save the client from one extra call.
-     * Adds user into the mobile users' group if s/he isn't yet a member of it.
+     * Adds user into the mobile users group if s/he isn't yet a member of it.
      *
      * @return array ('success', 'rsurl', 'sessionidparam', 'sessionid', 'capabilities')
      */
@@ -81,18 +75,8 @@ class ImageUploadHelper {
 	$status = array();
 	$status['success'] = NOKIAUPLOAD_ERR_UNKNOWN;
 
-	/*
-	 * We can't user GalleryUtilities::getRequestVariables because it assumes the
-	 * request variables to be prefixed with GALLERY_FORM_VARIABLE_PREFIX.
-	 * API specification says POST must be used.
-	 */
-	$username = isset($_POST['Username']) ? $_POST['Username'] : '';
-	$password = isset($_POST['Password']) ? $_POST['Password'] : '';
-
-	if (NOKIAUPLOAD_DEBUG) {
-	    if (empty($username) && isset($_GET['Username'])) {$username = $_GET['Username'];}
-	    if (empty($password) && isset($_GET['Password'])) {$password = $_GET['Password'];}
-	}
+	list ($username, $password) =
+	    GalleryUtilities::getRequestVariablesNoPrefix('Username', 'Password');
 
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($username);
 	if ($ret->isError()) {
@@ -211,24 +195,9 @@ class ImageUploadHelper {
     function createNewDirectory() {
 	LogFile::mark('NewDirectoryHelper');
 
-	/* API specification requires POST. Mandatory parameter. */
-	$albumNameOriginal = isset($_POST['DirName']) ? $_POST['DirName'] : null;
-
-	/* Optional parameters: description of the new album and it's parent id. */
-	$description = isset($_POST['DirDesc']) ? $_POST['DirDesc'] : null;
-	$parentId = isset($_POST['Pid']) ? $_POST['Pid'] : null;
-
-	if (NOKIAUPLOAD_DEBUG) {
-	    if (is_null($albumNameOriginal) && isset($_GET['DirName'])) {
-		$albumNameOriginal = $_GET['DirName'];
-	    }
-	    if (is_null($description) && isset($_GET['DirDesc'])) {
-		$description = $_GET['DirDesc'];
-	    }
-	    if (is_null($parentId) && isset($_GET['Pid'])) {
-		$parentId = $_GET['Pid'];
-	    }
-	}
+	// Mandatory: DirName   Optional: DirDesc, Pid
+	list ($albumNameOriginal, $description, $parentId) =
+	    GalleryUtilities::getRequestVariablesNoPrefix('DirName', 'DirDesc', 'Pid');
 
 	/* Set the default return value. This will be changed only if we succeed. */
 	$status['success'] = NOKIAUPLOAD_ERR_DIRCREATE;
@@ -343,20 +312,18 @@ class ImageUploadHelper {
 	/* Default status. Changes only if everything works out. */
 	$status = array('success' => NOKIAUPLOAD_ERR_UNKNOWN);
 
-	/* API specification requires POST. Mandatory parameters. */
-	$file = isset($_FILES['ImageData']) ? $_FILES['ImageData'] : null;
-	$itemName = isset($_POST['Filename']) ? $_POST['Filename'] : null;
-	$mimeType = isset($_POST['MimeType']) ? $_POST['MimeType'] : null;
-	$albumId = isset($_POST['DirId']) ? $_POST['DirId'] : null;
+	// Mandatory: ImageData
+	$file = GalleryUtilities::getFile('ImageData', false);
 
-	/* Optional parameters. */
-	$summary = isset($_POST['Caption']) ? $_POST['Caption'] : '';
-	$description = isset($_POST['Desc']) ? $_POST['Desc'] : '';
+	// Mandatory: Filename, MimeType, DirId   Optional: Caption, Desc, Source, Keyword
+	list ($itemName, $mimeType, $albumId, $summary, $description) =
+	    GalleryUtilities::getRequestVariablesNoPrefix('Filename', 'MimeType', 'DirId',
+							  'Caption', 'Desc');
+
 	/* These could be included in the description, maybe? */
-	//$device = isset($_POST['Source']) ? $_POST['Source'] : null;
-	//$keywords = isset($_POST['Keyword']) ? $_POST['Keyword'] : null;
+	//$device, $keywords = getRequestVariablesNoPrefix('Source', 'Keyword')
 
-	if (!isset($file) || !isset($itemName) || !isset($mimeType) || !isset($albumId)) {
+	if (empty($file) || empty($itemName) || empty($mimeType) || empty($albumId)) {
 	    LogFile::error('Missing required parameter.');
 	    return $status;
 	}

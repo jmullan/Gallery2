@@ -122,15 +122,15 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	// Login our test user
-	$_POST['Username'] = $this->_user->getUserName();
-	$_POST['Password'] = $this->_password;
+	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
+	GalleryUtilities::putRequestVariable('Password', $this->_password, false);
 	$results = ImageUploadHelper::doLogin();
 	if ($results['success'] != NOKIAUPLOAD_ERR_NOERR ||
 		$gallery->getActiveUser() != $this->_user) {
 	    return $this->assert(false, 'unable to login test user');
 	}
-	unset($_POST['Username']);
-	unset($_POST['Password']);
+	GalleryUtilities::removeRequestVariable('Username', false);
+	GalleryUtilities::removeRequestVariable('Password', false);
 	$session =& $gallery->getSession();
 	$session->remove('permissionCache');
 	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.addAlbumItem');
@@ -139,8 +139,8 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	}
 
 	// Invalid parent
-	$_POST['DirName'] = 'test';
-	$_POST['Pid'] = 'badID';
+	GalleryUtilities::putRequestVariable('DirName', 'test', false);
+	GalleryUtilities::putRequestVariable('Pid', 'badID', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:NewDirectory'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_DIRCREATE),
@@ -148,8 +148,8 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 			    $results, 'bad parent');
 
 	// Parent with no permission
-	$_POST['DirName'] = 'test';
-	$_POST['Pid'] = $this->_getRootId();
+	GalleryUtilities::putRequestVariable('DirName', 'test', false);
+	GalleryUtilities::putRequestVariable('Pid', $this->_getRootId(), false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:NewDirectory'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_DIRCREATE),
@@ -157,9 +157,9 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 			    $results, 'no permission parent');
 
 	// Valid request using default parent
-	$_POST['DirName'] = '"test" $album! (title)';
-	$_POST['DirDesc'] = 'this is the description';
-	unset($_POST['Pid']);
+	GalleryUtilities::putRequestVariable('DirName', '"test" $album! (title)', false);
+	GalleryUtilities::putRequestVariable('DirDesc', 'this is the description', false);
+	GalleryUtilities::removeRequestVariable('Pid', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'nokiaupload:NewDirectory'),
 			    $results['delegate'], 'delegate');
