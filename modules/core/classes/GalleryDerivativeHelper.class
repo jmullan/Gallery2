@@ -343,8 +343,8 @@ class GalleryDerivativeHelper {
         ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($originalSourceId,
-								      $originalSourceId,
-								      $newSourceId));
+								     $originalSourceId,
+								     $newSourceId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -391,5 +391,111 @@ class GalleryDerivativeHelper {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Rebuild the cache if its not current
+     *
+     * If the cache is expired, it will be automatically rebuilt
+     * 
+     * @access public
+     * @return array object GalleryStatus a status code,
+     *               boolean true if it had to be rebuilt, false if not
+     * @static
+     */
+    function rebuildCacheIfNotCurrent($derivativeId) {
+	global $gallery;
+
+	list ($ret, $derivative) = $gallery->loadEntitiesById($derivativeId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $current) = $derivative->isCacheCurrent();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!$current) {
+	    $ret = GalleryDerivativeHelper::rebuildCache($derivativeId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	return array(GalleryStatus::success(), !$current);
+    }
+
+    /**
+     * Rebuild the cache for the given derivative
+     *
+     * @param the id of the derivative
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function rebuildCache($derivativeId) {
+	global $gallery;
+
+	list ($ret, $derivative) = $gallery->loadEntitiesById($derivativeId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Check to see if we're a broken derivative. */
+	$sourceId = $derivative->getDerivativeSourceId();
+	if (empty($sourceId)) {
+	    return GalleryStatus::error(ERROR_BROKEN_DERIVATIVE, __FILE__, __LINE__);
+	}
+
+	/* Load the source */
+	list ($ret, $source) = $gallery->loadEntitiesById($sourceId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* If the source is a derivative, make sure it's current */
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    list ($ret, $isCurrent) = $source->isCacheCurrent();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!$isCurrent) {
+		$ret = GalleryDerivativeHelper::rebuildCache($sourceId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	/*
+	 * Rebuild the cache.  Lock it, then refresh it in case it was modified
+	 * before we acquired the lock, rebuild it, save it, then release the
+	 * lock.
+	 */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($derivativeId, 1);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $derivative) = $derivative->refresh();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $derivative->rebuildCache();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }	
 }
 ?>

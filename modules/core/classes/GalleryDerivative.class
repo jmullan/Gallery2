@@ -72,18 +72,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
     var $_derivativeSourceId;
 
     /**
-     * A sequence of commands used to derive this data from the original
+     * A sequence of operations used to derive this data from the original
      *
      * @g2 <member>
-     * @g2   <member-name>derivativeCommands</member-name>
+     * @g2   <member-name>derivativeOperations</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>LARGE</member-size>
      * @g2 </member>
      *
-     * @var int $_derivativeCommands
+     * @var int $_derivativeOperations
      * @access private
      */
-    var $_derivativeCommands;
+    var $_derivativeOperations;
 
     /**
      * The order of this derivative relative to others
@@ -196,17 +196,131 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
-     * Merge a new command into this derivative's command list
+     * Merge a new operation into this derivative's operation list
      *
-     * Try to do the "right thing".  For example, if the incoming command is a
-     * "rotate 90" and the last command on the list is already a "rotate 90"
-     * then replace the last command with a "rotate 180"
+     * @see GalleryToolkit::mergeOperation()
      *
      * @param string the command
      * @return object GalleryStatus a status code
      */
-    function mergeCommand($command) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    function mergeOperation($newOperation, $newArgs) {
+	global $gallery;
+
+	/* Load the source */
+	$sourceId = $this->getDerivativeSourceId();
+	list($ret, $source) = $gallery->loadEntitiesById($sourceId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$mimeType = $source->getMimeType();
+	$operationString = $this->getDerivativeOperations();
+
+	if (empty($operationString)) {
+	    $mergedOperations = $newOperation . '|' . join(',', $newArgs);
+	} else {
+	    /*
+	     * Here things get a little tricky.  When merging operations, we want
+	     * to try to merge against the last operation first because operations
+	     * are cumulative.  However, we can't start from the tail end of the
+	     * operations and merge backwards because we don't know what the input
+	     * mime type is for the last operation.  So perform a tail recursive merge
+	     * on our operations.
+	     */
+	    $operations = split(';', $operationString);
+	    list ($ret, $mergeComplete, $newOperations) =
+		$this->_recursiveMergeOperation($mimeType,
+						$operations,
+						$newOperation, $newArgs);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (!$mergeComplete) {
+		$mergedOperations = join(';', $operations) . ';' . $newOperation . '|' . join(',', $newArgs);
+	    } else {
+		$mergedOperations = join(';', $newOperations);
+	    }
+	}
+
+	$this->setDerivativeOperations($mergedOperations);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Tail-recursively merge a new operation onto an existing set of operations
+     *
+     * @param string the mime type of the source for the first operation
+     * @param array the remaining operations in the sequence
+     * @param string the new operation
+     * @param array mixed the new operation's args
+     * @access private
+     */
+    function _recursiveMergeOperation($mimeType, $remainingOperations, $newOperation, $newArgs) {
+	if (empty($remainingOperations)) {
+	    /* Trivial case -- no operations left means nothing to merge against */
+	    return array(GalleryStatus::success(), false, array());
+	}
+
+	/*
+	 * Pull the first operation off of the queue and get a toolkit that can
+	 * handle it.  Use the toolkit to figure out what the mime type is for
+	 * the next operation in line.
+	 */
+	$currentOperation = array_shift($remainingOperations);
+	list ($operation, $argString) = split('\|', $currentOperation);
+	$args = split(',', $argString);
+	list($ret, $toolkit, $outputMimeType) =
+	    GalleryToolkitHelper::getToolkitByOperation($mimeType, $operation);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if (!isset($toolkit)) {
+	    /* XXX: What can we do now? */
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+
+	/* Give the next operation in line the chance to do the merge. */
+	list ($ret, $mergeComplete, $returnedOperations) =
+	    $this->_recursiveMergeOperation($outputMimeType, $remainingOperations, $newOperation, $newArgs);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if ($mergeComplete) {
+	    /*
+	     * If we successfully merged farther on down the line then just
+	     * prepend our operation back at the beginning and declare victory.
+	     */
+	    array_unshift($returnedOperations, $currentOperation);
+	    return array(GalleryStatus::success(), true, $returnedOperations);
+	} else {
+	    /*
+	     * No joy farther down the line.  Give the toolkit a chance to
+	     * merge against the current operation.
+	     *
+	     * XXX: We should try this against all toolkits, not just the first
+	     * one in line.
+	     */
+	    list ($mergeComplete, $mergedOperation, $mergedArgs) = 
+		$toolkit->mergeOperations($mimeType,
+					  $operation, $args,
+					  $newOperation, $newArgs);
+	    if ($mergeComplete) {
+		/* Success -- prepend our merged operation and return the results */
+		if (!empty($mergedOperation)) {
+		    array_unshift($returnedOperations,
+				  $mergedOperation . '|' . join(',', $mergedArgs));
+		}
+		return array(GalleryStatus::success(), true, $returnedOperations);
+	    } else {
+		/* No joy -- prepend the current operation and return the results */
+		array_unshift($returnedOperations, $currentOperation);
+		return array(GalleryStatus::success(), false, $returnedOperations);
+	    }
+	}
     }
 
     /**
@@ -238,30 +352,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$gallery->loadDerivatives($this->getId());
 
 	return GalleryStatus::success();
-    }
-
-    /**
-     * Rebuild the cache if its not current
-     *
-     * If the cache is expired, it will be automatically rebuilt
-     * 
-     * @access public
-     * @return array object GalleryStatus a status code,
-     *               boolean true if it had to be rebuild, false if not
-     */
-    function rebuildCacheIfNotCurrent() {
-	list ($ret, $current) = $this->isCacheCurrent();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	if (!$current) {
-	    $ret = $this->rebuildCache();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	return array(GalleryStatus::success(), !$current);
     }
 
     /**
@@ -309,24 +399,87 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
-     * Rebuild the cache.  Subclasses should override this method to rebuild
-     * derivatives in a meaningful way.
+     * Rebuild the cache.  This should never be called directly; instead you
+     * should call GalleryDerivativeHelper::rebuildCacheIfNotCurrent($derivativeId)
      * 
      * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
-
-	/*
-	 * The only useful thing we can do at this level is to check to see if
-	 * we're a broken derivative.  Subclasses that override this method can
-	 * use this behaviour.
-	 */
-	$sourceId = $this->getDerivativeSourceId();
-	if (empty($sourceId)) {
-	    return GalleryStatus::error(ERROR_BROKEN_DERIVATIVE,
-					__FILE__, __LINE__);
+	global $gallery;
+	
+	/* Load the source */
+	list($ret, $source) = $gallery->loadEntitiesById($this->getDerivativeSourceId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/* Get the path of the source for the next operation */
+	list($ret, $sourcePath) = $source->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Figure out our target path */
+	list($ret, $destPath) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Figure out our source mime type */
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    $mimeType = $source->getDerivativeMimeType();
+	} else {
+	    $mimeType = $source->getMimeType();
+	}
+	
+	/* Now apply our derivative commands to create the cache file */
+	$operations = split(';', $this->getDerivativeOperations());
+	foreach ($operations as $operation) {
+	    if (empty($operation)) {
+		continue;
+	    }
+	    list($operationName, $operationArgs) = split('\|', $operation);
+
+	    /* Get the appropriate toolkit */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($mimeType, $operationName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (!isset($toolkit)) {
+		/* XXX: What can we do now? */
+		return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+	    }
+
+	    /* Perform the operation */
+	    list ($ret, $outputMimeType) =
+		$toolkit->performOperation($mimeType,
+					   $operationName,
+					   $sourcePath,
+					   $destPath,
+					   split(',', $operationArgs));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Prepare for the next operation */
+	    $sourcePath = $destPath;
+	    $mimeType = $outputMimeType;
+	}
+
+	/* Get the size of the file */
+	$platform = $gallery->getPlatform();
+	if ($platform->file_exists($destPath)) {
+	    $size = $platform->filesize($destPath);
+	} else {
+	    $size = -1;
+	}
+
+	/* Update our info */
+	$this->setDerivativeMimeType($mimeType);
+	$this->setDerivativeSize($size);
 	
 	return GalleryStatus::success();
     }

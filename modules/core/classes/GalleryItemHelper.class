@@ -245,5 +245,44 @@ class GalleryItemHelper {
 
 	return array(GalleryStatus::success(), $permissions);
     }
+
+    /**
+     * Return the appropriate GalleryItem instance for the mime type provided.
+     *
+     * Use the GalleryFactory to try to find an exact match to the mime type.
+     * Failing that, fall back to the major type, then fall back to '*'.
+     *
+     * @param string the mime type
+     * @return array object GalleryStatus a status code
+     *               object GalleryItem an item
+     */
+    function newItemByMimeType($mimeType) {
+
+	/* Try the whole mime type */
+	list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($instance)) {
+	    /* No? Try the major type only */
+	    $mimeType = substr(0, strcspn($mimeType, '/')) . '/*';
+	    list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!isset($instance)) {
+		/* No? Try all types */
+		$mimeType = '*';
+		list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $instance);
+    }
 }
 ?>

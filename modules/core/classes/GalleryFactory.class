@@ -26,12 +26,6 @@
  */
 
 /**
- * The operation was a success
- *
- */
-define('FACTORY_DEFAULT', '*');
-
-/**
  * A factory for creating all different kinds of objects
  *
  * @package GalleryCore
@@ -89,8 +83,7 @@ class GalleryFactory {
 	    $registry =& GalleryFactory::_getFactoryData();
 	    if (empty($registry['implementations'][$classType][$className])) {
 		$gallery->debug("Unimplemented: $classType, $className");
-		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-			     null);
+		return array(GalleryStatus::success(), null);
 	    }
 	    
 	    $fileName = $registry['implementations'][$classType][$className];
@@ -133,12 +126,7 @@ class GalleryFactory {
 	$hint = strtolower($hint);
 
 	if (empty($registry['hints'][$classType][$hint])) {
-	    $hint = FACTORY_DEFAULT;
-	}
-
-	if (empty($registry['hints'][$classType][$hint])) {
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::success(), null);
 	}
 
 	/* Right now we just use the first available hint */
@@ -164,8 +152,7 @@ class GalleryFactory {
 	$registry =& GalleryFactory::_getFactoryData();
 
 	if (empty($registry['ids'][$classType][$id])) {
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::success(), null);
 	}
 
 	$className = $registry['ids'][$classType][$id];

@@ -61,9 +61,6 @@ msgstr "Funksjon"
 msgid "Actions"
 msgstr "Funksjon"
 
-msgid "Activate a toolkit here"
-msgstr ""
-
 #, fuzzy
 msgid "Active"
 msgstr "aktiviser"
@@ -111,6 +108,9 @@ msgstr "Tilgjengelige Instillinger"
 
 msgid "Album sort order:"
 msgstr "Album sorteringsrekkef&oslash;lge:"
+
+msgid "Album"
+msgstr ""
 
 #, fuzzy
 msgid "All access"
@@ -163,13 +163,11 @@ msgstr ""
 msgid "Change"
 msgstr "Avbryt"
 
-#, fuzzy
-msgid ""
-"Choose a graphics toolkit to use.  You can only choose from the list of "
-"currently active toolkits."
+msgid "Choose the destination of the selected items"
 msgstr ""
-"Velg grafikkverkt&oslash;y. Du kan kun velge fra listen med tilgjengelige "
-"verkt&oslash;y"
+
+msgid "Choose the items you want to move"
+msgstr ""
 
 msgid "Clear"
 msgstr "Nullstill"
@@ -230,6 +228,10 @@ msgid "Descending"
 msgstr "Synkende"
 
 msgid "Description"
+msgstr "Beskrivelse"
+
+#, fuzzy
+msgid "Destination"
 msgstr "Beskrivelse"
 
 msgid ""
@@ -398,9 +400,6 @@ msgstr "Gallery Instillinger"
 msgid "General"
 msgstr "Generell"
 
-msgid "Graphics Toolkit"
-msgstr "Grafikk Verkt&oslash;y"
-
 #, c-format
 msgid "Group '%s' already exists"
 msgstr ""
@@ -494,6 +493,12 @@ msgstr "Filsystem Rettigheter"
 msgid "Item Thumbnail Size and Resizes"
 msgstr ""
 
+msgid "Item"
+msgstr ""
+
+msgid "Items to move"
+msgstr ""
+
 msgid ""
 "Keywords will not be visible to the end user, but are searchable. This can "
 "be any character string.  It should not contain HTML."
@@ -542,6 +547,13 @@ msgstr "Modul Navn"
 msgid "Modules"
 msgstr "Moduler"
 
+#, fuzzy
+msgid "Move an Item"
+msgstr "Editerer objekt"
+
+msgid "Move"
+msgstr ""
+
 msgid "Name"
 msgstr "Navn"
 
@@ -554,11 +566,10 @@ msgstr "Nye Filer"
 msgid "Next >>"
 msgstr "Neste >>"
 
-#, fuzzy
-msgid "No Graphics toolkits detected!"
-msgstr "Grafikk Verkt&oslash;y"
-
 msgid "No Thumbnail"
+msgstr ""
+
+msgid "No destination chosen"
 msgstr ""
 
 msgid "Not implemented yet"
@@ -798,9 +809,6 @@ msgstr ""
 msgid "Title"
 msgstr "Tittel"
 
-msgid "Toolkit"
-msgstr "Verkt&oslash;y"
-
 msgid "Total"
 msgstr "Totalt"
 
@@ -877,6 +885,15 @@ msgstr "editere objekt"
 msgid "Yes, make this item the highlight!"
 msgstr ""
 
+msgid "You are not allowed to move an album to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move an item to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move this item away from here."
+msgstr ""
+
 msgid ""
 "You are using a copy of the original image that has been scaled or rotated.  "
 "The original image is still available, but is no longer being used.  Any "
@@ -903,6 +920,13 @@ msgstr "Du kan ikke slette den anonyme brukeren!"
 
 msgid "You cannot delete yourself!"
 msgstr "Du kan ikke slette deg selv!"
+
+#, fuzzy
+msgid "You cannot move an album into its own subtree."
+msgstr "Eller du kan lage en ny bruker her."
+
+msgid "You don't have the permission to add items in this album"
+msgstr ""
 
 msgid "You must enter a group name"
 msgstr "Du m&aring; skrive et gruppenavn"
@@ -964,8 +988,9 @@ msgstr "Navnet inneholder ugyldige tegn. Vennligst velg et annet."
 msgid "[core] Add sub-album"
 msgstr ""
 
+#, fuzzy
 msgid "[core] Add sub-item"
-msgstr ""
+msgstr "Slette"
 
 #, fuzzy
 msgid "[core] Change item permissions"
@@ -975,22 +1000,25 @@ msgstr "Filsystem Rettigheter"
 msgid "[core] Change item properties"
 msgstr "Generelle Objekt Attributter"
 
+#, fuzzy
 msgid "[core] Change item text"
-msgstr ""
+msgstr "Slette"
 
 #, fuzzy
 msgid "[core] Delete item"
 msgstr "Slette"
 
+#, fuzzy
 msgid "[core] Move item"
-msgstr ""
+msgstr "Slette"
 
 #, fuzzy
 msgid "[core] View all versions"
 msgstr "En bedre beskrivelse av dette objektet"
 
+#, fuzzy
 msgid "[core] View item"
-msgstr ""
+msgstr "Slette"
 
 #, fuzzy
 msgid "[core] View original version"
@@ -1054,6 +1082,10 @@ msgstr "utlogging"
 
 msgid "make highlight"
 msgstr ""
+
+#, fuzzy
+msgid "move item"
+msgstr "Editerer objekt"
 
 #, fuzzy
 msgid "permissions"
@@ -1124,12 +1156,38 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, fuzzy
-#~ msgid "Remove %s"
+#~ msgid "core.delete"
+#~ msgstr "Slette"
+
+#, fuzzy
+#~ msgid "core.move"
 #~ msgstr "Fjerne"
 
 #, fuzzy
-#~ msgid "delete"
-#~ msgstr "Slette"
+#~ msgid "core.view"
+#~ msgstr "alltid"
+
+#, fuzzy
+#~ msgid ""
+#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
+#~ "currently active toolkits."
+#~ msgstr ""
+#~ "Velg grafikkverkt&oslash;y. Du kan kun velge fra listen med tilgjengelige "
+#~ "verkt&oslash;y"
+
+#~ msgid "Graphics Toolkit"
+#~ msgstr "Grafikk Verkt&oslash;y"
+
+#, fuzzy
+#~ msgid "No Graphics toolkits detected!"
+#~ msgstr "Grafikk Verkt&oslash;y"
+
+#~ msgid "Toolkit"
+#~ msgstr "Verkt&oslash;y"
+
+#, fuzzy
+#~ msgid "Remove %s"
+#~ msgstr "Fjerne"
 
 #~ msgid "Count"
 #~ msgstr "Antall"
@@ -1147,10 +1205,6 @@ msgstr[1] ""
 
 #, fuzzy
 #~ msgid "Delete this item"
-#~ msgstr "Editerer objekt"
-
-#, fuzzy
-#~ msgid "Move this item"
 #~ msgstr "Editerer objekt"
 
 #~ msgid "%d groups match your filter"

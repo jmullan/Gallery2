@@ -13,11 +13,26 @@
  */
 class CreatePhotoItemTestCase extends TestCase {
 
+    function getIterations() {
+	return array(1, 10, 50);
+    }
+
     function getDescription() {
 	return "Create a new PhotoItem in the root album and save it";
     }
 
-    function testStart() {
+    function testStart($iterations) {
+	for ($i = 0; $i < $iterations; $i++) {
+	    $ret = $this->_runTest();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+    
+    function _runTest() {
 	global $gallery;
 
 	list ($ret, $rootId) =
@@ -38,11 +53,14 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	print("Creating new photo item\n");
 	list ($ret, $photo) = GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	if (!isset($photo)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
 	
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$extension = GalleryUtilities::getFileExtension($imagePath);
@@ -72,62 +90,65 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Create a thumbnail */
-	list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	list ($ret, $toolkit, $outputMimeType) =
+	    GalleryToolkitHelper::getToolkitByOperation($photo->getMimeType(), 'thumbnail');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $thumbnail->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if (isset($toolkit)) {
+	    /* Create a thumbnail */
+	    list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+            if (!isset($thumbnail)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
+
+	    $ret = $thumbnail->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Make it a derivative from the source image */
+	    $thumbnail->setDerivativeSourceId($photo->getId());
+	    $thumbnail->setDerivativeOperations('thumbnail|200');
+	    $thumbnail->setDerivativeMimeType($outputMimeType);
+	    $ret = $thumbnail->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	list ($ret, $toolkit, $outputMimeType) =
+	    GalleryToolkitHelper::getToolkitByOperation($photo->getMimeType(), 'scale');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Make it a derivative from the source image */
-	$thumbnail->setDerivativeSourceId($photo->getId());
-	$thumbnail->setDerivativeCommands("scale 200");
-	$thumbnail->setDerivativeMimeType($photo->getMimeType());
-	$ret = $thumbnail->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	if (isset($toolkit)) {
+	    /* Create a resize */
+	    list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-	/* Create a resize */
-	list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+            if (!isset($resize)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
 
-	$ret = $resize->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	    $ret = $resize->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-	/* Make it a derivative from the source image */
-	$resize->setDerivativeSourceId($photo->getId());
-	$resize->setDerivativeCommands("scale 600");
-	$resize->setDerivativeMimeType($photo->getMimeType());
-	$ret = $resize->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/*
-	 * Check to see if the thumbnail's cache is current.
-	 * It shouldn't be, since we haven't built it yet.
-	 */
-	list ($ret, $bool) = $thumbnail->isCacheCurrent();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	if ($bool) {
-	    print "Cache is current\n";
-	} else {
-	    print "Cache is not current\n";
-
-	    /* Rebuild the cache */
-	    $ret = $thumbnail->rebuildCache();
+	    /* Make it a derivative from the source image */
+	    $resize->setDerivativeSourceId($photo->getId());
+	    $resize->setDerivativeOperations('scale|600');
+	    $resize->setDerivativeMimeType($outputMimeType);
+	    $ret = $resize->save();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

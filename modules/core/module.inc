@@ -81,6 +81,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryTemplateModule.class');
 	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryTheme.class');
+	require_once($classDir . 'GalleryToolkitHelper.class');
 	require_once($classDir . 'GalleryUserGroupMap.class');
 	require_once($classDir . 'GalleryUserHelper.class');
 	require_once($classDir . 'GalleryGroupHelper.class');
@@ -109,7 +110,7 @@ class CoreModule extends GalleryModule {
 					       'UnixPlatform',
 					       'Unix',
 					       $classDir . 'GalleryPlatform/UnixPlatform.class',
-					       array(FACTORY_DEFAULT));
+					       array('unix', '*'));
 
 	GalleryFactory::registerImplementation('GalleryPlatform',
 					       'WinNtPlatform',
@@ -168,21 +169,24 @@ class CoreModule extends GalleryModule {
 					       'GalleryUnknownItem',
 					       $classDir . 'GalleryUnknownItem.class');
 
-	/* Register GalleryDataItem implementations */
-	GalleryFactory::registerImplementation('GalleryDataItem',
+	/* Register GalleryItem implementations */
+	GalleryFactory::registerImplementation('GalleryItem',
 					       'GalleryPhotoItem',
 					       'GalleryPhotoItem',
 					       $classDir . 'GalleryPhotoItem.class',
-					       array('image/pjpeg',
-						     'image/jpeg',
-						     'image/gif',
-						     'image/png'));
+					       array('image/*'));
 
-	GalleryFactory::registerImplementation('GalleryDataItem',
+	GalleryFactory::registerImplementation('GalleryItem',
+					       'GalleryMovieItem',
+					       'GalleryMovieItem',
+					       $classDir . 'GalleryPhotoItem.class',
+					       array('video/*'));
+
+	GalleryFactory::registerImplementation('GalleryItem',
 					       'GalleryUnknownItem',
 					       'GalleryUnknownItem',
 					       $classDir . 'GalleryUnknownItem.class',
-					       array(FACTORY_DEFAULT));
+					       array('*'));
 
 	/* Register our search implementation */
 	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
@@ -298,95 +302,97 @@ class CoreModule extends GalleryModule {
 		 * extractor can find it.
 		 */
 		/* Register all core permissions */
-		// translate('All access')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.all', 'All access',
+								   'core.all',
+								   $gallery->i18n('All access'),
 								   GALLERY_PERMISSION_ALL_ACCESS);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] View item')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.view', '[core] View item');
+								   'core.view',
+								   $gallery->i18n('[core] View item')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] View resized version(s)')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.viewResizes', '[core] View resized version(s)');
+								   'core.viewResizes',
+								   $gallery->i18n('[core] View resized version(s)')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		// translate('[core] View original version')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.viewSource', '[core] View original version');
+								   'core.viewSource',
+								   $gallery->i18n('[core] View original version')); 
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		// translate('[core] View all versions')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.viewAll', '[core] View all versions',
+								   'core.viewAll',
+								   $gallery->i18n('[core] View all versions'), 
 								   GALLERY_PERMISSION_COMPOSITE,
-								   array('core.view', 'core.viewResizes', 'core.viewSource'));
+								   array('core.view',
+									 'core.viewResizes',
+									 'core.viewSource'));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Add sub-album')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.addAlbum', '[core] Add sub-album',
+								   'core.addAlbum',
+								   $gallery->i18n('[core] Add sub-album'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Add sub-item')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.addItem', '[core] Add sub-item',
+								   'core.addItem',
+								   $gallery->i18n('[core] Add sub-item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    
-		// translate('[core] Change item properties')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.changeProperties', '[core] Change item properties',
+								   'core.changeProperties',
+								   $gallery->i18n('[core] Change item properties'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Change item permissions')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.changePermissions', '[core] Change item permissions',
+								   'core.changePermissions',
+								   $gallery->i18n('[core] Change item permissions'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Move item')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.move', '[core] Move item',
+								   'core.move',
+								   $gallery->i18n('[core] Move item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Change item text')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.changeText', '[core] Change item text',
+								   'core.changeText',
+								   $gallery->i18n('[core] Change item text'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		// translate('[core] Delete item')
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.delete', '[core] Delete item',
+								   'core.delete',
+								   $gallery->i18n('[core] Delete item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -696,12 +702,12 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
-		list ($ret, $graphics) = $gallery->getGraphics();
+		list ($ret, $operations) = GalleryToolkitHelper::getOperations($item->getMimeType());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		if ($graphics->isSupportedMimeType($item->getMimeType())) {
+		if (!empty($operations)) {
 		    $views[] = array('name' => $this->translate('Edit Image'),
 				     'view' => 'core:ItemEditImage');
 		    $views[] = array('name' => $this->translate('Edit Sizes'),
@@ -764,6 +770,10 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
     
 	$ret = $group->create('All Users', GROUP_ALL_USERS);
 	if ($ret->isError()) {
@@ -805,6 +815,10 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+    
 	$ret = $group->create('Site Admins', GROUP_SITE_ADMINS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -845,6 +859,10 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+    
 	$ret = $user->create($this->translate('anonymous'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -893,6 +911,10 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+    
 	$ret = $user->create($this->translate('admin'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -953,6 +975,10 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
+	if (!isset($album)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+    
 	$ret = $album->createRoot('root', $adminId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

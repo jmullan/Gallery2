@@ -436,5 +436,21 @@ class GalleryPlatform {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
+
+    /**
+     * Return true if the path provided is allowed by the current open_basedir
+     * configuration.
+     *
+     * @return true if the path is ok
+     */
+    function isRestrictedByOpenBaseDir($path) {
+	/*
+	 * This must be implemented in a platform specific way due to the fact
+	 * that different PHP platforms use different separators in the basedir
+	 * path, and since case sensitivity of path elements is not relevant on
+	 * all platforms.
+	 */
+	assert(false);
+    }
 }
 ?>

@@ -78,7 +78,7 @@ class AdminEditGroupController extends GalleryController {
 		}
 
 		/* Refresh our object, now that it's locked */
-		$ret = $group->refresh();
+		list ($ret, $group) = $group->refresh();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

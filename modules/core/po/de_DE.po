@@ -60,9 +60,6 @@ msgstr "Aktion"
 msgid "Actions"
 msgstr "Aktionen"
 
-msgid "Activate a toolkit here"
-msgstr "Aktiviere hier ein Werkzeugkasten"
-
 msgid "Active"
 msgstr "Aktiv"
 
@@ -104,6 +101,10 @@ msgstr "Albumeinstellungen"
 
 msgid "Album sort order:"
 msgstr "Sortierreihenfolge des Albums:"
+
+#, fuzzy
+msgid "Album"
+msgstr "Album hinzuf&uuml;gen"
 
 msgid "All access"
 msgstr "Vollzugang"
@@ -160,12 +161,11 @@ msgstr "Albumbesitzer &auml;ndern in:"
 msgid "Change"
 msgstr "&Auml;ndern"
 
-msgid ""
-"Choose a graphics toolkit to use.  You can only choose from the list of "
-"currently active toolkits."
+msgid "Choose the destination of the selected items"
 msgstr ""
-"Suche den Werkzeugsatz f&uuml;r Graphiken aus, der verwendet werden soll. Du "
-"kannst nur zwischen den aktuell aktiven Werkzeugs&auml;tze ausw&auml;hlen"
+
+msgid "Choose the items you want to move"
+msgstr ""
 
 msgid "Clear"
 msgstr "l&ouml;schen"
@@ -225,6 +225,10 @@ msgid "Descending"
 msgstr "Absteigend"
 
 msgid "Description"
+msgstr "Beschreibung"
+
+#, fuzzy
+msgid "Destination"
 msgstr "Beschreibung"
 
 msgid ""
@@ -403,9 +407,6 @@ msgstr "Allgemeine Einstellungen"
 msgid "General"
 msgstr "Allgemein"
 
-msgid "Graphics Toolkit"
-msgstr "Werkzeugsatz f&uuml;r Graphiken"
-
 #, c-format
 msgid "Group '%s' already exists"
 msgstr "Gruppe '%s' existiert schon"
@@ -507,6 +508,13 @@ msgstr "Elemtentsberechtigungen"
 msgid "Item Thumbnail Size and Resizes"
 msgstr ""
 
+#, fuzzy
+msgid "Item"
+msgstr "Elemente hinzuf&uuml;gen"
+
+msgid "Items to move"
+msgstr ""
+
 msgid ""
 "Keywords will not be visible to the end user, but are searchable. This can "
 "be any character string.  It should not contain HTML."
@@ -554,6 +562,12 @@ msgstr "Modulname"
 msgid "Modules"
 msgstr "Module"
 
+msgid "Move an Item"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
 msgid "Name"
 msgstr "Name"
 
@@ -566,11 +580,11 @@ msgstr "Neue Dateien"
 msgid "Next >>"
 msgstr "N&auml;chstes >>"
 
-msgid "No Graphics toolkits detected!"
-msgstr "Kein Werkzeugsatz f&uuml;r Graphiken gefunden!"
-
 msgid "No Thumbnail"
 msgstr "Kein Thumbnail"
+
+msgid "No destination chosen"
+msgstr ""
 
 msgid "Not implemented yet"
 msgstr "Noch nicht implementiert"
@@ -812,9 +826,6 @@ msgstr "Thumbnails"
 msgid "Title"
 msgstr "Titel"
 
-msgid "Toolkit"
-msgstr "Werkzeugsatz"
-
 msgid "Total"
 msgstr "Gesamt"
 
@@ -886,6 +897,15 @@ msgstr "Ja, l&ouml;sche es!"
 msgid "Yes, make this item the highlight!"
 msgstr ""
 
+msgid "You are not allowed to move an album to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move an item to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move this item away from here."
+msgstr ""
+
 msgid ""
 "You are using a copy of the original image that has been scaled or rotated.  "
 "The original image is still available, but is no longer being used.  Any "
@@ -913,6 +933,13 @@ msgstr "Du kannst den anonymen Benutzer nicht l&ouml;schen"
 
 msgid "You cannot delete yourself!"
 msgstr "Du kannst dich nicht selbst l&ouml;schen!"
+
+#, fuzzy
+msgid "You cannot move an album into its own subtree."
+msgstr "Du kannst innerhalb dieses Albums ein neues erstellen."
+
+msgid "You don't have the permission to add items in this album"
+msgstr ""
 
 msgid "You must enter a group name"
 msgstr "Du musst ein Gruppennamen eingeben"
@@ -972,14 +999,17 @@ msgstr "[core] F&uuml;gen Unter-Album hinzu"
 msgid "[core] Add sub-item"
 msgstr "[core] F&uuml;ge Unter-Element hinzu"
 
+#, fuzzy
 msgid "[core] Change item permissions"
 msgstr "[core] &Auml;ndere Elementberechtigungen"
 
+#, fuzzy
 msgid "[core] Change item properties"
 msgstr "[core] &Auml;ndere Elementeigenschaften"
 
+#, fuzzy
 msgid "[core] Change item text"
-msgstr "[core] &Auml;ndere Elementtext"
+msgstr "[core] Bewege Element"
 
 msgid "[core] Delete item"
 msgstr "[core] L&ouml;sche Element"
@@ -1050,6 +1080,10 @@ msgstr "abmelden"
 msgid "make highlight"
 msgstr ""
 
+#, fuzzy
+msgid "move item"
+msgstr "Element anpassen"
+
 msgid "permissions"
 msgstr "Berechtigungen"
 
@@ -1118,11 +1152,44 @@ msgstr[0] "Lade eine Datei direkt von deinem Computer hoch."
 msgstr[1] "Lade bis zu %d Dateien direkt von deinem Computer hoch."
 
 #, fuzzy
-#~ msgid "Remove %s"
+#~ msgid "core.changeText"
+#~ msgstr "[core] &Auml;ndere Elementtext"
+
+#, fuzzy
+#~ msgid "core.delete"
+#~ msgstr "l&ouml;schen"
+
+#, fuzzy
+#~ msgid "core.move"
 #~ msgstr "Entfernen"
 
-#~ msgid "delete"
-#~ msgstr "l&ouml;schen"
+#, fuzzy
+#~ msgid "core.view"
+#~ msgstr "ewig"
+
+#~ msgid "Activate a toolkit here"
+#~ msgstr "Aktiviere hier ein Werkzeugkasten"
+
+#~ msgid ""
+#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
+#~ "currently active toolkits."
+#~ msgstr ""
+#~ "Suche den Werkzeugsatz f&uuml;r Graphiken aus, der verwendet werden soll. "
+#~ "Du kannst nur zwischen den aktuell aktiven Werkzeugs&auml;tze ausw&auml;"
+#~ "hlen"
+
+#~ msgid "Graphics Toolkit"
+#~ msgstr "Werkzeugsatz f&uuml;r Graphiken"
+
+#~ msgid "No Graphics toolkits detected!"
+#~ msgstr "Kein Werkzeugsatz f&uuml;r Graphiken gefunden!"
+
+#~ msgid "Toolkit"
+#~ msgstr "Werkzeugsatz"
+
+#, fuzzy
+#~ msgid "Remove %s"
+#~ msgstr "Entfernen"
 
 #~ msgid "Count"
 #~ msgstr "Anzahl"

@@ -30,6 +30,10 @@ class CreateModifyAndDeleteUserTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+            if (!isset($user)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
+
 	    $rand = rand(1, 1000000);
 	    $ret = $user->create('random_' . $rand);
 	    if ($ret->isError()) {

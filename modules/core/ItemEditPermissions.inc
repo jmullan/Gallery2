@@ -251,7 +251,11 @@ class ItemEditPermissionsController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $item->refresh();
+		    list ($ret, $item) = $item->refresh();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
 		    $item->setOwnerId($user->getId());
 		    $ret = $item->save();
 		    if ($ret->isError()) {

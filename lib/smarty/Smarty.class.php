@@ -39,7 +39,7 @@
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.4.2
+ * @version 2.5.0-RC1
  */
 
 /**
@@ -460,7 +460,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.4.2';
+    var $_version              = '2.5.0-RC1';
 
     /**
      * current template inclusion depth
@@ -1866,9 +1866,7 @@ class Smarty
             }
 
             $args = unserialize($insert_args[$i]);
-
             $name = $args['name'];
-            unset($args['name']);
 
             if (isset($args['script'])) {
                 if (!$this->_get_php_resource($this->_dequote($args['script']), $resource_type, $php_resource)) {
@@ -1880,7 +1878,6 @@ class Smarty
                 } else {
                     eval($php_resource);
                 }
-                unset($args['script']);
             }
 
             $function_name = $this->_plugins['insert'][$name][0];

@@ -32,6 +32,10 @@ class CreateGalleryCommentTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if (!isset($comment)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+	
 	$ret = $comment->create($rootAlbumId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

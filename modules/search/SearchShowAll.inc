@@ -79,10 +79,6 @@ class SearchShowAllView extends GalleryView {
 	$return = GalleryUtilities::getFormVariables('return.');
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	
-	print "<pre>";
-	print_r($form);
-	print "</pre>";
-
 	$searchResults = array();
 	$searchResultItems = array();
 	$searchResultThumbnails = array();
@@ -115,6 +111,11 @@ class SearchShowAllView extends GalleryView {
 		    GalleryFactory::newInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (!isset($searchInstance)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
 		}
 		
 		list ($ret, $moduleInfo) = $searchInstance->getSearchModuleInfo();

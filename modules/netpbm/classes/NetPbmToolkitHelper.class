@@ -1,0 +1,201 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package NetPbm
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A helper class for the GalleryNetPbmToolkit class
+ *
+ * @package NetPbm
+ * @subpackage Classes
+ */
+class NetPbmToolkitHelper {
+
+    /**
+     * Figure out what operations and properties are supported by the
+     * NetPbmToolkit and return them.
+     *
+     * @return object GalleryStatus a status code
+     *         array('operations' => ...
+     *               'properties' => ...)
+     * @static
+     */
+    function getOperationsAndProperties() {
+	global $gallery;
+
+	list ($ret, $netPbmPath) =
+	    $gallery->getModuleParameter('netpbm', 'path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$paths = array();
+	foreach (array('pnmtojpeg') as $key) {
+	    list ($ret, $paths[$key]) = 
+		$gallery->getModuleParameter('netpbm', $key);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	list ($ret, $tests, $mimeTypes) =
+	    NetPbmToolkitHelper::testBinaries($netPbmPath, $paths);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * -------------------- Operations --------------------
+	 */
+
+	/* Scale */
+	$operations['scale']['params'][] = array('type' => 'int',
+						 'description' => $gallery->i18n('target size'), 
+						 'default' => 200);
+	$operations['scale']['description'] = $gallery->i18n('Scale the image to the target size'); 
+	$operations['scale']['mimeTypes'] = $mimeTypes;
+
+	/* Thumbnail is an alias for scale */
+	$operations['thumbnail'] = $operations['scale'];
+
+	/* Resize */
+	$operations['resize']['params'][] = array('type' => 'int',
+						  'description' => $gallery->i18n('target width'), 
+						  'default' => 200);
+	$operations['resize']['params'][] = array('type' => 'int',
+						  'description' => $gallery->i18n('target height'), 
+						  'default' => 200);
+	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions'); 
+	$operations['resize']['mimeTypes'] = $mimeTypes;
+
+	/* Rotate */
+	$operations['rotate']['params'][] = array('type' => 'int',
+						  'description' => $gallery->i18n('rotation degrees'), 
+						  'default' => 90);
+	$operations['rotate']['description'] = $gallery->i18n('Rotate the image'); 
+	$operations['rotate']['mimeTypes'] = $mimeTypes;
+	
+	/* Crop */
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('left edge'), 
+						'default' => 0);
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('top edge'), 
+						'default' => 0);
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('width'), 
+						'default' => 0);
+	$operations['crop']['params'][] = array('type' => 'int',
+						'description' => $gallery->i18n('height'), 
+						'default' => 0);
+	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
+	$operations['crop']['mimeTypes'] = $mimeTypes;
+
+	/*
+	 * -------------------- Properties --------------------
+	 */
+
+	/* Dimensions */
+	$properties['dimensions']['type'] = 'int,int';
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image'); 
+	$properties['dimensions']['mimeTypes'] = $mimeTypes;
+
+	return array(GalleryStatus::success(), array('operations' => $operations,
+						     'properties' => $properties));
+    }
+
+    /**
+     * Test if the given path has a working set of NetPbm binaries.
+     *
+     * This is done by trying to run 'identify' on a sample image.
+     *
+     * @param string path to the NetPbm we are testing
+     * @return array object GalleryStatus general status of tests
+     *	       array ('name' => string: the name of the binary,
+     *		      'success' => boolean: test successfull?
+     *		      'message' => string: the error message, in case of 
+     *				   IMAGEMAGIC_TEST_ERROR
+     *		     )
+     * @static
+     */
+    function testBinaries($netPbmPath, $paths) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	/*
+	 * If the path is not restricted by open_basedir, then verify that it's
+	 * legal.  Else just hope that it's valid and use it.
+	 */
+	if (!$platform->isRestrictedByOpenBasedir($netPbmPath)) { 
+	    if (! $platform->file_exists($netPbmPath)
+		|| ! $platform->is_dir($netPbmPath) ) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	}
+
+	/* We need to translate some strings */
+	list($ret, $module) = $gallery->loadModule('netpbm');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$binaries['giftopnm'] = array('image/gif');
+	$binaries['ppmtogif'] = array('image/gif');
+	$binaries['jpegtopnm'] = array('image/jpeg', 'image/pjpeg');
+	$binaries[$paths['pnmtojpeg']] = array('image/jpeg', 'image/pjpeg');
+	$binaries['pngtopnm'] = array('image/png');
+	$binaries['pnmtopng'] = array('image/png');
+	$binaries['tifftopnm'] = array('image/tiff');
+	$binaries['pnmtotiff'] = array('image/tiff');
+
+	/* Get a list of all possible supported mime types */
+	$mimeTypes = array();
+	foreach (array_values($binaries) as $types) {
+	    $mimeTypes = array_merge($mimeTypes, $types);
+	}
+	$mimeTypes = array_flip($mimeTypes);
+
+	/* Disqualify mime types if the binaries aren't working */
+	foreach (array_keys($binaries) as $binary) {
+	    $fullPath = $netPbmPath . $binary;
+	    list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
+	    if (!$success) {
+		foreach ($binaries[$binary] as $mimeType) {
+		    unset($mimeTypes[$mimeType]);
+		}
+	    }
+	    $tests[] = array('name' => $binary,
+			     'success' => $success,
+			     'results' => $results);
+	}
+
+	$mimeTypes = array_flip($mimeTypes);
+
+	return array(GalleryStatus::success(), $tests, $mimeTypes);
+    }
+}
+?>

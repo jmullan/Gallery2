@@ -85,6 +85,9 @@ class CreateRandomTreeTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	if (!isset($album)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
 	
 	$ret = $album->create($parentId,
 			      $this->_randomName(),
@@ -130,8 +133,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $extension = GalleryUtilities::getFileExtension($imageFile);
 
 	    /* Create the item */
-	    list ($ret, $item) =
-		GalleryFactory::newInstanceByHint('GalleryDataItem', $mimeType);
+	    list ($ret, $item) = GalleryItemHelper::newItemByMimeType($mimeType);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -161,68 +163,96 @@ class CreateRandomTreeTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    list ($ret, $toolkit, $outputMimeType) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'thumbnail');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    /* Create a derivative image for the thumbnail */
-	    list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = $thumbnail->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $thumbnail->setDerivativeSourceId($item->getId());
-	    $thumbnail->setDerivativeCommands("scale 100");
-	    $thumbnail->setDerivativeMimeType($item->getMimeType());
-
-	    $thumbnail->save();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* If this is the first image in the album, make it the highlight */
-	    if ($i == 0) {
+	    if (isset($toolkit)) {
 		list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
-		$ret = $thumbnail->create($album->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+
+		if (!isset($thumbnail)) {
+		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		}  
+	    
+		$ret = $thumbnail->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		$thumbnail->setDerivativeSourceId($item->getId());
-		$thumbnail->setDerivativeCommands("scale 100");
-		$thumbnail->setDerivativeMimeType($item->getMimeType());
-		
+		$thumbnail->setDerivativeOperations('thumbnail|100');
+		$thumbnail->setDerivativeMimeType($outputMimeType);
+
 		$thumbnail->save();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	    }
-	    
-	    /* Create 1-3 resizes */
-	    $rand2 = rand(1, 3);
-	    $gallery->debug("<h3> Create $rand2 resizes </h3>");
-	    for ($j = 0; $j < $rand2; $j++) {
-		list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+
+		/* If this is the first image in the album, make it the highlight */
+		if ($i == 0) {
+		    list ($ret, $thumbnail) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    if (!isset($thumbnail)) {
+			return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    }  
 		
-		$ret = $resize->create($item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    $ret = $thumbnail->create($album->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		    $thumbnail->setDerivativeSourceId($item->getId());
+		    $thumbnail->setDerivativeOperations('thumbnail|100');
+		    $thumbnail->setDerivativeMimeType($outputMimeType);
+		
+		    $thumbnail->save();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
+	    }
 
-		$scale = 300 * ($j+1);
-		$resize->setDerivativeSourceId($item->getId());
-		$resize->setDerivativeCommands("scale $scale");
-		$resize->setDerivativeMimeType($item->getMimeType());
+	    list ($ret, $toolkit, $outputMimeType) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-		$ret = $resize->save();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+	    if (isset($toolkit)) {
+		/* Create 1-3 resizes */
+		$rand2 = rand(1, 3);
+		$gallery->debug("<h3> Create $rand2 resizes </h3>");
+		for ($j = 0; $j < $rand2; $j++) {
+		    list ($ret, $resize) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    if (!isset($resize)) {
+			return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    }  
+		
+		    $ret = $resize->create($item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    $scale = 300 * ($j+1);
+		    $resize->setDerivativeSourceId($item->getId());
+		    $resize->setDerivativeOperations("scale|$scale");
+		    $resize->setDerivativeMimeType($outputMimeType);
+
+		    $ret = $resize->save();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
 	    }
 

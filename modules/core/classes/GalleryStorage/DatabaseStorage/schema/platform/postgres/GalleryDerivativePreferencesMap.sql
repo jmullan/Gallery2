@@ -16,7 +16,7 @@
       INTEGER
     
       ,
-    DB_COLUMN_PREFIXderivativeCommands
+    DB_COLUMN_PREFIXderivativeOperations
       VARCHAR(
       
           255
@@ -41,9 +41,9 @@
     (DB_COLUMN_PREFIXderivativeType);
 
   
-    CREATE INDEX GalleryDerivativePreferencesMap_derivativeCommands 
+    CREATE INDEX GalleryDerivativePreferencesMap_derivativeOperations 
     ON DB_TABLE_PREFIXGalleryDerivativePreferencesMap
-    (DB_COLUMN_PREFIXderivativeCommands);
+    (DB_COLUMN_PREFIXderivativeOperations);
 
   
 

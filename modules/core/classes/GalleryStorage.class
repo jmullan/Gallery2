@@ -161,11 +161,11 @@ class GalleryStorage {
     /**
      * Load the GalleryEntities with the ids specified
      *
-     * @param mixed the ids (or id) of the GalleryEntities to load
+     * @param mixed the ids of the GalleryEntities to load
      * @return array object GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
-    function loadEntities($id) {
+    function loadEntities($ids) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);
@@ -208,15 +208,14 @@ class GalleryStorage {
     }
 
     /**
-     * Refresh a new GalleryEntity
+     * Refresh a GalleryEntity
      *
      * Refresh a GalleryEntity from the database, if it has changed.
-     * Return the new object.
      *
      * @access public
      * @param object GalleryEntity the object to refresh
      * @return array object GalleryStatus a status code,
-     *               GalleryEntity the refreshed object
+     *               object GalleryEntity the fresh entity
      */
     function refreshEntity($object) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
@@ -428,6 +427,9 @@ class GalleryStorage {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    if (!isset($entity)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    }
 	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
 	}
 
@@ -468,9 +470,11 @@ class GalleryStorage {
 		GalleryFactory::newInstance('GalleryEntity', $className);
 	    
 	    if ($ret->isError()) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!isset($instance)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	    }
 	    
 	    $this->_classTypeCache[$className] = $instance ;

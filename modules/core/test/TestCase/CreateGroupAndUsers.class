@@ -25,6 +25,10 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if (!isset($group)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+
 	$ret = $group->create('Group 1');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -38,6 +42,10 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	if (!isset($user1)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
 
 	$ret = $user1->create('user1');
 	if ($ret->isError()) {
@@ -56,6 +64,10 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	if (!isset($user2)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
 
 	$ret = $user2->create('user2');
 	if ($ret->isError()) {

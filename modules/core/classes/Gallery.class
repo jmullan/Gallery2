@@ -229,41 +229,64 @@ class Gallery {
      * @return array object GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
-    function loadEntitiesById($id) {
+    function loadEntitiesById($ids) {
 	GalleryProfiler::start('Gallery::loadEntitiesById');
 	
-	if (empty($id)) {
+	if (empty($ids)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	/* Check for cache hits on single entity lookups */
-	$cacheKey = "Gallery::loadEntitiesById($id)";
-	if (!is_array($id)) {
-	    if (GalleryDataCache::containsKey($cacheKey)) {
-		$entities = GalleryDataCache::get($cacheKey);
+	if (is_array($ids)) {
+	    $returnArray = true;
+	} else {
+	    $returnArray = false;
+	    $ids = array($ids);
+	}
+
+	/* Grab what we can from the cache and make up a list of what's missing */
+	$cached = array();
+	$missing = array();
+	foreach ($ids as $id) {
+	    if (GalleryDataCache::containsKey("Gallery::loadEntitiesById($id)")) {
+		$cached[$id] = GalleryDataCache::get("Gallery::loadEntitiesById($id)");
+	    } else {
+		$missing[] = $id;
 	    }
 	}
 
-	if (!isset($entities)) {
-
+	if (!empty($missing)) {
 	    /* Get a our storage object */
 	    $storage = $this->getStorage();
 	    
 	    /* Load the entities from our persistent store */
-	    list ($ret, $entities) = $storage->loadEntities($id);
+	    list ($ret, $missing) = $storage->loadEntities($missing);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-	    if (!is_array($id)) {
-		GalleryDataCache::put($cacheKey, $entities);
-	    }
 	}
-	GalleryProfiler::stop('Gallery::loadEntitiesById');
+
+	/* Move the new entities into the cache */
+	foreach ($missing as $entity) {
+	    $id = $entity->getId();
+	    GalleryDataCache::put("Gallery::loadEntitiesById($id)", $entity);
+	    $cached[$id] = $entity;
+	}
+
+	/* Build up the results from the cache */
+	$results = array();
+	foreach ($ids as $id) {
+	    $results[] =& $cached[$id];
+	}
 	
-	return array(GalleryStatus::success(), $entities);
+	GalleryProfiler::stop('Gallery::loadEntitiesById');
+
+	if (!$returnArray) {
+	    $results = $results[0];
+	}
+
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
@@ -388,35 +411,6 @@ class Gallery {
     }
 
     /**
-     * Get the image toolkit
-     *
-     * Return a the active GalleryGraphics
-     * 
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               object GalleryGraphics the active image toolkit
-     */
-    function getGraphics() {
-
-	/*
-	 * Create the graphics object on demand.
-	 */
-	if (empty($this->_graphics)) {
-	    list($ret, $type) = $this->getModuleParameter('core', 'graphics.type');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    list($ret, $this->_graphics) = GalleryFactory::newInstance('GalleryGraphics', $type);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	
-	return array(GalleryStatus::success(), $this->_graphics);
-    }
-
-    /**
      * Store a value in the Gallery config table
      *
      * @param string the key name
@@ -489,18 +483,29 @@ class Gallery {
 	if (!isset($this->_platform)) {
 	    $platformType = $this->getConfig('platform.type');
 
-	    list ($ret, $this->_platform) =
-		GalleryFactory::newInstanceByHint('GalleryPlatform', $platformType);
+	    foreach (array($platformType, '*') as $type) {
+		list ($ret, $this->_platform) =
+		    GalleryFactory::newInstanceByHint('GalleryPlatform', $type);
 
-	    /*
-	     * The platform factory should never fail.  It's highly
-	     * inconvenient to have to return an error code from this function,
-	     * so just drop a debug message if there was a failure.
-	     */
-	    if ($ret->isError()) {
+		/*
+		 * The platform factory should never fail.  It's highly
+		 * inconvenient to have to return an error code from this function,
+		 * so just drop a debug message if there was a failure.
+		 *
+		 * XXX: Refactor this out into initPlatform() and getPlatform()
+		 *      so that we can actually return an error code.
+		 */
+		if ($ret->isError()) {
+		    $this->debug($ret->getAsHtml());
+		}
+
+		if (isset($this->_platform)) {
+		    break;
+		}
+	    }
+
+	    if (!isset($this->_platform)) {
 		$this->debug('Failed to get the platform!');
-		$this->debug($ret->getAsHtml());
-		return null;
 	    }
 	}
 	
@@ -1367,6 +1372,20 @@ class Gallery {
 	}
 
 	return $this->_templateAdapter;
+    }
+
+    /**
+     * Mark a string as being internationalized.  This is a semaphore method; it
+     * does nothing but it allows us to easily identify strings that require
+     * translation.  Generally this is used to mark strings that will be stored
+     * in the database (like descriptions of permissions).
+     *
+     * @param string the value
+     * @return string the same value
+     */
+    function i18n($value) {
+	/* Just pass the value through */
+	return $value;
     }
 }
 ?>

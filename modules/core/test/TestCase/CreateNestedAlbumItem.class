@@ -47,6 +47,10 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+            if (!isset($nested[$i])) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
 	    
 	    $ret = $nested[$i]->create($parentId, "nested_${time}_$i",
 				       $gallery->getActiveUserId());

@@ -26,6 +26,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #, c-format
 msgid "%d day"
@@ -59,10 +60,6 @@ msgstr "アクション"
 #, fuzzy
 msgid "Actions"
 msgstr "アクション"
-
-#, fuzzy
-msgid "Activate a toolkit here"
-msgstr "ここでツールキットを有効化"
 
 #, fuzzy
 msgid "Active"
@@ -106,6 +103,10 @@ msgstr "アルバム設定"
 
 msgid "Album sort order:"
 msgstr "アルバムのソート順:"
+
+#, fuzzy
+msgid "Album"
+msgstr "アルバム追加"
 
 #, fuzzy
 msgid "All access"
@@ -163,12 +164,11 @@ msgstr "アルバム所有者変更:"
 msgid "Change"
 msgstr "変更"
 
-msgid ""
-"Choose a graphics toolkit to use.  You can only choose from the list of "
-"currently active toolkits."
+msgid "Choose the destination of the selected items"
 msgstr ""
-"使用するグラフィックツールキットを選択してください。現在利用できるリストの中"
-"から選んでください。"
+
+msgid "Choose the items you want to move"
+msgstr ""
 
 msgid "Clear"
 msgstr "消去"
@@ -228,6 +228,10 @@ msgid "Descending"
 msgstr "降順"
 
 msgid "Description"
+msgstr "説明"
+
+#, fuzzy
+msgid "Destination"
 msgstr "説明"
 
 msgid ""
@@ -406,9 +410,6 @@ msgstr "全般の設定"
 msgid "General"
 msgstr "全般"
 
-msgid "Graphics Toolkit"
-msgstr "グラフィックツールキット"
-
 #, c-format
 msgid "Group '%s' already exists"
 msgstr "グループ '%s' は既に存在しています"
@@ -505,6 +506,13 @@ msgstr "アイテム パーミッション"
 msgid "Item Thumbnail Size and Resizes"
 msgstr ""
 
+#, fuzzy
+msgid "Item"
+msgstr "アイテム追加"
+
+msgid "Items to move"
+msgstr ""
+
 msgid ""
 "Keywords will not be visible to the end user, but are searchable. This can "
 "be any character string.  It should not contain HTML."
@@ -551,6 +559,12 @@ msgstr "モジュール名"
 msgid "Modules"
 msgstr "モジュール"
 
+msgid "Move an Item"
+msgstr ""
+
+msgid "Move"
+msgstr ""
+
 msgid "Name"
 msgstr "名前"
 
@@ -563,11 +577,11 @@ msgstr "新しいファイル"
 msgid "Next >>"
 msgstr "次 >>"
 
-msgid "No Graphics toolkits detected!"
-msgstr "グラフィック ツールキットが検出されませんでした。"
-
 msgid "No Thumbnail"
 msgstr "サムネイルなし"
+
+msgid "No destination chosen"
+msgstr ""
 
 msgid "Not implemented yet"
 msgstr "まだ実行されていません"
@@ -804,9 +818,6 @@ msgstr "サムネイル"
 msgid "Title"
 msgstr "タイトル"
 
-msgid "Toolkit"
-msgstr "ツールキット"
-
 msgid "Total"
 msgstr "総計"
 
@@ -880,6 +891,15 @@ msgstr "はい、削除します。"
 msgid "Yes, make this item the highlight!"
 msgstr ""
 
+msgid "You are not allowed to move an album to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move an item to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move this item away from here."
+msgstr ""
+
 msgid ""
 "You are using a copy of the original image that has been scaled or rotated.  "
 "The original image is still available, but is no longer being used.  Any "
@@ -906,6 +926,13 @@ msgstr "anonymous(匿名)ユーザーを削除することはできません。"
 
 msgid "You cannot delete yourself!"
 msgstr "自分自身を削除することはできません。"
+
+#, fuzzy
+msgid "You cannot move an album into its own subtree."
+msgstr "このアルバムのなかに新しいアルバムを作成できます。"
+
+msgid "You don't have the permission to add items in this album"
+msgstr ""
 
 msgid "You must enter a group name"
 msgstr "グループ名を入力しなくてはなりません"
@@ -971,14 +998,17 @@ msgstr "[core] サブアルバム追加"
 msgid "[core] Add sub-item"
 msgstr "[core] サブアイテム追加"
 
+#, fuzzy
 msgid "[core] Change item permissions"
 msgstr "[core] アイテムパーミッション変更"
 
+#, fuzzy
 msgid "[core] Change item properties"
 msgstr "[core] アイテムプロパティ変更"
 
+#, fuzzy
 msgid "[core] Change item text"
-msgstr "[core] アイテムテキスト変更"
+msgstr "[core] アイテム移動"
 
 msgid "[core] Delete item"
 msgstr "[core] アイテム削除"
@@ -1053,6 +1083,10 @@ msgstr "ログアウト"
 msgid "make highlight"
 msgstr ""
 
+#, fuzzy
+msgid "move item"
+msgstr "アイテム編集"
+
 msgid "permissions"
 msgstr "パーミッション"
 
@@ -1121,8 +1155,41 @@ msgstr[0] "あなたのコンピュータから直接ファイルをアップロードしてください。"
 msgstr[1] ""
 "あなたのコンピュータから%dファイルまでを直接アップロードしてください。"
 
-#~ msgid "delete"
+#, fuzzy
+#~ msgid "core.changeText"
+#~ msgstr "[core] アイテムテキスト変更"
+
+#, fuzzy
+#~ msgid "core.delete"
 #~ msgstr "削除"
+
+#, fuzzy
+#~ msgid "core.move"
+#~ msgstr "削除"
+
+#, fuzzy
+#~ msgid "core.view"
+#~ msgstr "永久"
+
+#, fuzzy
+#~ msgid "Activate a toolkit here"
+#~ msgstr "ここでツールキットを有効化"
+
+#~ msgid ""
+#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
+#~ "currently active toolkits."
+#~ msgstr ""
+#~ "使用するグラフィックツールキットを選択してください。現在利用できるリストの"
+#~ "中から選んでください。"
+
+#~ msgid "Graphics Toolkit"
+#~ msgstr "グラフィックツールキット"
+
+#~ msgid "No Graphics toolkits detected!"
+#~ msgstr "グラフィック ツールキットが検出されませんでした。"
+
+#~ msgid "Toolkit"
+#~ msgstr "ツールキット"
 
 #~ msgid "Count"
 #~ msgstr "カウント"

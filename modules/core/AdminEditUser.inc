@@ -96,7 +96,11 @@ class AdminEditUserController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$user->refresh();
+		list ($ret, $user) = $user->refresh();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
 		$user->setFullname($form['fullname']);
 		if (!$isAnonymous) {
 		    $user->setEmail($form['email']);

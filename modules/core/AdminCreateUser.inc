@@ -72,6 +72,11 @@ class AdminCreateUserController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		if (!isset($user)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
+		}
+		
 		$ret = $user->create($form['username']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {

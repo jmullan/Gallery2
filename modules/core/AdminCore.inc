@@ -54,7 +54,6 @@ class AdminCoreController extends GalleryController {
 		       'default.layout',
 		       'default.theme',
 		       'default.language',
-		       'graphics.type',
 		       'session.lifetime',
 		       'session.inactivityTimeout') as $key) {
 	    $value = GalleryUtilities::getRequestVariables($key);
@@ -106,7 +105,6 @@ class AdminCoreView extends GalleryView {
 		       'default.layout',
 		       'default.theme',
 		       'default.language',
-		       'graphics.type',
 		       'session.lifetime',
 		       'session.inactivityTimeout') as $key) {
 
@@ -206,14 +204,6 @@ class AdminCoreView extends GalleryView {
 	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
 
-	/* Set up our graphics selection list */
-	$idsToClassNames = GalleryFactory::getAllImplementationIds('GalleryGraphics');
-	if (!empty($idsToClassNames)) {
-	    $graphicsTypeList = array_flip($idsToClassNames);
-	} else {
-	    $graphicsTypeList = array();
-	}
-
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
@@ -225,7 +215,6 @@ class AdminCoreView extends GalleryView {
 	$template->setVariable('permissionsDirectoryList', $permissionsDirectoryList);
 	$template->setVariable('permissionsFileList', $permissionsFileList);
 	$template->setVariable('sessionTimeList', $sessionTimeList);
-	$template->setVariable('graphicsTypeList' , $graphicsTypeList);
 	$template->setVariable('controller', 'core:AdminCore');
 	$html = $template->render('AdminCore.tpl');
 

@@ -57,7 +57,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
   
         $info['members']['derivativeType'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['derivativeCommands'] = STORAGE_TYPE_STRING;
+        $info['members']['derivativeOperations'] = STORAGE_TYPE_STRING;
   
         return $info; 
     }
@@ -84,7 +84,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     
-        if (!isset($data['derivativeCommands'])) {
+        if (!isset($data['derivativeOperations'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

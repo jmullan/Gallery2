@@ -49,6 +49,26 @@
 	</tr>
 	<!-- {/if} -->
 
+	<!-- {if isset($form.error.path.testError)} -->
+	<tr>
+	  <td colspan="2" align="center">
+	    {gallery->errorFontColor}
+	    {gallery->text text="The path you entered doesn't contain valid ImageMagick binaries. Use the 'test' button to check where the error is."}
+	    {/gallery->errorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
+	<!-- {if isset($form.error.path.badPath)} -->
+	<tr>
+	  <td colspan="2" align="center">
+	    {gallery->errorFontColor}
+	    {gallery->text text="The path you entered isn't a valid path."}
+	    {/gallery->errorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
 	<tr>	
 	  <td align="right">
 	    {gallery->text text="JPEG Quality"}
@@ -109,12 +129,12 @@
 	  </td>
 	</tr>
 
-	{if empty($test.success) && !empty($test.results)}
+	{if ! $test.success && ! empty($test.message)}
 	<tr>
 	  <td colspan="2">
 	    {gallery->text text="Error messages:"}
 	    <br>
-	    {foreach from=$test.results item=line}
+	    {foreach from=$test.message item=line}
 	    <pre>{$line}</pre>
 	    {/foreach}
 	  </td>
@@ -122,7 +142,25 @@
 	{/if}
 
 	{/foreach}
-      </table>
+
+	{if $mimeTypes}
+	<tr>
+	  <td colspan="2">
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <th> {gallery->text text="Supported MIME Types"} </th>
+	  <td align="center">
+	    {foreach from=$mimeTypes item=mimeType}
+	        {$mimeType}<br>
+	    {/foreach}
+	  </td>
+	</tr>
+	{/if}
+
+	</table>
       </td>
     </tr>
     {/if}

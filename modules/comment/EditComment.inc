@@ -96,7 +96,11 @@ class EditCommentController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$comment->refresh();
+		list ($ret, $comment) = $comment->refresh();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
 		$comment->setCommenterId($commenter->getId());
 		$comment->setHost($form['host']);
 		$comment->setComment($form['comment']);

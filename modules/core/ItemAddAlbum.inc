@@ -84,6 +84,11 @@ class ItemAddAlbumController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		if (!isset($instance)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
+		}  
+
 		$ret = $instance->create($itemId,
 					 $form['pathComponent'],
 					 $gallery->getActiveUserId());

@@ -48,11 +48,6 @@ class ConfigureImageMagickTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $gallery->setModuleParameter('core', 'graphics.type', 'ImageMagickGraphics');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	return GalleryStatus::success();
     }
 }

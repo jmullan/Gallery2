@@ -63,7 +63,7 @@ class GalleryDerivativePreferencesMap_core {
      * @g2     <indexed/>
      * @g2   </member>
      * @g2   <member>
-     * @g2     <member-name>derivativeCommands</member-name>
+     * @g2     <member-name>derivativeOperations</member-name>
      * @g2     <member-type>STRING</member-type>
      * @g2     <member-size>LARGE</member-size>
      * @g2     <indexed/>
@@ -106,7 +106,7 @@ class GalleryDerivativePreferencesMap_core {
      *
      * @param int the target id
      * @return array object GalleryStatus a status code
-     *               array (derivativeType => ..., derivativeCommands => ...)
+     *               array (derivativeType => ..., derivativeOperations => ...)
      * @static
      */
     function fetchPreferencesForItem($targetId) {
@@ -116,7 +116,7 @@ class GalleryDerivativePreferencesMap_core {
         SELECT
           [GalleryDerivativePreferencesMap::order],
           [GalleryDerivativePreferencesMap::derivativeType],
-          [GalleryDerivativePreferencesMap::derivativeCommands]
+          [GalleryDerivativePreferencesMap::derivativeOperations]
         FROM
           [GalleryDerivativePreferencesMap]
         WHERE
@@ -134,7 +134,7 @@ class GalleryDerivativePreferencesMap_core {
 	while ($result = $searchResults->nextResult()) {
 	    $data[] = array('order' => $result[0],
 			    'derivativeType' => $result[1],
-			    'derivativeCommands' => $result[2]);
+			    'derivativeOperations' => $result[2]);
 	}
 	return array($ret, $data);
     }

@@ -60,6 +60,11 @@ class AddCommentController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    if (!isset($comment)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			     null);
+	    }  
+
 	    $ret = $comment->create($itemId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

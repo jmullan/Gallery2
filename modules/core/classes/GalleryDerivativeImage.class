@@ -152,257 +152,47 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
     }
 
     /**
-     * @see GalleryDerivative::mergeCommand()
-     */
-    function mergeCommand($mergeCommand) {
-
-	$mergePieces = split(' ', $mergeCommand);
-	$commands = $this->getDerivativeCommands();
-	$newCommands = array();
-
-	$merged = false;
-	foreach (split(';', $commands) as $command) {
-	    if (empty($command)) {
-		continue;
-	    }
-	    
-	    $pieces = split(' ', $command);
-	    if ($pieces[0] == $mergePieces[0]) {
-		switch ($pieces[0]) {
-		case 'rotate':
-		    /* Add the rotations together */
-		    $newRotation = ($pieces[1] + $mergePieces[1]) % 360;
-		    if ($newRotation != 0) {
-			switch ($newRotation) {
-			case 270:
-			case -90:
-			    $newCommands[] = "rotate -90";
-			    break;
-
-			case 180:
-			case -180:
-			    $newCommands[] = "rotate 180";
-			    break;
-
-			case 90:
-			case -270:
-			    $newCommands[] = "rotate 90";
-			    break;
-
-			default:
-			    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-							__FILE__, __LINE__);
-			}
-		    }
-		    $merged = true;
-		    break;
-		    
-		case 'scale':
-		case 'resize':
-		case 'crop':
-		    /* Replace the old command with the new one */
-		    $newCommands[] = $mergeCommand;
-		    $merged = true;
-		    break;
-		}
-	    } else {
-		$newCommands[] = $command;
-	    }
-	}
-
-	if (!$merged) {
-	    $newCommands[] = $mergeCommand;
-	}
-
-	if (empty($newCommands)) {
-	    $this->setDerivativeCommands(null);
-	} else {
-	    $this->setDerivativeCommands(join(';', $newCommands));
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
      * Rebuild the cache.
      *
-     * Only applicable if isDerative() returns true.  The commands
-     * this item understands follow this EBNF grammar:
-     *
-     * COMMAND   = <OPERATION> | <OPERATION> ; <COMMAND>
-     * OPERATION = ROTATE | SCALE | RESIZE | CROP
-     * ROTATE    = "rotate" ("-90" | "180" | "90")
-     * CROP      = "crop" NUMBER NUMBER NUMBER NUMBER
-     * RESIZE    = "resize" NUMBER NUMBER 
-     * SCALE     = "scale" NUMBER
+     * Only applicable if isDerative() returns true.  Break apart the
+     * derivative commands and feed them into the appropriate graphics toolkits
+     * to perform the transformation necessary to create this derivative from
+     * its source.
      * 
      * @access public
      * @return object GalleryStatus a status code
      */
     function rebuildCache() {
 	global $gallery;
+
 	$ret = parent::rebuildCache();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Load the source */
-	$sourceId = $this->getDerivativeSourceId();
-	list($ret, $source) = $gallery->loadEntitiesById($sourceId);
+	/* Update our dimensions */
+	$mimeType = $this->getDerivativeMimeType();
+	list ($ret, $toolkit) =
+	    GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* If the source is a derivative, make sure the it's current */
-	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
-	    list ($ret, $isCurrent) = $source->isCacheCurrent();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    if (!$isCurrent) {
-		$ret = $source->rebuildCache();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-	
-	/* Get the path of the source for the next operation */
-	list($ret, $sourcePath) = $source->fetchPath();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Figure out our target path */
-	list($ret, $destPath) = $this->fetchPath();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	list($ret, $graphics) = $gallery->getGraphics();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Now apply our derivative commands to create the cache file */
-	$commands = split(';', $this->getDerivativeCommands());
-	foreach ($commands as $command) {
-	    if (empty($command)) {
-		continue;
-	    }
-	    $pieces = split(' ', $command);
-	    switch (array_shift($pieces)) {
-	    case 'rotate':
-		if (sizeof($pieces) != 1) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-						__FILE__, __LINE__);
-		}
-		
-		$ret = $graphics->rotateImage($this->getDerivativeMimeType(),
-					      $sourcePath,
-					      $destPath,
-					      $pieces[0]);
-		break;
-
-	    case 'crop':
-		if (sizeof($pieces) != 4) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-						__FILE__, __LINE__);
-		}
-		
-		$ret = $graphics->cropImage($this->getDerivativeMimeType(),
-					    $sourcePath,
-					    $destPath,
-					    $pieces[0],
-					    $pieces[1],
-					    $pieces[2],
-					    $pieces[3]);
-		break;
-
-	    case 'resize':
-		if (sizeof($pieces) != 2) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-						__FILE__, __LINE__);
-		}
-		
-		$ret = $graphics->resizeImage($this->getDerivativeMimeType(),
-					      $sourcePath,
-					      $destPath,
-					      $pieces[0],
-					      $pieces[1]);
-		break;
-
-	    case 'scale':
-		if (sizeof($pieces) != 1) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-						__FILE__, __LINE__);
-		}
-		
-		$ret = $graphics->scaleImage($this->getDerivativeMimeType(),
-					     $sourcePath,
-					     $destPath,
-					     $pieces[0]);
-		break;
-
-	    default:
-		return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					    __FILE__, __LINE__);
-	    }
-
+	if (isset($toolkit)) {
+	    /* Figure out our target path */
+	    list($ret, $destPath) = $this->fetchPath();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /*
-	     * After the first operation, the source for the next operation is the
-	     * same file as the original.
-	     */
-	    $sourcePath = $destPath;
-	}
-
-	$platform = $gallery->getPlatform();
-	
-	/* Get the size of the file */
-	if ($platform->file_exists($destPath)) {
-	    $size = $platform->filesize($destPath);
-	} else {
-	    $size = -1;
-	}
-	
-	/*
-	 * If the actual size differs from the database, update the
-	 * item.
-	 */
-	if ($size != $this->getDerivativeSize()) {
-	    $this->setDerivativeSize($size);
-	}
-
-	/* Update the dimensions */
-	list ($ret, $width, $height) =
-	    $graphics->getImageDimensions($this->getDerivativeMimeType(), $destPath);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$this->setWidth($width);
-	$this->setHeight($height);
-
-	/* Save our changes */
-	if ($this->isModified()) {
-	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->getId(), 1);
+	    list ($ret, $dimensions) =
+		$toolkit->getProperty($mimeType, 'dimensions', $destPath);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    $ret = $this->save();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $ret = $gallery->releaseLocks($lockId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	
+	    $this->setWidth($dimensions[0]);
+	    $this->setHeight($dimensions[1]);
 	}
 
 	return GalleryStatus::success();

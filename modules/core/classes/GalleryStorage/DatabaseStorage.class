@@ -265,7 +265,7 @@ class DatabaseStorage extends GalleryStorage {
     /**
      * Load the GalleryEntities with the ids specified
      *
-     * @param mixed the ids (or id) of the GalleryEntities to load
+     * @param array the ids of the GalleryEntities to load
      * @return array object GalleryStatus a status code,
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
@@ -276,13 +276,6 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
-	}
-
-	if (is_array($ids)) {
-	    $returnArray = true;
-	} else {
-	    $returnArray = false;
-	    $ids = array($ids);
 	}
 
 	/* Identify all the ids at once */
@@ -402,9 +395,6 @@ class DatabaseStorage extends GalleryStorage {
 	    $result[] = $entities[$id];
 	}
 
-	if (!$returnArray) {
-	    $result = $result[0];
-	}
 	return array(GalleryStatus::success(), $result);
     }
 
@@ -680,20 +670,13 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Refresh a new GalleryEntity
-     *
-     * Refresh a GalleryEntity from the database, if it has changed.
-     * Return the new object.
-     *
-     * @access public
-     * @param object GalleryEntity the object to refresh
-     * @return array object GalleryStatus a status code,
-     *               GalleryEntity the refreshed entity
+     * @see GalleryStorage::refreshEntity
      */
     function refreshEntity($entity) {
 	if (empty($this->_db)) {
-	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
 	/*
@@ -713,24 +696,23 @@ class DatabaseStorage extends GalleryStorage {
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	if (!$recordSet || $recordSet->RecordCount() == 0) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-					      __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 			 null);
 	}
 
-	if ($recordSet->FetchField(0) == $entity->getSerialNumber()) {
+	$row = $recordSet->FetchRow();
+	$newSerial = $row[0];
+	if ($newSerial == $entity->getSerialNumber()) {
 	    return array(GalleryStatus::success(), $entity);
 	}
 
 	/* Serial number didn't match -- reload the entity */
-	list ($ret, $freshEntity) = $this->loadEntities($entity->getId());
+	list ($ret, list($freshEntity)) = $this->loadEntities(array($entity->getId()));
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$entity &= $freshEntity;
-
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $freshEntity);
     }
 
     /**

@@ -16,7 +16,7 @@
     NOT NULL
   
       ,
-    DB_COLUMN_PREFIXderivativeCommands
+    DB_COLUMN_PREFIXderivativeOperations
       VARCHAR(
       
           255

@@ -129,46 +129,6 @@
 	<tr>
 	  <td colspan="2">
 	    {gallery->bigFontSize}
-	    {gallery->text text="Graphics Toolkit"}
-	    {/gallery->bigFontSize}
-	    <br>
-	    {gallery->text text="Choose a graphics toolkit to use.  You can only choose from the list of currently active toolkits."}
-	  </td>
-	</tr>
-
-	<!-- {if !empty($graphicsTypeList)} -->
-	<tr>
-	  <td align="right">
-	    {gallery->text text="Toolkit"}
-	  </td>
-	  <td>
-	    {gallery->select name="graphics.type"}
-	    {html_options options=$graphicsTypeList selected=$form.graphics.type}
-	    {/gallery->select}
-	  </td>
-	</tr>
-	<!-- {else} -->
-	<tr>
-	  <td colspan="2">
-	    {gallery->errorFontColor}
-	    {gallery->text text="No Graphics toolkits detected!"}
-	    <a href="{gallery->url view=core:SiteAdmin subView=core:AdminModules}">
-	      [{gallery->text text="Activate a toolkit here"}]
-	    </a>
-	    {/gallery->errorFontColor}
-	  </td>
-	</tr>
-	<!-- {/if} -->
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td colspan="2">
-	    {gallery->bigFontSize}
 	    {gallery->text text="Session Settings"}
 	    {/gallery->bigFontSize}
 	    <br>

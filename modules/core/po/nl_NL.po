@@ -30,6 +30,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, c-format
 msgid "%d day"
@@ -61,9 +62,6 @@ msgstr "Aktie"
 
 msgid "Actions"
 msgstr "Akties"
-
-msgid "Activate a toolkit here"
-msgstr "Activeer een hulpprogramma hier"
 
 msgid "Active"
 msgstr "Aktief"
@@ -106,6 +104,10 @@ msgstr "Album instellingen"
 
 msgid "Album sort order:"
 msgstr "Album sorteer volgorde:"
+
+#, fuzzy
+msgid "Album"
+msgstr "Album toevoegen"
 
 msgid "All access"
 msgstr "Altijd toegang"
@@ -155,12 +157,11 @@ msgstr "Verander album eigenaar naar:"
 msgid "Change"
 msgstr "Wijzigen"
 
-msgid ""
-"Choose a graphics toolkit to use.  You can only choose from the list of "
-"currently active toolkits."
+msgid "Choose the destination of the selected items"
 msgstr ""
-"Kies een grafische toolkit om te gebruiken. U kunt alleen kiezen uit de nu "
-"actieve toolkits."
+
+msgid "Choose the items you want to move"
+msgstr ""
 
 msgid "Clear"
 msgstr "Wissen"
@@ -220,6 +221,10 @@ msgid "Descending"
 msgstr "Aflopend"
 
 msgid "Description"
+msgstr "Omschrijving"
+
+#, fuzzy
+msgid "Destination"
 msgstr "Omschrijving"
 
 msgid ""
@@ -380,9 +385,6 @@ msgstr "Algemene instellingen"
 msgid "General"
 msgstr "Algemeen"
 
-msgid "Graphics Toolkit"
-msgstr "Grafische toolkit"
-
 #, c-format
 msgid "Group '%s' already exists"
 msgstr "Groep '%s' bestaat reeds"
@@ -483,6 +485,13 @@ msgid "Item Thumbnail Size and Resizes"
 msgstr "Item voorbeeld groottes"
 
 #, fuzzy
+msgid "Item"
+msgstr "Items toevoegen"
+
+msgid "Items to move"
+msgstr ""
+
+#, fuzzy
 msgid ""
 "Keywords will not be visible to the end user, but are searchable. This can "
 "be any character string.  It should not contain HTML."
@@ -527,6 +536,13 @@ msgstr "Module naam"
 msgid "Modules"
 msgstr "Modules"
 
+#, fuzzy
+msgid "Move an Item"
+msgstr "Bewerken Groep '%s'"
+
+msgid "Move"
+msgstr ""
+
 msgid "Name"
 msgstr "Naam"
 
@@ -539,11 +555,11 @@ msgstr "Nieuwe bestanden"
 msgid "Next >>"
 msgstr "Volgende >>"
 
-msgid "No Graphics toolkits detected!"
-msgstr "Geen grafische toolkit gedetecteerd!"
-
 msgid "No Thumbnail"
 msgstr "Geen voorbeeld"
+
+msgid "No destination chosen"
+msgstr ""
 
 msgid "Not implemented yet"
 msgstr "Nog niet geïmplementeerd"
@@ -770,9 +786,6 @@ msgstr "Voorbeelden"
 msgid "Title"
 msgstr "Titel"
 
-msgid "Toolkit"
-msgstr "Toolkit"
-
 msgid "Total"
 msgstr "Totaal"
 
@@ -844,6 +857,15 @@ msgstr "Ja, verwijderen!"
 msgid "Yes, make this item the highlight!"
 msgstr "Ja, maak van dit item de highlight!"
 
+msgid "You are not allowed to move an album to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move an item to the chosen destination."
+msgstr ""
+
+msgid "You are not allowed to move this item away from here."
+msgstr ""
+
 msgid ""
 "You are using a copy of the original image that has been scaled or rotated.  "
 "The original image is still available, but is no longer being used.  Any "
@@ -867,6 +889,13 @@ msgstr "U mag de annonieme gebruiker niet verwijderen!"
 
 msgid "You cannot delete yourself!"
 msgstr "U kan uzelf niet verwijderen"
+
+#, fuzzy
+msgid "You cannot move an album into its own subtree."
+msgstr "U kan nieuwe albums in dit album maken."
+
+msgid "You don't have the permission to add items in this album"
+msgstr ""
 
 msgid "You must enter a group name"
 msgstr "U moet een groepnaam opgeven"
@@ -926,14 +955,17 @@ msgstr "[core] Sub-album toevoegen"
 msgid "[core] Add sub-item"
 msgstr "[core] Sub-item toevoegen"
 
+#, fuzzy
 msgid "[core] Change item permissions"
 msgstr "[core] Verander item rechten"
 
+#, fuzzy
 msgid "[core] Change item properties"
 msgstr "[core] Verander item eigenschappen"
 
+#, fuzzy
 msgid "[core] Change item text"
-msgstr "[core] Verander item tekst"
+msgstr "[core] Verplaats item"
 
 msgid "[core] Delete item"
 msgstr "[core] Verwijder item"
@@ -1004,6 +1036,10 @@ msgstr "uitloggen"
 msgid "make highlight"
 msgstr "maak highlight"
 
+#, fuzzy
+msgid "move item"
+msgstr "Bewerken Groep '%s'"
+
 msgid "permissions"
 msgstr "rechten"
 
@@ -1072,12 +1108,43 @@ msgstr[0] "Upload een bestand rechstreeks vanuit uw computer."
 msgstr[1] ""
 
 #, fuzzy
-#~ msgid "Remove %s"
+#~ msgid "core.changeText"
+#~ msgstr "[core] Verander item tekst"
+
+#, fuzzy
+#~ msgid "core.delete"
+#~ msgstr "Verwijder"
+
+#, fuzzy
+#~ msgid "core.move"
 #~ msgstr "Verwijderen"
 
 #, fuzzy
-#~ msgid "delete"
-#~ msgstr "Verwijder"
+#~ msgid "core.view"
+#~ msgstr "altijd"
+
+#~ msgid "Activate a toolkit here"
+#~ msgstr "Activeer een hulpprogramma hier"
+
+#~ msgid ""
+#~ "Choose a graphics toolkit to use.  You can only choose from the list of "
+#~ "currently active toolkits."
+#~ msgstr ""
+#~ "Kies een grafische toolkit om te gebruiken. U kunt alleen kiezen uit de "
+#~ "nu actieve toolkits."
+
+#~ msgid "Graphics Toolkit"
+#~ msgstr "Grafische toolkit"
+
+#~ msgid "No Graphics toolkits detected!"
+#~ msgstr "Geen grafische toolkit gedetecteerd!"
+
+#~ msgid "Toolkit"
+#~ msgstr "Toolkit"
+
+#, fuzzy
+#~ msgid "Remove %s"
+#~ msgstr "Verwijderen"
 
 #~ msgid "Count"
 #~ msgstr "Tellen"
@@ -1095,10 +1162,6 @@ msgstr[1] ""
 
 #, fuzzy
 #~ msgid "Delete this item"
-#~ msgstr "Bewerken Groep '%s'"
-
-#, fuzzy
-#~ msgid "Move this item"
 #~ msgstr "Bewerken Groep '%s'"
 
 #, fuzzy

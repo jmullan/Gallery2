@@ -26,6 +26,10 @@ class CreateAndDeleteUserTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	if (!isset($user)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
 	
 	$ret = $user->create('joe blow');
 	if ($ret->isError()) {

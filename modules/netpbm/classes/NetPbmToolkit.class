@@ -28,42 +28,152 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryGraphics.class');
+require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
 
 /**
- * A NetPBM version of GalleryGraphics
+ * A NetPBM version of GalleryToolkit
  *
- * This class implements the GalleryGraphics API using NetPBM.
+ * This class implements the GalleryToolkit API using NetPBM.
  *
  * @package NetPBM
  * @subpackage Classes
  */
-class NetPbmGraphics extends GalleryGraphics {
+class NetPbmToolkit extends GalleryToolkit {
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
 
-    function NetPbmGraphics() {
-	/* Supported functions */
-	$this->_supportedFunctions = (IMAGE_FUNCTION_RESIZE |
-				      IMAGE_FUNCTION_SCALE |
-				      IMAGE_FUNCTION_ROTATE |
-				      IMAGE_FUNCTION_CROP |
-				      IMAGE_FUNCTION_PROPERTIES);
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
 
-	/* Supported mime types */
-	$this->_supportedMimeTypes['image/jpeg'] = 1;
-	$this->_supportedMimeTypes['image/pjpeg'] = 1;
-	$this->_supportedMimeTypes['image/gif'] = 1;
-	$this->_supportedMimeTypes['image/png'] = 1;
+	switch($propertyName) {
+	case 'dimensions':
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),
+			     null);
+	    }
+	    $results = array($width, $height);
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
-     * @see GalleryGraphics::getImageDimensions()
+     * @see GalleryToolkit::performOperation()
      */
-    function getImageDimensions($mimeType, $filename) {
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	switch($operationName) {
+	case 'thumbnail':
+	case 'scale':
+	    $transform = array($this->_pnmCmd('pnmscale'),
+			       '--quiet',
+			       '-xysize',
+			       $parameters[0],
+			       $parameters[0]);
+	    break;
+	    
+	case 'resize':
+	    $transform = array($this->_pnmCmd('pnmscale'),
+			       '--quiet',
+			       '-xsize', $parameters[0],
+			       '-ysize', $parameters[1]);
+	    break;
+
+	case 'rotate':
+	    switch($parameters[0]) {
+	    case -90:
+		$flipArgument = "-ccw";
+		break;
+		
+	    case 90:
+		$flipArgument = "-cw";
+		break;
+		
+	    case 180:
+		$flipArgument = "-r180";
+		break;
+
+	    default:
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			     null);
+	    }
+	    
+	    $transform = array($this->_pnmCmd('pnmflip'), $flipArgument);
+	    break;
+	    
+	case 'crop':
+	    $transform = array($this->_pnmCmd('pnmcut'),
+			       $parameters[0], $parameters[1],
+			       $parameters[2], $parameters[3]);
+	    break;
+	    
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $mimeType);
+    }
+
+    /**
+     * @see GalleryToolkit::mergeOperations()
+     */
+    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+
+	/* We can only merge like operations */
+	if ($operation1 != $operation2) {
+	    return array(false, null, null);
+	}
+
+	switch ($operation1) {
+	case 'crop':
+	case 'resize':
+	case 'scale':
+	    /* Second scale, resize, or crop takes precedence */
+	    return array(true, $operation2, $args2);
+	    break;
+
+	case 'rotate':
+	    /* Rotation is additive */
+	    $rotation = ($args1[0] + $args2[0]) % 360;
+
+	    /* 0 rotation means the operation goes away */
+	    if ($rotation == 0) {
+		return array(true, null, null);
+	    }
+
+	    if ($rotation == 270) {
+		$rotation = -90;
+	    }
+	    return array(true, $operation2, array($rotation));
+
+	default:
+	    return array(false, null, null);
+	}
+    }
+
+    /**
+     * @see GalleryToolkit::getImageDimensions()
+     */
+    function _getImageDimensions($mimeType, $filename) {
 
 	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
 	if ($ret->isError()) {
@@ -85,112 +195,9 @@ class NetPbmGraphics extends GalleryGraphics {
 	    }
 	}
 
-	return array(GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
 					  __FILE__, __LINE__),
 		     null, null);
-    }
-
-    /**
-     * @see GalleryGraphics::resizeImage()
-     */
-    function resizeImage($mimeType, $sourceFilename, $destFilename, $width, $height) {
-	if (!$this->isSupportedFunction(IMAGE_FUNCTION_RESIZE)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
-	}
-
-	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmscale'),
-					    '--quiet',
-					    '-xsize', $width,
-					    '-ysize', $height),
-				      $sourceFilename,
-				      $destFilename);
-    }
-
-    /**
-     * @see GalleryGraphics::scaleImage()
-     */
-    function scaleImage($mimeType, $sourceFilename, $destFilename, $targetSize) {
-	if (!$this->isSupportedFunction(IMAGE_FUNCTION_SCALE)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
-	}
-	
-	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmscale'),
-					    '--quiet',
-					    '-xysize', $targetSize, $targetSize),
-				      $sourceFilename,
-				      $destFilename);
-    }
-		
-    /**
-     * @see GalleryGraphics::rotateImage()
-     */
-    function rotateImage($mimeType, $sourceFilename, $destFilename, $degrees) {
-	if (!$this->isSupportedFunction(IMAGE_FUNCTION_ROTATE)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
-	}
-
-	switch($degrees) {
-	case -90:
-	    $flipArgument = "-ccw";
-	    break;
-
-	case 90:
-	    $flipArgument = "-cw";
-	    break;
-
-	case 180:
-	    $flipArgument = "-r180";
-	    break;
-
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-
-	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmflip'),
-					    $flipArgument),
-				      $sourceFilename,
-				      $destFilename);
-    }
-		
-    /**
-     * @see GalleryGraphics::cropImage()
-     */
-    function cropImage($mimeType, $sourceFilename, $destFilename, $x, $y, $width, $height) {
-	if (!$this->isSupportedFunction(IMAGE_FUNCTION_CROP)) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
-					__FILE__, __LINE__);
-	}
-	
-	return $this->_transformImage($mimeType,
-				      array($this->_pnmCmd('pnmcut'),
-					    $x, $y, $width, $height),
-				      $sourceFilename,
-				      $destFilename);
-    }
-
-    /**
-     * @see GalleryGraphics::isValidImage()
-     */
-    function isValidImage($mimeType, $filename) {
-
-	/* Test validity by getting image dimensions */
-	list($ret, $width, $height) = $this->getImageDimensions($mimeType, $filename);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* 0x0 image is also invalid */
-	if ($width == 0 && $height == 0) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), true);
     }
 
     /**
@@ -350,7 +357,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	$platform = $gallery->getPlatform();
 	list ($success, $results) = $platform->exec($cmdArray);
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -424,6 +431,5 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return array($results);
 	}
     }
-    
 }
 ?>

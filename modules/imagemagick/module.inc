@@ -55,10 +55,10 @@ class ImageMagickModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our graphics class with the factory */
-	GalleryFactory::registerImplementation('GalleryGraphics',
-					       'ImageMagickGraphics',
+	GalleryFactory::registerImplementation('GalleryToolkit',
+					       'ImageMagickToolkit',
 					       'ImageMagick',
-					       $classDir . 'ImageMagickGraphics.class');
+					       $classDir . 'ImageMagickToolkit.class');
 
 	return GalleryStatus::success();
     }
@@ -108,22 +108,39 @@ class ImageMagickModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	/*
-	 * If our graphics type is not Imagemagick, set it now.
-	 */
-	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
+
+	/* Load any classes we require */
+	require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+
+	/* Find out what operations and properties we have available to us */
+	list ($ret, $results) =
+	    ImageMagickToolkitHelper::getOperationsAndProperties();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($graphicsType != 'imagemagickgraphics') {
-	    $ret = $gallery->setModuleParameter('core', 'graphics.type', 'imagemagickgraphics');
+	foreach ($results['operations'] as $operation => $info) {
+	    $ret = GalleryToolkitHelper::registerOperation('ImageMagick',
+							   $info['mimeTypes'],
+							   $operation,
+							   $info['params'],
+							   $info['description']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
+	foreach ($results['properties'] as $property => $info) {
+	    $ret = GalleryToolkitHelper::registerProperty('ImageMagick',
+							  $info['mimeTypes'],
+							  $property,
+							  $info['type'],
+							  $info['description']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -138,29 +155,10 @@ class ImageMagickModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	/*
-	 * If we are the current graphics package, switch to whatever other
-	 * graphics packages are available.
-	 */
-	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
+	/* Unregister all of our properties and operations */
+	$ret = GalleryToolkitHelper::unregisterToolkit('ImageMagick');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($graphicsType == 'imagemagickgraphics') {
-	    $ids = GalleryFactory::getAllImplementationIds('GalleryGraphics');
-	    $newId = '';
-	    foreach ($ids as $name => $id) {
-		if ($id == 'imagemagickgraphics') {
-		    continue;
-		}
-		$newId = $id;
-		break;
-	    }
-	    $ret = $gallery->setModuleParameter('core', 'graphics.type', $newId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	return GalleryStatus::success();

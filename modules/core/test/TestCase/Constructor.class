@@ -29,6 +29,10 @@ class ConstructorTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    if (!isset($entity)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
 	}
 	return GalleryStatus::success();
     }

@@ -62,14 +62,14 @@
       {/foreach}
     </center>
 
-    {if !empty($rollup)}
+    {if sizeof($results) > 1}
     <hr>
     <b>Overall Status</b>
     <br>
     {if empty($rollup.error)}
     <b>Status</b>: Success
     {else}
-    <b>Error</b>: {$rollup.error}
+    <b>Error</b>: {$rollup.error.html}
     {/if}
     <br>
     <b>Elapsed</b>: {$rollup.elapsed}
@@ -84,7 +84,7 @@
     {if empty($result.error)}
     <b>Status</b>: Success
     {else}
-    <b>Error</b>: {$result.error}
+    <b>Error</b>: {$result.error.html}
     {/if}
     <br>
 

@@ -104,44 +104,44 @@ class CommentModule extends GalleryTemplateModule {
 	    }
 
 	    /* Register our permissions */
-	    // translate('[comment] Add comments')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.add', '[comment] Add comments');
+							       'comment.add',
+							       $gallery->i18n('[comment] Add comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    // translate('[comment] Edit comments')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.edit', '[comment] Edit comments');
+							       'comment.edit',
+							       $gallery->i18n('[comment] Edit comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    // translate('[comment] Delete comments')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.delete', '[comment] Delete comments');
+							       'comment.delete',
+							       $gallery->i18n('[comment] Delete comments')); 
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    // translate('[comment] View comments')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.view', '[comment] View comments');
+							       'comment.view',
+							       '[comment] View comments'); /* translate */
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    // translate('s IP address')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.viewIp', '[comment] View commenter\'s IP address');
+							       'comment.viewIp',
+							       $gallery->i18n('[comment] View commenter\'s IP address'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    // translate('[comment] All access')
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'comment.all', '[comment] All access',
+							       'comment.all',
+							       $gallery->i18n('[comment] All access'), 
 							       GALLERY_PERMISSION_COMPOSITE,
 							       array('comment.add',
 								     'comment.edit',

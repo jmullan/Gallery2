@@ -163,14 +163,12 @@ function GalleryTestHarness() {
     }
 
     $rollup = array();
-    if (sizeof($results) > 1) {
-	$rollup['elapsed'] = 0.0;
-	foreach ($results as $result) {
-	    if (!empty($result['error']) && empty($rollup['error'])) {
-		$rollup['error'] = $result['error'];
-	    }
-	    $rollup['elapsed'] += $result['timing']['elapsed'];
+    $rollup['elapsed'] = 0.0;
+    foreach ($results as $result) {
+	if (!empty($result['error']) && empty($rollup['error'])) {
+	    $rollup['error'] = $result['error'];
 	}
+	$rollup['elapsed'] += $result['timing']['elapsed'];
     }
 
     /* Get the Smarty instance. */
@@ -180,6 +178,11 @@ function GalleryTestHarness() {
     $template->setVariable('rollup', $rollup);
     print $template->render('index.tpl');
 
+    /* If we had any errors, pass them back now */
+    if (isset($rollup['error'])) {
+	return $rollup['error']['object']->wrap(__FILE__, __LINE__);
+    }
+    
     return GalleryStatus::success();
 }
 
@@ -228,10 +231,12 @@ function runTest($moduleName, $testName, $iterations) {
     if ($ret1->isError() || $ret2->isError()) {
 	if ($ret1->isError()) {
 	    $ret1 = $ret1->wrap(__FILE__, __LINE__);
-	    $result['error'] = $ret1->getAsHtml();
+	    $result['error']['html'] = $ret1->getAsHtml();
+	    $result['error']['object'] = $ret1;
 	} else {
 	    $ret2 = $ret2->wrap(__FILE__, __LINE__);
-	    $result['error'] = $ret2->getAsHtml();
+	    $result['error']['html'] = $ret2->getAsHtml();
+	    $result['error']['object'] = $ret2;
 	}
     } else {
 	$result['error'] = null;

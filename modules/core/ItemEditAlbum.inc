@@ -83,7 +83,7 @@ class ItemEditAlbumController extends GalleryController {
 	            array('order' => 0,
 			  'itemId' => $item->getId(),
 			  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-			  'derivativeCommands' => 'scale ' . $form['thumbnail']['size']));
+			  'derivativeOperations' => 'thumbnail|' . $form['thumbnail']['size']));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -98,7 +98,7 @@ class ItemEditAlbumController extends GalleryController {
 	                array('order' => $i,
 			      'itemId' => $item->getId(),
 			      'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
-			      'derivativeCommands' => 'scale ' . $form['resizes'][$i]['size']));
+			      'derivativeOperations' => 'scale|' . $form['resizes'][$i]['size']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -134,12 +134,16 @@ class ItemEditAlbumController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
 		    foreach ($childItems as $child) {
 			$childId = $child->getId();
 			$thumbnail = $thumbTable[$childId];
 
-			/* Change the thumbnail */
-			$thumbnail->setDerivativeCommands('scale ' . $form['thumbnail']['size']);
+			/*
+			 * Change the thumbnail
+			 * XXX: we should make sure that we have a toolkit for this!
+			 */
+			$thumbnail->setDerivativeOperations('thumbnail|' . $form['thumbnail']['size']);
 
 			if ($thumbnail->isModified()) {
 			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($thumbnail->getId());
@@ -165,7 +169,7 @@ class ItemEditAlbumController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    while (list(, $resizes) = each($resizesTable)) {
+		    foreach ($resizesTable as $resizes) {
 			foreach ($resizes as $resize) {
 			    $ret = $gallery->deleteEntityById($resize->getId());
 			}
@@ -174,29 +178,47 @@ class ItemEditAlbumController extends GalleryController {
 		    /* Add the new resizes */
 		    foreach ($childItems as $child) {
 			$childId = $child->getId();
-			for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-			    if (empty($form['resizes'][$i]['active'])) {
-				continue;
-			    }
 
-			    list ($ret, $derivative) = 
+			/*
+			 * Make sure that we have a toolkit before adding back
+			 * the resizes
+			 */
+			list ($ret, $toolkit, $outputMimeType) =
+			    GalleryToolkitHelper::getToolkitByOperation($child->getMimeType(), 'scale');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			if (isset($toolkit)) {
+			    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+				if (empty($form['resizes'][$i]['active'])) {
+				    continue;
+				}
+
+				list ($ret, $derivative) = 
 				    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 
-			    $ret = $derivative->create($childId, DERIVATIVE_TYPE_IMAGE_RESIZE);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
+				if (!isset($derivative)) {
+				    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+						 null);
+				}  
 
-			    $derivative->setDerivativeMimeType($child->getMimeType());
-			    $derivative->setDerivativeSourceId($child->getId());
-			    $derivative->setDerivativeCommands('scale ' . $form['resizes'][$i]['size']);
+				$ret = $derivative->create($childId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 
-			    $ret = $derivative->save();
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+				$derivative->setDerivativeMimeType($outputMimeType);
+				$derivative->setDerivativeSourceId($child->getId());
+				$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
+
+				$ret = $derivative->save();
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 			    }
 			}
 		    }
@@ -320,10 +342,10 @@ class ItemEditAlbumView extends GalleryView {
 	    }
 
 	    foreach ($preferences as $preference) {
-		if (preg_match('/scale (\d+)/',
-			       $preference['derivativeCommands'],
+		if (preg_match('/(scale|thumbnail)\|(\d+)/',
+			       $preference['derivativeOperations'],
 			       $matches)) {
-		    $size = $matches[1];
+		    $size = $matches[2];
 		}
 
 		switch($preference['derivativeType']) {

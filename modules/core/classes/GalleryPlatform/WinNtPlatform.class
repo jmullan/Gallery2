@@ -104,12 +104,30 @@ class WinNtPlatform extends GalleryPlatform {
     }
     
     /**
-     * Return the filesystem specific directory separator
-     *
-     * @return string directory separator
+     * @see GalleryPlatform::getDirectorySeparator
      */
     function getDirectorySeparator() {
 	return '\\';
     }
+
+    /**
+     * @see GalleryPlatform::isRestrictedByOpenBaseDir
+     */
+    function isRestrictedByOpenBaseDir($path) {
+	static $baseDirArray = array_split(';', ini_get('open_basedir'));
+
+	if (empty($baseDirArray)) {
+	    return false;
+	}
+	
+	foreach ($baseDirArray as $baseDir) {
+	    if (strncasecmp($baseDir, $path, strlen($baseDir))) {
+		return false;
+	    }
+	}
+	
+	return true;
+    }
+    
 }
 ?>

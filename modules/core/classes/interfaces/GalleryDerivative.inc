@@ -56,7 +56,7 @@ class GalleryDerivative extends GalleryDerivative_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
-        $meta['members']['derivativeCommands'] = array(
+        $meta['members']['derivativeOperations'] = array(
             'class' => 'GalleryDerivative',
             'type' => STORAGE_TYPE_STRING
         );
@@ -99,10 +99,10 @@ class GalleryDerivative extends GalleryDerivative_core {
             $data['derivativeSourceId'] = $this->_derivativeSourceId;
         }
     
-        if (!isset($this->_derivativeCommands)) {
-            $data['derivativeCommands'] = null;
+        if (!isset($this->_derivativeOperations)) {
+            $data['derivativeOperations'] = null;
         } else {
-            $data['derivativeCommands'] = $this->_derivativeCommands;
+            $data['derivativeOperations'] = $this->_derivativeOperations;
         }
     
         if (!isset($this->_derivativeOrder)) {
@@ -175,29 +175,29 @@ class GalleryDerivative extends GalleryDerivative_core {
     }
   
     /**
-     * Get the value of derivativeCommands
+     * Get the value of derivativeOperations
      *
      * @return STRING the value
      */
-    function getderivativeCommands() {
-        if (!isset($this->_derivativeCommands)) {
+    function getderivativeOperations() {
+        if (!isset($this->_derivativeOperations)) {
             return null;
         }
-        return $this->_derivativeCommands;
+        return $this->_derivativeOperations;
     }
 
     /**
-     * Set the value of derivativeCommands
+     * Set the value of derivativeOperations
      *
      * @param STRING the value
      */
-    function setderivativeCommands($value) {
+    function setderivativeOperations($value) {
 
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
 	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeCommands) ? $this->_derivativeCommands : null;
+	$b = isset($this->_derivativeOperations) ? $this->_derivativeOperations : null;
 
     
         /* 
@@ -205,8 +205,8 @@ class GalleryDerivative extends GalleryDerivative_core {
          * generate warnings for unset values.
          */
         if ($a != $b) {
-            $this->_derivativeCommands = $value;
-            $this->setModifiedFlag('derivativeCommands', MEMBER_MODIFIED);
+            $this->_derivativeOperations = $value;
+            $this->setModifiedFlag('derivativeOperations', MEMBER_MODIFIED);
         }
     }
   

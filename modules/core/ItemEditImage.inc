@@ -70,18 +70,22 @@ class ItemEditImageController extends GalleryController {
 
 
 	$remapSourceIds = array();
-	$command = null;
+	$operation = null;
 	/* Figure out which command we're taking */
 	if (isset($form['action']['scale']) &&
 	        is_numeric($form['scale']['size']) &&
 	        $form['scale']['size'] > 0) {
-	    $command = "scale " . $form['scale']['size'];
+	    $operation = 'scale';
+	    $args = array($form['scale']['size']);
 	} else if (isset($form['action']['rotate']['clockwise'])) {
-	    $command = "rotate 90";
+	    $operation = 'rotate';
+	    $args = array(90);
 	} else if (isset($form['action']['rotate']['counterClockwise'])) {
-	    $command = "rotate -90";
+	    $operation = 'rotate';
+	    $args = array(-90);
 	} else if (isset($form['action']['rotate']['flip'])) {
-	    $command = "rotate 180";
+	    $operation = 'rotate';
+	    $args = array(180);
 	} else if (isset($form['action']['revertToOriginal'])) {
 	    if (!empty($preferred)) {
 		$ret = $gallery->deleteEntityById($preferred->getId());
@@ -90,13 +94,18 @@ class ItemEditImageController extends GalleryController {
 		}
 
 		$remapSourceIds = array($preferred->getId(), $item->getId(), null);
+
+		/* Figure out where to redirect upon success */
+		$redirectParams['view'] = 'core:ItemAdmin';
+		$redirectParams['subView'] = 'core:ItemEditImage';
+		$redirectParams['itemId'] = $itemId;
 	    }
 	}
 
 	/*
 	 * If we have a command, then apply it to the correct object.
 	 */
-	if (!empty($command)) {
+	if (!empty($operation)) {
 	    /*
 	     * If we don't have a preferred and we're preserving, then create
 	     * one
@@ -107,8 +116,7 @@ class ItemEditImageController extends GalleryController {
 		/*
 		 * We have no preferred image, and we're not preserving the
 		 * original.  So, we're changing the original image here.  Make
-		 * the appropriate change, then break 
-		 *
+		 * the appropriate change, then expire the derivative tree. 
 		 */
 
 		/* Get the path of the source */
@@ -116,33 +124,31 @@ class ItemEditImageController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
-		list($ret, $graphics) = $gallery->getGraphics();
+
+		/* Get the appropriate toolkit */
+		list ($ret, $toolkit) =
+		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), $operation);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (!isset($toolkit)) {
+		    /* This should never happen */
+		    return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+		}
+
+		/* Perform the operation */
+		list ($ret, $outputMimeType) =
+		    $toolkit->performOperation($item->getMimeType(),
+					       $operation,
+					       $sourcePath,
+					       $sourcePath,
+					       $args);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$item->setMimeType($outputMimeType);
 		
-		/* Apply change directly to the raw image */
-		$pieces = split(' ', $command);
-		switch (array_shift($pieces)) {
-		case 'rotate':
-		    $ret = $graphics->rotateImage($item->getMimeType(),
-						  $sourcePath, $sourcePath, $pieces[0]);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $modified = true;
-		    break;
-
-		case 'scale':
-		    $ret = $graphics->scaleImage($item->getMimeType(),
-						 $sourcePath, $sourcePath, $pieces[0]);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    break;
-		}
-
 		/* Get the item to rescan its data object */
 		$ret = $item->rescan();
 		if ($ret->isError()) {
@@ -179,6 +185,11 @@ class ItemEditImageController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    
+		    if (!isset($preferred)) {
+			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				     null);
+		    }
+		
 		    $ret = $preferred->create($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -202,7 +213,7 @@ class ItemEditImageController extends GalleryController {
 		    }
 		}
 
-		$ret = $preferred->mergeCommand($command);
+		$ret = $preferred->mergeOperation($operation, $args);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -229,8 +240,8 @@ class ItemEditImageController extends GalleryController {
 		 * Perform a final check -- if the new derivative is exactly
 		 * the same as the original then delete it.
 		 */
-		$derivativeCommands = $preferred->getDerivativeCommands();
-		if (empty($derivativeCommands)) {
+		$derivativeOperations = $preferred->getDerivativeOperations();
+		if (empty($derivativeOperations)) {
 		    $ret = $gallery->deleteEntityById($preferred->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);

@@ -74,7 +74,7 @@ class UnixPlatform extends GalleryPlatform {
 	list ($ret, $expected) =
 	    $gallery->getModuleParameter('core', 'exec.expectedStatus');
 	if ($ret->isError()) {
-	    $gallery->debug('Unable to look up core::exec.expectedStatus param');
+	    $gallery->debug('Unable to look up core.exec.expectedStatus param');
 	    $expected = 0;
 	}
 
@@ -118,12 +118,29 @@ class UnixPlatform extends GalleryPlatform {
     }
     
     /**
-     * Return the filesystem specific directory separator
-     *
-     * @return string directory separator
+     * @see GalleryPlatform::getDirectorySeparator
      */
     function getDirectorySeparator() {
 	return '/';
+    }
+
+    /**
+     * @see GalleryPlatform::isRestrictedByOpenBaseDir
+     */
+    function isRestrictedByOpenBaseDir($path) {
+	$baseDirArray = split(':', ini_get('open_basedir'));
+
+	if (empty($baseDirArray)) {
+	    return false;
+	}
+	
+	foreach ($baseDirArray as $baseDir) {
+	    if (!strncmp($baseDir, $path, strlen($baseDir))) {
+		return false;
+	    }
+	}
+	
+	return true;
     }
 }
 ?>

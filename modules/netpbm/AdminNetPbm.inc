@@ -26,6 +26,11 @@
  */
 
 /**
+ * Required class
+ */
+require_once(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
+
+/**
  * @package NetPBM
  * @subpackage UserInterface
  */
@@ -151,27 +156,12 @@ class AdminNetPbmView extends GalleryView {
 	$tests = array();
 
 	if (isset($form['action']['test'])) {
-	    if (!empty($form['path'])) {
-		foreach (array('jpegtopnm',
-			       'giftopnm',
-			       $form['pnmtojpeg'],
-			       'ppmtogif',
-			       'pnmtopng',
-			       'pnmscale',
-			       'pnmfile',
-			       'ppmquant',
-			       'pnmcut',
-			       'pnmrotate',
-			       'pnmflip') as $binary) {
-
-		    $cmd = array($form['path'] . $binary, '--version');
-		    list ($success, $results) = $platform->exec(array($cmd));
-		    $tests[] = array('name' => $binary,
-				     'success' => $success,
-				     'results' => $results);
-		}
-	    } else {
+	    if (empty($form['path'])) {
 		$form['error']['path']['missing'] = 1;
+	    } else {
+		list ($ret, $tests, $mimeTypes) =
+		    NetPbmToolkitHelper::testBinaries($form['path'],
+						      array('pnmtojpeg' => $form['pnmtojpeg']));
 	    }
 	}
 

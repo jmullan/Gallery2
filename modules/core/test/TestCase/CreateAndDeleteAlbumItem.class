@@ -42,6 +42,10 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if (!isset($album)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}  
+
 	$ret = $album->createRoot("createAndDelete",
 				  $gallery->getActiveUserId());
 	

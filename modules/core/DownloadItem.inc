@@ -98,7 +98,8 @@ class DownloadItemView extends GalleryView {
 
 	/* Rebuild derivative cache, if necessary */
 	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-	    list ($ret, $rebuild) = $item->rebuildCacheIfNotCurrent();
+	    list ($ret, $rebuilt) =
+		GalleryDerivativeHelper::rebuildCacheIfNotCurrent($item->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

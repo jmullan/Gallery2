@@ -65,12 +65,24 @@ sub extract {
     }
 
     # grab phrases of this format: translate('.....')
-    while ($data =~ /translate\('(.*?)'\)/sg) {
+    while ($data =~ /translate\('(.*?[^\\])'\)/sg) {
       my $text = $1;
       $text =~ s/\"/\\\"/sg;	# escape double-quotes
       $strings{qq{gettext("$text")}}++;
     }
 
+    # grab phrases of this format: i18n(".....")
+    while ($data =~ /i18n\("(.*?[^\\])"\)/sg) {
+      my $text = $1;
+      $strings{qq{gettext("$text")}}++;
+    }
+
+    # grab phrases of this format: i18n('.....')
+    while ($data =~ /i18n\('(.*?[^\\])'\)/sg) {
+      my $text = $1;
+      $text =~ s/\"/\\\"/sg;	# escape double-quotes
+      $strings{qq{gettext("$text")}}++;
+    }
 
     # grab phrases of this format {gallery->text ..... }
     while ($data =~ /(\{\s*gallery->text\s+.*?[^\\]\})/sg) {

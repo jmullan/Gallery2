@@ -1,0 +1,107 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Ernesto Baschny <ernst@baschny.de>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A toolkit for manipulating files
+ *
+ * This class defines the API for file manipulation toolkits.  It's designed
+ * such that we can create many different toolkits, each providing its own
+ * unique functions for manipulating files.  Some of these toolkits may be
+ * centered around a particular technology (eg, NetPBPM, ImageMagick, Jhead,
+ * etc) while others may be focussed on a specific type of file (eg JPEG).
+ * It's up to the toolkit author.
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryToolkit {
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Get a certain property of a file
+     *
+     * @access public
+     * @param string a mime type
+     * @param string a property name
+     * @param string a file name
+     * @return array object GalleryStatus a status code,
+     *	       mixed the value of the property
+     */
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Perform a certain operation
+     *
+     * Perform the wanted operation on sourceFilename and write the results in      
+     * destFilename.
+     *	
+     * @access public
+     * @param string a mime type
+     * @param string the operation name
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param array mixed parameters
+     * @return array object GalleryStatus a status code
+     *               string the output mime type
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Merge two operations together in an intelligent way.  The end result of
+     * the merge should be a new operation and arguments that would result if
+     * you applied the operations in sequence.  For example, if the operations
+     * are 'rotate|90' and 'rotate|180', then the result would be 'rotate|270'
+     * (or 'rotate|-90').  The toolkit should only merge the operations if it
+     * can do so cleanly.
+     *
+     * @param string the input mime type
+     * @param string the first operation 
+     * @param array mixed the first operation's arguments 
+     * @param string the second operation 
+     * @param array mixed the second operation's arguments
+     * @return array (true if the operation was success,
+     *                $mergedOperation,
+     *                $mergedArgs)
+     */
+    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+	return array(false, null, null);
+    }
+}
+?>

@@ -52,11 +52,6 @@ class ConfigureNetPbmTestCase extends TestCase {
 	    return $ret2->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $gallery->setModuleParameter('core', 'graphics.type', 'NetPbmGraphics');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	return GalleryStatus::success();
     }
 }

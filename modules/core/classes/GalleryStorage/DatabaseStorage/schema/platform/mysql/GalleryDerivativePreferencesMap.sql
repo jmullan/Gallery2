@@ -16,7 +16,7 @@
       int(11)
     
       ,
-    DB_COLUMN_PREFIXderivativeCommands
+    DB_COLUMN_PREFIXderivativeOperations
       varchar(
       
           255
@@ -37,7 +37,7 @@
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXderivativeCommands)
+    INDEX (DB_COLUMN_PREFIXderivativeOperations)
     
 
     ) TYPE=DB_TABLE_TYPE;
