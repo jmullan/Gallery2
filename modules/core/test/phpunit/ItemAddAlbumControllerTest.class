@@ -1,0 +1,175 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminCore controller tests
+ */
+class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
+
+    function ItemAddAlbumControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemAddAlbum');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	list ($ret, $this->_rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::setUp();
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	parent::tearDown();
+    }
+
+    function testAddAlbum() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$name = 'testalbum-'.rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', $name);
+	GalleryUtilities::putRequestVariable('form.title', 'title');
+	GalleryUtilities::putRequestVariable('form.summary', 'summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'description');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemAddAlbum',
+				    'itemId' => $this->_rootId),
+			      $results);
+
+	$this->_deleteAlbum($name);
+    }
+
+    function testAddDuplicateAlbum() {
+	global $gallery;
+
+	/* Use valid inputs */
+	$name = 'testalbum-'.rand();
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', $name);
+	GalleryUtilities::putRequestVariable('form.title', 'title');
+	GalleryUtilities::putRequestVariable('form.summary', 'summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'description');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemAddAlbum',
+				    'itemId' => $this->_rootId),
+			      $results);
+
+	/* Now do it a second time with the same name */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.collision'));
+
+	$this->_deleteAlbum($name);
+    }
+    
+    function testAddAlbumMissingName() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', '');
+	GalleryUtilities::putRequestVariable('form.title', 'title');
+	GalleryUtilities::putRequestVariable('form.summary', 'summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'description');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.missing'));
+    }
+    
+    function testAddAlbumInvalidName() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_rootId);
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', 'Invalid!/\Chars');
+	GalleryUtilities::putRequestVariable('form.title', 'title');
+	GalleryUtilities::putRequestVariable('form.summary', 'summary');
+	GalleryUtilities::putRequestVariable('form.keywords', 'keywords');
+	GalleryUtilities::putRequestVariable('form.description', 'description');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assert('core:ItemAddAlbum', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.pathComponent.invalid'));
+    }
+
+    function _deleteAlbum($name) {
+	global $gallery;
+	
+	list ($ret, $id) =
+	    GalleryFileSystemEntityHelper::fetchChildIdByPathComponent($this->_rootId, $name);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->deleteEntityById($id);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+?>
