@@ -76,6 +76,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     function checkFile($fileName, $buffer) {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
 	$lines = explode("\n", $buffer);
+	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
 	for ($i = 0; $i < count($lines); $i++) {
 
 	    /* Check that Session and UrlGenerator are always accessed by-reference */
@@ -93,8 +94,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	     * is properly filtered through the framework so that we don't
 	     * get remote exploits.
 	     */
-	    if (preg_match_all('/\$_(REQUEST|POST|GET|SESSION|FILES)/', $lines[$i], $matches) &&
-		    !preg_match('/(test\/phpunit|^install\/|^upgrade\/)/', $fileName)) {
+	    if ($checkSuperglobals && preg_match_all(
+		    '/\$_(REQUEST|POST|GET|SESSION|FILES)/', $lines[$i], $matches)) {
 		foreach (array_unique($matches[1]) as $item) {
 		    if (isset($this->_exception['superglobals'][$item][$fileName])) {
 			continue;
