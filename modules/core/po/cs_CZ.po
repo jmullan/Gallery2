@@ -77,6 +77,10 @@ msgstr "Vybrat nebo zrušit výběr odkazů"
 msgid "(data)"
 msgstr "(data)"
 
+#, fuzzy
+msgid "(default)"
+msgstr "Výchozí hodnoty"
+
 msgid "(empty album)"
 msgstr "(prázdné album)"
 
@@ -236,6 +240,9 @@ msgstr "Vzestupně"
 msgid "Aspect Ratio: "
 msgstr "Zachovat poměr"
 
+msgid "Assign caption to:"
+msgstr ""
+
 msgid "Audio"
 msgstr "Audio"
 
@@ -253,6 +260,14 @@ msgid "Back to the Gallery"
 msgstr "Zpět na Galerii"
 
 msgid "Back"
+msgstr "Zpět"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Zkopírovat jména souborů do:"
+
+#, fuzzy
+msgid "Blank"
 msgstr "Zpět"
 
 msgid "Both"
@@ -333,8 +348,14 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "Smazat"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
 msgstr "Potvrdit odinstalování modulu"
+
+msgid "Continue..."
+msgstr ""
 
 msgid "Copy base filenames to:"
 msgstr "Zkopírovat jména souborů do:"
@@ -677,6 +698,17 @@ msgstr ""
 "chcete vyzkoušet zda krátké adresy fungují na Vaší konfiguraci.  Pokud odkaz "
 "vrací stránku s chybou, pak nejspíše nefungují."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 msgid "Gallery version"
 msgstr "Verze Galerie"
 
@@ -788,6 +820,10 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Časová prodleva nečinnosti"
 
+#, fuzzy
+msgid "Incompatible layout!"
+msgstr "Nekompatibilní modul!"
+
 msgid "Incompatible module!"
 msgstr "Nekompatibilní modul!"
 
@@ -830,6 +866,10 @@ msgstr "Jazyk"
 msgid "Last Changed Date"
 msgstr "Datum poslední změny"
 
+#, fuzzy, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr "Vyžadovaný API modul:%s (dostupný: %s)"
+
 msgid "Layout Name"
 msgstr "Jméno rozvržení"
 
@@ -858,6 +898,13 @@ msgstr "Odkaz"
 msgid "Local Server Upload Paths"
 msgstr "Cesty pro nové soubory na místním serveru"
 
+msgid "Lock system"
+msgstr ""
+
+#, fuzzy
+msgid "Locking System"
+msgstr "Operační systém"
+
 msgid "Login Method"
 msgstr "Přihlašovací metoda"
 
@@ -881,6 +928,10 @@ msgstr "Značka"
 
 msgid "Members"
 msgstr "Členové"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Rozvržení"
 
 msgid "Modified Photo"
 msgstr "Fotografie upravena"
@@ -1196,6 +1247,9 @@ msgstr "Životnost sezení (session)"
 msgid "Session Settings"
 msgstr "Nastavení sezení (session)"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr "Nastav datum a čas, který bude zobrazen pro tuto %s."
@@ -1290,8 +1344,16 @@ msgstr "Stav: Aktivní"
 msgid "Status: Inactive"
 msgstr "Stav: Neaktivní"
 
+#, fuzzy
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr "Stav: Nekompatibilní modul (neaktivní)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Stav: Nekompatibilní modul (neaktivní)"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "Stav: Neaktivní"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "Stav: Nutná aktualizace (neaktivní)"
@@ -1316,6 +1378,10 @@ msgstr "Modul %s úspěšně deaktivován"
 msgid "Successfully installed and auto-configured module %s"
 msgstr "Modul %s úspěšně nainstalován a nakonfigurován"
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Modul %s úspěšně aktivován"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "Modul %s úspěšně aktivován"
@@ -1334,6 +1400,10 @@ msgstr "Výchozí nastavení alba úspěšně uloženo"
 
 msgid "Successfully saved layout settings"
 msgstr "Nastavení rozvržení úspěšně uloženo"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Modul %s úspěšně odinstalován"
 
 #, c-format
 msgid "Successfully uninstalled module %s"
@@ -1574,6 +1644,14 @@ msgstr ""
 "položek ručně.  Pokud chcete v tomto pokračovat, musíte zrušit automatické "
 "třídění."
 
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+"Toto album je nastavené, aby používalo <b>%s</b> rozvržení. Tyto nastavení "
+"bude použito pouze pro rozvržení tohoto alba."
+
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
@@ -1682,6 +1760,10 @@ msgstr "Čas:"
 
 msgid "Title"
 msgstr "Titulek"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr "Priorita nástroje"
@@ -2115,6 +2197,10 @@ msgstr "změnit heslo"
 msgid "change"
 msgstr "změnit"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Vyberte pro ně nové album"
+
 msgid "configure"
 msgstr "konfigurovat"
 
@@ -2185,6 +2271,10 @@ msgstr "já"
 
 msgid "image"
 msgstr "obrázek"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Rozvržení %s úspěšně aktivováno"
 
 msgid "install"
 msgstr "instalovat"

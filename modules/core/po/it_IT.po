@@ -86,6 +86,10 @@ msgstr "Seleziona Tutti"
 msgid "(data)"
 msgstr "(dati)"
 
+#, fuzzy
+msgid "(default)"
+msgstr "Valori Predefiniti"
+
 msgid "(empty album)"
 msgstr "(album vuoto)"
 
@@ -245,6 +249,10 @@ msgstr "Ascendente"
 msgid "Aspect Ratio: "
 msgstr "Proporzioni Aspetto: "
 
+#, fuzzy
+msgid "Assign caption to:"
+msgstr "modifica permessi"
+
 msgid "Audio"
 msgstr "Audio"
 
@@ -262,6 +270,13 @@ msgid "Back to the Gallery"
 msgstr "Torna a Gallery"
 
 msgid "Back"
+msgstr ""
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Nome del file"
+
+msgid "Blank"
 msgstr ""
 
 msgid "Both"
@@ -341,7 +356,13 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "Pulisci"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -690,6 +711,17 @@ msgstr ""
 "vedere se le URL corte funzionano da te.  Se il link ritorna un errore del "
 "webserver, allora le URL corte non funzioneranno."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "%s di Gallery"
@@ -808,6 +840,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Timeout di inattivit&agrave;"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -853,6 +888,10 @@ msgstr "Lingua"
 msgid "Last Changed Date"
 msgstr "Data di Ultima Modifica"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 msgid "Layout Name"
 msgstr "Nome Layout"
 
@@ -882,6 +921,12 @@ msgstr "Link"
 msgid "Local Server Upload Paths"
 msgstr "Path per l'upload sul server locale"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -909,6 +954,10 @@ msgstr "Markup: "
 #, fuzzy
 msgid "Members"
 msgstr "Aggiungi Utente"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Layout"
 
 msgid "Modified Photo"
 msgstr "Foto Modificata"
@@ -1240,6 +1289,9 @@ msgstr "Configurazione Sessione"
 msgid "Session Settings"
 msgstr "Configurazione Sessione"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1340,8 +1392,15 @@ msgstr "Attivo"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "installa"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1366,6 +1425,10 @@ msgstr "Modulo %s disattivato con successo"
 msgid "Successfully installed and auto-configured module %s"
 msgstr "Modulo %s installato con successo"
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Modulo %s installato con successo"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "Modulo %s installato con successo"
@@ -1386,6 +1449,10 @@ msgstr "Salvataggio configurazione layout avvenuto con successo"
 
 msgid "Successfully saved layout settings"
 msgstr "Salvataggio configurazione layout avvenuto con successo"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Modulo %s installato con successo"
 
 #, fuzzy, c-format
 msgid "Successfully uninstalled module %s"
@@ -1631,6 +1698,14 @@ msgstr ""
 "modificare manualmente l'ordine degli oggetti.  Devi togliere l'odinamento "
 "automatico prima di continuare."
 
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+"Questo album &egrave; configurato per usare il layout <b>%s</b>. Questa "
+"configurazione si applica solo al layout di questo album."
+
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
@@ -1743,6 +1818,10 @@ msgstr "immagine"
 
 msgid "Title"
 msgstr "Titolo"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2191,6 +2270,10 @@ msgstr "Modifica Password"
 msgid "change"
 msgstr "modifica"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Seleziona un nuovo album per loro"
+
 msgid "configure"
 msgstr "configura"
 
@@ -2264,6 +2347,10 @@ msgstr "i"
 
 msgid "image"
 msgstr "immagine"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Layout %s attivato con successo"
 
 msgid "install"
 msgstr "installa"
@@ -2502,19 +2589,11 @@ msgstr[1] "Questo gruppo contiene %d utenti."
 #~ msgid "&laquo; Parent Directory &raquo;"
 #~ msgstr "&laquo; Directory Superiore &raquo;"
 
-#, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "modifica permessi"
-
 #~ msgid "Rotate/Scale"
 #~ msgstr "Ruota/Riscala"
 
 #~ msgid "Sizes"
 #~ msgstr "Dimensioni"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Nome del file"
 
 #~ msgid "Back to Album View"
 #~ msgstr "Torna alla Visualizzazione dell'Album"

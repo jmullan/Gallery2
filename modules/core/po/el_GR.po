@@ -82,6 +82,10 @@ msgid "(data)"
 msgstr ""
 
 #, fuzzy
+msgid "(default)"
+msgstr "Προεπιλογές"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "Λεύκομα"
 
@@ -251,6 +255,10 @@ msgstr "Αύξουσα"
 msgid "Aspect Ratio: "
 msgstr ""
 
+#, fuzzy
+msgid "Assign caption to:"
+msgstr "Διαχείρηση της Γκαλλερύ"
+
 msgid "Audio"
 msgstr ""
 
@@ -270,6 +278,14 @@ msgstr "Περιήγηση"
 
 #, fuzzy
 msgid "Back"
+msgstr "<< Πίσω"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Πλήρες Όνομα"
+
+#, fuzzy
+msgid "Blank"
 msgstr "<< Πίσω"
 
 msgid "Both"
@@ -353,7 +369,13 @@ msgstr ""
 msgid "Clear"
 msgstr "Καθαρισμός"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -698,6 +720,17 @@ msgid ""
 "a webserver error then they don't work for you."
 msgstr ""
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Γκαλλερύ"
@@ -798,6 +831,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Τάιμ ’ουτ Αδράνειας"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -844,6 +880,10 @@ msgstr ""
 msgid "Last Changed Date"
 msgstr ""
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "Όνομα Ομάδας"
@@ -875,6 +915,12 @@ msgstr ""
 msgid "Local Server Upload Paths"
 msgstr ""
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -900,6 +946,9 @@ msgstr ""
 #, fuzzy
 msgid "Members"
 msgstr "Προσθέστε Φωτογραφίες"
+
+msgid "Missing Layout"
+msgstr ""
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1251,6 +1300,9 @@ msgstr "Ρυθμίσεις Λευκόματος"
 msgid "Session Settings"
 msgstr "Ρυθμίσεις Λευκόματος"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1343,7 +1395,13 @@ msgstr "Ενεργό"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
+msgstr ""
+
+msgid "Status: Not Installed"
 msgstr ""
 
 msgid "Status: Upgrade Required (Inactive)"
@@ -1369,6 +1427,10 @@ msgstr ""
 msgid "Successfully installed and auto-configured module %s"
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr ""
@@ -1388,6 +1450,10 @@ msgstr ""
 
 msgid "Successfully saved layout settings"
 msgstr ""
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Η Ομάδα '%s' Διαγράφηκε με επιτυχία"
 
 #, c-format
 msgid "Successfully uninstalled module %s"
@@ -1594,6 +1660,12 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+
+#, c-format
+msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
@@ -1687,6 +1759,10 @@ msgid "Time:"
 msgstr "Προσθαφαίρεση  Χρηστών"
 
 msgid "Title"
+msgstr ""
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
 msgstr ""
 
 msgid "Toolkit Priority"
@@ -2144,6 +2220,10 @@ msgstr ""
 msgid "change"
 msgstr "Αλλαγή"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Διαγραφή Χρήστη"
+
 msgid "configure"
 msgstr ""
 
@@ -2222,6 +2302,9 @@ msgstr ""
 #, fuzzy
 msgid "image"
 msgstr "Προσθαφαίρεση  Χρηστών"
+
+msgid "install or activate this layout"
+msgstr ""
 
 msgid "install"
 msgstr ""
@@ -2457,16 +2540,8 @@ msgstr[1] ""
 #~ msgstr "* Χωρίς Ταξινόμιση *"
 
 #, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "Διαχείρηση της Γκαλλερύ"
-
-#, fuzzy
 #~ msgid "Sizes"
 #~ msgstr "Επεξεργασία Μεγέθους"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Πλήρες Όνομα"
 
 #, fuzzy
 #~ msgid "Edit Group Members"

@@ -81,6 +81,10 @@ msgstr "Afkryds/fjern alle"
 msgid "(data)"
 msgstr "(data)"
 
+#, fuzzy
+msgid "(default)"
+msgstr "Standarder"
+
 msgid "(empty album)"
 msgstr "(tomt album)"
 
@@ -238,6 +242,10 @@ msgstr "Stigende"
 msgid "Aspect Ratio: "
 msgstr "Dimensionsforhold: "
 
+#, fuzzy
+msgid "Assign caption to:"
+msgstr "rediger tilladelser"
+
 msgid "Audio"
 msgstr "Lyd"
 
@@ -255,6 +263,13 @@ msgid "Back to the Gallery"
 msgstr "Tilbage til galleri"
 
 msgid "Back"
+msgstr ""
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Filnavn"
+
+msgid "Blank"
 msgstr ""
 
 msgid "Both"
@@ -331,8 +346,14 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "Ryd"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
 msgstr "Bekræft modul afinstallation"
+
+msgid "Continue..."
+msgstr ""
 
 msgid "Copy base filenames to:"
 msgstr ""
@@ -672,6 +693,17 @@ msgstr ""
 "undersøge om korte URLs virker for dig. Hvis henvisningen returnerer en "
 "webserver fejl virker de ikke."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gallery %s"
@@ -783,6 +815,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Tidsgrænse for inaktivitet"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -826,6 +861,10 @@ msgstr "Sprog"
 msgid "Last Changed Date"
 msgstr "Sidst ændret dato"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 msgid "Layout Name"
 msgstr "Layoutnavn"
 
@@ -854,6 +893,12 @@ msgstr "Henvisning"
 msgid "Local Server Upload Paths"
 msgstr "Stier til overførsel fra lokal server"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -878,6 +923,10 @@ msgstr "Opmærkning: "
 
 msgid "Members"
 msgstr "Medlemmer"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Layout"
 
 msgid "Modified Photo"
 msgstr "Ændret foto"
@@ -1206,6 +1255,9 @@ msgstr "Besøgsopsætning"
 msgid "Session Settings"
 msgstr "Besøgsopsætning"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1302,8 +1354,15 @@ msgstr "Aktiv"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "installér"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1328,6 +1387,10 @@ msgstr "Modulet %s blev deaktiveret"
 msgid "Successfully installed and auto-configured module %s"
 msgstr "Modulet %s blev installeret"
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Modulet %s blev installeret"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "Modulet %s blev installeret"
@@ -1347,6 +1410,10 @@ msgstr "Standard albumopsætning blev gemt"
 
 msgid "Successfully saved layout settings"
 msgstr "Layoutopsætningen blev gemt"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Modulet %s blev installeret"
 
 #, fuzzy, c-format
 msgid "Successfully uninstalled module %s"
@@ -1583,6 +1650,14 @@ msgstr ""
 "sorteringen manuelt. Du skal fjerne den automatisk sortering for at "
 "fortsætte."
 
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+"Dette album er konfigureret til at bruge layoutet <b>%s</b>. Ændringerne "
+"gælder kun for layoutet på dette album."
+
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
@@ -1694,6 +1769,10 @@ msgstr "billede"
 
 msgid "Title"
 msgstr "Titel"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2128,6 +2207,10 @@ msgstr "Skift adgangskode"
 msgid "change"
 msgstr "ændrer"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Vælg et nyt album til dem"
+
 msgid "configure"
 msgstr "konfigurer"
 
@@ -2201,6 +2284,10 @@ msgstr "i"
 
 msgid "image"
 msgstr "billede"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Layoutet %s blev aktiveret"
 
 msgid "install"
 msgstr "installér"
@@ -2435,18 +2522,11 @@ msgstr[1] "Denne gruppe indeholder %d brugere"
 #~ msgid "&laquo; Parent Directory &raquo;"
 #~ msgstr "&laquo; Forrige mappe &raquo;"
 
-#, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "rediger tilladelser"
-
 #~ msgid "Rotate/Scale"
 #~ msgstr "Roter/skaler"
 
 #~ msgid "Sizes"
 #~ msgstr "Størrelser"
-
-#~ msgid "Filename"
-#~ msgstr "Filnavn"
 
 #~ msgid "Back to Album View"
 #~ msgstr "Tilbage til albumvisning"

@@ -104,6 +104,10 @@ msgid "(data)"
 msgstr "(sonraí)"
 
 #, fuzzy
+msgid "(default)"
+msgstr "Luachanna"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "(albam)"
 
@@ -269,6 +273,10 @@ msgid "Aspect Ratio: "
 msgstr ""
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "Riarachán an Ghailearaí"
+
+#, fuzzy
 msgid "Audio"
 msgstr "ceallaigh"
 
@@ -287,6 +295,13 @@ msgid "Back to the Gallery"
 msgstr "Téigh ar ais go dtí an Mhír"
 
 msgid "Back"
+msgstr ""
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Ainm Chomhaid"
+
+msgid "Blank"
 msgstr ""
 
 msgid "Both"
@@ -370,7 +385,13 @@ msgstr ""
 msgid "Clear"
 msgstr "Glan"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -726,6 +747,17 @@ msgstr ""
 "theastaíonn tú an gné seo, caithfidh tú an %s a úsáid. Cniog ar an %s seo. "
 "Má thugann an leathanach earráid, ní héireoidh sí seo leis do freastalaí."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gailearaí"
@@ -821,6 +853,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Tréimshe Neamhgníomhaíocht"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -869,6 +904,10 @@ msgstr "Teanga"
 msgid "Last Changed Date"
 msgstr "Dáta an Athraithe Is Deireanach"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "Leagan amach"
@@ -901,6 +940,12 @@ msgstr "Log Ann"
 msgid "Local Server Upload Paths"
 msgstr "Comhadlanna áitiúil d'uaslodáil"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -927,6 +972,10 @@ msgstr ""
 #, fuzzy
 msgid "Members"
 msgstr "Cuir Ball"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Leagan amach"
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1274,6 +1323,9 @@ msgstr "Roghanna an Seisiún"
 msgid "Session Settings"
 msgstr "Roghanna an Seisiún"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1373,8 +1425,15 @@ msgstr "Gníomhach"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "suiteáil"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1400,6 +1459,10 @@ msgid "Successfully installed and auto-configured module %s"
 msgstr "Ní raibh aon chomhad curtha."
 
 #, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
 msgid "Successfully installed module %s"
 msgstr "Ní raibh aon chomhad curtha."
 
@@ -1421,6 +1484,10 @@ msgstr "Ní raibh aon chomhad curtha."
 
 #, fuzzy
 msgid "Successfully saved layout settings"
+msgstr "Ní raibh aon chomhad curtha."
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
 msgstr "Ní raibh aon chomhad curtha."
 
 #, fuzzy, c-format
@@ -1653,6 +1720,12 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+
+#, c-format
+msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
@@ -1763,6 +1836,10 @@ msgstr "bogadh míreanna"
 
 msgid "Title"
 msgstr "Teideal"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2205,6 +2282,10 @@ msgstr "Athraigh focal faire"
 msgid "change"
 msgstr "athraigh"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Togh albam nua dhóibh"
+
 msgid "configure"
 msgstr "roghnaigh"
 
@@ -2280,6 +2361,10 @@ msgstr ""
 #, fuzzy
 msgid "image"
 msgstr "bogadh míreanna"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Ní raibh aon chomhad curtha."
 
 msgid "install"
 msgstr "suiteáil"
@@ -2576,20 +2661,12 @@ msgstr[4] "Tá %d úsáideoir sa ngrúpa seo."
 #~ msgstr "&laquo; Níl ord ag an sórt &raquo;"
 
 #, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "Riarachán an Ghailearaí"
-
-#, fuzzy
 #~ msgid "Rotate/Scale"
 #~ msgstr "Rothlaigh"
 
 #, fuzzy
 #~ msgid "Sizes"
 #~ msgstr "Méid"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Ainm Chomhaid"
 
 #~ msgid "Back to Album View"
 #~ msgstr "Téigh ar ais go dtí na hAlbaim"

@@ -87,6 +87,10 @@ msgid "(data)"
 msgstr "(tiedot)"
 
 #, fuzzy
+msgid "(default)"
+msgstr "Oletukset"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "(albumi)"
 
@@ -251,6 +255,10 @@ msgid "Aspect Ratio: "
 msgstr ""
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "Gallerian ylläpito"
+
+#, fuzzy
 msgid "Audio"
 msgstr "kumoa"
 
@@ -270,6 +278,14 @@ msgstr "Takaisin kohteeseen"
 
 #, fuzzy
 msgid "Back"
+msgstr "<< Takaisin"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Tiedostonnimi"
+
+#, fuzzy
+msgid "Blank"
 msgstr "<< Takaisin"
 
 msgid "Both"
@@ -352,7 +368,13 @@ msgstr ""
 msgid "Clear"
 msgstr "Tyhjennä"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -702,6 +724,17 @@ msgid ""
 "a webserver error then they don't work for you."
 msgstr ""
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Galleria"
@@ -799,6 +832,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Odotusaika loppui"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -847,6 +883,10 @@ msgstr "Kieli"
 msgid "Last Changed Date"
 msgstr "Viimeksi muokattu"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "Ulkoasu"
@@ -879,6 +919,12 @@ msgstr "Kirjaudu sisään"
 msgid "Local Server Upload Paths"
 msgstr "Paikallisen palvelimen siirtohakemistot"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -905,6 +951,10 @@ msgstr ""
 #, fuzzy
 msgid "Members"
 msgstr "Lisää jäsen"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Ulkoasu"
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1253,6 +1303,9 @@ msgstr "Istunnon asetukset"
 msgid "Session Settings"
 msgstr "Istunnon asetukset"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1352,8 +1405,15 @@ msgstr "Aktiivinen"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "asenna"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1379,6 +1439,10 @@ msgid "Successfully installed and auto-configured module %s"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 #, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
 msgid "Successfully installed module %s"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
@@ -1400,6 +1464,10 @@ msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 #, fuzzy
 msgid "Successfully saved layout settings"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
 msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 #, fuzzy, c-format
@@ -1629,6 +1697,12 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+
+#, c-format
+msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
@@ -1734,6 +1808,10 @@ msgstr "siirrä kohde"
 
 msgid "Title"
 msgstr "Otsikko"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2177,6 +2255,10 @@ msgstr "Vaihda salasana"
 msgid "change"
 msgstr "muuta"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Valitse uusi albumi"
+
 msgid "configure"
 msgstr "konfiguroi"
 
@@ -2252,6 +2334,10 @@ msgstr ""
 #, fuzzy
 msgid "image"
 msgstr "siirrä kohde"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Onnistuneesti lisätty yksi tiedosto."
 
 msgid "install"
 msgstr "asenna"
@@ -2495,20 +2581,12 @@ msgstr[1] "Ryhmässä on %d käyttäjää"
 #~ msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
 
 #, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "Gallerian ylläpito"
-
-#, fuzzy
 #~ msgid "Rotate/Scale"
 #~ msgstr "Pyöritä"
 
 #, fuzzy
 #~ msgid "Sizes"
 #~ msgstr "Koko"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Tiedostonnimi"
 
 #~ msgid "Back to Album View"
 #~ msgstr "Takaisin albumiin"

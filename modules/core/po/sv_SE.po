@@ -88,6 +88,10 @@ msgstr "Kontrollera alla"
 msgid "(data)"
 msgstr "(information)"
 
+#, fuzzy
+msgid "(default)"
+msgstr "Standardv&auml;rden"
+
 msgid "(empty album)"
 msgstr "(t&ouml;m album)"
 
@@ -246,6 +250,10 @@ msgid "Aspect Ratio: "
 msgstr "L&auml;gesf&ouml;rh&aring;llande:"
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "redigera foto"
+
+#, fuzzy
 msgid "Audio"
 msgstr "&aring;ngra"
 
@@ -264,6 +272,13 @@ msgid "Back to the Gallery"
 msgstr "Tillbaka till objektvisning"
 
 msgid "Back"
+msgstr ""
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Filnamn"
+
+msgid "Blank"
 msgstr ""
 
 msgid "Both"
@@ -345,7 +360,13 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "T&ouml;m"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -701,6 +722,17 @@ msgstr ""
 "URL fungerar f&ouml;r dig.  Om l&auml;nken retunerar ett "
 "webbserverfelmeddelande s&aring; fungerar det inte f&ouml;r dig."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gallery"
@@ -822,6 +854,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Inaktivitetsavbrott"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -869,6 +904,10 @@ msgstr "Spr&aring;k"
 msgid "Last Changed Date"
 msgstr "Senaste &auml;ndringsdatum"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 msgid "Layout Name"
 msgstr "Utseendenamn"
 
@@ -898,6 +937,12 @@ msgstr "L&auml;nka"
 msgid "Local Server Upload Paths"
 msgstr "Lokal server uppladningss&ouml;kv&auml;g"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -925,6 +970,10 @@ msgstr "Markera: "
 #, fuzzy
 msgid "Members"
 msgstr "L&auml;gg till medlem"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Utseende"
 
 msgid "Modified Photo"
 msgstr "Bearbetat foto"
@@ -1259,6 +1308,9 @@ msgstr "Sessionsinst&auml;llningar"
 msgid "Session Settings"
 msgstr "Sessionsinst&auml;llningar"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1362,8 +1414,15 @@ msgstr "Aktiv"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "installera"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1388,6 +1447,10 @@ msgstr "Avaktiverade framg&aring;ngsrikt modul %s"
 msgid "Successfully installed and auto-configured module %s"
 msgstr "Installerade framg&aring;ngsrikt modul %s"
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "Installerade framg&aring;ngsrikt modul %s"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "Installerade framg&aring;ngsrikt modul %s"
@@ -1408,6 +1471,10 @@ msgstr "Sparade utseendeinst&auml;llningar framg&aring;ngsrikt"
 
 msgid "Successfully saved layout settings"
 msgstr "Sparade utseendeinst&auml;llningar framg&aring;ngsrikt"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Installerade framg&aring;ngsrikt modul %s"
 
 #, fuzzy, c-format
 msgid "Successfully uninstalled module %s"
@@ -1658,6 +1725,15 @@ msgstr ""
 "&auml;ndra ordningen av objekt manuellt.  Du m&aring;ste ta bort automatisk "
 "sorteringsordning f&ouml;r att fors&auml;tta."
 
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+"Detta album &auml;r konfigurerat f&ouml;r att anv&auml;nda <b>%s</b> "
+"utseendet.  Dessa inst&auml;llningar verkst&auml;lls endast p&aring; "
+"utseendet f&ouml;r detta album."
+
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
@@ -1771,6 +1847,10 @@ msgstr "bild"
 
 msgid "Title"
 msgstr "Titel"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2229,6 +2309,10 @@ msgstr "&Auml;ndra l&ouml;senord"
 msgid "change"
 msgstr "&auml;ndra"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "V&auml;lj ett nytt album f&ouml;r dem"
+
 msgid "configure"
 msgstr "konfigurera"
 
@@ -2302,6 +2386,10 @@ msgstr "i"
 
 msgid "image"
 msgstr "bild"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Aktiverade framg&aring;ngsrikt utseende %s"
 
 msgid "install"
 msgstr "installera"
@@ -2540,19 +2628,11 @@ msgstr[1] "Denna grupp best&aring;r av %d anv&auml;ndare"
 #~ msgid "&laquo; Parent Directory &raquo;"
 #~ msgstr "&laquo; &Ouml;verliggande katalog &laquo;"
 
-#, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "redigera foto"
-
 #~ msgid "Rotate/Scale"
 #~ msgstr "Rotera/Skala"
 
 #~ msgid "Sizes"
 #~ msgstr "Storlekar"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Filnamn"
 
 #~ msgid "Back to Album View"
 #~ msgstr "Tillbaka till albumvisning"

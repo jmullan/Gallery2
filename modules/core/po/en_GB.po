@@ -81,6 +81,10 @@ msgid "(data)"
 msgstr "(data)"
 
 #, fuzzy
+msgid "(default)"
+msgstr "Defaults"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "(album)"
 
@@ -252,6 +256,10 @@ msgid "Aspect Ratio: "
 msgstr ""
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "Gallery Site Administration"
+
+#, fuzzy
 msgid "Audio"
 msgstr "Undo"
 
@@ -271,6 +279,14 @@ msgstr "Browse Gallery"
 
 #, fuzzy
 msgid "Back"
+msgstr "<< Back"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Full name"
+
+#, fuzzy
+msgid "Blank"
 msgstr "<< Back"
 
 msgid "Both"
@@ -356,7 +372,13 @@ msgstr ""
 msgid "Clear"
 msgstr "Clear"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -704,6 +726,17 @@ msgid ""
 "a webserver error then they don't work for you."
 msgstr ""
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gallery"
@@ -803,6 +836,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Inactivity Timeout"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -850,6 +886,10 @@ msgstr "Language"
 msgid "Last Changed Date"
 msgstr "Last Changed Date"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "Layout"
@@ -883,6 +923,12 @@ msgstr "Login"
 msgid "Local Server Upload Paths"
 msgstr ""
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -909,6 +955,10 @@ msgstr ""
 #, fuzzy
 msgid "Members"
 msgstr "Add Items"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Layout"
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1267,6 +1317,9 @@ msgstr "Session Settings"
 msgid "Session Settings"
 msgstr "Session Settings"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1363,8 +1416,15 @@ msgstr "Active"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "install"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1390,6 +1450,10 @@ msgid "Successfully installed and auto-configured module %s"
 msgstr ""
 
 #, c-format
+msgid "Successfully installed layout %s"
+msgstr ""
+
+#, c-format
 msgid "Successfully installed module %s"
 msgstr ""
 
@@ -1406,6 +1470,10 @@ msgid "Successfully saved default album settings"
 msgstr ""
 
 msgid "Successfully saved layout settings"
+msgstr ""
+
+#, c-format
+msgid "Successfully uninstalled layout %s"
 msgstr ""
 
 #, c-format
@@ -1635,6 +1703,12 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+
+#, c-format
+msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
@@ -1737,6 +1811,10 @@ msgstr "move item"
 
 msgid "Title"
 msgstr "Title"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr ""
@@ -2185,6 +2263,10 @@ msgstr "Password"
 msgid "change"
 msgstr "Change"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "You must enter a name for this album."
+
 msgid "configure"
 msgstr "configure"
 
@@ -2263,6 +2345,9 @@ msgstr ""
 #, fuzzy
 msgid "image"
 msgstr "move item"
+
+msgid "install or activate this layout"
+msgstr ""
 
 msgid "install"
 msgstr "install"
@@ -2506,20 +2591,12 @@ msgstr[1] "This group contains %d users"
 #~ msgstr "* No Sort Order *"
 
 #, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "Gallery Site Administration"
-
-#, fuzzy
 #~ msgid "Rotate/Scale"
 #~ msgstr "Rotate"
 
 #, fuzzy
 #~ msgid "Sizes"
 #~ msgstr "Edit Sizes"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "Full name"
 
 #~ msgid "Lifetime"
 #~ msgstr "Lifetime"

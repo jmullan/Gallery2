@@ -84,6 +84,10 @@ msgid "(data)"
 msgstr "(データ)"
 
 #, fuzzy
+msgid "(default)"
+msgstr "デフォルト"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "(アルバム)"
 
@@ -248,6 +252,10 @@ msgid "Aspect Ratio: "
 msgstr ""
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "サイト管理"
+
+#, fuzzy
 msgid "Audio"
 msgstr "やり直し"
 
@@ -267,6 +275,14 @@ msgstr "Galleryをブラウズ"
 
 #, fuzzy
 msgid "Back"
+msgstr "<< 戻る"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "ファイル名"
+
+#, fuzzy
+msgid "Blank"
 msgstr "<< 戻る"
 
 msgid "Both"
@@ -351,7 +367,13 @@ msgstr ""
 msgid "Clear"
 msgstr "消去"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
+msgstr ""
+
+msgid "Continue..."
 msgstr ""
 
 msgid "Copy base filenames to:"
@@ -697,6 +719,17 @@ msgid ""
 "a webserver error then they don't work for you."
 msgstr ""
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gallery"
@@ -795,6 +828,9 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "無効化タイムアウト"
 
+msgid "Incompatible layout!"
+msgstr ""
+
 msgid "Incompatible module!"
 msgstr ""
 
@@ -843,6 +879,10 @@ msgstr "言語"
 msgid "Last Changed Date"
 msgstr "最終変更日"
 
+#, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr ""
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "レイアウト"
@@ -876,6 +916,12 @@ msgstr "ログイン"
 msgid "Local Server Upload Paths"
 msgstr "サーバのパス"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr ""
 
@@ -902,6 +948,10 @@ msgstr ""
 #, fuzzy
 msgid "Members"
 msgstr "メンバー追加"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "レイアウト"
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1252,6 +1302,9 @@ msgstr "セッション設定"
 msgid "Session Settings"
 msgstr "セッション設定"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1357,8 +1410,15 @@ msgstr "アクティブ"
 msgid "Status: Inactive"
 msgstr ""
 
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr ""
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr ""
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "インストール"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr ""
@@ -1384,6 +1444,10 @@ msgid "Successfully installed and auto-configured module %s"
 msgstr "%d個のファイルの追加に成功しました。"
 
 #, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
 msgid "Successfully installed module %s"
 msgstr "%d個のファイルの追加に成功しました。"
 
@@ -1405,6 +1469,10 @@ msgstr "%d個のファイルの追加に成功しました。"
 
 #, fuzzy
 msgid "Successfully saved layout settings"
+msgstr "%d個のファイルの追加に成功しました。"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
 msgstr "%d個のファイルの追加に成功しました。"
 
 #, fuzzy, c-format
@@ -1633,6 +1701,12 @@ msgstr ""
 
 #, c-format
 msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+
+#, c-format
+msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
@@ -1738,6 +1812,10 @@ msgstr "アイテム移動"
 
 msgid "Title"
 msgstr "タイトル"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 #, fuzzy
 msgid "Toolkit Priority"
@@ -2192,6 +2270,10 @@ msgstr "パスワード変更"
 msgid "change"
 msgstr "変更"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "それらに対する新しいアルバムを選んでください"
+
 msgid "configure"
 msgstr "コンフィグ"
 
@@ -2267,6 +2349,10 @@ msgstr ""
 #, fuzzy
 msgid "image"
 msgstr "アイテム移動"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "%d個のファイルの追加に成功しました。"
 
 msgid "install"
 msgstr "インストール"
@@ -2501,20 +2587,12 @@ msgstr[1] ""
 #~ msgstr "&laquo; ソートなし &laquo;"
 
 #, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "サイト管理"
-
-#, fuzzy
 #~ msgid "Rotate/Scale"
 #~ msgstr "回転"
 
 #, fuzzy
 #~ msgid "Sizes"
 #~ msgstr "サイズ"
-
-#, fuzzy
-#~ msgid "Filename"
-#~ msgstr "ファイル名"
 
 #~ msgid "Lifetime"
 #~ msgstr "寿命"

@@ -87,6 +87,10 @@ msgid "(data)"
 msgstr "(datos)"
 
 #, fuzzy
+msgid "(default)"
+msgstr "Por defecto"
+
+#, fuzzy
 msgid "(empty album)"
 msgstr "(&aacute;lbum)"
 
@@ -266,6 +270,10 @@ msgid "Aspect Ratio: "
 msgstr "Proporci&oacute;n de aspecto: "
 
 #, fuzzy
+msgid "Assign caption to:"
+msgstr "editar permisos"
+
+#, fuzzy
 msgid "Audio"
 msgstr "Audio"
 
@@ -285,6 +293,14 @@ msgstr "Volver a la Galer&iacute;a"
 
 #, fuzzy
 msgid "Back"
+msgstr "<< Atr&aacute;s"
+
+#, fuzzy
+msgid "Base filename"
+msgstr "Nombre de usuario"
+
+#, fuzzy
+msgid "Blank"
 msgstr "<< Atr&aacute;s"
 
 msgid "Both"
@@ -375,8 +391,14 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "Limpiar"
 
+msgid "Configuration Error: Missing Layout"
+msgstr ""
+
 msgid "Confirm module uninstall"
 msgstr "Confirme la desinstalaci&oacute;n del m&oacute;dulo"
+
+msgid "Continue..."
+msgstr ""
 
 msgid "Copy base filenames to:"
 msgstr ""
@@ -755,6 +777,17 @@ msgstr ""
 "un error entonces esta opci&oacute;n de URls compactas no servir&aacute;n "
 "para usted."
 
+msgid ""
+"Gallery uses a system of locks to prevent simultaneous changes from "
+"interfering with each other.  There are two types of locking, each with its "
+"advantages and disadvantages.  <b>File</b> based locking is fast and "
+"efficient, but won't work on NFS filesystems and will be unreliable on "
+"Windows.  <b>Database</b> locking is slower but is more reliable.  If you "
+"are unsure which to choose, we recommend using file locking.  If you're "
+"getting many lock timeouts, you can try switching to database locking "
+"instead.  It's ok to switch back and forth."
+msgstr ""
+
 #, fuzzy
 msgid "Gallery version"
 msgstr "Gallery %s"
@@ -875,6 +908,10 @@ msgstr ""
 msgid "Inactivity Timeout"
 msgstr "Timeout por inactividad"
 
+#, fuzzy
+msgid "Incompatible layout!"
+msgstr "M&oacute;dulo incompatible!"
+
 msgid "Incompatible module!"
 msgstr "M&oacute;dulo incompatible!"
 
@@ -922,6 +959,10 @@ msgstr "Lenguaje"
 msgid "Last Changed Date"
 msgstr "&Uacute;ltima fecha de cambio"
 
+#, fuzzy, c-format
+msgid "Layout API Required: %s (available: %s)"
+msgstr "API del m&oacute;dulo requerida: %s (encontradas: %s)"
+
 #, fuzzy
 msgid "Layout Name"
 msgstr "Nombre de la dispocisi&oacute;n"
@@ -955,6 +996,12 @@ msgstr "Liga"
 msgid "Local Server Upload Paths"
 msgstr "Paths del servidor local"
 
+msgid "Lock system"
+msgstr ""
+
+msgid "Locking System"
+msgstr ""
+
 msgid "Login Method"
 msgstr "M&eacute;todo de acceso"
 
@@ -981,6 +1028,10 @@ msgstr "Markup"
 #, fuzzy
 msgid "Members"
 msgstr "Miembros"
+
+#, fuzzy
+msgid "Missing Layout"
+msgstr "Dispocisi&oacute;n"
 
 #, fuzzy
 msgid "Modified Photo"
@@ -1338,6 +1389,9 @@ msgstr "Duraci&oacute;n de la sesi&oacute;n"
 msgid "Session Settings"
 msgstr "Caracter&iacute;sticas de la sesi&oacute;n"
 
+msgid "Set item titles from:"
+msgstr ""
+
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
 msgstr ""
@@ -1444,8 +1498,16 @@ msgstr "Estado: Activo"
 msgid "Status: Inactive"
 msgstr "Estado: Inactivo"
 
+#, fuzzy
+msgid "Status: Incompatible Layout (Inactive)"
+msgstr "Estado: M&oacute;dulo incompatible (Inactivo)"
+
 msgid "Status: Incompatible Module (Inactive)"
 msgstr "Estado: M&oacute;dulo incompatible (Inactivo)"
+
+#, fuzzy
+msgid "Status: Not Installed"
+msgstr "Estado: Inactivo"
 
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "Estado: Actualizaci&oacute;n requerida (Inactivo)"
@@ -1470,6 +1532,10 @@ msgstr "M&oacute;dulo %s desactivado"
 msgid "Successfully installed and auto-configured module %s"
 msgstr "M&oacute;dulo %s instalado y auto-configurado"
 
+#, fuzzy, c-format
+msgid "Successfully installed layout %s"
+msgstr "M&oacute;dulo %s instalado satisfactoriamente"
+
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "M&oacute;dulo %s instalado satisfactoriamente"
@@ -1489,6 +1555,10 @@ msgstr "Satisfactoriamente se salvaron los ajustes del album"
 
 msgid "Successfully saved layout settings"
 msgstr "Satisfactoriamente se salvaron los ajustes de la disposici&oacute;n"
+
+#, fuzzy, c-format
+msgid "Successfully uninstalled layout %s"
+msgstr "Satisfactoriamente se desinstal&oacute; el m&oacute;dulo %s"
 
 #, c-format
 msgid "Successfully uninstalled module %s"
@@ -1743,6 +1813,14 @@ msgstr ""
 "no puede cambiar el orden de los elementos manualmente. Debe de desactivar "
 "el ordenamiento autom&aacute;tico para continuar."
 
+#, fuzzy, c-format
+msgid ""
+"This album is configured to use the %s layout, but it is either missing or "
+"not activated."
+msgstr ""
+"Este album est&aacute; configurado para usar la disposici&oacute;n <b>%s</"
+"b>. Estos ajustes solo aplican para la disposici&oacute;n de este album."
+
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
@@ -1860,6 +1938,10 @@ msgstr "imagen"
 
 msgid "Title"
 msgstr "T&iacute;tulo"
+
+#, c-format
+msgid "To fix this problem you can either %s or %s."
+msgstr ""
 
 msgid "Toolkit Priority"
 msgstr "Prioridad de la herramienta"
@@ -2344,6 +2426,10 @@ msgstr "cambiar contrase&ntilde;a"
 msgid "change"
 msgstr "cambiar"
 
+#, fuzzy
+msgid "choose a new layout for this album"
+msgstr "Escoja un nuevo album para ellos"
+
 msgid "configure"
 msgstr "configurar"
 
@@ -2424,6 +2510,10 @@ msgstr "i"
 #, fuzzy
 msgid "image"
 msgstr "imagen"
+
+#, fuzzy
+msgid "install or activate this layout"
+msgstr "Disposici&oacute;n %s activada"
 
 msgid "install"
 msgstr "instalar"
@@ -2669,10 +2759,6 @@ msgstr[1] "Este grupo contiene %d usuarios"
 #, fuzzy
 #~ msgid "&laquo; Parent Directory &raquo;"
 #~ msgstr "&laquo; Directorio ra&iacute;z &raquo;"
-
-#, fuzzy
-#~ msgid "edit caption"
-#~ msgstr "editar permisos"
 
 #~ msgid "Conflict Detected"
 #~ msgstr "Conflicto detectado"
