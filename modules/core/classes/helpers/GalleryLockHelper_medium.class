@@ -71,7 +71,7 @@ class GalleryLockHelper_medium {
      * @param integer an id to lock
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
-     *               object GalleryLock a lock
+     *               int the lock id
      * @static
      */
     function acquireReadLockParents($id, $timeout=10) {
