@@ -342,54 +342,51 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	 */
 	switch ($this->getOrderBy()) {
 	case 'title':
-	    $order = '[GalleryItem::title]';
+	    $orderColumn = '[GalleryItem::title]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'summary':
-	    $order = '[GalleryItem::summary]';
+	    $orderColumn = '[GalleryItem::summary]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'creationTimestamp':
-	    $order = '[GalleryEntity::creationTimestamp]';
+	    $orderColumn = '[GalleryEntity::creationTimestamp]';
 	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'modificationTimestamp':
-	    $order = '[GalleryEntity::modificationTimestamp]';
+	    $orderColumn = '[GalleryEntity::modificationTimestamp]';
 	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'description':
-	    $order = '[GalleryItem::description]';
+	    $orderColumn = '[GalleryItem::description]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 	    
 	case 'keywords':
-	    $order = '[GalleryItem::keywords]';
+	    $orderColumn = '[GalleryItem::keywords]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 
 	default:
-	    $order = '[GalleryItemAttributesMap::orderWeight]';
+	    $orderColumn = '[GalleryItemAttributesMap::orderWeight]';
 	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
 	}
 
 	switch ($this->getOrderDirection()) {
 	case ORDER_DESCENDING:
 	    $direction = 'DESC';
+	    break;
 
 	case ORDER_ASCENDING:
 	default:
 	    $direction = '';
 	}
 
-	$orderClause = '';
-	if (!empty($order)) {
-	    $orderClause = $order . ' ' . $direction;
-	}
-	return array($orderClause, $condition);
+	return array($orderColumn, $condition, $direction);
     }
     
     /**
@@ -417,7 +414,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
 
-	list($orderColumn, $extraWhere) = $this->_getOrderInfo();
+	list($orderColumn, $extraWhere, $orderDirection) = $this->_getOrderInfo();
 	$extraIds = 0;
 
 	if (!empty($extraWhere)) {
@@ -431,7 +428,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    $classes = array_unique(array_merge($classes, $orderClasses));
 	}
 	if (!empty($orderColumn)) {
-	    $orderClause = 'ORDER BY ' . $orderColumn;
+	    $orderClause = 'ORDER BY ' . $orderColumn . ' ' . $orderDirection;
 	    $groupExtra = ', ' . $orderColumn;
 	    $selectExtra = ', ' . $orderColumn;
 	} else {
