@@ -43,6 +43,7 @@ function app_init() {
   document.body.onresize = app_onresize;
   document.onkeydown = app_onkeydown;
   album_div.style.width = '100%';
+  document.getElementById('popup').style.height = Math.floor(app_wh*0.8)+'px';
  }
  if (app_is_safari) { //For Safari:
   document.onresize = app_onresize;
@@ -61,7 +62,8 @@ function app_onload() {
 }
 function app_onresize() {
  app_getwinsize();
- if (app_is_ie) { album_setsize(); image_setsize(); }
+ if (app_is_ie) { album_setsize(); image_setsize();
+     document.getElementById('popup').style.height = Math.floor(app_wh*0.8)+'px'; }
  if (image_on) image_fit();
 }
 function app_setcookie() {
