@@ -69,7 +69,7 @@
             form = document.forms[0];
             state = form.elements['{g->elementName name="selectionToggle"}'].checked;
   	    {foreach from=$form.localServerFiles item=file}
-            form.elements['{g->elementName name="form[localServerFiles][$file.fileKey]"}'].checked = state;
+            form.elements['{g->elementName name="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
   	    {/foreach}
           {rdelim}
 	</script>
