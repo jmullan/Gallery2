@@ -5,10 +5,6 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div id="gallery">
-  <div id="gsHeader">
-    <img src="{g->url href="images/galleryLogo_sm.png"}" alt="" />
-  </div>
-
   {* Content that G2 wants to display inside the <body> element *}
   {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 
