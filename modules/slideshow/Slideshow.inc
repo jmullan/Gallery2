@@ -159,7 +159,7 @@ class SlideshowView extends GalleryView {
 		    $itemList = array_merge($itemList, $sublist);
 		}
 
-	    } else {
+	    } else if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
 
 		list ($ret, $permissions) =
 		    GalleryCoreApi::getPermissions($childId);
