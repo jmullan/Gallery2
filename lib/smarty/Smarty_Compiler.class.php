@@ -6,7 +6,7 @@
  * Author:      Monte Ohrt <monte@ispi.net>
  *              Andrei Zmievski <andrei@php.net>
  *
- * Version:     2.3.0
+ * Version:     2.3.1
  * Copyright:   2001,2002 ispi of Lincoln, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -465,9 +465,6 @@ class Smarty_Compiler extends Smarty {
                 $arg_list[] = "'$arg_name' => $arg_value";
             }
 
-	    /* Add the function name to the argument list --BM 9/21/2002 */
-	    $arg_list[] = "'__function' => '$tag_command'";
-	    
             $output = "<?php \$this->_tag_stack[] = array('$tag_command', array(".implode(',', (array)$arg_list).")); \$this->_plugins['block']['$tag_command'][0](array(".implode(',', (array)$arg_list)."), null, \$this); ob_start(); ?>";
         } else {
             $output = "<?php \$this->_block_content = ob_get_contents(); ob_end_clean(); \$this->_plugins['block']['$tag_command'][0](\$this->_tag_stack[count(\$this->_tag_stack)-1][1], \$this->_block_content, \$this); array_pop(\$this->_tag_stack); ?>";
@@ -493,9 +490,6 @@ class Smarty_Compiler extends Smarty {
             $arg_list[] = "'$arg_name' => $arg_value";
         }
 
-	/* Add the function name to the argument list --BM 9/21/2002 */
-	$arg_list[] = "'__function' => '$tag_command'";
-	
         return "<?php \$this->_plugins['function']['$tag_command'][0](array(".implode(',', (array)$arg_list)."), \$this); if(\$this->_extract) { extract(\$this->_tpl_vars); \$this->_extract=false; } ?>";
     }
 
@@ -1303,38 +1297,48 @@ class Smarty_Compiler extends Smarty {
 
             case 'get':
                 array_shift($indexes);
-                $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_GET_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_GET_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             case 'post':
                 array_shift($indexes);
                 $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_POST_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_POST_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             case 'cookies':
                 array_shift($indexes);
                 $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_COOKIE_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_COOKIE_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             case 'env':
                 array_shift($indexes);
-                $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_ENV_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_ENV_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             case 'server':
                 array_shift($indexes);
                 $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_SERVER_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_SERVER_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             case 'session':
                 array_shift($indexes);
                 $name = substr($indexes[0], 1);
-                $compiled_ref = "\$GLOBALS['HTTP_SESSION_VARS']['$name']";
+                $compiled_ref = "\$GLOBALS['HTTP_SESSION_VARS']";
+                if ($name = substr($indexes[0], 1))
+                    $compiled_ref .= "['$name']";
                 break;
 
             /*
