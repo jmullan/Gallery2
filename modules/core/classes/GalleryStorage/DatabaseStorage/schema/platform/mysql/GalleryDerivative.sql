@@ -5,21 +5,18 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryDerivative (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryDerivative (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_derivativeSourceId
+  COLUMN_PREFIXderivativeSourceId
       int(11)
     
     ,
-  
-    g_derivativeCommands
+  COLUMN_PREFIXderivativeCommands
       varchar(
       
           255
@@ -27,22 +24,21 @@
       )
     
     ,
-  
-    g_derivativeSize
+  COLUMN_PREFIXderivativeSize
       int(11)
     
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryDerivative',
       1,

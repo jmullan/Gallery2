@@ -5,26 +5,22 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryItem (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryItem (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_description
+  COLUMN_PREFIXdescription
       text
     
     ,
-  
-    g_isHtmlAllowed
+  COLUMN_PREFIXisHtmlAllowed
       int(1)
     
     ,
-  
-    g_keywords
+  COLUMN_PREFIXkeywords
       varchar(
       
           255
@@ -32,8 +28,7 @@
       )
     
     ,
-  
-    g_orderBy
+  COLUMN_PREFIXorderBy
       varchar(
       
           128
@@ -41,8 +36,7 @@
       )
     
     ,
-  
-    g_orderDirection
+  COLUMN_PREFIXorderDirection
       varchar(
       
           128
@@ -50,20 +44,17 @@
       )
     
     ,
-  
-    g_orderWeight
+  COLUMN_PREFIXorderWeight
       int(11)
     
     ,
-  
-    g_ownerId
+  COLUMN_PREFIXownerId
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_title
+  COLUMN_PREFIXtitle
       varchar(
       
           128
@@ -73,13 +64,11 @@
     NOT NULL
   
     ,
-  
-    g_viewCount
+  COLUMN_PREFIXviewCount
       int(11)
     
     ,
-  
-    g_viewedSinceTimestamp
+  COLUMN_PREFIXviewedSinceTimestamp
       int(11)
     
     NOT NULL
@@ -87,13 +76,13 @@
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
       ,
     
     INDEX (
-    g_description
+    COLUMN_PREFIXdescription
           (255)
           
     )
@@ -101,21 +90,21 @@
       ,
     
     INDEX (
-    g_keywords
+    COLUMN_PREFIXkeywords
     )
     
       ,
     
     INDEX (
-    g_title
+    COLUMN_PREFIXtitle
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryItem',
       1,

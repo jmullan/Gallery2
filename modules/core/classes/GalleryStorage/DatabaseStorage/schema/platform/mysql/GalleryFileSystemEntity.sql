@@ -5,16 +5,14 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryFileSystemEntity (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryFileSystemEntity (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_pathComponent
+  COLUMN_PREFIXpathComponent
       varchar(
       
           32
@@ -24,21 +22,21 @@
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
       ,
     
     INDEX (
-    g_pathComponent
+    COLUMN_PREFIXpathComponent
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryFileSystemEntity',
       1,

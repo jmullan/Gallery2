@@ -5,21 +5,18 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryGroup (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryGroup (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_groupType
+  COLUMN_PREFIXgroupType
       int(11)
     
     ,
-  
-    g_groupName
+  COLUMN_PREFIXgroupName
       varchar(
       
           32
@@ -29,27 +26,27 @@
     , 
   
     UNIQUE KEY (
-    g_groupName
+    COLUMN_PREFIXgroupName
     )
     
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
       ,
     
     INDEX (
-    g_groupName
+    COLUMN_PREFIXgroupName
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryGroup',
       1,

@@ -5,40 +5,36 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryDerivativeImage (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryDerivativeImage (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_width
+  COLUMN_PREFIXwidth
       int(11)
     
     ,
-  
-    g_height
+  COLUMN_PREFIXheight
       int(11)
     
     ,
-  
-    g_imageType
+  COLUMN_PREFIXimageType
       int(11)
     
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryDerivativeImage',
       1,

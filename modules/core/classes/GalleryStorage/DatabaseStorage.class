@@ -35,12 +35,12 @@ define('DATABASE_SEQUENCE_ID', 'sequence_id');
 define('DATABASE_SEQUENCE_LOCK', 'sequence_lock');
 
 /**
- * Prefix to prepend to table names
+ * Default prefix to prepend to table names
  */
 define('DATABASE_TABLE_PREFIX', 'g2_');
 
 /**
- * Prefix to prepend to column names
+ * Default prefix to prepend to column names
  */
 define('DATABASE_COLUMN_PREFIX', 'g_');
 
@@ -48,8 +48,7 @@ define('DATABASE_COLUMN_PREFIX', 'g_');
  * Database connection states
  */
 define('DATABASE_STATUS_NOT_CONNECTED', 0);
-define('DATABASE_STATUS_PARTIALLY_CONNECTED', 1);
-define('DATABASE_STATUS_FULLY_CONNECTED', 2);
+define('DATABASE_STATUS_CONNECTED', 1);
 
 /**
  * Database implementation of the GalleryStorage interface.
@@ -137,6 +136,22 @@ class DatabaseStorage extends GalleryStorage {
     var $_entityTypeCache;
 
     /**
+     * A string to prepend to table names
+     *
+     * @var string $_tablePrefix
+     * @access private
+     */
+    var $_tablePrefix;
+
+    /**
+     * A string to prepend to column names
+     *
+     * @var string $_columnPrefix
+     * @access private
+     */
+    var $_columnPrefix;
+
+    /**
      * Constructor.
      *
      * @param array database configuration values
@@ -149,7 +164,19 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
 	$this->_database = $config['database'];
-	$this->_useDefault = $config['useDefaultDatabase'];
+
+	if (isset($config['tablePrefix'])) {
+	    $this->_tablePrefix = $config['tablePrefix'];
+	} else {
+	    $this->_tablePrefix = DATABASE_TABLE_PREFIX;
+	}
+
+	if (isset($config['columnPrefix'])) {
+	    $this->_columnPrefix = $config['columnPrefix'];
+	} else {
+	    $this->_columnPrefix = DATABASE_COLUMN_PREFIX;
+	}
+
 	if (isset($config['capabilities'])) {
 	    $this->_capabilities = $config['capabilities'];
 	} else {
@@ -195,18 +222,10 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_db->debug = true;
 	}
 
-	if ($this->_useDefault) {
-	    $ret = $this->_db->PConnect($this->_hostname,
-					$this->_username,
-					$this->_password,
-					$this->_database);
-	    $this->_connectionStatus = DATABASE_STATUS_FULLY_CONNECTED;
-	} else {
-	    $ret = $this->_db->PConnect($this->_hostname,
-					$this->_username,
-					$this->_password);
-	    $this->_connectionStatus = DATABASE_STATUS_PARTIALLY_CONNECTED;
-	}
+	$ret = $this->_db->PConnect($this->_hostname,
+				    $this->_username,
+				    $this->_password,
+				    $this->_database);
 	$this->_traceStop();
 
 	if (!$ret) {
@@ -214,7 +233,10 @@ class DatabaseStorage extends GalleryStorage {
 	    $this->_db = null;
 	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
+	} else {
+	    $this->_connectionStatus = DATABASE_STATUS_CONNECTED;
 	}
+
 
 	return GalleryStatus::success();
     }
@@ -241,7 +263,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return array object GalleryStatus a status code, object GalleryEntity
      */
     function loadEntity($id) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
@@ -342,7 +364,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function saveEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -524,7 +546,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function deleteEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -582,7 +604,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function newEntity(&$entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -613,7 +635,7 @@ class DatabaseStorage extends GalleryStorage {
      *               GalleryEntity the refreshed entity
      */
     function refreshEntity($entity) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -946,7 +968,7 @@ class DatabaseStorage extends GalleryStorage {
      *               array the result values
      */
     function search($query, $data=array()) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
@@ -1155,22 +1177,41 @@ class DatabaseStorage extends GalleryStorage {
     /**
      * Create the database.
      *
-     * Note that the database connection must not be attached to a specific
-     * database for this to work.
-     *
      * @return object GalleryStatus a status code
      */
     function createStore() {
 	global $gallery;
-	
-	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+
+	/*
+	 * Create a temporary connection that doesn't attach to the default
+	 * database for this operation.
+	 */
+	$this->_traceStart();
+	$db = ADONewConnection($this->getType());
+	if (empty($db)) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
+	/*
+	 * Turn on debugging in the database connection if Gallery is in debug
+	 * mode
+	 */
+	if ($gallery->getDebug()) {
+	    $db->debug = true;
+	}
+
+	$ret = $db->Connect($this->_hostname,
+			    $this->_username,
+			    $this->_password);
+	if (!$ret) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	}
+	
 	$query = 'CREATE DATABASE ' . $this->_database;
-	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query);
+	$recordSet = $db->Execute($query);
+	$db->Close();
 	$this->_traceStop();
 	
 	if (empty($recordSet)) {
@@ -1192,7 +1233,7 @@ class DatabaseStorage extends GalleryStorage {
     function configureStore() {
 	global $gallery;
 	
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	if ($this->_connectionStatus != DATABASE_STATUS_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
@@ -1239,7 +1280,11 @@ class DatabaseStorage extends GalleryStorage {
 		foreach (split(";", $buffer) as $query) {
 		    $query = trim($query);
 		    if (!empty($query)) {
+			$query = str_replace('TABLE_PREFIX', $this->_tablePrefix, $query);
+			$query = str_replace('COLUMN_PREFIX', $this->_columnPrefix, $query);
+			$this->_traceStart();
 			$recordSet = $this->_db->Execute($query);
+			$this->_traceStop();
 			if (empty($recordSet)) {
 			    $gallery->debug("Error trying to load $fileName");
 			    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1254,9 +1299,6 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 	
-	$this->_traceStart();
-	$this->_traceStop();
-
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -1271,14 +1313,38 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function removeStore() {
-	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	global $gallery;
+	
+	/*
+	 * Create a temporary connection that doesn't attach to the default
+	 * database for this operation.
+	 */
+	$this->_traceStart();
+	$db = ADONewConnection($this->getType());
+	if (empty($db)) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
+	/*
+	 * Turn on debugging in the database connection if Gallery is in debug
+	 * mode
+	 */
+	if ($gallery->getDebug()) {
+	    $db->debug = true;
+	}
+
+	$ret = $db->Connect($this->_hostname,
+			    $this->_username,
+			    $this->_password);
+	if (!$ret) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	}
+	
 	$query = 'DROP DATABASE ' . $this->_database;
-	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query);
+	$recordSet = $db->Execute($query);
+	$db->Close();
 	$this->_traceStop();
 	
 	if (empty($recordSet)) {
@@ -1340,7 +1406,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixColumnName($columnName) {
-	return DATABASE_COLUMN_PREFIX . $columnName;
+	return $this->_columnPrefix . $columnName;
     }
 
     /**
@@ -1351,7 +1417,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixTableName($tableName) {
-	return DATABASE_TABLE_PREFIX . $tableName;
+	return $this->_tablePrefix . $tableName;
     }
 
     /**

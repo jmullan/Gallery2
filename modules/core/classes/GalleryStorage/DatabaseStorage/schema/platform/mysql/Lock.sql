@@ -5,32 +5,28 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_Lock (
-  
-    g_lockId
+    CREATE TABLE TABLE_PREFIXLock (
+  COLUMN_PREFIXlockId
       int(11)
     
     ,
-  
-    g_readEntityId
+  COLUMN_PREFIXreadEntityId
       int(11)
     
     ,
-  
-    g_writeEntityId
+  COLUMN_PREFIXwriteEntityId
       int(11)
     
     ,
-  
-    g_request
+  COLUMN_PREFIXrequest
       int(11)
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'Lock',
       1,

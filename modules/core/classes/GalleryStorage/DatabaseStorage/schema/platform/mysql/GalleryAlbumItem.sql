@@ -5,16 +5,14 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryAlbumItem (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryAlbumItem (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_backgroundColor
+  COLUMN_PREFIXbackgroundColor
       varchar(
       
           32
@@ -22,8 +20,7 @@
       )
     
     ,
-  
-    g_backgroundColor2
+  COLUMN_PREFIXbackgroundColor2
       varchar(
       
           32
@@ -31,13 +28,11 @@
       )
     
     ,
-  
-    g_border
+  COLUMN_PREFIXborder
       int(11)
     
     ,
-  
-    g_borderColor
+  COLUMN_PREFIXborderColor
       varchar(
       
           32
@@ -45,18 +40,15 @@
       )
     
     ,
-  
-    g_columns
+  COLUMN_PREFIXcolumns
       int(11)
     
     ,
-  
-    g_displayViewCount
+  COLUMN_PREFIXdisplayViewCount
       int(1)
     
     ,
-  
-    g_font
+  COLUMN_PREFIXfont
       varchar(
       
           32
@@ -64,18 +56,15 @@
       )
     
     ,
-  
-    g_htmlFooter
+  COLUMN_PREFIXhtmlFooter
       text
     
     ,
-  
-    g_htmlHeader
+  COLUMN_PREFIXhtmlHeader
       text
     
     ,
-  
-    g_layout
+  COLUMN_PREFIXlayout
       varchar(
       
           32
@@ -83,8 +72,7 @@
       )
     
     ,
-  
-    g_linkColor
+  COLUMN_PREFIXlinkColor
       varchar(
       
           32
@@ -92,33 +80,27 @@
       )
     
     ,
-  
-    g_allowPrinting
+  COLUMN_PREFIXallowPrinting
       int(1)
     
     ,
-  
-    g_childIntermediateResize
+  COLUMN_PREFIXchildIntermediateResize
       int(11)
     
     ,
-  
-    g_childThumbSize
+  COLUMN_PREFIXchildThumbSize
       int(11)
     
     ,
-  
-    g_rows
+  COLUMN_PREFIXrows
       int(11)
     
     ,
-  
-    g_showBreadCrumb
+  COLUMN_PREFIXshowBreadCrumb
       int(1)
     
     ,
-  
-    g_textColor
+  COLUMN_PREFIXtextColor
       varchar(
       
           32
@@ -128,15 +110,15 @@
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryAlbumItem',
       1,

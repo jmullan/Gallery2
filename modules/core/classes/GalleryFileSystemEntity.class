@@ -224,7 +224,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    if (!empty($parentId)) {
 		list($ret, $parent) = $this->getParent();
 		if ($ret->isError()) {
-		    return array($ret, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		return $parent->getContainerPath();
@@ -258,12 +258,12 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	if (!empty($parentId)) {
 	    list($ret, $parent) = $this->getParent();
 	    if ($ret->isError()) {
-		return array($ret, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list($ret, $path) = $parent->getPath();
 	    if ($ret->isError()) {
-		return array($ret, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    global $gallery;

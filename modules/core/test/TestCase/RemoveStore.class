@@ -8,14 +8,10 @@ class RemoveStoreTestCase extends TestCase {
 	return "Drop the G2 database called '$config[database]'";
     }
 
-    function useDefaultDatabase() {
-	return false;
-    }
-
     function testStart() {
 	global $gallery;
 
-	list($ret, $storage) = $gallery->getStorage();
+	list($ret, $storage) = $gallery->getUninitializedStorage();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

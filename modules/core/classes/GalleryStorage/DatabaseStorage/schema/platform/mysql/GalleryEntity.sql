@@ -5,44 +5,38 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryEntity (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryEntity (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_creationTimestamp
+  COLUMN_PREFIXcreationTimestamp
       datetime
     
     NOT NULL
   
     ,
-  
-    g_dataVersion
+  COLUMN_PREFIXdataVersion
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_modificationTimestamp
+  COLUMN_PREFIXmodificationTimestamp
       datetime
     
     NOT NULL
   
     ,
-  
-    g_serialNumber
+  COLUMN_PREFIXserialNumber
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_entityType
+  COLUMN_PREFIXentityType
       varchar(
       
           32
@@ -54,15 +48,15 @@
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryEntity',
       1,

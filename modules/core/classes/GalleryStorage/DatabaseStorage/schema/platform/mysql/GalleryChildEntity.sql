@@ -5,30 +5,28 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryChildEntity (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryChildEntity (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_parentId
+  COLUMN_PREFIXparentId
       int(11)
     
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryChildEntity',
       1,

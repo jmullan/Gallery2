@@ -131,27 +131,6 @@ function runTest($testName, $iterations) {
 	}
     }
 
-    if ($class->requireDatabaseConnection()) {
-
-	/*
-	 * Break the OO rules here.  We have a persistent connection, and some
-	 * of our test cases want to use the default database and others
-	 * don't.  So .. trash the database connection between each test.
-	 *
-	 * We *could* make this part of the Gallery API, but I don't think that
-	 * it's going to be useful in the real world.
-	 */
-	$gallery->_storage = null;
-	
-	$config = $gallery->getConfig('storage.config');
-	if ($class->useDefaultDatabase()) {
-	    $config['useDefaultDatabase'] = 1;
-	} else {
-	    $config['useDefaultDatabase'] = 0;
-	}
-	$gallery->setConfig('storage.config', $config);
-    }
-
     print '<b>Test: ' . $testName . '</b>';
     print '<br>';
 

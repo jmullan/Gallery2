@@ -5,34 +5,32 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryUserGroupMap (
-  
-    g_userId
+    CREATE TABLE TABLE_PREFIXGalleryUserGroupMap (
+  COLUMN_PREFIXuserId
       int(11)
     
     ,
-  
-    g_groupId
+  COLUMN_PREFIXgroupId
       int(11)
     
     , 
   
     INDEX (
-    g_userId
+    COLUMN_PREFIXuserId
     )
     
       ,
     
     INDEX (
-    g_groupId
+    COLUMN_PREFIXgroupId
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryUserGroupMap',
       1,

@@ -5,16 +5,14 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryUser (
-  
-    g_id
+    CREATE TABLE TABLE_PREFIXGalleryUser (
+  COLUMN_PREFIXid
       int(11)
     
     NOT NULL
   
     ,
-  
-    g_userName
+  COLUMN_PREFIXuserName
       varchar(
       
           32
@@ -24,8 +22,7 @@
     NOT NULL
   
     ,
-  
-    g_fullname
+  COLUMN_PREFIXfullname
       varchar(
       
           128
@@ -33,8 +30,7 @@
       )
     
     ,
-  
-    g_password
+  COLUMN_PREFIXpassword
       varchar(
       
           32
@@ -42,8 +38,7 @@
       )
     
     ,
-  
-    g_email
+  COLUMN_PREFIXemail
       varchar(
       
           128
@@ -53,33 +48,33 @@
     , 
   
     UNIQUE KEY (
-    g_userName
+    COLUMN_PREFIXuserName
     )
     
       ,
     
     UNIQUE KEY (
-    g_email
+    COLUMN_PREFIXemail
     )
     
     , 
   
     INDEX (
-    g_id
+    COLUMN_PREFIXid
     )
     
       ,
     
     INDEX (
-    g_userName
+    COLUMN_PREFIXuserName
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryUser',
       1,

@@ -5,14 +5,12 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_GalleryItemPropertiesMap (
-  
-    g_itemId
+    CREATE TABLE TABLE_PREFIXGalleryItemPropertiesMap (
+  COLUMN_PREFIXitemId
       int(11)
     
     ,
-  
-    g_key
+  COLUMN_PREFIXkey
       varchar(
       
           128
@@ -20,32 +18,31 @@
       )
     
     ,
-  
-    g_value
+  COLUMN_PREFIXvalue
       text
     
     , 
   
     UNIQUE KEY (
-    g_itemId
+    COLUMN_PREFIXitemId
         ,
-      g_key
+      COLUMN_PREFIXkey
     )
     
     , 
   
     INDEX (
-    g_value
+    COLUMN_PREFIXvalue
           (255)
           
     )
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'GalleryItemPropertiesMap',
       1,

@@ -7,8 +7,8 @@
 
   <xsl:strip-space elements="*"/>
   <xsl:output method="text"/>
-  <xsl:variable name="tablePrefix">g2_</xsl:variable>
-  <xsl:variable name="columnPrefix">g_</xsl:variable>
+  <xsl:variable name="tablePrefix">TABLE_PREFIX</xsl:variable>
+  <xsl:variable name="columnPrefix">COLUMN_PREFIX</xsl:variable>
 
   <xsl:template match="table">
     -- This file was automatically generated from an XSL template, which is
@@ -42,7 +42,7 @@
   </xsl:template>
 
   <xsl:template match="column">
-    g_<xsl:value-of select="column-name"/> 
+    <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/> 
   <xsl:choose>
     <xsl:when test="column-type='INTEGER'">
       int(11)

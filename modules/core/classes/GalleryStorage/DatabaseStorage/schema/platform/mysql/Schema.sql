@@ -5,9 +5,8 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE g2_Schema (
-  
-    g_name
+    CREATE TABLE TABLE_PREFIXSchema (
+  COLUMN_PREFIXname
       varchar(
       
           128
@@ -15,21 +14,19 @@
       )
     
     ,
-  
-    g_major
+  COLUMN_PREFIXmajor
       int(11)
     
     ,
-  
-    g_minor
+  COLUMN_PREFIXminor
       int(11)
     
     ) TYPE=MyISAM;
 
-    INSERT INTO g2_Schema (
-      g_name,
-      g_major,
-      g_minor
+    INSERT INTO TABLE_PREFIXSchema (
+      COLUMN_PREFIXname,
+      COLUMN_PREFIXmajor,
+      COLUMN_PREFIXminor
       ) VALUES (
       'Schema',
       1,

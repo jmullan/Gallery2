@@ -391,7 +391,7 @@ class Gallery {
 
 	$lockId = $lock->getId();
 	$this->_locks[$lockId] = $lock;
-	return array($ret, $lockId);
+	return array($ret->wrap(__FILE__, __LINE__), $lockId);
     }
 
     /**
@@ -599,6 +599,24 @@ class Gallery {
     }
 
     /**
+     * Return a new, uninitialized storage instance.  
+     *
+     * This is useful when we want to do operations on the whole of the storage
+     * container (like in the case of DatabaseStorage when we want to drop or
+     * create the database).
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               object GalleryStorage a storage instance
+     */
+    function getUninitializedStorage() {
+	$type = $this->getConfig('storage.type');
+	$config = $this->getConfig('storage.config');
+	
+	return GalleryStorageFactory::newInstance($type, $config);
+    }
+    
+    /**
      * Return an instance of the GalleryStorage class
      *
      * @access public
@@ -607,19 +625,14 @@ class Gallery {
      */
     function getStorage() {
 	if (empty($this->_storage)) {
-	    /* Set up our storage system */
-	    $type = $this->getConfig('storage.type');
-	    $config = $this->getConfig('storage.config');
-	    
-	    list($ret, $storage) =
-		    GalleryStorageFactory::newInstance($type, $config);
+	    list($ret, $storage) = $this->getUninitializedStorage();
 	    if ($ret->isError()) {
 		return array($ret, null);
 	    }
 
 	    $ret = $storage->init();
 	    if ($ret->isError()) {
-		return array($ret, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $this->_storage = $storage;
