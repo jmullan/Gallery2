@@ -64,22 +64,13 @@ class GalleryUrlGenerator {
     var $_relativeG2Path;
 
     /**
-     * The session key for the CMS application in which G2 is embedded.
+     * The session key=value for the CMS application in which G2 is embedded.
      * Should only be nonempty when cookieless browsing is supported by CMS.
      *
      * @var string $_embedSessionString
      * @private
      */
-    var $_embedSessionKey;
-
-    /**
-     * The session id value for the CMS application in which G2 is embedded.
-     * Should only be nonempty when cookieless browsing is supported by CMS.
-     *
-     * @var string $_embedSessionString
-     * @private
-     */
-    var $_embedSessionId;
+    var $_embedSessionString;
 
     /*
      * ****************************************
@@ -98,10 +89,7 @@ class GalleryUrlGenerator {
     function GalleryUrlGenerator($baseFile, $relativeG2Path=null, $embedSessionString=null) {
 	$this->_baseFile = $baseFile;
 	$this->_relativeG2Path = $relativeG2Path;
-	if (!empty($embedSessionString)) {
-	    list ($this->_embedSessionKey, $this->_embedSessionId) =
-		explode('=', $embedSessionString, 2);
-	}
+	$this->_embedSessionString = $embedSessionString;
     }
 
     /**
@@ -329,8 +317,8 @@ class GalleryUrlGenerator {
 	$session =& $gallery->getSession();
 	if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
 		(isset($forceSessionId) && $forceSessionId === true)) {
-	    if (!empty($this->_embedSessionId)) {
-		$params[$this->_embedSessionKey] = $this->_embedSessionId;
+	    if (!empty($this->_embedSessionString)) {
+		$sessionString = $this->_embedSessionString;
 	    } else {
 		$params[$session->getKey()] = $session->getId();
 	    }
@@ -339,6 +327,10 @@ class GalleryUrlGenerator {
 	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
 		&& !isset($params['href'])) {
 	    $params['href'] = 'main.php';
+	    if (isset($sessionString)) {
+		$sessionString = null;
+		$params[$session->getKey()] = $session->getId();
+	    }
 	}
 
 	/* If the url specifies a full href, then let's use that */
@@ -366,15 +358,13 @@ class GalleryUrlGenerator {
 	     * but not have the session id in the url yet.  Detect that case and add the url here.
 	     */
 	    if (!($session->isUsingCookies())) {
-		if (!empty($this->_embedSessionId)) {
-		    $sessionKey = $this->_embedSessionKey;
-		    $sessionId = $this->_embedSessionId;
-		} else {
-		    $sessionKey = $session->getKey();
-		    $sessionId = $session->getId();
-		}
-		if (empty($_SERVER['QUERY_STRING']) || strpos($_SERVER['QUERY_STRING'], $sessionKey) === false) {
-		    $params['return'] .= $this->buildQueryString(array($sessionKey => $sessionId));
+		$sessionCheck = !empty($this->_embedSessionString) ? $this->_embedSessionString
+		    : (GalleryUtilities::prefixFormVariable($session->getKey()) .
+					'=' . $session->getId());
+		if (empty($_SERVER['QUERY_STRING']) ||
+			strpos($_SERVER['QUERY_STRING'], $sessionCheck) === false) {
+		    $params['return'] .=
+			(empty($_SERVER['QUERY_STRING']) ? '?' : '&') . $sessionCheck;
 		}
 	    }
 
@@ -422,7 +412,10 @@ class GalleryUrlGenerator {
 	} else if (!empty($params)) {
 	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
 	}
-	    
+	if (isset($sessionString)) {
+	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $sessionString;
+	}
+
 	return $url;
     }
 
