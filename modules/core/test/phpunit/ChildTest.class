@@ -104,6 +104,16 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals(array($item->getId()), $childIds, "root children");
     }
 
+    function testFetchChildAlbumItemIds() {
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildAlbumItemIds($this->_root);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(), $this->_child[1]->getId()), 
+        $childIds, "root sub-albums");
+    }
+
     function testFetchChildIds2() {
 
 	/* Order them in reverse */

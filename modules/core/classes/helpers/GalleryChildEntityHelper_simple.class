@@ -217,6 +217,29 @@ class GalleryChildEntityHelper_simple {
     }
 
     /**
+     * Return the ids of the subalbums of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     * @static
+     */
+    function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
+	list ($ret, $ids) =
+	    GalleryChildEntityHelper_simple::_fetchChildItemIds($item, $offset, $count, 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection
      * field, bypassing user permissions.

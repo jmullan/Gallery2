@@ -2160,6 +2160,23 @@ class GalleryCoreApi {
     }
 
     /**
+     * Same as fetchChildItemIds except we only want sub-albums
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     * @static
+     */
+    function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::fetchChildAlbumItemIds($item, $offset, $count);
+    }
+
+    /**
      * Same as fetchChildItemIds except we only want data items
      *
      * @param object GalleryItem an item
