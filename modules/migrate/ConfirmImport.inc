@@ -541,12 +541,21 @@ class ConfirmImportController extends GalleryController {
 				//}
 				$status['addFromLocalServer'][] = array('fileName' => $filename,
 									'id' => $newItem->getId());
-				
 				if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
-				    list ($ret, $success) =
-					    GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+				    $toolkit = NULL;
+
+				    list ($ret, $toolkit, $outputMimeType) =
+					    GalleryCoreApi::getToolkitByOperation($newItem->getMimeType(), 'thumbnail');
 				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
+					return $ret->wrap(__FILE__, __LINE__);
+				    }
+
+				    if (isset($toolkit)) {
+					list ($ret, $success) =
+						GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
 				    }
 				    $albumNeedsThumbnail = FALSE;
 				}
