@@ -519,12 +519,12 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if ($user->getId() != $anonymousUserId) {
-	        $views[] = array('name' => $this->translate('Account Settings'),
+		$views[] = array('name' => $this->translate('Account Settings'),
 				 'view' => 'core:UserPreferences');
-	        $views[] = array('name' => $this->translate('Change Password'),
+		$views[] = array('name' => $this->translate('Change Password'),
 				 'view' => 'core:UserChangePassword');
 	    } else {
-	        $views[] = array('name' => $this->translate('Login'),
+		$views[] = array('name' => $this->translate('Login'),
 				 'view' => 'core:UserLogin');
 	    }
 	}
@@ -632,14 +632,14 @@ class CoreModule extends GalleryModule {
 
 	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
-	        $views[] = array('name' => $this->translate('Add Items'),
+		$views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAdd');
 	    }
 	}
 
 	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->getCanContainChildren()) {
-	        $views[] = array('name' => $this->translate('Add Sub-Album'),
+		$views[] = array('name' => $this->translate('Add Sub-Album'),
 				 'view' => 'core:ItemAddAlbum');
 	    }
 	}
@@ -683,6 +683,7 @@ class CoreModule extends GalleryModule {
      * schema.
      *
      * @return array 'core' => core module version, 'gallery' => gallery version
+     * @static
      */
     function getInstalledVersions() {
 	global $gallery;
