@@ -16,7 +16,8 @@
 	   {if isset($ImageBlockSystemContent.linkTarget)}
 	     target="{$ImageBlockSystemContent.linkTarget}"
 	   {/if}{/strip}>
-	  {g->image item=$block.item image=$block.thumb class="giThumbImage" maxSize=140}
+	  {g->image item=$block.item image=$block.thumb
+		    class="giThumbImage" maxSize=$ImageBlockSystemContent.maxSize|default:null}
 	</a>
 
 	{if isset($ImageBlockSystemContent.show.title) && isset($block.item.title)}

@@ -163,8 +163,26 @@
     <p class="giInfo">
       &lt;?php @readfile('{g->url arg1="view=imageblock:External" arg2="blocks=randomImage" arg3="show=title"}'); ?&gt;
     </p>
+    <table class="gbDataTable">
+      <tr>
+	<td> g2_blocks </td>
+	<td> {g->text text="Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem"} </td>
+      </tr><tr>
+	<td> g2_show </td>
+	<td> {g->text text="Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize; the value can also be: none"} </td>
+      </tr><tr>
+	<td> g2_itemId </td>
+	<td> {g->text text="Limit the item selection to the subtree of the gallery under the album with the given id; or the id of the item to display when used with specificItem block type"} </td>
+      </tr><tr>
+	<td> g2_maxSize </td>
+	<td> {g->text text="Scale images to this maximum size"} </td>
+      </tr><tr>
+	<td> g2_linkTarget </td>
+	<td> {g->text text="Add a link target (for example, to open links in a new browser window)"} </td>
+      </tr>
+    </table>
     <p class="giDescription">
-      {g->text text="g2_blocks is a pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum.  g2_show is a pipe(|) separated list chosen from: title, date, views, owner; the value can also be: none.  If either parameter is omitted the site default defined above is used.  Add the parameter g2_heading=on to show the image block heading.  Add the parameter g2_itemId=[id] to limit the item selection to the subtree of the gallery under the album with the given [id].  To create an image block for a particular item pass g2_blocks=specificItem and g2_itemId=[id] of the item to display.  To add a link target (for example, to open links in a new browser window) pass g2_linkTarget=targetName."}
+      {g->text text="If either g2_blocks or g2_show is omitted the site default defined above is used."}
     </p>
   </div>
 </div>

@@ -41,15 +41,20 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @return array GalleryStatus a status code
      *               string template file or null
      */
-    function loadImageBlocks(&$template, $params = array('heading' => 1)) {
+    function loadImageBlocks(&$template, $params = array('heading' => 1, 'maxSize' => 140)) {
 	global $gallery;
 	list ($ret, $moduleParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$params = array_merge($moduleParams, $params);
-	$heading = isset($params['heading']);
 	$parentId = isset($params['itemId']) ? $params['itemId'] : null;
+	$show = array();
+	foreach (explode('|', $params['show']) as $key) {
+	    $show[$key] = 1;
+	}
+	$fullSize = isset($show['fullSize']);
+	$heading = isset($params['heading']) || isset($show['heading']);
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
 	if ($ret->isError()) {
@@ -76,17 +81,16 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    list ($tmp, $order, $itemType) = $matches;
 	    $ret = ImageBlockHelper::_addBlock($blocks,
 		   ($heading && isset($headings[$block])) ? $module->translate($headings[$block]) : '',
-		   $itemType, $order, $parentId);
+		   $itemType, $order, $parentId, $fullSize);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	$show = array();
-	foreach (explode('|', $params['show']) as $key) {
-	    $show[$key] = 1;
-	}
 	$ImageBlockSystemContent['show'] = $show;
+	if (isset($params['maxSize'])) {
+	    $ImageBlockSystemContent['maxSize'] = $params['maxSize'];
+	}
 	if (isset($params['linkTarget'])) {
 	    $ImageBlockSystemContent['linkTarget'] = $params['linkTarget'];
 	}
@@ -101,7 +105,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
     }
 
     /** @static @private */
-    function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null) {
+    function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null, $fullSize=false) {
 	$userId = null;
 	switch ($order) {
 	case 'specific':
@@ -197,20 +201,32 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	if (isset($data)) {
-	    list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	    list ($ret, $owner) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if ($fullSize) {
+		$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.viewSource');
+		if ($ret->isError()) {
+		    /* Ignore permission error.. just don't add a block */
+		    return GalleryStatus::success();
+		}
+		$image = $item;
+	    } else {
+		list ($ret, $thumbnail) = GalleryCoreApi::fetchThumbnailsByItemIds(array($id));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if (isset($thumbnail[$id])) {
+		    $image = $thumbnail[$id];
+		}
 	    }
 
 	    $data['title'] = $title;
 	    $data['item'] = $item->getMemberData();
 	    $data['owner'] = $owner->getMemberData();
-	    if (isset($thumbnail[$id])) {
-		$data['thumb'] = $thumbnail[$id]->getMemberData();
+	    if (isset($image)) {
+		$data['thumb'] = $image->getMemberData();
 		$blocks[] = $data;
 	    }
 	}
@@ -500,7 +516,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    /*
 	     * If the entity is a GalleryDataItem or GalleryAlbumItem and is
 	     * Newly Created or the parent has changed (item moved), continue
-             * processing, otherwise break out.
+	     * processing, otherwise break out.
 	     */
 	    if ( !(($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
 		    $entity->getModifiedFlag('parentId') !== MEMBER_UNMODIFIED) &&

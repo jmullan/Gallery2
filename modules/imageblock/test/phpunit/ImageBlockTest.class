@@ -355,10 +355,12 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_photo->getId(),
 	    $template->data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
 
-	/* Select specific item.. */
+	/* Select specific item, scaled full size with link target.. */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
-	GalleryUtilities::putRequestVariable('show', 'title|views');
+	GalleryUtilities::putRequestVariable('show', 'title|views|fullSize');
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
+	GalleryUtilities::putRequestVariable('linkTarget', '_blank');
+	GalleryUtilities::putRequestVariable('maxSize', '500');
 
 	$template = new ImageBlockDummyGalleryTemplate();
 	list ($ret, $tpl) = $external->loadTemplate($template, $form);
