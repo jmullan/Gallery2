@@ -11,8 +11,13 @@ class ConstructorTestCase extends TestCase {
     }
 
     function testStart($iterations) {
+	global $gallery;
+	
 	for ($i = 0; $i < $iterations; $i++) {
-	    $entity = new GalleryEntity();
+	    list ($ret, $entity) = $gallery->newEntity('GalleryEntity');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	return GalleryStatus::success();
     }

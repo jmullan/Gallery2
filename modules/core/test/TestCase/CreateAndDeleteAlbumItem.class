@@ -39,8 +39,8 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	}
 
 	/* Change some settings */
-	$album->setChildIntermediateSize(600);
-	$album->setChildThumbSize(200);
+	$album->setTitle('This is my title');
+	$album->setDescription('This is a description');
 
 	/* Add some properties */
 	$ret = GalleryItemPropertiesMap::addProperty($album->getId(), 'banana', 'orange');
