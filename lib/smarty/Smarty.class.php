@@ -155,6 +155,12 @@ class Smarty
 	var $default_modifiers		= array();
 											// modifiers to implicitly append to every var
 											// example: array('escape:"htmlall"');
+	
+    var $short_template_c_names = null;	  // If this is enabled and use_sub_dirs is false, then use a shortened 
+					  // (but still unique) of compiled template names, for example:
+					  //     2c2fb6231bf3babb^debug.tpl
+					  // instead of:
+					  //     ^very^very^very^very^very^long^possibly^too^long^path^to^debug.tpl
 
 /**************************************************************************/
 /* END SMARTY CONFIGURATION SECTION                                       */
@@ -1466,7 +1472,7 @@ function _run_insert_handler($args)
     {
 		static $_dir_sep = null;
 		static $_dir_sep_enc = null;
-		
+
 		if(!isset($_dir_sep)) {
 			$_dir_sep_enc = urlencode(DIR_SEP);
 			if($this->use_sub_dirs) {
@@ -1502,10 +1508,26 @@ function _run_insert_handler($args)
 				$_crc32 = '%%' . substr($_crc32,0,3) . $_dir_sep . '%%' . $_crc32;
 				$res .= $_crc32 . $_filename . '.php';
 			} else {
-        		$res .= str_replace($_dir_sep_enc,'^',urlencode($auto_source));
+				// Fully quality relative auto_source's
+				if ($auto_source{0} == DIR_SEP || $auto_source == $this->debug_tpl) {
+					$_dirname = dirname($auto_source);
+					$_filename = basename($auto_source);
+				} else {
+					$_dirname = $this->template_dir;
+					$_filename = $auto_source;
+				}
+
+				// If we're using short template names, then hash the directory name down
+				if ($this->short_template_c_names) {
+					$true_path = substr(md5($_dirname), 0, 16) . DIR_SEP . $_filename;
+				} else {
+					$true_path = $_dirname . '/' . $_filename;
+				}
+
+				$res .= str_replace($_dir_sep_enc,'^',urlencode($true_path));
 			}
 		}
-		
+
         return $res;
     }
 
