@@ -3,7 +3,7 @@
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
+      {gallery->input type="hidden" name=return.$key}{$value}{/gallery->input}
       {/foreach}
       
     <table>

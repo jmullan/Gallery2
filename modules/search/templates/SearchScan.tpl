@@ -3,7 +3,7 @@
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
-      {gallery->input type="hidden" name=$key|string_format:"return.%s"}{$value}{/gallery->input}
+      {gallery->input type="hidden" name=return.$key}{$value}{/gallery->input}
       {/foreach}
 
       {gallery->thinFrame width="100%"}
@@ -155,7 +155,7 @@
 	    &nbsp;
 	  </td>
 	  <td valign="top" width="100%">
-	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form.searchCriteria</b>"}
+	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$`form.searchCriteria`</b>"}
 	  </td>
 	</tr>
 	
@@ -164,7 +164,7 @@
 	    <b>{gallery->text text="Description: "}</b>
 	  </td>
 	  <td valign="top">
-	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$form.searchCriteria</b>"}
+	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$form.searchCriteria:"<b>$`form.searchCriteria`</b>"}
 	  </td>
 	</tr>
 
