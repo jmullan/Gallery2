@@ -1066,16 +1066,18 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 
     function testImportno_NO() {
-	if (function_exists('iconv')
+        if (!(function_exists('iconv')
 	    || function_exists('mb_convert_encoding')
-	    || function_exists('recode_string')
-	    || phpversion() >= '3.0.0'
-	    ) {
+	      || function_exists('recode_string'))) {
+	    return;
+	}
+	
 	    global $gallery;
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 
-	    GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('albumsPath',
+            dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
 	    GalleryUtilities::putRequestVariable('form[sourceAlbums][no_NO]', 1);
 	    GalleryUtilities::putRequestVariable('form[sourceEncoding]', 'ISO-8859-1');
 	    GalleryUtilities::putRequestVariable('form[action][import]', 1);
@@ -1131,17 +1133,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(array($testAlbum->getownerId()              // owner
-				      ),
-				array($testOwner->getId()                   // owner
-				      )
-				);
+        $this->assertEquals($testAlbum->getownerId(),             // owner
+                            $testOwner->getId());                 // owner
 
 	    $testPerms = array();
 	    $testPermsResult = array();
 	    $testPerms['admin'] = array('core.all' => true,
-					'comment.all' => true && $this->commentPermissionsExist
-					);
+                                    'comment.all' => true && $this->commentPermissionsExist);
 	    $testPerms['phpunitfoo001'] = array('core.view' => false,
 						'core.viewResizes' => false,
 						'core.viewSource' => false,
@@ -1218,19 +1216,20 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      )
 				);
 	}
-    }
 
     function testImportfr_FR() {
-	if (function_exists('iconv')
+	if (!(function_exists('iconv')
 	    || function_exists('mb_convert_encoding')
-	    || function_exists('recode_string')
-	    || phpversion() >= '3.0.0'
-	    ) {
+	      || function_exists('recode_string'))) {
+	    return;
+	}
+
 	    global $gallery;
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 
-	    GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('albumsPath',
+            dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
 	    GalleryUtilities::putRequestVariable('form[sourceAlbums][fr_FR]', 1);
 	    GalleryUtilities::putRequestVariable('form[sourceEncoding]', 'ISO-8859-1');
 	    GalleryUtilities::putRequestVariable('form[action][import]', 1);
@@ -1370,19 +1369,20 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      )
 				);
 	}
-    }
 
     function testImportKOI_8() {
-	if (function_exists('iconv')
+        if (!(function_exists('iconv')
 	    || function_exists('mb_convert_encoding')
-	    || function_exists('recode_string')
-	    || phpversion() >= '3.0.0'
-	    ) {
+	      || function_exists('recode_string'))) {
+	    return;
+	}
+
 	    global $gallery;
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 
-	    GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('albumsPath',
+            dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
 	    GalleryUtilities::putRequestVariable('form[sourceAlbums][KOI-8]', 1);
 	    GalleryUtilities::putRequestVariable('form[sourceEncoding]', 'KOI8-R');
 	    GalleryUtilities::putRequestVariable('form[action][import]', 1);
@@ -1522,7 +1522,6 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      )
 				);
 	}
-    }
 
     function testConvertHtmlToBbcode() {
 	/* UTF8 characters are ignored */
