@@ -53,13 +53,6 @@
 	  alt="{g->text text="Powered by Gallery 2"}"
 	  height="15"  
 	  width="80"/></a>
-	<a href="{g->url href="modules/core/test/data/cowbell.mp3"}"
-	onclick="window.open(this.href); return false;"
-	onkeypress="window.open(this.href); return false;"><img style="border: 0px"
-	  src="{g->url href="images/cowbell.png"}"
-	alt="{g->text text="Gallery %s (Cowbell)" arg1=$main.gallery.version}"
-	height="15"
-	width="80"/></a>
       </div>
     </div>
 
