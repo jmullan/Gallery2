@@ -64,7 +64,8 @@ class AuthenticateStep extends InstallStep {
 		    _('<b>Error:</b> your <b>login.txt</b> file is not readable. ' .
 		      'Please give Gallery read permissions on the file.');
 	    } else {
-		$fileAuth = trim(file_get_contents($authFile));
+		
+		$fileAuth = trim(join("", file($authFile)));
 		if ($fileAuth == $this->_uniqueKey) {
 		    $this->setComplete(true);
 		} else {
