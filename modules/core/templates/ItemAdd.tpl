@@ -11,8 +11,21 @@
 	{g->text text="Add Items"}
       </h2>
     </div>
-
   </div>
+
+  {if ($ItemAdd.hasToolkit)}
+  <div id="gsStatus">
+   <div class="giWarning">
+      {g->text text="You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add images, you will probably not have any thumbnails."}
+      {capture name="url"}
+      {g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+      {/capture}
+      {if $ItemAdd.isAdmin}
+      {g->text text="Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit." arg1=$smarty.capture.url}
+      {/if}
+   </div>
+  </div>
+  {/if}
 
   <div class="gbTabBar">
     <ul>

@@ -11,7 +11,6 @@
 	{g->text text="Upload Complete"}
       </h2>
     </div>
-    
   </div>
 
   <div class="gbAdmin">

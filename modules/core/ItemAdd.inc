@@ -201,9 +201,24 @@ class ItemAddView extends GalleryView {
 	    }
 	}
 
+ 	/* Make sure that we've got some toolkits */
+	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ItemAdd['hasToolkit'] = false;
+	for ($i = 0; $i < sizeof($operations); $i++) {
+	    if ($operations[$i]['name'] == 'thumbnail') {
+		$ItemAdd['hasToolkit'] = true;
+		break;
+	    }
+	}
+
 	$template->setVariable('ItemAdd', $ItemAdd);
 	$template->setVariable('controller', 'core:ItemAdd');
-	return array(GalleryStatus::success(), array('body' => 'modules/core/templates/ItemAdd.tpl'));
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/ItemAdd.tpl'));
     }
 }
 
