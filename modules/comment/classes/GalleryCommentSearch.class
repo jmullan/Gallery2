@@ -90,7 +90,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	SELECT
 	  DISTINCT([GalleryChildEntity::id]),
           [GalleryComment::comment],
-          UNIX_TIMESTAMP([GalleryComment::date]),
+          [GalleryComment::date],
           [GalleryUser::fullName],
           [GalleryUser::userName],
           [GalleryChildEntity::parentId]

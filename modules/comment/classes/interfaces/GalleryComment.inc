@@ -69,7 +69,7 @@ class GalleryComment extends GalleryComment_core {
     
         $meta['members']['date'] = array(
             'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_TIMESTAMP
+            'type' => STORAGE_TYPE_INTEGER
         );
     
         return $meta;
@@ -240,7 +240,7 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Get the value of date
      *
-     * @return TIMESTAMP the value
+     * @return INTEGER the value
      */
     function getdate() {
         if (!isset($this->_date)) {
@@ -252,7 +252,7 @@ class GalleryComment extends GalleryComment_core {
     /**
      * Set the value of date
      *
-     * @param TIMESTAMP the value
+     * @param INTEGER the value
      */
     function setdate($value) {
 
@@ -263,6 +263,11 @@ class GalleryComment extends GalleryComment_core {
 	$b = isset($this->_date) ? $this->_date : null;
 
     
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
         /* 
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.

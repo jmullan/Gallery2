@@ -987,7 +987,7 @@ class DatabaseStorage extends GalleryStorage {
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
 	/* Get the true name of the lock table */
@@ -1004,7 +1004,7 @@ class DatabaseStorage extends GalleryStorage {
 	if ($recordSet) {
 	    return GalleryStatus::success();
 	} else {
-	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
     }
 

@@ -132,8 +132,6 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
           [GalleryPermissionMap::permission] & ? = ?
-        GROUP BY
-          [GalleryItem::id], [GalleryEntity::modificationTimestamp]
         ORDER BY
           [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
         ';

@@ -235,8 +235,6 @@ class GalleryItemHelper {
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
           [GalleryPermissionMap::permission] & ? = ?
-        GROUP BY
-          [GalleryItem::id]
         ';
 	$data = array();
 	$data[] = $itemType;

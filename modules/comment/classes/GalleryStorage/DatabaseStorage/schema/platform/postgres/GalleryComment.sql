@@ -27,7 +27,7 @@
     
       ,
     DB_COLUMN_PREFIXdate
-      TIMESTAMP
+      INTEGER
     
     );
 

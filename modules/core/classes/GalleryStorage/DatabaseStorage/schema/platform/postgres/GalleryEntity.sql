@@ -11,13 +11,13 @@
   
       ,
     DB_COLUMN_PREFIXcreationTimestamp
-      TIMESTAMP
+      INTEGER
     
     NOT NULL
   
       ,
     DB_COLUMN_PREFIXmodificationTimestamp
-      TIMESTAMP
+      INTEGER
     
     NOT NULL
   

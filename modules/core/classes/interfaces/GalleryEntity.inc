@@ -59,12 +59,12 @@ class GalleryEntity extends GalleryEntity_core {
     
         $meta['members']['creationTimestamp'] = array(
             'class' => 'GalleryEntity',
-            'type' => STORAGE_TYPE_TIMESTAMP
+            'type' => STORAGE_TYPE_INTEGER
         );
     
         $meta['members']['modificationTimestamp'] = array(
             'class' => 'GalleryEntity',
-            'type' => STORAGE_TYPE_TIMESTAMP
+            'type' => STORAGE_TYPE_INTEGER
         );
     
         $meta['members']['serialNumber'] = array(
@@ -179,7 +179,7 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of creationTimestamp
      *
-     * @return TIMESTAMP the value
+     * @return INTEGER the value
      */
     function getcreationTimestamp() {
         if (!isset($this->_creationTimestamp)) {
@@ -191,7 +191,7 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of creationTimestamp
      *
-     * @param TIMESTAMP the value
+     * @param INTEGER the value
      */
     function setcreationTimestamp($value) {
 
@@ -202,6 +202,11 @@ class GalleryEntity extends GalleryEntity_core {
 	$b = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
 
     
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
         /* 
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
@@ -215,7 +220,7 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Get the value of modificationTimestamp
      *
-     * @return TIMESTAMP the value
+     * @return INTEGER the value
      */
     function getmodificationTimestamp() {
         if (!isset($this->_modificationTimestamp)) {
@@ -227,7 +232,7 @@ class GalleryEntity extends GalleryEntity_core {
     /**
      * Set the value of modificationTimestamp
      *
-     * @param TIMESTAMP the value
+     * @param INTEGER the value
      */
     function setmodificationTimestamp($value) {
 
@@ -238,6 +243,11 @@ class GalleryEntity extends GalleryEntity_core {
 	$b = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
 
     
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
         /* 
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
