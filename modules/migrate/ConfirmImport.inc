@@ -167,6 +167,7 @@ class ConfirmImportController extends GalleryController {
 	    /* Convert the form variable into a local temporary variable */
 	    $destinationAlbumID = $form['destinationAlbumID'];
 	    /* Go through the list of selected gallery1 albums to import */
+
 	    foreach (array_keys ($form['sourceAlbums']) as $sourceAlbumName) {
 		/* attempt to load the metadata from the selected album into a
 		 * local cache for later manipulation
@@ -475,14 +476,6 @@ class ConfirmImportController extends GalleryController {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				}
-				if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
-				    list ($ret, $success) =
-					    GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
-				    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    $albumNeedsThumbnail = FALSE;
-				}
 				if (isset($importAlbumItem->image->thumb_x) &&
 				    isset($importAlbumItem->image->thumb_y) &&
 				    isset($importAlbumItem->image->thumb_width) &&
@@ -511,12 +504,12 @@ class ConfirmImportController extends GalleryController {
 					}
 					
 					list ($ret, $operations) =
-						GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
-											  sprintf('crop|%s,%s,%s,%s',
+						GalleryCoreApi::mergeDerivativeOperations(sprintf('crop|%s,%s,%s,%s',
 												  $importAlbumItem->image->thumb_x,
 												  $importAlbumItem->image->thumb_y,
 												  $importAlbumItem->image->thumb_width,
 												  $importAlbumItem->image->thumb_height),
+											  $thumbnail->getDerivativeOperations(),
 											  true);
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -549,6 +542,14 @@ class ConfirmImportController extends GalleryController {
 				$status['addFromLocalServer'][] = array('fileName' => $filename,
 									'id' => $newItem->getId());
 				
+				if ($albumNeedsThumbnail || $importAlbumItem->highlight == 1) {
+				    list ($ret, $success) =
+					    GalleryCoreApi::setThumbnailFromItem($item->getId(), $newItem->getId());
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    $albumNeedsThumbnail = FALSE;
+				}
 				
 			    }
 			}
