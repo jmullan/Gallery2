@@ -26,7 +26,7 @@
  */
 
 /**
- * Required class
+ * Required classes
  */
 require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
 

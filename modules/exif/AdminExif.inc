@@ -20,15 +20,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
-require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
-
 /**
  * @version $Revision$ $Date$
  * @package Exif
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
 
 /**
  * This controller will handle the setting of Exif module options

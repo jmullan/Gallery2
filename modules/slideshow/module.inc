@@ -25,6 +25,11 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
+/**
+ * The implementation of the Slideshow module
+ *
+ * @package Slideshow
+ */
 class SlideshowModule extends GalleryModule {
 
     function SlideshowModule() {

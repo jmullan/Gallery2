@@ -28,6 +28,8 @@
 
 /**
  * ItemEdit controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class ItemEditControllerTest extends GalleryControllerTestCase {
 
@@ -126,6 +128,12 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
     }
 }
 
+/**
+ * Test plugin that returns success
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class ItemEditControllerTestPluginSuccess {
     function handleRequest($form, &$item, &$preferred) {
 	/* TODO: We should verify the item is legit here */
@@ -146,6 +154,12 @@ class ItemEditControllerTestPluginSuccess {
     }
 }
 
+/**
+ * Test plugin that fails
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class ItemEditControllerTestPluginFail {
     function handleRequest($form, &$item, &$preferred) {
 	return array(GalleryStatus::success(), array('failed'), null);

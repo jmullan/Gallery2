@@ -11,11 +11,18 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXitemIds
       TEXT
     
     );
+
+  
+    CREATE UNIQUE INDEX CartMap_sessionId 
+    ON DB_TABLE_PREFIXCartMap
+    (DB_COLUMN_PREFIXsessionId);
 
   
 

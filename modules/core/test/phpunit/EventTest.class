@@ -26,10 +26,15 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/**
+ * Required classes
+ */
 require_once(dirname(__FILE__) . '/../../classes/GalleryEventListener.class');
 
 /**
  * Test Event functionality
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class EventTest extends GalleryTestCase {
 
@@ -58,6 +63,8 @@ class EventTest extends GalleryTestCase {
 
 /**
  * Dummy event listener
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class EventTestEventListener extends GalleryEventListener {
     var $_event;

@@ -26,6 +26,10 @@
  * @author Jesse Mullan <jmullan@visi.com>
  */
 
+/**
+ * @package Migrate
+ * @subpackage UserInterface
+ */
 class ConfirmImportController extends GalleryController {
     /**
      * @see GalleryController::handleRequest()
@@ -661,6 +665,10 @@ class ConfirmImportController extends GalleryController {
     
 }
 
+/**
+ * @package Migrate
+ * @subpackage UserInterface
+ */
 class ConfirmImportView extends GalleryView {
 
     /**

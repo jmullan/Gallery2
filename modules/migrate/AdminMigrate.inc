@@ -22,8 +22,13 @@
 /**
  * @version $Revision$ $Date$
  * @package Migrate
- * @subpackage AdminMigrate
+ * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
+ */
+
+/**
+ * @package Migrate
+ * @subpackage UserInterface
  */
 class AdminMigrateView extends GalleryView {
     /**

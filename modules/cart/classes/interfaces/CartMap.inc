@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @package Comment
+ * @package Cart
  * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -37,7 +37,7 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @package Comment
+ * @package Cart
  * @subpackage Classes
  */
 class CartMap extends CartMap_core {
@@ -80,7 +80,7 @@ class CartMap extends CartMap_core {
      */
     function addMapEntry($data) {
         global $gallery;
-
+    
         if (!isset($data['sessionId'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }

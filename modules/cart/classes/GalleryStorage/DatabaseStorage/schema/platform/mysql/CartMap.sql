@@ -11,9 +11,15 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXitemIds
       text
+    
+    , 
+  
+    UNIQUE KEY (DB_COLUMN_PREFIXsessionId)
     
 
     ) TYPE=DB_TABLE_TYPE;

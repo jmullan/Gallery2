@@ -231,6 +231,22 @@ class CoreModule extends GalleryModule {
 						      'ItemEditPhotoThumbnail',
 						      dirname(__FILE__) . '/ItemEditPhotoThumbnail.inc');
 
+	/* Register our item add plugins */
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddFromBrowser',
+						      'ItemAddFromBrowser',
+						      dirname(__FILE__) . '/ItemAddFromBrowser.inc');
+	
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddFromServer',
+						      'ItemAddFromServer',
+						      dirname(__FILE__) . '/ItemAddFromServer.inc');
+	
+	GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
+						      'ItemAddFromWeb',
+						      'ItemAddFromWeb',
+						      dirname(__FILE__) . '/ItemAddFromWeb.inc');
+	
 	/* Now we have a $gallery instance and can set our description */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 
@@ -531,7 +547,7 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add items'),
 			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAddChildren',
+					    'subView' => 'core:ItemAdd',
 					    'itemId' => $item->getId()));
 	    }
 
@@ -796,7 +812,7 @@ class CoreModule extends GalleryModule {
 	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
-				 'view' => 'core:ItemAddChildren');
+				 'view' => 'core:ItemAdd');
 	    }
 	}
 	

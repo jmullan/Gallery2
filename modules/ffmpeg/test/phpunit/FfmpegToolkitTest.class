@@ -26,15 +26,17 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/**
+ * Required classes
+ */
 require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkitHelper.class');
 require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkit.class');
 
 /**
  * Test FfmpegToolkit functionality
  *
- * @package GalleryCore
+ * @package Ffmpeg
  * @subpackage PHPUnit
- *
  */
 class FfmpegToolkitTest extends GalleryTestCase {
 
@@ -154,6 +156,12 @@ class FfmpegToolkitTest extends GalleryTestCase {
     }
 }
 
+/**
+ * Mock platform for this test
+ *
+ * @package Ffmpeg
+ * @subpackage PHPUnit
+ */
 class FfmpegToolkitTestPlatform {
 
     function init() {

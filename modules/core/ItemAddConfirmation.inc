@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class ItemAddChildrenConfirmationView extends GalleryView {
+class ItemAddConfirmationView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -53,28 +53,21 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	 * it down so that the template doesn't have to know.
 	 */
 	$status = $template->getVariable('status');
-	if (!empty($status)) {
-	    if (isset($status['addFromLocalServer'])) {
-		$status = $status['addFromLocalServer'];
-	    } else if (isset($status['addFromBrowser'])) {
-		$status = $status['addFromBrowser'];
-	    } else if (isset($status['addFromWebPage'])) {
-		$status = $status['addFromWebPage'];
-	    }
-	    $count = sizeof($status);
+	if (!empty($status['addedFiles'])) {
+	    $count = sizeof($status['addedFiles']);
 	} else {
 	    $count = 0;
-	    $status = array();
+	    $status['addedFiles'] = array();
 	}
 
-	$ItemAddChildrenConfirmation = array();
-	$ItemAddChildrenConfirmation['count'] = $count;
-	$ItemAddChildrenConfirmation['status'] = $status;
+	$ItemAddConfirmation = array();
+	$ItemAddConfirmation['count'] = $count;
+	$ItemAddConfirmation['status'] = $status;
 
-	$template->setVariable('ItemAddChildrenConfirmation', $ItemAddChildrenConfirmation);
+	$template->setVariable('ItemAddConfirmation', $ItemAddConfirmation);
 	$template->setVariable('controller', '');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ItemAddChildrenConfirmation.tpl'));
+		     array('body' => 'modules/core/templates/ItemAddConfirmation.tpl'));
     }
 }
 ?>

@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @package Comment
+ * @package Exif
  * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -37,7 +37,7 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @package Comment
+ * @package Exif
  * @subpackage Classes
  */
 class ExifPropertiesMap extends ExifPropertiesMap_core {

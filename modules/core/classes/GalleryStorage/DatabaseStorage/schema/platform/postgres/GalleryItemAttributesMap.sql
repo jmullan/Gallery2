@@ -23,7 +23,14 @@
         
       )
     
+    NOT NULL
+  
     );
+
+  
+    CREATE INDEX ItemAttributesMap_parentSequence 
+    ON DB_TABLE_PREFIXItemAttributesMap
+    (DB_COLUMN_PREFIXparentSequence);
 
   
     CREATE UNIQUE INDEX ItemAttributesMap_itemId 

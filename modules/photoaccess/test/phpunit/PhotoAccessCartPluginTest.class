@@ -31,7 +31,6 @@
  *
  * @package PhotoAccess
  * @subpackage PHPUnit
- *
  */
 class PhotoAccessCartPluginTest extends GalleryTestCase {
 
@@ -170,6 +169,9 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 /**
  * Platform for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
  */
 class PhotoAccessCartPluginTestPlatform {
 
@@ -310,6 +312,13 @@ class PhotoAccessCartPluginTestPlatform {
     }
 }
 
+
+/**
+ * Mock url generator for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ */
 class PhotoAccessCartPluginTestUrlGenerator {
     function generateUrl($params) {
 	$lines = array();

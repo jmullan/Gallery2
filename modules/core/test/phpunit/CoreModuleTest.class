@@ -28,6 +28,8 @@
 
 /**
  * Test CoreModule functionality
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class CoreModuleTest extends GalleryTestCase {
     var $_module;
@@ -114,7 +116,7 @@ class CoreModuleTest extends GalleryTestCase {
 				  array('name' => $this->_module->translate('Permissions'),
 					'view' => 'core:ItemPermissions'),
 				  array('name' => $this->_module->translate('Add Items'),
-					'view' => 'core:ItemAddChildren'),
+					'view' => 'core:ItemAdd'),
 				  array('name' => $this->_module->translate('Add Sub-Album'),
 					'view' => 'core:ItemAddAlbum'),
 				  ),
@@ -173,7 +175,7 @@ class CoreModuleTest extends GalleryTestCase {
 	$links[] = array('text' => $this->_module->translate('add items'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemAddChildren',
+					   'subView' => 'core:ItemAdd',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$links[] = array('text' => $this->_module->translate('edit album'),
@@ -260,6 +262,12 @@ class CoreModuleTest extends GalleryTestCase {
     }
 }
 
+/**
+ * Mock template class
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class CoreModuleMockTemplate {
     function setVariable() {
     }

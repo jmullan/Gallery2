@@ -23,9 +23,15 @@
         
       )
     
+    NOT NULL
+  
     , 
   
     UNIQUE KEY (DB_COLUMN_PREFIXitemId)
+    
+    , 
+  
+    INDEX (DB_COLUMN_PREFIXparentSequence)
     
 
     ) TYPE=DB_TABLE_TYPE;

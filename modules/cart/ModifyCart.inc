@@ -20,14 +20,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-require_once(dirname(__FILE__) . '/classes/CartHelper.class');
-
 /**
  * @version $Revision$ $Date$
  * @package Cart
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/classes/CartHelper.class');
 
 /**
  * This controller will handle the addition of a comment to an item

@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package Cart
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * The implementation of the core-module
  *
- * @package GalleryCore
+ * @package Cart
  */
 class CartModule extends GalleryModule {
 

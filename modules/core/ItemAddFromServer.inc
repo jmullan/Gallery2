@@ -1,0 +1,219 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the addition of an item as a children to
+ * another item.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class ItemAddFromServer extends ItemAddPlugin {
+
+    /**
+     * @see ItemAddPlugin::handleRequest
+     */
+    function handleRequest($form, &$item) {
+	global $gallery;
+
+	$status = array();
+	$error = array();
+
+	if (isset($form['action']['findFilesFromLocalServer'])) {
+	    /* Delegate back to the same view */
+	} else if (isset($form['action']['addFromLocalServer'])) {
+	    /* Add the selected items */
+	    $dir = $form['localServerPath'];
+
+	    $platform = $gallery->getPlatform();
+	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
+		$filename = $fileKey;
+
+		// Build up the file path with the right style of directory separator
+		$slash = $platform->getDirectorySeparator();
+		$filepath = $dir;
+		if ($filepath[strlen($filepath)-1] != $slash) {
+		    $filepath .= $slash;
+		}
+		$filepath .= $filename;
+
+		// Unescape any special chars in the file path
+		$filepath = GalleryUtilities::htmlEntityDecode($filepath);
+		
+		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+
+		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
+								       $filename,
+								       $base,
+								       $base,
+								       $base,
+								       $mimeType,
+								       $item->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		$status['addedFiles'][] = array('fileName' => $filename, 'id' => $newItem->getId());
+	    }
+	}
+
+	return array(GalleryStatus::success(), $error, $status);
+    }
+
+    /**
+     * @see ItemAdd:loadTemplate
+     */
+    function loadTemplate(&$template, &$form, $item) {
+	global $gallery;
+
+	if ($form['formName'] != 'ItemAddFromServer') {
+	    /* First time around, load the form with item data */
+	    $form['localServerPath'] = '';
+	    $form['formName'] = 'ItemAddFromServer';
+	}
+
+	list ($ret, $localServerDirs) = GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (empty($localServerDirs)) {
+	    $localServerDirList = array();
+	} else {
+	    $localServerDirList = split(',', $localServerDirs);
+	}
+
+	/* Look up the platform type */
+	$platform = $gallery->getPlatform();
+
+	/* If we're uploading from the local server, get a file list now */
+	if (isset($form['action']['findFilesFromLocalServer'])) {
+
+	    /* Validate the path */
+	    $form['localServerFiles'] = array();
+	    if (empty($form['localServerPath'])) {
+		$form['error']['localServerPath']['missing'] = 1;
+	    } else if (!$platform->file_exists($form['localServerPath']) ||
+		       !$platform->is_readable($form['localServerPath'])) {
+		$form['error']['localServerPath']['invalid'] = 1;
+	    } else if (!GalleryUtilities::isPathInList($form['localServerPath'], $localServerDirList)) {
+		$form['error']['localServerPath']['illegal'] = 1;
+	    } else {
+		$mimeTypeItemMap = array();
+		$path = $form['localServerPath'];
+		if ($platform->is_dir($path)) {
+		    $handle = $platform->opendir($path);
+
+		    /* Add path to the recent path list */
+		    $session =& $gallery->getSession();
+		    $recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+		    $recentPaths[$form['localServerPath']] = 1;
+		    $session->put('core.view.ItemAdd.ItemAddFromServer.recentPaths', $recentPaths);
+
+		    while (false !== ($fileName = $platform->readdir($handle))) {
+			$gallery->guaranteeTimeLimit(5);
+			if ($fileName == '.' || $fileName == '..') {
+			    continue;
+			}
+
+			$filePath = $path . '/' . $fileName;
+			if (!$platform->is_dir($filePath) && $platform->is_readable($filePath)) {
+			    $mimeType = GalleryUtilities::getMimeType($fileName);
+			    if (!isset($mimeTypeItemMap[$mimeType])) {
+				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
+				    GalleryCoreApi::newItemByMimeType($mimeType);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+
+				$mimeTypeItemMap[$mimeType]['names'] =
+				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
+			    }
+			    
+			    $form['localServerFiles'][] =
+				array('dirName' => $path,
+				      'fileName' => $fileName,
+				      'stat' => $platform->stat($filePath),
+				      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
+				      'fileKey' => $fileName);
+			}
+		    }
+		    $platform->closedir($handle);
+			  
+		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
+		    $mimeType = GalleryUtilities::getMimeType($path);
+		    if (!isset($mimeTypeItemMap[$mimeType])) {
+			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
+			    GalleryCoreApi::newItemByMimeType($mimeType);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			$mimeTypeItemMap[$mimeType]['names'] =
+			    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
+		    }
+
+		    $dirName = dirname($path);
+		    $fileName = basename($path);
+		    $form['localServerFiles'][] =
+			array('dirName' => $dirName,
+			      'fileName' => $fileName,
+			      'stat' => $platform->stat($path),
+			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
+			      'fileKey' => htmlentities($fileName));
+		}
+		$localServerFileCount = sizeof($form['localServerFiles']);
+	    }
+	}
+	
+	$ItemAddFromServer = array();
+	$ItemAddFromServer['localServerDirList'] = $localServerDirList;
+	$ItemAddFromServer['localServerFileCount'] = isset($localServerFileCount) ? $localServerFileCount : null;
+
+	$session =& $gallery->getSession();
+	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
+	if (!isset($recentPaths)) {
+	    $recentPaths = array();
+	}
+	$ItemAddFromServer['recentPaths'] = array_keys($recentPaths);
+
+	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemAddFromServer.tpl');
+    }
+
+    /**
+     * @see ItemAddPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('From Local Server'));
+    }
+}
+?>

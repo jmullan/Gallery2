@@ -20,13 +20,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
-
 /**
  * @version $Revision$ $Date$
  * @package Migrate
- * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
+ */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+
+/**
+ * @package Migrate
+ * @subpackage UserInterface
  */
 class ChooseObjectsController extends GalleryController {
     /**
@@ -69,6 +76,10 @@ class ChooseObjectsController extends GalleryController {
     }
 }	    
 
+/**
+ * @package Migrate
+ * @subpackage UserInterface
+ */
 class ChooseObjectsView extends GalleryView {
 
     /**

@@ -19,22 +19,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 /**
  * @version $Revision$ $Date$
- * @package Comment
+ * @package Cart
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+/**
+ * Required classes
+ */
 require_once(dirname(__FILE__) . '/classes/CartHelper.class');
 
 /**
- * This view will show the comments stored for an item
+ * This view will allow users to view their individual carts
  *
  * @package Comment
  * @subpackage UserInterface
- *
  */
 class ViewCartView extends GalleryView {
 

@@ -28,6 +28,8 @@
 
 /**
  * ItemEditPhoto controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
 
@@ -214,8 +216,16 @@ class ItemEditPhotoSizesPluginTest extends ItemEditPluginTestCase {
     }
 }
 
-// Dummy test toolkit
+/**
+ * Required by our test toolkit
+ */
 require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class ItemEditPhotoSizesPluginTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()

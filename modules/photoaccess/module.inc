@@ -21,14 +21,14 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package GalleryCore
+ * @package PhotoAccess
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
 /**
  * The implementation of the core-module
  *
- * @package GalleryCore
+ * @package PhotoAccess
  */
 class PhotoAccessModule extends GalleryModule {
 

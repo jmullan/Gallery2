@@ -22,22 +22,27 @@
 /**
  * @version $Revision$ $Date$
  * @package Gallery
+ * @subpackage PHPUnit
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/* Plugins need to have these classes loaded */
+/**
+ * Plugins need to have these classes loaded
+ */
 require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryView.class');
 require_once(dirname(__FILE__) . '/../../modules/core/classes/GalleryController.class');
 require_once(dirname(__FILE__) . '/../../modules/core/ItemEdit.inc');
 
 /**
  * An ItemEditPlugin specific version of GalleryTestCase
+ * @package Gallery
+ * @subpackage PHPUnit
  */
 class ItemEditPluginTestCase extends GalleryTestCase {
 
     /**
      * The plugin instance
-     * @protected
+     * @access protected
      */
     var $_plugin;
 
@@ -66,7 +71,6 @@ class ItemEditPluginTestCase extends GalleryTestCase {
     function handleRequest(&$item, &$preferred, $errorCode=null) {
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
 	list ($ret, $error, $status) = $this->_plugin->handleRequest($form, $item, $preferred);
 	if (isset($errorCode)) {

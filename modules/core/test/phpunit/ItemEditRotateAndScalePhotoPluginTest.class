@@ -28,6 +28,8 @@
 
 /**
  * ItemEditPhoto controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
  */
 class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
@@ -325,8 +327,16 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     }
 }
 
-// Dummy test toolkit
+/**
+ * Required by test toolkit
+ */
 require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
 class ItemEditRotateAndScalePhotoPluginTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()

@@ -3,7 +3,7 @@
     directory are too restrictive.  Try changing the modes to
     775 or 777.
 
-    <?php include(dirname(__FILE__) . '/directoryDetailsFragment.php'); ?>
-    <?php include(dirname(__FILE__) . '/openBasedirFragment.php'); ?>
+    <?php include(dirname(__FILE__) . '/directoryDetailsFragment.inc'); ?>
+    <?php include(dirname(__FILE__) . '/openBasedirFragment.inc'); ?>
 
 

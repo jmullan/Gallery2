@@ -2,6 +2,6 @@
     appears to be a file.  Please either fix your configuration, or
     remove the file that is currently at this location:
     
-    <?php include(dirname(__FILE__) . '/directoryDetailsFragment.php'); ?>
+    <?php include(dirname(__FILE__) . '/directoryDetailsFragment.inc'); ?>
 
 

@@ -25,6 +25,10 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
+/**
+ * @package Slideshow
+ * @subpackage UserInterface
+ */
 class SlideshowView extends GalleryView {
 
     /**

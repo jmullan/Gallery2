@@ -31,7 +31,6 @@
  *
  * @package PhotoAccess
  * @subpackage PHPUnit
- *
  */
 class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
@@ -143,7 +142,10 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 }
 
 /**
- * Platform for this test
+ * Mock platform for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
  */
 class PrintPhotoControllerTestPlatform {
 
@@ -282,6 +284,12 @@ class PrintPhotoControllerTestPlatform {
     }
 }
 
+/**
+ * Mock url generator for this test
+ *
+ * @package PhotoAccess
+ * @subpackage PHPUnit
+ */
 class PrintPhotoControllerTestUrlGenerator {
     function generateUrl($params) {
 	$lines = array();

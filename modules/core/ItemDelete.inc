@@ -32,7 +32,6 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
 class ItemDeleteController extends GalleryController {
 

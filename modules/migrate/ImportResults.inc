@@ -26,6 +26,10 @@
  * @author Jesse Mullan <jmullan@visi.com>
  */
 
+/**
+ * @package Migrate
+ * @subpackage UserInterface
+ */
 class ImportResultsView extends GalleryView {
 
     /**

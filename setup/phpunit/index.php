@@ -1,9 +1,14 @@
 <?php
+/**
+ * @package Gallery
+ * @subpackage PHPUnit
+ */   
 include('../security.inc');
 require_once('../../init.php');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 require_once('GalleryControllerTestCase.class');
+require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 
 function GalleryMain(&$testSuite, $filter) {

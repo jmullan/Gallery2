@@ -1,0 +1,135 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemAddChildren controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
+
+    function ItemAddFromBrowserTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'core', 'ItemAddFromBrowser');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testAddChildrenFromBrowser() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
+
+	$platform = $gallery->getPlatform();
+	$baseDir = dirname(__FILE__) . '/../data/';
+	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif');
+	$i = 0;
+	foreach ($files as $file) {
+	    $i++;
+	    $fullPath = $baseDir . $file;
+
+	    if (get_magic_quotes_gpc()) {
+		$fullPath = addslashes($fullPath);
+	    }
+	    
+	    GalleryUtilities::putRequestVariable('form[name][' . $i . ']', $file);
+	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']',
+						 GalleryUtilities::getMimeType($fullPath));
+	    GalleryUtilities::putRequestVariable('form[tmp_name][' . $i . ']', $fullPath);
+	    GalleryUtilities::putRequestVariable('form[size][' . $i . ']', $platform->filesize($fullPath));
+	    GalleryUtilities::putRequestVariable('form[error][' . $i . ']', 0);
+	    GalleryUtilities::putRequestVariable('form[caption][' . $i . ']', 'this is a caption for ' . $file);
+	}
+	GalleryUtilities::putRequestVariable('form[uploadBoxCount]', $i);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+
+	/* We don't know the ids, but we can verify everything else */
+	$i = 0;
+	foreach ($files as $file) {
+	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName']);
+	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
+	    $i++;
+	}
+
+	/* Verify item attributes (like order weight) */
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$seenWeights = array();
+	foreach ($ids as $id) {
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(0, $viewCount);
+	    
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert(!isset($seenWeights[$orderWeight]), 'Seen this weight before');
+	    $seenWeights[$orderWeight] = 1;
+	}	    
+    }
+}
+?>

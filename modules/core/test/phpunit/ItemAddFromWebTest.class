@@ -1,0 +1,131 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemAddFromWeb plugin test
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromWebTest extends ItemAddPluginTestCase {
+
+    function ItemAddFromWebTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'core', 'ItemAddFromWeb');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new ItemAddFromWebTestPlatform($this->_savePlatform);
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_platform = $this->_savePlatform;
+	
+	parent::tearDown();
+    }
+
+    function testAddChildrenFromWebPage() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.gif]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/apo\'strophe.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/404.jpg]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+	$this->assertEquals(3, sizeof($results[1]['addedFiles']));
+	$this->assertEquals('http://test/test1.gif', $results[1]['addedFiles'][0]['fileName']);
+	$this->assert(isset($results[1]['addedFiles'][0]['id']));
+	$this->assertEquals('http://test/test1.jpg', $results[1]['addedFiles'][1]['fileName']);
+	$this->assert(isset($results[1]['addedFiles'][1]['id']));
+	$this->assertEquals('http://test/apo\'strophe.jpg', $results[1]['addedFiles'][2]['fileName']);
+	$this->assert(isset($results[1]['addedFiles'][2]['id']));
+    }
+}
+
+/**
+ * Test platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddFromWebTestPlatform extends GalleryPlatform {
+    function ItemAddFromWebTestPlatform($delegate) {
+	$this->_delegate = $delegate;
+    }
+
+    function fopen($filename, $mode, $use_include_path=0) {
+	switch($filename) {
+	case 'http://test/test1.gif':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.gif', $mode, $use_include_path);
+
+	case 'http://test/test1.jpg':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
+
+	case 'http://test/apo\'strophe.jpg':
+	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
+
+	case 'http://test/404.jpg':
+	    return null;
+
+	default:
+	    return $this->_delegate->fopen($filename, $mode, $use_include_path);
+	}
+
+    }
+}
+?>

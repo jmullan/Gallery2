@@ -125,8 +125,6 @@ class ItemAdminView extends GalleryView {
 	    $subViewName = 'core:ItemEditItem';
 	}
 
-	$ItemAdmin = array();
-
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -158,24 +156,28 @@ class ItemAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Our sub view may have set some hints, like the encoding type */
+	if ($template->hasVariable('ItemAdmin')) {
+	    $ItemAdmin =& $template->getVariableByReference('ItemAdmin'); 
+	} else {
+	    $ItemAdmin = array();
+	}
+
 	$ItemAdmin['viewBodyFile'] = $results['body'];
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
-	if (empty($parents)) {
-	    $ItemAdmin['parent'] = null;
-	} else {
-	    $ItemAdmin['parent'] = $parents[sizeof($parents)-1];
-	}
+	$ItemAdmin['parent'] = 	empty($parents) ? null : $parents[sizeof($parents) - 1];
 	$ItemAdmin['itemType'] = $itemType;
 	$ItemAdmin['thumbnail'] = $thumbnailData;
 	$ItemAdmin['subViewChoices'] = $subViewChoices;
 	$ItemAdmin['viewL10Domain'] = $subView->getL10Domain();
 	$ItemAdmin['isSiteAdmin'] = $isSiteAdmin;
 
-	$template->setVariable('ItemAdmin', $ItemAdmin);
-	if (!$template->hasVariable('enctype')) {
-	    $template->setVariable('enctype', 'application/x-www-form-urlencoded');
+	if (!isset($ItemAdmin['enctype'])) {
+	    $ItemAdmin['enctype'] = 'application/x-www-form-urlencoded';
 	}
+
+	$template->setVariable('ItemAdmin', $ItemAdmin);
 
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/core/templates/ItemAdminHead.tpl',

@@ -1,4 +1,4 @@
-{g->form arg1="controller=$controller" enctype=$enctype}
+{g->form arg1="controller=$controller" enctype=$ItemAdmin.enctype}
   {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
   {g->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/g->input}
   
