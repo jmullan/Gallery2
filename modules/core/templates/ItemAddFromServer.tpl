@@ -65,7 +65,7 @@
 
 <div class="gbAdmin">
   <p class="giDescription">
-    {g->text text="Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by anyelement on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755."}
+    {g->text text="Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by any element on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755."}
   </p>
   
   {if empty($ItemAddFromServer.localServerDirList)}
