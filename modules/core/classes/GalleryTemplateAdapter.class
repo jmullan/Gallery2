@@ -315,9 +315,11 @@ class GalleryTemplateAdapter {
 	}
 
 	/* Javascript */
-	foreach ($head['javascript'] as $path) {
-	    $output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
-				$urlGenerator->generateUrl(array('href' => $path)));
+	if (isset($head['javascript'])) {
+	    foreach ($head['javascript'] as $path) {
+		$output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
+			$urlGenerator->generateUrl(array('href' => $path)));
+	    }
 	}
 
 	/* Tpl to include */
