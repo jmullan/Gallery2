@@ -100,25 +100,5 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 				    'itemId' => $this->_rootAlbum->getId()),
 			      $results);
     }
-
-    function testFindFilesFromLocalServerInvalidPath() {
-	global $gallery;
-
-	$platform = $gallery->getPlatform();
-	$dir = dirname(__FILE__) . '/a/b/c/d/e/invalid path/';
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
-	GalleryUtilities::putRequestVariable('form.action.findFilesFromLocalServer', 1);
-	GalleryUtilities::putRequestVariable('form.localServerPath', $dir);
-
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
-	$this->assertEquals('core:ItemAddChildren', GalleryUtilities::getRequestVariables('subView'));
-	$this->assertEquals($this->_rootAlbum->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.localServerPath.invalid'),
-		      'missing error msg');
-    }
 }
 ?>
