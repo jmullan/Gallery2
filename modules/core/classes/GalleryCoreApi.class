@@ -1186,7 +1186,7 @@ class GalleryCoreApi {
      * invalidate for the intersection of the user and the item ids. 
      *
      * @param int a user id
-     * @param array a parent sequence
+     * @param int an item id
      * @return object GalleryStatus a status code
      */
     function invalidateDescendentCountCaches($userId, $itemId) {
@@ -1826,6 +1826,7 @@ class GalleryCoreApi {
 
     /**
      * Create a new event with the given name
+     * @param string the event name
      * @return object GalleryEvent an event with the given name
      * @static
      */
