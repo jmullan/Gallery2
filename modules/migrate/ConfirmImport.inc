@@ -402,9 +402,11 @@ class ConfirmImportController extends GalleryController {
 				// $newAlbumInstance->settheme
 				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
 				    if (isset($album['clicks_date']) && $album['clicks_date']>0 && $album['clicks_date']<$album['last_mod_time']){
-					$newAlbumInstance->setcreationTimestamp($album['clicks_date']);
+					$newAlbumInstance->setCreationTimestamp($album['clicks_date']);
+					$newAlbumInstance->setOriginationTimestamp($album['clicks_date']);
 				    } else {
-					$newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
+					$newAlbumInstance->setCreationTimestamp($album['last_mod_time']);
+					$newAlbumInstance->setOriginationTimestamp($album['last_mod_time']);
 				    }
 				}
 				if (isset($album['clicks_date']) && $album['clicks_date']>0) {
@@ -727,7 +729,8 @@ class ConfirmImportController extends GalleryController {
 			    }
 				*/
 				if (isset($importAlbumItem->uploadDate)){
-				    $newItem->setcreationTimestamp($importAlbumItem->uploadDate);
+				    $newItem->setCreationTimestamp($importAlbumItem->uploadDate);
+				    $newItem->setOriginationTimestamp($importAlbumItem->uploadDate);
 				}
 				if (isset($album['clicks_date']) && $album['clicks_date']>0) {
 				    $newItem->setviewedSinceTimestamp($album['clicks_date']);
