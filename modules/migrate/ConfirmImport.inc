@@ -325,10 +325,10 @@ class ConfirmImportController extends GalleryController {
 			     */
 			    
 			    /* load up the album with metadata from the old album */ 
-			    $newAlbumInstance->setTitle($album['title']);
-			    $newAlbumInstance->setSummary($album['summary']);
+			    $newAlbumInstance->setTitle($this->convertHtmlToBbcode($album['title']));
+			    $newAlbumInstance->setSummary($this->convertHtmlToBbcode($album['summary']));
 			    $newAlbumInstance->setKeywords('');
-			    $newAlbumInstance->setDescription($album['description']);
+			    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['description']));
 			    
 			    // $newAlbumInstance->setorderBy
 			    // $newAlbumInstance->setorderDirection
@@ -480,16 +480,16 @@ class ConfirmImportController extends GalleryController {
 			    }
 			    $caption = $importAlbumItem->caption;
 			    if (strlen($caption) > 128) {
-				$newItem->setTitle(substr($caption,0,125) . '...');
+				$newItem->setTitle(substr($this->convertHtmlToBbcode($caption),0,125) . '...');
 				if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-				    $newItem->setDescription($caption . "\n" . $importAlbumItem->extraFields['description']);
+				    $newItem->setDescription($this->convertHtmlToBbcode($caption) . "\n" . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
 				} else {
-				    $newItem->setDescription($caption);
+				    $newItem->setDescription($this->convertHtmlToBbcode($caption));
 				}
 			    } else {
-				$newItem->setTitle($caption);
+				$newItem->setTitle($this->convertHtmlToBbcode($caption));
 				if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-				    $newItem->setDescription($importAlbumItem->extraFields['description']);
+				    $newItem->setDescription($this->convertHtmlToBbcode($importAlbumItem->extraFields['description']));
 				}
 			    }
 			    
@@ -665,7 +665,27 @@ class ConfirmImportController extends GalleryController {
 	
 	return array(GalleryStatus::success(), $results);
     }
-    
+
+    /**
+     * Converts HTML to BBCode
+     *
+     * @param string $item item to convert
+     * @return string
+     */
+    function convertHtmlToBbcode($item) {
+        $item = preg_replace('/<b>/i', '[b]', $item);
+        $item = preg_replace('/<\/b>/i', '[/b]', $item);
+        $item = preg_replace('/<i>/i', '[i]', $item);
+        $item = preg_replace('/<\/i>/i', '[/i]', $item);
+        $item = preg_replace('/<ul>/i', '[list]', $item);
+        $item = preg_replace('/<\/ul>/i', '[/list]', $item);
+        $item = preg_replace('/<li>/i', '[*]', $item);
+        $item = preg_replace('/<\/li>/i', '', $item);
+        $item = preg_replace('/<img.*?src\s*=\s*(\'|")([^\1]*)?\1.*?>/is', '[img]$2[/img]', $item);
+        $item = preg_replace('/<a.*?href\s*=\s*(\'|")([^\1]*)?\1.*?>(.*)?<\/a>/is', '[url=$2]$3[/url]', $item);
+        GalleryUtilities::sanitizeInputValues($item);
+        return $item;
+    }    
 }
 
 /**
