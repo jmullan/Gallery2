@@ -162,7 +162,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    array('order' => 0,
 		  'itemId' => $this->getId(),
 		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-		  'derivativeOperations' => 'thumbnail|200'));
+		  'derivativeOperations' => 'thumbnail|150'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
