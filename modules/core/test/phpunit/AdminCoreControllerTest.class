@@ -29,10 +29,10 @@
 /**
  * AdminCore controller tests
  */
-class AdminCoreControllerTest extends GalleryTestCase {
+class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function AdminCoreControllerTest($methodName) {
-	$this->GalleryTestCase($methodName);
+	$this->GalleryControllerTestCase($methodName, 'core:AdminCore');
     }
 
     function setUp() {
@@ -57,11 +57,6 @@ class AdminCoreControllerTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	}
-
-	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCore");
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
