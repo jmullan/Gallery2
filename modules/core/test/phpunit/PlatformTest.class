@@ -333,6 +333,21 @@ class PlatformTest extends GalleryTestCase {
 	}
 	$this->assertEquals($testData2, $output);
     }
-}
 
+    function testSplitPath() {
+	$this->assertEquals(array('dir', 'path', 'file.txt'),
+			    $this->_platform->splitPath('dir/path/file.txt'), 'relative');
+	if (GalleryUtilities::isA($this->_platform, 'WinNtPlatform')) {
+	    $this->assertEquals(array('c:\\', 'dir', 'path', 'file.txt'),
+				$this->_platform->splitPath('c:\dir\path\file.txt'), 'absolute');
+	    $this->assertEquals(array('D:\\', 'path', 'file.txt'),
+				$this->_platform->splitPath('D:\path/file.txt'), 'absolute2');
+	    $this->assertEquals(array('\\', 'test'),
+				$this->_platform->splitPath('\test'), 'absolute3');
+	} else {
+	    $this->assertEquals(array('/', 'dir', 'path', 'file.txt'),
+				$this->_platform->splitPath('/dir/path/file.txt'), 'absolute');
+	}
+    }
+}
 ?>
