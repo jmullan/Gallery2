@@ -27,7 +27,7 @@
   </div>  
 </div>
 <div id="footer">
-&copy;<?php echo date('Y') ?> Gallery :: <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a> :: <strong>YOUR PHOTOS</strong> ON <strong>YOUR WEBSITE</strong>
+      Gallery: <strong>your photos</strong> on <strong>your website</strong> &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a> 
 </div>
 
 </body>
