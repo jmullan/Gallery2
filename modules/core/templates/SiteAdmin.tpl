@@ -1,4 +1,4 @@
-  <table border="1" cellspacing="0" cellpadding="0" width="100%">
+  <table border="0" cellspacing="0" cellpadding="0" width="100%">
     <tr>
       <td align="center">
 	<a href="{galleryUrl view='core:SiteAdmin'}">
@@ -12,7 +12,8 @@
       <td valign=top>
 	<br>
 	<center>
-	  <table border="2" cellspacing="10" cellpadding="10" width="1" height="125">
+	{galleryHeavyFrame}
+	  <table border="0" cellspacing="10" cellpadding="10" width="1" height="125">
 	    {counter assign=index start=0 print=false}
 	    {section name=outer loop=$subViewChoices step=3}
 	    <tr>
@@ -25,6 +26,7 @@
 	    </tr>
 	    {/section}
 	  </table>
+	{/galleryHeavyFrame}
 	</center>
 	<br>
       </td>
