@@ -142,6 +142,15 @@ class RewriteModuleExtras {
 		}
 	    }
 
+	    /*
+	     * We changed the .htaccess format so deactivate the module and make
+	     * the user reconfigure and reactivate.
+	     */
+	    list ($ret, $unused) = $module->deactivate();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    break;
 
 	default:
