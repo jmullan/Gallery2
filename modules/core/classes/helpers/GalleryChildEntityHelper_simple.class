@@ -311,6 +311,11 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	switch ($orderBy) {
+	case 'id':
+	    $orderColumn = '[GalleryItem::id]';
+	    $condition = '';
+	    break;
+	    
 	case 'title':
 	    $orderColumn = '[GalleryItem::title]';
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';

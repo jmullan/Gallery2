@@ -42,7 +42,9 @@ class ItemAttributesTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum($this->_getRootId(),
+								    array('orderBy' => 'id',
+									  'orderDirection' => ORDER_ASCENDING));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -198,7 +200,9 @@ class ItemAttributesTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(($i+1)*100, $weight, "item $i of $count is not balanced correctly");
+	    $this->assertEquals(($i+1)*100, $weight,
+				sprintf('item %d of %d (id: %d) is not balanced correctly',
+					$i, $count, $this->_childItems[$i]->getId()));
 	}
     }
 
