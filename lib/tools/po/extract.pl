@@ -27,7 +27,7 @@
 use FileHandle;
 use File::Basename;
 use File::Find;
-
+use IPC::Open2;
 use strict;
 
 my %strings;
@@ -49,10 +49,21 @@ sub extract {
     open($fd, basename($file));
     my $data = join('' => <$fd>);
 
-    # grab phrases of this format: translate(".....")
-    while ($data =~ /translate\("(.*?[^\\])"\)/sg) {
-      my $text = $1;
-      $strings{qq{gettext("$text")}}++;
+    # grab phrases for translate( or i18n( calls; capture string parameter enclosed
+    # in single or double quotes including concatenated strings like 'one' . "two"
+    while ($data =~
+      /(translate|i18n)\(\s*(((\s*\.\s*)?('((\\')?[^']*)*[^\\]'|"((\\")?[^"]*)*[^\\]"))+)\s*\)/sg) {
+	# Call out to php to parse string..
+	my ($in, $out);
+	open2($in, $out, 'php');
+	print $out '<?php print ';
+	print $out $2;
+	print $out ' ?>';
+	close $out;
+	my $text = join('', <$in>);
+	close $in;
+	$text =~ s/\"/\\\"/sg;    # escape double-quotes
+	$strings{qq{gettext("$text")}}++;
     }
 
     # grab phrases of this format: translate(array('one' => '...', 'many' => '...'))
@@ -67,26 +78,6 @@ sub extract {
     while ($data =~ /translate\(\s*array\('text'\s*=>\s+'(.*?[^\\])'/sg) {
       my $text = $1;
       $text =~ s/\"/\\\"/sg;    # escape double-quotes
-      $strings{qq{gettext("$text")}}++;
-    }
-
-    # grab phrases of this format: translate('.....')
-    while ($data =~ /translate\('(.*?[^\\])'\)/sg) {
-      my $text = $1;
-      $text =~ s/\"/\\\"/sg;	# escape double-quotes
-      $strings{qq{gettext("$text")}}++;
-    }
-
-    # grab phrases of this format: i18n(".....")
-    while ($data =~ /i18n\("(.*?[^\\])"\)/sg) {
-      my $text = $1;
-      $strings{qq{gettext("$text")}}++;
-    }
-
-    # grab phrases of this format: i18n('.....')
-    while ($data =~ /i18n\('(.*?[^\\])'\)/sg) {
-      my $text = $1;
-      $text =~ s/\"/\\\"/sg;	# escape double-quotes
       $strings{qq{gettext("$text")}}++;
     }
 
