@@ -535,7 +535,10 @@ class GalleryItemHelper_medium {
 
 	    $derivative->setWidth(0);
 	    $derivative->setHeight(0);
-	    GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	    $ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
@@ -794,7 +797,14 @@ class GalleryItemHelper_medium {
 		/* After changing sources, the derivative dimensions are no longer valid. */
 		$derivative->setWidth(0);
 		$derivative->setHeight(0);
-		GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+		$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
 		$ret = $derivative->save();
 		if ($ret->isError()) {

@@ -305,7 +305,7 @@ class ToolkitTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
 
@@ -313,7 +313,11 @@ class ToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	$this->assertEquals(200, $derivative->getWidth());
 	$this->assertEquals(150, $derivative->getHeight());
     }
@@ -331,7 +335,7 @@ class ToolkitTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
 
@@ -339,7 +343,11 @@ class ToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	$this->assertEquals(150, $derivative->getWidth());
 	$this->assertEquals(112, $derivative->getHeight());
     }
@@ -357,7 +365,7 @@ class ToolkitTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
 
@@ -365,7 +373,11 @@ class ToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->assertEquals(0, $derivative->getWidth());
 	$this->assertEquals(0, $derivative->getHeight());
     }

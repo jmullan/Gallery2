@@ -206,7 +206,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
-				GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $source);
+				$ret = GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $source);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
+				}
+
 				$ret = $thumbnail->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -286,7 +290,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 				$derivative->setDerivativeSourceId($source->getId());
 				$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
 
-				GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+				$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
+				}
+
 				$ret = $derivative->save();
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);

@@ -559,30 +559,31 @@ class GalleryToolkitHelper_medium {
 
     /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
-     * TODO:  This method knows too much about a small set of operations.  We should move it into
-     *        the toolkits themselves.
      *
      * @param object GalleryDerivativeImage the derivative
      * @param object GalleryDerivativeEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @return object GalleryStatus a status code
      * @static
      */
     function estimateDerivativeDimensions(&$derivative, $source) {
-	if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
-	    $width = $source->getWidth();
-	    $height = $source->getHeight();
-	    if ($width && $height) {
-	    $operations = $derivative->getDerivativeOperations();
-		if (preg_match('/^(?:thumbnail|scale)\|(\d+)$/', $operations, $matches)) {
-		$target = $matches[1];
-		if (!empty($target)) {
-			list ($newWidth, $newHeight) =
-			GalleryUtilities::shrinkDimensionsToFit($matches[1], $width, $height);
-			$derivative->setWidth($newWidth);
-			$derivative->setHeight($newHeight);
-		    }
+	if (preg_match('/^(thumbnail|scale|resize)\|/', $derivative->getDerivativeOperations(), $matches)) {
+	    if (!empty($matches[1])) {
+		list ($ret, $toolkit) =
+		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), $matches[1]);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (isset($toolkit)) {
+		    $toolkit->estimateDimensions(&$derivative, $source);
+		} else {
+		    // Fall back on the best-guess behaviour
+		    GalleryToolkit::estimateDimensions(&$derivative, $source);
 		}
 	    }
 	}
+
+	return GalleryStatus::success();
     }
 }
 ?>

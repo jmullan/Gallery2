@@ -60,10 +60,10 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	}
 	$ret = GalleryCoreApi::registerToolkitOperation('SquareThumbTestToolkit',
 	    array('test/crop', 'test/image'), 'crop',
-	    array(array('type' => 'int', 'description' => 'x'),
-		  array('type' => 'int', 'description' => 'y'),
-		  array('type' => 'int', 'description' => 'w'),
-		  array('type' => 'int', 'description' => 'h')), 'desc');
+	    array(array('type' => 'float', 'description' => 'left edge %'),
+		  array('type' => 'float', 'description' => 'top edge %'),
+		  array('type' => 'float', 'description' => 'width %'),
+		  array('type' => 'float', 'description' => 'height %')), 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -140,6 +140,63 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('test/crop', $mimeType, 'Output mime type 3');
+    }
+
+    function testEstimateDimensions1() {
+	$item = new GalleryPhotoItem();
+	$item->setWidth(100);
+	$item->setHeight(300);
+
+	$derivative = new GalleryDerivativeImage();
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	// Operation is smaller than the smallest side
+	$derivative->setDerivativeOperations('thumbnail|50');
+
+	$toolkit = new SquareThumbToolkit();
+	$toolkit->estimateDimensions($derivative, $item);
+
+	$this->assertEquals(50, $derivative->getWidth());
+	$this->assertEquals(50, $derivative->getHeight());
+    }
+
+    function testEstimateDimensions2() {
+	$item = new GalleryPhotoItem();
+	$item->setWidth(100);
+	$item->setHeight(300);
+
+	$derivative = new GalleryDerivativeImage();
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	// Operation is bigger than the smallest side
+	$derivative->setDerivativeOperations('thumbnail|200');
+
+	$toolkit = new SquareThumbToolkit();
+	$toolkit->estimateDimensions($derivative, $item);
+
+	$this->assertEquals(100, $derivative->getWidth());
+	$this->assertEquals(100, $derivative->getHeight());
+    }
+
+    function testEstimateDimensions3() {
+	$item = new GalleryPhotoItem();
+	$item->setWidth(100);
+	$item->setHeight(300);
+
+	$derivative = new GalleryDerivativeImage();
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	// Operation is bigger than the biggest side
+	$derivative->setDerivativeOperations('thumbnail|400');
+
+	$toolkit = new SquareThumbToolkit();
+	$toolkit->estimateDimensions($derivative, $item);
+
+	$this->assertEquals(100, $derivative->getWidth());
+	$this->assertEquals(100, $derivative->getHeight());
     }
 }
 
