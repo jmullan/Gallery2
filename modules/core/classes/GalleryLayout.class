@@ -657,11 +657,11 @@ class GalleryLayout {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    // Add url/moduleId keys..
-		    foreach ($links as $itemId => $list) {
+		    foreach ($links as $id => $list) {
 			foreach ($list as $link) {
 			    $link['url'] = $urlGenerator->generateUrl($link['params']);
 			    $link['moduleId'] = $moduleId;
-			    $itemLinks[$itemId][] = $link;
+			    $itemLinks[$id][] = $link;
 			}
 		    }
 		}
@@ -671,8 +671,8 @@ class GalleryLayout {
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
-		    foreach ($content as $itemId => $html) {
-			$itemSummaries[$itemId][$moduleId] = $html;
+		    foreach ($content as $id => $html) {
+			$itemSummaries[$id][$moduleId] = $html;
 		    }
 		}
 
@@ -688,8 +688,8 @@ class GalleryLayout {
 	    }
 
 	    if (isset($itemLinks)) {
-		foreach (array_keys($itemLinks) as $itemId) {
-		    usort($itemLinks[$itemId], array($this, '_sortItemLinks'));
+		foreach (array_keys($itemLinks) as $id) {
+		    usort($itemLinks[$id], array($this, '_sortItemLinks'));
 		}
 		$layout['itemLinks'] = $itemLinks[$itemId];
 		$childData[] = 'itemLinks';
