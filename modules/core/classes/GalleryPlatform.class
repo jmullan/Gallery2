@@ -227,6 +227,22 @@ class GalleryPlatform {
      * @return resource a file descriptor
      * @access public
      */
+    function file($filename, $use_include_path=false) {
+	global $gallery;
+	$gallery->debug("file($filename, $use_include_path)");
+	
+	return file($filename, $use_include_path);
+    }
+    
+    /**
+     * Open a file or URL
+     *
+     * @param string a file path or URL
+     * @param string a file mode
+     * @param int if this is set to 1, search the include path also
+     * @return resource a file descriptor
+     * @access public
+     */
     function fopen($filename, $mode, $use_include_path=0) {
 	global $gallery;
 	$gallery->debug("fopen($filename, $mode, $use_include_path)");

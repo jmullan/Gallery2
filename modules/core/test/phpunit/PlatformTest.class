@@ -102,6 +102,13 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals(1083,
 			    $this->_platform->filesize($this->_sourceFile));
     }
+
+    function testFile() {
+	$lines = $this->_platform->file(__FILE__);
+
+	/* --> Target Line <-- */
+	$this->assertEquals("/* --> Target Line <-- */", trim($lines[__LINE__-2]));
+    }
     
     function testFopen() {
 	$fd = $this->_platform->fopen($this->_sourceFile, 'r');
