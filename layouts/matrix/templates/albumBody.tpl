@@ -39,14 +39,12 @@
               </li>
     
               <li>
-                {g->text one="Size: %d item"
-                         many="Size: %d items"
-                                count=$layout.childCount
-                                arg1=$layout.childCount}
-                {g->text one="(%d item total)"
-                                many="(%d items total)"
-                                count=$layout.descendentCount
-                                arg1=$layout.descendentCount}
+                {g->text one="Size: %d item" many="Size: %d items"
+                         count=$layout.childCount arg1=$layout.childCount}
+                {if $layout.descendentCount > $layout.childCount}
+                  {g->text one="(%d item total)" many="(%d items total)"
+                           count=$layout.descendentCount arg1=$layout.descendentCount}
+                {/if}
               </li>    
               {if $layout.showAlbumOwner}
               <li>
