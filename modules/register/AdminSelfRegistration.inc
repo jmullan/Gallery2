@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package MobileGallery
+ * @package Gallery
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
@@ -41,6 +41,7 @@ class AdminSelfregistrationController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
+	
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -50,18 +51,18 @@ class AdminSelfregistrationController extends GalleryController {
 	$status = array();
 	if (isset($form['action']['save'])) {
 
-	    foreach (array('emailconfirmation', 'subject', 'from') as $key) {
+	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
 		if (isset($form[$key])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'selfregistration', $key, trim($form[$key]));
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
+				return array($ret->wrap(__FILE__, __LINE__), null);
+		    	}
+			}
+	    }
 
 	    $redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'selfregistration:AdminSelfregistration';
 		$status['saved'] = 1;
-	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'selfregistration:AdminSelfregistration';
@@ -93,9 +94,13 @@ class AdminSelfregistrationView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'selfregistration');
+	if ($ret->isError()) 
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminSelfregistration') {
-	    foreach (array('emailconfirmation', 'subject', 'from') as $key) {
+	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'selfregistration', $key);
 		if ($ret->isError()) {
@@ -106,8 +111,9 @@ class AdminSelfregistrationView extends GalleryView {
 	}
 	
 	$selfregistration = array();
-	$selfregistration['emailConfirmationList'] = array('true' => 'Use confirmation emails', 'false' => 'Accept without confirmation');
-	
+	$selfregistration['emailConfirmationList'] = array('true' => $module->translate('Use confirmation emails'),
+				 'false' => $module->translate('Accept without confirmation'));
+	$selfregistration['reallySendList'] = array('true' => $module->translate('Yes'), 'false' => $module->translate('No'));
 	$template->setVariable('Selfregistration', $selfregistration);
 	$template->setVariable('controller', 'selfregistration:AdminSelfregistration');
 	

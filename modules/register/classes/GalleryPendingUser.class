@@ -306,6 +306,7 @@ class GalleryPendingUser_core extends GalleryEntity {
 		$smarty->assign('confirmationUrl', $confirmationUrl);
 		$smarty->assign('baseUrl', $baseUrl);
 		
+		
 		list($ret, $sEmailText) = $smarty->fetch(dirname(__FILE__).'/../templates/SmartyConfirmationEMail.tpl');
 		if ($ret->isError()) {
 	    	return $ret->wrap(__FILE__, __LINE__);
@@ -313,7 +314,17 @@ class GalleryPendingUser_core extends GalleryEntity {
 		
 		$subject = 'Account activation';
 		$from = 'info@localhost';
-		$succ = mail($this->getEmail(), $subject, $sEmailText, "From: $from");
+		
+		/* check if sending emails is disabled */
+		list($ret, $reallySend) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', 'reallysend');
+		if ($ret->isError()) {
+	    	return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		if ($reallySend=='true')
+			$succ = mail($this->getEmail(), $subject, $sEmailText, "From: $from");
+		else 
+			$succ = true;
 		if (!$succ)
 			return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__, 'Could not send confirmation mail to '. $this->getEmail());
 			
@@ -347,6 +358,14 @@ class GalleryPendingUser_core extends GalleryEntity {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 		
+		/* notify gallery event system */
+		$eventName = "GalleryPendingUser::createGalleryUser";
+		$event = GalleryCoreApi::newEvent($eventName);
+		$event->setEntity($this);
+		$ret = GalleryCoreApi::postEvent($event);
+		if ($ret->isError()) {
+		    return  $ret->wrap(__FILE__, __LINE__);
+		}
 		return GalleryStatus::success();
 	}
 

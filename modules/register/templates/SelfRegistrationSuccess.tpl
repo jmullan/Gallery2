@@ -1,41 +1,59 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Registration successful"}
-    {/g->title}
-  {/g->banner}
+<div id="gsAdminContents">
+	<div class="gbTopFlag">
+	  <div class="gbTitle">
+        <div class="giTitle">
+          {g->text text="Registration successful"}
+	    </div>
+	  </div>
+	</div>
+
+  <div class="gbAdmin">
 
  {if isset($status.registeredUser)}
-  {g->box style="admin"}
-    {g->box}
-      {g->element}
+    <div class="gbDataEntry">
+      <span>
 		{g->text text="Your registration was successful."}
-      {/g->element}
-    {/g->box}
-    {g->box}
-      {g->element}
+      </span>
+    </div>
+    <div class="gbDataEntry">
+      <span>
 		{g->text text="You will shortly receive an email  containing a link. You have to click this link to confirm and activate your account."}
-      {/g->element}
-      {g->element}
+      </span>
+      <span>
 		{g->text text="This procedure is necessary to prevent account abuse."}
-      {/g->element}
-    {/g->box}
-  {/g->box}
- {/if}
+      </span>
+    </div>
+  </div>
 
- {if isset($status.activatedUser)}
-  {g->box style="admin"}
-    {g->box}
-      {g->element}
+ {elseif isset($status.activatedUser)}
+
+    <div class="gbDataEntry">
+      <span>
 		{g->text text="Your registration was successful and your account has been activated."}
-      {/g->element}
-    {/g->box}
-    {g->box}
-      {g->element}
-		{g->text text="You can now login to your account with your username and password."}
-      {/g->element}
-    {/g->box}
-  {/g->box}
+      </span>
+    </div>
+    <div class="gbDataEntry">
+      <span>
+		{g->text text="You can now"}
+		 <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin"}">{g->text text="login"}</a> 
+		 {g->text text="to your account with your username and password."}
+      </span>
+    </div>
+  </div>
+  
+ {else}
+ 
+    <div class="giTitle">
+		{g->text text="This page can only be called once."}
+    </div>
+    <div class="gbDataEntry">
+      <span>
+		{g->text text="This page has been requested before and can only be called once. Probable you have hit the Reload button. Please proceed to "}
+		 <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin"}">{g->text text="login"}</a>.
+      </span>
+    </div>
+  </div>
+  
  {/if}
  
-{/g->pagebox}
+</div>

@@ -1,87 +1,111 @@
-{g->pagebox}
-  {g->banner}
-    {g->title}
-      {g->text text="Selfregistration Settings"}
-    {/g->title}
-  {/g->banner}
-
+<div id="gsAdminContents">
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <div class="giTitle">
+        {g->text text="Selfregistration Settings"}
+      </div>
+    </div>
+    
+    <div class="spacer">
+      &nbsp;
+    </div>
+  </div>
+  
+ <div class="gbAdmin">
   {if isset($status)}
-    {g->success}
+    <div class="gsStatus">
       {if isset($status.saved)}
-	{g->text text="Settings saved successfully"}
+        <div class="giStatus">
+		{g->text text="Settings saved successfully"}
+	</div>
       {/if}
-    {/g->success}
+    </div>
   {/if}
 
-  {g->box style="admin"}
-    {g->description}
+  <div class="gbAdmin">
+    <div class="giDescription">
       {g->text text="Selfregistration is an extension to Gallery2. It allows user to register for an account and optionally sends a confirmation email."}
-    {/g->description}
-  {/g->box style="admin"}
+    </div>
+  </div>
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="Confirmation policy"}
-    {/g->title}
+    </div>
   
-    {g->description}
+    <div class="giDescription">
      {g->text text="The selfregistration module can accept new registrations instantly or require the user to click a confirmation link in an email that is sent by the module."}
-    {/g->description}
+    </div>
     
-    {g->table style="admin_widgets"}
-      {g->row}
-	{g->column}
+    <table style="admin_widgets">
+      <tr>
+	<td>
 	  {g->text text="Choose your preferred policy:"}
-	{/g->column}
+	</td>
 
-	{g->column}
- 	  {g->select name="form[emailconfirmation]"}
+	<td>
+ 	  <select name="{g->formVar var="form[emailconfirmation]"}">
 	    {html_options options=$Selfregistration.emailConfirmationList selected=$form.emailconfirmation }
-	  {/g->select}
-	{/g->column}
-      {/g->row}
-    {/g->table}
-  {/g->box}
+	  </select>
+	</td>
+      </tr>
+    </table>
+  </div>
 
 
-  {g->box style="admin"}
-    {g->title}
+  <div class="gbAdmin">
+    <div class="giTitle">
       {g->text text="eMail details"}
-    {/g->title}
+    </div>
     
-    {g->description}
+    <div class="giDescription">
      {g->text text="If you choose to send confirmation emails, please specify subject and sender as they should appear to the users."}
-    {/g->description}
+    </div>
     
-    {g->table style="admin_widgets"}
-      {g->row}
-	{g->column}
+    <table style="admin_widgets">
+      <tr>
+	<td>
 	  {g->text text="eMail-Subject:"}
-	{/g->column}
+	</td>
 
-	{g->column}
-	  {g->input type="text" name="form[subject]"}{$form.subject}{/g->input}
-	{/g->column}
-      {/g->row}
+	<td>
+	  <input type="text" name="{g->formVar var="form[subject]"}" value="{$form.subject}"/>
+	</td>
+      </tr>
 	
-      {g->row}
-	{g->column}
+      <tr>
+	<td>
 	  {g->text text="Sender eMail-address (From):"}
-	{/g->column}
+	</td>
 
-	{g->column}
-	  {g->input type="text" name="form[from]"}{$form.from}{/g->input}
-	{/g->column}
-      {/g->row}
+	<td>
+	  <input type="text" name="{g->formVar var="form[from]"}" value="{$form.from}"/>
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  {g->text text="Really send emails? ('No' for only pretending to do so):"}
+	</td>
+
+	<td>
+ 	  <select name="{g->formVar var="form[reallysend]"}">
+	    {html_options options=$Selfregistration.reallySendList selected=$form.reallysend}
+	  </select>
+	</td>
+      </tr>
+
 	
-    {/g->table}
-  {/g->box}
+    </table>
 
-  {g->box style="admin"}
-    {g->element}
-      {g->input type="submit" name="form[action][save]"}{g->text text="Save Settings"}{/g->input}
-      {g->input type="submit" name="form[action][cancel]"}{g->text text="Cancel"}{/g->input}
-    {/g->element}
-  {/g->box}
 
-{/g->pagebox}
+  <div class="gbButtons">
+    <span>
+      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    </span>
+   </div>
+  </div>
+  </div>
+
+</div>

@@ -56,130 +56,128 @@ class UserSelfregistrationController extends GalleryController {
 	 * ['delegate']['subView'] = 'core:AdminCreateUser';  ->  ['delegate']['subView'] = 'selfregistraion:UserSelfregistration';
 	 *
 	 */
-
-	$redirect = array();
-	$results = array();
-	$status = array();
-	$error = array();
-	if (isset($form['action']['cancel'])) {
+	// $redirect = array();
+	 $results = array();
+	 $status = array();
+	 $error = array();
+	 if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserAdmin';
+			$redirect['view'] = 'core:UserAdmin';
 	    
-	} else if (isset($form['action']['create'])) {
-	    /*
-	     * If all the right fields are in place then go ahead and
-	     * create the user.
-	     */
-	    if (!empty($form['userName']) &&
-	        !empty($form['email']) &&
-	        !empty($form['password1']) &&
-	        $form['password1'] == $form['password2']) {
-	    
-		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
+	 } else if (isset($form['action']['create'])) {
+		/*
+		* If all the right fields are in place then go ahead and
+		* create the user.
+		*/
+		if (!empty($form['userName']) &&
+				!empty($form['fullName']) && // added by S.E., 17.06.04
+				!empty($form['email']) &&
+				!empty($form['password1']) &&
+				$form['password1'] == $form['password2']) {
 
-		if (!isset($user)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				 null);
-		}
-		
-		$ret = $user->create($form['userName']);
-		if ($ret->isError()) {
-		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+					list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
+					if ($ret->isError()) {
+						return array($ret->wrap(__FILE__, __LINE__), null);
+					}
 
-		    // Set our error status and fall back to the view.
-		    $error[] = 'form[error][userName][exists]';
-		} else {
-		    $user->setEmail($form['email']);
-		    $user->setFullName($form['fullName']);
-		    $user->setLanguage($form['language']);
-		    $user->changePassword($form['password1']);
-		
-		    $ret = $user->save();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+					if (!isset($user)) {
+						return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+					}
 
-			/* this part is added for UserSelfregistration; keep this on updates */
-			
-		    /* send a confirmation email if activated in module settings */
-		    /* otherwise create the "real" user right now */
-		    list($ret, $sendConfirmation) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', 'emailconfirmation');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-  
-		    if ($sendConfirmation=='true') {
-		    	/* send confirmation email */
-		    	$ret = $user->sendConfirmationEMail();
-		    	if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-	    		}
-	    		$status['registeredUser'] = $form['userName'];
-	    		
-		    } else {
-		    	/* turn the pending user into a real user right now */
-		    	$ret = $user->createGalleryUser();
-		    	if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-		    	}
+					$ret = $user->create($form['userName']);
+					if ($ret->isError()) {
+						if (!($ret->getErrorCode() & ERROR_COLLISION)) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						}
 
-				/* delete the temporary PendingUser */
-				list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($user->getId()));
-		    	if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null);
-		    	}
-				
-				$ret = $user->delete();
-				if ($ret->isError()) {
-			    	return $ret->wrap(__FILE__, __LINE__);
+						// Set our error status and fall back to the view.
+						$error[] = 'form[error][userName][exists]';
+					} else {
+						$user->setEmail($form['email']);
+						$user->setFullName($form['fullName']);
+						//$gallery->debug(print_r($form));
+						//$user->setLanguage($form['language']);
+						$user->changePassword($form['password1']);
+
+						$ret = $user->save();
+						if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						}
+
+						/* this part is added for UserSelfregistration; keep this on updates */
+						
+						/* send a confirmation email if activated in module settings */
+						/* otherwise create the "real" user right now */
+						list($ret, $sendConfirmation) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', 'emailconfirmation');
+						if ($ret->isError()) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						}
+
+						if ($sendConfirmation!='false') {
+							/* send confirmation email */
+							$ret = $user->sendConfirmationEMail();
+							if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							$status['registeredUser'] = $form['userName'];
+
+						} else {
+							/* turn the pending user into a real user right now */
+							$ret = $user->createGalleryUser();
+							if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+
+							/* delete the temporary PendingUser */
+							list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($user->getId()));
+							if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+
+							$ret = $user->delete();
+							if ($ret->isError()) {
+								return $ret->wrap(__FILE__, __LINE__);
+							}
+
+							$ret = GalleryCoreApi::releaseLocks($lock);
+							if ($ret->isError()) {
+								return $ret->wrap(__FILE__, __LINE__);
+							}				
+							$status['activatedUser'] = $form['userName'];
+						}
+						/* end of added part */
+						
+						/* Request a redirect to the confirmation screen */
+						$redirect['view'] = 'core:UserAdmin';
+						$redirect['subView'] = 'selfregistration:SelfregistrationSuccess';
+					}
+				} else {
+					foreach (array('userName', 'email', 'password1', 'password2', 'fullName') as $key) { // 'fullName' added by S.E., 17.06.04
+						if (empty($form[$key])) {
+							$error[] = 'form[error][' . $key . '][missing]';
+						}
+					}
+
+					if (!empty($form['password1']) &&
+							!empty($form['password2']) &&
+							$form['password1'] != $form['password2']) {
+								$error[] = 'form[error][password2][mismatch]';
+							}
 				}
-				
-				$ret = GalleryCoreApi::releaseLocks($lock);
-				if ($ret->isError()) {
-			    	return $ret->wrap(__FILE__, __LINE__);
-				}				
-				$status['activatedUser'] = $form['userName'];
-		    }
-		    /* end of added part */
-		    
-		    
-		    /* Request a redirect to the confirmation screen */
-		    $redirect['view'] = 'core:UserAdmin';
-			$redirect['subView'] = 'selfregistration:SelfregistrationSuccess';
-		}
-	    } else {
-		foreach (array('userName', 'email', 'password1', 'password2') as $key) {
-		    if (empty($form[$key])) {
-			$error[] = 'form[error][' . $key . '][missing]';
-		    }
-		}
+	 }
 
-		if (!empty($form['password1']) &&
-		        !empty($form['password2']) &&
-		        $form['password1'] != $form['password2']) {
-		    $error[] = 'form[error][password2][mismatch]';
-		}
-	    }
+	 if (!empty($redirect)) {
+		 $results['redirect'] = $redirect;
+	 } else {
+		 $results['delegate']['view'] = 'core:UserAdmin';
+		 $results['delegate']['subView'] = 'selfregistration:UserSelfregistration';
+	 }
+	 $results['status'] = $status;
+	 $results['error'] = $error;
+
+	 return array(GalleryStatus::success(), $results);
 	}
-
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'selfregistration:UserSelfregistration';
-	}
-	$results['status'] = $status;
-	$results['error'] = $error;
-
-	return array(GalleryStatus::success(), $results);
-    }
 }
 
 /**

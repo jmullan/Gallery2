@@ -89,7 +89,7 @@ class SelfregistrationModule extends GalleryModule {
 		 * reasonable defaults.
 		 */
 		foreach (array( 'emailconfirmation' => 'true',
-							'subject' => 'Account activation',
+							'subject' => $this->translate('Account activation'),
 							'from' => 'webmaster@' . $_SERVER['SERVER_NAME'] )
 			 as $key => $value) {
 
