@@ -420,6 +420,11 @@ class GalleryLayout {
 	    }
 	}
 
+	$ret = $this->_studyItems($childIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	// -------------------------------------------------------------------------------------
 	// Load additional required entities..
 	$ids = array();
@@ -692,7 +697,7 @@ class GalleryLayout {
 
 	    if (isset($itemLinks)) {
 		foreach (array_keys($itemLinks) as $id) {
-		    usort($itemLinks[$id], 'GalleryLayout::_sortItemLinks');
+		    usort($itemLinks[$id], array('GalleryLayout', '_sortItemLinks'));
 		}
 		$layout['itemLinks'] = $itemLinks[$itemId];
 		$childData[] = 'itemLinks';
@@ -734,6 +739,7 @@ class GalleryLayout {
 
 	// -------------------------------------------------------------------------------------
 	$template->setVariable('layout', $layout);
+
 	return GalleryStatus::success();
     }
 
