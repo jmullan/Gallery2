@@ -291,16 +291,6 @@ class GalleryAlbumItem_core extends GalleryItem {
 				   
 	return GalleryStatus::success();
     }
-    
-    /**
-     * Is this album the root album?
-     * 
-     * @return bool true if yes, false if no
-     */
-    function isRoot() {
-	global $gallery;
-	return ($this->getId() == $gallery->getRootAlbumItemId());
-    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryAlbumItem.inc');
