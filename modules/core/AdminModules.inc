@@ -251,11 +251,15 @@ class AdminModulesView extends GalleryView {
 					       'action' => 'uninstall');
 		}
 	    } else {
-		$entry['state'] = 'active';
-		$entry['action'][] = array('text' => $coreModule->translate('deactivate'),
-					   'controller' => 'core:AdminModules',
-					   'moduleId' => $moduleId,
-					   'action' => 'deactivate');
+		if ($moduleId != 'core') {
+		    $entry['state'] = 'active';
+		    $entry['action'][] = array('text' => $coreModule->translate('deactivate'),
+					       'controller' => 'core:AdminModules',
+					       'moduleId' => $moduleId,
+					       'action' => 'deactivate');
+		} else {
+		    $entry['state'] = '';
+		}
 	    }
 
 	    $entry['description'] = $module->getDescription();
