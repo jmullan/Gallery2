@@ -198,6 +198,42 @@ if ($step == 1) {
 			$status[$step] = true;
 		}
 	}
+} elseif ($step == 6) {
+	if (isset($_GET['action']) && $_GET['action'] === 'create') {
+		$status[$step] = false;
+	}
+	if (isset($_POST['dbtype']) && isset($_POST['host']) && isset($_POST['uname']) && isset($_POST['pass'])
+		&& isset($_POST['tPrefix']) && isset($_POST['cPrefix'])) {
+		$dbtype = $_POST['dbtype'];
+		$host = $_POST['host'];
+		$uname = $_POST['uname'];
+		$pass = $_POST['pass'];
+		$tPrefix = $_POST['tPrefix'];
+		$cPrefix = $_POST['cPrefix'];
+		//XXX fix these so they only are set when correct
+		$_SESSION['db'] = array ('dbtype' => $dbtype,
+								 'host'    => $host,
+								 'uname'   => $uname,
+								 'pass'    => $pass,
+								 'tPrefix' => $tPrefix,
+								 'cPrefix' => $cPrefix
+								 );
+		if (empty($dbtype)) {
+			array_push($errorMsg, "Error: you must select a database type.");
+		}
+		if (empty($host)) {
+			array_push($errorMsg, "Error: you must specify a database host.");
+		}
+		if (empty($uname)) {
+			array_push($errorMsg, "Error: you must specify a database username.");
+		}
+		if (empty($pass)) {
+			array_push($errorMsg, "Error: you must specify a database password.");
+		}
+		if (count ($errorMsg) == 0) {
+			$status[$step] = true;
+		}
+	}
 }
 
 printNavBar();
@@ -291,7 +327,7 @@ function StorageSetup() {
 }
 
 function DatabaseSetup() {
-	global $content, $navbar, $percentage, $step, $status;
+	global $content, $navbar, $percentage, $step, $status, $errorMsg;
 
 	$content = 'databaseSetup.inc';
 	include(dirname(__FILE__) . '/body.inc');

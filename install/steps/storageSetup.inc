@@ -28,9 +28,7 @@
 
 <?php if ($status[$step]) { ?>
 <p class="success">
-Storage directory set successfully:<br />
-<i><tt><?php print $_SESSION['dir']?></tt></i>
-</p>
+Storage directory set successfully:</p>
 <?php } ?>
 
 <p> <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver, so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. If you access your site via FTP, you might not have this option.") ?> </p>
