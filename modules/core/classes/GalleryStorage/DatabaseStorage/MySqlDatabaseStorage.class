@@ -35,8 +35,37 @@ define('WORLD_LOCK_NAME', 'gallery_world_lock');
  */
 class MySqlDatabaseStorage extends DatabaseStorage {
 
+    /**
+     * Return the type of this database
+     *
+     * @return string
+     */
     function getType() {
 	return 'mysql';
+    }
+
+    /**
+     * Create a new schema.
+     *
+     * @param string the name of the database to create
+     * @return object GalleryStatus a status code
+     */
+    function createSchema() {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+					__FILE__, __LINE__);
+	}
+
+	$ret = $this->_initDatabaseSchema();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	$this->_traceStart();
+	$ret = $this->_databaseSchema->createSchema();
+	$this->_traceStop();
+
+	return $ret;
     }
 
     /**

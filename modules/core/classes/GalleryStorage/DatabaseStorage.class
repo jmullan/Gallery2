@@ -124,6 +124,19 @@ class DatabaseStorage extends GalleryStorage {
      */
     var $_queryCache;
 
+    /**
+     * The capabilities available in this version of the database software
+     *
+     * @var array $_capabilities
+     */
+    var $_capabilities;
+
+    /**
+     * A mapping of id to nucleus type, useful when we are going to do multiple
+     * lookups on the same object.
+     *
+     * @var array $_nucleusTypeCache
+     */
     var $_nucleusTypeCache;
 
     /**
@@ -140,7 +153,8 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
 	$this->_database = $config['database'];
-	$this->_useDefault = $config['useDefault'];
+	$this->_useDefault = $config['useDefaultDatabase'];
+	$this->_capabilities = $config['capabilities'];
     }
 
     /**
@@ -1243,7 +1257,8 @@ class DatabaseStorage extends GalleryStorage {
 	    require_once($base . '/DatabaseSchemaFactory.class');
 	    list($ret, $this->_databaseSchema) =
 		    DatabaseSchemaFactory::newInstance($this->getType(),
-						       $this->_db);
+						       $this->_db,
+						       $this->_capabilities);
 
 	    if ($ret->isError()) {
 		return $ret;
@@ -1405,6 +1420,16 @@ class DatabaseStorage extends GalleryStorage {
      */
     function prefixColumnName($columnName) {
 	return DATABASE_COLUMN_PREFIX . "$columnName";
+    }
+
+    /**
+     * Does the database software have the desired capability?
+     *
+     * @param string the name of the capability
+     * @return bool true if yes
+     */
+    function _hasCapability($capabilityName) {
+	return !empty($this->_capabilities[$capabilityName]);
     }
 }
 ?>
