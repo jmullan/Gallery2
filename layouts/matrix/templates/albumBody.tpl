@@ -76,34 +76,34 @@
       {/if}
     </div>
 
-    <div class="giTitle">
+    <h2 class="giTitle">
       {if $child.canContainChildren}
       {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
       {else}
       {$child.title|default:$child.pathComponent|markup}
       {/if}
-    </div>
+    </h2>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {$child.summary|truncate:256|markup}
-    </div>
+    </p>
 
-    <div class="giInfo">
-      <span>
+    <ul class="giInfo">
+      <li>
 	{capture name=modificationTimestamp}
 	{g->date timestamp=$child.modificationTimestamp}
 	{/capture}
 	{g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
-      </span>
+      </li>
 
       {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
-      <span>
+      <li>
 	{g->text text="Owner: %s" arg1=$layout.owners[$child.ownerId].fullName|default:$owner.userName}
-      </span>
+      </li>
       {/if}
 
       {if ($child.childCount > 0) }
-      <span>
+      <li>
 	{g->text one="Size: %d item"
 	many="Size: %d items"
 	count=$child.childCount
@@ -112,23 +112,22 @@
 	many="(%d items total)"
 	count=$child.descendentCount
 	arg1=$child.descendentCount}
-      </span>
+      </li>
       {/if}
 
       {if ($layout.viewCounts[$child.id] > 0) }
-      <span>
+      <li>
 	{g->text one="Viewed: %d time"
 	many="Viewed: %d times"
 	count=$layout.viewCounts[$child.id]
 	arg1=$layout.viewCounts[$child.id]}
-      </span>
+      </li>
       {/if}
-    </div>
+    </ul>
   </div>
 
   {counter}
   {if ($child.canContainChildren || ($childrenInColumnCount % $layout.columnSize == 0))}
-
   {counter start=0 print=no assign=childrenInColumnCount}
   {/if}
   {foreachelse}
