@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,7 +32,7 @@
  * @subpackage Helpers
  */
 class GalleryPluginHelper_simple {
-    
+
     /**
      * Load and initialize the given plugin
      *
@@ -55,7 +55,7 @@ class GalleryPluginHelper_simple {
 		$pluginSuperClass = 'GalleryModule';
 		$pluginClass = $pluginId . 'Module';
 		break;
-		
+
 	    case 'layout':
 		$pluginSuperClass = 'GalleryLayout';
 		$pluginClass = $pluginId . 'Layout';
@@ -87,7 +87,7 @@ class GalleryPluginHelper_simple {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-		
+
 		if (!class_exists($pluginClass)) {
 		    return array(GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 						      "Class $pluginClass does not exist"), null);
@@ -100,7 +100,7 @@ class GalleryPluginHelper_simple {
 	} else {
 	    $plugin = GalleryDataCache::get($cacheKey);
 	}
-	
+
 	if (!$ignoreVersionMismatch && $pluginType == 'module') {
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus('module');
@@ -122,10 +122,12 @@ class GalleryPluginHelper_simple {
 		}
 
 		/*  Return a handleable error */
-		return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__), $plugin);
+		return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
+		  "$pluginId db:" . $status[$pluginId]['version'] . ' code:' . $plugin->getVersion()),
+		  $plugin);
 	    }
 	}
-	
+
 	return array(GalleryStatus::success(), $plugin);
     }
 
@@ -146,7 +148,7 @@ class GalleryPluginHelper_simple {
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-	
+
 	list ($ret, $params) =
 	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
 	if ($ret->isError()) {
@@ -185,7 +187,7 @@ class GalleryPluginHelper_simple {
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-	
+
 	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $data =& GalleryDataCache::getFromDisk(array('type' => $pluginType,
@@ -211,7 +213,7 @@ class GalleryPluginHelper_simple {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$data = array();
 		while ($result = $searchResults->nextResult()) {
 		    $data[$result[0]] = $result[1];
@@ -226,7 +228,7 @@ class GalleryPluginHelper_simple {
 	} else {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
-	
+
 	return array(GalleryStatus::success(), $data);
     }
 
@@ -270,7 +272,7 @@ class GalleryPluginHelper_simple {
 		    $pluginFile = 'layout.inc';
 		    break;
 		}
-	    
+
 		if ($dir = $platform->opendir($pluginsDir)) {
 		    while ($pluginId = $platform->readdir($dir)) {
 			if ($pluginId{0} == '.') {
@@ -279,7 +281,7 @@ class GalleryPluginHelper_simple {
 			if (!$platform->is_dir($pluginsDir . $pluginId)) {
 			    continue;
 			}
-			
+
 			$path = $pluginsDir . $pluginId . '/' . $pluginFile;
 			if ($platform->file_exists($path)) {
 			    $plugins[$pluginId]['available'] = 1;
@@ -288,13 +290,13 @@ class GalleryPluginHelper_simple {
 				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'version');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
-			    } 
-			    
+			    }
+
 			    list ($ret, $plugins[$pluginId]['callbacks']) =
 				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'callbacks');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
-			    } 
+			    }
 			}
 		    }
 		    $platform->closedir($dir);
@@ -355,12 +357,12 @@ class GalleryPluginHelper_simple {
             WHERE
               [GalleryPluginMap::pluginType] = ?
             ';
-    	
+
 	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $data = array();
 	    while ($result = $searchResults->nextResult()) {
 		$data[$result[0]] = array('active' => $result[1]);
@@ -369,7 +371,7 @@ class GalleryPluginHelper_simple {
 	} else {
 	    $data = GalleryDataCache::get($cacheKey);
 	}
-	
+
 	return array(GalleryStatus::success(), $data);
     }
 }
