@@ -308,10 +308,10 @@ class DatabaseStorage extends GalleryStorage {
 	 * If we already have a cached query, use it
 	 */
 	if (!empty($this->_queryCache['load'][$targetType])) {
-	    $prefixTable =
-		     $this->_queryCache['load'][$targetType]['prefixTable'];
+	    $prefixTable = $this->_queryCache['load'][$targetType]['prefixTable'];
 	    $query = $this->_queryCache['load'][$targetType]['query'];
 	    $idCount = $this->_queryCache['load'][$targetType]['idCount'];
+	    $typeTable = $this->_queryCache['load'][$targetType]['typeTable'];
 
 	    /*
 	     * Prepare our array of input values.  They are all the id of
@@ -330,6 +330,9 @@ class DatabaseStorage extends GalleryStorage {
 
 	    $tables = array();
 	    $data = array();
+	    $prefixTable = array();
+	    $typeTable = array();
+	    $columns = array();
 	    foreach ($metaInfo['members'] as $columnName => $columnInfo) {
 
 		$type = $columnInfo['type'];
@@ -353,6 +356,7 @@ class DatabaseStorage extends GalleryStorage {
 		$prefixedColumnName = $this->prefixColumnName($columnName);
 		$columns[$tableName . '.' . $prefixedColumnName] = 1;
 		$prefixTable[$prefixedColumnName] = $columnName;
+		$typeTable[$prefixedColumnName] = $type;
 	    }
 
 	    $query = 'SELECT ';
@@ -366,6 +370,7 @@ class DatabaseStorage extends GalleryStorage {
 	     * Cache this query
 	     */
 	    $this->_queryCache['load'][$targetType]['prefixTable'] = $prefixTable;
+	    $this->_queryCache['load'][$targetType]['typeTable'] = $typeTable;
 	    $this->_queryCache['load'][$targetType]['query'] = $query;
 	    $this->_queryCache['load'][$targetType]['idCount'] = sizeof($data);
 	}
@@ -376,6 +381,12 @@ class DatabaseStorage extends GalleryStorage {
 	    foreach ($recordSet->fields as $prefixedColumnName => $value) {
 		if (isset($value)) {
 		    $func = 'set' . ucfirst($prefixTable[$prefixedColumnName]);
+
+		    /* Convert the database representation to a timestamp */
+		    if ($typeTable[$prefixedColumnName] & STORAGE_TYPE_TIMESTAMP) {
+			$value = $this->_db->UnixTimeStamp($value);
+		    }
+
 		    $nucleus->$func($value);
 		}
 	    }
@@ -570,6 +581,12 @@ class DatabaseStorage extends GalleryStorage {
 	    if ($nucleus->getModifiedFlag($name) & MEMBER_MODIFIED) {
 		$func = 'get' . ucfirst($name);
 		$value = $nucleus->$func();
+
+		/* Convert timestamps to the database representation */
+		if ($type & STORAGE_TYPE_TIMESTAMP) {
+		    $value = $this->_db->DBTimeStamp($value);
+		}
+		
 		$dataTable[$info['class']][$name] = $value;
 	    }
 	    
@@ -1102,7 +1119,7 @@ class DatabaseStorage extends GalleryStorage {
 		 */
 		if ((time() - $startTime) > $timeout) {
 		    $this->_traceStop();
-		    $this->releaseLock($lockId);
+		    $this->releaseLock($lockId, true);
 		    return array(GalleryStatus(ERROR_LOCK_IN_USE,
 					       __FILE__, __LINE__),
 				 null);
@@ -1127,7 +1144,7 @@ class DatabaseStorage extends GalleryStorage {
 		 */
 		if ((time() - $startTime) > $timeout) {
 		    $this->_traceStop();
-		    $this->releaseLock($lockId);
+		    $this->releaseLock($lockId, true);
 		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
 						      __FILE__, __LINE__),
 				 null);
@@ -1136,7 +1153,7 @@ class DatabaseStorage extends GalleryStorage {
 		$count = $this->_db->GetOne($query);
 		if ($count === false) {
 		    $this->_traceStop();
-		    $this->releaseLock($lockId);
+		    $this->releaseLock($lockId, true);
 		    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
 						      __FILE__, __LINE__),
 				 null);
@@ -1162,7 +1179,7 @@ class DatabaseStorage extends GalleryStorage {
 		 */
 		if ((time() - $startTime) > $timeout) {
 		    $this->_traceStop();
-		    $this->releaseLock($lockId);
+		    $this->releaseLock($lockId, true);
 		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
 						      __FILE__, __LINE__),
 				 null);
@@ -1187,7 +1204,7 @@ class DatabaseStorage extends GalleryStorage {
 	    $query = 'INSERT INTO ' . $lockTable . '(' .
 		     $idCol . ', ' . $lockIdCol . ') ' .
 		     'VALUES (?, ?)';
-	    while (true) {
+	    while ($i < sizeof($ids)) {
 		$id = $ids[$i];
 
 		/*
@@ -1195,26 +1212,22 @@ class DatabaseStorage extends GalleryStorage {
 		 */
 		if ((time() - $startTime) > $timeout) {
 		    $this->_traceStop();
-		    $this->releaseLock($lockId);
+		    $this->releaseLock($lockId, false);
 		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
-						      __FILE__, __LINE_),
+						      __FILE__, __LINE__),
 				 null);
 		}
 		    
 		$data = array($id, $lockId);
 		$recordSet = $this->_db->Execute($query, $data);
-		    
-		if (!$recordSet || $recordSet->RecordCount() != 1) {
+
+		if (!$recordSet) {
 		    /* We can't lock this record .. wait then retry */
 		    sleep(1);
+		    continue;
 		}
 
 		$i++;
-
-		/* If we've locked them all, we're done */
-		if ($i == sizeof($ids)) {
-		    break;
-		}
 	    }
 	}
 
