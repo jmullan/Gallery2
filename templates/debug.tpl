@@ -11,3 +11,6 @@
     {/g->element}
   {/g->box}
 {/if}
+
+{debug output=""}
+
