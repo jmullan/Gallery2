@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -63,7 +63,7 @@ class AdminLayoutsController extends GalleryController {
 						  "Invalid layout: $layoutId"),
 			     null);
 	    }
-	    
+
 	    $layoutStatus = $layoutStatusList[$layoutId];
 
 	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
@@ -82,6 +82,7 @@ class AdminLayoutsController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['mode'] = 'config';
 		$status['activated'] = $layout->getName();
 	    }
 	} else if (isset($form['action']['deactivate'])) {
@@ -106,6 +107,7 @@ class AdminLayoutsController extends GalleryController {
 		if (empty($redirect)) {
 		    $redirect['view'] = 'core:SiteAdmin';
 		    $redirect['subView'] = 'core:AdminLayouts';
+		    $redirect['mode'] = 'config';
 		}
 		$status['deactivated'] = $layout->getName();
 	    }
@@ -216,7 +218,7 @@ class AdminLayoutsView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -231,7 +233,7 @@ class AdminLayoutsView extends GalleryView {
 	if (empty($mode)) {
 	    $mode = 'defaults';
 	}
-	
+
 	/* Load the module list */
 	list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout', true);
 	if ($ret->isError()) {
@@ -379,7 +381,7 @@ class AdminLayoutsView extends GalleryView {
 	/* Render the HTML body */
 	$template->setVariable('AdminLayouts', $AdminLayouts);
 	$template->setVariable('controller', 'core:AdminLayouts');
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminLayouts.tpl'));
     }
