@@ -52,6 +52,12 @@ class AuthenticateStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	$installerDir = dirname(dirname(__FILE__));
+	if (isset($_SERVER['DOCUMENT_ROOT']) && preg_match('#^' . $_SERVER['DOCUMENT_ROOT'] . '/(.*)#',
+							   $installerDir, $matches)) {
+	    $installerDir = $matches[1];
+	}
+
 	if (!$this->isComplete()) {
 	    // authenticate
 	    $authenticated = false;
@@ -60,8 +66,7 @@ class AuthenticateStep extends InstallStep {
 		if (!$this->_firstTime) {
 		    $templateData['errors'][] =
 			sprintf(_('<b>Error:</b> could not locate <b>login.txt</b>. ' .
-				  'Please place it in your <tt>%s/</tt> directory.'),
-				str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(dirname(__FILE__))));
+				  'Please place it in your <tt>%s/</tt> directory.'), $installerDir);
 		}
 	    } else if (!is_readable($authFile)) {
 		$templateData['errors'][] =
@@ -82,9 +87,7 @@ class AuthenticateStep extends InstallStep {
 
 	$this->_firstTime = false;
 	
-	$templateData['installerDir'] =
-	    str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(dirname(__FILE__))) .
-		DIRECTORY_SEPARATOR;
+	$templateData['installerDir'] = $installerDir;
     
 	if ($this->isComplete()) {
 	    $templateData['bodyFile'] = 'AuthenticateSuccessful.html';
