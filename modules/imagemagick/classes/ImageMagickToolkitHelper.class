@@ -145,7 +145,7 @@ class ImageMagickToolkitHelper {
 	}
 
 	foreach ($results as $resultLine) {
-	    if (ereg('GIF.*PseudoClass', $resultLine)) {
+	    if (ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', $resultLine)) {
 		$mimeTypes[] = 'image/gif';
 	    } elseif (ereg('JPEG.*DirectClass', $resultLine)) {
 		$mimeTypes[] = 'image/jpeg';
@@ -217,7 +217,7 @@ class ImageMagickToolkitHelper {
 					 'message' => array_merge($module->translate('Problem executing binary:'),
 								  $results)
 					 );
-		} elseif (! ereg('GIF.*PseudoClass', join(',', $results))) {
+		} elseif (! ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', join(',', $results))) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
 					 'message' => array_merge($module->translate('Binary output:'),
