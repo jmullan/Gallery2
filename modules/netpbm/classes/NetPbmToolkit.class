@@ -98,7 +98,8 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	if (!isset($width) &&
 		($queueIt || in_array($operationName, array('thumbnail', 'crop')))) {
-	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    list ($ret, $width, $height) =
+		$this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
 		$this->_deleteTempFiles($context);
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -119,8 +120,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $transform[] = array($this->_pnmCmd('pnmscale'),
 				 '--quiet', '-xysize', $parameters[0], $ysize);
 	    if (isset($width)) {
-		list ($width, $height) =
-		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0], $ysize);
+		list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
+		    $width, $height, $parameters[0], $ysize);
 	    }
 	    break;
 
@@ -163,7 +164,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 
 	case 'crop':
-	    /* Crop is expressed in percentages so we have to know the dimensions of the input file */
+	    /* Crop is in percentages so we have to know the dimensions of the input file */
 	    $transform[] = array($this->_pnmCmd('pnmcut'),
 				 round(($parameters[0] / 100) * $width),
 				 round(($parameters[1] / 100) * $height),
@@ -184,7 +185,10 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $compositeAlignX = $parameters[5];
 	    $compositeAlignY = $parameters[6];
 
-	    // Create temporary files, composite may need to be decomposed into rgb & alpha images
+	    /*
+	     * Create temporary files, composite may need to be decomposed into
+	     * rgb & alpha images
+	     */
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $tmpOverlay = $platform->tempnam($tmpDir, 'npbm_');
 	    if (empty($tmpOverlay)) {
@@ -238,8 +242,8 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	    case 'image/tiff':
 		/*
-		 * This is only because my decomposed alpha was "all black", and made it seem like it
-		 * wasn't doing anything
+		 * This is only because my decomposed alpha was "all black", and
+		 * made it seem like it wasn't doing anything
 		 */
 		$useAlpha = 0;
 		$getOverlayCmd = array($this->_pnmCmd('tifftopnm'),
@@ -251,7 +255,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-				    "mimeType not handled: $compositeOverlayMimeType"), null, null);
+                    "mimeType not handled: $compositeOverlayMimeType"), null, null);
 	    }
 
 	    // Execute commands
@@ -272,66 +276,67 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $pnmcomp = array($this->_pnmCmd('pnmcomp'));
 
 	    switch ($compositeAlignmentType) {
-	    case 'top-left': // Top - Left
+	    case 'top-left': /* Top - Left */
 		$pnmcomp[] = '-align=left';
 		$pnmcomp[] = '-valign=top';
 		break;
 
-	    case 'top': // Top
+	    case 'top': /* Top */
 		$pnmcomp[] = '-align=center';
 		$pnmcomp[] = '-valign=top';
 		break;
 
-	    case 'top-right': // Top - Right
+	    case 'top-right': /* Top - Right */
 		$pnmcomp[] = '-align=right';
 		$pnmcomp[] = '-valign=top';
 		break;
 
-	    case 'left': // Left
+	    case 'left': /* Left */
 		$pnmcomp[] = '-align=left';
 		$pnmcomp[] = '-valign=middle';
 		break;
 
-	    case 'center': // Center
+	    case 'center': /* Center */
 		$pnmcomp[] = '-align=center';
 		$pnmcomp[] = '-valign=middle';
 		break;
 
-	    case 'right': // Right
+	    case 'right': /* Right */
 		$pnmcomp[] = '-align=right';
 		$pnmcomp[] = '-valign=middle';
 		break;
 
-	    case 'bottom-left': // Bottom - Left
+	    case 'bottom-left': /* Bottom - Left */
 		$pnmcomp[] = '-align=left';
 		$pnmcomp[] = '-valign=bottom';
 		break;
 
-	    case 'bottom': // Bottom
+	    case 'bottom': /* Bottom */
 		$pnmcomp[] = '-align=center';
 		$pnmcomp[] = '-valign=bottom';
 		break;
 
-	    case 'bottom-right': // Bottom Right
+	    case 'bottom-right': /* Bottom Right */
 		$pnmcomp[] = '-align=right';
 		$pnmcomp[] = '-valign=bottom';
 		break;
 
 	    case 'manual':
-		// Use the alignments we received
+		/* Use the alignments we received */
 		if (!isset($width)) {
-		    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+		    list ($ret, $width, $height) =
+			$this->_getImageDimensions($mimeType, $sourceFilename);
 		    if ($ret->isError()) {
 			$this->_deleteTempFiles($context);
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		}
 
-		// Convert from percentages to pixels
+		/* Convert from percentages to pixels */
 		$compositeAlignX = (int)($compositeAlignX / 100 * $width);
 		$compositeAlignY = (int)($compositeAlignY / 100 * $height);
 
-		// Clip to our bounding box
+		/* Clip to our bounding box */
 		$compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
 		$compositeAlignX = max(0, $compositeAlignX);
 		$compositeAlignY = min($compositeAlignY, $height - $compositeHeight);
@@ -344,7 +349,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    default:
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-			    "Unknown composite alignment type: $compositeAlignmentType"), null, null);
+                    "Unknown composite alignment type: $compositeAlignmentType"), null, null);
 	    }
 
 	    if ($useAlpha) {
@@ -354,11 +359,11 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $pnmcomp[] = $tmpOverlay;
 	    $transform[] = $pnmcomp;
 
-	    break; // case composite
+	    break; /* case composite */
 
 	case 'compress':
 	    $targetSize = $parameters[0];
-	    $fileSize = $platform->filesize($sourceFilename) >> 10; //Size in KB
+	    $fileSize = $platform->filesize($sourceFilename) >> 10; /* Size in KB */
 	    if ($fileSize <= $targetSize) {
 		break;
 	    }
@@ -385,8 +390,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		    $minQuality = $quality;
 		}
 		$quality = round(($minQuality + $maxQuality) / 2);
-	    } while ($maxQuality - $minQuality > 2
-		   && abs(($fileSize - $targetSize) / $targetSize) > 0.02);
+	    } while ($maxQuality - $minQuality > 2 &&
+		     abs(($fileSize - $targetSize) / $targetSize) > 0.02);
 	    return array(GalleryStatus::success(), $outputMimeType, $context);
 
 	default:
@@ -400,7 +405,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $context['height'] = $height;
 	}
 
-	if (($queueIt || empty($transform)) && $sourceFilename != $destFilename) {
+	if (($queueIt || (empty($transform) && $outputMimeType == $mimeType)) &&
+	        $sourceFilename != $destFilename) {
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
 		$this->_deleteTempFiles($context);
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
@@ -408,7 +414,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	    }
 	}
 
-	/* Use context look-ahead to see if we can queue up these parameters
+	/*
+	 * Use context look-ahead to see if we can queue up these parameters
 	 * to include in a later operation..
 	 */
 	if ($queueIt) {
@@ -417,7 +424,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::success(), $outputMimeType, $context);
 	}
 
-	if (!empty($transform)) {
+	if (!empty($transform) || $outputMimeType != $mimeType) {
 	    $ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
 					  $destFilename, $outputMimeType);
 	}
@@ -434,7 +441,9 @@ class NetPbmToolkit extends GalleryToolkit {
 	return array(GalleryStatus::success(), $outputMimeType, $context);
     }
 
-    /** Delete temp files used by composite operation */
+    /**
+     * Delete temp files used by composite operation
+     */
     function _deleteTempFiles(&$context) {
 	if (!empty($context['netpbm.tmp'])) {
 	    global $gallery;
@@ -538,7 +547,8 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	/* Use jhead to preserve EXIF metadata for some mime types */
 	if ($mimeType == 'image/jpeg' || $mimeType == 'image/pjpeg') {
-	    list ($ret, $jheadPath) = GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath');
+	    list ($ret, $jheadPath) =
+		GalleryCoreApi::getPluginParameter('module', 'netpbm', 'jheadPath');
 	    if ($ret->isError()) {
 		@$platform->unlink($tmpFilename);
 		return $ret->wrap(__FILE__, __LINE__);
@@ -598,9 +608,7 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
-					      __FILE__, __LINE__,
-					      'Unsupported file type: ' . $mimeType),
-			 null);
+                __FILE__, __LINE__, 'Unsupported file type: ' . $mimeType), null);
 	}
 
 	return array(GalleryStatus::success(),
@@ -690,7 +698,8 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	list ($success, $stdout, $stderr) = $platform->exec($cmdArray);
 	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
+			 null, null);
 	}
 
 	return array(GalleryStatus::success(), $stdout, $stderr);
@@ -744,7 +753,6 @@ class NetPbmToolkit extends GalleryToolkit {
      * @param array a single level set of commands
      */
     function _extractCommands($cmdArray, $level=0) {
-
 	$results = array();
 	$arrayElements = 0;
 	foreach (array_values($cmdArray) as $cmd) {
