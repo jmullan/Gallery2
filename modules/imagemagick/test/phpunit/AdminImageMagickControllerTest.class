@@ -85,8 +85,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 
-	/* use addslashes() here to escape the \ slash char on windows */
-	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}validPath${slash}"));
+	GalleryUtilities::putRequestVariable('form.path', "${slash}validPath${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 
@@ -121,7 +120,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}validPathBadBinaries${slash}"));
+	GalleryUtilities::putRequestVariable('form.path', "${slash}validPathBadBinaries${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 
@@ -141,7 +140,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
-	GalleryUtilities::putRequestVariable('form.path', addslashes("${slash}invalidPath${slash}"));
+	GalleryUtilities::putRequestVariable('form.path', "${slash}invalidPath${slash}");
 	GalleryUtilities::putRequestVariable('form.jpegQuality', '12');
 	GalleryUtilities::putRequestVariable('return.view', 'target');
 

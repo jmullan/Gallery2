@@ -133,6 +133,8 @@ class UtilitiesTest extends GalleryTestCase {
     function testConvertExtensionToMime() {
 	$this->assertEquals('image/jpeg',
 			    GalleryUtilities::convertExtensionToMime('jpg'));
+	$this->assertEquals('image/jpeg',
+			    GalleryUtilities::convertExtensionToMime('JPG'));
     }
     
     function testMakeMarkers() {
@@ -208,10 +210,27 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testIsPathInList() {
-	$this->assert(GalleryUtilities::isPathInList('/foo/bar', array('/foo', '/bar')), 'test 1');
-	$this->assert(!GalleryUtilities::isPathInList('/foobar', array('/foo', '/bar')), 'test 2');
-	$this->assert(GalleryUtilities::isPathInList('/foo', array('/foo', '/bar')), 'test 3');
-	$this->assert(GalleryUtilities::isPathInList('/foo/bar', array('/foo', '/bar')), 'test 4');
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$this->assert(GalleryUtilities::isPathInList("${slash}foo${slash}bar",
+						     array("${slash}foo", "${slash}bar")),
+		      'test 1');
+	$this->assert(!GalleryUtilities::isPathInList("${slash}foobar",
+						      array("${slash}foo", "${slash}bar")),
+		      'test 2');
+	
+	$this->assert(GalleryUtilities::isPathInList("${slash}foo",
+						     array("${slash}foo", "${slash}bar")),
+		      'test 3');
+	$this->assert(GalleryUtilities::isPathInList("${slash}foo${slash}bar",
+						     array("${slash}foo", "${slash}bar")),
+		      'test 4');
+    }
+
+    function testProcessingPaths() {
+	GalleryUtilities::putRequestVariable('test', __FILE__);
+	$this->assertEquals(__FILE__, GalleryUtilities::getRequestVariables('test'));
     }
 }
 
