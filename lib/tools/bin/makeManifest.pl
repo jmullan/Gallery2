@@ -29,8 +29,8 @@ map(s{$basedir/}{}, @entries);
 @entries = sort @entries;
 print STDERR "\n";
 
-# Get list of .class, .inc, .php files in basedir/modules/layouts..
-my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|[^/]*)\.(class|inc|php)$}, @entries);
+# Get list of .class, .inc, .php files in basedir/modules/layouts/themes..
+my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php)$}, @entries);
 
 # Split into sections
 #
