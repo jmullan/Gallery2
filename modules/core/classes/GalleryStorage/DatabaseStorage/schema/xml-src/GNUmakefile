@@ -36,7 +36,7 @@ $(TMPDIR)/%.xml: $(CLASSDIR)/%.class
 
 scrub: clean
 	rm -rf $(TMPDIR)
-	rm -rf $(OUTDIR)/*.xml
+	rm -rf $(OUTDIR)
 
 clean:
 	rm -f $(TMPDIR)/*.xml
