@@ -69,9 +69,19 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list($ret, $module) = $gallery->loadModule('netpbm');
+	/*
+	 * If our graphics type is not NetPBM, set it now.
+	 */
+	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($graphicsType != 'netpbm') {
+	    $ret = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	/* Figure out where to redirect upon success */
