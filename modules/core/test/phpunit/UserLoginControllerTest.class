@@ -49,7 +49,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_saveUser = $gallery->getActiveUser();
-	$this->_saveSession = $gallery->getSession();
+	$this->_saveSession = $gallery->_session;
     }
 
     function tearDown() {
