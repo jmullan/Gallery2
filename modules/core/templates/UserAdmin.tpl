@@ -55,7 +55,7 @@
             {$choice.name}
           </li>
           {else}
-          <li>
+	    <li class="gbAdminLink" id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
             <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
               {$choice.name}
             </a>

@@ -16,8 +16,8 @@
     {foreach from=$SiteAdmin.moduleSystemLinks item=module}
     {foreach from=$module item=link}
     {if isset($link.params.view) && $link.params.view == "core:SiteAdmin"}
-      <li class="giSelected">
-        {$link.text}
+      <li class="giSelected"> 
+      {$link.text}
       </li>
     {else}
       <li>
@@ -52,7 +52,7 @@
 	      {if ($SiteAdmin.subViewName == $choice.view)}
 	      <li class="giSelected"> {$choice.name} </li>
 	      {else}
-	      <li>
+	        <li class="gbAdminLink" id="gbLink_{$choice.controller|default:''|safecssname}{$choice.view|default:''|safecssname}{$choice.subView|default:''|safecssname}">
 		<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=`$choice.view`"}">
 		  {$choice.name}
 		</a>

@@ -68,7 +68,7 @@
               {$choiceName}
             </li>
           {else}
-            <li>
+            <li class="gbAdminLink" id="gbLink_{$choiceParams.controller|default:''|safecssname}{$choiceParams.view|default:''|safecssname}{$choiceParams.subView|default:''|safecssname}">
               <a href="{g->url params=$choiceParams}">
                 {$choiceName}
               </a>
