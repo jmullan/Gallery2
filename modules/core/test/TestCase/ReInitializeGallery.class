@@ -1,0 +1,28 @@
+<?php
+
+class ReInitializeGalleryTestCase extends TestCase {
+
+    function getDescription() {
+	return "Reset the database and the gallery data area.  " .
+		"Create root album, anonymous user.";
+    }
+
+    function useDefaultDatabase() {
+	return false;
+    }
+
+    function getDependencies() {
+	return array("DropDatabase",
+		     "CreateDatabase",
+		     "CreateSchema",
+		     "EmptyGallery",
+		     "CreateAlbumItem",
+		     "CreateAnonymousUser");
+    }
+
+    function testStart() {
+	return GalleryStatus::success();
+    }
+}
+
+?>

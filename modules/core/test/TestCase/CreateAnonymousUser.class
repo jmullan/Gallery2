@@ -1,0 +1,24 @@
+<?php
+
+class CreateAnonymousUserTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create the Anonymous user";
+    }
+
+    function testStart() {
+
+	$user = new GalleryUser();
+	$ret = $user->create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	$user->setFullName('Anonymous');
+	$user->setIsAdmin(false);
+	
+	return $user->save();
+    }
+}
+
+?>
+</pre>

@@ -11,7 +11,6 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 
 	print("Creating new album item\n");
 	$ret = $album->createRoot("createAndDelete");
-	$this->dump($ret, $album);
 	
 	if ($ret->isError()) {
 	    $this->error($ret);
@@ -34,7 +33,6 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	
 	print("SAVE\n");
 	$ret = $album->save();
-	$this->dump($ret, $album);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
@@ -42,7 +40,6 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 
 	print("DELETE\n");
 	$ret = $album->delete();
-	$this->dump($ret, $album);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;

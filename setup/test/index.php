@@ -37,7 +37,7 @@ foreach ($testTable as $name => $class) {
 	$bgColor = '#CCCCCC';
     }
     print '<td bgColor=' . $bgColor . '>';
-    print '<a href=index.php?runTest=' . $name . '>';
+    print '<a href=index.php?testName=' . $name . '>';
     print $name;
     print '</a>';
     print '</td>';
@@ -53,26 +53,65 @@ print '</center>';
 print '<br>';
 print '<hr>';
 
-if (!empty($HTTP_GET_VARS['runTest'])) {
-    $runTest = $HTTP_GET_VARS['runTest'];
+if (!empty($HTTP_GET_VARS['testName'])) {
+    ob_start();
+    $ret = runTest($HTTP_GET_VARS['testName']);
+    $buf = ob_get_contents();
+    ob_end_clean();
 
-    $class = $testTable[$runTest];
+    if ($ret->isError()) {
+	print 'Overall Status: ' . $ret->getAsString() . '<br>';
+    } else {
+	print 'Overall Status: Success<br>';
+    }
 
-    if ($class->requireDatabaseConnection()) {
-	if ($class->useDefaultDatabase()) {
-	    include('connectToDbDefault.php');
-	} else {
-	    include('connectToDbNoDefault.php');
+    print '<hr>';
+
+    print $buf;
+}
+
+function runTest($testName) {
+    global $testTable;
+    global $gallery;
+    
+    $class = $testTable[$testName];
+
+    $dependencies = $class->getDependencies();
+    foreach ($dependencies as $test) {
+	$ret = runTest($test);
+	if ($ret->isError()) {
+	    return $ret;
 	}
     }
 
-    print '<b>Test: ' . $runTest . '</b>';
+    if ($class->requireDatabaseConnection()) {
+	/* Set up our storage */
+	$storage = new DatabaseStorage();
+	$config = $gallery->getConfig();
+	$storage->setType($config->get('storage.database.type'));
+	$storage->setHostname($config->get('storage.database.hostname'));
+	$storage->setUsername($config->get('storage.database.username'));
+	$storage->setPassword($config->get('storage.database.password'));
+	if ($class->useDefaultDatabase()) {
+	    $storage->setDatabase($config->get('storage.database.database'));
+	}
+	$ret = $storage->connect();
+	if ($ret->isError()) {
+	    print "Error: ";
+	    print $ret->getAsString();
+	    exit;
+	}
+    
+	$gallery->setStorage($storage);
+    }
+
+    print '<b>Test: ' . $testName . '</b>';
     print '<br>';
     
     print '<b>Start</b><br>';
     set_time_limit(30);
-    $ret = $class->start();
-    if ($ret->isSuccess()) {
+    $ret1 = $class->start();
+    if ($ret1->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
 	print 'Status: ' . $ret->getAsString();
@@ -81,8 +120,8 @@ if (!empty($HTTP_GET_VARS['runTest'])) {
     print '<br>';
     
     print '<b>Cleanup</b><br>';
-    $ret = $class->cleanup();
-    if ($ret->isSuccess()) {
+    $ret2 = $class->cleanup();
+    if ($ret2->isSuccess()) {
 	print 'Status: Success<br>';
     } else {
 	print 'Status: ' . $ret->getAsString();
@@ -95,5 +134,11 @@ if (!empty($HTTP_GET_VARS['runTest'])) {
 	print $line;
     }
     print '</pre>';
+
+    if ($ret1->isError()) {
+	return $ret1;
+    }
+
+    return $ret2;
 }
 ?>
