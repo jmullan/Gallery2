@@ -986,7 +986,7 @@ class DatabaseStorage extends GalleryStorage {
 			 $lockTable, $freshUntilCol, $lockIdCol, $lockIdMarkers);
 
 	$this->_traceStart();
-	$data = array_merge($freshUntil, $lockIds);
+	$data = array_merge(array($freshUntil), $lockIds);
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
 	
