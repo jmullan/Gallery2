@@ -284,7 +284,7 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if (isset($permissions['core.viewSource'])) {
+	    if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
