@@ -57,10 +57,6 @@
   
     UNIQUE KEY (COLUMN_PREFIXuserName)
     
-      ,
-    
-    UNIQUE KEY (COLUMN_PREFIXemail)
-    
     , 
   
     INDEX (COLUMN_PREFIXid)
