@@ -32,16 +32,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "Album instellingen"
-
-#, fuzzy
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "* Geen sorteer volgorde *"
 
 msgid "&laquo; None &raquo;"
 msgstr ""
@@ -58,15 +54,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "* Geen sorteer volgorde *"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "* Geen sorteer volgorde *"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "* Geen sorteer volgorde *"
 
 msgid "&laquo; first"
 msgstr ""
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "* Geen sorteer volgorde *"
 
 msgid "(data)"
 msgstr ""
@@ -283,7 +279,7 @@ msgid "Choose a destination album"
 msgstr ""
 
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 
 msgid "Choose a new album for the link"
@@ -375,6 +371,10 @@ msgstr "Verwijder item"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Verwijder een gebruiker"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Verwijder"
@@ -775,6 +775,14 @@ msgstr "uitloggen"
 msgid "Make Highlight"
 msgstr "Maak highlight"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Album sorteer volgorde:"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Album sorteer volgorde:"
+
 msgid "Markup: "
 msgstr ""
 
@@ -837,6 +845,9 @@ msgstr "Nieuwe mappen"
 
 msgid "New files"
 msgstr "Nieuwe bestanden"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr ""
@@ -1226,6 +1237,12 @@ msgstr "De ingegeven naam is reeds in gebruik. Kies een andere naam."
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "De ingegeven naam is reeds in gebruik. Kies een andere naam."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "De wachtwoorden die u hebt ingegeven komen niet overeen"
 
@@ -1385,8 +1402,8 @@ msgid "This page is valid XHTML 1.0"
 msgstr ""
 
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 
 #, c-format
@@ -1446,6 +1463,14 @@ msgid "Use Global"
 msgstr ""
 
 msgid "Use short URLs?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Een langere beschrijving van dit item."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
 
 #, c-format
@@ -1543,6 +1568,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "U mag de 'all users' groep niet verwijderen!"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1738,6 +1767,10 @@ msgstr "Aktie"
 msgid "archive"
 msgstr "activeer"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "Ongedaan maken"
@@ -1769,6 +1802,12 @@ msgstr "deactiveer"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Verwijder een gebruiker"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 #, fuzzy
 msgid "delete"
@@ -2018,6 +2057,10 @@ msgstr[0] "Upload een bestand rechstreeks vanuit uw computer."
 msgstr[1] ""
 
 #, fuzzy
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "* Geen sorteer volgorde *"
+
+#, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "Gebruiker '%s' is aangemaakt."
 
@@ -2214,10 +2257,6 @@ msgstr[1] ""
 #, fuzzy
 #~ msgid "User Edit"
 #~ msgstr "Gebruikersnaam"
-
-#, fuzzy
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "U mag de 'all users' groep niet verwijderen!"
 
 #, fuzzy
 #~ msgid "You cannot delete the All Users group!"

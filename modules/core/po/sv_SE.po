@@ -32,7 +32,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "Varje objekt kr&auml;ver en miniatyrbild.  St&auml;ll in f&ouml;rvalt v&auml;"
 "rde i bildpunkter(pixels) h&auml;r."
@@ -40,9 +41,6 @@ msgstr ""
 #, c-format
 msgid "%s Layout Settings"
 msgstr "%s Utseendeinst&auml;llningar"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Ingen sorteringsordning &laquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ingen &raquo;"
@@ -56,14 +54,15 @@ msgstr "&laquo; Tillbaka"
 msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; f&ouml;rvalt utseende &laquo;"
 
+#, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; Ingen sorteringsordning &laquo;"
+
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; f&ouml;rvalt tema &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; f&ouml;rsta"
-
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; Ingen sorteringsordning &laquo;"
 
 msgid "(data)"
 msgstr "(information)"
@@ -258,8 +257,9 @@ msgstr "Kontrollera ingen"
 msgid "Choose a destination album"
 msgstr "V&auml;lj ett destinationsalbum"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "V&auml;lj ett utseende f&ouml;r detta album. (S&auml;ttet som albumet &auml;"
 "r ordnat p&aring; sidan.)"
@@ -351,6 +351,10 @@ msgstr "Ta bort objekt"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Ta bort en anv&auml;ndare"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Ta bort"
@@ -789,6 +793,14 @@ msgstr "Logga ut"
 msgid "Make Highlight"
 msgstr "G&ouml;r till f&ouml;rgrundsbild"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "F&ouml;rvald sorteringsordning"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "F&ouml;rvald sorteringsordning"
+
 msgid "Markup: "
 msgstr "Markera: "
 
@@ -845,6 +857,9 @@ msgstr "Nya kataloger"
 
 msgid "New files"
 msgstr "Nya filer"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "Ny &auml;gare"
@@ -1233,6 +1248,12 @@ msgid "The name you entered is already in use.  Please enter another."
 msgstr ""
 "Namnet du skrev in anv&auml;nds redan.  V&auml;nligen skriv in ett annat."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "L&ouml;senorden du skrev in matchar inte varandra"
 
@@ -1421,9 +1442,10 @@ msgstr "Detta objekt &auml;gs av anv&auml;ndare: %s"
 msgid "This page is valid XHTML 1.0"
 msgstr "Denna sida &auml;r validerad XHTML 1.0"
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 "Detta st&auml;ller in f&ouml;rvald sorteringsordning f&ouml;r albumet.  "
 "Detta g&ouml;rs p&aring; alla nya objekt."
@@ -1494,6 +1516,14 @@ msgstr "Anv&auml;nd global"
 
 msgid "Use short URLs?"
 msgstr "Anv&auml;nd korta webbadresser?"
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Detta &auml;r den l&aring;nga beskrivningen f&ouml;r objektet."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
+msgstr ""
 
 #, c-format
 msgid "User '%s' does not exist."
@@ -1599,6 +1629,10 @@ msgstr ""
 "Du kan v&auml;lja vilken del av fotot som kommer att anv&auml;ndas f&ouml;r "
 "miniatyrbilden.  Detta kommer inte att ha n&aring;gon p&aring;verkan "
 "p&aring; storleks&auml;ndrade eller originalversioner av bilden."
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Du kan inte ta bort denna grupp"
 
 msgid "You cannot delete that group"
 msgstr "Du kan inte ta bort denna grupp"
@@ -1787,6 +1821,10 @@ msgstr "Animering"
 msgid "archive"
 msgstr "aktivera"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "&aring;ngra"
@@ -1815,6 +1853,12 @@ msgstr "avaktivera"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Ta bort %s"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "ta bort"
@@ -2048,6 +2092,9 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Ladda upp en fil direkt fr&aring;n din dator."
 msgstr[1] "Ladda upp upp till %d filer direkt fr&aring;n din dator."
+
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Ingen sorteringsordning &laquo;"
 
 #~ msgid "Restored original photo successfully"
 #~ msgstr "&Aring;terst&auml;llde originalfoto framg&aring;ngsrikt"

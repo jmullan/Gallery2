@@ -30,7 +30,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: KBabel 1.3\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "Ogni oggetto necessita un'anteprima. Imposta qui il valore predefinito in "
 "pixel."
@@ -38,9 +39,6 @@ msgstr ""
 #, c-format
 msgid "%s Layout Settings"
 msgstr "Configurazione Layout di %s"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Nessun Ordinamento &raquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Nessuno &raquo;"
@@ -54,14 +52,15 @@ msgstr "&laquo; indietro"
 msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; layout predefinito &raquo;"
 
+#, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; nessun ordinamento &raquo;"
+
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; tema predefinito &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; primo"
-
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; nessun ordinamento &raquo;"
 
 msgid "(data)"
 msgstr "(dati)"
@@ -253,8 +252,9 @@ msgstr "Deseleziona Tutto"
 msgid "Choose a destination album"
 msgstr "Scegli un album di destinazione"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Scegli un layout per questo album. (Il modo in cui questo album viene "
 "sistemato nella pagina.)"
@@ -342,6 +342,10 @@ msgstr "Elimina Oggetto"
 
 msgid "Delete a User"
 msgstr "Elimina Un Utente"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Elimina"
@@ -769,6 +773,14 @@ msgstr "Disconnetti"
 msgid "Make Highlight"
 msgstr "Fanne la Copertina"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Ordinamento predefinito"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Ordinamento predefinito"
+
 msgid "Markup: "
 msgstr "Markup: "
 
@@ -825,6 +837,9 @@ msgstr "Nuove directory"
 
 msgid "New files"
 msgstr "Nuovi file"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "Nuovo proprietario"
@@ -1204,6 +1219,12 @@ msgid "The name you entered is already in use.  Please enter another."
 msgstr ""
 "Il nome che hai inserito &egrave; gi&agrave; in uso.  Inseriscine un altro."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "Le password che hai inserito non corrispondono"
 
@@ -1389,9 +1410,10 @@ msgstr "Questo oggetto &egrave; di propriet&agrave; dell'utente: %s"
 msgid "This page is valid XHTML 1.0"
 msgstr "Questa pagina &egrave; conforme a XHTML 1.0"
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 "Questo stabilisce il tipo di ordinamento predefinito per l'album.  "
 "Verr&agrave; applicato a tutti i nuovi oggetti."
@@ -1459,6 +1481,14 @@ msgstr "Usa Globali"
 
 msgid "Use short URLs?"
 msgstr "Usare le URL corte?"
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Questa &egrave; la descrizione estesa dell'oggetto."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
+msgstr ""
 
 #, c-format
 msgid "User '%s' does not exist."
@@ -1564,6 +1594,10 @@ msgstr ""
 "Puoi scegliere quale parte della foto sar&agrave; usata per l'anteprima.  "
 "Questo non avr&agrave; alcun effetto sulla versione ridimensionata od "
 "originale dell'immagine."
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Non puoi eliminare questo gruppo"
 
 msgid "You cannot delete that group"
 msgstr "Non puoi eliminare questo gruppo"
@@ -1744,6 +1778,10 @@ msgstr "animazione"
 msgid "archive"
 msgstr "archivio"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 msgid "audio"
 msgstr "audio"
 
@@ -1771,6 +1809,12 @@ msgstr "disattiva"
 #, c-format
 msgid "delete %s"
 msgstr "elimina %s"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "elimina"
@@ -2003,6 +2047,9 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Carica un file direttamente dal tuo computer."
 msgstr[1] "Carica fino a %d file direttamente dal tuo computer."
+
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Nessun Ordinamento &raquo;"
 
 #~ msgid "Restored original photo successfully"
 #~ msgstr "Foto originale ripristinata con successo"

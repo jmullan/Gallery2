@@ -32,16 +32,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 " Jokainen kuva tarvitsee esikatselukuvan. Aseta oletusarvo pikseleissä tähän."
 
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "Omat asetukset"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Ei mitään &raquo;"
@@ -58,15 +56,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; Ei mitään &raquo;"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Ei mitään &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; ensimmäinen"
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
 
 msgid "(data)"
 msgstr "(tiedot)"
@@ -271,8 +269,9 @@ msgstr ""
 msgid "Choose a destination album"
 msgstr "Valitse kohde valituille esineille"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr "Valitse sommittelu tälle albumille."
 
 #, fuzzy
@@ -364,6 +363,10 @@ msgstr "Poista kohde"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Poista käyttäjä"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Poista"
@@ -771,6 +774,14 @@ msgstr "Kirjaudu ulos"
 msgid "Make Highlight"
 msgstr "Laita esimerkkikuvaksi"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Lajittelujärjestys"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Lajittelujärjestys"
+
 msgid "Markup: "
 msgstr ""
 
@@ -829,6 +840,9 @@ msgstr "Uudet hakemistot"
 
 msgid "New files"
 msgstr "Uudet tiedostot"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "Uusi omistaja"
@@ -1226,6 +1240,12 @@ msgstr "Syöttämäsi nimi on jo käytössä. Valitse toinen nimi."
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "Syöttämäsi nimi on jo käytössä. Syötä uusi nimi."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "Syöttämäsi salasanat eivät vastaa toisiaan"
 
@@ -1390,9 +1410,10 @@ msgstr "Tämän kohteen omistaja on käyttäjä: %s"
 msgid "This page is valid XHTML 1.0"
 msgstr "Tämä sivu on käypää HTML 4.01 -koodia."
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 "Tämä asettaa oletusjärjestyksen albumille, joka pätee kaikkiin uusiin "
 "kohteisiin."
@@ -1460,6 +1481,14 @@ msgid "Use Global"
 msgstr ""
 
 msgid "Use short URLs?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Kohteen tarkka kuvaus."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
 
 #, c-format
@@ -1557,6 +1586,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Et voi lisätä tai poistaa käyttäjiä tästä ryhmästä"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1739,6 +1772,10 @@ msgstr "Toiminto"
 msgid "archive"
 msgstr "aktivoi"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "kumoa"
@@ -1767,6 +1804,12 @@ msgstr "deaktivoi"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Poista käyttäjä"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "poista"
@@ -2007,6 +2050,9 @@ msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Lähetä yksi tiedosto Galleriaan."
 msgstr[1] "Voit lähettää maks. %d tiedostoa koneeltasi yhtäaikaa Galleriaan."
 
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
+
 #, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "Palautus alkuperäiseen kuvaan onnistui"
@@ -2246,9 +2292,6 @@ msgstr[1] "Voit lähettää maks. %d tiedostoa koneeltasi yhtäaikaa Galleriaan.
 #, fuzzy
 #~ msgid "User Edit"
 #~ msgstr "Muokkaa"
-
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "Et voi lisätä tai poistaa käyttäjiä tästä ryhmästä"
 
 #, fuzzy
 #~ msgid "You cannot delete the All Users group!"

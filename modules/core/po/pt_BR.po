@@ -29,16 +29,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 " Todo ítem requer uma miniatura. Especifique aqui o tamanho padrão em píxels."
 
 #, c-format
 msgid "%s Layout Settings"
 msgstr "Parâmetros do Layout %s"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Sem ordem &raquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Nenhuma &raquo;"
@@ -52,14 +50,15 @@ msgstr "&laquo; volta"
 msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; layout padrão &raquo;"
 
+#, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; sem ordem &raquo;"
+
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; tema padrão &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; primeiro"
-
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; sem ordem &raquo;"
 
 msgid "(data)"
 msgstr "(data)"
@@ -251,8 +250,9 @@ msgstr "Deseleciona todos"
 msgid "Choose a destination album"
 msgstr "Escolha um álbum de destino"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Escolha um layout para este álbum. (A forma como o álbum é disposto na "
 "página.)"
@@ -340,6 +340,10 @@ msgstr "Apaga item"
 
 msgid "Delete a User"
 msgstr "Apaga um usuário"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Apaga"
@@ -527,11 +531,11 @@ msgid ""
 "Disabling this option will cause any actions (rotating, scaling, etc) to "
 "modify the original."
 msgstr ""
-"Gallery não altera as suas fotos originais quando girar ou redimensionar "
-"a imagem. Uma cópia da foto será feita e as operações serão aplicadas nesta "
+"Gallery não altera as suas fotos originais quando girar ou redimensionar a "
+"imagem. Uma cópia da foto será feita e as operações serão aplicadas nesta "
 "cópia. Isso preserva suas imagens originais, porém consome mais espaço em "
-"disco. Desativando esta opção irá aplicar as operações diretamente na "
-"imagem original."
+"disco. Desativando esta opção irá aplicar as operações diretamente na imagem "
+"original."
 
 msgid ""
 "Gallery features come as separate modules.  You can download and install "
@@ -553,12 +557,12 @@ msgid ""
 "layouts if you don't want to use them.  By default, new layouts are "
 "disabled.  They must be enabled before you can use them."
 msgstr ""
-"Gallery possui layouts que alteram a forma como você navega pelos seus álbums. "
-"Você pode instalar novos layouts ou desabilitar algum já instalado caso não "
-"queira usá-lo. Novos layouts estão inicialmente desabilitados, e precisam "
-"ser ativados para estarem disponíveis."
+"Gallery possui layouts que alteram a forma como você navega pelos seus "
+"álbums. Você pode instalar novos layouts ou desabilitar algum já instalado "
+"caso não queira usá-lo. Novos layouts estão inicialmente desabilitados, e "
+"precisam ser ativados para estarem disponíveis."
 
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Gallery has the option to use a compact URL format, however this format is "
 "not supported by default on all web servers.  It is enabled by default on "
@@ -566,12 +570,13 @@ msgid ""
 "s.  Use this %s to find out if short URLs work for you.  If the link returns "
 "a webserver error then they don't work for you."
 msgstr ""
-"O Gallery possui uma opção para usar URLs mais compactas, porém não são todos "
-"os servidores de web que permitem usá-las na instalação padrão. A opção está "
-"habilitada por default no Apache 1, mas não no Apache 2 ou IIS. Se estiver "
-"usando o Apache 2, você precisa usar a %s. Em IIS6, você precisa usar a %s. "
-"Use esta %s para descobrir se as URLs compactas funcionam para você. Se o "
-"link retornar um erro do servidor de web, quer dizer que não funcionam."
+"O Gallery possui uma opção para usar URLs mais compactas, porém não são "
+"todos os servidores de web que permitem usá-las na instalação padrão. A "
+"opção está habilitada por default no Apache 1, mas não no Apache 2 ou IIS. "
+"Se estiver usando o Apache 2, você precisa usar a %s. Em IIS6, você precisa "
+"usar a %s. Use esta %s para descobrir se as URLs compactas funcionam para "
+"você. Se o link retornar um erro do servidor de web, quer dizer que não "
+"funcionam."
 
 msgid "Gallery"
 msgstr "Gallery"
@@ -737,6 +742,14 @@ msgstr "Logout"
 msgid "Make Highlight"
 msgstr ""
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Ordem padrão"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Ordem padrão"
+
 msgid "Markup: "
 msgstr ""
 
@@ -793,6 +806,9 @@ msgstr "Novo diretório"
 
 msgid "New files"
 msgstr "Novos arquivos"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr ""
@@ -935,9 +951,6 @@ msgstr "Restaura o original"
 msgid "Restored layout settings"
 msgstr "Parâmetros de layout restaurados"
 
-msgid "Restored original photo successfully"
-msgstr "Foto original restaurada com sucesso"
-
 #, fuzzy
 msgid "Reverted rotate and scale changes successfully"
 msgstr "Usuário '%s' foi criado com sucesso."
@@ -984,8 +997,8 @@ msgid ""
 "activated below."
 msgstr ""
 "Selecione a língua padrão para o Gallery. Cada usuários pode reconfigurar "
-"este parâmetro em suas preferências pessoais ou usar o selecionador de língua, "
-"caso este esteja ativado."
+"este parâmetro em suas preferências pessoais ou usar o selecionador de "
+"língua, caso este esteja ativado."
 
 msgid "Server Path"
 msgstr ""
@@ -1004,6 +1017,10 @@ msgstr "Configuração"
 msgid "Settings saved successfully"
 msgstr "Configuração salva com sucesso"
 
+#, fuzzy
+msgid "Settings saved successfully."
+msgstr "Configuração salva com sucesso"
+
 msgid ""
 "Shrink or enlarge the original photo.  When Gallery scales a photo, it "
 "maintains the same aspect ratio (height to width) of the original photo to "
@@ -1011,10 +1028,10 @@ msgid ""
 "same as the value you enter here."
 msgstr ""
 "Diminua ou aumente a imagem original. Quando Gallery redimensiona uma "
-"imagem, ele irá manter as mesmas proporções (altura para largura), para evitar "
-"distorções. O valor entrado abaixo formará um retângulo neste tamanho em "
-"pixels. Gallery irá redimensionar a imagem até que fique no tamanho máximo "
-"possível que ainda caiba neste retângulo."
+"imagem, ele irá manter as mesmas proporções (altura para largura), para "
+"evitar distorções. O valor entrado abaixo formará um retângulo neste tamanho "
+"em pixels. Gallery irá redimensionar a imagem até que fique no tamanho "
+"máximo possível que ainda caiba neste retângulo."
 
 msgid "Site Admin"
 msgstr "Administração do Site"
@@ -1136,23 +1153,29 @@ msgid ""
 "Only use alphanumeric characters, underscores or dashes.  You will be able "
 "to rename it later."
 msgstr ""
-"O nome deste álbum no disco rígido. Precisa ser único dentro do álbum. "
-"Use somente caracteres alfanuméricos, o sublinhado (_) e o hífem (-). "
-"Você pode mudar o nome mais tarde."
+"O nome deste álbum no disco rígido. Precisa ser único dentro do álbum. Use "
+"somente caracteres alfanuméricos, o sublinhado (_) e o hífem (-). Você pode "
+"mudar o nome mais tarde."
 
 msgid ""
 "The name of this item on your hard disk.  It must be unique in this album.  "
 "Only use alphanumeric characters, underscores or dashes."
 msgstr ""
-"O nome representa o local de armazenamento deste item no disco fixo. "
-"Deve ser um nome único neste álbum. Use somente caracteres "
-"alfanuméricos, o sublinhado (_) e o hífem (-)."
+"O nome representa o local de armazenamento deste item no disco fixo. Deve "
+"ser um nome único neste álbum. Use somente caracteres alfanuméricos, o "
+"sublinhado (_) e o hífem (-)."
 
 msgid "The name you entered is already in use.  Please choose another."
 msgstr "O nome entrado já está em uso. Por favor tente outro."
 
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "O nome entrado já está em uso. Por favor tente outro."
+
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
 
 msgid "The passwords you entered did not match"
 msgstr "As senhas entradas não batem"
@@ -1297,12 +1320,16 @@ msgstr ""
 msgid "This item is owned by user: %s (%s)"
 msgstr "O dono deste item é usuário: %s (%s)"
 
+#, fuzzy, c-format
+msgid "This item is owned by user: %s"
+msgstr "O dono deste item é usuário: %s (%s)"
+
 msgid "This page is valid XHTML 1.0"
 msgstr ""
 
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 
 #, c-format
@@ -1361,6 +1388,14 @@ msgstr "Usar Global"
 
 msgid "Use short URLs?"
 msgstr "Usa URLs curtas?"
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Esta é a descrição comprida deste item."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
+msgstr ""
 
 #, c-format
 msgid "User '%s' does not exist."
@@ -1452,6 +1487,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Você não pode apagar este grupo"
 
 msgid "You cannot delete that group"
 msgstr "Você não pode apagar este grupo"
@@ -1627,6 +1666,10 @@ msgstr "animação"
 msgid "archive"
 msgstr "arquivo"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 msgid "audio"
 msgstr "áudio"
 
@@ -1654,6 +1697,12 @@ msgstr "desativar"
 #, c-format
 msgid "delete %s"
 msgstr "apaga %s"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "apaga"
@@ -1886,3 +1935,9 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Envia um arquivo diretamente do seu computador."
 msgstr[1] "Envia até %d arquivos diretamente do seu computador."
+
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Sem ordem &raquo;"
+
+#~ msgid "Restored original photo successfully"
+#~ msgstr "Foto original restaurada com sucesso"

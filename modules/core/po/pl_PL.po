@@ -30,7 +30,8 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 " Każda pozycja wymagaobrazka poglądowego. Określ standardową wartość w "
 "pikselach tutaj. "
@@ -38,9 +39,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "Ustawienia konta"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Brak kolejności sortowania &raquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Nic &raquo;"
@@ -55,15 +53,15 @@ msgstr "&laquo; z powrotem"
 msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; Brak kolejności sortowania &raquo;"
 
+#, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; Brak kolejności sortowania &raquo;"
+
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Brak kolejności sortowania raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; pierwszy"
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; Brak kolejności sortowania &raquo;"
 
 msgid "(data)"
 msgstr "(dane)"
@@ -266,8 +264,9 @@ msgstr ""
 msgid "Choose a destination album"
 msgstr "Wybierz miejsce docelowe dla wybranych pozycji"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Wybierz wygląd albumu. (Sposób, w jaki galeria ma ukazywać się na stronie.)"
 
@@ -360,6 +359,10 @@ msgstr "Usuń pozycję"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Usuń użytkownika"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Usuń"
@@ -783,6 +786,14 @@ msgstr "wyloguj się"
 msgid "Make Highlight"
 msgstr "Utwórz reprezentację"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Standardowa kolejność sortowania"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Standardowa kolejność sortowania"
+
 msgid "Markup: "
 msgstr ""
 
@@ -841,6 +852,9 @@ msgstr "Nowe katalogi"
 
 msgid "New files"
 msgstr "Nowe pliki"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "Nowy właściciel"
@@ -1237,6 +1251,12 @@ msgstr "Wprowadzona nazwa, jest już w użyciu. Proszę wybierz inną."
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "Wprowadzona nazwa jest już w użyciu. Proszę wprowadź inną."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "Wprowadzone hasła nie są jednakowe"
 
@@ -1404,9 +1424,10 @@ msgstr "Właścicielem pozycji jest użytkownik: %s"
 msgid "This page is valid XHTML 1.0"
 msgstr "Ta strona napisana jest w prawidłowym HTML 4.01"
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 " To ustawia standardowy porządek sortowania dla albumu. Dotyczy wszystkich "
 "nowych pozycji."
@@ -1477,6 +1498,14 @@ msgstr ""
 
 msgid "Use short URLs?"
 msgstr "Użyć krótkich URLi?"
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Szerszy opis tej pozycji."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
+msgstr ""
 
 #, c-format
 msgid "User '%s' does not exist."
@@ -1574,6 +1603,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Nie możesz dodawać lub usuwać uzytkowników z tej grupy"
 
 msgid "You cannot delete that group"
 msgstr "Nie możesz usunąć tej grupy"
@@ -1758,6 +1791,10 @@ msgstr "Animacja"
 msgid "archive"
 msgstr "aktywuj"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "cofnij"
@@ -1786,6 +1823,12 @@ msgstr "deaktywuj"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Usuń użytkownika"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "usuń"
@@ -2045,6 +2088,9 @@ msgstr[0] "Prześlij plik bezpośrednio z twojego komputera."
 msgstr[1] "Prześlij do %d plików bezpośrednio z twojego komputera."
 msgstr[2] "Prześlij do %d plików bezpośrednio z twojego komputera."
 
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Brak kolejności sortowania &raquo;"
+
 #, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "Przywrócono oryginalne zdjęcie"
@@ -2274,9 +2320,6 @@ msgstr[2] "Prześlij do %d plików bezpośrednio z twojego komputera."
 
 #~ msgid "User Edit"
 #~ msgstr "Edycja użytkownika"
-
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "Nie możesz dodawać lub usuwać uzytkowników z tej grupy"
 
 #~ msgid "You cannot delete the All Users group!"
 #~ msgstr "Nie możesz usunąć grupy Wszyscy użytkownicy"

@@ -48,7 +48,8 @@ msgstr ""
 "Plural-Forms: nplurals=5; plural=n==0 ? 0 : ( n==1 ? 1 : ( n%20<2 ? 2 : ( (n-"
 "1)%10>5 ? 3 : 4 )));\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "Tá pictiúrín teastáilte ag gach mír. Roghnaigh an luach loicthe (i bpicsil) "
 "anseo. "
@@ -56,9 +57,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "Roghanna an Chuntais"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; Níl ord ag an sórt &raquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; Aon cheann &raquo;"
@@ -75,15 +73,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; Aon cheann &raquo;"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; Níl ord ag an sórt &raquo;"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; Aon cheann &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; céad"
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; Níl ord ag an sórt &raquo;"
 
 msgid "(data)"
 msgstr "(sonraí)"
@@ -289,8 +287,9 @@ msgstr ""
 msgid "Choose a destination album"
 msgstr "Togh albam nua dhóibh"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "Togh leagan amach (socrú agus suímh na rudaí an leathanaigh) don albam seo."
 
@@ -383,6 +382,10 @@ msgstr "Scrios an mhír seo"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Scrios úsáideoir"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Scrios"
@@ -794,6 +797,14 @@ msgstr "Log As"
 msgid "Make Highlight"
 msgstr "Cuir Íomhá Ghealáin"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Ord shóirt loicthe"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Ord shóirt loicthe"
+
 msgid "Markup: "
 msgstr ""
 
@@ -852,6 +863,9 @@ msgstr "Comhadlanna nua"
 
 msgid "New files"
 msgstr "Comhaid nua"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "Úinéir nua"
@@ -1249,6 +1263,12 @@ msgstr "Tá an logainm seo ag duine eile. Togh ainm eile, le do thoil."
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "Tá an logainm seo ag duine eile. Togh ainm eile, le do thoil."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "Ní raibh na focail faire sin inchurtha lena chéile"
 
@@ -1418,9 +1438,10 @@ msgstr "Tá an mhír seo ag úsáideoir: %s"
 msgid "This page is valid XHTML 1.0"
 msgstr "Tá an leathanach seo bailí mar HTML 4.01"
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 "Is é an t-ord shóirt loicthe don albam seo. Rachaidh sé i bhfeidhm ar gach "
 "míre nua."
@@ -1490,6 +1511,14 @@ msgstr ""
 
 msgid "Use short URLs?"
 msgstr "URLaí dlútha a úsáid?"
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "Seo é cur síos fada an mír."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
+msgstr ""
 
 #, c-format
 msgid "User '%s' does not exist."
@@ -1586,6 +1615,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "Scrios grúpa"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1768,6 +1801,10 @@ msgstr "Aicsean"
 msgid "archive"
 msgstr "tosaigh"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "ceallaigh"
@@ -1796,6 +1833,12 @@ msgstr "stop"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Scrios úsáideoir"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "scrios"
@@ -2088,6 +2131,9 @@ msgstr[1] "Caith comhad amháin anáirde go díreach as do ríomhaire."
 msgstr[2] "Caith %d comhad anáirde go díreach as do ríomhaire."
 msgstr[3] "Caith %d gcomhad anáirde go díreach as do ríomhaire."
 msgstr[4] "Caith %d chomhad anáirde go díreach as do ríomhaire."
+
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; Níl ord ag an sórt &raquo;"
 
 #, fuzzy
 #~ msgid "Restored original photo successfully"

@@ -28,16 +28,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "Album Settings"
-
-#, fuzzy
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "* No Sort Order *"
 
 msgid "&laquo; None &raquo;"
 msgstr ""
@@ -54,15 +50,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "* No Sort Order *"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "* No Sort Order *"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "* No Sort Order *"
 
 msgid "&laquo; first"
 msgstr ""
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "* No Sort Order *"
 
 msgid "(data)"
 msgstr "(data)"
@@ -280,7 +276,7 @@ msgid "Choose a destination album"
 msgstr "Choose the destination of the selected items"
 
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 
 msgid "Choose a new album for the link"
@@ -374,6 +370,10 @@ msgstr "Delete Item"
 #, fuzzy
 msgid "Delete a User"
 msgstr "Delete a user"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "Delete"
@@ -780,6 +780,14 @@ msgstr "logout"
 msgid "Make Highlight"
 msgstr "Make Highlight"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "Album sort order:"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "Album sort order:"
+
 msgid "Markup: "
 msgstr ""
 
@@ -842,6 +850,9 @@ msgstr "New directories"
 
 msgid "New files"
 msgstr "New files"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr ""
@@ -1243,6 +1254,12 @@ msgstr "The name you entered is already in use.  Please choose another."
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "The name you entered is already in use.  Please enter another."
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "The passwords you entered did not match"
 
@@ -1406,8 +1423,8 @@ msgid "This page is valid XHTML 1.0"
 msgstr ""
 
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 
 #, c-format
@@ -1468,6 +1485,14 @@ msgid "Use Global"
 msgstr ""
 
 msgid "Use short URLs?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "A longer description of this item."
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
 
 #, c-format
@@ -1567,6 +1592,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "You cannot add or delete users from this group"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1757,6 +1786,10 @@ msgstr "Action"
 msgid "archive"
 msgstr "activate"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "Undo"
@@ -1788,6 +1821,12 @@ msgstr "deactivate"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "Delete a user"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 #, fuzzy
 msgid "delete"
@@ -2037,6 +2076,10 @@ msgstr[0] "Upload a file directly from your computer."
 msgstr[1] "Upload up to %d files directly from your computer."
 
 #, fuzzy
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "* No Sort Order *"
+
+#, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "Revert to original"
 
@@ -2248,9 +2291,6 @@ msgstr[1] "Upload up to %d files directly from your computer."
 #, fuzzy
 #~ msgid "User Edit"
 #~ msgstr "Edit"
-
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "You cannot add or delete users from this group"
 
 #, fuzzy
 #~ msgid "You cannot delete the All Users group!"

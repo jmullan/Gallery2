@@ -28,7 +28,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+#, fuzzy
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 "各アイテムはサムネイルが必要です。ピクセル指定でここにデフォルトの値を入力し"
 "てください。"
@@ -36,9 +37,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "アカウント設定"
-
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "&laquo; ソートなし &laquo;"
 
 msgid "&laquo; None &raquo;"
 msgstr "&laquo; なし &raquo;"
@@ -55,15 +53,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "&laquo; なし &raquo;"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "&laquo; ソートなし &laquo;"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "&laquo; なし &raquo;"
 
 msgid "&laquo; first"
 msgstr "&laquo; 最初"
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "&laquo; ソートなし &laquo;"
 
 msgid "(data)"
 msgstr "(データ)"
@@ -268,8 +266,9 @@ msgstr ""
 msgid "Choose a destination album"
 msgstr "選択されたアイテムの対象を選んでください"
 
+#, fuzzy
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 "このアルバムの配置方法を選択してください。 (ギャラリーがページ上で配置される"
 "方法)"
@@ -363,6 +362,10 @@ msgstr "アイテム削除"
 #, fuzzy
 msgid "Delete a User"
 msgstr "ユーザー削除"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "削除"
@@ -768,6 +771,14 @@ msgstr "ログアウト"
 msgid "Make Highlight"
 msgstr "ハイライト作成"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "既定のソート順:"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "既定のソート順:"
+
 msgid "Markup: "
 msgstr ""
 
@@ -826,6 +837,9 @@ msgstr "新しいディレクトリ"
 
 msgid "New files"
 msgstr "新しいファイル"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr "新しい所有者"
@@ -1233,6 +1247,12 @@ msgstr "入力した名前は既に使用されています。他のものを試
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "入力した名前は既に使用されています。他のものを試してください。"
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "入力したパスワードが一致しません"
 
@@ -1394,9 +1414,10 @@ msgstr "このアイテムは、ユーザー %sが所有しています。"
 msgid "This page is valid XHTML 1.0"
 msgstr "このページはHTML 4.01に準拠しています。"
 
+#, fuzzy
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 "これはアルバムのデフォルトのソート順を設定します。これは全ての新しいアイテム"
 "に適用されます。"
@@ -1464,6 +1485,14 @@ msgid "Use Global"
 msgstr ""
 
 msgid "Use short URLs?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "これはこのアイテムの詳しい説明です。"
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
 
 #, c-format
@@ -1561,6 +1590,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "'all users'グループを削除することはできません。"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1752,6 +1785,10 @@ msgstr "アクション"
 msgid "archive"
 msgstr "有効化"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "やり直し"
@@ -1782,6 +1819,12 @@ msgstr "無効化"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "ユーザー削除"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 msgid "delete"
 msgstr "削除"
@@ -2014,6 +2057,9 @@ msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "あなたのコンピュータから直接ファイルをアップロードしてください。"
 msgstr[1] ""
 
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "&laquo; ソートなし &laquo;"
+
 #, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "オリジナル画像へ戻すことに成功しました"
@@ -2238,10 +2284,6 @@ msgstr[1] ""
 #, fuzzy
 #~ msgid "User Edit"
 #~ msgstr "編集"
-
-#, fuzzy
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "'all users'グループを削除することはできません。"
 
 #, fuzzy
 #~ msgid "You cannot delete the All Users group!"

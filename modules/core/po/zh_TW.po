@@ -29,16 +29,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgid " Every item requires a thumbnail. Set the default value in pixels here."
+msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
 
 #, fuzzy, c-format
 msgid "%s Layout Settings"
 msgstr "相簿設定"
-
-#, fuzzy
-msgid "&laquo; No Sort Order &raquo;"
-msgstr "* 不排序 *"
 
 msgid "&laquo; None &raquo;"
 msgstr ""
@@ -55,15 +51,15 @@ msgid "&laquo; default layout &raquo;"
 msgstr "* 不排序 *"
 
 #, fuzzy
+msgid "&laquo; default sort order &raquo;"
+msgstr "* 不排序 *"
+
+#, fuzzy
 msgid "&laquo; default theme &raquo;"
 msgstr "* 不排序 *"
 
 msgid "&laquo; first"
 msgstr ""
-
-#, fuzzy
-msgid "&laquo; no sort order &raquo;"
-msgstr "* 不排序 *"
 
 msgid "(data)"
 msgstr ""
@@ -282,7 +278,7 @@ msgid "Choose a destination album"
 msgstr "請決定已選擇物件的搬移目的地"
 
 msgid ""
-"Choose a layout for this album. (The way the album is arranged on the page.)"
+"Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
 
 msgid "Choose a new album for the link"
@@ -376,6 +372,10 @@ msgstr "刪除物件"
 #, fuzzy
 msgid "Delete a User"
 msgstr "刪除使用者"
+
+#, c-format
+msgid "Delete user <strong>%s</strong> and..."
+msgstr ""
 
 msgid "Delete"
 msgstr "刪除"
@@ -777,6 +777,14 @@ msgstr "登出"
 msgid "Make Highlight"
 msgstr "標記為精彩畫面"
 
+#, fuzzy
+msgid "Manual Sort Order"
+msgstr "相簿排序方式:"
+
+#, fuzzy
+msgid "Manual sort order"
+msgstr "相簿排序方式:"
+
 msgid "Markup: "
 msgstr ""
 
@@ -839,6 +847,9 @@ msgstr "新增目錄"
 
 msgid "New files"
 msgstr "新增檔案"
+
+msgid "New owner (leaving blank means one of the Site Admins):"
+msgstr ""
 
 msgid "New owner"
 msgstr ""
@@ -1234,6 +1245,12 @@ msgstr "您輸入的名稱已經被使用，請輸入另一個"
 msgid "The name you entered is already in use.  Please enter another."
 msgstr "您輸入的名稱已經被使用，請輸入另一個"
 
+msgid "The new owner cannot be a Guest / Anonymous user!"
+msgstr ""
+
+msgid "The new owner must be a different user than the user we are deleting!"
+msgstr ""
+
 msgid "The passwords you entered did not match"
 msgstr "您輸入的密碼不符合"
 
@@ -1395,8 +1412,8 @@ msgid "This page is valid XHTML 1.0"
 msgstr ""
 
 msgid ""
-"This sets the default sort order for the album.  This applies to all new "
-"items."
+"This sets the sort order for the album.  This applies to all current items, "
+"and any newly added items."
 msgstr ""
 
 #, c-format
@@ -1457,6 +1474,14 @@ msgid "Use Global"
 msgstr ""
 
 msgid "Use short URLs?"
+msgstr ""
+
+#, fuzzy, c-format
+msgid "User %s is the owner of %s items."
+msgstr "本項目的詳細敘述"
+
+#, c-format
+msgid "User '%s' does not exist! Cannot assign items to a nonexistent user."
 msgstr ""
 
 #, c-format
@@ -1555,6 +1580,10 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
+
+#, fuzzy
+msgid "You can't remove yourself from this group."
+msgstr "不可刪除 'all users' 群組！"
 
 #, fuzzy
 msgid "You cannot delete that group"
@@ -1747,6 +1776,10 @@ msgstr "動作"
 msgid "archive"
 msgstr "啟動"
 
+#, c-format
+msgid "assign a new owner for all items of %s."
+msgstr ""
+
 #, fuzzy
 msgid "audio"
 msgstr "取消動作"
@@ -1778,6 +1811,12 @@ msgstr "不啟動"
 #, fuzzy, c-format
 msgid "delete %s"
 msgstr "刪除使用者"
+
+#, c-format
+msgid ""
+"delete all items of %s and assign a new owner for all remaining non empty "
+"albums"
+msgstr ""
 
 #, fuzzy
 msgid "delete"
@@ -2027,6 +2066,10 @@ msgstr[0] "由您的電腦直接上傳一個檔案。"
 msgstr[1] "由您的電腦直接上傳 %d 個檔案。"
 
 #, fuzzy
+#~ msgid "&laquo; No Sort Order &raquo;"
+#~ msgstr "* 不排序 *"
+
+#, fuzzy
 #~ msgid "Restored original photo successfully"
 #~ msgstr "使用者 '%s' 已經建立成功。"
 
@@ -2242,10 +2285,6 @@ msgstr[1] "由您的電腦直接上傳 %d 個檔案。"
 #, fuzzy
 #~ msgid "User Edit"
 #~ msgstr "編輯"
-
-#, fuzzy
-#~ msgid "You cannot add or delete users from this group"
-#~ msgstr "不可刪除 'all users' 群組！"
 
 #, fuzzy
 #~ msgid "You cannot delete the All Users group!"
