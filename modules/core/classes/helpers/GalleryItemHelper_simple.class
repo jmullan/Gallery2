@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,7 +33,7 @@
  * @abstract
  */
 class GalleryItemHelper_simple {
-    
+
     /**
      * Return the correct layout for this item
      *
@@ -56,7 +56,7 @@ class GalleryItemHelper_simple {
 
 	    $layoutId = $parent->getLayout();
 	}
-	
+
 	if (empty($layoutId)) {
 	    list ($ret, $layoutId) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
 	    if ($ret->isError()) {
@@ -89,20 +89,33 @@ class GalleryItemHelper_simple {
      */
     function fetchChildCounts($itemIds) {
 	global $gallery;
+	$storage =& $gallery->getStorage();
 
 	if (empty($itemIds)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}
 
-	$storage =& $gallery->getStorage();
+	$counts = $missing = array();
+	foreach ($itemIds as $itemId) {
+	    $cacheKey = "GalleryItemHelper::fetchChildCounts($itemId)";
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		$counts[$itemId] = GalleryDataCache::get($cacheKey);
+	    } else {
+		$missing[] = $itemId;
+	    }
+	}
+
+	if (empty($missing)) {
+	    return array(GalleryStatus::success(), $counts);
+	}
 
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
+	$markers = GalleryUtilities::makeMarkers(count($missing));
 
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
 	if ($ret->isError()) {
@@ -123,7 +136,7 @@ class GalleryItemHelper_simple {
         FROM
           [GalleryChildEntity], [GalleryPermissionMap]
         WHERE
-          [GalleryChildEntity::parentId] IN (' . $markers . ') 
+          [GalleryChildEntity::parentId] IN (' . $markers . ')
           AND
           [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
           AND
@@ -135,7 +148,7 @@ class GalleryItemHelper_simple {
         GROUP BY
           [GalleryChildEntity::parentId]
         ';
-	$data = $itemIds;
+	$data = $missing;
 	$data[] = $gallery->getActiveUserId();
 	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
@@ -146,9 +159,10 @@ class GalleryItemHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$counts = array();
 	while ($result = $searchResults->nextResult()) {
 	    $counts[$result[0]] = $result[1];
+	    GalleryDataCache::put('GalleryItemHelper::fetchChildCounts(' . $result[0] . ')',
+				  $result[1]);
 	}
 
 	return array(GalleryStatus::success(), $counts);
@@ -224,7 +238,7 @@ class GalleryItemHelper_simple {
 		$counts[$key] = $value;
 	    }
 	}
-	
+
 	return array(GalleryStatus::success(), $counts);
     }
 
@@ -262,13 +276,13 @@ class GalleryItemHelper_simple {
 
 	list ($ret, $concat) =
 	    $storage->getFunctionSql('CONCAT',
-				     array('[GalleryItemAttributesMap=1::parentSequence]', 
+				     array('[GalleryItemAttributesMap=1::parentSequence]',
 					   '[GalleryItemAttributesMap=1::itemId]',
 					   '\'%\''));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$query = sprintf('
         SELECT
           [GalleryItemAttributesMap=1::itemId],
@@ -377,21 +391,21 @@ class GalleryItemHelper_simple {
 	    array_splice($data, sizeof($data), 0, $groupIds);
 	    $data[] = $storage->convertIntToBits($permissionBits);
 	    $data[] = $storage->convertIntToBits($permissionBits);
-	    
+
 	    list ($ret, $searchResults) = $gallery->search($query, $data);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if ($searchResults->resultCount() != 1) {
 		return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	    }
-	    
+
 	    $result = $searchResults->nextResult();
 	    $count = (int)$result[0];
 
 	    GalleryDataCache::put($cacheKey, $count);
-	} 
+	}
 
 	return array(GalleryStatus::success(), $count);
     }
