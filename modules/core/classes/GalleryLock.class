@@ -60,6 +60,14 @@ class GalleryLock {
     var $_lockId;
 
     /**
+     * Ids of other locks that have been merged into this one
+     *
+     * @var int _slavedLockIds
+     * @access private
+     */
+    var $_slavedLockIds;
+
+    /**
      * The ids of the entities that are held by this lock
      *
      * @var array int _entityIds
@@ -100,6 +108,7 @@ class GalleryLock {
 	$this->_lockType = $lockType;
 	$this->_entityIds = $entityIds;
 	$this->_isLockAcquired = true;
+	$this->_slavedLockIds = array();
     }
 
     /**
@@ -118,6 +127,15 @@ class GalleryLock {
      */
     function getId() {
 	return $this->_lockId;
+    }
+
+    /**
+     * Get the lock id and all slaved lock ids
+     *
+     * @return array integer lock ids
+     */
+    function getAllIds() {
+	return array_merge(array($this->_lockId), $this->_slavedLockIds);
     }
 
     /**
@@ -153,6 +171,10 @@ class GalleryLock {
      * @return object GalleryStatus a status code
      */
     function merge(&$otherLock) {
+	if (!$otherLock->isLocked()) {
+	    return GalleryStatus::success();
+	}
+	
 	if ($otherLock->_lockType != $this->_lockType) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
@@ -160,6 +182,7 @@ class GalleryLock {
 
 	/* Grab the other lock's data */
 	$this->_entityIds = array_merge($this->_entityIds, $otherLock->_entityIds);
+	$this->_slavedLockIds = array_merge($this->_slavedLockIds, $otherLock->getAllIds());
 
 	/* Deactivate the other lock */
 	$otherLock->_isLockAcquired = false;
