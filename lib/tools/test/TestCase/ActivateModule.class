@@ -24,7 +24,10 @@ class ActivateModuleTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$moduleStatus = GalleryCoreApi::fetchPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	if (empty($moduleStatus[$this->_moduleId]['active'])) {
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $this->_moduleId);
 	    if ($ret->isError()) {
