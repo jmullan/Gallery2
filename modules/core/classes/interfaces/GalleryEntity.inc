@@ -125,8 +125,12 @@ class GalleryEntity extends GalleryEntity_core {
     
         $value = (int)$value;
       
-        $this->_id = $value;
-        $this->setModifiedFlag('id', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_id) || $this->_id != $value) {
+            $this->_id = $value;
+            $this->setModifiedFlag('id', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -148,8 +152,12 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function setcreationTimestamp($value) {
     
-        $this->_creationTimestamp = $value;
-        $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_creationTimestamp) || $this->_creationTimestamp != $value) {
+            $this->_creationTimestamp = $value;
+            $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -173,8 +181,12 @@ class GalleryEntity extends GalleryEntity_core {
     
         $value = (int)$value;
       
-        $this->_dataVersion = $value;
-        $this->setModifiedFlag('dataVersion', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_dataVersion) || $this->_dataVersion != $value) {
+            $this->_dataVersion = $value;
+            $this->setModifiedFlag('dataVersion', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -196,8 +208,12 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function setmodificationTimestamp($value) {
     
-        $this->_modificationTimestamp = $value;
-        $this->setModifiedFlag('modificationTimestamp', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_modificationTimestamp) || $this->_modificationTimestamp != $value) {
+            $this->_modificationTimestamp = $value;
+            $this->setModifiedFlag('modificationTimestamp', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -221,8 +237,12 @@ class GalleryEntity extends GalleryEntity_core {
     
         $value = (int)$value;
       
-        $this->_serialNumber = $value;
-        $this->setModifiedFlag('serialNumber', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_serialNumber) || $this->_serialNumber != $value) {
+            $this->_serialNumber = $value;
+            $this->setModifiedFlag('serialNumber', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -244,8 +264,12 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function setentityType($value) {
     
-        $this->_entityType = $value;
-        $this->setModifiedFlag('entityType', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_entityType) || $this->_entityType != $value) {
+            $this->_entityType = $value;
+            $this->setModifiedFlag('entityType', MEMBER_MODIFIED);
+        }
     }
   
 }

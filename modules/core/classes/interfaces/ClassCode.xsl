@@ -196,8 +196,12 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         $value = (int)$value;
       </xsl:when>
     </xsl:choose>
-        $this->_<xsl:value-of select="member-name"/> = $value;
-        $this->setModifiedFlag('<xsl:value-of select="member-name"/>', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_<xsl:value-of select="member-name"/>) || $this->_<xsl:value-of select="member-name"/> != $value) {
+            $this->_<xsl:value-of select="member-name"/> = $value;
+            $this->setModifiedFlag('<xsl:value-of select="member-name"/>', MEMBER_MODIFIED);
+        }
     }
   </xsl:template>
       

@@ -158,8 +158,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function setdescription($value) {
     
-        $this->_description = $value;
-        $this->setModifiedFlag('description', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_description) || $this->_description != $value) {
+            $this->_description = $value;
+            $this->setModifiedFlag('description', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -183,8 +187,12 @@ class GalleryItem extends GalleryItem_core {
     
         $value = (bool)$value;
       
-        $this->_isHtmlAllowed = $value;
-        $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_isHtmlAllowed) || $this->_isHtmlAllowed != $value) {
+            $this->_isHtmlAllowed = $value;
+            $this->setModifiedFlag('isHtmlAllowed', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -206,8 +214,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function setlayout($value) {
     
-        $this->_layout = $value;
-        $this->setModifiedFlag('layout', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_layout) || $this->_layout != $value) {
+            $this->_layout = $value;
+            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -229,8 +241,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function setkeywords($value) {
     
-        $this->_keywords = $value;
-        $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_keywords) || $this->_keywords != $value) {
+            $this->_keywords = $value;
+            $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -252,8 +268,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function setorderBy($value) {
     
-        $this->_orderBy = $value;
-        $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_orderBy) || $this->_orderBy != $value) {
+            $this->_orderBy = $value;
+            $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -275,8 +295,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function setorderDirection($value) {
     
-        $this->_orderDirection = $value;
-        $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_orderDirection) || $this->_orderDirection != $value) {
+            $this->_orderDirection = $value;
+            $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -300,8 +324,12 @@ class GalleryItem extends GalleryItem_core {
     
         $value = (int)$value;
       
-        $this->_orderWeight = $value;
-        $this->setModifiedFlag('orderWeight', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_orderWeight) || $this->_orderWeight != $value) {
+            $this->_orderWeight = $value;
+            $this->setModifiedFlag('orderWeight', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -325,8 +353,12 @@ class GalleryItem extends GalleryItem_core {
     
         $value = (int)$value;
       
-        $this->_ownerId = $value;
-        $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_ownerId) || $this->_ownerId != $value) {
+            $this->_ownerId = $value;
+            $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -348,8 +380,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function settheme($value) {
     
-        $this->_theme = $value;
-        $this->setModifiedFlag('theme', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_theme) || $this->_theme != $value) {
+            $this->_theme = $value;
+            $this->setModifiedFlag('theme', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -371,8 +407,12 @@ class GalleryItem extends GalleryItem_core {
      */
     function settitle($value) {
     
-        $this->_title = $value;
-        $this->setModifiedFlag('title', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_title) || $this->_title != $value) {
+            $this->_title = $value;
+            $this->setModifiedFlag('title', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -396,8 +436,12 @@ class GalleryItem extends GalleryItem_core {
     
         $value = (int)$value;
       
-        $this->_viewedSinceTimestamp = $value;
-        $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_viewedSinceTimestamp) || $this->_viewedSinceTimestamp != $value) {
+            $this->_viewedSinceTimestamp = $value;
+            $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
+        }
     }
   
 }

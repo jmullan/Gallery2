@@ -116,8 +116,12 @@ class GalleryUser extends GalleryUser_core {
      */
     function setuserName($value) {
     
-        $this->_userName = $value;
-        $this->setModifiedFlag('userName', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_userName) || $this->_userName != $value) {
+            $this->_userName = $value;
+            $this->setModifiedFlag('userName', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -139,8 +143,12 @@ class GalleryUser extends GalleryUser_core {
      */
     function setfullname($value) {
     
-        $this->_fullname = $value;
-        $this->setModifiedFlag('fullname', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_fullname) || $this->_fullname != $value) {
+            $this->_fullname = $value;
+            $this->setModifiedFlag('fullname', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -162,8 +170,12 @@ class GalleryUser extends GalleryUser_core {
      */
     function sethashedPassword($value) {
     
-        $this->_hashedPassword = $value;
-        $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_hashedPassword) || $this->_hashedPassword != $value) {
+            $this->_hashedPassword = $value;
+            $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -185,8 +197,12 @@ class GalleryUser extends GalleryUser_core {
      */
     function setemail($value) {
     
-        $this->_email = $value;
-        $this->setModifiedFlag('email', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_email) || $this->_email != $value) {
+            $this->_email = $value;
+            $this->setModifiedFlag('email', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -208,8 +224,12 @@ class GalleryUser extends GalleryUser_core {
      */
     function setlanguage($value) {
     
-        $this->_language = $value;
-        $this->setModifiedFlag('language', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_language) || $this->_language != $value) {
+            $this->_language = $value;
+            $this->setModifiedFlag('language', MEMBER_MODIFIED);
+        }
     }
   
 }

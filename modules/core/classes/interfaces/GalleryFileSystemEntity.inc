@@ -88,8 +88,12 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      */
     function setpathComponent($value) {
     
-        $this->_pathComponent = $value;
-        $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_pathComponent) || $this->_pathComponent != $value) {
+            $this->_pathComponent = $value;
+            $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
+        }
     }
   
 }

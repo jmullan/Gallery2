@@ -95,8 +95,12 @@ class GalleryDataItem extends GalleryDataItem_core {
      */
     function setfileExtension($value) {
     
-        $this->_fileExtension = $value;
-        $this->setModifiedFlag('fileExtension', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_fileExtension) || $this->_fileExtension != $value) {
+            $this->_fileExtension = $value;
+            $this->setModifiedFlag('fileExtension', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -118,8 +122,12 @@ class GalleryDataItem extends GalleryDataItem_core {
      */
     function setmimeType($value) {
     
-        $this->_mimeType = $value;
-        $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_mimeType) || $this->_mimeType != $value) {
+            $this->_mimeType = $value;
+            $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
+        }
     }
   
 }

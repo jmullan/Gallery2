@@ -90,8 +90,12 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     
         $value = (int)$value;
       
-        $this->_parentId = $value;
-        $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_parentId) || $this->_parentId != $value) {
+            $this->_parentId = $value;
+            $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
+        }
     }
   
 }

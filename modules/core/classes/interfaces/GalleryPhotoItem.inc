@@ -97,8 +97,12 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     
         $value = (int)$value;
       
-        $this->_width = $value;
-        $this->setModifiedFlag('width', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_width) || $this->_width != $value) {
+            $this->_width = $value;
+            $this->setModifiedFlag('width', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -122,8 +126,12 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
     
         $value = (int)$value;
       
-        $this->_height = $value;
-        $this->setModifiedFlag('height', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_height) || $this->_height != $value) {
+            $this->_height = $value;
+            $this->setModifiedFlag('height', MEMBER_MODIFIED);
+        }
     }
   
 }

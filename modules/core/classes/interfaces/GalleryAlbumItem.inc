@@ -97,8 +97,12 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     
         $value = (int)$value;
       
-        $this->_childIntermediateResize = $value;
-        $this->setModifiedFlag('childIntermediateResize', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_childIntermediateResize) || $this->_childIntermediateResize != $value) {
+            $this->_childIntermediateResize = $value;
+            $this->setModifiedFlag('childIntermediateResize', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -122,8 +126,12 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     
         $value = (int)$value;
       
-        $this->_childThumbSize = $value;
-        $this->setModifiedFlag('childThumbSize', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_childThumbSize) || $this->_childThumbSize != $value) {
+            $this->_childThumbSize = $value;
+            $this->setModifiedFlag('childThumbSize', MEMBER_MODIFIED);
+        }
     }
   
 }

@@ -118,8 +118,12 @@ class GalleryDerivative extends GalleryDerivative_core {
     
         $value = (int)$value;
       
-        $this->_derivativeSourceId = $value;
-        $this->setModifiedFlag('derivativeSourceId', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_derivativeSourceId) || $this->_derivativeSourceId != $value) {
+            $this->_derivativeSourceId = $value;
+            $this->setModifiedFlag('derivativeSourceId', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -141,8 +145,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      */
     function setderivativeCommands($value) {
     
-        $this->_derivativeCommands = $value;
-        $this->setModifiedFlag('derivativeCommands', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_derivativeCommands) || $this->_derivativeCommands != $value) {
+            $this->_derivativeCommands = $value;
+            $this->setModifiedFlag('derivativeCommands', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -166,8 +174,12 @@ class GalleryDerivative extends GalleryDerivative_core {
     
         $value = (int)$value;
       
-        $this->_derivativeSize = $value;
-        $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_derivativeSize) || $this->_derivativeSize != $value) {
+            $this->_derivativeSize = $value;
+            $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -191,8 +203,12 @@ class GalleryDerivative extends GalleryDerivative_core {
     
         $value = (int)$value;
       
-        $this->_derivativeType = $value;
-        $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_derivativeType) || $this->_derivativeType != $value) {
+            $this->_derivativeType = $value;
+            $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -214,8 +230,12 @@ class GalleryDerivative extends GalleryDerivative_core {
      */
     function setderivativeMimeType($value) {
     
-        $this->_derivativeMimeType = $value;
-        $this->setModifiedFlag('derivativeMimeType', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_derivativeMimeType) || $this->_derivativeMimeType != $value) {
+            $this->_derivativeMimeType = $value;
+            $this->setModifiedFlag('derivativeMimeType', MEMBER_MODIFIED);
+        }
     }
   
 }

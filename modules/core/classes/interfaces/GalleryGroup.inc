@@ -97,8 +97,12 @@ class GalleryGroup extends GalleryGroup_core {
     
         $value = (int)$value;
       
-        $this->_groupType = $value;
-        $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_groupType) || $this->_groupType != $value) {
+            $this->_groupType = $value;
+            $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
+        }
     }
   
     /**
@@ -120,8 +124,12 @@ class GalleryGroup extends GalleryGroup_core {
      */
     function setgroupName($value) {
     
-        $this->_groupName = $value;
-        $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
+
+        /* Only take action if the value actually changes */
+        if (!isset($this->_groupName) || $this->_groupName != $value) {
+            $this->_groupName = $value;
+            $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
+        }
     }
   
 }
