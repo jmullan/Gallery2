@@ -82,7 +82,7 @@ class ImageBlockHelper {
 	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
 	    break;  // More below..
 	default:
-	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}
 
 	if ($order == IMAGE_BLOCK_VIEWED || isset($parentId)) {

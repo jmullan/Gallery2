@@ -218,7 +218,7 @@ class ImageBlockModule extends GalleryModule {
 			  'creationTimestamp' => $item->getCreationTimestamp());
 	    list ($ret, $data['viewCount']) = GalleryCoreApi::fetchItemViewCount($parentId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
