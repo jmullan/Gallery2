@@ -31,6 +31,7 @@ class GalleryStub {
     }
 
     function setDebug() { }
+    function setDebugLogFile() { }
     function setProfile() { }
 }
 
@@ -94,5 +95,9 @@ function askForPassword() {
 }
 
 function redirectBackToSelf() {
-    header(sprintf('Location: %s', $_SERVER['PHP_SELF']));
+    $url = $_SERVER['PHP_SELF'];
+    if (isset($_SERVER['QUERY_STRING'])) {
+	$url .= '?' . $_SERVER['QUERY_STRING'];
+    }
+    header(sprintf('Location: %s', $url));
 }
