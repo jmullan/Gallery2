@@ -191,7 +191,7 @@
       )
     </xsl:when>
     <xsl:when test="column-type='TEXT'">
-      TEXT
+      LONG
     </xsl:when>
     <xsl:when test="column-type='BOOLEAN'">
       NUMBER(1)

@@ -17,7 +17,7 @@
   
       ,
     DB_COLUMN_PREFIXdescription
-      TEXT
+      LONG
     
       ,
     DB_COLUMN_PREFIXkeywords

@@ -21,7 +21,7 @@
   
       ,
     DB_COLUMN_PREFIXvalue
-      TEXT
+      LONG
     
     );
 
