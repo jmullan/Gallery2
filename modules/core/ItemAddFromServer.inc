@@ -74,11 +74,17 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 		    GalleryUtilities::sanitizeInputValues($base);
 
+		    $title = (isset($form['set']['title']) && $form['set']['title']) ? $base : '';
+		    $summary = (isset($form['set']['summary'])
+			     && $form['set']['summary']) ? $base : '';
+		    $description = (isset($form['set']['description'])
+				 && $form['set']['description']) ? $base : '';
+
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
 									   $filename,
-									   $base,
-									   $base,
-									   $base,
+									   $title,
+									   $summary,
+									   $description,
 									   $mimeType,
 									   $item->getId(),
 									   $useSymlink);
@@ -177,7 +183,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    if (!GalleryUtilities::isPathInList($filePath, $localServerDirList)) {
 				continue;
 			    }
-			    $fileName = $module->translate('&laquo; Parent Directory &raquo;');
+			    $fileName = $module->translate('Parent Directory');
 			} else {
 			    $filePath = $path . '/' . $fileName;
 			}
@@ -282,7 +288,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $template->setVariable('ItemAdmin', $ItemAdmin);
 	}
 
-        /* Do we want to allow symlinks? */
+	if (!isset($form['set'])) {
+	    $form['set'] = array('title' => 1, 'summary' => 0, 'description' => 0);
+	}
+
+	/* Do we want to allow symlinks? */
 	$ItemAddFromServer['showSymlink'] = $platform->isSymlinkSupported();
 
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);

@@ -92,6 +92,9 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/404.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test3.jpg?foo=bar]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/apo\'strophe.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	$basenames = array('test1', 'test2', 'test3', 'apo\'strophe');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
@@ -105,6 +108,23 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assert(isset($results[1]['addedFiles'][2]['id']));
 	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][3]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][3]['id']));
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$i = 0;
+	foreach ($ids as $id) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $base = $basenames[$i++];
+	    $this->assertEquals($base, $item->getTitle(), 'title');
+	    $this->assertEquals($base, $item->getSummary(), 'summary');
+	    $this->assertEquals(null, $item->getDescription(), 'description');
+	}
     }
 
     function testAddWithOption() {
@@ -123,7 +143,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	/* Check that warnings and errors came through from the option */
 	$this->assertEquals(array('an error'), $results[0]);
 	$this->assertEquals('a warning', $results[1]['addedFiles'][0]['warnings'][0]);
-	
+
 	list ($form, $item) = $option->getData();
 	$this->assert(isset($form['webPageUrls']['http://www.test.com/test1.gif']));
 	$this->assertEquals('test1.gif', $item->getPathComponent());

@@ -263,6 +263,18 @@
       {/if}
     </tr>
   </table>
+  <p class="giDescription">
+    {g->text text="Copy base filenames to:"}
+    <br/>
+    <input type="checkbox" id="setTitle" name="{g->formVar var="form[set][title]"}"{if $form.set.title} checked="checked"{/if}/>
+    <label for="setTitle"> {g->text text="Title"} </label>
+    &nbsp;
+    <input type="checkbox" name="{g->formVar var="form[set][summary]"}"{if $form.set.summary} checked="checked"{/if}/>
+    <label for="setSummary"> {g->text text="Summary"} </label>
+    &nbsp;
+    <input type="checkbox" name="{g->formVar var="form[set][description]"}"{if $form.set.description} checked="checked"{/if}/>
+    <label for="setDescription"> {g->text text="Description"} </label>
+  </p>
   {capture name="bottomFlagHtml"}
     <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
     <input type="submit" name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"

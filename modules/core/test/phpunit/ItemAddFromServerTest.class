@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -82,28 +82,44 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
      */
     function testAddChildrenFromLocalServer() {
 	return $this->_testAddChildrenFromLocalServer(false);
-    } 
+    }
 
 
     /*
-     * call _testAddChildrenFromLocalSerer specifying that we want to use
+     * call _testAddChildrenFromLocalServer specifying that we want to use
      * a symlink. Also specify that the symlink should be supported (and
      * thus the mock platform object that supports symlinks will be used.
      */
     function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkSupported() {
 	return $this->_testAddChildrenFromLocalServer(true, true);
-    } 
+    }
 
 
     /*
-     * call _testAddChildrenFromLocalSerer specifying that we want to use
+     * call _testAddChildrenFromLocalServer specifying that we want to use
      * a symlink. Also specify that the symlink should >not< be supported
      * (and thus the mock platform object that does not support symlinks
      * will be used.
      */
     function testAddChildrenFromLocalServerUsingSymlinkWithSymlinkNotSupported() {
 	return $this->_testAddChildrenFromLocalServer(true, false);
-    } 
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer with setTitle (set to base filename)
+     */
+    function testAddChildrenFromLocalServerSetTitle() {
+	return $this->_testAddChildrenFromLocalServer(false, true, true);
+    }
+
+
+    /*
+     * call _testAddChildrenFromLocalServer with setTitle/setDescription (set to base filename)
+     */
+    function testAddChildrenFromLocalServerSetTitleDescription() {
+	return $this->_testAddChildrenFromLocalServer(false, true, true, false, true);
+    }
 
 
     /**
@@ -115,11 +131,11 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
      * G2 will not support adding a file using symlinks on those OSes.
      * We have two different mock platform objects, one that supports
      * symlinks and one that does not.  if we expect using a symlink to
-     * fail, we bail check for that condition, and then bail out 
+     * fail, we bail check for that condition, and then bail out
      * immediately.
      */
-    function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true) {
-	
+    function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true,
+					     $setTitle=false, $setSummary=false, $setDescription=false) {
 	global $gallery;
 
 	if ($symlinkSupported) {
@@ -130,12 +146,22 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	if ($setTitle) {
+	    GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	}
+	if ($setSummary) {
+	    GalleryUtilities::putRequestVariable('form[set][summary]', 1);
+	}
+	if ($setDescription) {
+	    GalleryUtilities::putRequestVariable('form[set][description]', 1);
+	}
 
 	$platform = $gallery->getPlatform();
 	$baseDir = dirname(__FILE__) . '/../data/';
 	$fileKeys = array();
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
+	$escapedBasenames = array('test1', 'test1', 'test2', 'test3', 'apo&#039;strophe');
 	foreach ($files as $fileName) {
 	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . '][selected]', 1);
 	    if ($useSymlink) {
@@ -172,13 +198,23 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 
 	$seenWeights = array();
+	$i = 0;
 	foreach ($ids as $id) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $base = $escapedBasenames[$i++];
+	    $this->assertEquals($setTitle ? $base : null, $item->getTitle(), 'title');
+	    $this->assertEquals($setSummary ? $base : null, $item->getSummary(), 'summary');
+	    $this->assertEquals($setDescription ? $base : null, $item->getDescription(), 'description');
+
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
-	    
+
 	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -188,7 +224,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
     }
 
-    /* 
+    /*
      * Checks if the urlencoded filename gets correctly converted to a nice filename
      * in pathComponent, title and summary
      */
@@ -198,6 +234,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$baseDir = dirname(__FILE__) . '/../data/';
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
 	// This is what the browser will send us (urlencoded):
 	GalleryUtilities::putRequestVariable('form[localServerFiles][December+-+%3C%23952%3E.jpg][selected]', 1);
 
@@ -211,6 +249,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals('December - _#952_.jpg', $item->getPathComponent(), 'pathComponent');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
+	$this->assertEquals(null, $item->getDescription(), 'description');
     }
 
     function testAddWithOption() {
@@ -233,11 +272,11 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	/* Check that warnings and errors came through from the option */
 	$this->assertEquals(array('an error'), $results[0]);
 	$this->assertEquals('a warning', $results[1]['addedFiles'][0]['warnings'][0]);
-	
+
 	list ($form, $item) = $option->getData();
 	$this->assert($basedir, $form['localServerPath']);
 	$this->assertEquals($platform->filesize($basedir . 'test1.gif'), $item->getSize());
-    }    
+    }
 }
 
 /**
@@ -256,7 +295,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($path) {
 	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
-	    /* The windows path is a little weird -- but we can live with it */ 
+	    /* The windows path is a little weird -- but we can live with it */
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    return true;
 
@@ -269,7 +308,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($source) {
 	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
-	    /* The windows path is a little weird -- but we can live with it */ 
+	    /* The windows path is a little weird -- but we can live with it */
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
 	    $source = dirname(__FILE__) . '/../data/test1.jpg';
 	    break;
@@ -281,7 +320,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	switch ($source) {
 	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
-	    /* The windows path is a little weird -- but we can live with it */ 
+	    /* The windows path is a little weird -- but we can live with it */
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
 	    $source = dirname(__FILE__) . '/../data/test1.jpg';
 	    break;

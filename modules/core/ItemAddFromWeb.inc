@@ -74,11 +74,17 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			}
 		    }
 
+		    $title = (isset($form['set']['title']) && $form['set']['title']) ? $base : '';
+		    $summary = (isset($form['set']['summary'])
+			     && $form['set']['summary']) ? $base : '';
+		    $description = (isset($form['set']['description'])
+				 && $form['set']['description']) ? $base : '';
+
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
 									   basename($url),
-									   $base,
-									   $base,
-									   $base,
+									   $title,
+									   $summary,
+									   $description,
 									   $mimeType,
 									   $item->getId());
 		    if ($ret->isError()) {
@@ -286,6 +292,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		}
 	    }
 	}
+
+	if (!isset($form['set'])) {
+	    $form['set'] = array('title' => 1, 'summary' => 0, 'description' => 0);
+	}                    
 
 	$ItemAddFromWeb = array();
 	$ItemAddFromWeb['webPageUrlCount'] = isset($webPageUrlCount) ? $webPageUrlCount : 0;
