@@ -25,9 +25,11 @@
 
   <div id="gsAlbumContents">
     <form action="{g->url}" method="post">
+      <div>
       {g->hiddenFormVars}
-      <input type="hidden" name="{g->formVar var="controller"}" value="{$SearchScan.controller}"/>
-      <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchScan"/>
+      <input type="hidden" name="{g->formVar var="controller"}" value="{$SearchScan.controller}" />
+      <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchScan" />
+       </div> 
       <script type="text/javascript">
       // <![CDATA[
       function setCheck(val) {ldelim}
@@ -59,7 +61,7 @@
 
 	<div class="gbAdmin">
 	  <div class="gbDataEntry">
-	  <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onFocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
+	  <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
 	  <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
 
 	  {if isset($form.error.searchCriteria.missing)}
@@ -68,9 +70,6 @@
 	  </p>
 	  {/if}
 	  </div>
-	</div>
-
-	<div class="gbAdmin">
 	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
 	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
 	  {capture name=checkboxName}{g->formVar var="form[options][$moduleId][$optionId]"}{/capture}
@@ -80,14 +79,12 @@
 	  </label>
 	  {/foreach}
 	{/foreach}
+          <ul class="giSearchCheck">
+            <li><a href="javascript:setCheck(1)">{g->text text="Check All"}</a> </li> 
+            <li><a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> </li> 
+            <li><a href="javascript:invertCheck(0)">{g->text text="Invert"}</a></li>
+          </ul>
 	</div>
-
-	<div class="gbAdmin">
-	  <a href="javascript:setCheck(1)">{g->text text="Check All"}</a> &nbsp; 
-	  <a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> &nbsp; 
-	  <a href="javascript:invertCheck(0)">{g->text text="Invert"}</a>
-	</div>
-	<hr/>
 
 	{assign var="resultCount" value="0"}
 	{if !empty($SearchScan.searchResults)}

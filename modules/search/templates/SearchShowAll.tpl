@@ -24,14 +24,13 @@
 
   <div id="gsAlbumContents">
     <form action="{g->url}" method="post">
-      <p>
+      <div>
         {g->hiddenFormVars}
         <input type="hidden" name="{g->formVar var="controller"}" value="{$SearchShowAll.controller}"/>
         <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchShowAll"/>
         <input type="hidden" name="{g->formVar var="form[moduleId]"}" value="{$form.moduleId}"/>
         <input type="hidden" name="{g->formVar var="form[page]"}" value="{$form.page}"/>
-      </p>
-
+      </div>
       <script type="text/javascript">
 	// <![CDATA[
 	function setCheck(val) {ldelim}
@@ -82,12 +81,12 @@
 	</div>
 
 	<div class="gbAdmin">
-	  <a href="javascript:setCheck(1)">{g->text text="Check All"}</a> &nbsp; 
-	  <a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> &nbsp; 
-	  <a href="javascript:invertCheck(0)">{g->text text="Invert"}</a>
+          <ul class="giSearchCheck">
+            <li><a href="javascript:setCheck(1)">{g->text text="Check All"}</a> </li> 
+            <li><a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> </li> 
+            <li><a href="javascript:invertCheck(0)">{g->text text="Invert"}</a></li>
+          </ul>
 	</div>
-
-	<hr />
 
 	{if !empty($SearchShowAll.results)}
 	<div class="gbAdmin">
