@@ -118,9 +118,11 @@ class FfmpegToolkit extends GalleryToolkit {
 	case 'select-offset':
 	    // Doesn't change file; just remembers offset for future operation..
 	    $context['ffmpeg.offset'] = $parameters[0];
-	    if (!$platform->copy($sourceFilename, $destFilename)) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-			    "Failed copying $sourceFilename -> $destFilename"), null, null);
+	    if ($sourceFilename != $destFilename) {
+		if (!$platform->copy($sourceFilename, $destFilename)) {
+		    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+				"Failed copying $sourceFilename -> $destFilename"), null, null);
+		}
 	    }
 	    $outputMimeType = $mimeType;
 	    break;

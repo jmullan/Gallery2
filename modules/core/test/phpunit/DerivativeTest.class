@@ -653,8 +653,10 @@ class DerivativeTestToolkit extends GalleryToolkit {
 	$ops =& DerivativeTestToolkit::getPerformedOperations();
 	$ops[] = array($mimeType, $operationName, $sourceFilename, $destFilename, $parameters);
 
-	$platform = $gallery->getPlatform();
-	$platform->copy($sourceFilename, $destFilename);
+	if ($sourceFilename != $destFilename) {
+	    $platform = $gallery->getPlatform();
+	    $platform->copy($sourceFilename, $destFilename);
+	}
 	return array(GalleryStatus::success(), $mimeType, $context);
     }
 

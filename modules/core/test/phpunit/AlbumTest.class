@@ -623,8 +623,10 @@ class AlbumTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	$platform->copy($sourceFilename, $destFilename);
+	if ($sourceFilename != $destFilename) {
+	    $platform = $gallery->getPlatform();
+	    $platform->copy($sourceFilename, $destFilename);
+	}
 	return array(GalleryStatus::success(), $mimeType, $context);
     }
 }
