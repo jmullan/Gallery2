@@ -33,8 +33,10 @@ class InstallCoreModuleStep extends InstallStep {
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 	$gallery =& $GLOBALS['gallery'];
-	$gallery->setDebug('buffered');
 
+	// We want to avoid using the cache
+	GalleryDataCache::setFileCachingEnabled(false);
+	
 	if (empty($templateData['errors'])) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', false);
 	    if ($ret->isError()) {

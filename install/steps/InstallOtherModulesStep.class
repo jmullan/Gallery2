@@ -33,6 +33,9 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 
+	// We want to avoid using the cache
+	GalleryDataCache::setFileCachingEnabled(false);
+	
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret->isError()) {
@@ -48,63 +51,63 @@ class InstallOtherModulesStep extends InstallStep {
 		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
 		}
 	    }
-	}
 
-	foreach (array_keys($modules) as $moduleId) {
-	    $module =& $modules[$moduleId];
-	    list ($ret, $isActive) = $module->isActive();
-	    if ($ret->isSuccess()) {
-		if ($isActive) {
-		    unset($modules[$moduleId]);
-		    continue;
-		}
-	    } else {
-		continue;
-	    }
-
-	    if (!$module->canBeAutoInstalled()) {
-		unset($modules[$moduleId]);
-		continue;
-	    }
-
-	    if (isset($_REQUEST['action']['activate']) && isset($_REQUEST['module'][$moduleId])) {
-		$ret = $module->install();
-		if ($ret->isError()) {
-		    $templateData['errors'][] =
-			_(sprintf('Unable to install the %s module', $module->getName()));
-		    continue;
-		}
-		
-		list ($ret, $success) = $module->autoConfigure();
-		if ($ret->isError()) {
-		    $templateData['errors'][] =
-			_(sprintf('Unable to activate the %s module', $module->getName()));
-		    continue;
-		}
-
-		if (!$success) {
-		    $templateData['errors'][] =
-			_(sprintf('Unable to auto configure the %s module', $module->getName()));
-		    continue;
-		}
-		
-		list ($ret, $redirect) = $module->activate();
+	    foreach (array_keys($modules) as $moduleId) {
+		$module =& $modules[$moduleId];
+		list ($ret, $isActive) = $module->isActive();
 		if ($ret->isSuccess()) {
-		    unset($modules[$moduleId]);
-		    $templateData['activated'][$moduleId] = $module->getName();
+		    if ($isActive) {
+			unset($modules[$moduleId]);
+			continue;
+		    }
 		} else {
-		    $templateData['errors'][] =
-			_(sprintf('Unable to activate the %s module', $module->getName()));
 		    continue;
 		}
-	    }
 
-	    global $gallery;
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->commitTransaction();
-	    if ($ret->isError()) {
-		$templateData['errors'][] = _('Unable to commit database transaction');
-		$templateData['stackTrace'] = $ret->getAsHtml();
+		if (!$module->canBeAutoInstalled()) {
+		    unset($modules[$moduleId]);
+		    continue;
+		}
+
+		if (isset($_REQUEST['action']['activate']) && isset($_REQUEST['module'][$moduleId])) {
+		    $ret = $module->install();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to install the %s module', $module->getName()));
+			continue;
+		    }
+		
+		    list ($ret, $success) = $module->autoConfigure();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to activate the %s module', $module->getName()));
+			continue;
+		    }
+
+		    if (!$success) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to auto configure the %s module', $module->getName()));
+			continue;
+		    }
+		
+		    list ($ret, $redirect) = $module->activate();
+		    if ($ret->isSuccess()) {
+			unset($modules[$moduleId]);
+			$templateData['activated'][$moduleId] = $module->getName();
+		    } else {
+			$templateData['errors'][] =
+				_(sprintf('Unable to activate the %s module', $module->getName()));
+			continue;
+		    }
+		}
+
+		global $gallery;
+		$storage =& $gallery->getStorage();
+		$ret = $storage->commitTransaction();
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _('Unable to commit database transaction');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
 	    }
 	}
 
