@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @version $Version$ $Date$
+ * @version $Revision$ $Date$
  * @package Migrate
  * @subpackage UserInterface
  * @author Jesse Mullan <jmullan@visi.com>
@@ -38,7 +38,6 @@ class ImportResultsView extends GalleryView {
         }
 	
 	$status = $template->getVariable('status');
-
 	$counts = array();
 	foreach (array('userImportFailure', 'userImportSuccess') as $key) {
 	    if (isset($status[$key])) {
