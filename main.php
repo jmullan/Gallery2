@@ -349,9 +349,12 @@ function GalleryMain($returnHtml=false) {
 	/* Calculate a URI that we can use for the validation link */
 	$main['validationUri'] = $urlGenerator->getCurrentUrl();
 	$session =& $gallery->getSession();
-	$main['validationUri'] =
-	    urlencode($urlGenerator->appendParamsToUrl($urlGenerator->getCurrentUrl(),
-						       array($session->getKey() => $session->getId())));
+	if ($session->isUsingCookies()) {
+	    $main['validationUri'] =
+		$urlGenerator->appendParamsToUrl($main['validationUri'],
+						 array($session->getKey() => $session->getId()));
+	}
+	$main['validationUri'] = urlencode($main['validationUri']);
 
 	$main['gallery']['version'] = '2.0-alpha-1';
 	$template->setVariable('main', $main);
