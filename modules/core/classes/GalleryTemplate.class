@@ -261,6 +261,7 @@ class GalleryTemplate {
 	    if ($gallery->getDebug()) {
 		$smarty->debugging = true;
 	    }
+	    $smarty->use_sub_dirs = false;
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
 	    $smarty->register_object('g', $templateAdapter, array(), true,
