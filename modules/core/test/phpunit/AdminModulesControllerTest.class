@@ -60,11 +60,13 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('available' => 'AdminModules Controller Test'),
+				  'status' => array('installed' => 'AdminModules Controller Test',
+						    'autoConfigured' => true),
 				  'error' => array()),
 			    $results);
 
 	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
+	$this->assert($this->_testModule->wasCalled('autoConfigure'), 'autoConfigure not called');
     }
 
     function testUpgrade() {
@@ -76,7 +78,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('available' => 'AdminModules Controller Test'),
+				  'status' => array('upgraded' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
 
@@ -154,7 +156,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModulesVerifyUninstall',
 						      'moduleId' => 'AdminModulesControllerTest'),
-				  'status' => array(),
+				  'status' => array('uninstalled' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
     }
@@ -193,6 +195,11 @@ class AdminModulesControllerTestModule {
     function installOrUpgrade() {
 	$this->_setCalled('installOrUpgrade');
 	return GalleryStatus::success();
+    }
+
+    function autoConfigure() {
+	$this->_setCalled('autoConfigure');
+	return array(GalleryStatus::success(), true);
     }
 
     function activate() {

@@ -18,13 +18,23 @@
   <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.installed)}
-	{g->text text="Successfully installed module %s" arg1=$status.installed}
+	{if !empty($status.autoConfigured)}
+	  {g->text text="Successfully installed and auto-configured module %s" arg1=$status.installed}
+        {else}
+	  {g->text text="Successfully installed module %s" arg1=$status.installed}
+	{/if}
+      {/if}
+      {if isset($status.upgraded)}
+	{g->text text="Successfully upgraded module %s" arg1=$status.activated}
       {/if}
       {if isset($status.activated)}
 	{g->text text="Successfully activated module %s" arg1=$status.activated}
       {/if}
       {if isset($status.deactivated)}
 	{g->text text="Successfully deactivated module %s" arg1=$status.deactivated}
+      {/if}
+      {if isset($status.uninstalled)}
+	{g->text text="Successfully uninstalled module %s" arg1=$status.uninstalled}
       {/if}
     </div>
   </div>

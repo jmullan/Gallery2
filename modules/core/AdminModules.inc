@@ -65,6 +65,22 @@ class AdminModulesController extends GalleryController {
 	    switch($action) {
 		
 	    case 'install':
+		$ret = $module->installOrUpgrade();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list($ret, $autoConfigured) = $module->autoConfigure();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminModules';
+		$status['installed'] = $module->getName();
+		$status['autoConfigured'] = $autoConfigured;
+		break;
+		
 	    case 'upgrade':
 		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
@@ -73,7 +89,7 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['available'] = $module->getName();
+		$status['upgraded'] = $module->getName();
 		break;
 		
 	    case 'activate':
@@ -122,6 +138,7 @@ class AdminModulesController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModulesVerifyUninstall';
 		$redirect['moduleId'] = $module->getId();
+		$status['uninstalled'] = $module->getName();
 		break;
 		
 	    default:
