@@ -154,10 +154,10 @@ if ($currentStep->processRequest()) {
     $templateData = array();
 
     /* Round percentage to the nearest 5 */
-    $templateData['percentComplete'] =
-	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
+    $stepsComplete = $stepNumber - ($currentStep->isComplete() ? 0 : 1);
+    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
 
     /* Fetch our page into a variable */
     ob_start();
