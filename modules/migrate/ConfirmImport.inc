@@ -373,6 +373,10 @@ class ConfirmImportController extends GalleryController {
 										      $base,
 										      $mimeType,
 										      $item->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    
 			    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($newItem->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
