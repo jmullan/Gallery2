@@ -41,7 +41,7 @@ class NetPbmModule extends GalleryModule {
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
 	$this->setVersion('0.8.2');
-	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
+	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));

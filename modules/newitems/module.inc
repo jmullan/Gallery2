@@ -41,7 +41,7 @@ class NewItemsModule extends GalleryModule {
 	$this->setName($gallery->i18n('New Items'));
 	$this->setDescription($gallery->i18n('Highlight new/updated Gallery items'));
 	$this->setVersion('0.2.1');
-	$this->setGroup('display', $gallery->i18n('Display'));
+	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));

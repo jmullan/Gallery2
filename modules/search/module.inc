@@ -41,7 +41,7 @@ class SearchModule extends GalleryModule {
 	$this->setName('Search');
 	$this->setDescription($gallery->i18n('Search your Gallery'));
 	$this->setVersion('0.8.2');
-	$this->setGroup('gallery', $gallery->i18n('Gallery'));
+	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('loadSystemContent');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));

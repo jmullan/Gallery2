@@ -39,7 +39,7 @@ class RegisterModule extends GalleryModule {
 	$this->setName('Registration');
 	$this->setDescription($gallery->i18n('New User Registration'));
 	$this->setVersion('0.8.2');
-	$this->setGroup('gallery', $gallery->i18n('Gallery'));
+	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('performFactoryRegistrations|getSystemLinks|' .
 			    'getUserAdminViews|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));

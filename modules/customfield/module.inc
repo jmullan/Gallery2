@@ -41,7 +41,7 @@ class CustomFieldModule extends GalleryModule {
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
 	$this->setVersion('0.8.2');
-	$this->setGroup('data', $gallery->i18n('Extra Data'));
+	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('registerEventListeners|performFactoryRegistrations|' .
 			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
 	$this->setRequiredCoreApi(array(0, 8));

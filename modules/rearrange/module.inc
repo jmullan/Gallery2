@@ -39,7 +39,7 @@ class RearrangeModule extends GalleryModule {
 	$this->setName('Rearrange');
 	$this->setDescription($gallery->i18n('Rearrange the order of album items all at once'));
 	$this->setVersion('0.5.0');
-	$this->setGroup('gallery', $gallery->i18n('Gallery'));
+	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
