@@ -132,31 +132,35 @@ class GalleryUserGroupMap_core {
      * @param int the number of userids desired
      * @param int the start of the range
      * @return array object GalleryStatus a status code
-     *               array group ids
+     *               array user id => user name
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null) {
 	global $gallery;
 
 	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId]',
-				   'where' => '[GalleryUserGroupMap::groupId] = ?',
+	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId], ' .
+				               '[GalleryUser::userName] ',
+				   'where' => ('[GalleryUserGroupMap::groupId] = ? ' .
+					       'AND [GalleryUserGroupMap::userId] = ' .
+					       '    [GalleryUser::id]'),
+				   'order-by' => '[GalleryUser::userName]',
 				   'limit' => array('count' => $count,
 						    'offset' => $offset)),
 			     array($groupId));
 
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = $result[0];
+	    $data[$result[0]] = $result[1];
 	}
 	return array($ret, $data);
     }
 
     /**
-     * Return a list of user ids belonging to a group
+     * Return a list of groups that a user belongs to
      *
      * You can specify how many userids to list, and where the windows is in
      * the list of all users.
@@ -165,20 +169,24 @@ class GalleryUserGroupMap_core {
      * @param int the number of group ids desired
      * @param int the start of the range
      * @return array object GalleryStatus a status code
-     *               array group ids
+     *               array group id => group name
      */
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
 
 	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryUserGroupMap::groupId]',
-				   'where' => '[GalleryUserGroupMap::userId] = ?',
+	    $gallery->search(array('select' => '[GalleryUserGroupMap::groupId], ' .
+				               '[GalleryGroup::groupName]',
+				   'where' => ('[GalleryUserGroupMap::userId] = ? ' .
+					       'AND [GalleryUserGroupMap::groupId] = ' .
+					       '    [GalleryGroup::id]'),
+				   'order-by' => '[GalleryGroup::groupName]',
 				   'limit' => array('count' => $count,
 						    'offset' => $offset)),
 			     array($userId));
 	
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$data = array();

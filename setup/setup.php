@@ -539,7 +539,9 @@ function CreateRootAlbumItem() {
 	$gallery->debug('There is no admin user!');
 	return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
     }
-    $adminId = $results[0];
+
+    /* Pick the first admin user in the group */
+    $adminId = $results[0][0];
 	
     list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
     if ($ret->isError()) {
