@@ -268,15 +268,78 @@ class Gallery1DataParser {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+	    $id = $instance->getId();
+	    /*Array of example data
+(
+    +[title] => Test Album One
+    +[description] => No description
+    +[summary] =>
+    [nextname] => aaa
+    [bgcolor] =>
+    [textcolor] =>
+    [linkcolor] =>
+    [font] => verdana
+    [border] => 1
+    [bordercolor] => black
+    [returnto] => yes
+    [thumb_size] => 150
+    [resize_size] => 400
+    [rows] => 5
+    [cols] => 5
+    [fit_to_window] => no
+    [use_fullOnly] => no
+    [print_photos] => none
+    [use_exif] => yes
+    [perms] => Array
+        (
+            [canRead] => Array
+                (
+                    [everybody] => 1
+                )
 
+            [canViewFullImages] => Array
+                (
+                    [everybody] => 1
+                )
+
+        )
+
+    +[parentAlbumName] => .root
+    +[clicks] => 0
+    +[clicks_date] => 1056014708
+    [display_clicks] => yes
+    [public_comments] => yes
+    [serial_number] => 8
+    [extra_fields] => Array
+        (
+            [0] => Description
+        )
+
+    [cached_photo_count] => 2
+    [photos_separate] => 1
+    [name] => album01
+    [owner] => 1054014347u1233740678
+    [last_mod_time] => 1056015246
+
+	     */
 	    $instance->setTitle($album['title']);
 	    $instance->setSummary($album['summary']);
 	    $instance->setKeywords('');
 	    $instance->setDescription($album['description']);
-	    $id = $instance->getId();
+# setorderBy
+# setorderDirection
+# setownerId
+# settheme
+	    /*	    $instance->setcreationTimestamp($album['clicks_date']); */
+	    $instance->setviewedSinceTimestamp($album['clicks_date']);
+
 	    $ret = $instance->save();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = GalleryItemAttributesMap::setViewCount($id, $album['clicks']);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	$ret = $gallery->releaseLocks($lockIds);
