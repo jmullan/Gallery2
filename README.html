@@ -392,10 +392,12 @@
       </li>
       <li>
 	<b>G1 -> G2 Migration</b> - You can migrate your albums from
-	G1 to G2 (it doesn't affect your G1 install at all).  However,
-	the tool is incomplete.  We know that it seems to abort after
-	5 minutes so you might want to import in small chunks of
-	albums for now.
+	G1 to G2 (it doesn't affect your G1 install at all).  It will
+	migrate your permissions and comments, but it doesn't maintain
+	the order of photos, yet.  We also know that it seems to abort
+	after 5 minutes so if you do a large import and it suddenly
+	stops without giving you any feedback, you might want to
+	import in small chunks of albums for now.
       </li>
       <li>
 	<b>Performance</b> - G2 is not as fast as we want it to be.
@@ -419,15 +421,17 @@
       gallerydata directory (but leave the directory itself around)
       and <a href="#installing">perform a complete reinstall</a>.
       Yes, we know that this sucks.
+    </p>
 
-      <br/>
-
+    <p>
       We sneaky developer types have a backdoor that lets us do
       reinstalls much faster.  You can play with this too, but we ask
       that if something weird is going on, you verify that any bugs
       you're seeing happen when you do the install by hand, so that we
       know they're not caused by our little backdoor shenanigans.
+    </p>
 
+    <p>
       The back door is to go to the <a href="setup/test/" target="_guided">old test
       harness</a> and run the ReInitializeGallery test.  This will
       <b>immediately</b> nuke your entire G2 from orbit (it's the only
