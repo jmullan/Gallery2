@@ -114,5 +114,27 @@ class PhotoAccessModule extends GalleryModule {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
     }
+
+    /**
+     * @see GalleryModule::getItemLinks()
+     */
+    function getItemLinks($items) {
+	global $gallery;
+
+	$urlGenerator = $gallery->getUrlGenerator();
+	$links = array();
+	foreach ($items as $item) {
+	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		$params['controller'] = 'photoaccess:PrintPhoto';
+		$params['itemId'] = $item->getId();
+		$params['returnUrl'] = $urlGenerator->getCurrentUrl();
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('print on photoaccess.com'),
+			  'params' => $params);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $links);
+    }
 }
 ?>

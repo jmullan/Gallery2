@@ -33,10 +33,10 @@
  * @subpackage PHPUnit
  *
  */
-class PhotoAccessCartPluginTest extends GalleryTestCase {
+class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
-    function PhotoAccessCartPluginTest($methodName) {
-	$this->GalleryTestCase($methodName);
+    function PrintPhotoControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'photoaccess:PrintPhoto');
     }
 
     function setUp() {
@@ -54,69 +54,45 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	for ($i = 0; $i < 3; $i++) {
-	    /*
-	     * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
-	     * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
-	     * involved.  
-	     */
-	    list ($ret, $this->_items[$i]) =
-		$this->_createRandomDataItem($this->_album->getId(),
-					     'test/jpeg',
-					     array(),
-					     __FILE__,
-					     'GalleryPhotoItem');
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    
-	    /* Create a stub thumbnail */
-	    list ($ret, $derivative) =
-		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $ret = $derivative->save();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /*
-	     * Save the thumb and source ids for the test platform so that it can verify that the right post
-	     * data goes through.
-	     */
-	    $this->_thumbIds[$i] = $derivative->getId();
-	    $this->_sourceIds[$i] = $this->_items[$i]->getId();
+	/*
+	 * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
+	 * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
+	 * involved.  
+	 */
+	list ($ret, $this->_photo) =
+	    $this->_createRandomDataItem($this->_album->getId(),
+					 'test/jpeg',
+					 array(),
+					 __FILE__,
+					 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Create a least one preferred */
+	/* Create a stub thumbnail */
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	$ret = $derivative->create($this->_photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	$derivative->setWidth(0);
-	$derivative->setHeight(0);
+	
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$this->_sourceIds[2] = $derivative->getId();
+	/*
+	 * Save the thumb and source ids for the test platform so that it can verify that the right post
+	 * data goes through.
+	 */
+	$this->_thumbId = $derivative->getId();
+	$this->_sourceId = $this->_photo->getId();
 
 	/* Empty out the plugin session id */
 	$session =& $gallery->getSession();
@@ -125,8 +101,8 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Swap in a dummy platform and url generator */
 	$this->_save = array($gallery->_platform, $gallery->_urlGenerator);
-	$gallery->_platform = new PhotoAccessCartPluginTestPlatform($this);
-	$gallery->_urlGenerator = new PhotoAccessCartPluginTestUrlGenerator();
+	$gallery->_platform = new PrintPhotoControllerTestPlatform($this);
+	$gallery->_urlGenerator = new PrintPhotoControllerTestUrlGenerator();
     }
 
     function tearDown() {
@@ -151,29 +127,27 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    function testFulfillCart() {
-	/* Create our cart */
-	$cartItemIds = array();
-	for ($i = 0; $i < sizeof($this->_items); $i++) {
-	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
-	}
+    function testPrintPhoto() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
+	GalleryUtilities::putRequestVariable('returnUrl', 'RETURNURL');
 
-	require_once(dirname(__FILE__) . '/../../../cart/classes/CartPluginInterface_1_0.class');
-	require_once(dirname(__FILE__) . '/../../classes/PhotoAccessCartPlugin.class');
-	$cartPlugin = new PhotoAccessCartPlugin();
-	list ($ret, $url) = $cartPlugin->fulfillCart($cartItemIds);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$expectedHref = 'http://www.photoaccess.com/buy/anonCart.jsp;'.
+	    'jsessionid=PHOTOACCESS_SESSIONID?cb=CB_GP&svr=SERVER';
+	$this->assertEquals(array('redirect' => array('href' => $expectedHref),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
     }
 }
 
 /**
  * Platform for this test
  */
-class PhotoAccessCartPluginTestPlatform {
+class PrintPhotoControllerTestPlatform {
 
-    function PhotoAccessCartPluginTestPlatform(&$test) {
+    function PrintPhotoControllerTestPlatform(&$test) {
 	$this->_test =& $test;
     }
 
@@ -194,28 +168,26 @@ class PhotoAccessCartPluginTestPlatform {
 	 * that the plugin is going to make.  It will first make a request to get the cart so that it can get
 	 * a session id from the photoaccess server, then it will make a POST for each photo in the cart.
 	 */
-	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
-	    $postData[$i] = join('&', array('cb=CB_GP',
-					    'redir=true',
-					    'returnUrl=' . urlencode('view=cart:ViewCart'),
-					    'imageId=' . urlencode($this->_test->_items[$i]->getTitle()),
-					    'imageUrl=' . urlencode('view=core:DownloadItem/itemId=' .
-								    $this->_test->_sourceIds[$i]),
-					    'thumbUrl=' . urlencode('view=core:DownloadItem/itemId=' .
-								    $this->_test->_thumbIds[$i]),
-					    'imgWidth=0',
-					    'imgHeight=0'));
+	$postData = join('&', array('cb=CB_GP',
+				    'redir=true',
+				    'returnUrl=RETURNURL',
+				    'imageId=' . urlencode($this->_test->_photo->getTitle()),
+				    'imageUrl=' . urlencode('view=core:DownloadItem/itemId=' .
+							    $this->_test->_sourceId),
+				    'thumbUrl=' . urlencode('view=core:DownloadItem/itemId=' .
+							    $this->_test->_thumbId),
+				    'imgWidth=0',
+				    'imgHeight=0'));
 	    
-	    $expectedPost[$i] =
-		join("\r\n", 
-		     array('POST /buy/anonCart.jsp;jsessionid=PHOTOACCESS_SESSIONID?cb=CB_GP&svr=SERVER HTTP/1.0',
-			   'Host: www.photoaccess.com',
-			   'User-Agent: Test User Agent',
-			   'Content-Type: application/x-www-form-urlencoded',
-			   'Content-Length: ' . strlen($postData[$i]),
-			   '',
-			   $postData[$i])) . "\r\n";
-	}
+	$expectedPost =
+	    join("\r\n", 
+		 array('POST /buy/anonCart.jsp;jsessionid=PHOTOACCESS_SESSIONID?cb=CB_GP&svr=SERVER HTTP/1.0',
+		       'Host: www.photoaccess.com',
+		       'User-Agent: Test User Agent',
+		       'Content-Type: application/x-www-form-urlencoded',
+		       'Content-Length: ' . strlen($postData),
+		       '',
+		       $postData)) . "\r\n";
 	
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
@@ -233,9 +205,7 @@ class PhotoAccessCartPluginTestPlatform {
 		$this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
 		return strlen($string);
 
-	    case $expectedPost[0]:
-	    case $expectedPost[1]:
-	    case $expectedPost[2]:
+	    case $expectedPost:
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
 		$buffer[] = 'Connection: close';
@@ -247,11 +217,11 @@ class PhotoAccessCartPluginTestPlatform {
 		return strlen($string);
 
 	    default:
-		printf("<pre> Expected: %s</pre>", print_r($expectedPost[0], 1));
+		printf("<pre> Expected: %s</pre>", print_r($expectedPost, 1));
 		printf("<pre>Unxpected: %s</pre>", print_r($string, 1));
 
 		for ($i = 0; $i < strlen($string); $i++) {
-		    if ($expectedPost[0][$i] != $string[$i]) {
+		    if ($expectedPost[$i] != $string[$i]) {
 			printf("<pre>Differs at byte: %d <...%s...></pre>",
 			       print_r($i, 1),
 			       substr($string, $i-5, 10));
@@ -291,7 +261,9 @@ class PhotoAccessCartPluginTestPlatform {
     function fclose($handle) {
 	switch($handle) {
 	case 'test-resource-1':
-	    unset($this->_readBuffer[$handle]);
+	    if (isset($this->_readBuffer[$handle])) {
+		unset($this->_readBuffer[$handle]);
+	    }
 	    return true;
 
 	default:
@@ -310,7 +282,7 @@ class PhotoAccessCartPluginTestPlatform {
     }
 }
 
-class PhotoAccessCartPluginTestUrlGenerator {
+class PrintPhotoControllerTestUrlGenerator {
     function generateUrl($params) {
 	$lines = array();
 	foreach ($params as $key => $value) {
