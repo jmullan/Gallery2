@@ -153,12 +153,7 @@ class GalleryToolkitHelper_medium {
 	}
 
 	/* Invalidate our cache */
-	$cacheKeyPattern = "GalleryToolkitHelper::";
-	foreach (GalleryDataCache::getAllKeys() as $key) {
-	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
-		GalleryDataCache::remove($key);
-	    }
-	}
+	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
 	return GalleryStatus::success();
     }
@@ -268,12 +263,7 @@ class GalleryToolkitHelper_medium {
 	}
 
 	/* Invalidate our cache */
-	$cacheKeyPattern = "GalleryToolkitHelper::";
-	foreach (GalleryDataCache::getAllKeys() as $key) {
-	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
-		GalleryDataCache::remove($key);
-	    }
-	}
+	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
 	return GalleryStatus::success();
     }
@@ -367,12 +357,7 @@ class GalleryToolkitHelper_medium {
 	GalleryCoreApi::unregisterFactoryImplementation('GalleryToolkit', $toolkitId);
 
 	/* Invalidate our cache */
-	$cacheKeyPattern = "GalleryToolkitHelper::";
-	foreach (GalleryDataCache::getAllKeys() as $key) {
-	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
-		GalleryDataCache::remove($key);
-	    }
-	}
+	GalleryDataCache::removeByPattern('GalleryToolkitHelper::');
 
 	return GalleryStatus::success();
     }

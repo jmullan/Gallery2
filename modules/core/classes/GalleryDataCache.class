@@ -94,6 +94,22 @@ class GalleryDataCache {
     }
 
     /**
+     * Remove data from the cache
+     *
+     * @param string the key
+     * @param mixed the data
+     * @static
+     */
+    function removeByPattern($pattern) {
+	$cache =& GalleryDataCache::_getCache();
+	foreach (preg_grep("/$pattern/", array_keys($cache['keys'])) as $key) {
+	    unset($cache['timestamps'][$key]);
+	    unset($cache['keys'][$key]);
+	    unset($cache['protected'][$key]);
+	}
+    }
+
+    /**
      * Store a reference to the data in the cache
      *
      * You must provide a unique key.  Existing keys are overwritten.

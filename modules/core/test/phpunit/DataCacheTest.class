@@ -61,6 +61,21 @@ class DataCacheTest extends GalleryTestCase {
 	GalleryDataCache::reset();
 	$this->assert(!GalleryDataCache::containsKey($key));
     }
+
+    function testRemoveByPattern() {
+	GalleryDataCache::put('foo(1, 2, 3, 4)', 'baz');
+	GalleryDataCache::put('foo(2, 3, 4)', 'baz');
+	GalleryDataCache::put('bar(3, 4)', 'baz');
+	GalleryDataCache::put('bar(4)', 'baz');
+
+	GalleryDataCache::removeByPattern('foo\(2, ');
+	GalleryDataCache::removeByPattern('bar');
+
+	$this->assert(GalleryDataCache::containsKey('foo(1, 2, 3, 4)', 'baz'));
+	$this->assert(!GalleryDataCache::containsKey('foo(2, 3, 4)', 'baz'));
+	$this->assert(!GalleryDataCache::containsKey('bar(3, 4)', 'baz'));
+	$this->assert(!GalleryDataCache::containsKey('bar(4)', 'baz'));
+    }
 }
 
 ?>

@@ -103,7 +103,7 @@ class GalleryPluginHelper_medium {
     }
 
     /**
-     * Remoe the given plugin from the map
+     * Remove the given plugin from the map
      *
      * @param string the plugin type
      * @param string the plugin id
@@ -183,6 +183,31 @@ class GalleryPluginHelper_medium {
     }
 
     /**
+     * Remove all parameters for a given item id
+     *
+     * @param int the id of the GalleryItem
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeParametersForItemId($itemId) {
+	if (empty($itemId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::removeMapEntry(array('itemId' => $itemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\(.*, $itemId\)");
+	
+	return GalleryStatus::success();
+    }
+
+
+    /**
      * Remove a parameter for this plugin
      *
      * @param string the type of the plugin
@@ -238,12 +263,7 @@ class GalleryPluginHelper_medium {
 	}
 
 	/* Invalidate our cache */
-	$cacheKeyPattern = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, ";
-	foreach (GalleryDataCache::getAllKeys() as $key) {
-	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
-		GalleryDataCache::remove($key);
-	    }
-	}
+	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, ");
 	
 	return GalleryStatus::success();
     }

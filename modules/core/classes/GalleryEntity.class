@@ -330,6 +330,11 @@ class GalleryEntity_core extends GalleryPersistent {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$ret = GalleryCoreApi::removePluginParametersForItemId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$storage = $gallery->getStorage();
 	return $storage->deleteEntity($this);
     }

@@ -183,6 +183,19 @@ class GalleryCoreApi {
 	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
     }
+
+    /**
+     * Remove all plugin parameters for a given item id
+     *
+     * @param int the id of the GalleryItem
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removePluginParametersForItemId($itemId) {
+	GalleryCoreApi::apiMethodUsed('removeParametersForItemId', 'GalleryPluginHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
+	return GalleryPluginHelper_medium::removeParametersForItemId($itemId);
+    }
     
     /**
      * Get the status of all plugins of a given type
@@ -228,7 +241,7 @@ class GalleryCoreApi {
     }
 
     /**
-     * Remoe the given plugin from the map
+     * Remove the given plugin from the map
      *
      * @param string the plugin type
      * @param string the plugin id
