@@ -221,6 +221,20 @@ class GalleryStorage {
     }
 
     /**
+     * Refresh a new GalleryNucleus
+     *
+     * Refresh a GalleryNucleus from the database, if it has changed.
+     * Return the new nucleus.
+     *
+     * @access public
+     * @param object GalleryNucleus the object to refresh
+     * @return array object GalleryStatus a status code,
+     *               GalleryNucleus the refreshed object
+     */
+    function refreshNucleus($nucleus) {
+    }
+
+    /**
      * Lock a set of GalleryNucleus' (or the world)
      *
      * For right now, let's treat every lock as a world lock.  At some point in
@@ -241,6 +255,15 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLock() {
+    }
+
+    /**
+     * Return an instance of the GallerySearch class
+     *
+     * @access public
+     * @return object GallerySearch a search class
+     */
+    function getSearch() {
     }
     
     /**

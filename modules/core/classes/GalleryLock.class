@@ -92,18 +92,33 @@ class GalleryLock {
 	    $this->_isWorldLock = true;
 	}
 
-	register_shutdown_function(array($this, 'unlock'));
+	/*
+	 * Register a reference to this object with the unlock routine.  If we
+	 * don't use a reference, then the unlock method will get called on an
+	 * old copy of this lock and we'll wind up unlocking multiple times
+	 * (not fatal, but annoying).
+	 */
+	register_shutdown_function(array(&$this, 'unlock'));
 
 	return GalleryStatus::success();
     }
 
     /**
-     * Is this GalleryNucleus locked?
+     * Have we acquired a lock of any kind?
+     *
+     * @return boolean true if locked
+     */
+    function isLocked() {
+	return $this->_isLockAcquired;
+    }
+
+    /**
+     * Are these GalleryNucleus' locked?
      *
      * @param array an array of GalleryNucleus ids
      * @return boolean true if locked
      */
-    function isLocked($ids) {
+    function isIdLocked($ids) {
 	assert('!empty($ids)');
 
 	if (!$this->_isLockAcquired) {
@@ -146,15 +161,26 @@ class GalleryLock {
      * Release whatever locks this instance is holding
      *
      * @access public
+     * @return object GalleryStatus a status code
      */
     function unlock() {
 	if (!$this->_isLockAcquired) {
-	    return;
+	    return GalleryStatus::success();
 	}
 
 	global $gallery;
 	$storage = $gallery->getStorage();
-	return $storage->releaseLock($this->_lockId, $this->_isWorldLock);
+	$ret = $storage->releaseLock($this->_lockId, $this->_isWorldLock);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$this->_isLockAcquired = null;
+	$this->_isWorldLock = null;
+	$this->_lockId = null;
+	$this->_lockList = null;
+
+	return GalleryStatus::success();
     }
 }
 ?>

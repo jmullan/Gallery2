@@ -126,6 +126,18 @@ class GalleryUser extends GalleryNucleus {
     }
 
     /**
+     * Create a new instance of this GalleryUser in the persistent store
+     *
+     * @return object GalleryStatus a status code
+     */
+    function create() {
+
+	/* GalleryUser's have no parent */
+	$null = null;
+	return parent::create($null);
+    }
+
+    /**
      * Is the password provided correct?
      *
      * @param string a plaintext password

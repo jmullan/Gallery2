@@ -117,9 +117,8 @@ class GalleryComment extends GalleryNucleus {
      */
     function create(&$parent) {
 	assert('isset($parent)');
-	$this->setParentId($parent->getId());
 
-	$ret = parent::create();
+	$ret = parent::create($parent);
 	if ($ret->isError()) {
 	    return $ret;
 	}

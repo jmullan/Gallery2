@@ -469,11 +469,13 @@ class GalleryItem extends FileSystemNucleus {
      * @param int the id of the parent object
      * @return object GalleryStatus a status code
      */
-    function create(&$parent) {
+    function create(&$parent, $path, $ownerId) {
 	global $gallery;
 
+	assert('!empty($ownerId)');
+
 	if (isset($parent)) {
-	    if (!$gallery->isLocked($parent->getId())) {
+	    if (!$gallery->isIdLocked($parent->getId())) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
 	    }
@@ -483,11 +485,14 @@ class GalleryItem extends FileSystemNucleus {
 					    __FILE__, __LINE__);
 	    }
 	}
-	
-	$ret = parent::create();
+
+	$ret = parent::create($parent, $path);
 	if ($ret->isError()) {
 	    return $ret;
 	}
+
+	/* Record the owner */
+	$this->setOwnerId($ownerId);
 
 	/*
 	 * If a parent was specified, add this child to the end of the parent's
@@ -554,9 +559,9 @@ class GalleryItem extends FileSystemNucleus {
 	    }
 
 	    /*
-	     * Get rid of our child list
+	     * Empty out our child list
 	     */
-	    $childIds->empty();
+	    $childIds->splice(0);
 	}
 
 	return GalleryStatus::success();

@@ -199,7 +199,8 @@ class Gallery {
      *
      * @access public
      * @param string the search criteria
-     * @return array a list of of GalleryItem ids
+     * @return array object GalleryStatus a status code,
+                     array a list of of GalleryItem ids
      */
     function search($criteria) {
 	// XXX: should this method live in Gallery or in GalleryItem?
@@ -208,6 +209,8 @@ class Gallery {
 	// restrict the search to just one branch of the tree.  For now let's
 	// leave it here and then perhaps later we can introduce the concept of
 	// a "narrower" search
+	print "DO SOME SEARCHING HERE!";
+	return array(GalleryStatus::success(), array());
     }
 
     /**
@@ -265,59 +268,55 @@ class Gallery {
 	assert('!empty($id)');
 	$this->_activeUserId = $id;
     }
-    
+
     /**
      * Get the user database 
      *
-     * Return a reference to the instance of the active
-     * GalleryUserDatabase class.
+     * Return the active GalleryUserDatabase class.
      * 
      * @access public
      * @return object GalleryUserDatabase the active user database
      */
-    function &getUserDatabase() {
+    function getUserDatabase() {
 	return $this->_userDatabase;
     }
 
     /**
      * Set the user database 
      *
-     * Assign a reference to the instance of the active
-     * GalleryUserDatabase class.
+     * Assign the active GalleryUserDatabase class.
      * 
      * @param object GalleryUserDatabase the active user database
      * @access public
      */
-    function setUserDatabase(&$userDatabase) {
+    function setUserDatabase($userDatabase) {
 	assert('!empty($userDatabase)');
-	$this->_userDatabase =& $userDatabase;
+	$this->_userDatabase = $userDatabase;
     }
 
     /**
      * Get the image toolkit
      *
-     * Return a reference to the instance of the active
-     * GalleryImageToolkit class.
+     * Return a the active GalleryImageToolkit
      * 
      * @access public
      * @return object GalleryImageToolkit the active image toolkit
      */
-    function &getImageToolkit() {
+    function getImageToolkit() {
 	return $this->_imageToolkit;
     }
 
     /**
      * Set the image toolkit
      *
-     * Assign a reference to the instance of the active
-     * GalleryImageToolkit class.
+     * Assign the active GalleryImageToolkit
      * 
      * @param object GalleryImageToolkit the active image toolkit
      * @access public
      */
-    function setImageToolkit(&$imageToolkit) {
+    function setImageToolkit($imageToolkit) {
 	assert('!empty($imageToolkit)');
-	$this->_imageToolkit =& $imageToolkit;
+	$this->_imageToolkit = $imageToolkit;
     }
 
     /**
@@ -337,14 +336,14 @@ class Gallery {
     /**
      * Set a copy of the Gallery configuration settings
      *
-     * Assign a reference to a GalleryMap config instance.
+     * Assign the GalleryMap config instance.
      * 
      * @param object GalleryMap the Gallery config map
      * @access public
      */
-    function setConfig(&$config) {
+    function setConfig($config) {
 	assert('!empty($config)');
-	$this->_config =& $config;
+	$this->_config = $config;
     }
 
     /**
@@ -376,7 +375,7 @@ class Gallery {
     }
 
     /**
-     * Get the Gallery session object.
+     * Set the Gallery session object.
      *
      * Assign a reference to the unique Gallery session object
      * (implemented as an instance of the GalleryMap class).
@@ -384,7 +383,7 @@ class Gallery {
      * @param object GalleryMap the Gallery session map
      * @access public
      */
-    function &setSession($session) {
+    function setSession(&$session) {
 	assert('!empty($session)');
 	$this->_session =& $session;
     }
@@ -410,9 +409,9 @@ class Gallery {
      * @param object GalleryMap the Gallery platform map
      * @access public
      */
-    function &setPlatform($platform) {
+    function setPlatform($platform) {
 	assert('isset($platform)');
-	$this->_platform =& $platform;
+	$this->_platform = $platform;
     }
 
     /**
@@ -438,7 +437,7 @@ class Gallery {
 	/*
 	 * If we already have a lock, fail.
 	 */
-	if (!empty($this->_lock)) {
+	if (!empty($this->_lock) && $this->_lock->isLocked()) {
 	    return GalleryStatus::error(ERROR_ILLEGAL_LOCK,
 					__FILE__, __LINE__);
 	}
@@ -474,11 +473,17 @@ class Gallery {
      * Release the lock
      *
      * @access public
+     * @return object GalleryStatus a status code
      */
     function unlock() {
 	if (!empty($this->_lock)) {
-	    $this->_lock->unlock();
+	    $ret = $this->_lock->unlock();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -487,7 +492,7 @@ class Gallery {
      * @param mixed an id or array of ids of GalleryNucleus'
      * @access public
      */
-    function isLocked($ids) {
+    function isIdLocked($ids) {
 	assert('!empty($ids)');
 	if (empty($this->_lock)) {
 	    return false;
@@ -497,7 +502,7 @@ class Gallery {
 	    $ids = array($ids);
 	}
 
-	return $this->_lock->isLocked($ids);
+	return $this->_lock->isIdLocked($ids);
     }
 
     /**
@@ -514,11 +519,11 @@ class Gallery {
     }
 
     /**
-     * Return a reference to the implementation of the GalleryStorage class
+     * Return an instance of the GalleryStorage class
      *
      * @access public
      */
-    function &getStorage() {
+    function getStorage() {
 	return $this->_storage;
     }
 
@@ -530,8 +535,8 @@ class Gallery {
      *
      * @access public
      */
-    function &setStorage(&$storage) {
-	$this->_storage =& $storage;
+    function setStorage($storage) {
+	$this->_storage = $storage;
     }
 
     /**

@@ -53,6 +53,8 @@ class GalleryPlatform {
 	$umask = umask(0133);
 	$results = copy($source, $dest);
 	umask($umask);
+
+	return $results;
     }
 
     /**

@@ -81,6 +81,18 @@ class GalleryGroup extends GalleryNucleus {
     }
 
     /**
+     * Create a new instance of this GalleryUser in the persistent store
+     *
+     * @return object GalleryStatus a status code
+     */
+    function create() {
+
+	/* GalleryUser's have no parent */
+	$null = null;
+	return parent::create($null);
+    }
+
+    /**
      * Add the user to this group
      *
      * @param object GalleryUser the user instance
