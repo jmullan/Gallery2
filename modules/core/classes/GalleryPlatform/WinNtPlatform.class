@@ -43,20 +43,14 @@ class WinNtPlatform extends GalleryPlatform {
      * @see GalleryPlatform::rename()
      */
     function rename($oldname, $newname) {
-	$success = parent::rename($oldname, $newname);
-	if (!$success) {
-	    /*
-	     * Windows gets upset if the new file already exists.  If that's
-	     * the case, remove the new file and try renaming again.  If *that*
-	     * fails, then give up.
-	     */
-	    if ($this->file_exists($newname)) {
-		@$this->unlink($newname);
-		$success = parent::rename($oldname, $newname);
-	    }
+	/*
+	 * Windows gets upset if the new file already exists.  If that's
+	 * the case, remove the new file before renaming.
+	 */
+	if ($this->file_exists($newname)) {
+	    @$this->unlink($newname);
 	}
-
-	return $success;
+	return parent::rename($oldname, $newname);
     }
 	
     /**
@@ -83,6 +77,10 @@ class WinNtPlatform extends GalleryPlatform {
 	    }
 	}
 
+	/* We're going to redirect STDERR to a file */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$debugFile = tempnam($tmpDir, 'g2dbg');
+	
 	/*
 	 * Ok, this is screwy, but for some reason these
 	 * don't work:
@@ -99,12 +97,7 @@ class WinNtPlatform extends GalleryPlatform {
 	 * See "cmd.exe /help" for more details
 	 *
 	 */
-	$command = 'cmd /c "' . $command . '"';
-	
-	/* Redirect STDERR to a file */
-	$tmpDir = $gallery->getConfig('data.gallery.tmp');
-	$debugFile = tempnam($tmpDir, 'g2dbg');
-	$command .= ' 2>' . $debugFile;
+	$command = 'cmd /c "' . $command . ' 2> "' . $debugFile . '" "';
 
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
