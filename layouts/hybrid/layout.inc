@@ -119,6 +119,10 @@ class HybridLayout extends GalleryLayout {
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
 
+	$urlGenerator = $gallery->getUrlGenerator();
+	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
+	$layout['cookiePath'] = $cookiePath;
+
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
 	    foreach ($itemList as $tmp) {
@@ -126,9 +130,10 @@ class HybridLayout extends GalleryLayout {
 		    if (isset($tmp['imageIndex'])) {
 			$layout['viewIndex'] = $tmp['imageIndex'];
 			/* Set cookie to popup image just once */
-			$cook = 'G2_hybrid_' . $item->getPathComponent();
+			$cook = 'G2_hybrid_' . $item->getId();
 			setcookie($cook, '-2' .
-			    (isset($_COOKIE[$cook]) ? strstr($_COOKIE[$cook], ';') : ';'));
+			    (isset($_COOKIE[$cook]) ? strstr($_COOKIE[$cook], ';') : ';'),
+			    0, $cookiePath);
 		    }
 		    break;
 		}

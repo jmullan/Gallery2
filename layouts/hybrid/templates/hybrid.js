@@ -67,8 +67,10 @@ function app_setcookie() {
  var s = (image_on ? image_index : -1) + ';' + album_div.scrollTop + ';';
  var d = new Date();
  d.setTime(d.getTime() + 90*24*60*60*1000); // 90 day cookie
- document.cookie = 'G2_hybrid=' + escape(c) + ';expires=' + d.toUTCString();
- document.cookie = 'G2_hybrid_' + data_name + '=' + escape(s);
+ document.cookie = 'G2_hybrid=' + escape(c) + ';expires=' + d.toUTCString() +
+  ';path=' + app_path;
+ document.cookie = 'G2_hybrid_' + data_name + '=' + escape(s) +
+  ';path=' + app_path;
 }
 function app_getcookie() {
  var c = getcookie('G2_hybrid'), i,j,v,n,it=1,r=-2;
