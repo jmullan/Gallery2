@@ -261,6 +261,29 @@ class GalleryPermissionMap_core {
 
 	return GalleryStatus::success();
     }
+
+    function hasPermission($itemId, $userIds, $groupIds, $permissions) {
+	global $gallery;
+
+	$userIdMarkers = GalleryUtilities::makeMarkers($userIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	$permissionMarkers = GalleryUtilities::makeMarkers($permissions);
+	
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => '[GalleryPermissionMap::permission]',
+				   'where' => ('[GalleryPermissionMap::itemId] = ? ' .
+					       'AND (([GalleryPermissionMap::userId] IN (' . $userIdMarkers . ') ' .
+					       '      OR [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . ')) ' .
+					       '     AND [GalleryPermissionMap::permission] IN (' . $permissionMarkers . '))'),
+				   'limit' => array('count' => 1)),
+			     array_merge($itemId, $userIds, $groupIds, $permissions));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	return array(GalleryStatus::success(),
+		     $searchResults->resultCount() ? true : false);
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryPermissionMap.inc');

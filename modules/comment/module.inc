@@ -67,12 +67,26 @@ class CommentModule extends GalleryModule {
      * @see GalleryModule::install
      */
     function install() {
+	global $gallery;
+	
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if ($version != $this->getVersion()) {
+
+	    /* The store requires configuration. */
+	    list ($ret, $storage) = $gallery->getStorage();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $storage->configureStore('comment');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    if (empty($version)) {
 		/*
 		 * This is an initial install. Make sure that we have some

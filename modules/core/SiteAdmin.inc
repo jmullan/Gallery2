@@ -27,7 +27,7 @@ class SiteAdminView extends GalleryView {
 	global $gallery;
 	
 	/* Make sure we have adequate permissions */
-	$ret = $this->_assertSiteAdministrator();
+	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -62,7 +62,7 @@ class SiteAdminView extends GalleryView {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
-	$ret = $this->_assertSiteAdministrator();
+	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -43,7 +43,7 @@ class InitializeGalleryTestCase extends TestCase {
 	 * break a few rules to maintain continuity.  Make sure that any
 	 * relevant data (like config values) survive this transition.
 	 */
-	$oldConfig = $gallery->_config;
+	$oldGallery = $gallery;
 	
 	require_once(dirname(__FILE__) . '/../../module.inc');
 	$coreModule = new CoreModule();
@@ -55,8 +55,13 @@ class InitializeGalleryTestCase extends TestCase {
 	/* We changed the global gallery -- update our pointer */
 	$gallery =& $GLOBALS['gallery'];
 
-	foreach ($oldConfig as $key => $value) {
-	    $gallery->setConfig($key, $value);
+	foreach (array('_config',
+		       '_debug',
+		       '_profile',
+		       '_debugLogFile',
+		       '_debugBuffer',
+		       '_registry') as $member) {
+	    $gallery->$member = $oldGallery->$member;
 	}
 
 	/* Let the core module install itself, if necessary */

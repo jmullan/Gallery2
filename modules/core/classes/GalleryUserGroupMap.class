@@ -227,7 +227,7 @@ class GalleryUserGroupMap_core {
      * @return array object GalleryStatus a status code
      *               bool true if yes
      */
-    function isUserInAdminGroup($userId) {
+    function isUserInSiteAdminGroup($userId) {
 	global $gallery;
 	list ($ret, $adminGroupId) =
 	    $gallery->getModuleParameter('core', 'id.adminGroup');
@@ -254,17 +254,18 @@ class GalleryUserGroupMap_core {
 	global $gallery;
 
 	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => 'COUNT(*)',
+	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId]',
 				   'where' => ('[GalleryUserGroupMap::userId] = ? ' .
-					       'AND [GalleryUserGroupMap::groupId] = ?')),
+					       'AND [GalleryUserGroupMap::groupId] = ?'),
+				   'limit' => array('count' => 1)),
 			     array($userId, $groupId));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), $result[0] == 1);
+	return array(GalleryStatus::success(),
+		     $searchResults->resultCount() ? true : false);
     }
     
 }

@@ -231,20 +231,62 @@ class CoreModule extends GalleryModule {
 	    $items = array($items);
 	}
 
-	/* XXX: Permission check "can the user add a comment to this item?" */
-	$gallery->debug("XXX: Comment.getItemLinks should be checking perms");
-
 	foreach ($returnUrlParams as $param => $value) {
 	    $params['return.' . $param] = $value;
 	}
 
+	/*
+	 * See if the user has any admin permissions.  If so, display the "[edit
+	 * item]" link.
+	 */
+	$adminPermissions = array();
+	$permissions = $gallery->lookupRegistry('GalleryPermissionMap');
+	foreach ($permissions as $permission) {
+	    if (!empty($permission['admin'])) {
+		$adminPermissions[] = $permission['id'];
+	    }
+	}
+
+	/*
+	 * If we're a site admin, then we always have edit permission.  Else,
+	 * figure out what groups we're in and use that to make the determination.
+	 */
+	list ($ret, $isSiteAdmin) =
+	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$isSiteAdmin) {
+	    list ($ret, $groupIds) = 
+		GalleryUserGroupMap::fetchGroupsForUser($gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	$links = array();
 	foreach ($items as $item) {
-	    $params['view'] = 'comment:AddComment';
-	    $params['itemId'] = $item->getId();
-	    $links[$item->getId()] =
-		array('text' => $this->translate('add comment'),
-		      'params' => $params);
+	    if ($isSiteAdmin) {
+		$hasPermission = true; 
+	    } else {
+		list ($ret, $hasPermission) =
+		    GalleryPermissionMap::hasPermission($item->getId(),
+							array($gallery->getActiveUserId()),
+							$groupIds,
+							$adminPermissions);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    if ($hasPermission) {
+		$links[$item->getId()] =
+		    array('text' => $this->translate('edit item'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
@@ -272,12 +314,12 @@ class CoreModule extends GalleryModule {
 						     $params));
 	} else {
 	    $links[] = array('text' => $this->translate('logout'),
-			     'params' => array_merge(array('view' => 'core:Logout'),
+			     'params' => array_merge(array('controller' => 'core:Logout'),
 						     $params));
 	}
 
 	list ($ret, $isAdmin) =
-	    GalleryUserGroupMap::isUserInAdminGroup($gallery->getActiveUserId());
+	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

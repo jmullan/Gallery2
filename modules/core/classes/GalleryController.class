@@ -47,28 +47,5 @@ class GalleryController {
 		     null);
     }
 
-    /**
-     * Assert that the active user is a site administrator
-     *
-     * @return object GalleryStatus success if the user is an administrator
-     *                              ERROR_PERMISSION_DENIED if not.
-     */
-    function _assertSiteAdministrator() {
-	global $gallery;
-
-	/* Make sure we have adequate permissions */
-	list ($ret, $inGroup) =
-	    GalleryUserGroupMap::isUserInAdminGroup($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!$inGroup) {
-	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
-					__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
 }
 ?>

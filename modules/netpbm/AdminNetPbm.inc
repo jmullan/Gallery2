@@ -26,7 +26,7 @@ class AdminNetPbmController extends GalleryController {
     function handleRequest() {
 	global $gallery;
 
-	$ret = $this->_assertSiteAdministrator();
+	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
