@@ -32,8 +32,9 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName('WebCam');
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.8.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
+	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
     }
 
     /**

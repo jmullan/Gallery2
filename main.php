@@ -60,8 +60,8 @@ function GalleryMain($returnHtml=false) {
     }
 
     /*
-     * If we get an at this level, we can't rely on smarty so all we can do is dump
-     * the error out to the browser.
+     * If we get an error at this level, we can't rely on smarty so all we can do is
+     * dump the error out to the browser.
      */
     if ($ret->isError()) {
 	$ret = $ret->wrap(__FILE__, __LINE__);
@@ -85,9 +85,6 @@ function GalleryMain($returnHtml=false) {
 }
 
 function _GalleryMain($returnHtml=false) {
-    /**
-     * @global Gallery $gallery
-     */
     global $gallery;
     
     /* Let our url generator process the query string */
@@ -97,6 +94,18 @@ function _GalleryMain($returnHtml=false) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
 
+    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
+    if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+
+    $installedVersions = $core->getInstalledVersions();
+    if ($installedVersions['core'] != $core->getVersion()) {
+	header(sprintf("Location: %s",
+		       $urlGenerator->generateUrl(array('href' => 'upgrade/'))));
+	return array(GalleryStatus::success(), array('isDone' => true));
+    }
+    
     /* Figure out the target module/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
@@ -369,7 +378,7 @@ function _GalleryMain($returnHtml=false) {
 	}
 	$main['validationUri'] = urlencode($main['validationUri']);
 
-	$main['gallery']['version'] = '2.0-alpha-CVS';
+	$main['gallery']['version'] = $installedVersions['gallery'];
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');
 

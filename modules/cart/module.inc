@@ -38,8 +38,9 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName('Cart');
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.8.1');
 	$this->setGroup('commerce', $gallery->i18n('Commerce'));
+	$this->setCallbacks('getItemLinks|getSystemLinks');
     }
 
     /**

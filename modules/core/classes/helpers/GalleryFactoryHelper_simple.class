@@ -58,7 +58,7 @@ class GalleryFactoryHelper_simple {
      * @return object GalleryStatus a status code
      */
     function _loadRegistry() {
-	list ($ret, $status) = GalleryCoreApi::fetchPluginStatus('module');
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -70,21 +70,23 @@ class GalleryFactoryHelper_simple {
 	}
 	$module->performFactoryRegistrations();
 
-	foreach (array_keys($status) as $moduleId) {
+	foreach ($moduleStatus as $moduleId => $status) {
 	    if ($moduleId == 'core') {
 		continue;
 	    }
-	    
-	    if (!empty($status[$moduleId]['active'])) {
-		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			continue;
+
+	    if (!empty($status['active'])) {
+		if (in_array('performFactoryRegistrations', explode('|', $status['callbacks']))) {
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		    if ($ret->isError()) {
+			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			    continue;
+			}
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
-		    return $ret->wrap(__FILE__, __LINE__);
+
+		    $module->performFactoryRegistrations();
 		}
-		
-		$module->performFactoryRegistrations();
 	    }
 	}
 

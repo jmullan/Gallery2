@@ -82,6 +82,26 @@ class GalleryModule {
      */
     var $_group;
 
+    /**
+     * This module's callbacks.  This is a pipe (|) delimited string containing
+     * one or more of the following values:
+     *   performFactoryRegistrations
+     *   registerEventListeners
+     *   getSiteAdminViews
+     *   getItemAdminViews
+     *   getUserAdminViews
+     *   getSystemLinks
+     *   loadSystemContent
+     *   getItemLinks
+     *   getItemSummaries
+     *
+     * eg: getItemAdminViews|getSystemLinks|getItemLinks
+     *
+     * @var string _callbacks
+     * @access private
+     */
+    var $_callbacks;
+
     /*
      * ****************************************
      *                 Methods
@@ -197,6 +217,11 @@ class GalleryModule {
 	    }
 	    
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $this->setModuleParameter('callbacks', $this->getCallbacks());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -427,6 +452,7 @@ class GalleryModule {
      * @return array object GalleryStatus a status code
      *               string template file path
      */
+
     function loadSystemContent(&$template) {
 	return array(GalleryStatus::success(), null);
     }
@@ -540,6 +566,14 @@ class GalleryModule {
 
     function getGroup() {
 	return $this->_group;
+    }
+
+    function getCallbacks() {
+	return $this->_callbacks;
+    }
+
+    function setCallbacks($callbacks) {
+	$this->_callbacks = $callbacks;
     }
 }
 ?>

@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+    <title> <?php print _('Welcome to the Gallery Upgrader') ?> </title>
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+  </head>
+
+  <body>
+    <div id="box">
+      <div id="header">
+	<img src="images/g2Logo_install_head.png" />
+      </div>
+      <div id="navbar">
+	<h2><?php print _('Upgrade Steps') ?></h2>
+	<ol>
+	  <?php for ($i = 0; $i < sizeof($steps); $i++): ?>
+	  <li class="navitem">
+	    <span class="nav_num">
+	      <?php if ($i <= $currentStep->getStepNumber() && ($steps[$i]->isComplete() || $steps[$i]->isOptional())): ?>
+	      <span class="success">&radic;</span>
+	      <?php elseif ($steps[$i]->isInError()): ?>
+	      <span class="error">&#10007;</span>
+	      <?php else: ?>
+	      <?php print $i?>
+	      <?php endif; ?>
+	    </span>
+
+	    <span class="nav_text">
+	      <?php
+	      if ($i == 0 ||
+                  ($i <= $currentStep->getStepNumber()+1 &&
+                   ($steps[$i-1]->isComplete() || 
+                    $steps[$i-1]->isOptional()))) {
+	          $linkable = true;
+	      } else {
+	          $linkable = false;
+	      }
+	      ?>
+	      <?php if ($linkable): ?>
+	      <a href="?step=<?php print $i?>">
+		<?php endif; ?>
+		<?php print $steps[$i]->stepName(); ?>
+		<?php if ($linkable): ?>
+	      </a>
+	      <?php endif; ?>
+	    </span>
+	  </li>
+	  <?php endfor; ?>
+	</ol>
+	<ul>
+	  <li><span class="helpBox">?</span><a href="../README.html" target="_blank">Installer Help</a>
+          </li>
+	  <li><span class="helpBox">X</span><a href="?startOver=1">Start Over</a></li>
+	</ul>
+      </div>
+
+      <div id="main">
+	<?php if (!empty($templateData['errors'])): ?>
+	<h2 class="error">
+	  <?php foreach ($templateData['errors'] as $error): ?>
+	  <?php print $error ?> <br />
+	  <?php endforeach; ?>
+	</h2>
+	<?php endif; ?>
+	
+	<?php if (!empty($templateData['warnings'])): ?>
+	<h2 class="warning">
+	  <?php foreach ($templateData['warnings'] as $warning): ?>
+	  <?php print $warning ?> <br />
+	  <?php endforeach; ?>
+	</h2>
+	<?php endif; ?>
+
+	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
+	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
+	<div class="go">
+	  <?php $nextStep = $stepNumber + 1 ?>
+	  <span class="goToNext">
+	    <a href="index.php?step=<?php print $nextStep?>">
+	      <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
+	    </a>
+	  </span>
+
+	  <?php if ($currentStep->isRedoable()): ?>
+	  <span class="goToNextL">
+	    <a href="index.php?step=<?php print $stepNumber?>&doOver=1">
+	      <?php print _('Redo this step'); ?>
+	    </a>
+	  </span>
+	  <?php endif; ?>
+	</div>
+	<?php endif; ?>
+      </div>
+
+      <div id="bottom">
+	<table class="statusTable" cellspacing="0">
+	  <tr>
+	    <td colspan="2">
+	      <h4><?php print _('Installation Status'); ?></h4>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <?php $progressBarColor = ($templateData['percentComplete'] >= 100) ? '#fd6704' : '#fd6704'; ?> 
+	    <?php if ($templateData['percentComplete'] != 0): ?>
+	    <td width="<?php print $templateData['percentComplete'] ?>%" 
+	      align="center" 
+	      bgcolor="<?php print $progressBarColor; ?>" 
+	      style="border: 1px solid #ddd">&nbsp;</td>
+	    <?php endif; ?>
+
+	    <?php if ($templateData['percentComplete'] != 100): ?>
+	    <td width="<?php print 100 - $templateData['percentComplete'] ?>%" 
+	      bgcolor="#eeeeee" 
+	      style="border: 1px solid #ddd; <?php print ($templateData['percentComplete'] == 0) ? '' : 'border-left: 0px;'?>">&nbsp;</td>
+	    <?php endif; ?>
+	  </tr>
+	  <tr>
+	    <td <?php print ($templateData['percentComplete'] != 0 && $templateData['percentComplete'] != 100) ? 'colspan="2"' : '';?> >
+	      <span class="statusLine">
+		<?php print _('Install ') . $templateData['percentComplete'] ._('% complete')?>
+	      </span>
+	    </td>
+	  </tr>
+	</table>
+      </div>  
+    </div>
+    <div id="footer">
+      <?php print _('Gallery: <strong>your photos</strong> on <strong>your website</strong>') ?> 
+      &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a> 
+    </div>
+  </body>
+</html>

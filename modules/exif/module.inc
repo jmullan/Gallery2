@@ -40,8 +40,9 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.8.1');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
+	$this->setCallbacks('performFactoryRegistrations|loadItemDetails|getSiteAdminViews');
     }
 
     /**

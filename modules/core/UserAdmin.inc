@@ -52,26 +52,28 @@ class UserAdminView extends GalleryView {
 
 	/* Get a list of all the admin views for each module */
 	$subViewChoices = array();
-	foreach ($moduleStatus as $moduleId => $moduleStatus) {
-	    if (empty($moduleStatus['active'])) {
+	foreach ($moduleStatus as $moduleId => $status) {
+	    if (empty($status['active'])) {
 		continue;
 	    }
 
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
+	    if (in_array('getUserAdminViews', explode('|', $status['callbacks']))) {
+		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			continue;
+		    }
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		
+		list ($ret, $moduleViews) = $module->getUserAdminViews($user);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$subViewChoices = array_merge($subViewChoices, $moduleViews);
 	    }
-
-	    list ($ret, $moduleViews) = $module->getUserAdminViews($user);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
 	}
 
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');

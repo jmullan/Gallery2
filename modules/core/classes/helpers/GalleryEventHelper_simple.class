@@ -95,16 +95,19 @@ class GalleryEventHelper_simple {
 	    }
 
 	    foreach ($moduleStatus as $moduleId => $status) {
-		if (!empty($status['active'])) {
-		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-		    if ($ret->isError()) {
-			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-			    continue;
-			}
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
 
-		    $module->registerEventListeners();
+		if (!empty($status['active'])) {
+		    if (in_array('registerEventListeners', explode('|', $status['callbacks']))) {
+			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+			if ($ret->isError()) {
+			    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+				continue;
+			    }
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			
+			$module->registerEventListeners();
+		    }
 		}
 	    }
 

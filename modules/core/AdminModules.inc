@@ -66,7 +66,6 @@ class AdminModulesController extends GalleryController {
 		
 	    case 'install':
 	    case 'upgrade':
-	    case 'downgrade':
 		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -178,6 +177,27 @@ class AdminModulesView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/*
+	 * It's possible that we have some out-of-date modules which haven't been
+	 * deactivated yet, since the deactivation only occurs when we try to load the
+	 * module.  Take the hack approach of trying to load all the active modules now
+	 * to force the version check, then reload the module status when we're done.
+	 */
+	foreach ($moduleStatus as $moduleId => $status) {
+	    if (!empty($status['active'])) {
+		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+	
+	/* Reload the module list, which may now be updated because of obsolete modules. */
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module', true);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'AdminModules') {
 	    /* We have no form variables */
 	    $form['formName'] = 'AdminModules';
@@ -217,11 +237,6 @@ class AdminModulesView extends GalleryView {
 						       'controller' => 'core:AdminModules',
 						       'moduleId' => $module->getId(),
 						       'action' => 'upgrade');
-			} else {
-			    $entry['action'][] = array('text' => $coreModule->translate('downgrade'),
-						       'controller' => 'core:AdminModules',
-						       'moduleId' => $module->getId(),
-						       'action' => 'downgrade');
 			}
 		    }
 		    $entry['state'] = 'upgrade';
@@ -251,14 +266,12 @@ class AdminModulesView extends GalleryView {
 					       'action' => 'uninstall');
 		}
 	    } else {
+		$entry['state'] = 'active';
 		if ($moduleId != 'core') {
-		    $entry['state'] = 'active';
 		    $entry['action'][] = array('text' => $coreModule->translate('deactivate'),
 					       'controller' => 'core:AdminModules',
 					       'moduleId' => $moduleId,
 					       'action' => 'deactivate');
-		} else {
-		    $entry['state'] = '';
 		}
 	    }
 

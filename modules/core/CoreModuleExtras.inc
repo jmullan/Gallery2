@@ -41,6 +41,28 @@ class CoreModuleExtras {
     function upgrade($module, $currentVersion) {
 	global $gallery;
 
+	/*
+	 * We store our version outside of the database so that we can upgrade
+	 * even if the database is in an undependable state.
+	 */
+	$versions = $this->getInstalledVersions();
+	$currentVersion = $versions['core'];
+
+	if (!isset($currentVersion)) {
+	    /*
+	     * This is either an initial install or an upgrade from version
+	     * 0.8 (which didn't have the core versions.dat file).  Use a module
+	     * parameter as our acid test.
+	     *
+	     * TODO: Get rid of this when we get to the final release.  It's
+	     * only useful in the alpha -> beta transition.
+	     */
+	    list ($ret, $paramValue) = $this->getModuleParameter('permissions.directory');
+	    if (isset($paramValue)) {
+		$currentVersion = '0.8';
+	    }
+	}
+
 	if (!isset($currentVersion)) {
 	    /* This is an initial install. Make sure that we have some reasonable defaults for the core. */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
@@ -134,6 +156,24 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	$platform = $gallery->getPlatform();
+	$baseDir = $gallery->getConfig('data.gallery.base');
+	$versionFile = sprintf('%s%s%s',
+			       $baseDir,
+			       $platform->getDirectorySeparator(),
+			       'versions.dat');
+
+	if ($fd = $platform->fopen($versionFile, 'wb')) {
+	    $data = sprintf("%s\n%s",
+			    $module->getVersion(),
+			    $module->getGalleryVersion());
+	    $platform->fwrite($fd, $data);
+	    $platform->fclose($fd);
+	} else {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					'Can\'t write to the versions file'); 
 	}
 
 	return GalleryStatus::success();

@@ -37,9 +37,13 @@ class CoreModule extends GalleryModule {
 
 	$this->setId('core');
 	$this->setName('Core');
-	$this->setVersion('0.8');
+	$this->setGalleryVersion('2.0-alpha-3');
+	$this->setVersion('0.8.1');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
+	$this->setCallbacks('registerEventListeners|performFactoryRegistrations|' .
+			    'getItemLinks|getSystemLinks|loadSystemContent|' .
+			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
 
 	/*
 	 * We can't set our description until we have a $gallery object so
@@ -647,6 +651,54 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Set the current version of Gallery
+     */
+    function setGalleryVersion($version) {
+	$this->_galleryVersion = $version;
+    }
+
+    /**
+     * Get the current version of Gallery
+     */
+    function getGalleryVersion() {
+	return $this->_galleryVersion;
+    }
+
+    /**
+     * Get the version of the core module and of Gallery itself.  We store this
+     * on disk to avoid having to load up the database (which can be problematic
+     * if we're doing an upgrade and don't want to count a specific database
+     * schema.
+     *
+     * @return array 'core' => core module version, 'gallery' => gallery version
+     */
+    function getInstalledVersions() {
+	global $gallery;
+	static $versions;
+
+	if (!isset($versions)) {
+	    $platform = $gallery->getPlatform();
+	    $baseDir = $gallery->getConfig('data.gallery.base');
+	    $versionFile = sprintf('%s%s%s',
+				   $baseDir,
+				   $platform->getDirectorySeparator(),
+				   'versions.dat');
+
+	    $moduleVersion = null;
+	    $galleryVersion = null;
+	    if ($platform->file_exists($versionFile)) {
+		$versionArray = $platform->file($versionFile);
+		if (count($versionArray) >= 2) {
+		    $versions['core'] = rtrim($versionArray[0]);
+		    $versions['gallery'] = rtrim($versionArray[1]);
+		}
+	    }
+	}
+
+	return $versions;
     }
 }
 ?>

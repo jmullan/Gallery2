@@ -631,6 +631,25 @@ class GalleryLayout {
 		if (empty($status['active'])) {
 		    continue;
 		}
+		$callbacks = array_flip(explode('|', $status['callbacks']));
+
+		$required = false;
+		foreach (array('systemLinks' => 'getSystemLinks',
+			       'systemContentFiles' => 'loadSystemContent',
+			       'itemLinks' => 'getItemLinks',
+			       'itemSummaries' => 'getItemSummaries',
+			       'itemDetailFiles' => 'loadItemDetails') as $key => $callbackKey) {
+		    if (isset($load[$key]) && isset($callbacks[$callbackKey])) {
+			$required = true;
+			break;
+		    }
+		}
+		
+		if (!$required) {
+		    // This module doesn't have anything we need.  Don't bother with it
+		    continue;
+		}
+
 		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
@@ -639,7 +658,7 @@ class GalleryLayout {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
-		if (isset($load['systemLinks'])) {
+		if (isset($load['systemLinks']) && isset($callbacks['getSystemLinks'])) {
 		    list ($ret, $links) = $module->getSystemLinks();
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -652,7 +671,7 @@ class GalleryLayout {
 		    }
 		}
 
-		if (isset($load['systemContentFiles'])) {
+		if (isset($load['systemContentFiles']) && isset($callbacks['loadSystemContent'])) {
 		    list ($ret, $content) = $module->loadSystemContent($template);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -662,7 +681,7 @@ class GalleryLayout {
 		    }
 		}
 
-		if (isset($itemLinks)) {
+		if (isset($itemLinks) && isset($callbacks['getItemLinks'])) {
 		    list ($ret, $links) = $module->getItemLinks($allItems);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -677,7 +696,7 @@ class GalleryLayout {
 		    }
 		}
 
-		if (isset($itemSummaries)) {
+		if (isset($itemSummaries) && isset($callbacks['getItemSummaries'])) {
 		    list ($ret, $content) = $module->getItemSummaries($childItems);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -687,7 +706,7 @@ class GalleryLayout {
 		    }
 		}
 
-		if (isset($load['itemDetailFiles'])) {
+		if (isset($load['itemDetailFiles']) && isset($callbacks['loadItemDetails'])) {
 		    list ($ret, $content) = $module->loadItemDetails($template, $item);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);

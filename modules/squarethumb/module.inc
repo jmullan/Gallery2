@@ -41,8 +41,9 @@ class SquareThumbModule extends GalleryModule {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.8.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
+	$this->setCallbacks('performFactoryRegistrations|registerEventListeners');
     }
 
     /**

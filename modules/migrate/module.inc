@@ -39,8 +39,9 @@ class MigrateModule extends GalleryModule {
 	$this->setId('migrate');
 	$this->setName('Migration');
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.8.1');
 	$this->setGroup('import', $gallery->i18n('Import'));
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
     }
     
     /**

@@ -67,10 +67,12 @@ class GalleryPluginHelper_simple {
 		$pluginFile = sprintf('%s/../../../../%ss/%s/%s.inc',
 				      dirname(__FILE__), $pluginType, $pluginId, $pluginType);
 		$ret = GalleryUtilities::requireOnce($pluginFile);
+
 		if ($ret->isError()) {
 		    // If we have a bad path, it may be because our cached plugin list is out of
 		    // date -- in which case we should flush the cache and try again.
 		    if ($depth == 0 && $ret->getErrorCode() & ERROR_BAD_PATH) {
+
 			GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
 			GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 							       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
@@ -98,7 +100,7 @@ class GalleryPluginHelper_simple {
 	} else {
 	    $plugin = GalleryDataCache::get($cacheKey);
 	}
-
+	
 	if (!$ignoreVersionMismatch && $pluginType == 'module') {
 	    /* Verify that the versions match */
 	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus('module');
@@ -110,13 +112,16 @@ class GalleryPluginHelper_simple {
 		isset($status[$pluginId]['active']) &&
 		isset($status[$pluginId]['version']) &&
 		$status[$pluginId]['version'] != $plugin->getVersion()) {
-		
-		/* Try to deactivate the plugin and return a (handleable) error */
-		list ($ret, $redirectInfo) = $plugin->deactivate();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+
+		if ($pluginId != 'core') {
+		    /* Try to deactivate the plugin */
+		    list ($ret, $redirectInfo) = $plugin->deactivate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
-		
+
+		/*  Return a handleable error */
 		return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__), $plugin);
 	    }
 	}
@@ -279,12 +284,17 @@ class GalleryPluginHelper_simple {
 			if ($platform->file_exists($path)) {
 			    $plugins[$pluginId]['available'] = 1;
 
-			    list ($ret, $version) =
+			    list ($ret, $plugins[$pluginId]['version']) =
 				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'version');
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    } 
-			    $plugins[$pluginId]['version'] = $version;
+			    
+			    list ($ret, $plugins[$pluginId]['callbacks']) =
+				GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, 'callbacks');
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    } 
 			}
 		    }
 		    $platform->closedir($dir);

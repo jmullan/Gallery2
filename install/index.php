@@ -73,8 +73,8 @@ foreach ($stepOrder as $stepName) {
 session_start();
 
 // If we don't have our steps in our session, initialize them now.
-if (!isset($_GET['startOver']) && !empty($_SESSION['steps'])) {
-    $steps = unserialize($_SESSION['steps']);
+if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
+    $steps = unserialize($_SESSION['install_steps']);
     $galleryStub =& $_SESSION['galleryStub'];
 }
 
@@ -156,5 +156,5 @@ if ($currentStep->processRequest()) {
  * will break in environments where session.auto_start is on since
  * it will try to instantiate the classes before they've been defined
  */
-$_SESSION['steps'] = serialize($steps);
+$_SESSION['install_steps'] = serialize($steps);
 ?>

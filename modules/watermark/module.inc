@@ -40,8 +40,10 @@ class WatermarkModule extends GalleryModule {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.4');
+	$this->setVersion('0.8.1');
 	$this->setGroup('display', $gallery->i18n('Display'));
+	$this->setCallbacks('performFactoryRegistrations|registerEventListeners|' .
+			    'getSiteAdminViews|getUserAdminViews');
     }
 
     /**

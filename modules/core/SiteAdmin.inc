@@ -57,34 +57,37 @@ class SiteAdminView extends GalleryView {
 	/* Get a list of all the admin views for each module */
 	$subViewChoices = array();
 	ksort($moduleStatus);
-	foreach ($moduleStatus as $moduleId => $moduleStatus) {
-	    if (empty($moduleStatus['active'])) {
+
+	foreach ($moduleStatus as $moduleId => $status) {
+	    if (empty($status['active'])) {
 		continue;
 	    }
 
 	    /* Get the selected module's admin view */
-	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
+	    if (in_array('getSiteAdminViews', explode('|', $status['callbacks']))) {
+		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			continue;
+		    }
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 
-	    list ($ret, $moduleViews) = $module->getSiteAdminViews();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+		list ($ret, $moduleViews) = $module->getSiteAdminViews();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	    $group = $module->getGroup();
-	    if (empty($group)) {
-		$group = array('group' => 'other');
-	    }
-	    foreach (array_keys($moduleViews) as $i) {
-		$moduleViews[$i] = array_merge($group, $moduleViews[$i]);
-	    }
+		$group = $module->getGroup();
+		if (empty($group)) {
+		    $group = array('group' => 'other');
+		}
+		foreach (array_keys($moduleViews) as $i) {
+		    $moduleViews[$i] = array_merge($group, $moduleViews[$i]);
+		}
 
-	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
+		$subViewChoices = array_merge($subViewChoices, $moduleViews);
+	    }
 	}
 	// Sort and group..
 	$subViewGroups = $groupLabels = array();
