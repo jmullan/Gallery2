@@ -178,8 +178,8 @@ class GalleryUserHelper {
 
 	if (!$hasPermission) {
 	    $gallery->debug("user $userId doesn't have " .
-			    "permissions: " . serialize($permissions)  . 
-			    "for item $itemId");
+			    "permissions: (" . join(", ", $permissions) .
+			    ") for item $itemId");
 	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
 					__FILE__, __LINE__);
 	}
