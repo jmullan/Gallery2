@@ -33,6 +33,24 @@
 	    </td>
 	  </tr>
 
+	  {if ($form.groupType == GROUP_ALL_ADMINS)}
+	  <tr>
+	    <td colspan="2" align="center">
+	      {galleryWarningFontColor}
+	      {galleryText text="Note: This is the admin group.  Any users you add to this group will have site-wide administrative privileges"}
+	      {/galleryWarningFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
+	  {if ($form.groupType == GROUP_ALL_USERS)}
+	  <tr>
+	    <td colspan="2" align="center">
+	      {galleryText text="This group contains all Gallery users.  You cannot add or remove users from it."}
+	    </td>
+	  </tr>
+	  {else}
+
 	  {if !empty($form.list.users)}
 	  <tr>
 	    <td align="right">
@@ -69,9 +87,9 @@
 	    </td>
 	  </tr>
 
-	  {if isset($form.error.list.missingUserName)}
+	  {if isset($form.error.text.missingUserName)}
 	  <tr>
-	    <td align="center">
+	    <td colspan="2" align="center">
 	      {galleryErrorFontColor}
 	      {galleryText text="You must enter a username."}
 	      {/galleryErrorFontColor}
@@ -79,15 +97,16 @@
 	  </tr>
 	  {/if}
 
-	  {if isset($form.error.list.noSuchUser)}
+	  {if isset($form.error.text.noSuchUser)}
 	  <tr>
-	    <td align="center">
+	    <td colspan="2" align="center">
 	      {galleryErrorFontColor}
-	      {galleryText text="Username '%s' does not exist."
-	                   arg1=$form.text.username}
+	      {galleryText text="User '%s' does not exist."
+	                   arg1=$form.text.userName}
 	      {/galleryErrorFontColor}
 	    </td>
 	  </tr>
+	  {/if}
 	  {/if}
 
 	  <tr>
@@ -117,6 +136,7 @@
 	    </td>
 	  </tr>
 	  {/if}
+
 	</table>
 	{/galleryLightFrame}
       </td>

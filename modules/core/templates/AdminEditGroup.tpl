@@ -1,6 +1,6 @@
   {galleryForm controller="$controller"}
   {galleryInput type="hidden" name="form.groupId"}{$form.groupId}{/galleryInput}
-  <table width="100%" border="1" cellspacing="3" cellpadding="3">
+  <table width="100%" border="0" cellspacing="3" cellpadding="3">
 
     <tr>
       <td align="center" colspan="2">
@@ -34,16 +34,6 @@
 	{galleryInput name="form.groupName"}{$form.groupName}{/galleryInput}
       </td>
     </tr>
-
-    {if $form.groupType == GROUP_NORMAL}
-    <tr>
-      <td>
-	{gallerySelect name="form.list.userId" size=$form['list']['pageSize']}
-	{html_options options=$form['list']['users']}
-	{/gallerySelect}
-      </td>
-    </tr>
-    {/if}
 
     <tr>
       <td align="center" colspan="2">
