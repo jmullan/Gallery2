@@ -301,6 +301,7 @@ class MatrixTheme extends GalleryTheme {
      * @return string HTML content
      */
     function row($context, $column_array) {
+	$buf = '';
 	for ($i = 0; $i < sizeof($column_array); $i++) {
 	    $attrs = "";
 	    foreach (array('align', 'width', 'colspan', 'rowspan', 'valign') as $attrName) {
