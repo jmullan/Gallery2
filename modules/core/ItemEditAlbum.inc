@@ -214,10 +214,12 @@ class ItemEditAlbum extends ItemEditPlugin {
 			}
 		    }
 		}
-
-		/* Recreate the resizes, if requested to do so */
-		/* XXX: We should not delete resizes that we will be adding */
-		/*      again moments later again */
+		
+		/*
+		 * Recreate the resizes, if requested to do so.
+		 * TODO: We should not delete resizes that we will be
+		 *       adding again moments later again
+		 */
 		if (isset($form['recreateResizes'])) {
 		    /* Get and delete all current resizes */
 		    list ($ret, $resizesTable) = GalleryCoreApi::fetchResizesByItemIds($childIds);
@@ -254,6 +256,14 @@ class ItemEditAlbum extends ItemEditPlugin {
 				    continue;
 				}
 
+				/* Special case to make sure that we don't upsample photos */
+				if (GalleryUtilities::isA($child, 'GalleryPhotoItem')) {
+				    $maxDimension = max($child->getWidth(), $child->getHeight());
+				    if ($form['resizes'][$i]['size'] >= $maxDimension) {
+					continue;
+				    }
+				}
+		
 				list ($ret, $derivative) = 
 				    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
 									     $source->getEntityType());

@@ -309,6 +309,89 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	    $this->assertEquals('scale|456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
 	}
     }
+
+    /**
+     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes that are 
+     * larger (dimension wise) than the original.
+     */
+    function testRecreateResizesForSmallPhoto() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Set the album preferences such that we have one resize that's smaller than the original, and one
+	 * that's larger.  We know that the image we're using is 62x75
+	 */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->create($this->_album->getId(),
+			      dirname(__FILE__) . '/../data/test1.gif',
+			      'image/gif',
+			      'test image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
+	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
+	GalleryUtilities::putRequestVariable('form[orderBy]', 'baz');
+	GalleryUtilities::putRequestVariable('form[orderDirection]', 'bletch');
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
+	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][0][size]', 50);
+	GalleryUtilities::putRequestVariable('form[resizes][1][active]', 1);
+	GalleryUtilities::putRequestVariable('form[resizes][1][size]', 100);
+	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
+			    $results);
+
+	// Now verify that we didn't upsample our resizes
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($resizes[$photo->getId()]), 'Missing resizes for new photo');
+	if (isset($resizes[$photo->getId()])) {
+	    $resizes = $resizes[$photo->getId()];
+	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
+	    $this->assertEquals('scale|50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be scale|50');
+	}
+    }
 }
 
 /**
