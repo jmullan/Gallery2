@@ -77,16 +77,25 @@ class GalleryLockHelper_medium {
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
 
+	/*
+	 * The current id may not be an item, in which case it has no direct parent sequence.  But its parent
+	 * should be an item, so the surefire way to get the parent sequence in one shot is to get the
+	 * parent's parent sequence and then tack on the parent id.
+	 */
+
 	$storage = $gallery->getStorage();
 
 	/* Get the parent entity id */
 	$query = '
         SELECT
-          [GalleryChildEntity::parentId]
+          [GalleryItemAttributesMap::itemId],
+          [GalleryItemAttributesMap::parentSequence]
         FROM
-          [GalleryChildEntity]
+          [GalleryChildEntity], [GalleryItemAttributesMap]
         WHERE
           [GalleryChildEntity::id] = ?
+          AND
+          [GalleryChildEntity::parentId] = [GalleryItemAttributesMap::itemId]
         ';
 
 	list ($ret, $searchResults) = $gallery->search($query, array($id));
@@ -99,50 +108,35 @@ class GalleryLockHelper_medium {
 	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 	
-	/* Extract the parent id */
+	/* Extract the parent ids */
+	$parentIds = array();
 	while ($result = $searchResults->nextResult()) {
-	    $parentId = $result[0];
+	    $parentIds = preg_split('/\//', $result[1], -1, PREG_SPLIT_NO_EMPTY);
+	    $parentIds[] = $result[0];
 	}
-	
-	if ($parentId == null) {
-	    
-	    /* No parent -- we're at the root */
-	    return array(GalleryStatus::success(), null);
-	}
-	
-	/* Don't both read locking if we already have a read or write lock. */
-	if (!(GalleryLockHelper_medium::isWriteLocked($parentId) ||
-	      GalleryLockHelper_medium::isReadLocked($parentId))) {
-	    
-	    /* Read lock the parent */
-	    list ($ret, $lock1) = GalleryLockHelper_medium::acquireReadLock($parentId, $timeout);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+
+	/* Get rid of any locks we already have */
+	$tmp = array();
+	foreach ($parentIds as $id) {
+	    if (!GalleryLockHelper_medium::isReadLocked($id) &&
+		!GalleryLockHelper_medium::isWriteLocked($id)) {
+		$tmp[] = $id;
 	    }
 	}
+	$parentIds = $tmp;
 	
-	/* Then lock all ancestors of the parent */
-	list ($ret, $lock2) = GalleryLockHelper_medium::acquireReadLockParents($parentId, $timeout);
+	if (empty($parentIds)) {
+	    /* No locks required */
+	    return array(GalleryStatus::success(), null);
+	}
+
+	/* Read lock the parents */
+	list ($ret, $lock) = GalleryLockHelper_medium::acquireReadLock($parentIds, $timeout);
 	if ($ret->isError()) {
-	    GalleryLockHelper_medium::releaseLocks($lock1);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Merge the locks down to a single lock. */
-	if (empty($lock1) && empty($lock2)) {
-	    $lockId = null;
-	} else if (empty($lock1) && !empty($lock2)) {
-	    $lockId = $lock2;
-	} else if (!empty($lock1) && empty($lock2)) {
-	    $lockId = $lock1;
-	} else {
-	    $locks =& GalleryLockHelper_simple::_getLocks();
-	    $locks[$lock1]->merge($locks[$lock2]);
-	    unset($locks[$lock2]);
-	    $lockId = $lock1;
-	}
-
-	return array(GalleryStatus::success(), $lockId);
+	return array(GalleryStatus::success(), $lock);
     }
 
     /**
