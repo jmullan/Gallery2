@@ -515,6 +515,57 @@ class ConfirmImportController extends GalleryController {
 				}
 				$albumNeedsThumbnail = FALSE;
 			    }
+			    if (isset($importAlbumItem->image->thumb_x) &&
+				isset($importAlbumItem->image->thumb_y) &&
+				isset($importAlbumItem->image->thumb_width) &&
+				isset($importAlbumItem->image->thumb_height) &&
+				$importAlbumItem->image->thumb_width > 0 &&
+				$importAlbumItem->image->thumb_height > 0){ 
+
+				/* Load the thumbnail */
+				$thumbnails = array();
+				list ($ret, $thumbnails) = GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($newItem->getId()));
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+
+				if (!empty($thumbnails)) {
+				    $thumbnail = $thumbnails[$newItem->getId()];
+
+				    list ($ret, $lock) = $gallery->acquireWriteLock($thumbnail->getId());
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+
+				    list ($ret, $thumbnail) = $thumbnail->refresh();
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+
+				    $ret = $thumbnail->mergeOperation('crop',
+								      array($importAlbumItem->image->thumb_x,
+									    $importAlbumItem->image->thumb_y,
+									    $importAlbumItem->image->thumb_width,
+									    $importAlbumItem->image->thumb_height),
+								      true);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+
+				    $ret = $thumbnail->save();
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+
+				    $ret = $gallery->releaseLocks($lock);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				}
+			    }
+
+
+			    
 			    $ret = $newItem->save();
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
@@ -535,12 +586,12 @@ class ConfirmImportController extends GalleryController {
 			     *           -[width] => 225
 			     *           -[height] => 165
 			     *           -[resizedName] =>
-			     *            {thumb_x] =>
-			     *            [thumb_y] =>
-			     *            [thumb_width] =>
-			     *            [thumb_height] =>
-			     *            [raw_width] => 225
-			     *            [raw_height] => 165
+			     *           +[thumb_x] =>
+			     *           +[thumb_y] =>
+			     *           +[thumb_width] =>
+			     *           +[thumb_height] =>
+			     *           -[raw_width] => 225
+			     *           -[raw_height] => 165
 			     *           -[version] => 10
 			     *        )
 			     *
@@ -551,7 +602,7 @@ class ConfirmImportController extends GalleryController {
 			     *   +[clicks] =>
 			     *   +[keywords] =>
 			     *    [comments] =>
-			     *    [uploadDate] => 1056014783
+			     *   +[uploadDate] => 1056014783
 			     *   +[itemCaptureDate] => Array
 			     *        (
 			     *           +[0] => 1056014783
