@@ -72,6 +72,13 @@ class FfmpegToolkitHelper {
 	$operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
 	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
+	$operations['select-offset'] = array(
+	    'params' => array(array('type' => 'float',
+				    'description' => $gallery->i18n('offset in seconds'))),
+	    'description' => $gallery->i18n('Select time offset in movie file'),
+	    'mimeTypes' => $mimeTypes,
+	    'outputMimeType' => null);
+
 	/*
 	 * -------------------- Properties --------------------
 	 */

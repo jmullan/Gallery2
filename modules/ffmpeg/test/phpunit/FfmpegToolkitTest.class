@@ -96,21 +96,29 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
-	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
-								   'description' => 'Convert to a JPEG',
-								   'mimeTypes' => $expectedMimeTypes,
-								   'outputMimeType' => 'image/jpeg')),
-			    $results['operations']);
+	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
+				   'video/quicktime', 'video/x-ms-wmv');
+	$this->assertEquals(array('convert-to-image/jpeg' => array(
+		'params' => array(),
+		'description' => 'Convert to a JPEG',
+		'mimeTypes' => $expectedMimeTypes,
+		'outputMimeType' => 'image/jpeg'),
+	    'select-offset' => array(
+		'params' => array(array('type' => 'float', 'description' => 'offset in seconds')),
+		'description' => 'Select time offset in movie file',
+		'mimeTypes' => $expectedMimeTypes,
+		'outputMimeType' => null)),
+	    $results['operations'], 'operations');
 
-	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
-							'description' => 'Get the width and height of the movie',
-							'mimeTypes' => $expectedMimeTypes),
-				  'dimensions_and_duration' => array('type' => 'int,int,int',
-								     'description' => ('Get the width, height ' .
-										       'and duration of the movie'),
-								     'mimeTypes' => $expectedMimeTypes)),
-			    $results['properties']);
+	$this->assertEquals(array('dimensions' => array(
+		'type' => 'int,int',
+		'description' => 'Get the width and height of the movie',
+		'mimeTypes' => $expectedMimeTypes),
+	    'dimensions_and_duration' => array(
+		'type' => 'int,int,int',
+		'description' => ('Get the width, height and duration of the movie'),
+		'mimeTypes' => $expectedMimeTypes)),
+	    $results['properties'], 'properties');
     }
 
     function testBinaries() {
@@ -373,6 +381,34 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals($results, 'image/jpeg');
     }
+
+    function testPerformOperationWithOffset() {
+	global $gallery;
+
+	list ($ret, $results) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'select-offset',
+					      'testPerformOperation1.avi',
+					      'testPerformOperation2.avi',
+					      array('1.2'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($results, 'video/avi', 'mime after offset');
+	$this->assertEquals('1.2', $gallery->_ffmpeg_offset, 'offset');
+
+	list ($ret, $results) =
+	    $this->_toolkit->performOperation('video/avi',
+					      'convert-to-image/jpeg',
+					      'testPerformOperation2.avi',
+					      'testPerformOperation3.jpg',
+					      array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($results, 'image/jpeg', 'mime after convert');
+	$this->assert(!isset($gallery->_ffmpeg_offset), 'no offset');
+    }
 }
 
 /**
@@ -620,7 +656,7 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = 'decoder corresponds to the h263 and h263p encoders, for file formats its even';
 	    $results[] = 'worse';
 	    return array(1, $results, $stderr);
-	    
+
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation1.avi',
 				   '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
 	    $stderr[] = 'Input #0, avi, from \'testPerformOperation1.avi\':';
@@ -634,14 +670,32 @@ class FfmpegToolkitTestPlatform {
 	    $stderr[] = 'Press [q] to stop encoding';
 	    $stderr[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
 	    return array(1, $results, $stderr);
+
+	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation2.avi',
+			     '-ss', '1.2', '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
+	    $stderr[] = 'Input #0, avi, from \'testPerformOperation2.avi\':';
+	    $stderr[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $stderr[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    $stderr[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
+	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
+	    $stderr[] = 'Stream mapping:';
+	    $stderr[] = '  Stream #0.0 -> #0.0';
+	    $stderr[] = 'Press [q] to stop encoding';
+	    $stderr[] = 'frame=    2 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
+	    return array(1, $results, $stderr);
 	}
 
-	printf("<pre>%s</pre>", print_r($cmd, 1));
+	printf("Unexpected command for mock toolkit<pre>%s</pre>", print_r($cmd, 1));
 	
 	return array(0, '', 'unprepared for exec()');
     }
 
     function rename($oldName, $newName) {
+	return 1;
+    }
+
+    function copy($oldFile, $newFile) {
 	return 1;
     }
 
