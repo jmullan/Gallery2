@@ -139,6 +139,21 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert(GalleryUtilities::isA(new UtilitiesTest("x"), 'UtilitiesTest'));
 	$this->assert(!GalleryUtilities::isA(new UtilitiesTest("x"), 'GalleryEntity'));
     }
+
+    function testHasRequestVariable() {
+	$key = 'TESTKEY';
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+    }
+
+    function testRemoveRequestVariable() {
+	$key = 'TESTKEY';
+	GalleryUtilities::putRequestVariable($key, 'TESTVALUE');
+	$this->assert(GalleryUtilities::hasRequestVariable($key));
+	GalleryUtilities::removeRequestVariable($key);
+	$this->assert(!GalleryUtilities::hasRequestVariable($key));
+    }
 }
 
 ?>
