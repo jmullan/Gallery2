@@ -101,7 +101,14 @@ class ItemAddAlbumController extends GalleryController {
 		$redirect['subView'] = 'core:ItemEdit';
 		$redirect['editPlugin'] = 'ItemEditAlbum';
 		$redirect['itemId'] = $instance->getId();
-		$status['createdAlbum'] = 1;
+
+		/* Prepare our status message */
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
+		$status['editMessage'] = $module->translate('Album created successfully.');
 	    }
 	}
 
