@@ -132,7 +132,7 @@ class HybridLayout extends GalleryLayout {
 	$layout['moduleItemLinks'] = $moduleItemLinks;
 //	$layout['totalChildCount'] = $totalChildCount;
 //	$layout['totalDescendentCount'] = $totalDescendentCount;
-//	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
+	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
 //	if (!empty($parents)) {
 //	    $layout['parent'] = $parents[sizeof($parents)-1];

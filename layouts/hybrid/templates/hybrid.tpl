@@ -1,9 +1,9 @@
 <div id="album"
 ><div id="album_titlebar"
-><div id="album_tools"><img name="sidebar_max" src="layouts/hybrid/images/right.png" width="18" height="18" class="off" onclick="sidebar_onoff()" alt="Show sidebar" title="Show sidebar"
-><img name="slide__fwd" src="layouts/hybrid/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
-><img name="slide__rev" src="layouts/hybrid/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
-><img name="slide__rand" src="layouts/hybrid/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><div id="album_tools"><img name="sidebar_max" src="{$layout.layoutUrl}/images/right.png" width="18" height="18" class="off" onclick="sidebar_onoff()" alt="Show sidebar" title="Show sidebar"
+><img name="slide__fwd" src="{$layout.layoutUrl}/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><img name="slide__rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><img name="slide__rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ></div>{$layout.title|markup}<div id="album_details"
 >{if isset($layout.item.summary)}{$layout.item.summary|markup}<br>{/if}
 {$layout.item.description|markup}</div></div
@@ -39,7 +39,7 @@
  </td>
  <td class="t"><table class="text"><tr><td><span class="title">
   {if isset($it.image) || isset($it.moduleItemLinks)}
-   <span style="float:right;margin-left:2px"><img src="layouts/hybrid/images/menu.png" class="vis" width="18" height="18" alt="Item Actions" title="Item Actions" onclick="popup_menu(event,{$i}
+   <span style="float:right;margin-left:2px"><img src="{$layout.layoutUrl}/images/menu.png" class="vis" width="18" height="18" alt="Item Actions" title="Item Actions" onclick="popup_menu(event,{$i}
     {if isset($it.image)},{$it.imageIndex})"></span>
       <span id="title_{$it.imageIndex}">
     {else},-1)"></span><span>{/if}
@@ -64,7 +64,7 @@
 
 ><div id="sidebar"
 ><div id="sidebar_min"
-><img src="layouts/hybrid/images/left.png" width="18" height="18" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"></div>
+><img src="{$layout.layoutUrl}/images/left.png" width="18" height="18" onclick="sidebar_onoff()" alt="Hide sidebar" title="Hide sidebar"></div>
 {g->sidebar side="right"}
   {* Module links *}
   {g->box style="sidebar"}
@@ -174,20 +174,20 @@
 ><span id="image_view"></span></div
 
 ><div id="toolbar" style="visibility:hidden"><div id="tools_left"
-><img name="text_on" src="layouts/hybrid/images/up.png" width="18" height="18" class="on" onclick="text_onoff()" alt="Show text" title="Show text"
-><img name="text_off" src="layouts/hybrid/images/down.png" width="18" height="18" class="off" onclick="text_onoff()" alt="Hide text" title="Hide text"
-><img name="slide_poz" src="layouts/hybrid/images/poz.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Pause Slideshow" title="Pause Slideshow"
-><img name="slide_fwd" src="layouts/hybrid/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
-><img name="slide_rev" src="layouts/hybrid/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
-><img name="slide_rand" src="layouts/hybrid/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><img name="text_on" src="{$layout.layoutUrl}/images/up.png" width="18" height="18" class="on" onclick="text_onoff()" alt="Show text" title="Show text"
+><img name="text_off" src="{$layout.layoutUrl}/images/down.png" width="18" height="18" class="off" onclick="text_onoff()" alt="Hide text" title="Hide text"
+><img name="slide_poz" src="{$layout.layoutUrl}/images/poz.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Pause Slideshow" title="Pause Slideshow"
+><img name="slide_fwd" src="{$layout.layoutUrl}/images/fwd.png" width="18" height="18" class="on" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><img name="slide_rev" src="{$layout.layoutUrl}/images/rev.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
+><img name="slide_rand" src="{$layout.layoutUrl}/images/rand.png" width="18" height="18" class="off" onclick="slide_onoff()" alt="Start Slideshow" title="Start Slideshow"
 ></div><div id="tools_right"
-><img name="full_size" src="layouts/hybrid/images/full.png" width="18" height="18" class="off" onclick="image_zoom(1)" alt="Full Size" title="Full Size"
-><img name="fit_size" src="layouts/hybrid/images/fit.png" width="18" height="18" class="off" onclick="image_zoom(0)" alt="Fit Size" title="Fit Size"
-><img src="layouts/hybrid/images/info.png" width="18" height="18" class="on" onclick="popup_info(-1)" alt="Item Details" title="Item Details"
-><img name="prev_off" src="layouts/hybrid/images/prev-off.png" width="18" height="18" class="off" alt="No Previous Image" title="No Previous Image"
-><img name="prev_img" src="layouts/hybrid/images/prev.png" width="18" height="18" class="on" onclick="image_prev()" alt="Previous Image" title="Previous Image"
-><img name="next_off" src="layouts/hybrid/images/next-off.png" width="18" height="18" class="off" alt="No Next Image" title="No Next Image"
-><img name="next_img" src="layouts/hybrid/images/next.png" width="18" height="18" class="on" onclick="image_next()" alt="Next Image" title="Next Image"
+><img name="full_size" src="{$layout.layoutUrl}/images/full.png" width="18" height="18" class="off" onclick="image_zoom(1)" alt="Full Size" title="Full Size"
+><img name="fit_size" src="{$layout.layoutUrl}/images/fit.png" width="18" height="18" class="off" onclick="image_zoom(0)" alt="Fit Size" title="Fit Size"
+><img src="{$layout.layoutUrl}/images/info.png" width="18" height="18" class="on" onclick="popup_info(-1)" alt="Item Details" title="Item Details"
+><img name="prev_off" src="{$layout.layoutUrl}/images/prev-off.png" width="18" height="18" class="off" alt="No Previous Image" title="No Previous Image"
+><img name="prev_img" src="{$layout.layoutUrl}/images/prev.png" width="18" height="18" class="on" onclick="image_prev()" alt="Previous Image" title="Previous Image"
+><img name="next_off" src="{$layout.layoutUrl}/images/next-off.png" width="18" height="18" class="off" alt="No Next Image" title="No Next Image"
+><img name="next_img" src="{$layout.layoutUrl}/images/next.png" width="18" height="18" class="on" onclick="image_next()" alt="Next Image" title="Next Image"
 ></div><div id="title"></div
 ><img name="textspace" width="0" height="0" src="" alt=""></div
 
@@ -195,7 +195,7 @@
 
 ><iframe id="popup" frameborder="0" style="visibility:hidden"></iframe
 ><div id="popup_titlebar" style="visibility:hidden"
-><div style="float:right;margin-left:2px"><img src="layouts/hybrid/images/down.png" width="18" height="18" onclick="popup_vis(0)" alt=""></div
+><div style="float:right;margin-left:2px"><img src="{$layout.layoutUrl}/images/down.png" width="18" height="18" onclick="popup_vis(0)" alt=""></div
 >Item Details</div
 
 ><div id="popup_menu" onmouseover="clearTimeout(popup_timer)"
