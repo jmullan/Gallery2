@@ -52,7 +52,7 @@ class CommentModule extends GalleryModule {
 					       $classDir . 'GalleryComment.class');
 
 	GalleryPermissionMap::registerPermission('comment.all',
-						 $this->translate('[comment] Full access'),
+						 $this->translate('[comment] All access'),
 						 false);
 
 	GalleryPermissionMap::registerPermission('comment.add',
