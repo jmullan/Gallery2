@@ -23,7 +23,7 @@
     {g->text text="Successfully uninstalled layout %s" arg1=$status.uninstalled}
   {/if}
   {if isset($status.upgraded)}
-    {g->text text="Successfully upgraded layout %s" arg1=$status.uninstalled}
+    {g->text text="Successfully upgraded layout %s" arg1=$status.upgraded}
   {/if}
   {if isset($status.savedLayout)}
     {g->text text="Successfully saved layout settings"}
