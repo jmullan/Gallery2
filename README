@@ -8,31 +8,29 @@ these instructions:
 
 1. Get the latest G2 code
 
-2. Wipe out your existing data tree.  This is not absolutely 
-necessary, but it's helpful in terms of providing feedback
-on the install process.  You should probably wipe your old G2
-database, if you have one, as the data model may change without
-notice.  If you've got G2 installed, a fast way to do this is to
-go to the test harness:
+2. Wipe out your existing data tree.  This is not absolutely
+necessary, but it's helpful in terms of providing feedback on the
+install process.  You should probably wipe your old G2 database, if
+you have one, as the data model may change without notice.  If you've
+got G2 installed, a fast way to do this is to go to the test harness:
 
 	setup/test/index.php
 
-and run the "EmptyGallery" and then "RemoveStore" tests.  Note that if
-you're running a version of G2 from before, say, 10/21/2002 then this
-may not work for you 'cause I fixed some bugs in it.  So in that case,
-you should blow away your gallery data directory and drop your database
-by hand.
+and run the "EmptyGallery" and then "RemoveStore" tests.  *Note* that
+after you run these tests the test harness itself won't work anymore.
+You'll have to re-run the setup script (see steps 3 and 4) to be able
+to use the test harness again.
 
 3. Copy setup/config.php-dist to gallery/config.php and edit it.
 There are instructions in the file.  It should be pretty self
-explanatory.  I recommend setting your debug mode to 'buffered'
-so that you can see what's happening.
+explanatory.  I recommend setting your debug mode to 'buffered' so
+that you can see what's happening.
 
 4. Browse to gallery/setup/setup.php and follow its instructions.
-They are pretty sparse at the moment, but it *should* walk you
-through the process of creating a new data directory and a new
-database.  If it fails, you might want to look through the code.
-It's entirely in setup/setup.php
+They are pretty sparse at the moment, but it *should* walk you through
+the process of creating a new data directory and a new database.  If
+it fails, you might want to look through the code.  It's entirely in
+setup/setup.php
 
 5. Browse to the top level:
 
