@@ -1199,14 +1199,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      "Hallo Verden\r\n" .
 				      "Gallery er s\xc3\xa5 utrolig bra at jeg " .
 				      "har satt det opp til flere",        // title
-				      '',                                  // summary
+				      NULL,                                  // summary
 				      NULL,      // keywords
-				      "Western European (ISO)\r\n" .
-				      "Hello World \r\n" .
-				      "Norwegian Norsk\r\n" .
-				      "Hallo Verden\r\n" .
-				      "Gallery er s\xc3\xa5 utrolig bra at jeg " .
-				      "har satt det opp til flere venner. ", // description
+				      NULL, // description
 				      1090163050,                            // album creation
 				      1090162985                             // clicks counted since
 
@@ -1353,14 +1348,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      "Voil\xc3\xa0 du texte " .
 				      "contenant des caract\xc3\xa8res " .
 				      "accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 " .
-				      "donne",                             // title
-				      '',                                  // summary
-				      NULL,      // keywords
-				      "CHARSET=8859-1, fr-Fr, Hello World, french, " .
-				      "fran\xc3\xa7ais, Bonjour Monde\r\n" .
-				      "Voil\xc3\xa0 du texte contenant des caract\xc3\xa8res " .
-				      "accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne une " .
-				      "id\xc3\xa9e de la migration.", // description
+				      "donne",                               // title
+				      NULL,                                  // summary
+				      NULL,                                  // keywords
+				      NULL,                                  // description
 				      1084222738,                            // album creation
 				      1084222662                             // clicks counted since
 				      ),
@@ -1511,9 +1502,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				      "\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0\xd0" .
 				      "\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83" .
 				      "\xd0\xb9 \xd0\xbc\xd0\xb8\xd1\x80",   // title
-				      '',                                    // summary
+				      NULL,                                  // summary
 				      'Gallery 2 migration testing',         // keywords
-				      'head_left',                           // description
+				      NULL,                                  // description
 				      1089666791,                            // album creation
 				      1089666683                             // clicks counted since
 				      ),
