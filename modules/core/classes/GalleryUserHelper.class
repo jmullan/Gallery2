@@ -128,7 +128,7 @@ class GalleryUserHelper {
 
 	$usernames = array();
 	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), $result[0]);
+	return array(GalleryStatus::success(), (int)$result[0]);
     }
 
     /**
