@@ -136,12 +136,13 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 	    }
 
 	    if (!isset($item)) {
-		// Nothing to download for this item!
+		/* Nothing to download for this item! */
 		continue;
 	    }
 
 	    if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-		list ($ret, $item) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
+		list ($ret, $item) =
+		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($item->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -152,15 +153,17 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    // Copy file into temp dir with right subdir/filename..
+	    /* Copy file into temp dir with right subdir/filename */
 	    $target = $zipDir . $slash . $relativePath;
 	    list ($success, $created) = $this->mkdir_p(dirname($target));
 	    if (!$success) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			     null);
 	    }
 	    $tmpDirs = array_merge($tmpDirs, $created);
 	    if (!$platform->copy($path, $target)) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			     null);
 	    }
 	    $tmpFiles[] = $target;
 	    $cmd[] = $relativePath;

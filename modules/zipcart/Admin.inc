@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -48,11 +48,24 @@ class AdminController extends GalleryController {
 	    $form['path'] = trim($form['path']);
 	    if (empty($form['path'])) {
 		$error[] = 'form[error][path][missing]';
-	    } else {
+	    }
+	    if (empty($error)) {
 		$platform = $gallery->getPlatform();
 		if (!$platform->is_executable($form['path'])) {
 		    $error[] = 'form[error][path][badPath]';
 		}
+	    }
+	    if (empty($error)) {
+		/* Try zipping something */
+		$zipBase = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'zip_');
+		$zipFile = $zipBase . '.zip';
+		$gallery->guaranteeTimeLimit(30);
+		list ($success) = $platform->exec(array(array($form['path'], $zipFile, __FILE__)));
+		if (!$success || !$platform->file_exists($zipFile)) {
+		    $error[] = 'form[error][path][badZip]';
+		}
+		@$platform->unlink($zipFile);
+		@$platform->unlink($zipBase);
 	    }
 	}
 

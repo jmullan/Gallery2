@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -148,6 +148,19 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 				  $results);
     }
+
+    function testTestWrongBinary() {
+	/* Oops, user entered unzip instead of zip */
+	GalleryUtilities::putRequestVariable('form[action][test]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/unzip');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array('form[error][path][badZip]')),
+				  $results);
+    }
 }
 
 /**
@@ -155,14 +168,31 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
  *
  * @package ZipCart
  * @subpackage PHPUnit
- */ 
+ */
 class ZipCartAdminControllerTestPlatform {
     function is_executable($path) {
 	switch ($path) {
 	case '/validPath/zip':
+	case '/validPath/unzip':
 	    return true;
 	}
 	return false;
+    }
+
+    function tempnam($dir, $prefix) {
+	return 'tmpfile';
+    }
+
+    function exec($cmd) {
+	return array($cmd[0][0] == '/validPath/zip');
+    }
+
+    function file_exists($path) {
+	return ($path == 'tmpfile.zip');
+    }
+
+    function unlink($path) {
+	return true;
     }
 }
 ?>

@@ -57,7 +57,7 @@ class DownloadView extends GalleryView {
 	    $sendMultipart =
 		(strpos(GalleryUtilities::getServerVar('HTTP_USER_AGENT'), 'MSIE ') === false);
 	    if ($sendMultipart) {
-		// Send multipart reply: zip + html-to-reload
+		/* Send multipart reply: zip + html-to-reload */
 		header('Content-Type: multipart/mixed; boundary=G2ZipCart');
 		print "--G2ZipCart\nContent-Type: application/zip\n";
 		print "Content-Disposition: inline; filename=\"G2cart.zip\"\n";
@@ -67,7 +67,7 @@ class DownloadView extends GalleryView {
 		}
 		print "\n";
 	    } else {
-		// Poor IE6 doesn't know multipart.. just send zip
+		/* Poor IE6 doesn't know multipart.. just send zip */
 		header('Content-Disposition: inline; filename="G2cart.zip"');
 		if ($size > 0) {
 		    header("Content-Length", $size);
@@ -87,7 +87,7 @@ class DownloadView extends GalleryView {
 	    }
 
 	    @$platform->unlink($file);
-	    @$platform->unlink(substr($file, 0, -4));   // Remove file created by tempnam() too
+	    @$platform->unlink(substr($file, 0, -4));   /* Remove file created by tempnam() too */
 
 	    if ($sendMultipart) {
 		print "\n--G2ZipCart\nContent-type: text/html\nPragma: No-cache\n\n";
@@ -95,7 +95,7 @@ class DownloadView extends GalleryView {
 		print "--G2ZipCart--\n";
 	    }
 	} else {
-	    // On reload return to View Cart
+	    /* On reload return to View Cart */
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $url = $urlGenerator->generateUrl(array('view' => 'cart:ViewCart'));
 	    header('Location: ' . str_replace('&amp;', '&', $url));

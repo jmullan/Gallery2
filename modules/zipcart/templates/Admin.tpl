@@ -42,7 +42,12 @@
     {/if}
     {if isset($form.error.path.badPath)}
     <div class="giError">
-      {g->text text="The path you entered isn't valid"}
+      {g->text text="The path you entered isn't valid or isn't executable"}
+    </div>
+    {/if}
+    {if isset($form.error.path.badZip)}
+    <div class="giError">
+      {g->text text="Unable to create a zip file from this binary"}
     </div>
     {/if}
     {if isset($form.test) && $form.test}
@@ -53,8 +58,11 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}"
+     value="{g->text text="Save Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][test]"}"
+     value="{g->text text="Test Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}"
+     value="{g->text text="Cancel"}"/>
   </div>
 </div>
