@@ -75,6 +75,10 @@ class ConfirmImportController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	list ($ret, $adminUsersGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	
         /* Verify that active user is an admin */
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
@@ -347,17 +351,35 @@ class ConfirmImportController extends GalleryController {
 				
 				// $newAlbumInstance->setorderBy
 				// $newAlbumInstance->setorderDirection
-
-				if (isset($album['perms'])) {
-				    $ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
+				// print_r($album);
+				$ret = GalleryCoreApi::removeItemPermissions($newAlbumInstance->getId());
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				if ($adminUsersGroupId) {
+				    $ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+									      $adminUsersGroupId,
+									      'core.all',
+									      FALSE
+									      );
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    
+				    $ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+									      $adminUsersGroupId,
+									      'comment.all',
+									      FALSE
+									      );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				}
+									                                                                             
+				if (isset($album['perms'])) {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
 					    foreach(array_keys($tmpusers) as $tmpuser) {
-						//						print "<p>$desiredname : $tmpuser : $tmpperm  : $tmpTranslatedPerm</p>";
+						// print "<p>$desiredname : $tmpuser : $tmpperm  : $tmpTranslatedPerm</p>";
 						switch ($tmpuser) {
 						case 'everybody':
 						    if ($allUsersGroupId) {
@@ -384,7 +406,7 @@ class ConfirmImportController extends GalleryController {
 						    }
 						    break;
 						case 'Nobody':
-						    break;
+						    break;						    
 						default:		    
 						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
 						    if ($validPermUID) {
@@ -448,8 +470,7 @@ class ConfirmImportController extends GalleryController {
 									     );
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
-				    }
-				    
+				    }				    
 				}
 
 				
@@ -668,12 +689,31 @@ class ConfirmImportController extends GalleryController {
 					}
 				    }
 				}
-				if (isset($album['perms'])) {
-				    $ret = GalleryCoreApi::removeItemPermissions($newItem->getId());
+								    
+
+				$ret = GalleryCoreApi::removeItemPermissions($newItem->getId());
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				if ($adminUsersGroupId) {
+				    $ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
+									      $adminUsersGroupId,
+									      'core.all',
+									      FALSE
+									      );
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    
+				    $ret = GalleryCoreApi::addGroupPermission($newItem->getId(),
+									      $adminUsersGroupId,
+									      'comment.all',
+									      FALSE
+									      );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				}
+				if (isset($album['perms'])) {
 				    foreach($album['perms'] as $tmpperm => $tmpusers) {
 					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
 					    foreach(array_keys($tmpusers) as $tmpuser) {
