@@ -443,6 +443,10 @@ class GalleryStatus {
 	} else {
 	    foreach ($this->_stackTrace as $traceEntry) {
 		$buf = '<B>in</B> ' . str_replace($base, '', $traceEntry['file']);
+		$buf .= ' <a href="debugger.php?'
+			. 'file=' . str_replace($base, '', $traceEntry['file'])
+			. '&amp;line=' . $traceEntry['line'] . '#line' . $traceEntry['line'] . '">link</a>';
+			;
 		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
 		} else if (isset($traceEntry['class'])) {
