@@ -79,11 +79,13 @@ class ShowTreeView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Load everything at once */
-	list ($ret, $entityObjects) =
-	    GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (!empty($parentIds) || !empty($childIds)) {
+	    /* Load everything at once */
+	    list ($ret, $entityObjects) =
+		GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	$entityObjects[] = $entity;
 
