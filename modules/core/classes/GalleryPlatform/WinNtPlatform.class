@@ -69,7 +69,7 @@ class WinNtPlatform extends GalleryPlatform {
 	    }
 
 	    foreach ($cmdAndArgs as $arg) {
-		if ($arg == '>') {
+		if ($arg === '>') {
 		    $command .= '>';
 		} else {
 		    $command .= ' "' . $arg . '" ';
