@@ -309,9 +309,15 @@ class GalleryRemoteController extends GalleryController {
 	    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 	}
 
+	if (isset($form['force_filename'])) {
+		$itemName = $form['force_filename'];
+	} else {
+		$itemName = $file['name'];
+	}
+
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],
-							       basename($file['name']),
-							       basename($file['name']),
+							       basename($itemName),
+							       basename($itemName),
 							       $form['caption'],
 							       $form['caption'],
 							       $mimeType,
