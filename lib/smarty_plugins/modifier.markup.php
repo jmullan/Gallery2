@@ -78,7 +78,7 @@ class GalleryBbcodeMarkupParser {
     function GalleryBbcodeMarkupParser() {
 	require_once(dirname(__FILE__) . '/../bbcode/bbcode.class');
 
-	$this->_bbcode = new BBCode();
+	$this->_bbcode = new GalleryBbcode();
 
 	// Convert line breaks everywhere
 	$this->_bbcode->addParser(array($this, 'convertLineBreaks'),
