@@ -147,10 +147,11 @@
     </tr>
 
     {foreach from=$form.localServerFiles item=file}
+    {assign var=key value=$file.fileKey|urlencode}
     <tr class="{cycle values="gbEven,gbOdd"}">
       {if ($file.type == 'file')}
       <td style="text-align: center">
-	<input type="checkbox" name="{g->formVar var="form[localServerFiles][`$file.fileKey`]"}"/>
+	<input type="checkbox" name="{g->formVar var="form[localServerFiles][$key]"}"/>
       </td>
 
       <td>
@@ -171,7 +172,7 @@
 
       <td>
 	{if $file.legal}
-	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=`$file.fileKey`" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName}</a>
+	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName}</a>
 	{else}
 	<i>{$file.fileName}</i>
 	{/if}

@@ -63,7 +63,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		$filepath .= $filename;
 
 		// Unescape any special chars in the file path
-		$filepath = GalleryUtilities::htmlEntityDecode($filepath);
+		$filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
 		
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
@@ -120,8 +120,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 	/* If we're uploading from the local server, get a file list now */
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    $form['localServerPath'] = trim($form['localServerPath']);
+	    $form['localServerPath'] = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
 	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
-	    
+
 	    /* Validate the path */
 	    $form['localServerFiles'] = array();
 	    if (empty($form['localServerPath'])) {
@@ -248,6 +249,18 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    $recentPaths = array();
 	}
 	$ItemAddFromServer['recentPaths'] = array_keys($recentPaths);
+
+	/*
+	 * Set the ItemAdmin form's encoding type specially since legal paths may contain special
+	 * characters like ampersands (&)
+	 */
+	if ($template->hasVariable('ItemAdmin')) {
+	    $ItemAdmin =& $template->getVariableByReference('ItemAdmin');
+	    $ItemAdmin['enctype'] = 'multipart/form-data';
+	} else {
+	    $ItemAdmin['enctype'] = 'multipart/form-data';
+	    $template->setVariable('ItemAdmin', $ItemAdmin);
+	}
 
 	$template->setVariable('ItemAddFromServer', $ItemAddFromServer);
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemAddFromServer.tpl');
