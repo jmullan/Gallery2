@@ -153,12 +153,12 @@ class GalleryDataItem_core extends GalleryItem {
 	/* Make sure our base file name is legal */
 	$baseName = $platform->legalizePathComponent($baseName);
 
-	/* Don't be intimidated by the first 10 collisions */
+	/* Don't be intimidated by the first 100 collisions */
 	$retry = 0;
 	$newFileName = $parentPath . $baseName;
 	list ($fileBase, $extension) = GalleryUtilities::getFileNameComponents($baseName);
 	while ($platform->file_exists($newFileName)) {
-	    if (++$retry > 10) {
+	    if (++$retry > 100) {
 		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
 	    $baseName = sprintf('%s_%03d%s', $fileBase, $retry, empty($extension) ? '' : '.' . $extension);
