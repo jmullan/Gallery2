@@ -57,6 +57,20 @@ class ViewCartView extends GalleryView {
 	    }
 	    $form['formName'] = 'ViewCart';
 	}
+        $ViewCart = array();
+		
+        /* Bring in the root album information for the breadcrumb */
+        list ($ret, $rootAlbumId) =
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $ViewCart['rootAlbum'] = $rootAlbum->getMemberData();
+	
 
 	/* Find all our cart plugins */
 	require_once(dirname(__FILE__) . '/classes/CartPluginInterface_1_0.class');
@@ -121,7 +135,6 @@ class ViewCartView extends GalleryView {
 	    }
 	}
 	
-	$ViewCart = array();
 	$ViewCart['items'] = $items;
 	$ViewCart['itemTypeNames'] = $itemTypeNames;
 	$ViewCart['thumbnails'] = $thumbnails;
