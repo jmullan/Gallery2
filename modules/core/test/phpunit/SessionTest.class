@@ -159,10 +159,10 @@ class SessionTest extends GalleryTestCase {
 	for ($i = 0; $i < sizeof($statusId); $i++) {
 	    if ($i < sizeof($statusId) - 5) {
 		$this->assertEquals(null, $session->getStatus($statusId[$i], false),
-				    "Pass 1, status $i: $statusId[$i] should not be here");
+				    "Pass 2, status $i: $statusId[$i] should not be here");
 	    } else {
 		$this->assertEquals(array('i' => $i), $session->getStatus($statusId[$i], false),
-				    "Pass 1, status $i: $statusId[$i] should be here");
+				    "Pass 2, status $i: $statusId[$i] should be here");
 	    }
 	}
 
