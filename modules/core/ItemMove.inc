@@ -98,7 +98,7 @@ class ItemMoveController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$ret = GalleryItemHelper::studyPermissions($selectedIds, $gallery->getActiveUserId());
+		$ret = GalleryItemHelper::studyPermissions($selectedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -236,7 +236,7 @@ class ItemMoveView extends GalleryView {
         }
 
         /* Find out which ones we can move away from here */
-        $ret = GalleryItemHelper::studyPermissions($peerIds, $gallery->getActiveUserId());
+        $ret = GalleryItemHelper::studyPermissions($peerIds);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }

@@ -141,9 +141,7 @@ class ItemDeleteView extends GalleryView {
 	/* Count its children */
 	$childCount = 0;
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $childCountTable) = 
-		GalleryItemHelper::getChildCounts(array($item->getId()),
-						  $gallery->getActiveUserId());
+	    list ($ret, $childCountTable) = GalleryItemHelper::getChildCounts(array($item->getId()));
 	    if (isset($childCountTable[$item->getId()])) {
 		$childCount = $childCountTable[$item->getId()];
 	    }
