@@ -107,6 +107,7 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$childItems = array();
 	if (!empty($childIds)) {
 	    /* Load the children */
 	    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);

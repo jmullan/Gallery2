@@ -55,12 +55,22 @@ sub extract {
       $strings{qq{gettext("$text")}}++;
     }
 
+    # grab phrases of this format: translate(array('one' => '...', 'many' => '...'))
+    while ($data =~ /translate\(.*?array\('one'\s*=>\s*'(.*?)'.*?'many'\s*=>\s*'(.*?)'.*?\).*?\)/sg) {
+      my ($one, $many) = ($1, $2);
+      $one =~ s/\"/\\\"/sg;	# escape double-quotes
+      $many =~ s/\"/\\\"/sg;	# escape double-quotes
+      $strings{qq{gettext("$one")}}++;
+      $strings{qq{ngettext("$many")}}++;
+    }
+
     # grab phrases of this format: translate('.....')
     while ($data =~ /translate\('(.*?)'\)/sg) {
       my $text = $1;
       $text =~ s/\"/\\\"/sg;	# escape double-quotes
       $strings{qq{gettext("$text")}}++;
     }
+
 
     # grab phrases of this format { galleryText ..... }
     while ($data =~ /(\{\s*galleryText\s+.*?[^\\]\})/sg) {

@@ -200,6 +200,11 @@ class ItemEditPermissionsController extends GalleryController {
 		}
 
 		if (!empty($user)) {
+		    list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
 		    list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);

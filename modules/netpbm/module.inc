@@ -120,6 +120,45 @@ class NetPbmModule extends GalleryModule {
     }
 	
     /**
+     * @see GalleryModule::deactivate
+     */
+    function deactivate() {
+	global $gallery;
+
+	$ret = parent::deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/*
+	 * If we are the current graphics package, switch to whatever other
+	 * graphics packages are available.
+	 */
+	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($graphicsType == 'netpbmgraphics') {
+	    $ids = GalleryFactory::getAllImplementationIds('GalleryGraphics');
+	    $newId = '';
+	    foreach ($ids as $name => $id) {
+		if ($id == 'netpbmgraphics') {
+		    continue;
+		}
+		$newId = $id;
+		break;
+	    }
+	    $ret = $gallery->setModuleParameter('core', 'graphics.type', $newId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+	
+    /**
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {

@@ -1230,12 +1230,17 @@ class Gallery {
 	    
 	    $this->_translator = new GalleryTranslator();
 
-	    list ($ret, $activeUser) = $this->getActiveUser();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    $activeUserLanguage = null;
+	    $activeUserId = $this->getActiveUserId();
+	    if (!empty($activeUserId)) {
+		list ($ret, $activeUser) = $this->getActiveUser();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$activeUserLanguage = $activeUser->getLanguage();
 	    }
 
-	    $ret = $this->_translator->init($activeUser->getLanguage());
+	    $ret = $this->_translator->init($activeUserLanguage);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -171,7 +171,11 @@ class GalleryFactory {
      */
     function getAllImplementationIds($classType) {
 	$registry =& GalleryFactory::_getFactoryData();
-	return $registry['ids'][$classType];
+	if (isset($registry['ids'][$classType])) {
+	    return $registry['ids'][$classType];
+	} else {
+	    return null;
+	}
     }
 
     /**

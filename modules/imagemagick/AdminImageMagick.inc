@@ -34,28 +34,45 @@ class AdminImageMagickController extends GalleryController {
 	}
 
 	$form = GalleryUtilities::getFormVariables('form.');
+	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Set the path.  Guarantee that it's got a trailing slash. */
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$form['path'] = trim($form['path']);
-	if ($form['path']{strlen($form['path'])-1} != $slash) {
-	    $form['path'] .= $slash;
+	if (!empty($form['path'])) {
+	    if ($form['path']{strlen($form['path'])-1} != $slash) {
+		$form['path'] .= $slash;
+	    }
 	}
 
-	foreach (array('path', 'jpegQuality') as $parameter) {
-	    $ret = $gallery->setModuleParameter('imagemagick', $parameter, $form[$parameter]);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	if (isset($form['action']['save'])) {
+	    foreach (array('path', 'jpegQuality') as $parameter) {
+		$ret = $gallery->setModuleParameter('imagemagick', $parameter, $form[$parameter]);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
 	/* Figure out where to redirect upon success */
-	$redirectParams['view'] = 'core:SiteAdmin';
-	$redirectParams['subView'] = 'imagemagick:AdminImageMagick';
+	if (isset($form['action']['save']) || isset($form['action']['cancel'])) {
+	    if (!empty($return)) {
+		$redirectParams = $return;
+	    } else {
+		$redirectParams['view'] = 'core:SiteAdmin';
+		$redirectParams['subView'] = 'imagemagick:AdminImageMagick';
+	    }
+	}
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($redirectParams);
+	if (!empty($redirectParams)) {
+	    $templateAdapter = $gallery->getTemplateAdapter();
+	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	} else {
+	    if (empty($results['view'])) {
+		$results['view'] = 'imagemagick:AdminImageMagick';
+	    }
+	}
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -69,11 +86,28 @@ class AdminImageMagickView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	foreach (array('path', 'jpegQuality') as $key) {
-	    list ($ret, $form[$key]) =
-		$gallery->getModuleParameter('imagemagick', $key);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	$form = GalleryUtilities::getFormVariables('form.');
+	$return = GalleryUtilities::getFormVariables('return.');
+	$formName = GalleryUtilities::getRequestVariables('formName');
+	
+	/* Load our default values if we didn't just come from this form. */
+	if ($formName != 'AdminImageMagick') {
+	    foreach (array('path', 'jpegQuality') as $key) {
+		list ($ret, $form[$key]) =
+		    $gallery->getModuleParameter('imagemagick', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	/* Guarantee that the path has a trailing slash. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$form['path'] = trim($form['path']);
+	if (!empty($form['path'])) {
+	    if ($form['path']{strlen($form['path'])-1} != $slash) {
+		$form['path'] .= $slash;
 	    }
 	}
 
@@ -83,25 +117,27 @@ class AdminImageMagickView extends GalleryView {
 	}
 
 	$platform = $gallery->getPlatform();
-	GalleryProfiler::start('AdminImageMagickView::renderBody().test-binaries');
 	$tests = array();
-	if (!empty($form['path'])) {
-	    foreach (array('identify',
-			   'convert') as $binary) {
+	if (isset($form['action']['test'])) {
+	    if (!empty($form['path'])) {
+		foreach (array('identify',
+			       'convert') as $binary) {
 
-		$cmd = array($form['path'] . $binary, '-help');
-		list ($success, $results) = $platform->exec(array($cmd));
-		$tests[] = array('name' => $binary,
-				 'success' => $success,
-				 'results' => $results);
+		    $cmd = array($form['path'] . $binary, '-help');
+		    list ($success, $results) = $platform->exec(array($cmd));
+		    $tests[] = array('name' => $binary,
+				     'success' => $success,
+				     'results' => $results);
+		}
+	    } else {
+		$form['error']['path']['missing'] = 1;
 	    }
 	}
-
-	GalleryProfiler::stop('AdminImageMagickView::renderBody().test-binaries');
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('return', $return);
 	$this->_setTemplateVariable('tests', $tests);
 	$this->_setTemplateVariable('jpegQualityList', $jpegQualityList);
 	$this->_setTemplateVariable('controller', 'imagemagick:AdminImageMagick');

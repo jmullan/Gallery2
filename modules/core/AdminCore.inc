@@ -210,7 +210,11 @@ class AdminCoreView extends GalleryView {
 
 	/* Set up our graphics selection list */
 	$idsToClassNames = GalleryFactory::getAllImplementationIds('GalleryGraphics');
-	$graphicsTypeList = array_flip($idsToClassNames);	
+	if (!empty($idsToClassNames)) {
+	    $graphicsTypeList = array_flip($idsToClassNames);
+	} else {
+	    $graphicsTypeList = array();
+	}
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');

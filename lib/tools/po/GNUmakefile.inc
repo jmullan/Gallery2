@@ -36,7 +36,7 @@ messages.po:
 	mv $@.new $@
 
 clean:
-	$(RM) strings.raw messages.po
+	$(RM) messages.po
 
 install: *.po
 	@echo "Checking for os ... ${OSTYPE}"; \

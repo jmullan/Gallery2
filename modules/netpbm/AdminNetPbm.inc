@@ -34,57 +34,59 @@ class AdminNetPbmController extends GalleryController {
 	}
 
 	$form = GalleryUtilities::getFormVariables('form.');
+	$return = GalleryUtilities::getFormVariables('return.');
 
 	/* Set the path.  Guarantee that it's got a trailing slash. */
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$form['path'] = trim($form['path']);
-	if ($form['path']{strlen($form['path'])-1} != $slash) {
-	    $form['path'] .= $slash;
-	}
-	    
-	$ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (!empty($form['path'])) {
+	    if ($form['path']{strlen($form['path'])-1} != $slash) {
+		$form['path'] .= $slash;
+	    }
 	}
 
-	/*
-	 * Set the image quality
-	 */
-	$ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (isset($form['action']['save'])) {
+	    $ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	/*
-	 * Set the pnmtojpeg binary name
-	 */
-	$ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    /*
+	     * Set the image quality
+	     */
+	    $ret = $gallery->setModuleParameter('netpbm', 'jpegQuality', $form['jpegQuality']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	/*
-	 * If our graphics type is not NetPBM, set it now.
-	 */
-	list($ret, $graphicsType) = $gallery->getModuleParameter('core', 'graphics.type');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($graphicsType != 'netpbm') {
-	    $ret = $gallery->setModuleParameter('core', 'graphics.type', 'NetPbmGraphics');
+	    /*
+	     * Set the pnmtojpeg binary name
+	     */
+	    $ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
-	/* Figure out where to redirect upon success */
-	$redirectParams['view'] = 'core:SiteAdmin';
-	$redirectParams['subView'] = 'netpbm:AdminNetPbm';
+	/* Figure out where to redirect upon success/cancel */
+	if (isset($form['action']['save']) || isset($form['action']['cancel'])) {
+	    if (!empty($return)) {
+		$redirectParams = $return;
+	    } else {
+		$redirectParams['view'] = 'core:SiteAdmin';
+		$redirectParams['subView'] = 'netpbm:AdminNetPbm';
+	    }
+	}
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($redirectParams);
+	if (!empty($redirectParams)) {
+	    $templateAdapter = $gallery->getTemplateAdapter();
+	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	} else {
+	    if (empty($results['view'])) {
+		$results['view'] = 'netpbm:AdminNetPbm';
+	    }
+	}
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -98,14 +100,31 @@ class AdminNetPbmView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
-	    list ($ret, $form[$key]) =
-		$gallery->getModuleParameter('netpbm', $key);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	$form = GalleryUtilities::getFormVariables('form.');
+	$return = GalleryUtilities::getFormVariables('return.');
+	$formName = GalleryUtilities::getRequestVariables('formName');
+
+	/* Load our default values if we didn't just come from this form. */
+	if ($formName != 'AdminNetPbm') {
+	    foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
+		list ($ret, $form[$key]) =
+		    $gallery->getModuleParameter('netpbm', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
+	/* Guarantee that the path has a trailing slash. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$form['path'] = trim($form['path']);
+	if (!empty($form['path'])) {
+	    if ($form['path']{strlen($form['path'])-1} != $slash) {
+		$form['path'] .= $slash;
+	    }
+	}
+	
 	/* Set up our jpeg quality selection list */
 	for ($i = 95; $i >= 50; $i -= 5) {
 	    $jpegQualityList[] = $i;
@@ -115,34 +134,37 @@ class AdminNetPbmView extends GalleryView {
 	$pnmToJpegList = array('pnmtojpeg', 'ppmtojpeg');
 
 	$platform = $gallery->getPlatform();
-	GalleryProfiler::start('AdminNetPbmView::renderBody().test-binaries');
 	$tests = array();
-	if (!empty($form['path'])) {
-	    foreach (array('jpegtopnm',
-			   'giftopnm',
-			   $form['pnmtojpeg'],
-			   'ppmtogif',
-			   'pnmtopng',
-			   'pnmscale',
-			   'pnmfile',
-			   'ppmquant',
-			   'pnmcut',
-			   'pnmrotate',
-			   'pnmflip') as $binary) {
 
-		$cmd = array($form['path'] . $binary, '--version');
-		list ($success, $results) = $platform->exec(array($cmd));
-		$tests[] = array('name' => $binary,
-				 'success' => $success,
-				 'results' => $results);
+	if (isset($form['action']['test'])) {
+	    if (!empty($form['path'])) {
+		foreach (array('jpegtopnm',
+			       'giftopnm',
+			       $form['pnmtojpeg'],
+			       'ppmtogif',
+			       'pnmtopng',
+			       'pnmscale',
+			       'pnmfile',
+			       'ppmquant',
+			       'pnmcut',
+			       'pnmrotate',
+			       'pnmflip') as $binary) {
+
+		    $cmd = array($form['path'] . $binary, '--version');
+		    list ($success, $results) = $platform->exec(array($cmd));
+		    $tests[] = array('name' => $binary,
+				     'success' => $success,
+				     'results' => $results);
+		}
+	    } else {
+		$form['error']['path']['missing'] = 1;
 	    }
 	}
-
-	GalleryProfiler::stop('AdminNetPbmView::renderBody().test-binaries');
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('return', $return);
 	$this->_setTemplateVariable('tests', $tests);
 	$this->_setTemplateVariable('pnmToJpegList', $pnmToJpegList);
 	$this->_setTemplateVariable('jpegQualityList', $jpegQualityList);

@@ -282,7 +282,7 @@ class CoreModule extends GalleryModule {
 			       'default.orderDirection' => '1',
 			       'default.layout' => 'classic',
 			       'default.theme' => 'classic',
-			       'default.language' => 'en_US',
+			       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
 			       'session.idParameter' => 'GALLERYSID',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
@@ -677,11 +677,11 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
-	$ret = $user->create('anonymous');
+	$ret = $user->create($this->translate('anonymous'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$user->setFullName('Anonymous');
+	$user->setFullName($this->translate('Anonymous'));
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
@@ -725,7 +725,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 					     
-	$ret = $user->create('admin');
+	$ret = $user->create($this->translate('admin'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

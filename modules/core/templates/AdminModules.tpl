@@ -22,7 +22,7 @@
 	<td>
 	  {if (!empty($module.action))}
 	  {if (empty($module.action.controller)) }
-	  <a href="{galleryUrl view='core:SiteAdmin' subView=$module.action.view}">
+	  <a href="{galleryUrl view='core:SiteAdmin' subView=$module.action.view return_view='core:SiteAdmin' return_subView='core:AdminModules'}">
 	    {$module.action.text}
 	  </a>
 	  {else}

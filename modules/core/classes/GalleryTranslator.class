@@ -60,13 +60,23 @@ class GalleryTranslator {
      */
 
     function GalleryTranslator() {
+
+	/* XXX: Move this information into a configuration file */
 	$this->_supportedLanguages = array();
+
+	$this->_supportedLanguages['de']['DE']['description'] = 'German';
+	$this->_supportedLanguages['de']['DE']['charset'] = 'ISO-8859-1';
+	$this->_supportedLanguages['de']['_defaultCountry'] = 'DE';
+	
 	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
 	$this->_supportedLanguages['en']['US']['charset'] = 'ISO-8859-1';
     
 	$this->_supportedLanguages['es']['ES']['description'] = 'Espa&ntilde;ol';
 	$this->_supportedLanguages['es']['ES']['charset'] = 'ISO-8859-1';
 
+	$this->_supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
+	$this->_supportedLanguages['pt']['BR']['charset'] = 'ISO-8859-1';
+	
 	$this->_supportedLanguages['zh']['CN']['description'] = 'Chinese (Simplified)';
 	$this->_supportedLanguages['zh']['CN']['charset'] = 'GB2312';
 
@@ -99,44 +109,16 @@ class GalleryTranslator {
 	global $gallery;
 	global $HTTP_SERVER_VARS;
 
+	if (empty($languageCode)) {
+	    $languageCode = $this->getLanguageCodeFromRequest();
+	}
+
+	/* Split the language code into language/country */
+	list ($language, $country) = split('_', $languageCode);
+	
 	/* If we're using gettext, try to bind to a language */
 	if ($gallery->getConfig('function.exists.dgettext')) {
-
-	    /* Split the language code into language/country */
-	    if (!empty($languageCode)) {
-		list ($language, $country) = split('_', $languageCode);
-		
-		/* Make sure that the language specified is one that we support */
-		if (!isset($this->_supportedLanguages[$language][$country])) {
-		    $language = null;
-		    $country = null;
-		}
-	    }
 	    
-	    /* If no language is specified, see what the browser takes */
-	    if (empty($language)) {
-		if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
-		    foreach (explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])
-			     as $code) {
-			list ($language, $country) = preg_split('/[-_]/', $code);
-			$country = strtoupper($country);
-			
-			if (isset($this->_supportedLanguages[$language][$country])) {
-			    break;
-			} else {
-			    $language = null;
-			    $country = null;
-			}
-		    }
-		}
-	    }
-
-	    /* Fall back to English (US) */
-	    if (empty($language)) {
-		$language = 'en';
-		$country = 'US';
-	    }
-
 	    /* Set the appropriate charset in our HTTP header */
 	    if (!headers_sent()) {
 		header('Content-Type: text/html; charset=' .
@@ -148,6 +130,49 @@ class GalleryTranslator {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Examine the incoming request and try to figure out what languages the
+     * browser will accept.  Take the first one that we can support.
+     *
+     * @return a language code in the <language>_<COUNTRY> format, eg: en_US
+     */
+    function getLanguageCodeFromRequest() {
+	global $HTTP_SERVER_VARS;
+
+	/* Take the first thing the browser accepts that we can use */
+	if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
+	    foreach (explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])
+		     as $code) {
+
+		if (preg_match('/[-_]/', $code)) {
+		    list ($language, $country) = preg_split('/[-_]/', $code);
+		    $country = strtoupper($country);
+		} else {
+		    /* We only received a language code -- try the default country. */
+		    $language = $code;
+		    if (isset($this->_supportedLanguages[$language]['_defaultCountry'])) {
+			$country = $this->_supportedLanguages[$language]['_defaultCountry'];
+		    }
+		}
+			
+		if (isset($this->_supportedLanguages[$language][$country])) {
+		    break;
+		} else {
+		    $language = null;
+		    $country = null;
+		}
+	    }
+	}
+
+	/* Fall back to English (US) */
+	if (empty($language)) {
+	    $language = 'en';
+	    $country = 'US';
+	}
+
+	return "${language}_${country}";
     }
 
     /**
@@ -201,23 +226,26 @@ class GalleryTranslator {
 	    /*
 	     * We have to have dngettext (which is only available > PHP 4.2.0,
 	     * according to the PHP manual) in order to do pluralization
-	     * translations.  
+	     * translations.  If we don't have have dngettext() we try to
+	     * gracefully degrade to using dgettext().
 	     */
-
-	    /*
-	    if (isset($data['text'])) {
-		print "gettext($domain,$data[text])<br>";
-	    } else {
-		print "gettext($domain,$data[one],$data[many],$data[count])<br>";
-	    }
-	    */
-	    
 	    if (isset($data['one'])) {
 		if ($gallery->getConfig('function.exists.dngettext')) {
-		    // XXX: sometimes this call takes forever.  wtf?
+		    /*
+		     * XXX: sometimes this call takes forever.  I have no idea
+		     * why.  Do you?
+		     */
 		    $localized = dngettext($domain, $data['one'], $data['many'], $data['count']);
 		} else {
-		    $localized = dgettext($domain, $data['many']);
+		    /*
+		     * It would make more sense to fall back to $data['many']
+		     * here, since the odds are better that it will be more
+		     * applicable.  However, due to the way that we do the
+		     * pluralization, the keys will be organized by the
+		     * $data['one'] entry so there won't be a $data['many'] key
+		     * for dgettext() to use.  :-(
+		     */
+		    $localized = dgettext($domain, $data['one']);
 		}
 	    } else {
 		$localized = dgettext($domain, $data['text']);
