@@ -263,15 +263,15 @@ class Gallery1DataParser {
 	}
 	$uids = array();
 	foreach ($userDB->userMap as $username => $uid) {
-	    if (!Gallery1DataParser::isValidUid($username)
-		&& !eregi('nobody|everybody|loggedin', $username)
-		&& isValidUid($uid)) {
+	    if (Gallery1DataParser::isValidUid($uid)
+		&& !Gallery1DataParser::isValidUid($username)
+		&& !eregi('nobody|everybody|loggedin', $username)) {
 		$uids[$uid] = $username;
 	    }
 	}
 	return array(GalleryStatus::success(), $uids);
     }
-
+    
     /**
      * Load user uids from path
      *
@@ -280,9 +280,9 @@ class Gallery1DataParser {
      */
     function isValidUid($uid) {
 	if (ereg('^[0-9]{9,}_[0-9]+$', $uid)) {
-	    return array(GalleryStatus::success(), TRUE);
+	    return TRUE;
 	} else {
-	    return array(GalleryStatus::success(), FALSE);
+	    return FALSE;
 	}
     }
     

@@ -52,7 +52,6 @@ class ConfirmImportController extends GalleryController {
 			);
 	/* The other option is "cancel", I believe */
 	if (isset($form['action']['import'])) {
-
 	    /* get list of userids in advance */
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
 	    if ($ret->isError()) {
@@ -68,7 +67,6 @@ class ConfirmImportController extends GalleryController {
 
 	    /* go through the list of chosen users */
 	    foreach (array_keys ($form['migrateUser']) as $uid) {
-
 		/* convert from uid to username */
 		$userName = $uidMap[$uid];
 		list ($ret, $fields) =

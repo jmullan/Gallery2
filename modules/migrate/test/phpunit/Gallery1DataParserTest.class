@@ -223,24 +223,15 @@ class Gallery1DataParserTest extends GalleryControllerTestCase {
 			    $fields);
     }
     function testIsValidUid() {
-	list ($ret, $valid) = Gallery1DataParser::isValidUid('1057837115_2072132305');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$valid = Gallery1DataParser::isValidUid('1057837115_2072132305');
 	$this->assertEquals($valid,TRUE);	
     }
     function testIsInvalidUid1() {
-	list ($ret, $valid) = Gallery1DataParser::isValidUid('5');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$valid = Gallery1DataParser::isValidUid('5');
 	$this->assertEquals($valid,FALSE);
     }
     function testIsInvalidUid2() {
-	list ($ret, $valid) = Gallery1DataParser::isValidUid('monkey');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$valid = Gallery1DataParser::isValidUid('monkey');
 	$this->assertEquals($valid,FALSE);
     }
 }
