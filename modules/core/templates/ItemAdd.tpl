@@ -13,7 +13,7 @@
     </div>
   </div>
 
-  {if ($ItemAdd.hasToolkit)}
+  {if (! $ItemAdd.hasToolkit)}
   <div id="gsStatus">
    <div class="giWarning">
       {g->text text="You don't have any Graphics Toolkit activated that can handle JPEG images.  If you add images, you will probably not have any thumbnails."}
