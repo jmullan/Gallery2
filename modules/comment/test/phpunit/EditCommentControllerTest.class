@@ -108,8 +108,8 @@ class EditCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('x' => 'y'), $results);
-
+	$this->assertEquals(array('redirect' => array('x' => 'y')), $results);
+	
 	/* Grab the comment and verify it */
 	GalleryDataCache::reset();
 

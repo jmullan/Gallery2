@@ -49,10 +49,10 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.groupName', $groupName);
 	
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups',
-				    'form.status.createdGroup' => $groupName),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array('createdGroup' => $groupName)),
+			    $results);
 
 	$this->_deleteGroup($groupName);
     }
@@ -76,10 +76,10 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.groupName', $groupName);
 	
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups',
-				    'form.status.createdGroup' => $groupName),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array('createdGroup' => $groupName)),
+			    $results);
 
 
 	/* Create a second group with the same name */

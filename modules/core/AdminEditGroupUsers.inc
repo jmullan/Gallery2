@@ -82,7 +82,7 @@ class AdminEditGroupUsersController extends GalleryController {
 		    $redirectParams['view'] = 'core:SiteAdmin';
 		    $redirectParams['subView'] = 'core:AdminEditGroupUsers';
 		    $redirectParams['groupId'] = $group->getId();
-		    $redirectParams['form.status.removedUser'] = $user->getUsername();
+		    $status['removedUser'] = $user->getUsername();
 		}
 	    
 	    } else if (isset($form['action']['add'])) {
@@ -109,7 +109,7 @@ class AdminEditGroupUsersController extends GalleryController {
 			$redirectParams['view'] = 'core:SiteAdmin';
 			$redirectParams['subView'] = 'core:AdminEditGroupUsers';
 			$redirectParams['groupId'] = $group->getId();
-			$redirectParams['form.status.addedUser'] = $user->getUsername();
+			$status['addedUser'] = $user->getUsername();
 		    }
 		}
 	    }
@@ -117,6 +117,7 @@ class AdminEditGroupUsersController extends GalleryController {
 
 	if (!empty($redirectParams)) {
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';
@@ -140,7 +141,7 @@ class AdminEditGroupUsersView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody($form) {
+    function renderBody($form, $status) {
 	global $gallery;
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -171,6 +172,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('status', $status);
 	$template->setVariable('group', $group->getMemberData());
 	$template->setVariable('controller', 'core:AdminEditGroupUsers');
 	$html = $template->render('AdminEditGroupUsers.tpl');

@@ -92,8 +92,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
-
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
 			    $gallery->getModuleParameter('imagemagick', 'path'));
@@ -110,7 +110,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
     }
     
     function testSaveTestErrorPath() {

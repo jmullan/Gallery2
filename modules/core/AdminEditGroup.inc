@@ -48,6 +48,7 @@ class AdminEditGroupController extends GalleryController {
 	}
 
 	$results = array();
+	$status = array();
 	$redirectParams = array();
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
@@ -99,12 +100,13 @@ class AdminEditGroupController extends GalleryController {
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
 		$redirectParams['subView'] = 'core:AdminGroups';
-		$redirectParams['form.status.modifiedGroup'] = $group->getGroupName();
+		$status['modifiedGroup'] = $group->getGroupName();
 	    }
 	}
 
 	if (!empty($redirectParams)) {
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';

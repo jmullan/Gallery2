@@ -16,31 +16,31 @@
       </td>
     </tr>
 
-    {if isset($form.status)}
+    {if !empty($status)}
     <tr>
       <td colspan="2" align="center">
 	{gallery->lightFrame}
 	<table width="100%" border="0">
-	    <!-- {if isset($form.status.deletedGroup)} -->
+	    <!-- {if isset($status.deletedGroup)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Removed group '%s'" arg1=$form.status.deletedGroup}
+		{gallery->text text="Removed group '%s'" arg1=$status.deletedGroup}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->
 
-	    <!-- {if isset($form.status.createdGroup)} -->
+	    <!-- {if isset($status.createdGroup)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Created group '%s'" arg1=$form.status.createdGroup}
+		{gallery->text text="Created group '%s'" arg1=$status.createdGroup}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->
 
-	    <!-- {if isset($form.status.modifiedGroup)} -->
+	    <!-- {if isset($status.modifiedGroup)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Modified group '%s'" arg1=$form.status.modifiedGroup}
+		{gallery->text text="Modified group '%s'" arg1=$status.modifiedGroup}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->

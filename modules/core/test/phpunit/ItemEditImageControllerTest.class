@@ -129,10 +129,10 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditImage',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
@@ -182,10 +182,10 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditImage',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
@@ -204,10 +204,10 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditImage',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
@@ -226,10 +226,10 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditImage',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Verify that the transform went ok */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
@@ -248,10 +248,10 @@ class ItemEditImageControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditImage',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditImage',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Verify that the preferred is gone */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();

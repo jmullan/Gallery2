@@ -11,23 +11,23 @@
       </td>
     </tr>
 
-    {if isset($form.status)}
+    {if !empty($status)}
     <tr>
       <td colspan="2" align="center">
 	{gallery->lightFrame}
 	<table width="100%" border="0">
-	    <!-- {if isset($form.status.addedUser)} -->
+	    <!-- {if isset($status.addedUser)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Added user '%s' to group" arg1=$form.status.addedUser}
+		{gallery->text text="Added user '%s' to group" arg1=$status.addedUser}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->
 
-	    <!-- {if isset($form.status.removedUser)} -->
+	    <!-- {if isset($status.removedUser)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Removed user '%s' from group" arg1=$form.status.removedUser}
+		{gallery->text text="Removed user '%s' from group" arg1=$status.removedUser}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->

@@ -53,11 +53,11 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password2', 'password');
 	
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminUsers',
-				    'form.status.createdUser' => $userName),
-			      $results,
-			      'Failed to create user');
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array('createdUser' => $userName)),
+			    $results,
+			    'Failed to create user');
 
 	$this->_deleteUser($userName);
     }
@@ -108,10 +108,11 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password2', 'password');
 	
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminUsers',
-				    'form.status.createdUser' => $userName),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array('createdUser' => $userName)),
+			    $results,
+			    'Failed to create user');
 
 
 	/* Create a second user with the same name */

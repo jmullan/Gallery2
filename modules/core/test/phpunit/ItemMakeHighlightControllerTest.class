@@ -109,9 +109,9 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.makeHighlight', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'itemId' => $this->_item[0]->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'itemId' => $this->_item[0]->getId())),
+			    $results);
     }
     
     /**

@@ -212,7 +212,7 @@ class AdminGroupsView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody($form) {
+    function renderBody($form, $status) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -269,6 +269,7 @@ class AdminGroupsView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('status', $status);
 	$template->setVariable('totalGroupCount', $totalGroupCount);
 	$template->setVariable('controller', 'core:AdminGroups');
 	$html = $template->render('AdminGroups.tpl');

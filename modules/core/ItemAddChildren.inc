@@ -168,17 +168,10 @@ class ItemAddChildrenController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!empty($status)) {
-	    $session =& $gallery->getSession();
-	    $redirectParams['statusId'] = $session->putStatus($status);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
 	if (!empty($redirectParams)) {
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:ItemAdmin';

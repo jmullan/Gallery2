@@ -92,7 +92,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('x' => 'y'), $results);
+	$this->assertEquals(array('redirect' => array('x' => 'y')), $results);
     }
 
     /**

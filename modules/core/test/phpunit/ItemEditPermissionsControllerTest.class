@@ -96,10 +96,10 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -145,11 +145,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.groupName' => $this->_group->getGroupName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.group.groupName' => $this->_group->getGroupName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -179,11 +179,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.groupName' => $this->_group->getGroupName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.group.groupName' => $this->_group->getGroupName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -290,12 +290,12 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.permission' => 'core.edit',
-				    'form.group.groupName' => $this->_group->getGroupName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.group.permission' => 'core.edit',
+						      'form.group.groupName' => $this->_group->getGroupName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -326,12 +326,12 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.group.permission' => 'core.edit',
-				    'form.group.groupName' => $this->_group->getGroupName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.group.permission' => 'core.edit',
+						      'form.group.groupName' => $this->_group->getGroupName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -356,11 +356,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.userName' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.user.userName' => $this->_user->getUserName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -390,11 +390,11 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.userName' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.user.userName' => $this->_user->getUserName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -501,12 +501,12 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.permission' => 'core.edit',
-				    'form.user.userName' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.user.permission' => 'core.edit',
+						      'form.user.userName' => $this->_user->getUserName())),
+			    $results);
 
 	GalleryDataCache::reset();
 
@@ -537,12 +537,12 @@ class ItemEditPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditPermissions',
-				    'itemId' => $this->_albumParent->getId(),
-				    'form.user.permission' => 'core.edit',
-				    'form.user.userName' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditPermissions',
+						      'itemId' => $this->_albumParent->getId(),
+						      'form.user.permission' => 'core.edit',
+						      'form.user.userName' => $this->_user->getUserName())),
+			    $results);
 
 	GalleryDataCache::reset();
 

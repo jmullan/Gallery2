@@ -136,8 +136,21 @@ function GalleryMain($startTime) {
 	
 	/* Redirect, if so instructed */
 	if (!empty($results['redirect'])) {
+	    /*
+	     * If we have a status, store its data in the session and attach it
+	     * to the URL.
+	     */
+	    if (!empty($results['status'])) {
+		$session =& $gallery->getSession();
+		$results['redirect']['statusId'] = $session->putStatus($results['status']);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
+
 	    if ($gallery->getDebug() == false) {
 
 		/*

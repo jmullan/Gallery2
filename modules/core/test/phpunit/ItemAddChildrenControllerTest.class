@@ -95,15 +95,15 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$status = $this->assertRedirect(array('view' => 'core:ItemAdmin',
-					      'subView' => 'core:ItemAddChildrenConfirmation',
-					      'itemId' => $this->_rootAlbum->getId()),
-					$results);
+	$this->assertEquals(array('view' => 'core:ItemAdmin',
+				  'subView' => 'core:ItemAddChildrenConfirmation',
+				  'itemId' => $this->_rootAlbum->getId()),
+			    $results['redirect']);
 
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
 	foreach ($files as $file) {
-	    $this->assertEquals($status['addFromBrowser'][$i]['fileName'], $file);
+	    $this->assertEquals($results['status']['addFromBrowser'][$i]['fileName'], $file);
 	    $i++;
 	}
     }
@@ -126,15 +126,15 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$status = $this->assertRedirect(array('view' => 'core:ItemAdmin',
-					      'subView' => 'core:ItemAddChildrenConfirmation',
-					      'itemId' => $this->_rootAlbum->getId()),
-					$results);
+	$this->assertEquals(array('view' => 'core:ItemAdmin',
+				  'subView' => 'core:ItemAddChildrenConfirmation',
+				  'itemId' => $this->_rootAlbum->getId()),
+			    $results['redirect']);
 
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
 	foreach ($files as $file) {
-	    $this->assertEquals($status['addFromLocalServer'][$i]['fileName'], $file);
+	    $this->assertEquals($results['status']['addFromLocalServer'][$i]['fileName'], $file);
 	    $i++;
 	}
     }

@@ -54,9 +54,10 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminUsers'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array()),
+			    $results);
     }
 
     function testUndo() {
@@ -64,10 +65,11 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.undo', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminEditUser',
-				    'userId' => $this->_user->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditUser',
+						      'userId' => $this->_user->getId()),
+				  'status' => array()),
+			    $results);
     }
 
     function testEditUser() {
@@ -82,10 +84,10 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password2', '');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminUsers',
-				    'form.status.modifiedUser' => $newUserName),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array('modifiedUser' => $newUserName)),
+			    $results);
     }
 
     function testMissingFields() {

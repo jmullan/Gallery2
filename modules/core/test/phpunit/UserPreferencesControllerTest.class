@@ -60,16 +60,18 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('x' => 'y'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('x' => 'y'),
+				  'status' => array()),
+			    $results);
     }
 
     function testUndo() {
 	GalleryUtilities::putRequestVariable('form.action.undo', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:UserPreferences'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
+				  'status' => array()),
+			    $results);
     }
 
     function testEditAll() {
@@ -81,9 +83,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.password2', 'newPassword');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:UserPreferences',
-				    'form.status.saved' => 1),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
+				  'status' => array('saved' => 1)),
+			    $results);
 
 	/* Load back the user object and make sure the data got saved */
 	list ($ret, $this->_user) = $this->_user->refresh();
@@ -103,9 +105,9 @@ class UserPreferencesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.email', 'email');
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:UserPreferences',
-				    'form.status.saved' => 1),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:UserPreferences'),
+				  'status' => array('saved' => 1)),
+			    $results);
     }
 
     function testEditPasswordMismatch() {

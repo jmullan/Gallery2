@@ -158,9 +158,9 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.destination', $this->_album[0]->getId());
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'itemId' => $this->_album[1]->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'itemId' => $this->_album[1]->getId())),
+			    $results);
     }
 
     /**

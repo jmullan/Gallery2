@@ -58,11 +58,11 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminUsers',
-				    'form.status.deletedUser' => $user->getUserName()),
-			      $results,
-			      'Failed to create user');
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminUsers'),
+				  'status' => array('deletedUser' => $user->getUserName())),
+			    $results,
+			    'Failed to create user');
 
 	/* Clean up */
 	$this->_deleteUser($user);

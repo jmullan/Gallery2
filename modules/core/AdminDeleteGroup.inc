@@ -48,6 +48,7 @@ class AdminDeleteGroupController extends GalleryController {
 	}
 
 	$results = array();
+	$status = array();
 	$redirectParams = array();
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	
@@ -82,12 +83,13 @@ class AdminDeleteGroupController extends GalleryController {
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
 		$redirectParams['subView'] = 'core:AdminGroups';
-		$redirectParams['form.status.deletedGroup'] = $group->getGroupName();
+		$status['deletedGroup'] = $group->getGroupName();
 	    }
 	}
 
 	if (!empty($redirectParams)) {
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';

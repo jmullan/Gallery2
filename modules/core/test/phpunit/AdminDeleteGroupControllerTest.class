@@ -57,12 +57,12 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups',
-				    'form.status.deletedGroup' => $group->getGroupName()),
-			      $results,
-			      'Failed to create user');
-
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array('deletedGroup' => $group->getGroupName())),
+			    $results,
+			    'Failed to create user');
+	
 	/* Clean up */
 	$this->_deleteGroup($group);
     }

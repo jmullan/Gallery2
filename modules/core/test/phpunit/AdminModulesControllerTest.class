@@ -78,9 +78,9 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminModules'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules')),
+			    $results);
 
 	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'install'),
 		      'install not called');
@@ -94,9 +94,9 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('action', 'activate');
 	$results = $this->handleRequest();
 
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminModules'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules')),
+			    $results);
 
 	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'activate'),
 		      'activate not called');
@@ -118,7 +118,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
 	$results = $this->handleRequest();
 
-	$this->assertRedirect(array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminModules'), $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminModules')),
+			    $results);
 	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'deactivate'), 'deactivate not called');
 
 	/* Dectivate a module that is active (should succeed) */

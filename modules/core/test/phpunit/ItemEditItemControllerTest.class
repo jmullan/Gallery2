@@ -91,10 +91,10 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditItem',
-				    'itemId' => $this->_item[0]->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditItem',
+						      'itemId' => $this->_item[0]->getId())),
+			    $results);
     }
 
     function testEditItem() {
@@ -112,10 +112,10 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditItem',
-				    'itemId' => $this->_item[0]->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditItem',
+						      'itemId' => $this->_item[0]->getId())),
+			    $results);
     }
 
     function testInvalidPathComponent() {

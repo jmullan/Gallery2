@@ -48,6 +48,7 @@ class AdminEditUserController extends GalleryController {
 	}
 
 	$results = array();
+	$status = array();
 	$redirectParams = array();
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
@@ -145,12 +146,13 @@ class AdminEditUserController extends GalleryController {
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
 		$redirectParams['subView'] = 'core:AdminUsers';
-		$redirectParams['form.status.modifiedUser'] = $form['userName'];
+		$status['modifiedUser'] = $form['userName'];
 	    }
 	}
 
 	if (!empty($redirectParams)) {
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:SiteAdmin';

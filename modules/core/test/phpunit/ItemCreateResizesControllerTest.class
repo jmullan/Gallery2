@@ -139,10 +139,10 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	    
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemCreateResizes',
-				    'itemId' => $this->_item->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemCreateResizes',
+						      'itemId' => $this->_item->getId())),
+			    $results);
 
 	/* Examine the thumbnail and make sure it lines up */
 	list ($ret, $thumbTable) =

@@ -172,7 +172,7 @@ class AdminUsersView extends GalleryView {
     /**
      * @see GalleryView::renderBody
      */
-    function renderBody($form) {
+    function renderBody($form, $status) {
 	global $gallery;
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
@@ -226,6 +226,7 @@ class AdminUsersView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
+	$template->setVariable('status', $status);
 	$template->setVariable('totalUserCount', $totalUserCount);
 	$template->setVariable('controller', 'core:AdminUsers');
 	$html = $template->render('AdminUsers.tpl');

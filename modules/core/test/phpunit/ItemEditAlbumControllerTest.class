@@ -71,10 +71,10 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditAlbum',
-				    'itemId' => $this->_album->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAlbum',
+						      'itemId' => $this->_album->getId())),
+			    $results);
     }
 
     function testSave() {
@@ -96,10 +96,10 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemEditAlbum',
-				    'itemId' => $this->_album->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAlbum',
+						      'itemId' => $this->_album->getId())),
+			    $results);
 
 	list ($ret, $this->_album) = $this->_album->refresh();
 	if ($ret->isError()) {

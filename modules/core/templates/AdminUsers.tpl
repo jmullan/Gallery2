@@ -16,31 +16,31 @@
       </td>
     </tr>
 
-    {if isset($form.status)}
+    {if isset($status)}
     <tr>
       <td colspan="2" align="center">
 	{gallery->lightFrame}
 	<table width="100%" border="0">
-	    <!-- {if isset($form.status.deletedUser)} -->
+	    <!-- {if isset($status.deletedUser)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Removed user '%s'" arg1=$form.status.deletedUser}
+		{gallery->text text="Removed user '%s'" arg1=$status.deletedUser}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->
 
-	    <!-- {if isset($form.status.createdUser)} -->
+	    <!-- {if isset($status.createdUser)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Created user '%s'" arg1=$form.status.createdUser}
+		{gallery->text text="Created user '%s'" arg1=$status.createdUser}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->
 
-	    <!-- {if isset($form.status.modifiedUser)} -->
+	    <!-- {if isset($status.modifiedUser)} -->
 	    <tr>
 	      <td>
-		{gallery->text text="Modified user '%s'" arg1=$form.status.modifiedUser}
+		{gallery->text text="Modified user '%s'" arg1=$status.modifiedUser}
 	      </td>
 	    </tr>
 	    <!-- {/if} -->

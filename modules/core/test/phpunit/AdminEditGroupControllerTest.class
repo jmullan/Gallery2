@@ -45,9 +45,10 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups'),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array()),
+			    $results);
 	$this->_deleteGroup($group);
     }
 
@@ -61,10 +62,11 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.action.undo', 1);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminEditGroup',
-				    'groupId' => $group->getId()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroup',
+						      'groupId' => $group->getId()),
+				  'status' => array()),
+			    $results);
 
 	$this->_deleteGroup($group);
     }
@@ -81,10 +83,10 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form.groupName', $newGroupName);
 
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminGroups',
-				    'form.status.modifiedGroup' => $newGroupName),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminGroups'),
+				  'status' => array('modifiedGroup' => $newGroupName)),
+			    $results);
 	$this->_deleteGroup($group);
     }
     

@@ -75,8 +75,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
-
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret->isError()) {
@@ -102,8 +102,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
-
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	
 	/* Verify that there are no comments */
 	list ($ret, $counts) = GalleryCommentHelper::fetchCommentCounts(array($this->_item->getId()));
 	if ($ret->isError()) {
@@ -125,8 +125,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
-
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	
 	/* Grab the comment and take a look at it */
 	list ($ret, $comments) = GalleryCommentHelper::fetchComments($this->_item->getId());
 	if ($ret->isError()) {

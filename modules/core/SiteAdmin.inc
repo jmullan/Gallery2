@@ -74,8 +74,8 @@ class SiteAdminView extends GalleryView {
 	/* Get a list of all the admin views for each module */
 	$subViewChoices = array();
 	ksort($moduleStatus);
-	foreach ($moduleStatus as $moduleName => $status) {
-	    if (empty($status['active'])) {
+	foreach ($moduleStatus as $moduleName => $moduleStatus) {
+	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
 

@@ -54,6 +54,7 @@ class UserPreferencesController extends GalleryController {
 
 	$return = GalleryUtilities::getFormVariables('return.');
 	$results = array();
+	$status = array();
 	$redirectParams = array();
 
 	if (isset($form['action']['cancel'])) {
@@ -127,12 +128,13 @@ class UserPreferencesController extends GalleryController {
 
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:UserPreferences';
-		$redirectParams['form.status.saved'] = 1;
+		$status['saved'] = 1;
 	    }
 	}
 
 	if (!empty($redirectParams)) {
 	    $results['redirect'] = $redirectParams;
+	    $results['status'] = $status;
 	} else {
 	    if (empty($results['view'])) {
 		$results['view'] = 'core:UserPreferences';

@@ -78,8 +78,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
-
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
+	
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), '/validPath/'),
 			    $gallery->getModuleParameter('netpbm', 'path'));
@@ -98,7 +98,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'target'), $results);
+	$this->assertEquals(array('redirect' => array('view' => 'target')), $results);
     }
     
     function testSaveTestErrorPath() {

@@ -67,10 +67,10 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemAddAlbum',
-				    'itemId' => $this->_rootId),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemAddAlbum',
+						      'itemId' => $this->_rootId)),
+			    $results);
 
 	$this->_deleteAlbum($name);
     }
@@ -90,10 +90,10 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertRedirect(array('view' => 'core:ItemAdmin',
-				    'subView' => 'core:ItemAddAlbum',
-				    'itemId' => $this->_rootId),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemAddAlbum',
+						      'itemId' => $this->_rootId)),
+			    $results);
 
 	/* Now do it a second time with the same name */
 	$results = $this->handleRequest();

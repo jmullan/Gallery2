@@ -88,11 +88,11 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminEditGroupUsers',
-				    'groupId' => $this->_group->getId(),
-				    'form.status.removedUser' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $this->_group->getId()),
+				  'status' => array('removedUser' => $this->_user->getUserName())),
+			    $results);
     }
 
     function testAddUser() {
@@ -102,11 +102,11 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminEditGroupUsers',
-				    'groupId' => $this->_group->getId(),
-				    'form.status.addedUser' => $this->_user->getUserName()),
-			      $results);
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers',
+						      'groupId' => $this->_group->getId()),
+				  'status' => array('addedUser' => $this->_user->getUserName())),
+			    $results);
     }
     
     function testAddBogusUser() {
