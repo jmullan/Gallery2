@@ -142,21 +142,27 @@ class GalleryGroup_core extends GalleryEntity {
     }
 
     /**
-     * Return a map of group names => ids
+     * Delete this GalleryGroup
      *
-     * You can specify how many group names to list, and where the windows is
-     * in the list of all groups.
+     * Do some bookkeeping, like removing any user/group mappings
      *
-     * @param int the number of usernames desired
-     * @param int the start of the range
+     * @access public
+     * @return object GalleryStatus a status code
      */
-    function fetchGroupnames($count=null, $offset=null) {
+    function delete() {
 	global $gallery;
 
-	return $gallery->search(
-	    array('select' => '[GalleryGroup::id] [GalleryGroup::groupName]',
-		  'limit' => array('count' => $count,
-				   'offset' => $offset)));
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryUserGroupMap::removeGroup($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
 }
