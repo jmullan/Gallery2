@@ -58,9 +58,11 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	if (empty($templateData['errors'])) {
 	    foreach (array_keys($moduleList) as $moduleId) {
-		list ($ret, $modules[$moduleId]) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
-		if ($ret->isError()) {
+		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if (empty($modulePlugin) || $ret->isError()) {
 		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
+		} else {
+			$modules[$moduleId] = $modulePlugin;
 		}
 	    }
 
