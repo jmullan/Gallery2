@@ -208,6 +208,77 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(),
 			    $results['status']['albumImportFailure']
 			    );
+	$testAlbumId = $results['status']['albumImportSuccess']['album03'];
+	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $layout) = GalleryCoreApi::fetchLayout($testAlbum);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $settings) = $layout->getSettings($testAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rows) = $layout->getParameter('rows',$testAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $cols) = $layout->getParameter('cols',$testAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($testAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $derivativePreferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($testAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$this->assertEquals(array($testAlbum->getTitle(),
+				  $testAlbum->getSummary(),
+				  $testAlbum->getKeywords(),
+				  $testAlbum->getDescription(),
+				  $testAlbum->getownerId(),
+				  $testAlbum->getcreationTimestamp(),
+				  $testAlbum->getviewedSinceTimestamp(),
+				  $viewCount,
+				  $derivativePreferences,
+				  $rows,
+				  $cols
+
+				  ),
+			    array('Test Album Three',
+				  NULL,
+				  NULL,
+				  'No description',
+				  $testOwner->getId(),
+				  1056016982,
+				  1056015077,
+				  2,
+				  array(array(
+					      'order' => 0,
+					      'derivativeType' => 1,
+					      'derivativeOperations' => 'thumbnail|150'
+					      ),
+
+					array('order' => 1,
+					      'derivativeType' => 2,
+					      'derivativeOperations' => 'scale|400'
+					      )
+					),
+				  3,
+				  NULL
+				  )
+			    );
+	
     }
 }
 ?>
