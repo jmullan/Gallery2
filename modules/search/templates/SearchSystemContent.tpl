@@ -1,11 +1,11 @@
 <div class="gbMenu">
   <div class="giTitle">
-    <a href="{g->url arg1="view=search:SearchScan"}">
+    <a href="javascript:document.getElementById('SearchSystemContent').submit()">
       {g->text text="Search"}
     </a>
   </div>
 
-  <form action="{g->url}" method="post">
+  <form id="SearchSystemContent" action="{g->url}" method="post">
     <p>
       <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.view}"/>
       <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent"/>
