@@ -80,6 +80,9 @@
     
         <tr>
           <th>
+        {g->text text="#"}
+          </th>
+          <th>
     	{g->text text="Username"}
           </th>
           <th>
@@ -87,8 +90,11 @@
           </th>
         </tr>
     
-        {foreach from=$MembersList.users item=user}
+        {foreach from=$MembersList.users item=user name=MembersListLoop}
         <tr class="{cycle values="gbEven,gbOdd"}">
+	  <td>
+	    {g->text text="%d" arg1="`$smarty.foreach.MembersListLoop.iteration+$form.list.startingUser`"}
+	  </td>
           <td>
             <a href="{g->url arg1="view=members:MembersProfile" arg2="userId=`$user.id`"}">
     	  {$user.userName}
