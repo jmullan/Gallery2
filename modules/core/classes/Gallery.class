@@ -678,8 +678,9 @@ class Gallery {
      * Output a print_r style debug message
      *
      * @param mixed any object or value
+     * @param bool true if the output should be run through htmlentities()
      */
-    function debug_r($object) {
+    function debug_r($object, $escapeHtmlEntities=false) {
 	if (!empty($this->_debug)) {
 	    if (phpversion() >= '4.3.0') {
 		$buf = print_r($object, true);
@@ -690,6 +691,9 @@ class Gallery {
 		ob_end_clean();
 	    }
 
+	    if ($escapeHtmlEntities) {
+		$buf = htmlentities($buf);
+	    }
 	    $this->debug($buf);
 	}
     }

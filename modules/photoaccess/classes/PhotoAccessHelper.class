@@ -164,7 +164,8 @@ class PhotoAccessHelper {
 	$gallery->guaranteeTimeLimit(30);
 	$cartUrl = 'http://' . $photoAccessServer . $cartUrlFragment;
 	if ($gallery->getDebug()) {
-	    $gallery->debug(sprintf("Post Data:\n%s", htmlentities(print_r($postData, 1))));
+	    $gallery->debug('Post data:');
+	    $gallery->debug_r($postData, true);
 	}
 	list ($body, $response, $headers) =
 	    GalleryCoreApi::postToWebPage($cartUrl, $postData,
@@ -181,7 +182,8 @@ class PhotoAccessHelper {
 	 *   redirect-url="/buy/anonCart.jsp;jsessionid=XXXXXXXX?cb=CB_GP&#38;svr=clay"/>
 	 */
 	if ($gallery->getDebug()) {
-	    $gallery->debug(sprintf("Response Data:\n%s", htmlentities(print_r($body, 1))));
+	    $gallery->debug('Response Data');
+	    $gallery->debug_r($body, true);
 	}
 	if (preg_match('{<add-cart-response\s*request-url="(\S+)"\s*redirect-url="(\S+)"/>}',
 		       $body, $matches)) {
