@@ -31,41 +31,41 @@
             <table>
               <tr>
                 <th align="left">
-    	      <input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
+		  <input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
                   <input type="hidden" name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/> 	
-    	      {if ($form.list.page > 1)}
-    	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=1"}">
-    		{g->text text="&laquo; first"}
-    	      </a>
-    	      &nbsp;
-    	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.backPage`"}">
-    		{g->text text="&laquo; back"}
-    	      </a>
-    	      {else}
-    	      {g->text text="&laquo; first"}
-    	      &nbsp;
-    	      {g->text text="&laquo; back"}
-    	      {/if}
+   	          {if ($form.list.page > 1)}
+    	          <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=1"}">
+    		    {g->text text="&laquo; first"}
+    	          </a>
+    	          &nbsp;
+    	          <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.backPage`"}">
+    		    {g->text text="&laquo; back"}
+    	          </a>
+    	          {else}
+    	          {g->text text="&laquo; first"}
+    	          &nbsp;
+    	          {g->text text="&laquo; back"}
+    	          {/if}
                 </th>
                 <th>
-    	      {g->text text="Viewing page %d of %d"
+    	          {g->text text="Viewing page %d of %d"
                            arg1=$form.list.page
-    	               arg2=$form.list.maxPages}
+    	                   arg2=$form.list.maxPages}
                 </th>
                 <th align="right">
-    	      {if ($form.list.page < $form.list.maxPages)}
-    	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.nextPage`"}">
-    		{g->text text="next &raquo;"}
-    	      </a>
-    	      &nbsp;
-    	      <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.maxPages`"}">
-    		{g->text text="last &raquo;"}
-    	      </a>
-    	      {else}
-    	      {g->text text="next &raquo;"}
-    	      &nbsp;
-    	      {g->text text="last &raquo;"}
-    	      {/if}
+    	          {if ($form.list.page < $form.list.maxPages)}
+    	          <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.nextPage`"}">
+    		    {g->text text="next &raquo;"}
+    	          </a>
+	          &nbsp;
+    	          <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=`$form.list.maxPages`"}">
+    		    {g->text text="last &raquo;"}
+    	          </a>
+    	          {else}
+    	          {g->text text="next &raquo;"}
+    	          &nbsp;
+    	          {g->text text="last &raquo;"}
+    	          {/if}
                 </th>
               </tr>
             </table>
@@ -75,24 +75,24 @@
     
         <tr>
           <th>
-        {g->text text="#"}
+            {g->text text="#"}
           </th>
           <th>
-    	{g->text text="Username"}
+    	    {g->text text="Username"}
           </th>
           <th>
-    	{g->text text="Full Name"}
+	    {g->text text="Full Name"}
           </th>
         </tr>
     
         {foreach from=$MembersList.users item=user name=MembersListLoop}
         <tr class="{cycle values="gbEven,gbOdd"}">
 	  <td>
-	    {g->text text="%d" arg1="`$smarty.foreach.MembersListLoop.iteration+$form.list.startingUser`"}
+	    {$smarty.foreach.MembersListLoop.iteration+$form.list.startingUser}
 	  </td>
           <td>
             <a href="{g->url arg1="view=members:MembersProfile" arg2="userId=`$user.id`"}">
-    	  {$user.userName}
+    	      {$user.userName}
     	    </a>
           </td>
           <td>
