@@ -25,7 +25,7 @@
   
     , 
   
-      PRIMARY KEY (DB_COLUMN_PREFIXaccessListId
+      UNIQUE KEY (DB_COLUMN_PREFIXaccessListId
         ,
       DB_COLUMN_PREFIXuserId
         ,

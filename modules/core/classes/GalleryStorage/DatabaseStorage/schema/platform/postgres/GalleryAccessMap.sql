@@ -46,8 +46,9 @@
     (DB_COLUMN_PREFIXpermission);
 
   
-    ALTER TABLE DB_TABLE_PREFIXAccessMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXaccessListId
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXAccessMap_33666 
+    ON DB_TABLE_PREFIXAccessMap
+    (DB_COLUMN_PREFIXaccessListId
         ,
       DB_COLUMN_PREFIXuserId
         ,

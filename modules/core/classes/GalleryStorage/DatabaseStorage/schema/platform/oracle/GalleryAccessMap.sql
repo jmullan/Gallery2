@@ -43,7 +43,7 @@
     (DB_COLUMN_PREFIXpermission);
   
     ALTER TABLE DB_TABLE_PREFIXAccessMap
-      ADD PRIMARY KEY (DB_COLUMN_PREFIXaccessListId
+      ADD UNIQUE (DB_COLUMN_PREFIXaccessListId
         ,
       DB_COLUMN_PREFIXuserId
         ,
