@@ -127,8 +127,8 @@ test-multiscene.tif[1] 100x75 DirectClass 44kb TIFF 1s',
 		'test.jpg' => 'test.jpg 50x50 DirectClass 763b JPEG 1s',
 		'test.jp2' => 'identify: no delegate for this image format (JP2).
 identify: Missing an image file name [No such file or directory].',
-		'test.pdf' => 'test.pdf=>/tmp/magicFnmgfF[0] 526x706 PseudoClass 256c 29kb PDF 1s
-test.pdf=>/tmp/magicFnmgfF[1] 526x706 PseudoClass 256c 29kb PDF 1s',
+		'test.pdf' => 'test.pdf=>/tmp/magicFnmgfF[0] 612x792 PseudoClass 256c 29kb PDF 1s
+test.pdf=>/tmp/magicFnmgfF[1] 612x792 PseudoClass 256c 29kb PDF 1s',
 		'test.pjpg' => 'test.pjpg 50x50 DirectClass 970b JPEG 1s',
 		'test.png' => 'test.png 50x50 DirectClass 730b PNG 1s',
 		'test.svg' => 'identify: no delegate for this image format (SVG).

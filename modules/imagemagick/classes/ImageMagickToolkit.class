@@ -87,14 +87,14 @@ class ImageMagickToolkit extends GalleryToolkit {
 				   'crop', 'convert-to-image/jpeg', 'select-page');
 
 	/* Check context for any operations that have been queued up.. */
+	$outputMimeType = $mimeType;
 	if (isset($context['imagemagick.transform'])) {
 	    $transform = $context['imagemagick.transform'];
-	    $outputMimeType = $context['imagemagick.mime'];
+	    $mimeType = $context['imagemagick.mime'];
 	    unset($context['imagemagick.transform']);
 	    unset($context['imagemagick.mime']);
 	} else {
 	    $transform = array();
-	    $outputMimeType = $mimeType;
 	}
 	if (isset($context['width'])) {
 	    $width = $context['width'];
@@ -281,7 +281,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      "$operationName $mimeType"), null, null);
+					      "$operationName $outputMimeType"), null, null);
 	}
 
 	if (isset($width)) {
@@ -291,7 +291,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	if ($queueIt) {
 	    $context['imagemagick.transform'] = $transform;
-	    $context['imagemagick.mime'] = $outputMimeType;
+	    $context['imagemagick.mime'] = $mimeType;
 
 	    if ($sourceFilename != $destFilename) {
 		$platform = $gallery->getPlatform();

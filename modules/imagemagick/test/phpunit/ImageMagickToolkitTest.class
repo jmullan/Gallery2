@@ -339,7 +339,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		      'output[640x480].png', 'output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
-				      'width' => 150, 'height' => 113),
+				      'width' => 150, 'height' => 114),
 				$context, 'context at end ' . $this->_envName());
 
 	    unset($this->_files['output.png']);
@@ -410,6 +410,53 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 				$context, 'context at end ' . $this->_envName());
 
 	    unset($this->_files['output.png']);
+	}
+    }
+
+    // Ensure queued operations handle change of mime type correctly
+    function testOperationSequenceMimeChange() {
+	global $gallery;
+	$gallery->_platform->_copyOk = true;
+
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+	    $context = array('next.toolkit' => $this->_toolkit, 'next.operation' => 'thumbnail');
+
+	    list ($ret, $outputMimeType, $context) =
+		$this->_toolkit->performOperation('application/pdf', 'convert-to-image/jpeg',
+						  'test.pdf', 'TEMPFILE', array(), $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $context['next.toolkit'] = null;
+	    $context['next.operation'] = null;
+	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => '612', 'height' => '792',
+				      'imagemagick.transform' => array(),
+				      'imagemagick.mime' => 'application/pdf'),
+				$context, 'context after convert ' . $this->_envName());
+	    $this->assertEquals('image/jpeg', $outputMimeType, 'jpeg ' . $this->_envName());
+
+	    list ($ret, $outputMimeType, $context) =
+		$this->_toolkit->performOperation('image/jpeg', 'thumbnail',
+						  'TEMPFILE', 'output.jpg',
+						  array('150'), $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals(array_merge(
+		array('-quality', '75'),
+		$environment['removeMetaDataSwitch'],
+		array('-size', '150x150', '-geometry', '150x150', 'TEMPFILE[0]', 'output.jpg')),
+		$this->_files['output.jpg']['operation']['convert'], 'output ' . $this->_envName());
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => 116, 'height' => 150),
+				$context, 'context at end ' . $this->_envName());
+
+	    unset($this->_files['output.jpg']);
 	}
     }
 

@@ -78,14 +78,14 @@ class NetPbmToolkit extends GalleryToolkit {
 	$platform = $gallery->getPlatform();
 
 	/* Check context for any operations that have been queued up.. */
+	$outputMimeType = $mimeType;
 	if (isset($context['netpbm.transform'])) {
 	    $transform = $context['netpbm.transform'];
-	    $outputMimeType = $context['netpbm.mime'];
+	    $mimeType = $context['netpbm.mime'];
 	    unset($context['netpbm.transform']);
 	    unset($context['netpbm.mime']);
 	} else {
 	    $transform = array();
-	    $outputMimeType = $mimeType;
 	}
 	if (isset($context['width'])) {
 	    $width = $context['width'];
@@ -357,7 +357,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	default:
 	    $this->_deleteTempFiles($context);
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      "$operationName $mimeType"), null, null);
+					      "$operationName $outputMimeType"), null, null);
 	}
 
 	if (isset($width)) {
@@ -370,7 +370,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	 */
 	if ($queueIt) {
 	    $context['netpbm.transform'] = $transform;
-	    $context['netpbm.mime'] = $outputMimeType;
+	    $context['netpbm.mime'] = $mimeType;
 
 	    if ($sourceFilename != $destFilename) {
 		if (!$platform->copy($sourceFilename, $destFilename)) {
