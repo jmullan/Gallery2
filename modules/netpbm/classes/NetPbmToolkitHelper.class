@@ -52,9 +52,7 @@ class NetPbmToolkitHelper {
 	}
 
 	if (empty($netPbmPath)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_VALUE,
-					      __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 
 	$paths = array();
@@ -71,14 +69,13 @@ class NetPbmToolkitHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/*
-	 * -------------------- Operations --------------------
-	 */
+	/* -------------------- Operations -------------------- */
 
 	/* Convert TIFF to JPEG */
 	if (in_array('image/tiff', $mimeTypes)) {
 	    $operations['convert-to-image/jpeg']['params'] = array();
-	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
+	    $operations['convert-to-image/jpeg']['description'] =
+		$gallery->i18n('Convert to a JPEG');
 	    $operations['convert-to-image/jpeg']['mimeTypes'] = array('image/tiff');
 	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 	}
@@ -96,55 +93,57 @@ class NetPbmToolkitHelper {
 	$operations['thumbnail'] = $operations['scale'];
 
 	/* Resize */
-	$operations['resize']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('target width'));
-	$operations['resize']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('target height'));
-	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions');
+	$operations['resize']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('target width'));
+	$operations['resize']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('target height'));
+	$operations['resize']['description'] =
+	    $gallery->i18n('Resize the image to the target dimensions');
 	$operations['resize']['mimeTypes'] = $mimeTypes;
 
 	/* Rotate */
-	$operations['rotate']['params'][] = array('type' => 'int',
-						  'description' => $gallery->i18n('rotation degrees'));
+	$operations['rotate']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('rotation degrees'));
 	$operations['rotate']['description'] = $gallery->i18n('Rotate the image');
 	$operations['rotate']['mimeTypes'] = $mimeTypes;
 
 	/* Crop */
-	$operations['crop']['params'][] = array('type' => 'float',
-						'description' => $gallery->i18n('left edge %'));
-	$operations['crop']['params'][] = array('type' => 'float',
-						'description' => $gallery->i18n('top edge %'));
-	$operations['crop']['params'][] = array('type' => 'float',
-						'description' => $gallery->i18n('width %'));
-	$operations['crop']['params'][] = array('type' => 'float',
-						'description' => $gallery->i18n('height %'));
+	$operations['crop']['params'][] =
+	    array('type' => 'float', 'description' => $gallery->i18n('left edge %'));
+	$operations['crop']['params'][] =
+	    array('type' => 'float', 'description' => $gallery->i18n('top edge %'));
+	$operations['crop']['params'][] =
+	    array('type' => 'float', 'description' => $gallery->i18n('width %'));
+	$operations['crop']['params'][] =
+	    array('type' => 'float', 'description' => $gallery->i18n('height %'));
 	$operations['crop']['description'] = $gallery->i18n('Crop the image');
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 
 	/* Watermark */
-	$operations['composite']['params'][] = array('type' => 'string',
-						     'description' => $gallery->i18n('overlay path'));
-	$operations['composite']['params'][] = array('type' => 'string',
-						     'description' => $gallery->i18n('overlay mime type'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('overlay width'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('overlay height'));
-	$operations['composite']['params'][] = array('type' => 'string',
-						     'description' => $gallery->i18n('alignment type'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('alignment x %'));
-	$operations['composite']['params'][] = array('type' => 'int',
-						     'description' => $gallery->i18n('alignment y %'));
-	$operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
+	$operations['composite']['params'][] =
+	    array('type' => 'string', 'description' => $gallery->i18n('overlay path'));
+	$operations['composite']['params'][] =
+	    array('type' => 'string', 'description' => $gallery->i18n('overlay mime type'));
+	$operations['composite']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('overlay width'));
+	$operations['composite']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('overlay height'));
+	$operations['composite']['params'][] =
+	    array('type' => 'string', 'description' => $gallery->i18n('alignment type'));
+	$operations['composite']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('alignment x %'));
+	$operations['composite']['params'][] =
+	    array('type' => 'int', 'description' => $gallery->i18n('alignment y %'));
+	$operations['composite']['description'] =
+	    $gallery->i18n('Overlay source image with a second one');
 	$operations['composite']['mimeTypes'] = $mimeTypes;
 
 	/* Compress */
 	$qualityMimeTypes = array_intersect(array('image/jpeg', 'image/pjpeg'), $mimeTypes);
 	if (!empty($qualityMimeTypes)) {
 	    $operations['compress'] = array(
-		'params' => array(array('type' => 'int',
-					 'description' => $gallery->i18n('target size in kb'))),
+		'params' => array(
+		    array('type' => 'int', 'description' => $gallery->i18n('target size in kb'))),
 		'description' => $gallery->i18n('Reduce image quality to reach target file size'),
 		'mimeTypes' => $qualityMimeTypes);
 	}
@@ -155,11 +154,12 @@ class NetPbmToolkitHelper {
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image');
+	$properties['dimensions']['description'] =
+	    $gallery->i18n('Get the width and height of the image');
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
-	return array(GalleryStatus::success(), array('operations' => $operations,
-						     'properties' => $properties));
+	return array(GalleryStatus::success(),
+		     array('operations' => $operations, 'properties' => $properties));
     }
 
     /**
@@ -194,7 +194,8 @@ class NetPbmToolkitHelper {
 	    $fullPath .= '.exe';
 	}
 
-	if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
+	if (!$platform->isRestrictedByOpenBasedir($fullPath) &&
+		!$platform->file_exists($fullPath)) {
 	    $success = false;
 	    $results = array('File does not exist');
 	} else {
@@ -251,8 +252,7 @@ class NetPbmToolkitHelper {
 	$binaries['pnmtotiff'] = array('image/tiff');
 	$binaries['bmptopnm'] = array('image/bmp');
 	$binaries['ppmtobmp'] = array('image/bmp');
-	$binaries['pnmcomp'] = array(); /* pnmcomp doesn't help support a mime type,
-	                                   it allows for watermarking                */
+	$binaries['pnmcomp'] = array();  /* pnmcomp it allows for watermarking */
 
 	/* Get a list of all possible supported mime types */
 	$mimeTypes = array();
@@ -267,7 +267,8 @@ class NetPbmToolkitHelper {
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$fullPath .= '.exe';
 	    }
-	    if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
+	    if (!$platform->isRestrictedByOpenBasedir($fullPath) &&
+		    !$platform->file_exists($fullPath)) {
 		$success = false;
 		$results = array('File does not exist');
 	    } else {
