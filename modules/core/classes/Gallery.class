@@ -64,14 +64,6 @@ class Gallery {
     var $_config;
 
     /**
-     * An instance of the GalleryPlatform class
-     *
-     * @var object GalleryPlatform $_platform
-     * @access private
-     */
-    var $_platform;
-
-    /**
      * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
      * 
      * @var string $_debug
@@ -95,6 +87,14 @@ class Gallery {
      * @access private
      */
     var $_debugBuffer;
+
+    /**
+     * A cache of entities and searches that we've loaded
+     *
+     * @var array $_storageCache;
+     * @access private;
+     */
+    var $_storageCache;
 
     /**
      * A registry of event listeners
@@ -127,6 +127,14 @@ class Gallery {
      * @access private
      */
     var $_modules;
+
+    /**
+     * An instance of the GalleryPlatform class
+     *
+     * @var object GalleryPlatform $_platform
+     * @access private
+     */
+    var $_platform;
 
     /**
      * The current profiling mode.
@@ -216,6 +224,7 @@ class Gallery {
 	$this->_modules = array();
 	$this->_locks = array();
 	$this->_storage = null;
+	$this->_storageCache['loadEntitiesById'] = array();
     }
 
     /**
@@ -252,28 +261,41 @@ class Gallery {
      *               mixed one GalleryEntity or an array of GalleryEntities
      */
     function loadEntitiesById($id) {
+	GalleryProfiler::start('Gallery::loadEntitiesById');
+	
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	GalleryProfiler::start('Gallery::loadEntitiesById');
-
-	/* Get a reference to our storage object */
-	$reply =& $this->getStorage();
-	$ret = $reply[0];
-	$storage =& $reply[1];
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	/* Check for cache hits on single entity lookups */
+	if (!is_array($id)) {
+	    if (isset($this->_storageCache['loadEntitiesById'][$id])) {
+		$entities = $this->_storageCache['loadEntitiesById'][$id];
+	    }
 	}
 
-	/* Load the entities from our persistent store */
-	list ($ret, $entities) = $storage->loadEntities($id);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (!isset($entities)) {
 
+	    /* Get a reference to our storage object */
+	    $reply =& $this->getStorage();
+	    $ret = $reply[0];
+	    $storage =& $reply[1];
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Load the entities from our persistent store */
+	    list ($ret, $entities) = $storage->loadEntities($id);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!is_array($id)) {
+		$this->_storageCache['loadEntitiesById'][$id] = $entities;
+	    }
+	}
 	GalleryProfiler::stop('Gallery::loadEntitiesById');
 	
 	return array(GalleryStatus::success(), $entities);
@@ -336,18 +358,29 @@ class Gallery {
      * @see GalleryStorage::search()
      */
     function search($query, $data=array()) {
+
 	GalleryProfiler::start('Gallery::search');
-	
+
+	/*
+	 * XXX: can't cache the results of the $storage->search() call,
+	 * since the results are actually a GallerySearchResultSet which is an
+	 * active pointer back into the database.
+	 */
+
 	$reply =& $this->getStorage();
 	$ret = $reply[0];
 	$storage =& $reply[1];
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	    
+	list ($ret, $results) = $storage->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	$results = $storage->search($query, $data);
 	GalleryProfiler::stop('Gallery::search');
-	return $results;
+	return array(GalleryStatus::success(), $results);
     }
 
     /**

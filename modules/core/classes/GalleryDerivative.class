@@ -78,6 +78,17 @@ class GalleryDerivative_core extends GalleryChildEntity {
     var $_derivativeCommands;
 
     /**
+     * The order of this derivative relative to others
+     *
+     * @g2 <member>
+     * @g2   <member-name>derivativeOrder</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <indexed/>
+     * @g2 </member>
+     */
+    var $_derivativeOrder;
+
+    /**
      * The size of the derived object
      *
      * @g2 <member>
@@ -276,7 +287,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$cacheDir = $gallery->getConfig('data.gallery.cache');
 
 	$firstDigitOfId = substr($this->getId(), 0, 1);
-	$cacheDir = $cacheDir . $firstDigitOfId;
+	$cacheDir = $cacheDir . $firstDigitOfId . '/';
 	
 	/* Make sure that the cache dir exists, create it if necessary */
 	list($ret, $platform) = $gallery->getPlatform();

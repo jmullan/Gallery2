@@ -5,18 +5,18 @@
     -- formats the SQL attractively.
     --
 
-    CREATE TABLE TABLE_PREFIXGalleryDerivative (
-  COLUMN_PREFIXid
+    CREATE TABLE TABLE_PREFIXGalleryDerivativePreferencesMap (
+  COLUMN_PREFIXparentId
       int(11)
     
-    NOT NULL
-  
       ,
-    COLUMN_PREFIXderivativeSourceId
+    COLUMN_PREFIXorder
       int(11)
     
-    NOT NULL
-  
+      ,
+    COLUMN_PREFIXderivativeType
+      int(11)
+    
       ,
     COLUMN_PREFIXderivativeCommands
       varchar(
@@ -25,41 +25,21 @@
         
       )
     
-      ,
-    COLUMN_PREFIXderivativeOrder
-      int(11)
-    
-      ,
-    COLUMN_PREFIXderivativeSize
-      int(11)
-    
-      ,
-    COLUMN_PREFIXderivativeType
-      int(11)
-    
-      ,
-    COLUMN_PREFIXderivativeMimeType
-      varchar(
-      
-          128
-        
-      )
-    
     , 
   
-    INDEX (COLUMN_PREFIXid)
+    INDEX (COLUMN_PREFIXparentId)
     
       ,
     
-    INDEX (COLUMN_PREFIXderivativeSourceId)
-    
-      ,
-    
-    INDEX (COLUMN_PREFIXderivativeOrder)
+    INDEX (COLUMN_PREFIXorder)
     
       ,
     
     INDEX (COLUMN_PREFIXderivativeType)
+    
+      ,
+    
+    INDEX (COLUMN_PREFIXderivativeCommands)
     
 
     ) TYPE=MyISAM;
@@ -69,7 +49,7 @@
       COLUMN_PREFIXmajor,
       COLUMN_PREFIXminor
       ) VALUES (
-      'GalleryDerivative',
+      'GalleryDerivativePreferencesMap',
       1,
       0
       );

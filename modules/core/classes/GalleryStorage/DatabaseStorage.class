@@ -1076,7 +1076,13 @@ class DatabaseStorage extends GalleryStorage {
 		$column = $this->_prefixColumnName($member);
 
 		$allTables[$table] = 1;
-		if (!strcmp($this->_getClassType($class), 'entity')) {
+		list ($ret, $classType) = $this->_getClassType($class);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__),
+				 null);
+		}
+		
+		if (!strcmp($classType, 'entity')) {
 		    $entityTables[$table] = 1;
 		}
 

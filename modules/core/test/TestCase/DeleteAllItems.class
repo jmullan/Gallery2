@@ -7,7 +7,7 @@ class DeleteAllItemsTestCase extends TestCase {
     }
 
     function getDescription() {
-	return "Delete all items in the database, one by one";
+	return "Delete all AlbumItems in the database, one by one (except the root)";
     }
 
     function testStart() {
@@ -15,13 +15,19 @@ class DeleteAllItemsTestCase extends TestCase {
 
 	while (true) {
 	    $gallery->setTimeLimit(60);
+
+	    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    
 	    list ($ret, $results) =
 		$gallery->search(array('select' => '[GalleryEntity::id]',
-				       'where' => '[GalleryEntity::entityType]=?',
+				       'where' => ('[GalleryEntity::entityType] = ? ' .
+						   'AND [GalleryEntity::id] <> ?'),
 				       'order-by' => '[GalleryEntity::id] DESC',
 				       'limit' => array('offset' => 0, 'count' => 5)),
-				 array('GalleryAlbumItem'));
+				 array('GalleryAlbumItem', $rootAlbumId));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

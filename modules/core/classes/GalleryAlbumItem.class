@@ -46,32 +46,6 @@ class GalleryAlbumItem_core extends GalleryItem {
      * ****************************************
      */
 
-    /**
-     * Target size of the intermediate image
-     *
-     * @g2 <member>
-     * @g2   <member-name>childIntermediateResize</member-name>
-     * @g2   <member-type>INTEGER</member-type>
-     * @g2 </member>
-     *
-     * @var integer $_childIntermediateSize
-     * @access private
-     */
-    var $_childIntermediateSize;
-
-    /**
-     * Target size of thumbnails inside this album
-     *
-     * @g2 <member>
-     * @g2   <member-name>childThumbSize</member-name>
-     * @g2   <member-type>INTEGER</member-type>
-     * @g2 </member>
-     *
-     * @var integer $_childThumbSize
-     * @access private
-     */
-    var $_childThumbSize;
-
     /*
      * ****************************************
      *                 Methods
@@ -110,6 +84,12 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Copy over derivative preferences from the parent */
+	$ret = GalleryDerivativePreferencesMap::copyPreferences($parentId, $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return $this->_createDir($parentPath . $albumName);
     }
 
@@ -138,7 +118,27 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
+	/* Create default preferences */
+	/* XXX: parameterize this */
+	$ret = GalleryDerivativePreferencesMap::addMapEntry(
+	    array('order' => 1,
+		  'parentId' => $this->getId(),
+		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+		  'derivativeCommands' => 'scale 200'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryDerivativePreferencesMap::addMapEntry(
+	    array('order' => 1,
+		  'parentId' => $this->getId(),
+		  'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
+		  'derivativeCommands' => 'scale 640'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return $this->_createDir($parentPath . $albumName);
     }
 
@@ -193,6 +193,13 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Delete myself from the store */
 	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Delete derivative preferences */
+	$ret = GalleryDerivativePreferencesMap::removeMapEntry(
+	    array('parentId' => $this->getId()));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

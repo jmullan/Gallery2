@@ -1,3 +1,4 @@
+  {galleryHeavyFrame}
   <a href="{galleryUrl view=core:ShowItem itemId=$child.id}">
     {if !empty($child.thumbnail)}
     {assign var="thumbnail" value=$child.thumbnail}
@@ -17,3 +18,4 @@
     {$child.id}
     {/if}
   </a>
+  {/galleryHeavyFrame}

@@ -11,14 +11,6 @@
     
     NOT NULL
   
-      ,
-    COLUMN_PREFIXchildIntermediateResize
-      int(11)
-    
-      ,
-    COLUMN_PREFIXchildThumbSize
-      int(11)
-    
     , 
   
     INDEX (COLUMN_PREFIXid)

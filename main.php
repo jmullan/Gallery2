@@ -140,7 +140,7 @@ function GalleryMain($startTime) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-    
+
     /*
      * If this is an immediate view, it will send its own output directly.  This is
      * used in the situation where we want to send a binary file to the browser.

@@ -68,9 +68,17 @@ class GalleryDataItem extends GalleryDataItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['fileExtension'] = $this->_fileExtension;
+        if (!isset($this->_fileExtension)) {
+            $data['fileExtension'] = null;
+        } else {
+            $data['fileExtension'] = $this->_fileExtension;
+        }
     
-        $data['mimeType'] = $this->_mimeType;
+        if (!isset($this->_mimeType)) {
+            $data['mimeType'] = null;
+        } else {
+            $data['mimeType'] = $this->_mimeType;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

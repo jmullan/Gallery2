@@ -401,7 +401,8 @@ class GalleryStorage {
      * Identify this class as an entity or a map
      *
      * @param string the name of a class
-     * @return string 'entity' or 'map'
+     * @return array object GalleryStatus a status code
+     *               string 'entity' or 'map'
      * @access protected
      */
     function _getClassType($className) {
@@ -410,19 +411,44 @@ class GalleryStorage {
 	if (!isset($this->_classTypeCache[$className])) {
 	    if (!class_exists($className)) {
 		$array = $gallery->lookupRegistry('GalleryEntity.' . $className);
-		if (!empty($array)) {
-		    require_once($array[0]);
+		if (empty($array)) {
+		    $gallery->debug("Unknown class type: $className");
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+						      __FILE__, __LINE__),
+				 null);
+		}
+
+		list ($ret, $platform) = $gallery->getPlatform();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__),
+				 null);
+		}
+
+		if (!$platform->file_exists($array[0])) {
+		    $gallery->debug("Class file missing: $array[0]");
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+						      __FILE__, __LINE__),
+				 null);
+		}
+		
+		require_once($array[0]);
+		if (!class_exists($className)) {
+		    $gallery->debug("Class $className not defined in file $array[0]");
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+						      __FILE__, __LINE__),
+				 null);
 		}
 	    }
-
+	    
 	    $this->_classTypeCache[$className] = new $className;
 	}
 
 	if (method_exists($this->_classTypeCache[$className], 'getPersistentMemberInfo')) {
-	    return 'entity';
+	    $type = 'entity';
 	} else {
-	    return 'map';
+	    $type = 'map';
 	}
+	return array(GalleryStatus::success(), $type);
     }
     
     /**

@@ -16,7 +16,11 @@ class CreateGalleryCommentTestCase extends TestCase {
 	}
 	
 	/* Create the comment */
-	$comment = new GalleryComment();
+	list ($ret, $comment) = $gallery->newEntity("GalleryComment");
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $comment->create($rootAlbumId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

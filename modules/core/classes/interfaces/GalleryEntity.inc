@@ -83,15 +83,35 @@ class GalleryEntity extends GalleryEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['id'] = $this->_id;
+        if (!isset($this->_id)) {
+            $data['id'] = null;
+        } else {
+            $data['id'] = $this->_id;
+        }
     
-        $data['creationTimestamp'] = $this->_creationTimestamp;
+        if (!isset($this->_creationTimestamp)) {
+            $data['creationTimestamp'] = null;
+        } else {
+            $data['creationTimestamp'] = $this->_creationTimestamp;
+        }
     
-        $data['modificationTimestamp'] = $this->_modificationTimestamp;
+        if (!isset($this->_modificationTimestamp)) {
+            $data['modificationTimestamp'] = null;
+        } else {
+            $data['modificationTimestamp'] = $this->_modificationTimestamp;
+        }
     
-        $data['serialNumber'] = $this->_serialNumber;
+        if (!isset($this->_serialNumber)) {
+            $data['serialNumber'] = null;
+        } else {
+            $data['serialNumber'] = $this->_serialNumber;
+        }
     
-        $data['entityType'] = $this->_entityType;
+        if (!isset($this->_entityType)) {
+            $data['entityType'] = null;
+        } else {
+            $data['entityType'] = $this->_entityType;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

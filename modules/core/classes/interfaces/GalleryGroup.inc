@@ -68,9 +68,17 @@ class GalleryGroup extends GalleryGroup_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['groupType'] = $this->_groupType;
+        if (!isset($this->_groupType)) {
+            $data['groupType'] = null;
+        } else {
+            $data['groupType'] = $this->_groupType;
+        }
     
-        $data['groupName'] = $this->_groupName;
+        if (!isset($this->_groupName)) {
+            $data['groupName'] = null;
+        } else {
+            $data['groupName'] = $this->_groupName;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

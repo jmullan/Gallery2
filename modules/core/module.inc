@@ -46,6 +46,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'Gallery.class');
 	require_once($classDir . 'GalleryController.class');
 	require_once($classDir . 'GalleryDerivativeHelper.class');
+	require_once($classDir . 'GalleryDerivativePreferencesMap.class');
 	require_once($classDir . 'GalleryEvent.class');
 	require_once($classDir . 'GalleryEventListener.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
@@ -120,6 +121,10 @@ class CoreModule extends GalleryModule {
 	$this->_gallery =& $gallery;
 
 	/* Register our entity implementations */
+	$gallery->addRegistry('GalleryEntity.GalleryEntity',
+			      $classDir . 'GalleryEntity.class');
+	$gallery->addRegistry('GalleryEntity.GalleryChildEntity',
+			      $classDir . 'GalleryChildEntity.class');
 	$gallery->addRegistry('GalleryEntity.GalleryAlbumItem',
 			      $classDir . 'GalleryAlbumItem.class');
 	$gallery->addRegistry('GalleryEntity.GalleryUser',

@@ -63,7 +63,11 @@ class GalleryChildEntity extends GalleryChildEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['parentId'] = $this->_parentId;
+        if (!isset($this->_parentId)) {
+            $data['parentId'] = null;
+        } else {
+            $data['parentId'] = $this->_parentId;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

@@ -40,14 +40,19 @@
 	<table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align=center>
+	      {strip}
+	      {galleryThinFrame}
 	      <a href="{galleryUrl view=core:ShowItem itemId=$item.id resizeIndex=$nextResizeIndex}">
 		<img src="{galleryUrl view=core:DownloadItem itemId=$image.id}"
 		  {if ($image.width && $image.height)}
 		  width="{$image.width}"
 		  height="{$image.height}"
 		  {/if}
+		  border="0"
 		  >
 	      </a>
+	      {/galleryThinFrame}
+	      {/strip}
 	    </td>
 	  </tr>
 	</table>

@@ -168,6 +168,7 @@ class GalleryUserHelper {
      *                              ERROR_PERMISSION_DENIED if not.
      */
     function assertHasItemPermission($itemId, $userId, $permissions) {
+	global $gallery;
 
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper::hasItemPermission($itemId, $userId, $permissions);
@@ -176,6 +177,9 @@ class GalleryUserHelper {
 	}
 
 	if (!$hasPermission) {
+	    $gallery->debug("user $userId doesn't have " .
+			    "permissions: " . serialize($permissions)  . 
+			    "for item $itemId");
 	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
 					__FILE__, __LINE__);
 	}
@@ -196,7 +200,7 @@ class GalleryUserHelper {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $hasPermission) =
 	    GalleryPermissionMap::hasPermission($itemId, array($userId),
 						$groupIds, $permissions);

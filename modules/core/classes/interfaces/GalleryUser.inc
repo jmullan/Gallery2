@@ -83,15 +83,35 @@ class GalleryUser extends GalleryUser_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['userName'] = $this->_userName;
+        if (!isset($this->_userName)) {
+            $data['userName'] = null;
+        } else {
+            $data['userName'] = $this->_userName;
+        }
     
-        $data['fullName'] = $this->_fullName;
+        if (!isset($this->_fullName)) {
+            $data['fullName'] = null;
+        } else {
+            $data['fullName'] = $this->_fullName;
+        }
     
-        $data['hashedPassword'] = $this->_hashedPassword;
+        if (!isset($this->_hashedPassword)) {
+            $data['hashedPassword'] = null;
+        } else {
+            $data['hashedPassword'] = $this->_hashedPassword;
+        }
     
-        $data['email'] = $this->_email;
+        if (!isset($this->_email)) {
+            $data['email'] = null;
+        } else {
+            $data['email'] = $this->_email;
+        }
     
-        $data['language'] = $this->_language;
+        if (!isset($this->_language)) {
+            $data['language'] = null;
+        } else {
+            $data['language'] = $this->_language;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

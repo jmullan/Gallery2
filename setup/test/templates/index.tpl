@@ -19,10 +19,13 @@
       .nav {ldelim}font-family: helvetica, arial, geneva, sans-serif; color: #000000{rdelim}
       //-->
     </style>
+    <title>
+      Gallery Test Harness
+    </title>
   </head>
   <body>
     <center>
-      <h1> <a href=index.php>Test Harness</a> </h1>
+      <h1> <a href=index.php>Gallery Test Harness</a> </h1>
       {foreach from=$tests key=moduleName item=moduleTests}
       <h2>{$moduleName}</h2>
       <table border="1" cellspacing="0" cellpadding="5" width="100%">

@@ -63,7 +63,11 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['pathComponent'] = $this->_pathComponent;
+        if (!isset($this->_pathComponent)) {
+            $data['pathComponent'] = null;
+        } else {
+            $data['pathComponent'] = $this->_pathComponent;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;

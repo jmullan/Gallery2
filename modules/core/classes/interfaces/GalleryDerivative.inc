@@ -56,6 +56,11 @@ class GalleryDerivative extends GalleryDerivative_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['derivativeOrder'] = array(
+            'class' => 'GalleryDerivative',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
         $meta['members']['derivativeSize'] = array(
             'class' => 'GalleryDerivative',
             'type' => STORAGE_TYPE_INTEGER
@@ -83,15 +88,41 @@ class GalleryDerivative extends GalleryDerivative_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['derivativeSourceId'] = $this->_derivativeSourceId;
+        if (!isset($this->_derivativeSourceId)) {
+            $data['derivativeSourceId'] = null;
+        } else {
+            $data['derivativeSourceId'] = $this->_derivativeSourceId;
+        }
     
-        $data['derivativeCommands'] = $this->_derivativeCommands;
+        if (!isset($this->_derivativeCommands)) {
+            $data['derivativeCommands'] = null;
+        } else {
+            $data['derivativeCommands'] = $this->_derivativeCommands;
+        }
     
-        $data['derivativeSize'] = $this->_derivativeSize;
+        if (!isset($this->_derivativeOrder)) {
+            $data['derivativeOrder'] = null;
+        } else {
+            $data['derivativeOrder'] = $this->_derivativeOrder;
+        }
     
-        $data['derivativeType'] = $this->_derivativeType;
+        if (!isset($this->_derivativeSize)) {
+            $data['derivativeSize'] = null;
+        } else {
+            $data['derivativeSize'] = $this->_derivativeSize;
+        }
     
-        $data['derivativeMimeType'] = $this->_derivativeMimeType;
+        if (!isset($this->_derivativeType)) {
+            $data['derivativeType'] = null;
+        } else {
+            $data['derivativeType'] = $this->_derivativeType;
+        }
+    
+        if (!isset($this->_derivativeMimeType)) {
+            $data['derivativeMimeType'] = null;
+        } else {
+            $data['derivativeMimeType'] = $this->_derivativeMimeType;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
@@ -171,6 +202,47 @@ class GalleryDerivative extends GalleryDerivative_core {
         if ($a != $b) {
             $this->_derivativeCommands = $value;
             $this->setModifiedFlag('derivativeCommands', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of derivativeOrder
+     *
+     * @return INTEGER the value
+     */
+    function getderivativeOrder() {
+        if (!isset($this->_derivativeOrder)) {
+            return null;
+        }
+        return $this->_derivativeOrder;
+    }
+
+    /**
+     * Set the value of derivativeOrder
+     *
+     * @param INTEGER the value
+     */
+    function setderivativeOrder($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeOrder) ? $this->_derivativeOrder : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_derivativeOrder = $value;
+            $this->setModifiedFlag('derivativeOrder', MEMBER_MODIFIED);
         }
     }
   
