@@ -125,7 +125,8 @@ class GalleryPermissionSetMap_core {
 	    $flags |= GALLERY_PERMISSION_COMPOSITE;
 	} else if ($flags & GALLERY_PERMISSION_COMPOSITE) {
 	    if (empty($composites)) {
-		$gallery->debug("Permission $permissionId is marked as a composite, but didn't specify any composites!");
+		$gallery->debug("Permission $permissionId is marked as a composite, " .
+				"but didn't specify any composites!");
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
 
@@ -163,34 +164,15 @@ class GalleryPermissionSetMap_core {
      *               array (id => description, id => description, ...)
      */
     function getPermissionIds($flags=0) {
-	global $gallery;
 	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $translator) = $gallery->getTranslator();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/*
-	 * Remember that the permission description stored in the database
-	 * is an internationalized value that must be localized before it
-	 * can be returned.
-	 */
 	$results = array();
 	foreach ($allPermissions as $id => $permission) {
 	    if (($permission['flags'] & $flags) == $flags) {
-		list ($ret, $description) =
-		    $translator->translate('modules_' . $permission['module'],
-					   $gallery->getConfig('code.gallery.modules') . $permission['module'],
-					   array('text' => $permission['description']));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		$results[$id] = $description;
+		$results[$id] = $permission['description'];
 	    }
 	}
 
@@ -304,6 +286,30 @@ class GalleryPermissionSetMap_core {
 	 */
 	return array(GalleryStatus::success(), $results);
     }
+
+    /**
+     * Expand a single permission into all the possible permissions that it can
+     * possibly be.  For example, convert 'core.viewAll' into:
+     * ('core.viewAll', 'core.view', 'core.viewOriginal', 'core.viewResizes')
+     *
+     * @return array object GalleryStatus a status code
+     *               array(array('id' => ..., 'description' => ...), ...)
+     */
+    function getSubPermissions($permissionId) {
+	list ($ret, $bits) =
+	    GalleryPermissionSetMap::convertIdsToBits(array($permissionId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $ids) =
+	    GalleryPermissionSetMap::convertBitsToIds($bits);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return array(GalleryStatus::success(), $ids);
+    }
     
     /**
      * Return an unused permission bit that we can use for our purposes
@@ -388,12 +394,33 @@ class GalleryPermissionSetMap_core {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /*
+	     * Remember that the permission description stored in the database
+	     * is an internationalized value that must be localized before it
+	     * can be returned.
+	     */
+
+	    list ($ret, $translator) = $gallery->getTranslator();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    $storage = $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
 		$bits = $storage->convertBitsToInt($result[3]);
+
+		list ($ret, $description) =
+		    $translator->translate('modules_' . $result[0],
+					   $gallery->getConfig('code.gallery.modules') . $result[0],
+					   array('text' => $result[2]));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		
 		$permissions[$result[1]] = array('module' => $result[0],
 						 'permission' => $result[1],
-						 'description' => $result[2],
+						 'description' => $description,
 						 'bits' => (int)$bits,
 						 'flags' => (int)$result[4]);
 	    }
