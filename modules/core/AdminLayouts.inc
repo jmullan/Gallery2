@@ -107,6 +107,26 @@ class AdminLayoutsController extends GalleryController {
 		$redirect['subView'] = 'core:AdminLayouts';
 		$status['deactivated'] = $layout->getName();
 	    }
+	} else if (isset($form['action']['saveDefaults'])) {
+	    foreach (array(
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme') as $key) {
+		list ($outer, $inner) = explode('.', $key);
+		if (isset($form[$outer][$inner])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    /* Redirect upon success */
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminLayouts';
+	    $redirect['mode'] = 'defaults';
+	    $status['savedDefaults'] = 1;
+
 	} else if ($layout->isAdvancedSettings()) {
 	    list ($ret, $error, $statusKey) = $layout->handleSettingsRequest($form);
 	    if ($ret->isError()) {
@@ -218,6 +238,7 @@ class AdminLayoutsView extends GalleryView {
 
 	/* Transform it to include all the layout data that we want to display */
 	$activeCount = 0;
+	$layoutList = array();
 	foreach ($layouts as $id => $layoutStatus) {
 	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $id);
 	    if ($ret->isError()) {
@@ -230,10 +251,61 @@ class AdminLayoutsView extends GalleryView {
 	    $layouts[$id]['version'] = $layout->getVersion();
 	    $layouts[$id]['l10Domain'] = $layout->getL10Domain();
 
-	    $activeCount += $layouts[$id]['active'];
+
+	    if (!empty($layouts[$id]['active'])) {
+		$activeCount++;
+		$layoutList[$id] = $layout->getName();
+	    }
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$AdminLayouts = array();
 	switch($mode) {
+	case 'defaults':
+	    /* Load up the stored defaults */
+	    foreach (array(
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme') as $key) {
+
+		list ($ret, $value) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($outer, $inner) = explode('.', $key);
+		$form[$outer][$inner] = $value;
+	    }
+
+	    /* Set up our sort order selection list */
+	    $orderByList = array(
+		'orderWeight' => $module->translate('Manual Sort Order'),
+		'title' => $module->translate('Title'),
+		'summary' => $module->translate('Summary'),
+		'creationTimestamp' => $module->translate('Creation Date'),
+		'modificationTimestamp' => $module->translate('Last Changed Date'),
+		'description' => $module->translate('Description'),
+		'keywords' => $module->translate('Keywords'),
+		'viewCount' => $module->translate('View Count'),
+		'pathName' => $module->translate('Filename'),
+	    );
+	    /* Set up our sort direction selection list */
+	    $orderDirectionList = array(
+		ORDER_ASCENDING => $module->translate('Ascending'),
+		ORDER_DESCENDING => $module->translate('Descending')
+	    );
+
+	    $AdminLayouts['orderByList'] = $orderByList;
+	    $AdminLayouts['orderDirectionList'] = $orderDirectionList;
+	    $AdminLayouts['layoutList'] = $layoutList;
+	    $AdminLayouts['themeList'] = GalleryTheme::getThemeList();
+	    break;
 	case 'config':
 	    foreach (array_keys($layouts) as $id) {
 		$actions = array();

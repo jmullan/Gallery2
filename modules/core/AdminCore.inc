@@ -183,10 +183,6 @@ class AdminCoreView extends GalleryView {
 	    foreach (array('permissions.directory',
 			   'permissions.file',
 			   'exec.expectedStatus',
-			   'default.orderBy',
-			   'default.orderDirection',
-			   'default.layout',
-			   'default.theme',
 			   'default.language',
 			   'language.selector',
 			   'session.lifetime',
@@ -223,22 +219,6 @@ class AdminCoreView extends GalleryView {
 		unset($localServerDirList[$i]);
 	    }
 	}
-
-	/* Set up our sort order selection list */
-	$orderByList = array(
-		    'orderWeight' => $module->translate('Manual Sort Order'),
-		          'title' => $module->translate('Title'),
-		        'summary' => $module->translate('Summary'),
-	      'creationTimestamp' => $module->translate('Creation Date'),
-	  'modificationTimestamp' => $module->translate('Last Changed Date'),
-		    'description' => $module->translate('Description'),
-		       'keywords' => $module->translate('Keywords'),
-		      'viewCount' => $module->translate('View Count'));
-	
-	/* Set up our sort direction selection list */
-	$orderDirectionList = array(
-	     ORDER_ASCENDING => $module->translate('Ascending'),
-	    ORDER_DESCENDING => $module->translate('Descending'));
 
 	$platform = $gallery->getPlatform();
 
@@ -314,34 +294,11 @@ class AdminCoreView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $layoutStatusList) = GalleryCoreApi::fetchPluginStatus('layout');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$layoutList = array();
-	foreach ($layoutStatusList as $layoutId => $layoutStatus) {
-	    if (empty($layoutStatus['active'])) {
-		continue;
-	    }
-	    
-	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $layoutList[$layoutId] = $layout->getName();
-	}
-
 	$AdminCore = array();
-	$AdminCore['layoutList'] = $layoutList;
-	$AdminCore['themeList'] = GalleryTheme::getThemeList();
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['languageList'] = $languageList;
 	$AdminCore['languageSelectorList'] = $languageSelectorList;
 	$AdminCore['translationsSupported'] = $translator->canTranslate();
-	$AdminCore['orderByList'] = $orderByList;
-	$AdminCore['orderDirectionList'] = $orderDirectionList;
 	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;

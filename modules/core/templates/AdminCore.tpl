@@ -36,65 +36,6 @@
 
   <div class="gbAdmin">
     <h3 class="giTitle">
-      {g->text text="Defaults"}
-    </h3>
-
-    <p class="giDescription">
-      {g->text text="These are default values.  They can be overridden in each album."}
-    </p>
-
-    <table class="gbDataTable">
-      <tr>
-	<td>
-	  {g->text text="Default sort order"}
-	</td>
-	<td>
-	  <select name="{g->formVar var="form[default][orderBy]"}" onChange="pickOrder()">
-	      {html_options options=$AdminCore.orderByList selected=$form.default.orderBy}
-	  </select>
-	  <select name="{g->formVar var="form[default][orderDirection]"}">
-	      {html_options options=$AdminCore.orderDirectionList selected=$form.default.orderDirection}
-	  </select>
-	  <script type="text/javascript">
-	    function pickOrder() {ldelim}
-	      var list = '{g->formVar var="form[default][orderBy]"}';
-	      var index = document.forms[0].elements[list].selectedIndex;
-	      list = '{g->formVar var="form[default][orderDirection]"}';
-	      document.forms[0].elements[list].disabled = (index == 0) ?1:0;
-	    {rdelim}
-	    pickOrder();
-	  </script>
-	</td>
-      </tr>
-
-      <tr>
-	<td>
-	  {g->text text="Default layout"}
-	</td>
-
-	<td>
-	  <select name="{g->formVar var="form[default][layout]"}">
-	      {html_options options=$AdminCore.layoutList selected=$form.default.layout}
-	  </select>
-	</td>
-      </tr>
-
-      <tr>
-	<td>
-	  {g->text text="Default theme"}
-	</td>
-
-	<td>
-	  <select name="{g->formVar var="form[default][theme]"}">
-	      {html_options options=$AdminCore.themeList selected=$form.default.theme}
-	  </select>
-	</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="gbAdmin">
-    <h3 class="giTitle">
       {g->text text="Language Settings"}
     </h3>
 

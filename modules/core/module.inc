@@ -464,7 +464,7 @@ class CoreModule extends GalleryModule {
 				 'view' => 'core:AdminCore'),
 			   array('name' => $this->translate('Modules'),
 				 'view' => 'core:AdminModules'),
-			   array('name' => $this->translate('Layouts'),
+			   array('name' => $this->translate('Layouts and Themes'),
 				 'view' => 'core:AdminLayouts',
 				 'group' => 'display',
 				 'groupLabel' => $this->translate('Display')),
