@@ -55,6 +55,8 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	GalleryCoreApi::registerFactoryImplementation('ExifInterface_1_0',
+	    'SlideshowExif', 'SlideshowExif', __FILE__);
 
 	// Create a new subalbum and give AllUser group only core.view
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
@@ -541,6 +543,7 @@ class SlideshowTest extends GalleryTestCase {
  * Required classes
  */
 require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
+require_once(dirname(__FILE__) . '/../../../exif/classes/ExifInterface_1_0.class');
 
 /**
  * Test toolkit
@@ -557,6 +560,31 @@ class SlideshowToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), 'test/image');
+    }
+}
+
+/**
+ * Test toolkit
+ * @package Slideshow
+ * @subpackage PHPUnit
+ */
+class SlideshowExif extends ExifInterface_1_0 {
+    function getMetaData($itemIds, $properties=array()) {
+	if (!is_array($itemIds)) {
+	    $itemIds = array($itemIds);
+	}
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$data = array();
+	foreach ($items as $item) {
+	    if (GalleryUtilities::isA($item, 'GalleryDataItem') &&
+		    $item->getMimeType() == 'image/jpeg') {
+		$data[$item->getId()]['DateTime']['value'] = 'date';
+	    }
+	}
+	return array(GalleryStatus::success(), $data);
     }
 }
 ?>
