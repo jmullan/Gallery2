@@ -134,7 +134,7 @@ class WebHelper_simple {
 				   $redirectComponents['path'],
 				   $query);
 
-	    return WebHelper_simple::fetchWebPage($redirectUrl, $extraHeaders, $depth+1);
+	    return WebHelper_simple::fetchWebFile($redirectUrl, $outputFile, $depth+1);
 	}
 
 	$success = false;
