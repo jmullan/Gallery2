@@ -22,7 +22,7 @@
 /**
  * Access point for external application in which Gallery is embedded.
  * Three interaction modes:
- *  1) GalleryEmbed::init(g2Request=true) followed by GalleryEmbed::handleRequest()
+ *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
  *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
  *     end with GalleryEmbed::done() <-- REQUIRED
  *  3) Single GalleryEmbed::logout() call
@@ -40,7 +40,7 @@ class GalleryEmbed {
     /**
      * Initialize Gallery; must be called before most GalleryEmbed methods can be used.
      *
-     * @param array (
+     * @param array (optional--required before calling handleRequest) (
      *   'embedUri' => URI to access G2 via CMS application (example: index.php?module=gallery2)
      *   'relativeG2Path' => relative path from CMS (dir with embedUri) to G2 base dir
      *   'loginRedirect' => URI for redirect to CMS login view (example: /cms/index.php)
@@ -49,23 +49,24 @@ class GalleryEmbed {
      *   'gallerySessionId' => (optional) To support cookieless browsing, pass in G2 session id
      *                    (when cookies not in use, CMS must track this value between requests)
      * )
-     * @param boolean (optional) if false, call GalleryInitSecondPass too
      * @return object GalleryStatus a status object
      * @static
      */
-    function init($initParams, $g2Request=false) {
+    function init($initParams=array()) {
 	$ret = GalleryInitFirstPass($initParams);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (!$g2Request) {
+	if (empty($initParams)) {
 	    $ret = GalleryInitSecondPass();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 	GalleryCapabilities::set('login', false);
-	GalleryCapabilities::set('loginRedirect', array('href' => $initParams['loginRedirect']));
+	if (isset($initParams['loginRedirect'])) {
+	    GalleryCapabilities::set('loginRedirect', array('href' => $initParams['loginRedirect']));
+	}
 	return GalleryStatus::success();
     }
 
@@ -82,10 +83,12 @@ class GalleryEmbed {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$storage =& $gallery->getStorage();
-	$ret = $storage->commitTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($gallery->isStorageInitialized()) {
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->commitTransaction();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	return GalleryStatus::success();
     }
