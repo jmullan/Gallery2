@@ -154,7 +154,8 @@ class AdminFfmpegView extends GalleryView {
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminFfmpeg') {
 	    foreach (array('path') as $key) {
-		list ($ret, $form[$key]) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $key);
+		list ($ret, $form[$key]) =
+		    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -165,17 +166,26 @@ class AdminFfmpegView extends GalleryView {
 	$platform = $gallery->getPlatform();
 	$tests = array();
 	$mimeTypes = array();
-
+	$debugSnippet = '';
+	$failCount = 0;
 	if (isset($form['action']['test'])) {
 	    if (empty($form['path'])) {
 		$form['error']['path']['missing'] = 1;
 	    } else {
+		$gallery->startRecordingDebugSnippet();
 		list ($ret, $tests, $mimeTypes) = FfmpegToolkitHelper::testBinary($form['path']);
+		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$form['error']['path']['badPath'] = 1;
 		    } else {
 			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		foreach ($tests as $test) {
+		    if (!$test['success']) {
+			$failCount++;
 		    }
 		}
 	    }
@@ -184,6 +194,14 @@ class AdminFfmpegView extends GalleryView {
 	$AdminFfmpeg = array();
 	$AdminFfmpeg['tests'] = $tests;
 	$AdminFfmpeg['mimeTypes'] = $mimeTypes;
+	$AdminFfmpeg['debugSnippet'] = $debugSnippet;
+	$AdminFfmpeg['failCount'] = $failCount;
+
+	if ($failCount > 0) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	    $template->javascript($jsUrl);
+	}
 
 	$template->setVariable('AdminFfmpeg', $AdminFfmpeg);
 	$template->setVariable('controller', 'ffmpeg:AdminFfmpeg');

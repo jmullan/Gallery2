@@ -75,7 +75,7 @@ class AdminImageMagickController extends GalleryController {
 		    $failCount = 0;
 		    foreach ($testResults as $testResult) {
 			/* All tests should work, else this path is not a valid one */
-			if (! $testResult['success']) {
+			if (!$testResult['success']) {
 			    $failCount++;
 			}
 		    }
@@ -87,7 +87,8 @@ class AdminImageMagickController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $form['path']);
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'imagemagick', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -98,7 +99,8 @@ class AdminImageMagickController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', $form['jpegQuality']);
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'imagemagick', 'jpegQuality', $form['jpegQuality']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -168,9 +170,13 @@ class AdminImageMagickView extends GalleryView {
 	$tests = array();
 	$mimeTypes = array();
 	$version = array();
+	$debugSnippet = '';
+	$failCount = 0;
 	if (isset($form['action']['test'])) {
 	    if (!empty($form['path'])) {
+		$gallery->startRecordingDebugSnippet();
 		list($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
+		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 
 		$success = true;
 		if ($ret->isError()) {
@@ -183,18 +189,21 @@ class AdminImageMagickView extends GalleryView {
 		} else {
 		    $success = true;
 		    foreach ($testResults as $testResult) {
-			if (! $testResult['success']) {
+			if (!$testResult['success']) {
 			    $success = false;
+			    $failCount++;
 			}
 		        $tests[] = $testResult;
 		    }
 		    if ($success) {
-			list($ret, $mimeTypes) = ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
+			list($ret, $mimeTypes) =
+			    ImageMagickToolkitHelper::discoverMimeTypes($form['path']);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
-			list($ret, $version) = ImageMagickToolkitHelper::discoverVersion($form['path']);
+			list($ret, $version) =
+			    ImageMagickToolkitHelper::discoverVersion($form['path']);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -210,6 +219,14 @@ class AdminImageMagickView extends GalleryView {
 	$AdminImageMagick['version'] = $version;
 	$AdminImageMagick['mimeTypes'] = $mimeTypes;
 	$AdminImageMagick['jpegQualityList'] = $jpegQualityList;
+	$AdminImageMagick['debugSnippet'] = $debugSnippet;
+	$AdminImageMagick['failCount'] = $failCount;
+
+	if ($failCount > 0) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	    $template->javascript($jsUrl);
+	}
 
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick:AdminImageMagick');

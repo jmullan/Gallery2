@@ -121,4 +121,23 @@
   </p>
 </div>
 {/if}
+
+{if ($AdminImageMagick.failCount > 0)}
+<div class="gbBlock">
+  <h3>
+    {g->text one="Debug output (%d failed test)" many="Debug output (%d failed tests)"
+	     count=$AdminImageMagick.failCount arg1=$AdminImageMagick.failCount}
+    <span id="AdminImageMagick_trace-toggle"
+     class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px"
+     onclick="BlockToggle('AdminImageMagick_debugSnippet', 'AdminImageMagick_trace-toggle')">+</span>
+  </h3>
+  <p class="giDescription">
+    {g->text text="We gathered this debug output while testing your ImageMagick binaries.  If you read through this carefully you may discover the reason why your ImageMagick binaries failed the tests."}
+  </p>
+  <pre id="AdminImageMagick_debugSnippet" class="gcBackground1 gcBorder2"
+   style="display: none; border-width: 1px; border-style: dotted; padding: 4px">
+    {$AdminImageMagick.debugSnippet}
+  </pre>
+</div>
+{/if}
 {/if}

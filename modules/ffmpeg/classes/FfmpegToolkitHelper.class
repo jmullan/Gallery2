@@ -136,8 +136,10 @@ class FfmpegToolkitHelper {
 	$relevantTypes['avi'] = 'avi';
 	$relevantTypes['mov'] = 'mov';
 	$relevantTypes['wmv1'] = 'wmv';
-	list ($success, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
+	list ($ignored, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
 	$mimeTypes = array();
+
+	$success = false;
 	$i = 0;
 	while ($i < sizeof($results)) {
 	    $resultLine = $results[$i++];
@@ -180,7 +182,8 @@ class FfmpegToolkitHelper {
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
-			$mimeTypes[GalleryCoreApi::convertExtensionToMime($relevantTypes[$type])] = 1;
+			$mime = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+			$mimeTypes[$mime] = 1;
 		    }
 		}
 		$success = true;
@@ -188,7 +191,8 @@ class FfmpegToolkitHelper {
 		do {
 		    foreach (explode(' ', $regs[1]) as $type) {
 			if (isset($relevantTypes[$type])) {
-			    $mimeTypes[GalleryCoreApi::convertExtensionToMime($relevantTypes[$type])] = 1;
+			    $mime = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+			    $mimeTypes[$mime] = 1;
 			}
 		    }
 		    $resultLine = $results[$i++];
@@ -201,11 +205,14 @@ class FfmpegToolkitHelper {
 		    continue;
 		}
 		do {
-		    list($capabilities, $types) = preg_split('/\s+/', $resultLine, -1, PREG_SPLIT_NO_EMPTY);
+		    list($capabilities, $types) =
+			preg_split('/\s+/', $resultLine, -1, PREG_SPLIT_NO_EMPTY);
 		    foreach (explode(',', $types) as $type) {
 			if (isset($relevantTypes[$type])) {
 			    if (preg_match('|D|', $capabilities)) {
-				$mimeTypes[GalleryCoreApi::convertExtensionToMime($relevantTypes[$type])] = 1;
+				$mime = GalleryCoreApi::convertExtensionToMime(
+				    $relevantTypes[$type]);
+				$mimeTypes[$mime] = 1;
 			    }
 			}
 		    }
