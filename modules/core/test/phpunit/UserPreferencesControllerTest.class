@@ -1,0 +1,143 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * UserPreferences controller tests
+ */
+class UserPreferencesControllerTest extends GalleryControllerTestCase {
+
+    function UserPreferencesControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:UserPreferences');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_user) = $this->_createUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_saveUserId = $gallery->getActiveUserId();
+	$gallery->setActiveUserId($this->_user->getId());
+    }
+
+    function tearDown() {
+	global $gallery;
+	$this->_deleteUser($this->_user);
+	$gallery->setActiveUserId($this->_saveUserId);
+	parent::tearDown();
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('x' => 'y'),
+			      $results);
+    }
+
+    function testUndo() {
+	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:UserPreferences'),
+			      $results);
+    }
+
+    function testEditAll() {
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form.language', 'language');
+	GalleryUtilities::putRequestVariable('form.password1', 'newPassword');
+	GalleryUtilities::putRequestVariable('form.password2', 'newPassword');
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:UserPreferences',
+				    'form.status.saved' => 1),
+			      $results);
+
+	/* Load back the user object and make sure the data got saved */
+	list ($ret, $this->_user) = $this->_user->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($this->_user->getFullName(), 'full name');
+	$this->assertEquals($this->_user->getEmail(), 'email');
+	$this->assertEquals($this->_user->getLanguage(), 'language');
+	$this->assert($this->_user->isCorrectPassword('newPassword'));
+    }
+
+    function testEditRequiredOnly() {
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:UserPreferences',
+				    'form.status.saved' => 1),
+			      $results);
+    }
+
+    function testEditPasswordMismatch() {
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+	GalleryUtilities::putRequestVariable('form.password1', 'a');
+	GalleryUtilities::putRequestVariable('form.password2', 'b');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
+    }
+    
+    function testEditMissingEmail() {
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	// GalleryUtilities::putRequestVariable('form.email', 'email');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
+    }
+    
+    function testEditMissingFullName() {
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	// GalleryUtilities::putRequestVariable('form.fullName', 'full name');
+	GalleryUtilities::putRequestVariable('form.email', 'email');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:UserPreferences'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
+    }
+}
+?>

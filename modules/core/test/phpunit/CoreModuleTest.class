@@ -140,6 +140,9 @@ class CoreModuleTest extends GalleryTestCase {
 				  array('text' => $this->_module->translate('site admin'),
 					'params' => array('view' => 'core:SiteAdmin',
 							  'return.x' => 'y')),
+				  array('text' => $this->_module->translate('preferences'),
+					'params' => array('view' => 'core:UserPreferences',
+							  'return.x' => 'y')),
 				  array('text' => $this->_module->translate('logout'),
 					'params' => array('controller' => 'core:Logout',
 							  'return.x' => 'y'))

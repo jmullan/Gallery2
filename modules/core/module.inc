@@ -635,6 +635,9 @@ class CoreModule extends GalleryModule {
 			     'params' => array_merge(array('view' => 'core:Login'),
 						     $params));
 	} else {
+	    $links[] = array('text' => $this->translate('preferences'),
+			     'params' => array_merge(array('view' => 'core:UserPreferences'),
+						     $params));
 	    $links[] = array('text' => $this->translate('logout'),
 			     'params' => array_merge(array('controller' => 'core:Logout'),
 						     $params));
