@@ -170,7 +170,7 @@ class GallerySession_core {
 
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
-	    $this->_sessionId = md5(microtime() . rand(1, 1000000000));
+	    $this->_sessionId = md5(microtime() . rand(1, 32767));
 	}
 
 	/* Precache a few keys that we know we'll need. */
