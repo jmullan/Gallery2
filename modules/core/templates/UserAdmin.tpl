@@ -41,11 +41,9 @@
         </li>
         {else}
         <li>
-          <div class="giTitle">
-            <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
-              {$choice.name}
-            </a>
-          </div>
+          <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=`$choice.view`"}">
+            {$choice.name}
+          </a>
         </li> 
         {/if}
         {/foreach}

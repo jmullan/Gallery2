@@ -53,10 +53,6 @@
       &nbsp;
     </div>
   </div>
-      
-  <div class="gsSpacer">
-    &nbsp;
-  </div>
 
   {counter start=0 print=no assign=childrenInColumnCount}
   {foreach from=$layout.children item=child}

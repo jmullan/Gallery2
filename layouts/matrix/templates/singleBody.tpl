@@ -86,13 +86,6 @@
 	</div>
 
 	<div class="gsSingleImage">
-	  <div class="giTitle">
-	    {$layout.item.title|markup}
-	  </div>
-	  <div class="giDescription">
-	    {$layout.item.description|markup}
-	  </div>
-
 	  {capture name="fallback"}
 	  <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$image.id`"}">
 	    {g->text text="Download this item"} 
