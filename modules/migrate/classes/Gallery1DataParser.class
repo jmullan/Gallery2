@@ -394,7 +394,7 @@ class Gallery1DataParser {
 	if (function_exists('iconv')) {
 	    return iconv($sourceEncoding, 'UTF-8', $string);
 	} else if (function_exists('mb_convert_encoding')) {
-	    return mb_convert_encoding($string, $sourceEncoding, 'UTF-8');
+	    return mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
 	} else if (function_exists('recode_string')) {
 	    return recode_string($sourceEncoding . '..UTF-8', $string);
 	} else if ((phpversion() >= '3.0.0') && isset($charset[$sourceEncoding])) {
