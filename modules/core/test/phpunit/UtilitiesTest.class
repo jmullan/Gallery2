@@ -112,23 +112,19 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGetFormVariables2() {
-	$tmp_name = 'c:/apache/tmp\\php195.tmp';
-	if (get_magic_quotes_gpc()) {
-	    $tmp_name = addslashes($tmp_name);
-	}
+	/* Test windows and unix style tmp names */
 	$_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest'] =
-	    array('fileupload' => array('name' => 'DSCF0001.JPG',
-					'type' => 'image/pjpeg',
-					'tmp_name' => $tmp_name,
-					'error' => 0,
-					'size' => 1779802));
-
-	$this->assertEquals(array('fileupload' =>
-				  array('name' => 'DSCF0001.JPG',
-					'type' => 'image/pjpeg',
-					'tmp_name' => 'c:/apache/tmp\php195.tmp',
-					'error' => 0,
-					'size' => 1779802)),
+		array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
+		      'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
+		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+		      'error' => array('1' => 0, 0, 4, 4),
+		      'size' => array('1' => 1779802, 102323, 0, 0));
+	    
+	$this->assertEquals(array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
+				  'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
+				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+				  'error' => array('1' => 0, 0, 4, 4),
+				  'size' => array('1' => 1779802, 102323, 0, 0)),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
@@ -522,7 +518,7 @@ class UtilitiesTestPlatform {
     }
 
     function file_exists($path) {
-	switch($path) {
+	switch(realpath($path)) {
 	case __FILE__:
 	case realpath(dirname(__FILE__) . '/../../classes/GalleryAlbumItem.class'):
 	    return true;

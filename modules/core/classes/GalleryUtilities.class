@@ -144,14 +144,14 @@ class GalleryUtilities {
 	    /*
 	     * Later on during our sanitization process we're going to call
 	     * stripslashes on our file name.  But it may legitimately have
-	     * backslashes in it (eg c:\apache\foo.jpg), so make sure those
+	     * backslashes in it (eg c:\apache\tmp\php195.jpg), so make sure those
 	     * are escaped at this time.  There's gotta be a better way to
 	     * handle this.
 	     */
 	    $postForm = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
-		if (isset($postForm['tmp_name'])) {
-		    GalleryUtilities::recursiveAddSlashes($postForm['tmp_name']);
+		for ($i = 1; $i <= sizeof($postForm['tmp_name']); $i++) {
+		    $postForm['tmp_name'][$i] = addslashes($postForm['tmp_name'][$i]);
 		}
 	    }
 	    $form = GalleryUtilities::array_merge_replace($form, $postForm);
@@ -204,21 +204,6 @@ class GalleryUtilities {
 	    }
 	}
 	return $array;
-    }
-
-    /**
-     * Call addslashes on an entire array tree
-     *
-     * @param mixed an array or string
-     */
-    function recursiveAddSlashes(&$object) {
-	if (is_array($object)) {
-	    foreach (array_keys($object) as $key) {
-		GalleryUtilities::recursiveAddSlashes($object[$key]);
-	    }
-	} else {
-	    addslashes($object);
-	}
     }
 
     /**
