@@ -33,6 +33,9 @@
 	  {g->column header="true"}
 	    {g->text text="Album Title"}
 	  {/g->column}
+	  {g->column header="true"}
+	    {g->text text="Album Already Exists"}
+	  {/g->column}
 	{/g->row}
 
 	{foreach from=$form.sourceAlbums item=albumName}
@@ -44,6 +47,11 @@
 	    {g->column}
 	      {$ConfirmImport.albums.$albumName.title}
 	    {/g->column}
+	    {g->column}
+              {if ($ConfirmImport.existingAlbums.$albumName)> 0}
+		Exists
+	      {/if}
+            {/g->column}
 	  {/g->row}
 	{/foreach}
       {/g->table}
