@@ -188,7 +188,6 @@ class ItemAdminView extends GalleryView {
 	$ItemAdmin['moduleSystemLinks'] = $moduleSystemLinks;
 	$ItemAdmin['navigationLinks'] = $navigationLinks;
 	$ItemAdmin['viewBodyFile'] = $results['body'];
-	$ItemAdmin['viewHeadFile'] = isset($results['head']) ? $results['head'] : '';
 	$ItemAdmin['item'] = $item->getMemberData();
 	$ItemAdmin['parents'] = $parents;
 	$ItemAdmin['parent'] = 	empty($parents) ? null : $parents[sizeof($parents) - 1];
