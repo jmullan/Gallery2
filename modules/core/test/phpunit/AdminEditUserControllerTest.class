@@ -95,8 +95,8 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('userId', $this->_user->getId());
 	GalleryUtilities::putRequestVariable('form.action.save', 1);
 	GalleryUtilities::putRequestVariable('form.userName', $newUserName);
-	GalleryUtilities::putRequestVariable('form.fullName', '');
 	GalleryUtilities::putRequestVariable('form.email', '');
+	GalleryUtilities::putRequestVariable('form.fullName', '');
 	GalleryUtilities::putRequestVariable('form.language', '');
 	GalleryUtilities::putRequestVariable('form.password1', 'x');
 	GalleryUtilities::putRequestVariable('form.password2', '');
@@ -104,7 +104,6 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminEditUser', GalleryUtilities::getRequestVariables('subView'));
-	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.email.missing'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
