@@ -47,18 +47,15 @@ class MatrixTheme extends GalleryTheme {
     function style() {
 	global $gallery;
 
-	$style[] = sprintf('<style type="text/css" media="all">@import url(%s);</style>',
-			   $this->getBaseUrl() . 'styles/theme.css');
-
-	// TODO: remove the file_exists check once Chad creates layout.css
 	$platform = $gallery->getPlatform();
-	if ($platform->file_exists(dirname(__FILE__) . '/styles/layout.css')) {
-	    $view = GalleryUtilities::getRequestVariables('view');
-	    if (!empty($view) && $view != 'core:ShowItem') {
-		$style[] = sprintf('<style type="text/css" media="all">@import url(%s);</style>',
-				   $this->getBaseUrl() . 'styles/layout.css');
-	    }
-	}
+	$format = '<style type="text/css" media="all">@import url(%s);</style>';
+	
+	$style[] = sprintf($format, $this->getBaseUrl() . 'styles/theme.css');
+	
+    $view = GalleryUtilities::getRequestVariables('view');
+    if (!empty($view) && $view != 'core:ShowItem') {
+	    $style[] = sprintf($format, $this->getBaseUrl() . 'styles/layout.css');
+    }
 
 	return join("\n", $style);
     }
