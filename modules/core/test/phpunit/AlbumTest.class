@@ -63,10 +63,27 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	foreach (array('default.orderBy',
+		       'default.orderDirection',
+		       'default.layout',
+		       'default.theme',
+		       'default.newAlbumsUseDefaults') as $key) {
+	    list ($ret, $this->_save[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'core', $key);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
     }
 
     function tearDown() {
 	global $gallery;
+
+	foreach ($this->_save as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
+	    /* Ignore errors so that we do our best to restore the original values */
+	}
+	
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -479,7 +496,6 @@ class AlbumTest extends GalleryTestCase {
 	}
     }
 
-
     /**
      * Verify that creating a second album with the same path as
      * an existing one throws a collision error.
@@ -602,10 +618,69 @@ class AlbumTest extends GalleryTestCase {
 	}
     }
 
-    /** Test GalleryCoreApi::fetchAlbumTree */
+    function testInheritDefaults() {
+	global $gallery;
+
+	/* Create an album with one group of settings */
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId(),
+							array('layout' => 'a',
+							      'orderby' => 'b',
+							      'orderdirection' => 'c',
+							      'theme' => 'd'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Set our defaults to something else */
+	foreach (array('default.orderBy' => 'w',
+		       'default.orderDirection' => 'x',
+		       'default.layout' => 'y',
+		       'default.theme' => 'z',
+		       'default.newAlbumsUseDefaults' => 'false')
+		 as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Create a sub album.  It should inherit from the parent */
+	list ($ret, $child1) = $this->_createRandomAlbum($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('a', $child1->getLayout());
+	$this->assertEquals('b', $child1->getOrderBy());
+	$this->assertEquals('c', $child1->getOrderDirection());
+	$this->assertEquals('d', $child1->getTheme());
+
+	/* Now switch to using the defaults */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.newAlbumsUseDefaults', 'true');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Create a sub album.  It should pick up the defaults */
+	list ($ret, $child2) = $this->_createRandomAlbum($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $child2->getLayout());
+	$this->assertEquals(null, $child2->getOrderBy());
+	$this->assertEquals(null, $child2->getOrderDirection());
+	$this->assertEquals(null, $child2->getTheme());
+    }
+
+    /**
+     * Test GalleryCoreApi::fetchAlbumTree
+     */
     function testFetchAlbumTree() {
-	// Create tree.. P--0--2--4
-	//                \_1-3 \_5
+	/*
+	 * Create tree.. P--0--2--4
+	 *                \_1-3 \_5
+	 */
 	list ($ret, $album[0]) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

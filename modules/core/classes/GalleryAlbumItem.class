@@ -159,11 +159,19 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Copy some of the parents properties */
-	$this->setLayout($parent->getLayout());
-	$this->setTheme($parent->getTheme());
-	$this->setOrderBy($parent->getOrderBy());
-	$this->setOrderDirection($parent->getOrderDirection());
+	list ($ret, $useDefaults) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.newAlbumsUseDefaults');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($useDefaults != 'true') {
+	    /* Use parent's settings */
+	    $this->setLayout($parent->getLayout());
+	    $this->setOrderBy($parent->getOrderBy());
+	    $this->setOrderDirection($parent->getOrderDirection());
+	    $this->setTheme($parent->getTheme());
+	}
 
 	$ret = $this->_createDir($parentPath . $albumName);
 	if ($ret->isError()) {

@@ -96,6 +96,7 @@ class CoreModuleExtras {
 			   'default.layout' => 'matrix',
 			   'default.theme' => 'matrix',
 			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
+			   'default.newAlbumsUseDefaults' => 'false',
 			   'language.selector' => 'none',
 			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
 			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
@@ -246,7 +247,14 @@ class CoreModuleExtras {
 	    $currentVersion = '0.8.7';
 	    /* fall through */
 
+	case '0.8.7':
+	    $ret = $module->setParameter('default.newAlbumsUseDefaults', 'false');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $currentVersion = '0.8.8';
 	    break;
+	    
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));

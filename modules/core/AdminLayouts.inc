@@ -116,7 +116,9 @@ class AdminLayoutsController extends GalleryController {
 			   'default.orderBy',
 			   'default.orderDirection',
 			   'default.layout',
-			   'default.theme') as $key) {
+			   'default.theme',
+			   'default.newAlbumsUseDefaults',
+			   ) as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
@@ -125,12 +127,12 @@ class AdminLayoutsController extends GalleryController {
 		    }
 		}
 	    }
+
 	    /* Redirect upon success */
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminLayouts';
 	    $redirect['mode'] = 'defaults';
 	    $status['savedDefaults'] = 1;
-
 	} else if ($layout->isAdvancedSettings()) {
 	    list ($ret, $error, $statusKey) = $layout->handleSettingsRequest($form);
 	    if ($ret->isError()) {
@@ -275,7 +277,9 @@ class AdminLayoutsView extends GalleryView {
 			   'default.orderBy',
 			   'default.orderDirection',
 			   'default.layout',
-			   'default.theme') as $key) {
+			   'default.theme',
+			   'default.newAlbumsUseDefaults',
+			   ) as $key) {
 
 		list ($ret, $value) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', $key);
@@ -286,6 +290,11 @@ class AdminLayoutsView extends GalleryView {
 		list ($outer, $inner) = explode('.', $key);
 		$form[$outer][$inner] = $value;
 	    }
+
+	    $newAlbumsUseDefaultsList = array(
+                'false' => $module->translate('Inherit these settings from parent album'),
+                'true' => $module->translate('Use these settings')
+	    );
 
 	    /* Set up our sort order selection list */
 	    $orderByList = array(
@@ -323,6 +332,7 @@ class AdminLayoutsView extends GalleryView {
 	    $AdminLayouts['orderDirectionList'] = $orderDirectionList;
 	    $AdminLayouts['layoutList'] = $layoutList;
 	    $AdminLayouts['themeList'] = GalleryTheme::getThemeList();
+	    $AdminLayouts['newAlbumsUseDefaultsList'] = $newAlbumsUseDefaultsList;
 	    break;
 	case 'config':
 	    foreach (array_keys($layouts) as $id) {

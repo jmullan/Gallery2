@@ -185,7 +185,19 @@
 
           <td>
             <select name="{g->formVar var="form[default][theme]"}">
-                {html_options options=$AdminLayouts.themeList selected=$form.default.theme}
+              {html_options options=$AdminLayouts.themeList selected=$form.default.theme}
+            </select>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            {g->text text="New albums"}
+          </td>
+
+          <td>
+	    <select name="{g->formVar var="form[default][newAlbumsUseDefaults]"}">
+	      {html_options options=$AdminLayouts.newAlbumsUseDefaultsList selected=$form.default.newAlbumsUseDefaults}
             </select>
           </td>
         </tr>
