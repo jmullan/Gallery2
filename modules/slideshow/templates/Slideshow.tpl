@@ -19,7 +19,7 @@
 </div>
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
-var image = new Image(), timer, iSize = 0, bPause = 0, bShowText = 0;
+var image = new Image(), timer, iDir = 1, iSize = 0, bPause = 0, bShowText = 0;
 var linkStop, spanPause, spanText;
 var textBanner, spanTitle, spanSummary, spanDate, spanDescription;
 var index = {$SlideShow.start}, count = {$SlideShow.count};
@@ -31,6 +31,30 @@ item_map[{$i}][{$j}] = {$idx};
 {/foreach}
 {/foreach}
 {literal}
+function random_int(i) {
+  return Math.floor(i*(Math.random()%1));
+}
+var random_order = new Array(count);
+for (i=0; i < count; i++) random_order[i] = i;
+for (i=count-1; i > 0; i--) {
+  j = random_int(i+1);
+  k = random_order[i];
+  random_order[i] = random_order[j];
+  random_order[j] = k;
+alert(random_order[i]);
+}
+function move_index(by) {
+  if (iDir==0/*random*/) {
+    random_index = 0;
+    for (i = 0; i < count; i++)
+      if (random_order[i] == index) {
+        random_index = i;
+        break;
+      }
+    return random_order[(random_index+by+count)%count];
+  }
+  else return (index+(by*iDir)+count)%count;
+}
 function preload(i) {
   if (!is_cached[i]) {
     is_cached[i] = 1;
@@ -38,11 +62,11 @@ function preload(i) {
   }
 }
 function slide_view_start() {
-  preload((index+1)%count);
+  preload(move_index(1));
   timer = setTimeout('goto_next_photo()', 15000);
 }
 function goto_next_photo() {
-  index = (index+1)%count;
+  index = move_index(1);
   if (bCanBlend) apply_filter();
   document.images.slide.src = document.getElementById('item_'+index+'_'+item_map[index][iSize]).href;
   linkStop.href = document.getElementById('href_'+index).href;
@@ -74,25 +98,26 @@ function start_stop() {
                                : '{g->text text="Pause"}'; {literal}
 }
 function back_one() {
-  if (index > 0) {
-    index -= 2;
-    if (bPause) start_stop(); else {
-      clearTimeout(timer);
-      goto_next_photo();
-    }
+  index = move_index(-2);
+  if (bPause) start_stop(); else {
+    clearTimeout(timer);
+    goto_next_photo();
   }
 }
 function apply_filter() {
   f = filters[document.getElementById('filter').selectedIndex];
-  while (f == 'RANDOM') f = filters[Math.floor(Math.random()*filters.length)];
+  if (f == 'RANDOM') f = filters[random_int(filters.length)];
   document.images.slide.style.filter = f;
   document.images.slide.filters[0].Apply();
 }
 function new_size(size) {
   clearTimeout(timer);
   iSize = size;
-  index--;
+  index = move_index(-1);
   goto_next_photo();
+}
+function new_order(direct) {
+  iDir = direct;
 }
 {/literal}
 </script>
@@ -113,6 +138,11 @@ function new_size(size) {
         {g->link onClick="text_onoff();return false"}
           <span id="moreInfo">{g->text text="Show More Info"}</span>
         {/g->link} &nbsp;
+        {g->text text="direction: "}<select onchange="new_order(this.value)">
+          <option value=1>{g->text text="forward"}
+          <option value=-1>{g->text text="reverse"}
+          <option value=0>{g->text text="random"}
+        </select> &nbsp;
         {g->text text="max size: "}<select onchange="new_size(this.value)">
           <option value=0>{g->text text="320x200"}
           <option value=1>{g->text text="640x480"}
