@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,7 +38,7 @@ class GalleryUrlGenerator {
      * ****************************************
      */
 
-    /**  
+    /**
      * The base filename for the application
      *
      * @var string $_baseFile
@@ -76,6 +76,124 @@ class GalleryUrlGenerator {
      * The navigation id of the current URL
      */
     var $_navId = '';
+
+    /*
+     * ****************************************
+     *              Static Methods
+     * ****************************************
+     */
+
+    /**
+     * Return the complete current URL
+     *
+     * @return string the current URL
+     * @static
+     */
+    function getCurrentUrl() {
+	if (!empty($_SERVER['REQUEST_URI'])) {
+	    $path = $_SERVER['REQUEST_URI'];
+	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
+	    $path = $_SERVER['SCRIPT_NAME'];
+	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
+		$path .= $_SERVER['PATH_INFO'];
+	    }
+	}
+
+	return GalleryUrlGenerator::makeUrl($path);
+    }
+
+    /**
+     * Return the current server domain
+     * @return string the host name
+     * @static
+     */
+    function getCurrentDomain() {
+	if (isset($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+	    return $_SERVER['HTTP_X_FORWARDED_SERVER'];
+	} else {
+	    return $_SERVER['HTTP_HOST'];
+	}
+    }
+
+    /**
+     * Add given path to current protocol/server/port to create full url
+     * @param string the url path; leading slash will be added if missing
+     * @return string the url
+     * @static
+     */
+    function makeUrl($path) {
+	static $defaultPort;
+	if (!isset($defaultPort)) {
+	    $defaultPort = array('http' => 80, 'https' => 443);
+	}
+
+	$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+	$domain = GalleryUrlGenerator::getCurrentDomain();
+	if (empty($path)) {
+	    $path = '/';
+	} else if ($path{0} != '/') {
+	    $path = '/' . $path;
+	}
+
+	return sprintf('%s://%s%s', $protocol, $domain, $path);
+    }
+
+    /**
+     * Build a query string out of the given params
+     *
+     * @param array key value pairs (where keys are not prefixed by our form variable prefix)
+     * @param boolean (optional) if true return value starts with &amp; instead of ?
+     * @return string the query string, prefixed with ? or &amp; and using &amp; as a separator
+     * @static
+     */
+    function buildQueryString($params, $append=false) {
+	if (empty($params)) {
+	    return '';
+	}
+
+	$args = array();
+	foreach ($params as $key => $value) {
+	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
+	}
+
+	return ($append ? '&amp;' : '?') . implode('&amp;', $args);
+    }
+
+    /**
+     * Append parameters to a url using the G2 prefix and urlencoding the keys and values.
+     *
+     * @param string the original url
+     * @param array key/value pairs to be appended
+     * @return string the new url
+     * @static
+     */
+    function appendParamsToUrl($url, $params) {
+	$first = true;
+	foreach ($params as $key => $value) {
+	    if ($first && strpos($url, '?') === false) {
+		$url .= '?';
+	    } else {
+		$url .= '&amp;';
+	    }
+	    $first = false;
+
+	    $url .= sprintf('%s=%s', urlencode(GalleryUtilities::prefixFormVariable($key)),
+				     urlencode($value));
+	}
+
+	return $url;
+    }
+
+    /**
+     * Get the "galleryId" from the current url.
+     *
+     * @return string "galleryId" for this site.
+     * @static
+     */
+    function getGalleryId() {
+	$url = GalleryUrlGenerator::getCurrentUrl();
+	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade)/).*$}', '$1', $url);
+    }
 
     /*
      * ****************************************
@@ -126,58 +244,6 @@ class GalleryUrlGenerator {
 	if (!$deprecated) {
 	    $this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
 	}
-    }
-
-    /**
-     * Return the complete current URL
-     *
-     * @return string the current URL
-     */
-    function getCurrentUrl() {
-	if (!empty($_SERVER['REQUEST_URI'])) {
-	    $path = $_SERVER['REQUEST_URI'];
-	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
-	    $path = $_SERVER['SCRIPT_NAME'];
-	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
-		$path .= $_SERVER['PATH_INFO'];
-	    }
-	}
-
-	return $this->makeUrl($path);
-    }
-
-    /**
-     * Return the current server domain
-     * @return string the host name
-     */
-    function getCurrentDomain() {
-	if (isset($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
-	    return $_SERVER['HTTP_X_FORWARDED_SERVER'];
-	} else {
-	    return $_SERVER['HTTP_HOST'];
-	}
-    }
-
-    /**
-     * Add given path to current protocol/server/port to create full url
-     * @param string the url path; leading slash will be added if missing
-     * @return string the url
-     */
-    function makeUrl($path) {
-	static $defaultPort;
-	if (!isset($defaultPort)) {
-	    $defaultPort = array('http' => 80, 'https' => 443);
-	}
-
-	$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
-	$domain = $this->getCurrentDomain();
-	if (empty($path)) {
-	    $path = '/';
-	} else if ($path{0} != '/') {
-	    $path = '/' . $path;
-	}
-
-	return sprintf('%s://%s%s', $protocol, $domain, $path);
     }
 
     /**
@@ -260,15 +326,14 @@ class GalleryUrlGenerator {
      * Note: This should be called as soon as we have access to our session
      * and the requestVariables, but before we start generating URLs with
      * generateUrl(). Currently it's called from parseCurrentUrl().
-     * 
+     *
      * @access private
      */
     function initNavigation() {
 	global $gallery;
 	$gallery->debug("Initializing navigation");
 	list ($returnUrl, $returnName, $navId, $fromNavId) =
-		GalleryUtilities::getRequestVariables('return', 'returnName', 'navId',
-						      'fromNavId');
+	    GalleryUtilities::getRequestVariables('return', 'returnName', 'navId', 'fromNavId');
 	if (!empty($returnUrl)) {
 	    /* Branch a new navigation */
 	    $navData = array('returnUrl' => $returnUrl,
@@ -313,7 +378,7 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Get a list of navigation links to go back to where we came 
+     * Get a list of navigation links to go back to where we came
      * from.
      *
      * @param integer set this to get links back to a certain depth
@@ -327,7 +392,7 @@ class GalleryUrlGenerator {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$session =& $gallery->getSession();
 	if (empty($this->_navId)) {
 	    return array(GalleryStatus::success(), array());
@@ -360,7 +425,7 @@ class GalleryUrlGenerator {
 
     /**
      * Get the current navigation id
-     * 
+     *
      * @return string the navigation id
      */
     function getNavigationId() {
@@ -395,7 +460,8 @@ class GalleryUrlGenerator {
 		}
 
 		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__, $prefix), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+						      $prefix), null);
 		}
 
 		$viewName = $this->_viewPrefixRegistry['forward'][$prefix];
@@ -437,7 +503,7 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Get an URL to return to the currently loaded view, stripping all 
+     * Get an URL to return to the currently loaded view, stripping all
      * parameters that are of navigational nature
      *
      * @return string the URL
@@ -447,48 +513,43 @@ class GalleryUrlGenerator {
 
 	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
 	if (!empty($formUrl)) {
-	    /* We don't really have an URL, because we are in a POST request.
+	    /*
+	     * We don't really have an URL, because we are in a POST request.
 	     * This is the last known URL when the form was originally rendered:
 	     */
 	    return $formUrl;
 	}
 
-	$path = '';
-	if (!empty($_SERVER['REQUEST_URI'])) {
-	    $path = $_SERVER['REQUEST_URI'];
-	    if ($pos = strpos($_SERVER['REQUEST_URI'], '?')) {
-		/* We'll add the query params later */
-		$path = substr($path, 0, $pos);
-	    }
-	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
-	    $path = $_SERVER['SCRIPT_NAME'];
-	    if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
-		$path .= $_SERVER['PATH_INFO'];
-	    }
+	$url = $this->getCurrentUrl();
+	if ($pos = strpos($url, '?')) {
+	    /* We'll add the query params later */
+	    $url = substr($url, 0, $pos);
 	}
-	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(array('return', 'returnName', 'navId', 'fromNavId'));
-	$path .= '?';
+	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
+			array('return', 'returnName', 'navId', 'fromNavId'));
+	$url .= '?';
 	$args = array();
 	foreach ($urlVariables as $key => $value) {
 	    $args[] = $key . '=' . $value;
 	}
-	$path .= join('&amp;', $args);
+	$url .= implode('&amp;', $args);
 	/*
-	 * In very rare cases (like when you first access the app) it's possible to not be using cookies,
+	 * In very rare cases (like first access of the app) it's possible to not be using cookies,
 	 * but not have the session id in the url yet.  Detect that case and add the url here.
 	 */
 	$session =& $gallery->getSession();
 	if (!($session->isUsingCookies())) {
 	    $sessionCheck = !empty($this->_embedSessionString)
 				? $this->_embedSessionString
-				: (GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId());
-	    if (strpos($path, $sessionCheck) === false) {
-		$path .= (substr($path, -1, 1) == '?' ? '' : '&amp;') . $sessionCheck;
+				: (GalleryUtilities::prefixFormVariable($session->getKey())
+				   . '=' . $session->getId());
+	    if (strpos($url, $sessionCheck) === false) {
+		$url .= (substr($url, -1, 1) == '?' ? '' : '&amp;') . $sessionCheck;
 	    }
 	}
-	return $this->makeUrl($path);
+	return $url;
     }
-    
+
     /**
      * Return a valid Gallery URL.
      *
@@ -541,7 +602,7 @@ class GalleryUrlGenerator {
 	    if (isset($components['host'])) {
 		$url = $this->_baseFile;
 	    } else {
-		$url = $this->getCurrentUrlDir() . $this->_baseFile;		
+		$url = $this->getCurrentUrlDir() . $this->_baseFile;
 	    }
 	}
 
@@ -585,11 +646,10 @@ class GalleryUrlGenerator {
 	}
 
 	list ($ret, $useShortUrls) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
-	if (isset($params['forceShortUrls']) ||
-	        ($ret->isSuccess() && $useShortUrls == 'true')) {
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
+	if (isset($params['forceShortUrls']) || ($ret->isSuccess() && $useShortUrls == 'true')) {
 	    unset($params['forceShortUrls']);
-	    
+
 	    /* Give our view a chance to rewrite the query string */
 	    $queryString = null;
 	    if (isset($params['view'])) {
@@ -599,11 +659,11 @@ class GalleryUrlGenerator {
 		    list ($ret, $view) = GalleryView::loadView($viewName);
 		    if ($ret->isError()) {
 			/*
-			 * Swallow this error.  It's unfortunate, but almost everything that calls this
-			 * function is in the business of speaking right to the presentation layer (like
-			 * the templating code) and isn't in a position to properly provide an error.
-			 * Besides, we know that we have a working URL anyway, so if rewriting doesn't
-			 * work just fall back on that.
+			 * Swallow this error.  It's unfortunate, but almost everything that calls
+			 * this function is in the business of speaking right to the presentation
+			 * layer (like the templating code) and isn't in a position to properly
+			 * provide an error.  Besides, we know that we have a working URL anyway,
+			 * so if rewriting doesn't work just fall back on that.
 			 */
 		    } else {
 			$rewritten = $view->rewriteQueryString($params);
@@ -622,55 +682,6 @@ class GalleryUrlGenerator {
 	}
 	if (isset($sessionString)) {
 	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $sessionString;
-	}
-
-	return $url;
-    }
-
-    /**
-     * Build a query string out of the given params
-     *
-     * @param array key value pairs (where keys are not prefixed by our form variable prefix)
-     * @param boolean (optional) if true return value starts with & instead of ?
-     * @return string the query string, prefixed with a '?' and using & as a separator
-     */
-    function buildQueryString($params, $append=false) {
-	if (empty($params)) {
-	    return '';
-	}
-
-	$args = array();
-	foreach ($params as $key => $value) {
-	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
-	}
-
-	return ($append ? '&amp;' : '?') . join('&amp;', $args);
-    }
-
-    /**
-     * Append parameters to a url using the G2 prefix and urlencoding the keys and values.
-     *
-     * @param string the original url
-     * @param array key/value pairs to be appended
-     * @return string the new url
-     */
-    function appendParamsToUrl($url, $params) {
-	if (strpos($url, '?') === false) {
-	    $url .= '?';
-	} else {
-	    $url .= '&';
-	}
-
-	$first = true;
-	foreach ($params as $key => $value) {
-	    if ($first) {
-		$first = false;
-	    } else {
-		$url .= '&';
-	    }
-	    
-	    $url .= sprintf('%s=%s', urlencode(GalleryUtilities::prefixFormVariable($key)),
-				     urlencode($value));
 	}
 
 	return $url;
