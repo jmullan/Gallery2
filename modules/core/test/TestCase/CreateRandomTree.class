@@ -169,7 +169,10 @@ class CreateRandomTreeTestCase extends TestCase {
 		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 		}
 		
-		$comment->create($item->getId());
+		$ret = $comment->create($item->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 		$comment->setCommenterId($gallery->getActiveUserId());
 		$comment->setHost('127.0.0.1');
 		$comment->setComment($this->_randomWords(rand(10,100)));
