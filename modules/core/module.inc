@@ -282,6 +282,10 @@ class CoreModule extends GalleryModule {
 		 * This is an initial install.  
 		 * Make sure that we have some reasonable defaults for the core.
 		 */
+
+		/* Load the translator class since we use it statically */
+		require_once(dirname(__FILE__) . '/GalleryTranslator.class');
+		
 		foreach (array('permissions.directory' => '0755',
 			       'permissions.file' => '0644',
 			       'exec.expectedStatus' => '0',
