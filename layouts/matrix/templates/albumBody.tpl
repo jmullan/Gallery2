@@ -142,9 +142,7 @@
 
             {if ($layout.viewCounts[$child.id] > 0)}
             <li>
-              {g->text one="Viewed: %d time"
-                       many="Viewed: %d times"
-                       count=$layout.viewCounts[$child.id]
+              {g->text text="Views: %d"
                        arg1=$layout.viewCounts[$child.id]}
             </li>
             {/if}
