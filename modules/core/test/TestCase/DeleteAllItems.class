@@ -1,0 +1,44 @@
+<?php
+
+class DeleteAllItemsTestCase extends TestCase {
+
+    var $_id = 1;
+
+    function getDescription() {
+	return "Delete all items in the database, one by one";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $results) = $gallery->search(array(),
+						 array('GalleryNucleus::id'));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $gallery->lockWorld();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$results = array_reverse($results);
+	foreach ($results as $row) {
+	    $id = $row['GalleryNucleus::id'];
+	    $ret = $gallery->deleteNucleusById($id);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	}
+
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	return GalleryStatus::success();
+    }
+}
+
+?>
+</pre>
