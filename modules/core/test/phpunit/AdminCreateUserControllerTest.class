@@ -29,33 +29,16 @@
 /**
  * AdminCreateUser controller tests
  */
-class AdminCreateUserControllerTest extends GalleryTestCase {
+class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateUserControllerTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
-    function setUp() {
-	global $gallery;
-
-	parent::setUp();
-
-	/* Clear out any form vars */
-	GalleryUtilities::removeFormVariables('form.');
-
-	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCreateUser");
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+    function getControllerName() {
+	return "core:AdminCreateUser";
     }
-
-    function tearDown() {
-	/* Clear out any form vars */
-	GalleryUtilities::removeFormVariables('form.');
-
-	parent::tearDown();
-    }
-
+    
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
 	list ($ret, $results) = $this->_controller->handleRequest();
@@ -63,6 +46,7 @@ class AdminCreateUserControllerTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminUsers', GalleryUtilities::getRequestVariables('subView'));
     }
 
     function testCreateUser() {

@@ -29,40 +29,25 @@
 /**
  * AdminCreateGroup controller tests
  */
-class AdminCreateGroupControllerTest extends GalleryTestCase {
+class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateGroupControllerTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
-    function setUp() {
-	global $gallery;
-
-	parent::setUp();
-
-	/* Clear out any form vars */
-	GalleryUtilities::removeFormVariables('form.');
-	
-	list ($ret, $this->_controller) = GalleryController::loadController("core:AdminCreateGroup");
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function tearDown() {
-	/* Clear out any form vars */
-	GalleryUtilities::removeFormVariables('form.');
-	
-	parent::tearDown();
+    function getControllerName() {
+	return "core:AdminCreateGroup";
     }
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form.action.cancel', 1);
+
 	list ($ret, $results) = $this->_controller->handleRequest();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
     }
 
     function testCreateGroup() {
