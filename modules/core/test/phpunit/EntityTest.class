@@ -67,7 +67,7 @@ class EntityTest extends GalleryTestCase {
     function testOnLoad() {
 	/*
 	 * Ensure GalleryEntity::onLoad() is called whether entity is
-	 * loaded from database or disk cache..
+	 * loaded from database or disk cache.. also called for refresh()
 	 */
 
 	/* Load the entity back and verify it */
@@ -80,10 +80,9 @@ class EntityTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
 	$this->assertEquals($this->_entity, $newEntity, 'Entity check');
-	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for database load');
 
 	if (GalleryDataCache::isFileCachingEnabled()) {
 	    /* Load back from disk cache and verify it */
@@ -100,8 +99,23 @@ class EntityTest extends GalleryTestCase {
 	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)),
 				'Entity class 2');
 	    $this->assertEquals($this->_entity, $newEntity, 'Entity check 2');
-	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for disk cache load');
+	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for disk cache load');
 	}
+
+	/* Load back from memory cache */
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$newEntity->_wasOnLoadCalled(), 'onLoad for memory cache load');
+
+	/* Refresh from db */
+	list ($ret, $newEntity) = $this->_entity->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->_entity, $newEntity, 'Entity check 3');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for refresh');
     }
 
     function testOnLoadHandler() {
@@ -136,7 +150,7 @@ class EntityTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
-	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad for database load');
 	$this->assertEquals('onLoadHandler was called', $newEntity->getLinkedEntity(),
 			    'handler not called');
     }

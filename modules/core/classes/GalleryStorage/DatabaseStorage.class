@@ -424,14 +424,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $result[] = $entities[$id];
 	}
 
-	/* Let each entity do its post-load procedure */
-	foreach (array_keys($result) as $key) {
-	    $ret = $result[$key]->onLoad();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
 	return array(GalleryStatus::success(), $result);
     }
 
@@ -720,6 +712,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	 * might as well just retrieve the record every time
 	 */
 	list ($ret, list($freshEntity)) = $this->loadEntities(array($entity->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Let entity do its post-load procedure */
+	$ret = $freshEntity->onLoad();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

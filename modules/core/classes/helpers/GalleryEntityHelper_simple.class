@@ -44,7 +44,6 @@ class GalleryEntityHelper_simple {
      */
     function loadEntitiesById($ids) {
 	global $gallery;
-
 	$gallery->guaranteeTimeLimit(5);
 
 	if (empty($ids)) {
@@ -59,8 +58,7 @@ class GalleryEntityHelper_simple {
 	}
 
 	/* Grab what we can from the cache and make up a list of what's missing */
-	$cached = array();
-	$missing = array();
+	$cached = $missing = $onLoad = array();
 	foreach ($ids as $id) {
 	    $cacheKey = "GalleryEntityHelper::loadEntitiesById($id)";
 	    if (GalleryDataCache::containsKey($cacheKey)) {
@@ -68,16 +66,11 @@ class GalleryEntityHelper_simple {
 	    } else {
 		$data =& GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => $id));
 		if (isset($data)) {
-		    /* Let each entity do its post-load procedure */
-		    $ret = $data->onLoad();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
 		    $cached[$id] =& $data;
-		    GalleryDataCache::put($cacheKey, $data);
 		} else {
 		    $missing[] = $id;
 		}
+		$onLoad[] = $id;
 	    }
 	}
 
@@ -95,10 +88,18 @@ class GalleryEntityHelper_simple {
 	/* Move the new entities into the cache */
 	foreach ($missing as $entity) {
 	    $id = $entity->getId();
-	    GalleryDataCache::put("GalleryEntityHelper::loadEntitiesById($id)", $entity);
 	    GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => $id),
 					$entity, array($entity->getClassFile()));
 	    $cached[$id] = $entity;
+	}
+
+	/* Let each entity do its post-load procedure */
+	foreach ($onLoad as $id) {
+	    $ret = $cached[$id]->onLoad();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    GalleryDataCache::put("GalleryEntityHelper::loadEntitiesById($id)", $cached[$id]);
 	}
 
 	/* Build up the results from the cache */
