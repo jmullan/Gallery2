@@ -55,6 +55,16 @@ class HybridLayout extends GalleryLayout {
 
     function loadTemplate(&$template, $item) {
 	global $gallery;
+	$detail = GalleryUtilities::getRequestVariables('detail');
+
+	if (!$item->getCanContainChildren() && !$detail) {
+	    /* Load parent with initial view of this item  */
+	    $viewItemId = $item->getId();
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
 	$layout = array();
 	$layout['title'] = $item->getTitle();
@@ -63,7 +73,7 @@ class HybridLayout extends GalleryLayout {
 	}
 	$layout['item'] = $item->getMemberData();
 
-	if (!$item->getCanContainChildren()) {
+	if (!$item->getCanContainChildren() && $detail) {
 	    /* Get item details */
 	    list ($ret, $moduleItemDetailFiles) = $this->_loadModuleItemDetails($template, $item);
 	    if ($ret->isError()) {
@@ -85,6 +95,22 @@ class HybridLayout extends GalleryLayout {
 	$layout['count'] = count($itemList);
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
+
+	/* Init view with specific image */
+	if (isset($viewItemId)) {
+	    foreach ($itemList as $tmp) {
+		if ($tmp['id'] == $viewItemId) {
+		    if (isset($tmp['imageIndex'])) {
+			$layout['viewIndex'] = $tmp['imageIndex'];
+			/* Set cookie to popup image just once */
+			$cook = 'G2_hybrid_' . $item->getPathComponent();
+			setcookie($cook, '-2' .
+			    (isset($_COOKIE[$cook]) ? strstr($_COOKIE[$cook], ';') : ';'));
+		    }
+		    break;
+		}
+	    }
+	}
 
 	/* Get system links */
 	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();

@@ -31,7 +31,7 @@
         arg2="itemId=`$it.image.id`"
         arg3="serialNumber=`$it.image.serialNumber`"}{/g->link}
     {g->link id="info_`$it.imageIndex`" arg1="view=core:ShowItem"
-        arg2="itemId=`$it.id`"}{/g->link}
+        arg2="itemId=`$it.id`" arg3="detail=1"}{/g->link}
     <a href="" onclick="image_show({$it.imageIndex});return false">
     {if isset($it.thumb)}
       {g->image item=$it.data image=$it.thumb class=thumb}

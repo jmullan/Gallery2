@@ -50,7 +50,8 @@ function app_init() {
   document.getElementById('tools_right').style.width = '76px';
   document.getElementById('tools_right').style.paddingRight = '8px';
  }
- app_getcookie();
+ var i = app_getcookie();
+ if (i < -1 && data_view >= 0) image_show(data_view);
 }
 function app_onload() {
  if (data_count>0) image_precache(0);
@@ -70,7 +71,7 @@ function app_setcookie() {
  document.cookie = 'G2_hybrid_' + data_name + '=' + escape(s);
 }
 function app_getcookie() {
- var c = getcookie('G2_hybrid'), i,j,v,n,it=1;
+ var c = getcookie('G2_hybrid'), i,j,v,n,it=1,r=-2;
  if (c) {
   for (i=0, j = c.indexOf(';', 0); j >= 0; i = j+1, j = c.indexOf(';', i)) {
    v = c.substring(i,j);
@@ -91,11 +92,12 @@ function app_getcookie() {
    v = c.substring(i,j);
    n = parseInt(v);
    switch (it++) {
-    case 1: if (n >= 0) image_show(n); break;
+    case 1: r=n; if (n >= 0) image_show(n); break;
     case 2: album_div.scrollTop = n; break;
    }
   }
  }
+ return r;
 }
 function app_onkeypress(event) {
  if (app_is_ie) event = window.event; //For IE

@@ -5,5 +5,6 @@
 var data_iw = new Array({$layout.imageWidths});
 var data_ih = new Array({$layout.imageHeights});
 var data_count = data_iw.length, data_name = '{$layout.item.pathComponent}';
+var data_view = {$layout.viewIndex|default:-1};
 </script>
 <script type="text/javascript" src="{$layout.layoutUrl}/templates/hybrid.js"></script>
