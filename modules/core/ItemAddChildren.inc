@@ -170,7 +170,7 @@ class ItemAddChildrenController extends GalleryController {
 
 	if (!empty($status)) {
 	    $session =& $gallery->getSession();
-	    list ($ret, $redirectParams['statusId']) = $session->putStatus($status);
+	    $redirectParams['statusId'] = $session->putStatus($status);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -252,11 +252,7 @@ class ItemAddChildrenView extends GalleryView {
 	 */
 	$session =& $gallery->getSession();
 	if (empty($mode)) {
-	    list ($ret, $mode) = $session->get('core.view.ItemAddChildren.mode');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
+	    $mode = $session->get('core.view.ItemAddChildren.mode');
 	    if (empty($mode)) {
 		$mode = 'fromBrowser';
 	    }

@@ -73,7 +73,7 @@ function GalleryMain($startTime) {
      */
 
     /**
-     * The al mighty global Gallery object
+     * The all mighty global Gallery object
      *
      * @global Gallery $gallery
      */
@@ -226,7 +226,6 @@ function GalleryMain($startTime) {
     }
 
     if ($showGlobal) {
-
 	/* If we're debugging, gather up our debug info also */
 	if ($gallery->getDebug()) {
 	    if ($gallery->getDebug() == 'buffered') {

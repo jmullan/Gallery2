@@ -12,28 +12,42 @@
       )
     
       ,
-    DB_COLUMN_PREFIXkey
-      VARCHAR(
-      
-          32
-        
-      )
+    DB_COLUMN_PREFIXuserId
+      INTEGER
     
       ,
-    DB_COLUMN_PREFIXvalue
+    DB_COLUMN_PREFIXcreationTime
+      INTEGER
+    
+      ,
+    DB_COLUMN_PREFIXlastModificationTime
+      INTEGER
+    
+      ,
+    DB_COLUMN_PREFIXsessionData
       TEXT
     
     );
 
   
-    CREATE INDEX Session_sessionId 
+    CREATE INDEX Session_userId 
     ON DB_TABLE_PREFIXSession
-    (DB_COLUMN_PREFIXsessionId);
+    (DB_COLUMN_PREFIXuserId);
 
   
-    CREATE INDEX Session_key 
+    CREATE INDEX Session_creationTime 
     ON DB_TABLE_PREFIXSession
-    (DB_COLUMN_PREFIXkey);
+    (DB_COLUMN_PREFIXcreationTime);
+
+  
+    CREATE INDEX Session_lastModificationTime 
+    ON DB_TABLE_PREFIXSession
+    (DB_COLUMN_PREFIXlastModificationTime);
+
+  
+    CREATE UNIQUE INDEX Session_sessionId 
+    ON DB_TABLE_PREFIXSession
+    (DB_COLUMN_PREFIXsessionId);
 
   
 

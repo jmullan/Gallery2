@@ -26,24 +26,6 @@
  */
 
 /**
- * The key value is newly created 
- *
- */
-define('SESSION_KEY_NEW', 0x00000001);
-
-/**
- * The key value already exists in the store
- *
- */
-define('SESSION_KEY_EXISTS', 0x00000002);
-
-/**
- * The key value has been modified
- *
- */
-define('SESSION_KEY_MODIFIED', 0x00000004);
-
-/**
  * Storage container for session related data
  *
  * @g2 <class-name>GallerySession</class-name>
@@ -69,36 +51,28 @@ class GallerySession_core {
      * @g2     <member-name>sessionId</member-name>
      * @g2     <member-type>STRING</member-type>
      * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <unique/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>userId</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>creationTime</member-name>
+     * @g2     <member-type>INTEGER</member-type>
      * @g2     <indexed/>
      * @g2   </member>
      * @g2   <member>
-     * @g2     <member-name>key</member-name>
-     * @g2     <member-type>STRING</member-type>
-     * @g2     <member-size>SMALL</member-size>
+     * @g2     <member-name>lastModificationTime</member-name>
+     * @g2     <member-type>INTEGER</member-type>
      * @g2     <indexed/>
      * @g2   </member>
      * @g2   <member>
-     * @g2     <member-name>value</member-name>
+     * @g2     <member-name>sessionData</member-name>
      * @g2     <member-type>TEXT</member-type>
      * @g2   </member>
      * @g2 </map>
      */
-
-    /**
-     * The status of a given key
-     *
-     * @var array $_keyStatus
-     * @access private
-     */
-    var $_keyStatus;
-    
-    /**
-     * The value of a given key
-     *
-     * @var array $_valueMap
-     * @access private
-     */
-    var $_valueMap;
 
     /**
      * The ID of this session 
@@ -124,6 +98,30 @@ class GallerySession_core {
      */
     var $_isUsingCookies;
 
+    /**
+     * Is this a new session?
+     *
+     * @var bool $_isNewSession
+     * @access private
+     */
+    var $_isNewSession;
+
+    /**
+     * Has the session data been modified?
+     *
+     * @var bool $_isSessionDataModified
+     * @access private
+     */
+    var $_isSessionDataModified;
+
+    /**
+     * The session data
+     *
+     * @var array $_sessionData
+     * @access private
+     */
+    var $_sessionData;
+
     /*
      * ****************************************
      *                 Methods
@@ -141,13 +139,8 @@ class GallerySession_core {
 	global $HTTP_GET_VARS;
 	global $HTTP_POST_VARS;
 
-	/* Reset our internal state */
-	$this->_keyStatus = array();
-	$this->_valueMap = array();
-	
 	// Inactivity timeout for user sessions
-	list ($ret, $this->_sessionIdParameter) =
-	    $gallery->getModuleParameter('core', 'session.idParameter');
+	list ($ret, $this->_sessionIdParameter) = $gallery->getModuleParameter('core', 'session.idParameter');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -173,18 +166,10 @@ class GallerySession_core {
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
 	}
 
-	/* Precache a few keys that we know we'll need. */
-	$ret = $this->_loadKeys(array('core.session.creationTime',
-				      'core.session.lifetime',
-				      'core.session.lastModified'));
+	/* Load session state */
+	$ret = $this->_loadSessionData();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Set our creation time, if necessary. */
-	list ($ret, $creationTime) = $this->get('core.session.creationTime');
-	if (empty($creationTime)) {
-	    $this->put('core.session.creationTime', time());
 	}
 
 	/*
@@ -197,8 +182,7 @@ class GallerySession_core {
 	 */
 	$cookie = 'Set-Cookie: ' . $this->_sessionIdParameter . '=' . $this->_sessionId;
 
-	list ($ret, $sessionLifetime) =
-	    $gallery->getModuleParameter('core', 'session.lifetime');
+	list ($ret, $sessionLifetime) = $gallery->getModuleParameter('core', 'session.lifetime');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -228,35 +212,23 @@ class GallerySession_core {
     function save() {
 	global $gallery;
 
-	/* Set the session's last modification time */
-	$ret = $this->put('core.session.lastModified', time());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$dataSet['lastModificationTime'] = time();
+	$dataSet['userId'] = $gallery->getActiveUserId();
+	if ($this->_isSessionDataModified) {
+	    $dataSet['sessionData'] = serialize($this->_sessionData);
 	}
 
-	foreach ($this->_keyStatus as $key => $status) {
-	    if ($status & SESSION_KEY_MODIFIED) {
-		if ($status & SESSION_KEY_EXISTS) {
-		    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId,
-						       'key' => $key),
-						 array('value' => $this->_valueMap[$key]));
-		} else if ($status & SESSION_KEY_MODIFIED) {
-		    $ret = $this->addMapEntry(array('sessionId' => $this->_sessionId,
-						    'key' => $key,
-						    'value' => $this->_valueMap[$key]));
-		} else {
-		    if ($gallery->getDebug()) {
-			$gallery->debug("Unknown status for session key $key: $status");
-		    }
-		}
-
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-
-	    /* Clean the status flags */
-	    $this->_keyStatus[$key] = SESSION_KEY_EXISTS;
+	if ($this->_isNewSession) {
+	    $dataSet['sessionId'] = $this->_sessionId;
+	    $dataSet['creationTime'] = time();
+	    
+	    $ret = $this->addMapEntry(array($dataSet));
+	} else {
+	    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId),
+					 $dataSet);
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$ret = $this->_expireSessions();
@@ -319,25 +291,14 @@ class GallerySession_core {
                 FROM
                   [GallerySession]
                 WHERE
-                  ([GallerySession::key] = ?
-                   AND
-                   (? - [GallerySession::value] > ?))
+                  NOW() - [GallerySession::creationTime] > ?
                   OR
-                  ([GallerySession::key] = ?
-                   AND
-                   (? - [GallerySession::value] > ?))
+                  NOW() - [GallerySession::lastModificationTime] > ?
                 ';
 		
 		/* Find any sessions that are expired */
-		$now = time();
 		list ($ret, $searchResults) =
-		    $gallery->search($query, 
-				      array('core.session.lastModified',
-					    $now,
-					    $sessionInactivityTimeout,
-					    'core.session.creationTime',
-					    $now,
-					    $lifetime));
+		    $gallery->search($query, array($lifetime, $sessionInactivityTimeout));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -377,16 +338,14 @@ class GallerySession_core {
      * Get a value from the session data
      *
      * @param string the key
-     * @return array object GalleryStatus a status code
-     *               string the value
+     * @return string the value or null if it doesn't exist
      */
     function get($key) {
-	$ret = $this->_loadKeys($key);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if (isset($this->_sessionData[$key])) {
+	    return $this->_sessionData[$key];
 	}
 
-	return array(GalleryStatus::success(), $this->_valueMap[$key]);
+	return null;
     }
 
     /**
@@ -394,90 +353,61 @@ class GallerySession_core {
      *
      * @param string the key
      * @param string the value
-     * @return object GalleryStatus a status code
      */
     function put($key, $value) {
+	$this->_sessionData[$key] = $value;
+	$this->_isSessionDataModified = true;
+    }
 
-	$ret = $this->_loadKeys($key);
+    /**
+     * Remove a value from the session
+     *
+     * @param string the key
+     */
+    function remove($key) {
+	unset($this->_sessionData[$key]);
+	$this->_isSessionDataModified = true;
+    }
+
+    /**
+     * Check to see if a value exists in the session
+     *
+     * @param string the key
+     */
+    function exists($key) {
+	return isset($this->_sessionData[$key]);
+    }
+
+    /**
+     * Load the session data
+     *
+     * @returns object GalleryStatus a status code
+     * @access private
+     */
+    function _loadSessionData() {
+	global $gallery;
+
+	$query = '
+        SELECT
+          [GallerySession::sessionData]
+        FROM
+          [GallerySession]
+        WHERE
+          [GallerySession::sessionId] = ?
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($this->_sessionId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if (!isset($this->_keyStatus[$key])) {
-	    $this->_keyStatus[$key] = SESSION_KEY_NEW | SESSION_KEY_MODIFIED;
-	    $this->_valueMap[$key] = $value;
+	/* We shouldn't have more than one result */
+	if ($searchResults->resultCount() == 0) {
+	    $this->_isNewSession = true;
+	    $this->_sessionData = array();
 	} else {
-	    if ($value != $this->_valueMap[$key]) {
-		$this->_valueMap[$key] = $value;
-		$this->_keyStatus[$key] |= SESSION_KEY_MODIFIED;
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Load a set of keys
-     *
-     * @param mixed one or more (ie, an array) keys
-     * @returns object GalleryStatus a status code
-     * @access private
-     */
-    function _loadKeys($keys) {
-	global $gallery;
-
-	/* Convert a single argument into an array if necessary */
-	if (!is_array($keys)) {
-	    $keys = array($keys);
-	}
-
-	/*
-	 * Remove any keys for which we already know the status, since those
-	 * are already assumed to be loaded.
-	 */
-	$tmpKeys = array();
-	foreach ($keys as $key) {
-	    if (!isset($this->_keyStatus[$key])) {
-		$tmpKeys[$key] = 1;
-	    }
-	}
-	$keys = $tmpKeys;
-
-	if (!empty($keys)) {
-	    $markers = GalleryUtilities::makeMarkers(array_keys($keys));
-	    $data = array_merge(array($this->_sessionId), array_keys($keys));
-	    $query = '
-            SELECT
-              [GallerySession::key], 
-              [GallerySession::value]
-            FROM
-              [GallerySession]
-            WHERE
-              [GallerySession::sessionId] = ?
-              AND
-              [GallerySession::key] IN (' . $markers . ')
-            ';
-	    list ($ret, $searchResults) = $gallery->search($query, $data);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    while ($result = $searchResults->nextResult()) {
-		$key = $result[0];
-		$value = $result[1];
-		
-		$this->_keyStatus[$key] = SESSION_KEY_EXISTS;
-		$this->_valueMap[$key] = $value;
-
-		/* Removed processed keys from the array */
-		unset($keys[$key]);
-	    }
-
-	    /* Anything that's left in the $keys array wasn't in the store */
-	    foreach (array_keys($keys) as $key) {
-		$this->_keyStatus[$key] = SESSION_KEY_NEW;
-		$this->_valueMap[$key] = '';
-	    }
+	    $this->_isNewSession = false;
+	    $result = $searchResults->nextResult();
+	    $this->_sessionData = unserialize($result[0]);
 	}
 
 	return GalleryStatus::success();
@@ -487,38 +417,23 @@ class GallerySession_core {
      * Store a status message
      *
      * @param array status data
-     * @return array object GalleryStatus a status code
-     *               string the status id
+     * @return string the status id
      */
     function putStatus($status) {
 	$tod = gettimeofday();
 	$statusId = substr(md5($tod['usec'] + rand(1,1000)), 0, 8);
-	$ret = $this->put('core.status.' . $statusId, serialize($status));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return array(GalleryStatus::success(), $statusId);
+	$ret = $this->put('core.status.' . $statusId, $status);
+	return $statusId;
     }
 
     /**
      * Get a status message
      *
      * @param string the status id
-     * @return array object GalleryStatus a status code
-     *               array the status message
+     * @return array the status message
      */
     function getStatus($statusId) {
-	list ($ret, $status) = $this->get('core.status.' . $statusId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!empty($status)) {
-	    $status = unserialize($status);
-	}
-
-	return array(GalleryStatus::success(), $status);
+	return $this->get('core.status.' . $statusId);
     }
 }
 

@@ -46,10 +46,7 @@ class LoginControllerTest extends GalleryControllerTestCase {
 	}
 
 	$session =& $gallery->getsession();
-	list ($ret, $this->_saveUserId) = $session->get('core.id.activeUser');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_saveUserId = $session->get('core.id.activeUser');
     }
 
     function tearDown() {

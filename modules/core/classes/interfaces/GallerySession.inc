@@ -66,9 +66,13 @@ class GallerySession extends GallerySession_core {
     
         $info['members']['sessionId'] = STORAGE_TYPE_STRING;
   
-        $info['members']['key'] = STORAGE_TYPE_STRING;
+        $info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['value'] = STORAGE_TYPE_TEXT;
+        $info['members']['creationTime'] = STORAGE_TYPE_INTEGER;
+  
+        $info['members']['lastModificationTime'] = STORAGE_TYPE_INTEGER;
+  
+        $info['members']['sessionData'] = STORAGE_TYPE_TEXT;
   
         return $info; 
     }
@@ -87,11 +91,19 @@ class GallerySession extends GallerySession_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     
-        if (!isset($data['key'])) {
+        if (!isset($data['userId'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     
-        if (!isset($data['value'])) {
+        if (!isset($data['creationTime'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['lastModificationTime'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['sessionData'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

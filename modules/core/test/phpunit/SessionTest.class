@@ -46,7 +46,49 @@ class SessionTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 	$session->put($key, $value);
 
-	$this->assertEquals(array(GalleryStatus::success(), $value), $session->get($key));
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	$this->assertEquals($value, $session->get($key));
+    }
+
+    function testRemove() {
+	global $gallery;
+	$key = 'test-key';
+	$value = 'test-value';
+
+	/* Store the key */
+	$session =& $gallery->getSession();
+	$session->put($key, $value);
+	$ret = $session->save();
+
+	/* Save and reset */
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Make sure it's still there */
+	$new = $session->get($key);
+	$this->assertEquals($value, $new);
+
+	/* Remove the key */
+	$session->remove($key);
+
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Make sure it's gone */
+	$exists = $session->exists($key);
+	$this->assert(!$exists, "key $key should not exist!");
     }
 
     function testStatus() {
@@ -54,23 +96,45 @@ class SessionTest extends GalleryTestCase {
 	
 	$session =& $gallery->getSession();
 
+	/* Store a status and get its id */
 	$status = array('x' => 'y', 'a' => 'b');
-	list ($ret, $statusId) = $session->putStatus($status);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$statusId = $session->putStatus($status);
 
-	list ($ret, $result) = $session->getStatus($statusId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
+	/* Save and reset */
 	$ret = $session->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	GalleryDataCache::reset();
 
+	/* Get the status back and compare */
+	$this->assertEquals($status, $session->getStatus($statusId));
+
+	/* Make sure that it's gone now */
+	$this->assert(!$session->exists($statusId), 'status should be null the second time!');
+	
+    }
+
+    function testStatusOnceOnly() {
+	global $gallery;
+	
+	$session =& $gallery->getSession();
+
+	/* Store a status and get its id */
+	$status = array('x' => 'y', 'a' => 'b');
+	$statusId = $session->putStatus($status);
+
+	/* Save and reset */
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryDataCache::reset();
+
+	/* Get the status back and compare */
+	$result = $session->getStatus($statusId);
 	$this->assertEquals($status, $result);
+
     }
 }
 

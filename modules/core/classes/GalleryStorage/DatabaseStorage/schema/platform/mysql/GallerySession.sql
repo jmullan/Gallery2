@@ -12,24 +12,36 @@
       )
     
       ,
-    DB_COLUMN_PREFIXkey
-      varchar(
-      
-          32
-        
-      )
+    DB_COLUMN_PREFIXuserId
+      int(11)
     
       ,
-    DB_COLUMN_PREFIXvalue
+    DB_COLUMN_PREFIXcreationTime
+      int(11)
+    
+      ,
+    DB_COLUMN_PREFIXlastModificationTime
+      int(11)
+    
+      ,
+    DB_COLUMN_PREFIXsessionData
       text
     
     , 
   
-    INDEX (DB_COLUMN_PREFIXsessionId)
+    UNIQUE KEY (DB_COLUMN_PREFIXsessionId)
+    
+    , 
+  
+    INDEX (DB_COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXkey)
+    INDEX (DB_COLUMN_PREFIXcreationTime)
+    
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXlastModificationTime)
     
 
     ) TYPE=DB_TABLE_TYPE;

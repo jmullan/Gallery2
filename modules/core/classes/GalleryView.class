@@ -238,7 +238,7 @@ class GalleryView {
 	$statusId = GalleryUtilities::getRequestVariables('statusId');
 	if (isset($statusId)) {
 	    $session =& $gallery->getSession();
-	    list ($ret, $status) = $session->getStatus($statusId);
+	    $status = $session->getStatus($statusId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

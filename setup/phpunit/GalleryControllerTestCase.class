@@ -64,10 +64,7 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	$status = null;
 	if (isset($controllerResults['redirect']['statusId'])) {
 	    $session =& $gallery->getSession();
-	    list ($ret, $status) = $session->getStatus($controllerResults['redirect']['statusId']);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	    $status = $session->getStatus($controllerResults['redirect']['statusId']);
 	    unset($controllerResults['redirect']['statusId']);
 	}
 	    
