@@ -145,7 +145,7 @@
     {if !empty($layout.moduleItemDetailFiles)}
       {foreach from=$layout.moduleItemDetailFiles key=moduleName item=detailFile}
 	{g->box}
-	  {include file=$detailFile l10Domain="module_$moduleName"}
+	  {include file=$detailFile l10Domain="modules_$moduleName"}
 	{/g->box}
       {/foreach}
     {/if}
