@@ -24,7 +24,10 @@ class CreateRandomUserTestCase extends TestCase {
     function testStart($iterations) {
 	global $gallery;
 
-	for ($i = 0; $i < $iterations; $i++) {
+	$i = 0;
+	$collisionCount = 0;
+	while ($i < $iterations) {
+	    $gallery->guaranteeTimeLimit(5);
 	    list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -34,9 +37,19 @@ class CreateRandomUserTestCase extends TestCase {
 		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	    }  
 
-	    $rand = rand(1, 1000000);
+	    $randSize = 1000000;
+	    $rand = rand(1, $randSize);
 	    $ret = $user->create('random_' . $rand);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_COLLISION) {
+		    /* This happens */
+		    $collisionCount++;
+		    if ($collisionCount < $randSize) {
+			printf('detected collision #%d (continuing)<br>', $collisionCount);
+			continue;
+		    }
+		}
+		
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $user->setFullName('Random ' . $rand);
@@ -45,6 +58,7 @@ class CreateRandomUserTestCase extends TestCase {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $i++;
 	}
 
 	return GalleryStatus::success();
