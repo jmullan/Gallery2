@@ -214,9 +214,9 @@ class ZipCartPluginTest extends GalleryTestCase {
 	$this->assertEquals(4, count($gallery->_zipCartSources), '4 sources');
 	$this->assert(strpos($gallery->_zipCartSources[0], "${slash}albums${slash}") !== false,
 		      'first item from original (' . $gallery->_zipCartSources[0] . ')');
-	$this->assert(strpos($gallery->_zipCartSources[1], "${slash}derivative${slash}") !== false,
+	$this->assert(strpos($gallery->_zipCartSources[1], "${slash}derivative/") !== false,
 		      'second item from derivative (' . $gallery->_zipCartSources[1] . ')');
-	$this->assert(strpos($gallery->_zipCartSources[2], "${slash}derivative${slash}") !== false,
+	$this->assert(strpos($gallery->_zipCartSources[2], "${slash}derivative/") !== false,
 		      'third item from derivative (' . $gallery->_zipCartSources[2] . ')');
 	$this->assert(strpos($gallery->_zipCartSources[3], "${slash}albums${slash}") !== false,
 		      'fourth item from original (' . $gallery->_zipCartSources[3] . ')');
