@@ -30,7 +30,7 @@ map(s{$basedir/}{}, @entries);
 print STDERR "\n";
 
 # Get list of .class, .inc, .php files in basedir/modules/layouts/themes..
-my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php) \d$}, @entries);
+my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php)@@\d$}, @entries);
 
 # Split into sections
 #
@@ -77,7 +77,7 @@ foreach my $manifest (keys %sections) {
 
     my $cksum = crc32($data);
     my $cksum_crlf = crc32($data_crlf);
-    my $view = grep(m{^\Q$file\E \d$}, @viewable) ? 1 : 0;
+    my $view = grep(m{^\Q$file\E@@\d$}, @viewable) ? 1 : 0;
     print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\t$view\n";
   }
   close $out;
