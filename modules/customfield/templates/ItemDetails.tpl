@@ -5,8 +5,8 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 {if !empty($CustomFieldItemDetails.fields)}
-<div id="gsCustomFields">
-  <span class="giTitle"> {g->text text="Custom Fields"} </span>
+<div class="gbCustomFields">
+  <h2 class="giTitle"> {g->text text="Custom Fields"} </h2>
   <span class="giDescription">
     {foreach from=$CustomFieldItemDetails.fields key=field item=value}{$field}: {$value}<br/>
     {/foreach}
