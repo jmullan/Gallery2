@@ -44,7 +44,6 @@ class ImportResultsView extends GalleryView {
 		$counts[$key] = sizeof($status[$key]);
 	    } else {
 		$counts[$key] = 0;
-		$status[$key] = array();
 	    }
 	}
 

@@ -42,7 +42,7 @@ class ConfirmImportController extends GalleryController {
 	$albumsPath = GalleryUtilities::getRequestVariables('albumsPath');
 
 	$error = array();
-	$status = array();
+	$status = array('userImportFailure'=>array(),'userImportSuccess'=>array());
 	if (isset($form['action']['import'])) {
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);
 	    if ($ret->isError()) {
