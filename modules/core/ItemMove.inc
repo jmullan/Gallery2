@@ -74,7 +74,7 @@ class ItemMoveController extends GalleryController {
 		}
 
 		/* Load its parents: we don't want recursive moves */
-		list($ret, $newParentAncestors) = $newParent->fetchParents();
+		list($ret, $newParentAncestors) = GalleryCoreApi::fetchParents($newParent);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

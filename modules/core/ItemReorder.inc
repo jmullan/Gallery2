@@ -200,7 +200,7 @@ class ItemReorderView extends GalleryView {
 	} else {
 
 	    /* Get all peers that we can see */
-	    list ($ret, $peerIds) = $item->fetchChildIds();
+	    list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($item);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

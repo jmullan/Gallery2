@@ -67,25 +67,28 @@ class ShowTreeView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Load everything at once */
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Get all of this entity's children */
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildIds($entityId);
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($entity);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Load everything at once */
 	list ($ret, $entityObjects) =
-	    GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds, array($entityId)));
+	    GalleryCoreApi::loadEntitiesById(array_merge($parentIds, $childIds));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$entityObjects[] = $entity;
 
 	foreach ($entityObjects as $entity) {
-	    if (GalleryUtilities::isA($entity, 'GalleryItem')) {
-		$isItem[$entity->getId()] = 1;
-	    } else {
-		$isItem[$entity->getId()] = 0;
-	    }
+	    $isItem[$entity->getId()] = GalleryUtilities::isA($entity, 'GalleryItem');
 	    $entityTable[$entity->getId()] = $entity->getMemberData();
 	}
 

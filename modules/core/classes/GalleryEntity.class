@@ -372,8 +372,10 @@ class GalleryEntity_core extends GalleryPersistent {
 
     /**
      *
-     * Return the internationalized (but NOT localized) name of this item type.
-     * Subclasses should override this to provide their own name.
+     * Return the internationalized (but NOT localized) display name of this item type
+     * in two forms, one that can be used by itself ("Photo") and one that can be
+     * used in context ("photo"). Subclasses must override this to provide their
+     * own names.
      *
      * @return string the type name
      */

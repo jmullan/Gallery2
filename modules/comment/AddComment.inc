@@ -28,7 +28,7 @@
  */
 
 /**
- * This controller will handle the adition of a comment to an item
+ * Add a comment to an item.
  *
  * @package Comment
  * @subpackage UserInterface

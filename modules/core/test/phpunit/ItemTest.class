@@ -219,7 +219,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $ids) = $this->_parentItem->fetchChildIds();
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -77,7 +77,7 @@ class ChildTest extends GalleryTestCase {
     }
 
     function testFetchChildIds() {
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildIds($this->_root->getId());
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -88,21 +88,15 @@ class ChildTest extends GalleryTestCase {
 			    $childIds,
 			    "root children");
 
-	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $childIds) = GalleryCoreApi::fetchChildIds($this->_child[$i]->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    sort($childIds);
-	    $this->assertEquals(array($this->_derivative[$i][0]->getId(),
-				      $this->_derivative[$i][1]->getId()),
-				$childIds,
-				"child $i's children");
+	/* Make sure only items appear from fetchChildItemIds */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_child[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals(array(), $childIds, "child 0's children");
     }
 
-    function testFetchOrderedChildIds() {
+    function testFetchChildIds2() {
 
 	/* Order them in reverse */
 	$count = sizeof($this->_child);
@@ -113,7 +107,7 @@ class ChildTest extends GalleryTestCase {
 	    }
 	}
 
-	list ($ret, $childIds) = GalleryCoreApi::fetchOrderedChildIds($this->_root->getId());
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -68,7 +68,7 @@ class SlideshowView extends GalleryView {
      */
     function buildSlideshow($item, $startId = null) {
 	global $gallery;
-	list ($ret, $childIds) = $item->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -140,7 +140,7 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Load the item's parents */
-	list ($ret, $parents) = $item->fetchParents();
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -99,7 +99,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -132,7 +132,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -165,7 +165,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -198,7 +198,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -305,7 +305,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -347,7 +347,7 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

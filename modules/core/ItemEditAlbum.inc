@@ -111,20 +111,20 @@ class ItemEditAlbumController extends GalleryController {
 
 		/* Load the children if we might need them */
 		if (isset($form['recreateThumbnails']) || isset($form['recreateResizes']) ) {
-			/* Get the child id => child types */
-			list ($ret, $childIds) = $item->fetchChildIds();
+		    /* Get the child id => child types */
+		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $childItems = array();
+		    if (!empty($childIds)) {
+			/* Load the children */
+			list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-
-			$childItems = array();
-			if (!empty($childIds)) {
-			    /* Load the children */
-			    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			}
+		    }
 		}
 
 		$lockIds = array();

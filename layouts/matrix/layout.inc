@@ -157,7 +157,7 @@ class MatrixLayout extends GalleryLayout {
 	     */
 	    $highlightId = GalleryUtilities::getRequestVariables('highlightId');
 	    if (!empty($highlightId)) {
-		list ($ret, $childIds) = $item->fetchChildIds();
+		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -210,7 +210,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get the child id => child types */
-	list ($ret, $childIds) = $item->fetchChildIds($start, $perPage);
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, $start, $perPage);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -366,7 +366,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Load the parents */
-	list ($ret, $parents) = $item->fetchParents();
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -612,7 +612,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Load the parents */
-	list ($ret, $parents) = $item->fetchParents();
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -718,7 +718,7 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $peerIds) = $parent->fetchChildIds();
+	list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($parent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

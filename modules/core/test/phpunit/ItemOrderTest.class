@@ -114,7 +114,7 @@ class ItemOrderTest extends GalleryTestCase {
 	}
 
 	/* Fetch them out */
-	list ($ret, $results) = $this->_parentItem->fetchChildIds();
+	list ($ret, $results) = GalleryCoreApi::fetchChildItemIds($this->_parentItem);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

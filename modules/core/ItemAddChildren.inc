@@ -329,18 +329,21 @@ class ItemAddChildrenView extends GalleryView {
 			if (!$platform->is_dir($filePath) && $platform->is_readable($filePath)){
 			    $mimeType = GalleryUtilities::getMimeType($fileName);
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
-				list ($ret, $mimeTypeItemMap[$mimeType]) =
+				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 				    GalleryCoreApi::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+
+				$mimeTypeItemMap[$mimeType]['names'] =
+				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
 			    }
 			    
 			    $form['localServerFiles'][] =
 				array('dirName' => $path,
 				      'fileName' => $fileName,
 				      'stat' => $platform->stat($filePath),
-				      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+				      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
 				      'fileKey' => $fileName);
 			}
 		    }
@@ -349,10 +352,13 @@ class ItemAddChildrenView extends GalleryView {
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    $mimeType = GalleryUtilities::getMimeType($path);
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
-			list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryCoreApi::newItemByMimeType($mimeType);
+			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
+			    GalleryCoreApi::newItemByMimeType($mimeType);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
+			$mimeTypeItemMap[$mimeType]['names'] =
+			    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
 		    }
 
 		    $dirName = dirname($path);
@@ -361,7 +367,7 @@ class ItemAddChildrenView extends GalleryView {
 			array('dirName' => $dirName,
 			      'fileName' => $fileName,
 			      'stat' => $platform->stat($path),
-			      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
 			      'fileKey' => htmlentities($fileName));
 		}
 		$localServerFileCount = sizeof($form['localServerFiles']);
@@ -485,11 +491,13 @@ class ItemAddChildrenView extends GalleryView {
 			    }
 
 			    if (!isset($mimeTypeItemMap[$mimeType])) {
-				list ($ret, $mimeTypeItemMap[$mimeType]) =
+				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 				    GalleryCoreApi::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+				$mimeTypeItemMap[$mimeType]['names'] =
+				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
 			    }
 
 			    if (empty($urlComponents['host'])) {
@@ -510,7 +518,7 @@ class ItemAddChildrenView extends GalleryView {
 
 			    $form['webPageUrls'][] =
 				array('url' => $tmp,
-				      'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+				      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0]);
 			}
 			$webPageUrlCount = sizeof($form['webPageUrls']);
 		    }

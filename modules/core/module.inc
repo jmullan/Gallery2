@@ -560,22 +560,12 @@ class CoreModule extends GalleryModule {
 					    'subView' => 'core:ItemEditPermissions',
 					    'itemId' => $item->getId()));
 	    }
-	    
-	    if (!$isRoot && isset($permissions['core.delete'])) {
-		if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
-		    $text = $this->translate('delete animation');
-		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $text = $this->translate('delete image');
-		} else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
-		    $text = $this->translate('delete movie');
-		} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-		    $text = $this->translate('delete album');
-		} else {
-		    $text = $this->translate('delete item');
-		}
 
+	    $itemTypeNames = $item->itemTypeName();
+	    if (!$isRoot && isset($permissions['core.delete'])) {
 		$links[$item->getId()][] =
-		    array('text' => $text,
+		    array('text' => $this->translate(array('text' => 'delete %s',
+							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'return' => true,
 					    'subView' => 'core:ItemDelete',
@@ -592,20 +582,9 @@ class CoreModule extends GalleryModule {
 	    }
 	    
 	    if (!$isRoot && isset($permissions['core.delete'])) {
-		if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
-		    $text = $this->translate('move animation');
-		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $text = $this->translate('move image');
-		} else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
-		    $text = $this->translate('move movie');
-		} else if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-		    $text = $this->translate('move album');
-		} else {
-		    $text = $this->translate('move item');
-		}
-		
 		$links[$item->getId()][] =
-		    array('text' => $text,
+		    array('text' => $this->translate(array('text' => 'move %s',
+							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemMove',
 					    'itemId' => $item->getParentId(),

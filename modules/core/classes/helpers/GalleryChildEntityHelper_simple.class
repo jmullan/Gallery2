@@ -35,99 +35,305 @@
 class GalleryChildEntityHelper_simple {
 
     /**
-     * Return the ids of all the immediate child entities of the given entity.
+     * Return the ids of the children of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
      *
-     * Note: this call ignores permissions and order so it must be used very
-     * carefully!
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
      *
      * @access public
-     * @param array item ids
      * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
+     *               array integer ids
      */
-    function fetchChildIds($id) {
+    function fetchChildItemIds($item, $offset=null, $count=null) {
 	global $gallery;
 
-	if (empty($id)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
-	$storage = $gallery->getStorage();
-
-	$query = '
-        SELECT
-          [GalleryChildEntity::id]
-        FROM
-          [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::parentId] = ?
-        ';
-	$data = array();
-	$data[] = $id;
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[] = (int)$result[0];
-	}
-
-	return array(GalleryStatus::success(), $data);
-    }
-
-    /**
-     * Return the ids in weighted order of all the immediate child entities of
-     * the given entity.
-     *
-     * Note: this call ignores permissions so it must be used very carefully!
-     *
-     * @access public
-     * @param array item ids
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
-     */
-    function fetchOrderedChildIds($id) {
-	global $gallery;
-
-	if (empty($id)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
 	$storage = $gallery->getStorage();
 
+	/* List of classes that we will need */
+	$classes = array('[GalleryChildEntity]', '[GalleryItem]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
+
+	list($orderColumn, $extraWhere, $orderDirection) = GalleryChildEntityHelper_simple::_getOrderInfo($item);
+	$extraIds = 0;
+
+	if (!empty($extraWhere)) {
+	    $extraIds = substr_count($extraWhere, '?');
+	    $extraWhere = 'AND ' . $extraWhere;
+
+	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
+	    if ($ret->isError()) {
+    		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $classes = array_unique(array_merge($classes, $orderClasses));
+	}
+	if (!empty($orderColumn)) {
+	    $orderClause = 'ORDER BY ' . $orderColumn . ' ' . $orderDirection;
+	    $groupExtra = ', ' . $orderColumn;
+	    $selectExtra = ', ' . $orderColumn;
+	} else {
+	    $orderClause = '';
+	    $groupExtra = '';
+	    $selectExtra = '';
+	}
+
+	/* Prepare the query */
 	$query = '
         SELECT
-          [GalleryChildEntity::id]
+          [GalleryChildEntity::id] ' . $selectExtra . '
         FROM
-          [GalleryChildEntity], [GalleryItemAttributesMap]
+          ' . join(', ', $classes) . '
         WHERE
           [GalleryChildEntity::parentId] = ?
           AND
-          [GalleryChildEntity::id] = [GalleryItemAttributesMap::itemId]
-        ORDER BY
-          [GalleryItemAttributesMap::orderWeight] ASC
-        ';
-	$data = array();
-	$data[] = $id;
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
+          [GalleryChildEntity::id] = [GalleryItem::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+	  ' . $extraWhere . '
+        GROUP BY
+          [GalleryChildEntity::id] ' . $groupExtra . '
+	' . $orderClause . '
+	';
+	$data[] = $item->getId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+	for ($i = 0; $i < $extraIds; $i++) {
+	    /* add the data for $orderWhere's extra ?'s */
+	    $data[] = $this->getId();
+	}
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
+	if ($gallery->getDebug()) {
+	    $gallery->debug_r($options);
+	}
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$data = array();
+	$ids = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = (int)$result[0];
+	    $ids[] = (int)$result[0];
+	}
+	
+	return array(GalleryStatus::success(), $ids);
+    }
+
+    /**
+     * Return the ids of the children of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
+	global $gallery;
+
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $data);
+	$storage = $gallery->getStorage();
+
+	/* List of classes that we will need */
+	$classes = array('[GalleryChildEntity]', '[GalleryItem]');
+
+	list($orderColumn, $extraWhere, $orderDirection) = GalleryChildEntityHelper_simple::_getOrderInfo($item);
+	$extraIds = 0;
+
+	if (!empty($extraWhere)) {
+	    $extraIds = substr_count($extraWhere, '?');
+	    $extraWhere = 'AND ' . $extraWhere;
+
+	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
+	    if ($ret->isError()) {
+    		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $classes = array_unique(array_merge($classes, $orderClasses));
+	}
+	if (!empty($orderColumn)) {
+	    $orderClause = 'ORDER BY ' . $orderColumn . ' ' . $orderDirection;
+	    $groupExtra = ', ' . $orderColumn;
+	    $selectExtra = ', ' . $orderColumn;
+	} else {
+	    $orderClause = '';
+	    $groupExtra = '';
+	    $selectExtra = '';
+	}
+
+	/* Prepare the query */
+	$query = '
+        SELECT
+          [GalleryChildEntity::id] ' . $selectExtra . '
+        FROM
+          ' . join(', ', $classes) . '
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          [GalleryChildEntity::id] = [GalleryItem::id]
+	  ' . $extraWhere . '
+        GROUP BY
+          [GalleryChildEntity::id] ' . $groupExtra . '
+	' . $orderClause . '
+	';
+	$data[] = $item->getId();
+	for ($i = 0; $i < $extraIds; $i++) {
+	    /* add the data for $orderWhere's extra ?'s */
+	    $data[] = $this->getId();
+	}
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
+	if ($gallery->getDebug()) {
+	    $gallery->debug_r($options);
+	}
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = (int)$result[0];
+	}
+	
+	return array(GalleryStatus::success(), $ids);
+    }
+    
+    /**
+     * Load all the ancestors of this item
+     *
+     * @param object GalleryItem an item
+     * @return array object GalleryStatus a status code 
+     *               array (array(memberName => memberValue))
+     */
+    function fetchParents($item) {
+	global $gallery;
+
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    list ($ret, $parentIds) = GalleryCoreApi::fetchParentSequence($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    array_push($parentIds, $item->getParentId());
+	}
+
+	if (!empty($parentIds)) {
+	    list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $parents = array();
+	}
+
+	return array(GalleryStatus::success(), $parents);
+    }
+
+
+    /**
+     * If we want to sort, which storage info we need?
+     *
+     * This will return the ORDER BY clause to sort the items and a
+     * condition that we need to add to the fetching query. To join with
+     * a new table, the [GalleryChildEntity::id] will contain the current
+     * ID. Eventualy another table mentioned in the condition will have to
+     * be included too, the calling function has to decide that (using
+     * GalleryStorage::extractClasses())
+     *
+     * @return array string an order clause, string a row matching condition
+     * @access private
+     */
+    function _getOrderInfo($item) {
+	/*
+	 * Don't simply plug getOrderBy into the SQL clause, or we could open
+	 * the door for SQL injection.
+	 *
+	 * XXX: Eventually this should be something that a module can register
+	 * so that we can allow modules to introduce their own custom sort
+	 * orders.
+	 */
+	switch ($item->getOrderBy()) {
+	case 'title':
+	    $orderColumn = '[GalleryItem::title]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    break;
+	    
+	case 'summary':
+	    $orderColumn = '[GalleryItem::summary]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    break;
+	    
+	case 'creationTimestamp':
+	    $orderColumn = '[GalleryEntity::creationTimestamp]';
+	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+	    break;
+	    
+	case 'modificationTimestamp':
+	    $orderColumn = '[GalleryEntity::modificationTimestamp]';
+	    $condition = '[GalleryEntity::id] = [GalleryChildEntity::id]';
+	    break;
+	    
+	case 'description':
+	    $orderColumn = '[GalleryItem::description]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    break;
+	    
+	case 'keywords':
+	    $orderColumn = '[GalleryItem::keywords]';
+	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
+	    break;
+
+	case 'viewCount':
+	    $orderColumn = '[GalleryItemAttributesMap::viewCount]';
+	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+	    break;
+	    
+	default:
+	    $orderColumn = '[GalleryItemAttributesMap::orderWeight]';
+	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
+	}
+
+	switch ($item->getOrderDirection()) {
+	case ORDER_DESCENDING:
+	    $direction = 'DESC';
+	    break;
+
+	case ORDER_ASCENDING:
+	default:
+	    $direction = '';
+	}
+
+	return array($orderColumn, $condition, $direction);
     }
 }
 ?>

@@ -532,6 +532,15 @@ class GallerySession_core {
 	
 	return $statusData;
     }
+
+    /**
+     * Return the session id
+     *
+     * @return string the session id 
+     */
+    function getSessionId() {
+	return $this->_sessionId;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GallerySession.inc');

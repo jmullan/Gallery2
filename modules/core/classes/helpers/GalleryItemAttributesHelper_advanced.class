@@ -43,9 +43,14 @@ class GalleryItemAttributesHelper_advanced {
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
 	global $gallery;
 
-	list ($ret, $ids) = GalleryCoreApi::fetchOrderedChildIds($parentItemId);
+	list ($ret, $parentItem) = GalleryCoreApi::loadEntitiesById($parentItemId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+ 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIdsIgnorePermissions($parentItem);
+	if ($ret->isError()) {
+ 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$current = $spacing;

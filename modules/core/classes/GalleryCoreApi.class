@@ -1899,42 +1899,57 @@ class GalleryCoreApi {
 	return GalleryEntityHelper_medium::fetchEntitiesLinkedTo($targetId);
     }
 
+
     /**
-     * Return the ids of all the immediate child entities of the given entity.
+     * Return the ids of the children of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
      *
-     * Note: this call ignores permissions and order so it must be used very
-     * carefully!
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
      *
      * @access public
-     * @param array item ids
      * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
+     *               array integer ids
      */
-    function fetchChildIds($id) {
-	GalleryCoreApi::apiMethodUsed('fetchChildIds', 'GalleryChildEntityHelper_simple');
+    function fetchChildItemIds($item, $offset=null, $count=null) {
+	GalleryCoreApi::apiMethodUsed('fetchChildItemIds', 'GalleryChildEntityHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildIds($id);
-    }
-    
-    /**
-     * Return the ids in weighted order of all the immediate child entities of
-     * the given entity.
-     *
-     * Note: this call ignores permissions so it must be used very carefully!
-     *
-     * @access public
-     * @param array item ids
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
-     */
-    function fetchOrderedChildIds($id) {
-	GalleryCoreApi::apiMethodUsed('fetchOrderedChildIds', 'GalleryChildEntityHelper_simple');
-	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchOrderedChildIds($id);
+	return GalleryChildEntityHelper_simple::fetchChildItemIds($item, $offset, $count);
     }
 
+    /**
+     * Same as fetchChildItemIds, except that we ignore permissions
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
+	GalleryCoreApi::apiMethodUsed('fetchChildItemIdsIgnorePermissions', 'GalleryChildEntityHelper_simple');
+	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::fetchChildItemIdsIgnorePermissions($item, $offset, $count);
+    }
+
+    /**
+     * Load all the ancestors of this item
+     *
+     * @param object GalleryItem an item
+     * @return array object GalleryStatus a status code 
+     *               array (array(memberName => memberValue))
+     */
+    function fetchParents($item) {
+	GalleryCoreApi::apiMethodUsed('fetchParents', 'GalleryChildEntityHelper_simple');
+	require_once(dirname(__FILE__) . '/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::fetchParents($item);
+    }
+    
+    
     // Debug
     function apiMethodUsed($name) {
 	if (!isset($GLOBALS['GalleryCoreApi'][$name])) {

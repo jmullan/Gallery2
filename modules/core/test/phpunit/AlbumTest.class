@@ -319,7 +319,7 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Now we've created our nested tree.  Fetch it all back again */
-	list ($ret, $actual) = $nested[$iterations-1]->fetchParents();
+	list ($ret, $actual) = GalleryCoreApi::fetchParents($nested[$iterations-1]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -343,7 +343,7 @@ class AlbumTest extends GalleryTestCase {
      * Create a parent, a child, verify that fetchChildren on the parent
      * returns the child, delete both.
      */
-    function testFetchChildren() {
+    function testFetchChildIds() {
 	global $gallery;
 
 	list ($ret, $parent) = $this->_createRandomAlbum($this->_parentAlbum->getId());
@@ -358,12 +358,12 @@ class AlbumTest extends GalleryTestCase {
 
 	GalleryDataCache::reset();
 
-	list ($ret, $actual) = $parent->fetchChildren();
+	list ($ret, $actual) = GalleryCoreApi::fetchChildItemIds($parent);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($child), $actual);
+	$this->assertEquals(array($child->getId()), $actual);
     }
 }
 

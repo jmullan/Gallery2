@@ -153,7 +153,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     }
 
     function _getChildId() {
-	list ($ret, $ids) = GalleryCoreApi::fetchChildIds($this->_parentAlbum->getId());
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	$this->assertEquals(1, sizeof($ids));
 	return $ids[0];
     }

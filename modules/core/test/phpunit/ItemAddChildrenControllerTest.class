@@ -107,7 +107,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Verify item attributes (like order weight) */
-	list ($ret, $ids) = $this->_rootAlbum->fetchChildIds();
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -162,7 +162,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Verify item attributes (like order weight) */
-	list ($ret, $ids) = $this->_rootAlbum->fetchChildIds();
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
