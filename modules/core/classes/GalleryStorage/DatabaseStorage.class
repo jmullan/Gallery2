@@ -898,9 +898,10 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$data = array();
 	$set = array();
 	$where = array();
+	$wheredata = array();
 
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
-	    if (isset($match[$memberName])) {
+	    if (array_key_exists($memberName, $match)) {
 		if (GalleryUtilities::isA($match[$memberName], 'DatabaseSqlFragment')) {
 		    $where[] = $this->_translateColumnName($memberName) . ' ' .
 				$this->_translateQuery($match[$memberName]->getFragment());
@@ -917,6 +918,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			$wheredata[] = $value;
 		    }
 		    $where[] = $this->_translateColumnName($memberName) . ' IN (' . implode(',', $qs) . ')';
+		} else if (is_null($match[$memberName])) {
+		    $where[] = $this->_translateColumnName($memberName) . ' IS NULL';
 		} else {
 		    $where[] = $this->_translateColumnName($memberName) . '=?';
 		    $value = $match[$memberName];
@@ -927,7 +930,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		}
 	    }
 
-	    if (isset($change[$memberName])) {
+	    if (array_key_exists($memberName, $change)) {
 		if (GalleryUtilities::isA($change[$memberName], 'DatabaseSqlFragment')) {
 		    $set[] = $this->_translateColumnName($memberName) . ' ' .
 				$this->_translateQuery($change[$memberName]->getFragment());

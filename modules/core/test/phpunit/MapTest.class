@@ -64,5 +64,40 @@ class MapTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testUpdateNull() {
+	// Ensure updateMapEntry() method will accept null input values..
+
+	require_once(dirname(__FILE__) . '/../../classes/GalleryToolkitOperationMap.class');
+	$name = 'test-' . rand();
+
+	$ret = GalleryToolkitOperationMap::addMapEntry(
+	    array('name' => $name, 'parametersCrc' => 'test', 'outputMimeType' => 'test',
+		  'description' => 'test'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryToolkitOperationMap::updateMapEntry(
+	    array('name' => $name, 'outputMimeType' => 'test'),
+	    array('description' => null));
+	$this->assert($ret->isSuccess(), 'should succeed setting null value');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryToolkitOperationMap::updateMapEntry(
+	    array('name' => $name, 'description' => null),
+	    array('parametersCrc' => 'changed'));
+	$this->assert($ret->isSuccess(), 'should succeed matching null value');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryToolkitOperationMap::removeMapEntry(array('name' => $name));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 ?>
