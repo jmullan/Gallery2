@@ -140,9 +140,13 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	for ($i = 0; $i < sizeof($this->_childItems); $i++) {
-	    $this->assertEquals(array(GalleryStatus::success(), ($i+1)*100),
-				GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[$i]->getId()));
+	$count = sizeof($this->_childItems);
+	for ($i = 0; $i < $count; $i++) {
+	    list ($ret, $weight) = GalleryItemAttributesMap::fetchOrderWeight($this->_childItems[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(($i+1)*100, $weight, "item $i of $count is not balanced correctly");
 	}
     }
 }
