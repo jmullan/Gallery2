@@ -295,8 +295,8 @@ class GalleryToolkitHelper_medium {
 
 	/* Find and remove any unused operations */
 	$query = '
-        SELECT
-          DISTINCT([GalleryToolkitOperationMap::name])
+        SELECT DISTINCT
+          [GalleryToolkitOperationMap::name]
         FROM
           [GalleryToolkitOperationMap]
         LEFT JOIN
@@ -331,8 +331,8 @@ class GalleryToolkitHelper_medium {
 
 	/* Find and remove any unused properties */
 	$query = '
-        SELECT
-          DISTINCT([GalleryToolkitPropertyMap::name])
+        SELECT DISTINCT
+          [GalleryToolkitPropertyMap::name]
         FROM
           [GalleryToolkitPropertyMap]
         LEFT JOIN
@@ -383,12 +383,13 @@ class GalleryToolkitHelper_medium {
 	$cacheKey = "GalleryToolkitHelper::getOperations($mimeType)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
-            SELECT
-              DISTINCT([GalleryToolkitOperationMap::name]),
+            SELECT DISTINCT
+              [GalleryToolkitOperationMap::name],
               [GalleryToolkitOperationMap::outputMimeType],
               [GalleryToolkitOperationMap::description],
               [GalleryToolkitOperationParameterMap::type],
-              [GalleryToolkitOperationParameterMap::description]
+              [GalleryToolkitOperationParameterMap::description],
+              [GalleryToolkitOperationParameterMap::position]
             FROM
               [GalleryToolkitOperationMap],
               [GalleryToolkitOperationMimeTypeMap],
