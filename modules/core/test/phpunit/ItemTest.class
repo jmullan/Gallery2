@@ -225,9 +225,10 @@ class ItemTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    // Give delete permissions
+	    // Give permissions
 	    if ($i != 1) {
-		$ret = GalleryCoreApi::addUserPermission($child[$i]->getId(), $this->_userId, 'core.delete', false);
+		$ret = GalleryCoreApi::addUserPermission($child[$i]->getId(), $this->_userId,
+					($i==0) ? 'core.delete' : 'core.all', false);
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -242,6 +243,16 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array($child[0]->getId(), $child[2]->getId()), $itemIds);
+
+	// permission bundle should match all, not any bits..
+	list ($ret, $itemIds) =
+	    GalleryCoreApi::fetchChildItemIdsWithPermission($this->_album->getId(),
+							    'core.all');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($child[2]->getId()), $itemIds);
     }
 
     function testFetchLinkableChildItemIdsWithPermission() {

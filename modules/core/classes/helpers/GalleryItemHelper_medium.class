@@ -83,7 +83,7 @@ class GalleryItemHelper_medium {
            OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+          [GalleryPermissionMap::permission] & ? = ?
         GROUP BY
           [GalleryChildEntity::id]
         ';
@@ -92,7 +92,7 @@ class GalleryItemHelper_medium {
 	$data[] = $gallery->getActiveUserId();
 	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data[] = $storage->convertIntToBits($permissionBits);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
