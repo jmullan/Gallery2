@@ -435,20 +435,20 @@ class GalleryStatus {
 
 	if (empty($this->_stackTrace)) {
 	    for ($i = 0; $i < count($this->_fileName); $i++) {
-		$results[] = 'in ' .
+		$results[] = '<B>in</B> ' .
 		    str_replace($base, '', $this->_fileName[$i])  .
-		    ' at line ' .
+		    ' <B>at line</B> ' .
 		    $this->_lineNumber[$i];
 	    }
 	} else {
 	    foreach ($this->_stackTrace as $traceEntry) {
-		$buf = 'in ' . str_replace($base, '', $traceEntry['file']);
+		$buf = '<B>in</B> ' . str_replace($base, '', $traceEntry['file']);
 		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
 		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
 		} else if (isset($traceEntry['class'])) {
 		    $buf .= " ($traceEntry[function]) ";
 		}
-		$buf .= " at line $traceEntry[line]";
+		$buf .= " <B>at line</B> $traceEntry[line]";
 		$results[] = $buf;
 	    }
 	}  
