@@ -691,8 +691,8 @@ class AlbumTest extends GalleryTestCase {
      */
     function testFetchAlbumTree() {
 	/*
-	 * Create tree.. P--0--2--4
-	 *                \_1-3 \_5
+	 * Create tree.. P--0--2--4        with no permission on 5 so 6 and its subtree
+	 *                \_1-3 \_5--6--7  should appear as a child of 2 in the tree
 	 */
 	list ($ret, $album[0]) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
@@ -718,11 +718,23 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	list ($ret, $album[6]) = $this->_createRandomAlbum($album[5]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $album[7]) = $this->_createRandomAlbum($album[6]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($album[5]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	$fullTree = array($album[0]->getId() => array($album[2]->getId() => array($album[4]->getId() => array(), $album[5]->getId() => array())), $album[1]->getId() => array($album[3]->getId() => array()));
-	$subTree = array($album[2]->getId() => array($album[4]->getId() => array(), $album[5]->getId() => array()));
+	$fullTree = array($album[0]->getId() => array($album[2]->getId() => array($album[4]->getId() => array(), $album[6]->getId() => array($album[7]->getId() => array()))), $album[1]->getId() => array($album[3]->getId() => array()));
+	$subTree = array($album[2]->getId() => array($album[4]->getId() => array(), $album[6]->getId() => array($album[7]->getId() => array())));
 	$depthTree = array($album[0]->getId() => array($album[2]->getId() => array()), $album[1]->getId() => array($album[3]->getId() => array()));
-	$allIds = array($album[0]->getId(), $album[2]->getId(), $album[4]->getId(), $album[5]->getId(), $album[1]->getId(), $album[3]->getId());
+	$allIds = array($album[0]->getId(), $album[2]->getId(), $album[4]->getId(), $album[6]->getId(), $album[7]->getId(), $album[1]->getId(), $album[3]->getId());
 
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($this->_parentAlbum->getId());
 	if ($ret->isError()) {

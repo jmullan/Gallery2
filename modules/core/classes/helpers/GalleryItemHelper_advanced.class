@@ -640,6 +640,10 @@ class GalleryItemHelper_advanced {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$parentSequence[] = $itemId;
 	$parentSequence = implode('/', $parentSequence);
 
@@ -707,11 +711,11 @@ class GalleryItemHelper_advanced {
 	    }
 	    $branch =& $tree;
 	    foreach ($path as $id) {
-		if (!isset($branch[$id])) {
-		    $branch[$id] = array();
+		if (isset($branch[$id])) {
+		    $branch =& $branch[$id];
 		}
-		$branch =& $branch[$id];
 	    }
+	    $branch[$result[0]] = array();
 	}
 
 	return array(GalleryStatus::success(), $tree);

@@ -286,13 +286,27 @@ class GalleryLayout extends GalleryPlugin {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    if (!empty($parentSequence)) {
+		$ret = GalleryCoreApi::studyPermissions($parentSequence);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 	    foreach ($parentSequence as $id) {
 		$ids[$id] = true;
 	    }
 	}
 	if (isset($load['peers'])) {
 	    $peerIds = $peers = array();
+	    $loadPeers = false;
 	    if ($item->getParentId() != null) {
+		list ($ret, $loadPeers) =
+		    GalleryCoreApi::hasItemPermission($item->getParentId(), 'core.view');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    if ($loadPeers) {
 		list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -329,6 +343,9 @@ class GalleryLayout extends GalleryPlugin {
 		foreach ($peers as $id) {
 		    $ids[$id] = true;
 		}
+	    }
+	    if (empty($peers)) {
+		unset($load['peers']);
 	    }
 	}
 	if (!empty($ids)) {
@@ -416,11 +433,16 @@ class GalleryLayout extends GalleryPlugin {
 	if (isset($load['parents'])) {
 	    $layout['parents'] = array();
 	    foreach ($parentSequence as $id) {
-		$layout['parents'][] = $entities[$id]->getMemberData();
+		list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($id, 'core.view');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if ($canSee) {
+		    $layout['parents'][] = $entities[$id]->getMemberData();
+		}
 	    }
- 	    $layout['parent'] = empty($parentSequence) ? null :
- 		$layout['parents'][count($parentSequence) - 1];
-
+	    $layout['parent'] = empty($layout['parents']) ? null :
+		$layout['parents'][count($layout['parents']) - 1];
 	}
 
 	// -------------------------------------------------------------------------------------
@@ -434,9 +456,6 @@ class GalleryLayout extends GalleryPlugin {
 		$peer = $entities[$id]->getMemberData();
 		$peer['peerIndex'] = $i + 1;
 		$layout['peers'][] = $peer;
-	    }
-	    if (empty($peers)) {
-		$layout['show']['sidebarPeers'] = false;
 	    }
 	}
 
