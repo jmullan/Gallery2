@@ -57,7 +57,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * @g2 <member>
      * @g2   <member-name>pathComponent</member-name>
      * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
+     * @g2   <member-size>MEDIUM</member-size>
      * @g2   <indexed/>
      * @g2 </member>
      *
@@ -80,6 +80,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * class.
      *
      * @param int the id of the parent GalleryChildEntity
+     * @param string the path component of this entity
      * @return object GalleryStatus a status code
      */
     function create($parentId, $path) {
@@ -110,7 +111,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	/* Make sure that we don't have a collision in the db. */
-	list ($ret, $isCollision) = $this->_checkPathCollision($path);
+	list ($ret, $isCollision) = $this->_checkPathCollision($path, $parentId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -179,7 +180,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     }
 
     /**
-     * Rename this album
+     * Rename this item
      *
      * @access public
      * @param string the path component
@@ -213,6 +214,107 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	$this->setPathComponent($newname);
 	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Move item to a new parent
+     *
+     * @access public
+     * @param int the id of the new parent GalleryItem
+     * @return object GalleryStatus a status code
+     * @todo Make sure that 'order' stuff is maintained, so that the moved
+     *       items become the last in order in the new album if that album
+     *       is marked as unordered
+     */
+    function move($newParentId) {
+	global $gallery;
+
+	/* No need to do anything if moving to same parent */
+	if ($newParentId == $this->getParentId()) {
+	    return GalleryStatus::success();
+	}
+
+	/*
+	 * Read lock the parent so that we don't have a race condition below.
+	 */
+	$lockIds = array();
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($newParentId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($this->getParentId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/*
+	 * Get the new parent
+	 */
+	list ($ret, $newParent) = $gallery->loadEntitiesById($newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (! $newParent->canContainChildren()) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$platform = $gallery->getPlatform();
+
+	/*
+	 * Get the current path
+	 */
+	list($ret, $currentPath) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* New pathname will have same basename, but new pathname */
+	list($ret, $newParentPath) = $newParent->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Don't be intimidated by the first 10 collisions */
+	$newBaseName = $this->getPathComponent();
+	list($fileBase, $extension) = GalleryUtilities::getFileNameComponents($newBaseName);
+	$retry = 0;
+	$newFileName = $newParentPath . $newBaseName;
+	while ($platform->file_exists($newFileName)) {
+	    if (++$retry > 10) {
+		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+	    }
+	    $newBaseName = sprintf('%s_%03d.%s', $fileBase, $retry, $extension);
+	    $newFileName = sprintf('%s%s', $newParentPath, $newBaseName);
+	}
+
+	/* Make sure that we don't have a collision in the db. */
+	list ($ret, $isCollision) = $this->_checkPathCollision($newBaseName, $newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($isCollision) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	/* No collision -- proceed! */
+	$ret = parent::move($newParentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$platform->rename($currentPath, $newFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	/* Release locks */
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -318,14 +420,20 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
      * allows us to check for name collisions at this point.
      *
      * @param string the path component
+     * @param int [optional] the id of the parent we wish this item to be
+     *            placed in. If not given, the current parent will be used.
      * @return array object GalleryStatus a status code
      *               boolean true if there's a collision
      * @access private
      */
-    function _checkPathCollision($pathComponent) {
+    function _checkPathCollision($pathComponent, $newParentId=null) {
 	global $gallery;
 
-	$parentId = $this->getParentId();
+	if (!empty($newParentId)) {
+	   $parentId = $newParentId;
+	} else {
+	   $parentId = $this->getParentId();
+	}
 
 	$data = array();
 	$query = '

@@ -94,6 +94,26 @@ class GalleryChildEntity_core extends GalleryEntity {
     }
 
     /**
+     * Move this item to a new parent
+     *
+     * @param int the id of the GalleryItem parent
+     * @return object GalleryStatus a status code
+     */
+    function move($newParentId) {
+	global $gallery;
+
+	if (empty($newParentId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Set the new parent id */
+	$this->setParentId($newParentId);
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Create a root level item
      *
      * This is a special case; every other GalleryChildEntry will have a
@@ -113,6 +133,80 @@ class GalleryChildEntity_core extends GalleryEntity {
 	global $gallery;
 	return $gallery->loadEntitiesById($this->getParentId());
     }
+
+    /**
+     * Get a flat list of the hierarchy of all children of an item
+     *
+     * This is handy when you need a complete tree of certain entities,
+     * but don't want (or can't) to do tree-walking functions to do that.
+     * The 'level' array item will give us sense of depth of the tree,
+     * starting with '0' for the starting entitiy.
+     * 
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array
+     */
+    function getDescendantsList() {
+	global $gallery;
+
+	/*
+	 * Build the entityTree, starting at the current item.
+	 * (making a non-recursive pre-order transversal)
+	 *  $entityTree[]['itemId']
+	 *  $entityTree[]['entity']
+	 *  $entityTree[]['level']
+	 */
+	$entityTree = array();
+	$current = 0;
+	$maxLevel = 0;
+	$startItem = array('level' => 0,
+			   'itemId' => $this->getId(),
+			   'entity' => $this
+		     );
+	$entityTree = array($startItem);
+	while ($current < count($entityTree)) {
+	    $currentItemId = $entityTree[$current]['itemId'];
+	    $currentLevel = $entityTree[$current]['level'];
+
+	    /* Get the childIds of the current item */
+	    list ($ret, $childIds) =
+		GalleryChildEntityHelper::fetchChildIds($currentItemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!empty($childIds)) {
+		/* Load the children */
+		$childItems = array();
+		list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$newlevel = $currentLevel + 1;
+		if ($newlevel > $maxLevel) {
+		    $maxLevel = $newlevel;
+		}
+		$childrenList = array();
+		foreach ($childItems as $child) {
+		    $childId = $child->getId();
+		    $childrenList[] = array('level' => $newlevel,
+					    'itemId' => $childId,
+					    'entity' => $child
+				      );
+		}
+		/* put child items after currentItem in the array */
+		$entityTree = array_merge(
+				  array_slice($entityTree, 0, $current + 1),
+				  $childrenList,
+				  array_slice($entityTree, $current + 1)
+			      );
+	    }
+	    $current++;
+	}
+
+	return array(GalleryStatus::success(), $entityTree);
+    }
+
 
 }
 

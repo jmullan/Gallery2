@@ -13,7 +13,7 @@
     DB_COLUMN_PREFIXpathComponent
       varchar(
       
-          32
+          128
         
       )
     

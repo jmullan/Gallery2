@@ -468,7 +468,8 @@ class CoreModule extends GalleryModule {
 	    $showDeleteLink = false;
 	    $showPermissionsLink = false;
 	    $showAddHighlightLink = false;
-	    
+	    $showMoveItemLink = false;
+
 	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
 		$itemType = 'album';
 	    } else {
@@ -489,6 +490,7 @@ class CoreModule extends GalleryModule {
 		$showAddItemLink = $item->canContainChildren();
 		$showAddAlbumLink = $item->canContainChildren();
 		$showPermissionsLink = true;
+		$showMoveItemLink = true;
 
 	    } else {
 		if (!empty($permissions) &&
@@ -509,6 +511,7 @@ class CoreModule extends GalleryModule {
 
 		if (isset($permissions['core.delete'])) {
 		    $showDeleteLink = $item->getId() != $rootId;
+		    $showMoveItemLink = $item->getId() != $rootId;
 		}
 
 		if (isset($permissions['core.changePermissions'])) {
@@ -579,6 +582,16 @@ class CoreModule extends GalleryModule {
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemDelete',
 							'itemId' => $item->getId()),
+						  $params));
+	    }
+
+	    if ($showMoveItemLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('move item'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemMove',
+							'itemId' => $item->getParentId(),
+							'selectedId' => $item->getId()),
 						  $params));
 	    }
 
