@@ -1,0 +1,103 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo photo viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Photo functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ModuleParameterTest extends GalleryTestCase {
+
+    function ModuleParameterTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testAddParameter() {
+	global $gallery;
+	$key = 'testParameter';
+	$value = 'testValue';
+
+	$ret = $gallery->setModuleParameter('core', $key, $value);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $newValue) = $gallery->getModuleParameter('core', $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value, $newValue);
+    }
+
+    function testUpdateParameter() {
+	global $gallery;
+	$key = 'testParameter';
+	$value = 'testValue';
+
+	for ($i = 0; $i < 3; $i++) {
+	    $ret = $gallery->setModuleParameter('core', $key, "${value}-$i");
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $newValue) = $gallery->getModuleParameter('core', $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals("${value}-2", $newValue);
+    }
+
+    function testFetchAllParameters() {
+	global $gallery;
+	$key = 'testParameter';
+	$value = 'testValue';
+
+	for ($i = 0; $i < 3; $i++) {
+	    $ret = $gallery->setModuleParameter('core', "${key}-$i", "${value}-$i");
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $newValues) = $gallery->getAllModuleParameters('core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    $this->assertEquals("${value}-$i", $newValues["${key}-$i"]);
+	}
+    }
+}
+
+?>
