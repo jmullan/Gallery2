@@ -830,5 +830,43 @@ class GalleryUtilities {
 	}
 	return $value;
     }
+
+    /**
+     * Return true if the path exists and is in the given path list
+     *
+     * @param string the path
+     * @param string the list of legal paths
+     * @return true or false
+     */
+    function isPathInList($path, $list) {
+	global $gallery;
+
+	$pos = strpos($path, '..');
+	if (!($pos === false)) {
+	    return false;
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	foreach ($list as $element) {
+	    if ($path == $element) {
+		return true;
+	    }
+
+	    /*
+	     * Make sure the compare directory has a trailing slash so that
+	     * /tmp doesn't accidentally match /tmpfoo
+	     */
+	    if ($element{strlen($element)-1} != $slash) {
+		$element .= $slash;
+	    }
+
+	    if (!strncmp($element, $path, strlen($element))) {
+		return true;
+	    }
+	}
+	return false;
+    }
 }
 ?>

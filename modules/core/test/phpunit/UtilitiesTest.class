@@ -205,6 +205,13 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::removeFormVariables('utilitiestest.');
 	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest.'));
     }
+
+    function testIsPathInList() {
+	$this->assert(GalleryUtilities::isPathInList('/foo/bar', array('/foo', '/bar')), 'test 1');
+	$this->assert(!GalleryUtilities::isPathInList('/foobar', array('/foo', '/bar')), 'test 2');
+	$this->assert(GalleryUtilities::isPathInList('/foo', array('/foo', '/bar')), 'test 3');
+	$this->assert(GalleryUtilities::isPathInList('/foo/bar', array('/foo', '/bar')), 'test 4');
+    }
 }
 
 ?>
