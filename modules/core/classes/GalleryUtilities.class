@@ -94,5 +94,37 @@ class GalleryUtilities {
 	list ($base, $tag) = GalleryUtilities::getFileNameComponents($filename);
 	return $base;
     }
+
+    /**
+     * Return the specified request variables
+     *
+     * Sanitize the input data
+     */
+    function getRequestVariables() {
+
+	$values = array();
+	foreach (func_get_args() as $argName) {
+	    if (!empty($GLOBALS['HTTP_GET_VARS'][$argName])) {
+		$values[] = $GLOBALS['HTTP_GET_VARS'][$argName];
+	    } else if (!empty($GLOBALS['HTTP_POST_VARS'][$argName])) {
+		$values[] = $GLOBALS['HTTP_POST_VARS'][$argName];
+	    } else {
+		$values[] = null;
+	    }
+	}
+
+	/* Undo the damage caused by magic_quotes */
+	if (get_magic_quotes_gpc()) {
+	    for ($i = 0; $i < sizeof($values); $i++) {
+		$values[$i] = stripslashes($values[$i]);
+	    }
+	}
+
+	if (sizeof($values) == 1) {
+	    return $values[0];
+	} else {
+	    return $values;
+	}
+    }
 }
 ?>
