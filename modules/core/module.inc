@@ -358,6 +358,16 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
+	    if (!$isRoot && isset($permissions['core.edit'])) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('edit caption'),
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemEditCaptions',
+					    'itemId' => $item->getParentId(),
+					    'selectedId' => $item->getId(),
+					    'return' => 1));
+	    }
+
 	    if (!$isRoot && !$isParentRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
