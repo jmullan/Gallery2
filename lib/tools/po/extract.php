@@ -28,6 +28,11 @@
  * $Id$
  */
 
+if (php_sapi_name() != 'cli') {
+    print "You must run this from the command line\n";
+    exit(1);
+}
+
 $exts = '(class|php|inc|tpl)';
 
 foreach ($_SERVER['argv'] as $moduleDir) {
