@@ -105,6 +105,97 @@ class NetPbmModule extends GalleryModule {
     }
 	
     /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	global $gallery;
+	
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	if (!$needsConfiguration) {
+	    return array(GalleryStatus::success(), true);
+	}
+
+	/* Try a bunch of likely seeming paths to see if any of them work. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	/* Start with system paths.  Tack on a trailing slash if necessary. */
+	$paths = array();
+	foreach (explode(':', getenv('PATH')) as $path) {
+	    $path = trim($path);
+	    if ($path{strlen($path)-1} != $slash) {
+		$path .= $slash;
+	    }
+	    $paths[] = $path;
+	}
+	
+	/* Tack on other likely paths, based on our OS */
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $paths[] = 'C:\Program Files\netpbm\\';
+	    $paths[] = 'C:\apps\netpbm\\';
+	    $paths[] = 'C:\netpbm\\';
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    $paths[] = '/usr/bin/';
+	    $paths[] = '/usr/local/bin/';
+	    $paths[] = '/usr/local/netpbm/bin/';
+	    $paths[] = '/bin/';
+	} else {
+	    return array(GalleryStatus::success(), false);
+	}
+
+	/* Load any classes we require */
+	require_once(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
+
+	/* Now try each path in turn to see which ones work */
+	foreach ($paths as $path) {
+	    foreach (array('ppmtojpeg', 'pnmtojpeg') as $pnmtojpeg) {
+		list ($ret, $testResults) =
+		    NetPbmToolkitHelper::testBinaries($path, array('pnmtojpeg' => $pnmtojpeg));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+	    
+		$failCount = 0;
+		foreach ($testResults as $testResult) {
+		    /* All tests should work, else this path is not a valid one */
+		    if (!$testResult['success']) {
+			$failCount++;
+		    }
+		}
+
+		if ($failCount == 0) {
+		    /* We have a winner */
+		    $ret = $gallery->setModuleParameter('netpbm', 'path', $path);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
+		    }
+
+		    /* We have a winner */
+		    $ret = $gallery->setModuleParameter('netpbm', 'pnmtojpeg', $pnmtojpeg);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), false);
+		    }
+
+		    return array(GalleryStatus::success(), true);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
      * @see GalleryModule::activate()
      */
     function activate() {
