@@ -1,6 +1,6 @@
 <?php
 /* 
-V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -104,9 +104,9 @@ class  ADORecordSet_odbc_oracle extends ADORecordSet_odbc {
 	
 	var $databaseType = 'odbc_oracle';
 	
-	function ADORecordSet_odbc_oracle($id)
+	function ADORecordSet_odbc_oracle($id,$mode=false)
 	{
-		return $this->ADORecordSet_odbc($id);
+		return $this->ADORecordSet_odbc($id,$mode);
 	}
 }
 ?>

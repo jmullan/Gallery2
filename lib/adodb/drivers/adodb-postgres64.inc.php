@@ -1,6 +1,6 @@
 <?php
 /*
- V2.20 09 July 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V2.90 11 Dec 2002  (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -24,7 +24,8 @@ class ADODB_postgres64 extends ADOConnection{
 	var $hasInsertID = true;
 	var $_resultid = false;
   	var $concat_operator='||';
-	var $metaTablesSQL = "select tablename from pg_tables where tablename not like 'pg_%' order by 1";
+	var $metaTablesSQL = "select tablename from pg_tables where tablename not like 'pg\_%' order by 1";
+	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = "CURRENT_DATE";
 	var $sysTimeStamp = "CURRENT_TIMESTAMP";
@@ -42,7 +43,6 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	// get primary key etc -- from Freek Dijkstra
 	var $metaKeySQL = "SELECT ic.relname AS index_name, a.attname AS column_name,i.indisunique AS unique_key, i.indisprimary AS primary_key FROM pg_class bc, pg_class ic, pg_index i, pg_attribute a WHERE bc.oid = i.indrelid AND ic.oid = i.indexrelid AND (i.indkey[0] = a.attnum OR i.indkey[1] = a.attnum OR i.indkey[2] = a.attnum OR i.indkey[3] = a.attnum OR i.indkey[4] = a.attnum OR i.indkey[5] = a.attnum OR i.indkey[6] = a.attnum OR i.indkey[7] = a.attnum) AND a.attrelid = bc.oid AND bc.relname = '%s'";
 	
-	var $_hastrans = false;
 	var $hasAffectedRows = true;
 	var $hasLimit = false;	// set to true for pgsql 7 only. support pgsql/mysql SELECT * FROM TABLE LIMIT 10
 	// below suggested by Freek Dijkstra 
@@ -54,8 +54,11 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	var $hasGenID = true;
 	var $_genIDSQL = "SELECT NEXTVAL('%s')";
 	var $_genSeqSQL = "CREATE SEQUENCE %s START %s";
+	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
-		
+	
+	var $_is420 = false;
+	
 	// The last (fmtTimeStamp is not entirely correct: 
 	// PostgreSQL also has support for time zones, 
 	// and writes these time in this format: "2001-03-01 18:59:26+02". 
@@ -67,7 +70,14 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	function ADODB_postgres64() 
 	{
 	// changes the metaColumnsSQL, adds columns: attnum[6]
-			
+		$this->_is420 = strnatcmp(PHP_VERSION,'4.2.0')>=0;
+	}
+	
+	function ServerInfo()
+	{
+		$arr['description'] = $this->GetOne("select version()");
+		$arr['version'] = ADOConnection::_findvers($arr['description']);
+		return $arr;
 	}
 	
 	// get the last id - never tested
@@ -102,29 +112,73 @@ a different OID if a database must be reloaded. */
 		// returns true/false
 	function BeginTrans()
 	{
-		$this->_hastrans = true;
+		if ($this->transOff) return true;
+		$this->transCnt += 1;
 		return @pg_Exec($this->_connectionID, "begin");
 	}
 	
 	function RowLock($tables,$where) 
 	{
-		if (!$this->_hastrans) $this->BeginTrans();
+		if (!$this->transCnt) $this->BeginTrans();
 		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
 
 	// returns true/false. 
 	function CommitTrans($ok=true) 
 	{ 
+		if ($this->transOff) return true;
 		if (!$ok) return $this->RollbackTrans();
-		$this->_hastrans = false;
+		
+		$this->transCnt -= 1;
 		return @pg_Exec($this->_connectionID, "commit");
 	}
 	
 	// returns true/false
 	function RollbackTrans()
 	{
-		$this->_hastrans = false;
+		if ($this->transOff) return true;
+		$this->transCnt -= 1;
 		return @pg_Exec($this->_connectionID, "rollback");
+	}
+	
+			// Format date column in sql string given an input format that understands Y M D
+	function SQLDate($fmt, $col=false)
+	{	
+		if (!$col) $col = $this->sysDate;
+		$s = '';
+		
+		$len = strlen($fmt);
+		for ($i=0; $i < $len; $i++) {
+			if ($s) $s .= '||';
+			$ch = $fmt[$i];
+			switch($ch) {
+			case 'Y':
+			case 'y':
+				$s .= "date_part('year',$col)";
+				break;
+			case 'Q':
+			case 'q':
+				$s .= "date_part('quarter',$col)";
+				break;
+				
+			case 'M':
+			case 'm':
+				$s .= "lpad(date_part('month',$col),2,'0')";
+				break;
+			case 'D':
+			case 'd':
+				$s .= "lpad(date_part('day',$col),2,'0')";
+				break;
+			default:
+				if ($ch == '\\') {
+					$i++;
+					$ch = substr($fmt,$i,1);
+				}
+				$s .= $this->qstr($ch);
+				break;
+			}
+		}
+		return $s;
 	}
 	
 	/* 
@@ -171,7 +225,7 @@ a different OID if a database must be reloaded. */
 	{
 	global $ADODB_FETCH_MODE;
 	
-		if (!empty($this->metaColumnsSQL)) {
+		if (!empty($this->metaColumnsSQL)) { 
 			// the following is the only difference -- we lowercase it
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
@@ -221,9 +275,9 @@ a different OID if a database must be reloaded. */
 				}
 				unset($rsdef);
 			}
-
+		
 			$retarr = array();
-			while (!$rs->EOF) { //print_r($rs->fields);
+			while (!$rs->EOF) { 	
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
 				$fld->type = $rs->fields[1];
@@ -271,7 +325,7 @@ a different OID if a database must be reloaded. */
 		$rs = $this->Execute($sql);
 		if (!$rs) return false;
 		while (!$rs->EOF) {
-			$arr[] = $rs->fields[0];
+			$arr[] = reset($rs->fields);
 			$rs->MoveNext();
 		}
 		
@@ -332,23 +386,39 @@ a different OID if a database must be reloaded. */
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
-				$this->_resultid= pg_Exec($this->_connectionID,$sql);
-				return $this->_resultid;
+		$this->_resultid= pg_Exec($this->_connectionID,$sql);
+		// check if no data returned, then no need to create real recordset
+		if ($this->_resultid && pg_numfields($this->_resultid) <= 0) {
+			pg_freeresult($this->_resultid);
+			return true;
+		}
+		return $this->_resultid;
 	}
 	
 
 	/*	Returns: the last error message from previous database operation	*/	
 	function ErrorMsg() 
 	{
-		if (empty($this->_connectionID)) $this->_errorMsg = @pg_errormessage();
-		else $this->_errorMsg = @pg_errormessage($this->_connectionID);
+		if ($this->_is420) {
+			if (!empty($this->_resultid)) $this->_errorMsg = @pg_result_error($this->_resultid);
+			else if (!empty($this->_connectionID)) $this->_errorMsg = @pg_last_error($this->_connectionID);
+			else $this->_errorMsg = @pg_last_error();
+		} else {
+			if (empty($this->_connectionID)) $this->_errorMsg = @pg_errormessage();
+			else $this->_errorMsg = @pg_errormessage($this->_connectionID);
+		}
 		return $this->_errorMsg;
+	}
+	
+	function ErrorNo()
+	{
+		return (strlen($this->ErrorMsg())) ? -1 : 0;
 	}
 
 	// returns true or false
 	function _close()
 	{
-		if ($this->_hastrans) $this->RollbackTrans();
+		if ($this->transCnt) $this->RollbackTrans();
 		@pg_close($this->_connectionID);
 		$this->_resultid = false;
 		$this->_connectionID = false;
@@ -405,11 +475,13 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	var $databaseType = "postgres64";
 	var $canSeek = true;
-	function ADORecordSet_postgres64($queryID) 
+	function ADORecordSet_postgres64($queryID,$mode=false) 
 	{
-	global $ADODB_FETCH_MODE;
-	
-		switch ($ADODB_FETCH_MODE)
+		if ($mode === false) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		switch ($mode)
 		{
 		case ADODB_FETCH_NUM: $this->fetchMode = PGSQL_NUM; break;
 		case ADODB_FETCH_ASSOC:$this->fetchMode = PGSQL_ASSOC; break;
@@ -417,7 +489,6 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		case ADODB_FETCH_DEFAULT:
 		case ADODB_FETCH_BOTH:$this->fetchMode = PGSQL_BOTH; break;
 		}
-	
 		$this->ADORecordSet($queryID);
 	}
 	
@@ -472,12 +543,18 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	{
 		if (!$this->EOF) {		
 			$this->_currentRow++;
-			$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			if (is_array($this->fields)) return true;
+			
+			$f = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
+			
+			if (is_array($f)) {
+				$this->fields = $f;
+				return true;
+			}
 		}
 		$this->EOF = true;
 		return false;
-	}	
+	}		
+	
 	function _fetch()
 	{
 		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
@@ -490,6 +567,11 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
+		if (is_object($t)) {
+			$fieldobj = $t;
+			$t = $fieldobj->type;
+			$len = $fieldobj->max_length;
+		}
 		switch (strtoupper($t)) {
 				case 'CHAR':
 				case 'CHARACTER':

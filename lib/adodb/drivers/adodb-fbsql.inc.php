@@ -1,6 +1,6 @@
 <?php
 /*
- @version V2.30 1 Aug 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
+ @version V2.90 11 Dec 2002 (c) 2000-2002 John Lim (jlim@natsoft.com.my). All rights reserved.
  Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -80,7 +80,7 @@ class ADODB_fbsql extends ADOConnection {
  	function &MetaColumns($table) 
 	{
 		if ($this->metaColumnsSQL) {
-		
+			
 			$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
 			
 			if ($rs === false) return false;
@@ -159,10 +159,13 @@ class ADORecordSet_fbsql extends ADORecordSet{
 	var $databaseType = "fbsql";
 	var $canSeek = true;
 	
-	function ADORecordSet_fbsql($queryID) {
-	global $ADODB_FETCH_MODE;
-	
-		switch($ADODB_FETCH_MODE) {
+	function ADORecordSet_fbsql($queryID,$mode=false) 
+	{
+		if (!$mode) { 
+			global $ADODB_FETCH_MODE;
+			$mode = $ADODB_FETCH_MODE;
+		}
+		switch ($mode) {
 		case ADODB_FETCH_NUM: $this->fetchMode = FBSQL_NUM; break;
 		default:
 		case ADODB_FETCH_BOTH: $this->fetchMode = FBSQL_BOTH; break;
@@ -212,6 +215,11 @@ class ADORecordSet_fbsql extends ADORecordSet{
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
+		if (is_object($t)) {
+			$fieldobj = $t;
+			$t = $fieldobj->type;
+			$len = $fieldobj->max_length;
+		}
 		$len = -1; // fbsql max_length is not accurate
 		switch (strtoupper($t)) {
 		case 'CHARACTER':
