@@ -179,8 +179,8 @@ class SessionTest extends GalleryTestCase {
 
     function testIllegalSessionId() {
 	global $gallery;
-	$session =& $gallery->getSession();
-	$isUsingCookies = $session->isUsingCookies();
+	$saveSession = $gallery->getSession();
+	$isUsingCookies = $saveSession->isUsingCookies();
 
 	/* Test an illegal sessionId */
 	$_COOKIE[SESSION_ID_PARAMETER] = '../oops.txt';
@@ -205,12 +205,15 @@ class SessionTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 
 	$this->assertEquals($session->getSessionId(), $_COOKIE[SESSION_ID_PARAMETER]);
+
+	// Restore original session
+	$gallery->_session =& $saveSession;
     }
 
     function testSessionSaveLoad() {
 	global $gallery;
-	$session =& $gallery->getSession();
-	$isUsingCookies = $session->isUsingCookies();
+	$saveSession = $gallery->getSession();
+	$isUsingCookies = $saveSession->isUsingCookies();
 	$sid = md5(rand());
 
 	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
@@ -227,6 +230,7 @@ class SessionTest extends GalleryTestCase {
 
 	$ret = $session->save();
 	if ($ret->isError()) {
+	    $gallery->_session =& $saveSession;
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -238,6 +242,7 @@ class SessionTest extends GalleryTestCase {
 
 	$ret = $session->save();
 	if ($ret->isError()) {
+	    $gallery->_session =& $saveSession;
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -248,7 +253,9 @@ class SessionTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 
 	$this->assertEquals(array('j' => 'b'), $session->getStatus($otherStatusId));
+
+	// Restore original session
+	$gallery->_session =& $saveSession;
     }
 }
-
 ?>
