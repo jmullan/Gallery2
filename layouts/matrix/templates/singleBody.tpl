@@ -18,12 +18,16 @@
       <table class="gbTitleBanner">
         <tr>
           <td>
+            {if !empty($layout.item.title)}
             <h1 class="giTitle">
-              {$layout.item.title|default:$layout.item.pathComponent|markup}
+              {$layout.item.title|markup}
             </h1>
+            {/if}
+            {if !empty($layout.item.description)}
             <p class="giDescription">
               {$layout.item.description|markup}
             </p>
+	    {/if}
           </td>
           <td>
             <ul class="giInfo">

@@ -21,12 +21,16 @@
       <table class="gbTitleBanner">
         <tr>
           <td>
-            <h1 class="giTitle">
-              {$layout.item.title|default:$layout.item.pathComponent|markup}
+	    {if !empty($layout.item.title)}
+	    <h1 class="giTitle">
+              {$layout.item.title|markup}
             </h1>
+	    {/if}
+	    {if !empty($layout.item.description)}
             <p class="giDescription">
               {$layout.item.description|markup}
             </p>      
+	    {/if}
           </td>
   
           <td>
@@ -110,17 +114,21 @@
             {/if}
           </div>
 
+          {if !empty($child.title)}
           <h2 class="giTitle">
             {if $child.canContainChildren}
-            {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent|markup}
+            {g->text text="Album: %s" arg1=$child.title|markup}
             {else}
-            {$child.title|default:$child.pathComponent|markup}
+            {$child.title|markup}
             {/if}
           </h2>
+          {/if}
 
+          {if !empty($child.summary)}
           <p class="giDescription">
             {$child.summary|entitytruncate:256|markup}
           </p>
+          {/if}
 
           <ul class="giInfo">
             <li>
