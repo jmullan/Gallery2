@@ -364,37 +364,49 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
 
-	$select[] = '[GalleryItemAttributesMap::itemId]';
-	$from[] = '[GalleryItemAttributesMap]';
-	$where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
-	list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
+	if ($recursive) { 
+	    $select[] = '[GalleryItemAttributesMap::itemId]';
+	    $from[] = '[GalleryItemAttributesMap]';
+	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
+	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 
-	/* We don't care about ERROR_MISSING_OBJECT if it's a top-level album */
-	if ($ret->isError() & ERROR_MISSING_OBJECT) {
+	    /* We don't care about ERROR_MISSING_OBJECT if it's a top-level album */
+	    if ($ret->isError() & ERROR_MISSING_OBJECT) {
+		    return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $data[] = (empty($sequence) ? '/' : implode('/', $sequence)) . (empty($sequence) ? '' : '/') . 
+		    $parentAlbum->getId() . '/%';
+	    $data[] = $parentAlbum->getId();
+
+	    /* Build the query */
+	    $query = 'SELECT ' . implode(', ', $select) .
+		     ' FROM ' . implode(', ', $from) .
+		     ' WHERE ' . implode(' AND ', $where);
+
+	    list ($ret, $searchResult) = $gallery->search($query, $data);
+	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
-	}
-	$data[] = (empty($sequence) ? '/' : implode('/', $sequence)) . (empty($sequence) ? '' : '/') . 
-		$parentAlbum->getId() . '/%';
-	$data[] = $parentAlbum->getId();
+	    }
 
-	/* Build the query */
-	$query = 'SELECT ' . implode(', ', $select) .
-		 ' FROM ' . implode(', ', $from) .
-		 ' WHERE ' . implode(' AND ', $where);
-
-	list ($ret, $searchResult) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    while ($result = $searchResult->nextResult()) {
+		$childIds[] = $result[0];
+	    }
+	} else {
+	    list($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
+	    $childIds[] = $parentAlbum->getId();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
-	while ($result = $searchResult->nextResult()) {
+	foreach ($childIds as $itemId) {
 	    if ($disabled) {
-		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $result[0]));
+		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $itemId));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else {
-		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $result[0]));
+		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $itemId));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
