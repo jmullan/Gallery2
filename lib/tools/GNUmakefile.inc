@@ -1,5 +1,5 @@
 # If SAXON_JAR isn't set in the environment,  check for it in a couple of obvious places
-SAXON_JAR ?= $(shell for path in /usr/local/share/java/classes/saxon.jar /usr/share/java/saxon.jar; do if test -f $${path}; then echo $${path}; break; fi; done;)
+SAXON_JAR ?= $(shell for path in /usr/local/share/java/classes/saxon.jar /usr/share/java/saxon.jar /usr/local/share/saxon/saxon.jar; do if test -f $${path}; then echo $${path}; break; fi; done;)
 
 # You can override the SAXON command in the environment
 #
