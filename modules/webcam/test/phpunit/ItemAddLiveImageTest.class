@@ -1,0 +1,344 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package WebCam
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * ItemAddLiveImage plugin test
+ * @package WebCam
+ * @subpackage PHPUnit
+ */
+class ItemAddLiveImageTest extends ItemAddPluginTestCase {
+
+    function ItemAddLiveImageTest($methodName) {
+	$this->ItemAddPluginTestCase($methodName, 'webcam', 'ItemAddLiveImage');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_platform = new ItemAddLiveImageTestPlatform();
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testCheckUrl() {
+	GalleryUtilities::putRequestVariable('form[action][checkUrl]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'test');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(array(), array()), $results);
+    }
+
+    function testAddLiveImage() {
+	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/test.jpg');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'no error');
+	$this->assertEquals(array('addedFiles'), array_keys($results[1]), 'addedFiles');
+	$this->assertEquals(1, count($results[1]['addedFiles']), '1 file');
+	$this->assertEquals(array('fileName', 'id'), array_keys($results[1]['addedFiles'][0]), 'key');
+	$this->assertEquals('test.jpg', $results[1]['addedFiles'][0]['fileName'], 'fileName');
+    }    
+
+    function testAddLiveImageNotFound() {
+	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/404.jpg');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array('form[error][imageUrl][unavailable]'), $results[0], 'error');
+	$this->assertEquals(array(), $results[1], 'status');
+    }    
+
+    function testAddLiveImageBadType() {
+	GalleryUtilities::putRequestVariable('form[action][addLiveImage]', 1);
+	GalleryUtilities::putRequestVariable('form[imageUrl]', 'http://test.com/test.html');
+
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array('form[error][imageUrl][notImage]'), $results[0], 'error');
+	$this->assertEquals(array(), $results[1], 'status');
+    }    
+}
+
+/**
+ * Test platform
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemAddLiveImageTestPlatform {
+
+    function tempnam($tmpDir, $base) {
+	return "/test/$base";
+    }
+
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	if ($target == 'test.com' && $port == '80') {
+	    return 'test-resource-1';
+	}
+
+	$errno = 1;
+	$errstring = 'test failure';
+    }
+
+    function fwrite($handle, $string, $length=0) {
+        if ($handle == 'test-resource-1') {
+	    switch ($string) {
+	    case "GET /test.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
+		$status = 'HTTP/1.1 200 OK';
+		$mime = 'image/jpeg';
+		break;
+
+	    case "GET /404.jpg HTTP/1.0\r\nHost: test.com\r\n\r\n":
+		$status = 'HTTP/1.1 404 Not Found';
+		$mime = 'text/html';
+		break;
+
+	    case "GET /test.html HTTP/1.0\r\nHost: test.com\r\n\r\n":
+		$status = 'HTTP/1.1 200 OK';
+		$mime = 'text/html';
+		break;
+	    }
+	    if (isset($status)) {
+		$buffer = array();
+		$buffer[] = $status;
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 3 Nov 2004 05:40:03 GMT';
+		$buffer[] = 'Accept-Ranges: bytes';
+		$buffer[] = 'ETag: "122ae4-5-3fc199b0"';
+		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
+		$buffer[] = 'Content-Length: 5';
+		$buffer[] = "Content-Type: $mime";
+		$buffer[] = 'Last-Modified: Mon, 3 Nov 2004 05:40:00 GMT';
+		$buffer[] = 'Client-Date: Mon, 3 Nov 2004 05:40:03 GMT';
+		$buffer[] = 'Client-Peer: 209.237.226.157:80';
+		$buffer[] = 'Client-Response-Num: 1';
+		$buffer[] = '';
+		$buffer[] = 'test';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+	    }
+	} else if ($handle == '/test/webcam') {
+	    return strlen($string);
+	}
+	print "Unexpected write: $handle $string\n";
+	return 0;
+    }
+
+    function getDirectorySeparator() {
+	return '/';
+    }
+
+    function legalizePathComponent($component) {
+	switch ($component) {
+	case 'test.jpg':
+	case 'test.html':
+	    return $component;
+
+	default:
+	    print "Unexpected legalizePathComponent($component)";
+	    return 'UNEXPECTED';
+	}
+    }
+
+    function copy($fromFile, $toFile) {
+	if ($fromFile == '/test/webcam') {
+	    switch (basename($toFile)) {
+	    case 'test.jpg':
+	    case 'test.html':
+		return true;
+	    }
+	}
+
+	print "unexpected copy($fromFile, $toFile)";
+	return false;
+    }
+
+    function getimagesize($filename) {
+	switch (basename($filename)) {
+	case 'test.jpg':
+	    return array(100, 200);
+	}
+
+	print "unexpected getimagesize($filename)";
+	return 0;
+    }
+
+    function filesize($filename) {
+	switch (basename($filename)) {
+	case 'test.jpg':
+	case 'test.html':
+	    return 5;
+	}
+
+	print "unexpected filesize($filename)";
+	return 0;
+    }
+
+    function mkdir($dirname) {
+	print "unexpected mkdir($dirname)";
+	return false;
+    }
+
+    function file_exists($filename) {
+	switch($filename) {
+	case '/test/webcam':
+	    return 1;
+	}
+
+	return 0;
+    }
+
+    function unlink($filename) {
+	switch($filename) {
+	case '/test/webcam':
+	    return 1;
+	}
+
+	// Pass lock requests
+	if (preg_match("|\blocks\b|", $filename)) {
+	    return unlink($filename);
+	}
+
+	print "Attempted to unlink bogus file: $filename";
+	return 0;
+    }
+
+    function fflush($handle) {
+	switch($handle) {
+	case 'test-resource-1':
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+
+    function fgets($handle, $length) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	return array_shift($this->_readBuffer[$handle]) . "\n";
+    }
+
+    function fread($handle, $length) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	/*
+	 * Return the number of bytes requested, or if that exceeds what we have available
+	 * return what we have available.
+	 */
+	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
+	    $tmp = join("\n", $this->_readBuffer[$handle]);
+	    unset($this->_readBuffer[$handle]);
+	    return $tmp;
+	} else {
+	    $buf = join("\n", $this->_readBuffer[$handle]);
+	    $tmp = substr($buf, 0, $length);
+	    $this->_readBuffer[$handle] = split("\n", substr($buf, $length+1));
+	    return $tmp;
+	}
+    }
+
+    function feof($handle) {
+	return (empty($this->_readBuffer[$handle]));
+    }
+
+    function flock($handle, $operation, &$wouldblock) {
+	// Pass lock requests
+	return flock($handle, $operation, $wouldblock);
+    }
+
+    function fclose($handle) {
+	if ($handle == 'test-resource-1') {
+	    unset($this->_readBuffer[$handle]);
+	    return true;
+	}
+
+	// Pass locks
+	if (is_resource($handle)) {
+	    return fclose($handle);
+	}
+
+	return false;
+    }
+
+    function is_uploaded_file($filename) {
+	return false;
+    }
+
+    function fopen($filename, $modes) {
+	if ($filename == '/test/webcam' && $modes == 'wb') {
+	    return $filename;
+	}
+
+	// Pass lock requests
+	if (preg_match("|\blocks\b|", $filename)) {
+	    return fopen($filename, $modes);
+	}
+
+	print "Unexpected fopen($filename, $modes)";
+	return null;
+    }
+
+    function realpath($path) {
+	return realpath($path);
+    }
+}
+?>
