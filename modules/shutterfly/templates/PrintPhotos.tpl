@@ -43,10 +43,10 @@
       <input type="hidden" name="imthumbwidth-{$index}" value="{$entry.thumbWidth}"/>
       <input type="hidden" name="imthumbheight-{$index}" value="{$entry.thumbHeight}"/>
     {/if}
+    {if !empty($entry.item.title)}
+      <input type="hidden" name="imbkprnta-{$index}" value="{$entry.item.title}"/>
+    {/if}
   {/foreach}
-  {if !empty($entry.item.title)}
-    <input type="hidden" name="imbkprnta-{$index}" value="{$entry.item.title}"/>
-  {/if}
 </form>
 <noscript>
   <input type="submit"/>
