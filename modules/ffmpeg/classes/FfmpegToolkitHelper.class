@@ -137,14 +137,16 @@ class FfmpegToolkitHelper {
 	$i = 0;
 	while ($i < sizeof($results)) {
 	    $resultLine = $results[$i++];
-            /*
+	    /*
 	     * ffmpeg 0.4.6 says:
-	     * 
+	     * File formats:
 	     *   Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe
 	     * ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw
 	     * rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device
 	     * audio_device rtsp redir sdp rtp
 	     * [multiple lines]
+	     * Codecs:
+	     * ....
 	     *
 	     * ffmpeg 0.4.7 says:
 	     * Input audio/video file formats: mpeg mpegts image ...
@@ -179,16 +181,21 @@ class FfmpegToolkitHelper {
 		}
 		$success = true;
 	    } else if (preg_match('|  Decoding: (.*)$|', $resultLine, $regs)) {
-	        do {
+		do {
 		    foreach (explode(' ', $regs[1]) as $type) {
-		        if (isset($relevantTypes[$type])) {
+			if (isset($relevantTypes[$type])) {
 			    $mimeTypes[] = GalleryCoreApi::convertExtensionToMime($type);
-		        }
+			}
 		    }
 		    $resultLine = $results[$i++];
 		} while ($i < sizeof($results) && !preg_match('|Codecs:|', $resultLine));
 		$success = true;
 	    } else if (preg_match('|File formats:|', $resultLine, $regs)) {
+		$resultLine = $results[$i++];
+		if (preg_match('/^  \w+: /', $resultLine)) {
+		    /* We have found 0.4.6 format */
+		    continue;
+		}
 		do {
 		    list($capabilities, $types) = preg_split('/\s+/', $resultLine, -1, PREG_SPLIT_NO_EMPTY);
 		    foreach (explode(',', $types) as $type) {
@@ -198,7 +205,7 @@ class FfmpegToolkitHelper {
 			    }
 			}
 		    }
-						    
+		    
 		    $resultLine = $results[$i++];
 		} while (!empty($resultLine));
 		$success = true;
