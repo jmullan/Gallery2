@@ -68,6 +68,11 @@ class GalleryEntityHelper_simple {
 	    } else {
 		$data =& GalleryDataCache::getFromDisk(array('type' => 'entity', 'itemId' => $id));
 		if (isset($data)) {
+		    /* Let each entity do its post-load procedure */
+		    $ret = $data->onLoad();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    $cached[$id] =& $data;
 		    GalleryDataCache::put($cacheKey, $data);
 		} else {

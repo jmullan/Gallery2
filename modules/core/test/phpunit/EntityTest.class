@@ -1,0 +1,140 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test Entity functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTest extends GalleryTestCase {
+
+    function EntityTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testDoLoad() {
+	// Ensure GalleryEntity::onLoad() is called whether entity is
+	// loaded from database or disk cache..
+
+	GalleryDataCache::setFileCachingEnabled(true);
+
+	// Create entity..
+	list ($ret, $entity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $entity->create();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Save entity..
+	$ret = $entity->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Load the entity back and verify it
+	GalleryDataCache::reset();
+	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $entity->getId()));
+
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
+	$this->assertEquals($entity, $newEntity, 'Entity check');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
+
+	if (GalleryDataCache::isFileCachingEnabled()) {
+	    // Load back from disk cache and verify it
+	    GalleryDataCache::reset();
+	    $data = GalleryDataCache::getFromDisk(
+				      array('type' => 'entity', 'itemId' => $entity->getId()));
+	    $this->assert(!empty($data), 'Entity data should be in disk cache');
+
+	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class 2');
+	    $this->assertEquals($entity, $newEntity, 'Entity check 2');
+	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for disk cache load');
+	}
+
+	// Delete the entity..
+	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTestEntity extends GalleryEntity {
+
+    function create() {
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->setEntityType('EntityTestEntity');
+	return GalleryStatus::success();
+    }
+
+    function onLoad() {
+	$this->_wasOnLoadCalled(true);
+	$ret = parent::onLoad();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    function _wasOnLoadCalled($set=null) {
+	static $wasCalled;
+	if (!isset($wasCalled)) {
+	    $wasCalled = false;
+	}
+	if (isset($set)) {
+	    $value = $wasCalled = $set;
+	} else {
+	    $value = $wasCalled;
+	    $wasCalled = false;
+	}
+	return $value;
+    }
+}
+?>
