@@ -20,7 +20,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-if (!file_exists(dirname(__FILE__) . '/config.php')) {
+if (!file_exists(dirname(__FILE__) . '/config.php') ||
+        filesize(dirname(__FILE__) . '/config.php') < 10) {
     header("Location: install/");
     return;
 }
