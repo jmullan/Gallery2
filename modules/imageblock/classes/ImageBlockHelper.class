@@ -364,6 +364,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
 
+	$childIds = array();
 	if ($recursive) { 
 	    $select[] = '[GalleryItemAttributesMap::itemId]';
 	    $from[] = '[GalleryItemAttributesMap]';
