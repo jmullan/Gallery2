@@ -158,7 +158,7 @@ class ShowItemView extends GalleryView {
 	$itemId = null;
 	$origQueryString = $queryString;
 	while ($itemId == null && !empty($queryString)) {
-	    list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath($queryString);
+	    list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath(urldecode($queryString));
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
