@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -44,19 +44,30 @@ class PhotoAccessHelper {
      */
     function printPhotos($cartItemIds, $returnUrl) {
 	global $gallery;
+	$itemIds = array_keys($cartItemIds);
 
 	/* Load the necessary item data */
-	list ($ret, $items) = GalleryCoreApi::loadEntitiesById(array_keys($cartItemIds));
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array_keys($cartItemIds));
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array_keys($cartItemIds));
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = GalleryCoreApi::studyPermissions($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -69,7 +80,7 @@ class PhotoAccessHelper {
 	if (empty($cartUrlFragment)) {
 	    $cartUrlFragment = '/buy/anonCartXML.jsp';
 	}
-	
+
 	$urlGenerator = $gallery->getUrlGenerator();
 
 	/* Assemble all our data */
@@ -78,19 +89,31 @@ class PhotoAccessHelper {
 	    $itemId = $item->getId();
 	    $entry = array();
 
-	    if (isset($preferreds[$itemId])) {
-		$sourceId = $preferreds[$itemId]->getId();
-		$imageWidth = $preferreds[$itemId]->getWidth();
-		$imageHeight = $preferreds[$itemId]->getHeight();
-	    } else {
-		$sourceId = $item->getId();
-		$imageWidth = $item->getWidth();
-		$imageHeight = $item->getHeight();
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $entry['id'] = $sourceId;
+	    if (isset($permissions['core.viewSource'])) {
+		$source = isset($preferreds[$itemId]) ? $preferreds[$itemId] : $item;
+	    } else if (isset($permissions['core.viewResizes']) && !empty($resizes[$itemId])) {
+		$maxSize = null;
+		foreach ($resizes[$itemId] as $resize) {
+		    $size = $resize->getDerivativeSize();
+		    if (!isset($maxSize) || $size > $maxSize) {
+			$source = $resize;
+			$maxSize = $size;
+		    }
+		}
+	    } else if (isset($thumbnails[$itemId])) {
+		$source = $thumbnails[$itemId];
+	    } else {
+		continue;
+	    }
+
+	    $entry['id'] = $source->getId();
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
-		array('view' => 'core:DownloadItem', 'itemId' => $sourceId),
+		array('view' => 'core:DownloadItem', 'itemId' => $source->getId()),
 		true);
 
 	    if (isset($thumbnails[$itemId])) {
@@ -100,8 +123,8 @@ class PhotoAccessHelper {
 	    } else {
 		$entry['thumbUrl'] = '';
 	    }
-	    $entry['imageWidth'] = $imageWidth;
-	    $entry['imageHeight'] = $imageHeight;
+	    $entry['imageWidth'] = $source->getWidth();
+	    $entry['imageHeight'] = $source->getHeight();
 
 	    $entries[] = $entry;
 	    /* We should scan the results for a "200 OK" result */
@@ -136,7 +159,7 @@ class PhotoAccessHelper {
 	$postData = array();
 	$postData['cb'] = 'CB_GP';
 	$postData['xml_request'] = join('', $lines);
-	
+
 	$gallery->guaranteeTimeLimit(30);
 	$cartUrl = 'http://' . $photoAccessServer . $cartUrlFragment;
 	list ($body, $headers) =
