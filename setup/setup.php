@@ -497,7 +497,7 @@ function CreateAdminUser() {
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
-    $user->setPassword('admin');
+    $user->changePassword('admin');
     $user->setFullName('Gallery Administrator');
 	
     $ret = $user->save();
