@@ -37,7 +37,8 @@ class GalleryChildEntityHelper {
     /**
      * Return the ids of all the immediate child entities of the given entity.
      *
-     * Note: this call ignores permissions so it must be used very carefully!
+     * Note: this call ignores permissions and order so it must be used very
+     * carefully!
      *
      * @access public
      * @param array item ids
@@ -81,6 +82,8 @@ class GalleryChildEntityHelper {
 
     /**
      * Return the ids of all the parent entities of the given entity.
+     *
+     * Note: this call ignores permissions so it must be used very carefully!
      *
      * @access public
      * @param array item ids
