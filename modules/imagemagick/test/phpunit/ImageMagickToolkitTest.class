@@ -67,15 +67,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     }
 
     /**
-     * 
+     *
      */
     function setUp() {
 	global $gallery;
-	
+
 	parent::setUp();
-	
+
 	$gallery->_platform =& new ImageMagickToolkitTestPlatform($gallery->getPlatform(), $this->_files);
-	
+
 	$this->_save = array();
 	foreach (array('path', 'jpegQuality', 'compositeCmd', 'binary', 'removeMetaDataSwitch') as $key) {
 	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
@@ -84,7 +84,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	/* Reset to the defaults -- tearDown will undo this */
 	foreach (array('jpegQuality' => 75) as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
@@ -93,7 +93,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	
+
 	/* Get a toolkit to work with */
 	$this->_toolkit =& new ImageMagickToolkit();
     }
@@ -103,14 +103,14 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      */
     function tearDown() {
 	global $gallery;
-	
+
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	parent::tearDown();
     }
 
@@ -122,37 +122,41 @@ class ImageMagickToolkitTest extends GalleryTestCase {
      */
     function _setEnvironment($environment) {
 	global $gallery;
-	
+
 	$environment['path'] = '/' . $environment['name'] . $environment['version'] . '/';
-	
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $environment['path']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_currentEnvironment = $environment;
 	$gallery->_platform->setEnvironment($environment);
-	
+
 	$ret = ImageMagickToolkitHelper::savePlatformParameters();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	return true;
+    }
+
+    function _envName() {
+	return $this->_currentEnvironment['name'] . ' ' . $this->_currentEnvironment['version'];
     }
 
     /**
      * Helper to test a certain operation
-     * 
+     *
      * @param string
      * @param string
      * @param string filename
      * @param string filename
      * @param array indexed array
      * @param array assoc-array with paramName=>paramValue
-     * 
+     *
      * @access private
      * @return object GalleryStatus
      */
@@ -163,11 +167,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if ($mimeType == 'image/tiff' || $mimeType == 'application/pdf' || $mimeType == 'application/postscript') {
-	    $src = $src . '[0]';
+	    if ($operation == 'select-page') {
+		$src .= '[' . ($params[0] - 1) . ']';
+	    } else {
+		$src .= '[0]';
+	    }
 	}
-	
+
 	$search = array('|%src%|', '|%dst%|');
 	$replace = array($src, $dst);
 	foreach ($namedParams as $key => $value) {
@@ -178,13 +186,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	foreach (array_keys($expected) as $key) {
 	    $expected[$key] = preg_replace($search, $replace, $expected[$key]);
 	}
-	
+
 	if ($outputMimeType == 'image/jpeg' || $outputMimeType == 'image/png') {
 	    foreach (array_keys($expected) as $key) {
 		$expected[$key] = array_merge(array('-quality', '75'), $expected[$key]);
 	    }
-	} 
-	
+	}
+
 	global $_ImPlatformFiles;
 	$this->assertEquals($expected, $this->_files[$dst]['operation'], $this->_currentEnvironment['path']);
 
@@ -231,6 +239,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					 array('24.667', '23.5', '51.375', '52'),
 					 array('width' => '329', 'height' => '250', 'x' => '158', 'y' => '113')
 				    );
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $this->_testOperation('application/pdf', 'select-page',
+					 'test.pdf', 'output.pdf',
+					 array('2'), array());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -291,11 +306,18 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(array(10, 20), $results);
+	    $this->assertEquals(array(10, 20), $results, 'dimensions ' . $this->_envName());
+
+	    list ($ret, $results) =
+		$this->_toolkit->getProperty('application/pdf', 'page-count', 'test.pdf');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(array(2), $results, 'page-count ' . $this->_envName());
 
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
-	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED, 'bad op ' . $this->_envName());
 	}
     }
 
@@ -393,6 +415,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx', 'application/postscript');
 	    $canConvert = array_intersect($wantToConvert, $environment['mimeTypes']);
+	    $wantToPage = array('image/tiff', 'application/pdf', 'application/postscript');
+	    $canPage = array_intersect($wantToPage, $environment['mimeTypes']);
 
 	    $this->assertEquals(array(
 		'convert-to-image/jpeg' => array(
@@ -495,6 +519,16 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			'description' => 'Overlay source image with a second one',
 			'mimeTypes' => $environment['mimeTypes'],
 		),
+		'select-page' => array(
+			'params' => array(
+				array(
+					'type' => 'int',
+					'description' => 'page number',
+				),
+			),
+			'description' => 'Select a single page from a multi-page file',
+			'mimeTypes' => $canPage,
+		),
 	    ), $results['operations']);
 
 	    $this->assertEquals(array(
@@ -502,7 +536,12 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			'type' => 'int,int',
 			'description' => 'Get the width and height of the image',
 			'mimeTypes' => $environment['mimeTypes'],
-		)
+		),
+		'page-count' => array(
+			'type' => 'int',
+			'description' => 'Get the number of pages',
+			'mimeTypes' => $canPage,
+		),
 	    ), $results['properties']);
 	}
     }
@@ -515,7 +554,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $wanted = array('identify', 'convert', 'combine', 'composite');
 	    $expected = array();
 	    foreach ($wanted as $binary) {
@@ -523,7 +562,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    $expected[] = array('name' => $binary, 'success' => true);
 		}
 	    }
-	    
+
 	    $this->assertEquals($expected, $results);
 	}
 
@@ -663,7 +702,7 @@ class ImageMagickToolkitTestPlatform {
 	//echo $this->_environment['path'] . ": file_exists($path)<br>\n";
 	return false;
     }
-    
+
     function is_dir($path) {
 	if ($path == $this->_environment['path']) {
 	    return true;
@@ -686,7 +725,7 @@ class ImageMagickToolkitTestPlatform {
 	}
 
 	echo $this->_environment['path'] . ": is_executable($file)<br>\n";
-	return false;	
+	return false;
     }
 
     function copy($file1, $file2) {

@@ -57,6 +57,9 @@ $_commonOperations = array(
 	'composite' => array(
 		'composite' => array('-geometry', '+%x%+%y%', '%image%', '%src%', '%dst%'),
 	),
+	'select-page' => array(
+		'convert' => array('%src%', '%dst%'),
+	),
 );
 
 /* --------------------------------------------------------------------------

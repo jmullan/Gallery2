@@ -66,7 +66,7 @@ class ImageMagickToolkitHelper {
 	);
 	if (!empty($convertToJpegMimeTypes)) {
 	    $operations['convert-to-image/jpeg']['params'] = array();
-	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
+	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
 	    $operations['convert-to-image/jpeg']['mimeTypes'] = $convertToJpegMimeTypes;
 	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 	}
@@ -74,7 +74,7 @@ class ImageMagickToolkitHelper {
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int',
 						 'description' => $gallery->i18n('target size'));
-	$operations['scale']['description'] = $gallery->i18n('Scale the image to the target size'); 
+	$operations['scale']['description'] = $gallery->i18n('Scale the image to the target size');
 	$operations['scale']['mimeTypes'] = $mimeTypes;
 
 	/* Thumbnail is an alias for scale */
@@ -85,15 +85,15 @@ class ImageMagickToolkitHelper {
 						  'description' => $gallery->i18n('target width'));
 	$operations['resize']['params'][] = array('type' => 'int',
 						  'description' => $gallery->i18n('target height'));
-	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions'); 
+	$operations['resize']['description'] = $gallery->i18n('Resize the image to the target dimensions');
 	$operations['resize']['mimeTypes'] = $mimeTypes;
 
 	/* Rotate */
 	$operations['rotate']['params'][] = array('type' => 'int',
 						  'description' => $gallery->i18n('rotation degrees'));
-	$operations['rotate']['description'] = $gallery->i18n('Rotate the image'); 
+	$operations['rotate']['description'] = $gallery->i18n('Rotate the image');
 	$operations['rotate']['mimeTypes'] = $mimeTypes;
-	
+
 	/* Crop */
 	$operations['crop']['params'][] = array('type' => 'float',
 						'description' => $gallery->i18n('left edge %'));
@@ -103,7 +103,7 @@ class ImageMagickToolkitHelper {
 						'description' => $gallery->i18n('width %'));
 	$operations['crop']['params'][] = array('type' => 'float',
 						'description' => $gallery->i18n('height %'));
-	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
+	$operations['crop']['description'] = $gallery->i18n('Crop the image');
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 
 	/* Composite */
@@ -124,14 +124,32 @@ class ImageMagickToolkitHelper {
 	$operations['composite']['description'] = $gallery->i18n('Overlay source image with a second one');
 	$operations['composite']['mimeTypes'] = $mimeTypes;
 
+	$multiPageMimeTypes = array_intersect(
+		array('image/tiff', 'application/pdf', 'application/postscript'),
+		$mimeTypes
+	);
+	if (!empty($multiPageMimeTypes)) {
+	    $operations['select-page'] = array(
+		'params' => array(array('type' => 'int',
+					'description' => $gallery->i18n('page number'))),
+		'description' => $gallery->i18n('Select a single page from a multi-page file'),
+		'mimeTypes' => $multiPageMimeTypes);
+	}
+
 	/*
 	 * -------------------- Properties --------------------
 	 */
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image'); 
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the image');
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
+
+	if (!empty($multiPageMimeTypes)) {
+	    $properties['pagecount']['type'] = 'int';
+	    $properties['pagecount']['description'] = $gallery->i18n('Get the number of pages');
+	    $properties['pagecount']['mimeTypes'] = $multiPageMimeTypes;
+	}
 
 	return array(GalleryStatus::success(), array('operations' => $operations,
 						     'properties' => $properties));
@@ -139,7 +157,7 @@ class ImageMagickToolkitHelper {
 
     /**
      * Return an array of cmds needed to execute ImageMagick/GraphicsMagick commands
-     * 
+     *
      * @param string an ImageMagick command (eg. "convert")
      * @param string an optional other ImageMagick path. Default comes from modules configuration
      * @return array object GalleryStatus
@@ -177,7 +195,7 @@ class ImageMagickToolkitHelper {
      *
      * This is done by trying to run 'identify' on a couple of sample images.
      *
-     * @param string [optional] path to the ImageMagick we are testing, 
+     * @param string [optional] path to the ImageMagick we are testing,
      *	       if not given, use the 'imagemagick.path' module parameter
      * @return array object GalleryStatus
      *	       array supported mime-types
@@ -223,7 +241,7 @@ class ImageMagickToolkitHelper {
 	    }
 	    $command = array_merge($command, array($dataPath . $test['file']));
 	    list ($success, $results) = $platform->exec(array($command));
-	    
+
 	    $successCount += $success;
 	    if ($success) {
 		foreach ($results as $resultLine) {
@@ -253,7 +271,7 @@ class ImageMagickToolkitHelper {
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successfull?
-     *		      'message' => string: the error message, in case of 
+     *		      'message' => string: the error message, in case of
      *				   IMAGEMAGIC_TEST_ERROR
      *		     )
      * @static
@@ -266,7 +284,7 @@ class ImageMagickToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath)) { 
+	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath)) {
 	    if (! $platform->file_exists($imageMagickPath)
 		|| ! $platform->is_dir($imageMagickPath) ) {
 		return array(GalleryStatus::error(ERROR_BAD_PATH,
@@ -314,7 +332,7 @@ class ImageMagickToolkitHelper {
 		    $command = array_merge($command, array($dataPath . 'test.gif'));
 		    list ($success, $results) = $platform->exec(array($command));
 		}
-	    
+
 		if (!$success) {
 		    $testArray[] =
 			array('name' => 'identify',
@@ -595,7 +613,7 @@ class ImageMagickToolkitHelper {
     }
 
     /**
-     * Given a imageMagickPath, discover and store some platform-specific 
+     * Given a imageMagickPath, discover and store some platform-specific
      * settings in the plugins parameter map
      *
      * @return object GalleryStatus
@@ -612,7 +630,7 @@ class ImageMagickToolkitHelper {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Find out what composite cmd to use */
 	list ($ret, $compositeCmd) = ImageMagickToolkitHelper::discoverCompositeCmd($imageMagickPath);
 	if ($ret->isError()) {
