@@ -14,6 +14,7 @@
         body {
                 font-size: 1.2em;
 	        margin: 16px 48px;
+	        background: #e9eff3;
         }
 	p {
 	        line-height: 1.5em;
@@ -77,11 +78,12 @@
 	        padding: 0.2em 0.2em;
 	}
 	.important {
-	        background: #FAAA61;
+	        background: #FACA61;
 	        border: 2px;
 	        width: 480px;
 	        margin: 0.6em 0 0.6em 0;
 	        padding: 0.6em;
+ 	        color: #C00;
 	}
 	.important h3 {
 	        color: #eee;
@@ -119,13 +121,15 @@
   </head>
 
   <body>
-    <img src="images/g2Logo.png" alt="Gallery 2.0 Alpha" />
+    <img src="images/g2Logo.gif" alt="Gallery 2.0 Alpha" />
     <p>
       Welcome to Gallery 2.0 (G2). This is the fourth and final
-      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Nice Commits&rdquo;</b>.
-      Please read through this document carefully before installing G2
-      and before asking for help.  We have taken care to try to answer
-      as many of your questions here as possible.
+      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Nice
+      Commits&rdquo;</b>.  Please read through this document carefully
+      before installing G2 and before asking for help.  We have taken
+      care to try to answer as many of your questions here as
+      possible.  If you don't read this and have problems, we may
+      refer you back to this document as a first resource.
     </p>
 
 
@@ -153,9 +157,12 @@
       The odds are that your system is mostly all set to handle G2 so
       just skip right to the <a href="install/"
       target="_guided">installer</a> and start clicking.  It should
-      walk you through everything you need to get going.  <b>But</b>
-      if you hit a snag, please come back here and read more before
-      asking questions!  Enjoy.
+      walk you through everything you need to get going.  But before
+      you do that, you should really read the <a
+      href="#when_to_use">When to use G2 Alpha</a> and <a
+      href="#when_not_to_use">When not to use G2 Alpha</a> sections!
+      <b>But</b> if you hit a snag, please come back here and read
+      more before asking questions!  Enjoy.
     </p>
 
     <h2><a name="what_is_gallery">What is Gallery?</a></h2>
@@ -174,11 +181,11 @@
     <h2><a name="what_is_g2">What is G2 Alpha?</a></h2>
     <p>
       An Alpha version or Alpha release is the first official release
-      of a product.  An Alpha release will probably be unstable,
-      contain both known and unknown bugs, and will be missing some
-      intended features.  We release it early so that you can see what
-      is coming and give us feedback that will help us improve the
-      final release.
+      of a product.  An Alpha release is usually unstable, contains
+      both known and unknown bugs, and is missing some intended
+      features.  We release it early so that you can see what is
+      coming and give us feedback that will help us improve the final
+      release.
     </p>
 
     <h2><a name="Alpha_requirements">G2 Alpha requirements</a></h2>
@@ -229,7 +236,7 @@
     </p>
 
     <div class="important">
-      <h3>Warning</h3>
+      <h3>Warning!</h3>
       <span>
 	G2 has not yet been subjected to a rigorous security audit!
 	While we have taken great pains to make sure that it is
@@ -260,29 +267,55 @@
     </h3>
     <ol id="next-list">
       <li>
-	<b> Upgradeable Core and Modules </b> - ..
+	<b> Upgradeable Core and Modules </b> - At long last we
+	support upgrading from one version of G2 to the next.
+	Unfortunately, this may not work reliably for all version
+	before Alpha 4, so we recommend that you reinstall Alpha 4
+	from scratch just to be sure.
       </li>
 
       <li>
-	<b> Module Uninstall </b> - ..
+	<b> Module Uninstall </b> - You can now completely uninstall a
+	module and then delete it from your Gallery 2 installation.
       </li>
 
       <li>
-	<b> User Interface enhancements </b> - Some changes in our main layout
-	place the most important system links on top of every page (Site
-	Admin, Login, Logout, ...). This gives you easy access to these
-	commands. The sidebar has some improved functionality, like a direct
-	login form and some more details on your cart and members (if those
-	modules are active). This marks the further step for the "block"
-	system where modules can provide any amount of blocks of information
-	to be placed in the sidebar.
+	<b> Installer Improvements </b>
+	<ul>
+	  <li>
+	    The interface for installing modules is now much easier to
+	    use.  It shows you all the modules and lets you select the
+	    ones you want to install, and lets you repeat the process
+	    as often as you like.
+	  </li>
+	  <li>
+	    Added better instructions and examples for several steps
+	    that were confusing (your user feedback at work!)
+	  </li>
+	  <li>
+	    The installer now works on browsers that don't allow
+	    cookies.
+	  </li>
+	</ul>
       </li>
 
       <li>
-	<b> Navigation </b> - It's now easier to navigate around Gallery:
+	<b> User Interface enhancements </b> - Some changes in our
+	main layout place the most important system links on top of
+	every page (Site Admin, Login, Logout, ...). This gives you
+	easy access to these commands. The sidebar has some improved
+	functionality, like a direct login form and some more details
+	on your cart and members (if those modules are active). This
+	is another step towards a "block" system where modules can
+	provide any amount of blocks of information to be placed in
+	the sidebar.
+      </li>
+
+      <li>
+	<b> Navigation </b> - It's now easier to navigate around Gallery.
 	Meaningful "back" links will bring you back to the last last
 	visited pages, e.g. it's now possible to visit the Site Admin
-	while editing some album and have an easy way to come back.
+	while editing an album and have an easy way to return.
       </li>
 
       <li>
@@ -327,6 +360,9 @@
 	    but still select which toolkit is used in cases where
 	    multiple toolkits support the same type.
 	  </li>
+	  <li>
+	    Added support for ImageMagick 6.1.x
+	  </li>
 	</ul>
       </li>
 
@@ -338,10 +374,63 @@
       </li>
 
       <li>
+	<b> New Items </b> - New module shows "new" and "updated"
+	images next to appropriate images and albums, and adds a new
+	sort where new items are shown first followed by other items
+	sorted by view count.
+      </li>
+
+      <li>
 	<b> SMTP Authentication </b> - We now support sending email
 	via a SMTP server that requires user authentication.  Any
 	module that sends email (like the registration module) can
 	take advantage of this support.
+      </li>
+
+      <li>
+	<b> Embedding G2 </b> - We've made great improvements in
+	embedding Gallery 2 into other applications.  We've
+	successfully (though not completely) embedded it into Xaraya
+	and have begun working on other platforms.  There's now a
+	rudimentary <a href="docs/EMBEDDING">document</a> to
+	explain how to do it.
+      </li>
+
+      <li>
+	<b> Thumbnail Creation </b> - We now let you create thumbnails
+	at upload time, which greatly improves performance the first
+	time you view an album.  It's optional, but on by default.
+      </li>
+
+      <li>
+	<b> Improved Error Pages </b> - We now show you a nice error
+	page when two simultaneous and conflicting changes happen.
+	This new page explains how to resolve the problem.
+      </li>
+
+      <li>
+	<b> Members </b> - We now show a list of the recent
+	changes that a user has made, and let you page through the
+	entire list of changes.
+      </li>
+
+      <li>
+	<b> Removed IE7 </b> - We were experimenting with <a
+	href="http://dean.edwards.name/IE7/" target="_blank">IE7</a>,
+	a compatibility layer in Javascript reduces some of the
+	incompatibilities between IE6 and other browsers.  However we
+	were not able to get the performance and reliability that we
+	needed so we've decided to abandon using it (at least for now).
+      </li>
+
+      <li>
+	<b> Localization </b> - Gallery 2 is now translated into 18 languages, though only
+	German, Danish and Swedish are over 50% translated.  We can
+	use your help!
+      </li>
+
+      <li>
+	<b> Bug fixes </b> - Many bugs closed!
       </li>
     </ol>
 
@@ -566,8 +655,9 @@
 	<b>Storage</b> - Create a directory for gallery to store
 	photos.  This must be writable by the web server, but for
 	security reasons we suggest that you do not put it in the web
-	root.  If you put it in the web root, then it circumvents G2&rsquo;s
-	security.
+	root.  If you put it in the web root, then anybody can get
+	directly to your images with their web browser which
+	circumvents G2&rsquo;s security.
 	<div class="instructions">
 	  <h3>Unix Example</h3>
 	  <code>
@@ -640,19 +730,20 @@
       <li>
 	<b>Graphics Toolkits</b> - G2 works with <a
 	href="http://netpbm.sourceforge.net"
-	target="_blank">NetPBM</a>, <a href="http://www.imagemagick.org/"
-	target="_blank">ImageMagick</a> or <a
-	href="http://php.net/gd" target="_blank">GD</a>.
-	They&rsquo;re all equally good, though some say that NetPBM
-	has slightly better quality and that ImageMagick is slightly
-	faster than NetPBM.  GD is the fastest and is compiled into
-	PHP by default if your PHP is 4.3.0 or more recent, however it
-	may not have support for all image types (e.g. it might not
-	have JPEG support).  If the binaries for NetPBM and
-	ImageMagick are installed in default, or standard, locations
-	then G2 will auto-detect them during G2 installation.  It
-	won&rsquo;t cause any harm to enable all of these toolkits&#8212;in
-	fact you&rsquo;ll get the widest file type support if you do so.
+	target="_blank">NetPBM</a>, <a
+	href="http://www.imagemagick.org/"
+	target="_blank">ImageMagick</a> or <a href="http://php.net/gd"
+	target="_blank">GD</a>.  They&rsquo;re all equally good,
+	though some say that NetPBM has slightly better quality and
+	that ImageMagick is slightly faster than NetPBM.  GD is the
+	fastest and is compiled into PHP by default if your PHP is
+	4.3.0 or more recent, however it may not have support for all
+	image types (e.g. it might not have JPEG support). If the
+	binaries for NetPBM and ImageMagick are installed in default,
+	or standard, locations then G2 will auto-detect them during G2
+	installation.  It won&rsquo;t cause any harm to enable all of
+	these toolkits&#8212;in fact you&rsquo;ll get the widest file
+	type support if you do so.
       </li>
     </ol>
 
@@ -662,10 +753,6 @@
       install directory</a>.  G2 will walk you through the process of
       validating that your system is properly configured and will set
       everything up for you.
-    </p>
-    <p>
-      <em><strong>Note</strong> - the installer requires that you have cookies
-      enabled in your browser!</em>
     </p>
     <ol>
       <li>
@@ -748,27 +835,37 @@
 	as you want (more is better, here).  
       </li>
       <li>
-	<b> Add an album </b> - Browse back to <a href="main.php"
+	<b> Add photos </b> - Browse back to <a
+	href="main.php" target="_guided">the top of your new G2</a>
+	and click on the <a
+	href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemAdd&amp;g2_itemId=6"
+	target="_guided">Add Items</a> link.  This will bring up a
+	page with a few different upload options (at least 3, more if
+	you have other upload modules installed).  Select the one you
+	want and try adding a new photo to your album.  If all goes
+	well, you should see the new photos in your <a href="main.php"
+	target="_guided">Gallery!</a>.
+      </li>
+      <li>
+	<b> Add an album </b> - You don't want to put all of your
+	images into the top level of your G2, so you should try
+	creating a new album.  Browse back to <a href="main.php"
 	target="_guided">the top of your new G2</a> and click on the
 	<a
 	href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemAddAlbum&amp;g2_itemId=6"
 	target="_guided">add sub-album</a> link from the left side of
 	the page.  This will give you a form where you can enter
 	information about the new album you want to create.  Fill it
-	out and submit it.
+	out and click the <b>Create</b> button.  Now try adding images
+	to that album instead, or select the <b>Move Photo</b> link
+	from under any of the images you added earlier and move them
+	into this new album.
       </li>
       <li>
-	<b> Add photos to your album </b> - Now that you have a new
-	album, click on the <a
-	href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemAdd&amp;g2_itemId=8" target="_guided">Add
-	Items</a> link.  This will bring up a page with four different
-	upload options.  Select the one you want and try adding a new
-	photo to your album.  If all goes well, you should see the new photos in your <a href="main.php?g2_view=core:ShowItem&amp;g2_itemId=8" target="_guided">new album!</a>.  Congratulations!
-      </li>
-      <li>
-	<b> Import G1 albums </b> - you can easily import albums from
-	G1.  It won&rsquo;t cause any harm to your G1 (or at least,
-	it&rsquo;s not supposed to).  Just go to the <a
+	<b> Import Gallery 1.x albums </b> - you can easily import
+	albums from Gallery 1.x (G1).  It won&rsquo;t cause any harm
+	to your G1 (or at least, it&rsquo;s not supposed to).  Just go
+	to the <a
 	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=migrate:SelectGallery"
 	target="_guided">Migration Page</a> and enter the path to your
 	G1 albums directory and then follow the instructions.
@@ -784,60 +881,92 @@
 	<b> Plenty to do and see! </b> - 
 	<ul>
 	  <li>
-	    Explore the different <a href="main.php?g2_view=core:SiteAdmin" target="_guided">Site Admin</a> options
-	    and tune your G2 the way that you want it.
+	    Explore the different <a
+	    href="main.php?g2_view=core:SiteAdmin"
+	    target="_guided">Site Admin</a> options and tune your G2
+	    the way that you want it.
 	  </li>
 
 	  <li>
-	    You can <a href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts" target="_guided">activate different layouts</a> and then experiment with layouts and themes when <a href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemEdit&amp;g2_itemId=8" target="_guided">editing your new album</a>.
+	    You can <a
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts"
+	    target="_guided">activate different layouts</a> and then
+	    experiment with layouts and themes.  You can use different
+	    layouts and themes on each album!
 	  </li>
 
 	  <li>
-	    You can <a href="main.php?g2_view=search:SearchScan&amp;g2_form[useDefaultSettings]=1" target="_guided">search your G2</a> and view the <a href="main.php?g2_view=members:MembersList" target="_guided">members list</a>.
+	    You can <a
+	    href="main.php?g2_view=search:SearchScan&amp;g2_form[useDefaultSettings]=1"
+	    target="_guided">search your G2</a> and view the <a
+	    href="main.php?g2_view=members:MembersList"
+	    target="_guided">members list</a>.
 	  </li>
 
 	  <li>
-	    If the ffmpeg module is activated, you can upload movies and it will automatically create thumbnails of them for you.
+	    If the <b>Ffmpeg</b> module is activated, you can upload movies
+	    and it will automatically create thumbnails of them for
+	    you.
 	  </li>
 
 	  <li>
-	    Try uploading really wide images and then edit them to put them in Panorama mode to activate the panorama viewer.
+	    Activate the <b>Panorama</b> module and then try uploading
+	    really wide images and then edit them to put them in
+	    Panorama mode to activate the panorama viewer.
 	  </li>
 
 	  <li>
-	    Activate the cart and photoaccess modules, add all the photos from an album
-	    to the cart and try printing them all at once (you can
-	    cancel the print job at the last second so it&rsquo;s ok to play
-	    around with this)
+	    Activate the <b>Cart</b> and <b>Photoaccess</b> modules,
+	    add all the photos from an album to the cart and try
+	    printing them all at once (you can cancel the print job at
+	    the last second so it&rsquo;s ok to play around with this)
+	  </li>
+
+	  <li>
+	    Activate the <b>Cart</b> and <b>Zip Download</b> modules, add
+	    all the photos from an album to the cart and then download
+	    them all at once as a zip file!
 	  </li>
 
 	  <li>
 	    <a
-	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminUsers" target="_guided">Create
-	    some new users</a> then <a
-	    href="http://www.menalto.com/demo/dev/main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminGroups" target="_guided">create
-	    some new groups</a> and then try adding users to groups.
-	    You can assign permissions to entire groups instead of
-	    individual users, which makes permission management much
-	    easier.
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminUsers"
+	    target="_guided">Create some new users</a> then <a
+	    href="http://www.menalto.com/demo/dev/main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminGroups"
+	    target="_guided">create some new groups</a> and then try
+	    adding users to groups.  You can assign permissions to
+	    entire groups instead of individual users, which makes
+	    permission management much easier.
 	  </li>
 
 	  <li>
-	    Try uploading a Shockwave or a Director file.  You can view them in-line.
+	    Try uploading a Shockwave or a Director file.  You can
+	    view them in-line.
 	  </li>
 
 	  <li>
-	    Try uploading an MP3 and see that it&rsquo;s got a custom
-	    thumbnail.  Then use the <a
-	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=thumbnail:ThumbnailSiteAdmin" target="_guided">thumbnail
-	    manager</a> to upload your own custom thumbnails for
-	    different file types.  G2 lets you upload files of any type!
+	    Activate the <b>Thumbnail Manager</b> module then try uploading an
+	    MP3 and see that it&rsquo;s got a custom thumbnail. Use the <a
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=thumbnail:ThumbnailSiteAdmin"
+	    target="_guided">thumbnail manager</a> to upload your own
+	    custom thumbnails for different file types.  G2 lets you
+	    upload files of any type!
+	  </li>
+
+	  <li>
+	    Activate the <b>ImageBlock</b> module and see random
+	    images appear in the sidebar when you browse through your
+	    G2.
 	  </li>
 
 	  <li>
 	    Play around with the <a
 	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules"
 	    target="_guided">other modules</a> and see what they do!
+	    There are over 28 different cool modules that do all kinds
+	    of neat stuff.  If you decide that you don't want a module
+	    any more, just deactivate and uninstall it and it goes
+	    away.
 	  </li>
 	</ul>
       </li>
@@ -874,13 +1003,6 @@
     <h2><a name="known_issues">Known Issues / Bugs</a></h2>
     <ol>
       <li>
-	<b>Upgrade Path</b> - There&rsquo;s no upgrade path from this
-	version of G2 Alpha to future versions.  You&rsquo;ll have to throw
-	out all your data and start over when the next Alpha 
-	release comes out.  We will offer an upgrade path as we get
-	closer to beta.
-      </li>
-      <li>
 	<b>G1 -> G2 Migration</b> - 
 	<ul>
 	  <li> 
@@ -907,7 +1029,11 @@
       G2 data any time you upgrade.  The proper way to upgrade is to
       <a href="#get_latest_code">get the latest code</a> and overwrite
       your existing copy with it.  If you see weird errors, then
-      it&rsquo;s time to delete your database.
+      it&rsquo;s time to delete your database.  Starting with Alpha-4,
+      you should be able to upgrade to future versions of Gallery 2.
+      However, we're still working the kinks out of the upgrade
+      process so <b>we reserve the right to screw up horribly</b>
+      between now and beta.
     </p>
 
     <div class="instructions">
@@ -1011,6 +1137,14 @@
       target="_guided">Submit your localizations</a> early and often -
       no need to wait until you&rsquo;re entirely done.
     </p>
+    
+    <p>
+      <b> For Developers </b> - We've gotten started on some <a
+      href="http://gallery.menalto.com/modules.php?op=modload&name=GalleryDocs&file=index&page=gallery2-devguide.php">documentation</a>
+      that you should read if you want to start hacking on G2.  It's
+      an early draft and is a little bit out of date, but it's a
+      start.
+    </p>
 
     <a href="http://validator.w3.org/check?uri=referer"><img style="border: 0px"
 	src="images/xhtml10.png"
@@ -1023,13 +1157,11 @@
 	height="15"
 	width="80"/></a>
 
-    <a href="modules/core/test/data/Farva2.mp3"
-      onclick="window.open(this.href); return false;"
-      onkeypress="window.open(this.href); return false;"><img style="border: 0px"
-	src="images/badge-farva.png"
-	alt="Gallery 2.0 alpha-3 (Farva)"
-	height="15"
-	width="80"/></a>
+    <img style="border: 0px"
+      src="modules/core/data/heybaby.png"
+      alt="Gallery 2.0 alpha-4 (Nice Commits)"
+      height="15"
+      width="115"/>
     <hr />
 
     <p class="fineprint">
