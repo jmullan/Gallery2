@@ -137,6 +137,20 @@ class GalleryView {
 					      "$viewName can't be parsed"), null);
 	}
 
+	/* Check if this module is active before continuing */
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module, false);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isActive) = $plugin->isActive();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (! $isActive) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+			 null);
+	}
+
 	$moduleDir = dirname(__FILE__) . '/../../../modules/' . $module . '/';
 	$fileName = $moduleDir . $class . '.inc';
 
