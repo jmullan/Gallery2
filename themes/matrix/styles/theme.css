@@ -53,6 +53,7 @@ body {
 	padding: 8px;
 	width: 97%;
 	border-top: 1px solid #ccc;
+	float: left;
 }
 
 #gsSidebar, #gsAdminSidebar {
@@ -92,11 +93,9 @@ body {
     padding: 0;
 }
 
-* html #gsAlbumContents { overflow: auto; } /* style for IE */
+/* html #gsAlbumContents { overflow: auto; }*/ /* style for IE */
 
-.gbExif {
-    padding: 8px 14px;
-}
+.gbExif { padding: 8px 14px; }
 
 /*      .gbDataTable	*/
 /*      count from 0 Ñ first row is even...     */
@@ -374,7 +373,7 @@ table.gbTitleBanner tr td {
 
 .gbTitle { padding: 14px; }
 
-#gbThumbMatrix {  }
+#gbThumbMatrix { clear: both;  }
 
 td.gbItemAlbum,
 td.gbItemImage, 
