@@ -46,7 +46,6 @@ function GalleryInitFirstPass($params=array()) {
     GalleryCoreApi::requireOnce($classDir . 'Gallery.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryStatus.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryDataCache.class');
-    GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryUtilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryCapabilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
@@ -70,26 +69,12 @@ function GalleryInitFirstPass($params=array()) {
 	$gallery->setPlatform(new UnixPlatform());
     }
 
-    /* Configure our url Generator */
-    $urlGenerator = new GalleryUrlGenerator(
-			isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
-			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
-			isset($params['embedSessionString']) ? $params['embedSessionString'] : null );
-    $urlGenerator->registerViewPrefix('v', 'core:ShowItem');
-    $urlGenerator->registerViewPrefix('d', 'core:DownloadItem');
-
-    /* Deprecated prefixes.  TODO: remove these before the final release */
-    $urlGenerator->registerViewPrefix('view', 'core:ShowItem', true);
-    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem', true);
-
-    $gallery->setUrlGenerator($urlGenerator);
+    /* Load our local configuration */
+    include(dirname(__FILE__) . '/config.php');
 
     $platform = $gallery->getPlatform();
     $slash = $platform->getDirectorySeparator();
     
-    /* Load our local configuration */
-    include(dirname(__FILE__) . $slash . 'config.php');
-
     if (isset($params['debug'])) {
 	$gallery->setDebug($params['debug']);
     }
@@ -109,6 +94,28 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp' . $slash);
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
+
+    /* Configure our url Generator */
+    if (!isset($params['noDatabase'])) {
+	list ($ret, $urlGenerator) = GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+    if (!isset($urlGenerator)) {
+	GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
+	$urlGenerator = new GalleryUrlGenerator();
+    }
+    $urlGenerator->init(isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
+			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
+			isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
+    $urlGenerator->registerViewPrefix('v', 'core:ShowItem');
+    $urlGenerator->registerViewPrefix('d', 'core:DownloadItem');
+
+    /* Deprecated prefixes.  TODO: remove these before the final release */
+    $urlGenerator->registerViewPrefix('view', 'core:ShowItem', true);
+    $urlGenerator->registerViewPrefix('download', 'core:DownloadItem', true);
+    $gallery->setUrlGenerator($urlGenerator);
 
     /* Initialize our session */
     if (!isset($params['noDatabase'])) {

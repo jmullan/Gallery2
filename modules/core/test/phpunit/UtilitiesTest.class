@@ -215,13 +215,17 @@ class UtilitiesTest extends GalleryTestCase {
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
-	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php'));
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
+	$gallery->setUrlGenerator($urlGenerator);
 
 	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
 			    GalleryUtilities::convertPathToUrl($file), 'test');
 
 	// Simulate embedded (request uri doesn't reference g2 install dir)
-	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php?test=on', '../gallery2/'));
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?test=on', '../gallery2/');
+	$gallery->setUrlGenerator($urlGenerator);
 	$_SERVER['REQUEST_URI'] = '/testcms/phpunit_test.php?test=on&foo=bar';
 
 	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
@@ -230,7 +234,9 @@ class UtilitiesTest extends GalleryTestCase {
 	// Simulate apache alias (/g2test -> this g2 dir, not under docroot)
 	$_SERVER['DOCUMENT_ROOT'] = '/g2testroot';
 	$_SERVER['REQUEST_URI'] = '/g2test/phpunit_test.php?foo=bar';
-	$gallery->setUrlGenerator(new GalleryUrlGenerator('phpunit_test.php'));
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
+	$gallery->setUrlGenerator($urlGenerator);
 
 	$this->assertEquals('http://example.com/g2test/modules/core/test/phpunit/UtilitiesTest.class',
 			    GalleryUtilities::convertPathToUrl($file), 'alias');

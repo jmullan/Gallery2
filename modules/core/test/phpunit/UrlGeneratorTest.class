@@ -47,7 +47,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['SERVER_PORT'] = 80;
 
 	$this->_savedGet = $_GET;
-	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
+	$this->_urlGenerator = new GalleryUrlGenerator();
+	$this->_urlGenerator->init('phpunit_test.php');
 	parent::setUp();
     }
 
@@ -80,7 +81,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embbeded with full url as embedUri */
 	$_SERVER['REQUEST_URI'] = '/cms/otherpage?foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('http://example.com/cms/phpunit_test.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('http://example.com/cms/phpunit_test.php?module=gallery2', '../gallery2/');
 
 	$this->assertEquals('http://example.com/cms/phpunit_test.php?module=gallery2&amp;' .
 	    join('&amp;', $values), $urlGenerator->generateUrl($params),
@@ -88,15 +90,17 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '../gallery2/');
 
 	$this->assertEquals('http://example.com/cms/phpunit_test.php?module=gallery2&amp;' .
 	    join('&amp;', $values), $urlGenerator->generateUrl($params),
 	    'embedded');
 
 	/* Simulate cookieless embedded */
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2',
-						'../gallery2/', 'CMSSID=123456');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2',
+			    '../gallery2/', 'CMSSID=123456');
 
 	$this->assertEquals('http://example.com/cms/phpunit_test.php?module=gallery2&amp;' .
 	    join('&amp;', $values) . '&amp;CMSSID=123456',
@@ -126,14 +130,16 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embedded */
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '../gallery2/');
 
 	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
 			    $urlGenerator->generateUrl(array('href' => 'test/test.css')),
 			    'relative embedded');
 
 	/* Embedded, trailing slash omitted */
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '../gallery2');
 
 	$this->assertEquals('http://example.com/gallery2/test/test.css' . $qs,
 			    $urlGenerator->generateUrl(array('href' => 'test/test.css')),
@@ -197,12 +203,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Simulate embedded.. */
 	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', 'gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', 'gallery2/');
 	$this->assertEquals('http://example.com/', $urlGenerator->getCurrentUrlDir());
 	$this->assertEquals('http://example.com/gallery2/', $urlGenerator->getCurrentUrlDir(true));
 
 	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '../gallery2/');
 	$this->assertEquals('http://example.com/cms/', $urlGenerator->getCurrentUrlDir());
 	$this->assertEquals('http://example.com/gallery2/', $urlGenerator->getCurrentUrlDir(true));
     }
@@ -265,7 +273,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testBaseFileWithQMark() {
 	global $gallery;
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php?test=on');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?test=on');
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?test=on&foo=bar';
 
 	$params['a'] = 123;
@@ -425,27 +434,33 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('/gallery2/', $this->_urlGenerator->getCookiePath(), 'test 1');
 
 	$_SERVER['REQUEST_URI'] = '/phpunit_test.php?foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
 	$this->assertEquals('/', $urlGenerator->getCookiePath(), 'test 2');
 
 	$_SERVER['REQUEST_URI'] = '/cms/index.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('index.php?module=gallery2', '../gallery2/');
 	$this->assertEquals('/', $urlGenerator->getCookiePath(), 'test 3');
 
 	$_SERVER['REQUEST_URI'] = '/index.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', 'gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('index.php?module=gallery2', 'gallery2/');
 	$this->assertEquals('/', $urlGenerator->getCookiePath(), 'test 4');
 
 	$_SERVER['REQUEST_URI'] = '/cms/index.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', 'modules/gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('index.php?module=gallery2', 'modules/gallery2/');
 	$this->assertEquals('/cms/', $urlGenerator->getCookiePath(), 'test 5');
 
 	$_SERVER['REQUEST_URI'] = '/apps/cms/index.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', '../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('index.php?module=gallery2', '../gallery2/');
 	$this->assertEquals('/apps/', $urlGenerator->getCookiePath(), 'test 6');
 
 	$_SERVER['REQUEST_URI'] = '/apps/cms/index.php?module=gallery2&foo=bar';
-	$urlGenerator = new GalleryUrlGenerator('index.php?module=gallery2', '../../gallery2/');
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('index.php?module=gallery2', '../../gallery2/');
 	$this->assertEquals('/', $urlGenerator->getCookiePath(), 'test 7');
     }
 

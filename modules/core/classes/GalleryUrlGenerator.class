@@ -84,14 +84,14 @@ class GalleryUrlGenerator {
      */
 
     /**
-     * Constructor
+     * Initializer.  Configure the url generator with all the data it needs.
      *
      * @param string the base URL
      * @param string (optional) when embedded, relative path between G2 request urls and G2 basedir
      * @param string (optional) when embedded in CMS app that supports cookieless browsing,
      *                          key=value string for CMS session key and id
      */
-    function GalleryUrlGenerator($baseFile, $relativeG2Path=null, $embedSessionString=null) {
+    function init($baseFile, $relativeG2Path=null, $embedSessionString=null) {
 	$this->_baseFile = $baseFile;
 	$this->_relativeG2Path = $relativeG2Path;
 	$this->_embedSessionString = $embedSessionString;
@@ -244,9 +244,6 @@ class GalleryUrlGenerator {
 	    $path .= '/';
 	}
 
-	/* Convert %7E back into ~ so that it matches the URL */
-	$path = str_replace('%7E', '~', $path);
-	
 	return $path;
     }
 

@@ -34,7 +34,8 @@ function main() {
     global $gallery;
     
     /* Configure our url Generator for the test harness */
-    $urlGenerator = new GalleryUrlGenerator('../../main.php');
+    $urlGenerator = new GalleryUrlGenerator;
+    $urlGenerator->init('../../main.php');
     $gallery->setUrlGenerator($urlGenerator);
 
     /* Roll back our transaction since we're going to wrap each test in its own */

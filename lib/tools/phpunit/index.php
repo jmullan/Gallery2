@@ -26,7 +26,8 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
     global $gallery;
 
     /* Configure out url Generator for phpunit mode. */
-    $urlGenerator = new GalleryUrlGenerator('lib/tools/phpunit/index.php');
+    $urlGenerator = new GalleryUrlGenerator();
+    $urlGenerator->init('lib/tools/phpunit/index.php');
     $gallery->setUrlGenerator($urlGenerator);
 
     /*
