@@ -55,6 +55,8 @@ class GalleryTemplateModule extends GalleryModule {
      * @return object GalleryTemplate a template instance
      */
     function &getTemplate() {
+	global $gallery;
+	
 	if (!isset($this->_template)) {
 	    $templateDir = $gallery->getConfig('code.gallery.modules') . $this->getName() . '/templates/';
 	    $platform = $gallery->getPlatform();
@@ -64,7 +66,6 @@ class GalleryTemplateModule extends GalleryModule {
 	    }
 	    
 	    $this->_template = new GalleryTemplate('modules', $this->getName(), $templateDir);
-	    return GalleryStatus::success();
 	}
 	    
 	return $this->_template;
