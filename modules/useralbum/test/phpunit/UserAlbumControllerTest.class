@@ -60,6 +60,12 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $this->_userWithAlbum) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -111,7 +117,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
-    function testCreateAlbum() {
+    function testCreateAlbumOnAccess() {
 	global $gallery;
 	$gallery->setActiveUser($this->_userWithoutAlbum);
 

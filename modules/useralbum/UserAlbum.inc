@@ -61,6 +61,12 @@ class UserAlbumController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $createMode) =
+	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'create');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if (!empty($albumId)) {
 	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
@@ -68,7 +74,7 @@ class UserAlbumController extends GalleryController {
 	    }
 	}
 
-	if (!isset($album)) {
+	if (!isset($album) && $createMode == 'access') {
 	    /* If userId matches active user then create the user album */
 	    if ($userId != $activeUserId) {
 		return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);

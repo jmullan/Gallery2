@@ -40,7 +40,7 @@ class UserAlbumHelper {
      * @return object GalleryStatus a status code
      * @static
      */
-    function createUserAlbum(&$user) {
+    function createUserAlbum($user) {
 	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
