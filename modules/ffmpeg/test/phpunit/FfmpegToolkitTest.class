@@ -1,0 +1,227 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Ffmpeg
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkitHelper.class');
+require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkit.class');
+
+/**
+ * Test FfmpegToolkit functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class FfmpegToolkitTest extends GalleryTestCase {
+
+    function FfmpegToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * 
+     */
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+	
+	/* Save the platform */
+	$this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new FfmpegToolkitTestPlatform();
+	$ret = $gallery->_platform->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get a toolkit to work with */
+	$this->_toolkit = new FfmpegToolkit();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	global $gallery;
+	
+	/* Restore the platform */
+	$gallery->_platform = $this->_savePlatform;
+
+	parent::tearDown();
+    }
+
+    function testGetProperties() {
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('video/x-msvideo', 'dimensions', 'testGetProperties1.avi');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(200, 240), $results);
+
+	list ($ret, $results) = $this->_toolkit->getProperty('video/x-msvideo', 'BOGUS', 'BOGUS');
+	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
+    }
+
+    function testGetOperationsAndProperties() {
+	list ($ret, $results) = FfmpegToolkitHelper::getOperationsAndProperties();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
+							'description' => 'Get the width and height of the video',
+							'mimeTypes' => array('video/mpeg',
+									     'video/x.ms.asf',
+									     'video/x-msvideo',
+									     'video/quicktime'))),
+			    $results['properties']);
+    }
+
+    function testBinaries() {
+	list ($ret, $results, $mimeTypes) = FfmpegToolkitHelper::testBinary('/validPath/ffmpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
+	$output[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux audio_device rtsp redir sdp rtp';
+	$output[] = 'Output image formats: pbm pgm ppm pam pgmyuv yuv png jpeg gif';
+	$output[] = 'Input image formats: pnm pam pgmyuv yuv png jpeg gif';
+	$output[] = 'Codecs:';
+	$output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	$output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio mjpeg mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr 4xm mdec ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	$output[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
+	$output[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif qcif cif 4cif';
+	$output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+
+	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
+			    $results);
+	
+	$this->assertEquals(array('video/mpeg',
+				  'video/x.ms.asf',
+				  'video/x-msvideo',
+				  'video/quicktime'),
+			    $mimeTypes);
+    }
+}
+
+class FfmpegToolkitTestPlatform {
+
+    function init() {
+	global $gallery;
+	list ($ret, $this->_ffmpegPath) = $gallery->getModuleParameter('ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    function exec($cmd) {
+	global $gallery;
+
+	switch(serialize($cmd)) {
+	case serialize(array(array($this->_ffmpegPath, '-i', 'testGetProperties1.avi', '-vstats'))):
+	    $results[] = "Input #0, mov, from '../data/Sample.mov':";
+	    $results[] = "  Duration: 00:00:03.0, bitrate: 193 kb/s";
+	    $results[] = "  Stream #0.0: Video: svq1, 200x240, 15.00 fps";
+	    $results[] = "  Stream #0.1: Audio: 0x324d4451, 22050 Hz, mono";
+	    $results[] = "Must supply at least one output file";
+
+	    // Ffmpeg actually fails on this call -- but we continue because we get the data we need */
+	    return array(0, $results);
+
+	case serialize(array(array('/validPath/ffmpeg', '-formats'))):
+	case serialize(array(array($this->_ffmpegPath, '-formats'))):
+	    $results[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
+	    $results[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux audio_device rtsp redir sdp rtp';
+	    $results[] = 'Output image formats: pbm pgm ppm pam pgmyuv yuv png jpeg gif';
+	    $results[] = 'Input image formats: pnm pam pgmyuv yuv png jpeg gif';
+	    $results[] = 'Codecs:';
+	    $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	    $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio mjpeg mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr 4xm mdec ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	    $results[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
+	    $results[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif qcif cif 4cif';
+	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+	    
+	    return array(1, $results);
+	}
+	
+	return array(0, 'unprepared for exec()');
+    }
+
+    function rename($oldName, $newName) {
+	return 1;
+    }
+
+    function isRestrictedByOpenBasedir($path) {
+	switch($path) {
+	case $this->_ffmpegPath:
+	case '/validPath/':
+	    return false;
+	}
+    }
+
+    function file_exists($path) {
+	switch($path) {
+	case $this->_ffmpegPath:
+	case '/validPath/ffmpeg':
+	    return true;
+	}
+    }
+    
+    function is_file($path) {
+	switch ($path) {
+	case $this->_ffmpegPath:
+	case '/validPath/ffmpeg':
+	    return true;
+	}
+	
+	return false;
+    }
+
+    function is_dir($path) {
+	global $gallery;
+	list ($ret, $ffmpegPath) = $gallery->getModuleParameter('ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	switch($path) {
+	case $this->_ffmpegPath:
+	case '/validPath/':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function unlink($path) {
+	// we don't create any files, so no need to unlink any
+    }
+}
+
+?>

@@ -1,0 +1,144 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Ffmpeg
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A helper class for the FfmpegToolkit class
+ *
+ * @package Ffmpeg
+ * @subpackage Classes
+ */
+class FfmpegToolkitHelper {
+
+    /**
+     * Figure out what operations and properties are supported by the
+     * FfmpegToolkit and return them.
+     *
+     * @return object GalleryStatus a status code
+     *         array('operations' => ...
+     *               'properties' => ...)
+     * @static
+     */
+    function getOperationsAndProperties() {
+	global $gallery;
+
+	list ($ret, $ffmpegPath) =
+	    $gallery->getModuleParameter('ffmpeg', 'path');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (empty($ffmpegPath)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	list ($ret, $tests, $mimeTypes) = FfmpegToolkitHelper::testBinary($ffmpegPath);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * -------------------- Operations --------------------
+	 */
+
+	$operations = array();
+
+	/*
+	 * -------------------- Properties --------------------
+	 */
+
+	/* Dimensions */
+	$properties['dimensions']['type'] = 'int,int';
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the video'); 
+	$properties['dimensions']['mimeTypes'] = $mimeTypes;
+
+	return array(GalleryStatus::success(), array('operations' => $operations,
+						     'properties' => $properties));
+    }
+
+    /**
+     * Test if the given path has a working set of Ffmpeg binaries.
+     *
+     * This is done by calling all the binaries with the --version flag and
+     * making sure they run properly.
+     *
+     * @param string path to the Ffmpeg we are testing
+     * @return array object GalleryStatus general status of tests
+     *	       array ('name' => string: the name of the binary,
+     *		      'success' => boolean: test successfull?
+     *		      'message' => string: the error message
+     *		     )
+     *         array hash map of mime types
+     *
+     * @static
+     */
+    function testBinary($ffmpegPath) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	/*
+	 * If the path is not restricted by open_basedir, then verify that it's
+	 * legal.  Else just hope that it's valid and use it.
+	 */
+	if (!$platform->isRestrictedByOpenBasedir($ffmpegPath)) { 
+	    if (! $platform->file_exists($ffmpegPath)
+		|| ! $platform->is_file($ffmpegPath) ) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    }
+	}
+
+	/* We need to translate some strings */
+	list($ret, $module) = $gallery->loadModule('ffmpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	/* We only care about video for now */
+	$relevantTypes['mpeg'] = 1;
+	$relevantTypes['asf'] = 1;
+	$relevantTypes['avi'] = 1;
+	$relevantTypes['mov'] = 1;
+	list ($success, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
+	$mimeTypes = array();
+	foreach ($results as $resultLine) {
+	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
+		foreach (explode(' ', $regs[1]) as $type) {
+		    if (isset($relevantTypes[$type])) {
+			$mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
+		    }
+		}
+		$success = true;
+	    }
+	}
+	$tests[] = array('name' => 'ffmpeg',
+			 'success' => $success,
+			 'results' => $results);
+	return array(GalleryStatus::success(), $tests, $mimeTypes);
+    }
+}
+?>

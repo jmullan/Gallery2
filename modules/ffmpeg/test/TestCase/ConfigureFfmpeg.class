@@ -1,0 +1,74 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package Ffmpeg
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package Ffmpeg
+ * @subpackage TestCase
+ */
+class ConfigureFfmpegTestCase extends TestCase {
+    var $_moduleName = 'ffmpeg';
+
+    function getDescription() {
+	return "Configure the $this->_moduleName module";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $module) = $gallery->loadModule($this->_moduleName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $module->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $module->install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Hardcode a path we know will work (on Bharat's dev box) */
+	$platform = $gallery->getPlatform();
+	if (get_class($platform) == 'unixplatform') {
+	    $ret = $module->setModuleParameter('path', '/usr/local/bin/ffmpeg');
+	} else {
+	    $ret = $module->setModuleParameter('path', 'c:\\apps\\ffmpeg\\ffmpeg.exe');
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
