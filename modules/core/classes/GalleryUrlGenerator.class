@@ -174,7 +174,8 @@ class GalleryUrlGenerator {
     function getGalleryId() {
 	$urlGenerator = new GalleryUrlGenerator();
 	$url = $urlGenerator->getCurrentUrl();
-	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}', '$1', $url);
+	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}',
+			    '$1', $url);
     }
 
     /*
@@ -268,12 +269,9 @@ class GalleryUrlGenerator {
 	$url = $this->getCurrentUrl();
 
 	/*
-	 * Search for our short query strings, which contain information after the base file, eg:
-	 *
+	 * Remove the base file and any query string or path info after it:
 	 *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
-	 *
 	 * Extract everything up to but not including main.php:
-	 *
 	 *    http://example.com/gallery2/
 	 */
 	if (($i = strpos($url, $this->_baseFile)) !== false) {
@@ -323,12 +321,11 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Initializes the navigation branch
+     * Initialize the navigation branch
      *
-     * If we came here with a 'return' set, we need to branch a new
-     * navigation.
-     * If we are just navigating through options in the same navigation
-     * level, simply pass the navId along.
+     * If we came here with a 'return' set, we need to branch a new navigation.
+     * If we are just navigating through options in the same navigation level,
+     * simply pass the navId along.
      * If we are coming back from a navigation, clean up our mess.
      * In other cases we simply have no navigation support.
      *
@@ -340,7 +337,7 @@ class GalleryUrlGenerator {
      */
     function initNavigation() {
 	global $gallery;
-	$gallery->debug("Initializing navigation");
+
 	list ($returnUrl, $returnName, $navId, $fromNavId) =
 	    GalleryUtilities::getRequestVariables('return', 'returnName', 'navId', 'fromNavId');
 	if (!empty($returnUrl)) {
@@ -375,10 +372,10 @@ class GalleryUrlGenerator {
      */
     function isNavigationBackPossible() {
 	global $gallery;
-	$session =& $gallery->getSession();
 	if (empty($this->_navId)) {
 	    return false;
 	}
+	$session =& $gallery->getSession();
 	$navData = $session->getNavigation($this->_navId);
 	if (count($navData) > 0) {
 	    return true;
@@ -387,8 +384,7 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Get a list of navigation links to go back to where we came
-     * from.
+     * Get a list of navigation links to go back to where we came from.
      *
      * @param integer set this to get links back to a certain depth
      * @return array of navigational links: array('url' => ...,
@@ -396,6 +392,9 @@ class GalleryUrlGenerator {
      */
     function getNavigationLinks($depth = null) {
 	global $gallery;
+	if (empty($this->_navId)) {
+	    return array(GalleryStatus::success(), array());
+	}
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
@@ -403,9 +402,6 @@ class GalleryUrlGenerator {
 	}
 
 	$session =& $gallery->getSession();
-	if (empty($this->_navId)) {
-	    return array(GalleryStatus::success(), array());
-	}
 	$navData = $session->getNavigation($this->_navId);
 	$links = array();
 	$i = 0;
@@ -419,7 +415,7 @@ class GalleryUrlGenerator {
 	    if (isset($navItem['returnNavId'])) {
 		$params['navId'] = $navItem['returnNavId'];
 	    }
-	    if (isset($navItem['returnName']) && !empty($navItem['returnName'])) {
+	    if (!empty($navItem['returnName'])) {
 		$name = $core->translate(array('text' => 'Back to %s',
 					       'arg1' => $navItem['returnName']));
 	    } else {
@@ -461,11 +457,12 @@ class GalleryUrlGenerator {
 	$redirectUrl = null;
 	if (preg_match('|' . preg_quote($this->_baseFile) . '(/.*)|', $url, $regs)) {
 	    preg_match('|/(.*?)(/.*)|', $regs[1], $regs);
-	    if (sizeof($regs) >= 3) {
+	    if (count($regs) >= 3) {
 		list ($prefix, $queryString) = array($regs[1], $regs[2]);
 
 		if (empty($prefix)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						      implode(' ', $regs)), null);
 		}
 
 		if (empty($this->_viewPrefixRegistry['forward'][$prefix])) {
@@ -532,15 +529,18 @@ class GalleryUrlGenerator {
 	$url = $this->getCurrentUrl();
 	if ($pos = strpos($url, '?')) {
 	    /* We'll add the query params later */
-	    $url = substr($url, 0, $pos + 1);
+	    $url = substr($url, 0, $pos);
 	}
 	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
 			array('return', 'returnName', 'navId', 'fromNavId'));
-	$args = array();
-	foreach ($urlVariables as $key => $value) {
-	    $args[] = $key . '=' . $value;
+	if (!empty($urlVariables)) {
+	    $args = array();
+	    foreach ($urlVariables as $key => $value) {
+		$args[] = $key . '=' . $value;
+	    }
+	    $url .= '?' . implode('&amp;', $args);
 	}
-	$url .= implode('&amp;', $args);
+
 	/*
 	 * In very rare cases (like first access of the app) it's possible to not be using cookies,
 	 * but not have the session id in the url yet.  Detect that case and add the url here.
@@ -552,7 +552,7 @@ class GalleryUrlGenerator {
 				: (GalleryUtilities::prefixFormVariable($session->getKey())
 				   . '=' . $session->getId());
 	    if (strpos($url, $sessionCheck) === false) {
-		$url .= (substr($url, -1, 1) == '?' ? '' : '&amp;') . $sessionCheck;
+		$url .= (strpos($url, '?') === false ? '?' : '&amp;') . $sessionCheck;
 	    }
 	}
 	return $url;
@@ -594,7 +594,8 @@ class GalleryUrlGenerator {
 
 	    /* Prepend G2 base dir to all relative urls */
 	    $components = parse_url($url);
-	    if (!isset($components['host']) && (isset($components['path']) && $components['path'][0] != '/')) {
+	    if (!isset($components['host']) &&
+		    (isset($components['path']) && $components['path'][0] != '/')) {
 		/* It's a relative URL.  Check for overrides */
 		$override = sprintf('%s/local/%s', dirname($url), basename($url));
 		$overrideRealPath = dirname($this->_baseFile) . '/' . $override;
@@ -636,7 +637,8 @@ class GalleryUrlGenerator {
 		}
 	    }
 	    $params['returnName'] = $viewDescription;
-	    $params['return'] = urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
+	    $params['return'] =
+		urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
 	    $params['navId'] = $this->_navId;
 	}
 	if ((empty($currentView) || $currentView == $targetView || ! empty($params['controller']))
