@@ -193,7 +193,7 @@
     </h3>
 
     <p class="giDescription">
-      {g->text text="If you're having problems letting Gallery to update your .htaccess file, you can do it yourself by hand.  Cut and paste the following text into <b>%s</b>" arg1=$SetupRewrite.htaccessPath}
+      {g->text text="If you're having problems letting Gallery update your .htaccess file, you can do it yourself by hand.  Cut and paste the following text into <b>%s</b>" arg1=$SetupRewrite.htaccessPath}
     </p>
     <textarea rows="8" cols="60">{$SetupRewrite.htaccessContent}</textarea>
     <br/>
