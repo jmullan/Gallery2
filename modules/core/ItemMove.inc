@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -76,10 +76,10 @@ class ItemMoveController extends GalleryController {
 	    } else {
 		$error[] = 'form[error][destination][empty]';
 	    }
-	    
+
 	    if (empty($error) && !empty($form['selectedIds'])) {
 		$selectedIds = array_keys($form['selectedIds']);
-		
+
 		/* Load the source items */
 		list ($ret, $selectedItems) = GalleryCoreApi::loadEntitiesById($selectedIds);
 		if ($ret->isError()) {
@@ -99,7 +99,7 @@ class ItemMoveController extends GalleryController {
 			$error[] = 'form[error][source][' . $selectedId . '][selfMove]';
 			continue;
 		    }
-		    
+
 		    $oldParentIds[] = $selectedItem->getParentId();
 		    list ($ret, $permissions) = GalleryCoreApi::getPermissions($selectedId);
 		    if ($ret->isError()) {
@@ -110,7 +110,7 @@ class ItemMoveController extends GalleryController {
 		    if (! isset($permissions['core.delete'])) {
 			$error[] = 'form[error][source][' . $selectedId . '][permission][delete]';
 		    }
-		    
+
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
 			$error[] = 'form[error][source][' . $selectedId . '][permission][addAlbumItem]';
@@ -120,7 +120,7 @@ class ItemMoveController extends GalleryController {
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));
 	    }
-	    
+
 	    if (empty($error) && !empty($selectedIds) && !empty($newParentId)) {
 
 		/* Read lock myself, my parent id and the new parent id */
@@ -136,7 +136,7 @@ class ItemMoveController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* If we have no problems, do the moves */
 		$status['moved']['count'] = 0;
 		foreach ($selectedItems as $selectedItem) {
@@ -183,7 +183,7 @@ class ItemMoveController extends GalleryController {
 	    }
 
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
-	    
+
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = min($page + 1, $numPages);
 	} else if (isset($form['action']['previous'])) {
@@ -306,6 +306,9 @@ class ItemMoveView extends GalleryView {
 		    $thumbnail = $thumbnails[$peerItem->getId()];
 		    list ($ret, $thumbnail) =
 			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    $peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
 		}
 	    }
