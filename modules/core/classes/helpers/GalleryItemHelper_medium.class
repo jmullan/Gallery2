@@ -489,55 +489,19 @@ class GalleryItemHelper_medium {
 	    }
 
 	    /*
-	     * Validate the stored preferences to make sure that
-	     * they're supported by an active toolkit.
+	     * Validate/update the operations to make sure that they're supported
+	     * by an active toolkit and produce a viewable mime type.
 	     */
-	    list ($ret, $isSupported, $outputMimeType) =
-		GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
+	    list ($ret, $operations, $outputMimeType) =
+		GalleryCoreApi::makeSupportedViewableOperationSequence($mimeType, $operations,
+				$preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    if (!$isSupported) {
-		/*
-		 * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
-		 */
-		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-		    $operations = 'convert-to-image/jpeg;' . $preference['derivativeOperations'];
-		    list ($ret, $isSupported, $outputMimeType) =
-			GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-
-		    if (!$isSupported) {
-			/* Oh well -- try the next preference */
-			continue;
-		    }
-		} else {
-		    /* Otherwise, for resizes, just try the next preference */
-		    continue;
-		}
-	    }
-
-	    /*
-	     * If the output type isn't viewable, then try to turn it into a form that *is*
-	     * viewable.
-	     */
-	    if (!GalleryCoreApi::isViewableMimeType($outputMimeType)) {
-		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
-		list ($ret, $isSupported, $tmpOutputMimeType) =
-		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		
-		if ($isSupported) {
-		    $operations = $tmpOperations;
-		    $outputMimeType = $tmpOutputMimeType;
-		} else {
-		    /* Oh well */
-		}
+	    if (empty($operations)) {
+		/* Oh well -- try the next preference */
+		continue;
 	    }
 
 	    if (!empty($derivs[$preference['derivativeType']])) {

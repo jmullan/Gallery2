@@ -558,6 +558,61 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
+     * Make sure operation sequence is supported and produces a browser-viewable
+     * output mime type.  Add convert-to-image/jpeg operation if needed.
+     *
+     * @param string the original mime type
+     * @param string a sequence of operations
+     * @param boolean (optional) true to try prepending convert-to-image/jpeg if needed
+     * @return array object GalleryStatus a status code
+     *               string a sequence of operations, null if not supported
+     *               string the output mime type, null if not supported
+     * @static
+     */
+    function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
+	list ($ret, $isSupported, $outputMimeType) =
+	    GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if (!$isSupported && $forThumbnail) {
+	    /*
+	     * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
+	     */
+	    $operations = 'convert-to-image/jpeg;' . $operations;
+	    list ($ret, $isSupported, $outputMimeType) =
+		GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+	if (!$isSupported) {
+	    return array(GalleryStatus::success(), null, null);
+	}
+
+	/*
+	 * If the output type isn't viewable, then try to turn it into a form that *is* viewable.
+	 */
+	if (!GalleryCoreApi::isViewableMimeType($outputMimeType)) {
+	    $tmpOperations = $operations . ';convert-to-image/jpeg';
+	    list ($ret, $isSupported, $tmpOutputMimeType) =
+		GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $tmpOperations);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if ($isSupported) {
+		$operations = $tmpOperations;
+		$outputMimeType = $tmpOutputMimeType;
+	    } else {
+		/* Oh well */
+	    }
+	}
+
+	return array(GalleryStatus::success(), $operations, $outputMimeType);
+    }
+
+    /**
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
      *
      * @param object GalleryDerivativeImage the derivative

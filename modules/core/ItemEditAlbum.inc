@@ -181,22 +181,14 @@ class ItemEditAlbum extends ItemEditPlugin {
 
 			/* Change the thumbnail */
 			$operation = 'thumbnail|' . $form['thumbnail']['size'];
-			list ($ret, $isSupported, $outputMimeType) =
-			    GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
+			list ($ret, $operation, $outputMimeType) =
+			    GalleryCoreApi::makeSupportedViewableOperationSequence(
+				$source->getMimeType(), $operation);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
-			
-			if (!$isSupported) {
-			    $operation = 'convert-to-image/jpeg;' . $operation;
-			    list ($ret, $isSupported, $outputMimeType) =
-				GalleryCoreApi::isSupportedOperationSequence($source->getMimeType(), $operation);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
-			    }
-			}
 
-			if ($isSupported) {
+			if (!empty($operation)) {
 			    $thumbnail->setMimeType($outputMimeType);
 			    $thumbnail->setDerivativeSourceId($source->getId());
 			    $thumbnail->setDerivativeOperations($operation);

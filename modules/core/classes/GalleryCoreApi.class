@@ -1790,7 +1790,24 @@ class GalleryCoreApi {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
     }
-    
+
+    /**
+     * Make sure operation sequence is supported and produces a browser-viewable
+     * output mime type.  Add convert-to-image/jpeg operation if needed.
+     *
+     * @param string the original mime type
+     * @param string a sequence of operations
+     * @param boolean (optional) true to try prepending convert-to-image/jpeg if needed
+     * @return array object GalleryStatus a status code
+     *               string a sequence of operations, null if not supported
+     *               string the output mime type, null if not supported
+     * @static
+     */
+    function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail);
+    }
+
     /**
      * Get a toolkit that can retrieve the given property
      *
