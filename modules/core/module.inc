@@ -324,6 +324,17 @@ class CoreModule extends GalleryModule {
 		    }
 		}
 
+		/* Activate the Matrix layout */
+		list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', 'matrix');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$ret = $layout->activate();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
 		/*
 		 * Register our permissions.  Since we're storing
 		 * internationalized strings in the database, we have to give
