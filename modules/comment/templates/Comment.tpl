@@ -45,7 +45,7 @@
   </div>
 
   {if isset($truncate)}
-  {$comment.comment|truncate:$truncate|markup}
+  {$comment.comment|entitytruncate:$truncate|markup}
   {else}
   {$comment.comment|markup}
   {/if}

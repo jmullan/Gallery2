@@ -86,7 +86,7 @@
     </h2>
 
     <p class="giDescription">
-      {$child.summary|truncate:256|markup}
+      {$child.summary|entitytruncate:256|markup}
     </p>
 
     <ul class="giInfo">

@@ -48,15 +48,15 @@
     <ul>
       {assign var="lastIndex" value=0}
       {foreach from=$layout.peers item=peer}
-      {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
+      {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent|markup}
       {if ($peer.index - $lastIndex > 1)}
       <li>...</li>
       {/if}
 
       {if ($peer.peer.id == $layout.item.id)}
-      <li class="giSelected">{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}</li>
+      <li class="giSelected">{g->text text="%d. %s" arg1=$peer.index arg2=$title|entitytruncate:14}</li>
       {else}
-      <li><a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}</a></li>
+      <li><a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.peer.id`"}">{g->text text="%d. %s" arg1=$peer.index arg2=$title|entitytruncate:14}</a></li>
       {/if}
       {assign var="lastIndex" value=$peer.index}
       {/foreach}
