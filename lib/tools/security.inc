@@ -20,6 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+if (php_sapi_name() == 'cli') {
+    /* We don't apply this security check to command-line PHP */
+    return;
+}
+
 class GalleryStub {
     var $_hash;
     function setConfig($key, $value) {

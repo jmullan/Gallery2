@@ -33,9 +33,7 @@
  * @author Ernesto Baschny <ernst@baschny.de>
  */
 
-if (isset($_SERVER['HTTP_HOST'])) {
-    include('../security.inc');
-}
+include('../security.inc');
 
 /*
  * Gets a lot of information about our GD installation and return it as a
