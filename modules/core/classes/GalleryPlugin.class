@@ -28,7 +28,7 @@
 /**
  * Plugin meta-info container
  *
- * This is a container for information about a given module.
+ * This is a container for information about a given plugin.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -74,7 +74,7 @@ class GalleryPlugin {
     var $_version;
 
     /**
-     * The version of the Core API required by this module
+     * The version of the Core API required by this plugin
      *
      * @var array _requiredCoreApi
      * @access private
@@ -82,7 +82,7 @@ class GalleryPlugin {
     var $_requiredCoreApi;
 
     /**
-     * The localization domain for this layout
+     * The localization domain for this plugin
      *
      * @var string _l10Domain
      * @access private
@@ -238,19 +238,19 @@ class GalleryPlugin {
     function isActive() {
 	global $gallery;
 
-	list($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
+	list($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($this->getPluginType());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (empty($moduleStatus[$this->getId()])) {
+	if (empty($pluginStatus[$this->getId()])) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      sprintf("No such module: %s", $this->getId())),
+			      sprintf("No such %s: %s", $this->getPluginType(), $this->getId())),
 			 null);
 	}
 
 	return array(GalleryStatus::success(),
-		     empty($moduleStatus[$this->getId()]['active']) ? false : true);
+		     empty($pluginStatus[$this->getId()]['active']) ? false : true);
     }
 
     /**
@@ -263,7 +263,7 @@ class GalleryPlugin {
      */
     function getParameter($parameterName, $itemId=0) {
 	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
-            $this->getPluginType(), $this->getId(), $parameterName, $itemId);
+	    $this->getPluginType(), $this->getId(), $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -281,7 +281,7 @@ class GalleryPlugin {
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
 	$ret = GalleryCoreApi::setPluginParameter(
-            $this->getPluginType(), $this->getId(), $parameterName, $parameterValue, $itemId);
+	    $this->getPluginType(), $this->getId(), $parameterName, $parameterValue, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -290,7 +290,7 @@ class GalleryPlugin {
     }
 
     /**
-     * Remove a layout parameter for a specific item
+     * Remove a plugin parameter for a specific item
      *
      * @param string the parameter name
      * @param int the item id
@@ -325,7 +325,7 @@ class GalleryPlugin {
 	/* TODO: we should do this in one database query, ordered by id. */
 	foreach ($order as $id) {
 	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
-                $this->getPluginType(), $this->getId(), $id);
+		$this->getPluginType(), $this->getId(), $id);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
