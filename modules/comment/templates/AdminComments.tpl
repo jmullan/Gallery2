@@ -1,11 +1,13 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Comments Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Comments Settings"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="No settings available for this module."} 
-  {/gallery->title}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->element}
+      {g->text text="No settings available for this module."} 
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

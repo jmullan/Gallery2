@@ -1,14 +1,15 @@
-{gallery->main}
-  {gallery->component}
-    {gallery->bannerbox}
-      {gallery->title}
-	{gallery->text text="Security Violation"}
-      {/gallery->title}
-    {/gallery->bannerbox}
-    {gallery->detailedbox}
-      {gallery->description}
-	{gallery->text text="The action you attempted is not permitted."}
-      {/gallery->description}
-    {/gallery->detailedbox}
-  {/gallery->component}
-{/gallery->main}
+{g->main}
+  {g->pagebox}
+    {g->banner}
+      {g->title}
+	{g->text text="Security Violation"}
+      {/g->title}
+    {/g->banner}
+
+    {g->box}
+      {g->description}
+	{g->text text="The action you attempted is not permitted."}
+      {/g->description}
+    {/g->box}
+  {/g->pagebox}
+{/g->main}

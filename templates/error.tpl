@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>
-      {gallery->text text="Error"}
+      {g->text text="Error"}
     </title>
   </head>
   <body>

@@ -150,18 +150,18 @@ class AdminModulesView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
         list ($ret, $coreModule) = $gallery->loadModule('core');
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'AdminModules') {
@@ -175,7 +175,7 @@ class AdminModulesView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $entry = array();
@@ -184,7 +184,7 @@ class AdminModulesView extends GalleryView {
 		if (empty($status['active'])) {
 		    list ($ret, $version) = $module->getModuleParameter('version');
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
 		    /*
@@ -204,13 +204,13 @@ class AdminModulesView extends GalleryView {
 			 */
 			list ($ret, $needsConfig) = $module->needsConfiguration();
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
 			if ($needsConfig) {
 			    list ($ret, $configView) = $module->getConfigurationView();
 			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
+				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
 			    $entry['action'] = array('text' => $coreModule->translate('configure'),
 						     'view' => $configView);

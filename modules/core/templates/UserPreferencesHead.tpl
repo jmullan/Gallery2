@@ -1,4 +1,4 @@
-  <title>
-    {gallery->text text="Edit User Preferences"}
-  </title>
-  {gallery->style}
+<title>
+  {g->text text="Edit User Preferences"}
+</title>
+{g->style}

@@ -2,12 +2,12 @@
 <html>
   <head>
     <title>
-      {gallery->text text="Redirect"}
+      {g->text text="Redirect"}
     </title>
-    {gallery->style}
+    {g->style}
   </head>
   <body>
-      {gallery->text text="You are in debug mode so we are not automatically redirecting."}
+      {g->text text="You are in debug mode so we are not automatically redirecting."}
       <br/>
       <a href="{$main.redirectUrl}">[continue]</a>
       <br/>

@@ -236,12 +236,12 @@ class ItemCreateResizesView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] == 'ItemCreateResizes') {
@@ -261,7 +261,7 @@ class ItemCreateResizesView extends GalleryView {
 	    list ($ret, $resizes) =
 		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    if (!empty($resizes)) {
@@ -283,7 +283,7 @@ class ItemCreateResizesView extends GalleryView {
 	    list ($ret, $thumbnails) =
 		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!empty($thumbnails)) {
 		$thumbnail = $thumbnails[$item->getId()];

@@ -62,28 +62,7 @@ class AdminGroupsController extends GalleryController {
 	    }
 	} 
 	
-	if (isset($form['action']['firstPage'])) {
-
-	    /* Go to the first page */
-	    GalleryUtilities::putRequestVariable('form.list.page', 1);
-	    
-	} else if (isset($form['action']['backPage'])) {
-
-	    /* Go back a page */
-	    GalleryUtilities::putRequestVariable('form.list.page', max(1, $form['list']['page']-1));
-	    
-	} else if (isset($form['action']['nextPage'])) {
-	    
-	    /* Go forward a page */
-	    GalleryUtilities::putRequestVariable('form.list.page',
-						 min($form['list']['page']+1, $form['list']['maxPages']));
-	    
-	} else if (isset($form['action']['lastPage'])) {
-
-	    /* Go to the last page */
-	    GalleryUtilities::putRequestVariable('form.list.page', $form['list']['maxPages']);
-	    
-	} else if (isset($form['action']['filterClear'])) {
+	if (isset($form['action']['filterClear'])) {
 
 	    /* Clear the filter */
 	    GalleryUtilities::putRequestVariable('form.list.filter', null);
@@ -93,65 +72,6 @@ class AdminGroupsController extends GalleryController {
 	    /* Show the "create group" view */
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminCreateGroup';
-	    
-	} else if (isset($form['action']['editFromList'])) {
-
-	    if (empty($form['list']['groupId'])) {
-		$error[] = 'form.error.list.noGroupSelected';
-	    } else {
-		/* Show the "edit group" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminEditGroup';
-		$redirect['groupId'] = $form['list']['groupId'];
-	    }
-	    
-	} else if (isset($form['action']['addRemoveUsersFromList'])) {
-
-	    if (empty($form['list']['groupId'])) {
-		$error[] = 'form.error.list.noGroupSelected';
-	    } else {
-		/* Make sure we're not trying to add users to the All Users group */
-		list ($ret, $group) = $gallery->loadEntitiesById($form['list']['groupId']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if ($group->getGroupType() == GROUP_ALL_USERS) {
-		    $error[] = 'form.error.list.cantEditUsers';
-		} else {
-		    /* Show the "edit group" view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminEditGroupUsers';
-		    $redirect['groupId'] = $form['list']['groupId'];
-		}
-	    }
-	    
-	} else if (isset($form['action']['deleteFromList'])) {
-
-	    if (empty($form['list']['groupId'])) {
-		$error[] = 'form.error.list.noGroupSelected';
-	    } else {
-		list ($ret, $allUserGroupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if ($form['list']['groupId'] == $allUserGroupId) {
-		    $error[] = 'form.error.list.cantDeleteAllUsersGroup';
-		} else if ($form['list']['groupId'] == $adminGroupId) {
-		    $error[] = 'form.error.list.cantDeleteAdminGroup';
-		} else {
-		    /* Show the "delete group" view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminDeleteGroup';
-		    $redirect['groupId'] = $form['list']['groupId'];
-		}
-	    }
 	    
 	} else if (isset($form['action']['editFromText'])) {
 
@@ -224,7 +144,7 @@ class AdminGroupsView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	    
 	/* Load some standard form parameters */
@@ -245,7 +165,7 @@ class AdminGroupsView extends GalleryView {
 
 	list ($ret, $totalGroupCount) = GalleryGroupHelper::fetchGroupCount();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$form['list']['count'] = $totalGroupCount;
@@ -255,7 +175,7 @@ class AdminGroupsView extends GalleryView {
 	if (!empty($form['list']['filter'])) {
 	    list ($ret, $form['list']['count']) = GalleryGroupHelper::fetchGroupCount($form['list']['filter']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
@@ -264,15 +184,45 @@ class AdminGroupsView extends GalleryView {
 	if ($form['list']['page'] > $form['list']['maxPages']) {
 	    $form['list']['page'] = $form['list']['maxPages'];
 	}
-	
-	list ($ret, $form['list']['groupNames']) =
+
+	/* Calculate the next/back pages */
+	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
+	$form['list']['backPage'] = max(1, $form['list']['page']-1);
+
+	list ($ret, $groupNames) = 
 	    GalleryGroupHelper::fetchGroupNames($form['list']['pageSize'],
 						(($form['list']['page'] - 1) *
 						 $form['list']['pageSize']),
 						$form['list']['filter']);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+
+	list ($ret, $allUserGroupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	
+	list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$form['list']['groupNames'] = array();
+	foreach ($groupNames as $groupId => $groupName) {
+	    $form['list']['groupNames'][$groupId]['groupName'] = $groupName;
+	    if ($groupId == $allUserGroupId) {
+		$form['list']['groupNames'][$groupId]['can']['delete'] = false;
+		$form['list']['groupNames'][$groupId]['can']['editUsers'] = false;
+	    } else if ($groupId == $adminGroupId) {
+		$form['list']['groupNames'][$groupId]['can']['delete'] = false;
+		$form['list']['groupNames'][$groupId]['can']['editUsers'] = true;
+	    } else {
+		$form['list']['groupNames'][$groupId]['can']['delete'] = true;
+		$form['list']['groupNames'][$groupId]['can']['editUsers'] = true;
+	    }
+	}
+	
 
 	$AdminGroups = array();
 	$AdminGroups['totalGroupCount'] = $totalGroupCount;

@@ -189,7 +189,7 @@ class ItemReorderView extends GalleryView {
 
         list ($ret, $item) = $gallery->loadEntitiesById($itemId);
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
 
 	$show = array();
@@ -202,13 +202,13 @@ class ItemReorderView extends GalleryView {
 	    /* Get all peers that we can see */
 	    list ($ret, $peerIds) = $item->fetchChildIds();
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    /* Build our peers table */

@@ -126,7 +126,7 @@ class AdminCreateGroupView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	    
 

@@ -1,98 +1,99 @@
-{gallery->form action_controller=$SearchShowAll.controller}
-  {gallery->input type="hidden" name="form.formName"}SearchShowAll{/gallery->input}
-  {gallery->input type="hidden" name="form.moduleId"}{$form.moduleId}{/gallery->input}
-  {gallery->input type="hidden" name="form.page"}{$form.page}{/gallery->input}
+{g->form action_controller=$SearchShowAll.controller}
+  {g->input type="hidden" name="form.formName"}SearchShowAll{/g->input}
+  {g->input type="hidden" name="form.moduleId"}{$form.moduleId}{/g->input}
+  {g->input type="hidden" name="form.page"}{$form.page}{/g->input}
 
-  {gallery->main}
-    {gallery->pathbar}
-      {gallery->item}
-	{gallery->text text="Search"}
-      {/gallery->item}
-    {/gallery->pathbar}
+  {g->main}
+    {g->breadcrumb}
+      {g->item}
+	{g->title}
+	  {g->text text="Search"}
+	{/g->title}
+      {/g->item}
+    {/g->breadcrumb}
 
-    {gallery->component}
-      {gallery->bannerbox}
-	{gallery->title}
-	  {gallery->text text="Search the Gallery"}
-	{/gallery->title}
-      {/gallery->bannerbox}
+    {g->pagebox}
+      {g->banner}
+	{g->title}
+	  {g->text text="Search the Gallery"}
+	{/g->title}
+      {/g->banner}
+      
+      {g->box}
+	{g->title}
+	  {g->text text="Search: "}
+	{/g->title}
 
-      {gallery->widget1box}
-	{gallery->widget1}
-	  {gallery->title}
-	    {gallery->text text="Search: "}
-	  {/gallery->title}
-	  {gallery->body}
-	    {gallery->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/gallery->input}
-	    {if isset($form.error.searchCriteria.missing)}
-	      {gallery->error}
-		{gallery->text text="You must enter some text to search for!"}
-	      {/gallery->error}
-	    {/if}
-	    {gallery->input type="submit" name="form.action.search"}
-	      {gallery->text text="Search"}
-	    {/gallery->input}
-	  {/gallery->body}
-	{/gallery->widget1}
-      {/gallery->widget1box}
+	{g->element}
+	  {g->input type="text" size="50" name="form.searchCriteria"}{$form.searchCriteria}{/g->input}
+	{/g->element}
 
-      {gallery->detailedbox}
-	{gallery->title}
+	{if isset($form.error.searchCriteria.missing)}
+	  {g->error}
+	    {g->text text="You must enter some text to search for!"}
+	  {/g->error}
+	{/if}
+
+	{g->element}
+	  {g->input type="submit" name="form.action.search"}
+	    {g->text text="Search"}
+	  {/g->input}
+	{/g->element}
+      {/g->box}
+
+      {g->box}
+	{g->title}
 	  {$SearchShowAll.moduleInfo.name}
-	{/gallery->title}
+	{/g->title}
 
-	{gallery->body}
-	  {gallery->widget1box}
-	    {foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
-	      {gallery->widget1}
-		{gallery->title}
-		  {$optionInfo.description}
-		{/gallery->title}
-		{gallery->body}
-		  {capture name=checkboxName}form.options.{$SearchShowAll.moduleId}.{$optionId}{/capture}
-		  {gallery->input type="checkbox" name=$smarty.capture.checkboxName}
-		    {if isset($form.options.$SearchShowAll.moduleId.$optionId)}1{/if}
-		  {/gallery->input}
-		{/gallery->body}
-	      {/gallery->widget1}
-	    {/foreach}
-	  {/gallery->widget1box}
-	{/gallery->body}
-      {/gallery->detailedbox}
+	{g->table}
+	  {foreach from=$SearchShowAll.moduleInfo.options key=optionId item=optionInfo}
+	    {g->row}
+	      {g->column}
+		{capture name=checkboxName}form.options.{$SearchShowAll.moduleId}.{$optionId}{/capture}
+		{g->input type="checkbox" name=$smarty.capture.checkboxName}
+		  {if isset($form.options.$SearchShowAll.moduleId.$optionId)}1{/if}
+		{/g->input}
+	      {/g->column}
+	      {g->column}
+		{$optionInfo.description}
+	      {/g->column}
+	    {/g->row}
+	  {/foreach}
+	{/g->table}
 
-      {if !empty($SearchShowAll.results)}
-	{gallery->detailedbox}
-	  {gallery->title}
-	    {gallery->text text="Search Results"}
-	  {/gallery->title}
-
-	  {gallery->body}
-	    {gallery->detailedbox}
-	      {gallery->title}
-		{gallery->text text="Searching %s only" arg1=$SearchShowAll.moduleInfo.name}
-		{gallery->input type="submit" name="form.action.scan"}
-		  {gallery->text text="Search all modules"}
-		{/gallery->input}
+	{if !empty($SearchShowAll.results)}
+	  {g->box}
+	    {g->title}
+	      {g->text text="Search Results"}
+	    {/g->title}
+	    
+	    {g->box}
+	      {g->title}
+		{g->text text="Searching %s only" arg1=$SearchShowAll.moduleInfo.name}
+		{g->input type="submit" name="form.action.scan"}
+		  {g->text text="Search all modules"}
+		{/g->input}
 		{$SearchShowAll.moduleInfo.name}
 		{if ($SearchShowAll.results.count > 0)}
-		  {gallery->text text="(Results %d - %d)"
+		  {g->text text="(Results %d - %d)"
 	          arg1=$SearchShowAll.results.start
 	          arg2=$SearchShowAll.results.end}
 		{/if}
 		{if ($SearchShowAll.results.count > $SearchShowAll.results.end)}
 		  {assign var="moduleId" value=$SearchShowAll.moduleId}
-		  {gallery->input type="submit" name="form.action.showAll.$SearchShowAll.moduleId"}
-		    {gallery->text text="Show all %d" arg1=$SearchShowAll.results.count}
-		  {/gallery->input}
+		  {g->input type="submit" name="form.action.showAll.$SearchShowAll.moduleId"}
+		    {g->text text="Show all %d" arg1=$SearchShowAll.results.count}
+		  {/g->input}
 		{/if}
 		{if ($SearchShowAll.results.count > 0)}
 		  {if ($form.page > 1)}
-		    {gallery->input type="submit" name="form.action.previousPage"}
-		      {gallery->text text="<< Previous"}
-		    {/gallery->input}
+		    {g->input type="submit" name="form.action.previousPage"}
+		      {g->text text="<< Previous"}
+		    {/g->input}
 		  {/if}
 		  
-		  {gallery->text text="(Results %d - %d of %d, Page %d of %d)"
+		  {g->text text="(Results %d - %d of %d, Page %d of %d)"
 	          arg1=$SearchShowAll.results.start
 	          arg2=$SearchShowAll.results.end
 	          arg3=$SearchShowAll.results.count
@@ -100,52 +101,50 @@
 	          arg5=$SearchShowAll.maxPages}
 		{/if}
 		{if ($form.page < $SearchShowAll.maxPages)}
-		  {gallery->input type="submit" name="form.action.nextPage"}
-		    {gallery->text text="Next >>"}
-		  {/gallery->input}
+		  {g->input type="submit" name="form.action.nextPage"}
+		    {g->text text="Next >>"}
+		  {/g->input}
 		{/if}
-	      {/gallery->title}
+	      {/g->title}
 
-	      {gallery->body}
-		{gallery->table}
-		  {assign var="searchCriteria" value=$form.searchCriteria} 
-		  {foreach from=$SearchShowAll.results.results item=result} 
-		    {assign var=itemId value=$result.itemId} 
-		    {gallery->row}
-		      {gallery->column}
-			{gallery->link url_view="core:ShowItem" url_itemId=$itemId}
-			  {gallery->image item=$SearchShowAll.items.$itemId image=$SearchShowAll.thumbnails.$itemId}
-			{/gallery->link}
-		      {/gallery->column}
-
-		      {gallery->column}
-			{gallery->table}
-			  {foreach from=$result.fields item=field} 
-			    {gallery->row}
-			      {gallery->column}
-				{$field.key}
-			      {/gallery->column}
-			      {gallery->column}
-				{$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
-			      {/gallery->column}
-			    {/gallery->row}
-			  {/foreach}
-			{/gallery->table}
-		      {/gallery->column}
-		    {/gallery->row}
-		  {foreachelse} 
-		    {gallery->row}
-		      {gallery->column}
-			{gallery->text text="No results"}
-		      {/gallery->column}
-		    {/gallery->row}
-		  {/foreach}
-		{/gallery->table}
-	      {/gallery->body}
-	    {/gallery->detailedbox}
-	  {/gallery->body}
-	{/gallery->detailedbox}
-      {/if}
-    {/gallery->component}
-  {/gallery->main}
-{/gallery->form}
+	      {g->table}
+		{assign var="searchCriteria" value=$form.searchCriteria} 
+		{foreach from=$SearchShowAll.results.results item=result} 
+		  {assign var=itemId value=$result.itemId} 
+		  {g->row}
+		    {g->column}
+		      {g->link url_view="core:ShowItem" url_itemId=$itemId}
+			{g->image item=$SearchShowAll.items.$itemId image=$SearchShowAll.thumbnails.$itemId}
+		      {/g->link}
+		    {/g->column}
+		    
+		    {g->column}
+		      {g->table}
+			{foreach from=$result.fields item=field} 
+			  {g->row}
+			    {g->column}
+			      {$field.key}
+			    {/g->column}
+			    {g->column}
+			      {$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
+			    {/g->column}
+			  {/g->row}
+			{/foreach}
+		      {/g->table}
+		    {/g->column}
+		  {/g->row}
+		{foreachelse} 
+		  {g->row}
+		    {g->column}
+		      {g->text text="No results"}
+		    {/g->column}
+		  {/g->row}
+		{/foreach}
+	      {/g->table}
+	    {/g->box}
+	  {/g->box}
+	{/if}
+      {/g->box}
+    {/g->pagebox}
+  {/g->main}
+{/g->form}

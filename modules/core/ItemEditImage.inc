@@ -75,7 +75,7 @@ class ItemEditImageController extends GalleryController {
 	$operation = null;
 	/* Figure out which command we're taking */
 	if (isset($form['action']['scale'])) {
-	    if (!isset($form['scale']['size'])) {
+	    if (empty($form['scale']['size'])) {
 		$error[] = 'form.error.scale.size.missing';
 	    } else if (!is_numeric($form['scale']['size']) || $form['scale']['size'] < 1) {
 		$error[] = 'form.error.scale.size.invalid';
@@ -317,12 +317,12 @@ class ItemEditImageView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditImage') {
@@ -335,7 +335,7 @@ class ItemEditImageView extends GalleryView {
 	/* Check to see if we have a preferred source */
 	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if (empty($results)) {

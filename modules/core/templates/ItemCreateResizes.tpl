@@ -1,87 +1,79 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Item Thumbnail Size and Resizes"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Item Thumbnail Size and Resizes"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.saved)}
-	  {gallery->text text="Changes saved successfully."}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->success}
+      {if isset($status.saved)}
+	{g->text text="Changes saved successfully."}
+      {/if}
+    {/g->success}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Thumbnails"}
-  {/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Thumbnails"}
+    {/g->title}
 
-  {gallery->description}
-    {gallery->text text="Specify the thumbnail size of this item here:"}
-  {/gallery->description}
+    {g->description}
+      {g->text text="Specify the thumbnail size of this item here:"}
+    {/g->description}
 
-  {gallery->body}
-    {gallery->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/gallery->input}
+    {g->element}
+      {g->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/g->input}
+    {/g->element}
+  {/g->box}
 
-    {if !empty($form.error.thumbnail.size.missing)}
-      {gallery->error}
-	{gallery->text text="You must enter a thumbnail size"}
-      {/gallery->error}
-    {/if}
+  {if !empty($form.error.thumbnail.size.missing)}
+    {g->error}
+      {g->text text="You must enter a thumbnail size"}
+    {/g->error}
+  {/if}
+  
+  {if !empty($form.error.thumbnail.size.invalid)}
+    {g->error}
+      {g->text text="You must enter a number (greater than zero)"}
+    {/g->error}
+  {/if}
 
-    {if !empty($form.error.thumbnail.size.invalid)}
-      {gallery->error}
-	{gallery->text text="You must enter a number (greater than zero)"}
-      {/gallery->error}
-    {/if}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Resized Images"}
+    {/g->title}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Resized Images"}
-  {/gallery->title}
+    {g->description}
+      {g->text text="These sizes are alternate resized versions of the original you would like to have available for viewing."}
+    {/g->description}
 
-  {gallery->description}
-    {gallery->text text="These sizes are alternate resized versions of the original you would like to have available for viewing."}
-  {/gallery->description}
+    {counter start=0 assign=index}
+    {foreach from=$form.resizes item=resize}
+      {g->element}
+	{g->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/g->input}
+	{g->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/g->input}
+      {/g->element}
 
-  {gallery->body}
-    {gallery->widget1box}
-      {counter start=0 assign=index}
-      {foreach from=$form.resizes item=resize}
-	{gallery->widget1}
-	  {gallery->body}
-	    {gallery->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/gallery->input}
-	    {gallery->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/gallery->input}
+      {if !empty($form.error.resizes.$index.size.missing)}
+	{g->error}
+	  {g->text text="You must enter a valid size"}
+	{/g->error}
+      {/if}
+	      
+      {if !empty($form.error.resizes.$index.size.invalid)}
+	{g->error}
+	  {g->text text="You must enter a number (greater than zero)"}
+	{/g->error}
+      {/if}
+      {counter}
+    {/foreach}
+  {/g->box}
 
-	    {if !empty($form.error.resizes.$index.size.missing)}
-	      {gallery->error}
-	        {gallery->text text="You must enter a valid size"}
-	      {/gallery->error}
-            {/if}
-	    
-	    {if !empty($form.error.resizes.$index.size.invalid)}
-	      {gallery->error}
-	        {gallery->text text="You must enter a number (greater than zero)"}
-	      {/gallery->error}
-            {/if}
-            {counter}
-	  {/gallery->body}
-	{/gallery->widget1}
-      {/foreach}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
-
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-    {gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box}
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

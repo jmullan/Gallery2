@@ -1,171 +1,158 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Album Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Album Settings"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.saved)}
-	  {gallery->text text="Settings saved successfully."}
-	{/if}
-	{if isset($status.createdAlbum)}
-	  {gallery->text text="Album created successfully."}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->success}
+      {if isset($status.saved)}
+	{g->text text="Settings saved successfully."}
+      {/if}
+      {if isset($status.createdAlbum)}
+	{g->text text="Album created successfully."}
+      {/if}
+    {/g->success}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Sort order"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text=" This sets the default sort order for the album.  This applies to all new items."}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->select name="form.orderBy"}
-	    {html_options options=$ItemEditAlbum.orderByList selected=$form.orderBy}
-	  {/gallery->select}
-	  {gallery->select name="form.orderDirection"}
-	    {html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Sort order"}
+    {/g->title}
+    {g->description}
+      {g->text text="This sets the default sort order for the album.  This applies to all new items."}
+    {/g->description}
+    {g->element}
+      {g->select name="form.orderBy"}
+	{html_options options=$ItemEditAlbum.orderByList selected=$form.orderBy}
+      {/g->select}
+      {g->select name="form.orderDirection"}
+	{html_options options=$ItemEditAlbum.orderDirectionList selected=$form.orderDirection}
+      {/g->select}
+    {/g->element}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Layout"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text="Choose a layout for this album. (The way the gallery is arranged on the page.)"}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->select name="form.layout"}
-	    {html_options values=$ItemEditAlbum.layoutList selected=$form.layout output=$ItemEditAlbum.layoutList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Layout"}
+    {/g->title}
+    {g->description}
+      {g->text text="Choose a layout for this album. (The way the album is arranged on the page.)"}
+    {/g->description}
+    {g->element}
+      {g->select name="form.layout"}
+	{html_options values=$ItemEditAlbum.layoutList selected=$form.layout output=$ItemEditAlbum.layoutList}
+      {/g->select}
+    {/g->element}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Theme"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text="Choose a theme for this album.  (The look and feel of this album)"}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->select name="form.theme"}
-	    {html_options values=$ItemEditAlbum.themeList selected=$form.theme output=$ItemEditAlbum.themeList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Theme"}
+    {/g->title}
+    {g->description}
+      {g->text text="Choose a theme for this album.  (The look and feel of this album)"}
+    {/g->description}
+    {g->element}
+      {g->select name="form.theme"}
+	{html_options values=$ItemEditAlbum.themeList selected=$form.theme output=$ItemEditAlbum.themeList}
+      {/g->select}
+    {/g->element}
+  {/g->box}
+  
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Thumbnails"}
+    {/g->title}
+    {g->description}
+      {g->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
+    {/g->description}
+    {g->element}
+      {g->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/g->input}
+    {/g->element}
+    
+    {if !empty($form.error.thumbnail.size.invalid)}
+      {g->error}
+	{g->text text="You must enter a number (greater than zero)"}
+      {/g->error}
+    {/if}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Thumbnails"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text=" Every item requires a thumbnail. Set the default value in pixels here."}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->input type=text size=6 name="form.thumbnail.size"}{$form.thumbnail.size}{/gallery->input}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Resized Images"}
+    {/g->title}
+    {g->description}
+      {g->text text="Each item in your album can have multiple sizes. Define the default sizes here."}
+    {/g->description}
+    {g->element}
+      {g->table style="admin_listing" evenodd="true"}
+	{g->row}
+	  {g->column width="10%" header="true" align="center"}
+	    {g->text text="Active"}
+	  {/g->column}
+	  {g->column header="true"}
+	    {g->text text="Target Size (pixels)"}
+	  {/g->column}
+	{/g->row}
+	{counter start=0 assign=index}
+	{foreach from=$form.resizes item=resize}
+	  {g->row}
+	    {g->column align="center"}
+	      {g->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/g->input}
+	    {/g->column}
+	    {g->column}
+	      {g->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/g->input}
+	    {/g->column}
+	  {/g->row}
 
-	  {if !empty($form.error.thumbnail.size.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a thumbnail size"}
-	    {/gallery->error}
-          {/if}
+	  {if !empty($form.error.resizes.$index.size.missing)}
+	    {g->row}
+	      {g->column colspan="2"}
+		{g->error}
+		  {g->text text="You must enter a valid size"}
+		{/g->error}
+	      {/g->column}
+	    {/g->row}
+	  {/if}
+	  
+	  {if !empty($form.error.resizes.$index.size.invalid)}
+	    {g->row}
+	      {g->column colspan="2"}
+		{g->error}
+		  {g->text text="You must enter a number (greater than zero)"}
+		{/g->error}
+	      {/g->column}
+	    {/g->row}
+	  {/if}
+	  {counter}
+	{/foreach}
+      {/g->table}
+    {/g->element}
+  {/g->box}
 
-	  {if !empty($form.error.thumbnail.size.invalid)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a number (greater than zero)"}
-	    {/gallery->error}
-          {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Recreate thumbnails and resizes"}
+    {/g->title}
+    {g->description}
+      {g->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
+    {/g->description}
+    {g->element}
+      {g->input type="checkbox" name="form.recreateThumbnails"}{$form.recreateThumbnails}{/g->input}
+      {g->text text="Recreate thumbnails"}
+    {/g->element}
+    {g->element}
+      {g->input type="checkbox" name="form.recreateResizes"}{$form.recreateResizes}{/g->input}
+      {g->text text="Recreate resized images"}
+    {/g->element}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Resized Images"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text="Each item in your album can have multiple sizes. Define the default sizes here."}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->table}
-	    {gallery->row}
-	      {gallery->column header="true"}
-		{gallery->text text="Active"}
-	      {/gallery->column}
-	      {gallery->column header="true"}
-		{gallery->text text="Target Size (pixels)"}
-	      {/gallery->column}
-	    {/gallery->row}
-	    {counter start=0 assign=index}
-	    {foreach from=$form.resizes item=resize}
-	      {gallery->row}
-		{gallery->column}
-		  {gallery->input type="checkbox" name="form.resizes.$index.active"}{$form.resizes.$index.active}{/gallery->input}
-		{/gallery->column}
-		{gallery->column}
-		  {gallery->input type="text" size="6" name="form.resizes.$index.size"}{$form.resizes.$index.size}{/gallery->input}
-		{/gallery->column}
-	      {/gallery->row}
-
-	      {if !empty($form.error.resizes.$index.size.missing)}
-		{gallery->row}
-		  {gallery->column colspan="2"}
-		    {gallery->error}
-		      {gallery->text text="You must enter a valid size"}
-		    {/gallery->error}
-		  {/gallery->column}
-		{/gallery->row}
-              {/if}
-	      
-	      {if !empty($form.error.resizes.$index.size.invalid)}
-		{gallery->row}
-		  {gallery->column colspan="2"}
-		    {gallery->error}
-		      {gallery->text text="You must enter a number (greater than zero)"}
-		    {/gallery->error}
-		  {/gallery->column}
-		{/gallery->row}
-              {/if}
-              {counter}
-	    {/foreach}
-	  {/gallery->table}
-	{/gallery->body}
-      {/gallery->widget2}
-
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Recreate thumbnails and resizes"}
-	{/gallery->title}
-	{gallery->description}
-	  {gallery->text text="The thumbnail and resized image settings are for all new items. To apply these settings to all the items in your album, check the appropriate box."}
-	{/gallery->description}
-	{gallery->body}
-	  {gallery->input type="checkbox" name="form.recreateThumbnails"}{$form.recreateThumbnails}{/gallery->input}
-	  {gallery->text text="Recreate thumbnails"}
-	  <br />
-	  {gallery->input type="checkbox" name="form.recreateResizes"}{$form.recreateResizes}{/gallery->input}
-	  {gallery->text text="Recreate resized images"}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
-
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-    {gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

@@ -1,80 +1,80 @@
 <!-- Profiling output -->
 {if !empty($main.profile)}
-  {gallery->table width="100%"}
-    {gallery->row}
-      {gallery->column colspan="8"}
-	{gallery->text text="Profiling"}
-      {/gallery->column}
-    {/gallery->row}
+  {g->table width="100%"}
+    {g->row}
+      {g->column colspan="8"}
+	{g->text text="Profiling"}
+      {/g->column}
+    {/g->row}
 
-    {gallery->row}
-      {gallery->column header="true" rowspan="2"}
-	{gallery->text text="Function"}
-      {/gallery->column}
-      {gallery->column header="true" colspan="2"}
-	{gallery->text text="Combined"}
-      {/gallery->column}
-      {gallery->column header="true" colspan="3"}
-	{gallery->text text="Internal"}
-      {/gallery->column}
-      {gallery->column header="true" colspan="3"}
-	{gallery->text text="External"}
-      {/gallery->column}
-    {/gallery->row}
+    {g->row}
+      {g->column header="true" rowspan="2"}
+	{g->text text="Function"}
+      {/g->column}
+      {g->column header="true" colspan="2"}
+	{g->text text="Combined"}
+      {/g->column}
+      {g->column header="true" colspan="3"}
+	{g->text text="Internal"}
+      {/g->column}
+      {g->column header="true" colspan="3"}
+	{g->text text="External"}
+      {/g->column}
+    {/g->row}
 
-    {gallery->row}
-      {gallery->column header="true"}
-	{gallery->text text="Calls"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Total"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	&lt;{gallery->text text="Total"}&gt;
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Max"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Average"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Total"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Max"}
-      {/gallery->column}
-      {gallery->column header="true"}
-	{gallery->text text="Average"}
-      {/gallery->column}
-    {/gallery->row}
+    {g->row}
+      {g->column header="true"}
+	{g->text text="Calls"}
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Total"}
+      {/g->column}
+      {g->column header="true"}
+	&lt;{g->text text="Total"}&gt;
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Max"}
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Average"}
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Total"}
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Max"}
+      {/g->column}
+      {g->column header="true"}
+	{g->text text="Average"}
+      {/g->column}
+    {/g->row}
 
     {foreach from=$main.profile item=profileEntry}
-      {gallery->row}
-	{gallery->column}
+      {g->row}
+	{g->column}
 	  {$profileEntry.name}
-	{/gallery->column}
+	{/g->column}
 	{if (isset($profileEntry.error))} 
-	  {gallery->column colspan="7"}
-	    {gallery->text text="Error: %s" arg1=$profileEntry.error}
-	  {/gallery->column}
+	  {g->column colspan="7"}
+	    {g->text text="Error: %s" arg1=$profileEntry.error}
+	  {/g->column}
 	{else}
-	  {gallery->column}
+	  {g->column}
 	    {$profileEntry.count}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.total}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.internal.total}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.internal.max}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.internal.average}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.external.total}
 
 	    {* Embed more data in the comments *}
@@ -82,15 +82,15 @@
 	    {foreach from=$profileEntry.external.calls item=call}
 	      <!-- Call: {$call.elapsed} {$call.marker} -->
 	    {/foreach}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.external.max}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$profileEntry.external.average}
-	  {/gallery->column}
+	  {/g->column}
 	{/if}
-      {/gallery->row}
+      {/g->row}
     {/foreach}
-  {/gallery->table}
+  {/g->table}
 {/if}

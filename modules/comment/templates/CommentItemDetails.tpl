@@ -1,22 +1,20 @@
 {if !empty($CommentItemDetails.comments)}
-  {gallery->simplebox}
-    {gallery->title}
-      {gallery->text text="Recent comments"}
+  {g->box}
+    {g->title}
+      {g->text text="Recent comments"}
 
       {if sizeof($CommentItemDetails.comments) < $CommentItemDetails.totalComments }
-	{gallery->link url_view="core:ItemAdmin" url_subView="comment:ShowComments" url_itemId=$CommentItemDetails.item.id}
-	  {gallery->text text="(view all %d comments)" arg1=$CommentItemDetails.totalComments}
-	{/gallery->link}
+	{g->link url_view="core:ItemAdmin" url_subView="comment:ShowComments" url_itemId=$CommentItemDetails.item.id}
+	  {g->text text="(view all %d comments)" arg1=$CommentItemDetails.totalComments}
+	{/g->link}
       {/if}
-    {/gallery->title}
+    {/g->title}
 
-    {gallery->body}
-      {foreach from=$CommentItemDetails.comments item=comment}
-	{assign var="userId" value=$comment.commenterId}
-	{assign var="user" value=$CommentItemDetails.commenters.$userId}
-	{capture name="date"}{gallery->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
-	{include file="modules/comment/templates/Comment.tpl" user=$user comment=$comment can=$CommentItemDetails.can item=$CommentItemDetails.item truncate=256}
-      {/foreach}
-    {/gallery->body}
-  {/gallery->simplebox}
+    {foreach from=$CommentItemDetails.comments item=comment}
+      {assign var="userId" value=$comment.commenterId}
+      {assign var="user" value=$CommentItemDetails.commenters.$userId}
+      {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
+      {include file="modules/comment/templates/Comment.tpl" user=$user comment=$comment can=$CommentItemDetails.can item=$CommentItemDetails.item truncate=256}
+    {/foreach}
+  {/g->box}
 {/if}

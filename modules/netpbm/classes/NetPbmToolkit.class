@@ -96,7 +96,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    case -90:
 		$flipArgument = "-ccw";
 		break;
-		
+
 	    case 90:
 		$flipArgument = "-cw";
 		break;
@@ -160,8 +160,8 @@ class NetPbmToolkit extends GalleryToolkit {
 		return array(true, null, null);
 	    }
 
-	    if ($rotation == 270) {
-		$rotation = -90;
+	    if (abs($rotation) >= 180) {
+		$rotation = 360 - abs($rotation);
 	    }
 	    return array(true, $operation2, array($rotation));
 

@@ -116,13 +116,13 @@ class AdminDeleteGroupView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
         if ($form['formName'] != 'AdminDeleteGroup') {

@@ -1,4 +1,4 @@
 <title>
-  {gallery->text text="Gallery Debug File Viewer"}
+  {g->text text="Gallery Debug File Viewer"}
 </title>
-{gallery->style}
+{g->style}

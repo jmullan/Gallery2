@@ -1,77 +1,70 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Account Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Account Settings"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.saved)}
-	  {gallery->text text="Account settings saved successfully"}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->success}
+      {if isset($status.saved)}
+	{g->text text="Account settings saved successfully"}
+      {/if}
+    {/g->success}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Username"}
-	{/gallery->title}
-	{gallery->body}
-	  {$UserAdmin.user.userName}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box style="admin"}
+    {g->box}
+      {g->title}
+	{g->text text="Username"}
+      {/g->title}
+      {g->element}
+	{$UserAdmin.user.userName}
+      {/g->element}
+    {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Full name"}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->box}
+      {g->title}
+	{g->text text="Full name"}
+      {/g->title}
+      {g->element}
+	{g->input type="text" name="form.fullName"}{$form.fullName}{/g->input}
+      {/g->element}
+    {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Email address"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input type="text" name="form.email"}{$form.email}{/gallery->input}
-	  {if isset($form.error.email.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter an email address"}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->box}
+      {g->title}
+	{g->text text="Email address"}
+      {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
+      {g->element}
+	{g->input type="text" name="form.email"}{$form.email}{/g->input}
+      {/g->element}
+    {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Language"}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->select name="form.language"}
-	    {html_options options=$UserPreferences.languageList selected=$form.language}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget2}
+    {if isset($form.error.email.missing)}
+      {g->error}
+	{g->text text="You must enter an email address"}
+      {/g->error}
+    {/if}
 
-      {gallery->widget2}
-	{gallery->body}
-	  {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {g->box}
+      {g->title}
+	{g->text text="Language"}
+      {/g->title}
+      {g->element}
+	{g->select name="form.language"}
+	  {html_options options=$UserPreferences.languageList selected=$form.language}
+	{/g->select}
+      {/g->element}
+    {/g->box}
+
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

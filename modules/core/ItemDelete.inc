@@ -117,23 +117,23 @@ class ItemDeleteView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.delete');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if ($item->getId() == $rootId) {
 	    if ($gallery->getDebug()) {
 		$gallery->debug("Can't delete the root album");
 	    }
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	
 	/* Count its children */

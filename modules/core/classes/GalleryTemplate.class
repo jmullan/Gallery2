@@ -231,7 +231,7 @@ class GalleryTemplate {
 	    }
 
 	    $templateAdapter =& $gallery->getTemplateAdapter();
-	    $smarty->register_object('gallery', $templateAdapter, array(), true,
+	    $smarty->register_object('g', $templateAdapter, array(), true,
 				      GalleryTemplateAdapter::getBlockMethods());
 	}
 

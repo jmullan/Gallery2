@@ -1,44 +1,42 @@
-{gallery->main}
-  {gallery->bannerbox}
-    {gallery->title}
-      {gallery->text text="Source code for file: %s" arg1=$FileViewer.fileName} 
-    {/gallery->title}
-  {/gallery->bannerbox}
+{g->main}
+  {g->pagebox}
+    {g->banner}
+      {g->title}
+	{g->text text="Source code for file: %s" arg1=$FileViewer.fileName} 
+      {/g->title}
+    {/g->banner}
 
-  {gallery->component}
-    {gallery->detailedbox}
-      {gallery->body}
-	{counter print=false start=1 assign=lineNumber}
-	{gallery->table}
-	  {foreach from=$FileViewer.lines item=line}
-	    {gallery->row}
-	      {gallery->column}
-		{if ($lineNumber == $FileViewer.currentLine)}
-		  --->
-		{else}
-		  &nbsp;
-		{/if}
-	      {/gallery->column}
-	      {gallery->column}
-		<a name="{$lineNumber}">
-		{$lineNumber}
-		</a>
-	      {/gallery->column}
+    {g->box}
+      {counter print=false start=1 assign=lineNumber}
+      {g->table}
+	{foreach from=$FileViewer.lines item=line}
+	  {g->row}
+	    {g->column}
+	      {if ($lineNumber == $FileViewer.currentLine)}
+		--->
+	      {else}
+		&nbsp;
+	      {/if}
+	    {/g->column}
+	    {g->column}
+	      <a name="{$lineNumber}">
+	      {$lineNumber}
+	      </a>
+	    {/g->column}
 
-	      {gallery->column}
-		{if ($lineNumber == $FileViewer.currentLine)}
-		  <b>
-		{/if}
-		{$line|escape|replace:" ":"&nbsp;"|replace:"\t":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
-		{if ($lineNumber == $FileViewer.currentLine)}
-		  </b>
-		{/if}
-	      {/gallery->column}
-	    {/gallery->row}
-	    {counter}
-	  {/foreach}
-	{/gallery->table}
-      {/gallery->body}
-    {/gallery->detailedbox}
-  {/gallery->component}
-{/gallery->main}
+	    {g->column}
+	      {if ($lineNumber == $FileViewer.currentLine)}
+		<b>
+	      {/if}
+	      {$line|escape|replace:" ":"&nbsp;"|replace:"\t":"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}
+	      {if ($lineNumber == $FileViewer.currentLine)}
+		</b>
+	      {/if}
+	    {/g->column}
+	  {/g->row}
+	  {counter}
+	{/foreach}
+      {/g->table}
+    {/g->box}
+  {/g->pagebox}
+{/g->main}

@@ -1,28 +1,25 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Delete this comment?"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Delete this comment?"}
+    {/g->title}
+  {/g->banner}
 
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Are you sure?"}
+    {/g->title}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Are you sure?"}
-  {/gallery->title}
+    {g->description}
+      {g->text text="Delete this comment?  There is no undo!"}
+    {/g->description}
 
-  {gallery->description}
-    {gallery->text text="Delete this comment?  There is no undo!"}
-  {/gallery->description}
+    {g->element}
+      {g->input type="hidden" name="commentId"}{$DeleteComment.comment.id}{/g->input}
+      {g->input type="submit" name="form.action.delete"}{g->text text="Delete"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
 
-  {gallery->body}
-    {gallery->input type="hidden" name="commentId"}{$DeleteComment.comment.id}{/gallery->input}
-    {gallery->input type="submit" name="form.action.delete"}
-      {gallery->text text="Delete"}
-    {/gallery->input}
-    {gallery->input type="submit" name="form.action.cancel"}
-      {gallery->text text="Cancel"}
-    {/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
-
-{include file="modules/comment/templates/Comment.tpl" item=$ItemAdmin.item comment=$DeleteComment.comment user=$DeleteComment.commenter}
+  {include file="modules/comment/templates/Comment.tpl" item=$ItemAdmin.item comment=$DeleteComment.comment user=$DeleteComment.commenter}
+{/g->pagebox}

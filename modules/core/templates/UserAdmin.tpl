@@ -1,67 +1,67 @@
-{gallery->form action_controller="$controller"}
-  {gallery->input type="hidden" name="form.formName"}{$form.formName}{/gallery->input}
+{g->form action_controller="$controller"}
+  {g->input type="hidden" name="form.formName"}{$form.formName}{/g->input}
 
-  {gallery->main}
-    {gallery->pathbar}
-      {gallery->item}
-	{gallery->text text="Your Account"}
-      {/gallery->item}
+  {g->main}
+    {g->breadcrumb}
+      {g->item}
+	{g->title}
+	  {g->text text="Your Account"}
+	{/g->title}
+      {/g->item}
       {if ($UserAdmin.show.userInPathbar)}
-	{gallery->item}
-	  {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
-	{/gallery->item}
+	{g->item}
+	  {g->title}
+	    {$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
+	  {/g->title}
+	{/g->item}
       {/if}
-    {/gallery->pathbar}
+    {/g->breadcrumb}
 
-    {gallery->sidebar}
-      {gallery->component}
-	{gallery->simplebox}
-	  {gallery->body}
-	    {gallery->listingbox}
-	      {gallery->title}
-		{gallery->text text="User Options"}
-	      {/gallery->title}
-	      {foreach from=$UserAdmin.subViewChoices item=choice}
-		{if ($UserAdmin.subViewName == $choice.view)}
-		  {gallery->item selected="true"}
+    {g->sidebar}
+      {g->box style="sidebar"}
+	{g->title}
+	  {g->text text="User Options"}
+	{/g->title}
+
+	{g->listing}
+	  {foreach from=$UserAdmin.subViewChoices item=choice}
+	    {if ($UserAdmin.subViewName == $choice.view)}
+	      {g->item selected="true"}
+		{g->title}
+		  {$choice.name}
+		{/g->title}
+	      {/g->item}
+	    {else}
+	      {g->item}
+		{g->title}
+		  {g->link url_view='core:UserAdmin' url_subView=$choice.view}
 		    {$choice.name}
-		  {/gallery->item}
-		{else}
-		  {gallery->item}
-		    {gallery->link url_view='core:UserAdmin' url_subView=$choice.view}
-		      {$choice.name}
-		    {/gallery->link}
-		  {/gallery->item}
-		{/if}
-	      {/foreach}
-	    {/gallery->listingbox}
-	  {/gallery->body}
-	{/gallery->simplebox}
-      {/gallery->component}
+		  {/g->link}
+		{/g->title}
+	      {/g->item}
+	    {/if}
+	  {/foreach}
+	{/g->listing}
+      {/g->box}
       
-      {gallery->component}
-	{gallery->simplebox}
-	  {gallery->body}
-	    {gallery->listingbox}
-	      {gallery->title}
-		{gallery->text text="Navigation"}
-	      {/gallery->title}
-	      {gallery->group}
-		{gallery->item}
-		  {gallery->link}
-		    {gallery->text text="Browse Gallery"}
-		  {/gallery->link}
-		{/gallery->item}
-	      {/gallery->group}
-	    {/gallery->listingbox}
-	  {/gallery->body}
-	{/gallery->simplebox}
-      {/gallery->component}
-    {/gallery->sidebar}
+      {g->box style="sidebar"}
+	{g->title}
+	  {g->text text="Navigation"}
+	{/g->title}
 
-    {gallery->component}
-      {include file=$UserAdmin.viewBodyFile l10Domain=$UserAdmin.viewL10Domain}
-    {/gallery->component}
+	{g->listing}
+	  {g->item}
+	    {g->title}
+	      {g->link}
+		{g->text text="Browse Gallery"}
+	      {/g->link}
+	    {/g->title}
+	  {/g->item}
+	{/g->listing}
+      {/g->box}
+    {/g->sidebar}
 
-  {/gallery->main}
-{/gallery->form}
+    {include file=$UserAdmin.viewBodyFile l10Domain=$UserAdmin.viewL10Domain}
+
+  {/g->main}
+{/g->form}

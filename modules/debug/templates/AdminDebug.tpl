@@ -1,11 +1,13 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Debug Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Debug Settings"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="No available settings for the Debug module."}
-  {/gallery->title}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->element}
+      {g->text text="No available settings for the Debug module."}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

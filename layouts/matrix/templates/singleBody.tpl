@@ -2,109 +2,140 @@
 {assign var="currentIndex" value=$layout.imageViewsIndex}
 {assign var="image" value=$layout.imageViews.$currentIndex}
 
-{gallery->main}
+{g->main}
   {include file="layouts/matrix/templates/pathbar.tpl"}
   {include file="layouts/matrix/templates/sidebar.tpl"}
 
-  {gallery->component}
-    {gallery->bannerbox}
-      {gallery->title}
+  {g->pagebox}
+
+    {g->banner}
+      {g->title}
 	{$layout.item.title}
-      {/gallery->title}
-      {gallery->description}
+      {/g->title}
+      {g->description}
 	{$layout.item.summary}
-      {/gallery->description}
+      {/g->description}
 
-      {gallery->component}
-	{gallery->infobox}
-	  {gallery->item}
-	    {capture name=creationTimestamp}
-	      {gallery->date timestamp=$layout.item.creationTimestamp}
+      {g->infoset}
+	{g->item}
+	  {g->title}
+	    {capture name=modificationTimestamp}
+	      {g->date timestamp=$layout.item.modificationTimestamp}
 	    {/capture}
-	    {gallery->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
-	  {/gallery->item}
+	    {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+	  {/g->title}
+	{/g->item}
+	
+	{g->item}
+	  {g->title}
+	    {g->actionset}
+	      {g->title}
+		{g->text text="Size: "}
+	      {/g->title}
 
-	  {gallery->item}
-	    {gallery->text text="Size: "}
-	    {gallery->select onChange="if (this.value) javascript:location.href=this.value"}
 	      {section name=imageView loop=$layout.imageViews}
 		{if $smarty.section.imageView.index != $layout.imageViewsIndex}
-		  <option value="{gallery->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}">
+		  {assign var="selected" value=false}
 		{else}
-		  <option value="{gallery->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}" SELECTED>		  
+		  {assign var="selected" value=true}
 		{/if}
-		{gallery->text text="%dx%d" arg1=$layout.imageViews[imageView].width arg2=$layout.imageViews[imageView].height}
-	      {/section}
-	    {/gallery->select}
-	  {/gallery->item}
 
-	  {if !empty($layout.sourceImage)}
-	    {gallery->item}
-	      {gallery->text text="Full size: "}
-	      {gallery->link url_view="core:ShowItem" url_itemId=$layout.item.id url_imageViewsIndex=$layout.sourceImageViewIndex}
-		{gallery->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height}
-	      {/gallery->link}
-	    {/gallery->item}
+		{g->actionitem selected=$selected}
+		  {g->title}
+		    {g->text text="%dx%d" arg1=$layout.imageViews[imageView].width arg2=$layout.imageViews[imageView].height}
+		  {/g->title}
+		  {g->value}
+		    {g->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}
+		  {/g->value}
+		{/g->actionitem}
+	      {/section}
+	    {/g->actionset}
+	  {/g->title}
+	{/g->item}
+
+	{if !empty($layout.sourceImage)}
+	  {g->item}
+	    {g->title}
+	      {g->text text="Full size: "}
+		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_imageViewsIndex=$layout.sourceImageViewIndex}
+		  {g->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
 	  {/if}
 
-	  {gallery->item}
-	    {gallery->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
-	  {/gallery->item}
-	{/gallery->infobox}
+	  {g->item}
+	    {g->title}
+	      {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
+	    {/g->title}
+	  {/g->item}
+	{/g->infoset}
 
 	{include file="layouts/matrix/templates/itemNavigator.tpl"}
+      {/g->banner}
 
-      {/gallery->component}
-    {/gallery->bannerbox}
+      {g->box style="canvas"}
+	{g->itemview}
+	  {g->title}
+	    {$layout.item.title}
+	  {/g->title}
+	  {g->description}
+	    {$layout.item.description}
+	  {/g->description}
+	  {g->media}
+	    {if ($layout.can.viewInline.$currentIndex)}
+	      {g->image item=$layout.item image=$image}
+	    {else}
+	      {g->link url_view="core:DownloadItem" url_itemId=$image.id}
+		{g->text text="Download this item"} 
+	      {/g->link}
+	    {/if}
+	  {/g->media}
+	{/g->itemview}
+      {/g->box}
 
-    {gallery->imagebox}
-      {gallery->description}
-	{$layout.item.description}
-      {/gallery->description}
-      {gallery->body}
-	{if ($layout.can.viewInline.$currentIndex)}
-	  {gallery->image item=$layout.item image=$image}
-	{else}
-	  {gallery->link url_view="core:DownloadItem" url_itemId=$image.id}
-	    {gallery->text text="Download this item"} 
-	  {/gallery->link}
-	{/if}
-      {/gallery->body}
-    {/gallery->imagebox}
-
-    {if !empty($layout.moduleItemDetailFiles)}
-      {foreach from=$layout.moduleItemDetailFiles key=moduleName item=detailFile}
-	{gallery->simplebox}
-	  {gallery->body}
+      {if !empty($layout.moduleItemDetailFiles)}
+	{foreach from=$layout.moduleItemDetailFiles key=moduleName item=detailFile}
+	  {g->box}
 	    {include file=$detailFile l10Domain="module_$moduleName"}
-	  {/gallery->body}
-	{/gallery->simplebox}
-      {/foreach}
-    {/if}
+	  {/g->box}
+	{/foreach}
+      {/if}
 
-    {gallery->bannerbox}
-      {gallery->component}
-	{gallery->simplebox}
-	  {gallery->body}
-	    {foreach from=$layout.moduleItemLinks item=itemLinks key=loopId}
-	      {if ($loopId == $layout.item.id)}
-		{gallery->select onChange="if (this.value) javascript:location.href=this.value"}
-		  <option value=""> {gallery->text text="&laquo; edit item &raquo;"}
-		  {foreach from=$itemLinks item=module}
-		    {foreach from=$module item=link}
-		      <option value="{$link.url}"> {$link.text}
-		    {/foreach}
-		  {/foreach}
-		{/gallery->select}
-	      {/if}
-	    {/foreach}
-	  {/gallery->body}
-	{/gallery->simplebox}
+      {g->box}
+	{foreach from=$layout.moduleItemLinks item=itemLinks key=loopId}
+	  {if ($loopId == $layout.item.id)}
+	    {g->actionset}
+	      {g->actionitem}
+		{g->title}
+		  {g->text text="&laquo; edit item &raquo;"}
+		{/g->title}
+		{g->url}
+		  &nbsp;
+		{/g->url}
+	      {/g->actionitem}
 
+	      {foreach from=$itemLinks item=module}
+		{foreach from=$module item=link}
+		  {g->actionitem}
+		    {g->title}
+		      {$link.text}
+		    {/g->title}
+
+		    {g->value}
+		      {$link.url}
+		    {/g->value}
+		  {/g->actionitem}
+		{/foreach}
+	      {/foreach}
+	    {/g->actionset}
+	  {/if}
+	{/foreach}
+      {/g->box}
+
+      {g->banner}
 	{include file="layouts/matrix/templates/itemNavigator.tpl"}
+      {/g->banner}
 
-      {/gallery->component}
-    {/gallery->bannerbox}
-
-  {/gallery->component}
-{/gallery->main}
+    {/g->pagebox}
+{/g->main}

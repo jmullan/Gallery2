@@ -146,14 +146,14 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	    
 	/* Load the group */
 	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* First time on this page, initialize form fields */
@@ -165,7 +165,7 @@ class AdminEditGroupUsersView extends GalleryView {
 	/* Initialize the user list */
 	list ($ret, $users) = GalleryUserGroupMap::fetchUsersForGroup($group->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$form['userCount'] = sizeof($users);
 	$form['list']['users'] = $users;

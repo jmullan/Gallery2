@@ -1,38 +1,46 @@
-{gallery->linksbox}
+{g->linkset}
   {if isset($layout.navigator.first)}
-    {gallery->item}
-      {strip}
-	{gallery->link params=$layout.navigator.first}
-	  {gallery->text text="first"}
-	{/gallery->link}
-      {/strip}
-    {/gallery->item}
+    {g->item}
+      {g->title}
+	{strip}
+	  {g->link params=$layout.navigator.first}
+	    {g->text text="first"}
+	  {/g->link}
+	{/strip}
+      {/g->title}
+    {/g->item}
   {/if}
   {if isset($layout.navigator.back)}
-    {gallery->item}
-      {strip}
-	{gallery->link params=$layout.navigator.back}
-	  {gallery->text text="back"}
-	{/gallery->link}
-      {/strip}
-    {/gallery->item}
+    {g->item}
+      {g->title}
+	{strip}
+	  {g->link params=$layout.navigator.back}
+	    {g->text text="back"}
+	  {/g->link}
+	{/strip}
+      {/g->title}
+    {/g->item}
   {/if}
   {if isset($layout.navigator.next)}
-    {gallery->item}
-      {strip}
-	{gallery->link params=$layout.navigator.next}
-	  {gallery->text text="next"}
-	{/gallery->link}
-      {/strip}
-    {/gallery->item}
+    {g->item}
+      {g->title}
+	{strip}
+	  {g->link params=$layout.navigator.next}
+	    {g->text text="next"}
+	  {/g->link}
+	{/strip}
+      {/g->title}
+    {/g->item}
   {/if}
   {if isset($layout.navigator.last)}
-    {gallery->item}
-      {strip}
-	{gallery->link params=$layout.navigator.last}
-	  {gallery->text text="last"}
-	{/gallery->link}
-      {/strip}
-    {/gallery->item}
+    {g->item}
+      {g->title}
+	{strip}
+	  {g->link params=$layout.navigator.last}
+	    {g->text text="last"}
+	  {/g->link}
+	{/strip}
+      {/g->title}
+    {/g->item}
   {/if}
-{/gallery->linksbox}
+{/g->linkset}

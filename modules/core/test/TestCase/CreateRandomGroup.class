@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage TestCase
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * @package GalleryCore
+ * @subpackage TestCase
+ */
+class CreateRandomGroupTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create a random group";
+    }
+
+    function getIterations() {
+	return array(1, 50, 500, 1000, 10000);
+    }
+
+    function testStart($iterations) {
+	global $gallery;
+
+	for ($i = 0; $i < $iterations; $i++) {
+	    list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+            if (!isset($group)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }  
+
+	    $rand = rand(1, 1000000);
+	    $ret = $group->create('random_' . $rand);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $group->setGroupName('Random ' . $rand);
+	
+	    $ret = $group->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
+

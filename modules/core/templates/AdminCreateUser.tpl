@@ -1,123 +1,122 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Create A New User"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Create A New User"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Username"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input size="32" type="text" name="form.userName"}{$form.userName}{/gallery->input}
-	  {if isset($form.error.userName.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a username"}
-	    {/gallery->error}
-	  {/if}
+  {g->box style="admin"}
+    {g->box}
+      {g->title}
+	{g->text text="Username"}
+      {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
+
+      {g->element}
+	{g->input size="32" type="text" name="form.userName"}{$form.userName}{/g->input}
+      {/g->element}
+    {/g->box}
+
+    {if isset($form.error.userName.missing)}
+      {g->error}
+	{g->text text="You must enter a username"}
+      {/g->error}
+    {/if}
+    
+    {if isset($form.error.userName.exists)}
+      {g->error}
+	{g->text text="Username '%s' already exists" arg1=$form.userName}
+      {/g->error}
+    {/if}
+
+    {g->box}
+      {g->title}
+	{g->text text="Full Name"}
+      {/g->title}
+      {g->element}
+	{g->input size="32" type="text" name="form.fullName"}{$form.fullName}{/g->input}
+      {/g->element}
+    {/g->box}
+
+    {g->box}
+      {g->title}
+	{g->text text="Email Address"}
+      {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
+
+      {g->element}
+	  {g->input size="32" type="text" name="form.email"}{$form.email}{/g->input}
+      {/g->element}
+    {/g->box}
 	  
-	  {if isset($form.error.userName.exists)}
-	    {gallery->error}
-	      {gallery->text text="Username '%s' already exists" arg1=$form.userName}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+    {if isset($form.error.email.missing)}
+      {g->error}
+	{g->text text="You must enter an email address"}
+      {/g->error}
+    {/if}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Full Name"}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input size="32" type="text" name="form.fullName"}{$form.fullName}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->box}
+      {g->title}
+	{g->text text="Language"}
+      {/g->title}
+      {g->element}
+	{g->select name="form.language"}
+	  {html_options options=$AdminCreateUser.languageList selected=$form.language}
+	{/g->select}
+      {/g->element}
+    {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Email Address"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input size="32" type="text" name="form.email"}{$form.email}{/gallery->input}
-	  
-	  {if isset($form.error.email.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter an email address"}
-	    {/gallery->error}
-	  {/if}
-	  
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->box}
+      {g->title}
+	{g->text text="Password"}
+      {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
+      {g->element}
+	  {g->input size="32" type="password" name="form.password1"}{/g->input}
+      {/g->element}
+    {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Language"}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->select name="form.language"}
-	    {html_options options=$AdminCreateUser.languageList selected=$form.language}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget2}
+    {if isset($form.error.password1.missing)}
+      {g->error}
+	{g->text text="You must enter a password"}
+      {/g->error}
+    {/if}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Password"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input size="32" type="password" name="form.password1"}{/gallery->input}
+    {g->box}
+      {g->title}
+	{g->text text="Verify Password"}
+      {/g->title}
+      {g->subtitle}
+	{g->text text="required"}
+      {/g->subtitle}
+      {g->element}
+	  {g->input size="32" type="password" name="form.password2"}{/g->input}
+      {/g->element}
+    {/g->box}
 
-	  {if isset($form.error.password1.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a password"}
-	    {/gallery->error}
-	  {/if}
-	  
-	{/gallery->body}
-      {/gallery->widget2}
+    {if isset($form.error.password2.missing)}
+      {g->error}
+	{g->text text="You must enter the password a second time"}
+      {/g->error}
+    {/if}
+    
+    {if isset($form.error.password2.mismatch)}
+      {g->error}
+	{g->text text="The passwords you entered did not match"}
+      {/g->error}
+    {/if}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Verify Password"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input size="32" type="password" name="form.password2"}{/gallery->input}
-
-	  {if isset($form.error.password2.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter the password a second time"}
-	    {/gallery->error}
-	  {/if}
-	  
-	  {if isset($form.error.password2.mismatch)}
-	    {gallery->error}
-	      {gallery->text text="The passwords you entered did not match"}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
-
-      {gallery->widget2}
-	{gallery->body}
-	  {gallery->input type="submit" name="form.action.create"}{gallery->text text="Create User"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {g->box}
+      {g->element}
+	{g->input type="submit" name="form.action.create"}{g->text text="Create User"}{/g->input}
+	{g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+      {/g->element}
+    {/g->box}
+  {/g->box}
+{/g->pagebox}

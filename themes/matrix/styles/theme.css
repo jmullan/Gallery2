@@ -9,7 +9,7 @@ table td {
 
 .main {
   width: 91%;
-  margin: 0px 32px 0px 32px;
+  margin: 0px 8px 0px 8px;
   padding: 0px 0px 0px 0px;
   text-align: left;
   border: 0px;
@@ -29,8 +29,29 @@ table td {
   border-spacing: 0px;
 }
 
-.main_box { 
+.pagebox { 
+  width: 100%;
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  vertical-align: top;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+.pagebox_description { 
+}
+
+.pagebox_element { 
+}
+
+.pagebox_element_success { 
+  text-align: center;
+  padding: 4px;
+  border-right: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
+}
+
+.pagebox_footer { 
 }
 
 .bannerbox {
@@ -40,9 +61,8 @@ table td {
   padding: 8px 12px 8px 12px;
   text-align: left;
   background-color: #eee;
-  border-right: 1px solid #ddd;
   font-weight: bold;
-  font-size: 81%;
+  font-size: 100%;
 }
 
 .bannerbox_inner {  
@@ -70,74 +90,25 @@ table td {
   font-size: 63%;
 }
 
-.bannerbox_component {  
+.bannerbox_element {  
   vertical-align: top;
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
+  font-size: 63%;
 }
 
-.widget1box { 
+.infoset {
   border-collapse: collapse;
   border-spacing: 0px;
 }
 
-.widget1_title {
-  font-size: 63%;
-  text-align: left;
-  width: auto; 
-  padding-top: 2px; 
-  padding-right: 8px;
-  vertical-align: top;
-}
-
-.widget1_body { 
-  padding-bottom: 8px;
-}
-
-.widget2_title {
-  font-size: 69%;
-  font-weight: bold;
-  text-align: left;
-  padding-top: 2px; 
-  padding-right: 8px;
-  vertical-align: top;
-}
-
-.widget2_description {
-  font-size: 63%;
-  text-align: left;
-  padding-top: 2px; 
-  padding-right: 8px;
-  vertical-align: top;
-}
-
-.widget2_body { 
-  padding-bottom: 8px;
-}
-
-.linksbox {
-  border-collapse: collapse;
-  border-spacing: 0px;
-  font-size: 81%;
-}
-
-.linksbox_item {  
-  color: #bbb;
-  font-size: 63%;
-}
-
-.infobox {
-  border-collapse: collapse;
-  border-spacing: 0px;
-}
-
-.infobox_item {  
+.infoset_item {  
   color: #666;
   white-space: nowrap;
   font-size: 63%;
 }
 
-.detailedbox {
+.box {
   width: 100%;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
@@ -145,19 +116,135 @@ table td {
   clear: none;
 }
 
-.detailedbox_title { 
+.box_title { 
   margin: 0px 0px 4px 0px;
   padding: 0px 0px 0px 0px;
   font-weight: bold;
   font-size: 67%;
 }
 
-.detailedbox_description { 
+.box_subtitle { 
+  color: #ddd;
+}
+
+.box_description { 
   margin: 0px 0px 8px 0px;
   padding: 0px 0px 8px 0px;
   font-size: 63%;
   line-height: 1.6;
 }
+
+/********************************************************************************/
+
+.box_admin {
+  width: 100%;
+  margin: 0px 0px 0px 0px;
+  padding: 4px;
+  background-color: transparent;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  clear: none;
+}
+
+.box_admin_title { 
+  margin: 0px 0px 4px 0px;
+  padding: 0px 0px 0px 0px;
+  font-weight: bold;
+  font-size: 67%;
+}
+
+.box_admin_subtitle { 
+  color: #ddd;
+}
+
+.box_admin_description { 
+  margin: 0px 0px 8px 0px;
+  padding: 0px 0px 8px 0px;
+  font-size: 63%;
+  line-height: 1.6;
+}
+
+.box_admin_element { 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  font-size: 67%;
+}
+
+.box_admin_element_emphasized { 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  font-size: 81%;
+  font-weight: bold;
+}
+
+/********************************************************************************/
+
+.box_comment {
+  width: 100%;
+  margin: 0px 0px 0px 0px;
+  padding: 0px;
+  background-color: transparent;
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+.box_comment_title { 
+  margin: 0px 0px 0px 0px;
+  padding: 4px 0px 4px 0px;
+  font-weight: bold;
+  background: #ddd;
+  font-size: 87%;
+}
+
+.box_comment_subtitle { 
+  font-size: 67%;
+}
+
+.box_comment_description { 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  font-size: 67%;
+  background: #eee;
+}
+
+.box_comment_element { 
+  margin: 0px 0px 0px 0px;
+  padding: 8px;
+  font-size: 81%;
+}
+
+.box_comment_element_emphasized { 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  font-size: 81%;
+  font-weight: bold;
+}
+
+/********************************************************************************/
+
+.box_sidebar { 
+}
+
+.box_sidebar_title { 
+  margin: 0px 0px 4px 0px;
+  padding: 0px 0px 0px 0px;
+  font-weight: bold;
+  font-size: 67%;
+}
+
+.box_sidebar_subtitle { 
+  color: #ddd;
+}
+
+.box_sidebar_footer { 
+  margin: 0px 0px 0px 0px;
+  padding: 0px 0px 0px 6px;
+  font-size: 67%;
+  font-weight: bold;
+}
+
+/********************************************************************************/
 
 .globalheader {
   width: 91%;
@@ -181,17 +268,18 @@ table td {
   font-weight: bold;
 }
 
-.pathbar {
+.breadcrumb {
   width: auto;
   height: 24px;
   margin: 0px 0px 0px 0px;
   padding: 0px 0px 0px 0px;
+  border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   border-collapse: collapse;
   border-spacing: 0px;
 }
 
-.pathbar_inner {
+.breadcrumb_inner {
   width: auto;
   height: 24px;
   margin: 0px 0px 0px 0px;
@@ -200,7 +288,7 @@ table td {
   border-spacing: 0px;
 }
 
-.pathbar_item {
+.breadcrumb_item {
   color: #aaa;
   width: auto;
   margin: 0px 2px 0px 2px;
@@ -273,30 +361,7 @@ table td {
   font-size: 69%;
 }
 
-.textmodifier { 
-  color: #ddd;
-}
-
-.simplebox { 
-  width: 100%;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 0px 0px;
-  border-collapse: collapse;
-  border-spacing: 0px;
-}
-
-.simplebox_title { 
-  margin: 0px 0px 0px 0px;
-  padding: 6px 0px 6px 0px;
-  font-weight: bold;
-  font-size: 69%;
-}
-
-.simplebox_body { 
-  font-size: 69%;
-}
-
-.listingbox { 
+.listing { 
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0px;
@@ -304,21 +369,13 @@ table td {
   padding: 0px 0px 0px 0px;
 }
 
-.listingbox_title { 
-  width: 100%;
-  margin: 0px 0px 0px 0px;
-  padding: 0px 0px 4px 0px;
-  font-weight: bold;
-  font-size: 69%;
-}
-
-.listingbox_list { 
+.listing_list { 
   list-style-type: none;
   margin: 0px 0px 8px 12px;
   padding: 0px 0px 0px 0px;
 }
 
-.listingbox_item { 
+.listing_item { 
   margin: 0px 0px 0px 0px;
   padding: 2px 0px 2px 0px;
   color: #bbb;
@@ -326,7 +383,7 @@ table td {
   font-size: 63%;
 }
 
-.listingbox_selecteditem { 
+.listing_selecteditem { 
   margin: 0px 0px 0px 0px;
   padding: 2px 0px 2px 0px;
   color: #000;
@@ -336,9 +393,14 @@ table td {
   font-weight: bold;
 }
 
-.status { 
+.success { 
   font-weight: bold;
   color: #696;
+}
+
+.warning { 
+  font-weight: bold;
+  color: #222;
 }
 
 .error { 
@@ -347,20 +409,41 @@ table td {
 }
 
 .table { 
-  width: 98%;
-  border-spacing: 2px;
-  margin: 2px 2px 2px 2px;
 }
 
-.columnheader { 
-  font-size: 81%;
-  background-color: #eee;
+.table_admin_widgets { 
+  width: auto;
+  border-spacing: 2px;
+  font-size: 100%;
+  margin: 0px 0px 0px 0px;
+  border-bottom: 1px;
+}
+
+.table_admin_listing { 
+  width: 100%;
+  border-spacing: 2px;
+  font-size: 100%;
+  margin: 0px 0px 0px 0px;
+  border-bottom: 1px;
+}
+
+.row { 
+}
+
+.row_even { 
+  background-color: #f0f0f0;
+}
+
+.row_odd { 
+  background-color: #fcfcfc;
 }
 
 .column { 
-  font-size: 63%;
-  line-height: 1.33;
-  background-color: #fff;
+}
+
+.columnheader { 
+  font-weight: bold;
+  background-color: #eee;
 }
 
 .imagebox { 
@@ -384,19 +467,10 @@ table td {
   border-spacing: 0px;
 }
 
-.tabbedbox_tab_tween { 
-}
-
 .tabbedbox_tabset {  
   width: auto;
   padding: 0px 0px 0px 0px;
   border-right: 0px solid #ccc;
-  border-collapse: collapse;
-  border-spacing: 0px;
-}
-
-.tabbedbox_tabset_inner {  
-  width: auto;
   border-collapse: collapse;
   border-spacing: 0px;
 }
@@ -406,13 +480,22 @@ table td {
   height: 5px;
 }
 
-.tabbedbox_inactivetab { 
+.tabset {  
+  width: auto;
+  border-collapse: collapse;
+  border-spacing: 0px;
+}
+
+.tabset_tab_tween { 
+}
+
+.tabset_inactivetab { 
   font-size: 63%;
   font-weight: bold;
   padding: 0px 0px 0px 0px;
 }
 
-.tabbedbox_activetab { 
+.tabset_activetab { 
   font-size: 63%;
   font-weight: bold;
   padding: 0px 0px 0px 0px;
@@ -426,6 +509,75 @@ table td {
 .fullsize_image { 
   border: 3px solid #ddd;
   margin: 5px;
+}
+
+.itemthumbnail { 
+  float: left;
+  clear: top;
+  padding: 8px;
+}
+
+.itemthumbnail_title { 
+  font-weight: bold;
+  font-size: 81%;
+  padding: 0px 0px 0px 6px;
+}
+
+.itemthumbnail_actionset { 
+  font-size: 81%;
+  padding: 0px 0px 0px 6px;
+}
+
+.albumthumbnail { 
+  width: 100%;
+  clear: left;
+  background-color: #eee;
+  margin: 8px;
+}
+
+.albumthumbnail_inner { 
+  width: auto;
+  background-color: #eee;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  vertical-align: top;
+}
+
+.albumthumbnail_title { 
+  font-weight: bold;
+  font-size: 87%;
+}
+
+.albumthumbnail_description { 
+  font-size: 67%;
+}
+
+.albumthumbnail_infoset { 
+  font-size: 67%;
+}
+
+.albumthumbnail_actionset { 
+  font-size: 67%;
+  padding: 0px 0px 0px 8px;
+}
+
+.albumthumbnail_data { 
+  width: 100%;
+  vertical-align: top;
+  padding: 8px;
+}
+
+.albumthumbnail_media { 
+  margin: 0px;
+  vertical-align: top;
+  background-color: #eee;
+}
+
+.albumthumbnail_info { 
+  width: 100%;
+  text-align: left;
+  vertical-align: top;
+  background-color: #eee;
 }
 
 /* Form Widgets */

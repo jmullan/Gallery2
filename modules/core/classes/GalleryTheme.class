@@ -577,282 +577,278 @@ class GalleryTheme {
     /*************************************************************
      * Standard theme methods
      *************************************************************/
-    //(setq last-kbd-macro (read-kbd-macro "C-s /** C-a C-@ M-> 3*<C-p> C-w C-l C-x i GalleryTheme.inc RET C-x C-s"))
     /**
      * style theme method
-     * @param array the template context
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param string HTML content 
      * @return string HTML content
      */
-    function style($context) {
-        trigger_error("Undefined theme function: style", E_USER_ERROR);
-    }
+     function style($context) {
+         trigger_error('Undefined theme function: style', E_USER_ERROR);
+     }
 
     /**
-     * image theme method
-     * @param array the template context
+     * success theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param string HTML content 
      * @return string HTML content
      */
-    function image($context) {
-        trigger_error("Undefined theme function: image", E_USER_ERROR);
-    }
+     function success($context, $content) {
+         trigger_error('Undefined theme function: success', E_USER_ERROR);
+     }
+
+    /**
+     * warning theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param string HTML content 
+     * @return string HTML content
+     */
+     function warning($context, $content) {
+         trigger_error('Undefined theme function: warning', E_USER_ERROR);
+     }
 
     /**
      * error theme method
-     * @param array the template context
-     * @param string optional content
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param string HTML content 
      * @return string HTML content
      */
-    function error($context, $content) {
-        trigger_error("Undefined theme function: error", E_USER_ERROR);
-    }
+     function error($context, $content) {
+         trigger_error('Undefined theme function: error', E_USER_ERROR);
+     }
 
     /**
-     * status theme method
-     * @param array the template context
-     * @param string optional content
+     * image theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
      * @return string HTML content
      */
-    function status($context, $content) {
-        trigger_error("Undefined theme function: status", E_USER_ERROR);
-    }
+     function image($context) {
+         trigger_error('Undefined theme function: image', E_USER_ERROR);
+     }
 
     /**
-     * textmodifier theme method
-     * @param array the template context
-     * @param string optional content
+     * listing theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-    function textmodifier($context, $content) {
-        trigger_error("Undefined theme function: textmodifier", E_USER_ERROR);
-    }
+     function listing($context, $item_array) {
+         trigger_error('Undefined theme function: listing', E_USER_ERROR);
+     }
 
     /**
-     * globalheader theme method
-     * @param array the template context
-     * @param string optional content
+     * breadcrumb theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-    function globalheader($context, $content) {
-        trigger_error("Undefined theme function: globalheader", E_USER_ERROR);
-    }
+     function breadcrumb($context, $item_array) {
+         trigger_error('Undefined theme function: breadcrumb', E_USER_ERROR);
+     }
 
     /**
-     * main theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => header content)
-     * @param array optional ("params" => array, "content" => footer content)
-     * @param array optional ("params" => array, "content" => pathbar content)
-     * @param array optional (array("params" => array, "content" => sidebar content), ...)
-     * @param array optional (array("params" => array, "content" => component content), ...)
+     * linkset theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-    function main($context, $header, $footer, $pathbar, $sidebar_array, $component_array) {
-        trigger_error("Undefined theme function: main", E_USER_ERROR);
-    }
+     function linkset($context, $title, $item_array) {
+         trigger_error('Undefined theme function: linkset', E_USER_ERROR);
+     }
 
     /**
-     * globalfooter theme method
-     * @param array the template context
-     * @param string optional content
+     * actionset theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => actionitem HTML content)
      * @return string HTML content
      */
-    function globalfooter($context, $content) {
-        trigger_error("Undefined theme function: globalfooter", E_USER_ERROR);
-    }
+     function actionset($context, $title, $actionitem_array) {
+         trigger_error('Undefined theme function: actionset', E_USER_ERROR);
+     }
 
     /**
-     * header theme method
-     * @param array the template context
-     * @param string optional content
+     * infoset theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-    function header($context, $content) {
-        trigger_error("Undefined theme function: header", E_USER_ERROR);
-    }
+     function infoset($context, $item_array) {
+         trigger_error('Undefined theme function: infoset', E_USER_ERROR);
+     }
 
     /**
-     * footer theme method
-     * @param array the template context
-     * @param string optional content
+     * tabset theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => item HTML content)
      * @return string HTML content
      */
-    function footer($context, $content) {
-        trigger_error("Undefined theme function: footer", E_USER_ERROR);
-    }
-
-    /**
-     * pathbar theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => item content), ...)
-     * @return string HTML content
-     */
-    function pathbar($context, $item_array) {
-        trigger_error("Undefined theme function: pathbar", E_USER_ERROR);
-    }
-
-    /**
-     * sidebar theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => component content), ...)
-     * @return string HTML content
-     */
-    function sidebar($context, $component_array) {
-        trigger_error("Undefined theme function: sidebar", E_USER_ERROR);
-    }
-
-    /**
-     * bannerbox theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array optional ("params" => array, "content" => description content)
-     * @param array optional (array("params" => array, "content" => component content), ...)
-     * @return string HTML content
-     */
-    function bannerbox($context, $title, $description, $component_array) {
-        trigger_error("Undefined theme function: bannerbox", E_USER_ERROR);
-    }
-
-    /**
-     * linksbox theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => item content), ...)
-     * @return string HTML content
-     */
-    function linksbox($context, $item_array) {
-        trigger_error("Undefined theme function: linksbox", E_USER_ERROR);
-    }
-
-    /**
-     * infobox theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => item content), ...)
-     * @return string HTML content
-     */
-    function infobox($context, $item_array) {
-        trigger_error("Undefined theme function: infobox", E_USER_ERROR);
-    }
-
-    /**
-     * listingbox theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory (array("params" => array, "content" => item content), ...)
-     * @return string HTML content
-     */
-    function listingbox($context, $title, $item_array) {
-        trigger_error("Undefined theme function: listingbox", E_USER_ERROR);
-    }
-
-    /**
-     * imagebox theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array optional ("params" => array, "content" => description content)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function imagebox($context, $title, $description, $body) {
-        trigger_error("Undefined theme function: imagebox", E_USER_ERROR);
-    }
-
-    /**
-     * detailedbox theme method
-     * @param array the template context
-     * @param array mandatory ("params" => array, "content" => title content)
-     * @param array mandatory ("params" => array, "content" => description content)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function detailedbox($context, $title, $description, $body) {
-        trigger_error("Undefined theme function: detailedbox", E_USER_ERROR);
-    }
-
-    /**
-     * tabbedbox theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory (array("params" => array, "content" => item content), ...)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function tabbedbox($context, $title, $item_array, $body) {
-        trigger_error("Undefined theme function: tabbedbox", E_USER_ERROR);
-    }
-
-    /**
-     * simplebox theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function simplebox($context, $title, $body) {
-        trigger_error("Undefined theme function: simplebox", E_USER_ERROR);
-    }
-
-    /**
-     * widget1box theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory (array("params" => array, "content" => widget1 content), ...)
-     * @return string HTML content
-     */
-    function widget1box($context, $title, $widget1_array) {
-        trigger_error("Undefined theme function: widget1box", E_USER_ERROR);
-    }
-
-    /**
-     * widget2box theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory (array("params" => array, "content" => widget2 content), ...)
-     * @return string HTML content
-     */
-    function widget2box($context, $title, $widget2_array) {
-        trigger_error("Undefined theme function: widget2box", E_USER_ERROR);
-    }
-
-    /**
-     * widget1 theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function widget1($context, $title, $body) {
-        trigger_error("Undefined theme function: widget1", E_USER_ERROR);
-    }
-
-    /**
-     * widget2 theme method
-     * @param array the template context
-     * @param array optional ("params" => array, "content" => title content)
-     * @param array optional ("params" => array, "content" => description content)
-     * @param array mandatory ("params" => array, "content" => body content)
-     * @return string HTML content
-     */
-    function widget2($context, $title, $description, $body) {
-        trigger_error("Undefined theme function: widget2", E_USER_ERROR);
-    }
+     function tabset($context, $item_array) {
+         trigger_error('Undefined theme function: tabset', E_USER_ERROR);
+     }
 
     /**
      * table theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => row content), ...)
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => row HTML content)
      * @return string HTML content
      */
-    function table($context, $row_array) {
-        trigger_error("Undefined theme function: table", E_USER_ERROR);
-    }
+     function table($context, $row_array) {
+         trigger_error('Undefined theme function: table', E_USER_ERROR);
+     }
 
     /**
      * row theme method
-     * @param array the template context
-     * @param array mandatory (array("params" => array, "content" => column content), ...)
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => column HTML content)
      * @return string HTML content
      */
-    function row($context, $column_array) {
-        trigger_error("Undefined theme function: row", E_USER_ERROR);
-    }
+     function row($context, $column_array) {
+         trigger_error('Undefined theme function: row', E_USER_ERROR);
+     }
+
+    /**
+     * main theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => breadcrumb HTML content)
+     * @param array ("params" => array, "content" => sidebar HTML content)
+     * @param array ("params" => array, "content" => pagebox HTML content)
+     * @return string HTML content
+     */
+     function main($context, $breadcrumb, $sidebar_array, $pagebox) {
+         trigger_error('Undefined theme function: main', E_USER_ERROR);
+     }
+
+    /**
+     * sidebar theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => element HTML content)
+     * @return string HTML content
+     */
+     function sidebar($context, $element_array) {
+         trigger_error('Undefined theme function: sidebar', E_USER_ERROR);
+     }
+
+    /**
+     * itemthumbnail theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => description HTML content)
+     * @param array ("params" => array, "content" => media HTML content)
+     * @param array ("params" => array, "content" => infoset HTML content)
+     * @param array ("params" => array, "content" => actionset HTML content)
+     * @return string HTML content
+     */
+     function itemthumbnail($context, $title, $description, $media, $infoset, $actionset) {
+         trigger_error('Undefined theme function: itemthumbnail', E_USER_ERROR);
+     }
+
+    /**
+     * itemview theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => description HTML content)
+     * @param array ("params" => array, "content" => media HTML content)
+     * @param array ("params" => array, "content" => footer HTML content)
+     * @return string HTML content
+     */
+     function itemview($context, $title, $description, $media, $footer) {
+         trigger_error('Undefined theme function: itemview', E_USER_ERROR);
+     }
+
+    /**
+     * tabbedbox theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => tabset HTML content)
+     * @param array ("params" => array, "content" => footer HTML content)
+     * @param array ("params" => array, "content" => element HTML content)
+     * @return string HTML content
+     */
+     function tabbedbox($context, $tabset, $footer, $element_array) {
+         trigger_error('Undefined theme function: tabbedbox', E_USER_ERROR);
+     }
+
+    /**
+     * box theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => subtitle HTML content)
+     * @param array ("params" => array, "content" => description HTML content)
+     * @param array ("params" => array, "content" => footer HTML content)
+     * @param array ("params" => array, "content" => element HTML content)
+     * @return string HTML content
+     */
+     function box($context, $title, $subtitle, $description, $footer, $element_array) {
+         trigger_error('Undefined theme function: box', E_USER_ERROR);
+     }
+
+    /**
+     * pagebox theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => element HTML content)
+     * @return string HTML content
+     */
+     function pagebox($context, $element_array) {
+         trigger_error('Undefined theme function: pagebox', E_USER_ERROR);
+     }
+
+    /**
+     * banner theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => description HTML content)
+     * @param array ("params" => array, "content" => element HTML content)
+     * @return string HTML content
+     */
+     function banner($context, $title, $description, $element_array) {
+         trigger_error('Undefined theme function: banner', E_USER_ERROR);
+     }
+
+    /**
+     * item theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => subtitle HTML content)
+     * @return string HTML content
+     */
+     function item($context, $title, $subtitle) {
+         trigger_error('Undefined theme function: item', E_USER_ERROR);
+     }
+
+    /**
+     * actionitem theme method
+     * 
+     * @param array ("params" => ..., "stack" => ...)
+     * @param array ("params" => array, "content" => title HTML content)
+     * @param array ("params" => array, "content" => value HTML content)
+     * @return string HTML content
+     */
+     function actionitem($context, $title, $value) {
+         trigger_error('Undefined theme function: actionitem', E_USER_ERROR);
+     }
+
 }
 ?>

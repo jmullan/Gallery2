@@ -749,7 +749,7 @@ class Smarty_Compiler extends Smarty {
             	$arg_list[] = "'$arg_name' => $arg_value";
         	}
 		}
-				
+
         if($this->_reg_objects[$object][2]) {
             // smarty object argument format
             $args = "array(".implode(',', (array)$arg_list)."), \$this";

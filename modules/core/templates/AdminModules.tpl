@@ -1,51 +1,51 @@
-{gallery->bannerbox}
-  {gallery->title}
-    Gallery Modules
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      Gallery Modules
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->description}
-    {gallery->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
-  {/gallery->description}
+  {g->box style="admin"}
+    {g->description}
+      {g->text text="Gallery features come as separate modules.  You can download and install modules to add more features to your Gallery, or you can disable features if you don't want to use them.  In order to use a feature, you must install, configure (if necessary) and activate it.  If you don't wish to use a feature, you can deactivate it."}
+    {/g->description}
 
-  {gallery->body}
-    {gallery->table width="100%"}
-      {gallery->row}
-	{gallery->column header="true"} {gallery->text text="Module Name"} {/gallery->column}
-	{gallery->column header="true"} {gallery->text text="Version"} {/gallery->column}
-	{gallery->column header="true"} {gallery->text text="Description"} {/gallery->column}
-	{gallery->column header="true"} {gallery->text text="Actions"} {/gallery->column}
-      {/gallery->row}
+    {g->table style="admin_listing"}
+      {g->row}
+	{g->column header="true"} {g->text text="Module Name"} {/g->column}
+	{g->column header="true"} {g->text text="Version"} {/g->column}
+	{g->column header="true"} {g->text text="Description"} {/g->column}
+	{g->column header="true"} {g->text text="Actions"} {/g->column}
+      {/g->row}
 
       {foreach from=$AdminModules.modules item=module}
-	{gallery->row}
-	  {gallery->column}
+	{g->row}
+	  {g->column}
 	    {$module.name}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column width="10%" align="center" }
 	    {$module.version}
-	  {/gallery->column}
-	  {gallery->column}
+	  {/g->column}
+	  {g->column}
 	    {$module.description}
-	  {/gallery->column}	
-	  {gallery->column}
+	  {/g->column}	
+	  {g->column}
 	    {if (!empty($module.action))}
 	      {if (empty($module.action.controller)) }
-		{gallery->link url_return="true" url_view='core:SiteAdmin' url_subView=$module.action.view}
+		{g->link url_return="true" url_view='core:SiteAdmin' url_subView=$module.action.view}
 		  {$module.action.text}
-		{/gallery->link}
+		{/g->link}
 	      {else}
-		{gallery->link url_controller=$module.action.controller url_moduleName=$module.action.moduleName url_action=$module.action.action}
+		{g->link url_controller=$module.action.controller url_moduleName=$module.action.moduleName url_action=$module.action.action}
 		  {$module.action.text}
-		{/gallery->link}
+		{/g->link}
 	      {/if}
 	    {else}
 	      &nbsp;
 	    {/if}
-	  {/gallery->column}	
-	{/gallery->row}
+	  {/g->column}	
+	{/g->row}
       {/foreach}
-    {/gallery->table}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {/g->table}
+  {/g->box}
+{/g->pagebox}

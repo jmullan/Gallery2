@@ -1,14 +1,18 @@
-{gallery->pathbar}
+{g->breadcrumb}
   {foreach from=$layout.parents item=parent}
-    {gallery->item}
-      {gallery->link url_view='core:ShowItem' url_itemId=$parent.id}
-	{$parent.title|default:$parent.pathComponent}
-      {/gallery->link}
-    {/gallery->item}
+    {g->item}
+      {g->title}
+	{g->link url_view='core:ShowItem' url_itemId=$parent.id}
+	  {$parent.title|default:$parent.pathComponent}
+	{/g->link}
+      {/g->title}
+    {/g->item}
   {/foreach}
-  {gallery->item}
-    {gallery->link url_view='core:ShowItem' url_itemId=$layout.item.id}
-      {$layout.item.title|default:$layout.item.pathComponent}
-    {/gallery->link}
-  {/gallery->item}
-{/gallery->pathbar}
+  {g->item}
+    {g->title}
+      {g->link url_view='core:ShowItem' url_itemId=$layout.item.id}
+	{$layout.item.title|default:$layout.item.pathComponent}
+      {/g->link}
+    {/g->title}
+  {/g->item}
+{/g->breadcrumb}

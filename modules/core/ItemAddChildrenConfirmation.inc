@@ -45,7 +45,7 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	
 	/*

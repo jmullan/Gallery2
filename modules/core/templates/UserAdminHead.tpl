@@ -1,4 +1,4 @@
   <title>
-    {gallery->text text="Gallery User Administration"}
+    {g->text text="Gallery User Administration"}
   </title>
-  {gallery->style}
+  {g->style}

@@ -274,19 +274,36 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get the owner */
-	list ($ret, $owner) = $gallery->loadEntitiesById($item->getOwnerId());
+	/* Get all the owners */
+	$ownerIds = array($item->getOwnerId() => 1);
+	$owners = array();
+	foreach ($childIds as $childId) {
+	    $ownerIds[$childTable[$childId]['ownerId']] = 1;
+	}
+	list ($ret, $tmp) = $gallery->loadEntitiesById(array_flip($ownerIds));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	foreach ($tmp as $owner) {
+	    $owners[$owner->getId()] = $owner->getMemberData();
+	}
+
+	/* Assemble the children into rows of columns */
+	$i = 0;
+	foreach ($children as $child) {
+	    $childRows[(int)($i / $properties['columns'])][$i % $properties['columns']] = $child;
+	    $i++;
+	}
+	
 
 	$layout['user'] = $user->getMemberData();
-	$layout['owner'] = $owner->getMemberData();
+	$layout['owners'] = $owners;
+	$layout['owner'] = $owners[$item->getOwnerId()];
 	$layout['moduleItemLinks'] = $moduleItemLinks;
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
-	$layout['children'] = $children;
+	$layout['childRows'] = $childRows;
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
 	$layout['totalChildCount'] = $totalChildCount;

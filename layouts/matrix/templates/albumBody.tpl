@@ -1,98 +1,196 @@
-{gallery->main}
+{g->main}
   {include file="layouts/matrix/templates/pathbar.tpl"}
   {include file="layouts/matrix/templates/sidebar.tpl"}
 
-  {gallery->component}
-    {gallery->bannerbox}
-      {gallery->title}
+  {g->pagebox}
+    {g->banner}
+      {g->title}
 	{$layout.item.title}
-      {/gallery->title}
-      {gallery->description}
+      {/g->title}
+      {g->description}
 	{$layout.item.summary}
-      {/gallery->description}
+      {/g->description}
 
-      {gallery->component}
-	{gallery->infobox}
-	  {gallery->item}
+      {g->infoset}
+	{g->item}
+	  {g->title}
 	    {capture name=creationTimestamp}
-	      {gallery->date timestamp=$layout.item.creationTimestamp}
+	      {g->date timestamp=$layout.item.creationTimestamp}
 	    {/capture}
-	    {gallery->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
-	  {/gallery->item}
+	    {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+	  {/g->title}
+	{/g->item}
 
-	  {gallery->item}
-	    {gallery->text one="Size: %d item" many="Size: %d items" count=$layout.totalChildCount arg1=$layout.totalChildCount}
-	  {/gallery->item}
+	{g->item}
+	  {g->title}
+	    {g->text one="Size: %d item" many="Size: %d items" count=$layout.totalChildCount arg1=$layout.totalChildCount}
+	  {/g->title}
+	{/g->item}
+	
+	{g->item}
+	  {g->title}
+	    {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
+	  {/g->title}
+	{/g->item}
+      {/g->infoset}
 
-	  {gallery->item}
-	    {gallery->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
-	  {/gallery->item}
-	{/gallery->infobox}
+      {include file="layouts/matrix/templates/itemNavigator.tpl"}
+    {/g->banner}
 
-	{include file="layouts/matrix/templates/itemNavigator.tpl"}
+    {g->box style="canvas"}
+      
+      {g->element}
+	{g->table}
+	  {foreach from=$layout.childRows item=childRow}
+	    {g->row}
+	      {foreach from=$childRow item=child}
+		{if $child.canContainChildren} 
+		  {assign var="style" value="album"}
+		{else}
+		  {assign var="style" value="item"}
+		{/if}
+		{g->column}
+		  {strip}
+		    {g->itemthumbnail style=$style}
+		      {g->title}
+			{if $child.canContainChildren}
+			  {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
+			{else}
+			  {$child.title|default:$child.pathComponent}
+			{/if}
+		      {/g->title}
+		      {g->description}
+			{$child.description|truncate:512}
+		      {/g->description}
+		      {g->media}
+			{g->link url_view="core:ShowItem" url_itemId=$child.id}
+			  {g->image item=$child image=$child.thumbnail}
+			{/g->link url_view="core:ShowItem" url_itemId=$child.id}
+		      {/g->media}
+		      {g->infoset}
+			{g->item}
+			  {capture name=modificationTimestamp}
+			    {g->date timestamp=$child.modificationTimestamp}
+			  {/capture}
+			  {g->title}
+			    {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+			  {/g->title}
+			{/g->item}
 
-      {/gallery->component}
-    {/gallery->bannerbox}
+			{g->item}
+			  {g->title}
+			    {assign var="ownerId" value=$child.ownerId}
+			    {assign var="owner" value=$layout.owners.$ownerId}
+			    {g->text text="Owner: %s" arg1=$owner.fullName|default:$owner.userName}
+			  {/g->title}
+			{/g->item}
 
-    {gallery->simplebox}
-      {gallery->body}
-	{foreach from=$layout.children item=child}
-	  {strip}
-	    {gallery->link url_view="core:ShowItem" url_itemId=$child.id}
-	      {gallery->image item=$child image=$child.thumbnail}
-	    {/gallery->link url_view="core:ShowItem" url_itemId=$child.id}
-	  {/strip}
-	{/foreach}
-      {/gallery->body}
-    {/gallery->simplebox}
-
-    {gallery->bannerbox}
-      {gallery->component}
-	{gallery->simplebox}
-	  {gallery->body}
-	    {foreach from=$layout.moduleItemLinks item=itemLinks key=loopId}
-	      {if ($loopId == $layout.item.id)}
-		{gallery->select onChange="if (this.value) javascript:location.href=this.value"}
-		  <option value=""> {gallery->text text="&laquo; manage album &raquo;"}
-		  {foreach from=$itemLinks item=module}
-		    {foreach from=$module item=link}
-		      <option value="{$link.url}"> {$link.text}
-		    {/foreach}
-		  {/foreach}
-		{/gallery->select}
-	      {/if}
-	    {/foreach}
-	  {/gallery->body}
-	{/gallery->simplebox}
-
-	{gallery->linksbox}
-	  {gallery->item}
-	    {gallery->text text="Page"}
-	  {/gallery->item}
-	  
-	  {foreach name=jumprange from=$layout.jumprange item=page}
-	    {if ($page - $lastPage > 1)}
-	      {gallery->item}
-		...
-	      {/gallery->item}
-	    {/if}
-	    
-	    {if ($layout.currentPage == $page)}
-	      {gallery->item}
-		{$page}
-	      {/gallery->item}
-	    {else}
-	      {gallery->item}
-		{gallery->link url_view="core:ShowItem" url_itemId=$layout.item.id url_page=$page}
-		  {$page}
-		{/gallery->link}
-	      {/gallery->item}
-	    {/if}
-	    {assign var="lastPage" value=$page}
+			{g->item}
+			  {g->title}
+			    {g->text one="Size: %d item"
+			    many="Size: %d items"
+			    count=$child.childCount
+			    arg1=$child.childCount}
+			  {/g->title}
+			{/g->item}
+		      {/g->infoset}
+		      {g->actionset}
+			{g->actionitem}
+			  {g->title}
+			    {if $child.canContainChildren} 
+			      {g->text text="&laquo; manage album &raquo;"}
+			    {else}
+			      {g->text text="&laquo; edit item &raquo;"}
+			    {/if}
+			  {/g->title}
+			  {g->url}
+			    &nbsp;
+			  {/g->url}
+			{/g->actionitem}
+			{assign var="childId" value=$child.id}
+			{foreach from=$layout.moduleItemLinks.$childId key=module item=links}
+			  {foreach from=$links item=link}
+			    {g->actionitem}
+			      {g->title}
+				{$link.text}
+			      {/g->title}
+			      
+			      {g->value}
+				{$link.url}
+			      {/g->value}
+			    {/g->actionitem}
+			  {/foreach}
+			{/foreach}
+		      {/g->actionset}
+		    {/g->itemthumbnail}
+		  {/strip}
+		{/g->column}
+	      {/foreach}
+	    {/g->row}
 	  {/foreach}
-	{/gallery->linksbox}
+	{/g->table}
+      {/g->element}
+    {/g->box}
 
-      {/gallery->component}
-    {/gallery->bannerbox}
-  {/gallery->component}
-{/gallery->main}
+    {g->banner}
+      {assign var="id" value=$layout.item.id}
+      {g->actionset}
+	{g->actionitem}
+	  {g->title}
+	    {g->text text="&laquo; manage album &raquo;"}
+	  {/g->title}
+	  {g->url}
+	    &nbsp;
+	  {/g->url}
+	{/g->actionitem}
+	{foreach from=$layout.moduleItemLinks.$id key=module item=links}
+	  {foreach from=$links item=link}
+	    {g->actionitem}
+	      {g->title}
+		{$link.text}
+	      {/g->title}
+	      
+	      {g->value}
+		{$link.url}
+	      {/g->value}
+	    {/g->actionitem}
+	  {/foreach}
+	{/foreach}
+      {/g->actionset}
+
+      {g->linkset}
+	{g->title}
+	  {g->text text="Page"}
+	{/g->title}
+	
+	{foreach name=jumprange from=$layout.jumprange item=page}
+	  {if ($page - $lastPage > 1)}
+	    {g->item}
+	      {g->title}
+		...
+	      {/g->title}
+	    {/g->item}
+	  {/if}
+	  
+	  {if ($layout.currentPage == $page)}
+	    {g->item}
+	      {g->title}
+		{$page}
+	      {/g->title}
+	    {/g->item}
+	  {else}
+	    {g->item}
+	      {g->title}
+		{g->link url_view="core:ShowItem" url_itemId=$layout.item.id url_page=$page}
+		  {$page}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/if}
+	  {assign var="lastPage" value=$page}
+	{/foreach}
+      {/g->linkset}
+
+    {/g->banner}
+  {/g->pagebox}
+{/g->main}

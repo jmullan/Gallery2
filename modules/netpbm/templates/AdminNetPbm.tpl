@@ -1,153 +1,159 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="NetPBM Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="NetPBM Settings"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.saved)}
-	  {gallery->text text="Settings saved successfully"}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->success}
+      {if isset($status.saved)}
+	{g->text text="Settings saved successfully"}
+      {/if}
+    {/g->success}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->description}
-    {gallery->text text="NetPBM is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the NetPBM binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the NetPBM directory should do it)"}
-  {/gallery->description}
+  {g->box style="admin"}
+    {g->description}
+      {g->text text="NetPBM is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the NetPBM binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the NetPBM directory should do it)"}
+    {/g->description}
 
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Path to NetPBM:"}
-	{/gallery->title}
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Path to NetPBM:"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->input type="text" size="40" name="form.path"}{$form.path}{/gallery->input}
-	  
-	  {if isset($form.error.path.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a path to your NetPBM binaries"}
-	    {/gallery->error}
-	  {/if}
+	{g->column}
+	  {g->input type="text" size="40" name="form.path"}{$form.path}{/g->input}
+	{/g->column}
+      {/g->row}
+      
+      {if isset($form.error.path.missing)}
+	{g->row}
+	  {g->column colspan="2"}
+	    {g->error}
+	      {g->text text="You must enter a path to your NetPBM binaries"}
+	    {/g->error}
+	  {/g->column}
+	{/g->row}
+      {/if}
+      
+      {if isset($form.error.path.testError)}
+	{g->row}
+	  {g->column colspan="2"}
+	    {g->error}
+	      {g->text text="The path you entered doesn't contain valid NetPBM binaries. Use the 'test' button to check where the error is."}
+	    {/g->error}
+	  {/g->column}
+	{/g->row}
+      {/if}
+      
+      {if isset($form.error.path.badPath)}
+	{g->row}
+	  {g->column colspan="2"}
+	    {g->error}
+	      {g->text text="The path you entered isn't a valid path."}
+	    {/g->error}
+	  {/g->column}
+	{/g->row}
+      {/if}
 
-	  {if isset($form.error.path.testError)}
-	    {gallery->error}
-	      {gallery->text text="The path you entered doesn't contain valid NetPBM binaries. Use the 'test' button to check where the error is."}
-	    {/gallery->error}
-	  {/if}
+      {g->row}
+	{g->column}
+	  {g->text text="PNM to JPEG converter"}
+	{/g->column}
 
-	  {if isset($form.error.path.badPath)}
-	    {gallery->error}
-	      {gallery->text text="The path you entered isn't a valid path."}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget1}
-
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="PNM to JPEG converter"}
-	{/gallery->title}
-
-	{gallery->body}
-	  {gallery->select name="form.pnmtojpeg"}
+	{g->column}
+	  {g->select name="form.pnmtojpeg"}
 	    {html_options values=$AdminNetPbm.pnmToJpegList selected=$form.pnmtojpeg output=$AdminNetPbm.pnmToJpegList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
 
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="JPEG Quality"}
-	{/gallery->title}
+      {g->row}
+	{g->column}
+	  {g->text text="JPEG Quality"}
+	{/g->column}
 
-	{gallery->body}
-	  {gallery->select name="form.jpegQuality"}
+	{g->column}
+	  {g->select name="form.jpegQuality"}
 	    {html_options values=$AdminNetPbm.jpegQualityList selected=$form.jpegQuality output=$AdminNetPbm.jpegQualityList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+    {/g->table}
+  {/g->box}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save Settings"}{/gallery->input}
-    {gallery->input type="submit" name="form.action.test"}{gallery->text text="Test Settings"}{/gallery->input}
-    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Save Settings"}{/g->input}
+      {g->input type="submit" name="form.action.test"}{g->text text="Test Settings"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
 
-{if !empty($AdminNetPbm.tests)}
-  {gallery->detailedbox}
-    {gallery->title}
-      {gallery->text text="NetPBM binary test results"}
-    {/gallery->title}
-    
-    {gallery->body}
-      {gallery->table}
-	{gallery->row}
-	  {gallery->column header="true"}
-	    {gallery->text text="Binary Name"}
-	  {/gallery->column}
-	  {gallery->column header="true"}
-	    {gallery->text text="Pass/Fail"}
-	  {/gallery->column}
-	{/gallery->row}
+  {if !empty($AdminNetPbm.tests)}
+    {g->box style="admin"}
+      {g->title}
+	{g->text text="NetPBM binary test results"}
+      {/g->title}
+      
+      {g->table style="admin_listing"}
+	{g->row}
+	  {g->column header="true"}
+	    {g->text text="Binary Name"}
+	  {/g->column}
+	  {g->column header="true"}
+	    {g->text text="Pass/Fail"}
+	  {/g->column}
+	{/g->row}
 
 	{foreach from=$AdminNetPbm.tests item=test}
-	  {gallery->row}
-	    {gallery->column}
+	  {g->row}
+	    {g->column}
 	      {$test.name}
-	    {/gallery->column}
-	    {gallery->column}
+	    {/g->column}
+	    {g->column}
 	      {if ($test.success)}
-		{gallery->text text="Passed"}
+		{g->success}
+		  {g->text text="Passed"}
+		{/g->success}
 	      {else}
-		{gallery->text text="Failed"}
+		{g->error}
+		  {g->text text="Failed"}
+		{/g->error}
+
+		{if ! empty($test.message)}
+		  {g->text text="Error messages:"}
+		  <br />
+		  {foreach from=$test.message item=line}
+		    <pre>{$line}</pre>
+		  {/foreach}
+		{/if}
 	      {/if}
-	    {/gallery->column}
-	  {/gallery->row}
-
-	  {if ! $test.success && ! empty($test.message)}
-	    {gallery->row}
-	      {gallery->column}
-		{gallery->text text="Error messages:"}
-		<br />
-		{foreach from=$test.message item=line}
-		  <pre>{$line}</pre>
-		{/foreach}
-	      {/gallery->column}
-	    {/gallery->row}
-	  {/if}
+	    {/g->column}
+	  {/g->row}
 	{/foreach}
-      {/gallery->table}
-    {/gallery->body}
-  {/gallery->detailedbox}
+      {/g->table}
+    {/g->box}
 
-  {if $AdminNetPbm.mimeTypes}
-    {gallery->detailedbox}
-      {gallery->title}
-	{gallery->text text="Supported MIME Types"}
-      {/gallery->title}
+    {if $AdminNetPbm.mimeTypes}
+      {g->box style="admin"}
+	{g->title}
+	  {g->text text="Supported MIME Types"}
+	{/g->title}
 
-      {gallery->description}
-	{gallery->text text="The ImageMagick module can support files with the following MIME types"}
-      {/gallery->description}
-      
-      {gallery->body}
-	{foreach from=$AdminNetPbm.mimeTypes item=mimeType}
-	  {$mimeType} 
-	{/foreach}
-      {/gallery->body}
-    {/gallery->detailedbox}
+	{g->description}
+	  {g->text text="The ImageMagick module can support files with the following MIME types"}
+	{/g->description}
+	
+	{g->element}
+	  {foreach from=$AdminNetPbm.mimeTypes item=mimeType}
+	    {$mimeType} 
+	  {/foreach}
+	{/g->element}
+      {/g->box}
+    {/if}
   {/if}
-{/if}
+{/g->pagebox}

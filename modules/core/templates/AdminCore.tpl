@@ -1,233 +1,230 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="General Settings"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="General Settings"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.saved)}
-	  {gallery->text text="Settings saved successfully"}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->success}
+      {if isset($status.saved)}
+	{g->text text="Settings saved successfully"}
+      {/if}
+      {if isset($status.addedDir)}
+	{g->text text="Added local upload dir successfully"}
+      {/if}
+      {if isset($status.removedDir)}
+	{g->text text="Removed local upload dir successfully"}
+      {/if}
+    {/g->success}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Defaults"}
-  {/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Defaults"}
+    {/g->title}
 
-  {gallery->description}
-    {gallery->text text="These are default values.  They can be overridden in each album."}
-  {/gallery->description}
+    {g->description}
+      {g->text text="These are default values.  They can be overridden in each album."}
+    {/g->description}
 
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Default sort order"}
-	{/gallery->title}
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Default sort order"}
+	{/g->column}
 
-	{gallery->body}
-	  {gallery->select name="form.default.orderBy"}
+	{g->column}
+	  {g->select name="form.default.orderBy"}
 	    {html_options options=$AdminCore.orderByList selected=$form.default.orderBy}
-	  {/gallery->select}
-
-	  {gallery->select name="form.default.orderDirection"}
+	  {/g->select}
+	  {g->select name="form.default.orderDirection"}
 	    {html_options options=$AdminCore.orderDirectionList selected=$form.default.orderDirection}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
 
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Default layout"}
-	{/gallery->title}
+      {g->row}
+	{g->column}
+	  {g->text text="Default layout"}
+	{/g->column}
 
-	{gallery->body}
-	  {gallery->select name="form.default.layout"}
+	{g->column}
+	  {g->select name="form.default.layout"}
 	    {html_options values=$AdminCore.layoutList selected=$form.default.layout output=$AdminCore.layoutList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
 
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Default theme"}
-	{/gallery->title}
+      {g->row}
+	{g->column}
+	  {g->text text="Default theme"}
+	{/g->column}
 
-	{gallery->body}
-	  {gallery->select name="form.default.theme"}
+	{g->column}
+	  {g->select name="form.default.theme"}
 	    {html_options values=$AdminCore.themeList selected=$form.default.theme output=$AdminCore.themeList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+    {/g->table}
+  {/g->box}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Language settings"}
-  {/gallery->title}
-  {gallery->description}
-    {gallery->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
-  {/gallery->description}
-  
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Default language"}
-	{/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Language settings"}
+    {/g->title}
+    {g->description}
+      {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
+    {/g->description}
+    
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Default language"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->select name="form.default.language"}
+	{g->column}
+	  {g->select name="form.default.language"}
 	    {html_options options=$AdminCore.languageList selected=$form.default.language}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+    {/g->table}
+  {/g->box}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Filesystem Permissions"}
-  {/gallery->title}
-  {gallery->description}
-    {gallery->text text="Specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
-  {/gallery->description}
-  
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="New directories"}
-	{/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Filesystem Permissions"}
+    {/g->title}
+    {g->description}
+      {g->text text="Specify the default permissions for files and directories that Gallery creates. This doesn't apply to files/directories that Gallery has already created."}
+    {/g->description}
+    
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="New directories"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->select name="form.permissions.directory"}
+	{g->column}
+	  {g->select name="form.permissions.directory"}
 	    {html_options values=$AdminCore.permissionsDirectoryList selected=$form.permissions.directory output=$AdminCore.permissionsDirectoryList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
       
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="New files"}
-	{/gallery->title}
+      {g->row}
+	{g->column}
+	  {g->text text="New files"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->select name="form.permissions.file"}
+	{g->column}
+	  {g->select name="form.permissions.file"}
 	    {html_options values=$AdminCore.permissionsFileList selected=$form.permissions.file output=$AdminCore.permissionsFileList}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+    {/g->table}
+  {/g->box}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Local Server Upload Paths"}
-  {/gallery->title}
-  
-  {gallery->description}
-    {gallery->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
-  {/gallery->description}
-  
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Legal Paths"}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->select name="form.uploadLocalServer.selectedDir" size="5"}
-	    {html_options values=$AdminCore.localServerDirList selected=$form.uploadFromLocalServer.selectedDir output=$AdminCore.localServerDirList}
-	  {/gallery->select}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Local Server Upload Paths"}
+    {/g->title}
+    
+    {g->description}
+      {g->text text="Specify the legal directories on the local server where a user can store files and then upload them into Gallery using the <i>Upload from Local Server</i> feature.  The paths you enter here and all the files and directories under those paths will be available to any Gallery user who has upload privileges, so you should limit this to directories that won't contain sensitive data (eg. /tmp or /usr/ftp/incoming)"}
+    {/g->description}
+    
+    {g->table style="admin_listing" evenodd="true"}
+      {g->row}
+	{g->column header="true"}
+	  {g->text text="Path"}
+	{/g->column}
+	{g->column header="true"}
+	  {g->text text="Action"}
+	{/g->column}
+      {/g->row}
 
-	  <br/>
+      {foreach from=$AdminCore.localServerDirList item=dir}
+	{g->row}
+	  {g->column}
+	    {$dir}
+	  {/g->column}
+	  {g->column}
+	    {g->link url_controller="core:AdminCore" url_form_action_removeUploadLocalServerDir=1 url_form_uploadLocalServer_selectedDir=$dir}
+	      {g->text text="remove"}
+	    {/g->link}
+	  {/g->column}
+	{/g->row}
+      {/foreach}
 
-	  {gallery->input type="submit" name="form.action.removeUploadLocalServerDir"}
-	    {gallery->text text="remove"}
-	  {/gallery->input}
+      {g->row}
+	{g->column}
+	  {g->input type="text" size="40" name="form.uploadLocalServer.newDir"}{/g->input}
+	{/g->column}
 
-	  <br/>
+	{g->column}
+	  {g->input type="submit" name="form.action.addUploadLocalServerDir"}
+	    {g->text text="add"}
+	  {/g->input}
+	{/g->column}
+      {/g->row}
+    {/g->table}
 
-	  {gallery->input type="submit" name="form.action.addUploadLocalServerDir"}
-	    {gallery->text text="add"}
-	  {/gallery->input}
-	  {gallery->input type="text" name="form.uploadLocalServer.newDir"}{/gallery->input}
+    {if isset($form.error.uploadLocalServer.newDir.missing)}
+      {g->error}
+	{g->text text="You must enter a directory to add."}
+      {/g->error}
+    {/if}
+  {/g->box}
 
-	  {if isset($form.error.uploadLocalServer.newDir.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a directory to add."}
-	    {/gallery->error}
-	  {/if}
-
-	  {if isset($form.error.uploadLocalServer.selectedDir.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must select a directory to remove"}
-	    {/gallery->error}
-	  {/if}
-
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
-
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Session Settings"}
-  {/gallery->title}
-  
-  {gallery->description}
-    {gallery->text text="Specify the lifetime of the session here."}
-  {/gallery->description}
-  
-  {gallery->body}
-    {gallery->widget1box}
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Lifetime"}
-	{/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Session Settings"}
+    {/g->title}
+    
+    {g->description}
+      {g->text text="Specify the lifetime of the session here."}
+    {/g->description}
+    
+    {g->table style="admin_widgets"}
+      {g->row}
+	{g->column}
+	  {g->text text="Lifetime"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->select name="session.lifetime"}
+	{g->column}
+	  {g->select name="session.lifetime"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.lifetime}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
       
-      {gallery->widget1}
-	{gallery->title}
-	  {gallery->text text="Inactivity Timeout"}
-	{/gallery->title}
+      {g->row}
+	{g->column}
+	  {g->text text="Inactivity Timeout"}
+	{/g->column}
 	
-	{gallery->body}
-	  {gallery->select name="session.inactivityTimeout"}
+	{g->column}
+	  {g->select name="session.inactivityTimeout"}
 	    {html_options options=$AdminCore.sessionTimeList selected=$form.session.inactivityTimeout}
-	  {/gallery->select}
-	{/gallery->body}
-      {/gallery->widget1}
-    {/gallery->widget1box}
-  {/gallery->body}
-{/gallery->detailedbox}
+	  {/g->select}
+	{/g->column}
+      {/g->row}
+    {/g->table}
+  {/g->box}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->input type="submit" name="form.action.save"}
-      {gallery->text text="save"}
-    {/gallery->input}
-    {gallery->input type="submit" name="form.action.reset"}
-      {gallery->text text="reset"}
-    {/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box style="admin"}
+    {g->element}
+      {g->input type="submit" name="form.action.save"}
+	{g->text text="save"}
+      {/g->input}
+      {g->input type="submit" name="form.action.reset"}
+	{g->text text="reset"}
+      {/g->input}
+    {/g->element}
+  {/g->box}
+
+{/g->pagebox}

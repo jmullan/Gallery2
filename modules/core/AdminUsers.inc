@@ -62,28 +62,7 @@ class AdminUsersController extends GalleryController {
 	    }
 	}
 	
-	if (isset($form['action']['firstPage'])) {
-
-	    /* Go to the first page */
-	    GalleryUtilities::putRequestVariable('form.list.page', 1);
-	    
-	} else if (isset($form['action']['backPage'])) {
-
-	    /* Go back a page */
-	    GalleryUtilities::putRequestVariable('form.list.page', max(1, $form['list']['page']-1));
-	    
-	} else if (isset($form['action']['nextPage'])) {
-	    
-	    /* Go forward a page */
-	    GalleryUtilities::putRequestVariable('form.list.page',
-						 min($form['list']['page']+1, $form['list']['maxPages']));
-	    
-	} else if (isset($form['action']['lastPage'])) {
-
-	    /* Go to the last page */
-	    GalleryUtilities::putRequestVariable('form.list.page', $form['list']['maxPages']);
-	    
-	} else if (isset($form['action']['filterClear'])) {
+	if (isset($form['action']['filterClear'])) {
 
 	    /* Clear the filter */
 	    GalleryUtilities::putRequestVariable('form.list.filter', null);
@@ -94,39 +73,6 @@ class AdminUsersController extends GalleryController {
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminCreateUser';
 	    
-	} else if (isset($form['action']['editFromList'])) {
-
-	    if (empty($form['list']['userId'])) {
-		$error[] = 'form.error.list.noUserSelected';
-	    } else {
-		/* Show the "edit user" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminEditUser';
-		$redirect['userId'] = $form['list']['userId'];
-	    }
-	    
-	} else if (isset($form['action']['deleteFromList'])) {
-
-	    if (empty($form['list']['userId'])) {
-		$error[] = 'form.error.list.noUserSelected';
-	    } else {
-		list ($ret, $anonymousUserId) =
-		    $gallery->getModuleParameter('core', 'id.anonymousUser');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if ($form['list']['userId'] == $gallery->getActiveUserId()) {
-		    $error[] = 'form.error.list.cantDeleteActiveUser';
-		} else if ($form['list']['userId'] == $anonymousUserId) {
-		    $error[] = 'form.error.list.cantDeleteAnonymousUser';
-		} else {
-		    /* Show the "delete user" view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminDeleteUser';
-		    $redirect['userId'] = $form['list']['userId'];
-		}
-	    }
 	} else if (isset($form['action']['editFromText'])) {
 
 	    if (empty($form['text']['userName'])) {
@@ -183,7 +129,7 @@ class AdminUsersView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'AdminUsers') {
@@ -195,15 +141,15 @@ class AdminUsersView extends GalleryView {
 	if (!isset($form['list']['filter'])) {
 	    $form['list']['filter'] = '';
 	}
-	
-	if (!isset($form['list']['page'])) {
+
+	if (!isset($form['list']['page']) || $form['list']['page'] < 1) {
 	    $form['list']['page'] = 1;
 	}
 
 	/* Fetch the user count every time we reload */
 	list ($ret, $totalUserCount) = GalleryUserHelper::fetchUserCount();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$form['list']['count'] = $totalUserCount;
@@ -213,7 +159,7 @@ class AdminUsersView extends GalleryView {
 	if (!empty($form['list']['filter'])) {
 	    list ($ret, $form['list']['count']) = GalleryUserHelper::fetchUserCount($form['list']['filter']);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 
@@ -223,12 +169,34 @@ class AdminUsersView extends GalleryView {
 	    $form['list']['page'] = $form['list']['maxPages'];
 	}
 	
-	list ($ret, $form['list']['userNames']) =
+	/* Calculate the next/back pages */
+	$form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
+	$form['list']['backPage'] = max(1, $form['list']['page']-1);
+
+	list ($ret, $userNames) =
 	    GalleryUserHelper::fetchUserNames($form['list']['pageSize'],
 					      ($form['list']['page'] - 1) * $form['list']['pageSize'],
 					      $form['list']['filter']);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $anonymousUserId) =
+	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$myUserId = $gallery->getActiveUserId();
+
+	$form['list']['userNames'] = array();
+	foreach ($userNames as $userId => $userName) {
+	    $form['list']['userNames'][$userId]['userName'] = $userName;
+	    if ($userId == $anonymousUserId || $userId == $myUserId) {
+		$form['list']['userNames'][$userId]['can']['delete'] = false;
+	    } else {
+		$form['list']['userNames'][$userId]['can']['delete'] = true;
+	    }
 	}
 
 	$AdminUsers = array();

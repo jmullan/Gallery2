@@ -66,7 +66,7 @@ class ItemEditAlbumController extends GalleryController {
 	    
 	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
-	    if (!is_numeric($form['thumbnail']['size'])) {
+	    if (!is_numeric($form['thumbnail']['size']) || $form['thumbnail']['size'] < 1) {
 		$error[] = 'form.error.thumbnail.size.invalid';
 	    }
 
@@ -313,12 +313,12 @@ class ItemEditAlbumView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemEditAlbum') {
@@ -332,7 +332,7 @@ class ItemEditAlbumView extends GalleryView {
 	    list ($ret, $preferences) =
 		GalleryDerivativePreferencesMap::fetchPreferencesForItem($item->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    foreach ($preferences as $preference) {
@@ -382,7 +382,7 @@ class ItemEditAlbumView extends GalleryView {
 	
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$platform = $gallery->getPlatform();

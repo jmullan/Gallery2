@@ -1,75 +1,70 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Change Password"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Change Password"}
+    {/g->title}
+  {/g->banner}
 
-{if isset($status)}
-  {gallery->detailedbox}
-    {gallery->body}
-      {gallery->status}
-	{if isset($status.changedPassword)}
-	  {gallery->text text="Password changed successfully"}
-	{/if}
-      {/gallery->status}
-    {/gallery->body}
-  {/gallery->detailedbox}
-{/if}
+  {if isset($status)}
+    {g->status}
+      {if isset($status.changedPassword)}
+	{g->text text="Password changed successfully"}
+      {/if}
+    {/g->status}
+  {/if}
 
-{gallery->detailedbox}
-  {gallery->description}
-    {gallery->text text="You must enter a new password twice to change passwords."}
-  {/gallery->description}
+  {g->box}
+    {g->description}
+      {g->text text="You must enter a new password twice to change passwords."}
+    {/g->description}
+  {/g->box}
 
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Password"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input type="password" name="form.password1"}{/gallery->input}
-	  {if isset($form.error.password1.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a password"}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+  {g->box}
+    {g->title}
+      {g->text text="Password"}
+    {/g->title}
+    {g->subtitle}
+      {g->text text="required"}
+    {/g->subtitle}
+    {g->element}
+      {g->input type="password" name="form.password1"}{/g->input}
+    {/g->element}
+    {if isset($form.error.password1.missing)}
+      {g->error}
+	{g->text text="You must enter a password"}
+      {/g->error}
+    {/if}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Verify Password"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
-	{gallery->body}
-	  {gallery->input type="password" name="form.password2"}{/gallery->input}
+  {g->box}
+    {g->title}
+      {g->text text="Verify Password"}
+    {/g->title}
+    {g->subtitle}
+      {g->text text="required"}
+    {/g->subtitle}
+    {g->element}
+      {g->input type="password" name="form.password2"}{/g->input}
+    {/g->element}
 
-	  {if isset($form.error.password2.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter your password again!"}
-	    {/gallery->error}
-	  {/if}
+    {if isset($form.error.password2.missing)}
+      {g->error}
+	{g->text text="You must enter your password again!"}
+      {/g->error}
+    {/if}
 
-	  {if isset($form.error.password2.mismatch)}
-	    {gallery->error}
-	      {gallery->text text="The passwords you entered did not match"}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+    {if isset($form.error.password2.mismatch)}
+      {g->error}
+	{g->text text="The passwords you entered did not match"}
+      {/g->error}
+    {/if}
+  {/g->box}
 
-      {gallery->widget2}
-	{gallery->body}
-	  {gallery->input type="submit" name="form.action.save"}{gallery->text text="Change"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {g->box}
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Change"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}
+

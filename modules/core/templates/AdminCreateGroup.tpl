@@ -1,42 +1,40 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Create A New Group"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Create A New Group"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Group Name"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Group Name"}
+    {/g->title}
 
-	{gallery->body}
-	  {gallery->input type="text" name="form.groupName"}{$form.groupName}{/gallery->input}
-	  {if isset($form.error.groupName.missing)}
-	    {gallery->error}
-	      {gallery->text text="You must enter a group name"}
-	    {/gallery->error}
-	  {/if}
-	  
-	  {if isset($form.error.groupName.exists)}
-	    {gallery->error}
-	      {gallery->text text="Group '%s' already exists" arg1=$form.groupName}
-	    {/gallery->error}
-	  {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->subtitle}
+      {g->text text="required"}
+    {/g->subtitle}
 
-      {gallery->widget2}
-	{gallery->body}
-	  {gallery->input type="submit" name="form.action.create"}{gallery->text text="Create Group"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {g->element}
+      {g->input type="text" name="form.groupName"}{$form.groupName}{/g->input}
+    {/g->element}
+
+    {if isset($form.error.groupName.missing)}
+      {g->error}
+	{g->text text="You must enter a group name"}
+      {/g->error}
+    {/if}
+    
+    {if isset($form.error.groupName.exists)}
+      {g->error}
+	{g->text text="Group '%s' already exists" arg1=$form.groupName}
+      {/g->error}
+    {/if}
+  {/g->box}
+
+  {g->box}
+    {g->element}
+      {g->input type="submit" name="form.action.create"}{g->text text="Create Group"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

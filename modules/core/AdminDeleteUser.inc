@@ -123,13 +123,13 @@ class AdminDeleteUserView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	    
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = $gallery->loadEntitiesById($userId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'AdminDeleteUser') {

@@ -1,44 +1,53 @@
-{capture name="date"}{gallery->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
-{gallery->detailedbox}
-  {gallery->title}
+{capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
+{g->box style="comment"}
+  {g->title}
     {$comment.subject}
-  {/gallery->title}
-  {gallery->description}
+  {/g->title}
+  {if isset($can.edit) || isset($can.delete)}
+    {g->subtitle}
+      {g->linkset}
+	{if $can.edit}
+	  {g->item}
+	    {g->title}
+	      {g->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:EditComment" url_itemId=$item.id url_commentId=$comment.id}
+		{g->text text="edit"}
+	      {/g->link}
+	    {/g->title}
+	  {/g->item}
+	{/if}
+	{if $can.delete}
+	  {g->item}
+	    {g->title}
+	      {g->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:DeleteComment" url_itemId=$item.id url_commentId=$comment.id}
+		{g->text text="delete"}
+	      {/g->link}
+	    {/g->title}
+	  {/g->item}
+	{/if}
+      {/g->linkset}
+
+    {/g->subtitle}
+  {/if}
+
+  {g->description}
     {if isset($can.edit)}
-      {gallery->text text="Posted by %s on %s (%s)" 
+      {g->text text="Posted by %s on %s (%s)" 
       arg1=$user.fullName|default:$user.userName
       arg2=$smarty.capture.date
       arg3=$comment.host}
     {else}
-      {gallery->text text="Posted by %s on %s" 
+      {g->text text="Posted by %s on %s" 
       arg1=$user.fullName|default:$user.userName
       arg2=$smarty.capture.date}
     {/if}
 
-    {if isset($can.edit) || isset($can.delete)}
-      {gallery->linksbox}
-	{if $can.edit}
-	  {gallery->item}
-	    {gallery->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:EditComment" url_itemId=$item.id url_commentId=$comment.id}
-	      {gallery->text text="edit"}
-	    {/gallery->link}
-	  {/gallery->item}
-	{/if}
-	{if $can.delete}
-	  {gallery->item}
-	    {gallery->link url_return="true" url_view="core:ItemAdmin" url_subView="comment:DeleteComment" url_itemId=$item.id url_commentId=$comment.id}
-	      {gallery->text text="delete"}
-	    {/gallery->link}
-	  {/gallery->item}
-	{/if}
-      {/gallery->linksbox}
-    {/if}
-  {/gallery->description}
-  {gallery->body}
+  {/g->description}
+
+  {g->element}
     {if isset($truncate)}
       {$comment.comment|truncate:$truncate}
     {else}
       {$comment.comment}
     {/if}
-  {/gallery->body}
-{/gallery->detailedbox}
+  {/g->element}
+{/g->box}

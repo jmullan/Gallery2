@@ -1,86 +1,92 @@
-{gallery->form action_controller="$controller" enctype=$enctype}
-  {gallery->input type="hidden" name="form.formName"}{$form.formName}{/gallery->input}
-  {gallery->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/gallery->input}
+{g->form action_controller="$controller" enctype=$enctype}
+  {g->input type="hidden" name="form.formName"}{$form.formName}{/g->input}
+  {g->input type="hidden" name="itemId"}{$ItemAdmin.item.id}{/g->input}
   
-  {gallery->main}
-    {gallery->pathbar}
+  {g->main}
+    {g->breadcrumb}
       {foreach from=$ItemAdmin.parents item=parent}
-	{gallery->item}
-	  {gallery->link url_view='core:ShowItem' url_itemId=$parent.id}
-	    {$parent.title|default:$parent.pathComponent}
-	  {/gallery->link}
-	{/gallery->item}
+	{g->item}
+	  {g->title}
+	    {g->link url_view='core:ShowItem' url_itemId=$parent.id}
+	      {$parent.title|default:$parent.pathComponent}
+	    {/g->link}
+	  {/g->title}
+	{/g->item}
       {/foreach}
-      {gallery->item}
-	{gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
-	  {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent}
-	{/gallery->link}
-      {/gallery->item}
-    {/gallery->pathbar}
+      {g->item}
+	{g->title}
+	  {g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+	    {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent}
+	  {/g->link}
+	{/g->title}
+      {/g->item}
+    {/g->breadcrumb}
 
-    {gallery->sidebar}
-      {gallery->component}
-	{gallery->simplebox}
-	  {gallery->body}
-	    {if empty($ItemAdmin.thumbnail)}
-	      {gallery->text text="No Thumbnail"}
-	    {else}
-	      {gallery->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
-	    {/if}
-	    {$ItemAdmin.item.title}
-	  {/gallery->body}
-	{/gallery->simplebox}
+    {g->sidebar}
+      {g->box style="sidebar"}
+	{g->element}
+	  {if empty($ItemAdmin.thumbnail)}
+	    {g->text text="No Thumbnail"}
+	  {else}
+	    {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail}
+	  {/if}
+	{/g->element}
+	{g->footer}
+	  {$ItemAdmin.item.title}
+	{/g->footer}
+      {/g->box}
 
-	{gallery->simplebox}
-	  {gallery->body}
-	    {gallery->listingbox}
-	      {gallery->title}
-		{gallery->text text="Options"}
-	      {/gallery->title}
+      {g->box style="sidebar"}
+	{g->title}
+	  {g->text text="Options"}
+	{/g->title}
 
-	      {foreach from=$ItemAdmin.subViewChoices item=choice}
-		{gallery->item}
-		  {gallery->link url_view='core:ItemAdmin' url_subView=$choice.view url_itemId=$ItemAdmin.item.id}
-		    {$choice.name}
-		  {/gallery->link}
-		{/gallery->item}
-	      {/foreach}
-	    {/gallery->listingbox}
-	  {/gallery->body}
-	{/gallery->simplebox}
+	{g->listing}
+	  {foreach from=$ItemAdmin.subViewChoices item=choice}
+	    {g->item}
+	      {g->title}
+		{g->link url_view='core:ItemAdmin' url_subView=$choice.view url_itemId=$ItemAdmin.item.id}
+		  {$choice.name}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/foreach}
+	{/g->listing}
+      {/g->box}
 
-	{gallery->simplebox}
-	  {gallery->body}
-	    {gallery->listingbox}
-	      {gallery->title}
-		{gallery->text text="Navigation"}
-	      {/gallery->title}
-	      {if ($ItemAdmin.itemType == 'item')}
-		{gallery->item}
-		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
-		    {gallery->text text="Back to Item View"}
-		  {/gallery->link}
-		{/gallery->item}
-		{gallery->item}
-		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.parent.id}
-		    {gallery->text text="Back to Album View"}
-		  {/gallery->link}
-		{/gallery->item}
-	      {else}
-		{gallery->item}
-		  {gallery->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
-		    {gallery->text text="Back to Album View"}
-		  {/gallery->link}
-		{/gallery->item}
-	      {/if}
-	    {/gallery->listingbox}
-	  {/gallery->body}
-	{/gallery->simplebox}
-      {/gallery->component}
-    {/gallery->sidebar}
+      {g->box style="sidebar"}
+	{g->title}
+	  {g->text text="Navigation"}
+	{/g->title}
+	{g->listing}
+	  {if ($ItemAdmin.itemType == 'item')}
+	    {g->item}
+	      {g->title}
+		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		  {g->text text="Back to Item View"}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	    {g->item}
+	      {g->title}
+		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.parent.id}
+		  {g->text text="Back to Album View"}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {else}
+	    {g->item}
+	      {g->title}
+		{g->link url_view='core:ShowItem' url_itemId=$ItemAdmin.item.id}
+		  {g->text text="Back to Album View"}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/if}
+	{/g->listing}
+      {/g->box}
+    {/g->sidebar}
 
-    {gallery->component}
-      {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
-    {/gallery->component}
-  {/gallery->main}
-{/gallery->form}
+    {include file=$ItemAdmin.viewBodyFile l10Domain=$ItemAdmin.viewL10Domain}
+  {/g->main}
+{/g->form}

@@ -1,38 +1,33 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Edit a group"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Edit a group"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->body}
-    {gallery->widget2box}
-      {gallery->widget2}
-	{gallery->title}
-	  {gallery->text text="Group Name"}
-	  {gallery->textmodifier}
-	    {gallery->text text="required"}
-	  {/gallery->textmodifier}
-	{/gallery->title}
+  {g->box style="admin"}
+    {g->title}
+      {g->text text="Group Name"}
+    {/g->title}
+    {g->subtitle}
+      {g->text text="required"}
+    {/g->subtitle}
 
-	{gallery->body}
-	  {gallery->input type="text" name="form.groupName"}{$form.groupName}{/gallery->input}
-	  {gallery->input type="hidden" name="groupId"}{$AdminEditGroup.group.id}{/gallery->input}
-	    {if isset($form.error.groupName.missing)}
-	      {gallery->error}
-		{gallery->text text="You must enter a group name"}
-	      {/gallery->error}
-	    {/if}
-	{/gallery->body}
-      {/gallery->widget2}
+    {g->element}
+      {g->input type="text" name="form.groupName"}{$form.groupName}{/g->input}
+      {g->input type="hidden" name="groupId"}{$AdminEditGroup.group.id}{/g->input}
+    {/g->element}
 
-      {gallery->widget2}
-	{gallery->body}
-	  {gallery->input type="submit" name="form.action.save"}{gallery->text text="Save"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.undo"}{gallery->text text="Undo"}{/gallery->input}
-	  {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-	{/gallery->body}
-      {/gallery->widget2}
-    {/gallery->widget2box}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {if isset($form.error.groupName.missing)}
+      {g->error}
+	{g->text text="You must enter a group name"}
+      {/g->error}
+    {/if}
+
+    {g->element}
+      {g->input type="submit" name="form.action.save"}{g->text text="Save"}{/g->input}
+      {g->input type="submit" name="form.action.undo"}{g->text text="Undo"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

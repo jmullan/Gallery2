@@ -1,21 +1,23 @@
-{gallery->bannerbox}
-  {gallery->title}
-    {gallery->text text="Delete User"}
-  {/gallery->title}
-{/gallery->bannerbox}
+{g->pagebox}
+  {g->banner}
+    {g->title}
+      {g->text text="Delete User"}
+    {/g->title}
+  {/g->banner}
 
-{gallery->detailedbox}
-  {gallery->title}
-    {gallery->text text="Are you sure?"}
-  {/gallery->title}
+  {g->box}
+    {g->title}
+      {g->text text="Are you sure?"}
+    {/g->title}
 
-  {gallery->description}
-    {gallery->text text="This will completely remove <b>%s</b> from Gallery.  There is no undo!" arg1=$AdminDeleteUser.user.userName}
-  {/gallery->description}
+    {g->description}
+      {g->text text="This will completely remove <b>%s</b> from Gallery.  There is no undo!" arg1=$AdminDeleteUser.user.userName}
+    {/g->description}
 
-  {gallery->body}
-    {gallery->input type="hidden" name="userId"}{$AdminDeleteUser.user.id}{/gallery->input}
-    {gallery->input type="submit" name="form.action.delete"}{gallery->text text="Delete"}{/gallery->input}
-    {gallery->input type="submit" name="form.action.cancel"}{gallery->text text="Cancel"}{/gallery->input}
-  {/gallery->body}
-{/gallery->detailedbox}
+    {g->element}
+      {g->input type="hidden" name="userId"}{$AdminDeleteUser.user.id}{/g->input}
+      {g->input type="submit" name="form.action.delete"}{g->text text="Delete"}{/g->input}
+      {g->input type="submit" name="form.action.cancel"}{g->text text="Cancel"}{/g->input}
+    {/g->element}
+  {/g->box}
+{/g->pagebox}

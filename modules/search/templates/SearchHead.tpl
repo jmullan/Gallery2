@@ -1,5 +1,5 @@
-    <title>
-      {gallery->text text="Gallery Search"}
-    </title>
-    {gallery->style}
+<title>
+  {g->text text="Gallery Search"}
+</title>
+{g->style}
 

@@ -155,7 +155,7 @@ class AdminCoreView extends GalleryView {
 	
 	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	    
 	if ($form['formName'] != 'AdminCore') {
@@ -174,7 +174,7 @@ class AdminCoreView extends GalleryView {
 		list ($ret, $value) =
 		    $gallery->getModuleParameter('core', $key);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		list ($outer, $inner) = split('\.', $key);
@@ -185,19 +185,24 @@ class AdminCoreView extends GalleryView {
 
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get the list of legal local server dirs */
 	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$localServerDirList = split(',', $localServerDirs);
+	for ($i = 0; $i < sizeof($localServerDirList); $i++) {
+	    if (empty($localServerDirList[$i])) {
+		unset($localServerDirList[$i]);
+	    }
+	}
 
 	/* Set up our sort order selection list */
 	$orderByList = array();
-	$orderByList[''] = $module->translate('* No Sort Order *');
+	$orderByList[''] = $module->translate('&laquo; No Sort Order &raquo;');
 	$orderByList['title'] = $module->translate('Title');
 	$orderByList['summary'] = $module->translate('Summary');
 	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
@@ -231,10 +236,10 @@ class AdminCoreView extends GalleryView {
 	/* Set up our language selection list */
 	list ($ret, $module) = $gallery->loadModule('core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$languageList = array();
-	$languageList[''] = $module->translate('<none>');
+	$languageList[''] = $module->translate('&laquo; None &raquo;');
 	
 	$translator =& $gallery->getTranslator();
 	$supportedLanguages = $translator->getSupportedLanguages();

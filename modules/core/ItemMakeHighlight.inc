@@ -98,14 +98,14 @@ class ItemMakeHighlightView extends GalleryView {
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$parentId = $item->getParentId();
 
 	/* Make sure we have permission do edit the parent of this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.edit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] != 'ItemMakeHighlight') {
