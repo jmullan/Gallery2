@@ -46,7 +46,7 @@
     );
 
   
-    CREATE UNIQUE INDEX PermissionSetMap_permission 
+    CREATE UNIQUE INDEX PermissionSetMap_U1
     ON DB_TABLE_PREFIXPermissionSetMap
     (DB_COLUMN_PREFIXpermission);
     

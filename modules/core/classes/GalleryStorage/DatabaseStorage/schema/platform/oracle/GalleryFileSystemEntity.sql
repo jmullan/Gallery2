@@ -20,7 +20,7 @@
     );
 
   
-    CREATE INDEX FileSystemEntity_pathComponent 
+    CREATE INDEX FileSystemEntity_I1
     ON DB_TABLE_PREFIXFileSystemEntity
     (DB_COLUMN_PREFIXpathComponent);
 

@@ -26,17 +26,17 @@
     );
 
   
-    CREATE INDEX PermissionMap_itemId 
+    CREATE INDEX PermissionMap_I1
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXitemId);
 
   
-    CREATE INDEX PermissionMap_userId 
+    CREATE INDEX PermissionMap_I2
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXuserId);
 
   
-    CREATE INDEX PermissionMap_groupId 
+    CREATE INDEX PermissionMap_I3
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXgroupId);
 

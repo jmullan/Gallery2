@@ -50,22 +50,22 @@
     );
 
   
-    CREATE INDEX Entity_creationTimestamp 
+    CREATE INDEX Entity_I1
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXcreationTimestamp);
 
   
-    CREATE INDEX Entity_isLinkable 
+    CREATE INDEX Entity_I2
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXisLinkable);
 
   
-    CREATE INDEX Entity_modificationTimestamp 
+    CREATE INDEX Entity_I3
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXmodificationTimestamp);
 
   
-    CREATE INDEX Entity_serialNumber 
+    CREATE INDEX Entity_I4
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXserialNumber);
 

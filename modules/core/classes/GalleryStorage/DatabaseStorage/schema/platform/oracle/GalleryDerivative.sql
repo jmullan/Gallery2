@@ -54,17 +54,17 @@
     );
 
   
-    CREATE INDEX Derivative_derivativeSourceId 
+    CREATE INDEX Derivative_I1
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeSourceId);
 
   
-    CREATE INDEX Derivative_derivativeOrder 
+    CREATE INDEX Derivative_I2
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeOrder);
 
   
-    CREATE INDEX Derivative_derivativeType 
+    CREATE INDEX Derivative_I3
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeType);
 

@@ -18,7 +18,7 @@
     );
 
   
-    CREATE INDEX ChildEntity_parentId 
+    CREATE INDEX ChildEntity_I1
     ON DB_TABLE_PREFIXChildEntity
     (DB_COLUMN_PREFIXparentId);
 

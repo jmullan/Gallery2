@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXToolkitOperationParameterMap (
+    CREATE TABLE DB_TABLE_PREFIXTkOperationParameterMap (
   DB_COLUMN_PREFIXoperationName
       VARCHAR(
       
@@ -40,8 +40,8 @@
     );
 
   
-    CREATE INDEX ToolkitOperationParameterMap_operationName 
-    ON DB_TABLE_PREFIXToolkitOperationParameterMap
+    CREATE INDEX TkOperationParameterMap_operationName 
+    ON DB_TABLE_PREFIXTkOperationParameterMap
     (DB_COLUMN_PREFIXoperationName);
 
   
@@ -51,7 +51,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ToolkitOperationParameterMap',
+      'TkOperationParameterMap',
       1,
       0
       );

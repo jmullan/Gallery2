@@ -21,7 +21,7 @@
   
       ,
     DB_COLUMN_PREFIXvalue
-      LONG
+      VARCHAR2(4000)
     
     );
 

@@ -25,12 +25,10 @@
         
       )
     
-    NOT NULL
-  
     );
 
   
-    CREATE INDEX ItemAttributesMap_parentSequence 
+    CREATE INDEX ItemAttributesMap_I1
     ON DB_TABLE_PREFIXItemAttributesMap
     (DB_COLUMN_PREFIXparentSequence);
 

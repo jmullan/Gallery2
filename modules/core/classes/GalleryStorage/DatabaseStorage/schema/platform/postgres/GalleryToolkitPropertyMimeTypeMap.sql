@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXToolkitPropertyMimeTypeMap (
+    CREATE TABLE DB_TABLE_PREFIXTkPropertyMimeTypeMap (
   DB_COLUMN_PREFIXpropertyName
       VARCHAR(
       
@@ -36,13 +36,13 @@
     );
 
   
-    CREATE INDEX ToolkitPropertyMimeTypeMap_propertyName 
-    ON DB_TABLE_PREFIXToolkitPropertyMimeTypeMap
+    CREATE INDEX TkPropertyMimeTypeMap_propertyName 
+    ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXpropertyName);
 
   
-    CREATE INDEX ToolkitPropertyMimeTypeMap_mimeType 
-    ON DB_TABLE_PREFIXToolkitPropertyMimeTypeMap
+    CREATE INDEX TkPropertyMimeTypeMap_mimeType 
+    ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
 
   
@@ -52,7 +52,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ToolkitPropertyMimeTypeMap',
+      'TkPropertyMimeTypeMap',
       1,
       0
       );

@@ -17,7 +17,7 @@
   
       ,
     DB_COLUMN_PREFIXdescription
-      LONG
+      VARCHAR2(4000)
     
       ,
     DB_COLUMN_PREFIXkeywords
@@ -82,22 +82,22 @@
     );
 
   
-    CREATE INDEX Item_keywords 
+    CREATE INDEX Item_I1
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXkeywords);
 
   
-    CREATE INDEX Item_ownerId 
+    CREATE INDEX Item_I2
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXownerId);
 
   
-    CREATE INDEX Item_summary 
+    CREATE INDEX Item_I3
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXsummary);
 
   
-    CREATE INDEX Item_title 
+    CREATE INDEX Item_I4
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXtitle);
 

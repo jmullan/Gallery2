@@ -18,12 +18,12 @@
     );
 
   
-    CREATE INDEX UserGroupMap_userId 
+    CREATE INDEX UserGroupMap_I1
     ON DB_TABLE_PREFIXUserGroupMap
     (DB_COLUMN_PREFIXuserId);
 
   
-    CREATE INDEX UserGroupMap_groupId 
+    CREATE INDEX UserGroupMap_I2
     ON DB_TABLE_PREFIXUserGroupMap
     (DB_COLUMN_PREFIXgroupId);
 

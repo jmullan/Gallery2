@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXDerivativePreferencesMap (
+    CREATE TABLE DB_TABLE_PREFIXDerivativePrefsMap (
   DB_COLUMN_PREFIXitemId
       int(11)
     
@@ -35,7 +35,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'DerivativePreferencesMap',
+      'DerivativePrefsMap',
       1,
       0
       );

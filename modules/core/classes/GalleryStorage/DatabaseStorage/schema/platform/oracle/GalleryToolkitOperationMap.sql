@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXToolkitOperationMap (
+    CREATE TABLE DB_TABLE_PREFIXTkOperationMap (
   DB_COLUMN_PREFIXname
       VARCHAR2(
       
@@ -42,7 +42,7 @@
     );
 
   
-    ALTER TABLE DB_TABLE_PREFIXToolkitOperationMap
+    ALTER TABLE DB_TABLE_PREFIXTkOperationMap
     ADD PRIMARY KEY (DB_COLUMN_PREFIXname);
     
 
@@ -51,7 +51,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ToolkitOperationMap',
+      'TkOperationMap',
       1,
       0
       );
