@@ -41,7 +41,7 @@ class Gallery1DataParser {
     function isValidAlbumsPath($path) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-  
+	
 	if ($platform->file_exists($path . 'albumdb.dat')
 	    && $platform->is_readable($path . 'albumdb.dat')) {
 	    return true;
@@ -49,7 +49,7 @@ class Gallery1DataParser {
 	    return false;
 	}
     }
-
+    
     /**
      * Load and return user metadata from given file
      * 
@@ -60,19 +60,19 @@ class Gallery1DataParser {
     function loadFile($fileName) {
         global $gallery;
         $platform = $gallery->getPlatform();
-
+	
 	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Missing or not readable file: $fileName"), null);
 	}
         $tmp = $platform->file($fileName);
-
+	
 	if (empty($tmp)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 	
 	$tmp = join('', $tmp);
-
+	
 	/*
 	 * We renamed User.php to Gallery_User.php in v1.2, so port forward
 	 * any saved user objects.
@@ -80,11 +80,11 @@ class Gallery1DataParser {
 	if (!strcmp(substr($tmp, 0, 10), 'O:4:"user"')) {
 	    $tmp = ereg_replace('O:4:"user"', 'O:12:"gallery_user"', $tmp);
 	}
-
+	
 	$object = unserialize($tmp);
 	return array(GalleryStatus::success(), $object);
     }
-
+    
     /**
      * Fetch an array of albums from a given path
      *
@@ -93,22 +93,26 @@ class Gallery1DataParser {
      *               array of objects
      */
     function getAlbumList($path) {
+        global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	
 	foreach ($albumOrder as $albumName){
-	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
 	    $albumList[$albumName] = $albumFields;
 	}
-
+	
 	return array(GalleryStatus::success(), $albumList);
     }
-
+    
     /**
      * Fetch an associative array of parentalbum names from a given path to
      * gallery1 albums
@@ -118,13 +122,17 @@ class Gallery1DataParser {
      *               array of albums and their parents
      */
     function getParentAlbumList($path) {
+	global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach($albumOrder as $albumName){
-	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . $slash);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__),'');
 	    }
@@ -132,7 +140,7 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $parentAlbumList);
     }
-
+    
     /**
      * Build a data tree of albums
      *
@@ -170,8 +178,8 @@ class Gallery1DataParser {
      *               array of albumnames
      */
     function getRootAlbums($path) {
-        global $gallery;
-        $platform = $gallery->getPlatform();
+	global $gallery;
+	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
@@ -202,6 +210,7 @@ class Gallery1DataParser {
         global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
+
 	$tmp = trim($path);
 	if ($tmp[strlen($tmp)-1] != $slash) {
 	    $tmp .= $slash;
@@ -244,7 +253,11 @@ class Gallery1DataParser {
      *               array object Galleryphotos
      */
     function getPhotos($path) {
-	list ($ret, $photos) = Gallery1DataParser::loadFile($path . '/photos.dat');
+	global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	list ($ret, $photos) = Gallery1DataParser::loadFile($path . $slash . 'photos.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -259,7 +272,11 @@ class Gallery1DataParser {
      *               array Associative array of uids and usernames
      */
     function getUserUids($path) {
-	list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users/userdb.dat');
+        global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users' . $slash . 'userdb.dat');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -320,9 +337,12 @@ class Gallery1DataParser {
      */
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
 	$fields = array();
 	if (Gallery1DataParser::isValidUid($uid)) {
-	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
+	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
