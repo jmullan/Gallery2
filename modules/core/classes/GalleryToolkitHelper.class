@@ -105,7 +105,12 @@ class GalleryToolkitHelper {
 		 * operation to be registered since it conflicts with an
 		 * existing one.  Bounce it.
 		 */
-		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__,
+					    sprintf("CRC mismatch: %s != %s, or Mime type mismatch: %s != %s",
+						    $result[0],
+						    $crc,
+						    $result[1],
+						    $outputMimeType));
 	    }
 	} else {
 	    /*
@@ -568,7 +573,11 @@ class GalleryToolkitHelper {
 
 	$isSupported = true;
 	foreach (split(';', $operations) as $operation) {
-	    list($operationName, $operationArgs) = split('\|', $operation);
+	    if (strpos($operation, '|') === false) {
+		list($operationName, $operationArgs) = array($operation, null);
+	    } else {
+		list($operationName, $operationArgs) = split('\|', $operation);
+	    }
 	    
 	    /* Get the appropriate toolkit */
 	    list ($ret, $toolkit, $mimeType) =
