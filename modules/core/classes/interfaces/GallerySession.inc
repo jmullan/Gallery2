@@ -68,6 +68,8 @@ class GallerySession extends GallerySession_core {
   
         $info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
+        $info['members']['chunk'] = STORAGE_TYPE_INTEGER;
+  
         $info['members']['creationTime'] = STORAGE_TYPE_INTEGER;
   
         $info['members']['lastModificationTime'] = STORAGE_TYPE_INTEGER;
@@ -92,6 +94,10 @@ class GallerySession extends GallerySession_core {
         }
     
         if (!isset($data['userId'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['chunk'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     

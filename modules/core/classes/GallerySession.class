@@ -51,10 +51,13 @@ class GallerySession_core {
      * @g2     <member-name>sessionId</member-name>
      * @g2     <member-type>STRING</member-type>
      * @g2     <member-size>MEDIUM</member-size>
-     * @g2     <unique/>
      * @g2   </member>
      * @g2   <member>
      * @g2     <member-name>userId</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>chunk</member-name>
      * @g2     <member-type>INTEGER</member-type>
      * @g2   </member>
      * @g2   <member>
@@ -71,8 +74,20 @@ class GallerySession_core {
      * @g2     <member-name>sessionData</member-name>
      * @g2     <member-type>TEXT</member-type>
      * @g2   </member>
+     * @g2   <key>
+     * @g2     <member-name>sessionId</member-name>
+     * @g2     <member-name>chunk</member-name>
+     * @g2   </key>
      * @g2 </map>
      */
+
+    /**
+     * The time this session was created
+     *
+     * @var string $_creationTime
+     * @access private
+     */
+    var $_creationTime;
 
     /**
      * The ID of this session 
@@ -121,6 +136,14 @@ class GallerySession_core {
      * @access private
      */
     var $_sessionData;
+
+    /**
+     * The number of chunks used to store this session 
+     *
+     * @var array $_totalChunkCount
+     * @access private
+     */
+    var $_totalChunkCount;
 
     /*
      * ****************************************
@@ -172,12 +195,10 @@ class GallerySession_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$this->_isSessionDataModified = false;
-
 	/*
 	 * Send back a cookie.
 	 *
-	 * XXX: Need to be able to decide for certain that the browser isn't
+	 * TODO: Need to be able to decide for certain that the browser isn't
 	 * accepting cookies so that we can stop sending them.  We can do this
 	 * by recording how many times we've sent a cookie, and how many times
 	 * that we've received one back in return.  Leave that for later.
@@ -204,8 +225,14 @@ class GallerySession_core {
 	 * XSS attacks.
 	 */
 	$cookie .= '; HttpOnly=1';
-	
-	header($cookie);
+
+	/*
+	 * Init may be called multiple times (from unit tests) but don't send the headers more
+	 * than once.
+	 */
+	if (!headers_sent()) {
+	    header($cookie);
+	}
 	
 	return GalleryStatus::success();
     }
@@ -218,28 +245,58 @@ class GallerySession_core {
     function save() {
 	global $gallery;
 
-	$dataSet['lastModificationTime'] = time();
-	$dataSet['userId'] = $gallery->getActiveUserId();
-	if ($this->_isSessionDataModified || $this->_isNewSession) {
-	    $dataSet['sessionData'] = serialize($this->_sessionData);
+	/* Only bother saving if we've been modified at all */
+	if ($this->_isSessionDataModified) {
+	    $chunkSize = 63 * 1024;
+	    $sessionData = serialize($this->_sessionData);
+
+	    /* Split it into chunks (make the array 1-based for convenience later on) */
+	    $i = 0;
+	    $chunks = array();
+	    while (strlen($sessionData) > $i * $chunkSize) {
+		$chunks[$i+1] = substr($sessionData, $i * $chunkSize, $chunkSize);
+		$i++;
+	    }
+
+	    $now = time();
+	    for ($i = 1; $i <= max(sizeof($chunks), $this->_totalChunkCount); $i++) {
+		if ($i > sizeof($chunks)) {
+		    /* Expired chunk */
+		    $ret = $this->removeMapEntry(array('sessionId' => $this->_sessionId,
+						       'chunk' => $i));
+		} else if ($this->_isNewSession || $i > $this->_totalChunkCount) {
+		    /* This is a new chunk */
+		    $dataSet = array();
+		    $dataSet['lastModificationTime'] = $now;
+		    $dataSet['userId'] = $gallery->getActiveUserId();
+		    $dataSet['sessionId'] = $this->_sessionId;
+		    $dataSet['creationTime'] = $this->_creationTime;
+		    $dataSet['chunk'] = $i;
+		    $dataSet['sessionData'] = $chunks[$i];
+		    $ret = $this->addMapEntry($dataSet);
+		} else {
+		    /* Update existing chunk */
+		    $dataSet = array();
+		    $dataSet['lastModificationTime'] = $now;
+		    $dataSet['sessionData'] = $chunks[$i];
+		    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId,
+						       'chunk' => $i),
+						 $dataSet);
+		}
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 	}
 
-	if ($this->_isNewSession) {
-	    $dataSet['sessionId'] = $this->_sessionId;
-	    $dataSet['creationTime'] = time();
-	    
-	    $ret = $this->addMapEntry($dataSet);
-	} else {
-	    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId),
-					 $dataSet);
-	}
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $this->_expireSessions();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	/*
+	 * Perform garbage collection 1% of the time.
+	 */
+	if (rand(1, 100) == 1) {
+	    $ret = $this->_expireSessions();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();
@@ -274,24 +331,20 @@ class GallerySession_core {
     function _expireSessions() {
 	global $gallery;
 	
-	/*
-	 * Perform garbage collection 1% of the time.
-	 */
-	if (rand(1, 100) == 1) {
-	    list ($ret, $sessionInactivityTimeout) =
-		$gallery->getModuleParameter('core', 'session.inactivityTimeout');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	list ($ret, $sessionInactivityTimeout) =
+	    $gallery->getModuleParameter('core', 'session.inactivityTimeout');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    list ($ret, $lifetime) =
-		$gallery->getModuleParameter('core', 'session.lifetime');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	list ($ret, $lifetime) =
+	    $gallery->getModuleParameter('core', 'session.lifetime');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    if ($sessionInactivityTimeout > 0) {
-		$statement = '
+	if ($sessionInactivityTimeout > 0) {
+	    $statement = '
                 DELETE FROM
                   [GallerySession]
                 WHERE
@@ -300,12 +353,11 @@ class GallerySession_core {
                   (UNIX_TIMESTAMP(NOW()) - [GallerySession::lastModificationTime]) > ?
                 ';
 		
-		/* Delete any sessions that are expired */
-		$storage =& $gallery->getStorage();
-		$ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	    /* Delete any sessions that are expired */
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->execute($statement, array($lifetime, $sessionInactivityTimeout));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -385,11 +437,13 @@ class GallerySession_core {
 
 	$query = '
         SELECT
-          [GallerySession::sessionData]
+          [GallerySession::chunk], [GallerySession::sessionData], [GallerySession::creationTime]
         FROM
           [GallerySession]
         WHERE
           [GallerySession::sessionId] = ?
+        ORDER BY
+          [GallerySession::chunk] ASC
         ';
 	list ($ret, $searchResults) = $gallery->search($query, array($this->_sessionId));
 	if ($ret->isError()) {
@@ -398,12 +452,25 @@ class GallerySession_core {
 
 	/* We shouldn't have more than one result */
 	if ($searchResults->resultCount() == 0) {
-	    $this->_isNewSession = true;
 	    $this->_sessionData = array();
+	    $this->_isSessionDataModified = true;
+	    $this->_isNewSession = true;
+	    $this->_totalChunkCount = 1;
+	    $this->_creationTime = time();
 	} else {
+	    $serializedSessionData = '';
+	    $this->_totalChunkCount = 0;
+	    while ($result = $searchResults->nextResult()) {
+		$serializedSessionData .= $result[1];
+
+		if ($this->_totalChunkCount == 0) {
+		    $this->_creationTime = $result[2];
+		}
+		$this->_totalChunkCount++;
+	    }
+	    $this->_sessionData = unserialize($serializedSessionData);
+	    $this->_isSessionDataModified = false;
 	    $this->_isNewSession = false;
-	    $result = $searchResults->nextResult();
-	    $this->_sessionData = unserialize($result[0]);
 	}
 
 	return GalleryStatus::success();
@@ -415,10 +482,24 @@ class GallerySession_core {
      * @param array status data
      * @return string the status id
      */
-    function putStatus($status) {
+    function putStatus($statusData) {
 	$tod = gettimeofday();
 	$statusId = substr(md5($tod['usec'] + rand(1,1000)), 0, 8);
-	$ret = $this->put('core.status.' . $statusId, $status);
+
+	$status =& $this->get('core.status');
+	if (!isset($status)) {
+	    $status = array();
+	}
+
+	$status[$statusId] = $statusData;
+
+	/* Prune extra status messages */
+	$maxStatusMessages = 5;
+	if (sizeof($status) > $maxStatusMessages) {
+	    $status = array_splice($status, -$maxStatusMessages);
+	}
+	$this->put('core.status', $status);
+
 	return $statusId;
     }
 
@@ -428,11 +509,18 @@ class GallerySession_core {
      * @param string the status id
      * @return array the status message
      */
-    function getStatus($statusId) {
-	$key = 'core.status.' . $statusId;
-	$status = $this->get($key);
-	$this->remove($key);
-	return $status;
+    function getStatus($statusId, $remove=true) {
+	$status = $this->get('core.status');
+	$statusData = null;
+	if (isset($status) && isset($status[$statusId])) {
+	    $statusData = $status[$statusId];
+	    if ($remove) {
+		unset($status[$statusId]);
+		$this->put('core.status', $status);
+	    }
+	}
+	
+	return $statusData;
     }
 }
 

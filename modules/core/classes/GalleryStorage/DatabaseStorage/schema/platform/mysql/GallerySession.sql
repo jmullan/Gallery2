@@ -16,6 +16,10 @@
       int(11)
     
       ,
+    DB_COLUMN_PREFIXchunk
+      int(11)
+    
+      ,
     DB_COLUMN_PREFIXcreationTime
       int(11)
     
@@ -29,7 +33,9 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXsessionId)
+    UNIQUE KEY (DB_COLUMN_PREFIXsessionId
+        ,
+      DB_COLUMN_PREFIXchunk)
     
     , 
   

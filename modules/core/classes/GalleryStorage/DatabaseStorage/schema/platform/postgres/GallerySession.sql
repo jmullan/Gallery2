@@ -16,6 +16,10 @@
       INTEGER
     
       ,
+    DB_COLUMN_PREFIXchunk
+      INTEGER
+    
+      ,
     DB_COLUMN_PREFIXcreationTime
       INTEGER
     
@@ -40,9 +44,11 @@
     (DB_COLUMN_PREFIXlastModificationTime);
 
   
-    CREATE UNIQUE INDEX Session_sessionId 
+    CREATE UNIQUE INDEX Session_sessionId_chunk 
     ON DB_TABLE_PREFIXSession
-    (DB_COLUMN_PREFIXsessionId);
+    (DB_COLUMN_PREFIXsessionId
+        ,
+      DB_COLUMN_PREFIXchunk);
 
   
 
