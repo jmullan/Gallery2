@@ -16,8 +16,11 @@ var data_ih = new Array(1); data_ih[0] = {$layout.imageHeights};
 var data_iw = new Array({$layout.imageWidths});
 var data_ih = new Array({$layout.imageHeights});
 {/if}
-var data_count = data_iw.length, data_name = '{$layout.item.id}';
-var data_view = {$layout.viewIndex|default:-1};
-var app_path = '{$layout.cookiePath}';
+var data_count = data_iw.length, data_name = '{$layout.item.id}',
+    data_view = {$layout.viewIndex|default:-1}, app_path = '{$layout.cookiePath}',
+    album_showtext = '{g->text text="show details"}',
+    album_hidetext = '{g->text text="hide details"}',
+    album_showlinks = '{g->text text="show item links"}',
+    album_hidelinks = '{g->text text="hide item links"}';
 </script>
 <script type="text/javascript" src="{$layout.layoutUrl}/templates/hybrid.js"></script>

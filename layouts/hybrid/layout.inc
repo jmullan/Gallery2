@@ -43,7 +43,7 @@ class HybridLayout extends GalleryLayout {
 	$this->setId('hybrid');
 	$this->setName('Hybrid');
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.10.0');
 	$this->setL10Domain('layouts_hybrid');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(5, 0));
@@ -139,11 +139,7 @@ class HybridLayout extends GalleryLayout {
 		    if (isset($child['imageIndex'])) {
 			$layout['viewIndex'] = $child['imageIndex'];
 			/* Set cookie to popup image just once */
-			$cook = 'G2_hybrid_' . $item->getId();
-			setcookie($cook, '-2' .
-			    (GalleryUtilities::getCookieVar($cook) ?
-				    strstr(GalleryUtilities::getCookieVar($cook), ';') : ';'),
-			    0, $cookiePath);
+			setcookie('G2_hybrid_view', '1', 0, $cookiePath);
 		    }
 		    break;
 		}
