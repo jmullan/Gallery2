@@ -102,8 +102,10 @@
         <div id="help_and_examples" style="display: none">
          <br/>
 	  Enter a regular expression string to restrict testing to classes containing 
-          that text in their class name or test method.  Use ":#-#" to restrict which
-          matching tests are actually run.
+          that text in their class name or test method.  If you use an exclamation before a 
+          module/class/test name(s) encapsulated in parenthesis and separated with bars, this will 
+          exclude the matching tests. Use ":#-#" to restrict which matching tests are actually run.
+          You can also specify multiple spans with ":#-#,#-#,#-#".
 
           <ul id="filter_examples_list">
             <li>
@@ -117,16 +119,28 @@
             </li>
             <li>
               <a href="javascript:setFilter('comment')">comment</a>
-            </i>
+            </li>
+            <li>
+              <a href="javascript:setFilter('!(comment)')">!(comment)</a>
+            </li>
+            <li>
+              <a href="javascript:setFilter('!(comment|core)')">!(comment|core)</a>
+            </li>
             <li>
               <a href="javascript:setFilter('comment:1-3')">comment:1-3</a>
-            </i>
+            </li>
             <li>
               <a href="javascript:setFilter('comment:3-')">comment:3-</a>
-            </i>
+            </li>
             <li>
               <a href="javascript:setFilter('comment:-5')">comment:-5</a>
-            </i>
+            </li>
+            <li>
+              <a href="javascript:setFilter('comment:1-3,6-8,10-12')">comment:1-3,6-8,10-12</a>
+            </li>
+            <li>
+              <a href="javascript:setFilter('comment:-3,4-')">comment:-3,4-</a>
+            </li>
           </ul>
         </div>
       </form>
@@ -177,7 +191,7 @@
 	
     <?php
     $result = new PrettyTestResult();
-    $testSuite->run($result, $range[0], $range[1]);
+    $testSuite->run($result, $range);
     $result->report();
     ?>
   </body>

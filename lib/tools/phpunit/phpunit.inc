@@ -235,7 +235,7 @@ class TestCase extends Assert /* implements Test */ {
       return $this->fModuleId;
   }
 
-  function run(&$testResult, $rangeStart, $rangeEnd) {
+  function run(&$testResult, $ranges) {
     /* Run this single test, by calling the run() method of the
        TestResult object which will in turn call the runBare() method
        of this object.  That complication allows the TestResult object
@@ -244,7 +244,7 @@ class TestCase extends Assert /* implements Test */ {
        Note that if a TestResult object was passed in, it must be by
        reference. */
     $this->fResult = $testResult;
-    $testResult->run($this, $rangeStart, $rangeEnd);
+    $testResult->run($this, $ranges);
     $this->fResult = 0;
     return $testResult;
   }
@@ -404,36 +404,33 @@ class TestSuite /* implements Test */ {
     $this->fModuleId = $moduleid;
     $this->fFilter = $filter;
 
-    if (floor(phpversion()) >= 4) {
-      // PHP4 introspection, submitted by Dylan Kuhn
+ 
+    // PHP4 ONLY - introspection, submitted by Dylan Kuhn
 
-      $names = get_class_methods($classname);
-      while (list($key, $method) = each($names)) {
-        if (preg_match('/^test/', $method)) {
-          $test = new $classname($method);
-          if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
-            // Ignore the given method name since it is a constructor:
-            // it's the name of our test class or it is the name of a
-            // superclass of our test class.  (This code smells funny.
-            // Anyone got a better way?)
+    $names = get_class_methods($classname);
+    while (list($key, $method) = each($names)) {
+      if (preg_match('/^test/', $method)) {
+        $test = new $classname($method);
+        if (strcasecmp($method, $classname) == 0 || is_subclass_of($test, $method)) {
+          // Ignore the given method name since it is a constructor:
+          // it's the name of our test class or it is the name of a
+          // superclass of our test class.  (This code smells funny.
+          // Anyone got a better way?)
 
-            //print "skipping $method<br>";
-          } else {
+          //print "skipping $method<br>";
+	} else {
+          if (substr($this->fFilter, 0, 2) == '!(' & substr($this->fFilter, -1, 1) == ')') {
+	    $newFilter = substr($this->fFilter, 1);
+            if (!isset($this->fFilter) || !preg_match("/{$newFilter}/i", "$moduleid.$classname.$method")) {
+              $test->setModuleId($this->fModuleId);
+              $this->addTest($test);
+            }
+	  } else {
 	    if (!isset($this->fFilter) || preg_match("/{$this->fFilter}/i", "$moduleid.$classname.$method")) {
 	      $test->setModuleId($this->fModuleId);
 	      $this->addTest($test);
 	    }
-          }
-        }
-      }
-    }
-    else {  // PHP3
-      $dummy = new $classname("dummy");
-      $names = (array) $dummy;
-      while (list($key, $value) = each($names)) {
-        $type = gettype($value);
-        if ($type == "user function" && preg_match('/^test/', $key) && $key != "testcase") {
-	  $this->addTest(new $classname($key));
+	  }
         }
       }
     }
@@ -444,14 +441,14 @@ class TestSuite /* implements Test */ {
     $this->fTests[] = $test;
   }
 
-  function run(&$testResult, $rangeStart, $rangeEnd) {
+  function run(&$testResult, $ranges) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
     reset($this->fTests);
     while (list($na, $test) = each($this->fTests)) {
       if ($testResult->shouldStop())
 	break;
-      $test->run($testResult, $rangeStart, $rangeEnd);
+      $test->run($testResult, $ranges);
     }
   }
 
@@ -525,13 +522,18 @@ class TestResult {
     return $this->fFailures;
   }
 
-  function run(&$test, $rangeStart, $rangeEnd) {
+  function run(&$test, $ranges) {
     /* Run a single TestCase in the context of this TestResult */
-    $this->fRunTests++;
-    if ($this->fRunTests < $rangeStart || $this->fRunTests > $rangeEnd) {
-	$test->skip();
+    $count = ++$this->fRunTests;
+    $skipFlag = true;
+    foreach ($ranges as $tempRange) {
+        if ($count >= $tempRange[0] && $count <= $tempRange[1]) {
+            $skipFlag = false;
+        }
     }
-
+    if ($skipFlag) {
+        $test->skip();
+    }
     $this->_startTest($test);
     
     if (!$test->wasSkipped()) {
@@ -733,9 +735,9 @@ class PrettyTestResult extends TestResult {
 
 class TestRunner {
   /* Run a suite of tests and report results. */
-  function run(&$suite, $rangeStart, $rangeEnd) {
+  function run(&$suite, $ranges) {
       $result = new TextTestResult;
-      $suite->run($result, $rangeStart, $rangeEnd);
+      $suite->run($result, $ranges);
       $result->report();
   }
 }

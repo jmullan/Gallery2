@@ -108,33 +108,50 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 }
 
 define('FILTER_MAX', 1000000);
-$range = array(1, FILTER_MAX);
 if (isset($_GET['filter'])) {
     $filter = trim($_GET['filter']);
-
-    if (preg_match('/:(\d+)-(\d+)/', $filter, $matches)) {
-	$range = array($matches[1], $matches[2]);
-	$filter = preg_replace('/:\d+-\d+/', '', $filter);
+    $range = array();
+    $skip = explode(',', $filter);
+    foreach ($skip as $tempSkip) {
+	if (preg_match('/(\d+)-(\d+)/', $tempSkip, $matches)) {
+            if ($matches[1] >= 1 && $matches[1] <= FILTER_MAX &&
+            	$matches[2] >= 1 && $matches[2] <= FILTER_MAX) {
+                $range[] = array($matches[1], $matches[2]);
+                $filter = trim(preg_replace('/:?\d+-\d+,?/', '', $filter, 1));
+            }
+	} else if (preg_match('/(\d+)-/', $filter, $matches)) {
+            if ($matches[1] >= 1 && $matches[1] <= FILTER_MAX) {
+            	$range[] = array($matches[1], FILTER_MAX);
+            	$filter = trim(preg_replace('/:?\d+-,?/', '', $filter, 1));
+	    }
+	} else if (preg_match('/-(\d+)/', $filter, $matches)) {
+	    if ($matches[1] >= 1 && $matches[1] <= FILTER_MAX) {
+            	$range[] = array(1, $matches[1]);
+                $filter = preg_replace('/:?-\d+,?/', '', $filter, 1);
+            }
+	}
     }
-
-    if (preg_match('/:(\d+)-/', $filter, $matches)) {
-	$range[0] = $matches[1];
-	$filter = preg_replace('/:\d+-/', '', $filter);
+    $displayFilter = $filter;
+    if (count($range) == 0) {
+	$range[] = array(1, FILTER_MAX);
     }
-
-    if (preg_match('/:-(\d+)/', $filter, $matches)) {
-	$range[1] = $matches[1];
-	$filter = preg_replace('/:-\d+/', '', $filter);
+    for ($j=0; $j < count($range); $j++) {
+        if ($j == 0 && $j == (count($range)-1)) {
+            if ($range[$j][0] != 1 || $range[$j][1] != FILTER_MAX) {
+                $displayFilter .= sprintf(':%d-%d', $range[$j][0], $range[$j][1]);
+	    }
+	} else if ($j == 0) {
+            $displayFilter .= sprintf(':%d-%d,', $range[$j][0], $range[$j][1]);
+        } else if ($j == (count($range)-1)) {
+            $displayFilter .= sprintf('%d-%d', $range[$j][0], $range[$j][1]);	
+	} else {
+            $displayFilter .= sprintf('%d-%d,', $range[$j][0], $range[$j][1]);
+	}
     }
 } else {
     $filter = null;
+    $displayFilter = null;
 }
-
-$displayFilter = $filter;
-if ($range[0] != 1 || $range[1] != FILTER_MAX) {
-    $displayFilter .= sprintf(' :%d-%d', $range[0], $range[1]);
-}
-
 $testSuite = new TestSuite();
 $ret = PhpUnitGalleryMain($testSuite, $filter);
 if ($ret->isError()) {
