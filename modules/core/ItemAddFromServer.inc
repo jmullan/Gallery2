@@ -223,21 +223,20 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	$ItemAddFromServer = array();
-	
-	$accumulator = '';
-	foreach (preg_split('|[\\\/]|', $form['localServerPath']) as $element) {
-	    if (empty($element)) {
-		continue;
+
+	if (!empty($form['localServerFiles'])) {
+	    $accumulator = '';
+	    foreach ($platform->splitPath($form['localServerPath']) as $element) {
+		$accumulator .= $element;
+		$ItemAddFromServer['pathElements'][] = array(
+		    'name' => $element, 'path' => $accumulator,
+		    'legal' => GalleryUtilities::isPathInList($accumulator, $localServerDirList));
+		if (count($ItemAddFromServer['pathElements']) > 1) {
+		    $accumulator .= $slash;
+		}
 	    }
-	    
-	    $accumulator .= $slash . $element;
-	    $data = array();
-	    $data['name'] = $element;
-	    $data['path'] = $accumulator;
-	    $data['legal'] = GalleryUtilities::isPathInList($accumulator, $localServerDirList);
-	    $ItemAddFromServer['pathElements'][] = $data;
 	}
-	
+
 	$ItemAddFromServer['pathSeparator'] = $slash;
 	$ItemAddFromServer['localServerDirList'] = $localServerDirList;
 	$ItemAddFromServer['localServerFileCount'] =

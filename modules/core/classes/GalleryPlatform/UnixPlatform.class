@@ -134,5 +134,21 @@ class UnixPlatform extends GalleryPlatform {
 	
 	return true;
     }
+
+    /**
+     * @see GalleryPlatform::splitPath
+     */
+    function splitPath($path) {
+	$slash = $this->getDirectorySeparator();
+	$list = array();
+	foreach (explode($slash, $path) as $element) {
+	    if (!empty($element)) {
+		$list[] = $element;
+	    } else if (empty($list)) {
+		$list[] = $slash;
+	    }
+	}
+	return $list;
+    }
 }
 ?>

@@ -107,8 +107,8 @@
   <strong>
     {capture name="path"}
     {strip}
-    {foreach name="pathElements" from=$ItemAddFromServer.pathElements item=element}
-    {$ItemAddFromServer.pathSeparator}
+    {foreach name="pathElements" from=$ItemAddFromServer.pathElements key=idx item=element}
+    {if $idx>1}{$ItemAddFromServer.pathSeparator}{/if}
     {if ($element.legal && !$smarty.foreach.pathElements.last)}
     <a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=`$element.path`" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$element.name}</a>
     {else}

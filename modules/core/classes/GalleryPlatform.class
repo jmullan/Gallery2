@@ -1004,5 +1004,17 @@ class GalleryPlatform {
 	    return mail($to, $subject, $body);
 	}
     }
+
+    /**
+     * Split path into component elements.  Include root path for absolute paths.
+     * Examples: /tmp -> array('/', 'tmp')     rela/tive/path -> array('rela', 'tive', 'path')
+     *           C:\Test\File.txt -> array('C:\', 'Test', 'File.txt')
+     * @param string path
+     * @return array (path elements) first item is "root" if path is absolute
+     */
+    function splitPath($path) {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
 }
 ?>
