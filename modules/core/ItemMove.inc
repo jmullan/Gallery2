@@ -253,9 +253,11 @@ class ItemMoveView extends GalleryView {
 	    }
 
 	    /* Get child counts */
-	    list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (isset($peerTypes['album'])) {
+		list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    /* Get all possible destinations (where user has write permission) */
