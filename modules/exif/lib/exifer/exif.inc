@@ -806,8 +806,8 @@ function read_exif_data_raw($path,$verbose) {
 function ConvertToFraction($v, &$n, &$d)
 {
   $MaxTerms = 15;         //Limit to prevent infinite loop
-  $MinDivisor = 0.000001; //Limit to prevent divide by zero
-  $MaxError = 0.00000001; //How close is enough
+  $MinDivisor = 1E-6; //Limit to prevent divide by zero
+  $MaxError = 1E-8; //How close is enough
 
   $f = $v; //Initialize fraction being converted
 
