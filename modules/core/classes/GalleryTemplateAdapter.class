@@ -314,6 +314,12 @@ class GalleryTemplateAdapter {
 				$urlGenerator->generateUrl(array('href' => $path)));
 	}
 
+	/* Javascript */
+	foreach ($head['javascript'] as $path) {
+	    $output[] = sprintf('<script type="text/javascript" src="%s"></script>' . "\n",
+				$urlGenerator->generateUrl(array('href' => $path)));
+	}
+
 	/* Tpl to include */
 	foreach ($head['tpl'] as $path => $l10Domain) {
 	    $smarty->_smarty_include(

@@ -177,6 +177,15 @@ class GalleryTemplate {
     }
 
     /**
+     * Add a JavaScript to include in the <head> section
+     * @param string stylesheet path relative to gallery2 dir
+     */
+    function javascript($path) {
+	$head =& $this->getVariableByReference('head');
+	$head['javascript'][] = $path;
+    }
+
+    /**
      * Render the properly localized template
      *
      * @param string the template name
