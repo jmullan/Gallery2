@@ -48,6 +48,7 @@ $ret = InitFirstPass();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     error('unknownError', array('error' => $ret));
+    return;
 }
 
 $platform = $gallery->getPlatform();
@@ -118,6 +119,7 @@ $ret = $gallery->initStorage();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     error('storageError', array('error' => $ret));
+    return;
 }
 
 message('success');
