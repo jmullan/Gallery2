@@ -107,44 +107,5 @@ class AdminEditUserControllerTest extends GalleryControllerTestCase {
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.fullName.missing'));
 	$this->assert(GalleryUtilities::hasRequestVariable('form.error.password.mismatch'));
     }
-
-    function _createUser() {
-	global $gallery;
-	
-	list ($ret, $user) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	if (!isset($user)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-			 null);
-	}
-	
-	$ret = $user->create('testuser-'.rand());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = $user->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $user);
-    }
-
-    function _deleteUser($user) {
-	global $gallery;
-	$ret = $gallery->deleteEntityById($user->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function _nullToBlank($value) {
-	if ($value == null) {
-	    return '';
-	}
-	return $value;
-    }
 }
 ?>
