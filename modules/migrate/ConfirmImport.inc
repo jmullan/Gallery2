@@ -119,6 +119,11 @@ class ConfirmImportController extends GalleryController {
 			'albumImportSuccess'=>array(),
 			'urlRedirect' => isset($form['urlRedirect'])
 			);
+	if (isset($form['generateThumbnails']) && $form['generateThumbnails']) {
+	    $generateThumbnails=TRUE;
+	} else {
+	    $generateThumbnails=FALSE;
+	}
 	$finishedAlbums = array();
 	$albumPosition = array();
 	if (!isset($form['sourceEncoding'])) {
@@ -717,7 +722,7 @@ class ConfirmImportController extends GalleryController {
 
 				$convertedCaption = $this->convertHtmlToBbcode($caption,$sourceEncoding);
 				if (strlen($convertedCaption) > 128) {
-				    $newItem->setTitle(substr($convertedCaption,0,125) . '...');
+				    $newItem->setTitle(GalleryUtilities::entityTruncate($convertedCaption,128));
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
 					$newItem->setDescription($convertedCaption
 								 . "\n"
@@ -804,7 +809,6 @@ class ConfirmImportController extends GalleryController {
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
-					
 					$ret = GalleryCoreApi::releaseLocks($lock);
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -817,6 +821,12 @@ class ConfirmImportController extends GalleryController {
 					$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($thumbnail->getId()));
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+					if ($generateThumbnails) {
+					    $ret = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getID);
+					    if ($ret->isError()) {
+						return array($ret->wrap(__FILE__, __LINE__), null);
+					    }
 					}
 				    }
 				}
@@ -878,7 +888,6 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
-				
 				if ($importComments && isset($importAlbumItem->comments) && count($importAlbumItem->comments)>0) {
 				    foreach ($importAlbumItem->comments AS $importCommentId => $importComment) {
 					if (strcmp($importComment->UID,'everybody')) {

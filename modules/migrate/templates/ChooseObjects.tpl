@@ -179,6 +179,16 @@
       <input type="checkbox" name="{g->formVar var="form[urlRedirect]"}"{if $form.urlRedirect} checked="checked"{/if}/>
       {g->text text="Record G1->G2 mappings during import"}
     </div>
+
+    <div class="gbDataEntry">
+      <div class="giTitle">
+        {g->text text="Thumbnail generation"}
+      </div>
+
+      <input type="checkbox" name="{g->formVar var="form[generateThumbnails]"}"{if $form.generateThumbnails} checked="checked"{/if}/>
+      {g->text text="Generate thumbnails during migration.  If this is not checked, thumbnails will be generated when they are first needed.  If you generate them now, your migration process will be slower."}
+    </div>
+
   </div>
 
   <div class="gbButtons">

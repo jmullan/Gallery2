@@ -190,14 +190,12 @@ class ChooseObjectsView extends GalleryView {
 	}
 
 	if ($form['formName'] == 'ChooseObjects') {
-
 	    /* Init the checkboxes to not-checked */
 	    foreach ($newUsers as $uid => $username) {
 		if (!isset($form['migrateUser'][$uid])) {
 		    $form['migrateUser'][$uid] = null;
 		}
-	    }
-	    
+	    }	    
 	} else {
 	    $form['formName'] = 'ChooseObjects';
 
@@ -206,6 +204,7 @@ class ChooseObjectsView extends GalleryView {
 		$form['migrateUser'][$uid] = null;
 	    }
 	    $form['urlRedirect'] = 1;
+	    $form['generateThumbnails'] = 0;
 	}
 	list ($ret, $g1AlbumTree) = $this->_createG1AlbumTree($albumsPath);
 	if ($ret->isError()) {
