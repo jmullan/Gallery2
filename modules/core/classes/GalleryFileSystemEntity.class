@@ -238,6 +238,9 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	/* Make sure the old parent and the new parent are read locked */
 	if (!($gallery->isReadLocked($newParentId) && $gallery->isReadLocked($this->getParentId()))) {
+	    $gallery->debug(sprintf("One parent id (%d or %d) is not read locked",
+				    $newParentId,
+				    $this->getParentId()));
 	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 
