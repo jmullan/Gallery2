@@ -1,0 +1,189 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Scan through all of our source code and verify that we're not doing anything "bad".
+ * Checks for style guidelines too.
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CodeAuditTest extends CodeAuditTestCase {
+
+    function CodeAuditTest($methodName) {
+	global $gallery;
+
+	$this->CodeAuditTestCase($methodName);
+
+	$platform = $gallery->getPlatform();
+
+	$this->_exception['endphp'] =
+	    array(
+		  'layout.css.php' => 1
+		  );
+
+	$this->_exception['superglobals'] =
+	    array(
+		  'FILES' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				   ),
+		  'POST' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				  ),
+		  'GET' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				 ),
+		  'REQUEST' => array(
+				   'modules/core/classes/GallerySession.class' => 1,
+				 ),
+		  'COOKIE' => array(
+				   'modules/core/classes/GallerySession.class' => 1,
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				 ),
+		  'SERVER' => array(
+				   'modules/core/classes/GalleryUtilities.class' => 1,
+				 ),
+		  );
+	
+	$this->_longLineCount = 0;
+	$this->_errorCount = 0;
+
+	$this->_lineEnding = $platform->getLineEnding();
+
+	/*	
+	 * Windows CVS appends a CRLF after ?>, so allow for it
+	 */
+	$this->_phpEndFile = '/\?>(' . $this->_lineEnding . ')?$/';
+    }
+
+    /**
+     * @see CodeAuditTestCase::shouldCheckFile()
+     */
+    function shouldCheckFile($fileName) {
+	if (substr($fileName, -4) == '.tpl' || basename($fileName) == 'GNUmakefile.inc') {
+	    return false;
+	}
+	return true;
+    }
+
+    /**
+     * @see CodeAuditTestCase::checkFile()
+     */
+    function checkFile($fileName, $buffer) {
+	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
+	$lines = split("(\r\n|\n)", $buffer);
+	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
+	for ($i = 0; $i < count($lines); $i++) {
+
+	    /* Check that Session and UrlGenerator are always accessed by-reference */
+	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator)/', $lines[$i], $matches)) {
+		foreach (array_unique($matches[1]) as $item) {
+		    $this->_errorCount++;
+		    $this->assert(false,
+				  sprintf('%s gets %s by value instead of by reference on line %d',
+					  $fileName, $item, $i + 1));
+		}
+	    }
+
+	    /*
+	     * Verify that all access to superglobal variables from the browser
+	     * is properly filtered through the framework so that we don't
+	     * get remote exploits.
+	     */
+	    if ($checkSuperglobals && preg_match_all(
+		    '/\$_(REQUEST|POST|GET|SESSION|FILES|SERVER|COOKIE)/', $lines[$i], $matches)) {
+		foreach (array_unique($matches[1]) as $item) {
+		    if (isset($this->_exception['superglobals'][$item][$fileName])) {
+			continue;
+		    }
+
+		    /* It's ok if it's inside a debug statement */
+		    if (preg_match("/gallery->debug(|_r)\(.*$item.*\)/", $lines[$i])) {
+			continue;
+		    }
+		    
+		    $this->_errorCount++;
+		    $this->assert(false,
+				  sprintf('%s uses the %s superglobal instead of ' .
+					  'its helper on line %d',
+					  $fileName, $item, $i + 1));
+		}
+	    }
+
+	    /* Check that we don't have CRLF (windows-type newlines) */
+	    if (!isset($crlfHit) && strpos($lines[$i], "\r") !== false) {
+		$crlfHit = true;
+		$this->_errorCount++;
+		$this->assert(false, sprintf('%s has CR character on line %d', $fileName, $i + 1));
+	    }
+
+	    /* Check for lines wider than 100 characters */
+	    /* Do a simple tab->8spaces conversion.. good enough for this check */
+	    $line = str_replace("\t", '        ', $lines[$i]);
+	    if (strlen($line) > 100) {
+		$this->_longLineCount++;
+	    }
+	}
+
+	/*
+	 * Check that php files end with ?>
+	 * As noted in the constructor, Windows CVS will append a CRLF to
+	 * the end of the file, so we allow for that.
+	 */
+	if (!isset($this->_exception['endphp'][basename($fileName)])
+		&& !preg_match($this->_phpEndFile, $buffer)) {
+	    $this->_errorCount++;
+	    $this->assert(false, $fileName . ' does not end with ?&gt;');
+	}
+
+ 	if ($this->_errorCount > 10) {
+ 	    $this->halt();
+ 	}
+    }
+
+    /**
+     * @see CodeAuditTestCase::testCodeAudit()
+     */
+    function testCodeAudit() {
+	parent::testCodeAudit();
+
+	/* Check result of longLineCount */
+	if (!$this->_shouldHalt) {
+	    if ($this->_longLineCount > 2614) {
+		$this->assert(false, 'Found too many lines longer than 100 characters (' .
+			      $this->_longLineCount . ')');
+	    }
+	    if ($this->_longLineCount < 2500) {
+		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
+			      ' lines longer than 100 characters; update the failure' .
+			      ' thresholds in this unit test.');
+	    }
+	}
+    }
+}
+?>

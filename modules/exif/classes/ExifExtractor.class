@@ -1,0 +1,93 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load the parent class
+ */
+require_once(dirname(__FILE__) . '/ExifInterface_1_0.class');
+
+/**
+ * Implementation of the ExifInterface for pulling EXIF data from a set of target items
+ *
+ * @package Exif
+ * @subpackage Classes
+ */
+class ExifExtractor extends ExifInterface_1_0 {
+
+    /**
+     * @see ExifInterface_1_0::getMetaData()
+     */
+    function getMetaData($itemIds, $properties=array()) {
+	global $gallery;
+	require_once(dirname(__FILE__) . '/../lib/exifer/exif.inc');
+
+	if (!is_array($itemIds)) {
+	    $itemIds = array($itemIds);
+	}
+	if (!is_array($properties)) {
+	    $properties = array($properties);
+	}
+
+	$data = array();
+	foreach ($itemIds as $itemId) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    // Only look at JPEG DataItems..
+	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
+		    ($item->getMimeType() != 'image/jpeg' && $item->getMimeType() != 'image/pjpeg')) {
+		continue;
+	    }
+	    list($ret, $path) = $item->fetchPath();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $data[$itemId] = array();
+	    $rawExifData = read_exif_data_raw($path, false);
+	    require_once(dirname(__FILE__) . '/ExifHelper.class');
+	    foreach (ExifHelper::getExifKeys() as $property => $keyData) {
+		if (!empty($properties) && !in_array($property, $properties)) {
+		    continue;
+		}
+		for ($i = 1; $i < count($keyData); $i++) {
+		    $value = ExifHelper::_getValue($rawExifData,
+			     explode('.', $keyData[$i]));
+		    if (isset($value)) {
+			$data[$itemId][$property] =
+			    array('title' => $keyData[0], 'value' => $value);
+			break;
+		    }
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+}
+?>

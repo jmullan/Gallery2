@@ -1,0 +1,127 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ArchiveUpload
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Required classes
+ */
+GalleryCoreApi::relativeRequireOnce('modules/archiveupload/classes/ArchiveExtractToolkit.class');
+
+/**
+ * Test ArchiveExtractToolkit functionality
+ *
+ * @package ArchiveUpload
+ * @subpackage PHPUnit
+ */
+class ArchiveExtractToolkitTest extends GalleryTestCase {
+
+    function ArchiveExtractToolkitTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	$gallery->_platform = new ArchiveExtractToolkitTestPlatform();
+	$ret = $gallery->_platform->init();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get a toolkit to work with */
+	$this->_toolkit = new ArchiveExtractToolkit();
+    }
+
+    function testPerformOperation() {
+	list ($ret, $results) =
+	    $this->_toolkit->performOperation('application/zip',
+					      'extract',
+					      'testPerformOperation1.zip',
+					      'testPerformOperation2.dir',
+					      array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($results, 'application/zip');
+    }
+}
+
+/**
+ * Mock platform for this test
+ *
+ * @package ArchiveUpload
+ * @subpackage PHPUnit
+ */
+class ArchiveExtractToolkitTestPlatform {
+
+    function init() {
+	list ($ret, $this->_unzipPath) =
+	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    function exec($cmd) {
+	$results = array();
+	$stderr = array();
+	switch(serialize($cmd)) {
+	case serialize(array(array($this->_unzipPath, 'testPerformOperation1.zip'))):
+	    return array(1, $results, $stderr);
+	}
+
+	printf("Unexpected command for mock toolkit<pre>%s</pre>", print_r($cmd, 1));
+
+	return array(0, '', 'unprepared for exec()');
+    }
+
+    function is_dir($path) {
+	switch($path) {
+	case 'testPerformOperation2.dir':
+	    return true;
+	}
+
+	return false;
+    }
+
+    function getcwd() {
+	return '';
+    }
+
+    function chdir($path) {
+	return 1;
+    }
+
+    function realpath($path) {
+	return $path;
+    }
+}
+?>

@@ -1,0 +1,181 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Child functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ChildTest extends GalleryTestCase {
+
+    function ChildTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	/* Create a little tree of mixed items/entities */
+	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId(),
+							      array('orderBy' => 'orderWeight'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_root);
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_root->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    for ($j = 0; $j < 2; $j++) {
+		list ($ret, $this->_derivative[$i][$j]) =
+		    $this->_createDerivative($this->_child[$i], $this->_child[$i]->getId(),
+					     DERIVATIVE_TYPE_IMAGE_RESIZE);
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
+    }
+
+    function testFetchChildItemIds() {
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	sort($childIds);
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[1]->getId()),
+			    $childIds,
+			    "root children");
+
+	/* Make sure only items appear from fetchChildItemIds */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_child[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $childIds, "child 0's children");
+    }
+
+    function testFetchChildDataItemIds() {
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($this->_root);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($item->getId()), $childIds, "root children");
+    }
+
+    function testFetchChildAlbumItemIds() {
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildAlbumItemIds($this->_root);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(), $this->_child[1]->getId()), 
+        $childIds, "root sub-albums");
+    }
+
+    function testFetchChildIds2() {
+
+	/* Order them in reverse */
+	$count = sizeof($this->_child);
+	for ($i = 0; $i < $count; $i++) {
+	    $ret = GalleryCoreApi::setItemOrderWeight($this->_child[$i]->getId(), $count-$i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_root);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$expectedIds = array();
+	for ($i = $count-1; $i >= 0; $i--) {
+	    $expectedIds[] = $this->_child[$i]->getId();
+	}
+
+	$this->assertEquals($expectedIds, $childIds);
+    }
+
+    function testAlbumFirstOrder() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_root->getId(),
+				      array('orderBy' => 'albumsFirst|creationTimestamp',
+					    'orderDirection' => ORDER_DESCENDING));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$timestamp = time() - 1000;
+	for ($i = 0; $i < 6; $i++) {
+	    if ($i % 2) {
+		list ($ret, $child[$i]) = $this->_createRandomAlbum($album->getId(),
+						  array('creationTimestamp' => $timestamp));
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    } else {
+		list ($ret, $child[$i]) = $this->_createRandomDataItem($album->getId(),
+					  'test/file', array('creationTimestamp' => $timestamp));
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	    $timestamp += 100;
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($album);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array($child[5]->getId(),
+		  $child[3]->getId(),
+		  $child[1]->getId(),
+		  $child[4]->getId(),
+		  $child[2]->getId(),
+		  $child[0]->getId()),
+	    $childIds);
+    }
+}
+?>
