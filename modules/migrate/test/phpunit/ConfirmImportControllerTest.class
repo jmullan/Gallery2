@@ -283,7 +283,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* Get the layout associated with this album */
-	list ($ret, $layout) = GalleryCoreApi::fetchLayout($testAlbum);
+	list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -693,7 +693,11 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}
 
-				list ($ret, $layout) = GalleryCoreApi::fetchLayout($newAlbumInstance);
+				list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($newAlbumInstance);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
