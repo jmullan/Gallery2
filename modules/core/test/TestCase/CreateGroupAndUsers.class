@@ -9,27 +9,33 @@ class CreateGroupAndUsersTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$group = new GalleryGroup();
 	$ret = $group->create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$group->setName('Group 1');
+	$group->setGroupName('Group 1');
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	$user1 = new GalleryUser();
 	$ret = $user1->create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
 	$user1->setFullName('User 1');
+	$user1->setUsername('user1');
 	$user1->changePassword('password');
 	$user1->setEmail('User1@gallery.com');
 	$user1->setIsAdmin(false);
+	print_r($user1);
+	$ret = $user1->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	$user2 = new GalleryUser();
 	$ret = $user2->create();
@@ -37,56 +43,38 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user2->setFullName('User 2');
+	$user1->setUsername('user2');
 	$user2->changePassword('password');
 	$user2->setEmail('User2@gallery.com');
 	$user2->setIsAdmin(false);
-
-	$ret = $gallery->commitCache();
+	$ret = $user2->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print "<h2>ADD USERS TO GROUP!</h2>";
-	$ret = $group->addUser($user1->getId());
+	$ret = GalleryUserGroupMap::addUserToGroup($user1->getId(),
+						   $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $group->addUser($user2->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $gallery->commitCache();
+	$ret = GalleryUserGroupMap::addUserToGroup($user2->getId(),
+						   $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print "<h2>REMOVE!</h2>";
-	list ($ret, $user1) = $gallery->loadNucleusById($user1->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$ret = $user1->removeFromGroup($group->getId());
+	$ret = GalleryUserGroupMap::removeUserFromGroup($user1->getId(),
+							$group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	/* Leggo of our locks */
-	$ret = $gallery->unlock();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
 	return GalleryStatus::success();
     }
 }
 
 ?>
-</pre>
+

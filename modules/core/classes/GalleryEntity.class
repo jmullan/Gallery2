@@ -1,0 +1,245 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A GalleryEntity is a stateful representation of an entity in the persistent
+ * store.  You can load, modify, save and delete it.  Any modifications made to
+ * this entity will live in memory until you commit the changes to the store
+ * (hence, it's stateful).
+ *
+ * @g2 <class-name>GalleryEntity</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryEntity_core extends GalleryPersistent {
+
+    /**
+     * The id of this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>id</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <id/>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_id
+     * @access private
+     */
+    var $_id;
+
+    /**
+     * Date and time this item was created, in seconds since the epoch.
+     *
+     * @g2 <member>
+     * @g2   <member-name>creationTimestamp</member-name>
+     * @g2   <member-type>TIMESTAMP</member-type>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_creationTimestamp
+     * @access private
+     */
+    var $_creationTimestamp;
+
+    /**
+     * Data version of this GalleryEntity
+     *
+     * @g2 <member>
+     * @g2   <member-name>dataVersion</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var float $_dataVersion
+     * @access private
+     */
+    var $_dataVersion;
+
+    /**
+     * Date and time this item was last modified, in seconds since the epoch.
+     *
+     * @g2 <member>
+     * @g2   <member-name>modificationTimestamp</member-name>
+     * @g2   <member-type>TIMESTAMP</member-type>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_modificationTimestamp;
+     * @access private
+     */
+    var $_modificationTimestamp;
+
+    /**
+     * The serial number of this object in the persistent store.  This value
+     * will help us to avoid collisions.
+     *
+     * @g2 <member>
+     * @g2   <member-name>serialNumber</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_serialNumber
+     * @access private
+     */
+    var $_serialNumber;
+
+    /**
+     * The actual type of this object.  This will allow the storage class to
+     * correctly load this object from the database.
+     *
+     * @g2 <member>
+     * @g2   <member-name>entityType</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var string $_entityType
+     * @access private
+     */
+    var $_entityType;
+    
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Create a new instance of this GalleryEntity in the persistent store
+     *
+     * @return object GalleryStatus a status code
+     */
+    function create() {
+	global $gallery;
+
+	/* Create a new instance of this entity in the persistent store */
+	list($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $storage->newEntity($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set the creation time on this entity */
+	$this->setCreationTimestamp(time());
+
+	/* Set the object type */
+	$this->setEntityType(get_class($this));
+
+	return GalleryStatus::success();
+    }
+    
+    /**
+     * Save the changes to this GalleryEntity
+     *
+     * Save the changes to this GalleryEntity.  
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function save() {
+	global $gallery;
+
+	/*
+	 * Newly created objects don't need to be locked 'cause they're not in
+	 * the database yet.  Everything else does.
+	 */
+	if (!$gallery->isWriteLocked($this->getId())) {
+	    if (!$this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
+					    __FILE__, __LINE__);
+	    }
+	}
+	
+	if ($this->isModified()) {
+	    /* Change the modification date */
+	    $this->setModificationTimestamp(time());
+
+	    list($ret, $storage) = $gallery->getStorage();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    return $storage->saveEntity($this);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Refresh this item from the persistent store
+     *
+     * @access public
+     * @return array object GalleryStatus a status code,
+     *               object the refreshed GalleryEntity
+     */
+    function refresh($entity) {
+	global $gallery;
+
+	/* Are we trying to refresh an object that isn't in the database? */
+	if ($entity->testPersistentFlag(STORAGE_FLAG_DELETED) ||
+	    $entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $storage) = $this->getStorage();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return $storage->refresh($this);
+    }
+
+    /**
+     * Delete this GalleryEntity
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	if (!$gallery->isWriteLocked($this->getId())) {
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return $storage->deleteEntity($this);
+    }
+
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryEntity.inc');
+?>

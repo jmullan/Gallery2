@@ -9,86 +9,98 @@ class CreatePhotoItemTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 	$rootId = $gallery->getRootAlbumId();
+	$lockIds = array();
 
-	/* Lock the world */
-	$ret = $gallery->lockWorld();
+	/*
+	 * Read lock the root.  Normally we'd have to read lock its
+	 * ancestors too so that shit doesn't move around while we're working
+	 * on it, but in this case we know it's the root.
+	 */
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	print("Creating new photo item\n");
-	$photo = new PhotoItem();
+	$photo = new GalleryPhotoItem();
 	$ret = $photo->create($rootId,
 			      'itemPath_' . time(),
 			      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
-	/* Put an ImageContainer in our PhotoItem */
-	$image = new ImageContainer();
-	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.gif';
-	$ret = $image->createFromFile($photo->getId(), $imagePath);
+
+	/* Set basic details for our PhotoItem */
+	$photo->setTitle('PhotoItem Title');
+	$photo->setDescription('This is the description of my PhotoItem');
+
+	/* Save it */
+	$ret = $photo->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/*
-	 * Delete this PhotoItem's old source container.  Not applicable in
-	 * this case, but included for completeness (since this is example
-	 * code).
+	 * Now read lock it so that nobody else dinks with it while we're
+	 * adding data to it.
 	 */
-	$ret = $gallery->deleteNucleusById($photo->getSourceId());
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($photo->getId());
 	if ($ret->isError()) {
-	    /*
-	     * Probably want to warn the user at this point, but not
-	     * necessarily fail.
-	     */
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Set the ImageContainer as the source for this PhotoItem */
-	$photo->setSourceId($image->getId());
+	/* Put an ImageContainer in our PhotoItem */
+	$image = new GalleryImageContainer();
+	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.gif';
+	$ret = $image->create($photo->getId(),
+			      $imagePath,
+			      $photo->getPathComponent());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Save the image */
+	$ret = $image->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* Create a thumbnail */
-	$thumbnail = new ImageContainer();
-	$ret = $thumbnail->createDerivative($photo->getId());
+	$thumbnail = new GalleryDerivativeImage();
+	$ret = $thumbnail->create($photo->getId(), IMAGE_TYPE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Make it a derivative from the source image */
-	$ret = $thumbnail->deriveFrom($image->getId(), "scale 200");
+	$thumbnail->setDerivativeSourceId($image->getId());
+	$thumbnail->setDerivativeCommands("scale 200");
+	$ret = $thumbnail->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * Delete this PhotoItem's old thumbnail.  Not applicable in
-	 * this case, but included for completeness (since this is example
-	 * code).
-	 */
-	$ret = $gallery->deleteNucleusById($photo->getThumbnailId());
-	if ($ret->isError()) {
-	    /*
-	     * Probably want to warn the user at this point, but not
-	     * necessarily fail.
-	     */
-	}
-	$photo->setThumbnailId($thumbnail->getId());
-	
-
-	/* Set other basic details for our PhotoItem */
-	$photo->setTitle('PhotoItem Title');
-	$photo->setDescription('This is the description of my PhotoItem');
-
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
+	/* Create a resize */
+	$resize = new GalleryDerivativeImage();
+	$ret = $resize->create($photo->getId(), IMAGE_TYPE_RESIZE);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Release our lock */
-	$ret = $gallery->unlock();
+	/* Make it a derivative from the source image */
+	$resize->setDerivativeSourceId($image->getId());
+	$resize->setDerivativeCommands("scale 600");
+	$ret = $resize->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Release our locks */
+	$ret = $gallery->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -119,4 +131,4 @@ class CreatePhotoItemTestCase extends TestCase {
 }
 
 ?>
-</pre>
+

@@ -24,17 +24,20 @@
 require_once(dirname(__FILE__) . '/adodb/adodb.inc.php');
 require_once(dirname(__FILE__) . '/ErrorHandler.inc');
 
-$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+/**
+ * Name of the sequence we'll use for GalleryEntity ids
+ */
+define('DATABASE_SEQUENCE_ID', 'sequence_id');
 
 /**
- * Name of the sequence we'll use for GalleryNucleus ids
+ * Name of the sequence we'll use for lock ids
  */
-define('DATABASE_ID_SEQUENCE', 'sequence_id');
+define('DATABASE_SEQUENCE_LOCK', 'sequence_lock');
 
 /**
  * Prefix to prepend to table names
  */
-define('DATABASE_TABLE_PREFIX', 'gallery_');
+define('DATABASE_TABLE_PREFIX', 'g2_');
 
 /**
  * Prefix to prepend to column names
@@ -51,8 +54,8 @@ define('DATABASE_STATUS_FULLY_CONNECTED', 2);
 /**
  * Database implementation of the GalleryStorage interface.
  *
- * This object implements the hooks for saving and restoring objects in a
- * relational database.
+ * This strategy implements the hooks for saving and restoring GalleryEntity
+ * objects in a relational database.
  *
  * @version $Id$
  * @package GalleryStorage
@@ -117,27 +120,21 @@ class DatabaseStorage extends GalleryStorage {
     var $_connectionStatus;
 
     /**
-     * A cache of various queries and their associated data
-     * 
-     * @var array an associative array of cached queries
-     * @access private
-     */
-    var $_queryCache;
-
-    /**
      * The capabilities available in this version of the database software
      *
      * @var array $_capabilities
+     * @access private
      */
     var $_capabilities;
 
     /**
-     * A mapping of id to nucleus type, useful when we are going to do multiple
+     * A mapping of id to object type, useful when we are going to do multiple
      * lookups on the same object.
      *
-     * @var array $_nucleusTypeCache
+     * @var array $_entityTypeCache
+     * @access private
      */
-    var $_nucleusTypeCache;
+    var $_entityTypeCache;
 
     /**
      * Constructor.
@@ -147,14 +144,17 @@ class DatabaseStorage extends GalleryStorage {
     function DatabaseStorage($config) {
 	$this->GalleryStorage();
 	$this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
-	$this->_queryCache = array();
 
 	$this->_username = $config['username'];
 	$this->_password = $config['password'];
 	$this->_hostname = $config['hostname'];
 	$this->_database = $config['database'];
 	$this->_useDefault = $config['useDefaultDatabase'];
-	$this->_capabilities = $config['capabilities'];
+	if (isset($config['capabilities'])) {
+	    $this->_capabilities = $config['capabilities'];
+	} else {
+	    $this->_capabilities = array();
+	}
     }
 
     /**
@@ -234,41 +234,13 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Return the id of the GalleryItem associated with the path provided
-     *
-     * Return the id associated with the given path. Example path: 
-     * "/birthdays/fred" .. this is the "fred" item in the "birthdays" 
-     * item.  It doesn't really matter what types of items these are, as 
-     * long as the path is legitimate.
-     *
-     * This method must be implemented by subclasses of Gallery.
+     * Load a new GalleryEntity from storage
      *
      * @access public
-     * @abstract
-     * @param string the path to a GalleryItem
-     * @return array object GalleryStatus a status code
-     *               string the id of the GalleryItem
+     * @param string the id of the stored GalleryEntity
+     * @return array object GalleryStatus a status code, object GalleryEntity
      */
-    function getIdByPath($path) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
-					      __FILE__, __LINE__),
-			 null);
-	}
-	
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Load a new GalleryNucleus from storage
-     *
-     * @access public
-     * @param string the id of the stored GalleryNucleus
-     * @return array object GalleryStatus a status code, object GalleryNucleus
-     */
-    function loadNucleus($id) {
+    function loadEntity($id) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
@@ -278,85 +250,57 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	
 	/*
-	 * Figure out what kind of nucleus this is
+	 * Figure out what kind of entity this is
 	 */
-	list($ret, $targetType) = $this->_identifyNucleus($id);
+	list($ret, $className) = $this->_identifyEntity($id);
 	if ($ret->isError()) {
 	    $this->_traceStop();
 	    return array($ret, null);
 	}
 
 	/*
-	 * If we already have a cached query, use it
+	 * Create a new instance of the class.
 	 */
-	if (!empty($this->_queryCache['load'][$targetType])) {
-	    $prefixTable = $this->_queryCache['load'][$targetType]['prefixTable'];
-	    $query = $this->_queryCache['load'][$targetType]['query'];
-	    $idCount = $this->_queryCache['load'][$targetType]['idCount'];
-	    $typeTable = $this->_queryCache['load'][$targetType]['typeTable'];
-
-	    /*
-	     * Prepare our array of input values.  They are all the id of
-	     * the nucleus.
-	     */
-	    $data = array();
-	    for ($i = 0; $i < $idCount; $i++) {
-		$data[$i] = $id;
-	    }
-	} else {
-	    /*
-	     * Get our persistent and meta info for this class
-	     */
-	    $metaInfo = $this->_metaInfo->describeClass($targetType);
-	    $idCol = $this->prefixColumnName('id');
-
-	    $tables = array();
-	    $data = array();
-	    $prefixTable = array();
-	    $typeTable = array();
-	    $columns = array();
-	    foreach ($metaInfo['members'] as $columnName => $columnInfo) {
-
-		$type = $columnInfo['type'];
-		if ($type & STORAGE_TYPE_LIST || $type & STORAGE_TYPE_MAP) {
-		    /*
-		     * Don't load subtypes.  They are their own objects and are
-		     * loaded separately.
-		     */
-		    continue;
-		}
-	    
-		$class = strtolower($columnInfo['class']);
-		$tableName = DATABASE_TABLE_PREFIX . $class;
-
-		/* Keep track of the entire set of tables we're selecting from */
-		if (empty($tables[$tableName])) {
-		    $tables[$tableName] = 1;
-		    $where[] = "$tableName.$idCol=?";
-		    $data[] = $id;
-		}
-		$prefixedColumnName = $this->prefixColumnName($columnName);
-		$columns[$tableName . '.' . $prefixedColumnName] = 1;
-		$prefixTable[$prefixedColumnName] = $columnName;
-		$typeTable[$prefixedColumnName] = $type;
-	    }
-
-	    $query = 'SELECT ';
-	    $query .= join(', ', array_keys($columns));
-	    $query .= ' FROM ';
-	    $query .= join(', ', array_keys($tables));
-	    $query .= ' WHERE ';
-	    $query .= join(' AND ', $where);
-
-	    /*
-	     * Cache this query
-	     */
-	    $this->_queryCache['load'][$targetType]['prefixTable'] = $prefixTable;
-	    $this->_queryCache['load'][$targetType]['typeTable'] = $typeTable;
-	    $this->_queryCache['load'][$targetType]['query'] = $query;
-	    $this->_queryCache['load'][$targetType]['idCount'] = sizeof($data);
+	$entity = new $className;
+	if (empty($entity)) {
+	    return array(GalleryStatus::error(ERROR_BAD_DATA,
+					      __FILE__, __LINE__),
+			 null);
 	}
 
+
+	/*
+	 * Get our member info for this class
+	 */
+	$memberInfo = $this->_describeClassMembers($className);
+	$idCol = $this->_prefixColumnName('id');
+
+	$columns = array();
+	$tables = array();
+	$where = array();
+	$types = array();
+	$data = array();
+	foreach ($memberInfo['members'] as $columnName => $columnInfo) {
+	    $tableName = $this->_prefixTableName($columnInfo['class']);
+	    $types[] = $columnInfo['type'];
+	    $callbacks[] = 'set' . ucFirst($columnName);
+	    $columns[$tableName . '.' . $this->_prefixColumnName($columnName)] = 1;
+
+	    if (empty($tables[$tableName])) {
+		$tables[$tableName] = 1;
+		$where[] = $tableName . '.' . $idCol . '=?';
+		$data[] = $id;
+	    }
+	}
+
+	$query = 'SELECT ';
+	$query .= join(', ', array_keys($columns));
+	$query .= ' FROM ';
+	$query .= join(', ', array_keys($tables));
+	$query .= ' WHERE ';
+	$query .= join(' AND ', $where);
+
+	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 	$recordSet = $this->_db->Execute($query, $data);
 	if ($recordSet) {
 	    if ($recordSet->RecordCount() == 0) {
@@ -364,25 +308,24 @@ class DatabaseStorage extends GalleryStorage {
 						  __FILE__, __LINE__),
 			     null);
 	    }
-	    
-	    $nucleus = new $targetType;
-	    foreach ($recordSet->fields as $prefixedColumnName => $value) {
-		if (isset($value)) {
-		    $func = 'set' . ucfirst($prefixTable[$prefixedColumnName]);
 
-		    /* Convert the database representation to a timestamp */
-		    if ($typeTable[$prefixedColumnName] & STORAGE_TYPE_TIMESTAMP) {
-			$value = $this->_db->UnixTimeStamp($value);
-		    }
+	    $row = $recordSet->FetchRow();
+	    for ($i = 0; $i < sizeof($callbacks); $i++) {
+		$value = $row[$i];
 
-		    $nucleus->$func($value);
+		/* Convert the database representation to a timestamp */
+		if ($types[$i] & STORAGE_TYPE_TIMESTAMP) {
+		    $value = $this->_db->UnixTimeStamp($value);
 		}
+
+		/* Store the value in the object */
+		$entity->$callbacks[$i]($value);
 	    }
 	    $recordSet->Close();
 
-	    $nucleus->clearModifiedFlags();
+	    $entity->clearModifiedFlags();
 	    $this->_traceStop();
-	    return array(GalleryStatus::success(), $nucleus);
+	    return array(GalleryStatus::success(), $entity);
 	} else {
 	    $this->_traceStop();
 	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -392,142 +335,13 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Load a class member from the database
-     *
-     * This is used for class members that are objects, like GalleryMap and
-     * GalleryList instances.
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the member
-     * @param object a reference to the object to be loaded
-     * @return object GalleryStatus a status code
-     */
-    function loadMember(&$nucleus, $memberName, &$object) {
-
-	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
-	$type = $metaInfo['members'][$memberName]['type'];
-
-	/* Figure out which table we're reading from */
-	$tableName = DATABASE_TABLE_PREFIX .
-		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
-		strtolower($memberName);
-	
-	if ($type & STORAGE_TYPE_MAP) {
-	    return $this->_loadMap($nucleus, $tableName, $memberName, $object);
-	} else if ($type & STORAGE_TYPE_LIST) {
-	    return $this->_loadList($nucleus, $tableName, $memberName, $object);
-	} else {
-	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
-					__FILE__, __LINE__);
-	}
-    }
-
-    /**
-     * Load a GalleryMap from the database
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the table
-     * @param string the name of the member
-     * @access private
-     * @return object GalleryStatus a status code
-     */
-    function _loadMap(&$nucleus, $tableName, $memberName, &$map) {
-
-	$this->_traceStart();
-	
-	/* Clear out the map */
-	$map->reset();
-
-	/* Set up and execute our query */
-	$keyCol = $this->prefixColumnName('key');
-	$valueCol = $this->prefixColumnName('value');
-	$idCol = $this->prefixColumnName('id');
-	$query = "SELECT $keyCol, $valueCol" . 
-		 ' FROM ' . $tableName .
-		 " WHERE $idCol=?";
-	$data = array($nucleus->getId());
-	$recordSet = $this->_db->Execute($query, $data);
-	if (!$recordSet) {
-	    $this->_traceStop();
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
-	}
-
-	/* Push all our data into the map */
-	while (!$recordSet->EOF) {
-	    $map->set($recordSet->fields[$keyCol],
-		      $recordSet->fields[$valueCol]);
-	    $recordSet->MoveNext();
-	}
-
-	$map->clearModifiedFlags();
-	$nucleus->setLoadedFlag($memberName, true);
-
-	$this->_traceStop();
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Load a GalleryList from the database
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the table
-     * @param string the name of the member
-     * @access private
-     * @return object GalleryStatus a status code
-     */
-    function _loadList(&$nucleus, $tableName, $memberName, &$list) {
-
-	$this->_traceStart();
-	
-	/* Clear out the list */
-	$list->reset();
-
-	/* Set up and execute our query */
-	$arrayCol = $this->prefixColumnName('array');
-	$idCol = $this->prefixColumnName('id');
-
-	$query = "SELECT $arrayCol FROM $tableName" .
-		' WHERE ' . $idCol . '=?';
-	$data = array($nucleus->getId());
-	$recordSet = $this->_db->Execute($query, $data);
-	if (!$recordSet) {
-	    $this->_traceStop();
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
-	}
-
-	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
-	} else {
-	    if ($recordSet->RecordCount() == 0) {
-		/* No data!  Mark this member as newly created */
-		$nucleus->setModifiedFlag($memberName, MEMBER_CREATED);
-	    } else {
-		/* Push all our data into the map */
-		while (!$recordSet->EOF) {
-		    $list->unserialize($recordSet->fields[$arrayCol]);
-		    $recordSet->MoveNext();
-		}
-	    }
-	    $list->clearModifiedFlags();
-	}
-
-	$nucleus->setLoadedFlag($memberName, true);
-
-	$this->_traceStop();
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Save the changes to the GalleryNucleus.  
+     * Save the changes to the GalleryEntity.
      *
      * @access public
-     * @param object GalleryNucleus the GalleryNucleus to save
+     * @param object GalleryEntity reference to the GalleryEntity to save
      * @return object GalleryStatus a status code
      */
-    function saveNucleus(&$nucleus) {
+    function saveEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
@@ -538,85 +352,83 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Update the serial number, but remember the original one
 	 */
-	$originalSerialNumber = $nucleus->getSerialNumber();
-	$nucleus->setSerialNumber($originalSerialNumber + 1);
+	$originalSerialNumber = $entity->getSerialNumber();
+	$entity->setSerialNumber($originalSerialNumber + 1);
 
 	/*
-	 * Get our persistent and meta info for this class
+	 * Get our member info for this class
 	 */
-	$metaInfo = $this->_metaInfo->describeClass(get_class($nucleus));
-	$persistentInfo = $nucleus->getPersistentInfo();
+	$memberInfo = $this->_describeClassMembers(get_class($entity));
 	$idColumn = null;
 
 	/*
-	 * Locate changed fields.
+	 * Build up a complete picture of all the various changed fields, so
+	 * that we can do an insert or update.
 	 */
-	foreach ($metaInfo['members'] as $name => $info) {
-	    /* Locate the id column */
-	    $type = $metaInfo['members'][$name]['type'];
-	    if ($type & STORAGE_MODIFIER_ID) {
-		$func = 'get' . ucfirst($name);
-		$value = $nucleus->$func();
-		$idColumn = array('name' => $name, 'value' => $value);
-	    }
+	$dataTable = array();
+	$id = array();
+	foreach ($memberInfo['members'] as $memberName => $memberData) {
+	    $type = $memberData['type'];
+	    $class = $memberData['class'];
+	    $tableName = $this->_prefixTableName($class);
 
-	    /* Skip compound types, we'll handle them separately */
-	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
-		continue;
-	    }
-	    
 	    /* If the member is modified, record the new value in our table */
-	    if ($nucleus->getModifiedFlag($name) & MEMBER_MODIFIED) {
-		$func = 'get' . ucfirst($name);
-		$value = $nucleus->$func();
+	    if ($entity->getModifiedFlag($memberName) & MEMBER_MODIFIED) {
+		$getFunc = 'get' . $memberName;
+		$value = $entity->$getFunc();
+
+		/* Convert empty values to null */
+		if (empty($value)) {
+		    $value = null;
+		}
 
 		/* Convert timestamps to the database representation */
 		if ($type & STORAGE_TYPE_TIMESTAMP) {
 		    $value = $this->_db->DBTimeStamp($value);
 		}
+
+		$columnName = $this->_prefixColumnName($memberName);
+		$dataTable[$tableName][$columnName] = $value;
+	    } else {
+		/*
+		 * If we haven't set up a table for this class, do so now.
+		 * Otherwise we don't have a complete list of tables that we
+		 * need to insert into in order for this class to be completely
+		 * serialized.
+		 */
 		
-		$dataTable[$info['class']][$name] = $value;
+		if (!isset($dataTable[$tableName])) {
+		    $dataTable[$tableName] = array();
+		}
 	    }
-	    
-	    /*
-	     * If we haven't set up a table for this class, do so now.
-	     * Otherwise we don't have a complete list of tables that we
-	     * need to insert into in order for this class to be completely
-	     * serialized.
-	     */
-	    if (!isset($dataTable[$info['class']])) {
-		$dataTable[$info['class']] = array();
+
+	    if ($type & STORAGE_TYPE_ID) {
+		$getFunc = 'get' . $memberName;
+		$value = $entity->$getFunc();
+
+		$id['column'] = $this->_prefixColumnName($memberName);
+		$id['value'] = $value;
 	    }
 	}
 
-	if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-
+	if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 	    /*
 	     * Iterate through the data table and make up an INSERT statement
 	     * for each table that requires one. 
 	     */
-	    foreach ($dataTable as $table => $changes) {
+	    foreach ($dataTable as $tableName => $columnChanges) {
 
 		/* Make sure that the id column is set for each table */
-		if (empty($changes[$idColumn['name']])) {
-		    $changes[$idColumn['name']] =
-			     $idColumn['value'];
+		if (empty($columnChanges[$id['column']])) {
+		    $columnChanges[$id['column']] = $id['value'];
 		}
 
-		$table = DATABASE_TABLE_PREFIX . strtolower($table);
-
-		$columns = array();
-		$markers = array();
-		foreach ($changes as $name => $value) {
-		    $columns[] = $this->prefixColumnName($name);
-		    $markers[] = '?';
-		}
-		$query = "INSERT INTO $table (";
+		$columns = array_keys($columnChanges);
+		$data = array_values($columnChanges);
+		$markers = $this->_makeMarkers(sizeof($columnChanges));
+		$query = 'INSERT INTO ' . $tableName . ' (';
 		$query .= join(', ', $columns);
-		$query .= ') VALUES (';
-		$query .= join(', ', $markers);
-		$query .= ')';
-		$data = array_values($changes);
+		$query .= ') VALUES (' . $markers . ')';
 
 		$recordSet = $this->_db->Execute($query, $data);
 		if (!$recordSet) {
@@ -628,39 +440,35 @@ class DatabaseStorage extends GalleryStorage {
 	} else {
 
 	    /*
-	     * Iterate through the data table and make an UPDATE statement
-	     * for each table that requires one.  Make sure that we do the
-	     * GalleryNucleus table first, as that's the one that has the
-	     * serial number in it and we use the serial number to make sure
-	     * that we're not hitting a concurrency issue.
+	     * Iterate through the data table and make an UPDATE statement for
+	     * each table that requires one.  Make sure that we do the table
+	     * that has the serial number in it first, as we use the serial
+	     * number to make sure that we're not hitting a concurrency issue.
 	     */
+	    $serialNumberClass = $memberInfo['members']['serialNumber']['class'];
+	    $serialNumberTable = $this->_prefixTableName($serialNumberClass);
+
 	    $queryList = array();
-	    foreach ($dataTable as $table => $changes) {
+	    foreach ($dataTable as $tableName => $columnChanges) {
 		$changeList = array();
 		$data = array();
 		
-		foreach ($changes as $key => $value) {
-		    $changeList[] = $this->prefixColumnName($key) . '=?';
+		foreach ($columnChanges as $columnName => $value) {
+		    $changeList[] = $columnName . '=?';
 		    $data[] = $value;
 		}
 
 		if (sizeof($changeList)) {
-		    $tableName = DATABASE_TABLE_PREFIX . strtolower($table);
 		    $query = 'UPDATE ' . $tableName  .  ' SET';
 		    $query .= ' ' . join(',', $changeList);
-		    $query .= ' WHERE ' .
-			     $this->prefixColumnName($idColumn['name']) .
-			     '=?';
-		    $data[] = $idColumn['value'];
+		    $query .= ' WHERE ' . $id['column'] . '=?';
+		    $data[] = $id['value'];
 
-		    if (!strcasecmp($table, "GalleryNucleus")) {
+		    if (!strcmp($tableName, $serialNumberTable)) {
 			$query .= ' AND ' .
-				 $this->prefixColumnName('serialNumber') .
-				 '=?';
+				$this->_prefixColumnName('serialNumber') .
+				'=?';
 			$data[] = $originalSerialNumber;
-		    }
-
-		    if (!strcasecmp($table, "GalleryNucleus")) {
 			array_unshift($queryList, array($query, $data));
 		    } else {
 			array_push($queryList, array($query, $data));
@@ -668,6 +476,11 @@ class DatabaseStorage extends GalleryStorage {
 		}
 	    }
 
+	    /*
+	     * Now apply each UPDATE statement in turn.  Make sure that we're
+	     * only affecting one row each time.
+	     *
+	     */
 	    foreach ($queryList as $queryAndData) {
 		list($query, $data) = $queryAndData;
 		$recordSet = $this->_db->Execute($query, $data);
@@ -695,18 +508,8 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 	
-	/*
-	 * Save sub-objects as necessary
-	 */
-	foreach ($metaInfo['members'] as $name => $info) {
-	    $type = $metaInfo['members'][$name]['type'];
-	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
-		$this->saveMember($nucleus, $name);
-	    }
-	}
-
-	$nucleus->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
-	$nucleus->clearModifiedFlags();
+	$entity->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$entity->clearModifiedFlags();
 
 	$this->_traceStop();
 	
@@ -714,196 +517,13 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Save a class member from the database
-     *
-     * This is used for class members that are objects, like GalleryMap and
-     * GalleryList instances.
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the member
-     * @return object GalleryStatus a status code
-     */
-    function saveMember(&$nucleus, $memberName) {
-
-	if (!$nucleus->getLoadedFlag($memberName)) {
-	    return GalleryStatus::success();
-	}
-	
-	if (!($nucleus->getModifiedFlag($memberName) & MEMBER_MODIFIED)) {
-	    return GalleryStatus::success();
-	}
-
-	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
-	$type = $metaInfo['members'][$memberName]['type'];
-	
-	/* Figure out which table we're writing to */
-	$tableName = DATABASE_TABLE_PREFIX .
-		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
-		strtolower($memberName);
-
-	/* Get the actual object */
-	$func = 'get' . ucfirst($memberName);
-	$object =& $nucleus->$func();
-
-	if ($type & STORAGE_TYPE_MAP) {
-	    return $this->_saveMap($nucleus, $tableName, $memberName, $object);
-	} else if ($type & STORAGE_TYPE_LIST) {
-	    return $this->_saveList($nucleus, $tableName, $memberName, $object);
-	} else {
-	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
-					__FILE__, __LINE__);
-	}
-    }
-
-    /**
-     * Save a GalleryMap
+     * Delete the GalleryEntity.
      *
      * @access public
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the table
-     * @param string the member name of the map
-     * @param object GalleryMap the map object
+     * @param object GalleryEntity the GalleryEntity to delete
      * @return object GalleryStatus a status code
      */
-    function _saveMap($nucleus, $tableName, $memberName, &$map) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
-					__FILE__, __LINE__);
-	}
-
-	$deleteKeys = array();
-	$modifyKeys = array();
-	$createKeys = array();
-
-	$persistentInfo = $map->getPersistentInfo();
-	foreach ($persistentInfo->modified as $name => $flag) {
-	    if ($flag & MEMBER_REMOVED) {
-		if (!($flag & MEMBER_CREATED)) {
-		    $deleteMarkers[] = '?';
-		    $deleteKeys[] = $name;
-		}
-	    } else if ($flag & MEMBER_CREATED) {
-		$createKeys[] = $name;
-	    } else {
-		$modifyKeys[] = $name;
-	    }
-	}
-
-	$id = $nucleus->getId();
-	$idCol = $this->prefixColumnName('id');
-	$keyCol = $this->prefixColumnName('key');
-	$valueCol = $this->prefixColumnName('value');
-	if ($deleteKeys) {
-	    $query = 'DELETE FROM ' . $tableName .
-		    ' WHERE ' . $idCol . ' = ? ' .
-		    ' AND ' . $keyCol . ' IN (' .
-		    join(', ', $deleteMarkers) . ')';
-
-	    $data = $deleteKeys;
-	    array_unshift($data, $id);
-	    
-	    $recordSet = $this->_db->Execute($query, $data);
-	    if (!$recordSet) {
-		return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					    __FILE__, __LINE__);
-	    }
-	}
-
-	if ($createKeys) {
-	    foreach ($createKeys as $key) {
-		$query = 'INSERT INTO ' . $tableName .
-			' (' . $idCol . ', ' . $keyCol . ', ' . $valueCol . ')' .
-			' VALUES (?, ?, ?) ';
-		$data = array($id,
-			      $key,
-			      $map->get($key));
-
-		$recordSet = $this->_db->Execute($query, $data);
-		if (!$recordSet) {
-		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-						__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	if ($modifyKeys) {
-	    foreach ($modifyKeys as $key) {
-		$query = 'UPDATE ' . $tableName .
-			' SET ' . $valueCol . '=? ' .
-			' WHERE ' . $idCol . '=? AND ' . $keyCol . '=?';
-		$data = array($map->get($key), $id, $key);
-		$recordSet = $this->_db->Execute($query, $data);
-		if (!$recordSet) {
-		    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-						__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	/*
-	 * Actually delete the removed keys
-	 */
-	foreach ($deleteKeys as $key) {
-	    $map->delete($key);
-	}
-
-	/*
-	 * Clear out our modification flags.
-	 */
-	$map->clearModifiedFlags();
-    }
-
-    /**
-     * Save a GalleryList
-     *
-     * @access public
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the table
-     * @param string the member name of the map
-     * @param object GalleryList the list object
-     * @return object GalleryStatus a status code
-     */
-    function _saveList($nucleus, $tableName, $memberName, &$list) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
-					__FILE__, __LINE__);
-	}
-
-	/* Set up and execute our query */
-	$arrayCol = $this->prefixColumnName('array');
-	$idCol =  $this->prefixColumnName('id');
-
-	$serializedForm = $list->serialize();
-	if ($nucleus->getModifiedFlag($memberName) & MEMBER_CREATED) {
-	    $query = 'INSERT INTO ' . $tableName .
-		    ' (' . $idCol . ', ' . $arrayCol . ')' .
-		    ' VALUES (?, ?)';
-	    $data = array($nucleus->getId(), $serializedForm);
-	} else {
-	    $query = 'UPDATE ' . $tableName .
-		    ' SET ' . $arrayCol . '=? ' .
-		    ' WHERE ' . $idCol . '=?';
-	    $data = array($serializedForm, $nucleus->getId());
-	}
-
-	$recordSet = $this->_db->Execute($query, $data);
-	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
-	}
-
-	$list->clearModifiedFlags();
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Delete the GalleryNucleus.
-     *
-     * @access public
-     * @param object GalleryNucleus the GalleryNucleus to delete
-     * @return object GalleryStatus a status code
-     */
-    function deleteNucleus(&$nucleus) {
+    function deleteEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
@@ -913,30 +533,29 @@ class DatabaseStorage extends GalleryStorage {
 	 * If this object has not yet been saved in the database, don't bother
 	 * saving it.
 	 */
-	if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $nucleus->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
-	    $nucleus->setPersistentFlag(STORAGE_FLAG_DELETED);
+	if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $entity->clearPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	    $entity->setPersistentFlag(STORAGE_FLAG_DELETED);
 	    return;
 	}
 
 	$this->_traceStart();
 	
 	/*
-	 * Get our persistent and meta info for this class
+	 * Get our persistent and member info for this class
 	 */
-	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
-	$idCol = $this->prefixColumnName('id');
+	$memberInfo = $this->_describeClassMembers($entity->getEntityType());
+	$idCol = $this->_prefixColumnName('id');
 
 	$tables = array();
-	foreach ($metaInfo['members'] as $columnName => $columnInfo) {
-	    $class = strtolower($columnInfo['class']);
-	    $tables[DATABASE_TABLE_PREFIX . $class] = 1;
+	foreach ($memberInfo['members'] as $columnName => $columnInfo) {
+	    $tables[$this->_prefixTableName($columnInfo['class'])] = 1;
 	}
 
 	foreach ($tables as $tableName => $junk) {
 	    $query = 'DELETE FROM ' . $tableName .
 		    ' WHERE ' . $idCol . '=?';
-	    $data = array($nucleus->getId());
+	    $data = array($entity->getId());
 	    $recordSet = $this->_db->Execute($query, $data);
 	    if (!$recordSet) {
 		$this->_traceStop();
@@ -945,99 +564,51 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
-	/*
-	 * Delete sub-objects as necessary
-	 */
-	foreach ($metaInfo['members'] as $name => $info) {
-	    $type = $metaInfo['members'][$name]['type'];
-	    if ($type & (STORAGE_TYPE_MAP | STORAGE_TYPE_LIST)) {
-		$this->deleteMember($nucleus, $name);
-	    }
-	}
-
-	$nucleus->setPersistentFlag(STORAGE_FLAG_DELETED);
+	$entity->setPersistentFlag(STORAGE_FLAG_DELETED);
 	    
 	$this->_traceStop();
 	return GalleryStatus::success();
     }
 
     /**
-     * Delete a class member from the database
-     *
-     * This is used for class members that are objects, like GalleryMap and
-     * GalleryList instances.
-     *
-     * @param object GalleryNucleus the containing GalleryNucleus
-     * @param string the name of the member
-     * @return object GalleryStatus a status code
-     */
-    function deleteMember(&$nucleus, $memberName) {
-
-	$this->_traceStart();
-	
-	$metaInfo = $this->_metaInfo->describeClass($nucleus->getObjectType());
-	$type = $metaInfo['members'][$memberName]['type'];
-	$idCol = $this->prefixColumnName('id');
-	
-	/* Figure out which table we're writing to */
-	$tableName = DATABASE_TABLE_PREFIX .
-		strtolower($metaInfo['members'][$memberName]['class']) . '_' .
-		strtolower($memberName);
-
-	$query = 'DELETE FROM ' . $tableName .
-		' WHERE ' . $idCol . '=?';
-	$data = array($nucleus->getId());
-	$recordSet = $this->_db->Execute($query, $data);
-	$this->_traceStop();
-	
-	if (!$recordSet) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					      __FILE__, __LINE__),
-			 null);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Create a new GalleryNucleus 
+     * Create a new GalleryEntity 
      *
      * @access public
-     * @param object GalleryNucleus the GalleryNucleus to put the data in
+     * @param object GalleryEntity the GalleryEntity to put the data in
      * @return object GalleryStatus a status code
      */
-    function newNucleus(&$nucleus) {
+    function newEntity(&$entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
 	/*
-	 * Get the id of the next nucleus from our sequence.
+	 * Get the id of the next object from our sequence.
 	 */
 	$this->_traceStart();
-	$id = $this->_db->GenId(DATABASE_ID_SEQUENCE);
+	$id = $this->_db->GenId(DATABASE_SEQUENCE_ID);
 	$this->_traceStop();
 
-	$nucleus->setId($id);
-	$nucleus->setSerialNumber(0);
-	$nucleus->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$entity->setId($id);
+	$entity->setSerialNumber(0);
+	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 	
 	return GalleryStatus::success();
     }
 
     /**
-     * Refresh a new GalleryNucleus
+     * Refresh a new GalleryEntity
      *
-     * Refresh a GalleryNucleus from the database, if it has changed.
-     * Return the new nucleus.
+     * Refresh a GalleryEntity from the database, if it has changed.
+     * Return the new object.
      *
      * @access public
-     * @param object GalleryNucleus the object to refresh
+     * @param object GalleryEntity the object to refresh
      * @return array object GalleryStatus a status code,
-     *               GalleryNucleus the refreshed object
+     *               GalleryEntity the refreshed entity
      */
-    function refreshNucleus($nucleus) {
+    function refreshEntity($entity) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
@@ -1046,17 +617,18 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStart();
 	
 	/*
-	 * Check the serial number to see if the current object is up to
+	 * Check the serial number to see if the current entity is up to
 	 * date
 	 */
-	$tableName = DATABASE_TABLE_PREFIX . 'gallerynucleus';
-	$serialNumberCol = $this->prefixColumnName('serialNumber');
-	$idCol = $this->prefixColumnName('id');
+	$tableName = $this->_prefixTableName('GalleryEntity');
+	$serialNumberCol = $this->_prefixColumnName('serialNumber');
+	$idCol = $this->_prefixColumnName('id');
 	$query = 'SELECT ' . $serialNumberCol .
 		' FROM ' . $tableName .
 		' WHERE ' . $idCol . '=?';
-	$data = array($nucleus->getId());
+	$data = array($entity->getId());
 		
+	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 	$recordSet = $this->_db->Execute($query, $data);
 	if (!$recordSet || $recordSet->RecordCount() == 0) {
 	    $this->_traceStop();
@@ -1065,343 +637,502 @@ class DatabaseStorage extends GalleryStorage {
 			 null);
 	}
 
-	if ($recordSet->fields[$serialNumberCol] == $nucleus->getSerialNumber()) {
+	if ($recordSet->FetchField(0) == $entity->getSerialNumber()) {
 	    $this->_traceStop();
-	    return array(GalleryStatus::success(), $nucleus);
+	    return array(GalleryStatus::success(), $entity);
 	}
 
-	/* Serial number didn't match -- reload the nucleus */
-	return $this->loadNucleus($nucleus->getId());
+	/* Serial number didn't match -- reload the entity */
+	return $this->loadEntity($entity->getId());
     }
 
     /**
-     * Lock the world
+     * Acquire read locks on the given items
      *
      * @access public
      * @param int timeout before giving up on the lock
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
      */
-    function acquireLock($timeout) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
+    function acquireReadLock($entityIds, $timeout) {
+
+	/* It's ok to pass in a single id */
+	if (!is_array($entityIds)) {
+	    $entityIds = array($entityIds);
+	}
+
+	/* Know when to call it quits */
+	$cutoffTime = time() + $timeout;
+
+	/* Get the true name of the lock table */
+	$lockTable = $this->_prefixTableName("Lock");
+
+	/*
+	 * Algorithm:
+	 * 1. Get clearance to acquire locks (and get the lock id)
+	 * 2. If any of the entities that we want to lock are currently write
+	 *    locked, then clear the request and go back to step 1.
+	 * 3. Acquire our read locks
+	 */
+	while (true) {
+	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /*
+	     * Check to see if any of the ids that we care about are write
+	     * locked.
+	     */
+	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	    $markers = $this->_makeMarkers(sizeof($entityIds));
+	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $writeEntityIdCol . ' IN (' . $markers . ') ';
+	    $data = $entityIds;
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == 0 ) {
+		/* Success */
+		break;
+	    } else {
+		/* An entity that we want is write locked */
+		$this->_releaseLockById($lockId);
+
+		if (time() > $cutoffTime) {
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT,
+						      __FILE__, __LINE__),
+				 null);
+		}
+
+		/* Wait a second and try again */
+		sleep(1);
+	    }
+	}
+	    
+	/* Put in a read lock for every entity id */
+	$lockIdCol = $this->_prefixColumnName('lockId');
+	$readEntityIdCol = $this->_prefixColumnName('readEntityId');
+	foreach ($entityIds as $entityId) {
+	    $query = 'INSERT INTO ' . $lockTable .
+		    '(' . $lockIdCol . ', ' . $readEntityIdCol . ') VALUES (?, ?)';
+	    $data = array($lockId, $entityId);
+	    $this->_traceStart();
+	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	}
+
+	/* Drop the lock request, now that we've got the write locks */
+	$requestCol = $this->_prefixColumnName('request');
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
+	$data = array($lockId);
+	$recordSet = $this->_db->execute($query, $data);
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	/*
+	 * Create a GalleryLock object and initialize it with the relevant
+	 * data.
+	 */
+	$lock = new GalleryLock();
+	$lock->acquireLock($lockId, LOCK_READ, $entityIds);
+
+	/* Declare victory */
+	return array(GalleryStatus::success(), $lock);
     }
 
     /**
-     * Release all locks.
+     * Acquire write locks on the given items
      *
      * @access public
-     * @return object GalleryStatus a status code
+     * @param array or integer a set of ids
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
      */
-    function releaseLock() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
+    function acquireWriteLock($entityIds, $timeout) {
+
+	/* It's ok to pass in a single id */
+	if (!is_array($entityIds)) {
+	    $entityIds = array($entityIds);
+	}
+
+	/* Know when to call it quits */
+	$cutoffTime = time() + $timeout;
+
+	/* Get the true name of the lock table */
+	$lockTable = $this->_prefixTableName("Lock");
+
+	/*
+	 * Algorithm:
+	 * 1. Get clearance to acquire locks (and get the lock id)
+	 * 2. If any of the entities that we want to lock are currently locked,
+	 *    then clear the request and go back to step 1.
+	 * 3. Acquire our write locks
+	 */
+	while (true) {
+	    list($ret, $lockId) = $this->_getLockClearance($cutoffTime);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	
+	    /*
+	     * Check to see if any of the ids that we care about are locked.
+	     */
+	    $readEntityIdCol = $this->_prefixColumnName('readEntityId');
+	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	    $markers = $this->_makeMarkers(sizeof($entityIds));
+	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $readEntityIdCol . ' IN (' . $markers . ') ' .
+		    'OR ' . $writeEntityIdCol . ' IN (' . $markers . ')';
+	    $data = $entityIds;
+	    $data = array_merge($data, $entityIds);
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
+	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStop();
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == 0 ) {
+		/* Success */
+		break;
+	    } else {
+		/* An entity that we want is still locked */
+		$this->_releaseLockById($lockId);
+
+		if (time() > $cutoffTime) {
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT,
+						      __FILE__, __LINE__),
+				 null);
+		}
+
+		/* Wait a second and try again */
+		sleep(1);
+	    }
+	}
+
+	/*
+	 * We are approved to acquire our write locks.
+	 */
+	$lockIdCol = $this->_prefixColumnName('lockId');
+	$writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	foreach ($entityIds as $entityId) {
+	    $query = 'INSERT INTO ' . $lockTable .
+		    '(' . $lockIdCol . ', ' . $writeEntityIdCol .
+		    ') VALUES (?, ?)';
+	    $data = array($lockId, $entityId);
+	    $recordSet = $this->_db->execute($query, $data);
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	}
+
+	/* Drop the lock request, now that we've got the write locks */
+	$requestCol = $this->_prefixColumnName('request');
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
+	$data = array($lockId);
+	$recordSet = $this->_db->execute($query, $data);
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	/*
+	 * Create a GalleryLock object and initialize it with the relevant
+	 * data.
+	 */
+	$lock = new GalleryLock();
+	$lock->acquireLock($lockId, LOCK_WRITE, $entityIds);
+
+	/* Declare victory */
+	return array(GalleryStatus::success(), $lock);
     }
 
     /**
-     * Search the persistent store for the target values matching the given criteria
+     * Internal function to release a lock by id.  Outsiders should use
+     * releaseLock()
+     *
+     * @access private
+     * @param int the lock id
+     * @return object GalleryStatus a status code
+     */
+    function releaseLock($lock) {
+	return $this->_releaseLockById($lock->getId());
+    }
+
+    /**
+     * Internal function to release a lock by id.  Outsiders should use
+     * releaseLock()
+     *
+     * @access private
+     * @param int the lock id
+     * @return object GalleryStatus a status code
+     */
+    function _releaseLockById($lockId) {
+	/* Get the true name of the lock table */
+	$lockTable = $this->_prefixTableName("Lock");
+
+	$lockIdCol = $this->_prefixColumnName('lockId');
+	$query = 'DELETE FROM ' . $lockTable . ' ' .
+		'WHERE ' . $lockIdCol . ' = ?';
+	$data = array($lockId);
+	$this->_traceStart();
+	$recordSet = $this->_db->execute($query, $data);
+	$this->_traceStop();
+	if ($recordSet) {
+	    return GalleryStatus::success();
+	} else {
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+    }
+
+    /**
+     * Search the persistent store for the target values matching the given
+     * criteria
      *
      * This is a flexible and powerful search mechanism.  You specify which
      * class members you wish to search for, how you want to search them, and
-     * which class members you want returned.
-     *
-     * Right now we do a logical AND of all criteria.  Later on we should
-     * extend this.
-     *
-     * Example criteria:
-     * array(array('GalleryNucleus::parentId',
-     *             'EXACT',
-     *             $parentId),
-     *       array('FileSystemNucleus::pathComponent',
-     *             'EXACT',
-     *             $path));
-     *
-     * Comparators can be 'EXACT' or 'CONTAINS'
-     *
-     * Example target:
-     * array('GalleryNucleus::id')
-     *
-     * Example modifiers:
-     * SEARCH_COUNT          -- return only the number of hits
-     * SEARCH_LIMIT #        -- return only the first x hits
-     * SEARCH_ORDER GalleryNucleus::id SEARCH_DIRECTION_UP
-     *                       -- sort by id
+     * which class members you want returned in a very SQL like syntax
      *
      * @access public
-     * @param array the search criteria
-     * @param array the target values (default GalleryNucleus::id)
-     * @param array the modifiers
+     * @param array the search query
+     * @param array any explicit data values required by the query
      * @return array object GalleryStatus a status code,
-     *               array a list of target values
+     *               array the result values
      */
-    function search($criteriaArray, $targetArray, $modifiers) {
+    function search($query, $data=array()) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	$whereComponents = array();
-	$modifierComponents = array();
-	$targetTableList = array();
-	$whereTableList = array();
-	$targetMap = array();
+	/*
+	 * Convert the generic query to a specific one.  Luckily, the
+	 * generic query language is very close to standard SQL.  Isn't
+	 * that convenient!
+	 *
+	 * Convert:
+	 * array(
+	 *   'select'   => '[Class1.member1] [Class2.member2]',
+	 *   'where'    => '[Class3.member3] is NULL',
+	 *   'order-by' => '[Class1.member1] ASC',
+	 *   'limit'    => array('offset' => 0, 'count' => 10),
+	 *
+	 * Into:
+	 *
+	 * SELECT   table1.column1, table2.column2, table3.column3
+	 * FROM     table1, table2, table3
+	 * WHERE    table3.member3 IS NULL
+	 *          AND ((table1.id = table2.id) AND (table1.id = table3.id))
+	 * ORDER BY table1.member1 ASC
+	 *
+	 * Which would then be called like this:
+	 *
+	 * $db->SelectLimit($query, limit['count'], limit['offset']);
+	 *
+	 */
+	$tables = array();
+	foreach (array('select', 'where', 'order-by') as $elementName) {
+	    if (empty($query[$elementName])) {
+		/* XXX: We should verify that 'select' exists here */
+		continue;
+	    }
+
+	    $elementValue = $query[$elementName];
+	    while (ereg("(\[[[:alnum:]]*::[[:alnum:]]*\])", $elementValue, $regs)) {
+		$outer = $regs[1];
+		ereg("([[:alnum:]]*)::([[:alnum:]]*)", $outer, $regs);
+		list($class, $member) = array($regs[1], $regs[2]);
+		
+		$table = $this->_prefixTableName($class);
+		$column = $this->_prefixColumnName($member);
+		
+		$tables[$table] = 1;
+		$elementValue = str_replace($outer, "$table.$column", $elementValue);
+	    }
+
+	    /* Replace the element in the query */
+	    $query[$elementName] = $elementValue;
+	}
 
 	/*
-	 * XXX: This is all MySQL specific and will need to get moved into the
-	 * MySQLDatabaseStorage class eventually.
+	 * Now that we know 'tables' is unique, convert it to a list for easier
+	 * processing.
 	 */
-	if (!empty($modifiers)) {
-	    foreach ($modifiers as $modifier) {
-		switch($modifier[0]) {
-		case SEARCH_COUNT:
-		    $targetComponents[] = 'COUNT(*)';
-		    $targetMap['COUNT(*)'] = 'count';
-		    break;
+	$tables = array_keys($tables);
+	if (sizeof($tables)) {
+	    $query['from'] = join(", ", $tables);
 
-		case SEARCH_LIMIT:
-		    $modifierComponents['LIMIT'] = $modifier[1];
-		    break;
-		    
-		case SEARCH_ORDER:
-		    switch ($modifier[2]) {
-		    case SEARCH_DIRECTION_UP:
-			$dir = 'ASC';
-			break;
-
-		    case SEARCH_DIRECTION_DOWN:
-			$dir = 'DESC';
-			break;
-
-		    default:
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-							  __FILE__, __LINE__),
-				     null);
+	    if (sizeof($tables) > 1) {
+		$query['where'] .= ' AND (';
+		$idCol = $this->_prefixColumnName('id');
+		for ($i = 1; $i < sizeof($tables); $i++) {
+		    $query['where'] .= "($tables[0].$idCol = $tables[$i].$idCol)";
+		    if ($i < (sizeof($tables)-1)) {
+			$query['where'] .= ' AND ';
 		    }
-
-		    list($ret, $tableName, $colName) =
-			    $this->_memberNameToTableAndColumnName($modifier[1]);
-		    if ($ret->isError()) {
-			return array($ret, null);
-		    }
-		    
-		    $modifierComponents['ORDER'] = 'BY ' .
-			    $tableName . '.' . $colName .
-			    ' ' . $dir;
 		}
+		$query['where'] .= ')';
 	    }
 	}
 
-	foreach ($targetArray as $target) {
-	    list($ret, $tableName, $colName) =
-		    $this->_memberNameToTableAndColumnName($target);
-	    if ($ret->isError()) {
-		return array($ret, null);
-	    }
-
-	    $targetTableList[$tableName] = 1;
-
-	    /*
-	     * If we're doing a SEARCH_COUNT then don't look for other
-	     * targets.
-	     */
-	    if (empty($targetMap['COUNT(*)'])) {
-		$targetComponents[] = $tableName. '.' . $colName;
-		$targetMap[$colName] = $target;
-	    }
+	/* Assemble the query */
+	$finalQuery = 'SELECT ' . $query['select'];
+	$finalQuery .= ' FROM ' . $query['from'];
+	if (isset($query['where'])) {
+	    $finalQuery .= ' WHERE ' . $query['where'];
 	}
-	
-	foreach ($criteriaArray as $criteria) {
-	    if (sizeof($criteria) != 3) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-	    list($member, $compareType, $value) = $criteria;
-	    
-	    list($class, $member) = split('::', $member);
-	    if (empty($class) || empty($member)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-
-	    $tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
-	    $colName = $this->prefixColumnName($member);
-	    $whereTableList[$tableName] = 1;
-
-	    // If it's in the WHERE, it has to be in the target.
-	    $targetTableList[$tableName] = 1;
-
-	    $criteriaCol = $tableName . '.' . $colName;
-	    switch($compareType) {
-	    case 'EXACT':
-		if (empty($value) && !($value === 0)) {
-		    $whereComponents[] = $criteriaCol . ' is NULL';
-		} else {
-		    $whereComponents[] = $criteriaCol . '=?';
-		    $whereData[] = $value;
-		}
-		break;
-
-	    case 'CONTAINS':
-		$whereComponents[] = $criteriaCol . ' LIKE ?';
-		$whereData[] = '%' . $value . '%';
-		break;
-		
-	    default:
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
-	    }
+	if (isset($query['order-by'])) {
+	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
 	}
 
-	if (sizeof($whereTableList) > 1) {
-	    $idCol = $this->prefixColumnName('id');
-	    $keys = array_keys($whereTableList);
-	    for ($i = 1; $i < sizeof($keys); $i++) {
-		$whereComponents[] =
-			$keys[0] . '.' . $idCol . '=' .
-			$keys[$i] . '.' . $idCol;
-	    }
-	}
-
-	$query = 'SELECT ';
-	$query .= join(', ', $targetComponents);
-	$query .= ' FROM ';
-	$query .= join(', ', array_keys($targetTableList));
-
-	/* Tack on our WHERE clause, if applicable */
-	if (sizeof($whereComponents)) {
-	    $query .= ' WHERE ';
-	    $query .= join(' AND ', $whereComponents);
-	    $data = $whereData;
-	} else {
-	    $data = array();
-	}
-
-	/* Tack on our ORDER and LIMIT modifiers, in that order */
-	foreach (array('ORDER', 'LIMIT') as $modifierName) {
-	    if (!empty($modifierComponents[$modifierName])) {
-		$query .= ' ' . $modifierName .
-			' ' . $modifierComponents[$modifierName];
-	    }
-	}
-
+	/* Run it with the right limits and return the results */
+	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_BOTH;
 	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query, $data);
-	if (!$recordSet) {
+
+	if (isset($query['limit']) && sizeof($query['limit'])) {
+	    if (empty($query['limit']['count'])) {
+		$count = -1;
+	    } else {
+		$count = $query['limit']['count'];
+	    }
+	    
+	    if (empty($query['limit']['offset'])) {
+		$offset = -1;
+	    } else {
+		$offset = $query['limit']['offset'];
+	    }
+	    
+	    $recordSet = $this->_db->SelectLimit($finalQuery, $count, $offset, $data);
+	} else {
+	    $recordSet = $this->_db->Execute($finalQuery, $data);
+	}
+	$this->_traceStop();
+	if ($recordSet) {
+	    return array(GalleryStatus::success(),
+			 new DatabaseSearchResults($recordSet));
+	} else {
 	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					      __FILE__, __LINE__),
 			 null);
 	}
+    }
 
-	/* Push all our data into the map */
-	$results = array();
-	while (!$recordSet->EOF) {
-	    $row = array();
-	    foreach ($targetMap as $colName => $classMember) {
-		$row[$classMember] = $recordSet->fields[$colName];
+    /**
+     * Add a new entry to a map
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
+     */
+    function addMapEntry($mapName, $entry) {
+
+	$mapInfo = $this->_describeMapMembers($mapName);
+	$tableName = $this->_prefixTableName($mapName);
+	$data = array();
+	$markers = array();
+	$columns = array();
+	foreach ($mapInfo['members'] as $memberName => $memberType) {
+	    $markers[] = '?';
+	    $columns[] = $this->_prefixColumnName($memberName);
+
+	    $value = $entry[$memberName];
+	    if ($memberType & STORAGE_TYPE_TIMESTAMP) {
+		$value = $this->_db->DBTimeStamp($value);
 	    }
-	    array_push($results, $row);
-	    $recordSet->MoveNext();
+	    $data[] = $value;
 	}
 
+	$markers = $this->_makeMarkers(sizeof($columns));
+	$query = 'INSERT INTO ' . $tableName . ' (';
+	$query .= join(', ', $columns);
+	$query .= ') VALUES (' . $markers . ')';
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-
-	return array(GalleryStatus::success(), $results);
-    }
-
-    /**
-     * Convert a member name to its table and column names
-     *
-     * @access private
-     * @param string the member name
-     * @param array object GalleryStatus a status code
-     *              string the table name
-     *              string the column name 
-     */
-    function _memberNameToTableAndColumnName($memberName) {
-	list($class, $member) = split('::', $memberName);
-	if (empty($class) || empty($member)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
-	}
-	
-	$tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
-	$colName = $this->prefixColumnName($member);
-
-	return array(GalleryStatus::success(), $tableName, $colName);
-    }
-
-    /**
-     * Initialize the DatabaseSchema instance
-     *
-     * @access private
-     * @return object GalleryStatus a status code
-     */
-    function _initDatabaseSchema() {
-	if (empty($this->_databaseSchema)) {
-	    $base = dirname(__FILE__);
-	    require_once($base . '/DatabaseSchema.class');
-	    require_once($base . '/DatabaseSchemaFactory.class');
-	    list($ret, $this->_databaseSchema) =
-		    DatabaseSchemaFactory::newInstance($this->getType(),
-						       $this->_db,
-						       $this->_capabilities);
-
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 	}
 
 	return GalleryStatus::success();
     }
 
     /**
-     * Create a new schema.
+     * Remove an entry from a map
      *
-     * @param string the name of the database to create
-     * @return object GalleryStatus a status code
+     * This is dangerous, use very carefully!
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
      */
-    function createSchema() {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+    function removeMapEntry($mapName, $entry) {
+
+	$mapInfo = $this->_describeMapMembers($mapName);
+	$tableName = $this->_prefixTableName($mapName);
+	$data = array();
+	$where = array();
+	foreach ($mapInfo['members'] as $memberName => $memberType) {
+	    if (isset($entry[$memberName])) {
+		$where[] = $this->_prefixColumnName($memberName) . '=?';
+		$data[] = $entry[$memberName];
+	    }
+	}
+
+	if (sizeof($where) == 0) {
+	    return GalleryStatus::error(ERROR_BAD_DATA,
 					__FILE__, __LINE__);
 	}
 
-	$ret = $this->_initDatabaseSchema();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+	$query = 'DELETE FROM ' . $tableName . ' ';
+	$query .= 'WHERE '  . join(' AND ', $where);
+
 	$this->_traceStart();
-	$ret = $this->_databaseSchema->createSchema();
+	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
-    /**
-     * Bring the database schema up to date
-     *
-     * @return object GalleryStatus a status code
-     */
-    function updateSchema() {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
 	}
 
-	$ret = $this->_initDatabaseSchema();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$this->_traceStart();
-	$ret = $this->_databaseSchema->updateSchema();
-	$this->_traceStop();
-
-	return $ret->wrap(__FILE__, __LINE__);
+	return GalleryStatus::success();
     }
 
     /**
@@ -1410,78 +1141,161 @@ class DatabaseStorage extends GalleryStorage {
      * Note that the database connection must not be attached to a specific
      * database for this to work.
      *
-     * @param string the name of the database
      * @return object GalleryStatus a status code
      */
-    function createDatabase() {
+    function createStore() {
+	global $gallery;
+	
 	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$ret = $this->_initDatabaseSchema();
+	$query = 'CREATE DATABASE ' . $this->_database;
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query);
+	$this->_traceStop();
+	
+	if (empty($recordSet)) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Install or update the database schema.
+     *
+     * Note that the database connection must not be attached to a specific
+     * database for this to work.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStore() {
+	global $gallery;
+	
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+					__FILE__, __LINE__);
+	}
+	
+	/*
+	 * Find the SQL files for this platform
+	 */
+	$sqlDir = dirname(__FILE__) . '/schema/platform/' . $this->getType();
+	list ($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$sqlFiles = array();
+	if ($dir = $platform->opendir($sqlDir)) {
+	    while (($file = readdir($dir)) !== false) {
+		if (ereg(".sql$", $file)) {
+		    if (!strcmp($file, "Schema.sql")) {
+			array_unshift($sqlFiles, $file);
+		    } else {
+			array_push($sqlFiles, $file);
+		    }
+		}
+	    }
+	    closedir($dir);
+	} else {
+	    return GalleryStatus::error(ERROR_BAD_PATH,
+					__FILE__, __LINE__);
+	}
+
+	/**
+	 * Install the Schema table first, then do the rest.
+	 */
+	foreach ($sqlFiles as $fileName) {
+	    $fileName = $sqlDir . '/' . $fileName;
+	    print "> $fileName<br>";
+	    
+	    if ($fd = $platform->fopen($fileName, "r")) {
+		$buffer = null;
+		while (!feof($fd)) {
+		    $buffer .= fgets($fd, 4096);
+		}
+		
+		foreach (split(";", $buffer) as $query) {
+		    $query = trim($query);
+		    if (!empty($query)) {
+			$recordSet = $this->_db->Execute($query);
+			if (empty($recordSet)) {
+			    $gallery->debug("Error trying to load $fileName");
+			    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+							__FILE__, __LINE__);
+			}
+		    }
+		}
+	    } else {
+		$gallery->debug("Unable to read file $fileName");
+		return GalleryStatus::error(ERROR_BAD_PATH,
+					    __FILE__, __LINE__);
+	    }
+	}
+	
 	$this->_traceStart();
-	$ret = $this->_databaseSchema->createDatabase($this->_database);
 	$this->_traceStop();
 
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
     /**
-     * Drop the database.
+     * Remove the database.
      *
      * Use this very carefully!
      *
      * Note that the database connection must not be attached to a specific
      * database for this to work.
      *
-     * @param string the name of the database
      * @return object GalleryStatus a status code
      */
-    function dropDatabase() {
+    function removeStore() {
 	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$ret = $this->_initDatabaseSchema();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$query = 'DROP DATABASE ' . $this->_database;
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query);
+	$this->_traceStop();
+	
+	if (empty($recordSet)) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
 	}
 
-	$this->_traceStart();
-	$ret = $this->_databaseSchema->dropDatabase($this->_database);
-	$this->_traceStop();
-
-	return $ret->wrap(__FILE__, __LINE__);
+	return GalleryStatus::success();
     }
 	
     /**
-     * Identify the type of nucleus associated with the id provided
+     * Identify the type of entity associated with the id provided
      *
-     * @param int a nucleus id
+     * @param int a object id
      * @return array a GalleryStatus and a string class name
      */
-    function _identifyNucleus($id) {
+    function _identifyEntity($id) {
 	assert('!empty($id)');
 
-	if (empty($this->_nucleusTypeCache[$id])) {
-	    $idCol = $this->prefixColumnName('id');
-	    $objectTypeCol = $this->prefixColumnName('objectType');
-	    $table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
-	    $query = 'SELECT ' . $objectTypeCol .
+	if (empty($this->_entityTypeCache[$id])) {
+	    $idCol = $this->_prefixColumnName('id');
+	    $entityTypeCol = $this->_prefixColumnName('entityType');
+	    $table = $this->_prefixTableName('GalleryEntity');
+	    $query = 'SELECT ' . $entityTypeCol .
 		    ' FROM ' . $table .
 		    ' WHERE ' . $idCol . '=?';
 	    $data = array($id);
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 	    $recordSet = $this->_db->Execute($query, $data);
 	    
 	    if ($recordSet) {
 		if ($recordSet->RecordCount() == 1) {
-		    $type = $recordSet->fields[$objectTypeCol];
+		    $type = $recordSet->fields[0];
 		    $recordSet->Close();
 		}
 		
@@ -1489,7 +1303,7 @@ class DatabaseStorage extends GalleryStorage {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
 						      __FILE__, __LINE__), null);
 		} else {
-		    $this->_nucleusTypeCache[$id] = $type;
+		    $this->_entityTypeCache[$id] = $type;
 		}
 	    } else {
 		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
@@ -1498,7 +1312,7 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 	}
 
-	return array(GalleryStatus::success(), $this->_nucleusTypeCache[$id]);
+	return array(GalleryStatus::success(), $this->_entityTypeCache[$id]);
     }
 
     /**
@@ -1506,9 +1320,21 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @param string the name of a column
      * @return string a safe column name
+     * @access private
      */
-    function prefixColumnName($columnName) {
-	return DATABASE_COLUMN_PREFIX . "$columnName";
+    function _prefixColumnName($columnName) {
+	return DATABASE_COLUMN_PREFIX . $columnName;
+    }
+
+    /**
+     * Translate a potentially unsafe table name into a safe one
+     *
+     * @param string the name of a table
+     * @return string a safe table name
+     * @access private
+     */
+    function _prefixTableName($tableName) {
+	return DATABASE_TABLE_PREFIX . $tableName;
     }
 
     /**
@@ -1516,9 +1342,92 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @param string the name of the capability
      * @return bool true if yes
+     * @access private
      */
     function _hasCapability($capabilityName) {
 	return !empty($this->_capabilities[$capabilityName]);
+    }
+
+    /**
+     * Return a string of ? markers
+     *
+     * @param int the number of markers to return
+     * @access private
+     */
+    function _makeMarkers($count) {
+	$markers = array();
+	for ($i = 0; $i < $count; $i++) {
+	    $markers[$i] = '?';
+	}
+	return join(', ', $markers);
+    }
+
+    /**
+     * Internal function to get clearance to acquire locks
+     *
+     * Request clearance to acquire locks and then wait until it's our turn.
+     *
+     * @param int the time to stop trying to get clearance
+     * @return object GalleryStatus a status code
+     */
+    function _getLockClearance($cutoffTime) {
+	/* Get the true name of the lock table */
+	$lockTable = $this->_prefixTableName("Lock");
+	
+	/* Get a new lock id */
+	$this->_traceStart();
+	$lockId = $this->_db->GenId(DATABASE_SEQUENCE_LOCK);
+	$this->_traceStop();
+
+	/* Put in a lock request */
+	$lockIdCol = $this->_prefixColumnName('lockId');
+	$requestCol = $this->_prefixColumnName('request');
+	$query = 'INSERT INTO ' . $lockTable .
+		'(' . $lockIdCol . ', ' . $requestCol .
+		') VALUES (?, 1)';
+	$data = array($lockId);
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	if (!$recordSet) {
+	    $this->_releaseLockById($lockId);
+	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+    
+	/* Wait till it's our turn */
+	while (true) {
+	    $query = 'SELECT ' . $lockIdCol . ' FROM ' . $lockTable . ' ' .
+		    'WHERE ' . $requestCol . '=1 ORDER BY ' .
+		    $lockIdCol . ' ASC';
+
+	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $recordSet = $this->_db->SelectLimit($query, 1);
+	    if (!$recordSet) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+
+	    $row = $recordSet->FetchRow();
+	    if ($row[0] == $lockId) {
+		break;
+	    }
+
+	    /* Wait a second and try again */
+	    sleep(1);
+
+	    if (time() > $cutoffTime) {
+		$this->_releaseLockById($lockId);
+		return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $lockId);
     }
 }
 ?>

@@ -2,7 +2,9 @@
 
 class DeleteAllItemsTestCase extends TestCase {
 
-    var $_id = 1;
+    function getIterations() {
+	return array(1);
+    }
 
     function getDescription() {
 	return "Delete all items in the database, one by one";
@@ -11,48 +13,30 @@ class DeleteAllItemsTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	    
 	while (true) {
 	    $gallery->setTimeLimit(60);
 	    
 	    list ($ret, $results) =
-		    $gallery->search(array(array('GalleryNucleus::objectType',
-						 'EXACT',
-						 'albumitem')),
-				     array('GalleryNucleus::id'),
-				     array(array(SEARCH_LIMIT, 1),
-					   array(SEARCH_ORDER,
-						 'GalleryNucleus::id',
-						 SEARCH_DIRECTION_DOWN)));
+		$gallery->search(array('select' => '[GalleryEntity::id]',
+				       'where' => '[GalleryEntity::entityType]=?',
+				       'order-by' => '[GalleryEntity::id] DESC',
+				       'limit' => array('offset' => 0, 'count' => 5)),
+				 array('GalleryAlbumItem'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    if (empty($results)) {
+	    if ($results->resultCount() == 0) {
 		break;
 	    }
-	    
-	    $id = $results[0]['GalleryNucleus::id'];
-	    print "<H2> Delete Item $id </H2>\n";
-	    $ret = $gallery->deleteNucleusById($id);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 
-	    /* Commit the cache */
-	    $ret = $gallery->commitCache();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    while ($result = $results->nextResult()) {
+		$id = $result[0];
+		$ret = $gallery->deleteEntityById($id);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
-	}
-
-	$ret = $gallery->unlock();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -60,4 +44,4 @@ class DeleteAllItemsTestCase extends TestCase {
 }
 
 ?>
-</pre>
+

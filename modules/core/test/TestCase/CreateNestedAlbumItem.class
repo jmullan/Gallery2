@@ -9,22 +9,38 @@ class CreateNestedAlbumItemTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+	$lockIds = array();
+	
 	print("Creating new root album item\n");
-	$rootAlbum = new AlbumItem();
+	$rootAlbum = new GalleryAlbumItem();
 	$ret = $rootAlbum->createRoot("nestedRoot",
 				      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	print("Saving new root album\n");
+	$ret = $rootAlbum->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	print("Read locking root album\n");
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$parentId = $rootAlbum->getId();
 	for ($i = 0; $i < 5; $i++) {
-	    $nested[$i] = new AlbumItem();
+
+	    print("Read locking parent album\n");
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $nested[$i] = new GalleryAlbumItem();
 	    $ret = $nested[$i]->create($parentId, "nested_$i",
 				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {
@@ -39,14 +55,8 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    $parentId = $nested[$i]->getId();
 	}
 
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Leggo of our locks */
-	$ret = $gallery->unlock();
+	$ret = $gallery->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -56,4 +66,4 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 }
 
 ?>
-</pre>
+

@@ -1,0 +1,500 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/*
+ * ****************************************
+ *             Sorting Tags
+ * ****************************************
+ */
+
+/**
+ * Sort in an ascending fashion
+ *
+ * @constant SORT_ASCENDING
+ */
+define("SORT_ASCENDING", "asc");
+
+/**
+ * Sort in an descending fashion
+ *
+ * @constant SORT_DESCENDING
+ */
+define("SORT_DESCENDING", "desc");
+
+/**
+ * A subclass of GalleryItem for containing groups of GalleryItems
+ *
+ * A GalleryItem that has certain extra properties relating to
+ * displaying item groups and is allowed to contain other
+ * GalleryItems.
+ *
+ * @g2 <class-name>GalleryAlbumItem</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryAlbumItem_core extends GalleryItem {
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * Primary background color
+     *
+     * @g2 <member>
+     * @g2   <member-name>backgroundColor</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_backgroundColor;
+     * @access private
+     */
+    var $_backgroundColor;
+
+    
+    /**
+     * Secondary background color
+     *
+     * @g2 <member>
+     * @g2   <member-name>backgroundColor2</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_backgroundColor2
+     * @access private
+     */
+    var $_backgroundColor2;
+
+    /**
+     * Amount of table border
+     *
+     * @g2 <member>
+     * @g2   <member-name>border</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var string $_border
+     * @access private
+     */
+    var $_border;
+
+    /**
+     * Color of border
+     *
+     * @g2 <member>
+     * @g2   <member-name>borderColor</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_borderColor
+     * @access private
+     */
+    var $_borderColor;
+
+    /**
+     * Number of columns to show
+     *
+     * @g2 <member>
+     * @g2   <member-name>columns</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_columns
+     * @access private
+     */
+    var $_columns;
+
+    /**
+     * Show view counts for my items?
+     *
+     * @g2 <member>
+     * @g2   <member-name>displayViewCount</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var bool $_displayViewCount
+     * @access private
+     */
+    var $_displayViewCount;
+
+    /**
+     * Font name
+     *
+     * @g2 <member>
+     * @g2   <member-name>font</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_font
+     * @access private
+     */
+    var $_font;
+
+    /**
+     * The html_footer to use for this album
+     *
+     * @g2 <member>
+     * @g2   <member-name>htmlFooter</member-name>
+     * @g2   <member-type>TEXT</member-type>
+     * @g2 </member>
+     *
+     * @var string $_htmlFooter
+     * @access private
+     */
+    var $_htmlFooter;
+
+    /**
+     * The html_header to use for this album
+     *
+     * @g2 <member>
+     * @g2   <member-name>htmlHeader</member-name>
+     * @g2   <member-type>TEXT</member-type>
+     * @g2 </member>
+     *
+     * @var string $_htmlHeader
+     * @access private
+     */
+    var $_htmlHeader;
+
+    /**
+     * The layout to use for this album
+     *
+     * @g2 <member>
+     * @g2   <member-name>layout</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_layout
+     * @access private
+     */
+    var $_layout;
+
+    /**
+     * Link color
+     *
+     * @g2 <member>
+     * @g2   <member-name>linkColor</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_linkColor
+     * @access private
+     */
+    var $_linkColor;
+
+    /**
+     * Allow printing?
+     *
+     * @g2 <member>
+     * @g2   <member-name>allowPrinting</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var bool $_allowPrinting
+     * @access private
+     */
+    var $_allowPrinting;
+
+    /**
+     * Target size of the intermediate image
+     *
+     * @g2 <member>
+     * @g2   <member-name>childIntermediateResize</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var integer $_childIntermediateSize
+     * @access private
+     */
+    var $_childIntermediateSize;
+
+    /**
+     * Target size of thumbnails inside this album
+     *
+     * @g2 <member>
+     * @g2   <member-name>childThumbSize</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var integer $_childThumbSize
+     * @access private
+     */
+    var $_childThumbSize;
+
+    /**
+     * Number of rows to show
+     *
+     * @g2 <member>
+     * @g2   <member-name>rows</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_rows
+     * @access private
+     */
+    var $_rows;
+
+    /**
+     * Whether or not to show the breadcrumb links
+     *
+     * @g2 <member>
+     * @g2   <member-name>showBreadCrumb</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
+     *
+     * @var boolean $_showBreadCrumb
+     * @access private
+     */
+    var $_showBreadCrumb;
+
+    /**
+     * Text color
+     *
+     * @g2 <member>
+     * @g2   <member-name>textColor</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_textColor
+     * @access private
+     */
+    var $_textColor;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Create a new instance of this AlbumItem in the persistent store
+     *
+     * Also create the album directory on the filesystem
+     *
+     * @param int the id of the parent of this object
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId, $albumName, $ownerId) {
+	global $gallery;
+	
+	if (empty($albumName) || empty($ownerId) || empty($parentId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+				       __FILE__, __LINE__);
+	}
+
+	/* Let our superclass take care of creation in the persistent store */
+	$ret = parent::create($parentId, $albumName, $ownerId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $parent) = $gallery->loadEntityById($parentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list($ret, $parentPath) = $parent->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return $this->_createDir($parentPath . '/' . $albumName);
+    }
+
+    /**
+     * Create a new root level album 
+     *
+     * Also create the album directory on the filesystem
+     *
+     * @return object GalleryStatus a status code
+     */
+    function createRoot($albumName, $ownerId) {
+	global $gallery;
+
+	if (empty($albumName) || empty($ownerId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+				       __FILE__, __LINE__);
+	}
+
+	/* Let our superclass take care of creation in the persistent store */
+	$ret = parent::createRoot($albumName, $ownerId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$parentPath = $gallery->getConfig('core.directory.albums');
+	return $this->_createDir($parentPath . '/' . $albumName);
+    }
+
+    /**
+     * Internal function to create the album directory
+     *
+     * @access private
+     */
+    function _createDir($albumDir) {
+	global $gallery;
+	
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!$platform->mkdir($albumDir,
+	        $gallery->getConfig('core.permissions.directory'))) {
+
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Can this item contain other file system items?
+     *
+     * Always returns true -- AlbumItems contain other GalleryItems
+     *
+     * @return true if this item can contain other file system items
+     */
+    function isContainer() {
+	return true;
+    }
+    
+    /**
+     * Delete this AlbumItem
+     *
+     * Delete all children and then remove the album directory
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	/* Delete myself from the store */
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get my path */
+	list($ret, $path) = $this->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Remove my directory and everything in it */
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$platform->recursiveRmdir($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH,
+				       __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Can this item contain other items?
+     *
+     * AlbumItems are allowed to contain other GalleryItems
+     *
+     * @access public
+     * @return boolean true if the item can contain children
+     */
+    function canContainChildren() {
+	return true;
+    }
+
+    /**
+     * Rename this album
+     *
+     * @access public
+     * @param string the path component
+     * @return object GalleryStatus a status code
+     */
+    function rename($newname) {
+	global $gallery;
+	
+	/*
+	 * XXX: the entire parent tree needs to be read locked to make sure
+	 * that things aren't getting moved out from under us.
+	 */
+
+	/*
+	 * Check to see if the desired path exists.
+	 */
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $currentPath) = $this->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$newPath = dirname($currentPath) . '/' . $newname;
+	if ($platform->file_exists($newPath)) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	if (!$platform->rename($currentPath, $newPath)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH,
+					__FILE__, __LINE__);
+	}
+				   
+	$this->setPathComponent($newname);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Is this album the root album?
+     * 
+     * @return bool true if yes, false if no
+     */
+    function isRoot() {
+	global $gallery;
+	return ($this->getId() == $gallery->getRootAlbumItemId());
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryAlbumItem.inc');
+?>

@@ -1,0 +1,18 @@
+<!ELEMENT class ( class-name, schema, requires-id?, (map | member+)? ) >
+
+<!ELEMENT schema ( schema-major, schema-minor ) >
+<!ELEMENT map ( member+, key? ) >
+<!ELEMENT member ( member-name, member-type, member-size?, id?, indexed?, unique?, required? ) >
+<!ELEMENT key ( member-name+ ) >
+
+<!ELEMENT class-name ( #PCDATA ) >
+<!ELEMENT schema-major ( #PCDATA ) >
+<!ELEMENT schema-minor ( #PCDATA ) >
+<!ELEMENT member-name ( #PCDATA ) >
+<!ELEMENT member-type ( #PCDATA ) >
+<!ELEMENT member-size ( #PCDATA ) >
+<!ELEMENT requires-id EMPTY >
+<!ELEMENT required EMPTY >
+<!ELEMENT indexed EMPTY >
+<!ELEMENT unique EMPTY >
+<!ELEMENT id EMPTY >

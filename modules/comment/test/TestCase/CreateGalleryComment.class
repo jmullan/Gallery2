@@ -8,17 +8,10 @@ class CreateGalleryCommentTestCase extends TestCase {
 
     function testStart() {
 	global $gallery;
-	$rootId = $gallery->getRootAlbumId();
 
-	/* Lock the world */
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Create our child */
+	/* Create the comment */
 	$comment = new GalleryComment();
-	$ret = $comment->create($rootId);
+	$ret = $comment->create($gallery->getRootAlbumId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -29,15 +22,9 @@ class CreateGalleryCommentTestCase extends TestCase {
 	$comment->setDate(time());
 	$comment->setHostname('www.slashdot.org');
 	$comment->setName('Cmdr Taco');
-	
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
-	/* Unlock the world */
-	$ret = $gallery->unlock();
+	/* Save the comment */
+	$ret = $comment->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

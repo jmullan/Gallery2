@@ -39,6 +39,7 @@ class GalleryStorageFactory {
 	case 'database':
 	    $base = dirname(__FILE__) . '/GalleryStorage';
 	    require_once($base . '/DatabaseStorage.class');
+	    require_once($base . '/DatabaseSearchResults.class');
 	    require_once($base . '/DatabaseStorageFactory.class');
 	    return DatabaseStorageFactory::newInstance($config['type'],
 						       $config);

@@ -1,0 +1,108 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * An entity that can be the child of another entity.
+ *
+ * This object performs all of the basic functions required in all
+ * Gallery objects.
+ *
+ * @g2 <class-name>GalleryChildEntity</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryChildEntity_core extends GalleryEntity {
+
+    /**
+     * The id of the parent of this GalleryChildEntity
+     *
+     * @g2 <member>
+     * @g2   <member-name>parentId</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_parentId
+     * @access private
+     */
+    var $_parentId;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Create this item in our persistent store
+     *
+     * @param int the id of the GalleryItem parent
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId) {
+	global $gallery;
+
+	if (empty($parentId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set the parent id */
+	$this->setParentId($parentId);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create a root level item
+     *
+     * This is a special case; every other GalleryChildEntry will have a
+     * parent.  But the root items don't have one.
+     */
+    function createRoot() {
+	return parent::create();
+    }
+    
+    /**
+     * Get the parent instance
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryItem the parent item
+     */
+    function getParent() {
+	global $gallery;
+	return $gallery->loadEntityById($this->getParentId());
+    }
+
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryChildEntity.inc');
+?>

@@ -39,13 +39,13 @@ define("SUCCESS", 0x00000000);
 define("ERROR", 0x00000001);
 
 /**
- * A name collision happened in the filesystem as a result of this operation.
- * A common cause for this is attempting to use an existing filename when
- * moving an item from one location to another.
+ * A name collision happened in the filesystem or database as a result of this
+ * operation.  A common cause for this is attempting to use an existing filename
+ * when moving an item from one location to another.
  *
- * @constant ERROR_NAME_COLLISION
+ * @constant ERROR_COLLISION
  */
-define("ERROR_NAME_COLLISION", 0x00000002);
+define("ERROR_COLLISION", 0x00000002);
 
 /**
  * The object you're trying to access is no longer available.  Perhaps it was
@@ -177,11 +177,11 @@ define("ERROR_BROKEN_DERIVATIVE", 0x00040000);
 define("ERROR_UNSUPPORTED_OPERATION", 0x00080000);
 
 /**
- * We released the lock with uncommitted data
+ * We were unable to get a lock in the time allotted
  *
- * @constant ERROR_UNCOMMITTED_DATA
+ * @constant ERROR_LOCK_TIMEOUT
  */
-define("ERROR_UNCOMMITTED_DATA", 0x00100000);
+define("ERROR_LOCK_TIMEOUT", 0x00100000);
 
 /**
  * The operation you attempted is unimplemented
@@ -383,12 +383,18 @@ class GalleryStatus {
      */
     function _getAsArray() {
 	$codes = array();
-	foreach (get_defined_constants() as $constantName => $constantValue) {
-	    if (strpos($constantName, 'ERROR_') === 0) {
-		if ($this->_errorCode & $constantValue) {
-		    $codes[] = $constantName;
+
+	/* get_defined_constants() arrived in 4.1? */
+	if (function_exists("get_defined_constants")) {
+	    foreach (get_defined_constants() as $constantName => $constantValue) {
+		if (strpos($constantName, 'ERROR_') === 0) {
+		    if ($this->_errorCode & $constantValue) {
+			$codes[] = $constantName;
+		    }
 		}
 	    }
+	} else {
+	    $codes[] = "UnknownErrorName";
 	}
 
 	$results = array();

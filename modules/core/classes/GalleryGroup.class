@@ -24,14 +24,19 @@
  * A group is a set of GalleryUsers that can be treated as if they were a
  * single user.  This is very useful for managing permissions.
  *
- * @gallery metainfo 1.0
+ * @g2 <class-name>GalleryGroup</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
  * 
  * @version $Id$
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-class GalleryGroup extends GalleryNucleus {
+class GalleryGroup_core extends GalleryEntity {
 	
     /*
      * ****************************************
@@ -42,27 +47,17 @@ class GalleryGroup extends GalleryNucleus {
     /**
      * The group name
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_SMALL
-     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @g2 <member>
+     * @g2   <member-name>groupName</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2   <indexed/>
+     * @g2 </member>
      *
-     * @var string $_name
+     * @var string $_groupName
      * @access private
      */
-    var $_name;
-
-    /**
-     * The set of users in this group
-     *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_MAP
-     * @gallery flag STORAGE_TYPE_INTEGER
-     *
-     * @var object GalleryList $_users
-     * @access private
-     */
-    var $_users;
+    var $_groupName;
 
     /*
      * ****************************************
@@ -71,164 +66,24 @@ class GalleryGroup extends GalleryNucleus {
      */
 
     /**
-     * Constructor
+     * Return a map of group names => ids
      *
-     * Create a new blank instance, and register any members that need to
-     * persist in our storage.
+     * You can specify how many group names to list, and where the windows is
+     * in the list of all groups.
      *
-     * @access public
-     * @param string the id of an object to be loaded
+     * @param int the number of usernames desired
+     * @param int the start of the range
      */
-    function GalleryGroup() {
-	$this->GalleryNucleus();
-    }
-
-    /**
-     * Create a new instance of this GalleryUser in the persistent store
-     *
-     * @return object GalleryStatus a status code
-     */
-    function create() {
-
-	/* GalleryUsers have no parent */
-	return parent::create(null);
-    }
-
-    /**
-     * Add the user to this group
-     *
-     * @param int the id of the GalleryUser
-     * @return object GalleryStatus a status code
-     */
-    function addUser($userId) {
+    function getGroupnames($count=null, $offset=null) {
 	global $gallery;
-	if (empty($userId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
 
-	list($ret, $user) = $gallery->loadNucleusById($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$users =& $this->getUsers();
-	$users->set($user->getId(), 1);
-
-	$groups =& $user->getGroups();
-	$groups->set($this->getId(), 1);
-
-	$ret = $user->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return $this->save();
+	return $gallery->search(
+	    array('select' => '[GalleryGroup::id] [GalleryGroup::groupName]',
+		  'limit' => array('count' => $count,
+				   'offset' => $offset)));
     }
 
-    /**
-     * Remove the user from this group
-     *
-     * @param int the id of the GalleryUser
-     * @return object GalleryStatus a status code
-     */
-    function removeUser($userId) {
-	global $gallery;
-	if (empty($userId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	list($ret, $user) = $gallery->loadNucleusById($userId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$users =& $this->getUsers();
-	$users->remove($userId);
-
-	$groups =& $user->getGroups();
-	$groups->remove($this->getId());
-
-	$ret = $user->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return $this->save();
-    }
-
-    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
-    
-    /**
-     * Return the meta class information about this class
-     *
-     * @return array member => array(type, class)
-     */
-    function getMetaInfo() {
-        $meta = parent::getMetaInfo();
-        $meta['members']['users'] = array(
-            'class' => 'GalleryGroup',
-            'type' => STORAGE_TYPE_MAP |
-                      STORAGE_TYPE_INTEGER);
-        $meta['members']['name'] = array(
-            'class' => 'GalleryGroup',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_SMALL);
-        $meta['version'] = array('major' => 1, 'minor' => 0);
-    
-        return $meta;
-    }
-    
-    /**
-     * Set the value of name
-     * 
-     * @param string the new value for name
-     * @access public
-     */
-    function setName($value) {
-        assert('isset($value)');
-        $this->_name = $value;
-        $this->setModifiedFlag('name', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of name
-     * 
-     * @access public
-     * @return string the current value of name
-     */
-    function getName() {
-        if (!isset($this->_name)) {
-            return null;
-        }
-        return $this->_name;
-    }
-    
-    /**
-     * Get a reference to the users object
-     * 
-     * @access public
-     * @return object GalleryMap the users instance
-     */
-    function &getUsers() {
-        if (!($this->getLoadedFlag('users'))) {
-            global $gallery;
-            list($ret, $storage) = $gallery->getStorage();
-            /*
-             * Ignore bad return codes here because we don't want accessors to
-             * return status codes.  We'll have to hope that if the storage
-             * isn't set up properly the user finds out about it before she
-             * gets to this point
-             */
-            $this->_users = new GalleryMap();
-            $this->_users->setParentInfo($this, 'users');
-            $storage->loadMember($this, 'users', $this->_users);
-        }
-        return $this->_users;
-    }
-    
-    
-    /* END: Accessor Block.  DO NOT MODIFY! */
 }
+
+include(dirname(__FILE__) . '/interfaces/GalleryGroup.inc');
 ?>

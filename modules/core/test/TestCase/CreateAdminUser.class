@@ -10,7 +10,7 @@ class CreateAdminUserTestCase extends TestCase {
 	global $gallery;
 
 	$user = new GalleryUser();
-	$ret = $user->create();
+	$ret = $user->create('admin');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -23,9 +23,8 @@ class CreateAdminUserTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return $gallery->commitCache();
+	return GalleryStatus::success();
     }
 }
 
 ?>
-</pre>

@@ -1,0 +1,20 @@
+<?php
+
+class ConstructorTestCase extends TestCase {
+
+    function getIterations() {
+	return array(1000, 50000, 100000);
+    }
+
+    function getDescription() {
+	return 'Create a new GalleryEntity';
+    }
+
+    function testStart($iterations) {
+	for ($i = 0; $i < $iterations; $i++) {
+	    $entity = new GalleryEntity();
+	}
+	return GalleryStatus::success();
+    }
+}
+?>

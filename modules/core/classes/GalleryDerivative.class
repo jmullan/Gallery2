@@ -1,0 +1,303 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A container for a data source that Gallery manages.
+ *
+ * A container for any data that Gallery can manage.  Known
+ * implementations include ImageContainer, MovieContainer or
+ * UnknownContainer.
+ *
+ * @g2 <class-name>GalleryDerivative</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryDerivative_core extends GalleryChildEntity {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * What's the source of this derivative?  The source must be
+     * the id of another DataContainer.
+     *
+     * @g2 <member>
+     * @g2   <member-name>derivativeSourceId</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_derivativeSourceId
+     * @access private
+     */
+    var $_derivativeSourceId;
+
+    /**
+     * A sequence of commands used to derive this data from the original
+     *
+     * @g2 <member>
+     * @g2   <member-name>derivativeCommands</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>LARGE</member-size>
+     * @g2 </member>
+     *
+     * @var int $_derivativeCommands
+     * @access private
+     */
+    var $_derivativeCommands;
+
+    /**
+     * The size of the derived object
+     *
+     * @g2 <member>
+     * @g2   <member-name>derivativeSize</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <member-size>LARGE</member-size>
+     * @g2 </member>
+     *
+     * @var int $_derivativeSize
+     * @access private
+     */
+    var $_derivativeSize;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Delete this GalleryEntity
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	/*
+	 * XXX: Check the derivative relationship and expire any derivatives
+	 * that are dependent on this container.
+	 */
+
+	/* Delete myself */
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Expire our cache, and don't abort if this fails */
+	$ret = $this->expireCache();
+	    
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create a new GalleryDerivative
+     *
+     * @param int the id of the parent GalleryItem
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId) {
+
+	$ret = parent::create($parentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Break this derivative's dependencies
+     *
+     * This is used when the object's derivativeSource gets deleted
+     *
+     * @return object GalleryStatus a status code
+     */
+    function breakDerivativeDependency() {
+	if (!$this->getIsDerivative()) {
+	    /* Somebody thinks that we're a derivative, but we're not! */
+	    return GalleryStatus::error(ERROR_BAD_DATA_TYPE,
+					__FILE__, __LINE__);
+	}
+
+	/* Trash our cache */
+	$ret = $this->expireCache();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* We've got no source any more */
+	$this->setDerivativeSourceId(0);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the size of the derived object.  If it's a cacheable
+     * object and the cache is cleared, this will return the size
+     * that it *will* be once the cache is recreated.
+     * 
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               int the size of the object, -1 if unknown
+     */
+    function getSize() {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($platform->file_exists($filename)) {
+	    return $platform->filesize($filename);
+	} else {
+	    return -1;
+	}
+    }
+
+    /**
+     * Is the cache for this item still current?
+     *
+     * If the cache is expired, it can be rebuilt with rebuildCache()
+     * 
+     * @access public
+     * @return array object GalleryStatus a status code,
+     *               boolean false if the item is expired (ie, empty cache)
+     */
+    function isCacheCurrent() {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret, false);
+	}
+
+	list($ret, $path) = $this->getPath();
+	if ($ret->isError()) {
+	    return array($ret, false);
+	}
+
+	$bool = $platform->file_exists($path);
+	return array(GalleryStatus::success(), $bool);
+    }
+
+    /**
+     * Expire the cache.
+     * 
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function expireCache() {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $path) = $this->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($platform->file_exists($path)) {
+	    $platform->unlink($path);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Rebuild the cache.  Subclasses should override this method to rebuild
+     * derivatives in a meaningful way.
+     * 
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function rebuildCache() {
+
+	/*
+	 * The only useful thing we can do at this level is to check to see if
+	 * we're a broken derivative.  Subclasses that override this method can
+	 * use this behaviour.
+	 */
+	$sourceId = $this->getDerivativeSourceId();
+	if (empty($sourceId)) {
+	    return GalleryStatus::error(ERROR_BROKEN_DERIVATIVE,
+					__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the full path to the data file.
+     *
+     * @access public
+     * @return array object GalleryStatus a status code,
+     *               string a path where children can store their data files
+     */
+    function getPath() {
+	global $gallery;
+
+	/* Derivatives live in the cache directory */
+	$cacheDir = $gallery->getConfig('core.directory.cache');
+	$firstDigitOfId = substr($this->getId(), 0, 1);
+	$cacheDir = $cacheDir . '/' . $firstDigitOfId;
+	
+	/* Make sure that the cache dir exists, create it if necessary */
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+	
+	if ($platform->file_exists($cacheDir)) {
+	    if (!$platform->is_dir($cacheDir)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	} else {
+	    if (!$platform->mkdir($cacheDir)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	}
+
+	/* Our file is our id -- it will be unique */
+	$cacheFile = $cacheDir . '/' . $this->getId();
+	
+	return array(GalleryStatus::success(), $cacheFile);
+    }
+
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryDerivative.inc');
+?>

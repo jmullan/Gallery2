@@ -10,12 +10,7 @@ class CreateAlbumItemTestCase extends TestCase {
 	global $gallery;
 
 	print("Creating new album item\n");
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$album = new AlbumItem();
+	$album = new GalleryAlbumItem();
 	$ret = $album->createRoot("test", $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -30,22 +25,9 @@ class CreateAlbumItemTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Leggo of our locks */
-	$ret = $gallery->unlock();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 	
 	return GalleryStatus::success();
     }
 }
 
 ?>
-</pre>

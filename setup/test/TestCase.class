@@ -14,9 +14,30 @@ class TestCase {
     function getDescription() {
     }
 
-    function start() {
+    function getIterations() {
+	return array();
+    }
+
+    function start($iterations) {
 	$this->traceStart();
-	$ret = $this->testStart();
+
+	$this->startTiming($iterations);
+	
+	if ($iterations > 1) {
+	    /* Temporarily turn off debug mode */
+	    global $gallery;
+	    $debug = $gallery->getDebug();
+	    $gallery->setDebug(false);
+	}
+
+	$ret = $this->testStart($iterations);
+
+	if ($iterations > 1) {
+	    $gallery->setDebug($debug);
+	}
+	    
+	$this->stopTiming();
+	$this->timingReport();
 	$this->traceStop();
 
 	return $ret->wrap(__FILE__, __LINE__);
@@ -36,9 +57,6 @@ class TestCase {
 	$ret = $this->testCleanup();
 	$this->traceStop();
 
-	/* Release any locks the tests left hanging */
-	$gallery->unlock();
-	
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
@@ -70,12 +88,14 @@ class TestCase {
     }
 
     function startTiming($iterations) {
-	$this->_startTime = time();
+	list ($usec, $sec) = explode(" ", microtime());
+	$this->_startTime = ((float)$usec + (float)$sec);
 	$this->_iterations = $iterations;
     }
 
     function stopTiming() {
-	$this->_stopTime = time();
+	list ($usec, $sec) = explode(" ", microtime());
+	$this->_stopTime = ((float)$usec + (float)$sec);
     }
 
     function timingReport() {

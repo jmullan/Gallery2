@@ -1,0 +1,27 @@
+<?php
+
+class ConfigureStoreTestCase extends TestCase {
+
+    function getDescription() {
+	global $gallery;
+	$config = $gallery->getConfig('storage.config');
+	return "Configure the G2 database called '$config[database]'";
+    }
+
+    function useDefaultDatabase() {
+	return true;
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return $storage->configureStore();
+    }
+}
+
+?>

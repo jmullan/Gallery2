@@ -19,9 +19,23 @@
  */
 
 /**
+ * Read lock type
+ *
+ * @constant LOCK_READ
+ */
+define('LOCK_READ', 1);
+
+/**
+ * Write lock type
+ *
+ * @constant LOCK_WRITE
+ */
+define('LOCK_WRITE', 2);
+
+/**
  * Interface to the locking mechanism
  *
- * This object provides the hooks for locking GalleryNucleus objects
+ * This object provides the hooks for locking GalleryEntity objects
  *
  * @version $Id$
  * @package GalleryCore
@@ -38,48 +52,54 @@ class GalleryLock {
     var $_isLockAcquired;
 
     /**
+     * My lock id
+     *
+     * @var int _lockId
+     * @access private
+     */
+    var $_lockId;
+
+    /**
+     * The ids of the entities that are held by this lock
+     *
+     * @var array int _entityIds
+     * @access private
+     */
+    var $_entityIds;
+
+    /**
+     * The type of this lock (read or write)
+     *
+     * @var int _lockType
+     * @access private
+     */
+    var $_lockType;
+
+    /**
      * Constructor
      */
     function GalleryLock() {
 	$this->_isLockAcquired = false;
+	$this->_entityIds = null;
+	$this->_lockId = null;
+	$this->_lockType = null;
     }
 
     /**
-     * Lock a set of objects
-     * 
-     * Lock a set of objects such that:
-     * o There will never be deadlocks
-     * o There will never be locks left hanging
+     * Specify the lock id, and the set of ids are now held with this lock
      *
+     * This should only ever get called by the GalleryStorage strategy
+     * 
      * @access public
-     * @abstract
-     * @param array an array of GalleryNucleus objects
-     * @param integer how long we should wait to acquire locks
-     * @return object GalleryLock an instance of GalleryLock that holds the locks
+     * @param integer the lock id
+     * @param integer the lock type
+     * @param array the ids of the entities that are locked
      */
-    function acquire($timeout) {
-	global $gallery;
-	list($ret, $storage) = $gallery->getStorage();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $storage->acquireLock($timeout);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function acquireLock($lockId, $lockType, $entityIds) {
+	$this->_lockId = $lockId;
+	$this->_lockType = $lockType;
+	$this->_entityIds = $entityIds;
 	$this->_isLockAcquired = true;
-
-	/*
-	 * Register a reference to this object with the release routine.  If we
-	 * don't use a reference, then the release method will get called on an
-	 * old copy of this instance and we'll wind up unlocking multiple times
-	 * (not fatal, but annoying).
-	 */
-	register_shutdown_function(array(&$this, 'release'));
-
-	return GalleryStatus::success();
     }
 
     /**
@@ -89,6 +109,63 @@ class GalleryLock {
      */
     function isLocked() {
 	return $this->_isLockAcquired;
+    }
+
+    /**
+     * Get the lock id
+     *
+     * @return integer the lock id
+     */
+    function getId() {
+	return $this->_lockId;
+    }
+
+    /**
+     * What kind of lock are we holding?
+     *
+     * @return integer the lock type
+     */
+    function getLockType() {
+	return $this->_lockType;
+    }
+
+    /**
+     * What do we have locked?
+     *
+     * @return integer the lock type
+     */
+    function getEntityIds() {
+	return $this->_entityIds;
+    }
+
+    /**
+     * Have we acquired a lock of any kind?
+     *
+     * @return boolean true if locked
+     */
+    function isLocked() {
+	return $this->_isLockAcquired;
+    }
+
+    /**
+     * Merge another lock's data into our own
+     *
+     * @return object GalleryStatus a status code
+     */
+    function merge(&$otherLock) {
+	if ($otherLock->_lockType != $this->_lockType) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Grab the other lock's data */
+	$this->_entityIds = array_merge($this->_entityIds, $otherLock->_entityIds);
+
+	/* Deactivate the other lock */
+	$otherLock->_isLockAcquired = false;
+	$otherLock->_entityIds = null;
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -111,13 +188,15 @@ class GalleryLock {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = $storage->releaseLock();
+	$ret = $storage->releaseLock($this);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_isLockAcquired = null;
 	$this->_lockId = null;
+	$this->_lockType = null;
+	$this->_entityIds = null;
 
 	return GalleryStatus::success();
     }

@@ -1,0 +1,263 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Thumbnail image type
+ *
+ * @constant IMAGE_TYPE_THUMBNAIL
+ */
+define("IMAGE_TYPE_THUMBNAIL", 1);
+
+/**
+ * Resized image type
+ *
+ * @constant IMAGE_TYPE_RESIZE
+ */
+define("IMAGE_TYPE_RESIZE", 2);
+
+/**
+ * A DataContainer for images
+ *
+ * A container for a single image.  This image may or may not be
+ * cacheable (depending on whether or not it's a derivative image).
+ *
+ * @g2 <class-name>GalleryDerivativeImage</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryDerivativeImage_core extends GalleryDerivative {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The width of the image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>width</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_width
+     * @access private
+     */
+    var $_width;
+
+    /**
+     * The height of the image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>height</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_height
+     * @access private
+     */
+    var $_height;
+
+    /**
+     * The type of this image.  One of:
+     *    IMAGE_TYPE_THUMBNAIL
+     *    IMAGE_TYPE_RESIZE
+     *
+     * @g2 <member>
+     * @g2   <member-name>imageType</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     */
+    var $_imageType;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Create a new GalleryDerivativeImage
+     *
+     * @param int the id of the parent GalleryItem
+     * @param int the type of derivative image
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId, $imageType) {
+	global $gallery;
+
+	/* We can't have more than one thumbnail */
+	if ($imageType == IMAGE_TYPE_THUMBNAIL) {
+	    list($ret, $searchResults) =
+		$gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
+				   'where' => ('[GalleryChildEntity::parentId]=? AND ' .
+					       '[GalleryDerivativeImage::imageType]=?')),
+			     array($parentId, $imageType));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $result = $searchResults->nextResult();
+	    if ($result[0] > 0) {
+		return GalleryStatus::error(ERROR_COLLISION,
+					    __FILE__, __LINE__);
+	    }
+	}
+
+	$ret = parent::create($parentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Save our image type */
+	$this->setImageType($imageType);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Rebuild the cache.
+     *
+     * Only applicable if isDerative() returns true.  The commands
+     * this item understands follow this EBNF grammar:
+     *
+     * COMMAND   = <OPERATION> | <OPERATION> ; <COMMAND>
+     * OPERATION = ROTATE | SCALE | RESIZE | CROP
+     * ROTATE    = "rotate" ("-90" | "180" | "90")
+     * CROP      = "crop" NUMBER NUMBER NUMBER NUMBER
+     * RESIZE    = "resize" NUMBER NUMBER 
+     * SCALE     = "scale" NUMBER
+     * 
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function rebuildCache() {
+	global $gallery;
+	list($ret, $graphics) = $gallery->getGraphics();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = parent::rebuildCache();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Make sure the source is current */
+	$sourceId = $this->getDerivativeSourceId();
+	list($ret, $source) = $gallery->loadEntityById($sourceId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the path of the source for the next operation */
+	list($ret, $sourcePath) = $source->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $destPath) = $this->getPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$commands = split(';', $this->getDerivativeCommands());
+	foreach ($commands as $command) {
+	    $pieces = split(' ', $command);
+	    switch (array_shift($pieces)) {
+	    case 'rotate':
+		if (sizeof($pieces) != 1) {
+		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						__FILE__, __LINE__);
+		}
+		
+		$ret = $graphics->rotateImage($sourcePath,
+					      $destPath,
+					      $pieces[0]);
+		break;
+
+	    case 'crop':
+		if (sizeof($pieces) != 4) {
+		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						__FILE__, __LINE__);
+		}
+		
+		$ret = $graphics->cropImage($sourcePath,
+					    $destPath,
+					    $pieces[0],
+					    $pieces[1],
+					    $pieces[2],
+					    $pieces[3]);
+		break;
+
+	    case 'resize':
+		if (sizeof($pieces) != 2) {
+		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						__FILE__, __LINE__);
+		}
+		
+		$ret = $graphics->resizeImage($sourcePath,
+					      $destPath,
+					      $pieces[0],
+					      $pieces[1]);
+		break;
+
+	    case 'scale':
+		if (sizeof($pieces) != 1) {
+		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						__FILE__, __LINE__);
+		}
+		
+		$ret = $graphics->scaleImage($sourcePath,
+					     $destPath,
+					     $pieces[0]);
+		break;
+
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * After the first operation, the source for the next operation is the
+	     * same file as the original.
+	     */
+	    $sourcePath = $destPath;
+	}
+
+	return GalleryStatus::success();
+    }
+
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryDerivativeImage.inc');
+?>

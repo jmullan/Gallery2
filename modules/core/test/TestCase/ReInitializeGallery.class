@@ -3,8 +3,8 @@
 class ReInitializeGalleryTestCase extends TestCase {
 
     function getDescription() {
-	return "Reset the database and the gallery data area.  " .
-		"Create root album, anonymous user.";
+	return 'Reset the database and the gallery data area.  ' .
+		'Create root album, anonymous user.';
     }
 
     function useDefaultDatabase() {
@@ -12,13 +12,13 @@ class ReInitializeGalleryTestCase extends TestCase {
     }
 
     function getDependencies() {
-	return array("DropDatabase",
-		     "CreateDatabase",
-		     "CreateSchema",
-		     "EmptyGallery",
-		     "CreateAlbumItem",
-		     "CreateAnonymousUser",
-		     "CreateAdminUser");
+	return array('RemoveStore',
+		     'CreateStore',
+		     'ConfigureStore',
+		     'EmptyGallery',
+		     'CreateAlbumItem',
+		     'CreateAnonymousUser',
+		     'CreateAdminUser');
     }
 
     function testStart() {

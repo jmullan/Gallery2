@@ -72,10 +72,9 @@ class Gallery {
     var $_graphics;
 
     /**
-     * Storage for all session variables.  Contains an instance
-     * of the GalleryMap class.
+     * Storage for all session variables.  
      *
-     * @var object GalleryMap $_session
+     * @var array $_session
      * @access private
      */
     var $_session;
@@ -88,23 +87,6 @@ class Gallery {
      */
     var $_storage;
 
-    /**
-     * Our lock object
-     *
-     * @var object GalleryLock $_lock
-     * @access private
-     */
-    var $_lock;
-
-    /**
-     * An associative array mapping GalleryItem ids to unique GalleryItem
-     * instances.
-     *
-     * @var array $_nucleusCache
-     * @access private
-     */
-    var $_nucleusCache;
-    
     /**
      * An instance of the GalleryPlatform class
      *
@@ -145,6 +127,14 @@ class Gallery {
      * @access private
      */
     var $_timeLimit;
+
+    /**
+     * A list of all the locks that have been acquired during this request
+     *
+     * @var array $_locks
+     * @access private
+     */
+    var $_locks;
     
     /*
      * ****************************************
@@ -157,7 +147,10 @@ class Gallery {
      *
      */
     function Gallery() {
-	$this->_nucleusCache = array();
+	$this->_locks = array();
+
+	/* Set up a shutdown function to release any hanging locks. */
+	register_shutdown_function(array($this, '_releaseHangingLocks'));
     }
 
     /**
@@ -176,280 +169,82 @@ class Gallery {
     function getIdByPath($path) {
 	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
-	    return array($ret, null);
-	}
-	
-	return $storage->getIdByPath($path);
-    }
-
-    /**
-     * Add the GalleryNucleus to the cache.
-     *
-     * @access public
-     * @param object GalleryNucleus a reference to the GalleryNucleus to cache
-     * @return object GalleryStatus a status code
-     */
-    function updateCachedNucleus($nucleus) {
-
-	/*
-	 * We want to make sure that we don't have parallel versions of objects
-	 * floating around and getting modified.  So do a little non OO magic
-	 * here.  Tag a special serial number onto the object in the cache so
-	 * that when we receive modifications to it later we can be sure that
-	 * the user is always working with the latest copy of the object.
-	 */
-	$id = $nucleus->getId();
-
-	/*
-	 * The only way that the user can call updateCachedNucleus() when there
-	 * isn't a nucleus already in the cache is the case where they got a
-	 * nucleus, then called lockWorld() which flushes the cache.  In that
-	 * case, they're dealing with an object that's out of date, so fail.
-	 */
-	if (!isset($this->_nucleusCache[$id])) {
-	    return GalleryStatus::error(ERROR_OBSOLETE_DATA,
-					__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/*
-	 * Make sure that the object we're caching is derived from the most
-	 * current version that we've got in the cache.  If it *isn't* then 
-	 * we've got multiple parallel versions of objects in memory getting
-	 * modified concurrently (which will lead to database errors later).
-	 * The serial number of the object we're updating must match the serial
-	 * number of the version that's in the cache currently.
+	 * XXX: do this in applogic, not in the storage class.
 	 */
-	$old = $this->_nucleusCache[$id];
-	if ($old->_cacheSerial != $nucleus->_cacheSerial) {
-	    return GalleryStatus::error(ERROR_OBSOLETE_DATA,
-					__FILE__, __LINE__);
-	}
-
-	/*
-	 * The object being updated matches the one in the cache, so go ahead
-	 * and update the cached copy and bump the serial number.
-	 */
-	$nucleus->_cacheSerial++;
-	$this->_nucleusCache[$id] = $nucleus;
-	return GalleryStatus::success();
     }
 
     /**
-     * Insert a new nucleus into the cache
+     * Load the GalleryEntity with the id specified
      *
-     * This blows away any copy of the same nucleus that is already in the
-     * cache.
-     *
-     * @param object GalleryNucleus a reference to the GalleryNucleus to cache
+     * @param int the id of the GalleryEntity to load
+     * @return array object GalleryStatus a status code, object GalleryEntity
      */
-    function cacheNucleus(&$nucleus) {
-	$id = $nucleus->getId();
-	$nucleus->_cacheSerial = 0;
-	$this->_nucleusCache[$id] =& $nucleus;
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Commit any cached changes to the database
-     *
-     * @return object GalleryStatus a status code
-     */
-    function commitCache() {
-	global $gallery;
-
-	list($ret, $storage) = $gallery->getStorage();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	foreach (array_keys($this->_nucleusCache) as $key) {
-	    $nucleus =& $this->_nucleusCache[$key];
-
-	    if ($nucleus->testPersistentFlag(STORAGE_FLAG_MARKED_FOR_DELETION)) {
-		if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		    /* Created AND deleted -- ignore it */
-		}
-		$ret = $storage->deleteNucleus($nucleus);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    } else if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
-		       $nucleus->isModified()) {
-		$ret = $storage->saveNucleus($nucleus);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-	    }
-	}
-
-	/*
-	 * Empty out the cache.  For some reason that I don't quite understand,
-	 * if we don't do this then objects that have been saved don't get
-	 * their flags updated correctly.  This is probably indicative of a
-	 * deeper bug, but for now let's just take the easy way out and force
-	 * objects to be reloaded, if they're still needed.
-	 */
-	$this->_nucleusCache = array();
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Are there modified entries still in the cache? 
-     *
-     * @return bool true if yes
-     */
-    function isCacheUncommitted() {
-	foreach (array_keys($this->_nucleusCache) as $key) {
-	    $nucleus =& $this->_nucleusCache[$key];
-
-	    if ($nucleus->testPersistentFlag(STORAGE_FLAG_MARKED_FOR_DELETION) ||
-		    $nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
-		    $nucleus->isModified()) {
-
-		return true;
-	    }
-	}
-
-	return false;
-    }
-
-    /**
-     * Load the GalleryNucleus with the id specified
-     *
-     * Try to get this value from the cache.  If it's not in the cache, then
-     * get it from the persistent store 
-     *
-     * @param int the id of the GalleryNucleus to load
-     * @return array object GalleryStatus a status code, object GalleryNucleus
-     */
-    function loadNucleusById($id) {
+    function loadEntityById($id) {
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
 			 null);
 	}
 
-	/* See if we already have a cached instance, use it if so */
-	if (!empty($this->_nucleusCache[$id])) {
-	    return array(GalleryStatus::success(),
-			 $this->_nucleusCache[$id]);
-	}
-
-	list($ret, $nucleus) = $this->loadNucleusByIdNoCache($id);
+	/* Load the entity from our persistent store */
+	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
-	    return array($ret, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Add this item to the cache */
-	$this->cacheNucleus($nucleus);
-	
-	return array($ret, $nucleus);
+	return $storage->loadEntity($id);
     }
 
     /**
-     * Return the appropriate object directly from the persistent store
+     * Delete the entity with the given id 
      *
-     * Bypass the cache to read the object directly from the persistent store.
-     * Save the object in the cache after loading.
-     *
-     * @param int the id of the GalleryNucleus object
-     * @return array object GalleryStatus a status code, object GalleryNucleus
-     * @access private
+     * @param int the id of a GalleryEntity to delete
+     * @return object GalleryStatus a status code 
      */
-    function loadNucleusByIdNoCache($id) {
+    function deleteEntityById($id) {
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
 			 null);
 	}
-	
-	/* Load the nucleus from our persistent store */
-	list($ret, $storage) = $this->getStorage();
-	if ($ret->isError()) {
-	    return array($ret, null);
-	}
 
-	list($ret, $nucleus) = $storage->loadNucleus($id);
-	if ($ret->isError()) {
-	    return array($ret, null);
-	}
-
-	/*
-	 * The storage object caches data internally on loads.  The only way to
-	 * preserve that data across lookups is to keep a copy of the storage
-	 * object after calling loadNucleus() with it.
-	 */
-	$this->_storage = $storage;
-
-	return array(GalleryStatus::success(), $nucleus);
-    }
-
-    /**
-     * Delete a GalleryNucleus from the persistent store
-     *
-     * @param int the id of the nucleus
-     * @return object GalleryStatus a status code
-     */
-    function deleteNucleusById($id) {
-	if (empty($id)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	list($ret, $nucleus) = $this->loadNucleusById($id);
+	list ($ret, $lockId) = $this->acquireWriteLock($id);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	return $nucleus->delete();
+	list ($ret, $entity) = $this->loadEntityById($id);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $entity->delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $this->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
-     * Search the persistent store for the target values matching the given criteria
-     *
-     * This is a flexible and powerful search mechanism.  You specify which
-     * class members you wish to search for, how you want to search them, and
-     * which class members you want returned.
-     *
-     * Right now we do a logical AND of all criteria.  Later on we should
-     * extend this.
-     *
-     * Example criteria:
-     * array(array('GalleryNucleus::parentId',
-     *             'EXACT',
-     *             $parentId),
-     *       array('FileSystemNucleus::pathComponent',
-     *             'EXACT',
-     *             $path));
-     *
-     * Comparators can be 'EXACT' or 'CONTAINS'
-     *
-     * Example target:
-     * array('GalleryNucleus::id')
-     *
-     * Example modifiers:
-     * SEARCH_COUNT          -- return only the number of hits
-     * SEARCH_LIMIT #        -- return only the first x hits
-     * SEARCH_ORDER FileSystemNucleus::pathComponent SEARCH_DIRECTION_UP
-     *                       -- sort by path compnent
-     *
-     * @access public
-     * @param array the search criteria
-     * @param array the target values (default GalleryNucleus::id)
-     * @param array the modifiers
-     * @return array object GalleryStatus a status code,
-     *               array a list of target values
+     * @see GalleryStorage::search()
      */
-    function search($criteria,
-		    $target=array('GalleryNucleus::id'),
-		    $modifiers=array()) {
+    function search($query, $data=array()) {
 	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	return $storage->search($criteria, $target, $modifiers);
+	return $storage->search($query, $data);
     }
 
     /**
@@ -518,6 +313,10 @@ class Gallery {
      *               object GalleryGraphics the active image toolkit
      */
     function getGraphics() {
+
+	/*
+	 * Create the graphics object on demand.
+	 */
 	if (empty($this->_graphics)) {
 	    $type = $this->getConfig('graphics.type');
 	    $config = $this->getConfig('graphics.config');
@@ -557,29 +356,14 @@ class Gallery {
     /**
      * Get the Gallery session object.
      *
-     * Return a reference to the unique Gallery session object
-     * (implemented as an instance of the GalleryMap class).  Any
-     * changes made to this object will be saved in the session.
+     * Return a reference to the unique Gallery session object.  Any changes
+     * made to this object will be saved in the session.
      * 
      * @access public
-     * @return object GalleryMap the Gallery session map
+     * @return array session information
      */
     function &getSession() {
 	return $this->_session;
-    }
-
-    /**
-     * Set the Gallery session object.
-     *
-     * Assign a reference to the unique Gallery session object
-     * (implemented as an instance of the GalleryMap class).
-     * 
-     * @param object GalleryMap the Gallery session map
-     * @access public
-     */
-    function setSession(&$session) {
-	assert('!empty($session)');
-	$this->_session =& $session;
     }
 
     /**
@@ -589,13 +373,13 @@ class Gallery {
      * 
      * @access public
      * @return array object GalleryStatus a status code
-     *               object GalleryMap the Gallery platform map
+     *               object GalleryPlatform the Gallery platform object
      */
     function getPlatform() {
 	if (empty($this->_platform)) {
 	    list($ret, $platform) = GalleryPlatformFactory::newInstance('unix');
 	    if ($ret->isError()) {
-		return array($ret, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $this->_platform = $platform;
 	}
@@ -604,78 +388,243 @@ class Gallery {
     }
 
     /**
-     * Lock the entire Gallery
+     * Read Lock one or more objects
      *
-     * Use the active locking mechanism to lock the entire Gallery.  Then,
-     * traverse the tree and refresh any objects that we have in memory.  The
-     * result of this call is that the entire tree is in sync with the
-     * persistent store, and until unlock is called, no one else can
-     * change it.
-     *
-     * Use register_shutdown_function() to register the unlock() method so
-     * that we can be sure that we won't accidentally leave the world locked.
-     * 
      * @access public
+     * @param array ids to lock
      * @param integer how long to wait for the lock before giving up
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               int the lock id
      */
-    function lockWorld($timeout=10) {
-	/*
-	 * If we already have a lock, fail.
-	 */
-	if (!empty($this->_lock) && $this->_lock->isLocked()) {
-	    return GalleryStatus::error(ERROR_ILLEGAL_LOCK,
-					__FILE__, __LINE__);
+    function acquireReadLock($ids, $timeout=10) {
+	list ($ret, $storage) = $this->getStorage();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $lock) =
+	    $storage->acquireReadLock($ids, $timeout);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/*
-	 * Make and acquire a new lock.
-	 */
-	$this->_lock = new GalleryLock();
-	return $this->_lock->acquire($timeout);
-
-	/*
-	 * Flush the nucleus cache, since everything inside it cannot
-	 * be guaranteed to be up to date.
-	 */
-	$this->_nucleusCache = array();
+	$lockId = $lock->getId();
+	$this->_locks[$lockId] = $lock;
+	return array($ret, $lockId);
     }
 
     /**
-     * Release the lock
+     * Acquire read locks on all the parents of this id.  This is useful when
+     * we're going to do a filesystem related operation and we want to make
+     * sure that the tree does not change out from underneath us.
      *
      * @access public
-     * @return object GalleryStatus a status code
+     * @param integer an id to lock
+     * @param integer how long to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               object GalleryLock a lock
      */
-    function unlock() {
-	if (!empty($this->_lock)) {
+    function acquireReadLockParents($id, $timeout=10) {
+	global $gallery;
 
-	    /* Check to see if we've committed everything */
-	    if ($this->isCacheUncommitted()) {
-		return GalleryStatus::error(ERROR_UNCOMMITTED_DATA,
-					    __FILE__, __LINE__);
+	$lock = null;
+	$current = $id;
+	while (true) {
+	    list ($ret, $searchResults) = 
+		$gallery->search(array('select' => '[GalleryChildEntity::parentId]',
+				       'where' => ('[GalleryChildEntity::id] = ? ')),
+				 array($current));
+	    if ($ret->isError()) {
+		if (isset($lock)) {
+		    $lock->release();
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    if ($searchResults->resultCount() == 0) {
+		/* This should never happen! */
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						  __FILE__, __LINE__));
+	    }
+
+	    /* Extract the parent id */
+	    while ($result = $searchResults->nextResult()) {
+		$current = $result[0];
+	    }
+
+	    if ($current == null) {
+
+		/* No parent -- we're at the root */
+		if ($lock == null) {
+		    $lock = new GalleryLock();
+		}
+		break;
+	    }
+
+	    /* Lock the parent */
+	    list ($ret, $newLock) = $this->acquireReadLock($current, $timeout);
+	    if ($ret->isError()) {
+		if (isset($lock)) {
+		    $lock->release();
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /* Merge the locks together. */
+	    if (isset($lock)) {
+		$ret = $lock->merge($newLock);
+		if ($ret->isError()) {
+		    $lock->release();
+		    $newLock->release();
+		}
+	    } else {
+		$lock = $newLock;
 	    }
 	    
-	    $ret = $this->_lock->release();
+	    /* Then lock all ancestors of the parent */
+	    list ($ret, $newLock) = $this->acquireReadLockParents($current, $timeout);
+	    if ($ret->isError()) {
+		if (isset($lock)) {
+		    $lock->release();
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /* Merge the locks together. */
+	    $ret = $lock->merge($newLock);
+	    if ($ret->isError()) {
+		$lock->release();
+		$newLock->release();
+	    }
+	}
+
+	$lockId = $lock->getId();
+	$this->_locks[$lockId] = $lock;
+	return array(GalleryStatus::success(), $lockId);
+    }
+
+    /**
+     * Return true if the given id is read locked
+     *
+     * @access public
+     * @param int an entity id
+     * @return boolean true if the entity is read locked
+     */
+    function isReadLocked($id) {
+	foreach (array_keys($this->_locks) as $lockId) {
+	    $lock =& $this->_locks[$lockId];
+
+	    if ($lock->getLockType() != LOCK_READ) {
+		continue;
+	    }
+
+	    $ids = $lock->getEntityIds();
+	    if (in_array($id, $ids)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * Write lock one or more objects
+     *
+     * @access public
+     * @param array ids to lock
+     * @param integer how long to wait for the lock before giving up
+     * @return array object GalleryStatus a status code
+     *               int the lock id
+     */
+    function acquireWriteLock($ids, $timeout=10) {
+	list ($ret, $storage) = $this->getStorage();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lock) =
+	    $storage->acquireWriteLock($ids, $timeout);
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$lockId = $lock->getId();
+	$this->_locks[$lockId] = $lock;
+	return array($ret, $lockId);
+    }
+
+    /**
+     * Return true if the given id is write locked
+     *
+     * @access public
+     * @param int an entity id
+     * @return boolean true if the entity is write locked
+     */
+    function isWriteLocked($id) {
+
+	foreach (array_keys($this->_locks) as $lockId) {
+	    $lock =& $this->_locks[$lockId];
+
+	    if ($lock->getLockType() != LOCK_WRITE) {
+		continue;
+	    }
+
+	    $ids = $lock->getEntityIds();
+	    if (in_array($id, $ids)) {
+		return true;
+	    }
+	}
+
+	return false;
+    }
+
+    /**
+     * Release the given lock(s)
+     *
+     * @param array a list of lock ids, or a single lock id
+     * @return object GalleryStatus a status code
+     */
+    function releaseLocks($lockIds) {
+	if (!is_array($lockIds)) {
+	    $lockIds = array($lockIds);
+	}
+
+	/* Check all parameters before starting to release locks */
+	foreach ($lockIds as $lockId) {
+	    if (!isset($this->_locks[$lockId])) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+	}
+
+	/* Now release all locks */
+	foreach ($lockIds as $lockId) {
+	    $ret = $this->_locks[$lockId]->release();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    unset($this->_locks[$lockId]);
 	}
 
 	return GalleryStatus::success();
     }
 
     /**
-     * Have we acquired a world lock?
+     * Release any hanging locks.
      *
-     * @return bool true if the world is locked
+     * This should only be invoked as a register_shutdown callback.
+     *
+     * @access private
      */
-    function isLocked() {
-	if (empty($this->_lock)) {
-	    return false;
+    function _releaseHangingLocks() {
+	foreach ($this->_locks as $lock) {
+	    if ($lock->isLocked()) {
+		/* Bitch at the developer! */
+		$this->debug("Lock id " . $lock->getId() . " was left hanging!");
+		$lock->release();
+	    }
 	}
-
-	return $this->_lock->isLocked();
     }
 
     /**
@@ -730,7 +679,7 @@ class Gallery {
     function guaranteeTimeLimit($limit) {
 	$now = time();
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < 5)) {
-	    $this->debug("[$now] can't guarantee $limit!");
+	    $this->debug("[$now] can't guarantee $limit -- extending!");
 	    $this->setTimeLimit($limit);
 	}
     }

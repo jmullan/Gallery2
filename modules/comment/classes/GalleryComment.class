@@ -20,17 +20,22 @@
 
 
 /**
- * A GalleryNucleus for comments.
+ * A GalleryEntity for comments.
  *
  * GalleryComments are basically just structured text objects.
  *
- * @gallery metainfo 1.0
+ * @g2 <class-name>GalleryComment</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
  *
  * @version $Id$
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-class GalleryComment extends GalleryNucleus {
+class GalleryComment_core extends GalleryChildEntity {
 
     /*
      * ****************************************
@@ -41,9 +46,11 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Name of the commenter
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     * @g2 <member>
+     * @g2   <member-name>name</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
      *
      * @var $_name
      * @access private
@@ -53,9 +60,11 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Email address of the commenter
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     * @g2 <member>
+     * @g2   <member-name>emailAddress</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
      *
      * @var $_emailAddress
      * @access private
@@ -65,9 +74,11 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Hostname of the commenter
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     * @g2 <member>
+     * @g2   <member-name>hostname</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
      *
      * @var $_hostname
      * @access private
@@ -77,10 +88,11 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Text of the comment
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_TEXT
-     * @gallery flag STORAGE_MODIFIER_INDEXED
-     * @gallery flag STORAGE_MODIFIER_FULLTEXT_INDEXED
+     * @g2 <member>
+     * @g2   <member-name>comment</member-name>
+     * @g2   <member-type>TEXT</member-type>
+     * @g2   <indexed/>
+     * @g2 </member>
      *
      * @var $_comment
      * @access private
@@ -90,8 +102,10 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Date of the comment
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_TIMESTAMP
+     * @g2 <member>
+     * @g2   <member-name>date</member-name>
+     * @g2   <member-type>TIMESTAMP</member-type>
+     * @g2 </member>
      *
      * @var $_date
      * @access private
@@ -104,207 +118,7 @@ class GalleryComment extends GalleryNucleus {
      * ****************************************
      */
 
-    /**
-     * Constructor
-     *
-     * Create a new blank instance, and register any members that need to
-     * persist in our storage.
-     *
-     * @access public
-     */
-    function CommentContainer() {
-	$this->DataContainer();
-    }
-
-    /**
-     * Create this item in our persistent store
-     *
-     * @param int the id of the GalleryItem parent
-     * @return object GalleryStatus a status code
-     */
-    function create($parentId) {
-	global $gallery;
-
-	if (empty($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	$ret = parent::create($parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list($ret, $parent) = $gallery->loadNucleusById($parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$comments =& $parent->getCommentIds();
-	$comments->push($this->getId());
-	return $parent->save();
-    }
-
-    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
-    
-    /**
-     * Return the meta class information about this class
-     *
-     * @return array member => array(type, class)
-     */
-    function getMetaInfo() {
-        $meta = parent::getMetaInfo();
-        $meta['members']['comment'] = array(
-            'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_TEXT |
-                      STORAGE_MODIFIER_FULLTEXT_INDEXED | STORAGE_MODIFIER_INDEXED);
-        $meta['members']['hostname'] = array(
-            'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_MEDIUM);
-        $meta['members']['date'] = array(
-            'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_TIMESTAMP);
-        $meta['members']['emailAddress'] = array(
-            'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_MEDIUM);
-        $meta['members']['name'] = array(
-            'class' => 'GalleryComment',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_MEDIUM);
-        $meta['version'] = array('major' => 1, 'minor' => 0);
-    
-        return $meta;
-    }
-    
-    /**
-     * Set the value of comment
-     * 
-     * @param string the new value for comment
-     * @access public
-     */
-    function setComment($value) {
-        assert('isset($value)');
-        $this->_comment = $value;
-        $this->setModifiedFlag('comment', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of comment
-     * 
-     * @access public
-     * @return string the current value of comment
-     */
-    function getComment() {
-        if (!isset($this->_comment)) {
-            return null;
-        }
-        return $this->_comment;
-    }
-    
-    /**
-     * Set the value of date
-     * 
-     * @param int the new value for date
-     * @access public
-     */
-    function setDate($value) {
-        assert('isset($value)');
-        $value = (int)$value;
-        $this->_date = $value;
-        $this->setModifiedFlag('date', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of date
-     * 
-     * @access public
-     * @return int the current value of date
-     */
-    function getDate() {
-        if (!isset($this->_date)) {
-            return null;
-        }
-        return $this->_date;
-    }
-    
-    /**
-     * Set the value of emailAddress
-     * 
-     * @param string the new value for emailAddress
-     * @access public
-     */
-    function setEmailAddress($value) {
-        assert('isset($value)');
-        $this->_emailAddress = $value;
-        $this->setModifiedFlag('emailAddress', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of emailAddress
-     * 
-     * @access public
-     * @return string the current value of emailAddress
-     */
-    function getEmailAddress() {
-        if (!isset($this->_emailAddress)) {
-            return null;
-        }
-        return $this->_emailAddress;
-    }
-    
-    /**
-     * Set the value of hostname
-     * 
-     * @param string the new value for hostname
-     * @access public
-     */
-    function setHostname($value) {
-        assert('isset($value)');
-        $this->_hostname = $value;
-        $this->setModifiedFlag('hostname', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of hostname
-     * 
-     * @access public
-     * @return string the current value of hostname
-     */
-    function getHostname() {
-        if (!isset($this->_hostname)) {
-            return null;
-        }
-        return $this->_hostname;
-    }
-    
-    /**
-     * Set the value of name
-     * 
-     * @param string the new value for name
-     * @access public
-     */
-    function setName($value) {
-        assert('isset($value)');
-        $this->_name = $value;
-        $this->setModifiedFlag('name', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of name
-     * 
-     * @access public
-     * @return string the current value of name
-     */
-    function getName() {
-        if (!isset($this->_name)) {
-            return null;
-        }
-        return $this->_name;
-    }
-    
-    
-    /* END: Accessor Block.  DO NOT MODIFY! */
 }
+
+include(dirname(__FILE__) . '/interfaces/GalleryComment.inc');
 ?>

@@ -26,14 +26,19 @@
  * must be implemented by a class that has a persistent store for
  * the relevant user data.
  *
- * @gallery metainfo 1.0
- * 
+ * @g2 <class-name>GalleryUser</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
  * @version $Id$
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-class GalleryUser extends GalleryNucleus {
+class GalleryUser_core extends GalleryEntity {
 	
     /*
      * ****************************************
@@ -44,10 +49,14 @@ class GalleryUser extends GalleryNucleus {
     /**
      * The User's username
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_SMALL
-     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @g2 <member>
+     * @g2   <member-name>username</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2   <indexed/>
+     * @g2   <unique/>
+     * @g2   <required/>
+     * @g2 </member>
      *
      * @var string $_username
      * @access private
@@ -57,9 +66,11 @@ class GalleryUser extends GalleryNucleus {
     /**
      * The User's full name
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     * @g2 <member>
+     * @g2   <member-name>fullname</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
      *
      * @var string $_fullname
      * @access private
@@ -69,9 +80,11 @@ class GalleryUser extends GalleryNucleus {
     /**
      * The User's password in a hashed form.
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_SMALL
+     * @g2 <member>
+     * @g2   <member-name>password</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
      *
      * @var string $_password
      * @access private
@@ -81,10 +94,12 @@ class GalleryUser extends GalleryNucleus {
     /**
      * The User's email address.
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_STRING
-     * @gallery flag STORAGE_MODIFIER_MEDIUM
-     * @gallery flag STORAGE_MODIFIER_INDEXED
+     * @g2 <member>
+     * @g2   <member-name>email</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2   <unique/>
+     * @g2 </member>
      *
      * @var string $_email
      * @access private
@@ -92,27 +107,17 @@ class GalleryUser extends GalleryNucleus {
     var $_email;
 
     /**
-     * Is the user a Gallery admininstrator?
+     * Is the user a Gallery administrator?
      *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_BOOLEAN
+     * @g2 <member>
+     * @g2   <member-name>isAdmin</member-name>
+     * @g2   <member-type>BOOLEAN</member-type>
+     * @g2 </member>
      *
      * @var boolean $_isAdmin
      * @access private
      */
     var $_isAdmin;
-
-    /**
-     * The set of groups this user belongs to
-     *
-     * @gallery persistent
-     * @gallery flag STORAGE_TYPE_MAP
-     * @gallery flag STORAGE_TYPE_INTEGER
-     *
-     * @var object GalleryList $_groups
-     * @access private
-     */
-    var $_groups;
 
     /*
      * ****************************************
@@ -121,27 +126,37 @@ class GalleryUser extends GalleryNucleus {
      */
 
     /**
-     * Constructor
-     *
-     * Create a new blank instance, and register any members that need to
-     * persist in our storage.
-     *
-     * @access public
-     * @param string the id of an object to be loaded
-     */
-    function GalleryUser() {
-	$this->GalleryNucleus();
-    }
-
-    /**
-     * Create a new instance of this GalleryUser in the persistent store
+     * Create a new instance of this user in the persistent store
      *
      * @return object GalleryStatus a status code
      */
-    function create() {
+    function create($username) {
+	global $gallery;
 
-	/* GalleryUsers have no parent */
-	return parent::create(null);
+	/* Check to see if we have a collision */
+	list($ret, $results) =
+	    $gallery->search(array('select' => 'COUNT([GalleryUser::id])',
+				   'where' => ('[GalleryUser::username]=?')),
+			     array($username));
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$result = $results->nextResult();
+	if ($result[0] > 0) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+	
+	/* We don't have a parent, so pass in null */
+	$ret = parent::create(null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->setUsername($username);
+	return GalleryStatus::success();
     }
 
     /**
@@ -161,264 +176,27 @@ class GalleryUser extends GalleryNucleus {
      */
     function changePassword($newPassword) {
 	$this->setPassword(md5($newPassword));
-	$this->save();
     }
 
     /**
-     * Add this user to the group id specified.
+     * Return a map of usernames => userids
      *
-     * @param int the id of the GalleryGroup
-     * @return object GalleryStatus a status code
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param int the number of usernames desired
+     * @param int the start of the range
      */
-    function addToGroup($groupId) {
+    function getUsernames($count=null, $start=null, $offset=null) {
 	global $gallery;
-	if (empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
 
-	list($ret, $group) = $gallery->loadNucleusById($groupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$groups =& $this->getGroups();
-	$groups->set($group->getId(), 1);
-
-	$users =& $group->getUsers();
-	$users->set($this->getId(), 1);
-
-	$ret = $group->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return $this->save();
+	return $gallery->search(
+	    array('select' => '[GalleryUser::id] [GalleryUser::userName]',
+		  'limit' => array('count' => $count,
+				   'offset' => $offset)));
     }
 
-    /**
-     * Add this user to the group id specified.
-     *
-     * @param int the id of the GalleryGroup
-     * @return object GalleryStatus a status code
-     */
-    function removeFromGroup($groupId) {
-	global $gallery;
-	if (empty($groupId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	list($ret, $group) = $gallery->loadNucleusById($groupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
-	$groups =& $this->getGroups();
-	$groups->remove($group->getId());
-
-	$users =& $group->getUsers();
-	$users->remove($this->getId());
-
-	$ret = $group->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return $this->save();
-    }
-
-    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
-    
-    /**
-     * Return the meta class information about this class
-     *
-     * @return array member => array(type, class)
-     */
-    function getMetaInfo() {
-        $meta = parent::getMetaInfo();
-        $meta['members']['username'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_SMALL);
-        $meta['members']['isAdmin'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_BOOLEAN);
-        $meta['members']['fullname'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_MEDIUM);
-        $meta['members']['password'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_SMALL);
-        $meta['members']['email'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_STRING |
-                      STORAGE_MODIFIER_INDEXED | STORAGE_MODIFIER_MEDIUM);
-        $meta['members']['groups'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_MAP |
-                      STORAGE_TYPE_INTEGER);
-        $meta['version'] = array('major' => 1, 'minor' => 0);
-    
-        return $meta;
-    }
-    
-    /**
-     * Set the value of email
-     * 
-     * @param string the new value for email
-     * @access public
-     */
-    function setEmail($value) {
-        assert('isset($value)');
-        $this->_email = $value;
-        $this->setModifiedFlag('email', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of email
-     * 
-     * @access public
-     * @return string the current value of email
-     */
-    function getEmail() {
-        if (!isset($this->_email)) {
-            return null;
-        }
-        return $this->_email;
-    }
-    
-    /**
-     * Set the value of fullname
-     * 
-     * @param string the new value for fullname
-     * @access public
-     */
-    function setFullname($value) {
-        assert('isset($value)');
-        $this->_fullname = $value;
-        $this->setModifiedFlag('fullname', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of fullname
-     * 
-     * @access public
-     * @return string the current value of fullname
-     */
-    function getFullname() {
-        if (!isset($this->_fullname)) {
-            return null;
-        }
-        return $this->_fullname;
-    }
-    
-    /**
-     * Get a reference to the groups object
-     * 
-     * @access public
-     * @return object GalleryMap the groups instance
-     */
-    function &getGroups() {
-        if (!($this->getLoadedFlag('groups'))) {
-            global $gallery;
-            list($ret, $storage) = $gallery->getStorage();
-            /*
-             * Ignore bad return codes here because we don't want accessors to
-             * return status codes.  We'll have to hope that if the storage
-             * isn't set up properly the user finds out about it before she
-             * gets to this point
-             */
-            $this->_groups = new GalleryMap();
-            $this->_groups->setParentInfo($this, 'groups');
-            $storage->loadMember($this, 'groups', $this->_groups);
-        }
-        return $this->_groups;
-    }
-    
-    /**
-     * Set the value of isAdmin
-     * 
-     * @param bool the new value for isAdmin
-     * @access public
-     */
-    function setIsAdmin($value) {
-        assert('isset($value)');
-        if (empty($value)) {
-            $value = 0;
-        } else {
-            $value = 1;
-        }
-        $this->_isAdmin = $value;
-        $this->setModifiedFlag('isAdmin', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of isAdmin
-     * 
-     * @access public
-     * @return bool the current value of isAdmin
-     */
-    function getIsAdmin() {
-        if (!isset($this->_isAdmin)) {
-            return null;
-        }
-        return $this->_isAdmin;
-    }
-    
-    /**
-     * Set the value of password
-     * 
-     * @param string the new value for password
-     * @access public
-     */
-    function setPassword($value) {
-        assert('isset($value)');
-        $this->_password = $value;
-        $this->setModifiedFlag('password', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of password
-     * 
-     * @access public
-     * @return string the current value of password
-     */
-    function getPassword() {
-        if (!isset($this->_password)) {
-            return null;
-        }
-        return $this->_password;
-    }
-    
-    /**
-     * Set the value of username
-     * 
-     * @param string the new value for username
-     * @access public
-     */
-    function setUsername($value) {
-        assert('isset($value)');
-        $this->_username = $value;
-        $this->setModifiedFlag('username', MEMBER_MODIFIED);
-    }
-    
-    /**
-     * Get the value of username
-     * 
-     * @access public
-     * @return string the current value of username
-     */
-    function getUsername() {
-        if (!isset($this->_username)) {
-            return null;
-        }
-        return $this->_username;
-    }
-    
-    
-    /* END: Accessor Block.  DO NOT MODIFY! */
 }
+
+include(dirname(__FILE__) . '/interfaces/GalleryUser.inc');
 ?>

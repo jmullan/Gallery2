@@ -2,172 +2,176 @@
 
 class CreateRandomTreeTestCase extends TestCase {
 
-    var $_maxItems = 5000;
-    var $_itemCount = 0;
+    var $_maxItems;
+    var $_photoCount = 0;
     var $_imagePath;
 
-    function getDescription() {
-	return "Create a random tree of $this->_maxItems Albums, " .
-		"PhotoItems and ImageContainers";
+    function getIterations() {
+	return array(1, 50, 500, 1000, 10000);
     }
 
-    function testStart() {
+    function getDescription() {
+	return "Create a random album tree containing $this->_maxItems photos";
+    }
+
+    function testStart($iterations) {
 	global $gallery;
 	$rootId = $gallery->getRootAlbumId();
+	$lockIds = array();
 
 	$this->_imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
+	$this->_maxItems = $iterations;
 
-	$ret = $gallery->lockWorld();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	while ($this->_itemCount < $this->_maxItems) {
+	while ($this->_photoCount < $this->_maxItems) {
 	    $ret = $this->_createRandomAlbum($rootId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Leggo of our locks */
-	$ret = $gallery->unlock();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	return GalleryStatus::success();
     }
 
     function _randomName() {
-	return "foo_" . $this->_itemCount . "_" . rand(1000,5000);
+	return "foo_" . $this->_photoCount . "_" . rand(1000,5000);
     }
 
     function _createRandomAlbum($parentId) {
 	global $gallery;
 
-	set_time_limit(10);
+	$gallery->guaranteeTimeLimit(10);
 	
-	if ($this->_itemCount >= $this->_maxItems) {
+	list($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($this->_photoCount >= $this->_maxItems) {
 	    return GalleryStatus::success();
 	}
 
 	/* Create a random album */
-	$album = new AlbumItem();
+	$album = new GalleryAlbumItem();
 	$ret = $album->create($parentId,
 			      $this->_randomName(),
 			      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$this->_itemCount++;
-	if ($this->_itemCount >= $this->_maxItems) {
-	    return GalleryStatus::success();
+
+	/* Save the album */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Read lock it */
+	list($ret, $lockIds[]) = $gallery->acquireReadLock($album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create 1-50 random photos inside it */
 	$rand1 = rand(1, 50);
 	$gallery->debug("<h3> Create $rand1 Photos </h3>");
 	for ($i = 0; $i < $rand1; $i++) {
-
-	    $gallery->debug("<h4>$this->_itemCount, $this->_maxItems</h4>");
+	    $this->_photoCount++;
+	    $gallery->debug("<h4>$this->_photoCount, $this->_maxItems</h4>");
 	    
 	    /* Create the photo */
-	    $photo[$i] = new PhotoItem();
-	    $ret = $photo[$i]->create($album->getId(),
-				      $this->_randomName(),
-				      $gallery->getActiveUserId());
+	    $photo = new GalleryPhotoItem();
+	    $ret = $photo->create($album->getId(),
+				  $this->_randomName(),
+				  $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $this->_itemCount++;
-	    if ($this->_itemCount >= $this->_maxItems) {
-		return GalleryStatus::success();
+
+	    /* Save the photo */
+	    $photo->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Read lock it */
+	    list($ret, $lockIds[]) = $gallery->acquireReadLock($photo->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Put an image in it */
-	    $image[$i] = new ImageContainer();
-	    $ret = $image[$i]->createFromFile($photo[$i]->getId(),
-					      $this->_imagePath,
-					      $this->_randomName());
+	    $image = new GalleryImageContainer();
+	    $ret = $image->create($photo->getId(),
+				  $this->_imagePath,
+				  $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $this->_itemCount++;
-	    if ($this->_itemCount >= $this->_maxItems) {
-		return GalleryStatus::success();
+
+	    /* Save the image */
+	    $image->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /* Set the image as the photo's source */
-	    $photo[$i]->setSourceId($image[$i]->getId());
-	    
 	    /* Create a derivative image for the thumbnail */
-	    $thumbnail[$i] = new ImageContainer();
-	    $ret = $thumbnail[$i]->createDerivative($photo[$i]->getId());
+	    $thumbnail = new GalleryDerivativeImage();
+	    $ret = $thumbnail->create($photo->getId(), IMAGE_TYPE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $ret = $thumbnail[$i]->deriveFrom($image[$i]->getId(),
-					  "scale 200");
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    $thumbnail->setDerivativeSourceId($image->getId());
+	    $thumbnail->setDerivativeCommands("scale 200");
 
-	    /* Set the image as the photo's thumbnail */
-	    $photo[$i]->setThumbnailId($thumbnail[$i]->getId());
+	    $thumbnail->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    
-	    $this->_itemCount++;
-	    if ($this->_itemCount >= $this->_maxItems) {
-		return GalleryStatus::success();
-	    }
-
 	    /* Create 1-3 resizes */
 	    $rand2 = rand(1, 3);
 	    $gallery->debug("<h3> Create $rand2 resizes </h3>");
 	    for ($j = 0; $j < $rand2; $j++) {
-		$resize[$i][$j] = new ImageContainer();
-		$ret = $resize[$i][$j]->createDerivative($photo[$i]->getId());
+		$resize = new GalleryDerivativeImage();
+		$ret = $resize->create($photo->getId(), IMAGE_TYPE_RESIZE);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$scale = rand(300, 600);
-		$ret = $resize[$i][$j]->deriveFrom($image[$i]->getId(),
-						   "scale $scale");
+		$resize->setDerivativeSourceId($image->getId());
+		$resize->setDerivativeCommands("scale $scale");
+
+		$ret = $resize->save();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
+	    }
 
-		/* Add this image to the photo's resize id list */
-		$resizeIds =& $photo[$i]->getResizeIds();
-		$resizeIds->push($resize[$i][$j]->getId());
-		
-		$this->_itemCount++;
-		if ($this->_itemCount >= $this->_maxItems) {
-		    return GalleryStatus::success();
-		}
+	    if ($this->_photoCount >= $this->_maxItems) {
+		break;
 	    }
 	}
 
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
+	/* Release our locks */
+	$ret = $gallery->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Create 0-2 sub-albums */
-	$rand3 = rand(0, 2);
-	$gallery->debug("<h3> Create $rand3 sub-albums </h3>");
-	for ($i = 0; $i < $rand3; $i++) {
-	    $ret = $this->_createRandomAlbum($album->getId());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	/* 1-in-3 chance of having sub-albums */
+	if (rand(1, 3) == 1) {
+
+	    /* Create 1-3 sub-albums */
+	    $rand3 = rand(1, 3);
+	    $gallery->debug("<h3> Create $rand3 sub-albums </h3>");
+	    for ($i = 0; $i < $rand3; $i++) {
+		$ret = $this->_createRandomAlbum($album->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
+	    
 	}
 
 	return GalleryStatus::success();
@@ -175,4 +179,4 @@ class CreateRandomTreeTestCase extends TestCase {
 }
 
 ?>
-</pre>
+

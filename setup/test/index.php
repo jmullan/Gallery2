@@ -24,15 +24,18 @@ $testDir = 'TestCase';
 if ($dir = opendir($testDir)) {
     while (($file = readdir($dir)) != false) {
 	if (preg_match('/.class$/', $file)) {
+	    $files[] = $file;
 	    require_once($testDir . '/' . $file);
-
-	    $name = str_replace('.class', '', $file);
-	    $className = $name . 'TestCase';
-	    $class = new $className();
-	    $testTable[$name] = $class;
 	}
     }
     closedir($dir);
+
+    foreach ($files as $file) {
+	$name = str_replace('.class', '', $file);
+	$className = $name . 'TestCase';
+	$class = new $className();
+	$testTable[$name] = $class;
+    }
 } else {
     print "Unable to open test dir";
 }
@@ -42,6 +45,7 @@ print '<h1> <a href=index.php>Test Harness</a> </h1>';
 print '<table border=1 cellspacing=0 cellpadding=5>';
 print '<tr>';
 print '<th bgcolor=#9999CC> Name';
+print '<th bgcolor=#9999CC> Timing';
 print '<th bgcolor=#9999CC> Description';
 print '</tr>';
 
@@ -60,11 +64,23 @@ foreach ($testTable as $name => $class) {
     print '</a>';
     print '</td>';
     print '<td bgColor=' . $bgColor . '>';
+    $iters = $class->getIterations();
+    if (empty($iters)) {
+	print '&nbsp;';
+    } else {
+	foreach($iters as $iter) {
+	    print '<a href=index.php?testName=' . $name . "&iterations=$iter>";
+	    print "[" . shorten($iter) . "]";
+	    print '</a>';
+	}
+    }
+    print '</td>';
+    print '<td bgColor=' . $bgColor . '>';
     print $class->getDescription();
     print '</td>';
     print '</tr>';
 }
-
+ 
 print '</table>';
 print '</center>';
 
@@ -73,7 +89,12 @@ print '<hr>';
 
 if (!empty($HTTP_GET_VARS['testName'])) {
     ob_start();
-    $ret = runTest($HTTP_GET_VARS['testName']);
+    $iterations = 1;
+    if (!empty($HTTP_GET_VARS['iterations'])) {
+	$iterations = $HTTP_GET_VARS['iterations'];
+    }
+    
+    $ret = runTest($HTTP_GET_VARS['testName'], $iterations);
     $buf = ob_get_contents();
     ob_end_clean();
 
@@ -88,7 +109,15 @@ if (!empty($HTTP_GET_VARS['testName'])) {
     print $buf;
 }
 
-function runTest($testName) {
+function shorten($number) {
+    $number = str_replace("000000", "M", $number);
+    $number = str_replace("00000", "00K", $number);
+    $number = str_replace("0000", "0K", $number);
+    $number = str_replace("000", "K", $number);
+    return $number;
+}
+
+function runTest($testName, $iterations) {
     global $testTable;
     global $gallery;
     
@@ -96,7 +125,7 @@ function runTest($testName) {
 
     $dependencies = $class->getDependencies();
     foreach ($dependencies as $test) {
-	$ret = runTest($test);
+	$ret = runTest($test, $iterations);
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -128,7 +157,7 @@ function runTest($testName) {
     
     print '<b>Start</b><br>';
     set_time_limit(30);
-    $ret1 = $class->start();
+    $ret1 = $class->start($iterations);
     if ($ret1->isSuccess()) {
 	print 'Status: Success<br>';
     } else {

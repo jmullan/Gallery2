@@ -1,0 +1,251 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A GalleryChildEntity that also has data stored in the filesystem
+ *
+ * This class understands how to manage data on the filesystem in parallel to
+ * the data in the persistent store.
+ *
+ * @g2 <class-name>GalleryFileSystemEntity</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryFileSystemEntity_core extends GalleryChildEntity {
+
+    /**
+     * The path component of this item (eg. "image1").  This
+     * value, when combined with the paths of all the parent
+     * objects (say, "rootAlbum", "album01") will form the
+     * complete path to the item ("rootAlbum/album01/image1").
+     *
+     * @g2 <member>
+     * @g2   <member-name>pathComponent</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2   <indexed/>
+     * @g2 </member>
+     *
+     * @var string $_pathComponent
+     * @access private
+     */
+    var $_pathComponent;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+
+    /**
+     * Create a new instance of this FileSystemEntity in the persistent store
+     *
+     * Let the parent do its work, then add any initialization specific to this
+     * class.
+     *
+     * @param int the id of the parent GalleryChildEntity
+     * @return object GalleryStatus a status code
+     */
+    function create($parentId, $path) {
+	global $gallery;
+
+	/*
+	 * The parent must be read locked at this point to make sure that it's
+	 * not going to be moved around while we're adding stuff to it.
+	 * Realistically, the entire parent tree must be locked but it's not
+	 * really practical to check the entire tree so just check the parent.
+	 */
+	if (!$gallery->isReadLocked($parentId)) {
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
+					__FILE__, __LINE__);
+	}
+
+	if (empty($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Typically, we create a FileSystemEntity with a specific path.  This
+	 * allows us to check for name collisions at this point.  However, in
+	 * some circumstances (like derivative DataContainers) we use the id
+	 * itself as the path name, and we don't know the id yet.  So, if we
+	 * don't specify a path, don't do the extra collision checking.
+	 */
+	/* Make sure that we don't have a collision in the db. */
+	list($ret, $results) =
+	    $gallery->search(array('select' => 'COUNT([GalleryFileSystemEntity::id])',
+				   'where' => ('[GalleryChildEntity::parentId]=? AND ' .
+					       '[GalleryFileSystemEntity::pathComponent]=?')),
+			     array($parentId, $path));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$result = $results->nextResult();
+	if ($result[0] > 0) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	/* No collision -- proceed! */
+	$ret = parent::create($parentId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set our path component */
+	$this->setPathComponent($path);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create a new root level instance of this FileSystemEntity in the persistent store
+     *
+     * Let the parent do its work, then add any initialization specific to this
+     * class.
+     *
+     * @param int the id of the parent GalleryChildEntity
+     * @return object GalleryStatus a status code
+     */
+    function createRoot($path) {
+	global $gallery;
+
+	/* XXX: We should check for a root level lock here. */
+	
+	if (empty($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Typically, we create a FileSystemEntity with a specific path.  This
+	 * allows us to check for name collisions at this point.
+	 *
+	 * XXX: Will this cause problems with Derivative data containers?
+	 */
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
+				   'where' => ('[GalleryChildEntity::parentId] is NULL AND ' .
+					       '[GalleryFileSystemEntity::pathComponent]=?')),
+			     array($path));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$result = $searchResults->nextResult();
+	if ($result[0] > 0) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	/* No collision -- proceed! */
+	$ret = parent::createRoot();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Set our path component */
+	$this->setPathComponent($path);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return a path for any objects contained within this one (ie, children)
+     *
+     * Subclasses should specify their container-ness by overloading
+     * isContainer()
+     *
+     * @return array object GalleryStatus a status code,
+     *               string a path where children can store their data files
+     */
+    function getContainerPath() {
+	global $gallery;
+	
+	if ($this->isContainer()) {
+	    return $this->getPath();
+	} else {
+	    $parentId = $this->getParentId();
+	    if (!empty($parentId)) {
+		list($ret, $parent) = $this->getParent();
+		if ($ret->isError()) {
+		    return array($ret, null);
+		}
+
+		return $parent->getContainerPath();
+	    } else {
+		return array(GalleryStatus::error(ERROR_BAD_PATH,
+						  __FILE__, __LINE__));
+	    }
+	}
+    }
+
+    /**
+     * Can this item contain other file system items?
+     *
+     * @return true if this item can contain other file system items
+     */
+    function isContainer() {
+	return false;
+    }
+    
+    /**
+     * Return the full path of this item.  Note that this path is only valid as
+     * long as the entire tree is at least read locked.
+     *
+     * @access public
+     * @return array a GalleryStatus status, string a path
+     */
+    function getPath() {
+	global $gallery;
+
+	$parentId = $this->getParentId();
+	if (!empty($parentId)) {
+	    list($ret, $parent) = $this->getParent();
+	    if ($ret->isError()) {
+		return array($ret, null);
+	    }
+
+	    list($ret, $path) = $parent->getPath();
+	    if ($ret->isError()) {
+		return array($ret, null);
+	    }
+	} else {
+	    global $gallery;
+	    $path = $gallery->getConfig('core.directory.albums');
+	}
+
+	return array(GalleryStatus::success(),
+		     $path . '/' . $this->_pathComponent);
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryFileSystemEntity.inc');
+?>

@@ -37,88 +37,32 @@ define('STORAGE_TYPE_INTEGER', 0x00000001);
 define('STORAGE_TYPE_STRING', 0x00000002);
 
 /**
- * List type
- *
- * @constant STORAGE_TYPE_LIST
- */
-define('STORAGE_TYPE_LIST', 0x00000004);
-
-/**
- * Map type
- *
- * @constant STORAGE_TYPE_MAP
- */
-define('STORAGE_TYPE_MAP', 0x00000008);
-
-/**
  * Text type
  *
  * @constant STORAGE_TYPE_TEXT
  */
-define('STORAGE_TYPE_TEXT', 0x00000010);
+define('STORAGE_TYPE_TEXT', 0x00000004);
 
 /**
  * Text type
  *
  * @constant STORAGE_TYPE_BOOLEAN
  */
-define('STORAGE_TYPE_BOOLEAN', 0x00000020);
+define('STORAGE_TYPE_BOOLEAN', 0x00000008);
 
 /**
  * Timestamp type
  *
  * @constant STORAGE_TYPE_TIMESTAMP
  */
-define('STORAGE_TYPE_TIMESTAMP', 0x00000040);
+define('STORAGE_TYPE_TIMESTAMP', 0x00000010);
 
 /**
- * ID modifier
+ * ID type
  *
- * @constant STORAGE_MODIFIER_ID
+ * @constant STORAGE_TYPE_ID
  */
-define('STORAGE_MODIFIER_ID', 0x00010000);
-
-/**
- * This is a required field
- *
- * @constant STORAGE_MODIFIER_REQUIRED
- */
-define('STORAGE_MODIFIER_REQUIRED', 0x00020000);
-
-/**
- * This is a small field
- *
- * @constant STORAGE_MODIFIER_SMALL
- */
-define('STORAGE_MODIFIER_SMALL', 0x00040000);
-
-/**
- * This is a medium sized field
- *
- * @constant STORAGE_MODIFIER_MEDIUM
- */
-define('STORAGE_MODIFIER_MEDIUM', 0x00080000);
-
-/**
- * This is a large field
- *
- * @constant STORAGE_MODIFIER_LARGE
- */
-define('STORAGE_MODIFIER_LARGE', 0x00100000);
-
-/**
- * This is field should be indexed for performance
- *
- * @constant STORAGE_MODIFIER_INDEXED
- */
-define('STORAGE_MODIFIER_INDEXED', 0x00200000);
-
-/**
- * This is field should be fulltext indexed for performance
- *
- * @constant STORAGE_MODIFIER_FULLTEXT_INDEXED
- */
-define('STORAGE_MODIFIER_FULLTEXT_INDEXED', 0x00400000);
+define('STORAGE_TYPE_ID', 0x00000020);
 
 /**
  * Newly created flag
@@ -135,48 +79,6 @@ define('STORAGE_FLAG_NEWLY_CREATED', 0x00000001);
 define('STORAGE_FLAG_DELETED', 0x00000002);
 
 /**
- * This member is destined to be removed
- *
- * @constant STORAGE_MARKED_FOR_DELETION
- */
-define('STORAGE_FLAG_MARKED_FOR_DELETION', 0x00000004);
-
-/**
- * Search returns count only
- *
- * @constant SEARCH_COUNT
- */
-define('SEARCH_COUNT', 1);
-
-/**
- * Limit the search results
- *
- * @constant SEARCH_LIMIT
- */
-define('SEARCH_LIMIT', 2);
-
-/**
- * Specify a search order
- *
- * @constant SEARCH_ORDER
- */
-define('SEARCH_ORDER', 3);
-
-/**
- * Specify an ascending search order direction
- *
- * @constant SEARCH_DIRECTION_UP
- */
-define('SEARCH_DIRECTION_UP', 4);
-
-/**
- * Specify a descending search order direction 
- *
- * @constant SEARCH_DIRECTION_DOWN
- */
-define('SEARCH_DIRECTION_DOWN', 5);
-
-/**
  * Interface to the storage mechanism
  *
  * This object provides the hooks for saving and restoring objects in the persistent store.
@@ -189,12 +91,20 @@ define('SEARCH_DIRECTION_DOWN', 5);
 class GalleryStorage {
 
     /**
-     * A GalleryClassMetaInfo instance
+     * A cache of member info that we've discovered about various classes
      *
-     * @var object GalleryClassMetaInfo $_metaInfo
+     * @var array $_entityInfoCache
      * @access private
      */
-    var $_metaInfo;
+    var $_entityInfoCache;
+
+    /**
+     * A cache of member info that we've discovered about various maps
+     *
+     * @var array $_mapInfoCache
+     * @access private
+     */
+    var $_mapInfoCache;
 
     /**
      * The debugging flag
@@ -207,10 +117,11 @@ class GalleryStorage {
     /**
      * Constructor
      *
-     * Initialize our Gallery class meta information map
      */
     function GalleryStorage() {
-	$this->_metaInfo = new GalleryClassMetaInfo();
+	/* Initialize our Gallery map and class info caches */
+	$this->_entityInfoCache = array();
+	$this->_mapInfoCache = array();
     }
 
     /**
@@ -227,160 +138,226 @@ class GalleryStorage {
      * Turn debugging on or off.
      */
     function setDebug($bool) {
-	$this->_debug = $bool;
+	$this->_debug = (bool)$bool;
     }
 
     /**
-     * Return the id of the GalleryItem associated with the path provided
-     *
-     * Return the id associated with the given path. Example path: 
-     * "/birthdays/fred" .. this is the "fred" item in the "birthdays" 
-     * item.  It doesn't really matter what types of items these are, as 
-     * long as the path is legitimate.
-     *
-     * This method must be implemented by subclasses of Gallery.
-     *
-     * @access public
-     * @abstract
-     * @param string the path to a GalleryItem
-     * @return array object GalleryStatus a status code
-     *               string the id of the GalleryItem
+     * Get the debug state
      */
-    function getIdByPath($path) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
+    function getDebug() {
+	return $this->_debug;
     }
 
     /**
-     * Load a new GalleryNucleus from storage
+     * Load a new GalleryEntity from storage
      *
      * @access public
-     * @param string the id of the stored GalleryNucleus
-     * @return array object GalleryStatus a status code, object GalleryNucleus
-     */
-    function loadNucleus($id) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
-    }
-
-    /**
-     * Save the changes to the GalleryNucleus.  
-     *
-     * @access public
-     * @param object GalleryNucleus the GalleryNucleus to save
-     * @return object GalleryStatus a status code
-     */
-    function saveNucleus($nucleus) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Delete the GalleryNucleus.
-     *
-     * @access public
-     * @param object GalleryNucleus the GalleryNucleus to delete
-     * @return object GalleryStatus a status code
-     */
-    function deleteNucleus($nucleus) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Create a new GalleryNucleus 
-     *
-     * @access public
-     * @param object GalleryNucleus the GalleryNucleus to put the data in
-     * @return object GalleryStatus a status code
-     */
-    function newNucleus(&$nucleus) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Refresh a new GalleryNucleus
-     *
-     * Refresh a GalleryNucleus from the database, if it has changed.
-     * Return the new nucleus.
-     *
-     * @access public
-     * @param object GalleryNucleus the object to refresh
+     * @param string the id of the stored GalleryEntity
      * @return array object GalleryStatus a status code,
-     *               GalleryNucleus the refreshed object
+     *               object GalleryEntity
      */
-    function refreshNucleus($nucleus) {
+    function loadEntity($id) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);
     }
 
     /**
-     * Lock the world
+     * Save the changes to the GalleryEntity.  
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to save
+     * @return object GalleryStatus a status code
+     */
+    function saveEntity($object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Delete the GalleryEntity.
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to delete
+     * @return object GalleryStatus a status code
+     */
+    function deleteEntity($object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Create a new GalleryEntity 
+     *
+     * @access public
+     * @param object GalleryEntity the GalleryEntity to put the data in
+     * @return object GalleryStatus a status code
+     */
+    function newEntity(&$object) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Refresh a new GalleryEntity
+     *
+     * Refresh a GalleryEntity from the database, if it has changed.
+     * Return the new object.
+     *
+     * @access public
+     * @param object GalleryEntity the object to refresh
+     * @return array object GalleryStatus a status code,
+     *               GalleryEntity the refreshed object
+     */
+    function refreshEntity($object) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Acquire read locks on the given items
      *
      * @access public
      * @param int timeout before giving up on the lock
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
      */
-    function acquireLock($timeout) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Release all locks.
-     *
-     * @access public
-     * @return object GalleryStatus a status code
-     */
-    function releaseLock() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
-				    __FILE__, __LINE__);
-    }
-
-    /**
-     * Search the persistent store for the target values matching the given criteria
-     *
-     * This is a flexible and powerful search mechanism.  You specify which
-     * class members you wish to search for, how you want to search them, and
-     * which class members you want returned.
-     *
-     * Right now we do a logical AND of all criteria.  Later on we should
-     * extend this.
-     *
-     * Example criteria:
-     * array(array('GalleryNucleus::parentId',
-     *             'EXACT',
-     *             $parentId),
-     *       array('FileSystemNucleus::pathComponent',
-     *             'EXACT',
-     *             $path));
-     *
-     * Comparators can be 'EXACT' or 'CONTAINS'
-     *
-     * Example target:
-     * array('GalleryNucleus::id')
-     *
-     * Example modifiers:
-     * SEARCH_COUNT          -- return only the number of hits
-     * SEARCH_LIMIT #        -- return only the first x hits
-     * SEARCH_ORDER FileSystemNucleus::pathComponent SEARCH_DIRECTION_UP
-     *                       -- sort by path compnent
-     *
-     * @access public
-     * @param array the search criteria
-     * @param array the target values (default GalleryNucleus::id)
-     * @param array the modifiers
-     * @return array object GalleryStatus a status code,
-     *               array a list of target values
-     */
-    function search($criteria, $target, $modifiers) {
+    function acquireReadLock($ids, $timeout) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);
+    }
+
+    /**
+     * Acquire write locks on the given items
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return array object GalleryStatus a status code
+     *               object a GalleryLock instance
+     */
+    function acquireWriteLock($ids, $timeout) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Release a lock
+     *
+     * @param object a GalleryLock instance
+     */
+    function releaseLock($lock) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Search the persistent store for the target values matching the given
+     * criteria
+     *
+     * This is a flexible and powerful search mechanism.  You specify which
+     * class members you wish to search for, how you want to search them, and
+     * which class members you want returned in a very SQL like syntax
+     *
+     * @access public
+     * @param array the search query
+     * @param array any explicit data values required by the query
+     * @return array object GalleryStatus a status code,
+     *               array the result values
+     */
+    function search($query, $data=array()) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Add a new entry to a map
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
+     */
+    function addMapEntry($map, $entry) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Remove an entry from a map
+     *
+     * @param object the map we're working on
+     * @param array an associative array of data about the entry
+     */
+    function removeMapEntry($map, $entry) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
+     * Create the persistent store for this strategy.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function createStore() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Configure the persistent store for this strategy.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStore() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Remove the persistent store for this strategy.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function removeStore() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
+     * Describe all the members of a class
+     *
+     * @return array member => info associative array
+     * @access protected
+     */
+    function _describeClassMembers($className) {
+
+	if (empty($this->_entityInfoCache[$className])) {
+	    $entity = new $className;
+	    $this->_entityInfoCache[$className] = $entity->getPersistentMemberInfo();
+	}
+
+	return $this->_entityInfoCache[$className];
+    }
+
+    /**
+     * Describe all the members of a map
+     *
+     * @return array member name => member type
+     * @access protected
+     */
+    function _describeMapMembers($mapName) {
+
+	if (empty($this->_mapInfoCache[$mapName])) {
+	    eval("\$info = $mapName::getMapInfo();");
+	    $this->_mapInfoCache[$mapName] = $info;
+	}
+
+	return $this->_mapInfoCache[$mapName];
     }
     
     /**
