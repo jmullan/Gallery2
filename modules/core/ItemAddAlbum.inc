@@ -106,6 +106,14 @@ class ItemAddAlbumController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		$ret = GalleryCoreApi::addUserPermission($instance->getId(),
+							 $instance->getOwnerId(),
+							 'core.all',
+							 false);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core:ItemAdmin';
 		$redirect['subView'] = 'core:ItemEdit';
