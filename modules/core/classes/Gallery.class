@@ -226,9 +226,7 @@ class Gallery {
 	$this->guaranteeTimeLimit(5);
 	    
 	if (empty($ids)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__),
-			 null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
 	if (is_array($ids)) {

@@ -281,7 +281,7 @@ class ItemMoveView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $albumTree = $this->_createAlbumTree($albums);
+	    $albumTree = GalleryUtilities::createAlbumTree($albums);
 	}
 
 	$ItemMove = array();
@@ -295,69 +295,6 @@ class ItemMoveView extends GalleryView {
 
         return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemMove.tpl'));
-    }
-
-    /**
-     * Turn a set of albums into a depth tree suitable for display in a
-     * hierarchical format.
-     *
-     * @access private
-     */
-    function _createAlbumTree($albums) {
-	/* Index the albums by id */
-	$map = array();
-	foreach ($albums as $album) {
-	    $albumId = $album->getId();
-	    $parentId = $album->getParentId();
-	    $map[$albumId]['instance'] = $album;
-	    if (!empty($parentId)) {
-		$map[$albumId]['parent'] = $parentId;
-		$map[$parentId]['children'][] = $albumId;
-	    }
-	}
-
-	/*
-	 * Prune parents that don't exist.  This can occur if we have multiple
-	 * roots (unusual) or an album in the middle of the hierarchy that is
-	 * not viewable.
-	 */
-	foreach ($map as $id => $info) {
-	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
-		unset($map[$info['parent']]);
-	    }
-	}
-
-	/* Find root albums */
-	foreach ($map as $id => $info) {
-	    if (!isset($info['parent']) || !isset($map[$info['parent']])) {
-		$roots[] = $id;
-	    }
-	}
-
-	/* Walk the root albums */
-	$tree = array();
-	foreach ($roots as $id) {
-	    $tree = array_merge($tree, $this->_createDepthTree($map, $id));
-	}
-
-	return $tree;
-    }
-
-    /**
-     * Recursively walk a parent/child map and build the depth tree.
-     *
-     * @access private
-     */
-    function _createDepthTree(&$map, $id, $depth=0) {
-	$data = array();
-	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
-	if (isset($map[$id]['children'])) {
-	    foreach ($map[$id]['children'] as $childId) {
-		$data = array_merge($data, $this->_createDepthTree($map, $childId, $depth+1));
-	    }
-	}
-
-	return $data;
     }
 }
 ?>

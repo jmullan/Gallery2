@@ -322,6 +322,39 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(join("\n", $expectedBody) . "\n", $body);
 	$this->assertEquals(join("\n", $expectedHeaders) . "\n", $headers);
     }
+
+    function testCreateAlbumTree() {
+	/* Make up some bogus albums that we can use to simulate our tree. */
+	for ($i = 0; $i < 7; $i++) {
+	    list ($ret, $albums[$i]) =
+		GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	    $albums[$i]->setId($i);
+	}
+
+	$albums[0]->setParentId(null);
+	$albums[1]->setParentId(0);
+	$albums[2]->setParentId(0);
+	$albums[3]->setParentId(1);
+	$albums[4]->setParentId(1);
+	$albums[5]->setParentId(1);
+	$albums[6]->setParentId(4);
+	       
+	$tree = GalleryUtilities::createAlbumTree($albums);
+	$this->assert($tree[0]['depth'] == 0);
+	$this->assert($tree[0]['data']['id'] == 0);
+	$this->assert($tree[1]['depth'] == 0);
+	$this->assert($tree[1]['data']['id'] == 1);
+	$this->assert($tree[2]['depth'] == 1);
+	$this->assert($tree[2]['data']['id'] == 3);
+	$this->assert($tree[3]['depth'] == 1);
+	$this->assert($tree[3]['data']['id'] == 4);
+	$this->assert($tree[4]['depth'] == 2);
+	$this->assert($tree[4]['data']['id'] == 6);
+	$this->assert($tree[5]['depth'] == 1);
+	$this->assert($tree[5]['data']['id'] == 5);
+	$this->assert($tree[6]['depth'] == 0);
+	$this->assert($tree[6]['data']['id'] == 2);
+    }
 }
 
 class UtilitiesTestPlatform {
@@ -425,6 +458,7 @@ class UtilitiesTestPlatform {
     function file_exists($path) {
 	switch($path) {
 	case __FILE__:
+	case realpath(dirname(__FILE__) . '/../../classes/GalleryAlbumItem.class'):
 	    return true;
 
 	default:

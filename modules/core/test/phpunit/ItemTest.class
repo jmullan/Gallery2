@@ -539,6 +539,38 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivative->getDerivativeType());
 	$this->assertEquals('convert-to-image/jpeg;thumbnail|100', $derivative->getDerivativeOperations());
     }
+
+    function testFetchItemIdCount() {
+	global $gallery;
+
+	/* Switch to the anonymous user id so that this returns false */
+        list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$gallery->setActiveUserId($anonymousUserId);
+	
+	list ($ret, $count) =
+	    GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(0, $count, 'Should not have permission');
+    }
+
+    function testFetchItemIdCount2() {
+	global $gallery;
+
+	/* We're the admin user so this should return a positive value */
+	list ($ret, $count) =
+	    GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($count > 0, 'Should have permission');
+    }
 }
 
 // Dummy test toolkit

@@ -42,13 +42,59 @@ class ItemCreateLinkView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
+
+        if ($form['formName'] != 'ItemCreateLink') {
+            /* First time around, load the form with item data */
+            if ($selectedId) {
+                $form['selectedIds'][$selectedId] = true;
+            }
+            $form['destination'] = '';
+	    $form['formName'] = 'ItemCreateLink';
+        }
+
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
+	/* Get all peers that we can link */
+	list ($ret, $peerIds) =
+	    GalleryItemHelper::fetchChildItemIdsWithPermission($item->getId(), 'core.view');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	/* Load all the peers */
+	list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Build our peers table (linkable items only) */
+	$peers = array();
+	foreach ($peerItems as $peerItem) {
+	    if ($peerItem->isLinkable()) {
+		$peers[$peerItem->getId()] = $peerItem->getMemberData();
+		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+	    }
+	}
+
+	/* Find all the possible locations where this item can be linked. */
+	list ($ret, $ids) = GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Load all the album entities */
+	list ($ret, $albums) = $gallery->loadEntitiesById($ids);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$ItemCreateLink = array();
+	$ItemCreateLink['albumTree'] = GalleryUtilities::createAlbumTree($albums);
+	$ItemCreateLink['peers'] = $peers;
 
 	$template->setVariable('ItemCreateLink', $ItemCreateLink);
 	$template->setVariable('controller', '');

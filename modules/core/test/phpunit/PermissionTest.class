@@ -341,37 +341,6 @@ class PermissionTest extends GalleryTestCase {
 	}
 	$this->assertEquals($hasPermission, false, 'group does not have perm');
     }
-
-    function testHasPermissionInAnyAlbum() {
-	global $gallery;
-
-	/* Switch to the anonymous user id so that this returns false */
-        list ($ret, $anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$gallery->setActiveUserId($anonymousUserId);
-	
-	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermissionInAnyAlbum('core.changePermissions');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assertEquals(false, $hasPermission, 'Should not have permission');
-    }
-
-    function testHasPermissionInAnyAlbum2() {
-	global $gallery;
-
-	/* We're the admin user so this should return true */
-	list ($ret, $hasPermission) =
-	    GalleryPermissionMap::hasPermissionInAnyAlbum('core.changePermissions');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals(true, $hasPermission, 'Should have permission');
-    }
 }
 
 ?>

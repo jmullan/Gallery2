@@ -534,23 +534,24 @@ class CoreModule extends GalleryModule {
 
 	    if ($item->isLinkable()) {
 		if ($isAlbum) {
-		    list ($ret, $canWrite) = GalleryPermissionMap::hasPermissionInAnyAlbum('core.addDataItem');
+		    list ($ret, $count) = GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
-		    list ($ret, $canWrite) = GalleryPermissionMap::hasPermissionInAnyAlbum('core.addAlbumItem');
+		    list ($ret, $count) = GalleryItemHelper::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 
-		if ($canWrite) {
+		if ($count > 0) {
 		    $links[$item->getId()][] =
 			array('text' => $this->translate('create link'),
 			      'params' => array('view' => 'core:ItemAdmin',
 						'subView' => 'core:ItemCreateLink',
-						'itemId' => $item->getId()));
+						'itemId' => $item->getParentId(),
+						'selectedId' => $item->getId()));
 		}
 	    }
 
