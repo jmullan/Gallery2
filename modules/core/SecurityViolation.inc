@@ -28,10 +28,10 @@
  */
 
 /**
+ * A view to display whenever there's some kind of attempted security breach.
  *
  * @package GalleryCore
  * @subpackage UserInterface
- * @todo Document this
  */
 class SecurityViolationView extends GalleryView {
 
