@@ -32,9 +32,14 @@
  * @subpackage Gallery1DataParser
  * @abstract
  */
-
 class Gallery1DataParser {
 
+    /**
+     * Verify that the given path holds an albumdb and that the albumdb is readable
+     *
+     * @param string Path to albums
+     * @return boolean True if the path is valid, otherwise false
+     */
     function isValidAlbumsPath($path) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
@@ -47,6 +52,13 @@ class Gallery1DataParser {
 	}
     }
 
+    /**
+     * Load and return user metadata from given file
+     * 
+     * @param string Path to user file to unserialize
+     * @return array object GalleryStatus a status code,
+     *               object Unserialized user metadata
+     */
     function loadFile($fileName) {
         global $gallery;
         $platform = $gallery->getPlatform();
@@ -73,7 +85,14 @@ class Gallery1DataParser {
 	$object = unserialize($tmp);
 	return array(GalleryStatus::success(), $object);
     }
-    
+
+    /**
+     * Fetch an array of albums from a given path
+     *
+     * @param string Path to albums directory
+     * @return array object GalleryStatus a status code,
+     *               array of objects
+     */
     function getAlbumList($path) {
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
@@ -91,6 +110,14 @@ class Gallery1DataParser {
 	return array(GalleryStatus::success(), $albumList);
     }
 
+    /**
+     * Fetch an associative array of parentalbum names from a given path to
+     * gallery1 albums
+     *
+     * @param string Path to albums directory
+     * @return array object GalleryStatus a status code,
+     *               array of albums and their parents
+     */
     function getParentAlbumList($path) {
 	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
 	if ($ret->isError()) {
@@ -107,6 +134,13 @@ class Gallery1DataParser {
 	return array(GalleryStatus::success(), $parentAlbumList);
     }
 
+    /**
+     * Build a data tree of albums
+     *
+     * @param string Path to albums directory
+     * @return array object GalleryStatus a status code,
+     *               array of albumnames and their children, and their children...
+     */
     function getAlbumHierarchy($path) {
 	list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($path);
 	if ($ret->isError()) {
@@ -129,6 +163,13 @@ class Gallery1DataParser {
 	return array(GalleryStatus::success(), $hierarchy);
     }
 
+    /**
+     * Fetch an array of albums with no parents
+     *
+     * @param string Path to albums directory
+     * @return array object GalleryStatus a status code,
+     *               array of albumnames
+     */
     function getRootAlbums($path) {
         global $gallery;
         $platform = $gallery->getPlatform();
@@ -151,6 +192,13 @@ class Gallery1DataParser {
 	return array(GalleryStatus::success(), $rootAlbums);
     }
 
+    /**
+     * Load and return album metadata from given directory
+     *
+     * @param string Path to album directory
+     * @return array object GalleryStatus a status code,
+     *               object Unserialized album metadata
+     */
     function loadAlbumFields($path) {
         global $gallery;
 	$platform = $gallery->getPlatform();
@@ -171,6 +219,13 @@ class Gallery1DataParser {
 	return array(GalleryStatus::success(), $album->fields);
     }
 
+    /**
+     * Count the number of photos in an album dir
+     *
+     * @param string Path to album directory
+     * @return array object GalleryStatus a status code,
+     *               integer Count of photos
+     */
     function getPhotoCount($path) {
 	list ($ret, $photos) = Gallery1DataParser::loadFile($path . 'photos.dat');
 	if ($ret->isError()) {
@@ -179,7 +234,14 @@ class Gallery1DataParser {
 
 	return array(GalleryStatus::success(), $photos);
     }
-    
+
+    /**
+     * Load user uids from path
+     *
+     * @param string Path to album directory
+     * @return array object GalleryStatus a status code,
+     *               array Associative array of uids and usernames
+     */
     function getUserUids($path) {
 	list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users/userdb.dat');
 	if ($ret->isError()) {
@@ -195,7 +257,15 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $uids);
     }
-    
+
+    /**
+     * Load user metadata given a path and username
+     *
+     * @param string Path to album directory
+     * @param string Username to import
+     * @return array object GalleryStatus a status code,
+     *               array User metadata
+     */
     function getUserFieldsByUsername($path, $username) {
         global $gallery;
         list($ret, $uids) = Gallery1DataParser::getUserUids($path);
