@@ -3,7 +3,9 @@ require_once('../../init.php');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 
-function GalleryMain(&$testSuite) {
+function GalleryMain(&$testSuite, $filter) {
+    global $HTTP_GET_VARS;
+    
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -57,10 +59,12 @@ function GalleryMain(&$testSuite) {
 		    require_once($testDir . '/' . $file);
 
 		    $className = $matches[1];
-		    if (class_exists($className) &&
-			GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
+		    if (!$filter || stristr($className, $filter)) {
+			if (class_exists($className) &&
+			    GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 			
-			$testSuite->addTest(new TestSuite($className));
+			    $testSuite->addTest(new TestSuite($className));
+			}
 		    }
 		}
 	    }
@@ -71,8 +75,14 @@ function GalleryMain(&$testSuite) {
     return GalleryStatus::success();
 }
 
+if (isset($HTTP_GET_VARS['filter'])) {
+    $filter = $HTTP_GET_VARS['filter'];
+} else {
+    $filter = null;
+}
+
 $testSuite = new TestSuite();
-$ret = GalleryMain($testSuite);
+$ret = GalleryMain($testSuite, $filter);
 if ($ret->isError()) {
     print $ret->getAsHtml();
     return;
@@ -94,6 +104,9 @@ print "</pre>";
   </head>
   <body>
     <h1>Gallery Unit Tests</h1>
+    <form>
+    Filter: <input type="text" name="filter" value="<?php echo $filter?>">
+    </form>
     <h2>Test Results</h2>
     <?php
     $result = new PrettyTestResult();
