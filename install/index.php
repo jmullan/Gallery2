@@ -502,8 +502,11 @@ function printNavBar() {
 	    }
 	}
 	$navbar .= "</li>\n";
+
     }
-    $navbar .= "</ol>\n";
+
+	$navbar .= "</ol>\n";
+	$navbar .= "<p><span class=\"help\">?</span> <a href=\"../README.html\" target=\"_blank\">Installer Help</a></p>\n";
 }
 
 function CheckFileDirective() {
