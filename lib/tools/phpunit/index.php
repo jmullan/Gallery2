@@ -106,10 +106,32 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
     return GalleryStatus::success();
 }
 
+define('FILTER_MAX', 1000000);
+$range = array(1, FILTER_MAX);
 if (isset($_GET['filter'])) {
     $filter = $_GET['filter'];
+
+    if (preg_match('/:(\d+)-(\d+)/', $filter, $matches)) {
+	$range = array($matches[1], $matches[2]);
+	$filter = preg_replace('/:\d+-\d+/', '', $filter);
+    }
+
+    if (preg_match('/:(\d+)-/', $filter, $matches)) {
+	$range[0] = $matches[1];
+	$filter = preg_replace('/:\d+-/', '', $filter);
+    }
+
+    if (preg_match('/:-(\d+)/', $filter, $matches)) {
+	$range[1] = $matches[1];
+	$filter = preg_replace('/:-\d+/', '', $filter);
+    }
 } else {
     $filter = null;
+}
+
+$displayFilter = $filter;
+if ($range[0] != 1 || $range[1] != FILTER_MAX) {
+    $displayFilter .= sprintf(' :%d-%d', $range[0], $range[1]);
 }
 
 $testSuite = new TestSuite();

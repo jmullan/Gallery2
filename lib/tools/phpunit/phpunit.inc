@@ -221,6 +221,7 @@ class TestCase extends Assert /* implements Test */ {
   var $fExceptions = array();
   var $fTiming;
   var $fLifeCycle = array();
+  var $fSkipped = false;
 
   function TestCase($name) {
     $this->fName = $name;
@@ -234,7 +235,7 @@ class TestCase extends Assert /* implements Test */ {
       return $this->fModuleId;
   }
 
-  function run(&$testResult) {
+  function run(&$testResult, $rangeStart, $rangeEnd) {
     /* Run this single test, by calling the run() method of the
        TestResult object which will in turn call the runBare() method
        of this object.  That complication allows the TestResult object
@@ -243,7 +244,7 @@ class TestCase extends Assert /* implements Test */ {
        Note that if a TestResult object was passed in, it must be by
        reference. */
     $this->fResult = $testResult;
-    $testResult->run($this);
+    $testResult->run($this, $rangeStart, $rangeEnd);
     $this->fResult = 0;
     return $testResult;
   }
@@ -352,6 +353,14 @@ class TestCase extends Assert /* implements Test */ {
     return $this->fName;
   }
 
+  function skip() {
+    $this->fSkipped = true;
+  }
+
+  function wasSkipped() {
+    return $this->fSkipped;
+  }
+
   function runBare() {
     $this->fTiming['start'] = microtime();
     $this->setUp();
@@ -435,14 +444,14 @@ class TestSuite /* implements Test */ {
     $this->fTests[] = $test;
   }
 
-  function run(&$testResult) {
+  function run(&$testResult, $rangeStart, $rangeEnd) {
     /* Run all TestCases and TestSuites comprising this TestSuite,
        accumulating results in the given TestResult object. */
     reset($this->fTests);
     while (list($na, $test) = each($this->fTests)) {
       if ($testResult->shouldStop())
 	break;
-      $test->run($testResult);
+      $test->run($testResult, $rangeStart, $rangeEnd);
     }
   }
 
@@ -516,12 +525,18 @@ class TestResult {
     return $this->fFailures;
   }
 
-  function run(&$test) {
+  function run(&$test, $rangeStart, $rangeEnd) {
     /* Run a single TestCase in the context of this TestResult */
-    $this->_startTest($test);
     $this->fRunTests++;
+    if ($this->fRunTests < $rangeStart || $this->fRunTests > $rangeEnd) {
+	$test->skip();
+    }
 
-    $test->runBare();
+    $this->_startTest($test);
+    
+    if (!$test->wasSkipped()) {
+	$test->runBare();
+    }
 
     /* this is where JUnit would catch AssertionFailedError */
     $exceptions = $test->getExceptions();
@@ -648,7 +663,7 @@ class PrettyTestResult extends TestResult {
 	echo "<h2>Test Results</h2>";
 	
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
-	echo "<TR><TH>Module</TH><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
+	echo "<TR><TH>#</TH><TH>Module</TH><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
   }
   
   function report() {
@@ -690,7 +705,12 @@ class PrettyTestResult extends TestResult {
   }
 
   function _startTest($test) {
-    printf("<TR><TD>%s </TD><TD>%s </TD><TD>%s </TD>", $test->getModuleId(), $test->classname(),$test->name());
+      if ($test->wasSkipped()) {
+	  $style = ' style="text-decoration: line-through;"';
+      } else {
+	  $style = '';
+      }
+      printf("<TR><TD$style>%d</TD><TD$style>%s </TD><TD$style>%s </TD><TD$style>%s </TD>", $this->fRunTests, $test->getModuleId(), $test->classname(),$test->name());
     flush();
   }
 
@@ -699,8 +719,13 @@ class PrettyTestResult extends TestResult {
        ? " class=\"Failure\">FAIL"
        : " class=\"Pass\">OK";
 
-    $elapsed = sprintf("%2.4f", $test->elapsed());
-    $this->_totalElapsed += $elapsed;
+    if ($test->wasSkipped()) {
+	$outcome = ' class="Skipped">SKIP';
+	$elapsed = '0.0000';
+    } else {
+	$elapsed = sprintf("%2.4f", $test->elapsed());
+	$this->_totalElapsed += $elapsed;
+    }
     printf("<TD$outcome</TD><TD>$elapsed</TD></TR>");
     flush();
   }
@@ -708,9 +733,9 @@ class PrettyTestResult extends TestResult {
 
 class TestRunner {
   /* Run a suite of tests and report results. */
-  function run(&$suite) {
+  function run(&$suite, $rangeStart, $rangeEnd) {
       $result = new TextTestResult;
-      $suite->run($result);
+      $suite->run($result, $rangeStart, $rangeEnd);
       $result->report();
   }
 }

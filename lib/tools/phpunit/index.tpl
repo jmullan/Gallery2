@@ -52,7 +52,7 @@
     <script type="text/javascript">
       examplesVisible = false;
       function toggleFilterExamples() {
-        myList = document.getElementById('filter_examples_list');
+        myList = document.getElementById('help_and_examples');
         myIndicator = document.getElementById('filter_examples_toggle_indicator');
         if (examplesVisible) {
 	  myList.style.display = 'none';
@@ -81,49 +81,59 @@
 	
     <h2>Filter</h2>
     <div class="section">
-      Enter a regular expression string to restrict testing to classes containing 
-      that text in their class name or test method.
-
       <form>
 	<?php if (isset($sessionKey)): ?>
 	<input type="hidden" name="<?php echo $sessionKey?>" value="<?php echo $sessionId ?>"/>
 	<?php endif; ?>
 
-	<input style="margin-top: 0.3em; margin-bottom: 0.3em" type="text" name="filter" size="60" value="<?php echo $filter ?>" />
+	<input style="margin-top: 0.3em; margin-bottom: 0.3em" type="text" name="filter" size="60" value="<?php echo $displayFilter ?>" />
 
 	<br/>
         <span id="filter_examples_toggle" 
           href="#" 
           onclick="toggleFilterExamples()">
-          Examples
+          Help/Examples
           <span id="filter_examples_toggle_indicator" 
             style="padding-left: .3em; padding-right: 0.3em; border: solid #a6caf0; border-width: 1px; background: #eee">
             +
           </span>
         </span>
-		  
-        <ul id="filter_examples_list" style="display: none">
-          <li>
-            <a href="javascript:setFilter('AddCommentControllerTest.testAddComment')">AddCommentControllerTest.testAddComment</a>
-          </li>
-          <li>
-            <a href="javascript:setFilter('AddCommentControllerTest.testAdd')">AddCommentControllerTest.testAdd</a>
-          </li>
-          <li>
-            <a href="javascript:setFilter('AddCommentControllerTest')">AddCommentControllerTest</a>
-          </li>
-          <li>
-            <a href="javascript:setFilter('comment')">comment</a>
-          </i>
-        </ul>
+
+        <div id="help_and_examples" style="display: none">
+         <br/>
+	  Enter a regular expression string to restrict testing to classes containing 
+          that text in their class name or test method.  Use ":#-#" to restrict which
+          matching tests are actually run.
+
+          <ul id="filter_examples_list">
+            <li>
+              <a href="javascript:setFilter('AddCommentControllerTest.testAddComment')">AddCommentControllerTest.testAddComment</a>
+            </li>
+            <li>
+              <a href="javascript:setFilter('AddCommentControllerTest.testAdd')">AddCommentControllerTest.testAdd</a>
+            </li>
+            <li>
+              <a href="javascript:setFilter('AddCommentControllerTest')">AddCommentControllerTest</a>
+            </li>
+            <li>
+              <a href="javascript:setFilter('comment')">comment</a>
+            </i>
+            <li>
+              <a href="javascript:setFilter('comment:1-3')">comment:1-3</a>
+            </i>
+            <li>
+              <a href="javascript:setFilter('comment:3-')">comment:3-</a>
+            </i>
+            <li>
+              <a href="javascript:setFilter('comment:-5')">comment:-5</a>
+            </i>
+          </ul>
+        </div>
       </form>
     </div>
 
-    <h2 onclick="toggleModulesListing()"> 
+    <h2> 
       Modules
-      <span id="modules_listing_toggle_indicator" style="border: solid #a6caf0; border-width: 1px; background: #eee">
-	+
-      </span>
     </h2>
 
     <div class="section" style="width: 100%">
@@ -136,6 +146,9 @@
       }
       ?>
       <?php printf("%d active, %d total", $activeCount, sizeof($moduleStatusList)); ?>
+      <span onclick="toggleModulesListing()" id="modules_listing_toggle_indicator" style="border: solid #a6caf0; border-width: 1px; background: #eee">
+	+
+      </span>
       <br/>
       <table cellspacing="1" cellpadding="1" border="0"
         width="800" align="center" class="details" 
@@ -164,7 +177,7 @@
 	
     <?php
     $result = new PrettyTestResult();
-    $testSuite->run($result);
+    $testSuite->run($result, $range[0], $range[1]);
     $result->report();
     ?>
   </body>
