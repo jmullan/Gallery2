@@ -152,10 +152,21 @@ class ItemTest extends GalleryTestCase {
 	
 	/* Register an operation that we can perform on our mock data items */
 	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
-						       array('test/file'),
+						       array('test/image'),
 						       'thumbnail',
 						       array(array('type' => 'int')),
 						       'itemtest-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register a conversion operation that we can perform on our mock data items */
+	$ret = GalleryToolkitHelper::registerOperation('ItemTestToolkit',
+						       array('test/movie'),
+						       'convert-to-image/jpeg',
+						       array(),
+						       'itemtest-description',
+						       'image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -335,7 +346,7 @@ class ItemTest extends GalleryTestCase {
 	    $this->_createDerivative($this->_childItems[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 				     'itemtest-operation',
-				     'test/file');
+				     'test/image');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -465,6 +476,69 @@ class ItemTest extends GalleryTestCase {
 	$this->assert($weights[$newItem->getId()] > $maxWeight);
     }
 
+    function testAddMovieToAlbum() {
+	global $gallery;
+
+	list ($ret, $lockId) = $gallery->acquireReadLock($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete existing derivative preferences */
+	$ret = GalleryDerivativePreferencesMap::removeMapEntry(array('itemId' => $this->_childItems[0]->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Add a thumbnail preference */
+	$ret = GalleryDerivativePreferencesMap::addMapEntry(array('order' => 0,
+								  'itemId' => $this->_childItems[0]->getId(),
+								  'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+								  'derivativeOperations' => 'thumbnail|100'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add our item to the album */
+	list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum(__FILE__,
+								  'itemName',
+								  'title',
+								  'caption',
+								  'description',
+								  'test/movie',
+								  $this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Verify that the new item:
+	 *  - has one derivative
+	 *  - its a thumbnail derivative
+	 *  - it has operations of convert-to-image/jpeg;thumbnail|100
+	 */
+	list ($ret, $derivativeTable) =
+	    GalleryDerivativeHelper::fetchDerivativesBySourceIds(array($newItem->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (!isset($derivativeTable[$newItem->getId()])) {
+	    $this->assert(false, 'Missing item derivative');
+	    return;
+	}
+
+	$this->assert(1, sizeof($derivativeTable[$newItem->getId()]));
+
+	$derivative = $derivativeTable[$newItem->getId()][0];
+	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivative->getDerivativeType());
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|100', $derivative->getDerivativeOperations());
+    }
 }
 
 // Dummy test toolkit

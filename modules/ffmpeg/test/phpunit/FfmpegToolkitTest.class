@@ -99,19 +99,20 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$expectedMimeTypes = array('video/mpeg', 'video/x.ms.asf', 'video/x-msvideo', 'video/quicktime');
+	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
+								   'description' => 'Convert to a JPEG',
+								   'mimeTypes' => $expectedMimeTypes,
+								   'outputMimeType' => 'image/jpeg')),
+			    $results['operations']);
+
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the movie',
-							'mimeTypes' => array('video/mpeg',
-									     'video/x.ms.asf',
-									     'video/x-msvideo',
-									     'video/quicktime')),
+							'mimeTypes' => $expectedMimeTypes),
 				  'dimensions_and_duration' => array('type' => 'int,int,int',
 								     'description' => ('Get the width, height ' .
 										       'and duration of the movie'),
-								     'mimeTypes' => array('video/mpeg',
-											  'video/x.ms.asf',
-											  'video/x-msvideo',
-											  'video/quicktime'))),
+								     'mimeTypes' => $expectedMimeTypes)),
 			    $results['properties']);
     }
 
@@ -121,6 +122,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$expectedMimeTypes = array('video/mpeg', 'video/x.ms.asf', 'video/x-msvideo', 'video/quicktime');
 	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
 	$output[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux audio_device rtsp redir sdp rtp';
 	$output[] = 'Output image formats: pbm pgm ppm pam pgmyuv yuv png jpeg gif';
@@ -135,11 +137,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
 			    $results);
 	
-	$this->assertEquals(array('video/mpeg',
-				  'video/x.ms.asf',
-				  'video/x-msvideo',
-				  'video/quicktime'),
-			    $mimeTypes);
+	$this->assertEquals($expectedMimeTypes, $mimeTypes);
     }
 }
 

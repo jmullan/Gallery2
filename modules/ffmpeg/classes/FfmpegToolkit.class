@@ -83,8 +83,42 @@ class FfmpegToolkit extends GalleryToolkit {
      */
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters) {
+	global $gallery;
 
-	/* We don't support any operations .. yet */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$tmpFilename = tempnam($tmpDir, 'fmpg_');
+	if (empty($tmpFilename)) {
+	    /* This can happen if the $tmpDir path is bad */
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	$outputMimeType = null;
+	switch($operationName) {
+	case 'convert-to-image/jpeg':
+	    list ($ret, $results) = $this->_ffmpeg($sourceFilename,
+						   array('-f', 'singlejpeg',
+							 '-t', '0.001',
+							 '-y',
+							 $tmpFilename));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $platform = $gallery->getPlatform();
+	    $success = $platform->rename($tmpFilename, $destFilename);
+	    @$platform->unlink($tmpFilename);
+	    if (!$success) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Failed renaming $tmpFilename -> $destFilename");
+	    }
+	    $outputMimeType = 'image/jpeg';
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $outputMimeType);
     }
 
     function _getMovieDimensions($mimeType, $sourceFilename) {

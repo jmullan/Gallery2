@@ -415,16 +415,33 @@ class GalleryItemHelper {
 	     * Validate the stored preferences to make sure that
 	     * they're supported by an active toolkit.
 	     */
+	    $operations = $preference['derivativeOperations'];
 	    list ($ret, $isSupported, $outputMimeType) =
-		GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $preference['derivativeOperations']);
-
+		GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    /* Not supported?  Try the next preference */
 	    if (!$isSupported) {
-		continue;
+		/*
+		 * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
+		 */
+		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		    $operations = 'convert-to-image/jpeg;' . $preference['derivativeOperations'];
+		    list ($ret, $isSupported, $outputMimeType) =
+			GalleryToolkitHelper::isSupportedOperationSequence($mimeType, $operations);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if (!$isSupported) {
+			/* Oh well -- try the next preference */
+			continue;
+		    }
+		} else {
+		    /* Otherwise, for resizes, just try the next preference */
+		    continue;
+		}
 	    }
 
 	    list ($ret, $derivative) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
@@ -444,7 +461,7 @@ class GalleryItemHelper {
 
 	    $derivative->setDerivativeMimeType($outputMimeType);
 	    $derivative->setDerivativeSourceId($newItem->getId());
-	    $derivative->setDerivativeOperations($preference['derivativeOperations']);
+	    $derivative->setDerivativeOperations($operations);
 			
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {

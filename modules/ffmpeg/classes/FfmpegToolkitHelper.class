@@ -66,7 +66,11 @@ class FfmpegToolkitHelper {
 	 * -------------------- Operations --------------------
 	 */
 
-	$operations = array();
+	/* extract */
+	$operations['convert-to-image/jpeg']['params'] = array();
+	$operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
+	$operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
+	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
 	/*
 	 * -------------------- Properties --------------------

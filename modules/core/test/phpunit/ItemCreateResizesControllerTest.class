@@ -116,6 +116,12 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
+	/* Unregister dummy toolkit */
+	$ret = GalleryToolkitHelper::unregisterToolkit('ItemCreateResizesTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	parent::tearDown();
     }
 

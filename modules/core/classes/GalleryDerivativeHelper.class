@@ -135,10 +135,9 @@ class GalleryDerivativeHelper {
      * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @access private
      * @static
      */
-    function fetchDerivativesBySourceIds($ids, $types=null) {
+    function fetchDerivativesBySourceIds($ids, $types=array()) {
 	list ($ret, $results) =
 		GalleryDerivativeHelper::_loadDerivatives(null, $ids, $types);
 	if ($ret->isError()) {
@@ -159,7 +158,7 @@ class GalleryDerivativeHelper {
      * @access private
      * @static
      */
-    function _loadDerivatives($itemIds, $sourceIds, $types=null) {
+    function _loadDerivatives($itemIds, $sourceIds, $types=array()) {
 	global $gallery;
 	
 	GalleryProfiler::start('modules.core.classes.GalleryDerivativeHelper::loadDerivatives');

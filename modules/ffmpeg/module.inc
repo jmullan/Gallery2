@@ -122,7 +122,8 @@ class FfmpegModule extends GalleryModule {
 							   $info['mimeTypes'],
 							   $operation,
 							   $info['params'],
-							   $info['description']);
+							   $info['description'],
+							   $info['outputMimeType']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

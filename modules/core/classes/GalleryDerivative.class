@@ -483,7 +483,11 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    if (empty($operation)) {
 		continue;
 	    }
-	    list($operationName, $operationArgs) = split('\|', $operation);
+	    if (strpos($operation, '|') === false) {
+		list($operationName, $operationArgs) = array($operation, null);
+	    } else {
+		list($operationName, $operationArgs) = split('\|', $operation);
+	    }
 
 	    /* Get the appropriate toolkit */
 	    list ($ret, $toolkit) =
