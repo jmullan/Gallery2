@@ -331,7 +331,23 @@ class ConfirmImportController extends GalleryController {
 			    
 			    // $newAlbumInstance->setorderBy
 			    // $newAlbumInstance->setorderDirection
-			    // $newAlbumInstance->setownerId
+
+			    // Set album owner
+			    list($ret, $validUID) = Gallery1DataParser::isValidUid($album['owner']);
+			    if ($validUID) {
+				list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+				if ($ret->isError()) {
+				    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+				}
+				list($ret, $owner) = GalleryUserHelper::fetchUserByUsername($albumUserFields['username']);
+				if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
+				if ($owner) {
+				    $newAlbumInstance->setownerId($owner->getId());
+				}
+			    }
+
 			    // $newAlbumInstance->settheme
 			    $newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
 			    $newAlbumInstance->setviewedSinceTimestamp($album['clicks_date']);
@@ -415,7 +431,10 @@ class ConfirmImportController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-
+		    if (!isset($photos)) {
+			$photos = array();
+		    }
+		    
 		    foreach($photos as $j => $importAlbumItem) {
 			if (!isset($importAlbumItem->isAlbumName) || !$importAlbumItem->isAlbumName) {
 			    list ($ret, $item) = $gallery->loadEntitiesById($newAlbumInstanceId);
@@ -649,18 +668,25 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$album['name']] = $existingAlbumId;
 	    }
-
-	    list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+	    list($ret, $validUid) = Gallery1DataParser::isValidUid($album['owner']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
-	    list($ret, $owner) = GalleryUserHelper::fetchUserByUsername($testUser['username']);
-	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if ($owner) {
-		$albumValidOwner[$album['name']] = TRUE;
+	    if ($validUid){
+		list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list($ret, $owner) = GalleryUserHelper::fetchUserByUsername($testUser['username']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($owner) {
+		    $albumValidOwner[$album['name']] = TRUE;
+		} else {
+		    $albumValidOwner[$album['name']] = FALSE;
+		}
 	    } else {
 		$albumValidOwner[$album['name']] = FALSE;
 	    }
