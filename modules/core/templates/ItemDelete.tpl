@@ -51,22 +51,19 @@
       function setCheck(val) {ldelim}
         var frm = document.forms[0];
         {foreach from=$ItemDelete.peers item=peer}
-          {assign var="peerItemId" value=$peer.id}
-          frm.elements['g2_form[selectedIds][{$peerItemId}]'].checked = val;
+          frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
         {/foreach}
       {rdelim}
       function invertCheck(val) {ldelim}
         var frm = document.forms[0];
         {foreach from=$ItemDelete.peers item=peer}
-          {assign var="peerItemId" value=$peer.id}
-          frm.elements['g2_form[selectedIds][{$peerItemId}]'].checked = !frm.elements['g2_form[selectedIds][{$peerItemId}]'].checked;
+          frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;
         {/foreach}
       {rdelim}
     </script>
  
     <table>
       {foreach from=$ItemDelete.peers item=peer}
-      {assign var="peerItemId" value=$peer.id}
       <tr>
         <td width="60">
           {if isset($peer.thumbnail)}
@@ -86,15 +83,15 @@
           {$peer.title|default:$peer.pathComponent}
 
           <i>
-            {if isset($ItemDelete.peerTypes.data.$peerItemId)}
+            {if isset($ItemDelete.peerTypes.data[$peer.id])}
             {g->text text="(data)"}
             {/if}
-            {if isset($ItemDelete.peerTypes.album.$peerItemId)}
-            {if isset($ItemDelete.peerDescendentCounts.$peerItemId)}
+            {if isset($ItemDelete.peerTypes.album[$peer.id])}
+            {if isset($ItemDelete.peerDescendentCounts[$peer.id])}
             {g->text one="(album containing %d item)" 
       	       many="(album containing %d items)"
-                     count=$ItemDelete.peerDescendentCounts.$peerItemId
-                     arg1=$ItemDelete.peerDescendentCounts.$peerItemId}
+                     count=$ItemDelete.peerDescendentCounts[$peer.id]
+                     arg1=$ItemDelete.peerDescendentCounts[$peer.id]}
             {else}
             {g->text text="(empty album)"}
             {/if}
