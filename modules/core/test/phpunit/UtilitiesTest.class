@@ -329,26 +329,26 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(array(), GalleryUtilities::getFormVariables('utilitiestest', false));
     }
 
-    function testGetUserIpAddress() {
+    function testGetRemoteHostAddress() {
 	global $gallery;
 	
 	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
             unset($_SERVER[$key]);
 	}
 	
-	$ip = GalleryUtilities::getUserIpAddress();
+	$ip = GalleryUtilities::getRemoteHostAddress();
 	$this->assertEquals($ip, null, 'Unavailable IP');
 	 
 	$_SERVER['REMOTE_ADDR'] = '111.222.333.444';
-        $ip = GalleryUtilities::getUserIpAddress();
+        $ip = GalleryUtilities::getRemoteHostAddress();
         $this->assertEquals($ip, '111.222.333.444', 'IP From REMOTE_ADDR');
 
         $_SERVER['HTTP_CLIENT_IP'] = '222.333.444.555';
-        $ip = GalleryUtilities::getUserIpAddress();
+        $ip = GalleryUtilities::getRemoteHostAddress();
         $this->assertEquals($ip, '222.333.444.555', 'IP From HTTP_CLIENT_IP');
 
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '333.444.555.666';
-        $ip = GalleryUtilities::getUserIpAddress();
+        $ip = GalleryUtilities::getRemoteHostAddress();
         $this->assertEquals($ip, '333.444.555.666', 'IP From HTTP_X_FORWARDED_FOR');
     }
 
