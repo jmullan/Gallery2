@@ -82,10 +82,6 @@ class SiteAdminView extends GalleryView {
 	    $subViewName = 'core:AdminCore';
 	}
 
-	/* Set up my view parameters */
-	$SiteAdmin = array('subViewChoices' => $subViewChoices,
-			   'subViewName' => $subViewName);
-	
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -95,6 +91,17 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Our sub view may have set some hints, like the encoding type */
+	if ($template->hasVariable('SiteAdmin')) {
+	    $SiteAdmin =& $template->getVariableByReference('SiteAdmin');
+	} else {
+	    $SiteAdmin = array();
+	}
+
+	/* Set up my view parameters */
+	$SiteAdmin['subViewChoices'] = $subViewChoices;
+	$SiteAdmin['subViewName'] = $subViewName;
 	$SiteAdmin['viewBodyFile'] = $results['body'];
 	$SiteAdmin['viewL10Domain'] = $subView->getL10Domain();
 

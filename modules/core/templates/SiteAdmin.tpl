@@ -1,4 +1,5 @@
-{g->form arg1="controller=$controller"}
+{g->form arg1="controller=$controller"
+         enctype=$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}
   {g->input type="hidden" name="form[formName]"}{$form.formName}{/g->input}
 
   {g->main}
