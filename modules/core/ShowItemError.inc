@@ -61,9 +61,21 @@ class ShowItemErrorView extends GalleryView {
 		$targetId = $item->getId();
 	    }
 
+	    list ($ret, $canEdit) = GalleryCoreApi::hasItemPermission($targetId, 'core.edit');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $template->setVariable('ShowItemError',
 				   array('itemId' => $targetId,
-					 'layoutId' => $layoutId));
+					 'layoutId' => $layoutId,
+					 'canEdit' => $canEdit,
+					 'isAdmin' => $isAdmin));
 	    return array(GalleryStatus::success(),
 			 array('body' => 'modules/core/templates/ShowItemError.tpl'));
 

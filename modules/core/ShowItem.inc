@@ -82,7 +82,7 @@ class ShowItemView extends GalleryView {
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
-                    'module', 'core', 'id.anonymousUser');
+		    'module', 'core', 'id.anonymousUser');
 		if ($ret2->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -93,7 +93,7 @@ class ShowItemView extends GalleryView {
 		}
 		/* Try to redirect to root */
 		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter(
-                    'module', 'core', 'id.rootAlbum');
+		    'module', 'core', 'id.rootAlbum');
 		if ($ret2->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -122,11 +122,15 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$validLayout = true;
+	$validLayout = false;
 	list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
-	if ($ret->isError()) {
-	    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		$validLayout = false;
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($layout)) {
+	    list ($ret, $validLayout) = $layout->isActive();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 

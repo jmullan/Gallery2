@@ -20,17 +20,24 @@
   
     <p class="giDescription">
       {capture name="layoutId"}
-        <b>{$ShowItemError.layoutId}</b>
+	<b>{$ShowItemError.layoutId}</b>
       {/capture}
-      {g->text text="This album is configured to use the %s layout, but it is either missing or not activated." arg1=$smarty.capture.layoutId}
+      {g->text text="This album is configured to use the %s layout, but it is either inactive or not installed." arg1=$smarty.capture.layoutId}
       {capture name="optionOne"}
-        <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`"}">{g->text text="choose a new layout for this album"}</a>
+	{if !$ShowItemError.canEdit}
+	  <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin" arg3="return=1"}">{g->text text="login"}</a>
+	  {g->text text="and then"}
+	{/if}
+	<a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ShowItemError.itemId`"}">{g->text text="choose a new layout for this album"}</a>
       {/capture}
       {capture name="optionTwo"}
-        <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}">{g->text text="install or activate this layout"}</a>
+	{if !$ShowItemError.isAdmin}
+	  <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin" arg3="return=1"}">{g->text text="login as a site administrator"}</a>
+	  {g->text text="and then"}
+	{/if}
+	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}">{g->text text="install or activate this layout"}</a>
       {/capture}
       {g->text text="To fix this problem you can either %s or %s." arg1=$smarty.capture.optionOne arg2=$smarty.capture.optionTwo}
     </p>
   </div>
 </div>
-
