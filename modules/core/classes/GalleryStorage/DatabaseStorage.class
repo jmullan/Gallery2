@@ -28,8 +28,7 @@
 /**
  * Require the ADOdb libraries
  */
-global $gallery;
-require_once($gallery->getConfig('code.gallery.lib') . '/adodb/adodb.inc.php');
+require_once(dirname(__FILE__) . '/../../../../lib/adodb/adodb.inc.php');
 require_once(dirname(__FILE__) . '/DatabaseStorage/ErrorHandler.inc');
 
 /**
