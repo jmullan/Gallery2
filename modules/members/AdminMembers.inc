@@ -45,7 +45,7 @@ class AdminMembersController extends GalleryController {
     	$error = array();
     	$status = array();
     	if (isset($form['action']['save'])) {  
-    	    foreach (array('viewSelected', 'emailSelected') as $key) {
+    	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
     	        if (isset($form[$key])) {
     		    $ret = GalleryCoreApi::setPluginParameter('module', 
     		                                              'members', 
@@ -94,7 +94,7 @@ class AdminMembersView extends GalleryView {
     	
     	/* Load our default values if we didn't just come from this form. */
     	if ($form['formName'] != 'AdminMembers') {
-    	    foreach (array('viewSelected', 'emailSelected') as $key) {
+    	    foreach (array('canViewMembersModule', 'canViewEmailAddress') as $key) {
     	        list ($ret, $form[$key]) =
     	            GalleryCoreApi::getPluginParameter('module', 'members', $key);
     	        if ($ret->isError()) {
@@ -108,7 +108,7 @@ class AdminMembersView extends GalleryView {
     	               'id.everybodyGroup', 
     	               'id.allUserGroup') as $key) {
     	    list ($ret, $groupIds[]) = 
-                GalleryCoreApi::getPluginParameter('module','core',$key);
+                GalleryCoreApi::getPluginParameter('module', 'core', $key);
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
             }
@@ -119,8 +119,8 @@ class AdminMembersView extends GalleryView {
     	                                $groupIds[1] => $module->translate($viewTerms[1]),
     	                                $groupIds[2] => $module->translate($viewTerms[2]));
     	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
-    	                               false => $module->translate("Don't Show Email Addresses"));                                
-    	$template->setVariable('Members', $members);
+    	                               false => $module->translate("Don't Show Email Addresses"));
+	$template->setVariable('Members', $members);
     	$template->setVariable('controller', 'members:AdminMembers');
     
     	return array(GalleryStatus::success(),

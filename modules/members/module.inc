@@ -33,90 +33,90 @@
 class MembersModule extends GalleryModule {
 
     function MembersModule() {
-    	global $gallery;
-    	
-    	$this->setId('members');
-    	$this->setName('Members');
-    	$this->setDescription($gallery->i18n('Members List and Profiles'));
-    	$this->setVersion('0.8');
-    	$this->setGroup('gallery', $gallery->i18n('Gallery'));
+	global $gallery;
+
+	$this->setId('members');
+	$this->setName('Members');
+	$this->setDescription($gallery->i18n('Members List and Profiles'));
+	$this->setVersion('0.8');
+	$this->setGroup('gallery', $gallery->i18n('Gallery'));
     }
 
     /**
      * @see GalleryModule::install()
      */
     function install() {
-    	global $gallery;
+	global $gallery;
     	
-    	list ($ret, $version) = $this->getModuleParameter('version');
-    	if ($ret->isError()) {
-    	    return $ret->wrap(__FILE__, __LINE__);
-    	}
-         
-    	if ($version != $this->getVersion()) {
-            $ret = $this->setModuleParameter('version', $this->getVersion());
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-    	}
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+ 
+	if ($version != $this->getVersion()) {
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
     	
-    	list ($ret, $viewSelectedGroupId) = 
-            GalleryCoreApi::getPluginParameter('module','core','id.everybodyGroup');
+	list ($ret, $viewSelectedGroupId) = 
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-    	foreach (array('viewSelected' => $viewSelectedGroupId,
-    		       'version' => $this->getVersion(),
-    		       'emailSelected' => 0) as $key => $value) {
-    	    $ret = $this->setModuleParameter($key, $value);
-    	    if ($ret->isError()) {
-    	        return $ret->wrap(__FILE__, __LINE__);
-    	    }
-    	}
-    	
-    	return GalleryStatus::success();
+	foreach (array('canViewMembersModule' => $viewSelectedGroupId,
+		       'version' => $this->getVersion(),
+		       'canViewEmailAddress' => 0) as $key => $value) {
+	    $ret = $this->setModuleParameter($key, $value);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
      * @see GalleryModule::canBeAutoInstalled
      */
     function canBeAutoInstalled() {
-	    return true;
+	return true;
     }
 	
     /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
-	    /* We don't require any special configuration */
-	    return array(GalleryStatus::success(), true);
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
     }
 	
     /**
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks() {
-        global $gallery;
-        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
-        list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
-        if ($ret->isError()) {
+	global $gallery;
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
+	list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$links = array();
-        if ($result) {
+	if ($result) {
 	    $links[] = array('text' => $this->translate('Members List '),
-                             'params' => array('view' => 'members:MembersList'));
-        }
-        return array(GalleryStatus::success(), $links);    
+			     'params' => array('view' => 'members:MembersList'));
+	}
+	return array(GalleryStatus::success(), $links);    
     }
     
     /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-        return array(GalleryStatus::success(),
-	             array(array('name' => $this->translate('Members'),
-		                 'view' => 'members:AdminMembers')));
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Members'),
+				 'view' => 'members:AdminMembers')));
     }
 }
 ?>

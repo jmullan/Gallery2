@@ -26,10 +26,10 @@
     <table class="gbDataTable">
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td>
-  	{g->text text="Name:"}
+  	  {g->text text="Name:"}
         </td>
         <td>
-  	{$MembersProfile.user.fullName}
+  	  {$MembersProfile.user.fullName}
         </td>
       </tr>
   
@@ -50,18 +50,18 @@
   
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td>
-  	{g->text text="Member Since:"}
+  	  {g->text text="Member Since:"}
         </td>
         <td>
-  	{g->date timestamp=$MembersProfile.user.creationTimestamp}
-  	{if $MembersProfile.daysSinceCreation > 0}
-  	{g->text one="(%d day)"
-                     many="(%d days)"
-                     count=$MembersProfile.daysSinceCreation
-                     arg1=$MembersProfile.daysSinceCreation}
-    {elseif $MembersProfile.daysSinceCreation == 0}
-    {g->text text="(today)"}                
-    {/if}                 
+  	  {g->date timestamp=$MembersProfile.user.creationTimestamp}
+  	  {if $MembersProfile.daysSinceCreation > 0}
+  	  {g->text one="(%d day)"
+                   many="(%d days)"
+                   count=$MembersProfile.daysSinceCreation
+                   arg1=$MembersProfile.daysSinceCreation}
+          {elseif $MembersProfile.daysSinceCreation == 0}
+          {g->text text="(today)"}                
+          {/if}                 
         </td>
       </tr>
   
@@ -75,13 +75,13 @@
   	<ul>
   	  {foreach from=$MembersProfile.lastItems item=item}
   	  <li>
-  	      {if $item.canContainChildren}
-  	      {g->text text="Album:"}
-  	      {/if}
-  	      {g->text text="&nbsp;"}
-  	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
-  		{$item.title|default:$item.pathComponent}
-  	      </a>
+  	    {if $item.canContainChildren}
+  	    {g->text text="Album:"}
+  	    {/if}
+  	    {g->text text="&nbsp;"}
+  	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+	      {$item.title|default:$item.pathComponent}
+  	    </a>
   	    <br />
   	  </li>
   	  {/foreach}

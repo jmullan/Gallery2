@@ -63,54 +63,48 @@ class MembersTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	list ($ret, $this->_originalViewSelected) = 
-        GalleryCoreApi::getPluginParameter('module', 'members', 'viewSelected');
+	list ($ret, $this->_originalCanViewMembersModule) = 
+            GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $this->_originalEmailSelected) = 
-        GalleryCoreApi::getPluginParameter('module', 'members', 'emailSelected');
+	list ($ret, $this->_originalCanViewEmailAddress) = 
+            GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	global $gallery;
+	}	
     }
 
     function tearDown() {
-	/* Remove our dummy user and album */
-	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	/* Remove our dummy user and album, return original settings */
+	$ret = array();
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$ret[] = GalleryCoreApi::deleteEntityById($this->_user->getId());
+
+	$ret[] = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	
-	$ret = GalleryCoreApi::setPluginParameter('module', 
-    		                                  'members', 
-    		                                  'viewSelected', 
-    		                                  $this->_originalViewSelected);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-    
-        $ret = GalleryCoreApi::setPluginParameter('module', 
-    		                                  'members', 
-    		                                  'emailSelected', 
-    		                                  $this->_originalEmailSelected);
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	$ret[] = GalleryCoreApi::setPluginParameter('module', 
+						    'members', 
+						    'canViewMembersModule', 
+						    $this->_originalCanViewMembersModule);
+
+        $ret[] = GalleryCoreApi::setPluginParameter('module', 
+						    'members', 
+						    'canViewEmailAddress',
+						    $this->_originalCanViewEmailAddress);
+
+	/* we want to make sure all the original settings are replaced,
+	 * so we do not check for errors until they have all completed 
+	 */
+	foreach ($ret as $return) {
+	    if ($return->isError()) {
+                print $return->getAsHtml();
+                return array($return->wrap(__FILE__, __LINE__), null);
+            }
+	}
 
 	parent::tearDown();
     }
@@ -146,7 +140,7 @@ class MembersTest extends GalleryTestCase {
          
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
-    	                                          'viewSelected', 
+    	                                          'canViewMembersModule', 
     	                                          $adminGroupId);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -177,7 +171,7 @@ class MembersTest extends GalleryTestCase {
         /* not admin, view emails off */
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
-    	                                          'emailSelected', 
+    	                                          'canViewEmailAddress', 
     	                                          0);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -192,7 +186,7 @@ class MembersTest extends GalleryTestCase {
 	/* not admin, view emails on*/ 
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
-    	                                          'emailSelected', 
+    	                                          'canViewEmailAddress', 
     	                                          1);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -207,7 +201,7 @@ class MembersTest extends GalleryTestCase {
 	/* admin, view emails off*/ 
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
-    	                                          'emailSelected', 
+    	                                          'canViewEmailAddress', 
     	                                          0);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -233,7 +227,7 @@ class MembersTest extends GalleryTestCase {
 	/* admin, view emails on*/ 
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
-    	                                          'emailSelected', 
+    	                                          'canViewEmailAddress', 
     	                                          1);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -262,18 +256,16 @@ class MembersTest extends GalleryTestCase {
 	    
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_user->getId());
         if ($ret->isError()) {
-            print $ret->getAsHtml();
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
-	$this->_user->setcreationTimestamp(time()-604800);
+	$this->_user->setcreationTimestamp(time()-90-7*24*60*60);
 	$ret = $this->_user->save();
 	if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
-            print $ret->getAsHtml();
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
@@ -282,6 +274,27 @@ class MembersTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}	    
 	$this->assertEquals(7, $result);      
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_user->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        $this->_user->setcreationTimestamp(time()+90-7*24*60*60);
+        $ret = $this->_user->save();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $ret = GalleryCoreApi::releaseLocks($lockId);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        list ($ret, $result) = GalleryMembersHelper::daysSinceCreation($this->_user->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(7, $result);
     }
 }
 ?>

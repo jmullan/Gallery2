@@ -1,6 +1,6 @@
 {*
  * If you want to customize this file, do not edit it directly.
- * Instead, copy it to AdminSelfRegistration.tpl.local and edit that version instead.
+ * Instead, copy it to AdminMembers.tpl.local and edit that version instead.
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
@@ -26,14 +26,11 @@
      {g->text text="This will select who can see the members list and member profiles."}
     </p>
     
-    <table style="admin_widgets">
+    <table style="gbDataEntry">
       <tr>
 	<td>
-	  {g->text text="Select:"}
-	</td>
-	<td>
-	  <select name="{g->formVar var="form[viewSelected]"}">
-	    {html_options options=$Members.memberViews selected=$form.viewSelected}
+	  <select name="{g->formVar var="form[canViewMembersModule]"}">
+	    {html_options options=$Members.memberViews selected=$form.canViewMembersModule}
 	  </select>
 	</td>
       </tr>
@@ -42,18 +39,15 @@
   
   <div class="gbAdmin">
     <p class="giDescription">
-     {g->text text="This will select if email addresses are displayed in the member profiles."}
-     {g->text text="Administrators will always be able to see email addresses."}
+     {g->text text="This will select if email addresses are displayed in the member profiles.
+                    Administrators will always be able to see email addresses."}
     </p>
     
-    <table style="admin_widgets">
+    <table style="gbDataEntry">
       <tr>
 	<td>
-	  {g->text text="Select:"}
-	</td>
-	<td>
-	  <select name="{g->formVar var="form[emailSelected]"}">
-	    {html_options options=$Members.emailViews selected=$form.emailSelected}
+	  <select name="{g->formVar var="form[canViewEmailAddress]"}">
+	    {html_options options=$Members.emailViews selected=$form.canViewEmailAddress}
 	  </select>
 	</td>
       </tr>
