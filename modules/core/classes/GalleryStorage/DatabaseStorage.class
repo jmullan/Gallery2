@@ -1338,8 +1338,15 @@ class DatabaseStorage extends GalleryStorage {
      *             'EXACT',
      *             $path));
      *
+     * Comparators can be 'EXACT' or 'CONTAINS'
+     *
      * Example target:
      * array('GalleryNucleus::id')
+     *
+     * If the target is not an array, it can be one of the following
+     * special targets:
+     *
+     * SEARCH_COUNT   -- return only the number of hits
      *
      * @access public
      * @param array the search criteria
@@ -1357,19 +1364,26 @@ class DatabaseStorage extends GalleryStorage {
 	$targetTableList = array();
 	$whereTableList = array();
 	$targetMap = array();
-	
-	foreach ($targetArray as $target) {
-	    list($class, $member) = split('::', $target);
-	    if (empty($class) || empty($member)) {
-		return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					    __FILE__, __LINE__);
-	    }
 
-	    $tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
-	    $colName = $this->prefixColumnName($member);
-	    $targetTableList[$tableName] = 1;
-	    $targetComponents[] = $tableName. '.' . $colName;
-	    $targetMap[$colName] = $target;
+	if (is_array($targetArray)) {
+	    foreach ($targetArray as $target) {
+		list($class, $member) = split('::', $target);
+		if (empty($class) || empty($member)) {
+		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						__FILE__, __LINE__);
+		}
+		
+		$tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
+		$colName = $this->prefixColumnName($member);
+		$targetTableList[$tableName] = 1;
+		$targetComponents[] = $tableName. '.' . $colName;
+		$targetMap[$colName] = $target;
+	    }
+	} else {
+	    if ($targetArray == SEARCH_COUNT) {
+		$targetComponents[] = 'COUNT(*)';
+		$targetMap['COUNT(*)'] = 'count';
+	    }
 	}
 	
 	foreach ($criteriaArray as $criteria) {
@@ -1396,6 +1410,11 @@ class DatabaseStorage extends GalleryStorage {
 	    case 'EXACT':
 		$whereComponents[] = $tableName . '.' . $colName . '=?';
 		$whereData[] = $value;
+		break;
+
+	    case 'CONTAINS':
+		$whereComponents[] = $tableName . '.' . $colName . ' LIKE ?';
+		$whereData[] = '%' . $value . '%';
 		break;
 		
 	    default:

@@ -121,6 +121,13 @@ define("STORAGE_FLAG_NEWLY_CREATED", 0x00000001);
 define("STORAGE_FLAG_DELETED", 0x00000002);
 
 /**
+ * Search returns count only
+ *
+ * @constant SEARCH_COUNT
+ */
+define("SEARCH_COUNT", 1);
+
+/**
  * Interface to the storage mechanism
  *
  * This object provides the hooks for saving and restoring objects in the persistent store.
@@ -275,8 +282,15 @@ class GalleryStorage {
      *             'EXACT',
      *             $path));
      *
+     * Comparators can be 'EXACT' or 'CONTAINS'
+     *
      * Example target:
      * array('GalleryNucleus::id')
+     *
+     * If the target is not an array, it can be one of the following
+     * special targets:
+     *
+     * SEARCH_COUNT   -- return only the number of hits
      *
      * @access public
      * @param array the search criteria

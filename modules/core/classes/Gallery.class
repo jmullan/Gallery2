@@ -315,7 +315,6 @@ class Gallery {
      * extend this.
      *
      * Example criteria:
-     * 
      * array(array('GalleryNucleus::parentId',
      *             'EXACT',
      *             $parentId),
@@ -323,8 +322,15 @@ class Gallery {
      *             'EXACT',
      *             $path));
      *
+     * Comparators can be 'EXACT' or 'CONTAINS'
+     *
      * Example target:
      * array('GalleryNucleus::id')
+     *
+     * If the target is not an array, it can be one of the following
+     * special targets:
+     *
+     * SEARCH_COUNT   -- return only the number of hits
      *
      * @access public
      * @param array the search criteria
