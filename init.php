@@ -49,7 +49,7 @@ function GalleryInitFirstPass($params=array()) {
     GalleryCoreApi::requireOnce($classDir . 'GalleryCapabilities.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
     GalleryCoreApi::requireOnce($classDir . 'GalleryModule.class');
-    
+
     /*
      * Set up our Gallery global.  It's important to use a reference here because
      * the constructor registers a shutdown function and ties it to the instance in
@@ -113,18 +113,18 @@ function GalleryInitFirstPass($params=array()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    /* Initialize our translator */
-    $ret = $gallery->initTranslator();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
-
     return GalleryStatus::success();
 }
 
 function GalleryInitSecondPass() {
     global $gallery;
     
+    /* Initialize our translator */
+    $ret = $gallery->initTranslator();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
     $session =& $gallery->getSession();
     /*
      * Set our active user id.  Check to see if we have one in our session.  If
