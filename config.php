@@ -95,7 +95,7 @@ $gallery->setConfig('core.storage.type', 'database');
 /* Configure the Graphics toolkit */
 $gallery->setConfig('core.graphics.type', 'netpbm');
 $toolkitConfig['path'] = '/usr/local/bin';
-$toolkitConfig['fileTypes'] = array('jpg', 'jpeg', 'gif', 'png');
+$toolkitConfig['fileExtensions'] = array('jpg', 'jpeg', 'gif', 'png');
 $toolkitConfig['jpegImageQuality'] = 75;
 $toolkitConfig['expectedStatus'] = 0;
 $toolkitConfig['functions'] = (IMAGE_FUNCTION_RESIZE |
