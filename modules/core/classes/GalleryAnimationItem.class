@@ -31,12 +31,12 @@
 require_once(dirname(__FILE__) . '/GalleryDataItem.class');
 
 /**
- * A subclass of DataItem for containing Movies
+ * A subclass of DataItem for containing Animations
  *
- * A GalleryItem whose source is a movie of some kind (like an MPEG
- * or an AVI)
+ * A GalleryItem whose source is an animation of some kind (like a Flash
+ * or Shockwave)
  *
- * @g2 <class-name>GalleryMovieItem</class-name>
+ * @g2 <class-name>GalleryAnimationItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
@@ -47,7 +47,7 @@ require_once(dirname(__FILE__) . '/GalleryDataItem.class');
  * @package GalleryCore
  * @subpackage Classes
  */
-class GalleryMovieItem_core extends GalleryDataItem {
+class GalleryAnimationItem_core extends GalleryDataItem {
 
     /*
      * ****************************************
@@ -56,7 +56,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
      */
 
     /**
-     * The width of this movie.
+     * The width of this animation.
      *
      * @g2 <member>
      * @g2   <member-name>width</member-name>
@@ -69,7 +69,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
     var $_width;
 
     /**
-     * The height of this movie.
+     * The height of this animation.
      *
      * @g2 <member>
      * @g2   <member-name>height</member-name>
@@ -80,19 +80,6 @@ class GalleryMovieItem_core extends GalleryDataItem {
      * @access private
      */
     var $_height;
-
-    /**
-     * The duration of the movie in seconds 
-     *
-     * @g2 <member>
-     * @g2   <member-name>duration</member-name>
-     * @g2   <member-type>INTEGER</member-type>
-     * @g2 </member>
-     *
-     * @var int $_width
-     * @access private
-     */
-    var $_duration;
 
     /*
      * ****************************************
@@ -108,30 +95,30 @@ class GalleryMovieItem_core extends GalleryDataItem {
     }
     
     /**
-     * Create a new GalleryMovieItem from a video file
+     * Create a new GalleryAnimationItem from a animation file
      *
      * @param int the id of the parent GalleryItem
-     * @param string the path to the source video
+     * @param string the path to the source animation
      * @param string the mime type
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $videoFileName, $mimeType, $targetName=null) {
+    function create($parentId, $animationFileName, $mimeType, $targetName=null) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
 
 	/* Validate the input filename */
-	if (empty($videoFileName)) {
+	if (empty($animationFileName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	if (!$platform->file_exists($videoFileName)) {
+	if (!$platform->file_exists($animationFileName)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
 	/* Create our data item */
-	$ret = parent::create($parentId, $videoFileName, $mimeType, $targetName);
+	$ret = parent::create($parentId, $animationFileName, $mimeType, $targetName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -139,7 +126,6 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	/* Default to empty dimensions */
 	$this->setWidth(0);
 	$this->setHeight(0);
-	$this->setDuration(0);
 
 	/* Detect our dimensions, if possible */
 	$ret = $this->rescan();
@@ -167,17 +153,17 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	}
 
 	$mimeType = $this->getMimeType();
-	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions_and_duration');
+	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
-	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions_and_duration', $path);
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $path);
 	    if ($ret->isError()) {
 
 		/*
-		 * If we can't get the dimensions, it's probably a bad movie.
+		 * If we can't get the dimensions, it's probably a bad image.
 		 * Or our graphics code is broken.  Hard to tell which at this point.
 		 */
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
@@ -186,7 +172,6 @@ class GalleryMovieItem_core extends GalleryDataItem {
 
 	    $this->setWidth($dimensions[0]);
 	    $this->setHeight($dimensions[1]);
-	    $this->setDuration($dimensions[2]);
 	}
 
 	return GalleryStatus::success();
@@ -197,7 +182,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
      */
     function itemTypeName() {
 	global $gallery;
-	return $gallery->i18n('Movie');
+	return $gallery->i18n('Animation');
     }
 
     /**
@@ -214,45 +199,71 @@ class GalleryMovieItem_core extends GalleryDataItem {
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
-	    case 'video/quicktime':
-		return sprintf('<object %s type="%s" data="%s" width="%s" height="%s"></object>',
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			       $this->getMimeType(),
-			       $src,
-			       $width,
-			       $height);
-
-	    case 'video/x-msvideo':
-		return sprintf('<object id="WindowsMediaPlayer"
-                                        %s
-                                        width="%s"
-                                        height="%s"
-                                        classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A">
-                                  <param name="ShowDisplay" value="0">
-                                  <param name="ShowControls" value="1">
-                                  <param name="AutoStart" value="1">
-                                  <param name="AutoRewind" value="-1">
-                                  <param name="Volume" value="-5000">
-                                  <param name="FileName" value="%s">
-
-                                  <object id="video"
-                                          %s
-                                          data="%s"
-                                          type="%s"
-                                          width="%s"
-                                          height="%s">
-                                  </object>
+	    case 'application/x-shockwave-flash':
+		return sprintf('<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" 
+                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"
+                                  %s
+                                  width="%d"
+                                  height="%d">
+                                  <param name="movie" value="%s" />
+                                  <param name="quality" value="high" />
+                                  <param name="salign" value="TL" />
+                                  <embed src="%s"
+                            	         quality="high"
+                            	         pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"
+                            	         type="%s"
+                            	         width="%d"
+                            	         height="%d"
+                            	         salign="TL">
+                                  </embed>
                                 </object>',
 			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $width,
-			       $height+30,
+			       $height,
 			       $src,
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $src,
-			       'video/avi', // $this->getMimeType(),
+			       $this->getMimeType(),
 			       $width,
 			       $height);
-		
+
+	    case 'application/x-director':
+		return sprintf('<object classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000" 
+                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"
+                                        %s
+                                        width="%d"
+                                        height="%d"
+                                        name="%s"
+                                        id="sw">
+                                  <param name="src" value="%s" />
+                                  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />
+                                  <param name="sw3" value="2" />
+                                  <param name="swStretchStyle" value="none" />
+                                  <param name="bgColor" value="#000000" />
+                                  <embed src="%s" 
+                                         bgcolor="#000000"
+                                         width="%d"
+                                         height="%d" 
+                            	         swremote="swSaveEnabled=\'false\' 
+                            	                   swVolume=\'false\' 
+                            	                   swRestart=\'false\' 
+                            	                   swPausePlay=\'false\' 
+                            	                   swFastForward=\'false\' 
+                            	                   swContextMenu=\'true\'" 
+                            	         swstretchstyle="none" 
+                            	         sw3="2" 
+                            	         type="%s" 
+                            	         pluginspage="http://www.macromedia.com/shockwave/download/">
+                                  </embed>
+                                </object>',
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $width,
+			       $height,
+			       $this->getPathComponent(),
+			       $src,
+			       $src,
+			       $width,
+			       $height,
+			       $this->getMimeType());
 	    default:
 		return sprintf('[Render for %s not implemented  yet]', $this->getMimeType());
 		
@@ -264,5 +275,5 @@ class GalleryMovieItem_core extends GalleryDataItem {
     
 }
 
-include(dirname(__FILE__) . '/interfaces/GalleryMovieItem.inc');
+include(dirname(__FILE__) . '/interfaces/GalleryAnimationItem.inc');
 ?>

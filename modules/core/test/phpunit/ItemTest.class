@@ -232,7 +232,7 @@ class ItemTest extends GalleryTestCase {
 	}
 	$this->assertEquals('galleryphotoitem', get_class($instance));
 
-	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('video/randomvideotype');
+	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('video/x-msvideo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -356,6 +356,10 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(isset($thumbTable[$this->_childItems[1]->getId()]));
 	$newDerivative = $thumbTable[$this->_childItems[1]->getId()];
 	$this->assert(GalleryUtilities::isA($newDerivative, 'GalleryDerivative'));
+
+	if (!isset($newDerivative)) {
+	    return $this->fail("new derivative missing!");
+	}
 	$this->assertEquals($newDerivative->getDerivativeSourceId(), $derivative->getId());
     }
 

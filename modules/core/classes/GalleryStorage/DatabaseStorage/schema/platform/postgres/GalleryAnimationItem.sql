@@ -3,7 +3,7 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXMovieItem (
+    CREATE TABLE DB_TABLE_PREFIXAnimationItem (
   DB_COLUMN_PREFIXid
       INTEGER
     
@@ -17,15 +17,11 @@
     DB_COLUMN_PREFIXheight
       INTEGER
     
-      ,
-    DB_COLUMN_PREFIXduration
-      INTEGER
-    
     );
 
   
-    CREATE INDEX MovieItem_id 
-    ON DB_TABLE_PREFIXMovieItem
+    CREATE INDEX AnimationItem_id 
+    ON DB_TABLE_PREFIXAnimationItem
     (DB_COLUMN_PREFIXid);
 
   
@@ -35,7 +31,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'MovieItem',
+      'AnimationItem',
       1,
       0
       );

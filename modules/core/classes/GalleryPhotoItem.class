@@ -33,9 +33,7 @@ require_once(dirname(__FILE__) . '/GalleryDataItem.class');
 /**
  * A subclass of DataItem for containing Photos
  *
- * A GalleryItem whose source is an image.  It contains no image   
- * information itself, but contains several ImageContainer
- * versions of the original.
+ * A GalleryItem whose source is an image (eg JPEG, PNG, GIF, etc)
  *
  * @g2 <class-name>GalleryPhotoItem</class-name>
  * @g2 <parent-class-name>GalleryDataItem</parent-class-name>
@@ -57,7 +55,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
      */
 
     /**
-     * The width this image.
+     * The width of this image.
      *
      * @g2 <member>
      * @g2   <member-name>width</member-name>
@@ -70,7 +68,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
     var $_width;
 
     /**
-     * The height this image.
+     * The height of this image.
      *
      * @g2 <member>
      * @g2   <member-name>height</member-name>
@@ -120,28 +118,6 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $toolkit) =
-	    GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (isset($toolkit)) {
-	    list ($ret, $dimensions) =
-		$toolkit->getProperty($mimeType, 'dimensions', $imageFileName);
-	    if ($ret->isError()) {
-
-		/*
-		 * If we can't get the dimensions, it's probably a bad image.
-		 * Or our graphics code is broken.  Hard to tell which at this point.
-		 */
-		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	} else {
-	    $dimensions = array(0, 0);
-	}
-
 	/* Create our data item */
 	$ret = parent::create($parentId, $imageFileName,
 			      $mimeType, $targetName);
@@ -149,8 +125,14 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$this->setWidth($dimensions[0]);
-	$this->setHeight($dimensions[1]);
+	/* Default to empty dimensions */
+	$this->setWidth(0);
+	$this->setHeight(0);
+
+	/* Detect our dimensions, if possible */
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	return GalleryStatus::success();
     }
@@ -171,8 +153,8 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $toolkit) =
-	    GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
+	$mimeType = $this->getMimeType();
+	list ($ret, $toolkit) = GalleryToolkitHelper::getToolkitByProperty($mimeType, 'dimensions');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -183,7 +165,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    if ($ret->isError()) {
 
 		/*
-		 * If we can't get the dimensions, it's probably a bad image.
+		 * If we can't get the dimensions, it may be a bad image
 		 * Or our graphics code is broken.  Hard to tell which at this point.
 		 */
 		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);

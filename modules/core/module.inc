@@ -160,6 +160,11 @@ class CoreModule extends GalleryModule {
 					       $classDir . 'GalleryMovieItem.class');
 	
 	GalleryFactory::registerImplementation('GalleryEntity',
+					       'GalleryAnimationItem',
+					       'GalleryAnimationItem',
+					       $classDir . 'GalleryAnimationItem.class');
+	
+	GalleryFactory::registerImplementation('GalleryEntity',
 					       'GalleryPhotoItem',
 					       'GalleryPhotoItem',
 					       $classDir . 'GalleryPhotoItem.class');
@@ -183,8 +188,13 @@ class CoreModule extends GalleryModule {
 					       array('video/x-msvideo',
 						     'video/quicktime',
 						     'video/mpeg',
-						     'video/x.ms.asf',
-						     'application/x-director',
+						     'video/x.ms.asf'));
+
+	GalleryFactory::registerImplementation('GalleryItem',
+					       'GalleryAnimationItem',
+					       'GalleryAnimationItem',
+					       $classDir . 'GalleryAnimationItem.class',
+					       array('application/x-director',
 						     'application/x-shockwave-flash'));
 
 	GalleryFactory::registerImplementation('GalleryItem',
@@ -700,6 +710,12 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $itemType = 'album';
+	} else {
+	    $itemType = 'item';
+	}
+
 	$parentId = $item->getParentId();
 	list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($parentId);
 	if ($ret->isError()) {
@@ -717,7 +733,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (isset($permissions['core.edit'])) {
-	    if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    if ($itemType == 'album') {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
 
@@ -746,8 +762,13 @@ class CoreModule extends GalleryModule {
 	}
 	
 	if ($item->getId() != $rootId) {
+	    if ($itemType == 'album') {
+		$text = $this->translate('Delete Album');
+	    } else {
+		$text = $this->translate('Delete Item');
+	    }
 	    if (isset($permissions['core.delete'])) {
-		$views[] = array('name' => $this->translate('Delete Item'),
+		$views[] = array('name' => $text,
 				 'view' => 'core:ItemDelete');
 	    }
 	}

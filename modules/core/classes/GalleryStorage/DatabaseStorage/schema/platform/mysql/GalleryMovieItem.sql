@@ -17,6 +17,10 @@
     DB_COLUMN_PREFIXheight
       int(11)
     
+      ,
+    DB_COLUMN_PREFIXduration
+      int(11)
+    
     , 
   
     INDEX (DB_COLUMN_PREFIXid)
