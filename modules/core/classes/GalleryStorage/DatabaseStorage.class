@@ -1679,6 +1679,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    while (!$platform->feof($fd)) {
 		$buffer .= $platform->fgets($fd, 4096);
 	    }
+	    $platform->fclose($fd);
 
 	    /* Split the file where semicolons are followed by a blank line..
 	     * PL/SQL blocks will have other semicolons, so we can't split on every one.
