@@ -90,6 +90,14 @@ sub extract {
       my $one;
       my $many;
 
+      # Ignore translations of the form:
+      #   text=$foo
+      # as we expect those to be variables containing values that
+      # have been marked elsewhere with the i18n() function
+      if ($string =~ /text=\$/) {
+	next;
+      }
+
       # text=.....
       if ($string =~ /text="(.*?[^\\])"/s) {
 	$text = $1;
@@ -128,7 +136,7 @@ sub extract {
 	# parse error
 	$text =~ s/\n/\n>/sg;
 	print STDERR "extract.pl parse error: $file:\n";
-	print STDERR "> $text\n";
+	print STDERR "> $string\n";
 	exit;
       }
 
