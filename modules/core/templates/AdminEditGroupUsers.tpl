@@ -33,11 +33,11 @@
 	    </td>
 	  </tr>
 
-	  {if ($form.groupType == GROUP_ALL_ADMINS)}
+	  {if ($form.groupType == GROUP_SITE_ADMINS)}
 	  <tr>
 	    <td colspan="2" align="center">
 	      {galleryWarningFontColor}
-	      {galleryText text="Note: This is the admin group.  Any users you add to this group will have site-wide administrative privileges"}
+	      {galleryText text="Note: This is the site administrator group.  Any users you add to this group will have site-wide administrative privileges"}
 	      {/galleryWarningFontColor}
 	    </td>
 	  </tr>

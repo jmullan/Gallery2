@@ -224,7 +224,8 @@ class GalleryUserGroupMap_core {
      * Is the given user id in the admin group?
      *
      * @param int the id of the user
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               bool true if yes
      */
     function isUserInAdminGroup($userId) {
 	global $gallery;
@@ -234,14 +235,20 @@ class GalleryUserGroupMap_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryUserGroupMap::isUserInGroup($userId, $adminGroupId);
+	list ($ret, $result) = GalleryUserGroupMap::isUserInGroup($userId, $adminGroupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
      * Is the given user id in the given group?
      *
      * @param int the id of the user
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               bool true if yes
      */
     function isUserInGroup($userId, $groupId) {
 	global $gallery;
@@ -257,7 +264,7 @@ class GalleryUserGroupMap_core {
 	}
 
 	$result = $searchResults->nextResult();
-	return array($ret, $result[0] == 1);
+	return array(GalleryStatus::success(), $result[0] == 1);
     }
     
 }

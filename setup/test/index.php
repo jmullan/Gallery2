@@ -5,18 +5,31 @@ require_once('TestCase/ActivateModule.class');
 require_once('TestCase/DeactivateModule.class');
 $tests = array();
 
-$ret = GalleryInit();
+$ret = main();
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
-    return;
+
+    if ($gallery->getDebug() == 'buffered') {
+	print "<pre>";
+	print $gallery->getDebugBuffer();
+	print "</pre>";
+    }
 }
 
-$ret = GalleryTestHarness();
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    print $ret->getAsHtml();
-    return;
+function main() {
+
+    $ret = GalleryInit();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    $ret = GalleryTestHarness();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
+    return GalleryStatus::success();
 }
 
 function GalleryTestHarness() {

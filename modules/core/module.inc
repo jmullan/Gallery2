@@ -84,15 +84,36 @@ class CoreModule extends GalleryModule {
 
 	/* Register all core permissions */
 	$gallery->addRegistry('GalleryPermissionMap',
-			      array('id' => 'core.all', 'description' => 'Full'),
-			      array('id' => 'core.view', 'description' => 'View'),
-			      array('id' => 'core.viewResizes', 'description' => 'View Resizes'),
-			      array('id' => 'core.viewSource', 'description' => 'View Original'),
-			      array('id' => 'core.insert', 'description' => 'Insert'),
-			      array('id' => 'core.change', 'description' => 'Change'),
-			      array('id' => 'core.move', 'description' => 'Move'),
-			      array('id' => 'core.changeText', 'description' => 'Change Text'),
-			      array('id' => 'core.delete', 'description' => 'Delete'));
+			      array('id' => 'core.all',
+				    'description' => 'Full',
+				    'admin' => true),
+			      array('id' => 'core.view',
+				    'description' => 'View',
+				    'admin' => false),
+			      array('id' => 'core.viewResizes',
+				    'description' => 'View Resizes',
+				    'admin' => false),
+			      array('id' => 'core.viewSource',
+				    'description' => 'View Original',
+				    'admin' => false),
+			      array('id' => 'core.viewAll',
+				    'description' => 'View All',
+				    'admin' => false),
+			      array('id' => 'core.insert',
+				    'description' => 'Insert',
+				    'admin' => true),
+			      array('id' => 'core.change',
+				    'description' => 'Change',
+				    'admin' => true),
+			      array('id' => 'core.move',
+				    'description' => 'Move',
+				    'admin' => true),
+			      array('id' => 'core.changeText',
+				    'description' => 'Change Text',
+				    'admin' => true),
+			      array('id' => 'core.delete',
+				    'description' => 'Delete',
+				    'admin' => true));
 
 	$this->_gallery =& $gallery;
 
@@ -113,18 +134,129 @@ class CoreModule extends GalleryModule {
 			      $classDir . 'GalleryPhotoItem.class');
 	$gallery->addRegistry('GalleryEntity.GalleryUnknownItem',
 			      $classDir . 'GalleryUnknownItem.class');
-			      
+
 	return parent::init();
     }
 
+    /**
+     * @see GalleryModule::install
+     */
+    function install() {
+	global $gallery;
+
+	/*
+	 * Installing the core is an unusual case, since the locations where we
+	 * keep track of what's versions are installed may not even exist.  So,
+	 * we have to work under the assumption that the store itself is
+	 * already installed and configured, and our authentication is good.
+	 * So then if we ask for the version number of the core and we get a
+	 * storage error, we can assume that the core's store has not yet been
+	 * configured and do that now.  All other modules can simply ask for
+	 * the version number and expect that to succeed.
+	 */
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	} else if ($ret->isError() || $version != $this->getVersion()) {
+
+	    /* The store requires configuration. */
+	    list ($ret, $storage) = $gallery->getStorage();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = $storage->configureStore('core');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/*
+		 * This is an initial install.  
+		 * Make sure that we have some reasonable defaults for the core.
+		 */
+		foreach (array('permissions.directory' => '0755',
+			       'permissions.file' => '0644',
+			       'exec.expectedStatus' => '0',
+			       'default.orderBy' => 'id',
+			       'default.orderDirection' => '1',
+			       'default.layout' => 'classic',
+			       'default.theme' => 'classic',
+			       'default.language' => 'en_US',
+			       'session.idParameter' => 'GALLERYSID',
+			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
+			       'session.inactivityTimeout' => 14 * 365 * 86400, /* two weeks */
+			       )
+			 as $key => $value) {
+
+		    $ret = $this->setModuleParameter($key, $value);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+
+		foreach (array("_createAllUsersGroup",
+			       "_createSiteAdminsGroup",
+			       "_createAnonymousUser",
+			       "_createAdminUser",
+			       "_createRootAlbumItem") as $func) {
+
+		    $ret = $this->$func();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} 
+
+	/* The core is now guaranteed to be configured and initialized */
+			      
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::getItemLinks
+     */
+    function getItemLinks($items, $returnUrlParams) {
+	global $gallery;
+
+	if (!is_array($items)) {
+	    $items = array($items);
+	}
+
+	/* XXX: Permission check "can the user add a comment to this item?" */
+	$gallery->debug("XXX: Comment.getItemLinks should be checking perms");
+
+	foreach ($returnUrlParams as $param => $value) {
+	    $params['return.' . $param] = $value;
+	}
+
+	$links = array();
+	foreach ($items as $item) {
+	    $params['view'] = 'comment:AddComment';
+	    $params['itemId'] = $item->getId();
+	    $links[$item->getId()] =
+		array('text' => $this->translate('add comment'),
+		      'params' => $params);
+	}
+
+	return array(GalleryStatus::success(), $links);
+    }
+    
     /**
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks($returnUrlParams) {
 	global $gallery;
 
-	list ($ret, $anonymousUserId) =
-	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -135,13 +267,25 @@ class CoreModule extends GalleryModule {
 
 	$links = array();
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
-	    $params['view'] = 'core:Login';
 	    $links[] = array('text' => $this->translate('login'),
-			     'params' => $params);
+			     'params' => array_merge(array('view' => 'core:Login'),
+						     $params));
 	} else {
-	    $params['controller'] = 'core:Logout';
 	    $links[] = array('text' => $this->translate('logout'),
-			     'params' => $params);
+			     'params' => array_merge(array('view' => 'core:Logout'),
+						     $params));
+	}
+
+	list ($ret, $isAdmin) =
+	    GalleryUserGroupMap::isUserInAdminGroup($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($isAdmin) {
+	    $links[] = array('text' => $this->translate('site admin'),
+			     'params' => array_merge(array('view' => 'core:SiteAdmin'),
+						     $params));
 	}
 
 	return array(GalleryStatus::success(), $links);
@@ -151,8 +295,6 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews();
      */
     function getSiteAdminViews() {
-	global $gallery;
-
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('General'),
 				 'view' => 'core:AdminCore'),
@@ -163,5 +305,265 @@ class CoreModule extends GalleryModule {
 			   array('name' => $this->translate('Modules'),
 				 'view' => 'core:AdminModules')));
     }
+
+    /**
+     * Create the initial All Users group
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createAllUsersGroup() {
+	global $gallery;
+
+	list ($ret, $id) = $this->getModuleParameter('id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($id)) {
+	    return GalleryStatus::success();
+	}
+    
+	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    
+	$ret = $group->create('All Users', GROUP_ALL_USERS);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    
+	$ret = $this->setModuleParameter('id.allUserGroup', $group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create the Site Admins group
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createSiteAdminsGroup() {
+	global $gallery;
+
+	list ($ret, $id) = $this->getModuleParameter('id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($id)) {
+	    return GalleryStatus::success();
+	}
+    
+	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+					     
+	$ret = $group->create('Site Admins', GROUP_SITE_ADMINS);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->setModuleParameter('id.adminGroup', $group->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create the initial Anonymous User
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createAnonymousUser() {
+	global $gallery;
+
+	list ($ret, $id) = $this->getModuleParameter('id.anonymousUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!empty($id)) {
+	    return GalleryStatus::success();
+	}
+    
+	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+					     
+	$ret = $user->create('anonymous');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$user->setFullName('Anonymous');
+	
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->setModuleParameter('id.anonymousUser', $user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create the initial admin user
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createAdminUser() {
+	global $gallery;
+
+	/* Don't create if there is already a user in the admin group */
+	list ($ret, $adminGroupId) = $this->getModuleParameter('id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (sizeof($results) > 0) {
+	    return GalleryStatus::success();
+	}
+
+	/* Create the user */
+	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+					     
+	$ret = $user->create('admin');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$user->changePassword($gallery->getConfig('setup.password'));
+	$user->setFullName('Gallery Administrator');
+	
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Add her to the admin group */
+	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
+						   $adminGroupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Create the root album item
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _createRootAlbumItem() {
+	global $gallery;
+
+	/* Do we already have a root? */
+	list ($ret, $rootAlbumId) = $this->getModuleParameter('id.rootAlbum');
+	if ($rootAlbumId) {
+	    return GalleryStatus::success();
+	}
+
+	list ($ret, $adminGroupId) = $this->getModuleParameter('id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (sizeof($results) == 0) {
+	    $gallery->debug('There is no admin user!');
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+
+	/* Pick the first admin user in the group */
+	$results = array_keys($results);
+	$adminId = $results[0];
+	
+	list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+					     
+	$ret = $album->createRoot('root', $adminId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$album->setDescription("This is the top of your Gallery");
+
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Give all users some stuff */
+	list ($ret, $groupId) = $this->getModuleParameter('id.allUserGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach (array('core.view',
+		       'core.viewResizes',
+		       'core.viewSource') as $permission) {
+	    $ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+							    $groupId,
+							    $permission);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Grant admin users everything */
+	list ($ret, $groupId) = $this->getModuleParameter('id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+							$groupId,
+							'core.all');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $this->setModuleParameter('id.rootAlbum', $album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+    
 }
 ?>

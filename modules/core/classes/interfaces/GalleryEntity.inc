@@ -56,11 +56,6 @@ class GalleryEntity extends GalleryEntity_core {
             'type' => STORAGE_TYPE_TIMESTAMP
         );
     
-        $meta['members']['dataVersion'] = array(
-            'class' => 'GalleryEntity',
-            'type' => STORAGE_TYPE_INTEGER
-        );
-    
         $meta['members']['modificationTimestamp'] = array(
             'class' => 'GalleryEntity',
             'type' => STORAGE_TYPE_TIMESTAMP
@@ -91,8 +86,6 @@ class GalleryEntity extends GalleryEntity_core {
         $data['id'] = $this->_id;
     
         $data['creationTimestamp'] = $this->_creationTimestamp;
-    
-        $data['dataVersion'] = $this->_dataVersion;
     
         $data['modificationTimestamp'] = $this->_modificationTimestamp;
     
@@ -157,35 +150,6 @@ class GalleryEntity extends GalleryEntity_core {
         if (!isset($this->_creationTimestamp) || $this->_creationTimestamp != $value) {
             $this->_creationTimestamp = $value;
             $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
-        }
-    }
-  
-    /**
-     * Get the value of dataVersion
-     *
-     * @return INTEGER the value
-     */
-    function getdataVersion() {
-        if (!isset($this->_dataVersion)) {
-            return null;
-        }
-        return $this->_dataVersion;
-    }
-
-    /**
-     * Set the value of dataVersion
-     *
-     * @param INTEGER the value
-     */
-    function setdataVersion($value) {
-    
-        $value = (int)$value;
-      
-
-        /* Only take action if the value actually changes */
-        if (!isset($this->_dataVersion) || $this->_dataVersion != $value) {
-            $this->_dataVersion = $value;
-            $this->setModifiedFlag('dataVersion', MEMBER_MODIFIED);
         }
     }
   

@@ -18,10 +18,10 @@
     </tr>
     {/if}
 
-    {if $form.groupType == GROUP_ALL_ADMINS}
+    {if $form.groupType == GROUP_SITE_ADMINS}
     <tr>
       <td colspan="2" align="center">
-	{galleryText text="This group contains all Gallery administrators.  Any users you add to this group will have Gallery administrative privileges."}
+	{galleryText text="This group contains all Gallery site administrators.  Any users you add to this group will have Gallery administrative privileges."}
       </td>
     </tr>
     {/if}

@@ -28,6 +28,11 @@ class ConfigureNetPbmTestCase extends TestCase {
 	    }
 	}
 
+	$ret = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryStatus::success();
     }
 }

@@ -9,31 +9,14 @@ class InitializeGalleryTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
+	/*
+	 * Make sure that all the required paths exist.
+	 */
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$retArray = array();
-	$retArray[] = $gallery->setModuleParameter('core', 'permissions.directory', '755');
-	$retArray[] = $gallery->setModuleParameter('core', 'permissions.file', '644');
-	$retArray[] = $gallery->setModuleParameter('core', 'exec.expectedStatus', 0);
-	$retArray[] = $gallery->setModuleParameter('core', 'default.orderBy', 'id');
-	$retArray[] = $gallery->setModuleParameter('core', 'default.orderDirection', 1);
-	$retArray[] = $gallery->setModuleParameter('core', 'default.layout', 'classic');
-	$retArray[] = $gallery->setModuleParameter('core', 'default.theme', 'classic');
-	$retArray[] = $gallery->setModuleParameter('core', 'default.language', 'en_US');
-	$retArray[] = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
-	$retArray[] = $gallery->setModuleParameter('core', 'session.idParameter', 'GALLERYSID');
-	$retArray[] = $gallery->setModuleParameter('core', 'session.lifetime', 25 * 365 * 86400); /* 25 years */
-	$retArray[] = $gallery->setModuleParameter('core', 'session.inactivityTimeout', 7 * 365 * 86400); /* one week */
-
-	foreach ($retArray as $ret) {
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-	
 	foreach (array('data.gallery.albums',
 		       'data.gallery.cache',
 		       'data.gallery.tmp',
@@ -53,6 +36,40 @@ class InitializeGalleryTestCase extends TestCase {
 	    }
 	}
 
+	/*
+	 * Load and initialize the core module.  Normally this is done at the
+	 * very beginning of all of our operations, so doing this now is going
+	 * to cause all kinds of weirdness.  This is a test case, so it's ok to
+	 * break a few rules to maintain continuity.  Make sure that any
+	 * relevant data (like config values) survive this transition.
+	 */
+	$oldConfig = $gallery->_config;
+	
+	require_once(dirname(__FILE__) . '/../../module.inc');
+	$coreModule = new CoreModule();
+	$ret = $coreModule->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* We changed the global gallery -- update our pointer */
+	$gallery =& $GLOBALS['gallery'];
+
+	foreach ($oldConfig as $key => $value) {
+	    $gallery->setConfig($key, $value);
+	}
+
+	/* Let the core module install itself, if necessary */
+	list ($ret, $coreModule) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = $coreModule->install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 }

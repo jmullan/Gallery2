@@ -169,6 +169,14 @@ class GallerySession_core {
 	    $this->_sessionId = md5(microtime() . rand(1, 1000000000));
 	}
 
+	/* Precache a few keys that we know we'll need. */
+	$ret = $this->_loadKeys(array('core.session.creationTime',
+				      'core.session.lifetime',
+				      'core.session.lastModified'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	/* Set our creation time, if necessary. */
 	list ($ret, $creationTime) = $this->get('core.session.creationTime');
 	if (empty($creationTime)) {
@@ -259,7 +267,7 @@ class GallerySession_core {
 	    print $ret->getAsHtml();
 	}
 
-	$ret = $this->_expireInactiveSessions();
+	$ret = $this->_expireSessions();
 	if ($ret->isError()) {
 	    /*
 	     * We're getting called inside a shutdown handler -- can't
@@ -300,12 +308,12 @@ class GallerySession_core {
 
     /**
      * Get rid of any sessions that have not been accessed within our
-     * inactivity timeout.
+     * inactivity timeout or have exceeded the max lifetime.
      *
      * @return object GalleryStatus a status code.
      * @access private
      */
-    function _expireInactiveSessions() {
+    function _expireSessions() {
 	global $gallery;
 	
 	/*
@@ -326,7 +334,7 @@ class GallerySession_core {
 
 	    if ($sessionInactivityTimeout > 0) {
 
-		/* Find any session ids that exceed the inactivity timeout */
+		/* Find any sessions that are expired */
 		list ($ret, $searchResults) =
 		    $gallery->search(array('select' => '[GallerySession::sessionId]',
 					   'where' => ('([GallerySession::key] = ? ' .
@@ -383,7 +391,7 @@ class GallerySession_core {
      *               string the value
      */
     function get($key) {
-	$ret = $this->_loadKeys(array($key));
+	$ret = $this->_loadKeys($key);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -400,7 +408,7 @@ class GallerySession_core {
      */
     function put($key, $value) {
 
-	$ret = $this->_loadKeys(array($key));
+	$ret = $this->_loadKeys($key);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -428,6 +436,11 @@ class GallerySession_core {
     function _loadKeys($keys) {
 	global $gallery;
 
+	/* Convert a single argument into an array if necessary */
+	if (!is_array($keys)) {
+	    $keys = array($keys);
+	}
+
 	/*
 	 * Remove any keys for which we already know the status, since those
 	 * are already assumed to be loaded.
@@ -446,8 +459,7 @@ class GallerySession_core {
 	    list ($ret, $searchResults) =
 		$gallery->search(array('select' => '[GallerySession::key], [GallerySession::value]',
 				       'where' => ('[GallerySession::sessionId] = ?' .
-						   ' AND [GallerySession::key] IN (' . $markers . ')'),
-				       'limit' => array('count' => 1)),
+						   ' AND [GallerySession::key] IN (' . $markers . ')')),
 				 $data);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

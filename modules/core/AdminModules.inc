@@ -30,10 +30,10 @@ class AdminModulesController extends GalleryController {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	list($module, $action) = GalleryUtilities::getRequestVariables('module', 'action');
-	if (!empty($module) && !empty($action)) {
-	    list($ret, $module) = $gallery->loadModule($module);
+
+	list($moduleName, $action) = GalleryUtilities::getRequestVariables('moduleName', 'action');
+	if (!empty($moduleName) && !empty($action)) {
+	    list($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -44,6 +44,15 @@ class AdminModulesController extends GalleryController {
 	    }
 	    
 	    switch($action) {
+		
+	    case 'install':
+		$ret = $module->install();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		break;
+		
 	    case 'activate':
 
 		/* Can't activate if we're already active! */
@@ -144,28 +153,49 @@ class AdminModulesView extends GalleryView {
 	    $entry['name'] = $moduleName;
 	    if ($moduleName != 'core') {
 		if (empty($status['active'])) {
-		    list ($ret, $needsConfig) = $module->needsConfiguration();
+		    list ($ret, $version) = $module->getModuleParameter('version');
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    if ($needsConfig) {
-			list ($ret, $configView) = $module->getConfigurationView();
+		    /*
+		     * If the database versions doesn't match the module
+		     * version, we need to get the user to install the module.
+		     */
+		    if ($version != $module->getVersion()) {
+			$entry['action'] = array('text' => $coreModule->translate('install'),
+						 'controller' => 'core:AdminModules',
+						 'moduleName' => $module->getName(),
+						 'action' => 'install');
+		    } else {
+
+			/*
+			 * The versions match, but the module can still demand
+			 * to be configured before being activated.
+			 */
+			list ($ret, $needsConfig) = $module->needsConfiguration();
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			$entry['action'] = array('text' => $coreModule->translate('configure'),
-						 'view' => $configView);
-		    } else {
-			$entry['action'] = array('text' => $coreModule->translate('activate'),
-						 'controller' => 'core:AdminModules',
-						 'module' => $moduleName,
-						 'action' => 'activate');
+
+			if ($needsConfig) {
+			    list ($ret, $configView) = $module->getConfigurationView();
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    $entry['action'] = array('text' => $coreModule->translate('configure'),
+						     'view' => $configView);
+			} else {
+			    $entry['action'] = array('text' => $coreModule->translate('activate'),
+						     'controller' => 'core:AdminModules',
+						     'moduleName' => $moduleName,
+						     'action' => 'activate');
+			}
 		    }
 		} else {
 		    $entry['action'] = array('text' => $coreModule->translate('deactivate'),
 					     'controller' => 'core:AdminModules',
-					     'module' => $moduleName,
+					     'moduleName' => $moduleName,
 					     'action' => 'deactivate');
 		}
 	    }

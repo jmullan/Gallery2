@@ -100,6 +100,15 @@ class GalleryModule {
     }
 
     /**
+     * Perform any install/upgrade tasks at this point.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function install() {
+	return GalleryStatus::success();
+    }
+
+    /**
      * Activate this module
      *
      * @return object GalleryStatus a status code
@@ -161,7 +170,7 @@ class GalleryModule {
     }
 
     /**
-     * Does this module require configuration?
+     * Does this module require configuration before it can be activated?
      *
      * @return array object GalleryStatus a status code
      *               boolean
@@ -169,18 +178,7 @@ class GalleryModule {
     function needsConfiguration() {
 	global $gallery;
 	
-	list ($ret, $version) = $gallery->getModuleParameter($this->getName(),
-							     'version');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* If the versions don't match, we need to configure */
-	if ($version != $this->getVersion()) {
-	    return array(GalleryStatus::success(), true);
-	} else {
-	    return array(GalleryStatus::success(), false);
-	}
+	return array(GalleryStatus::success(), false);
     }
     
     /**
@@ -261,6 +259,34 @@ class GalleryModule {
      */
     function getItemDetails($item, $returnUrlParams) {
 	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * @see Gallery::getModuleParameter()
+     */
+    function getModuleParameter($parameterName) {
+	global $gallery;
+	list ($ret, $value) =
+	    $gallery->getModuleParameter($this->getName(), $parameterName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $value);
+    }
+    
+    /**
+     * @see Gallery::setModuleParameter()
+     */
+    function setModuleParameter($parameterName, $parameterValue) {
+	global $gallery;
+	$ret = $gallery->setModuleParameter($this->getName(),
+					    $parameterName, $parameterValue);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /* Getters and setters below */

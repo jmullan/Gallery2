@@ -18,12 +18,6 @@
     NOT NULL
   
       ,
-    COLUMN_PREFIXdataVersion
-      int(11)
-    
-    NOT NULL
-  
-      ,
     COLUMN_PREFIXmodificationTimestamp
       datetime
     

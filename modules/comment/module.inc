@@ -47,14 +47,56 @@ class CommentModule extends GalleryModule {
 
 	/* Register all comment permissions */
 	$gallery->addRegistry('GalleryPermissionMap',
-			      array('id' => 'comment.add', 'description' => 'Add comment'),
-			      array('id' => 'comment.edit', 'description' => 'Edit comment'),
-			      array('id' => 'comment.delete', 'description' => 'Delete comment'),
-			      array('id' => 'comment.viewIp', 'description' => 'View IP'));
+			      array('id' => 'comment.add',
+				    'description' => 'Add comment',
+				    'admin' => false),
+			      array('id' => 'comment.edit',
+				    'description' => 'Edit comment',
+				    'admin' => false),
+			      array('id' => 'comment.delete',
+				    'description' => 'Delete comment',
+				    'admin' => false),
+			      array('id' => 'comment.viewIp',
+				    'description' => 'View IP',
+				    'admin' => false));
 			      
 	return parent::init();
     }
 
+    /**
+     * @see GalleryModule::install
+     */
+    function install() {
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/*
+		 * This is an initial install. Make sure that we have some
+		 * reasonable defaults.
+		 */
+		foreach (array( /* XXX: nothing to set for now */ )
+			 as $key => $value) {
+
+		    $ret = $this->setModuleParameter($key, $value);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+		
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	return GalleryStatus::success();
+    }
+	
     /**
      * @see GalleryModule::getItemLinks
      */

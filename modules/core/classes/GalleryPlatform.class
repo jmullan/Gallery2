@@ -392,7 +392,6 @@ class GalleryPlatform {
 	/* Convert string permission representation to octal */
 	$octalPerms = octdec($stringPerms);
 	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
-	printf("mkdir(%s, %o)<br>", $path, $octalPerms);
 	
 	$results = mkdir($path, $octalPerms);
 	umask($umask);

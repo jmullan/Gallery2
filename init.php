@@ -89,6 +89,12 @@ function GalleryInit() {
      * functionality (paths, settings, etc) to be set properly.
      */
 
+    /* Let the core module install itself, if necessary */
+    $ret = $coreModule->install();
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+
     /* Load the module list */
     GalleryProfiler::start('GalleryInit.load-modules');
     list ($ret, $moduleStatus) = $gallery->getModuleStatus();

@@ -74,25 +74,6 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $needsConfiguration) = $module->needsConfiguration();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($needsConfiguration) {
-	    /*
-	     * If we get this far successfully, assume that the user has made
-	     * at least a token effort to configure the module correctly.  The
-	     * test code in AdminNetPbmView should indicate whether or not they
-	     * got it right.  So, update our version in the map accordingly.
-	     */
-	    $ret = $gallery->setModuleParameter($module->getName(),
-						'version', $module->getVersion());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	
 	/* Figure out where to redirect upon success */
 	$redirectParams['view'] = 'core:SiteAdmin';
 	$redirectParams['subView'] = 'netpbm:AdminNetPbm';

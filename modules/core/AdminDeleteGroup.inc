@@ -123,7 +123,7 @@ class AdminDeleteGroupView extends GalleryView {
 	}
 
 	$isAllUsers = ($group->getGroupType() == GROUP_ALL_USERS);
-	$isAllAdmins = ($group->getGroupType() == GROUP_ALL_ADMINS);
+	$isAllAdmins = ($group->getGroupType() == GROUP_SITE_ADMINS);
 	
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();

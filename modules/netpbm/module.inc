@@ -53,11 +53,69 @@ class NetPbmModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::install
+     */
+    function install() {
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/*
+		 * This is an initial install. Make sure that we have some
+		 * reasonable defaults.
+		 */
+		foreach (array('path' => '',
+			       'jpegQuality' => '75',
+			       'pnmtojpeg' => 'pnmtojpeg')
+			 as $key => $value) {
+
+		    $ret = $this->setModuleParameter($key, $value);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+		
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
+	return GalleryStatus::success();
+    }
+	
+    /**
+     * @see GalleryModule::needsConfiguration
+     */
+    function needsConfiguration() {
+	global $gallery;
+
+	/*
+	 * This module requires all fields to be filled out before it can be
+	 * activated. 
+	 */
+	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
+	    list ($ret, $value) = $this->getModuleParameter($key);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (empty($value)) {
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-	global $gallery;
-
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('NetPBM'),
 				 'view' => 'netpbm:AdminNetPbm')));
@@ -67,8 +125,6 @@ class NetPbmModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	global $gallery;
-
 	return array(GalleryStatus::success(), 'netpbm:AdminNetPbm');
     }
 }

@@ -21,9 +21,12 @@ class RemoveStoreTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Reset the Gallery instance */
+	/*
+	 * Reset the Gallery instance.  This will basically make Gallery
+	 * unusable until InitializeGallery is called.
+	 */
 	$gallery->reset();
-
+	
 	return GalleryStatus::success();
     }
 }

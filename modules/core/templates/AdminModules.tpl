@@ -26,7 +26,7 @@
 	    {$module.action.text}
 	  </a>
 	  {else}
-	  <a href="{galleryUrl controller=$module.action.controller module=$module.action.module action=$module.action.action}">
+	  <a href="{galleryUrl controller=$module.action.controller moduleName=$module.action.moduleName action=$module.action.action}">
 	    {$module.action.text}
 	  </a>
 	  {/if}

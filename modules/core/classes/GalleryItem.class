@@ -419,8 +419,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
 	$data[] = $userId;
 	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.all'));
+	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
+	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
 
 	list ($ret, $searchResults) = 
 	    $gallery->search(array('select' => 'COUNT(DISTINCT([GalleryChildEntity::id]))',
@@ -473,8 +473,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
 	$data[] = $userId;
 	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.all'));
+	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
+	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
 
 	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
 	if ($this->getOrderDirection() == ORDER_ASCENDING) {
