@@ -119,8 +119,8 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Empty out the plugin session id */
 	$session =& $gallery->getSession();
-	$this->_savePhotoAccessSessionId = $session->get('photoaccess.sessionId');
-	$session->remove('photoaccess.sessionId');
+	$this->_saveCartUrlFragment = $session->get('photoaccess.cartUrlFragment');
+	$session->remove('photoaccess.cartUrlFragment');
 
 	/* Swap in a dummy platform and url generator */
 	$this->_save = array($gallery->_platform, $gallery->_urlGenerator);
@@ -141,12 +141,11 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Restore session id */
 	$session =& $gallery->getSession();
-	if (isset($this->_savePhotoAccessSessionId)) {
-	    $session->put('photoaccess.sessionId', $this->_savePhotoAccessSessionId);
+	if (isset($this->_saveCartUrlFragment)) {
+	    $session->put('photoaccess.cartUrlFragment', $this->_saveCartUrlFragment);
 	} else {
-	    $session->remove('photoaccess.sessionId');
+	    $session->remove('photoaccess.cartUrlFragment');
 	}
-
 	parent::tearDown();
     }
 
@@ -160,10 +159,12 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	require_once(dirname(__FILE__) . '/../../../cart/classes/CartPluginInterface_1_0.class');
 	require_once(dirname(__FILE__) . '/../../classes/PhotoAccessCartPlugin.class');
 	$cartPlugin = new PhotoAccessCartPlugin();
-	list ($ret, $url) = $cartPlugin->fulfillCart($cartItemIds);
+	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->assertEquals(array('href' => 'http://beta.photoaccess.com/REDIRECT_URL'), $urlParams);
     }
 }
 
@@ -180,7 +181,7 @@ class PhotoAccessCartPluginTestPlatform {
     }
 
     function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
-	if ($target == 'www.photoaccess.com' && $port == '80') {
+	if ($target == 'beta.photoaccess.com' && $port == '80') {
 	    return 'test-resource-1';
 	}
 
@@ -196,66 +197,51 @@ class PhotoAccessCartPluginTestPlatform {
 	 * that the plugin is going to make.  It will first make a request to get the cart so that it can get
 	 * a session id from the photoaccess server, then it will make a POST for each photo in the cart.
 	 */
+	$xml = '<add-cart-request cobrand="CB_GP" pricelist="1" ' .
+	    'entry-page="/buy/anonCart.jsp" return-url="view=cart:ViewCart">';
 	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
-	    $postData[$i] = join('&', array('cb=CB_GP',
-					    'redir=true',
-					    'returnUrl=' . urlencode('view=cart:ViewCart'),
-					    'imageId=' . urlencode($this->_test->_items[$i]->getTitle()),
-					    'imageUrl=' . urlencode('view=core:DownloadItem/itemId=' .
-								    $this->_test->_sourceIds[$i]),
-					    'thumbUrl=' . urlencode('view=core:DownloadItem/itemId=' .
-								    $this->_test->_thumbIds[$i]),
-					    'imgWidth=0',
-					    'imgHeight=0'));
-	    
-	    $expectedPost[$i] =
-		join("\r\n", 
-		     array('POST /buy/anonCart.jsp;jsessionid=PHOTOACCESS_SESSIONID?cb=CB_GP&svr=SERVER HTTP/1.0',
-			   'Host: www.photoaccess.com',
-			   'User-Agent: Test User Agent',
-			   'Content-Type: application/x-www-form-urlencoded',
-			   'Content-Length: ' . strlen($postData[$i]),
-			   '',
-			   $postData[$i])) . "\r\n";
+	    $xml .= sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
+			    $this->_test->_sourceIds[$i], 
+			    'view=core:DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
+			    'view=core:DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
+			    0, 0);
 	}
+	$xml .= '</add-cart-request>';
+	    
+	$postData = join('&', array('cb=CB_GP', 'xml_request=' . urlencode($xml)));
+
+	$expectedPost =
+	    join("\r\n", 
+		 array('POST /buy/anonCartXML.jsp HTTP/1.0',
+		       'Host: beta.photoaccess.com',
+		       'User-Agent: Test User Agent',
+		       'Content-Type: application/x-www-form-urlencoded',
+		       'Content-Length: ' . strlen($postData),
+		       '',
+		       $postData)) . "\r\n";
 	
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
-	    case "GET /buy/anonCart.jsp?cb=CB_GP HTTP/1.0\r\n" .
-		"Host: www.photoaccess.com\r\n" .
-		"User-Agent: Test User Agent\r\n" .
-		"\r\n":
+	    case $expectedPost:
+		$response = '<add-cart-response request-url="/REQUEST_URL" redirect-url="/REDIRECT_URL"/>';
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
 		$buffer[] = 'Connection: close';
-		$buffer[] = 'Set-Cookie: sessionid=SERVER-PHOTOACCESS_SESSIONID; Path=/';
-		$buffer[] = 'Content-Length: 5';
+		$buffer[] = 'Content-Length: ' . strlen($response);
 		$buffer[] = '';
-		$buffer[] = 'test';
-		$this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
-		return strlen($string);
-
-	    case $expectedPost[0]:
-	    case $expectedPost[1]:
-	    case $expectedPost[2]:
-		$buffer = array();
-		$buffer[] = 'HTTP/1.1 200 OK';
-		$buffer[] = 'Connection: close';
-		$buffer[] = 'Set-Cookie: sessionid=SERVER-PHOTOACCESS_SESSIONID; Path=/';
-		$buffer[] = 'Content-Length: 5';
-		$buffer[] = '';
-		$buffer[] = 'test';
+		$buffer[] = $response;
 		$this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
 		return strlen($string);
 
 	    default:
-		printf("<pre> Expected: %s</pre>", print_r($expectedPost[0], 1));
+		printf("<pre> Expected: %s</pre>", print_r($expectedPost, 1));
 		printf("<pre>Unxpected: %s</pre>", print_r($string, 1));
 
 		for ($i = 0; $i < strlen($string); $i++) {
-		    if ($expectedPost[0][$i] != $string[$i]) {
-			printf("<pre>Differs at byte: %d <...%s...></pre>",
+		    if ($expectedPost[$i] != $string[$i]) {
+			printf("<pre>Differs at byte: %d <...%s...> <...%s...></pre>",
 			       print_r($i, 1),
+			       substr($expectedPost, $i-5, 10),
 			       substr($string, $i-5, 10));
 			break;
 		    }
@@ -293,7 +279,9 @@ class PhotoAccessCartPluginTestPlatform {
     function fclose($handle) {
 	switch($handle) {
 	case 'test-resource-1':
-	    unset($this->_readBuffer[$handle]);
+	    if (isset($this->_readBuffer[$handle])) {
+		unset($this->_readBuffer[$handle]);
+	    }
 	    return true;
 
 	default:

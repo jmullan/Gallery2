@@ -28,33 +28,21 @@
  */
 
 /**
- * This controller handles printing a single photo
+ * This view is for letting the user know that there was an error with photo fulfilment
  *
  * @package PhotoAccess
  * @subpackage UserInterface
  */
-class PrintPhotoController extends GalleryController {
+class FulfillmentErrorView extends GalleryView {
 
     /**
-     * @see GalleryController::handleRequest()
+     * @see GalleryView::loadTemplate
      */
-    function handleRequest($form) {
-	global $gallery;
+    function loadTemplate(&$template, &$form) {
 
-	list ($itemId, $returnUrl) = GalleryUtilities::getRequestVariables('itemId', 'returnUrl');
-
-	require_once(dirname(__FILE__) . '/classes/PhotoAccessHelper.class');
-	list ($ret, $cartUrl) = PhotoAccessHelper::printPhotos(array($itemId => 1), $returnUrl);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Prepare our results */
-	$results['redirect']['href'] = $cartUrl;
-	$results['status'] = array();
-	$results['error'] = array();
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(),
+		     array('head' => 'modules/photoaccess/templates/FulfillmentErrorHead.tpl',
+			   'body' => 'modules/photoaccess/templates/FulfillmentError.tpl'));
     }
 }
 ?>
