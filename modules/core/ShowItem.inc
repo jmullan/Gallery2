@@ -39,12 +39,31 @@ class ShowItemView extends GalleryView {
      * @see GalleryView::getThemeName
      */
     function getThemeName() {
+	global $gallery;
+	
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(), $item->getTheme());
+	/*
+	 * In the near term, we don't allow data items to have their own theme, even though there's room for
+	 * it.  Instead, draw them theme from the parent album.
+	 */
+	$theme = null;
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $theme = $item->getTheme();
+	} else {
+	    $parentId = $item->getParentId();
+	    list ($ret, $parent) = $gallery->loadEntitiesById($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $theme = $parent->gettheme();
+	}
+
+	return array(GalleryStatus::success(), $theme);
     }
 
     /**
