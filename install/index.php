@@ -73,7 +73,8 @@ class InstallStep {
     var $_stepNumber;
     var $_isComplete;
     var $_isInError;
-    
+    var $_isLastStep;
+
     function isComplete() {
 	return $this->_isComplete;
     }
@@ -135,6 +136,10 @@ class InstallStep {
 	}
 	return $string;
     }
+
+    function isRelevant() {
+	return true;
+    }
 }
 
 /*
@@ -176,12 +181,16 @@ if (empty($steps) || !is_array($steps)) {
     for ($i = 0; $i < sizeof($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
 	$step = new $className();
-	$step->setStepNumber($i);
-	$step->setInError(false);
-	$step->setComplete(false);
-	$step->setIsLastStep($i == sizeof($stepOrder) - 1);
-	$steps[] = $step;
+	if ($step->isRelevant()) {
+	    $step->setIsLastStep(false);
+	    $step->setStepNumber($i);
+	    $step->setInError(false);
+	    $step->setComplete(false);
+	    $steps[] = $step;
+	}
     }
+
+    $steps[sizeof($steps)-1]->setIsLastStep(true);
 }
 
 if (isset($_GET['step'])) {

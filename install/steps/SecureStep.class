@@ -44,5 +44,10 @@ class SecureStep extends InstallStep {
 	$templateData['bodyFile'] = 'Secure.html';
 	$this->setComplete(true);
     }
+
+    function isRelevant() {
+	// This step isn't relevant on Windows
+	return (strtolower(PHP_OS) != 'winnt');
+    }
 }
 ?>
