@@ -131,7 +131,7 @@ class ThumbnailSiteAdminView extends GalleryView {
 	    $form['formName'] = 'ThumbnailSiteAdmin';
 	}
 
-	$form['mimeMap'] = ThumbnailHelper::getMimeMap();
+	$form['mimeMap'] = ThumbnailHelper::getMimeTypeMap();
 
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails();
 	if ($ret->isError()) {
