@@ -42,7 +42,7 @@ class UnixPlatform extends GalleryPlatform {
     /**
      * @see GalleryPlatform::exec()
      */
-    function exec($cmdArray) {
+    function exec($cmdArray, $returnErrorOutput=false) {
 	global $gallery;
 
 	/* Assemble the command array into a pipeline */
@@ -62,7 +62,7 @@ class UnixPlatform extends GalleryPlatform {
 	}
 	
 	/* If we're in debug mode, redirect STDERR to a file */
-	if ($gallery->getDebug()) {
+	if ($returnErrorOutput || $gallery->getDebug()) {
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $debugFile = tempnam($tmpDir, 'g2dbg');
 	    $command = "($command) 2>$debugFile";
@@ -83,7 +83,7 @@ class UnixPlatform extends GalleryPlatform {
 	}
 
 	/* Read any debug output and dump it out */
-	if ($gallery->getDebug()) {
+	if ($returnErrorOutput || $gallery->getDebug()) {
 	    $gallery->debug("Regular Output:");
 	    if (!empty($results)) {
 		foreach ($results as $line) {

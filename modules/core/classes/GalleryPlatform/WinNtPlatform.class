@@ -42,7 +42,7 @@ class WinNtPlatform extends GalleryPlatform {
     /**
      * @see GalleryPlatform::exec()
      */
-    function exec($cmdArray) {
+    function exec($cmdArray, $returnErrorOutput=false) {
 	global $gallery;
 
 	/* Assemble the command array into a pipeline */

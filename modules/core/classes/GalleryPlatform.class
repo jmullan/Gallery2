@@ -29,10 +29,7 @@
  * A framework for doing platform specific tasks.
  * 
  * This is an abstract class that implements many basic tasks that are
- * different from platform to platform.  One common issue is working with
- * filesystem paths which are different between Unix and Win32.  This package
- * allows Gallery to use a platform neutral path system internally and allow
- * those paths to be translated into a platform specific version transparently.
+ * different from platform to platform.  
  *
  * @package GalleryCore
  * @abstract
@@ -532,12 +529,12 @@ class GalleryPlatform {
      * Execute a command and record the results and status.
      *
      * @param array(array('cmd', 'arg'), ...)
-     * @param array the location to put output from the command 
+     * @param whether or not we should return error output
      * @return array(bool TRUE if the command succeeded, FALSE otherwise,
      *               string output from the command)
      * @access public
      */
-    function exec($cmdArray) {
+    function exec($cmdArray, $returnErrorOutput=false) {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
