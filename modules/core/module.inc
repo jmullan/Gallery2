@@ -949,6 +949,7 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->setFullName($fullName);
+	$user->changePassword('');
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
