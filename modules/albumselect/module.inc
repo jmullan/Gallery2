@@ -95,7 +95,11 @@ class AlbumSelectModule extends GalleryModule {
 	/* Load template data, but only show in systemContent if module param is set */
 	list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+		$tree = null;
+	    } else {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	if (empty($tree)) {
 	    return array(GalleryStatus::success(), null);
