@@ -65,13 +65,13 @@
       // we haven't selected something that we can't handle.	If we have, then remove
       // the selection and alert the user.
       function checkPermissions(form, quiet) {ldelim}
-          destinationId = form.elements['{g->elementName name="form[destination]"}'].value;
+          destinationId = form.elements['{g->formVar var="form[destination]"}'].value;
           if (permission['addDataItem'][destinationId] && permission['addAlbumItem'][destinationId]) {ldelim}
       	{foreach from=$ItemMove.peerTypes.album key=id item=unused}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
       	{/foreach}
       	{foreach from=$ItemMove.peerTypes.data key=id item=unused}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
       	{/foreach}
       	return;
           {rdelim}
@@ -79,28 +79,28 @@
           changed = 0;
           if (permission['addDataItem'][destinationId]) {ldelim}
       	{foreach from=$ItemMove.peerTypes.album key=id item=unused}
-      	if (form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked) {ldelim}
-      	    form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked = 0;
+      	if (form.elements['{g->formVar var="form[selectedIds][$id]"}'].checked) {ldelim}
+      	    form.elements['{g->formVar var="form[selectedIds][$id]"}'].checked = 0;
       	    changed = 1;
       	{rdelim}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 1;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 1;
       	{/foreach}
       	{foreach from=$ItemMove.peerTypes.data key=id item=unused}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
       	{/foreach}
       	if (changed && !quiet) {ldelim}
       	    alert("{g->text text="The destination you chose does not accept sub-albums, so all sub-albums have been deselected."}");
       	{rdelim}
           {rdelim} else {ldelim}
       	{foreach from=$ItemMove.peerTypes.data key=id item=unused}
-      	if (form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked) {ldelim}
-      	    form.elements['{g->elementName name="form[selectedIds][$id]"}'].checked = 0;
+      	if (form.elements['{g->formVar var="form[selectedIds][$id]"}'].checked) {ldelim}
+      	    form.elements['{g->formVar var="form[selectedIds][$id]"}'].checked = 0;
       	    changed = 1;
       	{rdelim}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 1;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 1;
       	{/foreach}
       	{foreach from=$ItemMove.peerTypes.album key=id item=unused}
-      	form.elements['{g->elementName name="form[selectedIds][$id]"}'].disabled = 0;
+      	form.elements['{g->formVar var="form[selectedIds][$id]"}'].disabled = 0;
       	{/foreach}
       	if (changed && !quiet) {ldelim}
       	    alert("{g->text text="The destination you chose only accepts sub-albums, so all non-albums have been deselected."}");

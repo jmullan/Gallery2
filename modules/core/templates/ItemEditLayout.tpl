@@ -12,7 +12,7 @@
       <th>
 	{g->text text="Value"}
       </th>
-      <th colspan="2">
+      <th>
 	{g->text text="Use Global"}
       </th>
     </tr>
@@ -25,20 +25,24 @@
       </td>
       <td>
 	{if ($setting.type == 'text-field')}
-	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('$settingKey')" value="{$form.key.$settingKey}"/>
+	<input type="text" size="6" name="{g->formVar var="form[key][$settingKey]"}" onkeypress="javascript:changeSetting('{$settingKey}')" value="{$form.key.$settingKey}"/>
 	{elseif ($setting.type == 'single-select')}
-	<select name="{g->formVar var="form[key][$settingKey]"}" onChange="javascript:changeSetting('$settingKey')">
+	<select name="{g->formVar var="form[key][$settingKey]"}" onChange="javascript:changeSetting('{$settingKey}')">
 	    {html_options options=$setting.choices selected=$setting.value}
 	</select>
+	{elseif ($setting.type == 'checkbox')}
+        <input type="checkbox" name="{g->formVar var="form[key][$settingKey]"}" 
+        {if !empty($setting.value)}checked="checked"{/if}
+	onChange="javascript:changeSetting('{$settingKey}')"/>
 	{/if}
       </td>
 
-      <td>
-	&nbsp;
-      </td>
-
-      <td>
-	<input type="checkbox" name="{g->formVar var="form[useGlobal][$settingKey]"}" onclick="javascript:toggleGlobal('$settingKey')" value="{$form.useGlobal.$settingKey}"/>
+      <td align="center">
+	<input type="checkbox" name="{g->formVar var="form[useGlobal][$settingKey]"}" onclick="javascript:toggleGlobal('{$settingKey}')" value="{$form.useGlobal.$settingKey}"
+	{if ($setting.value == $ItemEditLayout.globalParams.$settingKey)}
+	  checked="checked"
+	{/if}
+	/>
       </td>
     </tr>
 
@@ -70,21 +74,35 @@
     {/foreach}
 
     function toggleGlobal(key) {ldelim}
-      inputWidget = '{g->elementName name="form[key]["}' + key + ']';
-      toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
+      inputWidget = '{g->formVar var="form[key]["}' + key + ']';
+      toggleWidget = '{g->formVar var="form[useGlobal]["}' + key + ']';
       if (document.forms[0].elements[toggleWidget].checked) {ldelim}
         savedValues[key] = document.forms[0].elements[inputWidget].value;
         isSaved[key] = true;
-        document.forms[0].elements[inputWidget].value = globalValues[key];
+        if (document.forms[0].elements[inputWidget].type == 'checkbox') {ldelim}
+          if (globalValues[key] != 0) {ldelim}
+            document.forms[0].elements[inputWidget].checked = 'checked';
+          {rdelim} else {ldelim}
+	    document.forms[0].elements[inputWidget].checked = null;
+          {rdelim}
+        {rdelim} else {ldelim}
+          document.forms[0].elements[inputWidget].value = globalValues[key];
+	{rdelim}
       {rdelim} else {ldelim}
-        if (isSaved[key]) {ldelim}
+        if (document.forms[0].elements[inputWidget].type == 'checkbox') {ldelim}
+          if (globalValues[key] == 0) {ldelim}
+            document.forms[0].elements[inputWidget].checked = 'checked';
+          {rdelim} else {ldelim}
+	    document.forms[0].elements[inputWidget].checked = null;
+          {rdelim}
+        {rdelim} else if (isSaved[key]) {ldelim}
           document.forms[0].elements[inputWidget].value = savedValues[key];
         {rdelim}
       {rdelim}
     {rdelim}
 
     function changeSetting(key) {ldelim}
-      toggleWidget = '{g->elementName name="form[useGlobal]["}' + key + ']';
+      toggleWidget = '{g->formVar var="form[useGlobal]["}' + key + ']';
       document.forms[0].elements[toggleWidget].checked = false;
     {rdelim}
   </script>

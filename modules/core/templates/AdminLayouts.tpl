@@ -146,6 +146,10 @@
 	    <select name="{g->formVar var="form[key][$settingKey]"}">
 		{html_options options=$setting.choices selected=$setting.value}
 	    </select>
+	    {elseif ($setting.type == 'checkbox')}
+            <input type="checkbox" name="{g->formVar var="form[key][$settingKey]"}" 
+            {if !empty($setting.value)}checked="checked"{/if}
+	    />
 	    {/if}
 	  </td>
 	</tr>

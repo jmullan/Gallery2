@@ -8,4 +8,6 @@
       {$main.debug}
       </pre>
   </span>
+
+  {debug output=""}
 </div>

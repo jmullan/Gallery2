@@ -120,8 +120,13 @@ class AdminLayoutsController extends GalleryController {
 	    if (empty($validationErrors)) {
 		/* Save any settings that have changed */
 		foreach ($settings as $setting) {
-		    if ($setting['key'] != $form['key'][$setting['key']]) {
-			$ret = $layout->setParameter($setting['key'], $form['key'][$setting['key']]);
+		    if ($setting['type'] == 'checkbox') {
+			$value = isset($form['key'][$setting['key']]) ? 1 : 0;
+		    } else {
+			$value = $form['key'][$setting['key']];
+		    }
+		    if ($setting['value'] != $value) {
+			$ret = $layout->setParameter($setting['key'], $value);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

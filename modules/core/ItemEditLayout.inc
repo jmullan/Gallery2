@@ -80,9 +80,17 @@ class ItemEditLayout extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    } else {
-			$ret = $layout->setParameter($key, $form['key'][$key], $item->getId());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			if ($setting['type'] == 'checkbox') {
+			    $value = isset($form['key'][$setting['key']]) ? 1 : 0;
+			} else {
+			    $value = $form['key'][$setting['key']];
+			}
+
+			if ($setting['value']  != $value) {
+			    $ret = $layout->setParameter($key, $value, $item->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    }
 			}
 		    }
 		}

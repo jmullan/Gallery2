@@ -5,7 +5,7 @@
       form = document.forms[0];
       state = form.elements['selectionToggle'].checked;
       {foreach from=$form.webPageUrls item=url}
-      form.elements['{g->elementName name="form[webPageUrls][`$url.url`]"}'].checked = state;
+      form.elements['{g->formVar var="form[webPageUrls][`$url.url`]"}'].checked = state;
       {/foreach}
     {rdelim}
   </script>
@@ -13,7 +13,7 @@
 
   <script type="text/javascript">
     function selectPath(path) {ldelim}
-      document.forms[0].elements['{g->elementName name="form[webPage]"}'].value = path;
+      document.forms[0].elements['{g->formVar var="form[webPage]"}'].value = path;
     {rdelim}
   </script>
 

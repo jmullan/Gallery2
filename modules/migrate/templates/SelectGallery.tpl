@@ -45,7 +45,7 @@
     {if !empty($SelectGallery.recentPaths)}
     <script type="text/javascript">
       function selectPath(path) {ldelim}
-        document.forms[0].elements['{g->elementName name="form[albumsPath]"}'].value = path;
+        document.forms[0].elements['{g->formVar var="form[albumsPath]"}'].value = path;
       {rdelim}
     </script>
 

@@ -339,6 +339,12 @@ function GalleryMain() {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/*
+	require_once('XML/Beautifier.php');
+	$fmt = new XML_Beautifier();
+	$html = $result = $fmt->formatString($html);
+	*/
 	
 	print $html;
 	

@@ -70,6 +70,14 @@ class MatrixLayout extends GalleryLayout {
 	if (!isset($params['columns'])) {
 	    $params['columns'] = 3;
 	}
+
+	if (!isset($params['showImageOwner'])) {
+	    $params['showImageOwner'] = false;
+	}
+	
+	if (!isset($params['showAlbumOwner'])) {
+	    $params['showAlbumOwner'] = true;
+	}
 	
 	$settings = array();
 	$settings[] = array('key' => 'rows',
@@ -82,6 +90,15 @@ class MatrixLayout extends GalleryLayout {
 			    'type' => 'text-field',
 			    'type-params' => array('size' => 2),
 			    'value' => $params['columns']);
+	$settings[] = array('key' => 'showImageOwner',
+			    'name' => $gallery->i18n('Show image owners'),
+			    'type' => 'checkbox',
+			    'value' => $params['showImageOwner']);
+	$settings[] = array('key' => 'showAlbumOwner',
+			    'name' => $gallery->i18n('Show album owners'),
+			    'type' => 'checkbox',
+			    'value' => $params['showAlbumOwner']);
+			    
 	return array(GalleryStatus::success(), $settings);
     }
 
@@ -477,6 +494,8 @@ class MatrixLayout extends GalleryLayout {
 	    $layout['parent'] = null;
 	}
 	$layout['item'] = $item->getMemberData();
+	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
+	$layout['showImageOwner'] = $properties['showImageOwner'];
 
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
