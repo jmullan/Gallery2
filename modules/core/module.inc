@@ -66,6 +66,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryDerivativePreferencesMap.class');
 	require_once($classDir . 'GalleryEvent.class');
 	require_once($classDir . 'GalleryEventListener.class');
+	require_once($classDir . 'GalleryFileSystemEntityHelper.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
 	require_once($classDir . 'GalleryItemHelper.class');
 	require_once($classDir . 'GalleryLayout.class');
