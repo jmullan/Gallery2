@@ -106,27 +106,6 @@ class DownloadItemView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Figure out what permission we need to view this item */
-	if (GalleryUtilities::isA($item, 'GalleryDerivative')) {
-	    switch($item->getDerivativeType()) {
-	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-		$requiredPermission = 'core.view';
-		break;
-
-	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
-		$requiredPermission = 'core.viewResizes';
-		break;
-
-	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
-		$requiredPermission = 'core.viewSource';
-		break;
-	    }
-	    $itemForPermission = $item->getParentId();
-	} else {
-	    $requiredPermission = 'core.viewSource';
-	    $itemForPermission = $item->getId();
-	}
-
 	/* Get the path to the file */
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret->isError()) {
@@ -139,13 +118,18 @@ class DownloadItemView extends GalleryView {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $itemForPermission = $item->getParentId();
+	    $derivativeType = $item->getDerivativeType();
+	} else {
+	    $itemForPermission = $item->getId();
+	    $derivativeType = null;
 	}
 
-	$ret = $this->_sendFile(array('permissionItemId' => $itemForPermission,
-				      'permission' => $requiredPermission,
+	$ret = $this->_sendFile(array('derivativePath' => $path,
+				      'derivativeType' => $derivativeType,
 				      'mimeType' => $item->getMimeType(),
 				      'pseudoFileName' => $pseudoFileName,
-				      'derivativePath' => $path));
+				      'parentId' => $itemForPermission));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -158,8 +142,19 @@ class DownloadItemView extends GalleryView {
 	$platform = $gallery->getPlatform();
 
 	/* Make sure we have permission */
-	$ret = GalleryCoreApi::assertHasItemPermission($data['permissionItemId'],
-						       $data['permission']);
+	$permission = 'core.viewSource';
+	switch($data['derivativeType']) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$permission = 'core.view';
+		break;
+
+	    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+		$permission = 'core.viewResizes';
+		break;
+
+	    /* DERIVATIVE_TYPE_IMAGE_PREFERRED uses core.viewSource */
+	}
+	$ret = GalleryCoreApi::assertHasItemPermission($data['parentId'], $permission);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -180,14 +175,26 @@ class DownloadItemView extends GalleryView {
 	 */
 	if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
 	    while (true) {
-		$data = $platform->fread($fd, 65535);
-		if (strlen($data) == 0) {
+		$bits = $platform->fread($fd, 65535);
+		if (strlen($bits) == 0) {
 		    break;
 		}
-		print $data;
+		print $bits;
 		$gallery->guaranteeTimeLimit(30);
 	    }
 	    $platform->fclose($fd);
+	}
+
+	/* Increment the view count */
+	if ($data['derivativeType'] != DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+	    $ret = GalleryCoreApi::incrementItemViewCount($data['parentId']);
+	    if ($ret->isError()) {
+		/* We've sent the file so ignore this error.. */
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Error incrementing view count for ' . $data['parentId'] . "\n"
+				   . $ret->getAsText());
+		}
+	    }
 	}
 
 	return GalleryStatus::success();
