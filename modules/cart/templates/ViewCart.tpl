@@ -38,7 +38,7 @@
     	  <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
     	  {/foreach}
     	</select>
-    	<input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}" class="button"/>
+    	<input type="submit" class="button" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}"/>
       </div>
     </div>
 
@@ -137,12 +137,9 @@
     
     {/if}
     <div class="gbBottomFlag">
-      <div class="gbNavBar">
-        <div class="gbAdmin">
+      <div class="gbButtonBar">
         &nbsp;
-        </div>
       </div>
     </div>
-    
   </div>
 </div>

@@ -111,24 +111,23 @@ a:active {
 	padding: 0 0 0 8px;
 }
 
-
 #gsFooter {
 	font-size: 0.9em;
 	color: #bbb;
-	margin: 0 20px 0 0;
+	margin: 0 15px 0 0;
 	padding: 8px;
 	border-top: 1px solid #ccc;
 }
 
 #gsSidebar, #gsAdminSidebar {
-        float: left;
+    float: left;
 	width: 20%;
 	border-top: 1px solid #ccc;
 	background-color: #fff;
 }
 
 #gsContents {
-        width: 100%;
+    width: 100%;
 	margin: 0;
 	padding: 0;
 }
@@ -146,12 +145,12 @@ a:active {
 /* End hide from IE-mac */
 
 #gsAlbumContents, #gsAdminContents, .gsOtherContents, #gsOtherContents {
-        float: left;
-        border-top: 1px solid #ccc;
-        border-left: 1px solid #ccc;
-        width: 78%;
-        margin: 0;
-        padding: 0;
+    float: left;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    width: 78%;
+    margin: 0;
+    padding: 0;
 }
 
 /* html #gsAlbumContents { overflow: auto; }*/ /* style for IE */
@@ -391,19 +390,30 @@ ul.gbAdminList li label { vertical-align: super; }
 /* End hide from IE-mac */
 
 .gbNavBar {
-        background-color: #e7e7e7;
-        margin: 0;
-        padding: 0 14px;
+    background-color: #e7e7e7;
+    margin: 0;
+    padding: 0 14px;
 }
 
-.gbNavBar .gbAdmin { float: right; padding: 3px; }
+.gbNavBar .gbAdmin { 
+    float: right; 
+    padding: 3px; 
+}
+
+/* Put in to fix viewCart action selector. 
+ * Without this, the go button wraps because of 
+ * giActionSelect below with dipslay: block.
+ */
+.gbAdmin .giActionSelect {
+	display: inline;
+}
 
 .gbNavBar:after {
-        content: "."; 
-        display: block;
-        height: 0; 
-        clear: both; 
-        visibility: hidden;
+    content: "."; 
+    display: block;
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
@@ -411,13 +421,13 @@ ul.gbAdminList li label { vertical-align: super; }
 /* End hide from IE-mac */
 
 .gbTitleBanner {
-        padding: 8px 14px;
+    padding: 8px 14px;
 }
 
 .gbTitleBanner h1 { 
-        font-size: 1.3em; 
-        margin: 0; 
-        padding: 0;
+    font-size: 1.3em; 
+    margin: 0; 
+    padding: 0;
 }
 
 table.gbTitleBanner {
@@ -515,9 +525,28 @@ td.gbItemAlbum { background-color: #eee; }
 }
 
 .gbButtons {
-        background-color: #eee;
-        padding: 8px;
+    background-color: #eee;
+    padding: 8px;
 }
+
+.gbButtons input, .button {
+    margin: 0 3px 0 0;
+    padding: 1px 3px; 
+    color: #333; 
+    background:#eee; 
+    border: 2px solid #e7e7e7; 
+    border-right: 2px solid #666; 
+    border-bottom: 2px solid #666; 
+    text-decoration: none;
+    text-transform: capitalize;
+}
+
+.gbButtons input {
+    margin: 8px 5px 0 5px;
+    border-top-color: #fff;
+    border-left-color: #fff;
+}
+
 
 /*      for tabular data */
 #gsAdminContents .gbDataTable {
@@ -711,19 +740,6 @@ discused the options of generating a table-based border (ie_test) and alistapart
 /*   Search page and form styles   */
 
 #SearchSystemContent { font-size: 1.1em; }
-
-.button {
-    margin: 0 3px 0 0;
-    padding: 1px 3px; 
-    color: #333; 
-    background:#eee; 
-    border: 2px solid #e7e7e7; 
-    border-right: 2px solid #666; 
-    border-bottom: 2px solid #666; 
-    text-decoration: none; 
-}
-
-.gbBottomFlag .button { border-top-color: #fff; border-left-color: #fff; }
 
 .giMarkupBar { margin: 4px 0; }
 
