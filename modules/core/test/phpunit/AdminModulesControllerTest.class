@@ -64,7 +64,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assert($this->_testModule->wasCalled('install'), 'install not called');
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'install not called');
     }
 
     /**
@@ -174,8 +174,8 @@ class AdminModulesControllerTestModule {
 	return GalleryStatus::success();
     }
     
-    function install() {
-	$this->_setCalled('install');
+    function installOrUpgrade() {
+	$this->_setCalled('installOrUpgrade');
 	return GalleryStatus::success();
     }
 
