@@ -139,7 +139,7 @@ class AdminLayoutsController extends GalleryController {
 		    $error[] = sprintf('form[error][key][%s][invalid]', $validationKey);
 		    $errorMessage[$validationKey] = $validationMessage;
 		}
-		GalleryUtilities::putRequestVariable('form.errorMessage', $errorMessage);
+		GalleryUtilities::putRequestVariable('form[errorMessage]', $errorMessage);
 	    }
 	} else if (isset($form['action']['undoLayout'])) {
 	    /* Redirect back to ourselves to reset the form */
