@@ -67,8 +67,9 @@ class ItemAddChildrenController extends GalleryController {
 		$file = $form['fileUpload'][$i];
 		if (!empty($file['tmp_name']) && !empty($file['size'])) {
 		    
-		    /* Get the mime type from the upload info. */
+		    /* Get the mime type and file extension from the upload info. */
 		    $mimeType = $file['type'];
+		    $extension = GalleryUtilities::getFileExtension($file['name']);
 
 		    /*
 		     * If we don't get useful data from that, take a swing at
@@ -76,8 +77,6 @@ class ItemAddChildrenController extends GalleryController {
 		     */
 		    if ($mimeType == 'application/octet-stream' ||
 			    $mimeType == 'application/unknown') {
-			list ($base, $extension) =
-			    GalleryUtilities::getFileNameComponents($file['name']);
 			$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 		    }
 
@@ -96,6 +95,7 @@ class ItemAddChildrenController extends GalleryController {
 					    $file['tmp_name'],
 					    $gallery->getActiveUserId(),
 					    $mimeType,
+					    $extension,
 					    GalleryUtilities::getFileBase($file['name']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);

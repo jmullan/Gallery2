@@ -111,10 +111,11 @@ class GalleryDataItem_core extends GalleryItem {
      * @param int the id of the parent GalleryItem
      * @param string the path to a data file to be contained
      * @param int the owner of the new item
+     * @param string the file extension
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $inputFileName, $ownerId, $mimeType, $targetName=null) {
+    function create($parentId, $inputFileName, $ownerId, $mimeType, $extension, $targetName=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -155,9 +156,6 @@ class GalleryDataItem_core extends GalleryItem {
 	} else {
 	    $baseName = $targetName;
 	}
-
-	/* Choose an appropriate extension */
-	$extension = GalleryUtilities::convertMimeToExtension($mimeType);
 
 	/* Don't be intimidated by the first 10 collisions */
 	$retry = 0;

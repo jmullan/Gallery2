@@ -352,6 +352,7 @@ class CoreModule extends GalleryModule {
 	$showAddItemLink = false;
 	$showAddAlbumLink = false;
 	$showDeleteLink = false;
+	$showPermissionsLink = false;
 	foreach ($items as $item) {
 	    list ($ret, $itemPermissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
@@ -365,6 +366,7 @@ class CoreModule extends GalleryModule {
 		$showDeleteLink = $item->getId() != $rootId;
 		$showAddItemLink = $item->canContainChildren();
 		$showAddAlbumLink = $item->canContainChildren();
+		$showPermissionsLink = true;
 	    } else {
 		if (array_intersect($adminPermissions, $itemPermissions)) {
 		    $showEditLink = true;
@@ -382,6 +384,10 @@ class CoreModule extends GalleryModule {
 
 		if (array_intersect(array('core.delete'), $itemPermissions)) {
 		    $showDeleteLink = $item->getId() != $rootId;
+		}
+
+		if (array_intersect(array('core.change'), $itemPermissions)) {
+		    $showPermissionsLink = true;
 		}
 	    }
 
@@ -407,6 +413,15 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add album'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemAddAlbum',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+	    
+	    if ($showPermissionsLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('permissions'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemEditPermissions',
 							'itemId' => $item->getId()),
 						  $params));
 	    }
@@ -519,9 +534,21 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
-	if (array_intersect(array('core.all', 'core.delete'), $permissions)) {
-	    $views[] = array('name' => $this->translate('Delete Item'),
-			     'view' => 'core:ItemDelete');
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($item->getId() != $rootId) {
+	    if (array_intersect(array('core.all', 'core.delete'), $permissions)) {
+		$views[] = array('name' => $this->translate('Delete Item'),
+				 'view' => 'core:ItemDelete');
+	    }
+	}
+	
+	if (array_intersect(array('core.all', 'core.change'), $permissions)) {
+	    $views[] = array('name' => $this->translate('Permissions'),
+			     'view' => 'core:ItemEditPermissions');
 	}
 	
 	if (array_intersect(array('core.all', 'core.addItem'), $permissions)) {

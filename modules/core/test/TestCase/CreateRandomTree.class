@@ -114,6 +114,7 @@ class CreateRandomTreeTestCase extends TestCase {
 
 	    $imageFile = $this->_imagePath[rand(0, sizeof($this->_imagePath)-1)];
 	    $mimeType = GalleryUtilities::getMimeType($imageFile);
+	    $extension = GalleryUtilities::getFileExtension($imageFile);
 
 	    /* Create the item */
 	    list ($ret, $item) =
@@ -126,6 +127,7 @@ class CreateRandomTreeTestCase extends TestCase {
 				 $imageFile,
 				 $gallery->getActiveUserId(),
 				 $mimeType,
+				 $extension,
 				 $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
