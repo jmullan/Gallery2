@@ -58,18 +58,18 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    'description' => (isset($form['set']['description'])) ? 1 : 0,
 			    'summary' => (isset($form['set']['summary'])) ? 1 : 0,
 		    );
-		    
+
 
 	    if (!empty($form['localServerFiles'])) {
 		foreach ($form['localServerFiles'] as $fileKey => $unused) {
 
-		    $useSymLink = 
+		    $useSymLink =
 			(isset($form['localServerFiles'][$fileKey]['useSymlink'])) ? 1 : 0;
 
 		    $file = array('fileName' => $fileKey, 'useSymLink' => $useSymLink);
 
 		    if (isset($form['localServerFiles'][$fileKey]['selected'])) {
-			$ret = $this->addItem($item->getId(), $dir, $file, 
+			$ret = $this->addItem($item->getId(), $dir, $file,
 				$textFields, $status, $error);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), $error, $status);
@@ -80,19 +80,18 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	    if (!empty($form['localServerDirectories'])) {
 		foreach ($form['localServerDirectories'] as $directory => $unused) {
-		    
 		    /* Skip current or parent directory entries */
 		    if ($directory == "." || $directory == "..") {
 			continue;
 		    }
-		    
-		    $useSymLink = 
-			    (isset($form['localServerDirectories'][$directory]['useSymlink'])) ? 1 : 0;
+
+		    $useSymLink =
+			(isset($form['localServerDirectories'][$directory]['useSymlink'])) ? 1 : 0;
 
 		    $newDir = array('dirName' => $directory, 'useSymLink' => $useSymLink);
 
 		    if (isset($form['localServerDirectories'][$directory]['selected'])) {
-			$ret = $this->addDirectory($item->getId(), $newDir, 
+			$ret = $this->addDirectory($item->getId(), $newDir,
 				$textFields, $status, $error);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), $error, $status);
@@ -146,16 +145,16 @@ class ItemAddFromServer extends ItemAddPlugin {
 							       $parentId,
 							       $useSymlink);
 
-	/* 
+	/*
 	 * Release the lockIds before checking $ret from addItemToAlbum
-	 * and possibly returning 
+	 * and possibly returning
 	 */
 	GalleryCoreApi::releaseLocks($lockIds);
 
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$status['addedFiles'][] = array('fileName' => $filename,
 					'id' => $newItem->getId(),
 					'warnings' => array());
@@ -171,25 +170,25 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	// Get directory name
 	$dirName = basename($path);
- 
+
 	/* Make sure we have permission to edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
- 
+
        list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
         if ($ret->isError()) {
            return $ret->wrap(__FILE__, __LINE__);
         }
-  
+
 
 	// Create new Album
 	$dirTitle = ($textFields['title']) ? $dirName : null;
 	$dirSummary = ($textFields['summary']) ? $dirName : null;
 	$dirDescription = ($textFields['description']) ? $dirName : null;
 	list ($ret, $instance) =
-               GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle, 
+               GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle,
 			$dirSummary, $dirDescription, "");
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_COLLISION) {
@@ -241,7 +240,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	while (false !== ($fileName = $this->_platform->readdir($handle))) {
 	    $gallery->guaranteeTimeLimit(5);
 
-	    if ($fileName == '.' || $fileName == '..') {
+	    if ($fileName == '.' || $fileName == '..' || $fileName == 'CVS') {
 		continue;
 	    } else {
 		$filePath = $path . $this->_dirSep . $fileName;
@@ -253,7 +252,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
 
 		    if ($legal) {
-			$newDir = array('dirName' => $filePath, 
+			$newDir = array('dirName' => $filePath,
 				'useSymLink' => $directory['useSymLink']);
 			$ret = $this->addDirectory($newId, $newDir, $textFields, $status, $error);
 			if ($ret->isError()) {
