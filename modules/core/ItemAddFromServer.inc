@@ -46,7 +46,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromLocalServer']) && !empty($form['localServerFiles'])) {
+	} else if (isset($form['action']['addFromLocalServer'])
+		   && !empty($form['localServerFiles'])) {
 	    /* Add the selected items */
 	    $dir = trim($form['localServerPath']);
 
@@ -147,7 +148,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    } else if (!$platform->file_exists($form['localServerPath']) ||
 		       !$platform->is_readable($form['localServerPath'])) {
 		$form['error']['localServerPath']['invalid'] = 1;
-	    } else if (!GalleryUtilities::isPathInList($form['localServerPath'], $localServerDirList)) {
+	    } else if (!GalleryUtilities::isPathInList($form['localServerPath'],
+						       $localServerDirList)) {
 		$form['error']['localServerPath']['illegal'] = 1;
 	    } else {
 		$mimeTypeItemMap = array();
@@ -178,8 +180,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    if ($platform->is_dir($filePath)) {
 
 				$filePath = $platform->realpath($filePath);
-				$legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
-
+				$legal = GalleryUtilities::isPathInList($filePath,
+									$localServerDirList);
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
 					  'fileName' => $fileName,
@@ -203,8 +205,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileName' => $fileName,
 					  'stat' => $platform->stat($filePath),
 					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-					  'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'],
-									     'GalleryUnknownItem'),
+					  'unknown' => GalleryUtilities::isA(
+							 $mimeTypeItemMap[$mimeType]['instance'],
+							 'GalleryUnknownItem'),
 					  'fileKey' => $fileName);
 			    }
 			}
@@ -228,8 +231,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 			array('fileName' => $fileName,
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-			      'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'],
-								 'GalleryUnknownItem'),
+			      'unknown' => GalleryUtilities::isA(
+						  $mimeTypeItemMap[$mimeType]['instance'],
+						  'GalleryUnknownItem'),
 			      'fileKey' => htmlentities($fileName));
 		}
 	    }
