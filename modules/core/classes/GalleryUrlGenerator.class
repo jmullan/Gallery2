@@ -525,7 +525,12 @@ class GalleryUrlGenerator {
 	    }
 	} else {
 	    /* Else start with our regular URL */
-	    $url = $this->getCurrentUrlDir() . $this->_baseFile;
+	    $components = parse_url($this->_baseFile);
+	    if (isset($components['host'])) {
+		$url = $this->_baseFile;
+	    } else {
+		$url = $this->getCurrentUrlDir() . $this->_baseFile;		
+	    }
 	}
 
 	/* Swap in the actual url for the 'return' placeholder, if necessary */
