@@ -1043,7 +1043,7 @@ class ConfirmImportController extends GalleryController {
 					}
 
 					$comment->setCommenterId($commenterId);
-					$comment->setHost($importComment->IPNumber);
+					$comment->setHost(empty($importComment->IPNumber) ? 'unknown' : $importComment->IPNumber);
 					if ($commenterId == $guestUserId) {
 					    $comment->setSubject($importComment->name);
 					} else {
