@@ -64,14 +64,14 @@ class MembersTest extends GalleryTestCase {
 	}
 	
 	list ($ret, $this->_originalViewSelected) = 
-        GalleryCoreApi::getPluginParameter('module','members','viewSelected');
+        GalleryCoreApi::getPluginParameter('module', 'members', 'viewSelected');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
 	list ($ret, $this->_originalEmailSelected) = 
-        GalleryCoreApi::getPluginParameter('module','members','emailSelected');
+        GalleryCoreApi::getPluginParameter('module', 'members', 'emailSelected');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -139,7 +139,7 @@ class MembersTest extends GalleryTestCase {
         global $gallery;
         
         list ($ret, $adminGroupId) = 
-            GalleryCoreApi::getPluginParameter('module','core','id.adminGroup');
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -174,11 +174,11 @@ class MembersTest extends GalleryTestCase {
     function testCanViewProfileEmail() {
         global $gallery;
          
-        /* not admin, view emails off*/     
+        /* not admin, view emails off */
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
     	                                          'emailSelected', 
-    	                                          false);
+    	                                          0);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
@@ -193,7 +193,7 @@ class MembersTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
     	                                          'emailSelected', 
-    	                                          true);
+    	                                          1);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
@@ -208,11 +208,17 @@ class MembersTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
     	                                          'emailSelected', 
-    	                                          false);
+    	                                          0);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
 
+        list ($ret, $adminGroupId) = 
+            GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+         
 	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $adminGroupId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -228,7 +234,7 @@ class MembersTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 
     	                                          'members', 
     	                                          'emailSelected', 
-    	                                          true);
+    	                                          1);
     	if ($ret->isError()) {
     	    return array($ret->wrap(__FILE__, __LINE__), null);
     	}
