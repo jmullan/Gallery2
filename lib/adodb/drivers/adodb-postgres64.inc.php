@@ -110,7 +110,9 @@ Unless you are very careful, you might end up with a tuple having
 a different OID if a database must be reloaded. */
 	function _insertid()
 	{
-		if (!is_resource($this->_resultid)) return false;
+	    if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) != 'pgsql result') {
+		return false;
+	    }
 	   return pg_getlastoid($this->_resultid);
 	}
 
@@ -118,7 +120,9 @@ a different OID if a database must be reloaded. */
 // Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44
    function _affectedrows()
    {
-   		if (!is_resource($this->_resultid)) return false;
+       if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) != 'pgsql result') {
+	   return false;
+       }
 	   	return pg_cmdtuples($this->_resultid);
    }
 
