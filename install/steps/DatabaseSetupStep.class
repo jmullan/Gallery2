@@ -1,0 +1,83 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class DatabaseSetupStep extends InstallStep {
+    function stepName() {
+	return _('Database Setup');
+    }
+
+    function loadGalleryObject(&$gallery) {
+	$gallery->setConfig('storage.config', $this->_config);
+    }
+
+    function loadTemplateData(&$templateData) {
+	global $gallery;
+
+	if (empty($this->_config)) {
+	    $this->_config = $gallery->getConfig('storage.config');
+	    if (empty($this->_config)) {
+		$this->_config = array();
+		$this->_config['type'] = 'mysql';
+		$this->_config['hostname'] = 'localhost';
+		$this->_config['username'] = 'root';
+		$this->_config['password'] = '';
+		$this->_config['database'] = 'gallery2';
+		$this->_config['tablePrefix'] = 'g2_';
+		$this->_config['columnPrefix'] = 'g_';
+	    }
+	}
+
+	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
+	    // TODO: change this to actually verify before marking complete
+	    if (true) {
+		$this->setComplete(true);
+		foreach (array('type', 'hostname', 'username',
+			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		    $this->_config[$key] = $_POST[$key];
+		}
+	    } else {
+		foreach (array('type', 'hostname', 'username',
+			       'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		    $templateData['config'][$key] = $_POST[$key];
+		}
+	    }
+	} else {
+	    $templateData['config'] = $this->_config;
+	}
+
+	if ($this->isComplete()) {
+	    $templateData['bodyFile'] = 'templates/DatabaseSetupSuccess.html';
+	} else {
+	    foreach (array('mysql'  => _('MySQL (all versions)'),
+			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
+			   'postgres7' => _('PostgreSQL v7.x'),
+			   'postgres' => _('PostgreSQL v6.x (not well tested)'))
+		     as $key => $value) {
+		$templateData['dbList'][$key] = $value;
+	    }
+	    $templatData['dbSelected'][$this->_config['type']] = 1;
+
+	    $templateData['bodyFile'] = 'templates/DatabaseSetupRequest.html';
+	}
+    }
+}
+?>

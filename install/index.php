@@ -41,7 +41,10 @@ class GalleryStub {
     }
     
     function getConfig($key) {
-	return $this->_hash[$key];
+	if (isset($this->_hash[$key])) {
+	    return $this->_hash[$key];
+	}
+	return null;
     }
     
     function setDebug($value) {
@@ -57,7 +60,68 @@ class GalleryStub {
 
 $gallery = new GalleryStub();
 
-session_start();
+// load in config.php if there
+$configFile = dirname(__FILE__) . '/../config.php';
+if (is_file($configFile) && is_readable($configFile)) {
+    require_once($configFile);
+}
+
+class InstallStep {
+    var $_stepNumber;
+    var $_isComplete;
+    var $_isInError;
+    
+    function isComplete() {
+	return $this->_isComplete;
+    }
+
+    function setComplete($complete) {
+	$this->_isComplete = $complete;
+    }
+
+    function canBeVisited() {
+	return true;
+    }
+
+    function setInError($inError) {
+	$this->_isInError = $inError;
+    }
+
+    function isInError() {
+	return $this->_isInError;
+    }
+
+    function stepName() {
+	return _('Unknown');
+    }
+
+    function setStepNumber($stepNumber) {
+	$this->_stepNumber = $stepNumber;
+    }
+    
+    function getStepNumber() {
+	return $this->_stepNumber;
+    }
+
+    function loadTemplateData(&$templateData) {
+	return null;
+    }
+
+    function getActions() {
+	return array();
+    }
+
+    function setIsLastStep($lastStep) {
+	$this->_isLastStep = $lastStep;
+    }
+
+    function isLastStep() {
+	return $this->_isLastStep;
+    }
+
+    function loadGalleryObject(&$gallery) {
+    }
+}
 
 // if gettext isn't enabled, subvert the _() text translation function
 // and just pass the string on through in English
@@ -67,492 +131,67 @@ if (!function_exists('_')) {
     }
 }
 
+$stepOrder[] = 'Welcome';
+$stepOrder[] = 'Authenticate';
+$stepOrder[] = 'InstallChecks';
+$stepOrder[] = 'SystemChecks';
+$stepOrder[] = 'AdminUserSetup';
+$stepOrder[] = 'StorageSetup';
+$stepOrder[] = 'DatabaseSetup';
+$stepOrder[] = 'CreateConfigFile';
+
+foreach ($stepOrder as $stepName) {
+    $className = $stepName . 'Step';
+    require("steps/$className.class");
+}
+
+session_start();
+
+// If we don't have our steps in our session, initialize them now.
+if (!isset($_GET['startOver']) && isset($_SESSION['steps'])) {
+    $steps =& $_SESSION['steps'];
+} else {
+    for ($i = 0; $i < sizeof($stepOrder); $i++) {
+	$className = $stepOrder[$i] . 'Step';
+	$step = new $className();
+	$step->setStepNumber($i);
+	$step->setInError(false);
+	$step->setComplete(false);
+	$step->setIsLastStep($i == sizeof($stepOrder) - 1);
+	$steps[] = $step;
+    }
+    $_SESSION['steps'] =& $steps;
+}
+
 if (isset($_GET['step'])) {
-    $step = $_GET['step'];
+    $stepNumber = (int)$_GET['step'];
 } else {
-    $step = 0;
+    $stepNumber = 0;
 }
 
-// steps and status: each step's status is true if it's been completed (though
-// authentication is re-checked at every step)
-$navbar = '';
-$navtext = array (_('Welcome'),
-		  _('Authenticate'),
-		  _('Install Checks'),
-		  _('System Checks'),
-		  _('Admin User Setup'),
-		  _('Storage Setup'),
-		  _('Database Setup'),
-		  _('Finish'));
-$status = array();
-$visited = array();
-foreach (array_keys($navtext) as $curr) {
-    array_push($status, false);
-    array_push($visited, false);
-}
-
-// load in config.php if there
-$configFile = dirname(__FILE__) . '/../config.php';
-if (is_file($configFile) && is_readable($configFile)) {
-    require_once($configFile);
-    $_SESSION['passA'] = $gallery->getConfig('setup.password');
-    $_SESSION['passB'] = $_SESSION['passA'];
-    $_SESSION['dir']   = $gallery->getConfig('data.gallery.base');
-    $_SESSION['db']    = $gallery->getConfig('storage.config');
-    $_SESSION['debug'] = $gallery->getDebug();
-}
-if (isset($_SESSION['status'])) {
-    $status = $_SESSION['status'];
-}
-if (isset($_SESSION['visited'])) {
-    $visited = $_SESSION['visited'];
-}
-$status[0] = true;
-$visited[0] = true;
-
-// authentication key download
-if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
-    if (isset($_SESSION['auth'])) {
-	$auth = $_SESSION['auth'];
-	$auth .= "\r\n";
-	header("Content-Type: text/plain");
-	header("Content-Length: " . strlen($auth));
-	header("Content-Description: Download login.txt to your computer.");
-	header("Content-Disposition: attachment; filename=login.txt");
-	print $auth;
-	exit;
+// Make sure all steps up to the current one are ok and load our gallery object
+for ($i = 0; $i < $stepNumber; $i++) {
+    if ($steps[$i]->isComplete()) {
+	$steps[$i]->loadGalleryObject($gallery);
     } else {
-	header("Location: index.php?step=1&auth=nosession");
+	$stepNumber = $i;
+	break;
     }
 }
+$currentStep =& $steps[$stepNumber];
 
-// authenticate
-$authenticated = false;
-if ($step > 1 || ($step == 1 && (!isset($_GET['error']) && ((isset($_GET['action']) && !($_GET['action'] === 'new')) || !isset($_GET['action']))))) {
-    $authFile = dirname(__FILE__) . '/login.txt';
-    if (!file_exists($authFile)) {
-	header('Location: index.php?step=1&error=nofile');
-    } elseif (!is_readable($authFile)) {
-	header('Location: index.php?step=1&error=noperms');
-    } elseif (!isset($_SESSION['auth'])) {
-	header('Location: index.php?step=1&error=nosession');
-    } else {
-	$fileAuth = trim(file_get_contents($authFile));
-	if (!($fileAuth === $_SESSION['auth'])) {
-	    header('Location: index.php?step=1&error=nomatch');
-	} else {
-	    $authenticated = true;
-	    $status[1] = true;
-	}
-    }
-}
+// Load up template data from the current step
+$templateData = array();
 
-// pre-header functionality
-// XXX split this into unique functions
-$errorMsg = array();
-if ($step == 1) {
-    if (isset($_GET['error'])) {
-	$error = $_GET['error'];
-	// uh oh...
-	if ($error === 'nofile') {
-	    $installerDir = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
-	    array_push($errorMsg, _("<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>$installerDir/</tt> directory."));
-	    $keyGen = false;
-	} elseif ($error === 'noperms') {
-	    array_push($errorMsg, _('<b>Error:</b> your <b>login.txt</b> file is not readable. Please give Gallery read permissions on the file.'));
-	    $keyGen = false;
-	} elseif ($error === 'nosession') {
-	    array_push($errorMsg, _('<b>Error:</b> session expired. Please download a new authentication string from below and try again.'));
-	    $keyGen = true;
-	} elseif ($error === 'nomatch') {
-	    array_push($errorMsg, _('<b>Error:</b> your <b>login.txt</b> key does not match correctly. Please download a new authentication string from below and try again.'));
-	    $keyGen = true;
-	}
-    } elseif ($authenticated) {
-	$keyGen = false;
-    } else {
-	$keyGen = true;
-    }
-    
-    if ($keyGen == true || !isset($_SESSION['auth'])) {
-	for ($len=64, $rand=''; strlen($rand) < $len;
-	     $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) : (!mt_rand(0,1) ? mt_rand(65,90) : mt_rand(97,122))));
-	$rand = md5($rand);
-	$_SESSION['auth'] = $rand;
-    } else {
-	$rand = $_SESSION['auth'];
-    }
-} elseif ($step == 2) {
-    $status[$step] = true;
-} elseif ($step == 3) {
-    $status[$step] = false;
-    // assert compatible version of PHP
-    if (phpversion() < '4.1.0') {
-	array_push($errorMsg, sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the <a href=\"http://php.net/\">PHP website</a>."), phpversion()));
-    }
-    // assert that __FILE__ works correctly
-    if (!CheckFileDirective()) {
-	array_push($errorMsg, _("Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums."));
-    }
-    if (count($errorMsg) == 0) {
-	$status[$step] = true;
-    }
-} elseif ($step == 4) {
-    if (isset($_GET['action']) && $_GET['action'] === 'create') {
-	$status[$step] = false;
-    }
-    if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB']) && isset($_POST['debug'])) {
-	$_SESSION['debug'] = $_POST['debug'];
-	if (empty($_POST['uname'])) {
-	    array_push($errorMsg, _('Error: you must enter a username!'));
-	} else {
-	    $_SESSION['uname'] = $_POST['uname'];
-	}
-	if (empty($_POST['passA']) || empty($_POST['passB'])) {
-	    if (empty($_POST['passA']) && empty($_POST['passB'])) {
-		array_push($errorMsg, _('Error: you must enter a password!'));
-	    } else {
-		array_push($errorMsg, _('Error: you must enter your password twice.'));
-		$_SESSION['passA'] = $_POST['passA'];
-		$_SESSION['passB'] = $_POST['passB'];
-	    }
-	} elseif ($_POST['passA'] !== $_POST['passB']) {
-	    array_push($errorMsg, _('Error: passwords do not match. Please enter them again.'));
-	} else {
-	    $_SESSION['passA'] = $_POST['passA'];
-	    $_SESSION['passB'] = $_POST['passB'];
-	}
-	if (count($errorMsg) == 0) {
-	    $status[$step] = true;
-	}
-    }
-} elseif ($step == 5) {
-    if (isset($_GET['action']) && $_GET['action'] === 'create') {
-	$status[$step] = false;
-    }
-    if (isset($_POST['dir'])) {
-	$dir = $_POST['dir'];
-	$_SESSION['dir'] = $dir;
-	if (empty($dir)) {
-	    array_push($errorMsg, _('Error: you must specify a data directory.'));
-	} else {
-	    if (!is_dir($dir)) {
-		//$tmp = umask(0022);
-		//umask($tmp);
-		// XXX implement auto-create on request
-		array_push($errorMsg, _('Error: the directory you specified does not exist. Please create it.'));
-	    } else {
-		if (!is_readable($dir)) {
-		    array_push($errorMsg, _("Error: Gallery cannot access the directory you specified. Please change its permissions."));
-		} elseif (!is_writable($dir)) {
-		    array_push($errorMsg, _("Error: Gallery cannot write to the directory you specified. Please change its permissions."));
-		} else {
-		    // populate the dir
-		    if (!checkDirectories($dir)) {
-			array_push($errorMsg, _("Error creating directories in storage directory."));
-		    }
-		}
-	    }
-	}
-	if (count($errorMsg) == 0) {
-	    $status[$step] = true;
-	}
-    }
-} elseif ($step == 6) {
-    
-    $type         = isset($_POST['type'])         ? $_POST['type']         : 'mysqlt';
-    $hostname     = isset($_POST['hostname'])     ? $_POST['hostname']     : 'localhost';
-    $username     = isset($_POST['username'])     ? $_POST['username']     : 'root';
-    $password     = isset($_POST['password'])     ? $_POST['password']     : '';
-    $database     = isset($_POST['database'])     ? $_POST['database']     : 'gallery2';
-    $tablePrefix  = isset($_POST['tablePrefix'])  ? $_POST['tablePrefix']  : 'g2_';
-    $columnPrefix = isset($_POST['columnPrefix']) ? $_POST['columnPrefix'] : 'g_';
-    
-    $_SESSION['db'] = array ('type'         => $type,
-			     'hostname'     => $hostname,
-			     'username'     => $username,
-			     'password'     => $password,
-			     'database'     => $database,
-			     'tablePrefix'  => $tablePrefix,
-			     'columnPrefix' => $columnPrefix
-			     );
-    
-    if (empty($type)) {
-	array_push($errorMsg, "Error: you must select a database type.");
-    }
-    if (empty($hostname)) {
-	array_push($errorMsg, "Error: you must specify a database host.");
-    }
-    if (empty($username)) {
-	array_push($errorMsg, "Error: you must specify a database username.");
-    }
-    if (empty($database)) {
-	array_push($errorMsg, "Error: you must specify a database name.");
-    }
-    
-    if (count($errorMsg == 0) && isset($_GET['action']) && $_GET['action'] === 'create') {
-	/*
-	 * Make sure we can connect to the storage subsystem.
-	 */
-	//$ret = $gallery->initStorage();
-	//	if ($ret->isError()) {
-	//$ret = $ret->wrap(__FILE__, __LINE__);
-	//error('storageError', array('error' => $ret));
-		//return;
-	//}
+// Round percentage to the nearest 5
+$templateData['percentComplete'] =		  
+    (int)((100 * ($stepNumber / sizeof($steps))) / 5) * 5;
+$templateData['errors'] = array();
+$templateData['installerDir'] =
+    str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
+$currentStep->loadTemplateData($templateData);
 
-	//message('success');
-    }
-
-    $status[$step] = count($errorMsg) == 0 ? true : false;
-}
-
-if ($step == 7 || ($visited[7] && count($errorMsg) == 0 && isset($_GET['action']) && $_GET['action'] === 'create')) {
-    writeConfigFile();
-}
-
-// make percentage a nice round multiple of 5
-$numDone = array_sum($status) - 1;
-if (0 == count($navtext) || $numDone < 1) {
-    $percentage = 0;
-} else {
-    $percentage = round((100 * ($numDone) / (count($status) - 1)) / 5) * 5;
-}
-print $_SESSION['debug'];
-printNavBar();
-
-// this can be cleaned up
-include(dirname(__FILE__) . '/head.inc');
-if ($step < 1) {
-    Welcome();
-} elseif ($step == 1) {
-    Authenticate($rand);
-} elseif ($step == 2) {
-    InstallCheck();
-} elseif ($step == 3) {
-    SystemCheck();
-} elseif ($step == 4) {
-    AdminSetup();
-} elseif ($step == 5) {
-    StorageSetup();
-} elseif ($step == 6) {
-    DatabaseSetup();
-} elseif ($step == 7) {
-    Finish();
-} else {
-    Welcome();
-}
-
-$visited[$step] = true;
-$_SESSION['status'] = $status;
-$_SESSION['visited'] = $visited;
-
-function Welcome() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-	
-    $content = 'welcome.inc';    
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function Authenticate($rand) {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg, $authenticated;
-
-    $content = 'authenticate.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function InstallCheck() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-	
-    $content = 'installCheck.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function SystemCheck() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-    
-    $content = 'systemCheck.inc';
-
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function AdminSetup() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-
-    $content = 'adminSetup.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function StorageSetup() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-
-    $content = 'storageSetup.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function DatabaseSetup() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-
-    $content = 'databaseSetup.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function Finish() {
-    global $content, $navbar, $percentage, $step, $status, $errorMsg;
-
-    $content = 'finish.inc';
-    include(dirname(__FILE__) . '/body.inc');
-    include(dirname(__FILE__) . '/foot.inc');
-}
-
-function writeConfigFile() {
-
-    global $status, $errorMsg;
-    $status[7] = 0;
-    
-    $configFilePath = realpath(dirname(__FILE__) . '/../config.php');
-    $configText = '';
-    
-    if (is_file($configFilePath)) {
-	if (!is_readable($configFilePath)) {
-	    array_push($errorMsg, "Error: Unable to read the <b>config.php</b> configuration file in your <tt>gallery</tt> directory. Please change its permissions.");
-	} elseif (!is_writable($configFilePath)) {
-	    array_push($errorMsg, "Error: Unable to write to the <b>config.php</b> configuration file in your <tt>gallery</tt> directory. Please change its permissions.");
-	}
-    } else {
- 	if (!is_writable(dirname($configFilePath))) {
-	    print "moo";
-	    array_push($errorMsg, "Error: Unable to create <b>config.php</b> in your <tt>gallery</tt> directory. Make sure that Gallery has write permissions for that directory, or please create a <b>config.php</b> file there and make sure Gallery can write to it.");
-	}
-    }
-    
-    if (count($errorMsg) == 0) {
-	if (!$f = @fopen($configFilePath, 'wt')) {
-	    array_push($errorMsg, "Error: Unable to create <b>config.php</b> in your <tt>gallery</tt> directory. Make sure that Gallery has write permissions for that directory, or please create a <b>config.php</b> file there and make sure Gallery can write to it.");
-	} else {
-	    // XXX need some for() loop action on this razzmatazz
-	    $g = @fopen('text/configHeader.inc', 'rt');
-	    $configText .= fread($g, filesize('text/configHeader.inc'));
-	    fclose($g);
-	    $configText .= "// [setup.password] Initial password for the 'admin' user\n";
-	    $configText .= "\$gallery->setConfig('setup.password', '{$_SESSION['passA']}');\n\n";
-	    $configText .= "// [data.gallery.base] Path to Gallery data storage directory\n";	    
-	    $configText .= "\$gallery->setConfig('data.gallery.base', '{$_SESSION['dir']}');\n\n";
-	    $configText .= "// [storage.type] Data storage mechanism (currently 'database' only) \n";
-	    $configText .= "\$gallery->setConfig('storage.type', 'database');\n\n";
-	    $configText .= "// [storage.config] Data storage configuration settings\n";
-	    $configText .= "\$storeConfig['type'] = '{$_SESSION['db']['type']}';\n";
-	    $configText .= "\$storeConfig['hostname'] = '{$_SESSION['db']['hostname']}';\n";
-	    $configText .= "\$storeConfig['database'] = '{$_SESSION['db']['database']}';\n";
-	    $configText .= "\$storeConfig['username'] = '{$_SESSION['db']['username']}';\n";
-	    $configText .= "\$storeConfig['password'] = '{$_SESSION['db']['password']}';\n";
-	    $configText .= "\$storeConfig['tablePrefix'] = '{$_SESSION['db']['tablePrefix']}';\n";
-	    $configText .= "\$storeConfig['columnPrefix'] = '{$_SESSION['db']['columnPrefix']}';\n";
-	    $configText .= "\$gallery->setConfig('storage.config', \$storeConfig);\n\n";
-	    $configText .= "// [debug] Debugging settings (intended for developers)\n";
-	    $configText .= "\$gallery->setDebug({$_SESSION['debug']});\n\n";
-	    $g = @fopen('text/configFooter.inc', 'rt');
-	    $configText .= fread($g, filesize('text/configHeader.inc'));
-	    fclose($g);
-	    fwrite($f, $configText);
-	    fclose($f);
-	}
-    }
-
-    if (count($errorMsg) == 0) {
-	$status[7] = true;
-    }
-}
-
-function printNavBar() {
-	
-    global $navbar, $navtext, $status, $visited;
-	
-    // XXX need to modify for RTL
-    $navbar .= "<ol>\n";
-    foreach (array_keys($navtext) as $step) {
-	if ($step != 0) {
-	    $navbar .= "\n";
-	}
-	$navbar .= "<li class=\"navitem\">\n";
-	if ($step == 0) {
-	    $num = '&nbsp;';
-	} else {
-	    $num = $step;
-	}
-	$navbar .= "<span class=\"nav_num\">$num</span>&nbsp;<span class=\"nav_text\">";
-	if ($step < 1 || $status[$step-1] || $visited[$step]) {
-	    $navbar .= "<a href=\"index.php?step=$step\">$navtext[$step]</a>";
-	} else {
-	    $navbar .= $navtext[$step];
-	}
-	$navbar .= '</span>';
-	if ($step > 0) {
-	    if ($status[$step]) {
-		$navbar .= " <span class=\"success\">&#10003;</span>";
-	    } elseif ($visited[$step]) {
-		$navbar .= " <span class=\"error\">&#10007;</span>";
-	    }
-	}
-	$navbar .= "</li>\n";
-
-    }
-
-	$navbar .= "</ol>\n";
-	$navbar .= "<p><span class=\"help\">?</span> <a href=\"../README.html\" target=\"_blank\">Installer Help</a></p>\n";
-}
-
-function CheckFileDirective() {
-    if (strstr(__FILE__, 'install/index.php') ||
-	strstr(__FILE__, 'install\\install.php')) {
-	return true;
-    } else {
-	return false;
-    }
-}
-
-function checkDirectories($dataBase) {
-
-    /* Make sure that our base path exists, is a directory and is writeable */
-
-    $testfile = $dataBase . '/setup' . rand(1, 10000);
-    if ($fd = fopen($testfile, 'w')) {
-	fclose($fd);
-	unlink($testfile);
-    } else {
-	return false;
-    }
-
-    /* Create the sub directories, if necessary */
-    foreach (array('albums',
-		   'cache',
-		   'tmp',
-		   'smarty',
-		   'smarty/templates_c') as $key) {
-	$dir = "$dataBase/$key";
-
-	if (file_exists($dir) && !is_dir($dir)) {
-   	    return false;
-	}
-
-	if (!file_exists($dir)) {
-	    if (!mkdir($dir)) {
-		return false;
-	    }
-	}
-
-	if (!is_writeable($dir)) {
-	    return false;
-	}
-    }
-    return true;
-}
+// Render our page
+include('templates/MainPage.html');
 ?>
 

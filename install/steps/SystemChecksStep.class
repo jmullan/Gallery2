@@ -1,0 +1,69 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class SystemChecksStep extends InstallStep {
+    function stepName() {
+	return _('System Checks');
+    }
+
+    function loadTemplateData(&$templateData) {
+	$failCount = 0;
+	
+	// assert compatible version of PHP
+	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0') < 0) {
+	    $templateData['check'][] =
+		array('title' => _('PHP Version'),
+		      'success' => false,
+		      'error' => sprintf(_("Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %s installed. Contact your webserver administrator to request an upgrade, available at the <a href=\"http://php.net/\">PHP website</a>."), phpversion()));
+	    $failCount++;
+	} else {
+	    $templateData['check'][] =
+		array('title' => _('PHP Version'), 'success' => true);
+	}
+
+	// assert that __FILE__ works correctly
+	if (!SystemChecksStep::CheckFileDirective()) {
+	    $templateData['check'][] =
+		array('title' => _('FILE Directive'),
+		      'success' => false,
+		      'error' => _('Error: your PHP __FILE__ directive is not functioning correctly. Please file a support request with your webserver administrator or in the Gallery forums.'));
+	    $failCount++;
+	} else {
+	    $templateData['check'][] =
+		array('title' => _('FILE Directive'), 'success' => true);
+	}
+	
+	$templateData['bodyFile'] = 'templates/SystemChecks.html';
+	$this->setComplete($failCount == 0);
+	$this->setInError($failCount > 0);
+    }
+
+    function CheckFileDirective() {
+	if (strstr(__FILE__, 'steps/SystemChecksStep.class') ||
+	    strstr(__FILE__, 'steps\\SystemChecksStep.class')) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+}
+?>

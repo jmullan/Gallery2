@@ -1,0 +1,76 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class AuthenticateStep extends InstallStep {
+    var $_uniqueKey;
+
+    function AuthenticateStep() {
+	for ($len=64, $rand='';
+	     strlen($rand) < $len;
+	     $rand .= chr(!mt_rand(0,2) ? mt_rand(48,57) :
+			  (!mt_rand(0,1) ? mt_rand(65,90) :
+			   mt_rand(97,122))));
+	$this->_uniqueKey = md5($rand);
+    }
+    
+    function stepName() {
+	return _('Authenticate');
+    }
+
+    function loadTemplateData(&$templateData) {
+	if (!$this->isComplete()) {
+	    // authenticate
+	    $authenticated = false;
+	    $authFile = dirname(__FILE__) . '/../login.txt';
+	    if (!file_exists($authFile)) {
+		$templateData['errors'][] =
+		    sprintf(_('<b>Error:</b> could not locate <b>login.txt</b>. ' .
+			      'Please place it in your <tt>%s/</tt> directory.'),
+			    str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(dirname(__FILE__))));
+	    } else if (!is_readable($authFile)) {
+		$templateData['errors'][] =
+		    _('<b>Error:</b> your <b>login.txt</b> file is not readable. ' .
+		      'Please give Gallery read permissions on the file.');
+	    } else {
+		$fileAuth = trim(file_get_contents($authFile));
+		if ($fileAuth == $this->_uniqueKey) {
+		    $this->setComplete(true);
+		} else {
+		    $templateData['errors'][] =
+			_('<b>Error:</b> your <b>login.txt</b> key does not match correctly. ' .
+			  'Please download a new authentication string from below and try again.');
+		}
+	    }
+	}
+	
+	if ($this->isComplete()) {
+	    $templateData['bodyFile'] = 'templates/AuthenticateSuccessful.html';
+	} else {
+	    $templateData['bodyFile'] = 'templates/AuthenticateRequest.html';
+	}
+    }
+
+    function getUniqueKey() {
+	return $this->_uniqueKey;
+    }
+}
+?>
