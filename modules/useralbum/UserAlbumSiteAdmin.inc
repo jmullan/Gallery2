@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -95,19 +95,19 @@ class UserAlbumSiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-        /* Get ids of all all albums where we can add new album items */
-        list ($ret, $albumIds) =
-            GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	/* Get ids of all all albums where we can add new album items */
+	list ($ret, $albumIds) =
+	    GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-        /* Load all the album entities */
-        list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
+	/* Load all the album entities */
+	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
 
 	$UserAlbumSiteAdmin = array(
 	    'createList' => array('immediate' => $module->translate('When user is created'),
@@ -123,7 +123,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 	$template->setVariable('UserAlbumSiteAdmin', $UserAlbumSiteAdmin);
 	$template->setVariable('controller', 'useralbum:UserAlbumSiteAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/useralbum/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/useralbum/templates/UserAlbumSiteAdmin.tpl'));
     }
 }
 ?>

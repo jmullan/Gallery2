@@ -170,7 +170,7 @@ class ThumbnailSiteAdminView extends GalleryView {
 
 	$template->setVariable('controller', 'thumbnail:ThumbnailSiteAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/thumbnail/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/thumbnail/templates/ThumbnailSiteAdmin.tpl'));
     }
 }
 ?>

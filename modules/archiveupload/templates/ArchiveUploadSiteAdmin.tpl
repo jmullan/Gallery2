@@ -33,7 +33,8 @@
 	{g->text text="Path to unzip"}
       </h3>
 
-      <input type="text" size="40" name="{g->formVar var="form[unzipPath]"}" value="{$form.unzipPath}"/>
+      <input type="text" size="40" name="{g->formVar var="form[unzipPath]"}"
+       value="{$form.unzipPath}"/>
 
       {if isset($form.error.unzipPath.missing)}
       <div class="giError">
@@ -62,9 +63,12 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}"
+     value="{g->text text="Save Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][test]"}"
+     value="{g->text text="Test Settings"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}"
+     value="{g->text text="Cancel"}"/>
   </div>
 
   {if !empty($ArchiveUploadSiteAdmin.tests)}

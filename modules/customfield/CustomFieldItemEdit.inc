@@ -114,7 +114,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $tpl = 'modules/customfield/templates/ItemAdmin.tpl';
+	    $tpl = 'modules/customfield/templates/CustomFieldItemAdmin.tpl';
 	    break;
 	default:
 	    $set = GalleryUtilities::isA($item, 'GalleryAlbumItem') ? 'album'
@@ -134,7 +134,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    if ($set == 'album') {
 		$form['adminFlag'] = $isContainerSettings ? 1 : 2;
 	    }
-	    $tpl = 'modules/customfield/templates/ItemEdit.tpl';
+	    $tpl = 'modules/customfield/templates/CustomFieldItemEdit.tpl';
 	}
 	$template->setVariable('controller', 'customfield:CustomFieldItemEdit');
 	return array(GalleryStatus::success(), $tpl);

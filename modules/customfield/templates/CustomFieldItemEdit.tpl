@@ -41,6 +41,7 @@
 {if !empty($form.fields)}
 <div class="gbButtons">
   <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+  <input type="submit" name="{g->formVar var="form[action][reset]"}"
+   value="{g->text text="Reset"}"/>
 </div>
 {/if}

@@ -135,7 +135,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 
 	$template->setVariable('controller', 'archiveupload:ArchiveUploadSiteAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/archiveupload/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/archiveupload/templates/ArchiveUploadSiteAdmin.tpl'));
     }
 }
 ?>

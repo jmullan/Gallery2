@@ -113,7 +113,6 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
 				  'status' => array(), 'error' => array()),
 			    $results, 'Activate album-specific');
 
@@ -135,7 +134,6 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
 				  'status' => array(), 'error' => array()),
 			    $results, 'Switch to edit-values');
 	$adminMode = $session->get(CUSTOM_FIELD_SESSION_KEY);
@@ -146,7 +144,6 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
 				  'status' => array(), 'error' => array()),
 			    $results, 'Switch to edit-settings');
 	$adminMode = $session->get(CUSTOM_FIELD_SESSION_KEY);
@@ -165,7 +162,6 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
 				  'status' => array(), 'error' => array()),
 			    $results, 'Revert to global-settings');
 

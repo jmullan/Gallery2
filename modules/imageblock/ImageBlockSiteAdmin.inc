@@ -145,7 +145,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 	$template->setVariable('ImageBlockSiteAdmin', $ImageBlockSiteAdmin);
 	$template->setVariable('controller', 'imageblock:ImageBlockSiteAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/imageblock/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/imageblock/templates/ImageBlockSiteAdmin.tpl'));
     }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,7 +40,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CustomFieldHelper.clas
  * @subpackage UserInterface
  */
 class CustomFieldItemAdminController extends GalleryController {
-    
+
     /**
      * @see GalleryController::handleRequest
      */
@@ -51,9 +51,9 @@ class CustomFieldItemAdminController extends GalleryController {
 	list ($adminMode, $itemId) = GalleryUtilities::getRequestVariables('cfAdmin', 'itemId');
 	if (!empty($adminMode) && !empty($itemId)) {
 
-	    // Activate album-specific settings:
+	    /* Activate album-specific settings: */
 	    if ($adminMode == 2) {
-		// Copy in global settings..
+		/* Copy in global settings */
 		list ($ret, $globalParam) = CustomFieldHelper::loadParameters();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -62,7 +62,7 @@ class CustomFieldItemAdminController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		// Mark setId on existing field values..
+		/* Mark setId on existing field values */
 		list ($ret, $searchResults) = $gallery->search(
 		    'SELECT [ChildEntity::id] FROM [ChildEntity] WHERE [ChildEntity::parentId]=?',
 		    array($itemId));
@@ -80,14 +80,14 @@ class CustomFieldItemAdminController extends GalleryController {
 		}
 	    }
 
-	    // Revert to global settings:
+	    /* Revert to global settings: */
 	    if ($adminMode == -2) {
-		// Remove album-specific settings..
+		/* Remove album-specific settings */
 		foreach (array('common', 'album', 'photo') as $set) {
 		    $ret = GalleryCoreApi::removePluginParameter(
 					   'module', 'customfield', $set, $itemId);
 		}
-		// Clear setId for existing field values that can be retained..
+		/* Clear setId for existing field values that can be retained */
 		list ($ret, $globalParam) = CustomFieldHelper::loadParameters();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -109,23 +109,22 @@ class CustomFieldItemAdminController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-		// Remove remaining field values..
+		/* Remove remaining field values */
 		$ret = CustomFieldMap::removeMapEntry(array('setId' => $itemId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 
-	    // Set admin mode in session..
+	    /* Set admin mode in session */
 	    if ($adminMode > 0) {
-	        $session->put(CUSTOM_FIELD_SESSION_KEY, $itemId);
+		$session->put(CUSTOM_FIELD_SESSION_KEY, $itemId);
 	    } else {
-	        $session->remove(CUSTOM_FIELD_SESSION_KEY);
+		$session->remove(CUSTOM_FIELD_SESSION_KEY);
 	    }
 	}
 
 	$results['return'] = 1;
-	$results['redirect']['view'] = 'core:ShowItem';
 	$results['status'] = array();
 	$results['error'] = array();
 

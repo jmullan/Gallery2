@@ -29,7 +29,7 @@
  * @package RandomHighlight
  * @subpackage UserInterface
  */
-class SiteAdminRandomHighlightController extends GalleryController {
+class RandomHighlightSiteAdminController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -59,7 +59,7 @@ class SiteAdminRandomHighlightController extends GalleryController {
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
 	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'randomhighlight:SiteAdminRandomHighlight';
+	$results[$method]['subView'] = 'randomhighlight:RandomHighlightSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -71,14 +71,14 @@ class SiteAdminRandomHighlightController extends GalleryController {
  * @package RandomHighlight
  * @subpackage UserInterface
  */
-class SiteAdminRandomHighlightView extends GalleryView {
+class RandomHighlightSiteAdminView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	if ($form['formName'] != 'SiteAdminRandomHighlight') {
-	    $form['formName'] = 'SiteAdminRandomHighlight';
+	if ($form['formName'] != 'RandomHighlightSiteAdmin') {
+	    $form['formName'] = 'RandomHighlightSiteAdmin';
 	    list ($ret, $duration) =
 		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', 'duration');
 	    if ($ret->isError()) {
@@ -87,9 +87,9 @@ class SiteAdminRandomHighlightView extends GalleryView {
 	    $form['duration'] = round($duration / 60, 2);
 	}
 
-	$template->setVariable('controller', 'randomhighlight:SiteAdminRandomHighlight');
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/randomhighlight/templates/SiteAdmin.tpl'));
+	$template->setVariable('controller', 'randomhighlight:RandomHighlightSiteAdmin');
+	return array(GalleryStatus::success(), array('body' =>
+		     'modules/randomhighlight/templates/RandomHighlightSiteAdmin.tpl'));
     }
 }
 ?>

@@ -12,7 +12,7 @@
       </h2>
     </div>
   </div>
-  
+
   {if !empty($status)}
   <div id="gsStatus">
     {if isset($status.saved)}

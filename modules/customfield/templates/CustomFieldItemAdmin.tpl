@@ -23,9 +23,11 @@
 </div>
 
 <script type="text/javascript">
+  // <![CDATA[
   var removeWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!"}';
   var albumWarning = '{g->text text="WARNING: Values for this custom field in this album will be deleted!"}';
   var photoWarning = '{g->text text="WARNING: Values for this custom field on non-photo items in this album will be deleted!"}';
+  // ]]>
 </script>
 
 <input type="hidden" name="{g->formVar var="form[cfAdmin]"}" value="1"/>

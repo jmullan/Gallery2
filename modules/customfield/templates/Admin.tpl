@@ -5,6 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <script type="text/javascript">{literal}
+// <![CDATA[
 function swap(set,j,k) {
  var tf,ts,td,ti;
  tf = document.getElementById(set+k).innerHTML;
@@ -42,6 +43,7 @@ pickdata[{counter}] = '{foreach from=$item.choices item=choice}{$choice}\n{/fore
 function pickfield(s) {
  document.getElementById('pick').value = pickdata[s.selectedIndex];
 }
+// ]]>
 {/literal}</script>
 
 {if !empty($status)}
@@ -216,7 +218,11 @@ function pickfield(s) {
       <textarea id="pick" name="{g->formVar var="form[picklist]"}" cols="40" rows="4"></textarea>
     </td>
   </tr></table>
-  <script type="text/javascript">if (pickdata.length>0) pickfield(document.getElementById('picksel'));</script>
+  <script type="text/javascript">
+    // <![CDATA[
+    if (pickdata.length>0) pickfield(document.getElementById('picksel'));
+    // ]]>
+  </script>
   {else}
     <p class="giInfo"> {g->text text="Add a custom field above to enable this section."} </p>
   {/if}
