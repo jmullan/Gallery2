@@ -148,7 +148,7 @@ class NetPbmModule extends GalleryModule {
 	    $paths[] = 'C:\apps\netpbm\\';
 	    $paths[] = 'C:\netpbm\\';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
-	    foreach (explode('', getenv('PATH')) as $path) {
+	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
 		if ($path{strlen($path)-1} != $slash) {
 		    $path .= $slash;
@@ -172,7 +172,7 @@ class NetPbmModule extends GalleryModule {
 	$success = false;
 	foreach ($paths as $path) {
 	    foreach (array('ppmtojpeg', 'pnmtojpeg') as $pnmtojpeg) {
-		if (!$platform->file_exists($path)) {
+		if (!$platform->isRestrictedByOpenBasedir($path) && !$platform->file_exists($path)) {
 		    continue;
 		}
 		
@@ -221,9 +221,10 @@ class NetPbmModule extends GalleryModule {
 
 		if ($lowestFailCount == 0) {
 		    /* We're done */
-		    break;
+		    break 2;
 		}
 	    }
+
 	}
 
 	return array(GalleryStatus::success(), $success);

@@ -158,10 +158,7 @@ class NetPbmToolkitHelper {
 	if (!$platform->isRestrictedByOpenBasedir($netPbmPath)) { 
 	    if (! $platform->file_exists($netPbmPath)
 		|| ! $platform->is_dir($netPbmPath) ) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH,
-						  __FILE__, __LINE__),
-			     null,
-			     null);
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	    }
 	}
 
@@ -193,11 +190,11 @@ class NetPbmToolkitHelper {
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$fullPath .= '.exe';
 	    }
-	    if ($platform->file_exists($fullPath)) {
-		list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
-	    } else {
+	    if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
 		$success = false;
 		$results = array('File does not exist');
+	    } else {
+		list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
 	    }
 
 	    if (!$success) {

@@ -227,12 +227,12 @@ class ImageMagickToolkitHelper {
 		    $fullPath .= '.exe';
 		}
 
-	        if ($platform->file_exists($fullPath)) {
-		    $command = array($fullPath, $dataPath . 'test.gif');
-		    list ($success, $results) = $platform->exec(array($command));
-		} else {
+		if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
 		    $success = false;
 		    $results = array('File does not exist');
+		} else {
+		    $command = array($fullPath, $dataPath . 'test.gif');
+		    list ($success, $results) = $platform->exec(array($command));
 		}
 	    
 		if (!$success) {
@@ -268,16 +268,16 @@ class ImageMagickToolkitHelper {
 				 null);
 		}
 
-		if ($platform->file_exists($fullPath)) {
+		if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
+		    $success = false;
+		    $results = array('File does not exist');
+		} else {
 		    $command = array($fullPath,
 				     '-scale', '200x200',
 				     $dataPath . 'test.gif',
 				     $tmpFilename
 				     );
 		    list ($success, $results) = $platform->exec(array($command));
-		} else {
-		    $success = false;
-		    $results = array('File does not exist');
 		}
 
 		if (!$success) {
