@@ -47,7 +47,7 @@
 	{g->text text="New owner"}
       </h2>
 
-      <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}"/>
       <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
       <input type="submit" name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
 
@@ -139,7 +139,7 @@
       {g->text text="New Group Permission"}
     </h2>
     
-    <input type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}"/>
 	    
     <select name="{g->formVar var="form[group][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.group.permission}
@@ -230,7 +230,7 @@
       {g->text text="New User Permission"}
     </h2>
 
-    <input type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}"/>
 
     <select name="{g->formVar var="form[user][permission]"}" size="1">
 	{html_options options=$ItemPermissions.allPermissions selected=$form.user.permission}

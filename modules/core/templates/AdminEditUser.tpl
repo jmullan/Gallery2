@@ -24,7 +24,7 @@
       </h3>
 
       <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
-      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
 
       {if isset($form.error.userName.duplicate)}
       <div class="giError">
@@ -44,7 +44,7 @@
 	{g->text text="Full Name"}
       </h3>
       
-      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
     </div>
 
     {if $AdminEditUser.show.email}
@@ -56,7 +56,7 @@
         </div>
       </h3>
 
-      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
 	  
       {if isset($form.error.email.missing)}
       <div class="giError">
@@ -86,7 +86,7 @@
           {g->text text="required"}
         </span>
       </h3>
-      <input size="32" type="password" name="{g->formVar var="form[password1]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
 
       {if isset($form.error.password1.missing)}
       <div class="giError">

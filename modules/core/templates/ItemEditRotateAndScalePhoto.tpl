@@ -42,7 +42,7 @@
   </p>
   
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
-  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}"/>
   <input type="submit" name="{g->formVar var="form[action][scale]"}" value="{g->text text="Scale"}"/>
   {else}
   <b>

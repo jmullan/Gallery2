@@ -38,7 +38,7 @@
         {g->text text="Full Name"}
       </h3>
 
-      <input type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
     </div>
 
     <div class="gbDataEntry">
@@ -49,7 +49,7 @@
         </span>
       </h3>
       
-      <input type="text" name="{g->formVar var="form[email]"}" value="{$form.email}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
 
       {if isset($form.error.email.missing)}
       <div class="giError">
@@ -64,7 +64,7 @@
         {g->text text="Language"}
       </h3>
 
-      <select name="{g->formVar var="form[language]"}" class="giActionSelect" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">
+      <select name="{g->formVar var="form[language]"}" class="giActionSelect">
           {html_options options=$UserPreferences.languageList selected=$form.language}
       </select>
     </div>

@@ -197,7 +197,7 @@
 
       <tr>
 	<td>
-	  <input type="text" size="40" name="{g->formVar var="form[uploadLocalServer][newDir]"}" value="{$form.uploadLocalServer.newDir}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+	  <input type="text" size="40" name="{g->formVar var="form[uploadLocalServer][newDir]"}" value="{$form.uploadLocalServer.newDir}"/>
 	</td>
 
 	<td>

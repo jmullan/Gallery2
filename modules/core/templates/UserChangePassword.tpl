@@ -36,7 +36,7 @@
       </span>
       </h3>
 
-      <input type="password" name="{g->formVar var="form[password1]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="password" name="{g->formVar var="form[password1]"}"/>
 
       {if isset($form.error.password1.missing)}
       <div class="giError">
@@ -53,7 +53,7 @@
       </span>
       </h3>
         
-      <input type="password" name="{g->formVar var="form[password2]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="password" name="{g->formVar var="form[password2]"}"/>
 
       {if isset($form.error.password2.missing)}
       <div class="giError">

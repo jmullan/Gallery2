@@ -47,7 +47,7 @@
       {g->text text="Server Path"}
     </h3>
 
-    <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
 
     {if isset($form.error.localServerPath.missing)}
     <div class="giError">

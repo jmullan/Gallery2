@@ -105,7 +105,7 @@
     <p class="giDescription" style="margin-bottom:10px">{g->text text="Images do not need to be thumbnail size; they will be resized as needed."}</p>
 
     {g->text text="Default thumbnail for mime type:"}
-    <input type="text" name="{g->formVar var="form[mimeType]"}" size="30" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/><br/>
+    <input type="text" name="{g->formVar var="form[mimeType]"}" size="30"/><br/>
     <select name="{g->formVar var="form[blah]"}"
      onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()">
     <option value="">{g->text text="&laquo; Choose type or enter above &raquo;"}</option>

@@ -26,7 +26,7 @@ function checkForm() {ldelim}
       <li>
         <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.subView}" />
         <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent" />
-        <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="this.style.background='#fff';this.value='';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#ccc';" />
+        <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15"/>
         <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1" />
         <input type="submit" value="{g->text text="Go"}"/>
       </li>

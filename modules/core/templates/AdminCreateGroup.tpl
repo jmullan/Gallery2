@@ -24,7 +24,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[groupName]"}'].focus();</script>
 
       {if isset($form.error.groupName.missing)}

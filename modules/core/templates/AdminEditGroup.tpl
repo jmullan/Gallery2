@@ -24,7 +24,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
       <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroup.group.id}"/>
 
       {if isset($form.error.groupName.missing)}

@@ -34,7 +34,7 @@
 	{g->text text="ImageMagick Path"}
       </h3>
 
-      <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
 	
       {if isset($form.error.path.missing)}
       <div class="giError">

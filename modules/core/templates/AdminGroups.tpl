@@ -44,7 +44,7 @@
       {g->text text="Edit Group"}
     </h3>
 
-    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/>
     <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
     <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}"/>
@@ -155,7 +155,7 @@
     </table>
 
     {if !empty($form.list.filter) || ($form.list.maxPages > 1)}
-    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" name="{g->formVar var="form[list][filter]"}" value="{$form.list.filter}"/>
     <input type="submit" name="{g->formVar var="form[action][filterBySubstring]"}" value="{g->text text="Filter:"}"/>
     <input type="submit" name="{g->formVar var="form[action][filterClear]"}" value="{g->text text="Clear"}"/>
     {/if}

@@ -54,7 +54,7 @@
       </li>
       <li>
         {g->text text="Width of panorama viewer: "}
-        <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';" />
+        <input type="text" size="6" name="{g->formVar var="form[width]"}" value="{$form.width}" />
 
         {if isset($form.error.width)}
         <div class="giError">

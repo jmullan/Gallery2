@@ -19,7 +19,7 @@
 	{g->text text="User name"}
       </h2>
 
-      <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[username]"}'].focus();</script>
 
       {if isset($form.error.username.missing)}
@@ -34,7 +34,7 @@
 	{g->text text="Password"}
       </h2>
 
-      <input type="password" name="{g->formVar var="form[password]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="password" name="{g->formVar var="form[password]"}"/>
 
       {if isset($form.error.password.missing)}
       <div class="giError">

@@ -35,7 +35,7 @@
         {g->text text="URL"}
       </h3>
   
-      <input type="text" size="80" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+      <input type="text" size="80" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}"/>
       
       {if isset($form.error.webPage.missing)}
       <div class="giError">

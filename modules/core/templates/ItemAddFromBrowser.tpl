@@ -29,7 +29,7 @@
     <h3 class="giTitle">
       {g->text text="Caption"}
     </h3>
-    <textarea rows="2" cols="60" name="{g->formVar var="form[caption][$iteration]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"></textarea>
+    <textarea rows="2" cols="60" name="{g->formVar var="form[caption][$iteration]"}"></textarea>
   </div>
   {/section}
 

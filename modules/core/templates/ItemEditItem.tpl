@@ -26,7 +26,7 @@
     {/if}
     {/foreach}
     {/strip}
-    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
 
     {if !empty($form.error.pathComponent.invalid)}
     <div class="giError">
@@ -60,7 +60,7 @@
              viewL10domain="modules_core" 
 	     element="title"
 	     firstMarkupBar="true"}
-    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
   </div>
   {if !empty($form.error.title.missingRootTitle)}
     <div class="giError">
@@ -79,7 +79,7 @@
     {include file="gallery:modules/core/templates/MarkupBar.tpl" 
              viewL10domain="modules_core" 
 	     element="summary"}
-    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
   </div>
 
   <div class="gbDataEntry">
@@ -89,7 +89,7 @@
     <p class="giDescription">
       {g->text text="Keywords are not visible, but are searchable."}
     </p>
-    <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">{$form.keywords}</textarea>
+    <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}">{$form.keywords}</textarea>
   </div>
 
   <div class="gbDataEntry">
@@ -102,7 +102,7 @@
     {include file="gallery:modules/core/templates/MarkupBar.tpl" 
              viewL10domain="modules_core" 
 	     element="description"}
-    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">{$form.description}</textarea>
+    <textarea id="description" rows="4" cols="60" name="{g->formVar var="form[description]"}">{$form.description}</textarea>
   </div>
 </div>
 

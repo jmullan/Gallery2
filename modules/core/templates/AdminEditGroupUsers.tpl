@@ -62,7 +62,7 @@
       {g->text text="Add Member"}
     </h2>
 
-    <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+    <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
     <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
 
     {if isset($form.error.text.userName.missing)}
