@@ -42,7 +42,7 @@ class UnixPlatform extends GalleryPlatform {
     /**
      * @see GalleryPlatform::exec()
      */
-    function exec($cmdArray, $returnErrorOutput=false) {
+    function exec($cmdArray) {
 	global $gallery;
 	$gallery->guaranteeTimeLimit(5);
 
@@ -62,12 +62,10 @@ class UnixPlatform extends GalleryPlatform {
 	    }
 	}
 	
-	/* If we're in debug mode, redirect STDERR to a file */
-	if ($returnErrorOutput || $gallery->getDebug()) {
-	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
-	    $debugFile = tempnam($tmpDir, 'g2dbg');
-	    $command = "($command) 2>$debugFile";
-	}
+	/* Redirect STDERR to a file */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$debugFile = tempnam($tmpDir, 'g2dbg');
+	$command = "($command) 2>$debugFile";
 
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
@@ -83,43 +81,38 @@ class UnixPlatform extends GalleryPlatform {
 	    $expected = 0;
 	}
 
-	/* Read any debug output and dump it out */
-	if ($returnErrorOutput || $gallery->getDebug()) {
-	    $gallery->debug("Regular Output:");
-	    if (!empty($results)) {
-		foreach ($results as $line) {
-		    $gallery->debug($line);
+	$stderr = array();
+	if ($this->file_exists($debugFile)) {
+	    if ($this->filesize($debugFile) > 0) {
+		if ($fd = $this->fopen($debugFile, "r")) {
+		    while (!$this->feof($fd)) {
+			$buf = $this->fgets($fd, 4096);
+			$buf = rtrim($buf);
+			if (!empty($buf)) {
+			    $stderr[] = $buf;
+			}
+		    }
+		    $this->fclose($fd);
 		}
+	    }
+	    $this->unlink($debugFile);
+	}
+
+	/* Dump any output we have */
+	if ($gallery->getDebug()) {
+	    $gallery->debug("Regular Output:");
+	    foreach ($results as $line) {
+		$gallery->debug($line);
 	    }
 	    
 	    $gallery->debug("Error Output:");
-	    $platform = $gallery->getPlatform();
-
-	    if ($platform->file_exists($debugFile)) {
-		if ($fd = $platform->fopen($debugFile, "r")) {
-		    $lineCount = 0;
-		    while (!feof($fd)) {
-			$buf = fgets($fd, 4096);
-			$buf = rtrim($buf);
-			$results[] = $buf;
-			$gallery->debug($buf);
-			if (!empty($buf)) {
-			    $lineCount++;
-			}
-		    }
-		    fclose($fd);
-		}
-		unlink($debugFile);
-
-		if ($lineCount == 0) {
-		    $gallery->debug("(no error output)");
-		} 
-		
-		$gallery->debug("Status: $status (expected $expected)");
+	    foreach ($stderr as $line) {
+		$gallery->debug($line);
 	    }
+	    $gallery->debug("Status: $status (expected $expected)");
 	}
-
-	return array($status == $expected, $results);
+	
+	return array($status == $expected, $results, $stderr);
     }
     
     /**

@@ -211,8 +211,8 @@ class ItemAddChildrenControllerTestPlatform extends GalleryPlatform {
 	$this->_delegate = $delegate;
     }
 
-    function exec($cmdArray, $returnErrorOutput=false) {
-	return $this->_delegate->exec($cmdArray, $returnErrorOutput);
+    function exec($cmdArray) {
+	return $this->_delegate->exec($cmdArray);
     }
 
     function getDirectorySeparator() {

@@ -100,6 +100,11 @@ class WinNtPlatform extends GalleryPlatform {
 	 *
 	 */
 	$command = 'cmd /c "' . $command . '"';
+	
+	/* Redirect STDERR to a file */
+	$tmpDir = $gallery->getConfig('data.gallery.tmp');
+	$debugFile = tempnam($tmpDir, 'g2dbg');
+	$command .= ' 2>' . $debugFile;
 
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
@@ -107,25 +112,46 @@ class WinNtPlatform extends GalleryPlatform {
 	exec($command, $results, $status);
 
 	list ($ret, $expected) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
 	if ($ret->isError()) {
 	    if ($gallery->getDebug()) {
-		$gallery->debug('Unable to look up core::exec.expectedStatus param');
+		$gallery->debug('Unable to look up core.exec.expectedStatus param');
 	    }
 	    $expected = 0;
 	}
 
-	/* Read any debug output and dump it out */
-	if ($gallery->getDebug()) {
-	    $gallery->debug("Regular Output:");
-	    if (!empty($results)) {
-		foreach ($results as $line) {
-		    $gallery->debug($line);
+	$stderr = array();
+	if ($this->file_exists($debugFile)) {
+	    if ($this->filesize($debugFile) > 0) {
+		if ($fd = $this->fopen($debugFile, "r")) {
+		    while (!$this->feof($fd)) {
+			$buf = $this->fgets($fd, 4096);
+			$buf = rtrim($buf);
+			if (!empty($buf)) {
+			    $stderr[] = $buf;
+			}
+		    }
+		    $this->fclose($fd);
 		}
 	    }
+	    $this->unlink($debugFile);
 	}
 
-	return array($status == $expected, $results);
+	/* Dump any output we have */
+	if ($gallery->getDebug()) {
+	    $gallery->debug("Regular Output:");
+	    foreach ($results as $line) {
+		$gallery->debug($line);
+	    }
+	    
+	    $gallery->debug("Error Output:");
+	    foreach ($stderr as $line) {
+		$gallery->debug($line);
+	    }
+	    $gallery->debug("Status: $status (expected $expected)");
+	}
+	
+	return array($status == $expected, $results, $stderr);
     }
     
     /**

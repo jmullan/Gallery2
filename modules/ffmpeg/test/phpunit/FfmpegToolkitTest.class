@@ -168,16 +168,21 @@ class FfmpegToolkitTestPlatform {
     function exec($cmd) {
 	global $gallery;
 
+	$results = array();
+	$stderr = array();
 	switch(serialize($cmd)) {
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testGetProperties1.avi', '-vstats'))):
-	    $results[] = "Input #0, mov, from '../data/Sample.mov':";
-	    $results[] = "  Duration: 00:00:03.0, bitrate: 193 kb/s";
-	    $results[] = "  Stream #0.0: Video: svq1, 200x240, 15.00 fps";
-	    $results[] = "  Stream #0.1: Audio: 0x324d4451, 22050 Hz, mono";
-	    $results[] = "Must supply at least one output file";
+	    $stderr[] = "Input #0, mov, from '../data/Sample.mov':";
+	    $stderr[] = "  Duration: 00:00:03.0, bitrate: 193 kb/s";
+	    $stderr[] = "  Stream #0.0: Video: svq1, 200x240, 15.00 fps";
+	    $stderr[] = "  Stream #0.1: Audio: 0x324d4451, 22050 Hz, mono";
+	    $stderr[] = "Must supply at least one output file";
 
-	    // Ffmpeg actually fails on this call -- but we continue because we get the data we need */
-	    return array(0, $results);
+	    /*
+	     * Ffmpeg actually fails on this call -- but we continue because we
+	     * get the data we need from stderr
+	     */
+	    return array(0, $results, $stderr);
 
 	case serialize(array(array('/validPath/ffmpeg', '-formats'))):
 	case serialize(array(array($this->_ffmpegPath, '-formats'))):
@@ -192,21 +197,21 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif qcif cif 4cif';
 	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
 	    
-	    return array(1, $results);
+	    return array(1, $results, $stderr);
 
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation1.avi',
 				   '-f', 'singlejpeg', '-t', '0.001', '-y', 'TEMPFILE'))):
-	    $results[] = 'Input #0, avi, from \'testPerformOperation1.avi\':';
-	    $results[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
-	    $results[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
-	    $results[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
-	    $results[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
-	    $results[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
-	    $results[] = 'Stream mapping:';
-	    $results[] = '  Stream #0.0 -> #0.0';
-	    $results[] = 'Press [q] to stop encoding';
-	    $results[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
-	    return array(1, $results);
+	    $stderr[] = 'Input #0, avi, from \'testPerformOperation1.avi\':';
+	    $stderr[] = '  Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $stderr[] = '  Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    $stderr[] = 'Output #0, singlejpeg, to \'TEMPFILE\':';
+	    $stderr[] = '  Stream #0.0: Video: mjpeg, 160x120, 15.00 fps, q=2-31, 200 kb/s';
+	    $stderr[] = 'Stream mapping:';
+	    $stderr[] = '  Stream #0.0 -> #0.0';
+	    $stderr[] = 'Press [q] to stop encoding';
+	    $stderr[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
+	    return array(1, $results, $stderr);
 	}
 
 	printf("<pre>%s</pre>", print_r($cmd, 1));
