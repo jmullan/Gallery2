@@ -146,9 +146,10 @@ class ImageMagickToolkitHelper {
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
 	if (!empty($multiPageMimeTypes)) {
-	    $properties['pagecount']['type'] = 'int';
-	    $properties['pagecount']['description'] = $gallery->i18n('Get the number of pages');
-	    $properties['pagecount']['mimeTypes'] = $multiPageMimeTypes;
+	    $properties['page-count'] = array(
+		'type' => 'int',
+		'description' => $gallery->i18n('Get the number of pages'),
+		'mimeTypes' => $multiPageMimeTypes);
 	}
 
 	return array(GalleryStatus::success(), array('operations' => $operations,
