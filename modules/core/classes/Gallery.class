@@ -1307,10 +1307,14 @@ class Gallery {
      */
     function debug_r($object) {
 	if (!empty($this->_debug)) {
-	    ob_start();
-	    print_r($object);
-	    $buf = ob_get_contents();
-	    ob_end_clean();
+	    if (phpversion() >= '4.3.0') {
+		$buf = print_r($object, true);
+	    } else {
+		ob_start();
+		print_r($object);
+		$buf = ob_get_contents();
+		ob_end_clean();
+	    }
 	    
 	    $this->debug($buf);
 	}
