@@ -42,13 +42,13 @@ class UserChangePasswordController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	$userId = $gallery->getActiveUserId();
+	$user = $gallery->getActiveUser();
 
 	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($userId == $anonymousUserId) {
+	if ($user->getId() == $anonymousUserId) {
 	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
 	}
 
@@ -72,6 +72,12 @@ class UserChangePasswordController extends GalleryController {
 	    /*
 	     * Validate our data before we continue.
 	     */
+	    if (empty($form['currentPassword'])) {
+		$error[] = 'form[error][currentPassword][missing]';
+	    } else if (!$user->isCorrectPassword($form['currentPassword'])) {
+		$error[] = 'form[error][currentPassword][incorrect]';
+	    }
+	    
 	    if (empty($form['password1'])) {
 		$error[] = 'form[error][password1][missing]';
 	    }
@@ -89,12 +95,12 @@ class UserChangePasswordController extends GalleryController {
 	     * the user.
 	     */
 	    if (empty($error)) {
-		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+		list ($ret, $user) = $user->refresh();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

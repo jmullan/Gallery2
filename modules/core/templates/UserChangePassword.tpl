@@ -25,12 +25,34 @@
 
   <div class="gbAdmin">
     <p class="giDescription">
-      {g->text text="You must enter a new password twice to change passwords."}
+      {g->text text="You must enter your current password to prove that it's you, then enter your new password twice to make sure that you didn't make a mistake."}
     </p>
   
     <div class="gbDataEntry">
       <h3 class="giTitle">
-        {g->text text="Password"}
+        {g->text text="Current Password"}
+      <span class="giSubtitle">
+        {g->text text="(required)"}
+      </span>
+      </h3>
+
+      <input type="password" name="{g->formVar var="form[currentPassword]"}"/>
+
+      {if isset($form.error.currentPassword.missing)}
+      <div class="giError">
+        {g->text text="You must enter your current password"}
+      </div>
+      {/if}
+      {if isset($form.error.currentPassword.incorrect)}
+      <div class="giError">
+        {g->text text="Incorrect password"}
+      </div>
+      {/if}
+    </div>
+
+    <div class="gbDataEntry">
+      <h3 class="giTitle">
+        {g->text text="New Password"}
       <span class="giSubtitle">
         {g->text text="(required)"}
       </span>
@@ -40,14 +62,14 @@
 
       {if isset($form.error.password1.missing)}
       <div class="giError">
-        {g->text text="You must enter a password"}
+        {g->text text="You must enter a new password"}
       </div>
       {/if}
     </div>
 
     <div class="gbDataEntry">
       <h3 class="giTitle">
-        {g->text text="Verify Password"}
+        {g->text text="Verify New Password"}
       <span class="giSubtitle">
         {g->text text="(required)"}
       </span>
@@ -57,7 +79,7 @@
 
       {if isset($form.error.password2.missing)}
       <div class="giError">
-        {g->text text="You must enter your password again!"}
+        {g->text text="You must enter your new password again!"}
       </div>
       {/if}
       

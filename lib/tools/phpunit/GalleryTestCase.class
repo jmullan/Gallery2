@@ -599,7 +599,7 @@ class GalleryTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 
-    function _createUser() {
+    function _createUser($fields=array()) {
 	global $gallery;
 	
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
@@ -616,6 +616,11 @@ class GalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	foreach ($fields as $key => $value) {
+	    eval("\$user->set$key(\$value);");
+	}
+	
 	$ret = $user->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
