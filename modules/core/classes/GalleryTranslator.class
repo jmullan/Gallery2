@@ -136,6 +136,7 @@ class GalleryTranslator {
 	    }
 	    
 	    putenv("LANG=${language}_${country}");
+	    setlocale(LC_ALL, "${language}_${country}");
 	}
 
 	return GalleryStatus::success();

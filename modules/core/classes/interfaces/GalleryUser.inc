@@ -51,7 +51,7 @@ class GalleryUser extends GalleryUser_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['fullname'] = array(
+        $meta['members']['fullName'] = array(
             'class' => 'GalleryUser',
             'type' => STORAGE_TYPE_STRING
         );
@@ -85,7 +85,7 @@ class GalleryUser extends GalleryUser_core {
     
         $data['userName'] = $this->_userName;
     
-        $data['fullname'] = $this->_fullname;
+        $data['fullName'] = $this->_fullName;
     
         $data['hashedPassword'] = $this->_hashedPassword;
     
@@ -125,29 +125,29 @@ class GalleryUser extends GalleryUser_core {
     }
   
     /**
-     * Get the value of fullname
+     * Get the value of fullName
      *
      * @return STRING the value
      */
-    function getfullname() {
-        if (!isset($this->_fullname)) {
+    function getfullName() {
+        if (!isset($this->_fullName)) {
             return null;
         }
-        return $this->_fullname;
+        return $this->_fullName;
     }
 
     /**
-     * Set the value of fullname
+     * Set the value of fullName
      *
      * @param STRING the value
      */
-    function setfullname($value) {
+    function setfullName($value) {
     
 
         /* Only take action if the value actually changes */
-        if (!isset($this->_fullname) || $this->_fullname != $value) {
-            $this->_fullname = $value;
-            $this->setModifiedFlag('fullname', MEMBER_MODIFIED);
+        if (!isset($this->_fullName) || $this->_fullName != $value) {
+            $this->_fullName = $value;
+            $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
         }
     }
   

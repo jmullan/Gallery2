@@ -42,6 +42,8 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 	
 	$classDir = dirname(__FILE__) . '/classes/';
+	require_once($classDir . 'GalleryCommentHelper.class');
+	
 	$gallery->addRegistry('GalleryEntity.GalleryComment',
 			      $classDir . 'GalleryComment.class');
 
@@ -55,6 +57,9 @@ class CommentModule extends GalleryModule {
 				    'itemAdmin' => false),
 			      array('id' => 'comment.delete',
 				    'description' => 'Delete comment',
+				    'itemAdmin' => false),
+			      array('id' => 'comment.view',
+				    'description' => 'View comments',
 				    'itemAdmin' => false),
 			      array('id' => 'comment.viewIp',
 				    'description' => 'View IP',
@@ -147,7 +152,7 @@ class CommentModule extends GalleryModule {
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
-     *               string HTML content
+     *               array (itemId => string HTML content)
      */
     function getItemSummaries($items, $returnUrlParams) {
 	global $gallery;
@@ -164,7 +169,7 @@ class CommentModule extends GalleryModule {
 	    $ids[] = $item->getId();
 	}
 
-	list ($ret, $commentCounts) = $this->_fetchCommentCounts($ids);
+	list ($ret, $commentCounts) = GalleryCommentHelper::fetchCommentCounts($ids);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -185,6 +190,71 @@ class CommentModule extends GalleryModule {
     }
 
     /**
+     * Return module-specific summary content about the item
+     *
+     * @param object GalleryItem a target item
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array (itemId => string HTML content)
+     */
+    function getItemDetails($items, $returnUrlParams) {
+	global $gallery;
+
+	if (!is_array($items)) {
+	    $items = array($items);
+	}
+
+	/* XXX: Permission check "can the user add a comment to this item?" */
+	$gallery->debug("XXX: Comment.getItemDetails should be checking perms");
+
+	$ids = array();
+	foreach ($items as $item) {
+	    $ids[] = $item->getId();
+	}
+
+	list ($ret, $comments) = GalleryCommentHelper::fetchComments($ids);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Render the comments */
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$smarty->template_dir = dirname(__FILE__) . '/templates';
+
+	$users = array();
+	$results = array();
+	foreach ($comments as $itemId => $commentList) {
+	    foreach ($commentList as $comment) {
+		/* Extract the member data */
+		$memberData = $comment->getMemberData();
+
+		/* Associate the commenter's info */
+		$commenterId = $memberData['commenterId'];
+		if (empty($users[$commenterId])) {
+		    list ($ret, $user) = $gallery->loadEntitiesById($commenterId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $users[$commenterId] = $user->getMemberData();
+		}
+		$memberData['commenter'] = $users[$commenterId];
+		$data[] = $memberData;
+	    }
+
+	    /* Render the comments */
+	    $smarty->assign('comments', $data);
+	    $results[$itemId] = $smarty->fetch('ShowComments.tpl');
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+    
+    /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
@@ -202,40 +272,6 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 
 	return array(GalleryStatus::success(), 'comment:AdminComments');
-    }
-
-    /**
-     * Return the number of comments associated with the given item id
-     *
-     * XXX: Can't move this into GalleryComment, as that class may not be
-     * loaded when we want to use this method!
-     *
-     * @param array int GalleryItem ids
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @access private
-     */
-    function _fetchCommentCounts($itemIds) {
-	global $gallery;
-
-	/* Check to see if we have a collision */
-	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => '[GalleryChildEntity::parentId], COUNT([GalleryComment::id])',
-				   'where' => '[GalleryChildEntity::parentId] IN (' . $markers . ')',
-				   'group-by' => '[GalleryChildEntity::parentId]'),
-			     $itemIds);
-
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[$result[0]] = $result[1];
-	}
-
-	return array(GalleryStatus::success(), $data);
     }
 }
 ?>

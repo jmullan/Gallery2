@@ -24,9 +24,13 @@ MSGFMTSOL = msgfmt -v -o
 
 all: install
 
-extract:
+messages.po:
 	perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
 	xgettext --keyword=_ -C --no-location strings.raw
+
+%.po: messages.po
+	msgmerge $@ messages.po > $@.new
+	mv $@.new $@
 
 clean:
 	$(RM) strings.raw messages.po

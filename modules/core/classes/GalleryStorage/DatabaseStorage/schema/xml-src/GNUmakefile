@@ -35,11 +35,10 @@ $(TMPDIR)/%.xml: $(CLASSDIR)/%.class
 	if [ -f $@ ]; then $(VALIDATOR) $@; fi
 
 scrub: clean
-	rm -rf $(TMPDIR)
-	rm -rf $(OUTDIR)
 
 clean:
-	rm -f $(TMPDIR)/*.xml
+	rm -rf $(TMPDIR)
+	rm -rf $(OUTDIR)
 
 # Gmake will automatically delete $(TMPDIR)/.xml files after creating .xml files
 # because it thinks that they're intermediate files.  But, we want to save

@@ -19,7 +19,7 @@
  */
 
 class ClassicTheme extends GalleryTheme {
-
+    
     /**
      * @see GalleryTheme::themeStyle
      */
@@ -64,17 +64,55 @@ class ClassicTheme extends GalleryTheme {
     }
 
     /**
+     * @see GalleryTheme::highlight1
+     */
+    function highlight1($params, $content) {
+	return ("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">" .
+		"<tr>" .
+		"<td width=\"100%\" class=\"highlight1\">" .
+		"$content" .
+		"</td>" .
+		"</tr>" .
+		"</table>");
+    }
+
+    /**
+     * @see GalleryTheme::highlight2
+     */
+    function highlight2($params, $content) {
+	return ("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">" .
+		"<tr>" .
+		"<td width=\"100%\" class=\"highlight2\">" .
+		"$content" .
+		"</td>" .
+		"</tr>" .
+		"</table>");
+    }
+
+    /**
      * @see GalleryTheme::lightFrame
      */
     function lightFrame($params, $content) {
-	return "<table border=\"1\"><tr><td>$content</td></tr></table>";
+	if (!empty($params['width'])) {
+	    $width = "width=\"$params[width]\"";
+	} else {
+	    $width = "";
+	}
+
+	return "<table border=\"1\" $width><tr><td>$content</td></tr></table>";
     }
 
     /**
      * @see GalleryTheme::heavyFrame
      */
     function heavyFrame($params, $content) {
-	return "<table border=\"5\"><tr><td>$content</td></tr></table>";
+	if (!empty($params['width'])) {
+	    $width = "width=\"$params[width]\"";
+	} else {
+	    $width = "";
+	}
+
+	return "<table border=\"5\" $width><tr><td>$content</td></tr></table>";
     }
 
     /**

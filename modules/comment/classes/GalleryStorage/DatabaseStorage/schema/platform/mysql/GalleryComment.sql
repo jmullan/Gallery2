@@ -11,40 +11,37 @@
     
     NOT NULL
   
-    ,
-  COLUMN_PREFIXcommenterId
+      ,
+    COLUMN_PREFIXcommenterId
       int(11)
     
-    ,
-  COLUMN_PREFIXhost
+      ,
+    COLUMN_PREFIXhost
       varchar(
       
           128
         
       )
     
-    ,
-  COLUMN_PREFIXcomment
+      ,
+    COLUMN_PREFIXcomment
       text
     
-    ,
-  COLUMN_PREFIXdate
+      ,
+    COLUMN_PREFIXdate
       datetime
     
     , 
   
-    INDEX (
-    COLUMN_PREFIXid
-    )
+    INDEX (COLUMN_PREFIXid)
     
       ,
     
-    INDEX (
-    COLUMN_PREFIXcomment
+    INDEX (COLUMN_PREFIXcomment
           (255)
-          
-    )
+          )
     
+
     ) TYPE=MyISAM;
 
     INSERT INTO TABLE_PREFIXSchema (

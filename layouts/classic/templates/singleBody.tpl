@@ -1,7 +1,8 @@
-  <table border="1" width="100%" cellspacing="0%" cellpadding="0%">
+  {galleryLightFrame width="100%"}
+  <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
     <tr>
       <td>
-	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
+	<table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align="right">
 	      {foreach from=$moduleSystemLinks item=module}
@@ -35,7 +36,7 @@
 
     <tr>
       <td>
-	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
+	<table border="0" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td align=center>
 	      <a href="{galleryUrl view=core:ShowItem itemId=$item.id resizeIndex=$nextResizeIndex}">
@@ -73,5 +74,20 @@
 	{include file="parents.tpl"}
       </td>
     </tr>
-  </table>
 
+    <!-- Module Item Details for the active item -->
+    {if !empty($moduleItemDetails)}
+    {foreach from=$moduleItemDetails key=itemId item=moduleDetails}
+    {if $itemId == $item.id}
+    {foreach from=$moduleDetails key=moduleName item=detail}
+    <tr>
+      <td width="100%">
+	{$detail}
+      </td>
+    </tr>
+    {/foreach}
+    {/if}
+    {/foreach}
+    {/if}
+  </table>
+  {/galleryLightFrame}

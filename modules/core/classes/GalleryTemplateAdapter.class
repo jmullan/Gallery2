@@ -94,6 +94,22 @@ class GalleryTemplateAdapter {
     }
 
     /**
+     * Return a valid URL for a standalone Gallery.
+     *
+     * @param array data in key/value pairs
+     * @return string a URL
+     */
+    function date($params) {
+	global $gallery;
+
+	if (empty($params['format'])) {
+	    $params['format'] = '%D %T';
+	}
+	
+	return strftime($params['format'], $params['timestamp']);
+    }
+    
+    /**
      * Return an HTML form 
      *
      * @param array data in key/value pairs

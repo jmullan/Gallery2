@@ -22,7 +22,7 @@
     NOT NULL
   
       ,
-    COLUMN_PREFIXfullname
+    COLUMN_PREFIXfullName
       varchar(
       
           128

@@ -1,0 +1,117 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A helper class for GalleryComments
+ *
+ * Utility functions useful in managing GalleryComments
+ *
+ * @version $Id$
+ * @package comment
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+class GalleryCommentHelper {
+	
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Return the comments associated with the given item ids
+     *
+     * @param array int GalleryItem ids
+     * @return array (item id => array (GalleryComment, ...), ...)
+     * @access private
+     */
+    function fetchComments($itemIds) {
+
+	global $gallery;
+
+	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => '[GalleryComment::id]',
+				   'where' => ('[GalleryChildEntity::parentId] IN (' .
+					       $markers . ')'),
+				   'order-by' => '[GalleryComment::date] ASC'),
+			     $itemIds);
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get all of our ids */
+	$allIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $allIds[] = $result[0];
+	}
+
+	/* Load all the comments at once */
+	$comments = array();
+	if (!empty($allIds)) {
+	    list ($ret, $allComments) = $gallery->loadEntitiesById($allIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    /* Now create a map by item id */
+	    foreach ($allComments as $comment) {
+		$comments[$comment->getParentId()][] = $comment;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $comments);
+    }
+
+    /**
+     * Return the number of comments associated with the given item ids
+     *
+     * @param array int GalleryItem ids
+     * @return array object GalleryStatus a status code
+     *               int a count
+     * @access private
+     */
+    function fetchCommentCounts($itemIds) {
+	global $gallery;
+
+	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => ('[GalleryChildEntity::parentId], ' .
+						'COUNT([GalleryComment::id])'),
+				   'where' => ('[GalleryChildEntity::parentId] IN (' .
+					       $markers . ')'),
+				   'group-by' => '[GalleryChildEntity::parentId]'),
+			     $itemIds);
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = $result[1];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+}
+?>

@@ -926,7 +926,8 @@ class Gallery {
 	    }
 
 	    /* Set up core Smarty hooks */
-	    foreach (array('Url', 'Text', 'Style') as $method) {
+	    foreach (array('Url', 'Text', 'Date', 'Style',
+			   ) as $method) {
 		$this->_smarty->register_function('gallery' . $method, 'galleryTemplateCallback');
 	    }
 	    
@@ -934,6 +935,7 @@ class Gallery {
 			   'SmallestFont', 'SmallerFont', 'SmallFont',
 			   'BigFont', 'BiggerFont', 'BiggestFont',
 			   'SuccessFontColor', 'WarningFontColor', 'ErrorFontColor',
+			   'Highlight1', 'Highlight2',
 			   'Form', 'Input', 'Select', 'TextArea') as $method) {
 		$this->_smarty->register_block('gallery' . $method, 'galleryTemplateCallback');
 	    }

@@ -102,7 +102,7 @@ class SiteAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	if (!empty($subView)) {
+	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 
 	    list ($ret, $subViewHtml) = $subView->renderBody();
