@@ -539,6 +539,23 @@ class GalleryItem extends FileSystemNucleus {
 	    return $ret;
 	}
 
+	/*
+	 * Remove this item from its parent
+	 */
+	if (isset($this->_parentId)) {
+	    list ($ret, $parent) = $gallery->loadNucleusById($this->_parentId);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+
+	    $childIds =& $parent->getChildIds();
+	    $childIds->removeValue($this->_id);
+	    $ret = $parent->save();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	}
+	    
 	if ($this->canContainChildren()) {
 	    $childIds =& $this->getChildIds();
 	    $size = $childIds->sizeof();
