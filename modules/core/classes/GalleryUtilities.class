@@ -582,13 +582,10 @@ class GalleryUtilities {
 	return (!strcasecmp(get_class($instance), $className));
     }
 
-
     /**
      * An entity-safe truncate for smarty
      *
      * @param string the original input string
-     * @param integer the 0 based start index (negative values mean subtract
-     *                from the end)
      * @param integer the desired length.  If negative negative then that many characters will
      *                be omitted from the end of string (after the start position has been
      *                calculated when a start is negative)
@@ -598,7 +595,7 @@ class GalleryUtilities {
      * @param boolean true if it is ok to break words apart. (default: false)
      * @return string
      */
-    function entityTruncate($string, $length, $countEntitiesAsOne=false, $etc='...', $breakWords=false) {
+    function entityTruncate($string, $length, $countEntitiesAsOne=true, $etc='...', $breakWords=false) {
 	if ($length == 0) {
 	    return '';
 	}
@@ -651,14 +648,14 @@ class GalleryUtilities {
 			 * with word break allowed.
 			 */
 			return GalleryUtilities::entityTruncate(
-                            $string, $length, $countEntitiesAsOne, $etc, true);
+			    $string, $length, $countEntitiesAsOne, $etc, true);
 		    }
 		}
 
 		if ($substringCount > $length) {
 		    /* Still too long.  Retry with word break allowed */
 		    return GalleryUtilities::entityTruncate(
-                        $string, $length, $countEntitiesAsOne, $etc, true);
+			$string, $length, $countEntitiesAsOne, $etc, true);
 		}
 	    }
 	    if (strlen($newString) == $originalLength) {
@@ -885,7 +882,7 @@ class GalleryUtilities {
      */
     function unicodeEntitiesToUtf8($string) {
 	$string = preg_replace('/&#([xa-f\d]+);/mei',
-            "GalleryUtilities::unicodeValueToUtf8Value('\\1')", $string);
+	    "GalleryUtilities::unicodeValueToUtf8Value('\\1')", $string);
 	return $string;
     }
 
@@ -1176,7 +1173,7 @@ class GalleryUtilities {
 	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
 	 * If it's neither, then return 'unknown' for now.
 	 */
-       	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
 	    $pseudoFileName = $entity->getPathComponent();
 	} else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
