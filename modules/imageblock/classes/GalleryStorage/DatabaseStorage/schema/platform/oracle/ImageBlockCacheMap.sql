@@ -30,12 +30,11 @@
     );
 
   
-    CREATE INDEX ImageBlockCacheMap_I1
+    CREATE INDEX DB_TABLE_PREFIXImageBlockCacheMap_778501627
     ON DB_TABLE_PREFIXImageBlockCacheMap
     (DB_COLUMN_PREFIXuserId
         ,
       DB_COLUMN_PREFIXitemType);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

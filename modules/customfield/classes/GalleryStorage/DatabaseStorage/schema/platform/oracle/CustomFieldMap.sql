@@ -12,9 +12,7 @@
       ,
     DB_COLUMN_PREFIXfield
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -22,9 +20,7 @@
       ,
     DB_COLUMN_PREFIXvalue
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
       ,
@@ -38,10 +34,9 @@
     );
 
   
-    CREATE INDEX CustomFieldMap_I1
+    CREATE INDEX DB_TABLE_PREFIXCustomFieldMap_3052975985
     ON DB_TABLE_PREFIXCustomFieldMap
     (DB_COLUMN_PREFIXitemId);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

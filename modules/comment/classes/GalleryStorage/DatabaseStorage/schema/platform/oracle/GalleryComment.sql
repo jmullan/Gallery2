@@ -18,9 +18,7 @@
       ,
     DB_COLUMN_PREFIXhost
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -28,9 +26,7 @@
       ,
     DB_COLUMN_PREFIXsubject
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -46,14 +42,14 @@
     );
 
   
-    CREATE INDEX Comment_I1
+    CREATE INDEX DB_TABLE_PREFIXComment_2862495610
     ON DB_TABLE_PREFIXComment
     (DB_COLUMN_PREFIXdate);
-
   
     ALTER TABLE DB_TABLE_PREFIXComment
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

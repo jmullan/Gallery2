@@ -12,9 +12,7 @@
       ,
     DB_COLUMN_PREFIXg1album
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -22,17 +20,16 @@
       ,
     DB_COLUMN_PREFIXg1item
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXG1MigrateMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXitemId);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXitemId)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

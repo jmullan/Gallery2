@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXExifPropertiesMap (
   DB_COLUMN_PREFIXproperty
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -22,12 +20,12 @@
     );
 
   
-    CREATE UNIQUE INDEX ExifPropertiesMap_U1
-    ON DB_TABLE_PREFIXExifPropertiesMap
-    (DB_COLUMN_PREFIXproperty
+    ALTER TABLE DB_TABLE_PREFIXExifPropertiesMap
+      ADD UNIQUE (DB_COLUMN_PREFIXproperty
         ,
-      DB_COLUMN_PREFIXviewMode);
-    
+      DB_COLUMN_PREFIXviewMode)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

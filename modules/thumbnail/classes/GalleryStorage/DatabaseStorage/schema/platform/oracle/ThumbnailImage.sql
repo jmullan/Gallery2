@@ -12,9 +12,7 @@
       ,
     DB_COLUMN_PREFIXfileName
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -22,9 +20,7 @@
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -42,21 +38,18 @@
       ,
     DB_COLUMN_PREFIXitemMimeTypes
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXThumbnailImage
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
-    CREATE UNIQUE INDEX ThumbnailImage_U2
-    ON DB_TABLE_PREFIXThumbnailImage
-    (DB_COLUMN_PREFIXfileName);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  
+      ADD UNIQUE (DB_COLUMN_PREFIXfileName)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

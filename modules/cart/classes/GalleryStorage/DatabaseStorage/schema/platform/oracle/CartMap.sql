@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXCartMap (
   DB_COLUMN_PREFIXsessionId
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -21,8 +19,9 @@
 
   
     ALTER TABLE DB_TABLE_PREFIXCartMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXsessionId);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXsessionId)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,
