@@ -237,7 +237,8 @@ class GalleryPermissionSetMap_core {
 
 	/* Make sure we've got an integer */
 	$permissionBits = (int)$permissionBits;
-
+	$leftoverBits = $permissionBits;
+	$allAccess = null;
 	if ($compress) {
 	    /*
 	     * We want to return the least number of permissions, so first process
@@ -247,27 +248,36 @@ class GalleryPermissionSetMap_core {
 	    foreach ($allPermissions as $id => $permission) {
 		if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) > 0) {
 		    if (($permission['bits'] & $permissionBits) == $permission['bits']) {
-			$results[] = array('id' => $id,
-					   'module' => $permission['module'],
-					   'description' => $permission['description']);
-			$permissionBits &= ~$permission['bits']; 
-			if ($permissionBits == 0) {
-			    break;
+			$entry = array('id' => $id,
+				       'module' => $permission['module'],
+				       'description' => $permission['description']);
+			$results[] = $entry;
+			if ($permission['flags'] & GALLERY_PERMISSION_ALL_ACCESS) {
+			    $allAccess[] = $entry;
 			}
+			$leftoverBits &= ~$permission['bits'];
 		    }
 		}
 	    }
 
-	    if ($permissionBits > 0) {
-		foreach ($allPermissions as $id => $permission) {
-		    if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) == 0) {
-			if (($permission['bits'] & $permissionBits) == $permission['bits']) {
-			    $results[] = array('id' => $id,
-					       'module' => $permission['module'],
-					       'description' => $permission['description']);
-			    $permissionBits &= ~$permission['bits'];
-			    if ($permissionBits == 0) {
-				break;
+	    /*
+	     * If they have an all access bit, then remove all other composites
+	     * for brevity.
+	     */
+	    if (isset($allAccess)) {
+		$results = $allAccess;
+	    } else {
+		if ($leftoverBits > 0) {
+		    foreach ($allPermissions as $id => $permission) {
+			if (($permission['flags'] & GALLERY_PERMISSION_COMPOSITE) == 0) {
+			    if (($permission['bits'] & $leftoverBits) == $permission['bits']) {
+				$results[] = array('id' => $id,
+						   'module' => $permission['module'],
+						   'description' => $permission['description']);
+				$leftoverBits &= ~$permission['bits'];
+				if ($leftoverBits == 0) {
+				    break;
+				}
 			    }
 			}
 		    }

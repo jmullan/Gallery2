@@ -65,6 +65,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 
 	$whereList = array();
 	$whereData = array();
+	$columnNumber = 0;
 	foreach (array('descriptions' => '[GalleryItem::description]',
 		       'keywords' => '[GalleryItem::keywords]',
 		       'summaries' => '[GalleryItem::summary]',
@@ -74,6 +75,16 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    if (isset($options[$key])) {
 		$whereList[] = "$column LIKE ?";
 		$whereData[] = '%' . $criteria . '%';
+		$selectMap[$column] = $columnNumber++;;
+		$selectList[] = $column;
+	    }
+	}
+
+	/* Always select back title and summary */
+	foreach (array('[GalleryItem::title]', '[GalleryItem::summary]') as $column) {
+	    if (!isset($selectMap[$column])) {
+		$selectMap[$column] = $columnNumber++;
+		$selectList[] = $column;
 	    }
 	}
 
@@ -93,14 +104,18 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
             AND
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+          [GalleryPermissionMap::permission] & ? = ?
         ';
 
 	$query = '
         SELECT
-          DISTINCT([GalleryItem::id]), [GalleryEntity::modificationTimestamp]
+          DISTINCT([GalleryItem::id]),
+          [GalleryUser::fullName],
+          [GalleryUser::userName],
+          [GalleryEntity::modificationTimestamp], ' .
+	    join(', ', $selectList) . '
         FROM
-          [GalleryItem], [GalleryPermissionMap], [GalleryUserGroupMap], [GalleryEntity]
+          [GalleryItem], [GalleryPermissionMap], [GalleryUserGroupMap], [GalleryEntity], [GalleryUser]
         WHERE
           (' . join(' OR ', $whereList) . ')
           AND
@@ -108,17 +123,19 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
           AND
           [GalleryItem::id] = [GalleryEntity::id]
           AND
+          [GalleryUser::id] = [GalleryItem::ownerId]
+          AND
           ([GalleryPermissionMap::userId] = ?
            OR
            ([GalleryUserGroupMap::userId] = ?
             AND
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
-          [GalleryPermissionMap::permission] & ? > ?
+          [GalleryPermissionMap::permission] & ? = ?
         GROUP BY
           [GalleryItem::id], [GalleryEntity::modificationTimestamp]
         ORDER BY
-          [GalleryEntity::modificationTimestamp] DESC
+          [GalleryEntity::modificationTimestamp] DESC, [GalleryItem::id] DESC
         ';
 
 	list ($ret, $viewPermission) =
@@ -133,7 +150,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $storage->convertIntToBits($viewPermission);
-	$data[] = $storage->convertIntToBits(0);
+	$data[] = $storage->convertIntToBits($viewPermission);
 
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
@@ -141,7 +158,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$result = $results->nextResult();
-	$numRows = $result[0];
+	$numRows = (int)$result[0];
 
 	/* Get the results that we're interested in */
 	list ($ret, $results) =
@@ -153,15 +170,47 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$itemIds = array();
-	while ($result = $results->nextResult()) {
-	    $itemIds[] = $result[0];
+
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$data = array('start' => $offset+1,
-		      'end' => $offset + sizeof($itemIds),
+	$text['description'] = $module->translate('Description');
+	$text['keywords'] = $module->translate('Keywords');
+	$text['summary'] = $module->translate('Summary');
+	$text['title'] = $module->translate('Title');
+	$text['owner'] = $module->translate('Owner');
+
+	$searchResults = array();
+	while ($result = $results->nextResult()) {
+	    $fields = array();
+	    foreach (array('[GalleryItem::title]' => $text['title'],
+			   '[GalleryItem::summary]' => $text['summary'],
+			   '[GalleryItem::keywords]' => $text['keywords'],
+			   '[GalleryItem::description]' => $text['description'])
+		     as $columnName => $fieldText) {
+		if (isset($selectMap[$columnName])) {
+		    /*
+		     * Remember that our field columns start at column index 4
+		     * (id, date, full name, username are columns 0-3)
+		     */
+		    $fields[] = array('key' => $fieldText,
+				      'value' => $result[$selectMap[$columnName]+4]);
+		}
+	    }
+
+	    $fields[] = array('key' => $text['owner'],
+			      'value' => !empty($result[1]) ? $result[1] : $result[2]);
+
+	    $searchResults[] = array('itemId' => (int)$result[0],
+				     'fields' => $fields);
+	}
+
+	$data = array('start' => $numRows == 0 ? 0 : $offset+1,
+		      'end' => $numRows == 0 ? 0 : $offset + sizeof($searchResults),
 		      'count' => $numRows,
-		      'ids' => $itemIds);
+		      'results' => $searchResults);
 	return array(GalleryStatus::success(), $data);
     }
 }

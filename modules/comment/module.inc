@@ -127,7 +127,7 @@ class CommentModule extends GalleryTemplateModule {
 	    
 	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
 							       'comment.view',
-							       '[comment] View comments'); /* translate */
+							       $gallery->i18n('[comment] View comments'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -152,6 +152,16 @@ class CommentModule extends GalleryTemplateModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 		
+	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
+							       'comment.search',
+							       $gallery->i18n('[comment] Search comments'),
+							       GALLERY_PERMISSION_COMPOSITE,
+							       array('core.view',
+								     'comment.view'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    $ret = $this->setModuleParameter('version', $this->getVersion());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

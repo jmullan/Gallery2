@@ -81,7 +81,7 @@
 
     <!-- {if !empty($searchResults)} -->
     {gallery->thinFrame}
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <table border="0" cellspacing="0" cellpadding="2" width="100%">
 	<tr>
 	  <td colspan="6">
 	    {gallery->highlight1}
@@ -95,6 +95,7 @@
 	</tr>
 
 	<!-- {foreach from=$searchResults key=moduleId item=results} -->
+
 	<tr>
 	  <td colspan="6">
 	    {gallery->highlight2}
@@ -126,18 +127,17 @@
 	</tr>
 
 	<!-- {assign var="searchCriteria" value=$form.searchCriteria} -->
-	<!-- {foreach from=$results.ids item=resultId} -->
+	<!-- {foreach from=$results.results item=result} -->
+	<!-- {assign var=itemId value=$result.itemId} -->
 	<tr>
-	  <td rowspan="2">
-	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	  </td>
-	  <td rowspan="2" valign="top">
-	    <a href="{gallery->url view=core:ShowItem itemId=$resultId}">
-	      {if isset($searchResultThumbnails.$resultId)}
-	      <img src="{gallery->url view=core:DownloadItem itemId=$searchResultThumbnails.$resultId.id}"
-	      {if ! empty($searchResultThumbnails.$resultId.width)}
-	      width="{$searchResultThumbnails.$resultId.width}"
-	      height="{$searchResultThumbnails.$resultId.height}"
+	  <td valign="center">
+	    <a href="{gallery->url view=core:ShowItem itemId=$itemId}">
+	      {if isset($thumbnails.$itemId)}
+	      {assign var=thumbnail value=$thumbnails.$itemId}
+	      <img src="{gallery->url view=core:DownloadItem itemId=$thumbnail.id}"
+	      {if ! empty($thumbnail.width)}
+	      width="{$thumbnail.width}"
+	      height="{$thumbnail.height}"
 	      {/if}
 	      border="0"
 	      >
@@ -146,32 +146,21 @@
 	      {/if}
 	    </a>
 	  </td>
-	  <td width="10" rowspan="2">
-	    &nbsp;
-	  </td>
-	  <td valign="top" align="right">
-	    <b>{gallery->text text="Title: "}</b>
-	  </td>
-	  <td width="10" rowspan="2">
-	    &nbsp;
-	  </td>
-	  <td valign="top" width="100%">
-	    {$searchResultItems.$resultId.title|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
-	  </td>
-	</tr>
-	
-	<tr>
-	  <td valign="top" align="right">
-	    <b>{gallery->text text="Description: "}</b>
-	  </td>
-	  <td valign="top">
-	    {$searchResultItems.$resultId.description|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}
+	  <td>
+	    <table border="0" cellspacing="2" cellpadding="0" width="100%">
+	      <!-- {foreach from=$result.fields item=field} -->
+		<tr>
+		  <td valign="top"><b>{$field.key}</b></td>
+		  <td>{$field.value|default:"&nbsp;"|replace:$searchCriteria:"<b>$searchCriteria</b>"}</td>
+		</tr>
+		<!-- {/foreach} -->
+	    </table>
 	  </td>
 	</tr>
 
 	<!-- {* spacer row *} -->
 	<tr>
-	  <td colspan="6">
+	  <td>
 	    &nbsp;
 	  </td>
 	</tr>

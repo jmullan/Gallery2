@@ -98,7 +98,6 @@ class SearchScanView extends GalleryView {
 	}
 
 	$searchResults = array();
-	$searchResultItems = array();
 	$searchResultThumbnails = array();
 	if ($form['formName'] == 'SearchScan' ||
 	    $form['formName'] == 'SearchShowAll' ||
@@ -122,7 +121,7 @@ class SearchScanView extends GalleryView {
 		    if (isset($form['options'][$id])) {
 			list ($ret, $searchResults[$id]) =
 			    $instance->search($form['options'][$id],
-					      '%' . $form['searchCriteria'] . '%',
+					      $form['searchCriteria'],
 					      0,
 					      $scanSize);
 			if ($ret->isError()) {
@@ -132,31 +131,28 @@ class SearchScanView extends GalleryView {
 		}
 	    }
 
+	    /* Pull out all the item ids and save them */
 	    $itemIds = array();
-	    foreach ($searchResults as $id => $results) {
-		$itemIds = array_merge($itemIds, $results['ids']);
+	    foreach ($searchResults as $id => $resultSet) {
+		foreach ($resultSet['results'] as $result) {
+		    if (isset($result['itemId'])) {
+			$itemIds[$result['itemId']] = 1;
+		    }
+		}
 	    }
+	    $itemIds = array_keys($itemIds);
 
+	    $thumbnails = array();
 	    if (!empty($itemIds)) {
-		list ($ret, $items) = $gallery->loadEntitiesById($itemIds);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		/* Convert them to member data */
-		foreach ($items as $item) {
-		    $searchResultItems[$item->getId()] = $item->getMemberData();
-		}
-
 		/* Fetch thumbnails */
-		list ($ret, $thumbnails) =
+		list ($ret, $thumbnailList) =
 		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		foreach ($thumbnails as $thumbnail) {
-		    $searchResultThumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
+		foreach ($thumbnailList as $thumbnail) {
+		    $thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
 		}
 	    }
 	} else {
@@ -170,8 +166,7 @@ class SearchScanView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('return', $return);
 	$template->setVariable('searchResults', $searchResults);
-	$template->setVariable('searchResultItems', $searchResultItems);
-	$template->setVariable('searchResultThumbnails', $searchResultThumbnails);
+	$template->setVariable('thumbnails', $thumbnails);
 	$html = $template->render('SearchScan.tpl');
 	
 	return array(GalleryStatus::success(), $html);

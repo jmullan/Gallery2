@@ -67,7 +67,13 @@ class GallerySearchInterface_1_0 {
      *               array('start' => 1..#,
      *                     'end' => 1..#,
      *                     'count' => #,
-     *                     'ids' => array(id, id, ...))
+     *                     'results' => array(itemId => id,
+     *                                        array(array('key' => 'localized title',
+     *                                                    'value' => 'localized text'),
+     *                                              array('key' => 'localized title',
+     *                                                    'value' => 'localized text'),         
+     *                                              array('key' => 'localized title',
+     *                                                    'value' => 'localized text')))))
      */
     function search($options, $criteria, $offset=0, $count=-1) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),

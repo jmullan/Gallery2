@@ -80,7 +80,6 @@ class SearchShowAllView extends GalleryView {
 	$return = GalleryUtilities::getFormVariables('return.');
 	
 	$searchResults = array();
-	$searchResultItems = array();
 	$searchResultThumbnails = array();
 	if ($form['formName'] == 'SearchShowAll' || $form['formName'] == 'SearchScan') {
 	    if (empty($form['searchCriteria'])) {
@@ -130,7 +129,7 @@ class SearchShowAllView extends GalleryView {
 		if (isset($form['options'][$moduleId])) {
 		    list ($ret, $searchResults) =
 			$searchInstance->search($form['options'][$moduleId],
-						'%' . $form['searchCriteria'] . '%',
+						$form['searchCriteria'],
 						($form['page']-1) * $pageSize,
 						$pageSize);
 		    if ($ret->isError()) {
@@ -140,26 +139,26 @@ class SearchShowAllView extends GalleryView {
 		$maxPages = ceil($searchResults['count'] / $pageSize);
 	    }
 
-	    if (!empty($searchResults['ids'])) {
-		list ($ret, $items) = $gallery->loadEntitiesById($searchResults['ids']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+	    $itemIds = array();
+	    $thumbnails = array();
+	    if (!empty($searchResults['results'])) {
+		foreach ($searchResults['results'] as $result) {
+		    if (isset($result['itemId'])) {
+			$itemIds[$result['itemId']] = 1;
+		    }
 		}
+		$itemIds = array_keys($itemIds);
 
-		/* Convert them to member data */
-		foreach ($items as $item) {
-		    $searchResultItems[$item->getId()] = $item->getMemberData();
-		}
+		if (!empty($itemIds)) {
+		    /* Fetch thumbnails */
+		    list ($ret, $thumbnailList) = GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
-		/* Fetch thumbnails */
-		list ($ret, $thumbnails) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($searchResults['ids']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		foreach ($thumbnails as $thumbnail) {
-		    $searchResultThumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
+		    foreach ($thumbnailList as $thumbnail) {
+			$thumbnails[$thumbnail->getParentId()] = $thumbnail->getMemberData();
+		    }
 		}
 	    }
 	} else {
@@ -175,8 +174,7 @@ class SearchShowAllView extends GalleryView {
 	$template->setVariable('moduleId', $moduleId);
 	$template->setVariable('return', $return);
 	$template->setVariable('searchResults', $searchResults);
-	$template->setVariable('searchResultItems', $searchResultItems);
-	$template->setVariable('searchResultThumbnails', $searchResultThumbnails);
+	$template->setVariable('thumbnails', $thumbnails);
 	$html = $template->render('SearchShowAll.tpl');
 	
 	return array(GalleryStatus::success(), $html);

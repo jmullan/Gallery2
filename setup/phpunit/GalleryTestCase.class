@@ -179,7 +179,7 @@ class GalleryTestCase extends TestCase {
      *               object GalleryDataItem
      * @access private
      */
-    function _createRandomDataItem($parentId, $mimeType='application/unknown') {
+    function _createRandomDataItem($parentId, $mimeType='application/unknown', $fields=array()) {
 	global $gallery;
 	
 	list ($ret, $item) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUnknownItem');
@@ -212,6 +212,10 @@ class GalleryTestCase extends TestCase {
 	$item->setSummary('This is a summary');
 	$item->setKeywords('These are some keywords');
 	$item->setDescription('This is a description');
+
+	foreach ($fields as $key => $value) {
+	    eval("\$item->set$key(\$value);");
+	}
 
 	/* Save it */
 	$ret = $item->save();

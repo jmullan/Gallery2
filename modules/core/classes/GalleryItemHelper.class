@@ -191,17 +191,16 @@ class GalleryItemHelper {
     }
     
     /**
-     * Return the ids of all items that match the given type and have the extra
-     * required permissions AND the core.view permission.
+     * Return the ids of all items that match the given type and have the
+     * given permission (defaults to 'core.view')
      *
      * @access public
      * @param string an item type (eg, 'GalleryAlbumItem')
-     * @param 
      * @return array object GalleryStatus a status code
      *               array(id, id, id, ...)
      * @static
      */
-    function fetchAllItemIds($itemType, $extraRequiredPermission=null) {
+    function fetchAllItemIds($itemType, $permission='core.view') {
 	global $gallery;
 
 	if (empty($itemType)) {
@@ -209,12 +208,7 @@ class GalleryItemHelper {
 			 null);
 	}
 
-	$permissions[] = 'core.view';
-	if (isset($extraRequiredPermission)) {
-	    $permissions[] = $extraRequiredPermission;
-	}
-
-	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits($permissions);
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits(array($permission));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -224,7 +218,7 @@ class GalleryItemHelper {
 	$query = '
         SELECT
           DISTINCT([GalleryItem::id]),
-	  BIT_OR([GalleryPermissionMap::permission])
+	  [GalleryPermissionMap::permission]
         FROM
           [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
         WHERE
@@ -239,10 +233,10 @@ class GalleryItemHelper {
            ([GalleryUserGroupMap::userId] = ?
             AND
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? = ?
         GROUP BY
           [GalleryItem::id]
-        HAVING
-          BIT_OR([GalleryPermissionMap::permission]) & ? = ?
         ';
 	$data = array();
 	$data[] = $itemType;

@@ -59,23 +59,15 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
     function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;
 
-	/* Get our separate permission bit settings */
-	list ($ret, $coreBits) =
-	    GalleryPermissionSetMap::convertIdsToBits('core.view');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	list ($ret, $commentBits) =
-	    GalleryPermissionSetMap::convertIdsToBits('comment.view');
+	    GalleryPermissionSetMap::convertIdsToBits('comment.search');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$countQuery = '
+	
+	static $countQuery = '
 	SELECT
-	  COUNT(DISTINCT([GalleryChildEntity::parentId])),
-	  BIT_OR([GalleryPermissionMap::permission])
+	  COUNT(DISTINCT([GalleryChildEntity::id]))
 	FROM
 	  [GalleryChildEntity], [GalleryComment], [GalleryPermissionMap], [GalleryUserGroupMap]
 	WHERE
@@ -90,21 +82,24 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
           [GalleryComment::comment] LIKE ?
-	HAVING
-	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
           AND
-	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+	  [GalleryPermissionMap::permission] & ? = ?
         ';
 
-	$query = '
+	static $query = '
 	SELECT
-	  DISTINCT([GalleryChildEntity::parentId]),
-	  BIT_OR([GalleryPermissionMap::permission]),
-          [GalleryComment::date]
+	  DISTINCT([GalleryChildEntity::id]),
+          [GalleryComment::comment],
+          UNIX_TIMESTAMP([GalleryComment::date]),
+          [GalleryUser::fullName],
+          [GalleryUser::userName],
+          [GalleryChildEntity::parentId]
 	FROM
-	  [GalleryChildEntity], [GalleryComment], [GalleryPermissionMap], [GalleryUserGroupMap]
+	  [GalleryChildEntity], [GalleryComment], [GalleryPermissionMap], [GalleryUserGroupMap], [GalleryUser]
 	WHERE
 	  [GalleryChildEntity::id] = [GalleryComment::id]
+	  AND
+	  [GalleryUser::id] = [GalleryComment::commenterId]
 	  AND
           [GalleryChildEntity::parentId] = [GalleryPermissionMap::itemId]
           AND
@@ -115,26 +110,19 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
             [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
           AND
           [GalleryComment::comment] LIKE ?
-	GROUP BY
-	  [GalleryChildEntity::parentId],
-          [GalleryComment::date]
-	HAVING
-	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
           AND
-	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+	  [GalleryPermissionMap::permission] & ? = ?
 	ORDER BY
-	  [GalleryComment::date] DESC
+	  [GalleryComment::date] DESC, [GalleryChildEntity::id] DESC
         ';
 
 	$storage = $gallery->getStorage();
 	$data = array();
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $criteria;
-	$data[] = $storage->convertIntToBits($coreBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data[] = '%' . $criteria . '%';
 	$data[] = $storage->convertIntToBits($commentBits);
-	$data[] = $storage->convertIntToBits(0);
+	$data[] = $storage->convertIntToBits($commentBits);
 	
 	/* Find the total */
 	list ($ret, $results) = $gallery->search($countQuery, $data);
@@ -142,26 +130,41 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$result = $results->nextResult();
-	$numRows = $result[0];
+	$numRows = (int)$result[0];
 	
-	list ($ret, $results) =
-	    $gallery->search($query,
-			     $data,
-			     array('limit' => array('offset' => $offset,
-						    'count' => $count)));
+	list ($ret, $results) = $gallery->search($query, $data,
+						 array('limit' => array('offset' => $offset,
+									'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$itemIds = array();
-	while ($result = $results->nextResult()) {
-	    $itemIds[] = $result[0];
+        list ($ret, $module) = $gallery->loadModule('comment');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$data = array('start' => $offset+1,
-		      'end' => $offset + sizeof($itemIds),
+	$text['comment'] = $module->translate('Comment');
+	$text['commenter'] = $module->translate('Commenter');
+
+	$searchResults = array();
+	while ($result = $results->nextResult()) {
+	    $fields = array();
+	    $fields[] = array('key' => $text['comment'], 'value' => $result[1]);
+	    
+	    if (!empty($result[5])) {
+		$fields[] = array('key' => $text['commenter'], 'value' => $result[3]);
+	    } else {
+		$fields[] = array('key' => $text['commenter'], 'value' => $result[4]);
+	    }
+	    $searchResults[] = array('itemId' => (int)$result[5],
+				     'fields' => $fields);
+	}
+
+	$data = array('start' => $numRows == 0 ? 0 : $offset+1,
+		      'end' => $numRows == 0 ? 0 : $offset + sizeof($searchResults),
 		      'count' => $numRows,
-		      'ids' => $itemIds);
+		      'results' => $searchResults);
 	return array(GalleryStatus::success(), $data);
     }
 }
