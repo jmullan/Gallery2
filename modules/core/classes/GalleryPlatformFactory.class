@@ -39,15 +39,16 @@ class GalleryPlatformFactory {
      */
     function newInstance($type) {
 	switch ($type) {
-	case 'unix':
+	case 'winnt':
+	    $base = dirname(__FILE__) . '/GalleryPlatform';
+	    require_once($base . '/WinNtPlatform.class');
+	    return new WinNtPlatform();
+
+	default:
+	    /* Assume a Unix variant */
 	    $base = dirname(__FILE__) . '/GalleryPlatform';
 	    require_once($base . '/UnixPlatform.class');
-	    return array(GalleryStatus::success(), new UnixPlatform());
-	    
-	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					      __FILE__, __LINE__),
-			 null);
+	    return new UnixPlatform();
 	}
     }
 }

@@ -42,11 +42,7 @@ if (!CheckConfigFileExists()) {
  */
 $ret = InitializeGallery();
 
-list ($ret, $platform) = $gallery->getPlatform();
-if ($ret->isError()) {
-    $ret = $ret->wrap(__FILE__, __LINE__);
-    error('unknownError', array('error' => $ret));
-}
+$platform = $gallery->getPlatform();
 
 if (!CheckSetupPassword()) {
     error('missingPassword');

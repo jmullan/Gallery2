@@ -88,8 +88,17 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
     function create($parentId, $derivativeType) {
 	global $gallery;
 
-	/* We can't have more than one thumbnail */
-	if ($derivativeType == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+	if ($derivativeType != DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+	        $derivativeType != DERIVATIVE_TYPE_IMAGE_RESIZE &&
+	        $derivativeType != DERIVATIVE_TYPE_IMAGE_PREFERRED) {
+	    $gallery->debug("Unknown derivative type: $derivativeType");
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* We can't have more than one THUMBNAIL or PREFERRED */
+	if ($derivativeType == DERIVATIVE_TYPE_IMAGE_THUMBNAIL ||
+	    $derivativeType == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
 	    list($ret, $searchResults) =
 		$gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
 				       'where' => ('[GalleryChildEntity::parentId]=? AND ' .
@@ -135,34 +144,50 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
      */
     function rebuildCache() {
 	global $gallery;
-	list($ret, $graphics) = $gallery->getGraphics();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$ret = parent::rebuildCache();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Make sure the source is current */
+	/* Load the source */
 	$sourceId = $this->getDerivativeSourceId();
 	list($ret, $source) = $gallery->loadEntitiesById($sourceId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* If the source is a derivative, make sure the it's current */
+	if (is_subclass_of($source, 'GalleryDerivative')) {
+	    list ($ret, $isCurrent) = $source->isCacheCurrent();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!$isCurrent) {
+		$ret = $source->rebuildCache();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	
 	/* Get the path of the source for the next operation */
 	list($ret, $sourcePath) = $source->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Figure out our target path */
 	list($ret, $destPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
+	list($ret, $graphics) = $gallery->getGraphics();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Now apply our derivative commands to create the cache file */
 	$commands = split(';', $this->getDerivativeCommands());
 	foreach ($commands as $command) {
 	    $pieces = split(' ', $command);
@@ -231,10 +256,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $sourcePath = $destPath;
 	}
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 	
 	/* Get the size of the file */
 	if ($platform->file_exists($destPath)) {
@@ -280,6 +302,25 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Break this derivative's dependencies
+     *
+     * This is used when the object's derivativeSource gets deleted
+     *
+     * @return object GalleryStatus a status code
+     */
+    function breakDerivativeDependency() {
+	$ret = parent::breakDerivativeDependency();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* We've got no dimensions any more */
+	$this->setWidth(0);
+	$this->setHeight(0);
+
+	return GalleryStatus::success();
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryDerivativeImage.inc');

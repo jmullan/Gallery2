@@ -591,8 +591,7 @@ class Gallery {
      * Return a copy of the unique Gallery platform object.
      * 
      * @access public
-     * @return array object GalleryStatus a status code
-     *               object GalleryPlatform the Gallery platform object
+     * @return array object GalleryPlatform the Gallery platform object
      */
     function getPlatform() {
 	if (empty($this->_platform)) {
@@ -600,14 +599,11 @@ class Gallery {
 	    /* Load the factory class */
 	    require_once(dirname(__FILE__) . '/GalleryPlatformFactory.class');
 
-	    list($ret, $platform) = GalleryPlatformFactory::newInstance('unix');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $this->_platform = $platform;
+	    $platformType = $this->getConfig('platform.type');
+	    $this->_platform = GalleryPlatformFactory::newInstance($platformType);
 	}
 	
-	return array(GalleryStatus::success(), $this->_platform);
+	return $this->_platform;
     }
 
     /**
@@ -1000,10 +996,7 @@ class Gallery {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $platform) = $this->getPlatform();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $platform = $this->getPlatform();
 
 	    /* Scan modules directory for installed modules */
 	    $modulesDir = $this->getConfig('code.gallery.modules');
@@ -1070,10 +1063,7 @@ class Gallery {
 	    $galleryBase = $this->getConfig('code.gallery.modules');
 	    $moduleFile = $galleryBase . $moduleName . '/module.inc';
 
-	    list ($ret, $platform) = $this->getPlatform();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $platform = $this->getPlatform();
 
 	    if (!$platform->file_exists($moduleFile)) {
 		$this->debug('Missing file: ' . $moduleFile);
@@ -1118,10 +1108,7 @@ class Gallery {
     function getAllModuleNames() {
 	$modulesDir = $this->getConfig('code.gallery.modules');
 
-	list ($ret, $platform) = $this->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$platform = $this->getPlatform();
 	
 	if ($dir = $platform->opendir($modulesDir)) {
 	    while (($file = readdir($dir)) != false) {

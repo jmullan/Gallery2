@@ -1402,10 +1402,7 @@ class DatabaseStorage extends GalleryStorage {
 	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleName .
 	    '/classes/GalleryStorage/DatabaseStorage/schema/platform/' .
 	    $this->getType();
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	$sqlFiles = array();
 	if ($dir = $platform->opendir($sqlDir)) {
@@ -1547,10 +1544,7 @@ class DatabaseStorage extends GalleryStorage {
     function _executeSqlFile($fileName) {
 	global $gallery;
 	
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 	
 	if ($fd = $platform->fopen($fileName, "r")) {
 	    $buffer = null;
@@ -1711,7 +1705,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixColumnName($columnName) {
-	return $this->_columnPrefix . $columnName;
+	return $this->_columnPrefix . strtolower($columnName);
     }
 
     /**
@@ -1722,7 +1716,7 @@ class DatabaseStorage extends GalleryStorage {
      * @access private
      */
     function _prefixTableName($tableName) {
-	return $this->_tablePrefix . $tableName;
+	return $this->_tablePrefix . strtolower($tableName);
     }
 
     /**

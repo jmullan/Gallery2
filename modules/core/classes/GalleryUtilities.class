@@ -464,57 +464,6 @@ class GalleryUtilities {
     }
 
     /**
-     * Execute a set of commands to perform an image operation
-     *
-     * @return array object GalleryStatus a status code
-     *               array any resulting output
-     * @access private
-     */
-    function exec($cmdArray) {
-	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Build up a platform-correct version of the command and arguments */
-	$command = '';
-	foreach ($cmdArray as $cmdAndArgs) {
-	    if (strlen($command)) {
-		$command .= ' | ';
-	    }
-	    
-	    if (is_array($cmdAndArgs)) {
-		$cmd = $cmdAndArgs[0];
-		$args = array_slice($cmdAndArgs, 1);
-
-		/* Add the platform-specific version of the command */
-		$command .= $platform->executablePath($cmd);
-
-		/* And then each argument */
-		foreach ($args as $arg) {
-		    /* Escape whitespace */
-		    $arg = str_replace(' ', '\\ ', $arg);
-
-		    $command .= ' ' . $arg;
-		}
-	    }
-	}
-
-	$results = array();
-	$success = $platform->exec($command, $results);
-	if ($success) {
-	    $ret = GalleryStatus::success();
-	} else {
-	    $ret = GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
-					__FILE__, __LINE__);
-	    $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return array($ret, $results);
-    }
-
-    /**
      * Convert a filesystem path inside the gallery directory to a relative URL
      *
      *  ie /path/to/gallery/themes/classic/styles/style.css =>
@@ -526,10 +475,20 @@ class GalleryUtilities {
     function convertPathToRelativeUrl($path) {
 	global $gallery;
 
-	/* Factor the gallery code base out of the path */
 	$dirbase = $gallery->getConfig('code.gallery.base');
-	$relativePath = str_replace($dirbase, '', $path);
 
+	/*
+	 * Factor the gallery code base out of the path, accounting for
+	 * differences in directory separators between platforms.
+	 */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	if ($slash != '/') {
+	    $dirbase = str_replace($slash, '/', $dirbase);
+	    $path = str_replace($slash, '/', $path);
+	}
+	$relativePath = str_replace($dirbase, '', $path);
+	
 	/* Prepend the URL base */
 	$urlBase = $gallery->getConfig('url.gallery.base');
 	if (!empty($urlBase)) {
@@ -548,10 +507,7 @@ class GalleryUtilities {
     function requireOnce($filename) {
 	global $gallery;
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->file_exists($filename)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);

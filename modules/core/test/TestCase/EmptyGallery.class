@@ -9,10 +9,7 @@ class EmptyGalleryTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	$dirs = array();
 	foreach (array('data.gallery.albums',

@@ -194,8 +194,13 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* We've got no source any more */
+	/* Zero out our settings */
 	$this->setDerivativeSourceId(0);
+	$this->setDerivativeSize(0);
+	$this->setDerivativeMimeType(null);
+
+	/* Expire any derivatives that depend on me */
+	$gallery->loadDerivatives($this->getId());
 
 	return GalleryStatus::success();
     }
@@ -211,10 +216,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
     function isCacheCurrent() {
 	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
-	}
+	$platform = $gallery->getPlatform();
 
 	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
@@ -233,10 +235,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
     function expireCache() {
 	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
@@ -290,10 +289,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	$cacheDir = $cacheDir . $firstDigitOfId . '/';
 	
 	/* Make sure that the cache dir exists, create it if necessary */
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$platform = $gallery->getPlatform();
 	
 	if ($platform->file_exists($cacheDir)) {
 	    if (!$platform->is_dir($cacheDir)) {

@@ -150,10 +150,7 @@ class GalleryAlbumItem_core extends GalleryItem {
     function _createDir($albumDir) {
 	global $gallery;
 	
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	list($ret, $perm) =
 	    $gallery->getModuleParameter('core', 'permissions.directory');
@@ -211,10 +208,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Remove my directory and everything in it */
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->recursiveRmdir($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH,
@@ -258,10 +252,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return $ret;
 	}
 
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	/*
 	 * Get the current path

@@ -33,6 +33,13 @@ define("DERIVATIVE_TYPE_IMAGE_THUMBNAIL", 1);
 define("DERIVATIVE_TYPE_IMAGE_RESIZE", 2);
 
 /**
+ * Preferred image type
+ *
+ * @constant DERIVATIVE_TYPE_IMAGE_PREFERRED
+ */
+define("DERIVATIVE_TYPE_IMAGE_PREFERRED", 3);
+
+/**
  * A helper class for GalleryDerivatives
  *
  * Utility functions useful in managing GalleryDerivatives
@@ -50,22 +57,111 @@ class GalleryDerivativeHelper {
      */
 
     /**
-     * Load the derivative images for the ids/types specified
-     *
-     * Meant to be called statically
+     * Convenience function to fetch the thumbnail for an item id
      *
      * @param array GalleryItem ids
-     * @param string entity type (eg, 'GalleryDerivativeImage')
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      */
-    function loadDerivatives($ids, $types) {
+    function fetchThumbnailsByItemIds($ids) {
+	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
+	    $ids, null, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/*
+	 * Only one thumb per item, so simplify the reuslts
+	 */
+	foreach ($results as $id => $value) {
+	    $results[$id] = $value[0];
+	}
+	
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Convenience function to fetch the resizes for an item id
+     *
+     * @param array GalleryItem ids
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => array(GalleryDerivativeImage, ...)
+     *                     ...)
+     */
+    function fetchResizesByItemIds($ids) {
+	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
+	    $ids, null, DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Load the derivative images owned by the given item id(s) of
+     * the type(s) specified
+     *
+     * @param array GalleryItem ids
+     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @access private
+     */
+    function fetchDerivativesByItemIds($ids, $types=null) {
+	list ($ret, $results) =
+		GalleryDerivativeHelper::_loadDerivatives($ids, null, $type);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Load the derivative images that have the specified source id(s) with
+     * the type(s) specified
+     *
+     * @param array GalleryItem ids
+     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @access private
+     */
+    function fetchDerivativesBySourceIds($ids, $types=null) {
+	list ($ret, $results) =
+		GalleryDerivativeHelper::_loadDerivatives(null, $ids, $type);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Load the derivative images for the ids/types specified
+     *
+     * @param array GalleryItem ids
+     * @param array GalleryDataItem or GalleryDerivative source ids
+     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
+     * @return array object GalleryStatus a status code 
+     *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @access private
+     */
+    function _loadDerivatives($itemIds, $sourceIds, $types=null) {
 	global $gallery;
 	
 	GalleryProfiler::start('GalleryDerivativeHelper::loadDerivatives');
-	
-	if (!is_array($ids)) {
-	    $ids = array($ids);
+
+	if (empty($itemIds) && empty($sourceIds)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	if (!empty($itemIds)) {
+	    $ids = $itemIds;
+	    $selectId = '[GalleryDerivative::id]';
+	} else {
+	    $ids = $sourceIds;
+	    $selectId = '[GalleryDerivative::derivativeSourceId]';
 	}
 
 	if (!is_array($types)) {
@@ -73,19 +169,23 @@ class GalleryDerivativeHelper {
 	}
 	    
 	/* Look up the ids of all their thumbnail images */
+	$data = array();
+	$searchParams['select'] = ($selectId . ', ' .
+				   '[GalleryChildEntity::parentId]');
+
 	$idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
-	$typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
-	$data = array_merge($types,
-			    $ids);
-	list ($ret, $searchResults) = $gallery->search(
-            array('select' => ('[GalleryDerivative::id], ' .
-			       '[GalleryChildEntity::parentId]'),
-		  'where' => ('[GalleryDerivative::derivativeType] IN (' .
-			      $typeMarkers . ') AND ' .
-			      '[GalleryChildEntity::parentId] IN (' .
-			      $idMarkers . ')')),
-            $data);
-	    
+	$searchParams['where'] = ('[GalleryChildEntity::parentId] IN (' .
+				  $idMarkers . ')');
+	$data = array_merge($data, $ids);
+	
+	if (!empty($types)) {
+	    $typeMarkers = GalleryUtilities::makeMarkers(sizeof($types));
+	    $searchParams['where'] .= (' AND [GalleryDerivative::derivativeType] IN (' .
+				       $typeMarkers . ')');
+	    $data = array_merge($data, $types);
+	}
+		     
+	list ($ret, $searchResults) = $gallery->search($searchParams, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

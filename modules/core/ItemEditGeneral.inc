@@ -42,10 +42,7 @@ class ItemEditGeneralController extends GalleryController {
 	    /*
 	     * Validate the input data.
 	     */
-	    list ($ret, $platform) = $gallery->getPlatform();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $platform = $gallery->getPlatform();
 	    
 	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
@@ -135,10 +132,7 @@ class ItemEditGeneralView extends GalleryView {
 
 	if ($formName == 'ItemEditGeneral' && empty($form['action']['undo'])) {
 	    /* Complain if we have any invalid data */
-	    list ($ret, $platform) = $gallery->getPlatform();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    $platform = $gallery->getPlatform();
 
 	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
 		$form['error']['pathComponent']['invalid'] = 1;

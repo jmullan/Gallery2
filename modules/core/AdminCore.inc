@@ -117,10 +117,7 @@ class AdminCoreView extends GalleryView {
 	$orderDirectionList['asc'] = $module->translate("Ascending");
 	$orderDirectionList['desc'] = $module->translate("Descending");
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$platform = $gallery->getPlatform();
 
 	/* Set up our layout selection list */
 	$layoutList = array();

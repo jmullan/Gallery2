@@ -126,19 +126,18 @@ class ClassicLayout extends GalleryLayout {
 	    }
 
 	    /* Load the thumbnails */
-	    list ($ret, $imageTable) =
-		GalleryDerivativeHelper::loadDerivatives($childIds,
-							 DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    list ($ret, $thumbTable) =
+		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	
+
 	    /* put it all together */
 	    $i = 0;
 	    foreach ($childIds as $id) {
 		$children[$i] = $childTable[$id];
-		if (isset($imageTable[$id])) {
-		    $children[$i]['thumbnail'] = $imageTable[$id][0]->getMemberData();
+		if (isset($thumbTable[$id])) {
+		    $children[$i]['thumbnail'] = $thumbTable[$id]->getMemberData();
 		}
 		$i++;
 	    }
@@ -200,7 +199,7 @@ class ClassicLayout extends GalleryLayout {
 	$this->_setTemplateVariable('totalPageCount', $totalPages);
 	$this->_setTemplateVariable('totalChildCount', $totalChildCount);
 	$this->_setTemplateVariable('layoutUrl',
-				    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
+            GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$this->_setTemplateVariable('parents', $parents);
 	
 	/* Parse the body template and send it back */
@@ -238,21 +237,13 @@ class ClassicLayout extends GalleryLayout {
 	    }
 
 	    /* Load the resizes */
-	    list ($ret, $imageTable) =
-		GalleryDerivativeHelper::loadDerivatives($item->getId(),
-							 DERIVATIVE_TYPE_IMAGE_RESIZE);
+	    list ($ret, $resizes) =
+		    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (empty($imageTable[$item->getId()])) {
-		// No resizes -- what do we do? -- fail for now
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-
-	    $resizes = $imageTable[$item->getId()];
+	    $resizes = $resizes[$item->getId()];
 	    if ($resizeIndex >= sizeof($resizes)) {
 		$resizeIndex = sizeof($resizes) - 1;
 	    }
@@ -332,7 +323,7 @@ class ClassicLayout extends GalleryLayout {
 	$this->_setTemplateVariable('moduleSystemLinks', $moduleSystemLinks);
 	$this->_setTemplateVariable('moduleItemDetails', $moduleItemDetails);
 	$this->_setTemplateVariable('layoutUrl',
-				    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
+	    GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$this->_setTemplateVariable('parents', $parents);
 	$this->_setTemplateVariable('itemIndex', $itemIndex+1);
 	$this->_setTemplateVariable('nextResizeIndex', $resizeIndex+1);
@@ -342,6 +333,5 @@ class ClassicLayout extends GalleryLayout {
 	$html = $this->_renderTemplate('classic', 'singleBody.tpl');
 	return array(GalleryStatus::success(), $html);
     }
-
 }
 ?>

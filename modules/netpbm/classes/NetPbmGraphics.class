@@ -201,10 +201,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	$success = $platform->rename($tmpFilename, $destFilename);
 	if (!$success) {
@@ -311,11 +308,20 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * Execute the command.  Flatten the command array first.
      *
-     * @see GalleryUtilities::exec
      */
     function _exec($cmdArray) {
+	global $gallery;
+	
 	$cmdArray = $this->_extractCommands($cmdArray);
-	return GalleryUtilities::exec($cmdArray);
+	$platform = $gallery->getPlatform();
+	list ($success, $results) = $platform->exec($cmdArray);
+	if (!$success) {
+	    return array(GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $results);
     }	
 
     /**
@@ -326,10 +332,7 @@ class NetPbmGraphics extends GalleryGraphics {
      */
     function _pnmCmd($cmd) {
 	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	list ($ret, $netPbmPath) =
 	    $gallery->getModuleParameter('netpbm', 'path');

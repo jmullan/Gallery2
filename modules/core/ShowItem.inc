@@ -65,10 +65,7 @@ class ShowItemView extends GalleryView {
 	}
 
 	/* Load the correct layout */
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (empty($layoutName)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,

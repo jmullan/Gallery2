@@ -90,15 +90,15 @@
 	      {$test.name}
 	    </td>
 	    <td align="center">
-	      {if ($test.status->isError())}
-	      {galleryErrorFontColor}{galleryText text="Failed"}{/galleryErrorFontColor}
-	      {else}
+	      {if ($test.success)}
 	      {gallerySuccessFontColor}{galleryText text="Passed"}{/gallerySuccessFontColor}
+	      {else}
+	      {galleryErrorFontColor}{galleryText text="Failed"}{/galleryErrorFontColor}
 	      {/if}
 	    </td>
 	  </tr>
 
-	  {if ($test.status->isError())}
+	  {if (!$test.success) && !empty($test.results)}
 	  <tr>
 	    <td colspan="2">
 	      {galleryText text="Error messages:"}

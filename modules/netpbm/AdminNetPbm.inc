@@ -33,19 +33,12 @@ class AdminNetPbmController extends GalleryController {
 
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	/*
-	 * Set the path.  Normalize it and guarantee that it's got a trailing slash.
-	 */
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$form['path'] = $platform->exportPath($form['path']);
-	
-	/* Guarantee a trailing slash */
-	if ($form['path']{strlen($form['path'])-1} != '/') {
-	    $form['path'] .= '/';
+	/* Set the path.  Guarantee that it's got a trailing slash. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$form['path'] = trim($form['path']);
+	if ($form['path']{strlen($form['path'])-1} != $slash) {
+	    $form['path'] .= $slash;
 	}
 	    
 	$ret = $gallery->setModuleParameter('netpbm', 'path', $form['path']);
@@ -119,6 +112,7 @@ class AdminNetPbmView extends GalleryView {
 	/* Set up our pnmtojpeg selection list */
 	$pnmToJpegList = array('pnmtojpeg', 'ppmtojpeg');
 
+	$platform = $gallery->getPlatform();
 	GalleryProfiler::start('AdminNetPbmView::renderBody().test-binaries');
 	$tests = array();
 	if (!empty($form['path'])) {
@@ -135,12 +129,13 @@ class AdminNetPbmView extends GalleryView {
 			   'pnmflip') as $binary) {
 
 		$cmd = array($form['path'] . $binary, '--version');
-		list ($ret, $results) = GalleryUtilities::exec(array($cmd));
+		list ($success, $results) = $platform->exec(array($cmd));
 		$tests[] = array('name' => $binary,
-				 'status' => $ret,
+				 'success' => $success,
 				 'results' => $results);
 	    }
 	}
+
 	GalleryProfiler::stop('AdminNetPbmView::renderBody().test-binaries');
 
 	/* Render the HTML body */

@@ -114,6 +114,8 @@ function GalleryMain($startTime) {
 	/* Redirect, if so instructed */
 	if (!empty($results['redirect'])) {
 	    header("Location: $results[redirect]");
+	    header("HTTP/1.0 302 Found");
+	    print "DEBUG! Redirect to: <a href=\"$results[redirect]\">$results[redirect]</a>";
 	    return GalleryStatus::success();
 	}
 	

@@ -79,11 +79,7 @@ class CoreModule extends GalleryModule {
 	$gallery->setCoreModule($this);
 
 	/* Configure the Platform */
-	if (substr(PHP_OS, 0, 3) == 'WIN') {
-	    $gallery->setConfig('platform.type', 'windows');
-	} else {
-	    $gallery->setConfig('platform.type', 'unix');
-	}
+	$gallery->setConfig('platform.type', strtolower(PHP_OS));
 
 	/* Register all core permissions */
 	$gallery->addRegistry('GalleryPermissionMap',
@@ -592,6 +588,7 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$album->setTitle("Gallery");
 	$album->setDescription("This is the top of your Gallery");
 
 	$ret = $album->save();

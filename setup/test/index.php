@@ -44,10 +44,7 @@ function GalleryTestHarness() {
 
     $modulesDir = $gallery->getConfig('code.gallery.modules');
 
-    list ($ret, $platform) = $gallery->getPlatform();
-    if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
-    }
+    $platform = $gallery->getPlatform();
 
     /*
      * Load the test cases for every module (active or not).

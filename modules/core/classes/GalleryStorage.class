@@ -418,11 +418,7 @@ class GalleryStorage {
 				 null);
 		}
 
-		list ($ret, $platform) = $gallery->getPlatform();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__),
-				 null);
-		}
+		$platform = $gallery->getPlatform();
 
 		if (!$platform->file_exists($array[0])) {
 		    $gallery->debug("Class file missing: $array[0]");

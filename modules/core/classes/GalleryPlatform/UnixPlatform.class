@@ -29,64 +29,41 @@
 class UnixPlatform extends GalleryPlatform {
 
     /**
-     * Convert a path from neutral format into platform specific format.
-     *
-     * @param string neutral path
-     * @return string platform specific path
-     * @access public
-     */
-    function importPath($path) {
-
-	/* The Unix format is the same as the neutral format */
-	return $path;
-    }
-
-    /**
-     * Convert a path from specific format into neutral format.
-     *
-     * @param string platform specific path
-     * @return string neutral path
-     * @access public
-     */
-    function exportPath($path) {
-
-	/* The Unix format is the same as the neutral format */
-	return $path;
-    }
-
-    /**
-     * Convert a path from neutral format to an executable format
-     *
-     * @param string neutral path
-     * @return string platform specific path
-     * @access public
-     */
-    function executablePath($path) {
-
-	/* The Unix format is the same as the neutral format */
-	return $path;
-    }
-
-    /**
      * Execute a command and record the results and status.
      *
-     * @param string the command to excute
+     * @param array(array('cmd', 'arg'), ...)
      * @param array the location to put output from the command 
      * @return bool TRUE if the command succeeded, FALSE otherwise.
      * @access public
      */
-    function exec($cmd, &$results) {
+    function exec($cmdArray) {
 	global $gallery;
 
+	/* Assemble the command array into a pipeline */
+	$command = '';
+	foreach ($cmdArray as $cmdAndArgs) {
+	    if (strlen($command)) {
+		$command .= ' | ';
+	    }
+	    
+	    foreach ($cmdAndArgs as $args) {
+		if ($arg == '>') {
+		    $command .= '>';
+		} else {
+		    $command .= ' "' . $arg . '" ';
+		}
+	    }
+	}
+	
 	/* If we're in debug mode, redirect STDERR to a file */
 	if ($gallery->getDebug()) {
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $debugFile = tempnam($tmpDir, 'g2dbg');
-	    $cmd = "($cmd) 2>$debugFile";
+	    $command = "($command) 2>$debugFile";
 	}
 
-	$gallery->debug("Executing: $cmd");
-	exec($cmd, $results, $status);
+	$gallery->debug("Executing: $command");
+	exec($command, $results, $status);
 
 	list ($ret, $expected) =
 	    $gallery->getModuleParameter('core', 'exec.expectedStatus');
@@ -105,10 +82,7 @@ class UnixPlatform extends GalleryPlatform {
 	    }
 	    
 	    $gallery->debug("Error Output:");
-	    list($ret, $platform) = $gallery->getPlatform();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    $platform = $gallery->getPlatform();
 
 	    if ($platform->file_exists($debugFile)) {
 		if ($fd = $platform->fopen($debugFile, "r")) {
@@ -135,6 +109,15 @@ class UnixPlatform extends GalleryPlatform {
 	}
 
 	return ($status == $expected);
+    }
+    
+    /**
+     * Return the filesystem specific directory separator
+     *
+     * @return string directory separator
+     */
+    function getDirectorySeparator() {
+	return '/';
     }
 }
 ?>

@@ -90,10 +90,7 @@ class GalleryDataItem_core extends GalleryItem {
      */
     function create($parentId, $inputFileName, $ownerId, $targetName=null) {
 	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
@@ -194,10 +191,7 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->unlink($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
@@ -216,10 +210,7 @@ class GalleryDataItem_core extends GalleryItem {
      */
     function fetchSize() {
 	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	list($ret, $path) = $this->fetchPath();
 	if ($ret->isError()) {
@@ -257,10 +248,7 @@ class GalleryDataItem_core extends GalleryItem {
 	    return $ret;
 	}
 
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	/*
 	 * Get the current path

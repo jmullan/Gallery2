@@ -26,7 +26,17 @@ class ConfigureNetPbmTestCase extends TestCase {
 	}
 
 	/* Hardcode a path we know will work (on Bharat's dev box) */
-	$ret = $module->setModuleParameter('path', '/usr/local/bin/');
+	$platform = $gallery->getPlatform();
+	if (is_subclass_of($platform, 'UnixPlatform')) {
+	    $ret = $module->setModuleParameter('path', '/usr/local/bin/');
+	} else {
+	    $ret = $module->setModuleParameter('path', 'c:\\apps\\netpbm\\');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $ret = $module->setModuleParameter('pnmtojpeg', 'ppmtojpeg');
+	}
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -82,10 +82,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -143,10 +140,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -190,10 +184,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 					__FILE__, __LINE__);
 	}
 
-	list ($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($newname)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,

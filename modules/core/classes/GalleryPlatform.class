@@ -45,8 +45,6 @@ class GalleryPlatform {
      */
     function copy($source, $dest) {
 	global $gallery;
-	$source = $this->importPath($source);
-	$dest = $this->importPath($dest);
 	$gallery->debug("copy($source, $dest)");
 	
 	$umask = umask(0133);
@@ -63,7 +61,7 @@ class GalleryPlatform {
      * @access public
      */
     function tempdir() {
-	return export_filename(getenv("TEMP"));
+	return getenv("TEMP");
     }
 
     /**
@@ -75,8 +73,6 @@ class GalleryPlatform {
      */
     function file_exists($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("file_exists($filename)");
 
 	return @file_exists($filename);
@@ -91,8 +87,6 @@ class GalleryPlatform {
      */
     function is_link($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_link($filename)");
 	
 	return is_link($filename);
@@ -107,8 +101,6 @@ class GalleryPlatform {
      */
     function is_dir($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_dir($filename)");
 	
 	return is_dir($filename);
@@ -123,8 +115,6 @@ class GalleryPlatform {
      */
     function is_file($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_file($filename)");
 	
 	return is_file($filename);
@@ -139,8 +129,6 @@ class GalleryPlatform {
      */
     function is_writeable($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_writeable($filename)");
 	
 	return is_writeable($filename);
@@ -155,8 +143,6 @@ class GalleryPlatform {
      */
     function is_readable($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_readable($filename)");
 	
 	return is_readable($filename);
@@ -171,8 +157,6 @@ class GalleryPlatform {
      */
     function is_uploaded_file($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_uploaded_file($filename)");
 	
 	return is_uploaded_file($filename);
@@ -187,8 +171,6 @@ class GalleryPlatform {
      */
     function is_executable($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("is_executable($filename)");
 	
 	return is_executable($filename);
@@ -203,8 +185,6 @@ class GalleryPlatform {
      */
     function filesize($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("filesize($filename)");
 	
 	return filesize($filename);
@@ -221,8 +201,6 @@ class GalleryPlatform {
      */
     function fopen($filename, $mode, $use_include_path=0) {
 	global $gallery;
-	
-	$path = $this->importPath($filename);
 	$gallery->debug("fopen($filename, $mode, $use_include_path)");
 	
 	return fopen($filename, $mode, $use_include_path);
@@ -237,8 +215,6 @@ class GalleryPlatform {
      */
     function opendir($path) {
 	global $gallery;
-	
-	$path = $this->importPath($path);
 	$gallery->debug("opendir($path)");
 	
 	return opendir($path);
@@ -256,9 +232,6 @@ class GalleryPlatform {
      */
     function rename($oldname, $newname) {
 	global $gallery;
-	
-	$oldname = $this->importPath($oldname);
-	$newname = $this->importPath($newname);
 	$gallery->debug("rename($oldname, $newname)");
 
 	return rename($oldname, $newname);
@@ -273,8 +246,6 @@ class GalleryPlatform {
      */
     function stat($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("stat($filename)");
 	
 	return stat($filename);
@@ -289,8 +260,6 @@ class GalleryPlatform {
      */
     function unlink($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("unlink($filename)");
 	
 	return unlink($filename);
@@ -305,8 +274,6 @@ class GalleryPlatform {
      */
     function rmdir($filename) {
 	global $gallery;
-	
-	$filename = $this->importPath($filename);
 	$gallery->debug("rmdir($filename)");
 	
 	return rmdir($filename);
@@ -321,10 +288,7 @@ class GalleryPlatform {
      */
     function recursiveRmdir($dirname) {
 	global $gallery;
-	
-	$dirname = $this->importPath($dirname);
 	$gallery->debug("recursiveRmdir($dirname)");
-	
 
 	if (!($fd = $this->opendir($dirname))) {
 	    return false;
@@ -353,9 +317,7 @@ class GalleryPlatform {
 	}
 	closedir($fd);
 
-	$this->rmdir($dirname);
-
-	return true;
+	return $this->rmdir($dirname);
     }
 
     /**
@@ -369,14 +331,11 @@ class GalleryPlatform {
     function mkdir($path, $stringPerms='755') {
 	global $gallery;
 
-	$path = $this->importPath($path);
-	
-	$umask = umask(0);
-
 	/* Convert string permission representation to octal */
 	$octalPerms = octdec($stringPerms);
 	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
 	
+	$umask = umask(0);
 	$results = mkdir($path, $octalPerms);
 	umask($umask);
 	return $results;
@@ -413,50 +372,24 @@ class GalleryPlatform {
     }
     
     /**
-     * Convert a path from neutral format into platform specific format.
-     *
-     * @param string neutral path
-     * @return string platform specific path
-     * @access public
-     */
-    function importPath($path) {
-	/* This must be implemented in a platform specific way */
-	assert(false);
-    }
-
-    /**
-     * Convert a path from specific format into neutral format.
-     *
-     * @param string platform specific path
-     * @return string neutral path
-     * @access public
-     */
-    function exportPath($path) {
-	/* This must be implemented in a platform specific way */
-	assert(false);
-    }
-
-    /**
-     * Convert a path from neutral format to an executable format
-     *
-     * @param string neutral path
-     * @return string platform specific path
-     * @access public
-     */
-    function executablePath($path) {
-	/* This must be implemented in a platform specific way */
-	assert(false);
-    }
-
-    /**
      * Execute a command and record the results and status.
      *
-     * @param string the command to excute
+     * @param array(array('cmd', 'arg'), ...)
      * @param array the location to put output from the command 
      * @return bool TRUE if the command succeeded, FALSE otherwise.
      * @access public
      */
-    function exec($cmd, &$results) {
+    function exec($cmdArray) {
+	/* This must be implemented in a platform specific way */
+	assert(false);
+    }
+
+    /**
+     * Return the filesystem specific directory separator
+     *
+     * @return string directory separator
+     */
+    function getDirectorySeparator() {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }

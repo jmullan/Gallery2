@@ -91,10 +91,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
     function create($parentId, $imageFileName, $ownerId, $targetName=null) {
 	global $gallery;
 
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$platform = $gallery->getPlatform();
 
 	/* Validate the input filename */
 	if (empty($imageFileName)) {

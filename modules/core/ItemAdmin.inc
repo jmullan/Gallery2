@@ -48,15 +48,14 @@ class ItemAdminView extends GalleryView {
 
 	/* Find its thumbnail */
 	list ($ret, $thumbnailTable) =
-	    GalleryDerivativeHelper::loadDerivatives($itemId,
-						     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (empty($thumbnailTable)) {
 	    $thumbnailData = null;
 	} else {
-	    $thumbnail = $thumbnailTable[$itemId][0];
+	    $thumbnail = $thumbnailTable[$itemId];
 	    $thumbnailData = $thumbnail->getMemberData();
 	    
 	    /* Generate scaled dimensions for our thumbnail to fit our page */
