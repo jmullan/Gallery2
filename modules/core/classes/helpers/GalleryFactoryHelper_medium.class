@@ -91,11 +91,13 @@ class GalleryFactoryHelper_medium {
 		break;
 	    }
 	}
-	foreach ($registry['hints'][$classType] as $hint => $names) {
-	    if (isset($names[$className])) {
-		unset($registry['hints'][$classType][$hint][$className]);
-		if (empty($registry['hints'][$classType][$hint])) {
-		    unset($registry['hints'][$classType][$hint]);
+	if (isset($registry['hints'][$classType])) {
+	    foreach ($registry['hints'][$classType] as $hint => $names) {
+		if (isset($names[$className])) {
+		    unset($registry['hints'][$classType][$hint][$className]);
+		    if (empty($registry['hints'][$classType][$hint])) {
+			unset($registry['hints'][$classType][$hint]);
+		    }
 		}
 	    }
 	}
