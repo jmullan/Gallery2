@@ -45,8 +45,8 @@
       {g->text text="The name you entered is already in use.  Please choose another."}
     </div>
     {/if}
-    {/if}
   </div>
+  {/if}
 
   <div class="gbDataEntry">
     <div class="giTitle">
