@@ -1,6 +1,6 @@
 <?php
 /*
- V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -16,6 +16,30 @@
   15 Dec 2000 jlim - added changes suggested by Additional code changes by "Eric G. Werk" egw@netguide.dk. 
   31 Jan 2002 jlim - finally installed postgresql. testing
   01 Mar 2001 jlim - Freek Dijkstra changes, also support for text type
+  
+  See http://www.varlena.com/varlena/GeneralBits/47.php
+  
+	-- What indexes are on my table?
+	select * from pg_indexes where tablename = 'tablename';
+	
+	-- What triggers are on my table?
+	select c.relname as "Table", t.tgname as "Trigger Name", 
+	   t.tgconstrname as "Constraint Name", t.tgenabled as "Enabled",
+	   t.tgisconstraint as "Is Constraint", cc.relname as "Referenced Table",
+	   p.proname as "Function Name"
+	from pg_trigger t, pg_class c, pg_class cc, pg_proc p
+	where t.tgfoid = p.oid and t.tgrelid = c.oid
+	   and t.tgconstrrelid = cc.oid
+	   and c.relname = 'tablename';
+	
+	-- What constraints are on my table?
+	select r.relname as "Table", c.conname as "Constraint Name",
+	   contype as "Constraint Type", conkey as "Key Columns",
+	   confkey as "Foreign Columns", consrc as "Source"
+	from pg_class r, pg_constraint c
+	where r.oid = c.conrelid
+	   and relname = 'tablename';
+
 */
 
 function adodb_addslashes($s)
@@ -63,6 +87,8 @@ AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
 	var $upperCase = 'upper';
 	var $substr = "substr";
+	var $autoRollback = true; // apparently pgsql does not autorollback properly before 4.3.4
+							// http://bugs.php.net/bug.php?id=25404
 	
 	// The last (fmtTimeStamp is not entirely correct: 
 	// PostgreSQL also has support for time zones, 
@@ -86,12 +112,12 @@ AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum
 		$this->version = $arr;
 		return $arr;
 	}
-
+/*
 	function IfNull( $field, $ifNull ) 
 	{
 		return " NULLIF($field, $ifNull) "; // if PGSQL
 	}
-	
+*/
 	// get the last id - never tested
 	function pg_insert_id($tablename,$fieldname)
 	{
@@ -110,19 +136,15 @@ Unless you are very careful, you might end up with a tuple having
 a different OID if a database must be reloaded. */
 	function _insertid()
 	{
-	    if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) != 'pgsql result') {
-		return false;
-	    }
-	   return pg_getlastoid($this->_resultid);
+		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
+	   	return pg_getlastoid($this->_resultid);
 	}
 
 // I get this error with PHP before 4.0.6 - jlim
 // Warning: This compilation does not support pg_cmdtuples() in d:/inetpub/wwwroot/php/adodb/adodb-postgres.inc.php on line 44
    function _affectedrows()
    {
-       if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) != 'pgsql result') {
-	   return false;
-       }
+   		if (!is_resource($this->_resultid) || get_resource_type($this->_resultid) !== 'pgsql result') return false;
 	   	return pg_cmdtuples($this->_resultid);
    }
 
@@ -458,8 +480,10 @@ select viewname,'V' from pg_views where viewname like $mask";
 	// examples:
 	// 	$db->Connect("host=host1 user=user1 password=secret port=4341");
 	// 	$db->Connect('host1','user1','secret');
-	function _connect($str,$user='',$pwd='',$db='',$persist=false)
+	function _connect($str,$user='',$pwd='',$db='',$ctype=0)
 	{
+		$this->_errorMsg = false;
+		
 		if ($user || $pwd || $db) {
 			$user = adodb_addslashes($user);
 			$pwd = adodb_addslashes($pwd);
@@ -470,8 +494,6 @@ select viewname,'V' from pg_views where viewname like $mask";
 				if ($host[0]) $str = "host=".adodb_addslashes($host[0]);
 				else $str = 'host=localhost';
 				if (isset($host[1])) $str .= " port=$host[1]";
-			} else {
-				$str = 'host=localhost';
 			}
 		   		if ($user) $str .= " user=".$user;
 		   		if ($pwd)  $str .= " password=".$pwd;
@@ -479,14 +501,30 @@ select viewname,'V' from pg_views where viewname like $mask";
 		}
 
 		//if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432";
-		if ($persist) $this->_connectionID = pg_pconnect($str);
-		else $this->_connectionID = pg_connect($str);
 		
+		if ($ctype === 1) { // persistent
+			$this->_connectionID = pg_pconnect($str);
+		} else {
+			if ($ctype === -1) { // nconnect, we trick pgsql ext by changing the connection str
+			static $ncnt;
+			
+				if (empty($ncnt)) $ncnt = 1;
+				else $ncnt += 1;
+				
+				$str .= str_repeat(' ',$ncnt);
+			}
+			$this->_connectionID = pg_connect($str);
+		}
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
 		return true;
 	}
 	
+	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabaseName)
+	{
+	 	return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabaseName,-1);
+	}
+	 
 	// returns true or false
 	//
 	// examples:
@@ -494,12 +532,13 @@ select viewname,'V' from pg_views where viewname like $mask";
 	// 	$db->PConnect('host1','user1','secret');
 	function _pconnect($str,$user='',$pwd='',$db='')
 	{
-		return $this->_connect($str,$user,$pwd,$db,true);
+		return $this->_connect($str,$user,$pwd,$db,1);
 	}
 
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
+		/*
 		if (is_array($sql)) {
 			if (!$sql[1]) {
 			
@@ -545,13 +584,15 @@ select viewname,'V' from pg_views where viewname like $mask";
 			
 			adodb_pr(">>>>>".$sql);
 			pg_exec($this->_connectionID,$s);
-		}
+		}*/
+		
+		$this->_errorMsg = false;
+		
 		$rez = pg_exec($this->_connectionID,$sql);
-		//print_r($rez);
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_numfields($rez) <= 0) {
-		        if (is_resource($this->_resultid) && get_resource_type($this->_resultid) == 'pgsql result') {
-			    pg_freeresult($this->_resultid);
+			if (is_resource($this->_resultid) && get_resource_type($this->_resultid) === 'pgsql result') {
+				pg_freeresult($this->_resultid);
 			}
 			$this->_resultid = $rez;
 			return true;
@@ -564,6 +605,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 	/*	Returns: the last error message from previous database operation	*/	
 	function ErrorMsg() 
 	{
+		if ($this->_errorMsg !== false) return $this->_errorMsg;
 		if (ADODB_PHPVER >= 0x4300) {
 			if (!empty($this->_resultid)) {
 				$this->_errorMsg = @pg_result_error($this->_resultid);
@@ -583,7 +625,7 @@ select viewname,'V' from pg_views where viewname like $mask";
 	function ErrorNo()
 	{
 		$e = $this->ErrorMsg();
-		return (strlen($e)) ? $e : 0;
+		return strlen($e) ? $e : 0;
 	}
 
 	// returns true or false
@@ -647,7 +689,8 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function &GetRowAssoc($upper=true)
 	{
 		if ($this->fetchMode == PGSQL_ASSOC && !$upper) return $this->fields;
-		return ADORecordSet::GetRowAssoc($upper);
+		$row =& ADORecordSet::GetRowAssoc($upper);
+		return $row;
 	}
 
 	function _initrs()
@@ -659,6 +702,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 		// cache types for blob decode check
 		for ($i=0, $max = $this->_numOfFields; $i < $max; $i++) { 
 			$f1 = $this->FetchField($i);
+			//print_r($f1);
 			if ($f1->type == 'bytea') $this->_blobArr[$i] = $f1->name;
 		}		
 	}
@@ -705,12 +749,14 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	function _fixblobs()
 	{
 		if ($this->fetchMode == PGSQL_NUM || $this->fetchMode == PGSQL_BOTH) {
-			foreach($this->_blobArr as $k => $v) {
+			reset($this->_blobArr);
+			while(list($k,$v) = each($this->_blobArr)) {
 				$this->fields[$k] = ADORecordSet_postgres64::_decode($this->fields[$k]);
 			}
 		}
 		if ($this->fetchMode == PGSQL_ASSOC || $this->fetchMode == PGSQL_BOTH) {
-			foreach($this->_blobArr as $k => $v) {
+			reset($this->_blobArr);
+			while(list($k,$v) = each($this->_blobArr)) {
 				$this->fields[$v] = ADORecordSet_postgres64::_decode($this->fields[$v]);
 			}
 		}
@@ -766,6 +812,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 				case 'VARCHAR':
 				case 'NAME':
 		   		case 'BPCHAR':
+				case '_VARCHAR':
 					if ($len <= $this->blobSize) return 'C';
 				
 				case 'TEXT':

@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -210,7 +210,8 @@ class ADODB_ado extends ADOConnection {
 			$oCmd->CommandText = $sql;
 			$oCmd->CommandType = 1;
 
-			foreach($inputarr as $val) {
+			reset($inputarr);
+			while(list(,$val) = each($inputarr)) {
 				// name, type, direction 1 = input, len,
 				$this->adoParameterType = 130;
 				$p = $oCmd->CreateParameter('name',$this->adoParameterType,1,strlen($val),$val);
@@ -543,15 +544,19 @@ class ADORecordSet_ado extends ADORecordSet {
 
 			switch($t) {
 			case 135: // timestamp
-				$this->fields[] = date('Y-m-d H:i:s',(integer)$f->value);
-				break;
-				
+				if (!strlen($f->value)) $this->fields = false;
+				else $this->fields[] = date('Y-m-d H:i:s',(integer)$f->value);
+				break;			
 			case 133:// A date value (yyyymmdd) 
-				$val = $f->value;
-				$this->fields[] = substr($val,0,4).'-'.substr($val,4,2).'-'.substr($val,6,2);
+				if ($val) {
+					$val = $f->value;
+					$this->fields[] = substr($val,0,4).'-'.substr($val,4,2).'-'.substr($val,6,2);
+				} else
+					$this->fields[] = false;
 				break;
 			case 7: // adDate
-				$this->fields[] = date('Y-m-d',(integer)$f->value);
+				if (!strlen($f->value)) $this->fields = false;
+				else $this->fields[] = date('Y-m-d',(integer)$f->value);
 				break;
 			case 1: // null
 				$this->fields[] = false;

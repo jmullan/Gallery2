@@ -1,6 +1,6 @@
 <?php
 /*
-V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -115,11 +115,10 @@ class ADODB_csv extends ADOConnection {
 			$sqlarr = explode('?',$sql);
 			$sql = '';
 			$i = 0;
-			foreach($inputarr as $v) {
+			reset($inputarr);
+			while(list(,$v) = each($inputarr)) {
 
 				$sql .= $sqlarr[$i];
-				// from Ron Baldwin <ron.baldwin@sourceprose.com>
-				// Only quote string types	
 				if (gettype($v) == 'string')
 					$sql .= $this->qstr($v);
 				else if ($v === null)

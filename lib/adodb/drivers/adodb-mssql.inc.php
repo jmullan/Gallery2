@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -197,10 +197,13 @@ class ADODB_mssql extends ADOConnection {
 		if ($nrows > 0 && $offset <= 0) {
 			$sql = preg_replace(
 				'/(^\s*select\s+(distinctrow|distinct)?)/i','\\1 '.$this->hasTop." $nrows ",$sql);
-			return $this->Execute($sql,$inputarr);
+			$rs =& $this->Execute($sql,$inputarr);
 		} else
-			return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+	
+		return $rs;
 	}
+	
 	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
@@ -236,7 +239,7 @@ class ADODB_mssql extends ADOConnection {
 				break;
 			
 			case 'H':
-				$s .= "replace(str(datepart(mi,$col),2),' ','0')";
+				$s .= "replace(str(datepart(hh,$col),2),' ','0')";
 				break;
 				
 			case 'i':
@@ -415,6 +418,7 @@ order by constraint_name, referenced_table_name, keyno";
 	
 	function ErrorNo() 
 	{
+		if ($this->_logsql && $this->_errorCode !== false) return $this->_errorCode;
 		if (empty($this->_errorMsg)) {
 			$this->_errorMsg = mssql_get_last_message();
 		}

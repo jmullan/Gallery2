@@ -1,6 +1,6 @@
 <?php
 /*
-V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -36,6 +36,7 @@ class ADODB_mysql extends ADOConnection {
 	var $clientFlags = 0;
 	var $dbxDriver = 1;
 	var $substr = "substring";
+	var $lastInsID = false;
 	
 	function ADODB_mysql() 
 	{			
@@ -240,13 +241,6 @@ class ADODB_mysql extends ADOConnection {
 		$s = "";
 		$arr = func_get_args();
 		$first = true;
-		/*
-		foreach($arr as $a) {
-			if ($first) {
-				$s = $a;
-				$first = false;
-			} else $s .= ','.$a;
-		}*/
 		
 		// suggestion by andrew005@mnogo.ru
 		$s = implode(',',$arr); 
@@ -319,6 +313,21 @@ class ADODB_mysql extends ADOConnection {
 				$fld->name = $rs->fields[0];
 				$type = $rs->fields[1];
 				
+				
+				// split type into type(length):
+				$fld->scale = null;
+				if (strpos($type,',') && preg_match("/^(.+)\((\d+),(\d+)/", $type, $query_array)) {
+					$fld->type = $query_array[1];
+					$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
+					$fld->scale = is_numeric($query_array[3]) ? $query_array[3] : -1;
+				} elseif (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
+					$fld->type = $query_array[1];
+					$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
+				} else {
+					$fld->max_length = -1;
+					$fld->type = $type;
+				}
+				/*
 				// split type into type(length):
 				if (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
 					$fld->type = $query_array[1];
@@ -326,11 +335,12 @@ class ADODB_mysql extends ADOConnection {
 				} else {
 					$fld->max_length = -1;
 					$fld->type = $type;
-				}
+				}*/
 				$fld->not_null = ($rs->fields[2] != 'YES');
 				$fld->primary_key = ($rs->fields[3] == 'PRI');
 				$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
 				$fld->binary = (strpos($fld->type,'blob') !== false);
+				
 				if (!$fld->binary) {
 					$d = $rs->fields[4];
 					if ($d != "" && $d != "NULL") {
@@ -365,9 +375,11 @@ class ADODB_mysql extends ADOConnection {
 	{
 		$offsetStr =($offset>=0) ? "$offset," : '';
 		
-		return ($secs) ? $this->CacheExecute($secs,$sql." LIMIT $offsetStr$nrows",$inputarr)
-			: $this->Execute($sql." LIMIT $offsetStr$nrows",$inputarr);
-		
+		if ($secs)
+			$rs =& $this->CacheExecute($secs,$sql." LIMIT $offsetStr$nrows",$inputarr);
+		else
+			$rs =& $this->Execute($sql." LIMIT $offsetStr$nrows",$inputarr);
+		return $rs;
 	}
 	
 	
@@ -383,6 +395,8 @@ class ADODB_mysql extends ADOConnection {
 	/*	Returns: the last error message from previous database operation	*/	
 	function ErrorMsg() 
 	{
+	
+		if ($this->_logsql) return $this->_errorMsg;
 		if (empty($this->_connectionID)) $this->_errorMsg = @mysql_error();
 		else $this->_errorMsg = @mysql_error($this->_connectionID);
 		return $this->_errorMsg;
@@ -391,6 +405,7 @@ class ADODB_mysql extends ADOConnection {
 	/*	Returns: the last error number from previous database operation	*/	
 	function ErrorNo() 
 	{
+		if ($this->_logsql) return $this->_errorCode;
 		if (empty($this->_connectionID))  return @mysql_errno();
 		else return @mysql_errno($this->_connectionID);
 	}
@@ -480,7 +495,8 @@ class ADORecordSet_mysql extends ADORecordSet{
 	function &GetRowAssoc($upper=true)
 	{
 		if ($this->fetchMode == MYSQL_ASSOC && !$upper) return $this->fields;
-		return ADORecordSet::GetRowAssoc($upper);
+		$row =& ADORecordSet::GetRowAssoc($upper);
+		return $row;
 	}
 	
 	/* Use associative array to get fields array */

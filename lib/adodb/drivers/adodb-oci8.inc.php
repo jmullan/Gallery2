@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V3.92 22 Sep 2003 (c) 2000-2003 John Lim. All rights reserved.
+  version V4.03 6 Nov 2003 (c) 2000-2003 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -303,7 +303,7 @@ NATSOFT.DOMAIN =
 	function ErrorMsg() 
 	{
 		if ($this->_errorMsg !== false) return $this->_errorMsg;
-		
+
 		if (is_resource($this->_stmt)) $arr = @OCIerror($this->_stmt);
 		if (empty($arr)) {
 			$arr = @OCIerror($this->_connectionID);
@@ -438,7 +438,9 @@ NATSOFT.DOMAIN =
 			}
 			// note that $nrows = 0 still has to work ==> no rows returned
 
-			return ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			return $rs;
+			
 		} else {
 			 // Algorithm by Tomas V V Cox, from PEAR DB oci8.php
 			
@@ -447,8 +449,10 @@ NATSOFT.DOMAIN =
 			 if (!$stmt = OCIParse($this->_connectionID, $q_fields)) {
 				 return false;
 			 }
+			 
 			 if (is_array($inputarr)) {
-				 foreach($inputarr as $k => $v) {
+				 reset($inputarr);
+				 while (list($k,$v) = each($inputarr)) {
 					if (is_array($v)) {
 						if (sizeof($v) == 2) // suggested by g.giunta@libero.
 							OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -496,8 +500,9 @@ NATSOFT.DOMAIN =
 				$inputarr['adodb_nrows'] = $nrows;
 				$inputarr['adodb_offset'] = $offset;
 				
-			if ($secs2cache>0) return $this->CacheExecute($secs2cache, $sql,$inputarr);
-			else return $this->Execute($sql,$inputarr);
+			if ($secs2cache>0) $rs =& $this->CacheExecute($secs2cache, $sql,$inputarr);
+			else $rs &= $this->Execute($sql,$inputarr);
+			return $rs;
 		}
 	
 	}
@@ -745,23 +750,26 @@ NATSOFT.DOMAIN =
 				} else {
 				// one statement to bind them all
 					$bindarr = array();
-					foreach($inputarr as $k => $v) {
+					reset($inputarr);
+					while(list($k,$v) = each($inputarr)) {
 						$bindarr[$k] = $v;
 						OCIBindByName($stmt,":$k",$bindarr[$k],4000);
 					}
 					$this->_bind[$bindpos] = &$bindarr;
 				}
 			}
-		} else
+		} else {
 			$stmt=OCIParse($this->_connectionID,$sql);
-	
+		}
+			
 		$this->_stmt = $stmt;
 		if (!$stmt) return false;
 	
 		if (defined('ADODB_PREFETCH_ROWS')) @OCISetPrefetch($stmt,ADODB_PREFETCH_ROWS);
 			
 		if (is_array($inputarr)) {
-			foreach($inputarr as $k => $v) {
+			reset($inputarr);
+			while(list($k,$v) = each($inputarr)) {
 				if (is_array($v)) {
 					if (sizeof($v) == 2) // suggested by g.giunta@libero.
 						OCIBindByName($stmt,":$k",$inputarr[$k][0],$v[1]);
@@ -784,23 +792,21 @@ NATSOFT.DOMAIN =
         $this->_errorMsg = false;
 		$this->_errorCode = false;
 		if (OCIExecute($stmt,$this->_commit)) {
-			
+		
             switch (@OCIStatementType($stmt)) {
-                case "SELECT" :
+                case "SELECT":
 					return $stmt;
 					
-                case "BEGIN" :
-                    if (isset($sql[4])) {
-					// jlim
+                case "BEGIN":
+                    if (is_array($sql) && isset($sql[4])) {
 						$cursor = $sql[4];
-					// jlim
 						if (is_resource($cursor)) {
 							OCIExecute($cursor);						
 	                        return $cursor;
 						}
 						return $stmt;
                     } else {
-						if (!is_array($sql) && is_resource($stmt)) {
+						if (is_resource($stmt)) {
 								OCIFreeStatement($stmt);
 								return true;
 						}
@@ -923,6 +929,7 @@ SELECT /*+ RULE */ distinct b.column_name
 	{	
 	$nofixquotes=false;
 	
+		if (is_array($s)) adodb_backtrace();
 		if ($this->noNullStrings && strlen($s)==0)$s = ' ';
 		if (!$magic_quotes) {	
 			if ($this->replaceQuote[0] == '\\'){
@@ -1061,7 +1068,10 @@ class ADORecordset_oci8 extends ADORecordSet {
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 
 	{
-		if ($offset <= 0) return $this->GetArray($nrows);
+		if ($offset <= 0) {
+			$arr =& $this->GetArray($nrows);
+			return $arr;
+		}
 		for ($i=1; $i < $offset; $i++) 
 			if (!@OCIFetch($this->_queryID)) return array();
 			

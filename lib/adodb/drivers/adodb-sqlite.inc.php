@@ -1,6 +1,6 @@
 <?php
 /*
-V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.03 6 Nov 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -85,6 +85,7 @@ class ADODB_sqlite extends ADOConnection {
 	
 	function ErrorMsg() 
  	{
+		if ($this->_logsql) return $this->_errorMsg;
 		return ($this->_errorNo) ? sqlite_error_string($this->_errorNo) : '';
 	}
  
@@ -155,10 +156,12 @@ class ADODB_sqlite extends ADOConnection {
 	{
 		$offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
 		$limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : ($offset >= 0 ? ' LIMIT 999999999' : '');
-	  	return $secs2cache ?
-	   		$this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr)
-	  	:
-	   		$this->Execute($sql."$limitStr$offsetStr",$inputarr);
+	  	if ($secs2cache)
+	   		$rs =& $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+	  	else
+	   		$rs =& $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+			
+		return $rs;
 	}
 	
 	/*

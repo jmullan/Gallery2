@@ -2,7 +2,7 @@
 /*
  * Set tabs to 4 for best viewing.
  * 
- * Latest version is available at http://php.weblogs.com
+ * Latest version is available at http://php.weblogs.com/adodb
  * 
  * This is the main include file for ADOdb.
  * Database specific drivers are stored in the adodb/drivers/adodb-*.inc.php
@@ -14,7 +14,7 @@
 /**
 	\mainpage 	
 	
-	 @version V3.92 22 Sep 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
+	 @version V4.03 6 Nov 2003 (c) 2000-2003 John Lim (jlim\@natsoft.com.my). All rights reserved.
 
 	Released under both BSD license and Lesser GPL library license. You can choose which license
 	you prefer.
@@ -148,7 +148,7 @@
 		/**
 		 * ADODB version as a string.
 		 */
-		$ADODB_vers = 'V3.92 22 Sep 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
+		$ADODB_vers = 'V4.03 6 Nov 2003 (c) 2000-2003 John Lim (jlim#natsoft.com.my). All rights reserved. Released BSD & LGPL.';
 	
 		/**
 		 * Determines whether recordset->RecordCount() is used. 
@@ -191,7 +191,6 @@
 	function ADODB_TransMonitor($dbms, $fn, $errno, $errmsg, $p1, $p2, &$thisConnection)
 	{
 		//print "Errorno ($fn errno=$errno m=$errmsg) ";
-		
 		$thisConnection->_transOK = false;
 		if ($thisConnection->_oldRaiseFn) {
 			$fn = $thisConnection->_oldRaiseFn;
@@ -229,7 +228,8 @@
 	var $metaTablesSQL = '';
 	var $uniqueOrderBy = false; /// All order by columns have to be unique
 	var $emptyDate = '&nbsp;';
-	var $rsPrefix = "ADORecordSet_";
+	var $emptyTimeStamp = '&nbsp;';
+	var $lastInsID = false;
 	//--
 	var $hasInsertID = false; 		/// supports autoincrement ID?
 	var $hasAffectedRows = false; 	/// supports affected rows for update/delete?
@@ -285,7 +285,7 @@
 	var $_bindInputArray = false; /// set to true if ADOConnection.Execute() permits binding of array parameters.
 	var $_evalAll = false;
 	var $_affected = false;
-	
+	var $_logsql = false;
 	
 
 	
@@ -717,11 +717,11 @@
 			
 			if (!is_array($sql) && !$this->_bindInputArray) {
 				$sqlarr = explode('?',$sql);
-				
 				if (!$array_2d) $inputarr = array($inputarr);
 				while(list(,$arr) = each($inputarr)) {
 					$sql = ''; $i = 0;
-					foreach($arr as $v) {
+					reset($arr);
+					while(list(,$v) = each($arr)) {
 						$sql .= $sqlarr[$i];
 						// from Ron Baldwin <ron.baldwin@sourceprose.com>
 						// Only quote string types	
@@ -736,13 +736,11 @@
 					$sql .= $sqlarr[$i];
 					if ($i+1 != sizeof($sqlarr))	
 						ADOConnection::outp( "Input Array does not match ?: ".htmlspecialchars($sql));
-					
+		
 					$ret =& $this->_Execute($sql,false);
 					if (!$ret) return $ret;
-				}
-				
+				}	
 			} else {
-				
 				if ($array_2d) {
 					$stmt = $this->Prepare($sql);
 					while(list(,$arr) = each($inputarr)) {
@@ -755,7 +753,7 @@
 		} else {
 			$ret =& $this->_Execute($sql,false);
 		}
-		
+
 		return $ret;
 	}
 	
@@ -764,10 +762,10 @@
 		// debug version of query
 		if ($this->debug) {
 		global $HTTP_SERVER_VARS;
-		
 			$ss = '';
 			if ($inputarr) {
-				foreach ($inputarr as $kk => $vv)  {
+				reset($inputarr);
+				while (list($kk,$vv) = each($inputarr))  {
 					if (is_string($vv) && strlen($vv)>64) $vv = substr($vv,0,64).'...';
 					$ss .= "($kk=>'$vv') ";
 				}
@@ -817,7 +815,6 @@
 		/************************
 			OK, query executed
 		*************************/
-		
 		// error handling if query fails
 		if ($this->_queryID === false) {
 			if ($this->debug == 99) adodb_backtrace(true,5);	
@@ -859,7 +856,7 @@
 		if (empty($this->_genSeqSQL)) return false;
 		return $this->Execute(sprintf($this->_genSeqSQL,$seqname,$startID));
 	}
-	
+
 	function DropSequence($seqname)
 	{
 		if (empty($this->_dropSeqSQL)) return false;
@@ -874,7 +871,6 @@
 	 * @param startID		if sequence does not exist, start at this ID
 	 * @return		0 if not supported, otherwise a sequence id
 	 */
-
 	function GenID($seqname='adodbseq',$startID=1)
 	{
 		if (!$this->hasGenID) {
@@ -898,30 +894,33 @@
 	/**
 	 * @return  the last inserted ID. Not all databases support this.
 	 */ 
-		function Insert_ID()
-		{
-				if ($this->hasInsertID) return $this->_insertid();
-				if ($this->debug) ADOConnection::outp( '<p>Insert_ID error</p>');
-				return false;
+	function Insert_ID()
+	{
+		if ($this->_logsql && $this->lastInsID) return $this->lastInsID;
+		if ($this->hasInsertID) return $this->_insertid();
+		if ($this->debug) {
+			ADOConnection::outp( '<p>Insert_ID error</p>');
+			adodb_backtrace();
 		}
-	
-	
+		return false;
+	}
+
+
 	/**
 	 * Portable Insert ID. Pablo Roca <pabloroca@mvps.org>
 	 *
 	 * @return  the last inserted ID. All databases support this. But aware possible
 	 * problems in multiuser environments. Heavy test this before deploying.
 	 */ 
-		function PO_Insert_ID($table="", $id="") 
-		{
-		   if ($this->hasInsertID){
-			   return $this->Insert_ID();
-		   } else {
-			   return $this->GetOne("SELECT MAX($id) FROM $table");
-		   }
-		}	
-	
-		
+	function PO_Insert_ID($table="", $id="") 
+	{
+	   if ($this->hasInsertID){
+		   return $this->Insert_ID();
+	   } else {
+		   return $this->GetOne("SELECT MAX($id) FROM $table");
+	   }
+	}
+
 	 /**
 	 * @return  # rows affected by UPDATE/DELETE
 	 */ 
@@ -929,9 +928,8 @@
 	 {
 		  if ($this->hasAffectedRows) {
 		  		if ($this->fnExecute === 'adodb_log_sql') {
-				global $ADODB_LOGSQL;
 				
-					if ($ADODB_LOGSQL && $this->_affected !== false) return $this->_affected;
+					if ($this->_logsql && $this->_affected !== false) return $this->_affected;
 				}
 				$val = $this->_affectedrows();
 				return ($val < 0) ? false : $val;
@@ -1083,7 +1081,7 @@
 		}
 		$ADODB_COUNTRECS = $savec;
 		if ($rs && !$rs->EOF) {
-			return $this->_rs2rs($rs,$nrows,$offset);
+			$rs =& $this->_rs2rs($rs,$nrows,$offset);
 		}
 		//print_r($rs);
 		return $rs;
@@ -1137,7 +1135,8 @@
 	*/
 	function &GetAll($sql, $inputarr=false)
 	{
-		return $this->GetArray($sql,$inputarr);
+		$arr =& $this->GetArray($sql,$inputarr);
+		return $arr;
 	}
 	
 	function &GetAssoc($sql, $inputarr=false,$force_array = false, $first2cols = false)
@@ -1266,7 +1265,6 @@
 		$ADODB_COUNTRECS = false;
 		$rs =& $this->Execute($sql,$inputarr);
 		$ADODB_COUNTRECS = $savec;
-		
 		if (!$rs) 
 			if (defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 			else return false;
@@ -1451,11 +1449,12 @@
 			if ($sql === false) $sql = -1;
 			if ($offset == -1) $offset = false;
 									  // sql,	nrows, offset,inputarr
-			return $this->SelectLimit($secs2cache,$sql,$nrows,$offset,$inputarr,$this->cacheSecs);
+			$rs =& $this->SelectLimit($secs2cache,$sql,$nrows,$offset,$inputarr,$this->cacheSecs);
 		} else {
 			if ($sql === false) ADOConnection::outp( "Warning: \$sql missing from CacheSelectLimit()");
-			return $this->SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
+			$rs =& $this->SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 		}
+		return $rs;
 	}
 	
 	/**
@@ -1700,16 +1699,14 @@
 	
 	function LogSQL($enable=true)
 	{
-	global $ADODB_LOGSQL;
 		include_once(ADODB_DIR.'/adodb-perf.inc.php');
 		
 		if ($enable) $this->fnExecute = 'adodb_log_sql';
 		else $this->fnExecute = false;
 		
-		$old = $ADODB_LOGSQL;	
-		$ADODB_LOGSQL = $enable;
+		$old = $this->_logsql;	
+		$this->_logsql = $enable;
 		if ($enable && !$old) $this->_affected = false;
-		
 		return $old;
 	}
 	
@@ -2081,7 +2078,7 @@
 	function UnixTimeStamp($v)
 	{
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]*(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 			
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
@@ -2113,6 +2110,23 @@
 		
 		return adodb_date($fmt,$tt);
 	
+	}
+	
+		/**
+	 *
+	 * @param v  	is the character timestamp in YYYY-MM-DD hh:mm:ss format
+	 * @param fmt 	is the format to apply to it, using date()
+	 *
+	 * @return a timestamp formated as user desires
+	 */
+	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
+	{
+		if (is_numeric($v)) return adodb_date($fmt,$v);
+		$tt = $this->UnixTimeStamp($v);
+		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
+		if (($tt === false || $tt == -1) && $v != false) return $v;
+		if ($tt == 0) return $this->emptyTimeStamp;
+		return adodb_date($fmt,$tt);
 	}
 	
 	
@@ -2198,7 +2212,8 @@
 			break;
 		default: $secs2cache = 0; break;
 		}*/
-		return $this->PageExecute($sql,$nrows,$page,$inputarr,$secs2cache);
+		$rs =& $this->PageExecute($sql,$nrows,$page,$inputarr,$secs2cache);
+		return $rs;
 	}
 
 } // end class ADOConnection
@@ -2246,15 +2261,16 @@
 	//==============================================================================================	
 	// CLASS ADORecordSet
 	//==============================================================================================	
-	
 
+	if (PHP_VERSION < 5) include_once(ADODB_DIR.'/adodb-php4.inc.php');
+	else include_once(ADODB_DIR.'/adodb-iterator.inc.php');
    /**
 	 * RecordSet class that represents the dataset returned by the database.
 	 * To keep memory overhead low, this class holds only the current row in memory.
 	 * No prefetching of data is done, so the RecordCount() can return -1 ( which
 	 * means recordcount not known).
 	 */
-	class ADORecordSet {
+	class ADORecordSet extends ADODB_BASE_RS {
 	/*
 	 * public variables	
 	 */
@@ -2395,7 +2411,8 @@
 	
 	function &GetAll($nRows = -1)
 	{
-		return GetArray($nRows);
+		$arr =& $this->GetArray($nRows);
+		return $arr;
 	}
 	
 	/*
@@ -2419,7 +2436,8 @@
 	function &GetArrayLimit($nrows,$offset=-1) 
 	{	
 		if ($offset <= 0) {
-			return $this->GetArray($nrows);
+			$arr =& $this->GetArray($nrows);
+			return $arr;
 		} 
 		
 		$this->Move($offset);
@@ -2444,7 +2462,8 @@
 	 */
 	function &GetRows($nRows = -1) 
 	{
-		return $this->GetArray($nRows);
+		$arr =& $this->GetArray($nRows);
+		return $arr;
 	}
 	
 	/**
@@ -2514,10 +2533,11 @@
 	 */
 	function UserTimeStamp($v,$fmt='Y-m-d H:i:s')
 	{
+		if (is_numeric($v)) return adodb_date($fmt,$v);
 		$tt = $this->UnixTimeStamp($v);
 		// $tt == -1 if pre TIMESTAMP_FIRST_YEAR
 		if (($tt === false || $tt == -1) && $v != false) return $v;
-		if ($tt == 0) return $this->emptyTimeStamp;
+		if ($tt === 0) return $this->emptyTimeStamp;
 		return adodb_date($fmt,$tt);
 	}
 	
@@ -2567,7 +2587,7 @@
 	{
 		
 		if (!preg_match( 
-			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]+(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
+			"|^([0-9]{4})[-/\.]?([0-9]{1,2})[-/\.]?([0-9]{1,2})[ ,-]*(([0-9]{1,2}):?([0-9]{1,2}):?([0-9\.]{1,4}))?|", 
 			($v), $rr)) return false;
 		if ($rr[1] <= TIMESTAMP_FIRST_YEAR && $rr[2]<= 1) return 0;
 	
@@ -2771,13 +2791,15 @@
    */
 	function &GetRowAssoc($upper=1)
 	{
-	 
+		$record = array();
+	 //	if (!$this->fields) return $record;
+		
 	   	if (!$this->bind) {
 			$this->GetAssocKeys($upper);
 		}
 		
-		$record = array();
-		foreach($this->bind as $k => $v) {
+		reset($this->bind);
+		while(list($k,$v) = each($this->bind)) {
 			$record[$k] = $this->fields[$v];
 		}
 
@@ -2900,7 +2922,8 @@
 	*/
 	function &FetchObj()
 	{
-		return $this->FetchObject(false);
+		$o =& $this->FetchObject(false);
+		return $o;
 	}
 	
 	/**
@@ -3247,7 +3270,8 @@
 			if ($nRows == -1 && $this->_currentRow <= 0 && !$this->_skiprow1) {
 				return $this->_array;
 			} else {
-				return ADORecordSet::GetArray($nRows);
+				$arr =& ADORecordSet::GetArray($nRows);
+				return $arr;
 			}
 		}
 		
@@ -3443,7 +3467,7 @@
 			else 
 			switch($drivername) {
 			case 'oracle': $drivername = 'oci8';break;
-			case 'sybase': $drivername = 'mssql';break;
+			//case 'sybase': $drivername = 'mssql';break;
 			case 'access': 
 						if ($perf) $drivername = '';
 						break;
@@ -3547,13 +3571,21 @@
 		return $ok;
 	}
 	
-
+	/*
+		Perform a print_r, with pre tags for better formatting.
+	*/
 	function adodb_pr($var)
 	{
 		echo " <pre>\n";print_r($var);echo "</pre>\n";
 	}
 	
-	function adodb_backtrace($print=true,$levels=9999)
+	/*
+		Perform a stack-crawl and pretty print it.
+		
+		@param printOrArr  Pass in a boolean to indicate print, or an $exception->trace array (assumes that print is true then).
+		@param levels Number of levels to display
+	*/
+	function adodb_backtrace($printOrArr=true,$levels=9999)
 	{
 		$s = '';
 		if (PHPVERSION() >= 4.3) {
@@ -3561,7 +3593,9 @@
 			$MAXSTRLEN = 64;
 		
 			$s = '<pre align=left>';
-			$traceArr = debug_backtrace();
+			
+			if (is_array($printOrArr)) $traceArr = $printOrArr;
+			else $traceArr = debug_backtrace();
 			array_shift($traceArr);
 			$tabs = sizeof($traceArr)-1;
 			
@@ -3593,7 +3627,7 @@
 				$s .= "\n";
 			}	
 			$s .= '</pre>';
-			if ($print) print $s;
+			if ($printOrArr) print $s;
 		}
 		return $s;
 	}
