@@ -71,7 +71,8 @@
       {/if}
 
       {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
-      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}">
+      <td class="{if $child.canContainChildren}giAlbumCell gcBackground1{else}giItemCell{/if}"
+	  width="1*">
 	{if $child.canContainChildren}
 	  {assign var=frameType value="albumFrame"}
 	{else}
