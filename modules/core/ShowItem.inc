@@ -20,11 +20,15 @@
 
 class ShowItemView /* extends GalleryView */ {
 
-    function render() {
+    function isImmediate() {
+	return false;
+    }
+
+    function renderBuffered() {
 	global $gallery;
 
 	/* If we don't have an item id, default to the root */
-	$itemId = GalleryUtilities::getRequestVariables('gItemId');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
 	    $itemId = $gallery->getConfig('core.id.rootAlbum');
 	}
@@ -32,13 +36,13 @@ class ShowItemView /* extends GalleryView */ {
 	/* Load the item */
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Update the view count */
 	$ret = $item->incrementViewCount();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Find the right layout for this item  */
@@ -47,116 +51,45 @@ class ShowItemView /* extends GalleryView */ {
 	    $layout = $gallery->getConfig('core.default.layout');
 	}
 
-	/* Load data for the layout */
-	// XXX: get this from the DB
-	$layoutInfo = array('rows' => 4, 'columns' => 4);
-
 	/* Load the correct layout */
 	require_once($gallery->getConfig('core.directory.layouts') .
 		     $layout . '/layout.inc');
 	$layoutClassName = $layout . 'Layout';
 	if (!class_exists($layoutClassName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
 	}
-	$layout = new $layoutClassName($layoutInfo);
+	$layout = new $layoutClassName();
 
-	/* Load the requested range of children for this item */
-	$children = array();
-	if ($item->canContainChildren()) {
-
-	    /* Learn what children the layout wants */
-	    list ($start, $count) = $layout->getChildItemRange();
-
-	    /* Get the child id => child types */
-	    list ($ret, $childIds) =
-		$item->getChildren($gallery->getActiveUserId(), $start, $count);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* We only want the ids */
-	    $childIds = array_keys($childIds);
-
-	    /* Load the children */
-	    list ($ret, $childEntities) = $gallery->loadEntitiesById($childIds);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Create a table of child id -> child data */
-	    foreach ($childEntities as $child) {
-		$childTable[$child->getId()] = $child->getMemberData();
-	    }
-
-	    /* Look up the ids of all their derivative images */
-	    $markers = GalleryUtilities::makeMarkers(sizeof($childIds));
-	    $data = array_merge(array('GalleryDerivativeImage'), $childIds);
-	    list ($ret, $searchResults) = 
-		$gallery->search(array('select' => ('[GalleryDerivativeImage::id], ' .
-						    '[GalleryChildEntity::parentId]'),
-				       'where' => ('[GalleryEntity::entityType]=? AND ' .
-						   '[GalleryChildEntity::parentId] in (' .
-						   $markers . ')')),
-				 $data);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $imageTable = array();
-	    if ($searchResults->resultCount() > 0) {
-		$imageIds = array();
-		while ($result = $searchResults->nextResult()) {
-		    $imageIds[] = $result[0];
-		}
-		
-		/* Load all the derivative images */
-		list ($ret, $imageEntities) = $gallery->loadEntitiesById($imageIds);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		/* Create a table of child id -> image data */
-		foreach ($imageEntities as $image) {
-		    $imageTable[$image->getParentId()][] = $image->getMemberData();
-		}
-	    }
-
-	    /* put it all together */
-	    $i = 0;
-	    foreach ($childIds as $id) {
-		$children[$i] = $childTable[$id];
-		if (isset($imageTable[$id])) {
-		    $children[$i]['images'] = $imageTable[$id];
-		}
-		$i++;
-	    }
+	/* Render and retrieve the body */
+	list ($ret, $body) = $layout->render($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Assemble the data to pass to the layout */
-	$layoutInputs = array();
-	$layoutInputs['item'] = $item->getMemberData();
-	$layoutInputs['children'] = $children;
-
-	/* Render and retrieve the results */
-	if ($item->canContainChildren()) {
-	    $master['layout'] = $layout->renderContainer($item, $children);
-	} else {
-	    $master['layout'] = $layout->renderSingle($item);
+	/* Figure out what style sheet to use and calculate its relative URL */
+	$style = $item->getStyle();
+	if (empty($style)) {
+	    $style = $gallery->getConfig('core.default.style');
+	}
+	$style = $gallery->getConfig('core.directory.styles') . $style . '.css';
+	$dirbase = $gallery->getConfig('core.directory.base');
+	$style = str_replace($dirbase, '', $style);
+	$urlbase = $gallery->getConfig('core.url.base');
+	if (!empty($urlbase)) {
+	    $style = $urlbase . '/' . $style;
 	}
 
-	if ($gallery->getDebug() == 'buffered') {
-	    $master['debug'] = $gallery->getDebugBuffer();
-	}
-
-	/* Display the global output */
+	/* Render the HTML head */
 	$smarty = $gallery->getSmarty();
+	$smarty->assign('item', $item->getMemberData());
+	$smarty->assign('style', $style);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$smarty->assign('master', $master);
-	
-	$smarty->display('global.tpl');
+	$head = $smarty->fetch('head.tpl');
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(),
+		     array('head' => $head,
+			   'body' => $body));
     }
 }
 ?>

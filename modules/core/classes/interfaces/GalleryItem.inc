@@ -86,6 +86,11 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['style'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         $meta['members']['title'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
@@ -122,6 +127,8 @@ class GalleryItem extends GalleryItem_core {
         $data['orderWeight'] = $this->_orderWeight;
     
         $data['ownerId'] = $this->_ownerId;
+    
+        $data['style'] = $this->_style;
     
         $data['title'] = $this->_title;
     
@@ -318,6 +325,29 @@ class GalleryItem extends GalleryItem_core {
       
         $this->_ownerId = $value;
         $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of style
+     *
+     * @return STRING the value
+     */
+    function getstyle() {
+        if (!isset($this->_style)) {
+            return null;
+        }
+        return $this->_style;
+    }
+
+    /**
+     * Set the value of style
+     *
+     * @param STRING the value
+     */
+    function setstyle($value) {
+    
+        $this->_style = $value;
+        $this->setModifiedFlag('style', MEMBER_MODIFIED);
     }
   
     /**

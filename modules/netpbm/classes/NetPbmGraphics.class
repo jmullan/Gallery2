@@ -74,12 +74,13 @@ class NetPbmGraphics extends GalleryGraphics {
      * 
      * @access public
      * @param string a file name
+     * @param string an optional file extension hint
      * @return array object GalleryStatus a status code,
      *               int the image width, int the image height
      */
-    function getImageDimensions($filename) {
+    function getImageDimensions($filename, $fileExtension=false) {
 
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename);
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename, $fileExtension);
 	if ($ret->isError()) {
 	    return array($ret, null, null);
 	}
@@ -319,9 +320,12 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertToPnmCmd($filename) {
+    function _convertToPnmCmd($filename, $fileExtension=false) {
 
-	$fileExtension = GalleryUtilities::getFileExtension($filename);
+	if (empty($fileExtension)) {
+	    $fileExtension = GalleryUtilities::getFileExtension($filename);
+	}
+	
 	switch($fileExtension) {
 	case 'png':
 	    $cmd = $this->_pnmCmd('pngtopnm');

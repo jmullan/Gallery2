@@ -254,6 +254,52 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $sourcePath = $destPath;
 	}
 
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Get the size of the file */
+	if ($platform->file_exists($destPath)) {
+	    $size = $platform->filesize($destPath);
+	} else {
+	    $size = -1;
+	}
+	
+	/*
+	 * If the actual size differs from the database, update the
+	 * item.
+	 */
+	if ($size != $this->getDerivativeSize()) {
+	    $this->setDerivativeSize($size);
+	}
+
+	/*
+	 * If we don't have any dimensions, find them out here.
+	 */
+	if ($this->getWidth() == 0 || $this->getHeight() == 0) {
+	    list ($ret, $width, $height) =
+		$graphics->getImageDimensions($destPath, $this->getDerivativeFileExtension());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $this->setWidth($width);
+	    $this->setHeight($height);
+	}
+
+	/*
+	 * Save our changes.  If we fail to update the database then don't
+	 * worry about it.
+	 */
+	if ($this->isModified()) {
+	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->getId(), 1);
+	    if ($ret->isSuccess()) {
+		$ret = $this->save();
+		$gallery->releaseLocks($lockId);
+	    }
+	}
+
 	return GalleryStatus::success();
     }
 

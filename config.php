@@ -22,7 +22,7 @@
 $gallery->setDebug('buffered');
 
 /*
- * Set our configuration.  These values will be set by the config wizard,
+ * Set our configuration.  These values will all be stored in the database
  * eventually.
  */
 
@@ -42,7 +42,8 @@ $gallery->setConfig('core.permissions.file', 0777);
 $gallery->setConfig('core.expectedStatus', 0);
 $gallery->setConfig('core.default.orderBy', 'id');
 $gallery->setConfig('core.default.orderDirection', 1);
-$gallery->setConfig('core.default.layout', 'basic');
+$gallery->setConfig('core.default.layout', 'classic');
+$gallery->setConfig('core.default.style', 'classic');
 
 /* Configure Smarty */
 $gallery->setConfig('smarty.directory.base', $galleryBase . 'include/smarty/');

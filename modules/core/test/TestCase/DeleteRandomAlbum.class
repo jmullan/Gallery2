@@ -35,7 +35,7 @@ class DeleteRandomAlbumTestCase extends TestCase {
 	}
 
 	/* Get the children */ 
-	list ($ret, $childIds) = $root->getChildren($userId);
+	list ($ret, $childIds) = $root->getChildrenWithTypes($userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

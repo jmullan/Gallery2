@@ -20,11 +20,15 @@
 
 class DownloadItemView /* extends GalleryView */ {
 
-    function render() {
+    function isImmediate() {
+	return true;
+    }
+
+    function renderImmediate() {
 	global $gallery;
 
 	/* Figure out which item we're talking about */
-	$itemId = GalleryUtilities::getRequestVariables('gItemId');
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
@@ -32,6 +36,12 @@ class DownloadItemView /* extends GalleryView */ {
 
 	/* Load the item */
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the path to the file */
+	list ($ret, $path) = $item->getPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -50,31 +60,17 @@ class DownloadItemView /* extends GalleryView */ {
 		}
 	    }
 
+	    $size = $item->getDerivativeSize();
 	    $fileExtension = $item->getDerivativeFileExtension();
 	} else {
 	    $fileExtension = $item->getFileExtension();
+	    list ($ret, $size) = $item->getSize();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
-	/* Get the path to the file */
-	list ($ret, $path) = $item->getPath();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Get the size of the file */
-	list ($ret, $size) = $item->getSize();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/*
-	 * Update the database's info, if necessary 
-	 */
-	if ($size != $
-	if (is_subclass_of($item, 'GalleryDerivativeImage')) {
-	}
-
-	if ($size != -1) {
+	if ($size > 0) {
 	    header('Content-length: ' . $size);
 	}
 	$mimeType = GalleryUtilities::convertTagToMime($fileExtension);

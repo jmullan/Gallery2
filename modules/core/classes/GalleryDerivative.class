@@ -174,36 +174,6 @@ class GalleryDerivative_core extends GalleryChildEntity {
     }
 
     /**
-     * Get the size of the derived object.  If it's a cacheable
-     * object and the cache is cleared, this will return the size
-     * that it *will* be once the cache is recreated.
-     * 
-     * @access public
-     * @return array object GalleryStatus a status code
-     *               int the size of the object, -1 if unknown
-     */
-    function getSize() {
-	global $gallery;
-	list($ret, $platform) = $gallery->getPlatform();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list($ret, $path) = $this->getPath();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
-	}
-
-	if ($platform->file_exists($path)) {
-	    $size = $platform->filesize($path);
-	} else {
-	    $size = -1;
-	}
-
-	return array(GalleryStatus::success(), $size);
-    }
-
-    /**
      * Is the cache for this item still current?
      *
      * If the cache is expired, it can be rebuilt with rebuildCache()

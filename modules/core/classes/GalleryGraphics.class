@@ -209,10 +209,11 @@ class GalleryGraphics {
      * 
      * @access public
      * @param string a file name
+     * @param string an optional file extension hint
      * @return array object GalleryStatus a status code,
      *               int the image width, int the image height
      */
-    function getImageDimensions($filename) {
+    function getImageDimensions($filename, $fileExtension=false) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null, null);

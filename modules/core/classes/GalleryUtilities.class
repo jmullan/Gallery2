@@ -19,6 +19,13 @@
  */
 
 /**
+ * The prefix for all HTTP GET/POST arguments
+ *
+ * @constant GALLERY_ARGUMENT_PREFIX
+ */
+define('GALLERY_ARGUMENT_PREFIX', 'g2_');
+
+/**
  * A collection of useful utilities that have no obvious home
  *
  * All of these utilities should be accessed in a static sense,
@@ -105,6 +112,9 @@ class GalleryUtilities {
 
 	$values = array();
 	foreach (func_get_args() as $argName) {
+	    /* Prepend our prefix here */
+	    $argName = GALLERY_ARGUMENT_PREFIX . $argName;
+	    
 	    if (!empty($GLOBALS['HTTP_GET_VARS'][$argName])) {
 		$values[] = $GLOBALS['HTTP_GET_VARS'][$argName];
 	    } else if (!empty($GLOBALS['HTTP_POST_VARS'][$argName])) {

@@ -62,6 +62,14 @@
     NOT NULL
   
     ,
+  COLUMN_PREFIXstyle
+      varchar(
+      
+          32
+        
+      )
+    
+    ,
   COLUMN_PREFIXtitle
       varchar(
       

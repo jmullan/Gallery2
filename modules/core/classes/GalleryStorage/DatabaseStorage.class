@@ -1577,7 +1577,9 @@ class DatabaseStorage extends GalleryStorage {
 		    $lockIdCol . ' ASC';
 
 	    $GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
+	    $this->_traceStart();
 	    $recordSet = $this->_db->SelectLimit($query, 1);
+	    $this->_traceStop();
 	    if (!$recordSet) {
 		$this->_releaseLockById($lockId);
 		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,

@@ -73,6 +73,7 @@ require_once($gallerybase . 'include/classes/GalleryViewCountMap.class');
 $gallery =& new Gallery();
 $gallery->setConfig('core.directory.base', $gallerybase);
 $gallery->setConfig('core.directory.layouts', $gallerybase . 'layouts/');
+$gallery->setConfig('core.directory.styles', $gallerybase . 'styles/');
 $gallery->setConfig('core.directory.modules', $gallerybase . 'modules/');
 
 /* Configure the Platform */

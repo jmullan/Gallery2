@@ -96,7 +96,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     var $_isHtmlAllowed;
 	     
     /**
-     * The layout to use for this album
+     * The layout to use for this item
      *
      * @g2 <member>
      * @g2   <member-name>layout</member-name>
@@ -177,6 +177,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_ownerId;
+
+    /**
+     * The style to use for this item
+     *
+     * @g2 <member>
+     * @g2   <member-name>style</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var string $_style
+     * @access private
+     */
+    var $_style;
 
     /**
      * The (short) title of this item
@@ -421,7 +435,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return array object GalleryStatus a status code
      *               array integer ids
      */
-    function getChildren($userId, $offset=null, $count=null) {
+    function getChildrenWithTypes($userId, $offset=null, $count=null) {
 	global $gallery;
 
 	$where = '[GalleryChildEntity::parentId] = ?';
@@ -475,6 +489,72 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	return array(GalleryStatus::success(), $ids);
     }
     
+    /**
+     * Return the ids of the children of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
+     *
+     * @param int the user id of the user making the request
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function getChildren($userId, $offset=null, $count=null) {
+	global $gallery;
+
+	$where = '[GalleryChildEntity::parentId] = ?';
+	$data[] = $this->getId();
+
+	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
+
+	/* Figure out what groups this user is in. */
+	list ($ret, $groupIds) =
+	    GalleryUserGroupMap::getGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$groupIdString = join(', ', $groupIds);
+	    
+	$where .= ' AND';
+	$where .= ' ([GalleryItem::ownerId] = ? OR';
+	$data[] = $userId;
+	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
+	    $groupIdString . ')';
+	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
+	$data[] = $userId;
+	$where .= ' AND';
+	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
+	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
+
+	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
+	if ($this->getOrderDirection() == ORDER_ASCENDING) {
+	    $orderBy .= ' ASC';
+	} else {
+	    $orderBy .= ' DESC';
+	}
+
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => 'DISTINCT([GalleryChildEntity::id])',
+				   'where' => $where,
+				   'order-by' => $orderBy,
+				   'limit' => array('count' => $count,
+						    'offset' => $offset)),
+			     $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[] = $result[0];
+	}
+	
+	return array(GalleryStatus::success(), $ids);
+    }
+
     /**
      * Delete this GalleryEntity
      *

@@ -136,14 +136,6 @@ class Gallery {
      */
     var $_smarty;
     
-    /**
-     * Storage for arbitrary data used by the layout engine
-     *
-     * @var array $_config
-     * @access private
-     */
-    var $_layoutData;
-
     /*
      * ****************************************
      *                 Methods
@@ -360,29 +352,6 @@ class Gallery {
     function getConfig($key) {
 	assert('!empty($key)');
 	return $this->_config[$key];
-    }
-
-    /**
-     * Store a value in the Gallery layout data map
-     *
-     * @param string the key name
-     * @param mixed the value
-     * @access public
-     */
-    function setLayoutData($key, $value) {
-	assert('!empty($key)');
-	$this->_layoutData[$key] = $value;
-    }
-
-    /**
-     * Get a value from the Gallery layout data map
-     *
-     * @access public
-     * @return mixed an arbitrary value
-     */
-    function getLayoutData($key) {
-	assert('!empty($key)');
-	return $this->_layoutData[$key];
     }
 
     /**
@@ -719,9 +688,34 @@ class Gallery {
 	    if ($this->getDebug()) {
 		$this->_smarty->debugging = true;
 	    }
+
+	    /* Set up some hooks */
+	    $this->_smarty->register_function('galleryUrl', 'galleryUrlGenerator');
+	    $this->_smarty->register_function('galleryText', 'galleryTranslator');
 	}
 
 	return $this->_smarty;
+    }
+
+    /**
+     * Translate a message into the user's locale
+     *
+     * @param array an associative array of data of the form
+     *              text => the message
+     *              arg1 => data
+     *              arg2 => data
+     *                ...
+     *              argn => data
+     */
+    function translate($data) {
+	/* XXX: implement this using gettext */
+	$args = array($data['text']);
+	$i = 1;
+	while (isset($data['arg' . $i])) {
+	    $args[] = $data['arg' . $i];
+	    $i++;
+	}
+	return call_user_func_array('sprintf', $args);
     }
 
     /**
