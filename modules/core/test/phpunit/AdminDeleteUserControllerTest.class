@@ -366,7 +366,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 			    'Failed to create user');
 	
 	/* Verifiy the user, his permissions and his groupMappings are gone */
-	$ret = $this->_verifyMissingAll($user->getId(), array($item->getId()));
+	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -424,7 +424,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 			    'Failed to create user');
 	
 	/* Verifiy the user, his permissions and his groupMappings are gone */
-	$ret = $this->_verifyMissingAll($user->getId(), array($item->getId()));
+	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -503,7 +503,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 			    'Failed to create user');
 	
 	/* Verifiy the user, his permissions and his groupMappings are gone */
-	$ret = $this->_verifyMissingAll($user->getId(), array($item->getId()));
+	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -533,19 +533,38 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
      * All Delete requests have in common that the user,
      * all his permissions and his group mappings should be gone
      */
-    function _verifyMissingAll($userId, $itemIds) {
+    function _verifyMissingAll($userId) {
+	global $gallery;
+	
 	/* Verify the group mappings are for this user are gone */
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assert(count($groupIds) == 0, 'Not all group memberships were removed');
-	/* Verify all permission maps for this user are gone */
-	list($ret, $userPermissions) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $userId);
+
+	/*
+	 * Verify all permission maps for this user are gone.  We can't use the standard
+	 * API method here because it counts on the user being in at least *1* group.
+	 * So roll our own SQL.  We'd prefer to use an API method if there was one, but
+	 * it doesn't make sense to build one just for a test case.
+	 */
+	$query = '
+        SELECT
+          COUNT([GalleryPermissionMap::itemId])
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::userId] = ?
+        ';
+	list($ret, $searchResults) = $gallery->search($query, array($userId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$this->assert(count($userPermissions) == 0, 'Not all permissions were removed');
+	$this->assertEquals(1, (int)$searchResults->resultCount());
+	$result = $searchResults->nextResult();
+	$this->assertEquals(0, (int)$result[0], 'Not all permissions were removed');
+
 	/* Verify the user is gone */
 	$ret = $this->_verifyMissing($userId);
 	if ($ret->isError()) {
