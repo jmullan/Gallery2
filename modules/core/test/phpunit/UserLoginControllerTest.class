@@ -78,10 +78,10 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	$gallery->_session =& $mockSession;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	/* May get a redirect url (like from useralbum module) or return */
+	$this->assert(isset($results['return']) || isset($results['redirect']), 'result');
+	$this->assertEquals(array(), $results['status'], 'status');
+	$this->assertEquals(array(), $results['error'], 'error');
 
 	$this->assertEquals($this->_user->getId(), $gallery->getActiveUserId());
 	$this->assert($mockSession->regenerateWasCalled(), '$session->regenerate() was not called');
