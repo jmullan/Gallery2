@@ -9,7 +9,11 @@ class CreateAllAdminsGroupTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$group = new GalleryGroup();
+	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $group->create('All Admins', GROUP_ALL_ADMINS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

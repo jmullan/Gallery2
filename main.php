@@ -154,6 +154,8 @@ function GalleryMain() {
 	    if ($gallery->getDebug() == 'buffered') {
 		$master['debug'] = $gallery->getDebugBuffer();
 	    }
+	} else {
+	    unset($master['profile']);
 	}
 
 	/* Display the global output */

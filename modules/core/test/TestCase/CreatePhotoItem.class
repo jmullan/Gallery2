@@ -28,7 +28,11 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	print("Creating new photo item\n");
-	$photo = new GalleryPhotoItem();
+	list ($ret, $photo) = $gallery->newEntity('GalleryPhotoItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$ret = $photo->create($rootId,
 			      $imagePath,
@@ -55,7 +59,11 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Create a thumbnail */
-	$thumbnail = new GalleryDerivativeImage();
+	list ($ret, $thumbnail) = $gallery->newEntity('GalleryDerivativeImage');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $thumbnail->create($photo->getId(), IMAGE_TYPE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -71,7 +79,11 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Create a resize */
-	$resize = new GalleryDerivativeImage();
+	list ($ret, $resize) = $gallery->newEntity('GalleryDerivativeImage');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $resize->create($photo->getId(), IMAGE_TYPE_RESIZE);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -42,7 +42,8 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 	
 	$classDir = dirname(__FILE__) . '/classes/';
-	require_once($classDir . 'GalleryComment.class');
+	$gallery->addRegistry('GalleryEntity.GalleryComment',
+			      $classDir . 'GalleryComment.class');
 
 	/* Register all comment permissions */
 	$gallery->addRegistry('GalleryPermissionMap',

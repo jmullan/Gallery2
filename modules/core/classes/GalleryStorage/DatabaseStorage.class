@@ -302,7 +302,11 @@ class DatabaseStorage extends GalleryStorage {
 	/* Load them in groups */
 	foreach ($classNames as $className => $targetIds) {
 	    /* Get our member info for this class */
-	    $memberInfo = $this->_describeEntityMembers($className);
+	    list ($ret, $memberInfo) = $this->_describeEntityMembers($className);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    $idCol = $this->_prefixColumnName('id');
 
 
@@ -418,7 +422,10 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Get our member info for this class
 	 */
-	$memberInfo = $this->_describeEntityMembers(get_class($entity));
+	list ($ret, $memberInfo) = $this->_describeEntityMembers(get_class($entity));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	$idColumn = null;
 
 	/*
@@ -600,7 +607,12 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Get our persistent and member info for this class
 	 */
-	$memberInfo = $this->_describeEntityMembers($entity->getEntityType());
+	list ($ret, $memberInfo) =
+	    $this->_describeEntityMembers($entity->getEntityType());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$idCol = $this->_prefixColumnName('id');
 
 	$tables = array();

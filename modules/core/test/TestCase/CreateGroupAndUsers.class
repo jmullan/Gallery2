@@ -9,7 +9,11 @@ class CreateGroupAndUsersTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$group = new GalleryGroup();
+	list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $group->create('Group 1');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -19,7 +23,11 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$user1 = new GalleryUser();
+	list ($ret, $user1) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $user1->create('user1');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -33,7 +41,11 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$user2 = new GalleryUser();
+	list ($ret, $user2) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $user2->create('user2');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -282,7 +282,8 @@ class ClassicLayout extends GalleryLayout {
 
 	/* Tell Smarty about everything we've learned */
 	$smarty->assign('navigator', $navigator);
-	$smarty->assign('layoutUrl', GalleryUtilities::convertPathToRelativeUrl(__FILE__));
+	$smarty->assign('layoutUrl',
+			GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$smarty->assign('parents', $parents);
 	$smarty->assign('itemIndex', $itemIndex+1);
 	$smarty->assign('totalPeerCount', $totalPeerCount);

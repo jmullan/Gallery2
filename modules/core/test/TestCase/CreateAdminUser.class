@@ -10,7 +10,11 @@ class CreateAdminUserTestCase extends TestCase {
 	global $gallery;
 
 	/* Create the user */
-	$user = new GalleryUser();
+	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $user->create('admin');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -378,24 +378,23 @@ class GalleryPlatform {
      * Create a new directory
      *
      * @param string a filesystem path
-     * @param int permissions of the newly created directory
+     * @param string permissions of the newly created directory
      * @return bool true on success, false on failure
      * @access public
      */
-    function mkdir($path, $perms=0755) {
+    function mkdir($path, $stringPerms='755') {
 	global $gallery;
 
 	$path = $this->importPath($path);
-	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $perms));
 	
 	$umask = umask(0);
 
-	/* Convert string permission representation to octal, if necessary */
-	if (is_string($perms)) {
-	    $perms = octdec($perms);
-	}
+	/* Convert string permission representation to octal */
+	$octalPerms = octdec($stringPerms);
+	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
+	printf("mkdir(%s, %o)<br>", $path, $octalPerms);
 	
-	$results = mkdir($path, (int)$perms);
+	$results = mkdir($path, $octalPerms);
 	umask($umask);
 	return $results;
     }

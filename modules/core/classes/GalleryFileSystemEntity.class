@@ -271,7 +271,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	return array(GalleryStatus::success(),
-		     $path . '/' . $this->_pathComponent);
+		     $path . $this->_pathComponent . '/');
     }
 }
 

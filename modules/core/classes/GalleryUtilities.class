@@ -403,7 +403,7 @@ class GalleryUtilities {
 	/* Prepend the URL base */
 	$urlBase = $gallery->getConfig('url.gallery.base');
 	if (!empty($urlBase)) {
-	    return $urlBase . '/' . $relativePath;
+	    return $urlBase . $relativePath;
 	}
 
 	return $relativePath;

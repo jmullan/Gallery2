@@ -32,7 +32,11 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
-	    $nested[$i] = new GalleryAlbumItem();
+	    list ($ret, $nested[$i]) = $gallery->newEntity('GalleryAlbumItem');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    $ret = $nested[$i]->create($parentId, "nested_${time}_$i",
 				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {

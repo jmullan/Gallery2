@@ -353,17 +353,23 @@ class GalleryStorage {
      * Describe all the members of a entity
      *
      * @param string a class name
-     * @return array member => info associative array
      * @access protected
+     * @return array object GalleryStatus a status code
+     *               member => info associative array
      */
     function _describeEntityMembers($entityName) {
+	global $gallery;
 
 	if (empty($this->_entityInfoCache[$entityName])) {
-	    $entity = new $entityName;
+	    list ($ret, $entity) = $gallery->newEntity($entityName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
 	}
 
-	return $this->_entityInfoCache[$entityName];
+	return array(GalleryStatus::success(),
+		     $this->_entityInfoCache[$entityName]);
     }
 
     /**
@@ -391,6 +397,13 @@ class GalleryStorage {
      * @access protected
      */
     function _getClassType($className) {
+	global $gallery;
+
+	$array = $gallery->lookupRegistry('GalleryEntity.' . $className);
+	if (!empty($array)) {
+	    require_once($array[0]);
+	}
+
 	$instance = new $className;
 	if (method_exists($instance, 'getPersistentMemberInfo')) {
 	    return 'entity';

@@ -17,7 +17,11 @@ class CreateRootAlbumItemTestCase extends TestCase {
 	}
 	
 	print("Creating new root album item\n");
-	$album = new GalleryAlbumItem();
+	list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$ret = $album->createRoot("test", $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -346,7 +346,7 @@ function CheckDirectories() {
 	}
 
 	if (!$platform->file_exists($dir)) {
-	    if (!$platform->mkdir($dir, 0775)) {
+	    if (!$platform->mkdir($dir)) {
 		return array('cant-mkdir', $key, $dir);
 		return GalleryStatus::success();
 	    }
@@ -370,7 +370,11 @@ function CreateAllUsersGroup() {
 	return GalleryStatus::success();
     }
     
-    $group = new GalleryGroup();
+    list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+    
     $ret = $group->create('All Users', GROUP_ALL_USERS);
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -402,7 +406,11 @@ function CreateAllAdminsGroup() {
 	return GalleryStatus::success();
     }
     
-    $group = new GalleryGroup();
+    list ($ret, $group) = $gallery->newEntity('GalleryGroup');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+					     
     $ret = $group->create('All Admins', GROUP_ALL_ADMINS);
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -434,7 +442,11 @@ function CreateAnonymousUser() {
 	return GalleryStatus::success();
     }
     
-    $user = new GalleryUser();
+    list ($ret, $user) = $gallery->newEntity('GalleryUser');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+					     
     $ret = $user->create('anonymous');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -475,7 +487,11 @@ function CreateAdminUser() {
     }
 
     /* Create the user */
-    $user = new GalleryUser();
+    list ($ret, $user) = $gallery->newEntity('GalleryUser');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+					     
     $ret = $user->create('admin');
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -525,7 +541,11 @@ function CreateRootAlbumItem() {
     }
     $adminId = $results[0];
 	
-    $album = new GalleryAlbumItem();
+    list ($ret, $album) = $gallery->newEntity('GalleryAlbumItem');
+    if ($ret->isError()) {
+	return $ret->wrap(__FILE__, __LINE__);
+    }
+					     
     $ret = $album->createRoot('root', $adminId);
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);

@@ -9,7 +9,11 @@ class CreateAnonymousUserTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$user = new GalleryUser();
+	list ($ret, $user) = $gallery->newEntity('GalleryUser');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	$ret = $user->create('anonymous');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

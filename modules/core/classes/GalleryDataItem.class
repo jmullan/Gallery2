@@ -133,7 +133,7 @@ class GalleryDataItem_core extends GalleryItem {
 		    GalleryUtilities::getFileExtension($inputFileName);
 	}
 	$pathComponent = substr($baseName, 0, strrpos($baseName, '.'));
-	$newFileName = $parentPath . '/' . $baseName;
+	$newFileName = $parentPath . $baseName;
 
 	/* Do a collision check */
 	if ($platform->file_exists($newFileName)) {
@@ -255,7 +255,7 @@ class GalleryDataItem_core extends GalleryItem {
 	}
 	
 	return array(GalleryStatus::success(),
-		     $containerPath . '/' .
+		     $containerPath . 
 		     $this->getPathComponent() .
 		     '.' .
 		     $this->getFileExtension());

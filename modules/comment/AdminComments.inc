@@ -81,7 +81,7 @@ class AdminCommentsController extends GalleryController {
 	$stateVariables['subView'] = 'comment:AdminComments';
 
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->generateUrl($stateVariables);
+	$results['redirect'] = $templateAdapter->url($stateVariables);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -111,7 +111,7 @@ class AdminCommentsView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {

@@ -49,37 +49,29 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryEntity.class');
 	require_once($classDir . 'GalleryChildEntity.class');
 	require_once($classDir . 'GalleryFileSystemEntity.class');
-	require_once($classDir . 'GalleryItem.class');
-	require_once($classDir . 'GalleryAlbumItem.class');
-	require_once($classDir . 'GalleryDerivative.class');
-	require_once($classDir . 'GalleryDataItem.class');
-	require_once($classDir . 'GalleryGraphics.class');
-	require_once($classDir . 'GalleryGraphicsFactory.class');
-	require_once($classDir . 'GalleryItemFactory.class');
 	require_once($classDir . 'Gallery.class');
-	require_once($classDir . 'GalleryLock.class');
 	require_once($classDir . 'GalleryStorage.class');
 	require_once($classDir . 'GalleryStorageFactory.class');
-	require_once($classDir . 'GalleryUser.class');
-	require_once($classDir . 'GalleryGroup.class');
-	require_once($classDir . 'GalleryDerivativeImage.class');
-	require_once($classDir . 'GalleryMovieItem.class');
-	require_once($classDir . 'GalleryPhotoItem.class');
-	require_once($classDir . 'GalleryUnknownItem.class');
-	require_once($classDir . 'GalleryPlatform.class');
-	require_once($classDir . 'GalleryPlatformFactory.class');
-	require_once($classDir . 'GallerySearchResult.class');
 	require_once($classDir . 'GalleryItemPropertiesMap.class');
 	require_once($classDir . 'GalleryUserGroupMap.class');
 	require_once($classDir . 'GalleryPermissionMap.class');
 	require_once($classDir . 'GalleryViewCountMap.class');
 	require_once($classDir . 'GalleryModuleMap.class');
 	require_once($classDir . 'GalleryModuleParameterMap.class');
+	require_once($classDir . 'GalleryPlatform.class');
+	require_once($classDir . 'GalleryPlatformFactory.class');
+	require_once($classDir . 'GallerySearchResults.class');
+	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryView.class');
 	require_once($classDir . 'GalleryController.class');
-	require_once($classDir . 'GalleryTemplateAdapter.class');
 	require_once($classDir . 'GalleryLayout.class');
 	require_once($classDir . 'GalleryTheme.class');
+	require_once($classDir . 'GalleryDerivative.class');
+	require_once($classDir . 'GalleryGraphics.class');
+	require_once($classDir . 'GalleryGraphicsFactory.class');
+	require_once($classDir . 'GalleryLock.class');
+	require_once($classDir . 'GalleryItem.class');
+	require_once($classDir . 'GalleryDataItem.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -112,6 +104,22 @@ class CoreModule extends GalleryModule {
 			      array('id' => 'core.delete', 'description' => 'Delete'));
 
 	$this->_gallery =& $gallery;
+
+	/* Register our entity implementations */
+	$gallery->addRegistry('GalleryEntity.GalleryAlbumItem',
+			      $classDir . 'GalleryAlbumItem.class');
+	$gallery->addRegistry('GalleryEntity.GalleryUser',
+			      $classDir . 'GalleryUser.class');
+	$gallery->addRegistry('GalleryEntity.GalleryGroup',
+			      $classDir . 'GalleryGroup.class');
+	$gallery->addRegistry('GalleryEntity.GalleryDerivativeImage',
+			      $classDir . 'GalleryDerivativeImage.class');
+	$gallery->addRegistry('GalleryEntity.GalleryMovieItem',
+			      $classDir . 'GalleryMovieItem.class');
+	$gallery->addRegistry('GalleryEntity.GalleryPhotoItem',
+			      $classDir . 'GalleryPhotoItem.class');
+	$gallery->addRegistry('GalleryEntity.GalleryUnknownItem',
+			      $classDir . 'GalleryUnknownItem.class');
 			      
 	return parent::init();
     }
