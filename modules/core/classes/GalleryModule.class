@@ -228,13 +228,16 @@ class GalleryModule {
     }
 
     /**
-     * Can this module be installed automatically if possible?  Default is false
-     * which is a security measure.  Only activate modules that by default do not
-     * expose any sensitive data.  For example, the debug module shouldn't be auto
-     * installed cause it can show filesystem paths.
-     *
+     * Is this module recommended to be installed/activated during the 
+     * installer?
+     * 
+     * Default is false which is a security measure. Only recommend modules
+     * that by default do not expose any sensitive data. For example, the
+     * debug module shouldn't be recommended because it can show filesystem
+     * paths. Also don't recommend installing modules that might change some
+     * default gallery behaviour (e.g. the squarethumbs module)
      */
-    function canBeAutoInstalled() {
+    function isRecommendedDuringInstall() {
 	return false;
     }
 

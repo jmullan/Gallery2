@@ -68,6 +68,13 @@ class NokiaUploadModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::isRecommendedDuringInstall
+     */
+    function isRecommendedDuringInstall() {
+	return true;
+    }
+
+    /**
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {

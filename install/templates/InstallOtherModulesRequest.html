@@ -1,5 +1,6 @@
     <h1><?php print _("Install Other Modules") ?></h1>
 
+    <?php if (! $templateData['isComplete']): ?>
     <script type="text/javascript">
       function checkAll(newValue) {
          for (var i = 0; i < document.forms[0].length; i++) {
@@ -18,27 +19,8 @@
       <?php print _("Some modules may fail to install automatically.  That's ok.  It typically means that they require some configuration, which you can do on the Site Adminstration page"); ?>
     </p>
 
-    <?php if (isset($templateData['activated'])): ?>
-    <?php foreach ($templateData['activated'] as $moduleId => $moduleName): ?>
-    <h2 class="success">
-      <?php print _(sprintf("Activated the <i>%s</i> module successfully", $moduleName)); ?>
-    </h2>
-    <?php endforeach; ?>
-    <?php endif; ?>
-
-    <?php if (isset($templateData['needsConfiguration'])): ?>
-    <?php foreach ($templateData['needsConfiguration'] as $moduleId => $moduleName): ?>
-    <h2 class="warning">
-      <?php print _(sprintf("The <i>%s</i> module was installed, but needs configuration to be activated", $moduleName)); ?>
-    </h2>
-    <?php endforeach; ?>
-    <p>
-      <?php print _("After finishing this installation, login as Admin and browse to Site Admin. Go to the <i>Modules</i> view and configure the above listed modules."); ?>
-    </p>
-    <?php endif; ?>
-
     <?php if (!empty($templateData['groupedModules'])): ?>
-    <form>
+    <form name="othermodules_form" method="post">
       <table class="modules">
         <tr style="background: #ccc;">
           <th>
@@ -60,10 +42,13 @@
 	  </tr>
 	  <?php $counter = 0; ?>
           <?php foreach ($modules as $id => $module): ?>
-          <?php if ($module->canBeAutoInstalled()): ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
             <td>
-              <input type=checkbox name="module[<?php print $id ?>]" checked="checked"/>
+              <input type=checkbox name="module[<?php print $id ?>]"
+                <?php if ($module->isRecommendedDuringInstall()): ?>
+                  checked="checked"
+                <?php endif; ?>
+              />
             </td>
             <td class="modules">
               <?php print $module->getName() ?>
@@ -76,7 +61,6 @@
             </td>
           </tr>
 	  <?php $counter++; ?>
-	  <?php endif; ?>
 	  <?php endforeach; ?>
 	<?php endforeach; ?>
         <tr style="background: #ccc;">
@@ -90,6 +74,19 @@
       </table>
       <br/>
       <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
-      <input type="submit" name="action[activate]" value="<?php print _("install and activate selected modules")?>"/>
+      <input type="hidden" name="activate" value="1"/>
     </form>
+    <?php endif; ?>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.othermodules_form.submit();"><?php print _('Activate Selected') ?></a>
+      </span>
+      <?php $nextStep = $stepNumber + 1 ?>
+      <span class="goToNextL">
+        <a href="index.php?step=<?php echo $nextStep?>">
+          <?php printf(_('Go to Step %d&raquo;'), $nextStep); ?>
+        </a>
+      </span>
+    </div>
     <?php endif; ?>

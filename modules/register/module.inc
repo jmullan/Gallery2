@@ -93,13 +93,6 @@ class RegisterModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::canBeAutoInstalled
-     */
-    function canBeAutoInstalled() {
-	return true;
-    }
-
-    /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {

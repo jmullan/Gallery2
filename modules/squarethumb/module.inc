@@ -86,13 +86,6 @@ class SquareThumbModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::canBeAutoInstalled
-     */
-    function canBeAutoInstalled() {
-	return true;
-    }
-
-    /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
