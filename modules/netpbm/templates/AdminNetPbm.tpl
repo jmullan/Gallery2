@@ -136,6 +136,14 @@
 	  {/g->row}
 	{/foreach}
       {/g->table}
+
+      {if ($AdminNetPbm.failCount > 0) && !empty($AdminNetPbm.mimeTypes)} 
+	{g->element}
+	  {g->warning}
+	    {g->text text="Although your NetPBM installation is not completely functional, you can still use it for the mime types listed below."}
+	  {/g->warning}
+	{/g->element}
+      {/if}
     {/g->box}
 
     {if $AdminNetPbm.mimeTypes}

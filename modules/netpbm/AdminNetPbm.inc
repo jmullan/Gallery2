@@ -82,7 +82,7 @@ class AdminNetPbmController extends GalleryController {
 			}
 		    }
 
-		    if ($failCount > 0) {
+		    if ($failCount == sizeof($testResults)) {
 			$error[] = 'form.error.path.testError';
 		    }
 		}
@@ -179,6 +179,7 @@ class AdminNetPbmView extends GalleryView {
 	$tests = array();
 	$mimeTypes = array();
 
+	$failCount = 0;
 	if (isset($form['action']['test'])) {
 	    if (empty($form['path'])) {
 		$form['error']['path']['missing'] = 1;
@@ -186,6 +187,10 @@ class AdminNetPbmView extends GalleryView {
 		list ($ret, $tests, $mimeTypes) =
 		    NetPbmToolkitHelper::testBinaries($form['path'],
 						      array('pnmtojpeg' => $form['pnmtojpeg']));
+
+		foreach ($tests as $test) {
+		    $failCount += !$test['success'];
+		}
 	    }
 	}
 
@@ -194,6 +199,7 @@ class AdminNetPbmView extends GalleryView {
 	$AdminNetPbm['mimeTypes'] = $mimeTypes;
 	$AdminNetPbm['pnmToJpegList'] = $pnmToJpegList;
 	$AdminNetPbm['jpegQualityList'] = $jpegQualityList;
+	$AdminNetPbm['failCount'] = $failCount;
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);
 	$template->setVariable('controller', 'netpbm:AdminNetPbm');

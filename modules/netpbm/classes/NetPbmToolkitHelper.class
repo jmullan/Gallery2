@@ -183,6 +183,7 @@ class NetPbmToolkitHelper {
 	foreach (array_keys($binaries) as $binary) {
 	    $fullPath = $netPbmPath . $binary;
 	    list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
+
 	    if (!$success) {
 		foreach ($binaries[$binary] as $mimeType) {
 		    unset($mimeTypes[$mimeType]);
