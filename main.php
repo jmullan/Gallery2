@@ -160,16 +160,26 @@ function _GalleryMain($returnHtml=false) {
 	/* Let the controller handle the input */
 	list ($ret, $results) = $controller->handleRequest($form);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    if ($ret->getErrorCode() & ERROR_OBSOLETE_DATA) {
+		/*
+		 * Treat this as if they redirected to the ObsoleteDataError view.  Store the error code in
+		 * our status, so that it will persist across the redirect.  Errors won't persist.
+		 */
+		$results['status'] = array('retAsHtml' => $ret->getAsHtml());
+		$results['error'] = array();
+		$results['delegate'] = array('view' => 'core:ObsoleteDataError');
+	    } else {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	/* Check to make sure we got back everything we want */
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
 	    (!isset($results['redirect']) && !isset($results['delegate']))) {
-	    $gallery->debug_r($results);
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					"Controller results are missing status, error or (redirect,delegate)"),
+					      'Controller results are missing status, ' .
+					      'error or (redirect,delegate)'),
 			 null);
 	}
 
@@ -190,9 +200,6 @@ function _GalleryMain($returnHtml=false) {
 	    if (!empty($results['status'])) {
 		$session =& $gallery->getSession();
 		$results['redirect']['statusId'] = $session->putStatus($results['status']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
 	    }
 	    
 	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
