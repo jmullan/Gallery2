@@ -156,6 +156,14 @@ class ItemEditMovieControllerTestPlatform {
 	return $this->_platform->file_exists($path);
     }
 
+    function is_dir($path) {
+	return $this->_platform->is_dir($path);
+    }
+
+    function is_writeable($path) {
+	return $this->_platform->is_writeable($path);
+    }
+
     function legalizePathComponent($pathComponent) {
 	return $this->_platform->legalizePathComponent($pathComponent);
     }
@@ -190,14 +198,14 @@ class ItemEditMovieControllerTestPlatform {
 	    $this->_platform->file_exists($args[0][2]) &&
 	    $args[0][3] == '-vstats') {
 
-	    $results[] = sprintf('Input #0, avi, from \'%s\':', $args[0][2]);
-	    $results[] = 'Duration: 00:00:04.0, bitrate: 329 kb/s';
-	    $results[] = 'Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
-	    $results[] = 'Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
-	    return array(1, $results);
+	    $results = array();
+	    $stderr[] = sprintf('Input #0, avi, from \'%s\':', $args[0][2]);
+	    $stderr[] = 'Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $stderr[] = 'Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $stderr[] = 'Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    return array(1, $results, $stderr);
 	} else {
-	    printf("<pre>%s</pre>", print_r($args, 1));
-	    return array(0, null);
+	    return array(0, null, null);
 	}
     }
 
