@@ -44,6 +44,7 @@ class ImportResultsView extends GalleryView {
 		$counts[$key] = sizeof($status[$key]);
 	    } else {
 		$counts[$key] = 0;
+		$status[$key] = array();
 	    }
 	}
 
@@ -52,7 +53,7 @@ class ImportResultsView extends GalleryView {
 
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate:ImportResults');
-	
+	$template->setVariable('status', $status);
         return array(GalleryStatus::success(), '', 'modules/migrate/templates/ImportResults.tpl');
     }
 }
