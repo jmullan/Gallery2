@@ -579,7 +579,7 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset) {
 	} else if($tag_name=="GPSInfoOffset") {
 		$formated_data = formatData($type,$tag,$intel,$data);
 		$result[$ifd_name]['GPSInfo'] = $formated_data;
-		include(dirname(__FILE__) . '/makers/gps.inc');
+		require_once(dirname(__FILE__) . '/makers/gps.inc');
 		parseGPS($data,$result,$formated_data,$seek,$globalOffset);
 	} else {
 		//Format the data depending on the type and tag
