@@ -65,8 +65,8 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		}
 
-		list ($ret, $testResults) =
-		    NetPbmToolkitHelper::testBinaries($form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
+		list ($ret, $testResults) = NetPbmToolkitHelper::testBinaries(
+		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
@@ -89,32 +89,30 @@ class AdminNetPbmController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'path', $form['path']);
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'netpbm', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		/*
-		 * Set the image quality
-		 */
-		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jpegQuality', $form['jpegQuality']);
+		/* Set the image quality */
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'netpbm', 'jpegQuality', $form['jpegQuality']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		/*
-		 * Set the pnmtojpeg binary name
-		 */
-		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
+		/* Set the pnmtojpeg binary name */
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'netpbm', 'pnmtojpeg', $form['pnmtojpeg']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/*
-		 * Set the jhead binary name
-		 */
+		/* Set the jhead binary name */
 		$jheadPath = isset($form['jheadPath']) ? $form['jheadPath'] : '';
-		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $jheadPath);
+		$ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'netpbm', 'jheadPath', $jheadPath);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
