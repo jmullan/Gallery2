@@ -70,28 +70,40 @@
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();{counter assign="nonArrayChildrenCounter" start="0" print="0"}
 {foreach from=$tagInfo.children key=childName item=childInfo}
 {if ($childName != 'content')}
 {if !$childInfo.isArray}
-        /* Collapse {$childName} to a single value */
-        if (sizeof($self['{$childName}']) > 1) {ldelim}
-            $smarty->trigger_error(sprintf('Illegal multiple {$childName} tags inside tag {$tagName} ' .
-                                           '(1 expected, %d found)', sizeof($self['{$childName}'])));
-            return;
-        {rdelim}
-        if (sizeof($self['{$childName}']) > 0) {ldelim}
-            $self['{$childName}'] = $self['{$childName}'][0];
-	{rdelim}
+        $nonArrayChildren[] = '{$childName}';{counter}
 {/if}
 {else}
         $self['content'] = $content;
 {/if}
-
 {/foreach}
+{if ($nonArrayChildrenCounter > 0)}
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {ldelim}
+          switch(sizeof($self[$child])) {ldelim}
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag {$tagName} ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
+            return;
+          {rdelim}
+        {rdelim}
+{/if}
 {if empty($attribute_tag.$tagName)}
         $content = $this->_theme->{$tagName}($context{foreach from=$tagInfo.children key=childName item=childInfo}, $self['{$childName}']{/foreach});
 {/if}
-
 {if isset($trimmed_tag.$tagName)}
         $content = trim($self['content']);
 {/if}

@@ -279,10 +279,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->input($context, $self['content']);
-
 
         $tagData = array('name' => 'input', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -324,10 +324,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->form($context, $self['content']);
-
 
         $tagData = array('name' => 'form', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -369,10 +369,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->select($context, $self['content']);
-
 
         $tagData = array('name' => 'select', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -414,10 +414,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->textarea($context, $self['content']);
-
 
         $tagData = array('name' => 'textarea', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -459,10 +459,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->link($context, $self['content']);
-
 
         $tagData = array('name' => 'link', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -504,10 +504,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->success($context, $self['content']);
-
 
         $tagData = array('name' => 'success', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -549,10 +549,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->warning($context, $self['content']);
-
 
         $tagData = array('name' => 'warning', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -594,10 +594,10 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
         $content = $this->_theme->error($context, $self['content']);
-
 
         $tagData = array('name' => 'error', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -668,8 +668,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->listing($context, $self['item']);
-
 
         $tagData = array('name' => 'listing', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -718,8 +718,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->breadcrumb($context, $self['item']);
-
 
         $tagData = array('name' => 'breadcrumb', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -773,19 +773,28 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag linkset ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag linkset ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
-
-
         $content = $this->_theme->linkset($context, $self['title'], $self['item']);
-
 
         $tagData = array('name' => 'linkset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -839,19 +848,28 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag actionset ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag actionset ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
-
-
         $content = $this->_theme->actionset($context, $self['title'], $self['actionitem']);
-
 
         $tagData = array('name' => 'actionset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -900,8 +918,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->infoset($context, $self['item']);
-
 
         $tagData = array('name' => 'infoset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -950,8 +968,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->tabset($context, $self['item']);
-
 
         $tagData = array('name' => 'tabset', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1008,8 +1026,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->table($context, $self['row']);
-
 
         $tagData = array('name' => 'table', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1066,8 +1084,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->row($context, $self['column']);
-
 
         $tagData = array('name' => 'row', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1129,9 +1147,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'column', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1169,9 +1187,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'element', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1204,9 +1222,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
         $content = trim($self['content']);
 
         $tagData = array('name' => 'title', 'params' => $params, 'content' => $content);
@@ -1240,9 +1258,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'subtitle', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1275,9 +1293,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'description', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1310,9 +1328,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'footer', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1345,9 +1363,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
 
         $tagData = array('name' => 'media', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1380,9 +1398,9 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
+
+        $nonArrayChildren = array();
         $self['content'] = $content;
-
-
         $content = trim($self['content']);
 
         $tagData = array('name' => 'value', 'params' => $params, 'content' => $content);
@@ -1424,29 +1442,29 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse breadcrumb to a single value */
-        if (sizeof($self['breadcrumb']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple breadcrumb tags inside tag main ' .
-                                           '(1 expected, %d found)', sizeof($self['breadcrumb'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'breadcrumb';
+        $nonArrayChildren[] = 'pagebox';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag main ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['breadcrumb']) > 0) {
-            $self['breadcrumb'] = $self['breadcrumb'][0];
-	}
-
-
-        /* Collapse pagebox to a single value */
-        if (sizeof($self['pagebox']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple pagebox tags inside tag main ' .
-                                           '(1 expected, %d found)', sizeof($self['pagebox'])));
-            return;
-        }
-        if (sizeof($self['pagebox']) > 0) {
-            $self['pagebox'] = $self['pagebox'][0];
-	}
-
         $content = $this->_theme->main($context, $self['breadcrumb'], $self['sidebar'], $self['pagebox']);
-
 
         $tagData = array('name' => 'main', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1503,8 +1521,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->sidebar($context, $self['element']);
-
 
         $tagData = array('name' => 'sidebar', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1560,58 +1578,32 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag itemthumbnail ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
-            return;
-        }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
 
-        /* Collapse description to a single value */
-        if (sizeof($self['description']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple description tags inside tag itemthumbnail ' .
-                                           '(1 expected, %d found)', sizeof($self['description'])));
-            return;
-        }
-        if (sizeof($self['description']) > 0) {
-            $self['description'] = $self['description'][0];
-	}
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'description';
+        $nonArrayChildren[] = 'media';
+        $nonArrayChildren[] = 'infoset';
+        $nonArrayChildren[] = 'actionset';
 
-        /* Collapse media to a single value */
-        if (sizeof($self['media']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple media tags inside tag itemthumbnail ' .
-                                           '(1 expected, %d found)', sizeof($self['media'])));
-            return;
-        }
-        if (sizeof($self['media']) > 0) {
-            $self['media'] = $self['media'][0];
-	}
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
 
-        /* Collapse infoset to a single value */
-        if (sizeof($self['infoset']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple infoset tags inside tag itemthumbnail ' .
-                                           '(1 expected, %d found)', sizeof($self['infoset'])));
-            return;
-        }
-        if (sizeof($self['infoset']) > 0) {
-            $self['infoset'] = $self['infoset'][0];
-	}
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
 
-        /* Collapse actionset to a single value */
-        if (sizeof($self['actionset']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple actionset tags inside tag itemthumbnail ' .
-                                           '(1 expected, %d found)', sizeof($self['actionset'])));
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag itemthumbnail ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['actionset']) > 0) {
-            $self['actionset'] = $self['actionset'][0];
-	}
-
         $content = $this->_theme->itemthumbnail($context, $self['title'], $self['description'], $self['media'], $self['infoset'], $self['actionset']);
-
 
         $tagData = array('name' => 'itemthumbnail', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1666,48 +1658,31 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag itemview ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
-            return;
-        }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
 
-        /* Collapse description to a single value */
-        if (sizeof($self['description']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple description tags inside tag itemview ' .
-                                           '(1 expected, %d found)', sizeof($self['description'])));
-            return;
-        }
-        if (sizeof($self['description']) > 0) {
-            $self['description'] = $self['description'][0];
-	}
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'description';
+        $nonArrayChildren[] = 'media';
+        $nonArrayChildren[] = 'footer';
 
-        /* Collapse media to a single value */
-        if (sizeof($self['media']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple media tags inside tag itemview ' .
-                                           '(1 expected, %d found)', sizeof($self['media'])));
-            return;
-        }
-        if (sizeof($self['media']) > 0) {
-            $self['media'] = $self['media'][0];
-	}
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
 
-        /* Collapse footer to a single value */
-        if (sizeof($self['footer']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple footer tags inside tag itemview ' .
-                                           '(1 expected, %d found)', sizeof($self['footer'])));
-            return;
-        }
-        if (sizeof($self['footer']) > 0) {
-            $self['footer'] = $self['footer'][0];
-	}
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
 
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag itemview ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
+            return;
+          }
+        }
         $content = $this->_theme->itemview($context, $self['title'], $self['description'], $self['media'], $self['footer']);
-
 
         $tagData = array('name' => 'itemview', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1757,29 +1732,29 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse tabset to a single value */
-        if (sizeof($self['tabset']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple tabset tags inside tag tabbedbox ' .
-                                           '(1 expected, %d found)', sizeof($self['tabset'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'tabset';
+        $nonArrayChildren[] = 'footer';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag tabbedbox ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['tabset']) > 0) {
-            $self['tabset'] = $self['tabset'][0];
-	}
-
-        /* Collapse footer to a single value */
-        if (sizeof($self['footer']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple footer tags inside tag tabbedbox ' .
-                                           '(1 expected, %d found)', sizeof($self['footer'])));
-            return;
-        }
-        if (sizeof($self['footer']) > 0) {
-            $self['footer'] = $self['footer'][0];
-	}
-
-
         $content = $this->_theme->tabbedbox($context, $self['tabset'], $self['footer'], $self['element']);
-
 
         $tagData = array('name' => 'tabbedbox', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1836,49 +1811,31 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag box ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'subtitle';
+        $nonArrayChildren[] = 'description';
+        $nonArrayChildren[] = 'footer';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag box ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
-
-        /* Collapse subtitle to a single value */
-        if (sizeof($self['subtitle']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple subtitle tags inside tag box ' .
-                                           '(1 expected, %d found)', sizeof($self['subtitle'])));
-            return;
-        }
-        if (sizeof($self['subtitle']) > 0) {
-            $self['subtitle'] = $self['subtitle'][0];
-	}
-
-        /* Collapse description to a single value */
-        if (sizeof($self['description']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple description tags inside tag box ' .
-                                           '(1 expected, %d found)', sizeof($self['description'])));
-            return;
-        }
-        if (sizeof($self['description']) > 0) {
-            $self['description'] = $self['description'][0];
-	}
-
-        /* Collapse footer to a single value */
-        if (sizeof($self['footer']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple footer tags inside tag box ' .
-                                           '(1 expected, %d found)', sizeof($self['footer'])));
-            return;
-        }
-        if (sizeof($self['footer']) > 0) {
-            $self['footer'] = $self['footer'][0];
-	}
-
-
         $content = $this->_theme->box($context, $self['title'], $self['subtitle'], $self['description'], $self['footer'], $self['element']);
-
 
         $tagData = array('name' => 'box', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1932,8 +1889,8 @@ class GalleryTemplateAdapter {
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
 
+        $nonArrayChildren = array();
         $content = $this->_theme->pagebox($context, $self['element']);
-
 
         $tagData = array('name' => 'pagebox', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -1983,29 +1940,29 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag banner ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
+
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'description';
+
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag banner ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
             return;
+          }
         }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
-
-        /* Collapse description to a single value */
-        if (sizeof($self['description']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple description tags inside tag banner ' .
-                                           '(1 expected, %d found)', sizeof($self['description'])));
-            return;
-        }
-        if (sizeof($self['description']) > 0) {
-            $self['description'] = $self['description'][0];
-	}
-
-
         $content = $this->_theme->banner($context, $self['title'], $self['description'], $self['element']);
-
 
         $tagData = array('name' => 'banner', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -2058,28 +2015,29 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag item ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
-            return;
-        }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
 
-        /* Collapse subtitle to a single value */
-        if (sizeof($self['subtitle']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple subtitle tags inside tag item ' .
-                                           '(1 expected, %d found)', sizeof($self['subtitle'])));
-            return;
-        }
-        if (sizeof($self['subtitle']) > 0) {
-            $self['subtitle'] = $self['subtitle'][0];
-	}
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'subtitle';
 
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag item ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
+            return;
+          }
+        }
         $content = $this->_theme->item($context, $self['title'], $self['subtitle']);
-
 
         $tagData = array('name' => 'item', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
@@ -2132,28 +2090,29 @@ class GalleryTemplateAdapter {
 
         $context = $this->_getContext($params, $smarty);
 	$self = $this->stackPop();
-        /* Collapse title to a single value */
-        if (sizeof($self['title']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple title tags inside tag actionitem ' .
-                                           '(1 expected, %d found)', sizeof($self['title'])));
-            return;
-        }
-        if (sizeof($self['title']) > 0) {
-            $self['title'] = $self['title'][0];
-	}
 
-        /* Collapse value to a single value */
-        if (sizeof($self['value']) > 1) {
-            $smarty->trigger_error(sprintf('Illegal multiple value tags inside tag actionitem ' .
-                                           '(1 expected, %d found)', sizeof($self['value'])));
-            return;
-        }
-        if (sizeof($self['value']) > 0) {
-            $self['value'] = $self['value'][0];
-	}
+        $nonArrayChildren = array();
+        $nonArrayChildren[] = 'title';
+        $nonArrayChildren[] = 'value';
 
+        /* Force non-array children to a single value (or error if there was more than one) */
+        foreach ($nonArrayChildren as $child) {
+          switch(sizeof($self[$child])) {
+          case 0:
+            $self[$child] = array('name' => $child, 'params' => array(), 'content' => '');
+            break;
+
+          case 1:
+            $self[$child] = $self[$child][0];
+            break;
+
+          default:
+            $smarty->trigger_error(sprintf('Illegal multiple \'$child\' tags inside tag actionitem ' .
+                                           '(1 expected, %d found)', sizeof($self[$child])));
+            return;
+          }
+        }
         $content = $this->_theme->actionitem($context, $self['title'], $self['value']);
-
 
         $tagData = array('name' => 'actionitem', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {
