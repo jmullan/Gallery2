@@ -172,8 +172,6 @@ class AdminModulesView extends GalleryView {
 	    $form['formName'] = 'AdminModules';
 	}
 
-	ksort($moduleStatus);
-
 	foreach ($moduleStatus as $moduleId => $status) {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
@@ -235,9 +233,13 @@ class AdminModulesView extends GalleryView {
 	    
 	    $entry['description'] = $module->getDescription();
 	    $entry['version'] = $module->getVersion();
+	    $group = $module->getGroup();
+	    $entry = array_merge($entry, empty($group) ?
+		array('group' => 'other', 'groupLabel' => $module->translate('Other')) : $group);
 	    $modules[] = $entry;
 	}
 
+	usort($modules, 'AdminModules_moduleSort');
 	$AdminModules['modules'] = $modules;
 
 	/* Render the HTML body */
@@ -246,6 +248,34 @@ class AdminModulesView extends GalleryView {
 	
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminModules.tpl'));
+    }
+}
+
+function AdminModules_moduleSort($a, $b) {
+    static $groupOrder;
+    if (!isset($groupOrder)) {
+      // gallery first, toolkits second, other last
+      $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
+    }
+    $ag = $a['group'];
+    $bg = $b['group'];
+    if ($ag != $bg) {
+	$ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
+	$bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
+	if ($ao != $bo) {
+	    return ($ao > $bo) ? 1 : -1;
+	}
+	$ag = isset($a['groupLabel']) ? $a['groupLabel'] : $ag;
+	$bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
+	return ($ag > $bg) ? 1 : -1;
+    } else {
+	$an = $a['name'];
+	$bn = $b['name'];
+	if ($an == $bn) {
+	    return 0;
+	} else {
+	    return ($an > $bn) ? 1 : -1;
+	}
     }
 }
 ?>

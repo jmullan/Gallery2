@@ -42,6 +42,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setName('ImageMagick');
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
 	$this->setVersion('0.8');
+	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
     }
 
     /**
@@ -288,9 +289,7 @@ class ImageMagickModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('ImageMagick'),
-				 'view' => 'imagemagick:AdminImageMagick',
-				 'group' => 'toolkits',
-				 'groupLabel' => $this->translate('Graphics Toolkits'))));
+				 'view' => 'imagemagick:AdminImageMagick')));
     }
 
     /**

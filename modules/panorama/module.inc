@@ -41,6 +41,7 @@ class PanoramaModule extends GalleryModule {
 	$this->setName('Panorama');
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
 	$this->setVersion('0.8');
+	$this->setGroup('display', $gallery->i18n('Display'));
     }
 
     /**
@@ -134,9 +135,7 @@ class PanoramaModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Panorama'),
-				 'view' => 'panorama:PanoramaSiteAdmin',
-				 'group' => 'display',
-				 'groupLabel' => $this->translate('Display'))));
+				 'view' => 'panorama:PanoramaSiteAdmin')));
     }
 
     /**

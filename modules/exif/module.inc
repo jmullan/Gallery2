@@ -41,6 +41,7 @@ class ExifModule extends GalleryModule {
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
 	$this->setVersion('0.8');
+	$this->setGroup('data', $gallery->i18n('Extra Data'));
     }
 
     /**
@@ -180,9 +181,7 @@ class ExifModule extends GalleryModule {
 
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('EXIF Parser'),
-				 'view' => 'exif:AdminExif',
-				 'group' => 'data',
-				 'groupLabel' => $this->translate('Extra Data'))));
+				 'view' => 'exif:AdminExif')));
     }
 
     /**

@@ -38,6 +38,7 @@ class SlideshowModule extends GalleryModule {
 	$this->setName('Slideshow');
 	$this->setDescription($gallery->i18n('Slideshow'));
 	$this->setVersion('0.8');
+	$this->setGroup('display', $gallery->i18n('Display'));
     }
 
     /**

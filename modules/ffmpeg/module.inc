@@ -41,6 +41,7 @@ class FfmpegModule extends GalleryModule {
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
 	$this->setVersion('0.8');
+	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
     }
 
     /**
@@ -277,9 +278,7 @@ class FfmpegModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Ffmpeg'),
-				 'view' => 'ffmpeg:AdminFfmpeg',
-				 'group' => 'toolkits',
-				 'groupLabel' => $this->translate('Graphics Toolkits'))));
+				 'view' => 'ffmpeg:AdminFfmpeg')));
     }
 
     /**

@@ -73,6 +73,15 @@ class GalleryModule {
      */
     var $_version;
 
+    /**
+     * The module group (optional)
+     * Used to better organize site admin pages
+     *
+     * @var array('group'=>group, 'groupLabel'=>localized label) _group
+     * @access private
+     */
+    var $_group;
+
     /*
      * ****************************************
      *                 Methods
@@ -246,12 +255,11 @@ class GalleryModule {
     
     /**
      * Get the name of the GalleryView containing the various site
-     * administration views for this module.  Note that the text values are
+     * administration views for this module.  Note that the text value is
      * localized since they will be displayed directly to the user.
      *
      * @return array object GalleryStatus a status code
-     *               array( array('name' => name, 'view' => view,
-     *                            optional: 'group' => group, 'groupLabel' => label), ...)
+     *               array( array('name' => name, 'view' => view), ...)
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(), array());
@@ -432,6 +440,14 @@ class GalleryModule {
 
     function getVersion() {
 	return $this->_version;
+    }
+
+    function setGroup($group, $groupLabel) {
+	$this->_group = array('group' => $group, 'groupLabel' => $groupLabel);
+    }
+
+    function getGroup() {
+	return $this->_group;
     }
 }
 ?>

@@ -41,6 +41,7 @@ class CommentModule extends GalleryModule {
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
 	$this->setVersion('0.8');
+	$this->setGroup('data', $gallery->i18n('Extra Data'));
     }
 
     /**

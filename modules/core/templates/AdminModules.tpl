@@ -43,7 +43,10 @@
 	<th> {g->text text="Actions"} </th>
       </tr>
 
+      {assign var="group" value=""}
       {foreach from=$AdminModules.modules item=module}
+      {if $group!=$module.group}<tr><td colspan="4"><h3>{$module.groupLabel}</h3></td></tr>{/if}
+      {assign var="group" value=$module.group}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
 	  {$module.name}

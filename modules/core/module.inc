@@ -39,6 +39,7 @@ class CoreModule extends GalleryModule {
 	$this->setName('Core');
 	$this->setVersion('0.8');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
+	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 
 	/*
 	 * We can't set our description until we have a $gallery object so
@@ -409,23 +410,17 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews();
      */
     function getSiteAdminViews() {
-	$label = $this->translate('Gallery');
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('General'),
-				 'view' => 'core:AdminCore',
-				 'group' => 'gallery', 'groupLabel' => $label),
+				 'view' => 'core:AdminCore'),
 			   array('name' => $this->translate('Users'),
-				 'view' => 'core:AdminUsers',
-				 'group' => 'gallery', 'groupLabel' => $label),
+				 'view' => 'core:AdminUsers'),
 			   array('name' => $this->translate('Groups'),
-				 'view' => 'core:AdminGroups',
-				 'group' => 'gallery', 'groupLabel' => $label),
+				 'view' => 'core:AdminGroups'),
 			   array('name' => $this->translate('Modules'),
-				 'view' => 'core:AdminModules',
-				 'group' => 'gallery', 'groupLabel' => $label),
+				 'view' => 'core:AdminModules'),
 			   array('name' => $this->translate('Layouts'),
-				 'view' => 'core:AdminLayouts',
-				 'group' => 'gallery', 'groupLabel' => $label)
+				 'view' => 'core:AdminLayouts')
 			   )
 		     );
     }

@@ -40,6 +40,7 @@ class MigrateModule extends GalleryModule {
 	$this->setName('Migration');
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
 	$this->setVersion('0.8');
+	$this->setGroup('import', $gallery->i18n('Import'));
     }
     
     /**
@@ -84,20 +85,7 @@ class MigrateModule extends GalleryModule {
 	global $gallery;
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Gallery 1'),
-				 'view' => 'migrate:SelectGallery',
-				 'group' => 'import',
-				 'groupLabel' => $this->translate('Import')
-				 )
-			   )
-		     );
-    }
-
-    /**
-     * @see GalleryModule::getConfigurationView
-     */
-    function getConfigurationView() {
-	global $gallery;
-	return array(GalleryStatus::success(), 'migrate:SelectGallery');
+				 'view' => 'migrate:SelectGallery')));
     }
 }
 ?>

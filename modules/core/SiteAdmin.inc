@@ -73,14 +73,19 @@ class SiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    $group = $module->getGroup();
+	    if (empty($group)) {
+		$group = array('group' => 'other');
+	    }
+	    foreach (array_keys($moduleViews) as $i) {
+		$moduleViews[$i] = array_merge($group, $moduleViews[$i]);
+	    }
+
 	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
 	}
 	// Sort and group..
 	$subViewGroups = $groupLabels = array();
 	foreach ($subViewChoices as $adminView) {
-	    if (!isset($adminView['group'])) {
-		$adminView['group'] = 'other';
-	    }
 	    $group = $adminView['group'];
 	    $subViewGroups[$group][] = $adminView;
 
@@ -97,7 +102,7 @@ class SiteAdminView extends GalleryView {
 	foreach (array_keys($subViewGroups) as $group) {
 	    $data =& $subViewGroups[$group];
 	    if ($data[0]['group'] != 'gallery') {
-		usort($data, 'SiteAdminView_viewSort');
+		usort($data, 'SiteAdminView_nameSort');
 	    }
 	    if (isset($groupLabels[$group])) {
 		$tmp = -1;
@@ -111,6 +116,7 @@ class SiteAdminView extends GalleryView {
 		$data[0]['groupLabel'] = ucwords($data[0]['group']);
 	    }
 	}
+	usort($subViewGroups, 'SiteAdminView_groupSort');
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
@@ -148,31 +154,30 @@ class SiteAdminView extends GalleryView {
     }
 }
 
-function SiteAdminView_viewSort($a, $b) {
+function SiteAdminView_groupSort($a, $b) {
     static $groupOrder;
     if (!isset($groupOrder)) {
 	// gallery first, toolkits second, other last
 	$groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
     }
-    $ag = isset($a['group']) ? $a['group'] : 'other';
-    $bg = isset($b['group']) ? $b['group'] : 'other';
-    if ($ag != $bg) {
-	$ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
-	$bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
-	if ($ao != $bo) {
-	    return ($ao > $bo) ? 1 : -1;
-	}
-	$ag = isset($a['groupLabel']) ? $a['groupLabel'] : $ag;
-	$bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
-	return ($ag > $bg) ? 1 : -1;
-    } else {
-	$an = $a['name'];
-	$bn = $b['name'];
-	if ($an == $bn) {
-	    return 0;
-	} else {
-	    return ($an > $bn) ? 1 : -1;
-	}
+    $ag = $a[0]['group'];
+    $bg = $b[0]['group'];
+    $ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
+    $bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
+    if ($ao != $bo) {
+	return ($ao > $bo) ? 1 : -1;
     }
+    $ag = isset($a[0]['groupLabel']) ? $a[0]['groupLabel'] : $ag;
+    $bg = isset($b[0]['groupLabel']) ? $b[0]['groupLabel'] : $bg;
+    return ($ag > $bg) ? 1 : -1;
+}
+
+function SiteAdminView_nameSort($a, $b) {
+    $an = $a['name'];
+    $bn = $b['name'];
+    if ($an == $bn) {
+	return 0;
+    }
+    return ($an > $bn) ? 1 : -1;
 }
 ?>

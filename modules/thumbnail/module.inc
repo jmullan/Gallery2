@@ -41,6 +41,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
 	$this->setVersion('0.8');
+	$this->setGroup('display', $gallery->i18n('Display'));
     }
 
     /**
@@ -190,9 +191,7 @@ class ThumbnailModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Thumbnails'),
-				 'view' => 'thumbnail:ThumbnailSiteAdmin',
-				 'group' => 'display',
-				 'groupLabel' => $this->translate('Display'))));
+				 'view' => 'thumbnail:ThumbnailSiteAdmin')));
     }
 }
 ?>

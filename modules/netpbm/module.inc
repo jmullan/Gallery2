@@ -41,6 +41,7 @@ class NetPbmModule extends GalleryModule {
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
 	$this->setVersion('0.8');
+	$this->setGroup('toolkits', $gallery->i18n('Graphics Toolkits'));
     }
 
     /**
@@ -342,9 +343,7 @@ class NetPbmModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('NetPBM'),
-				 'view' => 'netpbm:AdminNetPbm',
-				 'group' => 'toolkits',
-				 'groupLabel' => $this->translate('Graphics Toolkits'))));
+				 'view' => 'netpbm:AdminNetPbm')));
     }
 
     /**

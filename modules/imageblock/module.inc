@@ -38,6 +38,7 @@ class ImageBlockModule extends GalleryModule {
 	$this->setName('ImageBlock');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
 	$this->setVersion('0.8');
+	$this->setGroup('blocks', $gallery->i18n('Blocks'));
     }
 
     /**
@@ -102,9 +103,7 @@ class ImageBlockModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Random/Popular'),
-				 'view' => 'imageblock:ImageBlockSiteAdmin',
-				 'group' => 'blocks',
-				 'groupLabel' => $this->translate('Blocks'))));
+				 'view' => 'imageblock:ImageBlockSiteAdmin')));
     }
 
     /**
