@@ -16,6 +16,40 @@
       </td>
     </tr>
 
+    {if isset($form.status)}
+    <tr>
+      <td colspan="2" align="center">
+	{gallery->lightFrame}
+	<table width="100%" border="0">
+	    <!-- {if isset($form.status.deletedGroup)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Removed group '%s'" arg1=$form.status.deletedGroup}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+
+	    <!-- {if isset($form.status.createdGroup)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Created group '%s'" arg1=$form.status.createdGroup}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+
+	    <!-- {if isset($form.status.modifiedGroup)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Modified group '%s'" arg1=$form.status.modifiedGroup}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+	</table>
+	{/gallery->lightFrame}
+      </td>
+    </tr>
+    {/if}
+
     <tr>
       <td valign="top">
 	{gallery->lightFrame}
@@ -113,6 +147,26 @@
 	    <td align="center">
 	      {gallery->errorFontColor}
 	      {gallery->text text="You must select a group"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
+	  {if isset($form.error.list.cantDeleteAllUsersGroup)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You cannot delete the All Users group"}
+	      {/gallery->errorFontColor}
+	    </td>
+	  </tr>
+	  {/if}
+
+	  {if isset($form.error.list.cantDeleteAdminGroup)}
+	  <tr>
+	    <td align="center">
+	      {gallery->errorFontColor}
+	      {gallery->text text="You cannot delete the Site Admins group"}
 	      {/gallery->errorFontColor}
 	    </td>
 	  </tr>

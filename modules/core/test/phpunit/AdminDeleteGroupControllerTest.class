@@ -49,6 +49,9 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
     }
 
+    /**
+     * Create and delete a group
+     */
     function testDeleteGroup() {
 
 	/* Create a group that we can delete */
@@ -65,8 +68,8 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminDeleteGroupConfirmation',
-				    'groupName' => $group->getGroupName()),
+				    'subView' => 'core:AdminGroups',
+				    'form.status.deletedGroup' => $group->getGroupName()),
 			      $results,
 			      'Failed to create user');
 
@@ -74,6 +77,9 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	$this->_deleteGroup($group);
     }
 
+    /**
+     * Try to delete the all users group (this will fail)
+     */
     function testDeleteAllUsersGroup() {
 	global $gallery;
 
@@ -92,7 +98,10 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
 	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
     }
-    
+
+    /**
+     * Try to delete the site admin group (this will fail)
+     */
     function testDeleteSiteAdminsGroup() {
 	global $gallery;
 

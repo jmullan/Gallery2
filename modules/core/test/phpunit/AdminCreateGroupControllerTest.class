@@ -60,8 +60,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminCreateGroupConfirmation',
-				    'groupName' => $groupName),
+				    'subView' => 'core:AdminGroups',
+				    'form.status.createdGroup' => $groupName),
 			      $results);
 
 	$this->_deleteGroup($groupName);
@@ -93,8 +93,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminCreateGroupConfirmation',
-				    'groupName' => $groupName),
+				    'subView' => 'core:AdminGroups',
+				    'form.status.createdGroup' => $groupName),
 			      $results);
 
 

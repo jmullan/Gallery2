@@ -89,8 +89,8 @@ class AdminCreateGroupController extends GalleryController {
 
 		    /* Request a redirect to the confirmation screen */
 		    $redirectParams['view'] = 'core:SiteAdmin';
-		    $redirectParams['subView'] = 'core:AdminCreateGroupConfirmation';
-		    $redirectParams['groupName'] = $form['groupName'];
+		    $redirectParams['subView'] = 'core:AdminGroups';
+		    $redirectParams['form.status.createdGroup'] = $group->getGroupName();
 		}
 	    } else {
 		// Set our error status and fall back to the view.

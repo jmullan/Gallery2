@@ -97,8 +97,8 @@ class AdminEditGroupController extends GalleryController {
 
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminEditGroupConfirmation';
-		$redirectParams['groupName'] = $form['groupName'];
+		$redirectParams['subView'] = 'core:AdminGroups';
+		$redirectParams['form.status.modifiedGroup'] = $group->getGroupName();
 	    }
 	}
 

@@ -59,7 +59,7 @@ class AdminGroupsController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	}
+	} 
 	
 	if (isset($form['action']['firstPage'])) {
 
@@ -120,10 +120,26 @@ class AdminGroupsController extends GalleryController {
 	    if (empty($form['list']['groupId'])) {
 		GalleryUtilities::putRequestVariable('form.error.list.noGroupSelected', 1);
 	    } else {
-		/* Show the "delete group" view */
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
+		list ($ret, $allUserGroupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($form['list']['groupId'] == $allUserGroupId) {
+		    GalleryUtilities::putRequestVariable('form.error.list.cantDeleteAllUsersGroup', 1);
+		} else if ($form['list']['groupId'] == $adminGroupId) {
+		    GalleryUtilities::putRequestVariable('form.error.list.cantDeleteAdminGroup', 1);
+		} else {
+		    /* Show the "delete group" view */
+		    $results['view'] = 'core:SiteAdmin';
+		    GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteGroup');
+		    GalleryUtilities::putRequestVariable('groupId', $form['list']['groupId']);
+		}
 	    }
 	    
 	} else if (isset($form['action']['editFromText'])) {

@@ -49,7 +49,6 @@ class AdminDeleteGroupController extends GalleryController {
 
 	$results = array();
 	$redirectParams = array();
-	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	$form = GalleryUtilities::getFormVariables('form.');
 	
 	if (isset($form['action']['cancel'])) {
@@ -64,33 +63,26 @@ class AdminDeleteGroupController extends GalleryController {
 	     * Check to see if we're trying to delete the anonymous group, or
 	     * ourself (can't do either of those).
 	     */
-	    list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	    list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /*
+	     * In theory we should never get to this point unless we're
+	     * operating on a valid group, so don't bother sending errors back
+	     * in case we can't delete.
+	     */
 	    if ($group->getGroupType() == GROUP_NORMAL) {
-
-		/* Delete the group */
-		list ($ret, $lockId) = $gallery->acquireWriteLock($groupId);
+		$ret = $gallery->deleteEntityById($group->getId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-
-		$ret = $group->delete();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$ret = $gallery->releaseLocks($lockId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
+		
 		/* Request a redirect to the confirmation screen */
 		$redirectParams['view'] = 'core:SiteAdmin';
-		$redirectParams['subView'] = 'core:AdminDeleteGroupConfirmation';
-		$redirectParams['groupName'] = $group->getGroupName();
+		$redirectParams['subView'] = 'core:AdminGroups';
+		$redirectParams['form.status.deletedGroup'] = $group->getGroupName();
 	    }
 	}
 
@@ -126,27 +118,22 @@ class AdminDeleteGroupView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	$groupId = GalleryUtilities::getRequestVariables('groupId');
 
-	/*
-	 * Check to see if we're trying to delete the anonymous group, or
-	 * ourself (can't do either of those).
-	 */
-	list ($ret, $group) = $gallery->loadEntitiesById($groupId);
+	$formName = GalleryUtilities::getRequestVariables('formName');
+	$form = GalleryUtilities::getFormVariables('form.');
+	if ($formName != 'AdminDeleteGroup') {
+	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
+	}
+
+	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$form['groupName'] = $group->getGroupName();
 
-	$isAllUsers = ($group->getGroupType() == GROUP_ALL_USERS);
-	$isAllAdmins = ($group->getGroupType() == GROUP_SITE_ADMINS);
-	
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
-	$template->setVariable('groupId', $groupId);
-	$template->setVariable('groupName', $group->getGroupName());
-	$template->setVariable('isAllUsers', $isAllUsers);
-	$template->setVariable('isAllAdmins', $isAllAdmins);
+	$template->setVariable('form', $form);
 	$template->setVariable('controller', 'core:AdminDeleteGroup');
 	$html = $template->render('AdminDeleteGroup.tpl');
 
