@@ -251,13 +251,104 @@ class ClassicLayout extends GalleryLayout {
 	 * get them into an acceptable format for the template engine.
 	 */
 	$imageViews = array();
-	    
-	/* Load the resizes */
-	$gallery->debug('XXX: missing view-resize permission check');
-	list ($ret, $resizes) =
-	    GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
+
+	/* If the user can see resized versions, add those to the list */
+	list($ret, $hasPermission) =
+	    GalleryUserHelper::hasItemPermission($item->getId(),
+						 $gallery->getActiveUserId(),
+						 array('core.viewResizes'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($hasPermission) {
+	    /* Load the resizes */
+	    list ($ret, $resizes) =
+		GalleryDerivativeHelper::fetchResizesByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!empty($resizes)) {
+		foreach ($resizes[$item->getId()] as $resize) {
+		    $imageViews[] = array('inline' => true,
+					  'height' => $resize->getHeight(),
+					  'width' => $resize->getWidth(),
+					  'size' => $resize->getDerivativeSize(),
+					  'id' => $resize->getId());
+		}
+	    }
+	}
+
+	/* If the user can see the full version, add it to the list */
+	list($ret, $hasPermission) =
+	    GalleryUserHelper::hasItemPermission($item->getId(),
+						 $gallery->getActiveUserId(),
+						 array('core.viewSource'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($hasPermission) {
+	    /* Add the full version */
+	    list ($ret, $preferred) =
+		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Show the preferred item, if it's there */
+	    if (empty($preferred)) {
+		if (is_subclass_of($item, 'GalleryDataItem')) {
+		    $dataItem = array('size' => $item->getSize(),
+				      'id' => $item->getId());
+
+		    if ($item->canBeViewedInline()) {
+			$dataItem['inline'] = true;
+			$dataItem['height'] = $item->getHeight();
+			$dataItem['width'] = $item->getWidth();
+		    } else {
+			$dataItem['inline'] = false;
+		    }
+		
+		    $imageViews[] = $dataItem;
+		}
+	    } else {
+		$preferred = $preferred[$item->getId()];
+		$imageViews[] = array('inline' => true,
+				      'height' => $preferred->getHeight(),
+				      'width' => $preferred->getWidth(),
+				      'size' => $preferred->getDerivativeSize(),
+				      'id' => $preferred->getId());
+	    }
+	}
+
+	/*
+	 * If all else fails, try to just show the thumbnail.
+	 */
+	if (empty($imageViews)) {
+
+	    /* Make sure we can view the item at all */
+	    list($ret, $hasPermission) =
+		GalleryUserHelper::hasItemPermission($item->getId(),
+						     $gallery->getActiveUserId(),
+						     array('core.view'));
+	    
+	    /* Load the thumbnail */
+	    list ($ret, $thumbnails) =
+		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!empty($thumbnails)) {
+		$thumbnail = $thumbnails[$item->getId()];
+		$imageViews[] = array('inline' => true,
+				      'height' => $thumbnail->getHeight(),
+				      'width' => $thumbnail->getWidth(),
+				      'size' => $thumbnail->getDerivativeSize(),
+				      'id' => $thumbnail->getId());
+	    }
 	}
 
 	$imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
@@ -265,55 +356,13 @@ class ClassicLayout extends GalleryLayout {
 	    $imageViewsIndex = 0;
 	}
 
-	if (!empty($resizes)) {
-	    foreach ($resizes[$item->getId()] as $resize) {
-		$imageViews[] = array('inline' => true,
-				      'height' => $resize->getHeight(),
-				      'width' => $resize->getWidth(),
-				      'size' => $resize->getDerivativeSize(),
-				      'id' => $resize->getId());
-	    }
-	}
-
-	/* Add the full version */
-	$gallery->debug('XXX: missing view-full permission check');
-	list ($ret, $preferred) =
-	    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Show the preferred item, if it's there */
-	if (empty($preferred)) {
-	    if (is_subclass_of($item, 'GalleryDataItem')) {
-		$dataItem = array('size' => $item->getSize(),
-				  'id' => $item->getId());
-
-		if ($item->canBeViewedInline()) {
-		    $dataItem['inline'] = true;
-		    $dataItem['height'] = $item->getHeight();
-		    $dataItem['width'] = $item->getWidth();
-		} else {
-		    $dataItem['inline'] = false;
-		}
-		
-		$imageViews[] = $dataItem;
-	    }
-	} else {
-	    $preferred = $preferred[$item->getId()];
-	    $imageViews[] = array('inline' => true,
-				  'height' => $preferred->getHeight(),
-				  'width' => $preferred->getWidth(),
-				  'size' => $preferred->getDerivativeSize(),
-				  'id' => $preferred->getId());
-	}
+	/* Don't let the index overflow the images array */
+	$imageViewsIndex = min($imageViewsIndex, sizeof($imageViews) - 1);
 
 	/*
 	 * In order to figure out where we are, we have to load the entire list
 	 * of children of my parent and then iterate through it to find our
 	 * current index.
-	 *
-	 * XXX SCALE: this doesn't scale well
 	 */
 	list ($ret, $parent) =
 	    $gallery->loadEntitiesById($item->getParentId());
