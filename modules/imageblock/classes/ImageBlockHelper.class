@@ -118,7 +118,7 @@ class ImageBlockHelper {
 	  [GalleryDerivative::derivativeType] = ' .
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL . '
 	GROUP BY
-	  [GalleryEntity::id]
+	  [GalleryEntity::id], [GalleryEntity::creationTimestamp], [GalleryItemAttributesMap::viewCount]
 	ORDER BY ' .  $orderBy . ' LIMIT 1';
 
 	$data[] = $gallery->getActiveUserId();
