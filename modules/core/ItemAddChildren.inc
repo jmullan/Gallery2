@@ -206,17 +206,17 @@ class ItemAddChildrenView extends GalleryView {
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	if ($form['formName'] == 'ItemAddChildren') {
@@ -232,7 +232,7 @@ class ItemAddChildrenView extends GalleryView {
 
 	list ($ret, $localServerDirs) = $gallery->getModuleParameter('core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (empty($localServerDirs)) {
 	    $localServerDirList = array();
@@ -288,7 +288,7 @@ class ItemAddChildrenView extends GalleryView {
 				list ($ret, $mimeTypeItemMap[$mimeType]) =
 				    GalleryItemHelper::newItemByMimeType($mimeType);
 				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 			    }
 			    
@@ -307,7 +307,7 @@ class ItemAddChildrenView extends GalleryView {
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
 			list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
 

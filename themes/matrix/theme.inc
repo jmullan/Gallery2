@@ -94,7 +94,7 @@ class MatrixTheme extends GalleryTheme {
 	    $imageClass = "fullsize_image";
 	}
 
- 	$result = sprintf('<img class="%s" src="%s" width="%s" height="%s" alt="%s" longdesc="%s">',
+ 	$result = sprintf('<img class="%s" src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
 			  $imageClass,
  			  $src,
  			  $width,
@@ -427,15 +427,57 @@ class MatrixTheme extends GalleryTheme {
 	    $buf .= '<tr> <td class="tabbedbox_title"> ' . $title['content'] . '</td> </tr> ';
 	}
 
+	$imageUrl = $this->getBaseUrl() . 'images/';
 	$buf .= '<tr> <td class="tabbedbox_tabset"> <table class="tabbedbox_tabset_inner"> <tr>';
+
+	$lastActive = true;
+	$firstTab = true;
+	$piece = array();
 	foreach ($item_array as $item) {
-	    if ($item['params']['selected'] == 'true') {
-		$buf .= '<td class="tabbedbox_tab">' . $item['content'] . '</td>';
+	    $active = ($item['params']['selected'] == 'true');
+
+	    if ($active) {
+		if ($firstTab) {
+		    $left = array($imageUrl . 'tab-left-act.gif', 8, 28);
+		} else {
+		    $left = array($imageUrl . 'tab-tween-inact-act.gif', 16, 28);
+		}
+		$mid = array('tabbedbox_activetab', $imageUrl . 'tab-mid-act.gif');
 	    } else {
-		$buf .= '<td class="tabbedbox_selectedtab">' . $item['content'] . '</td>';
+		if ($firstTab) {
+		    $left = array($imageUrl . 'tab-left-inact.gif', 8, 28);
+		} else {
+		    if ($lastActive) {
+			$left = array($imageUrl . 'tab-tween-act-inact.gif', 16, 28);
+		    } else {
+			$left = array($imageUrl . 'tab-tween-inact-inact.gif', 16, 28);
+		    }
+		}
+		$mid = array('tabbedbox_inactivetab', $imageUrl . 'tab-mid-inact.gif');
 	    }
+
+	    $buf .= sprintf('<td class="tabbedbox_tab_tween"><img src="%s" width="%s" height="%s" alt=""/></td>',
+			    $left[0], $left[1], $left[2]);
+	    $buf .= sprintf('<td class="%s" style="background-image: url(%s);">%s</td>',
+			    $mid[0],
+			    $mid[1],
+			    $item['content']);
+	    $lastActive = $active;
+	    $firstTab = false;
 	}
+
+	if ($active) {
+	    $right = array($imageUrl . 'tab-right-act.gif', 8, 28);
+	} else {
+	    $right = array($imageUrl . 'tab-right-inact.gif', 8, 28);
+	}
+	$buf .= sprintf('<td class="tabbedbox_tab_tween"><img src="%s" width="%s" height="%s" alt=""/></td>',
+			$right[0], $right[1], $right[2]);
 	$buf .= '</tr> </table> </td> </tr>';
+
+	$buf .= '<tr>';
+	$buf .= '<td class="tabbedbox_tabset_divider"></td>';
+	$buf .= '</tr>';
 
 	$buf .= '<tr> <td class="tabbedbox_body"> ' . $body['content'] . '</td> </tr> ';
 	$buf .= '</table>';
