@@ -47,7 +47,6 @@ class AdminNetPbmController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$debugSnippet = '';
 	$status = array();
 	$error = array();
 	if (isset($form['action']['save'])) {
@@ -66,11 +65,8 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		}
 
-		$gallery->startRecordingDebugSnippet();
 		list ($ret, $testResults) = NetPbmToolkitHelper::testBinaries(
 		    $form['path'], array('pnmtojpeg' => $form['pnmtojpeg']));
-		$debugSnippet = $gallery->stopRecordingDebugSnippet();
-		
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][path][badPath]';
@@ -79,7 +75,6 @@ class AdminNetPbmController extends GalleryController {
 		    }
 		} else {
 		    $failCount = 0;
-		    $debugSnippet = '';
 		    foreach ($testResults as $testResult) {
 			/* At least one test should work, else this path is not a valid one */
 			if (!$testResult['success']) {
@@ -94,10 +89,8 @@ class AdminNetPbmController extends GalleryController {
 	    }
 
 	    if (!empty($form['jheadPath'])) {
-		$gallery->startRecordingDebugSnippet();
 		list ($ret, $jheadTests, $jheadMimeTypes) =
 		    NetPbmToolkitHelper::testJhead($form['jheadPath']);
-		$debugSnippet .= $gallery->stopRecordingDebugSnippet();
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
 			$error[] = 'form[error][jheadPath][badPath]';
