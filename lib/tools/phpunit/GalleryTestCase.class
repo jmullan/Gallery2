@@ -114,6 +114,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $_ENV;
 	$this->_saveVars[] = $gallery->getPlatform();
 	$this->_saveVars[] = $gallery->getActiveUser();
+	$this->_saveVars[] = $gallery->getUrlGenerator();
 	$this->_saveVars[] = $gallery->_config;
     
 	$_GET = array();
@@ -177,6 +178,7 @@ class GalleryTestCase extends TestCase {
 	$_ENV = array_shift($this->_saveVars);
 	$gallery->setPlatform(array_shift($this->_saveVars));
 	$gallery->setActiveUser(array_shift($this->_saveVars));
+	$gallery->setUrlGenerator(array_shift($this->_saveVars));
 	$gallery->_config = array_shift($this->_saveVars);
 
 	parent::tearDown();
