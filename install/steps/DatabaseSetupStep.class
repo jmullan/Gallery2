@@ -164,6 +164,9 @@ class DatabaseSetupStep extends InstallStep {
     }
 
     function _captureEnd() {
+	if (!isset($this->_debugContents)) {
+	    $this->_debugContents = '';
+	}
 	$this->_debugContents .= ob_get_contents();
 	ob_end_clean();
     }

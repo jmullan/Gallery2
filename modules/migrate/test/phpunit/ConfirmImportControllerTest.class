@@ -140,8 +140,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* Clean up our test album */
 	$ret = GalleryCoreApi::deleteEntityById($this->_temporaryAlbumId);
 	if ($ret->isError()) {
-	    print "<p><b>ERROR deleting" . $this->_temporaryAlbumId . "</b></p>";
-	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $mapCount) = G1MigrateHelper::fetchMapCount();

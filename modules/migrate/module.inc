@@ -44,6 +44,25 @@ class MigrateModule extends GalleryModule {
     }
     
     /**
+     * @see GalleryModule::registerEventListeners()
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new MigrateModule(), true);
+    }
+
+    function handleEvent($event) {
+	$item = $event->getEntity();
+	if (GalleryUtilities::isA($item, 'GalleryItem')) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/G1MigrateMap.class');
+	    $ret = G1MigrateMap::removeMapEntry(array('itemId' => $item->_id));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__); 
+	    }
+        }
+	return GalleryStatus::success();
+    }
+
+    /**
      * @see GalleryModule::isRecommendedDuringInstall
      */
     function isRecommendedDuringInstall() {
