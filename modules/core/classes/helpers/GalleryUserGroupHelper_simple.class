@@ -67,6 +67,11 @@ class GalleryUserGroupHelper_simple {
     function isUserInGroup($userId, $groupId) {
 	global $gallery;
 
+	$cacheKey = "GalleryUserGroupHelper::isUserInGroup($userId,$groupId)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    return array(GalleryStatus::success(), GalleryDataCache::get($cacheKey));
+	}
+
 	$query = '
         SELECT
           [GalleryUserGroupMap::userId]
@@ -86,8 +91,9 @@ class GalleryUserGroupHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return array(GalleryStatus::success(),
-		     $searchResults->resultCount() ? true : false);
+	$result = $searchResults->resultCount() ? true : false;
+	GalleryDataCache::put($cacheKey, $result);
+	return array(GalleryStatus::success(), $result);
     }
 }
 ?>
