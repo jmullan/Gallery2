@@ -138,7 +138,7 @@ class GalleryTemplateAdapter {
 	global $gallery;
 
 	if (empty($params['format'])) {
-	    $params['format'] = '%D %T';
+	    $params['format'] = '%x';
 	}
 	
 	return strftime($params['format'], $params['timestamp']);
