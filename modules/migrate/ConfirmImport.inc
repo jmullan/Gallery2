@@ -204,6 +204,7 @@ class ConfirmImportController extends GalleryController {
 		    /* Set a positive note for later.  Hooray! */
 		    $status['userImportSuccess'][$userName] = 1;
 		}
+		$uid = null;
 	    }
 	    
             /* Import Any Selected Albums
@@ -275,8 +276,9 @@ class ConfirmImportController extends GalleryController {
 		    $targetAlbumID = $finishedAlbums[$album['parentAlbumName']];
 		} else {
 		    $albumfields[$album['name']] = $album;
+		    $album = NULL;
 		}
-		if ($targetAlbumID) {
+		if ($targetAlbumID && $album) {
 		    if (isset($albumPosition[$album['name']])) {
 		    }
 		    list($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
@@ -632,6 +634,7 @@ class ConfirmImportController extends GalleryController {
 				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 				}
 				$albumPosition[$importAlbumItem->isAlbumName] = $j;
+				$importAlbumItem = NULL;
 			    } else {
 				$dir = $albumsPath . $album['name'] . $slash;
 				$filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
@@ -870,7 +873,7 @@ class ConfirmImportController extends GalleryController {
 			    }
 			}
 		    }		    		    
-		    
+		    $album = null;
 		    /* $i keeps track of how many passes we make over the data */
 		    $i++;
 		}
