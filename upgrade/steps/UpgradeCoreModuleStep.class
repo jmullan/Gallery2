@@ -31,6 +31,18 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	    $gallery->setDebug('buffered');
 	}
 
+	/*
+	 * We'll need a translator to load up the core module for the
+	 * GalleryPlugin::setGroup() method to work.
+	 */
+	$translator =& $gallery->getTranslator();
+	if (empty($translator)) {
+	    $ret = $gallery->initTranslator();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	require_once(dirname(__FILE__) . '/../../modules/core/module.inc');
 	$core = new CoreModule();
 	$versions = $core->getInstalledVersions();

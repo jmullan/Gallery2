@@ -55,6 +55,18 @@ class InstallCoreModuleStep extends InstallStep {
 	    }
 	}
 
+	/*
+	 * We'll need a translator to load up the core module for the
+	 * GalleryPlugin::setGroup() method to work.
+	 */
+	$translator =& $gallery->getTranslator();
+	if (empty($translator)) {
+	    $ret = $gallery->initTranslator();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
 	if (empty($templateData['errors'])) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
 	    if ($ret->isError()) {

@@ -65,19 +65,6 @@ class CoreModuleExtras {
 	    }
 	}
 
-	/*
-	 * We may need a translator in order to run the install functions below.
-	 * At this point in the install process, we probably don't have one!
-	 * Try to get one, and if that fails, then create one.
-	 */
-	$translator =& $gallery->getTranslator();
-	if (empty($translator)) {
-	    $ret = $gallery->initTranslator();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
 	switch ($currentVersion) {
 	case '0':
 	    /*
