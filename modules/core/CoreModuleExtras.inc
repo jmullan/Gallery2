@@ -40,24 +40,8 @@ class CoreModuleExtras {
     function install($module) {
 	global $gallery;
 
-	if ($gallery->getDebug()) {
-	    $gallery->debug('Can\'t load core version -- ' .
-			    '<b>assuming that the core needs installation</b>');
-	}
-	
-	// On some databases, our transaction is hosed at this point.  So roll back and start again.
-	$storage =& $gallery->getStorage();
-	$ret = $storage->rollbackTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ret = $storage->beginTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
 	/* The store requires configuration. */
+	$storage =& $gallery->getStorage();
 	$ret = $storage->configureStore('core');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -624,11 +624,6 @@ class CoreModule extends GalleryModule {
 	 * configured and do that now.  All other modules can simply ask for
 	 * the version number and expect that to succeed.
 	 */
-	if ($gallery->getDebug()) {
-	    $gallery->debug('Trying to load core version.  If you see an error like ' .
-			    '<b>table Xxx doesn\'t exist</b> here, that\'s OK.');
-	}
-
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError() & !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
