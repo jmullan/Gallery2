@@ -6,6 +6,6 @@
  *}
 <div class="gbBottomFlag">
   <div class="giActionSelect">
-    <a href="{$redirectUrl}">[{g->text text="Please click to continue"}]</a>
+    <a href="{$redirectUrl}">{g->text text="Continue..."}</a>
   </div>
 </div>
