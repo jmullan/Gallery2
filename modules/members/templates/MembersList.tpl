@@ -33,7 +33,7 @@
     <table class="gbDataTable">
       {if ($form.list.maxPages > 1)}
       <tr>
-        <th colspan="3">
+        <th colspan="4">
           <table>
             <tr>
               <th align="left">

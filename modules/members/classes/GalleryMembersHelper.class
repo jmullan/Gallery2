@@ -42,6 +42,73 @@ class GalleryMembersHelper {
      * ****************************************
      */
 
+
+    /**
+     * Return the total number of items a user owns
+     *
+     * @param int User id
+     * @return array (object GalleryStatus a status code,
+     *                int ItemCount a total item count)
+     * @static
+     */
+    function fetchUserItemCount($userId){
+        global $gallery;
+
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        $storage =& $gallery->getStorage();
+        $groupIds = array_keys($groupIds);
+        $groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+        list ($ret, $andPermission) =
+            $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        $query = '
+        SELECT 
+          COUNT( DISTINCT [GalleryItem::id])
+        FROM
+	  [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+	WHERE
+          [GalleryItem::ownerId] = ?
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+          AND
+        ' . $andPermission . ' > ?
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryItem::id]
+	';
+
+        $data[] = $userId;
+        $data[] = $gallery->getActiveUserId();
+        array_splice($data, sizeof($data), 0, $groupIds);
+        $data[] = $storage->convertIntToBits($permissionBits);
+        $data[] = $storage->convertIntToBits(0);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	$result = $searchResults->nextResult();
+        $numItems = (int)$result[0];
+
+        return array(GalleryStatus::success(), $numItems);
+    }
+
+
+
     /**
      * Return the last N items a user created
      *
@@ -101,7 +168,7 @@ class GalleryMembersHelper {
           AND
 	' . $andPermission . ' > ?
           AND
-	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+	  [GalleryPermissionMap::itemId] = [GalleryItem::id]
         ORDER BY
           [GalleryEntity::creationTimestamp] ' . $direction . '
         ';
@@ -218,10 +285,13 @@ class GalleryMembersHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* The difference in the creationTimestamp and Now, divided by the number of seconds
-	 * in a day gives us a result in days
+	/* The difference in the day of  creationTimestamp and todays date, divided by the number of seconds
+	 * in a day , gives us a result in days
 	 */
-	$age = (int) ((time() - $user->getCreationTimestamp()) / (24 * 60 * 60));
+
+	$todayStamp = strtotime(date("F j, Y", time()));
+	$creationStamp = strtotime(date("F j, Y", $user->getCreationTimestamp()));
+	$age = ($todayStamp - $creationStamp) / (24 * 60 * 60);
 
 	return array(GalleryStatus::success(), $age);
     }

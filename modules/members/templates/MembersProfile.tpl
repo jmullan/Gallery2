@@ -67,28 +67,49 @@
   
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td valign="top">
-  	{g->text text="Last Five Items:"}
+  	{g->text text="Last Items:"}
         </td>
   
         <td>
-  	{if sizeof($MembersProfile.lastItems)}
-  	<ul>
+	  <table>
+  	  {if sizeof($MembersProfile.lastItems)}
   	  {foreach from=$MembersProfile.lastItems item=item}
-  	  <li>
-  	    {if $item.canContainChildren}
-  	    {g->text text="Album:"}
-  	    {/if}
-  	    {g->text text="&nbsp;"}
-  	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
-	      {$item.title|default:$item.pathComponent}
-  	    </a>
-  	    <br />
-  	  </li>
-  	  {/foreach}
-  	</ul>
-  	{else}
-  	{g->text text="None"}
-  	{/if}
+  	    <tr>
+              <td>
+	      {if $item.canContainChildren}
+  	        <img style="border: 0px"
+                     src="{g->url href="modules/members/data/directory.gif"}"
+                     alt="{g->text text="Album"}"
+                     height="16"
+                     width="16"/>
+              </td>
+  	      {else}
+	        <img style="border: 0px"
+                     src="{g->url href="modules/members/data/file.gif"}"
+                     alt="{g->text text="Item"}"
+                     height="16"
+                     width="16"/>
+              </td>
+	      {/if}
+  	      <td>
+  	        <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+	          {$item.title|default:$item.pathComponent}
+    	        </a>
+  	        <br />
+	      </td>
+            </tr>
+  	    {/foreach}
+	    <tr>
+              <td>
+	        <a href="{g->url arg1="view=members:MembersItems"
+                                 arg2="userId=`$MembersProfile.user.id`"}">{g->text text="List All &raquo;"}
+                </a>
+	      </td>
+	    </tr>
+    	  {else}
+    	  {g->text text="None"}
+  	  {/if}
+	  </table>
         </td>
       </tr>	
     </table>
