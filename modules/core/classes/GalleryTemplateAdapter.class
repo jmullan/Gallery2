@@ -1207,6 +1207,7 @@ class GalleryTemplateAdapter {
         $self['content'] = $content;
 
 
+        $content = trim($self['content']);
 
         $tagData = array('name' => 'title', 'params' => $params, 'content' => $content);
         if ($this->stackEmpty()) {

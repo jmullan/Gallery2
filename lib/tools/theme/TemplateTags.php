@@ -28,6 +28,7 @@ $contracted_tag['image'] = 1;
  * very hard to read.
  */
 $trimmed_tag['value'] = 1;
+$trimmed_tag['title'] = 1;
 
 $attribute_tag['title'] = 1;
 $attribute_tag['subtitle'] = 1;
