@@ -275,17 +275,17 @@ if ($step == 1) {
 	/*
 	 * Make sure we can connect to the storage subsystem.
 	 */
-	$ret = $gallery->initStorage();
-	if ($ret->isError()) {
-	    $ret = $ret->wrap(__FILE__, __LINE__);
-	    error('storageError', array('error' => $ret));
-	    return;
-	}
+	//$ret = $gallery->initStorage();
+	//	if ($ret->isError()) {
+	//$ret = $ret->wrap(__FILE__, __LINE__);
+	//error('storageError', array('error' => $ret));
+		//return;
+	//}
 
-message('success');
-
-	$status[$step] = count($errorMsg) == 0 ? true : false;
+	//message('success');
     }
+
+    $status[$step] = count($errorMsg) == 0 ? true : false;
 }
 
 if ($step == 7 || ($status[7] && count($errorMsg) == 0 && isset($_GET['action']) && $_GET['action'] === 'create')) {
