@@ -138,6 +138,9 @@ class GallerySession {
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+	} else {
+	    /* Sanitize user input to avoid writing outside the session's dir */
+	    $this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
 	}
 
 	/* Load session state */
@@ -417,12 +420,16 @@ class GallerySession {
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
 	if ($platform->file_exists($sessionFile)) {
-	    list ($ret, $serialized) = $platform->concurrentRead($sessionFile, 'rb');
+	    list ($ret, $serialized) = $platform->concurrentRead($sessionFile);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    /* Make sure we create two *separate* arrays here or our
+	     * comparison later will fail sometimes if we just assign
+	     * one to the other with '='.
+	     */
 	    $this->_sessionData = unserialize($serialized);
-	    $this->_loadedSessionData = $this->_sessionData;
+	    $this->_loadedSessionData = array_merge($this->_sessionData);
 	} else {
 	    /* No session file */
 	    $this->_sessionData = array();

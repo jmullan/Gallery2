@@ -178,6 +178,66 @@ class SessionTest extends GalleryTestCase {
 	/* Make sure the SQL runs */ 
 	GallerySession::_expireSessions();
     }
+
+    function testIllegalSessionId() {
+	global $gallery;
+
+	/* Test an illegal sessionId */
+	$_COOKIE[SESSION_ID_PARAMETER] = '../oops.txt';
+
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+
+	$this->assert(! preg_match('#^\.\.#', $session->getSessionId()), 'Dangerous session-id!');
+
+	/* Now test a legal sessionId */
+	$_COOKIE[SESSION_ID_PARAMETER] = md5(rand());
+
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+
+	$this->assertEquals($session->getSessionId(), $_COOKIE[SESSION_ID_PARAMETER]);
+    }
+
+    function testSessionSaveLoad() {
+	global $gallery;
+	$sid = md5(rand());
+
+	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
+	
+	/* Request #1, save some status information and remove it */
+        $gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+	$statusId = $session->putStatus(array('i' => 'a'));
+	$this->assertEquals(array('i' => 'a'), $session->getStatus($statusId));
+	
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Request #2, save some more status information */
+        $gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+	$otherStatusId = $session->putStatus(array('j' => 'b'));
+	
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Request #3, get back the status saved in previous request */	
+	GalleryDataCache::reset();
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+	
+	$this->assertEquals(array('j' => 'b'), $session->getStatus($otherStatusId));
+    }
 }
 
 ?>
