@@ -298,7 +298,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function loadEntities($ids) {
 	global $gallery;
-	
+
 	if (empty($this->_db)) {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
 	}
@@ -311,6 +311,7 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Separate the ids by type */
 	$classNames = array();
+	$gallery->guaranteeTimeLimit(5);
 	for ($i = 0; $i < sizeof($ids); $i++) {
 	    if (empty($types[$i])) {
 		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
@@ -321,6 +322,7 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Load them in groups */
 	foreach ($classNames as $className => $targetIdHash) {
+	    $gallery->guaranteeTimeLimit(5);
 
 	    /* Get unique target ids */
 	    $targetIds = array_keys($targetIdHash);
@@ -376,7 +378,11 @@ class DatabaseStorage extends GalleryStorage {
 		}
 
 		/* Process all the results */
+		$j = 0;
 		while ($row = $recordSet->FetchRow()) {
+		    if (++$j % 20 == 0) {
+			$gallery->guaranteeTimeLimit(5);
+		    }
 		    $entity = new $className;
 		    if (empty($entity)) {
 			return array(GalleryStatus::error(ERROR_BAD_DATA_TYPE, __FILE__, __LINE__), null);
