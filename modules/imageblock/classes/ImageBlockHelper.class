@@ -101,7 +101,6 @@ class ImageBlockHelper {
 	}
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $typeMap[$itemType];
-	$result = null;
 
 	if (isset($parentId)) {
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
@@ -111,27 +110,23 @@ class ImageBlockHelper {
 	    $data[] = implode('/', $sequence) . (empty($sequence) ? '' : '/') . $parentId . '/%';
 	}
 
-	while (true) {
-	    list ($ret, $searchResults) = $gallery->search($query, $data, array());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if ($rec = $searchResults->nextResult()) {
-		$result = array('id' => (int)$rec[0],
-				'creationTimestamp' => (int)$rec[1]);
-		if ($order == IMAGE_BLOCK_VIEWED || isset($parentId)) {
-		    $result['viewCount'] = (int)$rec[2];
-		}
-		break;
-	    }
-	    if (isset($cached)) {
-		break;
-	    }
+	list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isCached) = ImageBlockHelper::_isCached($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$isCached) {
 	    $ret = ImageBlockHelper::cacheViewableTree();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $cached = true;
+	    list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	if (isset($result) && !isset($result['viewCount'])) {
@@ -142,6 +137,37 @@ class ImageBlockHelper {
 	}
 
 	return array(GalleryStatus::success(), $result);
+    }
+
+    /** @static @private */
+    function _runQuery($query, $data) {
+	global $gallery;
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = null;
+	if ($rec = $searchResults->nextResult()) {
+	    $result = array('id' => (int)$rec[0],
+			    'creationTimestamp' => (int)$rec[1]);
+	    if (isset($rec[2])) {
+		$result['viewCount'] = (int)$rec[2];
+	    }
+	}
+	return array(GalleryStatus::success(), $result);
+    }
+
+    /** @static @private */
+    function _isCached($userId) {
+	global $gallery;
+	list ($ret, $searchResults) = $gallery->search(
+	    'SELECT COUNT(*) FROM [ImageBlockCacheMap] WHERE [ImageBlockCacheMap::userId]=?',
+	    array($userId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$isCached = ($rec = $searchResults->nextResult()) && ($rec[0] > 0);
+	return array(GalleryStatus::success(), $isCached);
     }
 
     /**
@@ -175,7 +201,7 @@ class ImageBlockHelper {
 	$query = '
 	INSERT INTO
 	  [ImageBlockCacheMap]
-	SELECT
+	SELECT DISTINCT
 	  ?, ?, [GalleryEntity::creationTimestamp], [GalleryEntity::id]
 	FROM
 	  [GalleryEntity], [GalleryPermissionMap], [GalleryChildEntity], [GalleryDerivative]
