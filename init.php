@@ -98,7 +98,8 @@ function GalleryInitFirstPass($params=array()) {
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {
 	list ($ret, $urlGenerator) = GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator', null);
-	if ($ret->isError()) {
+	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
+	if ($ret->isError() && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
