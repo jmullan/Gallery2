@@ -172,9 +172,19 @@ notification system, but at any time you should be able to do this:
 	cd po
 	gmake el_GR.po  	(using Greek as an example)
 
-This will extract all messages from the module that you're in, and update
-the .po file.  Look through the .po file for any blocks that have an
-empty msgstr, or are marked "fuzzy" and update them.
+This will extract all messages from the module that you're in, and
+update the .po file.  Look through the .po file for any blocks that
+have an empty msgstr, or are marked "fuzzy" and update them.  After
+they are fixed, remove the fuzzy tag.  You may find tags that look
+like this:
+
+	#, fuzzy
+	#~ msgid "User "
+	#~ msgstr "Gebruikersnaam"
+
+This is a fuzzy translation for a string that no longer exists.  It
+means that we removed the content string from the code, so you no longer
+need to translate it.  You can delete these entries.
 
 When you've got everything right, run:
 
