@@ -7,6 +7,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
     }
 
     function testStart() {
+	global $gallery;
 
 	$group = new GalleryGroup();
 	$ret = $group->create();
