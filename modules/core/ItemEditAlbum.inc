@@ -126,6 +126,13 @@ class ItemEditAlbumController extends GalleryController {
 		$lockIds = array();
 
 		/* Recreate the thumbnails, if requested to do so */
+
+		/*
+		 * TODO: it's possible for the data item not to have
+		 * resizes/thumbnails because it was created when there were no
+		 * graphics toolkits.  Improve this code to detect that
+		 * situation and build new thumbnails/resizes
+		 */
 		if (isset($form['recreateThumbnails'])) {
 		    /* Load the thumbnail of the children */
 		    list ($ret, $thumbTable) =
@@ -136,6 +143,10 @@ class ItemEditAlbumController extends GalleryController {
 
 		    foreach ($childItems as $child) {
 			$childId = $child->getId();
+			if (!isset($thumbTable[$childId])) {
+			    continue;
+			}
+			
 			$thumbnail = $thumbTable[$childId];
 
 			/*
@@ -177,6 +188,10 @@ class ItemEditAlbumController extends GalleryController {
 		    /* Add the new resizes */
 		    foreach ($childItems as $child) {
 			$childId = $child->getId();
+
+			if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
+			    continue;
+			}
 
 			/*
 			 * Make sure that we have a toolkit before adding back
