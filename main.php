@@ -36,8 +36,13 @@ if (!defined('G2_EMBED')) {
 	return;
     }
 
-    /* Process the request */
-    GalleryMain();
+    global $gallery;
+    if (!$gallery->getConfig('mode.embed.only')) {
+
+	/* Process the request */
+	GalleryMain();
+
+    }
 }
 
 function GalleryMain($returnHtml=false) {

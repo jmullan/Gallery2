@@ -21,15 +21,14 @@
  */
 
 /*
- * As a security precaution, we limit access to Gallery's install and setup
- * functionality to those people who know the password, below.  The first time
- * around, you must pick a password and enter it here in clear text.  Example:
+ * As a security precaution, we limit access to Gallery's test suite
+ * to those people who know the password, below.  Example:
  *
  *  $gallery->setConfig('setup.password', 'A PASSWORD');
  *
  * Choose something random and enter it in plain text.  You don't have to
  * remember it because you can always refer to this file.  You'll only be asked
- * for this password when you run Gallery's setup code.  We don't provide a
+ * for this password when you run Gallery's lib/tools code.  We don't provide a
  * default password because we want you to choose one of your own (which
  * lessens the chance that you'll get hacked).
  */
@@ -54,7 +53,7 @@ $gallery->setConfig('data.gallery.base', '');
 
 /*
  * Gallery can store its data in multiple different back ends.  Currently we
- * support only MySQL and PostgreSQL.  Enter the hostname where your
+ * support MySQL, PostgreSQL and Oracle.  Enter the hostname where your
  * database lives, and the username and password you use to connect to it.
  *
  * You must specify the name of a database that already exists.  Gallery will 
@@ -126,4 +125,10 @@ $gallery->setDebug(false);
  *	
  */
 $gallery->setProfile(false);
+
+/*
+ * Embedded mode.  You can disable direct access to main.php (standalone G2)
+ * by setting this this flag to true.
+ */
+$gallery->setConfig('mode.embed.only', false);
 ?>
