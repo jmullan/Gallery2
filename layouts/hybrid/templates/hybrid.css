@@ -1,144 +1,241 @@
 body {
-  margin:0px; padding:0px;
+    margin: 0px;
+    padding: 0px;
 }
-table,tr,td {
-  margin:0px; padding:0px;
-  border-spacing:0px;
+table, tr, td {
+    margin: 0px;
+    padding: 0px;
+    border-spacing: 0px !important;
 }
 img {
-  border:0px;
+    border: 0px !important;
 }
 img.off {
-  position:absolute; visibility:hidden;
-  left:0px;
+    position: absolute;
+    visibility: hidden;
+    left: 0px;
 }
 img.hid {
-  visibility:hidden;
+    visibility: hidden;
 }
 div#album {
-  position:absolute;
-  top:0px; left:150px; right:0px; height:100%;
+    position: absolute;
+    top: 0px;
+    left: 180px;
+    right: 0px;
+    height: 101%;
+    margin: 0px;
+    padding: 0px;
+    clear: both;
 }
 div#album_titlebar {
-  overflow:hidden;
-  border-bottom-width:1px;
-  text-align:left;
+    overflow: hidden;
+    border-bottom-width: 1px !important;
+    text-align: left;
 }
 div#album_titlebar table {
-  width:90%;
+    width: 90%;
 }
 div#album_titlebar td {
-  vertical-align:top;
+    vertical-align: top;
 }
 div#album_tools {
-  float:left;
-  margin-right:3px;
+    float: left;
+    margin-right: 3px;
 }
 div#album_tools img.on {
-  margin-right:1px;
+    margin-right: 1px;
 }
 div#album_content {
-  position:absolute;
-  top:40px; left:0px; width:100%; bottom:0px;
-  overflow:auto;
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #ddd;
+    overflow: auto;
+    /*
+    bottom: 0px;
+    */
 }
 div#album table.content {
-  margin:3px 0px 1px 3px;
+    margin: 10px 0px 1px 10px;
 }
 div#album table.text {
-  width:100%;
+    width: 100%;
 }
 div#album td.i {
-  vertical-align:top;
-  padding:0px 5px 3px 0px;
+    vertical-align: top;
+    padding: 0px 5px 3px 0px;
 }
 div#album td.t {
-  vertical-align:top;
-  width:40%;
+    vertical-align: top;
+    width: 40%;
 }
 div#album td.t img {
-  margin-left:1px;
+    margin-left: 1px;
 }
 div#album td.t span.title {
-  display:block;
-  margin-right:6px; padding:0px 1px 0px 2px;
+    display: block;
+    margin-right: 6px;
+    padding: 0px 1px 0px 2px;
 }
 div#album td.t span.text {
-  margin-right:6px; padding:0px 1px 0px 2px;
+    margin-right: 6px;
+    padding: 0px 1px 0px 2px;
 }
 div#sidebar {
-  position:absolute;
-  top:0px; left:0px; height:100%;
-  overflow:auto;
-  padding-right:6px;
-  border-right-width:1px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 0;
+    overflow: auto;
+    /*
+    height: 100%;
+    border-right-width: 1px;
+    */
 }
 div#image {
-  position:absolute;
-  bottom:10px; top:0px; left:0px; width:100%;
-  overflow:hidden;
-  text-align:center;
+    position: absolute;
+    /*bottom: 10px;*/
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+    text-align: center;
 }
 div#toolbar {
-  position:absolute;
-  left:0px; width:100%; bottom:0px;
-  border-top-width:1px;
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    bottom: 0px;
+    border-top-width: 1px !important;
 }
 div#tools_left {
-  float:left;
+    float: left;
 }
 div#tools_left img.on {
-  margin-right:1px;
+    margin-right: 1px;
 }
 div#title {
-  height:19px;
-  overflow:hidden;
-  text-align:center;
+    height: 19px;
+    overflow: hidden;
+    text-align: center;
 }
 div#tools_right {
-  float:right;
+    float: right;
 }
 div#tools_right img.on {
-  margin-left:1px;
+    margin-left: 1px;
 }
 div#text {
-  position:absolute;
-  left:0px; width:100%; bottom:0px; height:99px;
-  overflow:hidden;
-  border-top-width:1px;
-  text-align:center;
+    position: absolute;
+    left: 0px;
+    width: 100%;
+    bottom: 0px;
+    height: 99px;
+    overflow: hidden;
+    border-top-width: 1px !important;
+    text-align: center;
 }
 iframe#popup {
-  position:absolute;
-  top:10%; left:15%; width:70%; height:80%;
-  border-width:0px 5px 5px;
+    position: absolute;
+    top: 10%;
+    left: 15%;
+    width: 70%;
+    height: 80%;
+    border-width: 0px 5px 5px !important;
 }
 div#popup_titlebar {
-  position:absolute;
-  left:15%; width:70%; bottom:90%;
-  border-width:5px 5px 2px;
+    position: absolute;
+    left: 15%;
+    width: 70%;
+    bottom: 90%;
+    border-width: 5px 5px 2px !important;
 }
 div#popup_menu {
-  position:absolute; visibility:hidden;
-  top:0px; left:200px;
-  padding:1px 11px 3px 2px;
-  border-width:3px;
+    position: absolute;
+    visibility: hidden;
+    top: 0px;
+    left: 200px;
+    padding: 1px 11px 3px 2px;
+    border-width: 3px !important;
+}
+div#album_titlebar { 
+    background-color: #bbb;
+    border-bottom-style: solid !important;
+    border-bottom-color: black !important;
 }
 
-div#album_content { background-color:#ddd }
-div#album_titlebar { background-color:#bbb;
-                     border-bottom-style:solid; border-bottom-color:black }
-div#album td.i { text-align:center }
-div#album td.t span.title { background-color:#bbb }
-div#sidebar { background-color:white;
-              border-right-style:solid; border-right-color:black }
-div#image { background-color:#bbb }
-div#toolbar { background-color:#ddd;
-              border-top-style:solid; border-top-color:black }
-div#text { background-color:#bbb;
-           border-top-style:solid; border-top-color:black }
-iframe#popup { background-color:white; border-style:ridge; border-color:#666 }
-div#popup_titlebar { background-color:#ddd; border-style:ridge ridge solid;
-                     border-color:#666; text-align:center }
-div#popup_menu { background-color:white; font-size:90%; line-height:1.33;
-                 text-align:left; border-style:outset; border-color:#999 }
+div#album td.i {
+    text-align: center;
+}
+div#album td.t span.title {
+    background-color: #bbb !important;
+}
+div#sidebar { 
+    background-color: white;
+    /*
+    border-right-style: solid;
+    border-right-color: black;
+    */
+}
+div#image {
+    background-color: #bbb !important;
+}
+div#toolbar {
+    background-color: #ddd;
+    border-top-style: solid !important;
+    border-top-color: black !important;
+}
+div#text {
+    background-color: #bbb !important;
+    border-top-style: solid !important;
+    border-top-color: black !important;
+}
+iframe#popup {
+    background-color: white !important;
+    border-style: ridge !important;
+    border-color: #666 !important;
+}
+div#popup_titlebar {
+    background-color: #ddd !important;
+    border-style: ridge ridge solid !important;
+    border-color: #666 !important;
+    text-align: center;
+}
+div#popup_menu {
+    background-color: white !important;
+    font-size: 90%;
+    line-height: 1.33;
+    text-align: left;
+    border-style: outset !important;
+    border-color: #999 !important;
+}
+
+#gsSidebar {
+    width: 180px;
+    border-right: 0px !important;
+}
+#gsSidebar .giThumbImage {
+    margin: 4px 0;
+}
+.gbMenu {
+    margin: 16px 0 0 8px;
+	padding: 0 0 16px 0;
+}
+.gbMenu li {
+	padding: 6px 0 0 0;
+}
+.gbMenu ul, .gbMenu ol {
+	margin: 0;
+	padding: 0;
+}
+.gbMenu ul ul {
+	margin: 0 0 0.5em 1.0em;
+}
+#gsFooter {
+    /*bottom: 0px;*/
+    margin: 0 15px 0 0;
+	padding: 8px;
+}
