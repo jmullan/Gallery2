@@ -139,8 +139,22 @@ class GallerySession {
 		$this->_sessionId = $sessionId;
 	    }
 	} else {
-	    $this->_isUsingCookies = false;
-	    $this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    /*
+	     * Many search engine crawlers don't use cookies.  Normally this
+	     * leads to us putting the session id in the url.  But doing so
+	     * causes the search engine to do a lot of extra work to weed out
+	     * the session id, which they may not do very well.  So if we detect
+	     * that this is a search engine, pretend that they accept cookies.
+	     * Later on we won't even save the session anyway.
+	     */
+	    $searchEngineId = GalleryUtilities::identifySearchEngine();
+	    if (isset($searchEngineId)) {
+		$this->_isUsingCookies = true;
+		$this->_sessionId = $searchEngineId;
+	    } else {
+		$this->_isUsingCookies = false;
+		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    }
 	} 
 
 	/* If we don't have a session id at this point, create one. */
@@ -259,7 +273,7 @@ class GallerySession {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$dieRoll = rand(1, 100);
-	
+
 	/* Only bother saving if we've been modified at all */
 	$serialized = serialize(array($this->_creationTime,
 				      $this->_remoteIdentifier,

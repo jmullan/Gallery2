@@ -1302,5 +1302,26 @@ class GalleryUtilities {
 	/* Catchall */
 	return false;
     }
+
+    /**
+     * Return the id of the search engine currently crawling the site by
+     * analyzing the current request.  
+     *
+     * @return string the crawler id, or null if it's a regular user
+     */
+    function identifySearchEngine() {
+	$userAgent = $_SERVER['HTTP_USER_AGENT'];
+	if (strstr($userAgent, 'Google')) {
+	    return 'google';
+	} else if (strstr($userAgent, 'Yahoo')) {
+	    return 'yahoo';
+	} else if (strstr($userAgent, 'Ask Jeeves')) {
+	    return 'askjeeves';
+	} else if (strstr($userAgent, 'msnbot')) {
+	    return 'microsoft';
+	}
+
+	return null;
+    }
 }
 ?>
