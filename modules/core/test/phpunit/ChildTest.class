@@ -39,34 +39,6 @@ class ChildTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function _createDerivative($parentId) {
-	global $gallery;
-
-	list ($ret, $derivative) = 
-	    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ret = $derivative->create($parentId, DERIVATIVE_TYPE_IMAGE_RESIZE);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Set bogus values */
-	$derivative->setDerivativeMimeType('');
-	$derivative->setDerivativeSourceId($parentId);
-	$derivative->setDerivativeOperations('');
-			
-	$ret = $derivative->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	return array(GalleryStatus::success(), $derivative);
-    }
-
-    
     function setUp() {
 	parent::setUp();
 
@@ -84,7 +56,7 @@ class ChildTest extends GalleryTestCase {
 
 	    for ($j = 0; $j < 2; $j++) {
 		list ($ret, $this->_derivative[$i][$j]) =
-		    $this->_createDerivative($this->_child[$i]->getId());
+		    $this->_createDerivative($this->_child[$i]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}

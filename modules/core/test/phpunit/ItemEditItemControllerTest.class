@@ -48,6 +48,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -55,6 +56,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_album[$i]) = $this->_createRandomAlbum($rootId);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -191,62 +193,5 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 
-    /*
-     * Create a random data item
-     *
-     * @param int the id of the parent album
-     * @return array object GalleryStatus a status code
-     *               object GalleryDataItem
-     * @access private
-     */
-    function _createRandomDataItem($parentId) {
-	global $gallery;
-	
-	list ($ret, $item) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUnknownItem');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!isset($item)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$inputFile = dirname(__FILE__) . '/../data/test1.gif';
-	if (get_magic_quotes_gpc()) {
-	    $inputFile = addslashes($inputFile);
-	}
-	
-	$ret = $item->create($parentId, $inputFile, 'application/unknown', 'unknown.dat');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Change some settings */
-	$item->setTitle('This is my title');
-	$item->setSummary('This is a summary');
-	$item->setKeywords('These are some keywords');
-	$item->setDescription('This is a description');
-
-	/* Save it */
-	$ret = $item->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Leggo of our locks */
-	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $item);
-    }
 }
 ?>

@@ -156,6 +156,92 @@ class GalleryTestCase extends TestCase {
     }
     
 
+    /*
+     * Create a random data item
+     *
+     * @param int the id of the parent album
+     * @return array object GalleryStatus a status code
+     *               object GalleryDataItem
+     * @access private
+     */
+    function _createRandomDataItem($parentId, $mimeType='application/unknown') {
+	global $gallery;
+	
+	list ($ret, $item) = GalleryFactory::newInstance('GalleryEntity', 'GalleryUnknownItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($item)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$inputFile = __FILE__;
+	if (get_magic_quotes_gpc()) {
+	    $inputFile = addslashes($inputFile);
+	}
+	
+	$ret = $item->create($parentId, $inputFile, $mimeType,
+			     'test-' . rand(1, 5000) . '.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$item->setTitle('This is my title');
+	$item->setSummary('This is a summary');
+	$item->setKeywords('These are some keywords');
+	$item->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $item->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $item);
+    }
+    
+    function _createDerivative($parentId, $type, $operations='test-operation|100') {
+	global $gallery;
+
+	list ($ret, $derivative) = 
+	    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = $derivative->create($parentId, $type);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Set bogus values */
+	$derivative->setDerivativeMimeType('');
+	$derivative->setDerivativeSourceId($parentId);
+	$derivative->setDerivativeOperations($operations);
+			
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return array(GalleryStatus::success(), $derivative);
+    }
+    
     function _deleteAndVerifyEntity($id) {
 	global $gallery;
 
