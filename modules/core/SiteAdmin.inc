@@ -103,13 +103,12 @@ class SiteAdminView extends GalleryView {
 	/* If we have a specific sub view, render it now */
 	$subView = GalleryUtilities::getRequestVariables('subView');
 	if (!empty($subView)) {
-	    ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $subView, $regs);
-	    if (sizeof($regs) != 3) {
-		$module = 'core';
-		$class = 'SecurityViolation';
-	    } else {
+	    if (preg_match('/^(\w+):(\w+)$/', $subView, $regs) == 1) {
 		$module = $regs[1];
 		$class = $regs[2];
+	    } else {
+		$module = 'core';
+		$class = 'SecurityViolation';
 	    }
 
 	    require_once($gallery->getConfig('code.gallery.modules') .

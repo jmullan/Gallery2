@@ -100,8 +100,7 @@ function GalleryMain($startTime) {
 
     /* Load and run the appropriate controller */
     if (!empty($controllerName)) {
-	ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $controllerName, $regs);
-	if (sizeof($regs) == 3) {
+	if (preg_match('/^(\w+):(\w+)$/', $controllerName, $regs) == 1) {
 	    $module = $regs[1];
 	    $class = $regs[2];
 
@@ -137,13 +136,12 @@ function GalleryMain($startTime) {
 	$module = 'core';
 	$class = 'ShowItem';
     } else {
-	ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $viewName, $regs);
-	if (sizeof($regs) != 3) {
-	    $module = 'core';
-	    $class = 'SecurityViolation';
-	} else {
+	if (preg_match('/^(\w+):(\w+)$/', $viewName, $regs) == 1) {
 	    $module = $regs[1];
 	    $class = $regs[2];
+	} else {
+	    $module = 'core';
+	    $class = 'SecurityViolation';
 	}
     }
 
