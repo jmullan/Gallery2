@@ -46,10 +46,12 @@
 	      {foreach from=$childRow item=child}
 		{if $child.canContainChildren} 
 		  {assign var="style" value="album"}
+		  {assign var="colspan" value=$layout.columnSize}
 		{else}
 		  {assign var="style" value="item"}
+		  {assign var="colspan" value="1"}
 		{/if}
-		{g->column}
+		{g->column colspan=$colspan}
 		  {strip}
 		    {g->itemthumbnail style=$style}
 		      {g->title}
@@ -131,6 +133,14 @@
 	{/g->table}
       {/g->element}
     {/g->box}
+
+    {if !empty($layout.moduleItemDetailFiles)}
+      {foreach from=$layout.moduleItemDetailFiles key=moduleName item=detailFile}
+	{g->box}
+	  {include file=$detailFile l10Domain="module_$moduleName"}
+	{/g->box}
+      {/foreach}
+    {/if}
 
     {g->banner}
       {assign var="id" value=$layout.item.id}

@@ -154,6 +154,8 @@ class MatrixLayout extends GalleryLayout {
 
 		if (!empty($childCounts[$childId])) {
 		    $childTable[$childId]['childCount'] = $childCounts[$childId];
+		} else {
+		    $childTable[$childId]['childCount'] = 0;
 		}
 	    }
 
@@ -289,12 +291,18 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Assemble the children into rows of columns */
-	$i = 0;
+	$r = 0;
+	$c = 0;
 	foreach ($children as $child) {
-	    $childRows[(int)($i / $properties['columns'])][$i % $properties['columns']] = $child;
-	    $i++;
+	    $width = $child['canContainChildren'] ? $properties['columns'] : 1;
+
+	    if ($c + $width > $properties['columns']) {
+		$r++;
+		$c = 0;
+	    }
+	    $childRows[$r][$c] = $child;
+	    $c += $width;
 	}
-	
 
 	$layout['user'] = $user->getMemberData();
 	$layout['owners'] = $owners;
@@ -304,6 +312,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
 	$layout['childRows'] = $childRows;
+	$layout['columnSize'] = $properties['columns'];
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
 	$layout['totalChildCount'] = $totalChildCount;
