@@ -4,22 +4,22 @@
 }{/g->link}
 {g->link id="href_$i" arg1="view=core:ShowItem" arg2="itemId=`$it.id`"
 }{/g->link}
-<div id="title_{$i}" style="visibility:hidden;position:absolute">
-{$it.data.title|markup}</div>
-<div id="summary_{$i}" style="visibility:hidden;position:absolute">
-{$it.data.summary|markup}</div>
-<div id="date_{$i}" style="visibility:hidden;position:absolute">
+<div style="visibility:hidden;position:absolute">
+<span id="title_{$i}">{$it.data.title|markup}</span>
+<span id="summary_{$i}">{$it.data.summary|markup}</span>
+<span id="date_{$i}">
 {if isset($it.exif.DateTime)}
 {$it.exif.DateTime.title}: {$it.exif.DateTime.value}
 {else}
 {g->text text="Date: "}{g->date timestamp=$it.data.modificationTimestamp}
-{/if}</div>
-<div id="description_{$i}" style="visibility:hidden;position:absolute">
-{$it.data.description|markup}</div>
+{/if}</span>
+<span id="description_{$i}">{$it.data.description|markup}</span>
+</div>
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
-var image = new Image(), timer, showText = 0, stopLink, textLink;
-var textBanner, titleText, summaryText, dateText, descriptionText;
+var image = new Image(), timer, bPause = 0, bShowText = 0;
+var linkStop, spanPause, spanText;
+var textBanner, spanTitle, spanSummary, spanDate, spanDescription;
 var index = {$SlideShow.start}, count = {$SlideShow.count};
 var is_cached = new Array(count), item_ids = new Array(count);
 {foreach from=$SlideShow.itemList key=i item=it}
@@ -39,23 +39,41 @@ function slide_view_start() {
 function goto_next_photo() {
   index = (index+1)%count;
   document.images.slide.src = document.getElementById('item_'+index).href;
-  stopLink.href = document.getElementById('href_'+index).href;
-  if (showText) show_text();
+  linkStop.href = document.getElementById('href_'+index).href;
+  if (bShowText) show_text();
 }
 function show_text() {
-  titleText.innerHTML = document.getElementById('title_'+index).innerHTML;
-  summaryText.innerHTML = document.getElementById('summary_'+index).innerHTML;
-  dateText.innerHTML = document.getElementById('date_'+index).innerHTML;
-  descriptionText.innerHTML =
+  spanTitle.innerHTML = document.getElementById('title_'+index).innerHTML;
+  spanSummary.innerHTML = document.getElementById('summary_'+index).innerHTML;
+  spanDate.innerHTML = document.getElementById('date_'+index).innerHTML;
+  spanDescription.innerHTML =
     document.getElementById('description_'+index).innerHTML;
 }
 function text_onoff() {
-  showText = showText ? 0 : 1;
-  if (showText) show_text(); else
-  titleText.innerHTML = summaryText.innerHTML = descriptionText.innerHTML = '';
-  textBanner.style.visibility = showText ? 'visible' : 'hidden';
-  textLink.innerHTML = showText ? {/literal}'{g->text text="Hide More Info"}'
-                                : '{g->text text="Show More Info"}'; {literal}
+  bShowText = bShowText ? 0 : 1;
+  if (bShowText) show_text(); else {
+    spanTitle.innerHTML = spanSummary.innerHTML =
+    spanDate.innerHTML = spanDescription.innerHTML = '';
+  }
+  textBanner.style.visibility = bShowText ? 'visible' : 'hidden';
+  spanText.innerHTML = bShowText ? {/literal}'{g->text text="Hide More Info"}'
+                                 : '{g->text text="Show More Info"}'; {literal}
+}
+function start_stop() {
+  bPause = bPause ? 0 : 1;
+  if (bPause) clearTimeout(timer);
+  else goto_next_photo();
+  spanPause.innerHTML = bPause ? {/literal}'{g->text text="Resume"}'
+                               : '{g->text text="Pause"}'; {literal}
+}
+function back_one() {
+  if (index > 0) {
+    index -= 2;
+    if (bPause) start_stop(); else {
+      clearTimeout(timer);
+      goto_next_photo();
+    }
+  }
 }
 {/literal}
 </script>
@@ -67,8 +85,14 @@ function text_onoff() {
                  arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}
           {g->text text="Stop"}
         {/g->link} &nbsp;
+        {g->link onClick="start_stop();return false"}
+          <span id="pause">{g->text text="Pause"}</span>
+        {/g->link} &nbsp;
+        {g->link onClick="back_one();return false"}
+          {g->text text="Back One Image"}
+        {/g->link} &nbsp;
         {g->link onClick="text_onoff();return false"}
-          <span id="textLink">{g->text text="Show More Info"}</span>
+          <span id="moreInfo">{g->text text="Show More Info"}</span>
         {/g->link}
       {/g->title}
     {/g->item}
@@ -94,13 +118,14 @@ function text_onoff() {
   {/g->pagebox}
 {/g->main}
 <script language="JavaScript" type="text/JavaScript">
-  stopLink = document.getElementById('stop');
-  textLink = document.getElementById('textLink');
+  linkStop = document.getElementById('stop');
+  spanPause = document.getElementById('pause');
+  spanText = document.getElementById('moreInfo');
   textBanner = document.getElementById('textBanner');
-  titleText = document.getElementById('title');
-  summaryText = document.getElementById('summary');
-  dateText = document.getElementById('date');
-  descriptionText = document.getElementById('description');
+  spanTitle = document.getElementById('title');
+  spanSummary = document.getElementById('summary');
+  spanDate = document.getElementById('date');
+  spanDescription = document.getElementById('description');
   document.images.slide.onload = slide_view_start;
   document.images.slide.onerror = goto_next_photo;
   document.images.slide.src =
