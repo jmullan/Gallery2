@@ -230,6 +230,30 @@ class GalleryItemHelper_medium {
 	$newItem->setSummary(substr($summary, 0, 255));
 	$newItem->setDescription($description);
 
+	/* Try to get an originationTimestamp for the just added item */
+	list ($ret, $toolkits) =
+	    GalleryCoreApi::getToolkitsByProperty($mimeType, 'originationTimestamp');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($toolkits) {
+	    list ($ret, $path) = $newItem->fetchPath();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($toolkits as $toolkit) {
+		list ($ret, $originationTimestamp) =
+			$toolkit->getProperty($mimeType, 'originationTimestamp', $path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
+		    $newItem->setOriginationTimestamp($originationTimestamp[0]);
+		    break;
+		}
+	    }
+	}
+
 	$ret = $newItem->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

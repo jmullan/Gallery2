@@ -40,7 +40,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('performFactoryRegistrations|loadItemDetails|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(0, 8));
@@ -57,6 +57,12 @@ class ExifModule extends GalleryModule {
 	GalleryCoreApi::registerFactoryImplementation(
 	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
 	    dirname(__FILE__) . '/classes/ExifExtractor.class');
+
+	/* Register our graphics class with the factory */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'ExifToolkit',
+						      'Exif',
+						      $classDir . 'ExifToolkit.class');
     }
 
     /**
@@ -80,6 +86,28 @@ class ExifModule extends GalleryModule {
 	}
 	
 	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::activate
+     */
+    function activate() {
+	global $gallery;
+	$ret = GalleryCoreApi::registerToolkitProperty('Exif',
+							array('image/jpeg'),
+							'originationTimestamp',
+							'int',
+							$gallery->i18n('Get the origination timestamp'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $redirect) = parent::activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
     }
 
     /**

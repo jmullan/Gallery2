@@ -48,7 +48,6 @@ class GalleryToolkitHelper_simple {
      * @return array object GalleryStatus a status code
      *               object GalleryToolkit a toolkit
      *               string a result mime type
-     * @todo use priorities for choosing the correct toolkit
      */
     function getToolkitByOperation($mimeType, $operationName) {
 	global $gallery;
@@ -108,14 +107,38 @@ class GalleryToolkitHelper_simple {
      * @static
      * @param string a mime type
      * @param string the property name
+     * @param int how many toolkits to we want (0 = all available)
      * @return array object GalleryStatus a status code
      *               object GalleryToolkit a toolkit
-     * @todo use priorties for choosing the correct toolkit
      */
     function getToolkitByProperty($mimeType, $propertyName) {
+	$cacheKey = "GalleryToolkitHelper::getToolkitByProperty($mimeType, $propertyName)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    list ($ret, $toolkits) = GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $toolkit = $toolkits[0];
+	} else {
+	    $toolkit = GalleryDataCache::get($cacheKey);
+	}
+	return array(GalleryStatus::success(), $toolkit);
+    }
+
+    /**
+     * Get the toolkits that can retrieve the given property
+     *
+     * @access public
+     * @static
+     * @param string a mime type
+     * @param string the property name
+     * @return array object GalleryStatus a status code
+     *               array of GalleryToolkit objects
+     */
+    function getToolkitsByProperty($mimeType, $propertyName) {
 	global $gallery;
 
-	$cacheKey = "GalleryToolkitHelper::getToolkitByProperty($mimeType, $propertyName)";
+	$cacheKey = "GalleryToolkitHelper::getToolkitsByProperty($mimeType, $propertyName)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
             SELECT
@@ -137,22 +160,21 @@ class GalleryToolkitHelper_simple {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $toolkit = null;
-	    if ($searchResults->resultCount() > 0) {
-		$result = $searchResults->nextResult();
-
+	    $toolkits = null;
+	    while ($result = $searchResults->nextResult()) {
 		list ($ret, $toolkit) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $result[0]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$toolkits[] = $toolkit;
 	    }
-	    GalleryDataCache::put($cacheKey, $toolkit);
+	    GalleryDataCache::put($cacheKey, $toolkits);
 	} else {
-	    $toolkit = GalleryDataCache::get($cacheKey);
+	    $toolkits = GalleryDataCache::get($cacheKey);
 	}
 
-	return array(GalleryStatus::success(), $toolkit);
+	return array(GalleryStatus::success(), $toolkits);
     }
 
     /**

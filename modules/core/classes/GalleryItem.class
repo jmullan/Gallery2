@@ -45,7 +45,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryFileSystemEntity.class'
  * @g2 <parent-class-name>GalleryFileSystemEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -161,6 +161,20 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      */
     var $_viewedSinceTimestamp;
 
+    /**
+     * Date and time when this item was originally captured (i.e. photographed, filmed, etc)
+     *
+     * @g2 <member>
+     * @g2   <member-name>originationTimestamp</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var int $_originationTimestamp
+     * @access private
+     */
+    var $_originationTimestamp;
+
     /*
      * ****************************************
      *                 Methods
@@ -207,6 +221,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* By default, items can't contain children */
 	$this->setCanContainChildren(false);
+
+	/* Origination timestamp defaults to now */
+	$this->setOriginationTimestamp(time());
 
 	return GalleryStatus::success();
     }

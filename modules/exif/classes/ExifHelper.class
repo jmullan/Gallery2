@@ -115,19 +115,16 @@ class ExifHelper {
     }
 
     /**
-     * Return the EXIF data for a specific view and file 
+     * Return the raw EXIF data as returned by Exifer
      *
      * @param string the path to the file
-     * @param int the view mode
-     * @return array object GalleryStatus a status code
-     *               array title/value pairs
-     * @static
+     * @param reference to an array where to store the results
+     *        as returned by read_exif_data_raw() from exifer
      */
-    function getExifData($path, $viewMode) {
+    function _fetchRawExifData($path, &$rawExifData) {
 	global $gallery;
 	require_once(dirname(__FILE__) . '/../lib/exifer/exif.inc');
 
-	$exifKeys = ExifHelper::getExifKeys();
 	$rawExifData = read_exif_data_raw($path, false);
 	if ($gallery->getDebug()) {
 	    // Capture old-school print_r() to support older PHP
@@ -137,6 +134,20 @@ class ExifHelper {
 	    ob_end_clean();
 	    $gallery->debug(str_replace("\0", '', $buf));
 	}
+    }
+
+    /**
+     * Return the EXIF data for a specific view and file 
+     *
+     * @param string the path to the file
+     * @param int the view mode
+     * @return array object GalleryStatus a status code
+     *               array title/value pairs
+     * @static
+     */
+    function getExifData($path, $viewMode) {
+	ExifHelper::_fetchRawExifData($path, $rawExifData);
+	$exifKeys = ExifHelper::getExifKeys();
 
 	$results = array();
 	require_once(dirname(__FILE__) . '/ExifPropertiesMap.class');
@@ -156,6 +167,26 @@ class ExifHelper {
 	}
 
 	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Return the timestamp when the picture was taken, as recorded in exif
+     * 
+     * @param string the path to the file
+     * @return int an unix timestamp
+     */
+    function getOriginationTimestamp($path) {
+	ExifHelper::_fetchRawExifData($path, $rawExifData);
+	foreach (array('SubIFD.DateTimeOriginal', 'IFD0.DateTime', 'SubIFD.DateTimeDigitized') as $tag) {
+	    $value = ExifHelper::_getValue($rawExifData, explode('.', $tag));
+	    if (isset($value) && preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
+		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6], (int)$m[2], (int)$m[3], (int)$m[1]);
+		if ($time > 0) {
+		    return $time;
+		}
+	    }
+	}
+	return null;
     }
 
     /**

@@ -178,6 +178,52 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals(null, $toolkit);
     }
 
+    function testPropertyMultipleToolkits() {
+	$ret = GalleryCoreApi::registerToolkitProperty('TestToolkit',
+						      array('test/type'),
+						      'test-property',
+						      'int',
+						      'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::registerToolkitProperty('TestToolkit2',
+						      array('test/type'),
+						      'test-property',
+						      'int',
+						      'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the toolkits */
+	list ($ret, $toolkits) =
+	    GalleryCoreApi::getToolkitsByProperty('test/type', 'test-property');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(new TestToolkit(), new TestToolkit2()), $toolkits);
+
+	/* Unregister */
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get the toolkits */
+	list ($ret, $toolkitIds) =
+	    GalleryCoreApi::getToolkitByProperty('test/type', 'test-property');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $toolkitIds);
+    }
+
     function testOperationSequence() {
 	$params = array(array('type' => 'test-type1',
 			      'description' => 'test-description1'),

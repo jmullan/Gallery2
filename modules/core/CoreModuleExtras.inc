@@ -208,6 +208,11 @@ class CoreModuleExtras {
 	    /* fall through */
 
 	    break;
+	case '0.8.5':
+	    $currentVersion = '0.8.6';
+	    /* fall through */
+
+	    break;
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));

@@ -55,6 +55,12 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXoriginationTimestamp
+      INTEGER
+    
+    NOT NULL
+  
     );
 
   
@@ -89,7 +95,7 @@
       ) VALUES (
       'Item',
       1,
-      0
+      1
       );
 
   

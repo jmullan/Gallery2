@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 9);
+	return array(0, 10);
     }
 
     /**
@@ -1838,6 +1838,21 @@ class GalleryCoreApi {
     function getToolkitByProperty($mimeType, $propertyName) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getToolkitByProperty($mimeType, $propertyName);
+    }
+
+    /**
+     * Get the toolkits that can retrieve the given property
+     *
+     * @access public
+     * @static
+     * @param string a mime type
+     * @param string the property name
+     * @return array object GalleryStatus a status code
+     *               array of toolkitIds
+     */
+    function getToolkitsByProperty($mimeType, $propertyName) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_simple.class');
+	return GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
     }
 
     /**

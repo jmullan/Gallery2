@@ -55,6 +55,12 @@
     
     NOT NULL
   
+      ,
+    DB_COLUMN_PREFIXoriginationTimestamp
+      int(11)
+    
+    NOT NULL
+  
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
@@ -85,7 +91,7 @@
       ) VALUES (
       'Item',
       1,
-      0
+      1
       );
 
   

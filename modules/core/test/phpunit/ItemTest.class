@@ -836,6 +836,46 @@ class ItemTest extends GalleryTestCase {
 	$this->assert($weights[$newItem->getId()] > $maxWeight);
     }
 
+    /*
+     * Check that when adding a file to an album, the originationTimestamp
+     * provided by some toolkit gets added
+     */
+    function testAddItemToAlbumWithOriginationTimestamp() {
+	global $gallery;
+
+	/* Register the originationTimestamp property that we can get from our mock data items */
+	$ret = GalleryCoreApi::registerToolkitProperty('ItemTestToolkit',
+						       array('test/imageWithTimestamp'),
+						       'originationTimestamp',
+						       'int',
+						       'Get the origination timestamp');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
+							       'itemNameWts',
+							       'title',
+							       'caption',
+							       'description',
+							       'test/imageWithTimestamp',
+							       $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals((int)12345, $newItem->getOriginationTimestamp());
+    }
+
     function testAddMovieToAlbum() {
 	global $gallery;
 
@@ -1197,7 +1237,21 @@ class ItemTest extends GalleryTestCase {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemTestToolkit extends GalleryToolkit { }
+class ItemTestToolkit extends GalleryToolkit {
+
+    function getProperty($mimeType, $propertyName, $sourceFilename) {
+	// This will be called by addItemToAlbum
+	if ($propertyName == 'originationTimestamp') {
+	    $results = null;
+	    if (basename($sourceFilename) == 'itemNameWts') {
+		$results = array(12345);
+	    }
+	    return array(GalleryStatus::success(), $results);
+	}
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+}
 
 
 /**
