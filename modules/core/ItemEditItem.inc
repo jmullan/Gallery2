@@ -83,9 +83,18 @@ class ItemEditItemController extends GalleryController {
 		 * It's possible to get a collision when we rename, so try that
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
-		$ret = $item->rename($form['pathComponent']);
-		if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		if ($item->getPathComponent() != $form['pathComponent']) {
+		    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    if ($item->getId() != $rootAlbumId) {
+			$ret = $item->rename($form['pathComponent']);
+			if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
 		}
 
 		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
@@ -166,7 +175,18 @@ class ItemEditItemView extends GalleryView {
 	    $form['formName'] = 'ItemEditItem';
 	}
 
+	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$can = array();
+	if ($rootAlbumId != $item->getId()) {
+	    $can['changePathComponent'] = 1;
+	}
+	
 	$ItemEditItem = array();
+	$ItemEditItem['can'] = $can;
 
 	/* Render the HTML body */
 	$template->setVariable('ItemEditItem', $ItemEditItem);

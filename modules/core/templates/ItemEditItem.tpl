@@ -14,46 +14,48 @@
   {/if}
 
   {g->box style="admin"}
-    {g->box}
-      {g->title}
-	{g->text text="Name"}
-      {/g->title}
-      {g->subtitle}
-	{g->text text="required"}
-      {/g->subtitle}
-      {g->description}
-	{g->text text="The name of this item on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes."}
-      {/g->description}
-      {g->element}
-	{strip}
-	  {foreach from=$ItemAdmin.parents item=parent}
-	    {if empty($parent.parentId)}
-	      /
-	    {else}
-	      {$parent.pathComponent}/
-	    {/if}
-	  {/foreach}
-	{/strip}
-	{g->input type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/g->input}
-      {/g->element}
-    {/g->box}
+    {if isset($ItemEditItem.can.changePathComponent)}
+      {g->box}
+	{g->title}
+	  {g->text text="Name"}
+	{/g->title}
+	{g->subtitle}
+	  {g->text text="required"}
+	{/g->subtitle}
+	{g->description}
+	  {g->text text="The name of this item on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes."}
+	{/g->description}
+	{g->element}
+	  {strip}
+	    {foreach from=$ItemAdmin.parents item=parent}
+	      {if empty($parent.parentId)}
+		/
+	      {else}
+		{$parent.pathComponent}/
+	      {/if}
+	    {/foreach}
+	  {/strip}
+	  {g->input type=text size=40 name="form.pathComponent"}{$form.pathComponent}{/g->input}
+	{/g->element}
+      {/g->box}
 
-    {if !empty($form.error.pathComponent.invalid)}
-      {g->error}
-	{g->text text="Your name contains invalid characters.  Please choose another."}
-      {/g->error}
-    {/if}
+      {if !empty($form.error.pathComponent.invalid)}
+	{g->error}
+	  {g->text text="Your name contains invalid characters.  Please choose another."}
+	{/g->error}
+      {/if}
 
-    {if !empty($form.error.pathComponent.missing)}
-      {g->error}
-	{g->text text="You must enter a name for this item."}
-      {/g->error}
-    {/if}
+      {if !empty($form.error.pathComponent.missing)}
+	{g->error}
+	  {g->text text="You must enter a name for this item."}
+	{/g->error}
+      {/if}
 
-    {if !empty($form.error.pathComponent.collision)}
-      {g->error}
-	{g->text text="The name you entered is already in use.  Please choose another."}
-      {/g->error}
+      {if !empty($form.error.pathComponent.collision)}
+	{g->error}
+	  {g->text text="The name you entered is already in use.  Please choose another."}
+	{/g->error}
+      {/if}
     {/if}
 
     {g->box}

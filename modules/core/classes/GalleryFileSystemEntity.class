@@ -169,16 +169,19 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function rename($newname) {
 	global $gallery;
 
+	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($this->getId() == $rootAlbumId) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
 	if (empty($newname)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->isLegalPathComponent($newname)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Make sure that we don't have a collision in the db. */
@@ -188,8 +191,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	if ($isCollision) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	$this->setPathComponent($newname);

@@ -172,6 +172,41 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testRenameRoot() {
+	global $gallery;
+	
+	list ($ret, $rootAlbum) = $gallery->loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Use invalid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('form.pathComponent', 'floort');
+	GalleryUtilities::putRequestVariable('form.title', $rootAlbum->getTitle());
+	GalleryUtilities::putRequestVariable('form.summary', $rootAlbum->getSummary());
+	GalleryUtilities::putRequestVariable('form.keywords', $rootAlbum->getKeywords());
+	GalleryUtilities::putRequestVariable('form.description', $rootAlbum->getDescription());
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditItem',
+						      'itemId' => $rootAlbum->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that the path component is still the same */
+	list ($ret, $rootAlbum) = $rootAlbum->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $rootAlbum->getPathComponent());
+    }
+
     function testPathCollisionAlbum() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
