@@ -152,7 +152,7 @@ class RandomHighlightModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Random Highlight'),
-				 'view' => 'randomhighlight:SiteAdminRandomHighlight')));
+				 'view' => 'randomhighlight:RandomHighlightSiteAdmin')));
     }
 
     /**
