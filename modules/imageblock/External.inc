@@ -44,8 +44,8 @@ class ExternalView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$params = array('heading' => 'off');
-	foreach (array('blocks', 'show') as $key) {
+	$params = array();
+	foreach (array('blocks', 'show', 'heading') as $key) {
 	    $tmp = GalleryUtilities::getRequestVariables($key);
 	    if (!empty($tmp)) {
 		$params[$key] = $tmp;

@@ -114,7 +114,7 @@ class ImageBlockModule extends GalleryModule {
 	return $this->_loadImageBlocks($template);
     }
 	
-    function _loadImageBlocks(&$template, $params = array()) {
+    function _loadImageBlocks(&$template, $params = array('heading' => 1)) {
 	global $gallery;
 
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
@@ -128,7 +128,7 @@ class ImageBlockModule extends GalleryModule {
 	foreach (explode('|', $params['blocks']) as $key) {
 	    $param[$key] = 1;
 	}
-	$heading = isset($params['heading']) ? 0 : 1;
+	$heading = isset($params['heading']);
 
 	$blocks = array();
 	if (isset($param['randomImage'])) {
