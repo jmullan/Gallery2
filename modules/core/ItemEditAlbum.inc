@@ -56,17 +56,30 @@ class ItemEditAlbumController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($form['action']['save'])) {
+	if (isset($form['action']['undo'])) {
+
+	    /* Redirect back to the current page to reset the form */
+	    $redirectParams['view'] = 'core:ItemAdmin';
+	    $redirectParams['subView'] = 'core:ItemEditAlbum';
+	    $redirectParams['itemId'] = $itemId;
+	    
+	} else if (isset($form['action']['save'])) {
 	    /* Validate the input data. */
 	    $error = false;
 	    if (!is_numeric($form['thumbnail']['size'])) {
+		GalleryUtilities::putRequestVariable('form.error.thumbnail.size.invalid', 1);
 		$error = true;
 	    }
-	    
-	    foreach ($form['resizes'] as $resize) {
-		if (!empty($resize['active']) && !is_numeric($resize['size'])) {
-		    $error = true;
-		    break;
+
+	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
+		if (!empty($form['resizes'][$i]['active'])) {
+		    if (empty($form['resizes'][$i]['size'])) {
+			GalleryUtilities::putRequestVariable('form.error.resizes.' . $i . '.size.missing', 1);
+			$error = true;
+		    } else if (!is_numeric($form['resizes'][$i]['size'])) {
+			GalleryUtilities::putRequestVariable('form.error.resizes.' . $i . '.size.invalid', 1);
+			$error = true;
+		    }
 		}
 	    }
 
@@ -243,7 +256,6 @@ class ItemEditAlbumController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-	    
 		/* Save basic settings */
 		$item->setLayout($form['layout']);
 		$item->setTheme($form['theme']);
@@ -315,32 +327,7 @@ class ItemEditAlbumView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($formName == 'ItemEditAlbum' && empty($form['action']['undo'])) {
-
-	    /* Complain if we have any invalid data */
-	    if (empty($form['thumbnail']['size'])) {
-		$form['error']['thumbnail']['size']['missing'] = 1;
-	    } else if (!is_numeric($form['thumbnail']['size']) ||
-		       $form['thumbnail']['size'] <= 0) {
-		$form['error']['thumbnail']['size']['invalid'] = 1;
-	    }
-
-	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
-		if (empty($form['resizes'][$i]['active'])) {
-		    /* Force it to a value, but don't check the data */
-		    $form['resizes'][$i]['active'] = 0;
-		    continue;
-		}
-
-		if (empty($form['resizes'][$i]['size'])) {
-		    $form['error']['resizes'][$i]['size']['missing'] = 1;
-		} else if (!is_numeric($form['resizes'][$i]['size']) ||
-			   $form['resizes'][$i]['size'] <= 0) {
-		    $form['error']['resizes'][$i]['size']['invalid'] = 1;
-		}
-	    }
-
-	} else {
+	if ($formName != 'ItemEditAlbum') {
 	    /* First time around, load the form with item data */
 	    $form = array();
 
