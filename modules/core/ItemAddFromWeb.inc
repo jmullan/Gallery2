@@ -134,14 +134,22 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			$recentPaths[$form['webPage']] = 1;
 			$session->put('core.view.ItemAddFromWeb.recentPaths', $recentPaths);
 
-			/*
-			 * Parse the buffer.  We match:
-			 *  href="foo bar"    href='foo bar'   href=foo
-			 *  src="foo bar"     src='foo bar'    src=foo
-			 */
-			/* Parse the buffer */
-			preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
-				       $buffer, $matches);
+			if (isset($headers['Content-Type']) &&
+			    strncmp($headers['Content-Type'], 'text', 4)) {
+			    /*
+			     * If the buffer does not contain text(/html) then just offer
+			     * to add this url, rather than parsing the contents.
+			     */
+			    $matches = array( array(), array($form['webPage']), array(), array() );
+			} else {
+			    /*
+			     * Parse the buffer.  We match:
+			     *  href="foo bar"    href='foo bar'   href=foo
+			     *  src="foo bar"     src='foo bar'    src=foo
+			     */
+			    preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
+					   $buffer, $matches);
+			}
 
 			/* Validate the URLs as best we can */
 			$webPageUrlList = array();
@@ -149,9 +157,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			$seenBefore = array();
 			$form['webPageUrls'] = array();
 			foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
-			    if (empty($url)) {
-				continue;
-			    } else if (isset($seenBefore[$url])) {
+			    if (empty($url) || isset($seenBefore[$url])) {
 				continue;
 			    } else {
 				$seenBefore[$url] = 1;
