@@ -114,7 +114,10 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 	}
 
-	switch($operationName) {
+	if (preg_match('{^convert-to-(image/.*)$}', $operationName, $matches)) {
+	    $cmd = 'convert';
+	    $outputMimeType = $matches[1];
+	} else switch($operationName) {
 	case 'thumbnail':
 	    $cmd = 'convert';
 	    /* Don't enlarge images for a thumbnail */
@@ -179,11 +182,6 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $transform = array_merge($transform,
 			       array('-crop', sprintf('%sx%s+%s+%s',
 					      $width, $height, $pixelX, $pixelY)));
-	    break;
-
-	case 'convert-to-image/jpeg':
-	    $cmd = 'convert';
-	    $outputMimeType = 'image/jpeg';
 	    break;
 
 	case 'select-page':
@@ -471,12 +469,9 @@ class ImageMagickToolkit extends GalleryToolkit {
 	if ($mimeType == $outputMimeType) {
 	    $command[] = $tmpFilename;
 	} else {
-	    switch($outputMimeType) {
-	    case 'image/jpeg':
-		$command[] = sprintf("jpeg:%s", $tmpFilename);
-		break;
-
-	    default:
+	    if (preg_match('{^image/(.*)$}', $outputMimeType, $matches)) {
+		$command[] = sprintf("%s:%s", $matches[1], $tmpFilename);
+	    } else {
 		/* Don't know this type! */
 		@$platform->unlink($tmpFilename);
 		return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__,

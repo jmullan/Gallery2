@@ -55,20 +55,20 @@ class ImageMagickToolkitHelper {
 	 */
 
 	/*
-	 * TIFF, SVG aren't viewable inline.  Ok, SVG is, but we can't count on it because it
-	 * requires a special viewer.  So provide a means to convert it to a JPEG.
-	 * Same for PDF.
+	 * Provide some mime type conversions.  G2 will use convert-to-image/jpeg for
+	 * types that aren't viewable inline (TIFF, SVG, PDF, etc)..
 	 */
-	$convertToJpegMimeTypes = array_intersect(
-		array('image/tiff', 'image/svg+xml', 'application/pdf',
-		      'image/jp2', 'image/jpx', 'application/postscript'),
-		$mimeTypes
-	);
-	if (!empty($convertToJpegMimeTypes)) {
-	    $operations['convert-to-image/jpeg']['params'] = array();
-	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
-	    $operations['convert-to-image/jpeg']['mimeTypes'] = $convertToJpegMimeTypes;
-	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
+	foreach (array('image/jpeg', 'image/png', 'image/gif',
+		       'image/tiff', 'image/jp2') as $convertToMimeType) {
+	    if (is_int($i = array_search($convertToMimeType, $mimeTypes))) {
+		$convertFromMimeTypes = $mimeTypes;
+		array_splice($convertFromMimeTypes, $i, 1);
+		$operations['convert-to-' . $convertToMimeType] = array(
+		    'params' => array(),
+		    'description' => $gallery->i18n('Convert to') . " $convertToMimeType",
+		    'mimeTypes' =>  $convertFromMimeTypes,
+		    'outputMimeType' => $convertToMimeType);
+	    }
 	}
 
 	/* Scale */

@@ -243,6 +243,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
+	    $ret = $this->_testOperation('image/gif', 'convert-to-image/png',
+					 'test.gif', 'output.png',
+					 array(), array());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
 	    $ret = $this->_testOperation('application/pdf', 'select-page',
 					 'test.pdf', 'output.pdf',
 					 array('2'), array());
@@ -449,7 +456,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    $this->assertEquals(array_merge(
 		array('-quality', '75', '-size', '150x150', '-geometry', '150x150'),
 		$environment['removeMetaDataSwitch'],
-		array('TEMPFILE[0]', 'output.jpg')),
+		array('TEMPFILE[0]', 'jpeg:output.jpg')),
 		$this->_files['output.jpg']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 116, 'height' => 150),
@@ -576,18 +583,24 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $wantToConvert = array('image/tiff', 'image/svg+xml', 'application/pdf', 'image/jp2', 'image/jpx', 'application/postscript');
-	    $canConvert = array_intersect($wantToConvert, $environment['mimeTypes']);
+
+	    $canConvert = array();
+	    foreach (array('image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/jp2')
+		     as $mimeType) {
+		if (is_int($i = array_search($mimeType, $environment['mimeTypes']))) {
+		    $convertTo = $environment['mimeTypes'];
+		    array_splice($convertTo, $i, 1);
+		    $canConvert['convert-to-' . $mimeType] = array(
+			'params' => array(),
+			'description' => 'Convert to ' . $mimeType,
+			'mimeTypes' => $convertTo,
+			'outputMimeType' => $mimeType);
+		}
+	    }
 	    $wantToPage = array('image/tiff', 'application/pdf', 'application/postscript');
 	    $canPage = array_intersect($wantToPage, $environment['mimeTypes']);
 
-	    $this->assertEquals(array(
-		'convert-to-image/jpeg' => array(
-			'params' => array(),
-			'description' => 'Convert to a JPEG',
-			'mimeTypes' => $canConvert,
-			'outputMimeType' => 'image/jpeg'
-		),
+	    $this->assertEquals(array_merge($canConvert, array(
 		'scale' => array(
 			'params' => array(
 				array(
@@ -692,7 +705,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			'description' => 'Select a single page from a multi-page file',
 			'mimeTypes' => $canPage,
 		),
-	    ), $results['operations']);
+	    )), $results['operations']);
 
 	    $this->assertEquals(array(
 		'dimensions' => array(
@@ -832,7 +845,13 @@ class ImageMagickToolkitTestPlatform {
 	    if (isset($this->_files[$newBase]['operation'])) {
 		foreach (array_keys($this->_files[$newBase]['operation']) as $operation) {
 		    $count = count($this->_files[$newBase]['operation'][$operation]);
-		    $this->_files[$newBase]['operation'][$operation][$count - 1] = $newName;
+		    $val = $this->_files[$newBase]['operation'][$operation][$count - 1];
+		    if (preg_match('/^(jpeg|png):/', $val, $regs)) {
+			$val = $regs[1] . ':' . $newName;
+		    } else {
+			$val = $newName;
+		    }
+		    $this->_files[$newBase]['operation'][$operation][$count - 1] = $val;
 		}
 	    }
 	    unset($this->_files[$oldBase]);
