@@ -65,8 +65,10 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
-	$this->assert($this->_testModule->wasCalled('autoConfigure'), 'autoConfigure not called');
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+	$this->assert($this->_testModule->wasCalled('autoConfigure'),
+		      'autoConfigure not called');
     }
 
     function testUpgrade() {

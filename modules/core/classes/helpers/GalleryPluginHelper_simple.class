@@ -67,20 +67,24 @@ class GalleryPluginHelper_simple {
 	    }
 
 	    if (!class_exists($pluginClass)) {
-		GalleryCoreApi::requireOnce(sprintf('%s/../%s.class', dirname(__FILE__), $pluginSuperClass));
+		GalleryCoreApi::requireOnce(
+		    sprintf('%s/../%s.class', dirname(__FILE__), $pluginSuperClass));
 		$pluginFile = sprintf('%s/../../../../%ss/%s/%s.inc',
 				      dirname(__FILE__), $pluginType, $pluginId, $pluginType);
 		$ret = GalleryUtilities::requireOnce($pluginFile);
 
 		if ($ret->isError()) {
-		    // If we have a bad path, it may be because our cached plugin list is out of
-		    // date -- in which case we should flush the cache and try again.
+		    /*
+		     * If we have a bad path, it may be because our cached plugin list is out of
+		     * date -- in which case we should flush the cache and try again.
+		     */
 		    if ($depth == 0 && $ret->getErrorCode() & ERROR_BAD_PATH) {
-
-			GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
-			GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-							       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-							       'id' => '_all'));
+			GalleryDataCache::remove(
+			    "GalleryPluginHelper::fetchPluginStatus($pluginType)");
+			GalleryDataCache::removeFromDisk(
+			    array('type' => $pluginType,
+				  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+				  'id' => '_all'));
 			list ($ret, $plugin) =
 			    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
 								   $ignoreVersionMismatch, $depth + 1);
@@ -105,33 +109,38 @@ class GalleryPluginHelper_simple {
 	    $plugin = GalleryDataCache::get($cacheKey);
 	}
 
-	if (!$ignoreVersionMismatch && $pluginType == 'module') {
+	if (!$ignoreVersionMismatch) {
 	    /* Verify that the versions match */
-	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus('module');
+	    list ($ret, $status) = GalleryPluginHelper_simple::fetchPluginStatus($pluginType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $coreApiVersion = GalleryCoreApi::getApiVersion();
-	    $moduleApiVersion = GalleryModule::getApiVersion();
-
-	    if (isset($status[$pluginId]) && $pluginId != 'core') {
+	    if (isset($status[$pluginId]) &&
+		($pluginId != 'core' || $pluginType != 'module')) {
 		$s = $status[$pluginId];
 
 		if (isset($s['active']) &&
 		    isset($s['version']) &&
 		    ($s['version'] != $plugin->getVersion() ||
-		     !GalleryUtilities::isCompatibleWithApi($plugin->getRequiredCoreApi(), $coreApiVersion) ||
-		     !GalleryUtilities::isCompatibleWithApi($plugin->getRequiredModuleApi(), $moduleApiVersion))) {
+		     !GalleryUtilities::isCompatibleWithApi(
+		          $plugin->getRequiredCoreApi(), GalleryCoreApi::getApiVersion()) ||
+		     ($pluginType == 'module' && 
+		      !GalleryUtilities::isCompatibleWithApi(
+		          $plugin->getRequiredModuleApi(), GalleryModule::getApiVersion())) ||
+		     ($pluginType == 'layout' && 
+		      !GalleryUtilities::isCompatibleWithApi(
+			  $plugin->getRequiredLayoutApi(), GalleryLayout::getApiVersion())))) {
 
 		    /* Try to deactivate the plugin */
 		    list ($ret, $redirectInfo) = $plugin->deactivate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
 		    if (!empty($redirectInfo)) {
 			/*
-			 * We were unable to automatically deactivate the module!
+			 * We were unable to automatically deactivate the plugin!
 			 * Forcibly abort this request and jump to the upgrader so this
 			 * module can be upgraded.
 			 */
@@ -140,20 +149,24 @@ class GalleryPluginHelper_simple {
 		    }
 
 		    /*  Return a handleable error */
-		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH, __FILE__, __LINE__,
-						      sprintf('[%s] db: (v: %s core api: %s/%s, module api: %s/%s) ' .
-							      'code: (v: %s core api: %s/%s, module api: %s/%s) ',
-							      $pluginId,
-							      $s['version'],
-							      $s['requiredCoreApi'][0],
-							      $s['requiredCoreApi'][1],
-							      $s['requiredModuleApi'][0],
-							      $s['requiredModuleApi'][1],
-							      $plugin->getVersion(),
-							      $coreApiVersion[0],
-							      $coreApiVersion[1],
-							      $moduleApiVersion[0],
-							      $moduleApiVersion[1])),
+		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH,
+						      __FILE__, __LINE__,
+                                     sprintf('[%s] db: (v: %s core api: %s, %s api: %s) '.
+					     'code: (v: %s core api: %s, %s api: %s) ',
+					     $pluginId,
+					     $s['version'],
+					     join('/', $s['requiredCoreApi']),
+					     $pluginType,
+					     join('/', $s[$pluginType == 'module' ?
+							  'requiredModuleApi' :
+							  'requiredLayoutApi']),
+					     $plugin->getVersion(),
+					     join('/', GalleryCoreApi::getApiVersion()),
+					     $pluginType,
+					     join('/',
+						  $pluginType == 'module' ?
+						  GalleryModule::getApiVersion() :
+						  GalleryLayout::getApiVersion()))),
 				 $plugin);
 		}
 	    }
@@ -279,9 +292,10 @@ class GalleryPluginHelper_simple {
 	$cacheKey = "GalleryPluginHelper::fetchPluginStatus($pluginType)";
 	if ($ignoreCache || !GalleryDataCache::containsKey($cacheKey)) {
 	    if (!$ignoreCache) {
-		$plugins =& GalleryDataCache::getFromDisk(array('type' => $pluginType,
-								'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-								'id' => '_all'));
+		$plugins =& GalleryDataCache::getFromDisk(
+                    array('type' => $pluginType,
+			  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+			  'id' => '_all'));
 	    }
 	    if (!isset($plugins)) {
 		list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
@@ -326,7 +340,8 @@ class GalleryPluginHelper_simple {
 
 			    foreach ($frameworkParams as $paramName) {
 				list ($ret, $plugins[$pluginId][$paramName]) =
-				    GalleryPluginHelper_simple::getParameter($pluginType, $pluginId, '_' . $paramName);
+				    GalleryPluginHelper_simple::getParameter(
+                                        $pluginType, $pluginId, '_' . $paramName);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -341,7 +356,8 @@ class GalleryPluginHelper_simple {
 				    if (empty($tmp) || count($tmp) < 2) {
 					$tmp = array(-1, -1);
 				    }
-				    $plugins[$pluginId][$paramName] = array((int)$tmp[0], (int)$tmp[1]);
+				    $plugins[$pluginId][$paramName] =
+					array((int)$tmp[0], (int)$tmp[1]);
 				}
 			    }
 			}

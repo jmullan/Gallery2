@@ -42,13 +42,8 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$gallery->_platform = new AdminLayoutsTestPlatform($gallery->_platform);
-
-	/*
-	 * Clear the cached layout status list, because we specifically want to
-	 * load it in our tests (our dummy platform will feed in mock data)
-	 */
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus(layout)");
+	$this->_testLayout =& AdminLayoutsControllerTestLayout::getSingleton();
+	$this->_testLayout->resetCalls();
 
 	list ($ret, $this->_params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
@@ -57,18 +52,6 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	/* Delete our layouts */
-	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    $ret = GalleryCoreApi::removeAllPluginParameters('layout', $layoutId);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $ret = GalleryCoreApi::removePlugin('layout', $layoutId);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
 	foreach ($this->_params as $key => $value) {
 	    if (strpos($key, 'default.') === 0) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
@@ -80,54 +63,179 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
-    function testActivate() {
-	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
-	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
+    function testInstall() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][install]', 1);
+	$this->_testLayout->_set('_isActive', false);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminLayouts',
 						      'mode' => 'config'),
-				  'status' => array('activated' => 'Test Layout 1'),
+				  'status' => array('installed' => 'AdminLayouts Controller Test'),
 				  'error' => array()),
 			    $results);
 
-	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->assert($this->_testLayout->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+    }
 
-	$this->assertEquals(1, (int)$pluginStatus['testLayoutId1']['active']);
+    function testUninstall() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][uninstall]', 1);
+	$this->_testLayout->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'config'),
+		  'status' => array('uninstalled' => 'AdminLayouts Controller Test'),
+		  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testLayout->wasCalled('uninstall'),
+		      'uninstall not called');
+    }
+
+    function testUninstallActiveLayout() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][uninstall]', 1);
+	$this->_testLayout->_set('_isActive', true);
+
+	/* The ui doesn't permit this, so expect a silent failure */
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'config'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$this->assert(!$this->_testLayout->wasCalled('uninstall'),
+		      'uninstall unexpectedly called');
+    }
+
+    function testUpgrade() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][upgrade]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'config'),
+				  'status' => array('upgraded' => 'AdminLayouts Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testLayout->wasCalled('installOrUpgrade'),
+		      'installOrUpgrade not called');
+    }
+
+    function testActivate() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
+	$this->_testLayout->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'config'),
+				  'status' => array('activated' => 'AdminLayouts Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testLayout->wasCalled('activate'),
+		      'activate not called');
+    }
+
+    function testActivateAlreadyActiveLayout() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][activate]', 1);
+	$this->_testLayout->_set('_isActive', true);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'config'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$this->assert(!$this->_testLayout->wasCalled('activate'),
+		      'activate unexpectedly called');
     }
 
     function testDeactivate() {
-	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    list ($ret, $ignored) = GalleryCoreApi::activatePlugin('layout', $layoutId);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
 	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testLayout->_set('_isActive', true);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminLayouts',
-						      'mode' => 'config'),
-				  'status' => array('deactivated' => 'Test Layout 1'),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'config'),
+		  'status' => array('deactivated' => 'AdminLayouts Controller Test'),
+		  'error' => array()),
+	    $results);
 
-	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus('layout');
+	$this->assert($this->_testLayout->wasCalled('deactivate'),
+		      'deactivate not called');
+    }
+
+    function testDeactivateDefaultLayout() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testLayout->_set('_isActive', true);
+
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'default.layout', 'AdminLayoutsControllerTest');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(0, (int)$pluginStatus['testLayoutId1']['active']);
-	$this->assertEquals(1, (int)$pluginStatus['testLayoutId2']['active']);
+	/* The ui doesn't permit this, so expect a silent failure */
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'config'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	$this->assert(!$this->_testLayout->wasCalled('deactivate'),
+		      'deactivate unexpectedly called');
+    }
+
+    function testDeactivateAlreadyInactive() {
+	GalleryUtilities::putRequestVariable('layoutId', 'AdminLayoutsControllerTest');
+	GalleryUtilities::putRequestVariable('form[action][deactivate]', 1);
+	$this->_testLayout->_set('_isActive', false);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'config'),
+		  'status' => array(),
+		  'error' => array()),
+	    $results);
+
+	$this->assert(!$this->_testLayout->wasCalled('deactivate'),
+		      'deactivate unexpectedly called');
     }
 
     function testSaveLayout() {
@@ -138,13 +246,18 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminLayouts',
-						      'mode' => 'editLayout',
-						      'layoutId' => 'testLayoutId2'),
-				  'status' => array('savedLayout' => 'Test Layout 2'),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'editLayout',
+				      'layoutId' => 'testLayoutId2'),
+		  'status' => array('savedLayout' => 'Test Layout 2'),
+		  'error' => array()),
+            $results);
+
+	$map =& TestLayoutId2Layout::getMap();
+	$this->assertEquals(2, (int)$map['rows']);
+	$this->assertEquals(4, (int)$map['columns']);
     }
 
     function testUndoLayout() {
@@ -155,13 +268,14 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminLayouts',
-						      'mode' => 'editLayout',
-						      'layoutId' => 'testLayoutId2'),
-				  'status' => array('restoredLayout' => 'Test Layout 2'),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+            array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts',
+				      'mode' => 'editLayout',
+				      'layoutId' => 'testLayoutId2'),
+		  'status' => array('restoredLayout' => 'Test Layout 2'),
+		  'error' => array()),
+	    $results);
     }
 
     function testSaveLayoutWithValidationErrors() {
@@ -172,16 +286,13 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminLayouts'),
-				  'status' => array(),
-				  'error' => array('form[error][key][rows][invalid]',
-						   'form[error][key][columns][invalid]')),
-			    $results);
-
-	$map =& TestLayoutId2Layout::getMap();
-	$this->assertEquals(2, (int)$map['rows']);
-	$this->assertEquals(4, (int)$map['columns']);
+	$this->assertEquals(
+            array('delegate' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'core:AdminLayouts'),
+		  'status' => array(),
+		  'error' => array('form[error][key][rows][invalid]',
+				   'form[error][key][columns][invalid]')),
+            $results);
     }
 
     function testSaveDefaults() {
@@ -260,6 +371,10 @@ class TestLayoutId1Layout extends GalleryLayout {
 	$this->setId('testLayoutId1');
 	$this->setName('Test Layout 1');
     }
+
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
 }
 
 /**
@@ -313,105 +428,91 @@ class TestLayoutId2Layout extends GalleryLayout {
     function validateSettings($settings) {
 	return array();
     }
+
+    function isActive() {
+	return array(GalleryStatus::success(), true);
+    }
 }
 
+
 /**
- * Test platform for this test
+ * Test layout
  *
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class AdminLayoutsTestPlatform {
+class AdminLayoutsControllerTestLayout {
 
-    function AdminLayoutsTestPlatform($platform) {
-	$this->_platform = $platform;
-    }
-
-    function opendir($path) {
-	if (realpath($path) == realpath(dirname(__FILE__) . '/../../../../layouts')) {
-	    return 'TEST_VALID_RESOURCE';
-	} else {
-	    return null;
-	}
-    }
-
-    function readdir($path) {
-	static $paths;
-	if (!isset($paths)) {
-	    $paths = array('.',
-			   '..',
-			   'testLayoutId1',
-			   'testLayoutId2');
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new AdminLayoutsControllerTestLayout();
 	}
 
-	if ($path == 'TEST_VALID_RESOURCE') {
-	    if (empty($paths)) {
-		$paths = null;
-		return null;
-	    } else {
-		return array_shift($paths);
-	    }
-	}
+	return $singleton;
     }
 
-    function closedir($path) {
+    function getId() {
+	return 'AdminLayoutsControllerTest';
     }
 
-    function file_exists($path) {
-	/*
-	 * Can't use realpath() directly here because these paths are bogus!  Build up
-	 * the path based on GalleryPluginHelper_simple instead, as that's what'll be passing
-	 * in this path
-	 */
-	$base = realpath(dirname(__FILE__) . '/../../../../modules/core/classes/helpers') .
-	    '/../../../../layouts/';
-	switch($path) {
-	case $base . 'testLayoutId1/layout.inc':
-	case $base . 'testLayoutId2/layout.inc':
-	case $base . 'anotherTestLayoutId/layout.inc':
-	    return 1;
-
-	default:
-	    if (preg_match('/smarty.templates_c|module.inc$/', $path)) {
-		return file_exists($path);
-	    }
-	    return 0;
-	}
+    function getName() {
+	return 'AdminLayouts Controller Test';
     }
 
-    function is_dir($path) {
-	$base = realpath(dirname(__FILE__) . '/../../../../layouts');
-	$path = realpath($path);
-
-	switch($path) {
-	case realpath($base . '/testLayoutId1'):
-	case realpath($base . '/testLayoutId2'):
-	case realpath($base . '/anotherTestLayoutId'):
-	    return 1;
-
-	default:
-	    if (preg_match('/smarty.templates_c/', $path)) {
-		return is_dir($path);
-	    }
-	    return 0;
-	}
+    function init() {
+	$this->_setCalled('init');
+	return GalleryStatus::success();
+    }
+    
+    function installOrUpgrade() {
+	$this->_setCalled('installOrUpgrade');
+	return GalleryStatus::success();
     }
 
-    // In case GalleryStatus::getAsHtml gets called..
-    function realpath($path) {
-	return $this->_platform->realpath($path);
+    function activate() {
+	$this->_setCalled('activate');
+	return array(GalleryStatus::success(), array());
     }
 
-    function mkdir($path, $stringPerms='755') {
-	return $this->_platform->mkdir($path, $stringPerms);
+    function uninstall() {
+	$this->_setCalled('uninstall');
+	return GalleryStatus::success();
     }
 
-    function is_writeable($filename) {
-	return $this->_platform->is_writeable($filename);
+    function deactivate() {
+	$this->_setCalled('deactivate');
+	return array(GalleryStatus::success(), array());
     }
 
-    function stat($filename) {
-	return $this->_platform->stat($filename);
+    function _setCalled($function) {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap[$function] = 1;
+    }
+
+    function wasCalled($function) {
+	$singleton = &$this->getSingleton();
+	return isset($singleton->_callMap[$function]);
+    }
+
+    function resetCalls() {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap = array();
+    }
+
+    function _set($key, $val) {
+	$singleton = &$this->getSingleton();
+	$singleton->$key = $val;
+    }
+
+    function isActive() {
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_isActive);
+    }
+
+    function isAdvancedSettings() {
+	$singleton = &$this->getSingleton();
+	return $singleton->_isAdvancedSettings;
     }
 }
 ?>

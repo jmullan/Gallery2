@@ -122,6 +122,11 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    list ($ret, $ignored) = $layout->installOrUpgrade();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    list ($ret, $ignored) = $layout->activate();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -275,6 +280,39 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $currentVersion = '0.8.13';
+
+	case '0.8.13':
+	    /*
+	     * We added layout versioning.  We need to call installOrUpgrade()
+	     * on the currently active layouts to let them update their
+	     * bookkeeping.  Reactivate them too for good measure.
+	     */
+	    list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    foreach ($layouts as $layoutId => $layoutStatus) {
+		if (!empty($layoutStatus['active'])) {
+		    list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+		    if ($ret->isError() &&
+			!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    $ret = $layout->installOrUpgrade();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    list ($ret, $ignored) = $layout->activate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    
+	    $currentVersion = '0.8.14';
 	    break;
 	    
 	default:

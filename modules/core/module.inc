@@ -38,7 +38,7 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-alpha-4+');
-	$this->setVersion('0.8.13');
+	$this->setVersion('0.8.14');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
@@ -52,7 +52,8 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
+	GalleryCoreApi::relativeRequireOnce(
+            'modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
 

@@ -35,7 +35,9 @@
 class GalleryItemHelper_simple {
 
     /**
-     * Return the correct layout for this item
+     * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
+     * we fall back on the default.  And if that can't be loaded, then we return
+     * null.
      *
      * @param object GalleryItem
      * @return array object GalleryStatus a status code
@@ -57,21 +59,53 @@ class GalleryItemHelper_simple {
 	    $layoutId = $parent->getLayout();
 	}
 
-	if (empty($layoutId)) {
-	    list ($ret, $layoutId) = GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	/*
+	 * We start up an infinite loop and break out of it when we've got an
+	 * appropriate layout.  Start with the layoutId provided by the item.
+	 * If that layout isn't active, then try the default one.  If that one
+	 * isn't active either then return null.
+	 */
+	$isDefaultLayout = false;
+	while (true) {
+	    if (empty($layoutId)) {
+		list ($ret, $layoutId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$isDefaultLayout = true;
 	    }
-	}
 
-	/* Load the correct layout */
-	if (empty($layoutId)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-	}
+	    /* Load the correct layout */
+	    if (empty($layoutId)) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	    
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    $layoutId = null;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		list ($ret, $isActive) = $layout->isActive();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    
+		if ($isActive) {
+		    break;
+		} else {
+		    $layoutId = null;
+		}
+	    }
 
-	list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    /* The default layout doesn't work */
+	    if ($isDefaultLayout) {
+		$layout = null;
+		break;
+	    }
 	}
 
 	return array(GalleryStatus::success(), $layout);

@@ -149,12 +149,14 @@ function _GalleryMain($returnHtml=false) {
 	if ($controller->canUseImmediateView()) {
 	    /* make a copy of $main for the immediate status view */
 	    $mainForImmediate = $main;
-	    $ret = _GalleryMain_setupMain($mainForImmediate, $urlGenerator, $installedVersions['gallery']);
+	    $ret = _GalleryMain_setupMain(
+                $mainForImmediate, $urlGenerator, $installedVersions['gallery']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryImmediateStatusView.class');
+	    GalleryCoreApi::relativeRequireOnce(
+                'modules/core/classes/GalleryImmediateStatusView.class');
 	    $galleryImmediateStatusView = new GalleryImmediateStatusView();
 	    $galleryImmediateStatusView->setMain($mainForImmediate);
 	    $controller->setImmediateStatusView($galleryImmediateStatusView);
@@ -220,7 +222,8 @@ function _GalleryMain($returnHtml=false) {
 
 		$results['sendLateRedirect']->setMain($main);
 		return array(GalleryStatus::success(),
-			     _GalleryMain_doLateRedirect($redirectUrl, $results['sendLateRedirect']));
+			     _GalleryMain_doLateRedirect($redirectUrl,
+							 $results['sendLateRedirect']));
 	    } else {
 		return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
 	    }

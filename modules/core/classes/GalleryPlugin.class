@@ -82,14 +82,6 @@ class GalleryPlugin {
     var $_requiredCoreApi;
 
     /**
-     * The version of the Core API required by this module
-     *
-     * @var array _requiredModuleApi
-     * @access private
-     */
-    var $_requiredModuleApi;
-
-    /**
      * The localization domain for this layout
      *
      * @var string _l10Domain
@@ -196,7 +188,7 @@ class GalleryPlugin {
 					       'id' => '_all'));
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
-	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
+	$event = GalleryCoreApi::newEvent('Gallery::DeactivatePlugin');
 	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
 	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
@@ -204,6 +196,37 @@ class GalleryPlugin {
 	}
 
 	return array(GalleryStatus::success(), array());
+    }
+
+
+    /**
+     * Remove this plugin's parameters
+     *
+     * @return object GalleryStatus a status code
+     */
+    function uninstall() {
+	global $gallery;
+
+	/* Remove this plugin */
+	$ret = GalleryCoreApi::removePlugin($this->getPluginType(), $this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Perform the plugin installation or upgrade, whatever is required.
+     *
+     * Plugins should not need to override this method.  Instead they should
+     * override the upgrade method and put all their plugin specific logic
+     * there.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function installOrUpgrade() {
+	return GalleryStatus::success();
     }
 
     /**
@@ -314,6 +337,24 @@ class GalleryPlugin {
 	return array(GalleryStatus::success(), $params);
     }
 
+    /**
+     * Perform any upgrade tasks required at this point.  This method is called
+     * if the plugin version in the code does not match the version number in
+     * the database.  For modules, the framework will upgrade database tables as
+     * necessary, but it is the responsibility of the module to:
+     *
+     * 1. Register/unregister permissions
+     * 2. Move or massage data as required by the upgrade
+     *
+     * This method will be called with a null version on an initial install.
+     * @param string the current version (null if this is an initial install)
+     * @return object GalleryStatus a status code
+     * @access protected
+     */
+    function upgrade($currentVersion) {
+	return GalleryStatus::success();
+    }
+
     /* Getters and setters below */
 
     function setId($id) {
@@ -356,14 +397,6 @@ class GalleryPlugin {
 	return $this->_group;
     }
 
-    function getCallbacks() {
-	return $this->_callbacks;
-    }
-
-    function setCallbacks($callbacks) {
-	$this->_callbacks = $callbacks;
-    }
-
     function getL10Domain() {
 	return $this->_l10Domain;
     }
@@ -378,14 +411,6 @@ class GalleryPlugin {
 
     function getRequiredCoreApi() {
 	return $this->_requiredCoreApi;
-    }
-
-    function setRequiredModuleApi($requirement) {
-	$this->_requiredModuleApi = $requirement;
-    }
-
-    function getRequiredModuleApi() {
-	return $this->_requiredModuleApi;
     }
 
     /**

@@ -45,6 +45,8 @@ class TileLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
 	$this->setVersion('0.3');
 	$this->setL10Domain('layouts_tile');
+	$this->setRequiredLayoutApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 2));
 
 	return GalleryStatus::success();
     }
@@ -294,8 +296,9 @@ class TileLayout extends GalleryLayout {
      */
     function handleSettingsRequest($form, $itemId=null) {
 	if (!isset($itemId)) {
-	    // Site admin settings..
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	    /* Site admin settings.. */
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+			 null, null);
 	}
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {

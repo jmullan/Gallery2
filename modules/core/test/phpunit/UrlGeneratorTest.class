@@ -42,18 +42,22 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
+	parent::setUp();
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 
-	$this->_savedGet = $_GET;
+	global $gallery;
+	$this->_savedSession = $gallery->_session;
+	
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$this->_urlGenerator->init('phpunit_test.php');
-	parent::setUp();
     }
 
     function tearDown() {
-	$_GET = $this->_savedGet;
+	global $gallery;
+	$gallery->_session = $this->_savedSession;
+
 	parent::tearDown();
     }
 
@@ -114,6 +118,19 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => 12345),
 				       true),
 	    'core:DownloadItem always direct-g2 url, even when embedded');
+    }
+
+    function testGenerateUrlWithNoSession() {
+	global $gallery;
+	$gallery->_session = null;
+	
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
+
+	$this->assertEquals('/upgrade',
+			    $urlGenerator->generateUrl(array('href' => '/upgrade')));
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?g2_view=foo',
+			    $urlGenerator->generateUrl(array('view' => 'foo')));
     }
 
     function testGenerateHref() {

@@ -1185,7 +1185,9 @@ class GalleryCoreApi {
     }
 
     /**
-     * Return the correct layout for this item
+     * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
+     * we fall back on the default.  And if that can't be loaded, then we return
+     * null.
      *
      * @param object GalleryItem
      * @return array object GalleryStatus a status code

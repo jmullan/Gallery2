@@ -37,7 +37,15 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPlugin.class');
 class GalleryLayout extends GalleryPlugin {
 
     /**
-     * Return the major and minor version of the Module API.
+     * The version of the GalleryLayout API required by this layout
+     *
+     * @var array _requiredLayoutApi
+     * @access private
+     */
+    var $_requiredLayoutApi;
+
+    /**
+     * Return the major and minor version of the GalleryLayout API.
      *
      * This follows the same rules as the core API.
      * @see GalleryCoreApi::getApiVersion()
@@ -167,6 +175,46 @@ class GalleryLayout extends GalleryPlugin {
 	}
 
 	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Perform the module installation or upgrade, whatever is required.
+     *
+     * It will do the following:
+     * 1. Get the current version of the layout (if its already installed)
+     * 2. Let the layout perform any necessary upgrade tasks.
+     * 3. Set the new layout version and api requirements into the database
+     *
+     * Layouts should not need to override this method.  Instead they should
+     * override the upgrade method and put all their layout specific logic
+     * there.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function installOrUpgrade() {
+	list ($ret, $installedVersion) = $this->getParameter('_version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($installedVersion != $this->getVersion()) {
+	    $ret = $this->upgrade($installedVersion);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $data = array('_version' => $this->getVersion(),
+			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
+			  '_requiredLayoutApi' => join(',', $this->getRequiredLayoutApi()));
+	    foreach ($data as $key => $value) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -663,6 +711,14 @@ class GalleryLayout extends GalleryPlugin {
      */
     function getPluginType() {
 	return 'layout';
+    }
+
+    function setRequiredLayoutApi($requirement) {
+	$this->_requiredLayoutApi = $requirement;
+    }
+
+    function getRequiredLayoutApi() {
+	return $this->_requiredLayoutApi;
     }
 }
 ?>

@@ -232,10 +232,10 @@ class AdminModulesView extends GalleryView {
 	    $entry['name'] = $module->getName();
 	    $entry['l10Domain'] = 'modules_' . $moduleId;
 	    $entry['action'] = array();
-	    $coreApiCompatible =
-		GalleryUtilities::isCompatibleWithApi($module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
-	    $moduleApiCompatible =
-		GalleryUtilities::isCompatibleWithApi($module->getRequiredModuleApi(), GalleryModule::getApiVersion());
+	    $coreApiCompatible = GalleryUtilities::isCompatibleWithApi(
+                $module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
+	    $moduleApiCompatible = GalleryUtilities::isCompatibleWithApi(
+                $module->getRequiredModuleApi(), GalleryModule::getApiVersion());
 	    if ($coreApiCompatible && $moduleApiCompatible) {
 		if (empty($status['active'])) {
 		    $version = $status['version'];

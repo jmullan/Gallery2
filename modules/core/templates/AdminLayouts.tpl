@@ -22,6 +22,12 @@
       {if isset($status.deactivated)}
 	{g->text text="Successfully deactivated layout %s" arg1=$status.deactivated}
       {/if}
+      {if isset($status.installed)}
+	{g->text text="Successfully installed layout %s" arg1=$status.installed}
+      {/if}
+      {if isset($status.uninstalled)}
+	{g->text text="Successfully uninstalled layout %s" arg1=$status.uninstalled}
+      {/if}
       {if isset($status.savedLayout)}
 	{g->text text="Successfully saved layout settings"}
       {/if}
@@ -67,7 +73,7 @@
         {/if}
 
         {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
-        {if $AdminLayouts.layouts.$layoutId.active}
+        {if $layout.active}
         {if ($AdminLayouts.mode == 'editLayout') && ($AdminLayouts.layoutId == $layoutId)}
         <li class="giSelectedTab">
           <span>
@@ -91,41 +97,85 @@
     
       <table class="gbDataTable">
         <tr>
+	  <th> &nbsp; </th>
           <th> {g->text text="Layout Name"} </th>
           <th> {g->text text="Version"} </th>
+	  <th> {g->text text="Installed"} </th>
           <th> {g->text text="Description"} </th>
           <th> {g->text text="Actions"} </th>
         </tr>
 
         {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
         <tr class="{cycle values="gbEven,gbOdd"}">
-          <td>
+	  <td>
+	    {if $layout.state == 'active'}
+	    <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="{g->text text="Status: Active"}" />
+	    {/if}
+	    {if $layout.state == 'inactive'}
+	    <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="{g->text text="Status: Inactive"}" />
+	    {/if}
+	    {if $layout.state == 'upgrade'}
+	    <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="{g->text text="Status: Upgrade Required (Inactive)"}" />
+	    {/if}
+	    {if $layout.state == 'incompatible'}
+	    <img src="{g->url href="modules/core/data/module-incompatible.gif"}" width="13" height="13" alt="{g->text text="Status: Incompatible Layout (Inactive)"}" />
+	    {/if}
+	  </td>
+
+          <td {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
             {$layout.name}
+            {if ($layoutId == $AdminLayouts.defaultLayoutId)}
+            {/if}
           </td>
 
-          <td align="center">
+          <td align="center" {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
             {$layout.version}
           </td>
 
-          <td>
+          <td align="center" {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
+            {$layout.installedVersion}
+          </td>
+
+          <td {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
             {g->text text=$layout.description l10Domain=$layout.l10Domain}
+	    {if $layout.state == 'incompatible'}
+	    <br />
+	    <span class="giError">
+	      {g->text text="Incompatible layout!"}
+	      {if $layout.api.required.core != $layout.api.provided.core}
+		<br/>
+		{g->text text="Core API Required: %s (available: %s)"
+			 arg1=$layout.api.required.core arg2=$layout.api.provided.core}
+	      {/if}
+	      {if $layout.api.required.layout != $layout.api.provided.layout}
+		<br/>
+		{g->text text="Layout API Required: %s (available: %s)"
+			 arg1=$layout.api.required.layout arg2=$layout.api.provided.layout}
+	      {/if}
+	    </span>
+	    {/if}
           </td>
 
-          <td>
-            <div class="giHorizontalLinks">
-              {if (isset($layout.actions.activate))}
-              <span>
-                <a href="{g->url arg1="controller=core:AdminLayouts" arg2="form[action][activate]=1" arg3="layoutId=$layoutId"}">{g->text text="activate"}</a>
-              </span>
-              {/if}
-
-              {if (isset($layout.actions.deactivate))}
-              <span>
-                <a href="{g->url arg1="controller=core:AdminLayouts" arg2="form[action][deactivate]=1" arg3="layoutId=$layoutId"}">{g->text text="deactivate"}</a>
-              </span>
-              {/if}
-            </div>
-          </td>
+          <td {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
+            {if ($layoutId == $AdminLayouts.defaultLayoutId)}
+            {g->text text="(default)"}
+            {else}
+	    {if (!empty($layout.action))}
+	    {foreach name=actions from=$layout.action item=action}
+	    {strip}
+	    {if !$smarty.foreach.actions.first}
+	    <br/>
+	    {/if}
+	    <a href="{g->url params=$action.params}">
+	      {$action.text}
+	    </a>
+	    {/strip}
+	    {/foreach}
+	    {else}
+	    &nbsp;
+	    {/if}
+	    {/if}
+	  </td>
         </tr>
         {/foreach}
       </table>
@@ -179,7 +229,7 @@
 
           <td>
             <select name="{g->formVar var="form[default][layout]"}">
-                {html_options options=$AdminLayouts.layoutList selected=$form.default.layout}
+              {html_options options=$AdminLayouts.layoutList selected=$form.default.layout}
             </select>
           </td>
         </tr>

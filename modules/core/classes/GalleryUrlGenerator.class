@@ -569,21 +569,26 @@ class GalleryUrlGenerator {
 	global $gallery;
 
 	$session =& $gallery->getSession();
-	if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
-		(isset($forceSessionId) && $forceSessionId === true)) {
-	    if (!empty($this->_embedSessionString)) {
-		$sessionString = $this->_embedSessionString;
-	    } else {
-		$params[$session->getKey()] = $session->getId();
+	if ($session) {
+	    if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
+		 (isset($forceSessionId) && $forceSessionId === true)) {
+		if (!empty($this->_embedSessionString)) {
+		    $sessionString = $this->_embedSessionString;
+		} else {
+		    $params[$session->getKey()] = $session->getId();
+		}
 	    }
 	}
+	
 	/* Force direct-g2 url for core:DownloadItem view, even if embedded: */
 	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
 		&& !isset($params['href'])) {
 	    $params['href'] = 'main.php';
 	    if (isset($sessionString)) {
 		$sessionString = null;
-		$params[$session->getKey()] = $session->getId();
+		if ($session) {
+		    $params[$session->getKey()] = $session->getId();
+		}
 	    }
 	}
 

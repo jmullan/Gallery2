@@ -81,7 +81,8 @@ class ShowItemView extends GalleryView {
 	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
 	if ($ret->isError()) {
 	    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
+                    'module', 'core', 'id.anonymousUser');
 		if ($ret2->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -91,7 +92,8 @@ class ShowItemView extends GalleryView {
 				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
 		}
 		/* Try to redirect to root */
-		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter(
+                    'module', 'core', 'id.rootAlbum');
 		if ($ret2->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -120,33 +122,40 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Let the layout load the template and get its body file */
-	list ($ret, $results) = $layout->loadTemplate($template, $item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (isset($layout)) {
+	    /* Let the layout load the template and get its body file */
+	    list ($ret, $results) = $layout->loadTemplate($template, $item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	if (isset($results['redirect'])) {
-	    return array(GalleryStatus::success(), $results);
-	} else if (isset($results['html'])) {
-	    return array(GalleryStatus::success(), $results);
+	    if (isset($results['redirect'])) {
+		return array(GalleryStatus::success(), $results);
+	    } else if (isset($results['html'])) {
+		return array(GalleryStatus::success(), $results);
+	    } else {
+		$ShowItem = array();
+		$ShowItem['item'] = $item->getMemberData();
+		$ShowItem['layoutL10Domain'] = $layout->getL10Domain();
+		if (isset($results['body'])) {
+		    $ShowItem['layoutBodyFile'] = $results['body'];
+		}
+		$template->setVariable('ShowItem', $ShowItem);
+
+		/* Provide a title if the layout doesn't */
+		$head = $template->getVariable('head');
+		if (empty($head['tpl']) && empty($head['title'])) {
+		    $template->head('modules/core/templates/ShowItemHead.tpl');
+		}
+
+		return array(GalleryStatus::success(),
+			     array('body' => 'modules/core/templates/ShowItem.tpl'));
+	    }
 	} else {
-	    $ShowItem = array();
-	    $ShowItem['item'] = $item->getMemberData();
-	    $ShowItem['layoutL10Domain'] = $layout->getL10Domain();
-	    if (isset($results['body'])) {
-		$ShowItem['layoutBodyFile'] = $results['body'];
-	    }
-	    $template->setVariable('ShowItem', $ShowItem);
-
-	    /* Provide a title if the layout doesn't */
-	    $head = $template->getVariable('head');
-	    if (empty($head['tpl']) && empty($head['title'])) {
-		$template->head('modules/core/templates/ShowItemHead.tpl');
-	    }
-
 	    return array(GalleryStatus::success(),
-			 array('body' => 'modules/core/templates/ShowItem.tpl'));
+			 array('redirect' => array('view' => 'core:ShowItemError',
+						   'problem' => 'missingLayout',
+						   'itemId' => $item->getId())));
 	}
     }
 

@@ -37,12 +37,6 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPlugin.class');
  */
 class GalleryModule extends GalleryPlugin {
 
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
-
     /**
      * The module group (optional)
      * Used to better organize site admin pages
@@ -71,14 +65,16 @@ class GalleryModule extends GalleryPlugin {
      */
     var $_callbacks;
 
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
+    /**
+     * The version of the GalleryModule API required by this module
+     *
+     * @var array _requiredModuleApi
+     * @access private
      */
+    var $_requiredModuleApi;
 
     /**
-     * Return the major and minor version of the Module API.
+     * Return the major and minor version of the GalleryModule API.
      *
      * This follows the same rules as the core API.
      * @see GalleryCoreApi::getApiVersion()
@@ -97,24 +93,6 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Perform any upgrade tasks required at this point.  This method
-     * is called if the module version in the module.inc does not match the
-     * version number in the database.  The framework will upgrade database
-     * tables as necessary, but it is the responsibility of the module to:
-     *
-     * 1. Register/unregister permissions
-     * 2. Move or massage data as required by the upgrade
-     *
-     * This method will be called with a null version on an initial install.
-     * @param string the current version (null if this is an initial install)
-     * @return object GalleryStatus a status code
-     * @access protected
-     */
-    function upgrade($currentVersion) {
-	return GalleryStatus::success();
-    }
-
-    /**
      * Perform the module installation or upgrade, whatever is required.
      *
      * It will do the following:
@@ -122,7 +100,7 @@ class GalleryModule extends GalleryPlugin {
      * 2. Request that the storage subsystem install this module's database
      *    tables (which will also upgrade any tables that require it)
      * 3. Let the module perform any necessary upgrade tasks.
-     * 4. Set the new module version into the database
+     * 4. Set the new module version and api requirements into the database
      *
      * Modules should not need to override this method.  Instead they should
      * override the upgrade method and put all their module specific logic
@@ -186,7 +164,7 @@ class GalleryModule extends GalleryPlugin {
 
 		$ret = $this->performFactoryRegistrations();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
@@ -201,7 +179,7 @@ class GalleryModule extends GalleryPlugin {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -219,12 +197,6 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Remove this plugin */
-	$ret = GalleryCoreApi::removePlugin('module', $this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Remove factory implementations */
 	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
 	if ($ret->isError()) {
@@ -238,6 +210,12 @@ class GalleryModule extends GalleryPlugin {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	    
+	/* Remove this plugin */
+	$ret = parent::uninstall();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryStatus::success();
     }
 
@@ -509,6 +487,14 @@ class GalleryModule extends GalleryPlugin {
      */
     function getPluginType() {
 	return 'module';
+    }
+
+    function setRequiredModuleApi($requirement) {
+	$this->_requiredModuleApi = $requirement;
+    }
+
+    function getRequiredModuleApi() {
+	return $this->_requiredModuleApi;
     }
 }
 ?>
