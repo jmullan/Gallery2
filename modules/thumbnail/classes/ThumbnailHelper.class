@@ -197,21 +197,23 @@ class ThumbnailHelper {
 	 * If we don't get useful data from the form or its a type we don't
 	 * recognize, take a swing at it using the file name.
 	 */
-    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($fileMimeType);
+	list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($fileMimeType);
 	if ($fileMimeType == 'application/octet-stream' ||
 		$fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
 	    $extension = GalleryUtilities::getFileExtension($filename);
-        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-        if ($ret->isError()) {
-            $mimeType = 'application/unknown';
-        }
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    if ($ret->isError()) {
+		$mimeType = 'application/unknown';
+	    }
 	}
 	if ($fileMimeType != 'image/jpeg') {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__),
+			 null);
 	}
 
 	if (!isset($item)) {
-	    list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
+	    list ($ret, $item) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -240,7 +242,8 @@ class ThumbnailHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $adminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -337,7 +340,7 @@ class ThumbnailHelper {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    // Make sure operations just contains thumbnail|{size}
+	    /* Make sure operations just contains thumbnail|{size} */
 	    $derivative->setDerivativeOperations(
 		preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '${1}',
 			     $derivative->getDerivativeOperations()));
@@ -450,43 +453,40 @@ class ThumbnailHelper {
 
 	    $ret = GalleryCoreApi::releaseLocks($lockId);
 	    if ($ret->isError()) {
-	        return $ret->wrap(__FILE__, __LINE__);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Return mime types and applicable file extensions
      *
      * @return array object GalleryStatus a status code
-     *               array array string mime type, 
-     *                           array of string extensions
-     *                     boolean is viewable
+     *               array (string mime type => string list of extensions)
      * @static
      */
     function getMimeTypeMap() {
-        global $gallery;
-        
-        $query = '
-            SELECT [GalleryMimeTypeMap::mimeType],
-                [GalleryMimeTypeMap::extension]
-            FROM [GalleryMimeTypeMap]
-            ORDER BY [GalleryMimeTypeMap::mimeType]
-        ';
-        list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        while ($result = $searchResults->nextResult()) {
-            $typeMap[$result[0]][] = $result[1];
-        }
-        
-        foreach(array_keys($typeMap) as $mimeType) {
-            $typeMap[$mimeType] = implode(' ', $typeMap[$mimeType]);
-        }
-        return array(GalleryStatus::success(), $typeMap);
+	global $gallery;
+
+	$query = '
+	    SELECT [GalleryMimeTypeMap::mimeType], [GalleryMimeTypeMap::extension]
+	    FROM [GalleryMimeTypeMap]
+	    ORDER BY [GalleryMimeTypeMap::mimeType]
+	';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	while ($result = $searchResults->nextResult()) {
+	    $typeMap[$result[0]][] = $result[1];
+	}
+
+	foreach(array_keys($typeMap) as $mimeType) {
+	    $typeMap[$mimeType] = implode(' ', $typeMap[$mimeType]);
+	}
+	return array(GalleryStatus::success(), $typeMap);
     }
 }
 ?>
