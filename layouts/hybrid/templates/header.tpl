@@ -8,7 +8,7 @@
 <title>
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
-<link rel="stylesheet" type="text/css" href="{g->url href=$layout.layoutUrl forceSessionId=false}/templates/hybrid.css" />
+<link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css"/>
 {g->style}
 {if isset($layout.frame)}
  {include file=$layout.frame.style ImageFrame_data=$layout.frame.data}

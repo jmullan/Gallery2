@@ -102,12 +102,12 @@ class SliderLayout extends GalleryLayout {
 	$layout['maxThumbWidth'] = $maxTW;
 	$layout['maxThumbHeight'] = $maxTH;
 	$layout['imageCount'] = count($imageWidths);
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['show']['sidebarActions'] = false;
 
 	$urlGenerator = $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
+	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/slider'), false);
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {

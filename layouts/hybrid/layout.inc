@@ -126,6 +126,8 @@ class HybridLayout extends GalleryLayout {
 	$urlGenerator = $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
+	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/hybrid'), false);
+	$layout['params'] = $params;
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
@@ -165,9 +167,6 @@ class HybridLayout extends GalleryLayout {
 	    }
 	    $layout['frame'] = $frame;
 	}
-
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
-	$layout['params'] = $params;
 
 	return array(GalleryStatus::success(),
 		array('body' => 'layouts/hybrid/templates/hybrid.tpl',

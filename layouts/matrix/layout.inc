@@ -141,6 +141,9 @@ class MatrixLayout extends GalleryLayout {
      * @see GalleryLayout::loadTemplate
      */
     function loadTemplate(&$template, $item) {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+
 	list ($ret, $params) = $this->fetchParameters($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -157,7 +160,8 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	$layout =& $template->getVariableByReference('layout');
-	$layout['layoutUrl'] = 'layouts/' . $this->getId();
+	$layout['layoutUrl'] = $urlGenerator->generateUrl(
+				array('href' => 'layouts/' . $this->getId()), false);
 
 	/* Prepare image frames, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
@@ -339,7 +343,6 @@ class MatrixLayout extends GalleryLayout {
 	$layout['totalPageCount'] = $totalPages;
 	$layout['navigator'] = $navigator;
 	$layout['jumprange'] = $jumprange;
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
 	$layout['showImageOwner'] = $properties['showImageOwner'];
 	$layout['useCaptureDate'] = $properties['useCaptureDate'];

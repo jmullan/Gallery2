@@ -139,11 +139,11 @@ class TileLayout extends GalleryLayout {
 	$layout['imageWidths'] = implode(',', $imageWidths);
 	$layout['imageHeights'] = implode(',', $imageHeights);
 	$layout['imageCount'] = count($imageWidths);
-	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 
 	$urlGenerator = $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
+	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/tile'), false);
 
 	/* Init view with specific image */
 	if (isset($viewItemId)) {
