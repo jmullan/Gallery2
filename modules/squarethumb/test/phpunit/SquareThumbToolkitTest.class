@@ -242,7 +242,8 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 	    }
 	    break;
 	}
-	return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					  "$operationName $sourceFilename"), null);
     }
 }
 ?>
