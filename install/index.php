@@ -144,7 +144,7 @@ if ($step == 1) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
     }
-    if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
+    //if (isset($_POST['uname']) && isset($_POST['passA']) && isset($_POST['passB'])) {
 	if (empty($_POST['uname'])) {
 	    array_push($errorMsg, _('Error: you must enter a username!'));
 	} else {
@@ -164,7 +164,7 @@ if ($step == 1) {
 	if (count($errorMsg) == 0) {
 	    $status[$step] = true;
 	}
-    }
+	//    }
 } elseif ($step == 5) {
     if (isset($_GET['action']) && $_GET['action'] === 'create') {
 	$status[$step] = false;
@@ -268,7 +268,7 @@ if ($step < 1) {
 $_SESSION['status'] = $status;
 
 function Welcome() {
-    global $content, $navbar, $percentage, $step, $status;
+    global $content, $navbar, $percentage, $step, $status, $errorMsg;
 	
     $content = 'welcome.inc';
 
@@ -287,7 +287,7 @@ function Authenticate($rand) {
 }
 
 function InstallCheck() {
-    global $content, $navbar, $percentage, $step, $status;
+    global $content, $navbar, $percentage, $step, $status, $errorMsg;
 	
     $content = 'installCheck.inc';
 
@@ -298,7 +298,7 @@ function InstallCheck() {
 }
 
 function SystemCheck() {
-    global $content, $navbar, $percentage, $step, $status;
+    global $content, $navbar, $percentage, $step, $status, $errorMsg;
 	
     $errors = array();
 	
@@ -342,7 +342,7 @@ function DatabaseSetup() {
 }
 
 function Finish() {
-    global $content, $navbar, $percentage, $step, $status;
+    global $content, $navbar, $percentage, $step, $status, $errorMsg;
 
     $content = 'finish.inc';
     include(dirname(__FILE__) . '/body.inc');

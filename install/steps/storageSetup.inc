@@ -20,13 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
-<?php if (count($errorMsg) > 0) { ?>
-<p class="error">
-<?php print implode("<br />\n", $errorMsg); ?>
-</p>
-<?php } ?>
+<?php
 
-<?php if ($status[$step]) { ?>
+if ($status[$step]) { ?>
 <h2 class="success">
 Storage directory set successfully.
 </h2>

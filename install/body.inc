@@ -28,7 +28,13 @@
     <h2>Install Steps</h2>
     <?php echo $navbar; ?>
   </div>
+  <?php if (count($errorMsg) > 0) { ?>
+  <?php } ?>
   <div id="main">
+    <h2 class="error">
+      <?php print implode("<br />\n", $errorMsg); ?>
+    </h2>
+    
     <?php include(dirname(__FILE__) . '/steps/' . $content); ?>
   </div>
   <div id="bottom">

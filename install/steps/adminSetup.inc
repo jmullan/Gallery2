@@ -20,13 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 ?>
-<?php if (count($errorMsg) > 0) { ?>
-<p class="error">
-<?php print implode("<br />\n", $errorMsg); ?>
-</p>
-<?php } ?>
+<?php
 
-<?php if ($status[$step]) { ?>
+if ($status[$step]) { ?>
 <h2 class="success">
 Admin user "<?php print $_SESSION['uname']?>" updated successfully.
 </h2>
@@ -43,7 +39,8 @@ Admin user "<?php print $_SESSION['uname']?>" updated successfully.
         <?php print _('Admin username') ?><span class="error">*</span>
       </td>
       <td>
-        <input disabled name="uname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
+        <input disabled name="fakeuname" type="text" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
+        <input name="uname" type="hidden" value="<?php print isset($_SESSION['uname']) ? $_SESSION['uname'] : _('admin') ?>" />
       </td>
     </tr>
     <tr>
