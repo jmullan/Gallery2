@@ -146,6 +146,14 @@ class DatabaseStorage /* implements GalleryStorage */ {
     var $_mapInfoCache;
 
     /**
+     * Whether or not we should use persistent database connections
+     *
+     * @var array $_usePersistentConnections
+     * @access private
+     */
+    var $_usePersistentConnections;
+
+    /**
      * Constructor.
      *
      * @param array database configuration values
@@ -156,6 +164,13 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$this->_hostname = $config['hostname'];
 	$this->_database = $config['database'];
 	$this->_isTransactional = false;
+
+	/*
+	 * We use persistent connections if the value is left out, or if it's
+	 * non empty.
+	 */
+	$this->_usePersistentConnections = !isset($config['usePersistentConnections']) ||
+	    !empty($config['usePersistentConnections']);
 
 	if (isset($config['tablePrefix'])) {
 	    $this->_tablePrefix = $config['tablePrefix'];
@@ -218,9 +233,10 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	}
 
 	$this->_traceStart();
-	if ($forceNew) {
+	if ($forceNew || !$this->_usePersistentConnections) {
 	    $connectMethod = 'NConnect';
 	} else {
+	    print "PCON!";
 	    $connectMethod = 'PConnect';
 	}
 	$ret = $db->$connectMethod($this->_hostname,
