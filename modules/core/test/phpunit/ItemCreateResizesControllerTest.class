@@ -42,38 +42,38 @@ class ItemCreateResizesControllerTest extends GalleryControllerTestCase {
 	
 	/* Register a mock data item type */
 	GalleryCoreApi::registerFactoryImplementation('GalleryItem',
-					       'ItemCreateResizesTestItem',
-					       'ItemCreateResizesTestItem',
-					       __FILE__,
-					       array('test/*'));
+						      'ItemCreateResizesTestItem',
+						      'ItemCreateResizesTestItem',
+						      __FILE__,
+						      array('test/*'));
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-					       'ItemCreateResizesTestToolkit',
-					       'ItemCreateResizesTestToolkit',
-					       __FILE__);
+						      'ItemCreateResizesTestToolkit',
+						      'ItemCreateResizesTestToolkit',
+						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemCreateResizesTestToolkit',
-						 array('test/file'),
-						 'thumbnail',
-						 array(array('type' => 'int',
-							     'description' => 'test')),
-						 'test-description',
-						 '');
+							array('test/file'),
+							'thumbnail',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description',
+							'');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemCreateResizesTestToolkit',
-						 array('test/file'),
-						 'resize',
-						 array(array('type' => 'int',
-							     'description' => 'test'),
-						       array('type' => 'int',
-							     'description' => 'test')),
-						 'test-description',
-						 '');
+							array('test/file'),
+							'resize',
+							array(array('type' => 'int',
+								    'description' => 'test'),
+							      array('type' => 'int',
+								    'description' => 'test')),
+							'test-description',
+							'');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -61,11 +61,12 @@ msgstr ""
 msgid "&laquo; no sort order &raquo;"
 msgstr "* Sin Ordenar *"
 
-msgid "(album)"
-msgstr "(&aacute;lbum)"
-
 msgid "(data)"
 msgstr "(datos)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(&aacute;lbum)"
 
 #, fuzzy
 msgid "180&deg;"
@@ -142,6 +143,10 @@ msgstr "Agregados '%s' usuarios al grupo"
 msgid "Admin Options"
 msgstr "Acciones"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Opciones del Album"
+
 msgid "Album Settings"
 msgstr "Opciones del Album"
 
@@ -164,8 +169,8 @@ msgid "All access"
 msgstr "Acceso Total"
 
 #, fuzzy
-msgid "Animation Settings"
-msgstr "Opciones del Album"
+msgid "Animation Size"
+msgstr "Acci&oacute;n"
 
 #, fuzzy
 msgid "Animation"
@@ -227,6 +232,10 @@ msgstr "No tiene permisos suficientes como para agregar items a este album"
 
 msgid "Change"
 msgstr "Cambiar"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "El usuario '%s' a sido modificado."
 
 msgid "Changes saved successfully."
 msgstr ""
@@ -294,6 +303,10 @@ msgstr "Usuario '%s' creado"
 
 msgid "Creation Date"
 msgstr "Fecha de Creaci&oacute;n"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Sin Miniatura"
 
 msgid "Crop"
 msgstr ""
@@ -369,9 +382,13 @@ msgid ""
 "here."
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Editar un usuario"
+
 #, fuzzy
-msgid "Edit Animation"
-msgstr "Administrador de Gallery"
+msgid "Edit Album"
+msgstr "editar album"
 
 #, fuzzy
 msgid "Edit Group (by list)"
@@ -384,14 +401,6 @@ msgstr "Editando Grupo '%s'"
 #, fuzzy
 msgid "Edit Group"
 msgstr "Editar un grupo"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "Opciones del Album"
-
-#, fuzzy
-msgid "Edit Movie"
-msgstr "Editar Tama&ntilde;o"
 
 msgid "Edit User (by list)"
 msgstr ""
@@ -656,10 +665,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "Dispocisi&oacute;n"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "Opciones del Album"
-
 msgid "Layout"
 msgstr "Dispocisi&oacute;n"
 
@@ -727,10 +732,6 @@ msgstr "M&oacute;dulos"
 msgid "Move Album"
 msgstr "editar album"
 
-#, fuzzy
-msgid "Move Item"
-msgstr "Mover un item"
-
 msgid "Move an Item"
 msgstr "Mover un item"
 
@@ -742,7 +743,7 @@ msgid "Move"
 msgstr "Mover"
 
 #, fuzzy
-msgid "Movie Settings"
+msgid "Movie Size"
 msgstr "Opciones Disponibles"
 
 #, fuzzy
@@ -824,10 +825,6 @@ msgstr ""
 
 msgid "Photo 7x5"
 msgstr ""
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "Opciones del Album"
 
 msgid "Photo"
 msgstr ""
@@ -1261,7 +1258,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1321,7 +1318,7 @@ msgid "This will completely remove <b>%s</b> from Gallery.  There is no undo!"
 msgstr ""
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "El usuario '%s' a sido modificado."
 
 #, fuzzy
@@ -1679,25 +1676,6 @@ msgid "edit album"
 msgstr "editar album"
 
 #, fuzzy
-msgid "edit animation"
-msgstr "Destino"
-
-#, fuzzy
-msgid "edit general"
-msgstr "Editar un usuario"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "Disposici&oacute;n por defecto"
-
-#, fuzzy
-msgid "edit movie"
-msgstr "editar item"
-
-msgid "edit photo"
-msgstr ""
-
-#, fuzzy
 msgid "edit user"
 msgstr "Editar un usuario"
 
@@ -1845,6 +1823,12 @@ msgstr[0] "semana %d"
 msgstr[1] "semana %d"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] ""
@@ -1891,6 +1875,54 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Subir un archivo desde su computadora."
 msgstr[1] "Subir hasta %d archivos desde su computadora."
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "Opciones del Album"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "El usuario '%s' a sido modificado."
+
+#, fuzzy
+#~ msgid "edit general"
+#~ msgstr "Editar un usuario"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "Disposici&oacute;n por defecto"
+
+#, fuzzy
+#~ msgid "Animation Settings"
+#~ msgstr "Opciones del Album"
+
+#, fuzzy
+#~ msgid "Edit Animation"
+#~ msgstr "Administrador de Gallery"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Opciones del Album"
+
+#, fuzzy
+#~ msgid "Edit Movie"
+#~ msgstr "Editar Tama&ntilde;o"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "Mover un item"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "Opciones del Album"
+
+#, fuzzy
+#~ msgid "edit animation"
+#~ msgstr "Destino"
+
+#, fuzzy
+#~ msgid "edit movie"
+#~ msgstr "editar item"
 
 #, fuzzy
 #~ msgid "delete animation"

@@ -29,10 +29,10 @@
 /**
  * ItemEditPhoto controller tests
  */
-class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
+class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
-    function ItemEditPhotoControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditPhoto');
+    function ItemEditRotateAndScalePhotoPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditRotateAndScalePhoto');
     }
 
     function setUp() {
@@ -47,12 +47,12 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-					       'ItemEditPhotoTestToolkit',
-					       'ItemEditPhotoTestToolkit',
-					       __FILE__);
+						      'ItemEditRotateAndScalePhotoPluginTestToolkit',
+						      'ItemEditRotateAndScalePhotoPluginTestToolkit',
+						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
 							array('test/file'),
 							'scale',
 							array(array('type' => 'int',
@@ -62,7 +62,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
 							array('test/file'),
 							'rotate',
 							array(array('type' => 'int',
@@ -72,7 +72,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoTestToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
 							array('test/file'),
 							'resize',
 							array(array('type' => 'int',
@@ -118,7 +118,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	}
 	
 	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoTestToolkit');
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditRotateAndScalePhotoPluginTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -130,14 +130,11 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 	
-
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
@@ -148,13 +145,10 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	$originalSize = $this->_item->getSize();
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('scaledPhoto' => 1)),
-				  'error' => array()),
+	$preferred = null;
+	$results = $this->handleRequest($this->_item, $preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Scaled photo successfully')),
 			    $results);
 
 	/* Verify that we don't have a preferred */
@@ -179,20 +173,14 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 200);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('scaledPhoto' => 1)),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Scaled photo successfully')),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -201,7 +189,7 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Note: Our test toolkit is completely bogus, so output values don't look like normal toolkits
+	// Note: We use a mock toolkit; output values don't look like normal toolkits
 	$this->assertEquals('rotate+scale|90,+,200', $this->_derivative[0]->getDerivativeOperations());
     }
 
@@ -209,18 +197,13 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 	
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto'),
-				  'status' => array(),
-				  'error' => array('form[error][scale][size][missing]')),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array('form[error][scale][size][missing]'), null),
 			    $results);
     }
     
@@ -228,18 +211,13 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 'scooby doo');
 
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto'),
-				  'status' => array(),
-				  'error' => array('form[error][scale][size][invalid]')),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array('form[error][scale][size][invalid]'), null),
 			    $results);
     }
 
@@ -247,19 +225,12 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][rotate][clockwise]', 1);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('rotatedPhoto' => 1)),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -274,18 +245,11 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][rotate][counterClockwise]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('rotatedPhoto' => 1)),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -300,18 +264,11 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][rotate][flip]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('rotatedPhoto' => 1)),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
 			    $results);
 
 	/* Verify that the transform went ok */
@@ -326,18 +283,11 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
 	GalleryUtilities::putRequestVariable('form[action][revertToOriginal]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editPhoto',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editPhoto' => array('revertedPhoto' => 1)),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Restored original photo successfully')),
 			    $results);
 
 	/* Verify that the preferred is gone */
@@ -355,168 +305,29 @@ class ItemEditPhotoControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    function testEditResizes() {
-	global $gallery;
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editSizes');
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 400);
-
-	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
-	}
-	    
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editSizes',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editSizes' => array('saved' => 1)),
-				  'error' => array()),
-			    $results);
-
-	/* Examine the thumbnail and make sure it lines up */
-	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	if (isset($thumbTable[$this->_item->getId()])) {
-	    $this->assertEquals('thumbnail|400', $thumbTable[$this->_item->getId()]->getDerivativeOperations());
-	}
-
-	/* Examine the resizes and make sure they line up */
-	list ($ret, $resizeTable) =
-	    GalleryCoreApi::fetchResizesByItemIds(array($this->_item->getId()));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	if (!empty($resizeTable[$this->_item->getId()])) {
-	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
-	    for ($i = 0; $i < 3; $i++) {
-		$this->assertEquals('scale|' . 100 * ($i+1),
-				    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
-	    }
-	}
-    }
-
-    function testEditResizesMissing() {
-	global $gallery;
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editSizes');
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[thumbnail][size]', null);
-
-	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	}
-	    
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto'),
-				  'status' => array(),
-				  'error' => array('form[error][thumbnail][size][missing]',
-						   'form[error][resizes][0][size][missing]',
-						   'form[error][resizes][1][size][missing]',
-						   'form[error][resizes][2][size][missing]')),
-			    $results);
-    }
-
-    function testEditResizesInvalid() {
-	global $gallery;
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editSizes');
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 'xyz');
-
-	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 'x' . rand());
-	}
-	    
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto'),
-				  'status' => array(),
-				  'error' => array('form[error][thumbnail][size][invalid]',
-						   'form[error][resizes][0][size][invalid]',
-						   'form[error][resizes][1][size][invalid]',
-						   'form[error][resizes][2][size][invalid]')),
-			    $results);
-    }
-
-    function testEditThumbnail() {
-	global $gallery;
-
-	/* Give our item a thumbnail */
-	list ($ret, $thumbnail) =
-	    $this->_createDerivative($this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'rotate|180');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editThumbnail');
-	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
-	GalleryUtilities::putRequestVariable('form[crop][x]', '50');
-	GalleryUtilities::putRequestVariable('form[crop][y]', '50');
-	GalleryUtilities::putRequestVariable('form[crop][width]', '200');
-	GalleryUtilities::putRequestVariable('form[crop][height]', '200');
-
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditPhoto',
-						      'mode' => 'editThumbnail',
-						      'itemId' => $this->_item->getId()),
-				  'status' => array('editThumbnail' => array('cropped' => 1)),
-				  'error' => array()),
-			    $results);
-    }
-
     function testScaleWithInvalidSerialNumber() {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('mode', 'editPhoto');
-	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'on');
+	GalleryUtilities::putRequestVariable('form[preserveOriginal]', 'off');
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
-	
 
-	/* Delete the preferred */
+        /* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Save current size */
-	$originalSize = $this->_item->getSize();
-
-	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+	$preferred = null;
+	$results = $this->handleRequest($this->_item, $preferred, ERROR_OBSOLETE_DATA);
     }
-
-
 }
 
 // Dummy test toolkit
 require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
-class ItemEditPhotoTestToolkit extends GalleryToolkit {
+class ItemEditRotateAndScalePhotoPluginTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      * Dummy operation

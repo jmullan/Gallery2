@@ -29,10 +29,10 @@
 /**
  * ItemEditAlbum controller tests
  */
-class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
+class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
-    function ItemEditAlbumControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditAlbum');
+    function ItemEditAlbumPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditAlbum');
     }
 
     function setUp() {
@@ -61,23 +61,16 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditAlbum',
-						      'itemId' => $this->_album->getId()),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), null), $results);
     }
 
     function testSave() {
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
@@ -94,12 +87,9 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	
 	
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditAlbum',
-						      'itemId' => $this->_album->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(),
+				  $this->_translate('Settings saved successfully.')),
 			    $results);
 
 	list ($ret, $this->_album) = $this->_album->refresh();
@@ -133,7 +123,6 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
     function testInvalidSave() {
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 'foo');
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
@@ -144,21 +133,18 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][size]', 'foo');
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditAlbum'),
-				  'status' => array(),
-				  'error' => array('form[error][thumbnail][size][invalid]',
-						   'form[error][resizes][0][size][invalid]',
-						   'form[error][resizes][1][size][invalid]',
-						   'form[error][resizes][2][size][invalid]')),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]',
+					'form[error][resizes][0][size][invalid]',
+					'form[error][resizes][1][size][invalid]',
+					'form[error][resizes][2][size][invalid]'),
+				  null),
 			    $results);
     }
 
     function testInvalidSave2() {
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
@@ -166,20 +152,17 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditAlbum'),
-				  'status' => array(),
-				  'error' => array('form[error][resizes][0][size][missing]',
-						   'form[error][resizes][1][size][missing]',
-						   'form[error][resizes][2][size][missing]')),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][resizes][0][size][missing]',
+					'form[error][resizes][1][size][missing]',
+					'form[error][resizes][2][size][missing]'),
+				  null),
 			    $results);
     }
     
 
     function testInvalidSerialNumber() {
 	/* valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
@@ -195,7 +178,7 @@ class ItemEditAlbumControllerTest extends GalleryControllerTestCase {
 	/* invalid serial number */
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
-	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+	$results = $this->handleRequest($this->_album, $this->_preferred, ERROR_OBSOLETE_DATA);
     }
 }
 ?>

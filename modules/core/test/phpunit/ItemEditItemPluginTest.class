@@ -29,10 +29,10 @@
 /**
  * ItemEditItem controller tests
  */
-class ItemEditItemControllerTest extends GalleryControllerTestCase {
+class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
-    function ItemEditItemControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditItem');
+    function ItemEditItemPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditItem');
     }
 
     function setUp() {
@@ -55,6 +55,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+
+	$this->_preferred = null;
     }
 
     function tearDown() {
@@ -81,17 +83,11 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem',
-						      'itemId' => $this->_item[0]->getId()),
-				  'status' => array(),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), null), $results);
     }
 
     function testEditItem() {
@@ -99,7 +95,6 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
   	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -109,13 +104,9 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem',
-						      'itemId' => $this->_item[0]->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+				  $results);
     }
 
     function testInvalidPathComponent() {
@@ -123,16 +114,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', '#$%W$%W?$%W%/');
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem'),
-				  'status' => array(),
-				  'error' => array('form[error][pathComponent][invalid]')),
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][pathComponent][invalid]'), null),
 			    $results);
     }
 
@@ -141,31 +128,19 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 
 	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::removeRequestVariable('form[pathComponent]');
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem'),
-				  'status' => array(),
-				  'error' => array('form[error][pathComponent][missing]')),
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][pathComponent][missing]'), null),
 			    $results);
     }
 
     function testPathCollisionItem() {
 	global $gallery;
 	
-	/* Get some stats on the file before we try moving */
-	$platform = $gallery->getPlatform();
-	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
 	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[1]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -174,16 +149,12 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
 
-	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem',
-						      'itemId' => $this->_item[0]->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
+	/* Perform the request and verify that we succeeded (the controller works around the collision) */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+				  $results);
 
-	/* Make sure the object is still in the original path */
+	/* Make sure the object has been renamed to something similar to the new path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -202,6 +173,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($comparePath . '_001', $newPath);
 
 	/* Make sure that the file was moved */
+	$platform = $gallery->getPlatform();
 	$this->assert($platform->file_exists($newPath));
     }
 
@@ -214,7 +186,6 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	}
 	
 	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'floort');
 	GalleryUtilities::putRequestVariable('form[title]', $rootAlbum->getTitle());
@@ -223,14 +194,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
 
-	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem',
-						      'itemId' => $rootAlbum->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
+	/* There's no UI for renaming the root album so this returns a bad parameter. */
+	$results = $this->handleRequest($rootAlbum, $this->_preferred, ERROR_BAD_PARAMETER);
 
 	/* Verify that the path component is still the same */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
@@ -252,7 +217,6 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	}
 	
 	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_album[1]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -261,11 +225,8 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 
 	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditItem'),
-				  'status' => array(),
-				  'error' => array('form[error][pathComponent][collision]')),
+	$results = $this->handleRequest($this->_album[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][pathComponent][collision]'), null),
 			    $results);
 
 	/* Make sure the object is still in the original path */
@@ -284,20 +245,10 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$this->assert($platform->file_exists($originalPath));
     }
 
-    function testInvalidItem() {
-	/* Use invalid inputs */
-	GalleryUtilities::putRequestVariable('itemId', '1234' . rand(1, 99999));
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
-	/* Perform the request and verify that we failed */
-	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
-    }
-
     function testInvalidSerialNumber() {
 	global $gallery;
 	
 	/* Use an invalid Serial */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[0]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -306,7 +257,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
-	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+	$results = $this->handleRequest($this->_item[0], $this->_preferred, ERROR_OBSOLETE_DATA);
     }
 
     function testMoveItemWithInvalidSerialNumber() {
@@ -320,7 +271,6 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	}
 	
 	/* Use an invalid Serial */
-	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -329,7 +279,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
-	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+	$results = $this->handleRequest($this->_item[0], $this->_preferred, ERROR_OBSOLETE_DATA);
 
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
@@ -358,7 +308,6 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	}
 	
 	/* Use an invalid Serial */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
@@ -367,7 +316,7 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
 	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
 
-	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+	$results = $this->handleRequest($this->_album[0], $this->_preferred, ERROR_OBSOLETE_DATA);
 
 	/* Make sure the object is still in the original path */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();

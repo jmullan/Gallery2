@@ -23,14 +23,14 @@
     {/g->title}
     
     {g->description}
-      {if empty($ItemEditPermissions.owner.fullName)}
-	{g->text text="This item is owned by user: %s" arg1=$ItemEditPermissions.owner.userName}
+      {if empty($ItemPermissions.owner.fullName)}
+	{g->text text="This item is owned by user: %s" arg1=$ItemPermissions.owner.userName}
       {else}
-	{g->text text="This item is owned by user: %s (%s)" arg1=$ItemEditPermissions.owner.userName arg2=$ItemEditPermissions.owner.fullName}
+	{g->text text="This item is owned by user: %s (%s)" arg1=$ItemPermissions.owner.userName arg2=$ItemPermissions.owner.fullName}
       {/if}
     {/g->description}
     
-    {if $ItemEditPermissions.can.changeOwner}
+    {if $ItemPermissions.can.changeOwner}
       {g->box}
 	{g->title}
 	  {g->text text="New owner"}
@@ -59,7 +59,7 @@
     {/if}
   {/g->box}
 
-  {if $ItemEditPermissions.can.applyToSubItems}
+  {if $ItemPermissions.can.applyToSubItems}
     {g->box style="admin"}
       {g->title}
 	{g->text text="Apply changes"}
@@ -94,9 +94,9 @@
 	  {/g->column}
 	{/g->row}
 
-	{if $ItemEditPermissions.groupPermissions}
-	  {section name=group loop=$ItemEditPermissions.groupPermissions}
-	    {assign var="entry" value=$ItemEditPermissions.groupPermissions[group]}
+	{if $ItemPermissions.groupPermissions}
+	  {section name=group loop=$ItemPermissions.groupPermissions}
+	    {assign var="entry" value=$ItemPermissions.groupPermissions[group]}
 	    {assign var="index" value=$smarty.section.group.iteration}
 	    {g->row}
 	      {g->column}
@@ -143,7 +143,7 @@
       {/g->input}
 	    
       {g->select name="form[group][permission]" size="1"}
-	{html_options options=$ItemEditPermissions.allPermissions selected=$form.group.permission}
+	{html_options options=$ItemPermissions.allPermissions selected=$form.group.permission}
       {/g->select}
 
       {g->input type="submit" name="form[action][addGroupPermission]"}
@@ -195,9 +195,9 @@
 	  {/g->column}
 	{/g->row}
 
-	{if $ItemEditPermissions.userPermissions}
-	  {section name=user loop=$ItemEditPermissions.userPermissions}
-	    {assign var="entry" value=$ItemEditPermissions.userPermissions[user]}
+	{if $ItemPermissions.userPermissions}
+	  {section name=user loop=$ItemPermissions.userPermissions}
+	    {assign var="entry" value=$ItemPermissions.userPermissions[user]}
 	    {assign var="index" value=$smarty.section.user.iteration}
 	    {g->row}
 	      {g->column}
@@ -244,7 +244,7 @@
       {/g->input}
 
       {g->select name="form[user][permission]" size="1"}
-	{html_options options=$ItemEditPermissions.allPermissions selected=$form.user.permission}
+	{html_options options=$ItemPermissions.allPermissions selected=$form.user.permission}
       {/g->select}
       
       {g->input type="submit" name="form[action][addUserPermission]"}

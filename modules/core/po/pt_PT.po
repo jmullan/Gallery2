@@ -60,11 +60,12 @@ msgstr "&laquo; primeiro"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; Sem Ordenação &raquo;"
 
-msgid "(album)"
-msgstr "(album)"
-
 msgid "(data)"
 msgstr "(dados)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(album)"
 
 msgid "180&deg;"
 msgstr "180&deg"
@@ -135,6 +136,10 @@ msgstr "Utilizador '%s' adicionado ao grupo"
 msgid "Admin Options"
 msgstr "Opções de Administração"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Parâmetros do Album"
+
 msgid "Album Settings"
 msgstr "Parâmetros do Album"
 
@@ -155,8 +160,9 @@ msgstr "Utilizadores"
 msgid "All access"
 msgstr "Acesso a todos"
 
-msgid "Animation Settings"
-msgstr "Parâmetros da Animação"
+#, fuzzy
+msgid "Animation Size"
+msgstr "Animação"
 
 msgid "Animation"
 msgstr "Animação"
@@ -212,6 +218,10 @@ msgstr "Altera a ordem dos items neste Album."
 
 msgid "Change"
 msgstr "Alterar"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "As alterações foram gravadas com sucesso"
 
 msgid "Changes saved successfully."
 msgstr "As alterações foram gravadas com sucesso"
@@ -280,6 +290,10 @@ msgstr "Utilizador '%s' criado"
 
 msgid "Creation Date"
 msgstr "Data de Criação"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Sem Thumbnail"
 
 msgid "Crop"
 msgstr ""
@@ -354,8 +368,13 @@ msgstr ""
 "Cada item do album pode ter múltiplos tamanhos. Definir aqui os tamanos de "
 "defeito"
 
-msgid "Edit Animation"
-msgstr "Editar Animação"
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Editar Utilizador"
+
+#, fuzzy
+msgid "Edit Album"
+msgstr "apagar album"
 
 msgid "Edit Group (by list)"
 msgstr "Editar Grupo (por lista)"
@@ -365,13 +384,6 @@ msgstr "Editar Membros do Grupo"
 
 msgid "Edit Group"
 msgstr "Editar Grupo"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "Parâmetros da Conta"
-
-msgid "Edit Movie"
-msgstr "Editar Filme"
 
 msgid "Edit User (by list)"
 msgstr "Editar Utilizador (por lista)"
@@ -658,10 +670,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "Layout"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "Parâmetros da Conta"
-
 msgid "Layout"
 msgstr "Layout"
 
@@ -726,10 +734,6 @@ msgstr "Módulos"
 msgid "Move Album"
 msgstr "mover album"
 
-#, fuzzy
-msgid "Move Item"
-msgstr "Mover um Item"
-
 msgid "Move an Item"
 msgstr "Mover um Item"
 
@@ -739,7 +743,8 @@ msgstr "Mover este item"
 msgid "Move"
 msgstr "Mover"
 
-msgid "Movie Settings"
+#, fuzzy
+msgid "Movie Size"
 msgstr "Parâmetros do filme"
 
 msgid "Movie"
@@ -821,10 +826,6 @@ msgstr "Foto"
 #, fuzzy
 msgid "Photo 7x5"
 msgstr "Foto"
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "Parâmetros da Conta"
 
 msgid "Photo"
 msgstr "Foto"
@@ -1248,7 +1249,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1308,7 +1309,7 @@ msgstr ""
 "de revereter"
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "O Album foi criado com sucesso"
 
 #, fuzzy
@@ -1650,22 +1651,6 @@ msgstr "apagar"
 msgid "edit album"
 msgstr "apagar album"
 
-msgid "edit animation"
-msgstr "editar animação"
-
-msgid "edit general"
-msgstr "editar geral"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "Layout de defeito"
-
-msgid "edit movie"
-msgstr "editar filme"
-
-msgid "edit photo"
-msgstr ""
-
 msgid "edit user"
 msgstr "editar utilizador"
 
@@ -1805,6 +1790,12 @@ msgstr[0] "%d semana"
 msgstr[1] "%d semanas"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] "Foi adicionado %d ficheiro com sucesso."
@@ -1851,6 +1842,48 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Fazer o Upload de um ficheiro directamente do seu computador."
 msgstr[1] "Fazer o Upload de até %d ficheiros directamente do seu computador."
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "Parâmetros da Conta"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Imagens rodadas com sucesso"
+
+#~ msgid "edit general"
+#~ msgstr "editar geral"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "Layout de defeito"
+
+#~ msgid "Animation Settings"
+#~ msgstr "Parâmetros da Animação"
+
+#~ msgid "Edit Animation"
+#~ msgstr "Editar Animação"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Parâmetros da Conta"
+
+#~ msgid "Edit Movie"
+#~ msgstr "Editar Filme"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "Mover um Item"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "Parâmetros da Conta"
+
+#~ msgid "edit animation"
+#~ msgstr "editar animação"
+
+#~ msgid "edit movie"
+#~ msgstr "editar filme"
 
 #~ msgid "delete animation"
 #~ msgstr "apagar animação"

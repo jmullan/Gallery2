@@ -703,32 +703,10 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/*
-	 * Check the serial number to see if the current entity is up to
-	 * date
+	 * We could check the serial number against the database, or check to see if the entity is modified in
+	 * order to figure out whether or not we should refresh.  But either way that requires a database hit
+	 * so we might as well just retrieve the record every time
 	 */
-	list ($tableName, $unused) = $this->_translateTableName('GalleryEntity');
-	$serialNumberCol = $this->_translateColumnName('serialNumber');
-	$idCol = $this->_translateColumnName('id');
-	$query = 'SELECT ' . $serialNumberCol .
-		' FROM ' . $tableName .
-		' WHERE ' . $idCol . '=?';
-	$data = array($entity->getId());
-		
-	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
-	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query, $data);
-	$this->_traceStop();
-	if (!$recordSet || $recordSet->RecordCount() == 0) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-
-	$row = $recordSet->FetchRow();
-	$newSerial = $row[0];
-	if ($newSerial == $entity->getSerialNumber()) {
-	    return array(GalleryStatus::success(), $entity);
-	}
-
-	/* Serial number didn't match -- reload the entity */
 	list ($ret, list($freshEntity)) = $this->loadEntities(array($entity->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

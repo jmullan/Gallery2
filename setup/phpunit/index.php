@@ -4,6 +4,7 @@ require_once('../../init.php');
 require_once('phpunit.inc');
 require_once('GalleryTestCase.class');
 require_once('GalleryControllerTestCase.class');
+require_once('ItemEditPluginTestCase.class');
 
 function GalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();

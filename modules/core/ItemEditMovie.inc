@@ -28,38 +28,26 @@
  */
 
 /**
- * This controller will handle the editing of an image
+ * Plugin for editing Movies
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
-class ItemEditMovieController extends GalleryController {
+class ItemEditMovie extends ItemEditPlugin {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see ItemEditPlugin::handleRequest
      */
-    function handleRequest($form) {
+    function handleRequest($form, &$item, &$preferred) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$status = array();
+	$status = null;
 	$error = array();
 
 	/* Figure out which command we're taking */
 	if (isset($form['action']['save'])) {
 
+	    /* Missing values get set to 0 */
 	    if (isset($form['width']) && $form['width'] < 0) {
 		$error[] = 'form[error][width][invalid]';
 	    } else {
@@ -75,12 +63,13 @@ class ItemEditMovieController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		list ($ret, $item) = $item->refresh();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    GalleryCoreApi::releaseLocks($lock);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		$item->setWidth($form['width']);
@@ -89,64 +78,37 @@ class ItemEditMovieController extends GalleryController {
 		$ret = $item->save();
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lock);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		GalleryCoreApi::releaseLocks($lock);
+		$ret = GalleryCoreApi::releaseLocks($lock);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
 
-		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemEditMovie';
-		$redirect['itemId'] = $itemId;
-		$status['saved'] = 1;
+		/* Prepare our status message */
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
+		$status = $module->translate('Changes saved successfully');
 	    }
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEditMovie';
-	}
-	$results['status'] = $status;
-	$results['error'] = $error;
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $error, $status);
     }
-}
-
-/**
- * This view will show options to edit an image
- *
- * @package GalleryCore
- * @subpackage UserInterface
- */
-class ItemEditMovieView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see ItemEditPlugin::loadTemplate
      */
-    function loadTemplate(&$template, &$form) {
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
-
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	if ($form['formName'] != 'ItemEditMovie') {
 	    /* First time around, load the form with item data */
 	    $form['width'] = $item->getWidth();
 	    $form['height'] = $item->getHeight();
-	    $form['serialNumber'] = $item->getSerialNumber();
 	    $form['formName'] = 'ItemEditMovie';
 	}
 
@@ -154,8 +116,26 @@ class ItemEditMovieView extends GalleryView {
 							     
 	$template->setVariable('ItemEditMovie', $ItemEditMovie);
 	$template->setVariable('controller', 'core:ItemEditMovie');
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ItemEditMovie.tpl'));
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditMovie.tpl');
+    }
+
+    /**
+     * @see ItemEditPlugin::isSupported
+     */
+    function isSupported($item, $thumbnail) {
+	return (GalleryUtilities::isA($item, 'GalleryMovieItem'));
+    }
+
+    /**
+     * @see ItemEditPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('Movie Size'));
     }
 }
 ?>

@@ -32,46 +32,38 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
-class ItemEditLayoutController extends GalleryController {
+class ItemEditLayout extends ItemEditPlugin {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see ItemEditPlugin::handleRequest
      */
-    function handleRequest($form) {
+    function handleRequest($form, &$item, &$preferred) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-	
-	$status = array();
+	$status = null;
 	$error = array();
 	$errorMessage = array();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 
 	if (isset($form['action']['save'])) {
 	    list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    
 	    /* Validate the settings */
 	    $validationErrors = $layout->validateSettings($form['key']);
 	    if (empty($validationErrors)) {
 		/* Get the item settings */
-		list ($ret, $settings) = $layout->getSettings($itemId);
+		list ($ret, $settings) = $layout->getSettings($item->getId());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		/*
@@ -83,23 +75,19 @@ class ItemEditLayoutController extends GalleryController {
 		foreach ($settings as $setting) {
 		    $key = $setting['key'];
 		    if (!empty($form['useGlobal'][$key])) {
-			$ret = $layout->removeItemParameter($key, $itemId);
+			$ret = $layout->removeItemParameter($key, $item->getId());
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    } else {
-			$ret = $layout->setParameter($key, $form['key'][$key], $itemId);
+			$ret = $layout->setParameter($key, $form['key'][$key], $item->getId());
 			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
 		}
 
-		/* Redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemEditLayout';
-		$redirect['itemId'] = $itemId;
-		$status['saved'] = 1;
+		$status = $module->translate('Successfully saved layout settings');
 	    } else {
 		foreach ($validationErrors as $validationKey => $validationMessage) {
 		    $error[] = sprintf('form[error][key][%s][invalid]', $validationKey);
@@ -108,52 +96,17 @@ class ItemEditLayoutController extends GalleryController {
 		GalleryUtilities::putRequestVariable('form[errorMessage]', $errorMessage);
 	    }
 	} else if (isset($form['action']['undo'])) {
-	    /* Redirect upon success */
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'core:ItemEditLayout';
-	    $redirect['itemId'] = $itemId;
-	    $status['restored'] = 1;
+	    /* Take no action and we'll be redirected back to the same page which will reset the form */
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEditLayout';
-	}
-	$results['status'] = $status;
-	$results['error'] = $error;
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $error, $status);
     }
-}
-
-/**
- * This view will prompt for settings of an album
- *
- * @package GalleryCore
- * @subpackage UserInterface
- */
-class ItemEditLayoutView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see ItemEditPlugin::loadTemplate
      */
-    function loadTemplate(&$template, &$form) {
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
-
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
 	if ($ret->isError()) {
@@ -175,7 +128,7 @@ class ItemEditLayoutView extends GalleryView {
 
 	/* Fetch the item-only params */
 	list ($ret, $itemParams) =
-	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId(), $itemId);
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $layout->getId(), $item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -207,8 +160,26 @@ class ItemEditLayoutView extends GalleryView {
 	
 	$template->setVariable('ItemEditLayout', $ItemEditLayout);
 	$template->setVariable('controller', 'core:ItemEditLayout');
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ItemEditLayout.tpl'));
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditLayout.tpl');
+    }
+
+    /**
+     * @see ItemEditPlugin::isSupported
+     */
+    function isSupported($item, $thumbnail) {
+	return (GalleryUtilities::isA($item, 'GalleryAlbumItem'));
+    }
+
+    /**
+     * @see ItemEditPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('Layout'));
     }
 }
 ?>

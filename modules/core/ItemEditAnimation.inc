@@ -28,35 +28,22 @@
  */
 
 /**
- * This controller will handle the editing of an image
+ * Plugin for editing Animations
  *
  * @package GalleryCore
  * @subpackage UserInterface
- *
  */
-class ItemEditAnimationController extends GalleryController {
+class ItemEditAnimation extends ItemEditPlugin {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see ItemEditPlugin::handleRequest
      */
-    function handleRequest($form) {
+    function handleRequest($form, &$item, &$preferred) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$status = array();
+	$status = null;
 	$error = array();
-
+	
 	/* Figure out which command we're taking */
 	if (isset($form['action']['save'])) {
 
@@ -75,12 +62,13 @@ class ItemEditAnimationController extends GalleryController {
 	    if (empty($error)) {
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		list ($ret, $item) = $item->refresh();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    GalleryCoreApi::releaseLocks($lock);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		$item->setWidth($form['width']);
@@ -89,73 +77,63 @@ class ItemEditAnimationController extends GalleryController {
 		$ret = $item->save();
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lock);
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		GalleryCoreApi::releaseLocks($lock);
+		$ret = GalleryCoreApi::releaseLocks($lock);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
 
-		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemEditAnimation';
-		$redirect['itemId'] = $itemId;
-		$status['saved'] = 1;
+		/* Prepare our status message */
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
+		$status = $module->translate('Changes saved successfully');
 	    }
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEditAnimation';
-	}
-	$results['status'] = $status;
-	$results['error'] = $error;
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $error, $status);
     }
-}
-
-/**
- * This view will show options to edit an image
- *
- * @package GalleryCore
- * @subpackage UserInterface
- */
-class ItemEditAnimationView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see ItemEditPlugin::loadTemplate
      */
-    function loadTemplate(&$template, &$form) {
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
-
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	if ($form['formName'] != 'ItemEditAnimation') {
 	    /* First time around, load the form with item data */
 	    $form['width'] = $item->getWidth();
 	    $form['height'] = $item->getHeight();
-	    $form['serialNumber'] = $item->getSerialNumber();
 	    $form['formName'] = 'ItemEditAnimation';
 	}
 
 	$ItemEditAnimation = array();
-							     
 	$template->setVariable('ItemEditAnimation', $ItemEditAnimation);
 	$template->setVariable('controller', 'core:ItemEditAnimation');
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ItemEditAnimation.tpl'));
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditAnimation.tpl');
+    }
+
+    /**
+     * @see ItemEditPlugin::isSupported
+     */
+    function isSupported($item, $thumbnail) {
+	return (GalleryUtilities::isA($item, 'GalleryAnimationItem'));
+    }
+
+    /**
+     * @see ItemEditPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('Animation Size'));
     }
 }
 ?>

@@ -64,11 +64,12 @@ msgstr "&laquo; ensimmäinen"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; Ei lajittelujärjestystä &raquo;"
 
-msgid "(album)"
-msgstr "(albumi)"
-
 msgid "(data)"
 msgstr "(tiedot)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(albumi)"
 
 msgid "180&deg;"
 msgstr "180&deg;"
@@ -140,6 +141,10 @@ msgstr "Käyttäjä '%s' lisätty ryhmään"
 msgid "Admin Options"
 msgstr "Ylläpitäjän toiminnot"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Albumin asetukset"
+
 msgid "Album Settings"
 msgstr "Albumin asetukset"
 
@@ -161,8 +166,8 @@ msgid "All access"
 msgstr "Täydet käyttöoikeudet"
 
 #, fuzzy
-msgid "Animation Settings"
-msgstr "Omat asetukset"
+msgid "Animation Size"
+msgstr "Toiminto"
 
 #, fuzzy
 msgid "Animation"
@@ -219,6 +224,10 @@ msgstr "Muokkaa tämän albumin kohteiden järjestystä."
 
 msgid "Change"
 msgstr "Muuta"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "Muutokset tallennettu onnistuneesti."
 
 msgid "Changes saved successfully."
 msgstr "Muutokset tallennettu onnistuneesti."
@@ -285,6 +294,10 @@ msgstr "Luotu käyttäjä '%s'"
 
 msgid "Creation Date"
 msgstr "Luontipäivä"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Ei esikatselukuvaa"
 
 msgid "Crop"
 msgstr ""
@@ -360,9 +373,13 @@ msgstr ""
 "Jokaisella kohteella voi olla monta eri kokoa albumissasi. Määritä "
 "oletuskoko tähän."
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Muokkaa käyttäjää"
+
 #, fuzzy
-msgid "Edit Animation"
-msgstr "Gallerian ylläpito"
+msgid "Edit Album"
+msgstr "poista albumi"
 
 msgid "Edit Group (by list)"
 msgstr "Muokkaa ryhmää (valitse listasta)"
@@ -372,14 +389,6 @@ msgstr "Muokkaa ryhmän jäseniä"
 
 msgid "Edit Group"
 msgstr "Muokkaa ryhmää"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "Omat asetukset"
-
-#, fuzzy
-msgid "Edit Movie"
-msgstr "Muokkaa kokoja"
 
 msgid "Edit User (by list)"
 msgstr "Muokkaa käyttäjää (valitse listasta)"
@@ -646,10 +655,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "Ulkoasu"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "Omat asetukset"
-
 msgid "Layout"
 msgstr "Ulkoasu"
 
@@ -714,10 +719,6 @@ msgstr "Moduulit"
 msgid "Move Album"
 msgstr "muokkaa albumia"
 
-#, fuzzy
-msgid "Move Item"
-msgstr "Siirrä kohdetta"
-
 msgid "Move an Item"
 msgstr "Siirrä kohdetta"
 
@@ -728,7 +729,7 @@ msgid "Move"
 msgstr "Siirrä"
 
 #, fuzzy
-msgid "Movie Settings"
+msgid "Movie Size"
 msgstr "Käytettävissä olevat asetukset"
 
 msgid "Movie"
@@ -810,10 +811,6 @@ msgstr "Kuva"
 #, fuzzy
 msgid "Photo 7x5"
 msgstr "Kuva"
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "Omat asetukset"
 
 msgid "Photo"
 msgstr "Kuva"
@@ -1237,7 +1234,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1296,7 +1293,7 @@ msgid "This will completely remove <b>%s</b> from Gallery.  There is no undo!"
 msgstr "Haluatko varmasta poistaa <b>%s</b> peruuttamattomasti Galleriasta?"
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "Albumi luotu onnistuneesti"
 
 #, fuzzy
@@ -1641,25 +1638,6 @@ msgstr "poista"
 msgid "edit album"
 msgstr "poista albumi"
 
-#, fuzzy
-msgid "edit animation"
-msgstr "Kohde"
-
-#, fuzzy
-msgid "edit general"
-msgstr "muokkaa käyttäjää"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "Oletusulkoasu"
-
-#, fuzzy
-msgid "edit movie"
-msgstr "muokkaa kohdetta"
-
-msgid "edit photo"
-msgstr ""
-
 msgid "edit user"
 msgstr "muokkaa käyttäjää"
 
@@ -1801,6 +1779,12 @@ msgstr[0] "yksi viikko"
 msgstr[1] "%d viikkoa"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] "Onnistuneesti lisätty yksi tiedosto."
@@ -1847,6 +1831,54 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Lähetä yksi tiedosto Galleriaan."
 msgstr[1] "Voit lähettää maks. %d tiedostoa koneeltasi yhtäaikaa Galleriaan."
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "Omat asetukset"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Pyöritys onnistui"
+
+#, fuzzy
+#~ msgid "edit general"
+#~ msgstr "muokkaa käyttäjää"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "Oletusulkoasu"
+
+#, fuzzy
+#~ msgid "Animation Settings"
+#~ msgstr "Omat asetukset"
+
+#, fuzzy
+#~ msgid "Edit Animation"
+#~ msgstr "Gallerian ylläpito"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Omat asetukset"
+
+#, fuzzy
+#~ msgid "Edit Movie"
+#~ msgstr "Muokkaa kokoja"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "Siirrä kohdetta"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "Omat asetukset"
+
+#, fuzzy
+#~ msgid "edit animation"
+#~ msgstr "Kohde"
+
+#, fuzzy
+#~ msgid "edit movie"
+#~ msgstr "muokkaa kohdetta"
 
 #, fuzzy
 #~ msgid "delete animation"

@@ -64,11 +64,12 @@ msgstr "&laquo; f&ouml;rsta"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; Ingen sorteringsordning &laquo;"
 
-msgid "(album)"
-msgstr "(album)"
-
 msgid "(data)"
 msgstr "(information)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(album)"
 
 msgid "180&deg;"
 msgstr "180&deg;"
@@ -139,6 +140,10 @@ msgstr "Lade till anv&auml;ndare '%s' i grupp"
 msgid "Admin Options"
 msgstr "Administrat&ouml;rsalternativ"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Albuminst&auml;llningar"
+
 msgid "Album Settings"
 msgstr "Albuminst&auml;llningar"
 
@@ -157,8 +162,9 @@ msgstr "Alla anv&auml;ndare"
 msgid "All access"
 msgstr "Alla tillg&auml;ngliga"
 
-msgid "Animation Settings"
-msgstr "Animeringsinst&auml;llningar"
+#, fuzzy
+msgid "Animation Size"
+msgstr "Animering"
 
 msgid "Animation"
 msgstr "Animering"
@@ -213,6 +219,10 @@ msgstr "&Auml;ndra ordning p&aring; objekten i detta album."
 
 msgid "Change"
 msgstr "&Auml;ndra"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "&Auml;ndringar sparades framg&aring;ngsrikt."
 
 msgid "Changes saved successfully."
 msgstr "&Auml;ndringar sparades framg&aring;ngsrikt."
@@ -280,6 +290,10 @@ msgstr "Skapade anv&auml;ndare '%s'"
 
 msgid "Creation Date"
 msgstr "Skapardatum"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Ingen miniatyrbild"
 
 msgid "Crop"
 msgstr "Besk&auml;r"
@@ -357,8 +371,13 @@ msgstr ""
 "Varje objekt i ditt album kan ha flera storlekar.  Best&auml;m f&ouml;rvald "
 "storlek h&auml;r."
 
-msgid "Edit Animation"
-msgstr "Redigera animering"
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Redigera anv&auml;ndare"
+
+#, fuzzy
+msgid "Edit Album"
+msgstr "redigera album"
 
 msgid "Edit Group (by list)"
 msgstr "Redigera grupp (genom lista)"
@@ -368,12 +387,6 @@ msgstr "Redigera gruppmedlemmar"
 
 msgid "Edit Group"
 msgstr "Redigera grupp"
-
-msgid "Edit Layout Settings"
-msgstr "Redigera utseendeinst&auml;llningar"
-
-msgid "Edit Movie"
-msgstr "Redigera film"
 
 msgid "Edit User (by list)"
 msgstr "Redigera anv&auml;ndare (genom lista)"
@@ -674,9 +687,6 @@ msgstr "Utseendekonfiguration"
 msgid "Layout Name"
 msgstr "Utseendenamn"
 
-msgid "Layout Settings"
-msgstr "Utseendeinst&auml;llningar"
-
 msgid "Layout"
 msgstr "Utseende"
 
@@ -736,9 +746,6 @@ msgstr "Moduler"
 msgid "Move Album"
 msgstr "Flytta album"
 
-msgid "Move Item"
-msgstr "Flytta objekt"
-
 msgid "Move an Item"
 msgstr "Flytta ett objekt"
 
@@ -748,7 +755,8 @@ msgstr "Flytta detta objekt"
 msgid "Move"
 msgstr "Flytta"
 
-msgid "Movie Settings"
+#, fuzzy
+msgid "Movie Size"
 msgstr "Filminst&auml;llningar"
 
 msgid "Movie"
@@ -825,9 +833,6 @@ msgstr "Foto 6x4"
 
 msgid "Photo 7x5"
 msgstr "Foto 7x5"
-
-msgid "Photo Settings"
-msgstr "Fotoinst&auml;llningar"
 
 msgid "Photo"
 msgstr "Foto"
@@ -1267,10 +1272,10 @@ msgstr ""
 "&auml;ndra ordningen av objekt manuellt.  Du m&aring;ste ta bort automatisk "
 "sorteringsordning f&ouml;r att fors&auml;tta."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 "Detta album &auml;r konfigurerat f&ouml;r att anv&auml;nda <b>%s</b> "
 "utseendet.  Dessa inst&auml;llningar verkst&auml;lls endast p&aring; "
@@ -1336,7 +1341,8 @@ msgstr ""
 "Detta kommer att helt ta bort <b>%s</b> fr&aring;n Gallery.  Det finns ingen "
 "&aring;terv&auml;ndo!"
 
-msgid "Thumbnail cropped successfully."
+#, fuzzy
+msgid "Thumbnail cropped successfully"
 msgstr "Miniatyrbild besk&auml;rdes frag&aring;ngsrikt."
 
 msgid "Thumbnail"
@@ -1695,21 +1701,6 @@ msgstr "ta bort"
 msgid "edit album"
 msgstr "redigera album"
 
-msgid "edit animation"
-msgstr "redigera animation"
-
-msgid "edit general"
-msgstr "redigera generellt"
-
-msgid "edit layout"
-msgstr "redigera utseende"
-
-msgid "edit movie"
-msgstr "redigera film"
-
-msgid "edit photo"
-msgstr "redigera foto"
-
 msgid "edit user"
 msgstr "redigera anv&auml;ndare"
 
@@ -1849,6 +1840,12 @@ msgstr[0] "%d vecka"
 msgstr[1] "%d veckor"
 
 #, fuzzy, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] "Detta album inneh&aring;ller inga objekt att l&auml;nka."
+msgstr[1] "Detta album inneh&aring;ller inga objekt att l&auml;nka."
+
+#, fuzzy, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] "Lade framg&aring;ngsrikt till %d fil."
@@ -1895,6 +1892,46 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "Ladda upp en fil direkt fr&aring;n din dator."
 msgstr[1] "Ladda upp upp till %d filer direkt fr&aring;n din dator."
+
+#~ msgid "Layout Settings"
+#~ msgstr "Utseendeinst&auml;llningar"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Roterade foto framg&aring;ngsrikt"
+
+#~ msgid "edit general"
+#~ msgstr "redigera generellt"
+
+#~ msgid "edit layout"
+#~ msgstr "redigera utseende"
+
+#~ msgid "Animation Settings"
+#~ msgstr "Animeringsinst&auml;llningar"
+
+#~ msgid "Edit Animation"
+#~ msgstr "Redigera animering"
+
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Redigera utseendeinst&auml;llningar"
+
+#~ msgid "Edit Movie"
+#~ msgstr "Redigera film"
+
+#~ msgid "Move Item"
+#~ msgstr "Flytta objekt"
+
+#~ msgid "Photo Settings"
+#~ msgstr "Fotoinst&auml;llningar"
+
+#~ msgid "edit animation"
+#~ msgstr "redigera animation"
+
+#~ msgid "edit movie"
+#~ msgstr "redigera film"
+
+#~ msgid "edit photo"
+#~ msgstr "redigera foto"
 
 #~ msgid "delete animation"
 #~ msgstr "ta bort animering"

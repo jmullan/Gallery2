@@ -81,11 +81,12 @@ msgstr "&laquo; céad"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; Níl ord ag an sórt &raquo;"
 
-msgid "(album)"
-msgstr "(albam)"
-
 msgid "(data)"
 msgstr "(sonraí)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(albam)"
 
 msgid "180&deg;"
 msgstr "180&deg;"
@@ -157,6 +158,10 @@ msgstr "Úsáideoir '%s' curtha leis an ngrúpa"
 msgid "Admin Options"
 msgstr "Roghanna Riaracháin"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Roghanna an Albaim"
+
 msgid "Album Settings"
 msgstr "Roghanna an Albaim"
 
@@ -178,8 +183,8 @@ msgid "All access"
 msgstr "Smacht iomlán"
 
 #, fuzzy
-msgid "Animation Settings"
-msgstr "Roghanna an Chuntais"
+msgid "Animation Size"
+msgstr "Aicsean"
 
 #, fuzzy
 msgid "Animation"
@@ -236,6 +241,10 @@ msgstr "Athraigh ord na míreanna san albam seo."
 
 msgid "Change"
 msgstr "Athraigh"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "Athruithe sábháilte go rathúil."
 
 msgid "Changes saved successfully."
 msgstr "Athruithe sábháilte go rathúil."
@@ -303,6 +312,10 @@ msgstr "Bhí úsáideoir '%s' curtha"
 
 msgid "Creation Date"
 msgstr "Dáta Cruthaithe"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Níl pictiúrín ann"
 
 msgid "Crop"
 msgstr ""
@@ -379,9 +392,13 @@ msgstr ""
 "Bheadh ilméideannasa do gach mír i do chuid albam. Roghnaigh na "
 "loicméideanna thíos anseo."
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Athraigh Úsáideoir"
+
 #, fuzzy
-msgid "Edit Animation"
-msgstr "Riarachán an Ghailearaí"
+msgid "Edit Album"
+msgstr "scrios an t-albam seo"
 
 msgid "Edit Group (by list)"
 msgstr "Athraigh Grúpa (faoi liosta)"
@@ -391,14 +408,6 @@ msgstr "Athraigh Baill an Ghrúpa"
 
 msgid "Edit Group"
 msgstr "Athraigh Grúpa"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "Roghanna an Chuntais"
-
-#, fuzzy
-msgid "Edit Movie"
-msgstr "Athraigh Méideanna"
 
 msgid "Edit User (by list)"
 msgstr "Athraigh Úsáideoir (faoi liosta)"
@@ -667,10 +676,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "Leagan amach"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "Roghanna an Chuntais"
-
 msgid "Layout"
 msgstr "Leagan amach"
 
@@ -735,10 +740,6 @@ msgstr "Modúil"
 msgid "Move Album"
 msgstr "athraigh an t-albam seo"
 
-#, fuzzy
-msgid "Move Item"
-msgstr "Bogadh Mír"
-
 msgid "Move an Item"
 msgstr "Bogadh Mír"
 
@@ -749,7 +750,7 @@ msgid "Move"
 msgstr "Bogadh"
 
 #, fuzzy
-msgid "Movie Settings"
+msgid "Movie Size"
 msgstr "Roghanna an Chuntais"
 
 msgid "Movie"
@@ -831,10 +832,6 @@ msgstr "Grianghraf"
 #, fuzzy
 msgid "Photo 7x5"
 msgstr "Grianghraf"
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "Roghanna an Chuntais"
 
 msgid "Photo"
 msgstr "Grianghraf"
@@ -1261,7 +1258,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1324,7 +1321,7 @@ msgstr ""
 "ann!"
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "Albam curtha go rathúil."
 
 #, fuzzy
@@ -1668,25 +1665,6 @@ msgstr "scrios"
 msgid "edit album"
 msgstr "scrios an t-albam seo"
 
-#, fuzzy
-msgid "edit animation"
-msgstr "Ceann cúrsa"
-
-#, fuzzy
-msgid "edit general"
-msgstr "athraigh úsáideoir"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "Leagan amach loicthe"
-
-#, fuzzy
-msgid "edit movie"
-msgstr "athraigh an mhír seo"
-
-msgid "edit photo"
-msgstr ""
-
 msgid "edit user"
 msgstr "athraigh úsáideoir"
 
@@ -1854,6 +1832,12 @@ msgstr[3] "%d seachtainí"
 msgstr[4] "%d seachtainí"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] "Ní raibh aon chomhad curtha."
@@ -1924,6 +1908,54 @@ msgstr[1] "Caith comhad amháin anáirde go díreach as do ríomhaire."
 msgstr[2] "Caith %d comhad anáirde go díreach as do ríomhaire."
 msgstr[3] "Caith %d gcomhad anáirde go díreach as do ríomhaire."
 msgstr[4] "Caith %d chomhad anáirde go díreach as do ríomhaire."
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Íomhá rothlaithe go rathúil"
+
+#, fuzzy
+#~ msgid "edit general"
+#~ msgstr "athraigh úsáideoir"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "Leagan amach loicthe"
+
+#, fuzzy
+#~ msgid "Animation Settings"
+#~ msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+#~ msgid "Edit Animation"
+#~ msgstr "Riarachán an Ghailearaí"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+#~ msgid "Edit Movie"
+#~ msgstr "Athraigh Méideanna"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "Bogadh Mír"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "Roghanna an Chuntais"
+
+#, fuzzy
+#~ msgid "edit animation"
+#~ msgstr "Ceann cúrsa"
+
+#, fuzzy
+#~ msgid "edit movie"
+#~ msgstr "athraigh an mhír seo"
 
 #, fuzzy
 #~ msgid "delete animation"

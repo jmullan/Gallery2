@@ -28,46 +28,30 @@
  */
 
 /**
- * This controller will handle general changes made to an item
+ * Plugin for editing data common to all items
  *
  * @package GalleryCore
  * @subpackage UserInterface
  *
  */
-class ItemEditItemController extends GalleryController {
+class ItemEditItem extends ItemEditPlugin {
 
     /**
-     * @see GalleryController::handleRequest
+     * @see ItemEditPlugin::handleRequest
      */
-    function handleRequest($form) {
+    function handleRequest($form, &$item, &$preferred) {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$status = array();
+	$status = null;
 	$error = array();
 	if (isset($form['action']['undo'])) {
 
-	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'core:ItemEditItem';
-	    $redirect['itemId'] = $itemId;
+	    /* Take no action and we'll be redirected back to the same page which will reset the form */
 	    
 	} else if (isset($form['action']['save'])) {
 	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $isRootAlbum = $item->getId() == $rootAlbumId;
@@ -85,9 +69,9 @@ class ItemEditItemController extends GalleryController {
 	    }
 	    
 	    if (empty($error)) {
-		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		
 		/*
@@ -95,11 +79,14 @@ class ItemEditItemController extends GalleryController {
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
 		$originalPathComponent = $item->getPathComponent();
-		if (!$isRootAlbum) {
-		    if ($item->getPathComponent() != $form['pathComponent']) {
+		if ($item->getPathComponent() != $form['pathComponent']) {	
+		    if ($isRootAlbum) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+		    } else {
 			$ret = $item->rename($form['pathComponent']);
 			if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
 		}
@@ -124,63 +111,33 @@ class ItemEditItemController extends GalleryController {
 			}
 			    
 			GalleryCoreApi::releaseLocks($lockId);
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    /* Figure out where to redirect upon success */
-		    $redirect['view'] = 'core:ItemAdmin';
-		    $redirect['subView'] = 'core:ItemEditItem';
-		    $redirect['itemId'] = $itemId;
-		    $status['saved'] = 1;
+		    /* Prepare our status message */
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		
+		    $status = $module->translate('Changes saved successfully');
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 	}
 
-	if (!empty($redirect)) {
-	    $results['redirect'] = $redirect;
-	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEditItem';
-	}
-	$results['status'] = $status;
-	$results['error'] = $error;
-	
-
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $error, $status);
     }
-}
-
-/**
- * This view will prompt for general settings of an item
- *
- * @package GalleryCore
- * @subpackage UserInterface
- */
-class ItemEditItemView extends GalleryView {
 
     /**
-     * @see GalleryView::loadTemplate
+     * @see ItemEditPlugin::loadTemplate
      */
-    function loadTemplate(&$template, &$form) {
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
-
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
-
-	/* Make sure we have permission do edit this item */
-	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	if ($form['formName'] != 'ItemEditItem') {
 	    /* First time around, load the form with item data */
@@ -189,7 +146,6 @@ class ItemEditItemView extends GalleryView {
 	    $form['keywords'] = $item->getKeywords();
 	    $form['description'] = $item->getDescription();
 	    $form['pathComponent'] = $item->getPathComponent();
-	    $form['serialNumber'] = $item->getSerialNumber();
 	    $form['formName'] = 'ItemEditItem';
 	}
 
@@ -210,8 +166,26 @@ class ItemEditItemView extends GalleryView {
 	$template->setVariable('ItemEditItem', $ItemEditItem);
 	$template->setVariable('controller', 'core:ItemEditItem');
 
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/ItemEditItem.tpl'));
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditItem.tpl');
+    }
+
+    /**
+     * @see ItemEditPlugin::isSupported
+     */
+    function isSupported($item, $thumbnail) {
+	return (GalleryUtilities::isA($item, 'GalleryItem'));
+    }
+
+    /**
+     * @see ItemEditPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('General Settings'));
     }
 }
 ?>

@@ -190,6 +190,47 @@ class CoreModule extends GalleryModule {
 						      'core',
 						      $classDir . 'GalleryCoreSearch.class');
 
+	/* Register our item edit plugins */
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditItem',
+						      'ItemEditItem',
+						      dirname(__FILE__) . '/ItemEditItem.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditAnimation',
+						      'ItemEditAnimation',
+						      dirname(__FILE__) . '/ItemEditAnimation.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditMovie',
+						      'ItemEditMovie',
+						      dirname(__FILE__) . '/ItemEditMovie.inc');
+	
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditAlbum',
+						      'ItemEditAlbum',
+						      dirname(__FILE__) . '/ItemEditAlbum.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditLayout',
+						      'ItemEditLayout',
+						      dirname(__FILE__) . '/ItemEditLayout.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditRotateAndScalePhoto',
+						      'ItemEditRotateAndScalePhoto',
+						      dirname(__FILE__) . '/ItemEditRotateAndScalePhoto.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditPhotoSizes',
+						      'ItemEditPhotoSizes',
+						      dirname(__FILE__) . '/ItemEditPhotoSizes.inc');
+
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+						      'ItemEditPhotoThumbnail',
+						      'ItemEditPhotoThumbnail',
+						      dirname(__FILE__) . '/ItemEditPhotoThumbnail.inc');
+
 	/* Now we have a $gallery instance and can set our description */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 
@@ -494,32 +535,15 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
+	    $itemTypeNames = $item->itemTypeName();
 	    if (isset($permissions['core.edit'])) {
-		if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('edit animation'),
-			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditAnimation',
-						'itemId' => $item->getId()));
-		} else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('edit movie'),
-			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditMovie',
-						'itemId' => $item->getId()));
-		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('edit photo'),
-			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditPhoto',
-						'itemId' => $item->getId()));
-		} else if ($isAlbum) {
-		    $links[$item->getId()][] =
-			array('text' => $this->translate('edit album'),
-			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditAlbum',
-						'itemId' => $item->getId()));
-		}
+		$links[$item->getId()][] =
+		    array('text' => $this->translate(array('text' => 'edit %s',
+							   'arg1' => $itemTypeNames[1])),
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'return' => true,
+					    'subView' => 'core:ItemEdit',
+					    'itemId' => $item->getId()));
 	    }
 
 	    if ($item->isLinkable()) {
@@ -557,11 +581,10 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('permissions'),
 			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditPermissions',
+					    'subView' => 'core:ItemPermissions',
 					    'itemId' => $item->getId()));
 	    }
 
-	    $itemTypeNames = $item->itemTypeName();
 	    if (!$isRoot && isset($permissions['core.delete'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate(array('text' => 'delete %s',
@@ -573,14 +596,6 @@ class CoreModule extends GalleryModule {
 					    'selectedId' => $item->getId()));
 	    }
 
-	    if (isset($permissions['core.edit'])) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit general'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditItem',
-					    'itemId' => $item->getId()));
-	    }
-	    
 	    if (!$isRoot && isset($permissions['core.delete'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate(array('text' => 'move %s',
@@ -607,14 +622,6 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array('view' => 'core:ItemAdmin',
 					    'subView' => 'core:ItemReorder',
-					    'itemId' => $item->getId()));
-	    }
-
-	    if ($isAlbum && isset($permissions['core.edit'])) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit layout'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditLayout',
 					    'itemId' => $item->getId()));
 	    }
 	}
@@ -750,37 +757,18 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($permissions['core.edit'])) {
-	        $views[] = array('name' => $this->translate('General Settings'),
-				 'view' => 'core:ItemEditItem');
-	}
-
+	$itemTypeNames = $item->itemTypeName();
 	if (isset($permissions['core.edit'])) {
 	    if ($isAlbum) {
-	        $views[] = array('name' => $this->translate('Album Settings'),
-				 'view' => 'core:ItemEditAlbum');
-
-	        $views[] = array('name' => $this->translate('Layout Settings'),
-				 'view' => 'core:ItemEditLayout');
-
 		if ($childCount > 1) {
 		    $views[] = array('name' => $this->translate('Reorder Items'),
 				     'view' => 'core:ItemReorder');
 		}
-		
-	    } else {
-		/* Management views for core item types */
-		if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
-		    $views[] = array('name' => $this->translate('Animation Settings'),
-				     'view' => 'core:ItemEditAnimation');
-		} else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
-		    $views[] = array('name' => $this->translate('Movie Settings'),
-				     'view' => 'core:ItemEditMovie');
-		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $views[] = array('name' => $this->translate('Photo Settings'),
-				     'view' => 'core:ItemEditPhoto');
-		}
 	    }
+	    
+	    /* Edit view for all item types */
+	    $views[] = array('name' => $this->translate(array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
+			     'view' => 'core:ItemEdit');
 
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
@@ -790,17 +778,10 @@ class CoreModule extends GalleryModule {
 	
 	if (isset($permissions['core.delete'])) {
 	    if ($item->getId() != $rootId) {
-		if ($isAlbum) {
-		    $deleteText = $this->translate('Delete Album');
-		    $moveText = $this->translate('Move Album');
-		} else {
-		    $deleteText = $this->translate('Delete Item');
-		    $moveText = $this->translate('Move Item');
-		}
-		$views[] = array('name' => $deleteText,
+		$views[] = array('name' => $this->translate(array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
 				 'view' => 'core:ItemDelete');
 
-		$views[] = array('name' => $moveText,
+		$views[] = array('name' => $this->translate(array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
 				 'view' => 'core:ItemMove',
 				 'itemId' => $parentId,
 				 'selectedId' => $item->getId());
@@ -809,7 +790,7 @@ class CoreModule extends GalleryModule {
 	
 	if (isset($permissions['core.changePermissions'])) {
 	    $views[] = array('name' => $this->translate('Permissions'),
-			     'view' => 'core:ItemEditPermissions');
+			     'view' => 'core:ItemPermissions');
 	}
 	
 	if (isset($permissions['core.addDataItem'])) {

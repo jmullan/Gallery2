@@ -59,11 +59,12 @@ msgstr "&laquo; erstes"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; Keine Sortierreihenfolge &laquo;"
 
-msgid "(album)"
-msgstr "(Album)"
-
 msgid "(data)"
 msgstr "(Daten)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(Album)"
 
 msgid "180&deg;"
 msgstr "180&deg;"
@@ -133,6 +134,10 @@ msgstr "Benutzer '%s' wurde in die Gruppe aufgenommen."
 msgid "Admin Options"
 msgstr "Admin Optionen"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Albumeinstellungen"
+
 msgid "Album Settings"
 msgstr "Albumeinstellungen"
 
@@ -151,8 +156,9 @@ msgstr "Alle Benutzer"
 msgid "All access"
 msgstr "Vollzugang"
 
-msgid "Animation Settings"
-msgstr "Animation Einstellungen"
+#, fuzzy
+msgid "Animation Size"
+msgstr "Animation"
 
 msgid "Animation"
 msgstr "Animation"
@@ -207,6 +213,10 @@ msgstr "Ändern Sie die Reihenfolge der Elemente in diesem Album."
 
 msgid "Change"
 msgstr "Ändern"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "Änderungen erfolgreich gespeichert."
 
 msgid "Changes saved successfully."
 msgstr "Änderungen erfolgreich gespeichert."
@@ -270,6 +280,10 @@ msgstr "Benutzer '%s' erstellt"
 
 msgid "Creation Date"
 msgstr "Erstellungsdatum"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "Kein Thumbnail"
 
 msgid "Crop"
 msgstr "Zuschneiden"
@@ -344,8 +358,13 @@ msgstr ""
 "Jedes Element eines Albums kann verschiedene Größen haben.  Geben Sie hier "
 "die Standardgröße an."
 
-msgid "Edit Animation"
-msgstr "Nimation bearbeiten"
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Benutzer bearbeiten"
+
+#, fuzzy
+msgid "Edit Album"
+msgstr "Album bearbeiten"
 
 msgid "Edit Group (by list)"
 msgstr "Gruppe bearbeiten (nach Liste)"
@@ -355,12 +374,6 @@ msgstr "Gruppenmitglieder bearbeiten"
 
 msgid "Edit Group"
 msgstr "Gruppe bearbeiten"
-
-msgid "Edit Layout Settings"
-msgstr "Layout Einstellungen bearbeiten"
-
-msgid "Edit Movie"
-msgstr "Film bearbeiten"
 
 msgid "Edit User (by list)"
 msgstr "Benutzer bearbeiten (nach Liste)"
@@ -624,9 +637,6 @@ msgstr "Layout Konfiguration"
 msgid "Layout Name"
 msgstr "Layout Name"
 
-msgid "Layout Settings"
-msgstr "Layout Einstellungen"
-
 msgid "Layout"
 msgstr "Layout"
 
@@ -686,9 +696,6 @@ msgstr "Module"
 msgid "Move Album"
 msgstr "Album verschieben"
 
-msgid "Move Item"
-msgstr "Verschiebe das Element"
-
 msgid "Move an Item"
 msgstr "Verschiebe das Element"
 
@@ -698,7 +705,8 @@ msgstr "Dieses Element verschieben"
 msgid "Move"
 msgstr "Verschieben"
 
-msgid "Movie Settings"
+#, fuzzy
+msgid "Movie Size"
 msgstr "Film Einstellungen"
 
 msgid "Movie"
@@ -775,9 +783,6 @@ msgstr "Photo 6x4"
 
 msgid "Photo 7x5"
 msgstr "Photo 7x5"
-
-msgid "Photo Settings"
-msgstr "Phozoeinstellungen"
 
 msgid "Photo"
 msgstr "Photo"
@@ -1205,10 +1210,10 @@ msgstr ""
 "Sie die Ordnung nicht manuell verändern.  Bitte entfernen Sie zuvor die "
 "automatische Sortierung."
 
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 "Dies Album wurde so konfiguriert, dass es das <b>%s</b> Layout benutzt.  "
 "Diese Einstellungen wird sich also nur auf das Layout dieses Elemtes "
@@ -1272,7 +1277,8 @@ msgstr ""
 "Dies wird <b>%s</b> endgültig aus der Gallery entfernen. Sie können dies "
 "nicht rückgängig machen!"
 
-msgid "Thumbnail cropped successfully."
+#, fuzzy
+msgid "Thumbnail cropped successfully"
 msgstr "Dsa Thumbnail wurde erfolgreich zugeschnitten."
 
 msgid "Thumbnail"
@@ -1611,21 +1617,6 @@ msgstr "Löschen"
 msgid "edit album"
 msgstr "Album bearbeiten"
 
-msgid "edit animation"
-msgstr "Anitmation bearbeiten"
-
-msgid "edit general"
-msgstr "Allgemeines bearbeiten"
-
-msgid "edit layout"
-msgstr "Layout bearbeiten"
-
-msgid "edit movie"
-msgstr "Film bearbeiten"
-
-msgid "edit photo"
-msgstr "Photo bearbeiten"
-
 msgid "edit user"
 msgstr "Benutzer bearbeiten"
 
@@ -1764,6 +1755,12 @@ msgid_plural "%d weeks"
 msgstr[0] ""
 msgstr[1] ""
 
+#, fuzzy, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] "Dieses Album enthält keine verlinkbaren Elemente."
+msgstr[1] "Dieses Album enthält keine verlinkbaren Elemente."
+
 #, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
@@ -1811,6 +1808,46 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] ""
 msgstr[1] ""
+
+#~ msgid "Layout Settings"
+#~ msgstr "Layout Einstellungen"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Photo erfolgreich rotiert"
+
+#~ msgid "edit general"
+#~ msgstr "Allgemeines bearbeiten"
+
+#~ msgid "edit layout"
+#~ msgstr "Layout bearbeiten"
+
+#~ msgid "Animation Settings"
+#~ msgstr "Animation Einstellungen"
+
+#~ msgid "Edit Animation"
+#~ msgstr "Nimation bearbeiten"
+
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Layout Einstellungen bearbeiten"
+
+#~ msgid "Edit Movie"
+#~ msgstr "Film bearbeiten"
+
+#~ msgid "Move Item"
+#~ msgstr "Verschiebe das Element"
+
+#~ msgid "Photo Settings"
+#~ msgstr "Phozoeinstellungen"
+
+#~ msgid "edit animation"
+#~ msgstr "Anitmation bearbeiten"
+
+#~ msgid "edit movie"
+#~ msgstr "Film bearbeiten"
+
+#~ msgid "edit photo"
+#~ msgstr "Photo bearbeiten"
 
 #~ msgid "delete animation"
 #~ msgstr "Animation löschen"

@@ -61,11 +61,12 @@ msgstr "&laquo; 最初"
 msgid "&laquo; no sort order &raquo;"
 msgstr "&laquo; ソートなし &laquo;"
 
-msgid "(album)"
-msgstr "(アルバム)"
-
 msgid "(data)"
 msgstr "(データ)"
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "(アルバム)"
 
 msgid "180&deg;"
 msgstr "180度"
@@ -137,6 +138,10 @@ msgstr "ユーザ '%s' をグループに追加しました"
 msgid "Admin Options"
 msgstr "管理オプション"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "アルバム設定"
+
 msgid "Album Settings"
 msgstr "アルバム設定"
 
@@ -158,8 +163,8 @@ msgid "All access"
 msgstr "全てのアクセス"
 
 #, fuzzy
-msgid "Animation Settings"
-msgstr "アカウント設定"
+msgid "Animation Size"
+msgstr "アクション"
 
 #, fuzzy
 msgid "Animation"
@@ -216,6 +221,10 @@ msgstr "このアルバム並べ替える順を変更"
 
 msgid "Change"
 msgstr "変更"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "変更の保存に成功しました。"
 
 msgid "Changes saved successfully."
 msgstr "変更の保存に成功しました。"
@@ -284,6 +293,10 @@ msgstr "ユーザ '%s' が作成されました。"
 
 msgid "Creation Date"
 msgstr "作成日"
+
+#, fuzzy
+msgid "Crop Thumbnail"
+msgstr "サムネイルなし"
 
 msgid "Crop"
 msgstr ""
@@ -357,9 +370,13 @@ msgid ""
 "here."
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "ユーザ編集"
+
 #, fuzzy
-msgid "Edit Animation"
-msgstr "サイト管理"
+msgid "Edit Album"
+msgstr "アルバム編集"
 
 msgid "Edit Group (by list)"
 msgstr "グループ編集 (リスト)"
@@ -369,14 +386,6 @@ msgstr "グループメンバーを編集中"
 
 msgid "Edit Group"
 msgstr "グループ編集"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "アカウント設定"
-
-#, fuzzy
-msgid "Edit Movie"
-msgstr "サイズ編集"
 
 msgid "Edit User (by list)"
 msgstr "ユーザ編集 (リスト)"
@@ -640,10 +649,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "レイアウト"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "アカウント設定"
-
 msgid "Layout"
 msgstr "レイアウト"
 
@@ -709,10 +714,6 @@ msgstr "モジュール"
 msgid "Move Album"
 msgstr "アルバム編集"
 
-#, fuzzy
-msgid "Move Item"
-msgstr "アイテム移動"
-
 msgid "Move an Item"
 msgstr "アイテム移動"
 
@@ -723,7 +724,7 @@ msgid "Move"
 msgstr "移動"
 
 #, fuzzy
-msgid "Movie Settings"
+msgid "Movie Size"
 msgstr "利用可能な設定"
 
 msgid "Movie"
@@ -805,10 +806,6 @@ msgstr "画像"
 #, fuzzy
 msgid "Photo 7x5"
 msgstr "画像"
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "アカウント設定"
 
 msgid "Photo"
 msgstr "画像"
@@ -1238,7 +1235,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1297,7 +1294,7 @@ msgid "This will completely remove <b>%s</b> from Gallery.  There is no undo!"
 msgstr ""
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "アルバム作成に成功しました。"
 
 #, fuzzy
@@ -1655,25 +1652,6 @@ msgstr "削除"
 msgid "edit album"
 msgstr "アルバム編集"
 
-#, fuzzy
-msgid "edit animation"
-msgstr "宛先"
-
-#, fuzzy
-msgid "edit general"
-msgstr "ユーザ編集"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "デフォルトレイアウト"
-
-#, fuzzy
-msgid "edit movie"
-msgstr "アイテム編集"
-
-msgid "edit photo"
-msgstr ""
-
 msgid "edit user"
 msgstr "ユーザ編集"
 
@@ -1809,6 +1787,12 @@ msgid_plural "%d weeks"
 msgstr[0] "%d週間"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] "%d個のファイルの追加に成功しました。"
@@ -1855,6 +1839,54 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] "あなたのコンピュータから直接ファイルをアップロードしてください。"
 msgstr[1] ""
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "アカウント設定"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "画像の回転に成功しました"
+
+#, fuzzy
+#~ msgid "edit general"
+#~ msgstr "ユーザ編集"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "デフォルトレイアウト"
+
+#, fuzzy
+#~ msgid "Animation Settings"
+#~ msgstr "アカウント設定"
+
+#, fuzzy
+#~ msgid "Edit Animation"
+#~ msgstr "サイト管理"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "アカウント設定"
+
+#, fuzzy
+#~ msgid "Edit Movie"
+#~ msgstr "サイズ編集"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "アイテム移動"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "アカウント設定"
+
+#, fuzzy
+#~ msgid "edit animation"
+#~ msgstr "宛先"
+
+#, fuzzy
+#~ msgid "edit movie"
+#~ msgstr "アイテム編集"
 
 #, fuzzy
 #~ msgid "delete animation"

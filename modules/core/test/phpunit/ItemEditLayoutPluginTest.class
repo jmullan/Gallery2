@@ -29,10 +29,10 @@
 /**
  * ItemEditLayout controller tests
  */
-class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
+class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 
-    function ItemEditLayoutControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditLayout');
+    function ItemEditLayoutPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditLayout');
     }
 
     function setUp() {
@@ -66,6 +66,8 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
         $this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new AdminLayoutsTestPlatform();
 
+	$this->_preferred = null;
+
 	// Reset test layout
 	ItemEditLayoutControllerTestLayout::reset();
     }
@@ -88,32 +90,21 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 
 	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditLayout',
-						      'itemId' => $this->_album->getId()),
-				  'status' => array('restored' => 1),
-				  'error' => array()),
-			    $results);
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), null), $results);
     }
 
     function testSave() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
 	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditLayout',
-						      'itemId' => $this->_album->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved layout settings')),
 			    $results);
 
 	// Verify
@@ -123,17 +114,13 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
     }
 
     function testInvalidSave() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[key][rows]', '3x');
 	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditLayout'),
-				  'status' => array(),
-				  'error' => array('form[error][key][rows][invalid]')),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array('form[error][key][rows][invalid]'), null),
 			    $results);
 
 	/* Verify that we have a detailed error message */
@@ -144,19 +131,14 @@ class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveWithGlobal() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('form[key][rows]', 3);
 	GalleryUtilities::putRequestVariable('form[key][columns]', 4);
 	GalleryUtilities::putRequestVariable('form[useGlobal][columns]', 'on');
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditLayout',
-						      'itemId' => $this->_album->getId()),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
+	$results = $this->handleRequest($this->_album, $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Successfully saved layout settings')),
 			    $results);
 
 	// Verify

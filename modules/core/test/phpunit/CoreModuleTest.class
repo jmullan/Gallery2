@@ -103,12 +103,8 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	
 	$this->assertEquals(array(
-				  array('name' => $this->_module->translate('General Settings'),
-					'view' => 'core:ItemEditItem'),
-				  array('name' => $this->_module->translate('Album Settings'),
-					'view' => 'core:ItemEditAlbum'),
-				  array('name' => $this->_module->translate('Layout Settings'),
-					'view' => 'core:ItemEditLayout'),
+				  array('name' => $this->_module->translate('Edit Album'),
+					'view' => 'core:ItemEdit'),
 				  array('name' => $this->_module->translate('Delete Album'),
 					'view' => 'core:ItemDelete'),
 				  array('name' => $this->_module->translate('Move Album'),
@@ -116,7 +112,7 @@ class CoreModuleTest extends GalleryTestCase {
 					'itemId' => $this->_parentAlbum->getParentId(),
 					'selectedId' => $this->_parentAlbum->getId()),
 				  array('name' => $this->_module->translate('Permissions'),
-					'view' => 'core:ItemEditPermissions'),
+					'view' => 'core:ItemPermissions'),
 				  array('name' => $this->_module->translate('Add Items'),
 					'view' => 'core:ItemAddChildren'),
 				  array('name' => $this->_module->translate('Add Sub-Album'),
@@ -183,7 +179,8 @@ class CoreModuleTest extends GalleryTestCase {
 	$links[] = array('text' => $this->_module->translate('edit album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemEditAlbum',
+					   'return' => 1,
+					   'subView' => 'core:ItemEdit',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$links[] = array('text' => $this->_module->translate('add sub-album'),
@@ -195,7 +192,7 @@ class CoreModuleTest extends GalleryTestCase {
 	$links[] = array('text' => $this->_module->translate('permissions'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemEditPermissions',
+					   'subView' => 'core:ItemPermissions',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$links[] = array('text' => $this->_module->translate('delete album'),
@@ -206,24 +203,12 @@ class CoreModuleTest extends GalleryTestCase {
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('edit general'),
-			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemEditItem',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   ));
 	$links[] = array('text' => $this->_module->translate('move album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemMove',
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
-					   ));
-	$links[] = array('text' => $this->_module->translate('edit layout'),
-			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemEditLayout',
-					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }

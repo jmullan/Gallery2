@@ -61,12 +61,12 @@ msgstr ""
 msgid "&laquo; no sort order &raquo;"
 msgstr "* Χωρίς Ταξινόμιση *"
 
-#, fuzzy
-msgid "(album)"
-msgstr "Λεύκομα"
-
 msgid "(data)"
 msgstr ""
+
+#, fuzzy
+msgid "(empty album)"
+msgstr "Λεύκομα"
 
 #, fuzzy
 msgid "180&deg;"
@@ -144,6 +144,10 @@ msgstr ""
 msgid "Admin Options"
 msgstr "Ενέργειες"
 
+#, fuzzy
+msgid "Album Basics"
+msgstr "Ρυθμίσεις Λευκόματος"
+
 msgid "Album Settings"
 msgstr "Ρυθμίσεις Λευκόματος"
 
@@ -166,8 +170,8 @@ msgid "All access"
 msgstr "Πλήρες Πρόσβαση"
 
 #, fuzzy
-msgid "Animation Settings"
-msgstr "Ρυθμίσεις Λευκόματος"
+msgid "Animation Size"
+msgstr "Ενέργεια"
 
 #, fuzzy
 msgid "Animation"
@@ -227,6 +231,10 @@ msgstr ""
 
 msgid "Change"
 msgstr "Αλλαγή"
+
+#, fuzzy
+msgid "Changes saved successfully"
+msgstr "Η Ομάδα '%s' Δημιουργήθηκε με επιτυχία"
 
 #, fuzzy
 msgid "Changes saved successfully."
@@ -295,6 +303,9 @@ msgstr "Δημιουργία Χρήστη"
 
 msgid "Creation Date"
 msgstr "Ημερομηνία Δημιουργίας"
+
+msgid "Crop Thumbnail"
+msgstr ""
 
 msgid "Crop"
 msgstr ""
@@ -370,9 +381,13 @@ msgid ""
 "here."
 msgstr ""
 
+#, fuzzy, c-format
+msgid "Edit %s"
+msgstr "Επεξεργασία Χρήστη"
+
 #, fuzzy
-msgid "Edit Animation"
-msgstr "Διαχείρηση της Γκαλλερύ"
+msgid "Edit Album"
+msgstr "Διαγραφή Χρήστη"
 
 #, fuzzy
 msgid "Edit Group (by list)"
@@ -385,14 +400,6 @@ msgstr "Επεξεργασία ομάδας '%s'"
 #, fuzzy
 msgid "Edit Group"
 msgstr "Επεξεργασία Ομάδας"
-
-#, fuzzy
-msgid "Edit Layout Settings"
-msgstr "Ρυθμίσεις Λευκόματος"
-
-#, fuzzy
-msgid "Edit Movie"
-msgstr "Επεξεργασία Μεγέθους"
 
 msgid "Edit User (by list)"
 msgstr ""
@@ -657,10 +664,6 @@ msgstr ""
 msgid "Layout Name"
 msgstr "Όνομα Ομάδας"
 
-#, fuzzy
-msgid "Layout Settings"
-msgstr "Ρυθμίσεις Λευκόματος"
-
 msgid "Layout"
 msgstr ""
 
@@ -725,10 +728,6 @@ msgid "Move Album"
 msgstr "Διαγραφή Χρήστη"
 
 #, fuzzy
-msgid "Move Item"
-msgstr "Επεξεργασία Αντικειμένου"
-
-#, fuzzy
 msgid "Move an Item"
 msgstr "Επεξεργασία Αντικειμένου"
 
@@ -740,7 +739,7 @@ msgid "Move"
 msgstr ""
 
 #, fuzzy
-msgid "Movie Settings"
+msgid "Movie Size"
 msgstr "Ρυθμίσεις Λευκόματος"
 
 msgid "Movie"
@@ -826,10 +825,6 @@ msgstr ""
 
 msgid "Photo 7x5"
 msgstr ""
-
-#, fuzzy
-msgid "Photo Settings"
-msgstr "Ρυθμίσεις Λευκόματος"
 
 msgid "Photo"
 msgstr ""
@@ -1227,7 +1222,7 @@ msgstr ""
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
-"apply to the layout for this item."
+"apply to the layout for this album."
 msgstr ""
 
 msgid "This is a link to another photo, so you cannot change the original"
@@ -1280,7 +1275,7 @@ msgid "This will completely remove <b>%s</b> from Gallery.  There is no undo!"
 msgstr ""
 
 #, fuzzy
-msgid "Thumbnail cropped successfully."
+msgid "Thumbnail cropped successfully"
 msgstr "Η Ομάδα '%s' Δημιουργήθηκε με επιτυχία"
 
 msgid "Thumbnail"
@@ -1648,25 +1643,6 @@ msgid "edit album"
 msgstr "Διαγραφή Χρήστη"
 
 #, fuzzy
-msgid "edit animation"
-msgstr "Προορισμός"
-
-#, fuzzy
-msgid "edit general"
-msgstr "Επεξεργασία Χρήστη"
-
-#, fuzzy
-msgid "edit layout"
-msgstr "Προεπιλεγμένη Διάταξη"
-
-#, fuzzy
-msgid "edit movie"
-msgstr "Επεξεργασία Χρήστη"
-
-msgid "edit photo"
-msgstr ""
-
-#, fuzzy
 msgid "edit user"
 msgstr "Επεξεργασία Χρήστη"
 
@@ -1807,6 +1783,12 @@ msgstr[0] "%d Εβδομάδα"
 msgstr[1] "%d Εβδομάδα"
 
 #, c-format
+msgid "(album containing %d item)"
+msgid_plural "(album containing %d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#, c-format
 msgid "Successfully added %d file."
 msgid_plural "Successfully added %d files."
 msgstr[0] ""
@@ -1853,6 +1835,54 @@ msgid "Upload a file directly from your computer."
 msgid_plural "Upload up to %d files directly from your computer."
 msgstr[0] ""
 msgstr[1] ""
+
+#, fuzzy
+#~ msgid "Layout Settings"
+#~ msgstr "Ρυθμίσεις Λευκόματος"
+
+#, fuzzy
+#~ msgid "Reverted photo successfully"
+#~ msgstr "Η Ομάδα '%s' Δημιουργήθηκε με επιτυχία"
+
+#, fuzzy
+#~ msgid "edit general"
+#~ msgstr "Επεξεργασία Χρήστη"
+
+#, fuzzy
+#~ msgid "edit layout"
+#~ msgstr "Προεπιλεγμένη Διάταξη"
+
+#, fuzzy
+#~ msgid "Animation Settings"
+#~ msgstr "Ρυθμίσεις Λευκόματος"
+
+#, fuzzy
+#~ msgid "Edit Animation"
+#~ msgstr "Διαχείρηση της Γκαλλερύ"
+
+#, fuzzy
+#~ msgid "Edit Layout Settings"
+#~ msgstr "Ρυθμίσεις Λευκόματος"
+
+#, fuzzy
+#~ msgid "Edit Movie"
+#~ msgstr "Επεξεργασία Μεγέθους"
+
+#, fuzzy
+#~ msgid "Move Item"
+#~ msgstr "Επεξεργασία Αντικειμένου"
+
+#, fuzzy
+#~ msgid "Photo Settings"
+#~ msgstr "Ρυθμίσεις Λευκόματος"
+
+#, fuzzy
+#~ msgid "edit animation"
+#~ msgstr "Προορισμός"
+
+#, fuzzy
+#~ msgid "edit movie"
+#~ msgstr "Επεξεργασία Χρήστη"
 
 #, fuzzy
 #~ msgid "delete animation"
