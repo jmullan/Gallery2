@@ -189,10 +189,12 @@ class ItemTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
+	/*
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentItem->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	*/
 	
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemTestToolkit');
@@ -778,6 +780,78 @@ class ItemTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::releaseLocks($locks);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes that are 
+     * larger (dimension wise) than the original.
+     */
+    function testAddSmallPhotoToAlbum() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Set the album preferences such that we have one resize that's smaller than the original, and one
+	 * that's larger.  We know that the image we're using is 62x75
+	 */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = GalleryCoreApi::addDerivativePreference(1, $this->_childItems[0]->getId(),
+						       DERIVATIVE_TYPE_IMAGE_RESIZE,
+						       'resize|50');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$ret = GalleryCoreApi::addDerivativePreference(2, $this->_childItems[0]->getId(),
+						       DERIVATIVE_TYPE_IMAGE_RESIZE,
+						       'resize|100');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/gif');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->create($this->_childItems[0]->getId(),
+			      dirname(__FILE__) . '/../data/test1.gif',
+			      'image/gif',
+			      'test image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Now verify that we didn't upsample our resizes
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(isset($resizes[$photo->getId()]), 'Missing resizes for new photo');
+	if (isset($resizes[$photo->getId()])) {
+	    $resizes = $resizes[$photo->getId()];
+	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
+	    $this->assertEquals('resize|100', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|100');
 	}
     }
 }

@@ -309,13 +309,25 @@ class GalleryItemHelper_medium {
 	    }
 
 	    $mimeType = $source->getMimeType();
-	    
+
+	    $itemHasThumbnail = false;
 	    foreach ($preferences as $preference) {
+		$operations = $preference['derivativeOperations'];
+
+		/* Special case to make sure that we don't upsample photos */
+		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		    $maxDimension = max($item->getWidth(), $item->getHeight());
+		    if (preg_match('/resize\|(\d+)/', $operations, $matches)) {
+			if ($matches[1] <= $maxDimension) {
+			    continue;
+			}
+		    }
+		}
+		
 		/*
 		 * Validate the stored preferences to make sure that
 		 * they're supported by an active toolkit.
 		 */
-		$operations = $preference['derivativeOperations'];
 		list ($ret, $isSupported, $outputMimeType) =
 		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
 		if ($ret->isError()) {
@@ -387,18 +399,23 @@ class GalleryItemHelper_medium {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
+		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		    $itemHasThumbnail = true;
+		}
 	    }
 
-	    /* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
-	    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (empty($thumbnailTable)) {
-		list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
+	    if ($itemHasThumbnail) {
+		/* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
+		list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (empty($thumbnailTable)) {
+		    list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		}
 	    }
 	}
@@ -476,9 +493,14 @@ class GalleryItemHelper_medium {
 	 * If at this point $source is undefined then we have no source
 	 * thumbnail and that means that we're done.
 	 */
+	$lockIds = array();
 	if (isset($source)) {
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($source->getId());
 	    if ($ret->isError()) {
+		if (!empty($lockIds)) {
+		    // Ignore errors -- we're already in an error handler
+		    GalleryCoreApi::releaseLocks($lockIds);
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -489,11 +511,19 @@ class GalleryItemHelper_medium {
 		/* Modify existing thumbnail */
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -503,15 +533,27 @@ class GalleryItemHelper_medium {
 		list ($ret, $derivative) =
 		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($derivative)) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		}  
 
 		$ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -523,6 +565,10 @@ class GalleryItemHelper_medium {
 		 */
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
@@ -531,6 +577,10 @@ class GalleryItemHelper_medium {
 		if (isset($parentId)) {
 		    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
 		    if ($ret->isError()) {
+			if (!empty($lockIds)) {
+			    // Ignore errors -- we're already in an error handler
+			    GalleryCoreApi::releaseLocks($lockIds);
+			}
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -541,6 +591,10 @@ class GalleryItemHelper_medium {
 			}
 		    }
 		    if (empty($derivativeOperations)) {
+			if (!empty($lockIds)) {
+			    // Ignore errors -- we're already in an error handler
+			    GalleryCoreApi::releaseLocks($lockIds);
+			}
 			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 		    }
 
@@ -551,6 +605,10 @@ class GalleryItemHelper_medium {
 		    list ($ret, $isSupported, $outputMimeType) =
 			GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $derivativeOperations);
 		    if ($ret->isError()) {
+			if (!empty($lockIds)) {
+			    // Ignore errors -- we're already in an error handler
+			    GalleryCoreApi::releaseLocks($lockIds);
+			}
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
@@ -573,11 +631,15 @@ class GalleryItemHelper_medium {
 	    
 		$ret = $derivative->save();
 		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			// Ignore errors -- we're already in an error handler
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 
-	    if (isset($lockIds)) {
+	    if (!empty($lockIds)) {
 		$ret = GalleryCoreApi::releaseLocks($lockIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
