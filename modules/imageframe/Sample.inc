@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -36,23 +36,24 @@ class SampleView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	list ($ret, $imageframe) =
-	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
-	if ($ret->isError() || !isset($imageframe)) {
+	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($imageframe)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 	}
 
 	list ($ret, $list) = $imageframe->getImageFrameList();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$frame = array();
-	list ($ret, $frame['template'], $frame['style'], $frame['data']) =
-	    $imageframe->getImageFrameData(array_keys($list));
+	$ret = $imageframe->init($template, array_keys($list));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ImageFrameSample = array();
+	$ImageFrameSample = array('list' => $list);
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (!empty($itemId)) {
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -68,10 +69,6 @@ class SampleView extends GalleryView {
 		$ImageFrameSample['thumb'] = $thumbnail[$itemId]->getMemberData();
 	    }
 	}
-
-	$ImageFrameSample['list'] = $list;
-	$ImageFrameSample['frame'] = $frame;
-	$ImageFrameSample['sample'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/images/sample.jpg';
 
 	$template->setVariable('ImageFrameSample', $ImageFrameSample);
 	return array(GalleryStatus::success(),

@@ -5,8 +5,8 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <style type="text/css">
-td img {ldelim} vertical-align:bottom {rdelim}
-{foreach from=$ImageFrame_data key=id item=data}
+img.ImageFrame_image {ldelim} vertical-align:bottom; border:0px; {rdelim}
+{foreach from=$ImageFrameData key=id item=data}
 {if $data.type=='style'}
 img.ImageFrame_{$id} {ldelim} {$data.style} {rdelim}
 {elseif $data.type=='image'}

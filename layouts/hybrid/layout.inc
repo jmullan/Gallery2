@@ -147,25 +147,23 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	/* Prepare image frames, if available */
-	list ($ret, $imageframe) =
-	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$list = array();
-	foreach (array('albumFrame', 'imageFrame') as $key) {
-	    if (!empty($params[$key])) {
-		$list[] = $params[$key];
+	if (isset($imageframe)) {
+	    $frameIds = array();
+	    foreach (array('albumFrame', 'imageFrame') as $key) {
+		if (!empty($params[$key])) {
+		    $frameIds[] = $layout[$key] = $params[$key];
+		}
 	    }
-	}
-	if (!empty($list) && isset($imageframe)) {
-	    $frame = array();
-	    list ($ret, $frame['template'], $frame['style'], $frame['data']) =
-		$imageframe->getImageFrameData($list);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (!empty($frameIds)) {
+		$ret = $imageframe->init($template, $frameIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
-	    $layout['frame'] = $frame;
 	}
 
 	return array(GalleryStatus::success(),
@@ -294,8 +292,7 @@ class HybridLayout extends GalleryLayout {
 	$params = array_merge(array('albumFrame' => '', 'imageFrame' => ''), $params);
 
 	/* Image frame settings, if available */
-	list ($ret, $imageframe) =
-	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

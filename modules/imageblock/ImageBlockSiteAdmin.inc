@@ -53,7 +53,8 @@ class ImageBlockSiteAdminController extends GalleryController {
 		    $param[] = $key;
 		}
 	    }
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock', 'blocks', implode('|', $param));
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
+						      'blocks', implode('|', $param));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -63,9 +64,19 @@ class ImageBlockSiteAdminController extends GalleryController {
 		    $param[] = $key;
 		}
 	    }
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock', 'show', implode('|', $param));
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
+						      'show', implode('|', $param));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach (array('albumFrame', 'itemFrame') as $key) {
+		if (isset($form[$key])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'imageblock',
+							      $key, $form[$key]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
 	    }
 	    $status['saved'] = 1;
 	} /* else $form['action']['reset'] */
@@ -110,7 +121,28 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    foreach (explode('|', $param['show']) as $tmp) {
 		$form[$tmp] = 1;
 	    }
+	    $form['albumFrame'] = $param['albumFrame'];
+	    $form['itemFrame'] = $param['itemFrame'];
 	}
+
+	/* ImageFrame settings, if available */
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($imageframe)) {
+	    list ($ret, $list) = $imageframe->getImageFrameList();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $template->setVariable('ImageBlockSiteAdmin',
+				   array('list' => $list, 'sampleUrl' => $sampleUrl));
+	}
+
 	$template->setVariable('controller', 'imageblock:ImageBlockSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/imageblock/templates/SiteAdmin.tpl'));

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,7 +33,7 @@
  * @package ImageFrame
  * @subpackage Classes
  */
-class ImageFrameInterface_1_0 {
+class ImageFrameInterface_1_1 {
 
     /**
      * Get list of available image frames
@@ -47,22 +47,20 @@ class ImageFrameInterface_1_0 {
     }
 
     /**
-     * Get data required for rendering image frames.
-     * Pass in list of ids that may be used in a view.  Include the style
-     * template in the header and then include the image frame template where
-     * needed, passing the frame data, the frame to render and all required
-     * image parameters, either item/image or src.
-     * See example in SampleHead.tpl/SampleBody.tpl
+     * Prepare imageframe system.
+     * Pass in list of ids that may be used in a view.  Include the
+     * {imageframe_head} tag in the header and then use the {imageframe} block
+     * where needed, passing the frame to render and the frame contents.  The
+     * image in the content must have id="%ID%" and class="%CLASS%".
+     * See example in SampleHead.tpl/SampleBody.tpl.
+     * This method may be called more than once in a request.
      *
+     * @param object GalleryTemplate template
      * @param array of frame ids to prepare for use or single frame id
-     * @return array(object GalleryStatus a status code,
-     *               string image frame template path,
-     *               string style template path,
-     *               array of ImageFrame data for requested frames )
+     * @return object GalleryStatus a status code
      */
-    function getImageFrameData($frameIds) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
-		     null, null, null);
+    function init(&$template, $frameIds) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
     /**
@@ -70,8 +68,8 @@ class ImageFrameInterface_1_0 {
      * Pass an itemId to the view to use the thumbnail of that item in
      * the samples; otherwise a default image will be used.
      *
-     * @return array(object GalleryStatus a status code,
-     *               string view name)
+     * @return array object GalleryStatus a status code,
+     *               string view url
      */
     function getSampleUrl($itemId=null) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),

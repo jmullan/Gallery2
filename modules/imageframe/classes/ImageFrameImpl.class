@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -28,7 +28,7 @@
 /**
  * Load the parent class
  */
-require_once(dirname(__FILE__) . '/ImageFrameInterface_1_0.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageFrameInterface_1_1.class');
 
 /**
  * Implementation of the ImageFrameInterface for rendering a frame around an image
@@ -36,10 +36,10 @@ require_once(dirname(__FILE__) . '/ImageFrameInterface_1_0.class');
  * @package ImageFrame
  * @subpackage Classes
  */
-class ImageFrameImpl extends ImageFrameInterface_1_0 {
+class ImageFrameImpl extends ImageFrameInterface_1_1 {
 
     /**
-     * @see ImageFrameInterface_1_0::getImageFrameList()
+     * @see ImageFrameInterface_1_1::getImageFrameList()
      */
     function getImageFrameList() {
 	global $gallery;
@@ -66,62 +66,99 @@ class ImageFrameImpl extends ImageFrameInterface_1_0 {
     }
 
     /**
-     * @see ImageFrameInterface_1_0::getImageFrameData()
+     * @see ImageFrameInterface_1_1::init()
      */
-    function getImageFrameData($frameIds) {
+    function init(&$template, $frameIds) {
+	static $simpleFrames;
+	if (!isset($simpleFrames)) {
+	    $simpleFrames = array('none' => array('type' => 'none'),
+				  'solid' => array('type' => 'style',
+						   'style' => 'border:1px solid black'));
+	    $smarty =& $template->_getSmarty();
+	    $smarty->register_block('imageframe', array($this, 'renderImageFrame'));
+	    $smarty->register_function('imageframe_style', array($this, 'renderImageFrameStyle'));
+	    $template->setVariable('ImageFrameData', array());
+	}
+	$data =& $template->getVariableByReference('ImageFrameData');
+
 	global $gallery;
 	$platform = $gallery->getPlatform();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$baseUrl = GalleryUtilities::convertPathToUrl(dirname(__FILE__) . '/../frames');
 	if (!is_array($frameIds)) {
 	    $frameIds = array($frameIds);
 	}
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$baseUrl = GalleryUtilities::convertPathToUrl(dirname(__FILE__) . '/../frames');
 
-	$defn = array('none' => array('type'=>'none'),
-	    'solid' => array('type'=>'style','style'=>'border:1px solid black'));
-
-	$data = array();
-	foreach ($frameIds as $id) {
-	    if (isset($defn[$id])) {
-		$data[$id] = $defn[$id];
+	foreach ($frameIds as $frameId) {
+	    if (isset($data[$frameId])) {
+		continue;
+	    }
+	    if (isset($simpleFrames[$frameId])) {
+		$data[$frameId] = $simpleFrames[$frameId];
 	    } else {
-		$dir = dirname(__FILE__) . "/../frames/$id";
+		$dir = dirname(__FILE__) . "/../frames/$frameId";
 		$frameinc = "$dir/frame.inc";
 		if ($platform->is_dir($dir) && $platform->file_exists($frameinc)) {
 		    require($frameinc);
-		    $dat = array('type' => isset($frameData['style']) ? 'style' : 'image');
+		    $frame = array('type' => isset($frameData['style']) ? 'style' : 'image');
 		    foreach ($frameData as $key => $value) {
 			if ($key == 'name' || $key == 'description') {
-			    $dat[$key] = $module->translate($value);
+			    $frame[$key] = $module->translate($value);
 			} else if (!strncmp($key, 'image', 5) && $value) {
-			    $dat[$key] = "$baseUrl/$id/" . $value;
+			    $frame[$key] = "$baseUrl/$frameId/" . $value;
 			} else {
-			    $dat[$key] = $value;
+			    $frame[$key] = $value;
 			}
 		    }
-		    if ($dat['type'] == 'image') {
-			$dat['wHL'] = max($frameData['widthTTL'], $frameData['widthBBL']);
-			$dat['wHR'] = max($frameData['widthTTR'], $frameData['widthBBR']);
-			$dat['hVT'] = max($frameData['heightLLT'], $frameData['heightRRT']);
-			$dat['hVB'] = max($frameData['heightLLB'], $frameData['heightRRB']);
-			$dat['rowspan'] = 1 + ($dat['hVT']>0?1:0) + ($dat['hVB']>0?1:0);
-			$dat['colspan'] = 1 + ($dat['wHL']>0?1:0) + ($dat['wHR']>0?1:0);
+		    if ($frame['type'] == 'image') {
+			$frame['wHL'] = max($frameData['widthTTL'], $frameData['widthBBL']);
+			$frame['wHR'] = max($frameData['widthTTR'], $frameData['widthBBR']);
+			$frame['hVT'] = max($frameData['heightLLT'], $frameData['heightRRT']);
+			$frame['hVB'] = max($frameData['heightLLB'], $frameData['heightRRB']);
+			$frame['rowspan'] = 1 + ($frame['hVT']>0?1:0) + ($frame['hVB']>0?1:0);
+			$frame['colspan'] = 1 + ($frame['wHL']>0?1:0) + ($frame['wHR']>0?1:0);
 		    }
-		    $data[$id] = $dat;
+		    $data[$frameId] = $frame;
 		}
 	    }
 	}
 
-	return array(GalleryStatus::success(),
-	    'modules/imageframe/templates/ImageFrame.tpl',
-	    'modules/imageframe/templates/ImageFrameStyle.tpl', $data);
+	return GalleryStatus::success();
     }
 
     /**
-     * @see ImageFrameInterface_1_0::getSampleView()
+     * Smarty callback for ImageFrame CSS
+     */
+    function renderImageFrameStyle($params, &$smarty) {
+	static $isDone;
+	if (isset($isDone)) {
+	    return '';
+	}
+	$isDone = true;
+	return $smarty->_smarty_include(
+	    array('smarty_include_tpl_file' =>
+		      'gallery:modules/imageframe/templates/ImageFrameStyle.tpl',
+		  'smarty_include_vars' => array()));
+    }
+
+    /**
+     * Smarty callback to render an ImageFrame
+     */
+    function renderImageFrame($params, $content, &$smarty) {
+	if (!isset($content)) {
+	    return;
+	}
+	return $smarty->_smarty_include(
+	    array('smarty_include_tpl_file' => 'gallery:modules/imageframe/templates/ImageFrame.tpl',
+		  'smarty_include_vars' => array('frame' => $params['frame'],
+						 'content' => trim($content))));
+    }
+
+    /**
+     * @see ImageFrameInterface_1_1::getSampleUrl()
      */
     function getSampleUrl($itemId=null) {
 	global $gallery;

@@ -9,8 +9,8 @@
 </title>
 <link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css"/>
 {g->style}
-{if isset($layout.frame)}
- {include file=$layout.frame.style ImageFrame_data=$layout.frame.data}
+{if isset($layout.albumFrame) || isset($layout.imageFrame)}
+  {imageframe_style}
 {/if}
 <script type="text/javascript">
 {if $layout.imageCount==1}

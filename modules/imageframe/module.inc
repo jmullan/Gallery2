@@ -37,7 +37,7 @@ class ImageFrameModule extends GalleryModule {
 	$this->setId('imageframe');
 	$this->setName('ImageFrame');
 	$this->setDescription($gallery->i18n('Render frames around images'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(2, 0));
@@ -54,8 +54,8 @@ class ImageFrameModule extends GalleryModule {
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-	    'ImageFrameInterface_1_0', 'ImageFrameImpl', 'ImageFrame',
-            'modules/imageframe/classes/ImageFrameImpl.class', 'imageframe', null);
+	    'ImageFrameInterface_1_1', 'ImageFrameImpl', 'ImageFrame',
+	    'modules/imageframe/classes/ImageFrameImpl.class', 'imageframe', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

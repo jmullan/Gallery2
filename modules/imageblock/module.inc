@@ -35,9 +35,9 @@ class ImageBlockModule extends GalleryModule {
     function ImageBlockModule() {
 	global $gallery;
 	$this->setId('imageblock');
-	$this->setName('ImageBlock');
+	$this->setName('Image Block');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent');
 	$this->setRequiredCoreApi(array(2, 0));
@@ -59,10 +59,14 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	if (!isset($currentVersion)) {
-	    foreach (array('blocks' => 'randomImage',
-			   'show' => 'title|date|views' )
-		     as $key => $value) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('blocks' => 'randomImage', 'show' => 'title|date|views',
+		       'albumFrame' => '', 'itemFrame' => '' )
+		as $key => $value) {
+	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -75,9 +79,9 @@ class ImageBlockModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-        $ret = GalleryCoreApi::registerFactoryImplementation(
-           'ItemEditOption', 'ImageBlockOption', 'ImageBlockOption',
-           'modules/imageblock/ImageBlockOption.inc', 'imageblock', array('ItemEditAlbum'));
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	   'ItemEditOption', 'ImageBlockOption', 'ImageBlockOption',
+	   'modules/imageblock/ImageBlockOption.inc', 'imageblock', array('ItemEditAlbum'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -144,6 +144,25 @@
         </label>
       </li>
     </ul>
+
+    {if isset($ImageBlockSiteAdmin)}
+    <h3 class="giTitle">
+      {g->text text="Frames"}
+    </h3>
+    <p class="giDescription">
+      <a href="{$ImageBlockSiteAdmin.sampleUrl}"> {g->text text="View samples"} </a>
+    </p>
+    <table class="gbDataTable">
+      <tr><td> {g->text text="Album Frame"} </td>
+      <td><select name="{g->formVar var="form[albumFrame]"}">
+	{html_options options=$ImageBlockSiteAdmin.list selected=$form.albumFrame}
+      </select></td></tr>
+      <tr><td> {g->text text="Photo Frame"} </td>
+      <td><select name="{g->formVar var="form[itemFrame]"}">
+	{html_options options=$ImageBlockSiteAdmin.list selected=$form.itemFrame}
+      </select></td></tr>
+    </table>
+    {/if}
   </div>
 
   <div class="gbButtons">

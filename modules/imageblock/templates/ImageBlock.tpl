@@ -12,13 +12,30 @@
 	  </h3>
 	{/if}
 
+	{capture name="link"}
 	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}" {strip}
 	   {if isset($ImageBlockSystemContent.linkTarget)}
 	     target="{$ImageBlockSystemContent.linkTarget}"
 	   {/if}{/strip}>
-	  {g->image item=$block.item image=$block.thumb
-		    class="giThumbImage" maxSize=$ImageBlockSystemContent.maxSize|default:null}
-	</a>
+	{/capture}
+	{if $block.item.canContainChildren}
+	  {assign var=frameType value="albumFrame"}
+	{else}
+	  {assign var=frameType value="itemFrame"}
+	{/if}
+	{if isset($ImageBlockSystemContent.$frameType)}
+	  {imageframe frame=$ImageBlockSystemContent.$frameType}
+	    {$smarty.capture.link}
+	    {g->image item=$block.item image=$block.thumb id="%ID%" class="%CLASS%"
+		      maxSize=$ImageBlockSystemContent.maxSize|default:null}
+	    </a>
+	  {/imageframe}
+	{else}
+	  {$smarty.capture.link}
+	    {g->image item=$block.item image=$block.thumb class="giThumbImage"
+		      maxSize=$ImageBlockSystemContent.maxSize|default:null}
+	  </a>
+	{/if}
 
 	{if isset($ImageBlockSystemContent.show.title) && isset($block.item.title)}
 	<h4 class="giDescription">

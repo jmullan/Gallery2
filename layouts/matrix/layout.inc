@@ -82,7 +82,7 @@ class MatrixLayout extends GalleryLayout {
 			    'value' => $params['showAlbumOwner']);
 
 	/* ImageFrame settings, if available */
-	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -160,16 +160,16 @@ class MatrixLayout extends GalleryLayout {
 				array('href' => 'layouts/' . $this->getId()), false);
 
 	/* Prepare image frames, if available */
-	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$frame = array();
 	if (isset($imageframe)) {
+	    $frameIds = array();
 	    if ($item->getCanContainChildren()) {
 		foreach (array('albumFrame', 'itemFrame') as $key) {
 		    if (!empty($params[$key])) {
-			$frame[$key] = $params[$key];
+			$frameIds[] = $layout[$key] = $params[$key];
 		    }
 		}
 	    } else {
@@ -181,16 +181,14 @@ class MatrixLayout extends GalleryLayout {
 		$value = isset($value) ? $value
 		       : (isset($params['photoFrame']) ? $params['photoFrame'] : null);
 		if (!empty($value)) {
-		    $frame['photoFrame'] = $value;
+		    $frameIds[] = $layout['photoFrame'] = $value;
 		}
 	    }
-	    if (!empty($frame)) {
-		list ($ret, $frame['template'], $frame['style'], $frame['data']) =
-		    $imageframe->getImageFrameData($frame);
+	    if (!empty($frameIds)) {
+		$ret = $imageframe->init($template, $frameIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$layout['frame'] = $frame;
 	    }
 	}
 

@@ -469,5 +469,13 @@ class ImageBlockDummyGalleryTemplate {
     function setVariable($key, $value) {
 	$this->data[$key] = $value;
     }
+    function &getVariableByReference($key) {
+	return $this->data[$key];
+    }
+    function &_getSmarty() {
+	return $this;
+    }
+    function register_block() { }
+    function register_function() { }
 }
 ?>

@@ -105,9 +105,10 @@
       {/capture}
 
       {if ($layout.can.viewInline[$layout.imageViewsIndex])}
-	{if isset($layout.frame)}
-	  {include file=$layout.frame.template ImageFrame_data=$layout.frame.data
-		   ImageFrame_frame=$layout.frame.photoFrame item=$layout.item image=$image}
+	{if isset($layout.photoFrame)}
+	  {imageframe frame=$layout.photoFrame}
+	    {g->image item=$layout.item image=$image id="%ID%" class="%CLASS%"}
+	  {/imageframe}
 	{else}
 	  {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
 	{/if}

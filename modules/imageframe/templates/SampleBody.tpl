@@ -11,19 +11,15 @@
   {foreach from=$ImageFrameSample.list key=frame item=name}
     <div style="float:left;margin:6px">
     {$name}<br/>
-    {if isset($ImageFrameSample.item)}
-      {include file=$ImageFrameSample.frame.template
-       ImageFrame_data=$ImageFrameSample.frame.data ImageFrame_frame=$frame
-       item=$ImageFrameSample.item image=$ImageFrameSample.thumb}
-    {else}
-      {include file=$ImageFrameSample.frame.template
-       ImageFrame_data=$ImageFrameSample.frame.data ImageFrame_frame=$frame
-       src=$ImageFrameSample.sample}
-      {* Can also add ImageFrame_pre= and ImageFrame_post= params. Example:
-       * {capture name="link"}<a href="{g->url arg1="view=core:ShowItem"
-       *                                       arg2="itemId=`$itemId`"}">{/capture}
-       * ImageFrame_pre=$smarty.capture.link ImageFrame_post="</a>" *}
-    {/if}
+    {imageframe frame=$frame}
+      {if isset($ImageFrameSample.item)}
+	{g->image item=$ImageFrameSample.item image=$ImageFrameSample.thumb
+		  maxSize=150 id="%ID%" class="%CLASS%"}
+      {else}
+	<img src="{g->url href="modules/imageframe/images/sample.jpg"}"
+	     width="150" height="126" id="%ID%" class="%CLASS%"/>
+      {/if}
+    {/imageframe}
     </div>
   {/foreach}
 </div>

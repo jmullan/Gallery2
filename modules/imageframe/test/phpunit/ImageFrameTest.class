@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,17 +41,17 @@ class ImageFrameTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
-	if ($ret->isError() || !isset($module)) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	list ($ret, $this->_imageframe) =
+	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1', 'ImageFrameImpl');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $imageframe) =
-	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0', 'ImageFrameImpl');
-	if ($ret->isError() || !isset($imageframe)) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (!isset($this->_imageframe)) {
+	    print 'Missing ImageFrameImpl';
+	    return $this->failWithStatus(
+		GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
 	}
-
-	$this->_imageframe = $imageframe;
     }
 
 
@@ -63,14 +63,14 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assert(isset($list['none']) && isset($list['dots']) && isset($list['wood']));
     }
 
-    function testImageFrameData() {
-	list ($ret, $template, $style, $data) =
-	    $this->_imageframe->getImageFrameData(array('none', 'dots', 'wood'));
+    function testImageFrameInit() {
+	$template = new ImageFrameDummyGalleryTemplate();
+	$ret = $this->_imageframe->init($template, array('none', 'dots', 'wood'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('modules/imageframe/templates/ImageFrame.tpl', $template, 'Template');
-	$this->assertEquals('modules/imageframe/templates/ImageFrameStyle.tpl', $style, 'Style');
+	$this->assert(isset($template->data['ImageFrameData']), 'template data');
+	$data = $template->data['ImageFrameData'];
 	$this->assertEquals(3, count($data), 'Data size');
 	$this->assertEquals(array('type'=>'none'), $data['none'], 'None');
 	$this->assertEquals('style', $data['dots']['type'], 'Dots type');
@@ -92,5 +92,24 @@ class ImageFrameTest extends GalleryTestCase {
 	$this->assertEquals('http', substr($url, 0, 4), 'Url2 protocol');
 	$this->assert(preg_match('/12345/', $url), 'Url2 id');
     }
+}
+
+/**
+ * @package ImageFrame
+ * @subpackage PHPUnit
+ */
+class ImageFrameDummyGalleryTemplate {
+    var $data = array();
+    function setVariable($key, $value) {
+	$this->data[$key] = $value;
+    }
+    function &getVariableByReference($key) {
+	return $this->data[$key];
+    }
+    function &_getSmarty() {
+	return $this;
+    }
+    function register_block() { }
+    function register_function() { }
 }
 ?>

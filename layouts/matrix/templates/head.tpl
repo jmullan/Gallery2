@@ -9,6 +9,6 @@
 </title>
 <style type="text/css" media="all">@import url({$layout.layoutUrl}/layout.css.php);</style>
 {g->style}
-{if isset($layout.frame)}
-  {include file=$layout.frame.style ImageFrame_data=$layout.frame.data}
+{if isset($layout.albumFrame) || isset($layout.itemFrame) || isset($layout.photoFrame)}
+  {imageframe_style}
 {/if}
