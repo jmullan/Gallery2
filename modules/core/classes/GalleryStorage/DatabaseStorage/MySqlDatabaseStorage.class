@@ -1,0 +1,92 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Name of the world lock
+ */
+define('WORLD_LOCK_NAME', 'gallery_world_lock');
+
+/**
+ * MySQL extension of the DatabaseStorage class.
+ *
+ * This object implements the hooks for saving and restoring objects in a
+ * MySQL database.
+ *
+ * @version $Id$
+ * @package DatabaseStorage
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class MySqlDatabaseStorage extends DatabaseStorage {
+
+    function getType() {
+	return 'mysql';
+    }
+
+    /**
+     * Lock the world
+     *
+     * @access public
+     * @param int timeout before giving up on the lock
+     * @return object GalleryStatus a status code
+     */
+    function acquireLock($timeout) {
+	$this->_traceStart();
+	$query = 'SELECT GET_LOCK("' . WORLD_LOCK_NAME . '", ?) ';
+	$query .= ' AS ' . WORLD_LOCK_NAME;
+	$data = array($timeout);
+	$recordSet = $this->_db->Execute($query, $data);
+	if (!$recordSet) {
+	    $ret = GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	} else {
+	    if ($recordSet->fields[WORLD_LOCK_NAME] == 0) {
+		$ret = GalleryStatus::error(ERROR_LOCK_IN_USE,
+					    __FILE__, __LINE__);
+	    } else {
+		$ret = GalleryStatus::success();
+	    }
+	}
+
+	$this->_traceStop();
+	return $ret;
+    }
+
+    /**
+     * Release all locks.
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function releaseLock() {
+	$this->_traceStart();
+	$query = 'DO RELEASE_LOCK("' . WORLD_LOCK_NAME . '")';
+	$recordSet = $this->_db->Execute($query);
+	if (!$recordSet) {
+	    $ret = GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	} else {
+	    $ret = GalleryStatus::success();
+	}
+
+	$this->_traceStop();
+	return $ret;
+    }
+}
+?>

@@ -1,0 +1,374 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Resize function
+ *
+ * @constant IMAGE_FUNCTION_RESIZE
+ */
+define('IMAGE_FUNCTION_RESIZE', 0x00000001);
+
+/**
+ * Scale function
+ *
+ * @constant IMAGE_FUNCTION_SCALE
+ */
+define('IMAGE_FUNCTION_SCALE', 0x00000002);
+
+/**
+ * Rotate function
+ *
+ * @constant IMAGE_FUNCTION_ROTATE
+ */
+define('IMAGE_FUNCTION_ROTATE', 0x00000004);
+
+/**
+ * IMAGE_FUNCTION_CROP
+ *
+ * @constant IMAGE_FUNCTION_CROP
+ */
+define('IMAGE_FUNCTION_CROP', 0x00000008);
+
+/**
+ * IMAGE_FUNCTION_PROPERTIES
+ *
+ * @constant IMAGE_FUNCTION_PROPERTIES
+ */
+define('IMAGE_FUNCTION_PROPERTIES', 0x00000008);
+
+
+/**
+ * A toolkit for manipulating images
+ *
+ * This class defines the API for image toolkits.  Subclasses should
+ * implement this for a specific image toolkit, such as NetPBM or
+ * ImageMagick.
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryGraphics {
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The functions supported by this toolkit
+     *
+     * @var int $_supportedFunctions
+     * @access private
+     */
+    var $_supportedFunctions = 0;
+
+    /**
+     * The file types supported by this toolkit
+     *
+     * @var array $_supportedFileTypes
+     * @access private
+     */
+    var $_supportedFileTypes = array();
+
+    /**
+     * The expected status from executed sub-jobs
+     *
+     * @var array $_expectedStatus
+     * @access private
+     */
+    var $_expectedStatus = 0;
+
+    /**
+     * The target image quality for JPEG transforms
+     *
+     * @var array $_jpegImageQuality
+     * @access private
+     */
+    var $_jpegImageQuality = 75;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * @param array configuration information
+     */
+    function GalleryGraphics($config) {
+	assert('!empty($config)');
+
+	if (!empty($config['fileTypes'])) {
+	    foreach ($config['fileTypes'] as $type) {
+		$this->_supportedFileTypes[$type] = 1;
+	    }
+	}
+
+	if (!empty($config['jpegImageQuality'])) {
+	    $this->_jpegImageQuality = $config['jpegImageQuality'];
+	}
+
+	if (!empty($config['functions'])) {
+	    $this->_supportedFunctions = $config['functions'];
+	}
+
+	if (!empty($config['expectedStatus'])) {
+	    $this->_expectedStatus = $config['expectedStatus'];
+	}
+    }
+    
+    /**
+     * Get the list of supported file types
+     *
+     * Get the list of supported file types that this toolkit can
+     * support.
+     *
+     * @access public
+     * @return array lowercase file tags tags (eg "jpg", "gif")
+     */
+    function getSupportedFileTypes() {
+	return array_keys($this->_supportedFileTypes);
+    }
+
+    /**
+     * Is this file type supported?
+     *
+     * @access public
+     * @param string a file tag (eg "jpg", "Jpg", "JPG", "JPEG")
+     * @return bool true if the tag given is supported 
+     */
+    function isSupportedFiletype($tag) {
+	return isset($this->_supportedFileTypes[strtolower($tag)]);
+    }
+
+    /**
+     * Get a list of functions that this toolkit supports
+     *
+     * Not all toolkits support all functions.  GD for example, may not support
+     * rotation.
+     *
+     * @access public
+     * @return int a bitmask of IMAGE_FUNCTION constants
+     */
+    function getSupportedFunctions() {
+	return $this->_supportedFunctions;
+    }
+
+    /**
+     * Is this function supported?
+     *
+     * @param int a IMAGE_FUNCTION_XXX flag
+     * @return bool true if yes, false if no.
+     */
+    function isSupportedFunction($flag) {
+	return (boolean)($this->_supportedFunctions & $flag);
+    }
+
+    /**
+     * What is the target image quality for JPEG transformations?
+     *
+     * @return int the quality level
+     */
+    function getJpegImageQuality() {
+	return $this->_jpegImageQuality;
+    }
+
+    /**
+     * What is the expected return status for sub-jobs?
+     *
+     * @return int the expected status (probably 0)
+     */
+    function getExpectedStatus() {
+	return $this->_expectedStatus;
+    }
+
+    /**
+     * Calculate the dimensions of the image file
+     *
+     * Calculate the dimensions of the image file
+     * 
+     * @access public
+     * @param string a file name
+     * @return array object GalleryStatus a status code,
+     *               int the image width, int the image height
+     */
+    function getImageDimensions($filename) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null, null);
+    }
+
+    /**
+     * Resize the image to the target size specified
+     *
+     * Resize the image located at sourceFilename and write the results in      
+     * destFilename.  Resize the image to the dimensions provided, ignoring
+     * changes to the aspect ratio.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the target width
+     * @param string int the target height
+     * @return object GalleryStatus a status code
+     */
+    function resizeImage($sourceFilename, $destFilename, $width, $height) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+		
+    /**
+     * Scale the image to the target size specified
+     *
+     * Resize the image located at sourceFilename and write the results in      
+     * destFilename.  Scale the image such that it fits within the bounding
+     * box specified by $targetSize x $targetSize, while maintaining the
+     * aspect ratio.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the target size
+     * @return object GalleryStatus a status code
+     */
+    function scaleImage($sourceFilename, $destFilename, $targetSize) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+		
+    /**
+     * Rotate the image by the degrees specified
+     *
+     * Rotate the image located at sourceFilename and write the results in      
+     * destFilename.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the degrees to be rotated (one of -90, 180, 90)
+     * @return object GalleryStatus a status code
+     */
+    function rotateImage($sourceFilename, $destFilename, $degrees) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+		
+    /**
+     * Crop the image by the position and dimensions specified
+     *
+     * Crop the image located at sourceFilename and write the results in 
+     * destFilename.  The upper left corner of the subsection is
+     * at the x, y coordinate provided and the lower right is
+     * x+width, y+height.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param int x-axis origin
+     * @param int y-axis origin
+     * @param int width of crop rectangle
+     * @param int height of crop rectangle
+     * @return object GalleryStatus a status code
+     */
+    function cropImage($sourceFilename, $destFilename, $x, $y, $width, $height) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+
+    /**
+     * Is this image valid?
+     *
+     * Is this image valid?  Can it be handled by this toolkit?
+     * 
+     * @access public
+     * @param string the image file name
+     * @return array object GalleryStatus, boolean 
+     */
+    function isValidImage($filename) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Get any image properties associated with this image
+     *
+     * Some file types have embedded data.  Eg, JPEG can have EXIF
+     * data.
+     * 
+     * @access public
+     * @param string the image file name
+     * @return array object GalleryStatus a status code
+     *               array a set of key value pairs
+     */
+    function getProperties($filename) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Execute a set of commands to perform an image operation
+     *
+     * @return array object GalleryStatus a status code
+     *               array any resulting output
+     * @access private
+     */
+    function _exec($cmdArray) {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+
+	/* Build up a platform-correct version of the command and arguments */
+	$command = '';
+	foreach ($cmdArray as $cmdAndArgs) {
+	    if (strlen($command)) {
+		$command .= ' | ';
+	    }
+	    
+	    if (is_array($cmdAndArgs)) {
+		$cmd = $cmdAndArgs[0];
+		$args = array_slice($cmdAndArgs, 1);
+
+		/* Add the platform-specific version of the command */
+		$command .= $platform->executablePath($cmd);
+
+		/* And then each argument */
+		foreach ($args as $arg) {
+		    /* Escape whitespace */
+		    $arg = str_replace(' ', '\\ ', $arg);
+
+		    $command .= ' ' . $arg;
+		}
+	    }
+	}
+
+	$results = array();
+	$success = $platform->exec($command, $results);
+	if ($success) {
+	    $ret = GalleryStatus::success();
+	} else {
+	    $ret = GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+					__FILE__, __LINE__);
+	}
+
+	return array($ret, $results);
+    }
+}
+?>

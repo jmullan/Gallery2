@@ -10,8 +10,8 @@ class CreatePhotoItemTestCase extends TestCase {
 	global $gallery;
 	$rootId = $gallery->getRootAlbumId();
 
-	/* Lock the root */
-	$ret = $gallery->lockLocal($rootId);
+	/* Lock the world */
+	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -25,18 +25,6 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret;
 	}
 	
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	/* Release our lock on the root */
-	$ret = $gallery->unlock();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	/* Put an ImageContainer in our PhotoItem */
 	$image = new ImageContainer();
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
@@ -95,6 +83,12 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	/* Commit the cache */
 	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Release our lock */
+	$ret = $gallery->unlock();
 	if ($ret->isError()) {
 	    return $ret;
 	}

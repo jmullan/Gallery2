@@ -30,14 +30,6 @@
 class GalleryLock {
 
     /**
-     * List of currently acquired locks
-     *
-     * @var array $_lockList
-     * @access private
-     */
-    var $_lockList;
-
-    /**
      * Do we have a lock or not?
      *
      * @var boolean _isLockAcquired
@@ -46,24 +38,10 @@ class GalleryLock {
     var $_isLockAcquired;
 
     /**
-     * Do we have a world lock or not?
-     *
-     * @var boolean _isWorldLock
-     * @access private
-     */
-    var $_isWorldLock;
-
-    /**
-     * The internal id of this lock
-     */
-    var $_lockId;
-
-    /**
      * Constructor
      */
     function GalleryLock() {
 	$this->_isLockAcquired = false;
-	$this->_isWorldLock = false;
     }
 
     /**
@@ -79,29 +57,27 @@ class GalleryLock {
      * @param integer how long we should wait to acquire locks
      * @return object GalleryLock an instance of GalleryLock that holds the locks
      */
-    function lock($ids, $timeout) {
+    function acquire($timeout) {
 	global $gallery;
-	$storage = $gallery->getStorage();
-
-	list($ret, $this->_lockId) = $storage->acquireLock($ids, $timeout);
+	list($ret, $storage) = $gallery->getStorage();
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
-	$this->_lockList = $ids;
-	$this->_isLockAcquired = true;
-
-	if (sizeof($ids) == 0) {
-	    $this->_isWorldLock = true;
+	$ret = $storage->acquireLock($timeout);
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
+	$this->_isLockAcquired = true;
+
 	/*
-	 * Register a reference to this object with the unlock routine.  If we
-	 * don't use a reference, then the unlock method will get called on an
-	 * old copy of this lock and we'll wind up unlocking multiple times
+	 * Register a reference to this object with the release routine.  If we
+	 * don't use a reference, then the release method will get called on an
+	 * old copy of this instance and we'll wind up unlocking multiple times
 	 * (not fatal, but annoying).
 	 */
-	register_shutdown_function(array(&$this, 'unlock'));
+	register_shutdown_function(array(&$this, 'release'));
 
 	return GalleryStatus::success();
     }
@@ -116,49 +92,6 @@ class GalleryLock {
     }
 
     /**
-     * Are these GalleryNucleus' locked?
-     *
-     * @param array an array of GalleryNucleus ids
-     * @return boolean true if locked
-     */
-    function isIdLocked($ids) {
-	assert('!empty($ids)');
-
-	if (!$this->_isLockAcquired) {
-	    return false;
-	}
-
-	if ($this->_isWorldLock) {
-	    return true;
-	}
-
-	foreach ($ids as $id) {
-	    if (!in_array($id, $this->_lockList)) {
-		return false;
-	    }
-	}
-
-	return true;
-    }
-
-    /**
-     * Have we acquired a world lock?
-     *
-     * @return bool true if the world is locked
-     */
-    function isWorldLocked() {
-	if (!$this->_isLockAcquired) {
-	    return false;
-	}
-
-	if ($this->_isWorldLock) {
-	    return true;
-	}
-
-	return false;
-    }
-
-    /**
      * Release all locks
      * 
      * Release whatever locks this instance is holding
@@ -166,22 +99,25 @@ class GalleryLock {
      * @access public
      * @return object GalleryStatus a status code
      */
-    function unlock() {
+    function release() {
+	global $gallery;
+	
 	if (!$this->_isLockAcquired) {
 	    return GalleryStatus::success();
 	}
 
-	global $gallery;
-	$storage = $gallery->getStorage();
-	$ret = $storage->releaseLock($this->_lockId, $this->_isWorldLock);
+	list($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $storage->releaseLock();
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
 	$this->_isLockAcquired = null;
-	$this->_isWorldLock = null;
 	$this->_lockId = null;
-	$this->_lockList = null;
 
 	return GalleryStatus::success();
     }

@@ -64,12 +64,12 @@ class Gallery {
     var $_config;
 
     /**
-     * The current GalleryImageToolkit
+     * The current GalleryGraphics
      *
-     * @var object GalleryImageToolkit $_imageToolkit
+     * @var object GalleryGraphics $_graphics
      * @access private
      */
-    var $_imageToolkit;
+    var $_graphics;
 
     /**
      * Storage for all session variables.  Contains an instance
@@ -162,10 +162,16 @@ class Gallery {
      *
      * @access public
      * @param string the path to a GalleryItem
-     * @return int the id of the GalleryItem (or null)
+     * @return array object GalleryStatus a status code
+     *               int the id of the GalleryItem (or null)
      */
     function getIdByPath($path) {
-	return $this->_storage->getIdByPath($path);
+	list($ret, $storage) = $this->getStorage();
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+	
+	return $storage->getIdByPath($path);
     }
 
     /**
@@ -183,25 +189,54 @@ class Gallery {
 	 * here.  Tag a special serial number onto the object in the cache so
 	 * that when we receive modifications to it later we can be sure that
 	 * the user is always working with the latest copy of the object.
-	 *
-	 * Make sure that the object we're caching is derived from the most
-	 * current version that we've got in the cache.  If it *isn't* then 
-	 * we've got multiple parallel versions of objects in memory getting
-	 * modified concurrently (which will lead to database errors later)
 	 */
 	$id = $nucleus->getId();
 
-	if (isset($this->_nucleusCache[$id])) {
-	    $old = $this->_nucleusCache[$id];
-	    if ($old->_cacheSerial != $nucleus->_cacheSerial) {
-		return GalleryStatus::error(ERROR_OBSOLETE_DATA,
-					    __FILE__, __LINE__);
-	    }
-	} else {
-	    $nucleus->_cacheSerial = 0;
+	/*
+	 * The only way that the user can call updateCachedNucleus() when there
+	 * isn't a nucleus already in the cache is the case where they got a
+	 * nucleus, then called lockWorld() which flushes the cache.  In that
+	 * case, they're dealing with an object that's out of date, so fail.
+	 */
+	if (!isset($this->_nucleusCache[$id])) {
+	    return GalleryStatus::error(ERROR_OBSOLETE_DATA,
+					__FILE__, __LINE__);
 	}
 
+	/*
+	 * Make sure that the object we're caching is derived from the most
+	 * current version that we've got in the cache.  If it *isn't* then 
+	 * we've got multiple parallel versions of objects in memory getting
+	 * modified concurrently (which will lead to database errors later).
+	 * The serial number of the object we're updating must match the serial
+	 * number of the version that's in the cache currently.
+	 */
+	$old = $this->_nucleusCache[$id];
+	if ($old->_cacheSerial != $nucleus->_cacheSerial) {
+	    return GalleryStatus::error(ERROR_OBSOLETE_DATA,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * The object being updated matches the one in the cache, so go ahead
+	 * and update the cached copy and bump the serial number.
+	 */
 	$nucleus->_cacheSerial++;
+	$this->_nucleusCache[$id] =& $nucleus;
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Insert a new nucleus into the cache
+     *
+     * This blows away any copy of the same nucleus that is already in the
+     * cache.
+     *
+     * @param object GalleryNucleus a reference to the GalleryNucleus to cache
+     */
+    function cacheNucleus(&$nucleus) {
+	$id = $nucleus->getId();
+	$nucleus->_cacheSerial = 0;
 	$this->_nucleusCache[$id] =& $nucleus;
 	return GalleryStatus::success();
     }
@@ -214,7 +249,11 @@ class Gallery {
     function commitCache() {
 	global $gallery;
 
-	$storage = $gallery->getStorage();
+	list($ret, $storage) = $gallery->getStorage();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	foreach (array_keys($this->_nucleusCache) as $key) {
 	    $nucleus =& $this->_nucleusCache[$key];
 
@@ -285,8 +324,8 @@ class Gallery {
 
 	list($ret, $nucleus) = $this->loadNucleusByIdNoCache($id);
 
-	/* Update the cache */
-	$this->updateCachedNucleus($nucleus);
+	/* Add this item to the cache */
+	$this->cacheNucleus($nucleus);
 	
 	return array($ret, $nucleus);
     }
@@ -309,11 +348,23 @@ class Gallery {
 	}
 	
 	/* Load the nucleus from our persistent store */
-	list($ret, $nucleus) = $this->_storage->loadNucleus($id);
+	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
 	    return array($ret, null);
 	}
-	
+
+	list($ret, $nucleus) = $storage->loadNucleus($id);
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+
+	/*
+	 * The storage object caches data internally on loads.  The only way to
+	 * preserve that data across lookups is to keep a copy of the storage
+	 * object after calling loadNucleus() with it.
+	 */
+	$this->_storage = $storage;
+
 	return array(GalleryStatus::success(), $nucleus);
     }
 
@@ -372,7 +423,12 @@ class Gallery {
      *               array a list of target values
      */
     function search($criteria, $target=array('GalleryNucleus::id')) {
-	return $this->_storage->search($criteria, $target);
+	list($ret, $storage) = $this->getStorage();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	return $storage->search($criteria, $target);
     }
 
     /**
@@ -434,26 +490,24 @@ class Gallery {
     /**
      * Get the image toolkit
      *
-     * Return a the active GalleryImageToolkit
+     * Return a the active GalleryGraphics
      * 
      * @access public
-     * @return object GalleryImageToolkit the active image toolkit
+     * @return array object GalleryStatus a status code
+     *               object GalleryGraphics the active image toolkit
      */
-    function getImageToolkit() {
-	return $this->_imageToolkit;
-    }
-
-    /**
-     * Set the image toolkit
-     *
-     * Assign the active GalleryImageToolkit
-     * 
-     * @param object GalleryImageToolkit the active image toolkit
-     * @access public
-     */
-    function setImageToolkit($imageToolkit) {
-	assert('!empty($imageToolkit)');
-	$this->_imageToolkit = $imageToolkit;
+    function getGraphics() {
+	if (empty($this->_graphics)) {
+	    $type = $this->getConfig('graphics.type');
+	    $config = $this->getConfig('graphics.config');
+	    list ($ret, $this->_graphics) =
+		    GalleryGraphicsFactory::newInstance($type, $config);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	}
+	
+	return array(GalleryStatus::success(), $this->_graphics);
     }
 
     /**
@@ -513,59 +567,19 @@ class Gallery {
      * Return a copy of the unique Gallery platform object.
      * 
      * @access public
-     * @return object GalleryMap the Gallery platform map
+     * @return array object GalleryStatus a status code
+     *               object GalleryMap the Gallery platform map
      */
     function getPlatform() {
-	return $this->_platform;
-    }
-
-    /**
-     * Get the Gallery platform object.
-     *
-     * Assign a reference to the unique Gallery platform object
-     * (implemented as an instance of the GalleryMap class).
-     * 
-     * @param object GalleryMap the Gallery platform map
-     * @access public
-     */
-    function setPlatform($platform) {
-	assert('isset($platform)');
-	$this->_platform = $platform;
-    }
-
-    /**
-     * Lock the given GalleryNucleus instances.
-     *
-     * Use the active locking mechanism to lock the given GalleryNucleus instances.
-     * 
-     * Use register_shutdown_function() to register the unlock() method so
-     * that we can be sure that we won't accidentally leave the instances
-     * locked.
-     * 
-     * @access public
-     * @param mixed an id or an array of ids of the GalleryNucleus' to be locked 
-     * @param integer how long to wait for the lock before giving up
-     * @return object GalleryStatus a status code
-     */
-    function lockLocal($ids, $timeout=10) {
-	assert('isset($ids)');
-	if (!is_array($ids)) {
-	    $ids = array($ids);
+	if (empty($this->_platform)) {
+	    list($ret, $platform) = GalleryPlatformFactory::newInstance('unix');
+	    if ($ret->isError()) {
+		return array($ret, null);
+	    }
+	    $this->_platform = $platform;
 	}
-
-	/*
-	 * If we already have a lock, fail.
-	 */
-	if (!empty($this->_lock) && $this->_lock->isLocked()) {
-	    return GalleryStatus::error(ERROR_ILLEGAL_LOCK,
-					__FILE__, __LINE__);
-	}
-
-	/*
-	 * Make and acquire a new lock.
-	 */
-	$this->_lock = new GalleryLock();
-	return $this->_lock->lock($ids, $timeout);
+	
+	return array(GalleryStatus::success(), $this->_platform);
     }
 
     /**
@@ -585,7 +599,25 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function lockWorld($timeout=10) {
-	return $this->lockLocal(array(), $timeout);
+	/*
+	 * If we already have a lock, fail.
+	 */
+	if (!empty($this->_lock) && $this->_lock->isLocked()) {
+	    return GalleryStatus::error(ERROR_ILLEGAL_LOCK,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Make and acquire a new lock.
+	 */
+	$this->_lock = new GalleryLock();
+	return $this->_lock->acquire($timeout);
+
+	/*
+	 * Flush the nucleus cache, since everything inside it cannot
+	 * be guaranteed to be up to date.
+	 */
+	$this->_nucleusCache = array();
     }
 
     /**
@@ -596,7 +628,14 @@ class Gallery {
      */
     function unlock() {
 	if (!empty($this->_lock)) {
-	    $ret = $this->_lock->unlock();
+
+	    /* Check to see if we've committed everything */
+	    if ($this->isCacheUncommitted()) {
+		return GalleryStatus::error(ERROR_UNCOMMITTED_DATA,
+					    __FILE__, __LINE__);
+	    }
+	    
+	    $ret = $this->_lock->release();
 	    if ($ret->isError()) {
 		return $ret;
 	    }
@@ -606,56 +645,45 @@ class Gallery {
     }
 
     /**
-     * Is the GalleryNucleus locked?
-     *
-     * @param mixed an id or array of ids of GalleryNucleus'
-     * @access public
-     */
-    function isIdLocked($ids) {
-	assert('!empty($ids)');
-	if (empty($this->_lock)) {
-	    return false;
-	}
-
-	if (!is_array($ids)) {
-	    $ids = array($ids);
-	}
-
-	return $this->_lock->isIdLocked($ids);
-    }
-
-    /**
      * Have we acquired a world lock?
      *
      * @return bool true if the world is locked
      */
-    function isWorldLocked() {
+    function isLocked() {
 	if (empty($this->_lock)) {
 	    return false;
 	}
 
-	return $this->_lock->isWorldLocked();
+	return $this->_lock->isLocked();
     }
 
     /**
      * Return an instance of the GalleryStorage class
      *
      * @access public
+     * @return array object GalleryStatus a status code
+     *               object GalleryStorage a storage instance
      */
     function getStorage() {
-	return $this->_storage;
-    }
+	if (empty($this->_storage)) {
+	    /* Set up our storage system */
+	    $type = $this->getConfig('storage.type');
+	    $config = $this->getConfig('storage.config');
+	    
+	    list($ret, $storage) =
+		    GalleryStorageFactory::newInstance($type, $config);
+	    if ($ret->isError()) {
+		return array($ret, null);
+	    }
 
-    /**
-     * Set a new GalleryStorage instance.
-     *
-     * Accept a new instance of GalleryStorage and use it for all further
-     * storage requests.
-     *
-     * @access public
-     */
-    function setStorage($storage) {
-	$this->_storage = $storage;
+	    $ret = $storage->init();
+	    if ($ret->isError()) {
+		return array($ret, null);
+	    }
+
+	    $this->_storage = $storage;
+	}
+	return array(GalleryStatus::success(), $this->_storage);
     }
 
     /**

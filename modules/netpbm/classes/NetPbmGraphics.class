@@ -1,0 +1,406 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * A NetPBM GalleryGraphics
+ *
+ * This class implements the GalleryGraphics API using NetPBM.
+ *
+ * @version $Id$
+ * @package GalleryGraphics
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class NetPbmGraphics extends GalleryGraphics {
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * The name of the pnmtojpeg command.  Default is 'pnmtojpeg'
+     * NetPBM replaced the 'ppmtojpeg' command with 'pnmtojpeg' at some point.
+     *
+     * @var string $_pnmToJpeg
+     * @access private
+     */
+    var $_pnmToJpeg = 'pnmtojpeg';
+
+    /**
+     * The path to the NetPBM directory.
+     *
+     * @var string $_netPbmPath;
+     * @access private
+     */
+    var $_netPbmPath;
+
+    /**
+     * Constructor
+     *
+     * @param array configuration information
+     */
+    function NetPbmGraphics($config) {
+	assert('!empty($config)');
+
+	$this->GalleryGraphics($config);
+	$this->_netPbmPath = $config['path'];
+
+	if (!empty($config['pnmtojpeg'])) {
+	    $this->_pnmToJpeg = $config['pnmtojpeg'];
+	}
+    }
+
+    /**
+     * Calculate the dimensions of the image file
+     *
+     * Calculate the dimensions of the image file
+     * 
+     * @access public
+     * @param string a file name
+     * @return array object GalleryStatus a status code,
+     *               int the image width, int the image height
+     */
+    function getImageDimensions($filename) {
+
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename);
+	if ($ret->isError()) {
+	    return array($ret, null, null);
+	}
+	
+	list($ret, $output) =
+		$this->_exec(array($convertToPnmCmd,
+				   array($this->_pnmCmd('pnmfile'),
+					 '--allimages')));
+
+	if ($ret->isError()) {
+	    return array($ret, null, null);
+	}
+
+	foreach ($output as $line) {
+	    if (ereg('([0-9]+) by ([0-9]+)', $line, $regs)) {
+		return array(GalleryStatus::success(), $regs[1], $regs[2]);
+	    }
+	}
+
+	return array(GalleryStatus::error(ERROR_GRAPHICS_FAILURE,
+					  __FILE__, __LINE__),
+		     null, null);
+    }
+
+    /**
+     * Resize the image to the target size specified
+     *
+     * Resize the image located at sourceFilename and write the results in      
+     * destFilename.  Resize the image to the dimensions provided, ignoring
+     * changes to the aspect ratio.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the target width
+     * @param string int the target height
+     * @return object GalleryStatus a status code
+     */
+    function resizeImage($sourceFilename, $destFilename, $width, $height) {
+	if (!$this->isSupportedFunction(IMAGE_FUNCTION_RESIZE)) {
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
+	}
+
+	return $this->_transformImage(array($this->_pnmCmd('pnmscale'),
+					    '--quiet',
+					    '-xsize', $width,
+					    '-ysize', $height),
+				      $sourceFilename,
+				      $destFilename);
+    }
+
+    /**
+     * Scale the image to the target size specified
+     *
+     * Resize the image located at sourceFilename and write the results in      
+     * destFilename.  Scale the image such that it fits within the bounding
+     * box specified by $targetSize x $targetSize, while maintaining the
+     * aspect ratio.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the target size
+     * @return object GalleryStatus a status code
+     */
+    function scaleImage($sourceFilename, $destFilename, $targetSize) {
+	if (!$this->isSupportedFunction(IMAGE_FUNCTION_SCALE)) {
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
+	}
+	
+	return $this->_transformImage(array($this->_pnmCmd('pnmscale'),
+					    '--quiet',
+					    '-xysize', $targetSize, $targetSize),
+				      $sourceFilename,
+				      $destFilename);
+    }
+		
+    /**
+     * Rotate the image by the degrees specified
+     *
+     * Rotate the image located at sourceFilename and write the results in      
+     * destFilename.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param string int the degrees to be rotated (one of -90, 180, 90)
+     * @return object GalleryStatus a status code
+     */
+    function rotateImage($sourceFilename, $destFilename, $degrees) {
+	if (!$this->isSupportedFunction(IMAGE_FUNCTION_ROTATE)) {
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    }
+		
+    /**
+     * Crop the image by the position and dimensions specified
+     *
+     * Crop the image located at sourceFilename and write the results in 
+     * destFilename.  The upper left corner of the subsection is
+     * at the x, y coordinate provided and the lower right is
+     * x+width, y+height.
+     *	
+     * @access public
+     * @param string the source file name
+     * @param string the destination file name (it will be overwritten if it exists)
+     * @param int x-axis origin
+     * @param int y-axis origin
+     * @param int width of crop rectangle
+     * @param int height of crop rectangle
+     * @return object GalleryStatus a status code
+     */
+    function cropImage($sourceFilename, $destFilename, $x, $y, $width, $height) {
+	if (!$this->isSupportedFunction(IMAGE_FUNCTION_CROP)) {
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
+	}
+	
+	return $this->_transformImage(array($this->_pnmCmd('pnmcut'),
+					    $x, $y, $width, $height),
+				      $sourceFilename,
+				      $destFilename);
+    }
+
+    /**
+     * Is this image valid?
+     *
+     * Is this image valid?  Can it be handled by this toolkit?
+     * 
+     * @access public
+     * @param string the image file name
+     * @return boolean true if the filename represents an image file
+     */
+    function isValidImage($filename) {
+
+	/* Test validity by getting image dimensions */
+	list($ret, $width, $height) = $this->getImageDimensions($filename);
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
+
+	/* 0x0 image is also invalid */
+	if ($width == 0 && $height == 0) {
+	    return array($ret, null);
+	}
+
+	return array(GalleryStatus::success(), true);
+    }
+
+    /**
+     * Get any extended image properties associated with this image
+     *
+     * Some file types have embedded data.  Eg, JPEG can have EXIF
+     * data.
+     * 
+     * @access public
+     * @param string the image file name
+     * @return array object GalleryStatus a status code
+     *               array a set of key value pairs
+     */
+    function getProperties($filename) {
+	if (!$this->isSupportedFunction(IMAGE_FUNCTION_PROPERTIES)) {
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
+	}
+	
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
+		     null);
+    }
+
+    /**
+     * Do the given transform on the source image 
+     *
+     * @param string the command to execute
+     * @param string the path to a source file
+     * @param string the path to a destination file
+     * @return object GalleryStatus a status code
+     */
+    function _transformImage($command, $sourceFilename, $destFilename) {
+	global $gallery;
+
+	/* Figure out our convert-to-pnm command */
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($sourceFilename);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Get a temp file name and figure out our convert-from-pnm command */
+	$tmpDir = $gallery->getConfig('core.directory.temp');
+	$tmpFilename = tempnam($tmpDir, 'g2');
+	if (empty($tmpFilename)) {
+	    /* This can happen if the $tmpDir path is bad */
+	    return GalleryStatus::error(ERROR_BAD_PATH,
+					__FILE__, __LINE__);
+	}
+
+	$fileType = GalleryUtilities::getFileType($sourceFilename);
+	list($ret, $convertFromPnmCmd) =
+		$this->_convertFromPnmCmd($tmpFilename, $fileType);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Do the conversion */
+	list($ret, $output) = 
+		$this->_exec(array($convertToPnmCmd,
+				   $command,
+				   $convertFromPnmCmd));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$success = $platform->rename($tmpFilename, $destFilename);
+	if (!$success) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
+					__FILE__, __LINE__);
+	} else {
+	    return GalleryStatus::success();
+	}
+    }
+		
+    /**
+     * Generate the correct command to convert an image type to PNM.
+     *
+     * @param string the path to an image file
+     * @return array object GalleryStatus a status code,
+     *               array 1 or more string commands
+     */
+    function _convertToPnmCmd($filename) {
+
+	$fileType = GalleryUtilities::getFileType($filename);
+	switch($fileType) {
+	case 'png':
+	    $cmd = $this->_pnmCmd('pngtopnm');
+	    break;
+
+	case 'jpg':
+	case 'jpeg':
+	    $cmd = $this->_pnmCmd('jpegtopnm');
+	    break;
+
+	case 'gif':
+	    $cmd = $this->_pnmCmd('giftopnm');
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(),
+		     array($cmd, '--quiet', $filename));
+    }
+
+    /**
+     * Generate the correct command to convert an image type from PNM.
+     *
+     * @param string the path to an image file
+     * @param string the path to an image file
+     * @return array object GalleryStatus a status code,
+     *               array 1 or more string commands
+     */
+    function _convertFromPnmCmd($filename, $fileType) {
+
+	switch($fileType) {
+	case 'png':
+	    $cmd = array($this->_pnmCmd('pnmtopng'),
+			 '>',
+			 $filename);
+	    break;
+
+	case 'jpg':
+	case 'jpeg':
+	    $cmd = array($this->_pnmCmd($this->_pnmToJpeg),
+			 '--quality=' . $this->getJpegImageQuality(),
+			 '>',
+			 $filename);
+	    break;
+
+	case 'gif':
+	    $cmd = array(array($this->_pnmCmd('ppmquant'),
+			       '256'),
+			 array($this->_pnmCmd('ppmtogif'),
+			       '>',
+			       $filename));
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(), $cmd);
+    }
+
+    /**
+     * Return the full path to the NetPBM command
+     *
+     * @access private
+     * @param string a netpbm command (eg. "giftopnm")
+     */
+    function _pnmCmd($cmd) {
+	global $gallery;
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $this->_netPbmPath . '/' . $cmd;
+    }
+}
+?>

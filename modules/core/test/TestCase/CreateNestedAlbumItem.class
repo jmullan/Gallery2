@@ -9,21 +9,15 @@ class CreateNestedAlbumItemTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
+	$ret = $gallery->lockWorld();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	print("Creating new root album item\n");
 	$rootAlbum = new AlbumItem();
 	$ret = $rootAlbum->createRoot("nestedRoot",
 				      $gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	/* Commit the cache */
-	$ret = $gallery->commitCache();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -42,13 +36,13 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 		return $ret;
 	    }
 
-	    /* Commit the cache */
-	    $ret = $gallery->commitCache();
-	    if ($ret->isError()) {
-		return $ret;
-	    }
-
 	    $parentId = $nested[$i]->getId();
+	}
+
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
 	/* Leggo of our locks */

@@ -32,11 +32,6 @@ $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 define('DATABASE_ID_SEQUENCE', 'sequence_id');
 
 /**
- * Name of the sequence we'll use for lock ids
- */
-define('DATABASE_LOCK_SEQUENCE', 'sequence_lock');
-
-/**
  * Prefix to prepend to table names
  */
 define('DATABASE_TABLE_PREFIX', 'gallery_');
@@ -52,12 +47,6 @@ define('DATABASE_COLUMN_PREFIX', 'g_');
 define('DATABASE_STATUS_NOT_CONNECTED', 0);
 define('DATABASE_STATUS_PARTIALLY_CONNECTED', 1);
 define('DATABASE_STATUS_FULLY_CONNECTED', 2);
-
-/**
- * Lock semaphores
- */
-define('SEMAPHORE_WORLD_LOCK_REQUESTED', 1);
-define('SEMAPHORE_WORLD_LOCK_ACQUIRED', 2);
 
 /**
  * Database implementation of the GalleryStorage interface.
@@ -79,14 +68,6 @@ class DatabaseStorage extends GalleryStorage {
      */
     var $_db;
 
-    /**
-     * The type of database we're connecting to (eg 'mysql', 'postgres')
-     *
-     * @var string $_type
-     * @access private
-     */
-    var $_type;
-    
     /**
      * Name of the database user
      * 
@@ -125,7 +106,7 @@ class DatabaseStorage extends GalleryStorage {
      * @var object DatabaseSchema an instance of the DatabaseSchema class
      * @access private
      */
-    var $_hostname;
+    var $_databaseSchema;
 
     /**
      * Status of the database connection
@@ -143,74 +124,50 @@ class DatabaseStorage extends GalleryStorage {
      */
     var $_queryCache;
 
+    var $_nucleusTypeCache;
+
     /**
      * Constructor.
+     *
+     * @param array database configuration values
      */
-    function DatabaseStorage() {
+    function DatabaseStorage($config) {
 	$this->GalleryStorage();
 	$this->_connectionStatus = DATABASE_STATUS_NOT_CONNECTED;
 	$this->_queryCache = array();
+
+	$this->_username = $config['username'];
+	$this->_password = $config['password'];
+	$this->_hostname = $config['hostname'];
+	$this->_database = $config['database'];
+	$this->_useDefault = $config['useDefault'];
     }
 
     /**
-     * Specify the type of database using ADOdb names (eg 'mysql', 'postgres')
+     * Do any initialization that is required by this class
      *
-     * @param string the database type
+     * @return object GallerySatus a status code
      */
-    function setType($type) {
-	$this->_type = $type;
+    function init() {
+	return $this->_connect();
     }
-
-    /**
-     * Specify the name of the user with which to connect to the database 
-     *
-     * @param string username
-     */
-    function setUsername($username) {
-	$this->_username = $username;
-    }
-
-    /**
-     * Specify the database user's password
-     *
-     * @param string password (in clear text)
-     */
-    function setPassword($password) {
-	$this->_password = $password;
-    }
-
-    /**
-     * Specify the name of the logical database
-     *
-     * @param string the name of the logical database
-     */
-    function setDatabase($database) {
-	$this->_database = $database;
-    }
-
-    /**
-     * Host the database runs on 
-     *
-     * @param string a hostname
-     */
-    function setHostname($hostname) {
-	$this->_hostname = $hostname;
-    }
-
+    
     /**
      * Connect to the database
      *
      * @return object GalleryStatus a status code
+     * @access private
      */
-    function connect() {
-	if (empty($this->_type) ||
-	        empty($this->_username) ||
-	        empty($this->_hostname)) {
-	    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__);
+    function _connect() {
+	global $gallery;
+	
+	if (empty($this->_username) || empty($this->_hostname)) {
+	    return GalleryStatus::error(ERROR_MISSING_VALUE,
+					__FILE__, __LINE__);
 	}
 
 	$this->_traceStart();
-	$this->_db = ADONewConnection($this->_type);
+	$this->_db = ADONewConnection($this->getType());
 	if (empty($this->_db)) {
 	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
 					__FILE__, __LINE__);
@@ -220,22 +177,21 @@ class DatabaseStorage extends GalleryStorage {
 	 * Turn on debugging in the database connection if Gallery is in debug
 	 * mode
 	 */
-	global $gallery;
 	if ($gallery->getDebug()) {
 	    $this->_db->debug = true;
 	}
 
-	if (empty($this->_database)) {
-	    $ret = $this->_db->PConnect($this->_hostname,
-					$this->_username,
-					$this->_password);
-	    $this->_connectionStatus = DATABASE_STATUS_PARTIALLY_CONNECTED;
-	} else {
+	if ($this->_useDefault) {
 	    $ret = $this->_db->PConnect($this->_hostname,
 					$this->_username,
 					$this->_password,
 					$this->_database);
 	    $this->_connectionStatus = DATABASE_STATUS_FULLY_CONNECTED;
+	} else {
+	    $ret = $this->_db->PConnect($this->_hostname,
+					$this->_username,
+					$this->_password);
+	    $this->_connectionStatus = DATABASE_STATUS_PARTIALLY_CONNECTED;
 	}
 	$this->_traceStop();
 
@@ -276,13 +232,19 @@ class DatabaseStorage extends GalleryStorage {
      * @access public
      * @abstract
      * @param string the path to a GalleryItem
-     * @return string the id of the GalleryItem
+     * @return array object GalleryStatus a status code
+     *               string the id of the GalleryItem
      */
     function getIdByPath($path) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
-					__FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
+					      __FILE__, __LINE__),
+			 null);
 	}
+	
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
 
     /**
@@ -294,7 +256,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function loadNucleus($id) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return array(GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					      __FILE__, __LINE__),
 			 null);
 	}
@@ -547,7 +509,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function saveNucleus(&$nucleus) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -785,7 +747,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function _saveMap($nucleus, $tableName, $memberName, &$map) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -883,7 +845,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function _saveList($nucleus, $tableName, $memberName, &$list) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -923,7 +885,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function deleteNucleus(&$nucleus) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -1026,7 +988,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function newNucleus(&$nucleus) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -1057,7 +1019,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function refreshNucleus($nucleus) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -1093,201 +1055,15 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
-     * Lock a set of GalleryNucleus' (or the world)
-     *
-     * For right now, let's treat every lock as a world lock.  At some point in
-     * the future we can optimize this to actually hold row locks for efficiency.
+     * Lock the world
      *
      * @access public
-     * @param array ids to lock (empty array means lock the world)
      * @param int timeout before giving up on the lock
-     * @return array a GalleryStatus, int a lock id
+     * @return object GalleryStatus a status code
      */
-    function acquireLock($ids=array(), $timeout) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return array(GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
-					      __FILE__, __LINE__),
-			 null);
-	}
-
-	$semaphoreCol = $this->prefixColumnName('semaphore');
-	$lockIdCol = $this->prefixColumnName('lockId');
-	$idCol = $this->prefixColumnName('id');
-
-	/* Remember when we started trying to acquire this lock */
-	$startTime = time();
-
-	$this->_traceStart();
-	$lockTable = DATABASE_TABLE_PREFIX . 'lock';
-	$lockSemaphoreTable = DATABASE_TABLE_PREFIX . 'lock_semaphore';
-
-	/* Make sure there are no pending world locks. */
-	while (true) {
-	    if ((time() - $startTime) > $timeout) {
-		$this->_traceStop();
-		return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-	    
-	    /* See if there are any pending world locks */
-	    $query = 'SELECT * FROM ' . $lockSemaphoreTable .
-		    ' WHERE ' . $semaphoreCol . '=?';
-	    $data = array(SEMAPHORE_WORLD_LOCK_REQUESTED);
-	    $recordSet = $this->_db->Execute($query, $data);
-	    if (!$recordSet) {
-		$this->_traceStop();
-		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-
-	    if ($recordSet->RecordCount() > 0) {
-		sleep(1);
-	    } else {
-		break;
-	    }
-	}
-
-	 /* Get our lock id */
-	$lockId = $this->_db->GenId(DATABASE_LOCK_SEQUENCE);
-
-	if (sizeof($ids) == 0) {
-	    /*
-	     * This is a world lock.  First get the "world lock requested"
-	     * semaphore to prevent any new local locks from being created.
-	     * Then get the "world lock acquired" lock (which is currently a
-	     * semaphore also).
-	     *
-	     * Technically I don't think the "world lock acquired" semaphore is
-	     * entirely necessary, since the "world lock requested" semaphore
-	     * pretty much covers it.  But, it might be useful in the future
-	     */
-	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
-		    '(' . $semaphoreCol . ', ' . $lockIdCol . ') ' .
-		     ' VALUES (?, ?)';
-
-	    /* Insert our semaphore */
-	    while (true) {
-		/*
-		 * If we've exceeded our time limit, abort.
-		 */
-		if ((time() - $startTime) > $timeout) {
-		    $this->_traceStop();
-		    $this->releaseLock($lockId, true);
-		    return array(GalleryStatus(ERROR_LOCK_IN_USE,
-					       __FILE__, __LINE__),
-				 null);
-		}
-		$data = array(SEMAPHORE_WORLD_LOCK_REQUESTED, $lockId);
-		$recordSet = $this->_db->Execute($query, $data);
-
-		if (!$recordSet) {
-		    /* We can't lock this record .. wait then retry */
-		    sleep(1);
-		} else {
-		    /* We got our semaphore */
-		    break;
-		}
-	    }
-
-	    /* Wait for local locks to go away */
-	    $query = 'SELECT COUNT(*) FROM ' . $lockTable;
-	    while (true) {
-		/*
-		 * If we've exceeded our time limit, abort.
-		 */
-		if ((time() - $startTime) > $timeout) {
-		    $this->_traceStop();
-		    $this->releaseLock($lockId, true);
-		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
-						      __FILE__, __LINE__),
-				 null);
-		}
-
-		$count = $this->_db->GetOne($query);
-		if ($count === false) {
-		    $this->_traceStop();
-		    $this->releaseLock($lockId, true);
-		    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
-						      __FILE__, __LINE__),
-				 null);
-		}
-
-		/*
-		 * No locks left?  Great, we're done with this step.
-		 */
-		if ($count == 0) {
-		    break;
-		} else {
-		    sleep(1);
-		}
-	    }
-
-	    /* Acquire our lock */
-	    $query = 'INSERT INTO ' . $lockSemaphoreTable .
-		    '(' . $semaphoreCol . ', ' . $lockIdCol . ') ' .
-		     'VALUES (?, ?)';
-	    while (true) {
-		/*
-		 * If we've exceeded our time limit, abort.
-		 */
-		if ((time() - $startTime) > $timeout) {
-		    $this->_traceStop();
-		    $this->releaseLock($lockId, true);
-		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
-						      __FILE__, __LINE__),
-				 null);
-		}
-		$data = array(SEMAPHORE_WORLD_LOCK_ACQUIRED, $lockId);
-		$recordSet = $this->_db->Execute($query, $data);
-		    
-		if (!$recordSet) {
-		    /* We can't lock this record .. wait then retry */
-		    sleep(1);
-		} else {
-		    /* We got our lock */
-		    break;
-		}
-	    }
-	} else {
-	    /*
-	     * This is a local lock.  Acquire all our locks.  If we fail to get
-	     * one, release all of them and let the user know.
-	     */
-	    $i = 0;
-	    $query = 'INSERT INTO ' . $lockTable . '(' .
-		     $idCol . ', ' . $lockIdCol . ') ' .
-		     'VALUES (?, ?)';
-	    while ($i < sizeof($ids)) {
-		$id = $ids[$i];
-
-		/*
-		 * If we've exceeded our time limit, abort.
-		 */
-		if ((time() - $startTime) > $timeout) {
-		    $this->_traceStop();
-		    $this->releaseLock($lockId, false);
-		    return array(GalleryStatus::error(ERROR_LOCK_IN_USE,
-						      __FILE__, __LINE__),
-				 null);
-		}
-		    
-		$data = array($id, $lockId);
-		$recordSet = $this->_db->Execute($query, $data);
-
-		if (!$recordSet) {
-		    /* We can't lock this record .. wait then retry */
-		    sleep(1);
-		    continue;
-		}
-
-		$i++;
-	    }
-	}
-
-	$this->_traceStop();
-	return array(GalleryStatus::success(), $lockId);
+    function acquireLock($timeout) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -1296,34 +1072,9 @@ class DatabaseStorage extends GalleryStorage {
      * @access public
      * @return object GalleryStatus a status code
      */
-    function releaseLock($lockId, $isWorldLock) {
-	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
-					__FILE__, __LINE__);
-	}
-
-	$this->_traceStart();
-
-	if ($isWorldLock) {
-	    $lockTable = DATABASE_TABLE_PREFIX . 'lock_semaphore';
-	} else {
-	    $lockTable = DATABASE_TABLE_PREFIX . 'lock';
-	}
-
-	$lockIdCol = $this->prefixColumnName('lockId');
-	$query = 'DELETE FROM ' . $lockTable .
-		 ' WHERE ' . $lockIdCol . '=?';
-	$data = array($lockId);
-
-	$recordSet = $this->_db->Execute($query, $data);
-	$this->_traceStop();
-	
-	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
+    function releaseLock() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -1362,7 +1113,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function search($criteriaArray, $targetArray) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
@@ -1483,12 +1234,23 @@ class DatabaseStorage extends GalleryStorage {
      * Initialize the DatabaseSchema instance
      *
      * @access private
+     * @return object GalleryStatus a status code
      */
     function _initDatabaseSchema() {
 	if (empty($this->_databaseSchema)) {
-	    require_once(dirname(__FILE__) . '/DatabaseSchema.class');
-	    $this->_databaseSchema = new DatabaseSchema($this->_db, $this->_type);
+	    $base = dirname(__FILE__);
+	    require_once($base . '/DatabaseSchema.class');
+	    require_once($base . '/DatabaseSchemaFactory.class');
+	    list($ret, $this->_databaseSchema) =
+		    DatabaseSchemaFactory::newInstance($this->getType(),
+						       $this->_db);
+
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -1499,11 +1261,15 @@ class DatabaseStorage extends GalleryStorage {
      */
     function createSchema() {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$this->_initDatabaseSchema();
+	$ret = $this->_initDatabaseSchema();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->createSchema();
 	$this->_traceStop();
@@ -1518,11 +1284,15 @@ class DatabaseStorage extends GalleryStorage {
      */
     function updateSchema() {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$this->_initDatabaseSchema();
+	$ret = $this->_initDatabaseSchema();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$this->_traceStart();
 	$ret = $this->_databaseSchema->updateSchema();
 	$this->_traceStop();
@@ -1539,22 +1309,26 @@ class DatabaseStorage extends GalleryStorage {
      * @param string the name of the database
      * @return object GalleryStatus a status code
      */
-    function createDatabase($databaseName) {
+    function createDatabase() {
 	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$this->_initDatabaseSchema();
+	$ret = $this->_initDatabaseSchema();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$this->_traceStart();
-	$ret = $this->_databaseSchema->createDatabase($databaseName);
+	$ret = $this->_databaseSchema->createDatabase($this->_database);
 	$this->_traceStop();
 
 	return $ret;
     }
 
     /**
-     * Drop a database.
+     * Drop the database.
      *
      * Use this very carefully!
      *
@@ -1564,15 +1338,19 @@ class DatabaseStorage extends GalleryStorage {
      * @param string the name of the database
      * @return object GalleryStatus a status code
      */
-    function dropDatabase($databaseName) {
+    function dropDatabase() {
 	if ($this->_connectionStatus != DATABASE_STATUS_PARTIALLY_CONNECTED) {
-	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
-	$this->_initDatabaseSchema();
+	$ret = $this->_initDatabaseSchema();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$this->_traceStart();
-	$ret = $this->_databaseSchema->dropDatabase($databaseName);
+	$ret = $this->_databaseSchema->dropDatabase($this->_database);
 	$this->_traceStop();
 
 	return $ret;
@@ -1587,32 +1365,36 @@ class DatabaseStorage extends GalleryStorage {
     function _identifyNucleus($id) {
 	assert('!empty($id)');
 
-	$idCol = $this->prefixColumnName('id');
-	$objectTypeCol = $this->prefixColumnName('objectType');
-	$table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
-	$query = 'SELECT ' . $objectTypeCol .
-		' FROM ' . $table .
-		' WHERE ' . $idCol . '=?';
-	$data = array($id);
-	$recordSet = $this->_db->Execute($query, $data);
-
-	if ($recordSet) {
-	    if ($recordSet->RecordCount() == 1) {
-		$type = $recordSet->fields[$objectTypeCol];
-		$recordSet->Close();
-	    }
-
-	    if (empty($type)) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-						  __FILE__, __LINE__), null);
+	if (empty($this->_nucleusTypeCache[$id])) {
+	    $idCol = $this->prefixColumnName('id');
+	    $objectTypeCol = $this->prefixColumnName('objectType');
+	    $table = DATABASE_TABLE_PREFIX  . 'gallerynucleus';
+	    $query = 'SELECT ' . $objectTypeCol .
+		    ' FROM ' . $table .
+		    ' WHERE ' . $idCol . '=?';
+	    $data = array($id);
+	    $recordSet = $this->_db->Execute($query, $data);
+	    
+	    if ($recordSet) {
+		if ($recordSet->RecordCount() == 1) {
+		    $type = $recordSet->fields[$objectTypeCol];
+		    $recordSet->Close();
+		}
+		
+		if (empty($type)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						      __FILE__, __LINE__), null);
+		} else {
+		    $this->_nucleusTypeCache[$id] = $type;
+		}
 	    } else {
-		return array(GalleryStatus::success(), $type);
+		return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
+						  __FILE__, __LINE__),
+			     null);
 	    }
-	} else {
-	    return array(GalleryStatus::error(ERROR_DATABASE_FAILURE,
-					      __FILE__, __LINE__),
-			 null);
 	}
+
+	return array(GalleryStatus::success(), $this->_nucleusTypeCache[$id]);
     }
 
     /**
@@ -1622,8 +1404,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return string a safe column name
      */
     function prefixColumnName($columnName) {
-	$this->_initDatabaseSchema();
-	return $this->_databaseSchema->prefixColumnName($columnName);
+	return DATABASE_COLUMN_PREFIX . "$columnName";
     }
 }
 ?>

@@ -36,14 +36,6 @@ class TestCase {
 	$ret = $this->testCleanup();
 	$this->traceStop();
 
-	if ($ret->isSuccess()) {
-	    if ($gallery->isCacheUncommitted()) {
-		print "<h1> Uncommitted items left in the cache! </h1>";
-		$ret = GalleryStatus::error(ERROR_UNKNOWN,
-					    __FILE__, __LINE__);
-	    }
-	}
-
 	/* Release any locks the tests left hanging */
 	$gallery->unlock();
 	

@@ -9,6 +9,11 @@ class CreateGroupAndUsersTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
+	$ret = $gallery->lockWorld();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	$group = new GalleryGroup();
 	$ret = $group->create();
 	if ($ret->isError()) {
@@ -41,14 +46,6 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret;
 	}
 
-	global $gallery;
-	$ret = $gallery->lockLocal(array($group->getId(),
-					 $user1->getId(),
-					 $user2->getId()));
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	print "<h2>ADD USERS TO GROUP!</h2>";
 	$ret = $group->addUser($user1->getId());
 	if ($ret->isError()) {
@@ -75,7 +72,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret;
 	}
-	
+
 	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;

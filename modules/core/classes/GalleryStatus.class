@@ -85,11 +85,11 @@ define("ERROR_MISSING_VALUE", 0x00000020);
 define("ERROR_DATABASE_FAILURE", 0x00000040);
 
 /**
- * A database operation was attempted before connecting to the database
+ * A database operation was attempted with an invalid database connection
  *
- * @constant ERROR_DATABASE_NOT_CONNECTED
+ * @constant ERROR_DATABASE_CONNECTION
  */
-define("ERROR_DATABASE_NOT_CONNECTED", 0x00000080);
+define("ERROR_DATABASE_CONNECTION", 0x00000080);
 
 /**
  * You attempted to modify an object using an in-memory version that
@@ -107,18 +107,18 @@ define("ERROR_OBSOLETE_DATA", 0x00000100);
 define("ERROR_LOCK_REQUIRED", 0x00000200);
 
 /**
- * You attempted an operation which requires a world lock.
- *
- * @constant ERROR_WORLD_LOCK_REQUIRED
- */
-define("ERROR_WORLD_LOCK_REQUIRED", 0x00000400);
-
-/**
  * You attempted to acquire a lock illegally
  *
  * @constant ERROR_ILLEGAL_LOCK
  */
-define("ERROR_ILLEGAL_LOCK", 0x00000800);
+define("ERROR_ILLEGAL_LOCK", 0x00000400);
+
+/**
+ * We tried a file operation on an unsupported file type
+ *
+ * @constant ERROR_UNSUPPORTED_FILE_TYPE
+ */
+define("ERROR_UNSUPPORTED_FILE_TYPE", 0x00000800);
 
 /**
  * You attempted an illegal operation on a deleted object
@@ -170,18 +170,18 @@ define("ERROR_PLATFORM_FAILURE", 0x00020000);
 define("ERROR_BROKEN_DERIVATIVE", 0x00040000);
 
 /**
- * We tried a file operation on an unsupported file type
- *
- * @constant ERROR_UNSUPPORTED_FILE_TYPE
- */
-define("ERROR_UNSUPPORTED_FILE_TYPE", 0x00080000);
-
-/**
  * We tried an unsupported operation
  *
  * @constant ERROR_UNSUPPORTED_OPERATION
  */
 define("ERROR_UNSUPPORTED_OPERATION", 0x00080000);
+
+/**
+ * We released the lock with uncommitted data
+ *
+ * @constant ERROR_UNCOMMITTED_DATA
+ */
+define("ERROR_UNCOMMITTED_DATA", 0x00100000);
 
 /**
  * The operation you attempted is unimplemented

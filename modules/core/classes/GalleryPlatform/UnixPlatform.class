@@ -99,7 +99,10 @@ class UnixPlatform extends GalleryPlatform {
 	    }
 	    
 	    $gallery->debug("Error Output:");
-	    $platform = $gallery->getPlatform();
+	    list($ret, $platform) = $gallery->getPlatform();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 
 	    if ($platform->file_exists($debugFile)) {
 		if ($fd = $platform->fopen($debugFile, "r")) {

@@ -213,7 +213,13 @@ class GalleryGroup extends GalleryNucleus {
     function &getUsers() {
         if (!($this->getLoadedFlag('users'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_users = new GalleryMap();
             $this->_users->setParentInfo($this, 'users');
             $storage->loadMember($this, 'users', $this->_users);

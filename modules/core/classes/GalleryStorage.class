@@ -172,6 +172,16 @@ class GalleryStorage {
     }
 
     /**
+     * Do any initialization that is required by this class
+     *
+     * @return object GallerySatus a status code
+     */
+    function init() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
+    }
+
+    /**
      * Turn debugging on or off.
      */
     function setDebug($bool) {
@@ -191,9 +201,13 @@ class GalleryStorage {
      * @access public
      * @abstract
      * @param string the path to a GalleryItem
-     * @return string the id of the GalleryItem
+     * @return array object GalleryStatus a status code
+     *               string the id of the GalleryItem
      */
     function getIdByPath($path) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
 
     /**
@@ -204,6 +218,9 @@ class GalleryStorage {
      * @return array object GalleryStatus a status code, object GalleryNucleus
      */
     function loadNucleus($id) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
 
     /**
@@ -214,6 +231,8 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function saveNucleus($nucleus) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -224,16 +243,20 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function deleteNucleus($nucleus) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
      * Create a new GalleryNucleus 
      *
      * @access public
-     * @param object GalleryNucleus a hint of the type of GalleryNucleus we're creating
-     * @return object GalleryNucleus a GalleryNucleus or null if the hint is bogus.
+     * @param object GalleryNucleus the GalleryNucleus to put the data in
+     * @return object GalleryStatus a status code
      */
-    function newNucleus($nucleus) {
+    function newNucleus(&$nucleus) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -248,20 +271,21 @@ class GalleryStorage {
      *               GalleryNucleus the refreshed object
      */
     function refreshNucleus($nucleus) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
 
     /**
-     * Lock a set of GalleryNucleus' (or the world)
-     *
-     * For right now, let's treat every lock as a world lock.  At some point in
-     * the future we can optimize this to actually hold row locks for efficiency.
+     * Lock the world
      *
      * @access public
-     * @param array ids to lock (empty array means lock the world)
      * @param int timeout before giving up on the lock
      * @return object GalleryStatus a status code
      */
-    function acquireLock($ids=array(), $timeout) {
+    function acquireLock($timeout) {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -271,6 +295,8 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLock() {
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
 
     /**
@@ -308,6 +334,9 @@ class GalleryStorage {
      *               array a list of target values
      */
     function search($criteria, $target) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
     }
     
     /**

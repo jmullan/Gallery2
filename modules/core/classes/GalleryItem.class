@@ -619,7 +619,7 @@ class GalleryItem extends FileSystemNucleus {
 	assert('!empty($ownerId)');
 
 	if (isset($parentId)) {
-	    if (!$gallery->isIdLocked($parentId)) {
+	    if (!$gallery->isLocked()) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
 	    }
@@ -771,6 +771,10 @@ class GalleryItem extends FileSystemNucleus {
         $meta['members']['viewCount'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_INTEGER);
+        $meta['members']['permissionExceptions'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_MAP |
+                      STORAGE_TYPE_INTEGER);
         $meta['members']['deniedPermissions'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_MAP |
@@ -812,7 +816,13 @@ class GalleryItem extends FileSystemNucleus {
     function &getAllowedPermissions() {
         if (!($this->getLoadedFlag('allowedPermissions'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_allowedPermissions = new GalleryMap();
             $this->_allowedPermissions->setParentInfo($this, 'allowedPermissions');
             $storage->loadMember($this, 'allowedPermissions', $this->_allowedPermissions);
@@ -829,7 +839,13 @@ class GalleryItem extends FileSystemNucleus {
     function &getChildIds() {
         if (!($this->getLoadedFlag('childIds'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_childIds = new GalleryList();
             $this->_childIds->setParentInfo($this, 'childIds');
             $storage->loadMember($this, 'childIds', $this->_childIds);
@@ -846,7 +862,13 @@ class GalleryItem extends FileSystemNucleus {
     function &getCommentIds() {
         if (!($this->getLoadedFlag('commentIds'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_commentIds = new GalleryList();
             $this->_commentIds->setParentInfo($this, 'commentIds');
             $storage->loadMember($this, 'commentIds', $this->_commentIds);
@@ -863,7 +885,13 @@ class GalleryItem extends FileSystemNucleus {
     function &getDeniedPermissions() {
         if (!($this->getLoadedFlag('deniedPermissions'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_deniedPermissions = new GalleryMap();
             $this->_deniedPermissions->setParentInfo($this, 'deniedPermissions');
             $storage->loadMember($this, 'deniedPermissions', $this->_deniedPermissions);
@@ -978,6 +1006,29 @@ class GalleryItem extends FileSystemNucleus {
     }
     
     /**
+     * Get a reference to the permissionExceptions object
+     * 
+     * @access public
+     * @return object GalleryMap the permissionExceptions instance
+     */
+    function &getPermissionExceptions() {
+        if (!($this->getLoadedFlag('permissionExceptions'))) {
+            global $gallery;
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
+            $this->_permissionExceptions = new GalleryMap();
+            $this->_permissionExceptions->setParentInfo($this, 'permissionExceptions');
+            $storage->loadMember($this, 'permissionExceptions', $this->_permissionExceptions);
+        }
+        return $this->_permissionExceptions;
+    }
+    
+    /**
      * Get a reference to the properties object
      * 
      * @access public
@@ -986,7 +1037,13 @@ class GalleryItem extends FileSystemNucleus {
     function &getProperties() {
         if (!($this->getLoadedFlag('properties'))) {
             global $gallery;
-            $storage = $gallery->getStorage();
+            list($ret, $storage) = $gallery->getStorage();
+            /*
+             * Ignore bad return codes here because we don't want accessors to
+             * return status codes.  We'll have to hope that if the storage
+             * isn't set up properly the user finds out about it before she
+             * gets to this point
+             */
             $this->_properties = new GalleryMap();
             $this->_properties->setParentInfo($this, 'properties');
             $storage->loadMember($this, 'properties', $this->_properties);

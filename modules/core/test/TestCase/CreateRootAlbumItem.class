@@ -24,7 +24,7 @@ class CreateAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 	
-	$ret = $gallery->lockLocal($album->getId());
+	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
 	    return $ret;
 	}

@@ -13,7 +13,10 @@ class EmptyGalleryTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$platform = $gallery->getPlatform();
+	list($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret;
+	}
 
 	foreach (array($gallery->getConfig('core.directory.albums'),
 		       $gallery->getConfig('core.directory.temp'),
