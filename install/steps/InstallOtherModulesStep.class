@@ -26,6 +26,15 @@ class InstallOtherModulesStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	/*
+	 * Disable the data cache before initializing.  If we don't do this
+	 * *first* then some data (like factory registrations) will get cached
+	 * now, and then the modules won't be able to update it later on.
+	 */
+	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
+	GalleryDataCache::setFileCachingEnabled(false);
+	GalleryDataCache::setMemoryCachingEnabled(false);
+
 	require(dirname(__FILE__) . '/../../init.php');
 	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
 	if ($ret->isError()) {
@@ -34,7 +43,6 @@ class InstallOtherModulesStep extends InstallStep {
 	}
 
 	/* We want to avoid using the cache */
-	GalleryDataCache::setFileCachingEnabled(false);
 	$groupedModules = array();
 	$groupLabel = array();
 	$moduleInstalled = array();
