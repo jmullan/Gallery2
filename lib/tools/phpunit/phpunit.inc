@@ -30,8 +30,6 @@
 // SOFTWARE.
 //
 
-//error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE |
-//   		E_CORE_ERROR | E_CORE_WARNING);
 error_reporting(E_ALL);
 
 /*
@@ -50,6 +48,14 @@ function trace($msg) {
 if (phpversion() >= '4') {
     function PHPUnit_error_handler($errno, $errstr, $errfile, $errline) {
 	global $PHPUnit_testRunning;
+
+	if ($errno == 2048) {
+	    /*
+	     * We're ignoring E_STRICT for now because of PHP 5's retarded inability
+	     * to allow us to use standard PHP4 constructs like 'var'
+	     */
+	    return;
+	}
 
 	$message = "<B>PHP ERROR:</B> ".$errstr;
 	if (function_exists('debug_backtrace')) {
