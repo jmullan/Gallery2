@@ -108,7 +108,7 @@
 
   <select name="{g->formVar var="form[watermarkId]"}" onchange="chooseWatermark(this.value)">
     {foreach from=$ItemEditWatermark.watermarks item=watermark}
-    <option value="{$watermark.id}" {if ($form.watermarkId == $watermark.id)}selected="selected"{/if}>{$watermark.fileName}</option>
+    <option value="{$watermark.id}" {if ($form.watermarkId == $watermark.id)}selected="selected"{/if}>{$watermark.name}</option>
     {/foreach}
   </select>
 </div>
