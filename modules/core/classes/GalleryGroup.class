@@ -40,7 +40,7 @@ GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryEntity.class');
  * @g2 <parent-class-name>GalleryEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -61,7 +61,6 @@ class GalleryGroup_core extends GalleryEntity {
      * @g2 <member>
      * @g2   <member-name>groupType</member-name>
      * @g2   <member-type>INTEGER</member-type>
-     * @g2   <member-size>SMALL</member-size>
      * @g2   <required/>
      * @g2 </member>
      *
@@ -76,7 +75,7 @@ class GalleryGroup_core extends GalleryEntity {
      * @g2 <member>
      * @g2   <member-name>groupName</member-name>
      * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
+     * @g2   <member-size>MEDIUM</member-size>
      * @g2   <unique/>
      * @g2 </member>
      *
@@ -103,13 +102,13 @@ class GalleryGroup_core extends GalleryEntity {
 
 	/* Check to see if we have a collision */
 	$query = '
-        SELECT
-          [GalleryGroup::id]
-        FROM
-          [GalleryGroup]
-        WHERE
-          [GalleryGroup::groupName] = ?
-        ';
+	SELECT
+	  [GalleryGroup::id]
+	FROM
+	  [GalleryGroup]
+	WHERE
+	  [GalleryGroup::groupName] = ?
+	';
 	list($ret, $results) =
 	    $gallery->search($query, array($groupName),
 			     array('limit' => array('count' => 1)));

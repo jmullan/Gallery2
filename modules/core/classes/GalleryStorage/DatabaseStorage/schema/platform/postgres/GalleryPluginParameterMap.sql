@@ -7,7 +7,7 @@
   DB_COLUMN_PREFIXpluginType
       VARCHAR(
       
-          128
+          32
         
       )
     
@@ -17,7 +17,7 @@
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
       
-          128
+          32
         
       )
     
@@ -84,7 +84,7 @@
       ) VALUES (
       'PluginParameterMap',
       1,
-      0
+      1
       );
 
   

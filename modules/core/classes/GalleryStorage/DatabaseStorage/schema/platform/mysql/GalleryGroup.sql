@@ -19,7 +19,7 @@
     DB_COLUMN_PREFIXgroupName
       varchar(
       
-          32
+          128
         
       )
     
@@ -41,7 +41,7 @@
       ) VALUES (
       'Group',
       1,
-      0
+      1
       );
 
   

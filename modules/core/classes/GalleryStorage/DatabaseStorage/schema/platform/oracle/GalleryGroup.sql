@@ -18,7 +18,7 @@
       ,
     DB_COLUMN_PREFIXgroupName
       VARCHAR2(
-       32 
+       128 
       )
     
     );
@@ -38,7 +38,7 @@
       ) VALUES (
       'Group',
       1,
-      0
+      1
       );
 
   

@@ -6,7 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXPluginParameterMap (
   DB_COLUMN_PREFIXpluginType
       VARCHAR2(
-       128 
+       32 
       )
     
     NOT NULL
@@ -14,7 +14,7 @@
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR2(
-       128 
+       32 
       )
     
     NOT NULL
@@ -72,7 +72,7 @@
       ) VALUES (
       'PluginParameterMap',
       1,
-      0
+      1
       );
 
   
