@@ -40,7 +40,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.8.5');
+	$this->setVersion('0.8.6');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(3, 0));
@@ -75,6 +75,7 @@ class ThumbnailModule extends GalleryModule {
 	case '0.8.3':
 	case '0.8.4':
 	case '0.8.5':
+	case '0.8.6':
 	}
 
 	return GalleryStatus::success();

@@ -161,6 +161,35 @@ class GalleryModule extends GalleryPlugin {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    /*
+	     * If the module is active, then give it the chance to re-register
+	     * its factory registrations, since they may have been updated with
+	     * the new module's code.  If the module isn't active, this will be
+	     * handled properly next time the module is activated.
+	     *
+	     * TODO: This is a hack.  We really should have a "reactivate"
+	     * method in the module that we can call to let the module do the
+	     * right thing.  This will break sooner or later when we add more
+	     * complexity to GalleryModule::activate().
+	     */
+	    list ($ret, $isActive) = $this->isActive();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($isActive) {
+		/* Unregister all factory implementations */
+		$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$ret = $this->performFactoryRegistrations();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
 	    $data = array('_version' => $this->getVersion(),
 			  '_callbacks' => $this->getCallbacks(),
 			  '_requiredCoreApi' => join(',', $this->getRequiredCoreApi()),
@@ -239,6 +268,9 @@ class GalleryModule extends GalleryPlugin {
     
     /**
      * @see GalleryPlugin::activate()
+     *
+     * Note: if you add something here, consider adding  the same functionality
+     * to installOrUpgrade (see the TODO there).
      */
     function activate() {
 	global $gallery;

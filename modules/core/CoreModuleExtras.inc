@@ -170,17 +170,11 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.11';
+	    $currentVersion = '0.8.12';
 	    break;
 
 	case '0.8':
-	    $currentVersion = '0.8.1';
-	    /* fall through */
-
 	case '0.8.1':
-	    $currentVersion = '0.8.2';
-	    /* fall through */
-
 	case '0.8.2':
 	    /*
 	     * Update our framework module parameters to have a leading
@@ -219,13 +213,7 @@ class CoreModuleExtras {
 	    /* fall through */
 
 	case '0.8.3':
-	    $currentVersion = '0.8.4';
-	    /* fall through */
-
 	case '0.8.4':
-	    $currentVersion = '0.8.5';
-	    /* fall through */
-
 	case '0.8.5':
 	    /*
 	     * Copy the information from viewedSinceTimestamp to originationTimestamp
@@ -247,9 +235,6 @@ class CoreModuleExtras {
 	    /* fall through */
 
 	case '0.8.6':
-	    $currentVersion = '0.8.7';
-	    /* fall through */
-
 	case '0.8.7':
 	    $ret = $module->setParameter('default.newAlbumsUseDefaults', 'false');
 	    if ($ret->isError()) {
@@ -259,9 +244,6 @@ class CoreModuleExtras {
 	    /* fall through */
 
 	case '0.8.8':
-	    $currentVersion = '0.8.9';
-	    /* fall through */
-
 	case '0.8.9':
 	    $storage =& $gallery->getStorage();
 
@@ -280,7 +262,8 @@ class CoreModuleExtras {
 	    /* fall through */
 
 	case '0.8.10':
-	    $currentVersion = '0.8.11';
+	case '0.8.11':
+	    $currentVersion = '0.8.12';
 	    break;
 	    
 	default:

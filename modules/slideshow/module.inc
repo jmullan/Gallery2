@@ -37,7 +37,7 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName('Slideshow');
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(3, 0));

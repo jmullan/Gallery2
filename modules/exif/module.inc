@@ -40,7 +40,7 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(3, 0));
@@ -82,6 +82,7 @@ class ExifModule extends GalleryModule {
 	    case '0.8.4':
 	    case '0.8.5':
 	    case '0.8.6':
+	    case '0.8.7':
 	    }
 	}
 
