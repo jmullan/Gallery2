@@ -1,6 +1,6 @@
 <?php
 include('../security.inc');
-require_once('../../../init.php');
+require_once('../../../init.inc');
 require_once('TestCase.class');
 require_once('TestCase/ActivateModule.class');
 require_once('TestCase/InstallModule.class');

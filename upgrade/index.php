@@ -77,7 +77,7 @@ if (isset($_SESSION['path'])) {
 }
 $_SESSION['path'] = __FILE__;
 
-require_once(dirname(__FILE__) . '/../init.php');
+require_once(dirname(__FILE__) . '/../init.inc');
 $ret = GalleryInitFirstPass(array('debug' => 'buffered',
 				  'noDatabase' => 1));
 if ($ret->isError()) {

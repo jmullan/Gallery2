@@ -25,7 +25,7 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
     return;
 }
 
-require_once(dirname(__FILE__) . '/init.php');
+require_once(dirname(__FILE__) . '/init.inc');
 if (!defined('G2_EMBED')) {
 
     /* Initialize Gallery */
