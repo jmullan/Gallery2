@@ -295,7 +295,7 @@ class GalleryPlatform {
      *
      * @param string a file path or URL
      * @param int if this is set to 1, search the include path also
-     * @return resource a file descriptor
+     * @return array of lines
      * @access public
      */
     function file($filename, $use_include_path=false) {
@@ -312,7 +312,7 @@ class GalleryPlatform {
      *
      * @param string a file path or URL
      * @param int if this is set to 1, search the include path also
-     * @return resource a file descriptor
+     * @return int the number of bytes read from the file
      * @access public
      */
     function readfile($filename, $use_include_path=false) {
