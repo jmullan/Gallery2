@@ -139,35 +139,36 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
+	$tests = array();
+	$tests[] = array('mime' => array('image/gif'), 'file' => 'test.gif', 'expected' => '(GIF.*PseudoClass|PseudoClass.*GIF)');
+	$tests[] = array('mime' => array('image/jpeg', 'image/pjpeg'), 'file' => 'test.jpg', 'expected' => 'JPEG.*DirectClass');
+	$tests[] = array('mime' => array('image/png'), 'file' => 'test.png', 'expected' => 'PNG.*DirectClass');
+	$tests[] = array('mime' => array('image/tiff'), 'file' => 'test.tif', 'expected' => 'TIFF.*(Pseudo|Direct)Class');
+	$tests[] = array('mime' => array('image/svg+xml'), 'file' => 'test.svg', 'expected' => 'SVG.*DirectClass');
+	
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
-	$command = array($imageMagickPath . 'identify',
-			 $dataPath . 'test.gif',
-			 $dataPath . 'test.jpg',
-			 $dataPath . 'test.png',
-			 $dataPath . 'test.tif',
-			 $dataPath . 'test.svg');
 
-	list ($success, $results) = $platform->exec(array($command));
-	if (!$success) {
-	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	$successCount = 0;
+	foreach ($tests as $test) {
+	    $command = array($imageMagickPath . 'identify', $dataPath . $test['file']);
+	
+	    list ($success, $results) = $platform->exec(array($command));
+	    $successCount += $success;
+	    if ($success) {
+		foreach ($results as $resultLine) {
+		    if (ereg($test['expected'], $resultLine)) {
+			foreach ($test['mime'] as $type) {
+			    $mimeTypes[$type] = 1;
+			}
+		    }
+		}
+	    }
 	}
 
-	$mimeTypes = array();
-	foreach ($results as $resultLine) {
-	    if (ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', $resultLine)) {
-		$mimeTypes['image/gif'] = 1;
-	    } elseif (ereg('JPEG.*DirectClass', $resultLine)) {
-		$mimeTypes['image/jpeg'] = 1;
-		$mimeTypes['image/pjpeg'] = 1;
-	    } elseif (ereg('PNG.*DirectClass', $resultLine)) {
-		$mimeTypes['image/png'] = 1;
-	    } elseif (ereg('TIFF.*(Pseudo|Direct)Class', $resultLine)) {
-		$mimeTypes['image/tiff'] = 1;
-	    } elseif (ereg('SVG.*DirectClass', $resultLine)) {
-		$mimeTypes['image/svg+xml'] = 1;
-	    }
+	if ($successCount == 0) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), array_keys($mimeTypes));

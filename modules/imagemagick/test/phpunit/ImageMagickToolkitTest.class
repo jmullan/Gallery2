@@ -206,6 +206,19 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			    $results);
     }
 
+    function testDiscoverMimeTypesWithBustedSvg() {
+	list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes('/crashSvgPath/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('image/gif',
+				  'image/jpeg',
+				  'image/pjpeg',
+				  'image/png',
+				  'image/tiff'),
+			    $results);
+    }
+
     function testGetOperationsAndProperties() {
 	list ($ret, $results) = ImageMagickToolkitHelper::getOperationsAndProperties();
 	if ($ret->isError()) {
@@ -315,23 +328,93 @@ class ImageMagickToolkitTestPlatform {
 	switch($cmd[0][0]) {
 	case '/validPath/identify':
 	case $imageMagickPath . 'identify':
-	    if ($cmd[0][1] == 'testGetProperties2.gif') {
-		return array(1, array('testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
-	    } else if (sizeof($cmd[0]) == 6) {
-		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01',
-				      'test.jpg[1] JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01',
-				      'test.png[2] PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01',
-				      'test.tif[3] TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01',
-				      'test.svg[4] SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01'));
-	    } else if (strstr($cmd[0][1], 'test.gif')) {
-		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
-	    } else if ($cmd[0][1] == 'testPerformOperations1.gif') {
-		return array(1, array('testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
-	    } else if ($cmd[0][1] == 'testPerformOperations4.jpg') {
-		return array(1, array('testPerformOperations1.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
+	    $lines = array();
+	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
+		switch(basename($cmd[0][$i])) {
+		case 'testGetProperties2.gif':
+		    $lines[] = 'testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+
+		case 'test.gif':
+		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.jpg':
+		    $lines[] = 'test.jpg JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.png':
+		    $lines[] = 'test.png PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.tif':
+		    $lines[] = 'test.tif TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01';
+		    break;
+		    
+		case 'test.svg':
+		    $lines[] = 'test.svg SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01';
+		    break;
+
+		case 'testPerformOperations1.gif':
+		    $lines[] = 'testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+
+		case 'testPerformOperations4.jpg':
+		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+		}
 	    }
+
+	    return array(1, $lines);
 	    break;
 
+	case '/crashSvgPath/identify':
+	case $imageMagickPath . 'identify':
+	    $lines = array();
+	    $success = 1;
+	    for ($i = 0; $i < sizeof($cmd[0]); $i++) {
+		switch(basename($cmd[0][$i])) {
+		case 'testGetProperties2.gif':
+		    $lines[] = 'testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+
+		case 'test.gif':
+		    $lines[] = 'test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.jpg':
+		    $lines[] = 'test.jpg JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.png':
+		    $lines[] = 'test.png PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
+		    break;
+		    
+		case 'test.tif':
+		    $lines[] = 'test.tif TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01';
+		    break;
+		    
+		case 'test.svg':
+		    $lines[] = 'Segmentation fault (core dumped)';
+		    $success = 0;
+		    break;
+
+		case 'testPerformOperations1.gif':
+		    $lines[] = 'testPerformOperations1.gif GIF 300x400+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+
+		case 'testPerformOperations4.jpg':
+		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+		}
+
+		if (!$success) {
+		    break;
+		}
+	    }
+	    return array($success, $lines);
+	    break;
+	    
 	case $imageMagickPath . 'convert':
 	case '/validPath/convert':
 	    if ($cmd[0][1] == '-scale' && $cmd[0][2] == '200x200') {
