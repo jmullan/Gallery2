@@ -55,7 +55,11 @@ class UserAlbumModule extends GalleryModule {
 	global $gallery;
 
 	if (!isset($currentVersion)) {
-	    foreach (array('view' => 'everybody', 'fullsize' => '1')
+	    list($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);   
+	    }
+	    foreach (array('view' => 'everybody', 'fullSize' => '1', 'targetLocation' => $rootId)
 		     as $key => $value) {
 		$ret = $this->setModuleParameter($key, $value);
 		if ($ret->isError()) {
@@ -107,7 +111,7 @@ class UserAlbumModule extends GalleryModule {
 
 	    // Create top level album..
 	    list ($ret, $album) = GalleryCoreApi::createAlbum(
-		$module['targetlocation'], $user->getUserName(), $user->getFullName(), '', '', '');
+		$module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -143,7 +147,7 @@ class UserAlbumModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $viewPermissions = $module['fullsize'] ? array('core.viewAll')
+	    $viewPermissions = $module['fullSize'] ? array('core.viewAll')
 						   : array('core.view', 'core.viewResizes');
 	    switch ($module['view']) {
 	    case 'everybody':

@@ -43,7 +43,7 @@ class UserAlbumSiteAdminController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['save'])) {
-	    foreach (array('view', 'fullsize','targetlocation') as $key) {
+	    foreach (array('view', 'fullSize','targetLocation') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $form[$key]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -76,7 +76,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 	global $gallery;
 	if ($form['formName'] != 'UserAlbumSiteAdmin') {
 	    $form['formName'] = 'UserAlbumSiteAdmin';
-	    foreach (array('view', 'fullsize', 'targetlocation') as $key) {
+	    foreach (array('view', 'fullSize', 'targetLocation') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', $key);
 		if ($ret->isError()) {

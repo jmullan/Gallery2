@@ -55,7 +55,7 @@ class UserAlbumTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'fullsize', '0');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'fullSize', '0');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -67,7 +67,7 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'targetlocation', $this->_parentAlbum->_id);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'targetLocation', $this->_parentAlbum->_id);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

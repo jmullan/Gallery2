@@ -92,8 +92,8 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[view]', 'allusers');
-	GalleryUtilities::putRequestVariable('form[fullsize]', '0');
-	GalleryUtilities::putRequestVariable('form[targetlocation', $this->_getRootId());
+	GalleryUtilities::putRequestVariable('form[fullSize]', '0');
+	GalleryUtilities::putRequestVariable('form[targetLocation]', $this->_getRootId());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

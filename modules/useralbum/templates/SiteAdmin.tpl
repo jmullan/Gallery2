@@ -37,16 +37,16 @@
       </tr><tr>
 	<td> {g->text text="Full size images viewable"} </td>
 	<td>
-	  <select name="{g->formVar var="form[fullsize]"}">
-	    {html_options options=$UserAlbumSiteAdmin.sizeList selected=$form.fullsize}
+	  <select name="{g->formVar var="form[fullSize]"}">
+	    {html_options options=$UserAlbumSiteAdmin.sizeList selected=$form.fullSize}
 	  </select>
 	</td>
       </tr><tr>
 	<td> {g->text text="Location for new user albums"} </td>
 	<td>
-      <select name="{g->formVar var="form[targetlocation]"}">
+      <select name="{g->formVar var="form[targetLocation]"}">
         {foreach from=$UserAlbumSiteAdmin.targetLocation item=album}
-	<option value="{$album.data.id}"{if $album.data.id==$form.targetlocation} selected="selected"{/if}>
+	<option value="{$album.data.id}"{if $album.data.id==$form.targetLocation} selected="selected"{/if}>
           {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	  {$album.data.title|default:$album.data.pathComponent}
 	</option>
