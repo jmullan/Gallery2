@@ -1,5 +1,23 @@
 {g->form arg1="controller=`$SearchScan.controller`"}
   {g->input type="hidden" name="form[formName]"}SearchScan{/g->input}
+      <script type="text/javascript">
+        function setCheck(val) {ldelim}
+          var frm = document.forms[0];
+          {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+            {foreach from=$moduleInfo.options key=optionId item=optionInfo}
+              frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=val;
+            {/foreach}
+          {/foreach}
+        {rdelim}
+        function invertCheck() {ldelim}
+          var frm = document.forms[0];
+          {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+            {foreach from=$moduleInfo.options key=optionId item=optionInfo}
+              frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=!(frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked)
+            {/foreach}
+          {/foreach}
+        {rdelim}
+      </script>
 
   {g->main}
     {g->breadcrumb}
@@ -62,6 +80,15 @@
 	  {/g->table}
 	{/g->box}
       {/foreach}
+      {g->box}
+        {g->row}
+          {g->column}
+            <a href="javascript:setCheck(1)">{g->text text="Check All"}</a>
+            <a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a>
+            <a href="javascript:invertCheck(0)">{g->text text="Invert"}</a>
+          {/g->column}
+        {/g->row}
+      {/g->box}
 
       {if !empty($SearchScan.searchResults)}
 	{g->box}
