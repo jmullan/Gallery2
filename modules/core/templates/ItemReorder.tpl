@@ -7,30 +7,30 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Reorder Album"}
-      </div>
+      </h2>
     </div>
 
   </div>
 
   {if isset($ItemReorder.show.automaticOrderMessage)}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
       <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEditAlbum" arg3="itemId=`$ItemAdmin.item.id`"}" value="{g->text text="[change]"}"/>
-    </div>
+    </p>
   </div>
   {else}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Change the order of the items in this album."}
-    </div>
+    </p>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Move this item"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[selectedId]"}">
 	{foreach from=$ItemReorder.peers item=peer}

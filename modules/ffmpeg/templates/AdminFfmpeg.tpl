@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="FFMPEG Settings"}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -25,14 +25,14 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="FFMPEG is a graphics toolkit that can be used to process video files that you upload to Gallery.  You must install the FFMPEG binary on your machine, then enter the path to it in the text box below.  If you're on a Unix machine, don't forget to make the binary executable (<i>chmod 755 ffmpeg</i> in the right directory should do it)"}
-    </div>
+    </p>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
-	{g->text text="Path to FFMPEG:"}
-      </div>
+      <h3 class="giTitle">
+	{g->text text="Path to FFMPEG"}
+      </h3>
 	
       <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
       
@@ -70,9 +70,9 @@
 
   {if !empty($AdminFfmpeg.tests)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="FFMPEG binary test results"}
-    </div>
+    </h3>
 
     <table class="gbDataTable">
       <tr>
@@ -116,13 +116,13 @@
 
   {if $AdminFfmpeg.mimeTypes}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Supported MIME Types"}
-    </div>
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="The FFMPEG module can support files with the following MIME types"}
-    </div>
+    </p>
 	
     {foreach from=$AdminFfmpeg.mimeTypes item=mimeType}
     {$mimeType} 

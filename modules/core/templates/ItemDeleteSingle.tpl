@@ -7,19 +7,19 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Delete %s" arg1=$ItemDeleteSingle.itemTypeNames.0}
-      </div>
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Delete"}
-    </div>
+    </h2>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Are you sure you want to delete this %s?"
 	       arg1=$ItemDeleteSingle.itemTypeNames.1}
       {if $ItemDeleteSingle.childCount > 0}
@@ -29,10 +29,10 @@
                  arg1=$ItemDeleteSingle.childCount}
       {/if}
 
-      <b>
+      <strong>
         {g->text text="There is no undo!"}
-      </b>
-    </div>
+      </strong>
+    </p>
   </div>
 
   <div class="gbButtons">

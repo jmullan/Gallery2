@@ -7,17 +7,17 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Log in to your account"}
-      </div>
+      </h2>
     </div>
   </div>
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="User name"}
-      </div>
+      </h2>
 
       <input type="text" name="{g->formVar var="form[username]"}" value="{$form.username}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <script type="text/javascript">document.forms[0]['{g->formVar var="form[username]"}'].focus();</script>
@@ -30,9 +30,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Password"}
-      </div>
+      </h2>
 
       <input type="password" name="{g->formVar var="form[password]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 

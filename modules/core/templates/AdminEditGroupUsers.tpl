@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Edit Group Members"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -29,19 +29,19 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text one="This group contains %d user"
                many="This group contains %d users"
                count=$form.userCount
                arg1=$form.userCount}
-    </div>
+    </p>
   </div>
 
   {if !empty($form.list.users)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Remove Member"}
-    </div>
+    </h2>
 
     <select name="{g->formVar var="form[list][userId]"}" size="1">
 	{html_options options=$form.list.users}
@@ -58,9 +58,9 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Add Member"}
-    </div>
+    </h2>
 
     <input type="text" name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}" class="button"/>

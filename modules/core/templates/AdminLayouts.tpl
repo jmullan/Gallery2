@@ -120,13 +120,13 @@
 
     {if ($AdminLayouts.mode == "editLayout")}
     <div class="gbAdmin">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="%s Layout Settings" arg1=$AdminLayouts.layouts[$AdminLayouts.layoutId].name}
-      </div>
+      </h3>
 
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="These are the global settings for the layout.  They can be overridden at the album level."}
-      </div>
+      </p>
 
      {if isset($AdminLayouts.customTemplate)}
 

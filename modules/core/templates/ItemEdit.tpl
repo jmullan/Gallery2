@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Edit %s" arg1=$ItemEdit.itemTypeNames.0}
-      </div>
+      </h2>
     </div>
     
   </div>

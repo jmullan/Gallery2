@@ -7,18 +7,18 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Edit a group"}
-      </div>
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Group Name"}
-      </div>
+      </h3>
       
       <div class="giSubtitle">
 	{g->text text="required"}

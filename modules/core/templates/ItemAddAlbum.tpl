@@ -7,25 +7,25 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Add Sub-Album"}
-      </div>
+      </h2>
     </div>
 
   </div>
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Name"}
-      </div>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <span class="giSubtitle">
+	{g->text text="(required)"}
+      </span>
+      </h3>
 
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="The name of this album on your hard disk.  It must be unique in this album.  Only use alphanumeric characters, underscores or dashes.  You will be able to rename it later."}
-      </div>
+      </p>
 
       {strip}
 	{foreach from=$ItemAdmin.parents item=parent}
@@ -56,13 +56,13 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Title"}
-      </div>
+      </h3>
       
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="This is the album title."}
-      </div>
+      </p>
 
       {include file="gallery:modules/core/templates/MarkupBar.tpl" 
                viewL10domain="modules_core" 
@@ -72,13 +72,13 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Summary"}
-      </div>
+      </h3>
 
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="This is the album summary."}
-      </div>
+      </p>
 
       {include file="gallery:modules/core/templates/MarkupBar.tpl" 
                viewL10domain="modules_core" 
@@ -87,25 +87,25 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Keywords"}
-      </div>
+      </h3>
 
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="Keywords are not visible, but are searchable."}
-      </div>
+      </p>
 
       <textarea rows="2" cols="60" name="{g->formVar var="form[keywords]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">{$form.keywords}</textarea>
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Description"}
-      </div>
+      </h3>
 
-      <div class="giDescription">
+      <p class="giDescription">
 	{g->text text="This is the long description of the album."}
-      </div>
+      </p>
 
       {include file="gallery:modules/core/templates/MarkupBar.tpl" 
                viewL10domain="modules_core" 

@@ -7,22 +7,21 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Edit a user"}
-      </div>
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Username"}
-      </div>
-
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+        <span class="giSubtitle">
+          {g->text text="(required)"}
+        </span>
+      </h3>
 
       <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
       <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
@@ -41,22 +40,21 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Full Name"}
-      </div>
+      </h3>
       
       <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     </div>
 
     {if $AdminEditUser.show.email}
     <div class="gbDataEntry">
-      <div class="giTitle">
-	{g->text text="Email Address"}
-      </div>
-
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
+      <h3 class="giTitle">
+	{g->text text="E-mail Address"}
+        <div class="giSubtitle">
+          {g->text text="required"}
+        </div>
+      </h3>
 
       <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	  
@@ -70,9 +68,9 @@
 
     {if $AdminEditUser.show.language}
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Language"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[language]"}">
 	  {html_options options=$AdminEditUser.languageList selected=$form.language}
@@ -82,13 +80,12 @@
 
     {if $AdminEditUser.show.password}
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Password"}
-      </div>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
-
+        <span class="giSubtitle">
+          {g->text text="required"}
+        </span>
+      </h3>
       <input size="32" type="password" name="{g->formVar var="form[password1]"}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
       {if isset($form.error.password1.missing)}
@@ -99,13 +96,13 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Verify Password"}
-      </div>
-      <div class="giSubtitle">
-	{g->text text="required"}
-      </div>
-
+        <span class="giSubtitle">
+          {g->text text="required"}
+        </span>
+      </h3>
+      
       <input size="32" type="password" name="{g->formVar var="form[password2]"}"/>
 
       {if isset($form.error.password2.missing)}

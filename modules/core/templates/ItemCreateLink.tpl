@@ -7,11 +7,10 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Link an Item"}
-      </div>
+      </h2>
     </div>
-    
   </div>
 
   {if (isset($status))}
@@ -27,18 +26,18 @@
 
   {if !empty($ItemCreateLink.peers)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Source"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose the items you want to link"}
       {if ($ItemCreateLink.numPages > 1) }
       {g->text text="(page %d of %d)"
 	       arg1=$ItemCreateLink.page
 	       arg2=$ItemCreateLink.numPages}
       {/if}
-    </div>
+    </p>
     
     <table>
       {foreach from=$ItemCreateLink.peers item=peer}
@@ -76,13 +75,13 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Destination"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose a new album for the link"}
-    </div>
+    </p>
       
     <select name="{g->formVar var="form[destination]"}">
       {foreach from=$ItemCreateLink.albumTree item=album}
@@ -111,9 +110,9 @@
   </div>
   {else}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This album contains no items to link."}
-    </div>
+    </p>
   </div>
   {/if}
 </div>

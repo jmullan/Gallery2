@@ -12,7 +12,7 @@
   </p>
     
   <div id="gsHeader">
-    <!-- header -->
+    {include file="gallery:layouts/matrix/templates/banner.tpl"}    
   </div>
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">

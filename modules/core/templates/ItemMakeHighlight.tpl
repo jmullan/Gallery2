@@ -7,17 +7,17 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
-	{g->text text="Use as parent's thumbnail?"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Use As Parent&rsquo;s Thumbnail?"}
+      </h2>
     </div>
 
   </div>
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="You can make this item the thumbnail for its parent album."}
-    </div>
+    </p>
     
     <input type="submit" name="{g->formVar var="form[action][makeHighlight]"}" value="{g->text text="Yes, highlight this item!"}" class="button"/>
   </div>

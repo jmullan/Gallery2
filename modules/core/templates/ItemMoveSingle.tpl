@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Move %s" arg1=$ItemMoveSingle.itemTypeNames.0}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -23,13 +23,13 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Destination"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose a destination album"}
-    </div>
+    </p>
       
     <select name="{g->formVar var="form[destination]"}" onchange="javascript:checkPermissions(this.form)">
       {foreach from=$ItemMoveSingle.albumTree item=album}

@@ -5,13 +5,13 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div class="gbAdmin">
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Thumbnail"}
-  </div>
+  </h2>
   
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value."}
-  </div>
+  </p>
   
   {if $ItemEditPhotoSizes.editSizes.can.createThumbnail}
   <input type="text" size="6" name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
@@ -40,13 +40,13 @@
 </div>
 
 <div class="gbAdmin">
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Resized Photos"}
-  </div>
+  </h2>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="These sizes are alternate resized versions of the original you would like to have available for viewing."}
-  </div>
+  </p>
 
   {if $ItemEditPhotoSizes.editSizes.can.createThumbnail}
   {counter start=0 assign=index}

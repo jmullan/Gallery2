@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="NetPBM Settings"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -25,14 +25,14 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="NetPBM is a graphics toolkit that can be used to process images that you upload to Gallery.  You must install the NetPBM binaries on your machine, then enter the path to them in the text box below.  If you're on a Unix machine, don't forget to make the binaries executable (<i>chmod 755 *</i> in the NetPBM directory should do it)"}
-    </div>
+    </p>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="NetPBM Path"}
-      </div>
+      </h3>
 	
       <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
       
@@ -56,9 +56,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	  {g->text text="PNM to JPEG converter"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[pnmtojpeg]"}">
 	  {html_options values=$AdminNetPbm.pnmToJpegList selected=$form.pnmtojpeg output=$AdminNetPbm.pnmToJpegList}
@@ -66,9 +66,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="JPEG Quality"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[jpegQuality]"}">
 	  {html_options values=$AdminNetPbm.jpegQualityList selected=$form.jpegQuality output=$AdminNetPbm.jpegQualityList}
@@ -77,14 +77,14 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="NetPBM will lose embedded EXIF data if you modify the original image, unless you have the optional <b>jhead</b> binary installed on your system.  If you have jhead installed, enter the path below.  Without it, NetPBM will still perform all of its normal functions, but you should always use the <i>preserve original image</i> option when rotating and scaling images"}
-    </div>
+    </p>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
-	{g->text text="Path to jhead:"}
-      </div>
+      <h3 class="giTitle">
+	{g->text text="Path to jhead"}
+      </h3>
 
       <input type="text" size="40" name="{g->formVar var="form[jheadPath]"}" value="{$form.jheadPath}"/>
 
@@ -104,9 +104,9 @@
 
   {if !empty($AdminNetPbm.tests)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="NetPBM binary test results"}
-    </div>
+    </h3>
 
     <table class="gbDataTable">
       <tr>
@@ -155,13 +155,13 @@
 
   {if $AdminNetPbm.mimeTypes}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Supported MIME Types"}
-    </div>
+    </h3>
 
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="The NetPBM module can support files with the following MIME types"}
-    </div>
+    </p>
     
     {foreach from=$AdminNetPbm.mimeTypes item=mimeType}
     {$mimeType} 

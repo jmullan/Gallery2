@@ -22,12 +22,14 @@ function checkForm() {ldelim}
 
 <div class="gbMenu">
   <form id="SearchSystemContent" action="{g->url}" method="post">
-      <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.subView}"/>
-      <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent"/>
-      <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="this.style.background='#fff';this.value='';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#ccc';"/>
-      <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1"/>
-	  <a href="#" onclick="return checkForm()" class="button">{g->text text="Go"}</a>
     <ul>
+      <li>
+        <input type="hidden" name="{g->formVar var="view"}" value="{$SearchSystemContent.subView}" />
+        <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent" />
+        <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="this.style.background='#fff';this.value='';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#ccc';" />
+        <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1" />
+        <a href="#" onclick="return checkForm()" class="button">{g->text text="Go"}</a>
+      </li>
       <li>
       <a href="{g->url arg1="view=search:SearchScan" arg2="form[useDefaultSettings]=1"}">{g->text text="advanced search"}</a>
       </li>

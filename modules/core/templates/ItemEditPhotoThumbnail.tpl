@@ -5,13 +5,13 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div class="gbAdmin">
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Thumbnail"}
-  </div>
+  </h2>
   
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="You can select which part of the photo will be used for the thumbnail.  This will have no effect on the resized or original versions of the image."}
-  </div>
+  </p>
 
   {if $ItemEditPhotoThumbnail.editThumbnail.can.crop}
   <!--
@@ -106,9 +106,9 @@
   </script>
 
   <div class="gbDataEntry">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Aspect Ratio: "}
-    </div>
+    </h2>
 
     <select onchange="javascript:setAspectRatio(this.value)">
       {foreach from=$ItemEditPhotoThumbnail.editThumbnail.aspectRatioList key=index item=aspect}

@@ -7,15 +7,15 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Upload Complete"}
-      </div>
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {if isset($ItemAddConfirmation.count)}
       {g->text one="Successfully added %d file." 
 	       many="Successfully added %d files." 
@@ -24,7 +24,7 @@
       {else}
       {g->text text="No files added."}
       {/if}
-    </div>
+    </h3>
 
     {foreach from=$ItemAddConfirmation.status.addedFiles item=entry}
     {capture name="itemLink"}

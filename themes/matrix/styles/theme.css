@@ -33,6 +33,7 @@
 body {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 62.5%;
+	color: #333;
 }
 
 /*      font-size using ems
@@ -60,11 +61,14 @@ for more info: http://www.clagnut.com/blog/348/
 */
 
 form, div { 
-    margin: 0; 
-    padding 0;
+        margin: 0; 
+        padding 0;
 }
 
-h1, h2, h3, h4, h5, h6 { font-family: "Gill Sans", Verdana, Arial, Helvetica, sans-serif; }
+h1, h2, h3, h4, h5, h6 {
+        font-family: "Gill Sans", "Trebuchet MS", Arial, Helvetica, sans-serif;
+        margin: 0;
+}
 
 a {
         font-weight: bold;
@@ -75,8 +79,6 @@ a:link {}
 a:visited {}
 a:hover { color: #fd6704; }
 a:active {}
-
-
 
 /*	GALLERY
 	Category 1: Gallery		
@@ -109,7 +111,6 @@ a:active {}
 
 #gsSidebar, #gsAdminSidebar {
         float: left;
-	/*width: 156px;*/
 	width: 20%;
 	border-top: 1px solid #ccc;
 	background-color: #fff;
@@ -217,7 +218,6 @@ table.gbDataTable img { border: none; }
 	clear: both;
 }
 
-
 /*      BOXES
 	Category 3: box definitions			   
 	This also includes Category 4: items that are defined 
@@ -225,14 +225,6 @@ table.gbDataTable img { border: none; }
 */
 
 .gbDataEntry { margin: 6px 0px; }
-
-/*#gsAdminContents ul, #gsAdminContents li {
-        list-style: none;
-        margin: 0;
-        padding: 1px 0;
-}
-
-#gsAdminContents li label { vertical-align: super; }*/
 
 ul.gbAdminList {
         list-style-type: none;
@@ -325,16 +317,6 @@ ul.gbAdminList li label { vertical-align: super; }
 	padding: 0 0 0 0;
 }
 
-/*	not implemented yet	 
-.gbMenu ul {  }
-.gbMenu li.comments:before { content: url('../images/icon_comments.jpg'); }
-.gbMenu li.general:before { content: url('../images/icon_general.jpg'); }
-.gbMenu li.users:before { content: url('../images/icon_users.jpg'); }
-.gbMenu li.groups:before { content: url('../images/icon_groups.jpg'); }
-.gbMenu li.modules:before { content: url('../images/icon_modules.jpg'); }
-.gbMenu li.layouts:before { content: url('../images/icon_layouts.jpg'); }
-.gbMenu li.debug:before { content: url('../images/icon_debug.jpg'); } */
-
 .gbMenu:after {
 	content: "."; 
 	display: block; 
@@ -349,18 +331,16 @@ ul.gbAdminList li label { vertical-align: super; }
 
 /*	text inside the title bar */
 .giTitle {
-	font-size: 1.2em;
+	font-size: 1.3em;
 	font-weight: bold;
-	margin: 0 8px 0 0;
-	padding: 0;
 }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb { 
-        font-size: 1.2em;
+        font-size: 1.1em;
         font-weight: bold;
 	margin: 0;
-	padding: 8px 8px; 
+	padding: 6px 8px; 
 }
 
 .gbBreadCrumb li { 
@@ -376,24 +356,20 @@ ul.gbAdminList li label { vertical-align: super; }
 	background-image: none;
 }
 
-/*      horizontal link divider */
-#gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }
-/*.gbBreadCrumb li + li:before { content: '\00BB \ '; }*/
-
-/* inside gsAlbumContents or gsAdmiinContents */
+/*      inside gsAlbumContents or gsAdmiinContents */
 
 .gbTopFlag, .gbBottomFlag {
 	background-color: #eee;
 	margin: 0;
-	padding: 0;
+	padding: 4px 0 4px 0;
 }
 
 .gbTopFlag:after, .gbBottomFlag:after {
-	content: "."; 
-	display: block;
-	height: 0; 
-	clear: both; 
-    visibility: hidden;
+        content: "."; 
+        display: block;
+        height: 0; 
+        clear: both; 
+        visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
@@ -402,31 +378,33 @@ ul.gbAdminList li label { vertical-align: super; }
 /* End hide from IE-mac */
 
 .gbNavBar {
-    background-color: #e7e7e7;
-    margin: 0;
-    padding: 0 14px;
+        background-color: #e7e7e7;
+        margin: 0;
+        padding: 0 14px;
 }
 
 .gbNavBar .gbAdmin { float: right; padding: 3px; }
 
 .gbNavBar:after {
-	content: "."; 
-	display: block;
-	height: 0; 
-	clear: both; 
-    visibility: hidden;
+        content: "."; 
+        display: block;
+        height: 0; 
+        clear: both; 
+        visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
 * html .gbNavBar { height: 2em; }
 /* End hide from IE-mac */
 
-.gbTitleBanner { padding: 8px 14px; }
+.gbTitleBanner {
+        padding: 8px 14px;
+}
 
 .gbTitleBanner h1 { 
-    font-size: 1.2em; 
-    margin: 0; 
-    padding: 0;
+        font-size: 1.3em; 
+        margin: 0; 
+        padding: 0;
 }
 
 table.gbTitleBanner {
@@ -435,13 +413,13 @@ table.gbTitleBanner {
 }
 
 table.gbTitleBanner tr td {
-    width: 33%;      
+        width: 33%;      
 	vertical-align: top;
 }
 
-.gbTitleBanner .giTitle, .gbTitleBanner .giDescription  { margin: 8px 0; }
+.gbTitleBanner .giTitle { margin: 9px 0 0 0; }
 
-.gbTitle { padding: 14px; }
+.gbTitle { padding: 12px 0 6px 14px; }
 
 #gbThumbMatrix {  }
 
@@ -462,14 +440,14 @@ td.gbItemAlbum { background-color: #eee; }
 /*	  #gsComments	 */
 
 .gbComment {
-    border-bottom: 1px dotted #ddd;
-    margin: 0;	
-    padding: 8px 0 8px 0;
+        border-bottom: 1px dotted #ddd;
+        margin: 0;	
+        padding: 8px 0 8px 0;
 }
 
 .gbComment span {
-    font-size: 0.9em;
-    color: #bbb;
+        font-size: 0.9em;
+        color: #bbb;
 }
 
 .gbComment p { margin: 6px 0; }
@@ -481,19 +459,19 @@ td.gbItemAlbum { background-color: #eee; }
 	margin-right: 8px;
 }
 
-/*	  #gsSidebar  */
+/*      #gsSidebar  */
 #gsSidebar div { }
 
 #gsSidebar .giThumbImage { margin: 4px 0; }
 
-/*	  #gsSearchContents  */
+/*      #gsSearchContents  */
 
-/*	  small grey border around all the thumbnails */
+/*      small grey border around all the thumbnails */
 #gsSearchContents .giThumbImage, 
 #gsSearchContents .giThumbMovie, 
 #gsSearchContents .giThumbOther { border: 0px solid #ccc; }
 
-/*	  override the normal title clear so as to wrap information on the right of the thumbnail */
+/*      override the normal title clear so as to wrap information on the right of the thumbnail */
 
 #gsSearchContents .gbItemImage .giTitle {
 	border-width: 0;
@@ -501,22 +479,24 @@ td.gbItemAlbum { background-color: #eee; }
 	padding: 0;
 }
 
-#gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img { border: 0px; }
+#gsSearchContents .gbItemImage img,
+#gsSearchContents .gbItemAlbum img { border: 0px; }
 
 #gsSearchContents .giTitle { margin: 0 14px; padding: 0; }
 
-/*	  #gsAdminContents	*/
+/*      #gsAdminContents	*/
 
 #gsAdminContents .gbAdmin, .gbButtons {
-	border-bottom: 1px solid #bbb;
 	background-color: #fff;
 	clear: both;
 	float: left;
 	width: 97%;
+	border-bottom: 1px solid #bbb;
 	margin: 0;
 	padding: 8px 14px;
 }
 
+/*      hides border on last occurence  */
 .gbAdmin:last-child {
 	border-bottom: 1px none #bbb;        
 }
@@ -532,7 +512,7 @@ td.gbItemAlbum { background-color: #eee; }
 
 /*      Status section  */
 
-/*      Error inside a gsStatus section */
+/*      error inside a gsStatus section */
 
 #gsStatus { margin: 4px 0 0 4px; }
 
@@ -572,8 +552,8 @@ td.gbItemAlbum { background-color: #eee; }
 	display: block;
 	font-size: 1.1em;
 	line-height: 1.4em;
-	margin: 4px 0;
-	padding: 0 8px 0 0;
+	margin: 0 0 6px 0;
+	padding: 0;
 }
 
 .giInfo {
@@ -689,12 +669,6 @@ discused the options of generating a table-based border (ie_test) and alistapart
 }
 
 /*	  .gbTopFlag   */
-
-.gbTopFlag .giTitle {
-	color: #000;
-	font-weight: bold;
-	font-size: 1.3em; 
-}
 
 /*	  .gbBottomFlag   */
 

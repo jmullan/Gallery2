@@ -6,18 +6,18 @@
  *}
 <div class="gsContents">
   {if $ItemAddFromBrowser.uploadsPermitted}
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text one="Upload a file directly from your computer."
     many="Upload up to %d files directly from your computer."
     count=$form.uploadBoxCount
     arg1=$form.uploadBoxCount}
     {g->text text="Enter the full path to the file and an optional caption in the boxes below."}
     <input type="hidden" name="{g->formVar var="form[uploadBoxCount]"}" value="{$form.uploadBoxCount}" />
-  </div>
+  </p>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="<b>Note:</b> You can upload up to %s at one time.  If you want to upload more than that, you must upload the files separately, or use an upload format" arg1=$ItemAddFromBrowser.uploadMaxSize}
-  </div>
+  </p>
   {section name="uploadBoxes" loop=$form.uploadBoxCount}
   {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
   <div class="gbDataEntry">

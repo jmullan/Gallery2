@@ -25,9 +25,9 @@
     {/if}
   
     <div class="gbAdmin">
-      <div class="giDescription">
+      <p class="giDescription">
         {g->text text="You must enter a new password twice to change passwords."}
-      </div>
+      </p>
     
       <div class="gbDataEntry">
         <h3 class="giTitle">

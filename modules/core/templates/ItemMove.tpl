@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Move an Item"}
-      </div>
+      </h2>
     </div>
 
   </div>
@@ -27,18 +27,18 @@
 
   {if !empty($ItemMove.peers)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Source"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose the items you want to move"}
       {if ($ItemMove.numPages > 1) }
       {g->text text="(page %d of %d)"
 	       arg1=$ItemMove.page
 	       arg2=$ItemMove.numPages}
       {/if}
-    </div>
+    </p>
       
     <script type="text/javascript">
       //<![CDATA[
@@ -186,13 +186,13 @@
   </div>
     
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Destination"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose a new album for them"}
-    </div>
+    </p>
       
     <select name="{g->formVar var="form[destination]"}" onchange="javascript:checkPermissions(this.form)">
       {foreach from=$ItemMove.albumTree item=album}
@@ -227,9 +227,9 @@
   </div>
   {else}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This album contains no items to move."}
-    </div>
+    </p>
   </div>
   {/if}
 </div>

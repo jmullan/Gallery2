@@ -13,7 +13,7 @@
   </p>
   
   <div id="gsHeader">
-    <!-- header -->
+    {include file="gallery:layouts/matrix/templates/banner.tpl"}    
   </div>
 
   <ul class="gbBreadCrumb">
@@ -43,16 +43,16 @@
         {g->image item=$ItemAdmin.item image=$ItemAdmin.thumbnail maxSize=130}
         {/if}
   
-        <div class="giTitle">
+        <h3 class="giTitle">
           {$ItemAdmin.item.title|markup}
-        </div>
+        </h3>
       </div>
       {/if}
   
       <div class="gbMenu">
-        <div class="giTitle">
+        <h3 class="giTitle">
           {g->text text="Options"}
-        </div>
+        </h3>
         
         <ul>
           {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
@@ -66,9 +66,9 @@
       </div>
       
       <div class="gbMenu">
-        <div class="giTitle">
+        <h3 class="giTitle">
           {g->text text="Navigation"}
-        </div>
+        </h3>
         
         <ul>
           {if ($ItemAdmin.isSiteAdmin)}

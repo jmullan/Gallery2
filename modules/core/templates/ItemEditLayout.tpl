@@ -5,9 +5,9 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div class="gbAdmin">
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="This album is configured to use the <b>%s</b> layout. These settings only apply to the layout for this album." arg1=$ItemEditLayout.layout.name}
-  </div>
+  </p>
 
  {if isset($ItemEditLayout.customTemplate)}
 

@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Delete Item"}
-      </div>
+      </h2>
     </div>
     
   </div>
@@ -31,18 +31,18 @@
   
   {if !empty($ItemDelete.peers)}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Delete"}
-    </div>
+    </h2>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Choose the items you want to delete"}
       {if ($ItemDelete.numPages > 1) }
       {g->text text="(page %d of %d)"
 	       arg1=$ItemDelete.page
 	       arg2=$ItemDelete.numPages}
       {/if}
-    </div>
+    </p>
 
     <input type="hidden" name="{g->formVar var="page"}" value="{$ItemDelete.page}"/>
     <input type="hidden" name="{g->formVar var="form[formname]"}" value="DeleteItem"/>
@@ -127,9 +127,9 @@
   </div>
   {else}
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This album contains no items to delete"}
-    </div>
+    </p>
   </div>
   {/if}
 </div>

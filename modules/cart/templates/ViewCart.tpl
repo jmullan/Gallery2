@@ -5,7 +5,7 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div id="gsHeader">
-  <!-- Header -->
+    {include file="gallery:layouts/matrix/templates/banner.tpl"}    
 </div>
 
 <ul class="gbBreadCrumb">

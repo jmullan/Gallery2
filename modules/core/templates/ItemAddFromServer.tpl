@@ -26,9 +26,9 @@
     {rdelim}
   </script>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="Transfer files that are already on your server into your Gallery.  The files must already have been uploaded to your server some other way (like FTP) and must be placed in a directory where they are accessibly by anyelement on the server.  If you're on Unix this means that the files and the directory the files are in should have modes of at least 755."}
-  </div>
+  </p>
 
   {if empty($ItemAddFromServer.localServerDirList)}
   <div class="giWarning">
@@ -43,9 +43,9 @@
   {if empty($form.localServerFiles)}
 
   <div class="gbDataEntry">
-    <div class="giTitle">
+    <h3 class="giTitle">
       {g->text text="Server Path"}
-    </div>
+    </h3>
 
     <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
@@ -76,7 +76,7 @@
   </a>
   {/if}
 
-  <ul>
+  <ul class="gbAdminList">
     {foreach from=$ItemAddFromServer.localServerDirList item=dir}
     {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
     <li> 
@@ -90,7 +90,7 @@
   {if !empty($ItemAddFromServer.recentPaths)}
   {g->text text="Recent Directories"}
 
-  <ul>
+  <ul class="gbAdminList">
     {foreach from=$ItemAddFromServer.recentPaths item=dir}
       {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
     <li>
@@ -104,7 +104,7 @@
   <input type="submit" name="{g->formVar var="form[action][findFilesFromLocalServer]"}" value="{g->text text="Find Files"}" class="button"/>
 
   {else} {* {if empty($form.localServerFiles)} *}
-  <b>
+  <strong>
     {capture name="path"}
     {strip}
     {foreach name="pathElements" from=$ItemAddFromServer.pathElements item=element}
@@ -118,7 +118,7 @@
     {/strip}
     {/capture}
     {g->text text="Directory: %s" arg1=$smarty.capture.path}
-  </b>
+  </strong>
   <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}">
     {g->text text="[start over]"}
   </a>

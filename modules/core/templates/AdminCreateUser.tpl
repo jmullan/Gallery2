@@ -7,18 +7,18 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Create A New User"}
-      </div>
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Username"}
-      </div>
+      </h3>
 
       <div class="giSubtitle">
 	{g->text text="required"}
@@ -41,17 +41,17 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Full Name"}
-      </div>
+      </h3>
       
       <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Email Address"}
-      </div>
+      </h3>
 
       <div class="giSubtitle">
 	{g->text text="required"}
@@ -67,9 +67,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Language"}
-      </div>
+      </h3>
 
       <select name="{g->formVar var="form[language]"}">
 	  {html_options options=$AdminCreateUser.languageList selected=$form.language}
@@ -77,9 +77,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Password"}
-      </div>
+      </h3>
       <div class="giSubtitle">
 	{g->text text="required"}
       </div>
@@ -94,9 +94,9 @@
     </div>
 
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h3 class="giTitle">
 	{g->text text="Verify Password"}
-      </div>
+      </h3>
       <div class="giSubtitle">
 	{g->text text="required"}
       </div>

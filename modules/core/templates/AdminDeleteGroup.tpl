@@ -7,22 +7,22 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
-	{g->text text="Delete a group"}
-      </div>
+      <h2 class="giTitle">
+	{g->text text="Delete A Group"}
+      </h2>
     </div>
     
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Are you sure?"}
-    </div>
+    </h2>
 
-    <div class="giDescription">
-      {g->text text="This will completely remove <b>%s</b> from Gallery.  There is no undo!"
+    <p class="giDescription">
+      {g->text text="This will completely remove <strong>%s</strong> from Gallery.  There is no undo!"
       arg1=$AdminDeleteGroup.group.groupName}
-    </div>
+    </p>
 
     <div class="gbBottomFlag">
       <div class="giActionSelect">

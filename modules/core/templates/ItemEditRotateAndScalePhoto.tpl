@@ -5,13 +5,13 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div class="gbAdmin">
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Rotate"}
-  </div>
+  </h2>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="You can only rotate the photo in 90 degree increments."}
-  </div>
+  </p>
 
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate}
   <input type="hidden" name="{g->formVar var="mode"}" value="editPhoto"/>
@@ -33,13 +33,13 @@
 </div>
 
 <div class="gbAdmin">
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Scale"}
-  </div>
+  </h2>
   
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="Shrink or enlarge the original photo.  When Gallery scales a photo, it maintains the same aspect ratio (height to width) of the original photo to avoid distortion.  Your photo will be scaled until the larger side is the same as the value you enter here."}
-  </div>
+  </p>
   
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
   <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}"/>
@@ -71,13 +71,13 @@
 {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate || $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
 <div class="gbAdmin">
   {if empty($ItemEditRotateAndScalePhoto.editPhoto.hasPreferredSource)}
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Preserve Original"}
-  </div>
+  </h2>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="Gallery does not modify your original photo when rotating and scaling. Instead, it duplicates your photo and works with copies.  This requires a little extra disk space but prevents your original from getting damaged.  Disabling this option will cause any actions (rotating, scaling, etc) to modify the original."}
-  </div>
+  </p>
 
   {if $ItemEditRotateAndScalePhoto.editPhoto.isLinked}
   <b>
@@ -93,13 +93,13 @@
   {/if}
   {/if}
   {else}
-  <div class="giTitle">
+  <h2 class="giTitle">
     {g->text text="Modified Photo"}
-  </div>
+  </h2>
 
-  <div class="giDescription">
+  <p class="giDescription">
     {g->text text="You are using a copy of the original photo that has been scaled or rotated.  The original photo is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
-  </div>
+  </p>
 	
   <input type="submit" name="{g->formVar var="form[action][revertToOriginal]"}" value="{g->text text="Restore original"}"/>
   {/if}

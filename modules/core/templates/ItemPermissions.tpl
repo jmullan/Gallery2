@@ -7,9 +7,9 @@
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="Permissions"}
-      </div>
+      </h2>
     </div>
       
   </div>
@@ -23,29 +23,29 @@
   {/if}
 
   <div class="gbAdmin">
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="Each item has its own independent set of permissions.  Changing the parent's permissions has no effect on the permissions of the child.  This allows you to restrict access to the parent of this item, but still grant full access to this item, or vice versa.  The most efficient way to use this permission system is to create groups and assign permissions to them.  Then if you want to grant permissions to a specific user, you can add (or remove) the user from the appropriate group."}
-    </div>
+    </p>
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Owner"}
-    </div>
+    </h2>
     
-    <div class="giDescription">
+    <p class="giDescription">
       {if empty($ItemPermissions.owner.fullName)}
       {g->text text="This item is owned by user: %s" arg1=$ItemPermissions.owner.userName}
       {else}
       {g->text text="This item is owned by user: %s (%s)" arg1=$ItemPermissions.owner.userName arg2=$ItemPermissions.owner.fullName}
       {/if}
-    </div>
+    </p>
     
     {if $ItemPermissions.can.changeOwner}
     <div class="gbDataEntry">
-      <div class="giTitle">
+      <h2 class="giTitle">
 	{g->text text="New owner"}
-      </div>
+      </h2>
 
       <input type="text" name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
       <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
@@ -68,22 +68,22 @@
 
   {if $ItemPermissions.can.applyToSubItems}
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Apply changes"}
-    </div>
+    </h2>
       
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many of sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible."}
-    </div>
+    </p>
 
     <input type="checkbox" name="{g->formVar var="form[applyToSubItems]"}" value="{g->text text="Apply to sub-items"}"/>
   </div>
   {/if}
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Group Permissions"}
-    </div>
+    </h2>
 
     <table class="gbDataTable">
       <tr>
@@ -135,9 +135,9 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="New Group Permission"}
-    </div>
+    </h2>
     
     <input type="text" name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 	    
@@ -173,9 +173,9 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="User Permissions"}
-    </div>
+    </h2>
 
     <table class="gbDataTable">
       <tr>
@@ -226,9 +226,9 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="New User Permission"}
-    </div>
+    </h2>
 
     <input type="text" name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
 
