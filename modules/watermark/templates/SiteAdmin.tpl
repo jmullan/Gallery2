@@ -50,10 +50,10 @@
       {/foreach}
       <tr>
         <td>
-          <input type="file" name="{g->formVar var="form[1]"}" size="60">
+          <input type="file" name="{g->formVar var="form[1]"}" size="60"/>
         </td>
         <td>
-          <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="add"}">
+          <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="add"}"/>
         </td>
       </tr>
     </table>
