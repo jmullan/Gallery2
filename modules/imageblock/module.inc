@@ -113,12 +113,12 @@ class ImageBlockModule extends GalleryModule {
     function loadSystemContent(&$template) {
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 
-	list ($ret, $tmp) = $this->getModuleParameter('blocks');
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$param = array();
-	foreach (explode('|', $tmp) as $key) {
+	foreach (explode('|', $params['blocks']) as $key) {
 	    $param[$key] = 1;
 	}
 
@@ -166,12 +166,8 @@ class ImageBlockModule extends GalleryModule {
 	    }
 	}
 
-	list ($ret, $tmp) = $this->getModuleParameter('show');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 	$show = array();
-	foreach (explode('|', $tmp) as $key) {
+	foreach (explode('|', $params['show']) as $key) {
 	    $show[$key] = 1;
 	}
 	$ImageBlockSystemContent['show'] = $show;

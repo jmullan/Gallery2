@@ -97,19 +97,14 @@ class ImageBlockSiteAdminView extends GalleryView {
 		$form[$tmp] = 0;
 	    }
 	    list ($ret, $param) =
-		GalleryCoreApi::getPluginParameter('module', 'imageblock', 'blocks');
+		GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    foreach (explode('|', $param) as $tmp) {
+	    foreach (explode('|', $param['blocks']) as $tmp) {
 		$form[$tmp] = 1;
 	    }
-	    list ($ret, $param) =
-		GalleryCoreApi::getPluginParameter('module', 'imageblock', 'show');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach (explode('|', $param) as $tmp) {
+	    foreach (explode('|', $param['show']) as $tmp) {
 		$form[$tmp] = 1;
 	    }
 	}
