@@ -70,6 +70,10 @@ class CustomFieldMap extends CustomFieldMap_core {
   
 	$info['members']['value'] = STORAGE_TYPE_STRING;
   
+	$info['members']['setId'] = STORAGE_TYPE_INTEGER;
+  
+	$info['members']['setType'] = STORAGE_TYPE_INTEGER;
+  
 	return $info; 
     }
 
@@ -92,6 +96,14 @@ class CustomFieldMap extends CustomFieldMap_core {
 	}
     
 	if (!isset($data['value'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+    
+	if (!isset($data['setId'])) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+    
+	if (!isset($data['setType'])) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
     

@@ -27,6 +27,14 @@
         
       )
     
+      ,
+    DB_COLUMN_PREFIXsetId
+      INTEGER
+    
+      ,
+    DB_COLUMN_PREFIXsetType
+      INTEGER
+    
     );
 
   

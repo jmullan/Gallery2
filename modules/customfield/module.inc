@@ -138,7 +138,7 @@ class CustomFieldModule extends GalleryModule {
 	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
 	$summaries = array();
 	foreach ($items as $item) {
-	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item->getId(), 'summary');
+	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'summary');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -156,7 +156,7 @@ class CustomFieldModule extends GalleryModule {
      */
     function loadItemDetails(&$template, $item) {
 	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
-	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item->getId(), 'detail');
+	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'detail');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

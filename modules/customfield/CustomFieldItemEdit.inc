@@ -27,6 +27,8 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
+require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+
 /**
  * This controller will handle assigning values to custom fields
  *
@@ -42,10 +44,43 @@ class CustomFieldItemEdit extends ItemEditPlugin {
     function handleRequest($form, &$item, &$preferred) {
 	$status = null;
 	$error = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 
-	if (isset($form['action']['save'])) {
-	    require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
-	    $ret = CustomFieldHelper::saveFieldValues($item->getId(), $form['fields']);
+	if (isset($form['cfAdmin'])) {
+	    list ($ret, $adminStatus) = CustomFieldHelper::handleAdminAction($form, $item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    foreach ($adminStatus as $key => $tmp) {
+		switch ($key) {
+		case 'saved':
+		    $status = $module->translate("Display settings saved successfully");
+		    break;
+		case 'added':
+		    $status = $module->translate("New field added successfully");
+		    break;
+		case 'moved':
+		    $status = $module->translate("Field moved successfully");
+		    break;
+		case 'removed':
+		    $status = $module->translate("Field removed successfully");
+		    break;
+		case 'picklist':
+		    $status = $module->translate("Picklist updated successfully");
+		    break;
+		case 'error':
+		    $status = '<div class="giError">' .
+			$module->translate("Field name already in use") . '</div>';
+		    break;
+		default:
+		    $status = $key;
+		}
+	    }
+	} else if (isset($form['action']['save'])) {
+	    $ret = CustomFieldHelper::saveFieldValues($item, $form['fields']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -63,39 +98,60 @@ class CustomFieldItemEdit extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+	global $gallery;
+	$session =& $gallery->getSession();
+	$tmp = $session->get(CUSTOM_FIELD_SESSION_KEY);
+	$adminMode = (!empty($tmp) && $tmp == $item->getId()) ? 1 : 0;
+
 	if ($form['formName'] != 'CustomFieldItemEdit') {
 	    $form['formName'] = 'CustomFieldItemEdit';
+	    $form['itemId'] = $item->getId();
+	}
+
+	switch ($adminMode) {
+	case 1:
+	    $ret = CustomFieldHelper::loadAdminForm($form, $item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $tpl = 'modules/customfield/templates/ItemAdmin.tpl';
+	    break;
+	default:
 	    $set = GalleryUtilities::isA($item, 'GalleryAlbumItem') ? 'album'
 		 : (GalleryUtilities::isA($item, 'GalleryPhotoItem') ? 'photo' : 'common');
-	    list ($ret, $form['fields'], $param) =
-		CustomFieldHelper::fetchFieldValues($item->getId(), null, $set);
+	    list ($ret, $form['fields'], $param, $isContainerSettings) =
+		CustomFieldHelper::fetchFieldValues($item, null, $set);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach (array('common' => 1, $set => 1) as $s => $tmp) {
-		foreach ($param[$s] as $item) {
-		    if (!empty($item['choices'])) {
-			$form['choices'][$item['field']] = $item['choices'];
+		foreach ($param[$s] as $it) {
+		    if (!empty($it['choices'])) {
+			$form['choices'][$it['field']] = $it['choices'];
 		    }
 		}
 	    }
+	    if ($set == 'album') {
+		$form['adminFlag'] = $isContainerSettings ? 1 : 2;
+	    }
+	    $tpl = 'modules/customfield/templates/ItemEdit.tpl';
 	}
 	$template->setVariable('controller', 'customfield:CustomFieldItemEdit');
-	return array(GalleryStatus::success(), 'modules/customfield/templates/ItemEdit.tpl');
+	return array(GalleryStatus::success(), $tpl);
     }
 
     /**
      * @see ItemEditPlugin::isSupported
      */
     function isSupported($item, $thumbnail) {
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
-	list ($ret, $param) = CustomFieldHelper::loadParameters();
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    return true;
+	}
+	list ($ret, $param) = CustomFieldHelper::loadParameters($item->getParentId());
 	if ($ret->isError()) {
 	    return false;
 	}
 	if (!empty($param['common']) ||
-	    (GalleryUtilities::isA($item, 'GalleryAlbumItem') && !empty($param['album'])) ||
 	    (GalleryUtilities::isA($item, 'GalleryPhotoItem') && !empty($param['photo']))) {
 	    return true;
 	}

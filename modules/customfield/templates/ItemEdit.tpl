@@ -5,6 +5,21 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div class="gbAdmin">
+  {if isset($form.adminFlag)}
+    <p class="giDescription">
+      <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
+                       arg2="cfAdmin=`$form.adminFlag`" arg3="itemId=`$form.itemId`"
+                       arg4="return=true"}">
+	{if $form.adminFlag==2}
+	  {g->text text="Override global custom field settings for this album"}
+	{else}
+	  {g->text text="Edit custom field settings for this album"}
+	{/if}
+      </a>
+    </p>
+  {/if}
+
+  {if !empty($form.fields)}
   <table class="gbDataTable">
   {foreach from=$form.fields key=field item=value}
     <tr><td>{$field}</td><td>
@@ -20,9 +35,12 @@
     </td></tr>
   {/foreach}
   </table>
+  {/if}
 </div>
 
+{if !empty($form.fields)}
 <div class="gbButtons">
   <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}" class="button"/>
   <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}" class="button"/>
 </div>
+{/if}

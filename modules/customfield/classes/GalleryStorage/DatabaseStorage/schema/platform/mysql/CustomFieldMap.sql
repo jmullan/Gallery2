@@ -27,6 +27,14 @@
         
       )
     
+      ,
+    DB_COLUMN_PREFIXsetId
+      int(11)
+    
+      ,
+    DB_COLUMN_PREFIXsetType
+      int(11)
+    
     , 
   
     INDEX (DB_COLUMN_PREFIXitemId)

@@ -43,133 +43,10 @@ class CustomFieldSiteAdminController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$status = array();
-	if (isset($form['action']['save'])) {
-	    list ($ret, $param) = CustomFieldHelper::loadParameters();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach (array('common', 'album', 'photo') as $set) {
-		$newParam[$set] = array();
-		foreach ($form[$set]['index'] as $newidx => $oldidx) {
-		    $newParam[$set][] = array('field' => $param[$set][$oldidx]['field'],
-					      'summary' => isset($form[$set]['summary'][$newidx]),
-					      'detail' => isset($form[$set]['detail'][$newidx]),
-					      'choices' => $param[$set][$oldidx]['choices']);
-		}
-	    }
-	    $ret = CustomFieldHelper::saveParameters($newParam);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $status['saved'] = 1;
-	} else if (isset($form['action']['add'])) {
-	    foreach ($form['action']['add'] as $set => $tmp) {}
-	    list ($ret, $param) = CustomFieldHelper::loadParameters();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($param as $list) {
-		$idx = CustomFieldHelper::findParameter($list, $form[$set]['newField']);
-		if ($idx >= 0) {
-		    $status['error']['duplicate'] = 1;
-		    break;
-		}
-	    }
-	    if (empty($status)) {
-		$param[$set][] = array('field' => $form[$set]['newField'],
-				       'summary' => false, 'detail' => true, 'choices' => array());
-		$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$status['added'] = 1;
-	    }
-	} else if (isset($form['action']['go'])) {
-	    foreach ($form['action']['go'] as $set => $tmp) {}
-	    list ($ret, $param) = CustomFieldHelper::loadParameters();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $idx = CustomFieldHelper::findParameter($param[$set], $form[$set]['goField']);
-	    if ($idx < 0) {
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	    }
-	    switch ($form[$set]['goAction']) {
-
-	    case 'common':
-		// Remove from $set, add to common; no db change
-		$param['common'][] = $param[$set][$idx];
-		unset($param[$set][$idx]);
-		$ret = CustomFieldHelper::saveParameters(
-		    array('common' => $param['common'], $set => $param[$set]));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		break;
-
-	    case 'remove':
-		// Remove from $set; delete from all items
-		unset($param[$set][$idx]);
-		$ret = CustomFieldHelper::saveParameters(array($set => $param[$set]));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ret = CustomFieldHelper::deleteField($form[$set]['goField']);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$status['removed'] = 1;
-		break;
-
-	    case 'album':
-		// Remove from common, add to album; delete from non-album items
-	    case 'photo':
-		// Remove from common, add to photo; delete from non-photo items
-		$newSet = $form[$set]['goAction'];
-		$param[$newSet][] = $param[$set][$idx];
-		unset($param[$set][$idx]);
-		$ret = CustomFieldHelper::saveParameters(
-		    array('common' => $param['common'], $newSet => $param[$newSet]));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ret = CustomFieldHelper::deleteField($form[$set]['goField'], $newSet);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		break;
-
-	    default:
-		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-	    }
-	    if (empty($status)) {
-		$status['moved'] = 1;
-	    }
-	} else if (isset($form['action']['picklist'])) {
-	    $choices = array();
-	    foreach (array_map('trim', explode("\n", $form['picklist'])) as $tmp) {
-		if (!empty($tmp)) {
-		    $choices[] = $tmp;
-		}
-	    }
-	    list ($ret, $param) = CustomFieldHelper::loadParameters();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($param as $set => $list) {
-		$idx = CustomFieldHelper::findParameter($list, $form['pickField']);
-		if ($idx >= 0) {
-		    $param[$set][$idx]['choices'] = $choices;
-		    $ret = CustomFieldHelper::saveParameters(array($set => $param[$set]));
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $status['picklist'] = 1;
-		    break;
-		}
-	    }
-	} /* else $form['action']['reset'] */
+	list ($ret, $status) = CustomFieldHelper::handleAdminAction($form);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Figure out where to redirect upon success */
 	$results['return'] = 1;
@@ -195,25 +72,10 @@ class CustomFieldSiteAdminView extends GalleryView {
 	if ($form['formName'] != 'CustomFieldSiteAdmin') {
 	    $form['formName'] = 'CustomFieldSiteAdmin';
 
-	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'customfield');
+	    $ret = CustomFieldHelper::loadAdminForm($form);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $form['set'] = array();
-	    $form['set'][] = array('key' => 'common', 'name' => $module->translate('Common Fields'));
-	    $form['set'][] = array('key' => 'album', 'name' => $module->translate('Album Fields'));
-	    $form['set'][] = array('key' => 'photo', 'name' => $module->translate('Photo Fields'));
-	    $form['count']['set'] = count($form['set']);
-
-	    list ($ret, $param) = CustomFieldHelper::loadParameters();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    foreach ($param as $set => $list) {
-		$form['count'][$set] = count($list);
-	    }
-	    $form['fields'] = $param;
 	}
 	$template->setVariable('controller', 'customfield:CustomFieldSiteAdmin');
 	return array(GalleryStatus::success(),

@@ -89,7 +89,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 			    $results, 'Add Common Field');
 
 	GalleryUtilities::removeFormVariables('form');
-	GalleryUtilities::putRequestVariable('form[common][newField]', 'Another Common');
+	GalleryUtilities::putRequestVariable('form[common][newField]', 'Another|Common');
 	GalleryUtilities::putRequestVariable('form[action][add][common]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
@@ -162,7 +162,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	unset($params['version']);
 	ksort($params);
 	$this->assertEquals(array('album' => 'Album Field`0`1`Three`Two`One',
-				  'common' => 'Common Field`0`1|Another Common`0`1',
+				  'common' => 'Common Field`0`1|Another:Common`0`1',
 				  'photo' => 'Photo Field`0`1'),
 			    $params, 'Check Data 1');
 
@@ -192,7 +192,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 	unset($params['version']);
 	ksort($params);
 	$this->assertEquals(array('album' => 'Album Field`1`1`Three`Two`One',
-				  'common' => 'Another Common`0`0|Common Field`1`0',
+				  'common' => 'Another:Common`0`0|Common Field`1`0',
 				  'photo' => 'Photo Field`0`1'),
 			    $params, 'Check Data 2');
 
@@ -221,7 +221,7 @@ class CustomFieldSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	// Remove field..
 	GalleryUtilities::removeFormVariables('form');
-	GalleryUtilities::putRequestVariable('form[common][goField]', 'Another Common');
+	GalleryUtilities::putRequestVariable('form[common][goField]', 'Another:Common');
 	GalleryUtilities::putRequestVariable('form[common][goAction]', 'remove');
 	GalleryUtilities::putRequestVariable('form[action][go][common]', '1');
 	$results = $this->handleRequest();
