@@ -182,13 +182,10 @@ class ShowItemView extends GalleryView {
 		    $buf .= $path;
 		    unset($params['itemId']);
 		}
-		$len = strlen($buf);
-		if ($buf[$len-1] == '/') {
-		    $buf[$len-1] = '.';
-		    $buf .= 'html';
-		} else {
-		    $buf .= '.html';
-		}
+	    }
+
+	    if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+		$buf .= '.html';
 	    }
 	}
 
