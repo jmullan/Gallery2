@@ -1,0 +1,122 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Watermark
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/WatermarkHelper.class');
+
+/**
+ * WatermarkSiteAdmin controller tests
+ * Also tests WatermarkHelper::fetchWatermarks()
+ *
+ * @package Watermark
+ * @subpackage PHPUnit
+ */
+class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
+
+    function WatermarkSiteAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'watermark:WatermarkSiteAdmin');
+    }
+
+    function testWatermarkSiteAdminController() {
+	$name = 'phpunit_' . rand() . '.jpg';
+
+	// No file
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('add_error' => 1),
+				  'error' => array()),
+			    $results, 'No file');
+
+	// Add
+	GalleryUtilities::putRequestVariable('form[name][1]', $name);
+	GalleryUtilities::putRequestVariable('form[type][1]', 'image/jpeg');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
+	    dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('add' => 1),
+				  'error' => array()),
+			    $results, 'Add');
+
+	// Add same name, browser doesn't send correct mime type
+	GalleryUtilities::putRequestVariable('form[type][1]', 'application/octet-stream');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('add' => 1),
+				  'error' => array()),
+			    $results, 'Add same name, bad mime');
+
+	list ($ret, $items) = WatermarkHelper::fetchWatermarks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$map = array_flip($items);
+	$this->assert(isset($map[$name]), 'Watermark not found after add');
+	$this->assert(isset($map["_$name"]), 'Watermark 2 not found after add');
+
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($map["_$name"]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('image/jpeg', $item->getMimeType(), 'Watermark 2 mime type');
+
+	// Delete
+	GalleryUtilities::removeFormVariables('form');
+	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map[$name]);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('delete' => 1),
+				  'error' => array()),
+			    $results, 'Delete');
+
+	// Delete
+	GalleryUtilities::removeFormVariables('form');
+	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+	GalleryUtilities::putRequestVariable('form[delete][itemId]', $map["_$name"]);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'watermark:WatermarkSiteAdmin'),
+				  'status' => array('delete' => 1),
+				  'error' => array()),
+			    $results, 'Delete 2');
+    }
+}
+?>

@@ -1,0 +1,293 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Watermark
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load the parent class
+ */
+require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
+
+/**
+ * Representation of an image used for watermarking
+ *
+ * @g2 <class-name>WatermarkImage</class-name>
+ * @g2 <parent-class-name>GalleryEntity</parent-class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ * @g2 <requires-id/>
+ * 
+ * @package Watermark
+ * @subpackage Classes
+ */
+class WatermarkImage_core extends GalleryEntity {
+	
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The watermark image filename.
+     *
+     * @g2 <member>
+     * @g2   <member-name>fileName</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2   <unique/>
+     * @g2   <required/>
+     * @g2 </member>
+     *
+     * @var string $_fileName
+     * @access private
+     */
+    var $_fileName;
+
+    /**
+     * The mime type of the image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>mimeType</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2   <member-size>MEDIUM</member-size>
+     * @g2 </member>
+     *
+     * @var string $_mimeType
+     * @access private
+     */
+    var $_mimeType;
+
+    /**
+     * The size of the image file.
+     *
+     * @g2 <member>
+     * @g2   <member-name>size</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_size
+     * @access private
+     */
+    var $_size;
+
+    /**
+     * The width of the image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>width</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_width
+     * @access private
+     */
+    var $_width;
+
+    /**
+     * The height of the image.
+     *
+     * @g2 <member>
+     * @g2   <member-name>height</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2 </member>
+     *
+     * @var int $_height
+     * @access private
+     */
+    var $_height;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Create a new instance of this type in the persistent store.
+     *
+     * @access public
+     * @param string the path to a data file to be contained
+     * @param string the mime type of the new item
+     * @param string the desired name of the new item
+     * @return object GalleryStatus a status code
+     */
+    function create($inputFileName, $mimeType, $targetName=null) {
+	require_once(dirname(__FILE__) . '/WatermarkHelper.class');
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	/* Validate the input file */
+	if (empty($inputFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	if (!$platform->file_exists($inputFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	/* Uniquify name */
+	if (empty($targetName)) {
+	    $targetName = basename($inputFileName);
+	}
+	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	while (in_array($targetName, $list)) {
+	    $targetName = "_$targetName";
+	}
+
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->setFileName($targetName);
+	$this->setMimeType($mimeType);
+	$this->setWidth(0);
+	$this->setHeight(0);
+
+	$platform = $gallery->getPlatform();
+	$dir = $this->getWatermarkDir();
+	if (!$platform->file_exists($dir)) {
+	    if (!$platform->mkdir($dir)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+	    }
+	}
+	if (!$platform->is_dir($dir)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
+	}
+
+	$newFileName = $this->getWatermarkDir() . $targetName;
+	if (!$platform->copy($inputFileName, $newFileName)) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
+	}
+	$this->setSize($platform->filesize($newFileName));
+
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($toolkit)) {
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions', $newFileName);
+	    if ($ret->isError()) {
+		$ret->addErrorCode(ERROR_BAD_DATA_TYPE);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $this->setWidth($dimensions[0]);
+	    $this->setHeight($dimensions[1]);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Delete this GalleryEntity
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	/* Delete myself */
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Delete our source file */
+	$path = $this->getWatermarkDir() . $this->getFileName();
+	$platform = $gallery->getPlatform();
+	if (!$platform->unlink($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__, "Could not delete $path");
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Full path to image file
+     *
+     * @return array(object GalleryStatus a status code, string path)
+     */
+    function fetchPath() {
+	return array(GalleryStatus::success(),
+		     $this->getWatermarkDir() . $this->getFileName());
+    }
+
+    /**
+     * Watermark directory
+     *
+     * @return string Directory where watermark images are stored
+     */
+    function getWatermarkDir() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	return $gallery->getConfig('data.gallery.base') . 'watermark' . $slash;
+    }
+
+    /**
+     * Render image
+     *
+     * @return string content
+     */
+    function render($format, $params) {
+	global $gallery;
+
+	switch($format) {
+	case 'HTML':
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+						    'itemId' => $this->getId(),
+						    'serialNumber' => $this->getSerialNumber()));
+
+	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
+
+	    /* Shrink our dimensions if necessary */
+	    if (isset($params['maxSize'])) {
+		list ($width, $height) =
+		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
+	    }
+
+	    return sprintf('<img %s src="%s" width="%s" height="%s" alt="%s"/>',
+			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			   $src,
+			   $width,
+			   $height,
+			   $this->getFileName());
+
+        default:
+            return null;
+        }
+    }
+}
+
+include(dirname(__FILE__) . '/interfaces/WatermarkImage.inc');
+?>
