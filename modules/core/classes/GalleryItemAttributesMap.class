@@ -41,6 +41,17 @@
  * @package GalleryCore
  * @subpackage Classes
  */
+
+/**
+ * Indicate a lower weight
+ */
+define('LOWER_WEIGHT', -1);
+
+/**
+ * Indicate a higher weight
+ */
+define('HIGHER_WEIGHT', 1);
+
 class GalleryItemAttributesMap_core {
 
     /**
@@ -66,7 +77,7 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Create a new set of attributes for an item
-     * @param the item id
+     * @param int the item id
      */
     function createItemAttributes($itemId) {
 	$ret = GalleryItemAttributesMap::addMapEntry(array('itemId' => $itemId,
@@ -81,7 +92,7 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Remove the attributes for the given item
-     * @param the item id
+     * @param int the item id
      */
     function removeItemAttributes($itemId) {
 	$ret = GalleryItemAttributesMap::removeMapEntry(array('itemId' => $itemId));
@@ -94,8 +105,8 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Update the view count for this item id
-     * @param the item id
-     * @param the new count
+     * @param int the item id
+     * @param int the new count
      */
     function setViewCount($itemId, $count) {
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
@@ -109,8 +120,8 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Update the view count for this item id
-     * @param the item id
-     * @param the amount to increment
+     * @param int the item id
+     * @param int the amount to increment
      */
     function incrementViewCount($itemId, $step=1) {
 	list ($ret, $count) = GalleryItemAttributesMap::fetchViewCount($itemId);
@@ -129,6 +140,7 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Get the view count for this item id
+     * @param int the item id
      */
     function fetchViewCount($itemId) {
 	global $gallery;
@@ -157,8 +169,8 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Set the order weight for an item id
-     * @param the item id
-     * @param the new order weight
+     * @param int the item id
+     * @param int the new order weight
      */
     function setOrderWeight($itemId, $orderWeight) {
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
@@ -172,32 +184,50 @@ class GalleryItemAttributesMap_core {
 
     /**
      * Get the order weight for a given item id
-     * @param the item id
-     * @param the order weight
+     * @param int the item id
+     * @param int the order weight
      */
     function fetchOrderWeight($itemId) {
-	global $gallery;
+	list ($ret, $orderWeights) = GalleryItemAttributesMap::fetchOrderWeight(array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	
+	if (!isset($orderWeights[$itemId])) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+			 
+	return array(GalleryStatus::success(), (int)$orderWeights[$itemId]);
+    }
+
+    /**
+     * Get the order weight for a given item id
+     * @param array the item ids
+     * @param int the order weight
+     * @return array(itemId1 => orderWeight1,
+     *               itemId2 => orderWeight2, ...)
+     */
+    function fetchOrderWeights($itemIds) {
+	global $gallery;
+
 	$query = '
         SELECT
-          [GalleryItemAttributesMap::orderWeight]
+          [GalleryItemAttributesMap::itemId], [GalleryItemAttributesMap::orderWeight]
         FROM
           [GalleryItemAttributesMap]
         WHERE
-          [GalleryItemAttributesMap::itemId] = ?
+          [GalleryItemAttributesMap::itemId] IN (' . GalleryUtilities::makeMarkers(sizeof($itemIds)) . ')
         ';
-	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	list ($ret, $searchResults) = $gallery->search($query, $itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[(int)$result[0]] = $result[1];
 	}
-	$result = $searchResults->nextResult();
-	$count = (int)$result[0];
-			 
-	return array(GalleryStatus::success(), $count);
+	return array(GalleryStatus::success(), $data);
     }
 
     /**
@@ -206,8 +236,8 @@ class GalleryItemAttributesMap_core {
      * same order as they have now, but their order weights should be spaced
      * out to exactly the spacing value specified in the arguments.
      *
-     * @param the parent id
-     * @param the order spacing
+     * @param int the parent id
+     * @param int the order spacing
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
 	global $gallery;
@@ -219,6 +249,7 @@ class GalleryItemAttributesMap_core {
 
 	$current = $spacing;
 	foreach ($ids as $id) {
+	    $gallery->guaranteeTimeLimit(5);
 	    $ret = GalleryItemAttributesMap::setOrderWeight($id, $current);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -227,6 +258,54 @@ class GalleryItemAttributesMap_core {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the view count for this item id
+     * @param int the item id
+     */
+    function fetchNextWeight($itemId, $direction) {
+	global $gallery;
+
+	if ($direction == LOWER_WEIGHT) {
+	    $aggregate = 'MAX';
+	    $comparison = '<';
+	} else {
+	    $aggregate = 'MIN';
+	    $comparison = '>';
+	}
+	
+	$query = '
+        SELECT
+          ' . $aggregate . '([GalleryItemAttributesMap=2::orderWeight])
+        FROM
+          [GalleryItemAttributesMap=1], [GalleryItemAttributesMap=2],
+          [GalleryChildEntity=1], [GalleryChildEntity=2]
+        WHERE
+          [GalleryChildEntity=1::id] = ?
+          AND
+          [GalleryChildEntity=1::parentId] = [GalleryChildEntity=2::parentId]
+          AND
+          [GalleryChildEntity=1::id] = [GalleryItemAttributesMap=1::itemId]
+          AND
+          [GalleryChildEntity=2::id] = [GalleryItemAttributesMap=2::itemId]
+          AND
+          [GalleryItemAttributesMap=2::orderWeight] ' .
+		$comparison . ' [GalleryItemAttributesMap=1::orderWeight]
+        ';
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+	if (isset($result[0])) {
+	    $weight = (int)$result[0];
+	} else {
+	    $weight = null;
+	}
+			 
+	return array(GalleryStatus::success(), $weight);
     }
 }
 
