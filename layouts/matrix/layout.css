@@ -37,6 +37,7 @@
 }
 
 #gsComments { 
+        clear: both;
 	padding: 8px;
 }
 
@@ -120,6 +121,14 @@
 	padding: 8px;
 }
 
+.gbItemAlbum:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+}
+
 /* individual items */
 #gsAlbumContents .gbItemImage,
 #gsAlbumContents .gbItemMovie,
@@ -139,6 +148,14 @@
 #gsAlbumContents .gbBottomFlag { 
 			display: block; 
 			padding: 8px;
+}
+
+.gbTopFlag:after, .gbBottomFlag:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
 }
 
 #gsAlbumContents div.giHorizontalLinks {

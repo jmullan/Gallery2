@@ -12,9 +12,6 @@
       </div>
     </div>
     
-    <div class="spacer">
-      &nbsp;
-    </div>
   </div>
   <input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
   <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>

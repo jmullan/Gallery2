@@ -12,9 +12,6 @@
       </div>
     </div>
 
-    <div class="spacer">
-      &nbsp;
-    </div>
   </div>
 
   {if isset($status.saved)}
@@ -101,9 +98,6 @@
   </div>
 
   <div class="gbAdmin">
-    <div class="spacer">
-      &nbsp;
-    </div>
 
     <div class="giTitle">
       {g->text text="External Image Block"}

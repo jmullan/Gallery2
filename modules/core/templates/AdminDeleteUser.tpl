@@ -12,9 +12,6 @@
       </div>
     </div>
     
-    <div class="spacer">
-      &nbsp;
-    </div>
   </div>
 
   <div class="gbAdmin">

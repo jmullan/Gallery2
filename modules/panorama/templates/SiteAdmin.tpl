@@ -12,9 +12,6 @@
       </div>
     </div>
       
-    <div class="spacer">
-      &nbsp;
-    </div>
   </div>
   
   {if isset($status)}

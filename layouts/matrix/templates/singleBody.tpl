@@ -80,9 +80,6 @@
             </span>
           </div>
           {include file="layouts/matrix/templates/itemNavigator.tpl"}
-	  <div class="gsSpacer">
-            &nbsp;
-          </div>
 	</div>
 
 	<div class="gsSingleImage">

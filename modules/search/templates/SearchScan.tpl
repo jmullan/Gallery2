@@ -54,10 +54,6 @@
       </div>
     </div>
 
-    <div class="spacer">
-      &nbsp;
-    </div>
-
     <div class="gbAdmin">
       <div class="gbDataEntry">
         <div class="giTitle">

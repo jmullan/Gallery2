@@ -49,9 +49,6 @@
 
     {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
 
-    <div class="gsSpacer">
-      &nbsp;
-    </div>
   </div>
 
   {counter start=0 print=no assign=childrenInColumnCount}
@@ -131,9 +128,7 @@
 
   {counter}
   {if ($child.canContainChildren || ($childrenInColumnCount % $layout.columnSize == 0))}
-  <div class="gsSpacer">
-    &nbsp;
-  </div>
+
   {counter start=0 print=no assign=childrenInColumnCount}
   {/if}
   {foreachelse}
@@ -141,10 +136,6 @@
     {g->text text="This album is empty"}
   </div>
   {/foreach}
-
-  <div class="gsSpacer">
-    &nbsp;
-  </div>
 
   {if !empty($layout.moduleItemDetailFiles)}
   {foreach from=$layout.moduleItemDetailFiles key=moduleId item=detailFile}

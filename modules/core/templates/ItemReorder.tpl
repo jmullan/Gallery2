@@ -11,10 +11,7 @@
 	{g->text text="Reorder Album"}
       </div>
     </div>
-    
-    <div class="spacer">
-      &nbsp;
-    </div>
+
   </div>
 
   {if isset($ItemReorder.show.automaticOrderMessage)}

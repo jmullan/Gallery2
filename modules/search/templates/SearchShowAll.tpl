@@ -35,10 +35,6 @@
       </div>
     </div>
 
-    <div class="spacer">
-      &nbsp;
-    </div>
-
     <div class="gbAdmin">
       <div class="giTitle">
         {g->text text="Search"}
