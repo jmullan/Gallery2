@@ -1,8 +1,4 @@
 <title>
-  {if empty($ShowItem.item.title)}
-    {$ShowItem.item.pathComponent}
-  {else}
-    {$ShowItem.item.title}
-  {/if}
+  {$ShowItem.item.title|default:$ShowItem.item.pathComponent|bbcode}
 </title>
 {g->style}

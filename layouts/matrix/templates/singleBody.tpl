@@ -10,10 +10,10 @@
 
     {g->banner}
       {g->title}
-	{$layout.item.title}
+	{$layout.item.title|bbcode}
       {/g->title}
       {g->description}
-	{$layout.item.summary}
+	{$layout.item.summary|bbcode}
       {/g->description}
 
       {g->infoset}
@@ -94,10 +94,10 @@
       {g->box style="canvas"}
 	{g->itemview}
 	  {g->title}
-	    {$layout.item.title}
+	    {$layout.item.title|bbcode}
 	  {/g->title}
 	  {g->description}
-	    {$layout.item.description}
+	    {$layout.item.description|bbcode}
 	  {/g->description}
 	  {g->media}
 	    {capture name="fallback"}
