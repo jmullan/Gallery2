@@ -1,0 +1,48 @@
+SHORT TERM
+----------
+- refactor GalleryGraphics so that we can have multiple active toolkits (EB)
+- Use new Smarty with OOP
+- Try to get rid my md5(dirname) patch and re-enable $use_sub_dirs
+
+
+MEDIUM TERM
+-----------
+- database
+  - Use proper row locking with Postgres
+- themes
+  - either add a way to generate a list of elements to the theme API
+    or let the theme API specify colors (background, foreground, alternates, etc).  
+- comments
+  - GalleryComment's module.inc getItemDetails should delegate to a view
+    instead of being inline in module.inc
+- optimization
+  - Come up with an easy way for *Map classes to cache their results.
+  - put size/mimeType into GalleryFileSystemEntity, since anything on the
+    filesystem should have both (and then we can remove it from GalleryDataItem
+    and GalleryDerivative, simplifying the download code among other things)
+  - Move install code out of core/modules.inc since it's so rarely used
+- layouts
+  - don't calculate the item's location in the parent each time we
+    look at an item, instead when we are putting up a breadcrumb link
+    set a "focusOnItemId" parameter and let the view go to the right
+    page if the user clicks that link.
+  - The tricky question is, how does the layout learn enough from the
+    module to know how to lay out the requested info?  
+  - simplify the layout code -- separation of renderAlbum and renderSingle is
+    too bulky, complex
+- security
+  - test harness and setup code should not be available to the public
+  - We're still not sanitizing text input values appropriately.  Black hats
+    can sneak in javascript injection.
+
+LONG TERM
+---------
+- Features
+  - design and implement select/cut/copy/paste multi-edit functionality
+- Modules
+  - rating/voting
+  - printing
+    - Shutterfly, fotokasten
+  - slideshow
+  - checksum
+  - workflow (notification, moderation, etc)
