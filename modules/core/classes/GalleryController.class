@@ -96,7 +96,8 @@ class GalleryController {
 	if (!class_exists($controllerClassName)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      "Class $controllerClassName not defined in " .
-					      "${moduleId}:$controllerName"));
+					      "$controllerName"),
+			 null);
 	}
 	
 	return array(GalleryStatus::success(), new $controllerClassName);
