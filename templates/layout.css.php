@@ -1,7 +1,7 @@
 <?php
 /*
- * Gallery - a web based photo album viewer and editor 
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software;you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,7 +9,7 @@
  * your option) any later version.
  *
  * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY;without even the implied warranty of 
+ * WITHOUT ANY WARRANTY;without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
@@ -44,7 +44,7 @@ form, div, h1, h2, h3, h4, h5, h6  {
 
 /* ******************************************************************************************
  * GALLERY
- * Category 1: Gallery		
+ * Category 1: Gallery
  * declare Gallery Module Borders, etc
  */
 
@@ -54,7 +54,7 @@ form, div, h1, h2, h3, h4, h5, h6  {
 /* ******************************************************************************************
  * SECTIONS
  * Category 2: section definitions
- * declare section styles		   
+ * declare section styles
  */
 
 #gsHeader {
@@ -179,13 +179,13 @@ table.gbDataTable td {
 
 /* ******************************************************************************************
  * BOXES
- * Category 3: box definitions			   
- * This also includes Category 4: items that are defined 
+ * Category 3: box definitions
+ * This also includes Category 4: items that are defined
  * with respect to sections.
  */
 
 .gbDataEntry {
-    margin: 6px 0px;
+    margin: 6px 0;
 }
 
 ul.gbAdminList {
@@ -315,8 +315,8 @@ ul.gbAdminList li label { }
     padding: 3px;
 }
 
-/* Put in to fix viewCart action selector. 
- * Without this, the go button wraps because of 
+/* Put in to fix viewCart action selector.
+ * Without this, the go button wraps because of
  * giActionSelect below with dipslay: block.
  */
 .gbAdmin .giActionSelect {
@@ -350,7 +350,7 @@ table.gbTitleBanner {
 }
 
 table.gbTitleBanner tr td {
-    width: 33%;     
+    width: 33%;
 }
 
 .gbTitleBanner .giTitle {
@@ -375,7 +375,7 @@ td.gbItemAlbum, td.gbItemImage, td.gbItemMovie, td.gbItemOther {
 /*	  #gsComments	 */
 
 .gbComment {
-    margin: 0;	
+    margin: 0;
     padding: 8px 0 8px 0;
 }
 
@@ -397,7 +397,7 @@ td.gbItemAlbum, td.gbItemImage, td.gbItemMovie, td.gbItemOther {
 }
 
 #gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img {
-    border: 0px;
+    border: none;
 }
 
 #gsSearchContents .giTitle {
@@ -451,17 +451,17 @@ input[type=submit] {
 
 /* ******************************************************************************************
  * ITEMS
- * Category 4: item and span definitions		 
- * declares styles for items that are defined globally or  
- * with respect to boxes. items defined uniquely per	   
- * section are in the BOXES part of this file.		 
+ * Category 4: item and span definitions
+ * declares styles for items that are defined globally or
+ * with respect to boxes. items defined uniquely per
+ * section are in the BOXES part of this file.
  */
 
 /*      Global / Defaults */
 
 .giMarkupBar input {
 	margin: 0;
-	padding: 0px;
+	padding: 0;
 }
 
 .giDescription {
@@ -496,7 +496,7 @@ input[type=submit] {
 	padding: 0 4px;
 	background-image: none;
  }
- 
+
 .giHorizontalLinksLeft {
     float: left;
     padding-left: 0;

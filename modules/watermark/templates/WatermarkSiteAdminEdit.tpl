@@ -104,7 +104,7 @@
       {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
     </p>
 
-    <div id="background" style="width: 400px; height: 300px; background: #DDD; border: solid #9CF 1px; margin: 5px 0px 10px 0px; "/>
+    <div id="background" style="width: 400px; height: 300px; background: #DDD; border: solid #9CF 1px; margin: 5px 0 10px 0;"/>
     <img name="floater" 
          src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$WatermarkSiteAdminEdit.watermark.id`"}"
          width="{$WatermarkSiteAdminEdit.watermark.width}"

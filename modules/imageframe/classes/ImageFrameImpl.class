@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2004 Bharat Mediratta
+ * Copyright (C) 2000-2005 Bharat Mediratta
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,9 +71,9 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
     function init(&$template, $frameIds) {
 	static $simpleFrames;
 	if (!isset($simpleFrames)) {
-	    $simpleFrames = array('none' => array('type' => 'style', 'style' => 'border:0px'),
+	    $simpleFrames = array('none' => array('type' => 'style', 'style' => 'border:none'),
 				  'solid' => array('type' => 'style',
-						   'style' => 'border:1px solid black'));
+						   'style' => 'border:thin solid black'));
 	    $smarty =& $template->_getSmarty();
 	    $smarty->register_block('imageframe', array($this, 'renderImageFrame'));
 	    $template->setVariable('ImageFrameData', array());

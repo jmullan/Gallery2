@@ -83,14 +83,14 @@
   	    <tr>
               <td>
 	      {if $item.canContainChildren}
-  	        <img style="border: 0px"
+  	        <img style="border: none"
                      src="{g->url href="modules/members/data/directory.gif"}"
                      alt="{g->text text="Album"}"
                      height="16"
                      width="16"/>
               </td>
   	      {else}
-	        <img style="border: 0px"
+	        <img style="border: none"
                      src="{g->url href="modules/members/data/file.gif"}"
                      alt="{g->text text="Item"}"
                      height="16"

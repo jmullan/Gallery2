@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <style type="text/css">
-img.ImageFrame_image {ldelim} vertical-align:bottom; border:0px; {rdelim}
+img.ImageFrame_image {ldelim} vertical-align:bottom; border:none; {rdelim}
 {foreach from=$ImageFrameData key=id item=data}
 {if $data.type=='style'}
 img.ImageFrame_{$id} {ldelim} {$data.style} {rdelim}
@@ -47,6 +47,6 @@ table.ImageFrame_{$id} .RR div.V {ldelim} width:{$data.widthRR}px; {rdelim}
 table.ImageFrame_{$id} td {ldelim} font-size:1px {rdelim} /* For IE */
 {/if}
 {/foreach}
-td div.H {ldelim} width:1px; height:0px; {rdelim}
-td div.V {ldelim} width:0px; height:1px; {rdelim}
+td div.H {ldelim} width:1px; height:0; {rdelim}
+td div.V {ldelim} width:0; height:1px; {rdelim}
 </style>

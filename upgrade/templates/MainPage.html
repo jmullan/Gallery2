@@ -29,7 +29,7 @@
 	      <?php
 	      if ($i == 0 ||
                   ($i <= $currentStep->getStepNumber()+1 &&
-                   ($steps[$i-1]->isComplete() || 
+                   ($steps[$i-1]->isComplete() ||
                     $steps[$i-1]->isOptional()))) {
 	          $linkable = true;
 	      } else {
@@ -62,7 +62,7 @@
 	  <?php endforeach; ?>
 	</h2>
 	<?php endif; ?>
-	
+
 	<?php if (!empty($templateData['warnings'])): ?>
 	<h2 class="warning">
 	  <?php foreach ($templateData['warnings'] as $warning): ?>
@@ -101,18 +101,18 @@
 	  </tr>
 
 	  <tr>
-	    <?php $progressBarColor = ($templateData['percentComplete'] >= 100) ? '#fd6704' : '#fd6704'; ?> 
+	    <?php $progressBarColor = ($templateData['percentComplete'] >= 100) ? '#fd6704' : '#fd6704'; ?>
 	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td width="<?php print $templateData['percentComplete'] ?>%" 
-	      align="center" 
-	      bgcolor="<?php print $progressBarColor; ?>" 
+	    <td width="<?php print $templateData['percentComplete'] ?>%"
+	      align="center"
+	      bgcolor="<?php print $progressBarColor; ?>"
 	      style="border: 1px solid #ddd">&nbsp;</td>
 	    <?php endif; ?>
 
 	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td width="<?php print 100 - $templateData['percentComplete'] ?>%" 
-	      bgcolor="#eeeeee" 
-	      style="border: 1px solid #ddd; <?php print ($templateData['percentComplete'] == 0) ? '' : 'border-left: 0px;'?>">&nbsp;</td>
+	    <td width="<?php print 100 - $templateData['percentComplete'] ?>%"
+	      bgcolor="#eeeeee"
+	      style="border: 1px solid #ddd; <?php print ($templateData['percentComplete'] == 0) ? '' : 'border-left: none;'?>">&nbsp;</td>
 	    <?php endif; ?>
 	  </tr>
 	  <tr>
@@ -123,11 +123,11 @@
 	    </td>
 	  </tr>
 	</table>
-      </div>  
+      </div>
     </div>
     <div id="footer">
-      <?php print _('Gallery: <strong>your photos</strong> on <strong>your website</strong>') ?> 
-      &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a> 
+      <?php print _('Gallery: <strong>your photos</strong> on <strong>your website</strong>') ?>
+      &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a>
     </div>
   </body>
 </html>

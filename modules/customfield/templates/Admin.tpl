@@ -116,13 +116,13 @@ function pickfield(s) {
 		  {if $item.detail}checked="checked"{/if}/>
 	</td><td>
 	  {if $idx > 0}
-	  <a href="" onclick="up('{$set.key}',{$idx});this.blur();return false" style="padding:0px 2px">
+	  <a href="" onclick="up('{$set.key}',{$idx});this.blur();return false" style="padding:0 2px">
 	    {g->text text="up"}
 	  </a>
 	  {/if}
 	</td><td>
 	  {if ($idx < count($form.fields[$set.key])-1)}
-	  <a href="" onclick="down('{$set.key}',{$idx});this.blur();return false" style="padding:0px 2px">
+	  <a href="" onclick="down('{$set.key}',{$idx});this.blur();return false" style="padding:0 2px">
 	    {g->text text="down"}
 	  </a>
 	  {/if}

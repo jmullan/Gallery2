@@ -9,15 +9,14 @@
   {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 
   <div id="gsFooter">
-    <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img style="border: 0px"
+    <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img
        src="{g->url href="images/xhtml10.png"}"
        alt="{g->text text="This page is valid XHTML 1.0"}" 
-       height="15" width="80"/></a>
-    <a href="http://gallery.sourceforge.net"><img style="border: 0px"
+       style="border: none" width="80" height="15"/></a>
+    <a href="http://gallery.sourceforge.net"><img
        src="{g->url href="images/gallery.gif"}"
        alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
-       height="15"  
-       width="80"/></a>
+       style="border: none" width="80" height="15"/></a>
   </div>
 </div>
 

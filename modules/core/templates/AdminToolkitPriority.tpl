@@ -51,13 +51,13 @@ function down(j) { swap(j,j+1); }
 	  <td id="t.{$idx}"> {$toolkit} </td>
 	  <td>
 	    {if $idx>1}
-	      <a href="" onclick="up({$idx});this.blur();return false" style="padding:0px 2px">
+	      <a href="" onclick="up({$idx});this.blur();return false" style="padding:0 2px">
 		{g->text text="up"} </a>
 	    {/if}
 	  </td>
 	  <td>
 	    {if $idx<$AdminToolkitPriority.count}
-	      <a href="" onclick="down({$idx});this.blur();return false" style="padding:0px 2px">
+	      <a href="" onclick="down({$idx});this.blur();return false" style="padding:0 2px">
 		{g->text text="down"} </a>
 	    {/if}
 	    <input type="hidden" id="i.{$idx}"

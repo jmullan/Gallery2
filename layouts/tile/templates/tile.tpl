@@ -12,7 +12,7 @@
   {g->text text="Warning: This site requires javascript."}
 </p></noscript>
 
-<div style="position:absolute;visibility:hidden;left:0px">
+<div style="position:absolute;visibility:hidden;left:0">
 {foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     {if isset($it.renderItem)}

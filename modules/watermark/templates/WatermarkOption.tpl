@@ -39,12 +39,12 @@
   </div>
 
   <div style="position: relative; width: 100%; height: 80px">
-    <select style="position: relative; left: 0px; top: 0px;" name="{g->formVar var="form[WatermarkOption][watermarkId]"}" onchange="WatermarkOption_chooseWatermark(this.value)">
+    <select style="position: relative; left: 0; top: 0;" name="{g->formVar var="form[WatermarkOption][watermarkId]"}" onchange="WatermarkOption_chooseWatermark(this.value)">
       <option value="">&laquo; {g->text text="none"} &raquo;</option>
       {foreach from=$WatermarkOption.watermarks item=watermark}
       <option value="{$watermark.id}">{$watermark.name}</option>
       {/foreach}
     </select>
-    <img style="position: relative; left: 100px; top: 0px;" id="WatermarkOption_watermark" src="" width="{$WatermarkOption.watermarks[$WatermarkOption.currentId].width}" height="{$WatermarkOption.watermarks[$WatermarkOption.currentId].height}"/>
+    <img style="position: relative; left: 100px; top: 0;" id="WatermarkOption_watermark" src="" width="{$WatermarkOption.watermarks[$WatermarkOption.currentId].width}" height="{$WatermarkOption.watermarks[$WatermarkOption.currentId].height}"/>
   </div>
 </div>

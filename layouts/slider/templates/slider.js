@@ -228,18 +228,18 @@ function options_onoff() {
 function thumbs_horizvert() {
  if (thumbs_horiz=thumbs_horiz?0:1) {
   title_div.style.marginBottom = thumbs_ht + 'px';
-  thumb_div.style.bottom = '0px';
+  thumb_div.style.bottom = '0';
   thumb_div.style.top = '';
   thumb_div.style.height = thumbs_ht + 'px';
   thumb_div.style.width = '100%';
-  image_div.style.left = '0px';
+  image_div.style.left = '0';
  } else {
   image_div.style.left = thumbs_wd + 'px';
   thumb_div.style.width = thumbs_wd + 'px';
   thumb_div.style.height = '';
-  thumb_div.style.top = '0px';
+  thumb_div.style.top = '0';
   thumb_div.style.bottom = '20px';
-  title_div.style.marginBottom = '0px';
+  title_div.style.marginBottom = '0';
  }
  var imgs = thumb_div.getElementsByTagName('IMG'), cls = thumbs_horiz?'hthumb':'vthumb';
  for (var i=0; i < imgs.length; i++)

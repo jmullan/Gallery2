@@ -93,7 +93,7 @@
   {if isset($it.summary)}{$it.summary|markup}<br />{/if}
   {$it.description|markup}</span></td></tr></table>
   {if isset($it.itemLinks)}
-   <span id="links_{$i}" style="position:absolute;visibility:hidden;top:0px">
+   <span id="links_{$i}" style="position:absolute;visibility:hidden;top:0">
    {foreach from=$it.itemLinks item=link}
     <a href="{$link.url}">{$link.text}</a><br />
    {/foreach}
@@ -143,15 +143,15 @@
 {capture name="sidebarInsert_3"}
   <div class="gbMenu">
     <ul><li>
-      <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img style="border: 0px"
-         src="{g->url href="images/xhtml10.png"}"
-         alt="{g->text text="This page is valid XHTML 1.0"}"
-         height="15" width="80" /></a>
+      <a href="http://validator.w3.org/check?uri={$main.validationUri}&amp;ss=1"><img
+	 src="{g->url href="images/xhtml10.png"}"
+	 alt="{g->text text="This page is valid XHTML 1.0"}"
+	 style="border: none" height="15" width="80"/></a>
     </li><li>
-      <a href="http://gallery.sourceforge.net"><img style="border: 0px"
-         src="{g->url href="images/gallery.gif"}"
-         alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
-         height="15" width="80" /></a>
+      <a href="http://gallery.sourceforge.net"><img
+	 src="{g->url href="images/gallery.gif"}"
+	 alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
+	 style="border: none" height="15" width="80" /></a>
     </li></ul>
   </div>
 {/capture}

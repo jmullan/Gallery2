@@ -149,7 +149,7 @@
 
       <div style="float:left">
 	<a onclick="tools_onoff();return false">
-	  <span id="tools" class="breadcrumb_item" style="margin:0px;padding:0px">
+	  <span id="tools" class="breadcrumb_item" style="margin:0;padding:0">
 	    {g->text text="[-]"}
 	  </span>
         </a>
