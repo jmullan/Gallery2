@@ -125,7 +125,7 @@ class ItemAdminView extends GalleryView {
 	if (empty($subViewName) && !empty($subViewChoices)) {
 	    $subViewName = $subViewChoices[0]['view'];
 	}
-	
+
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 	    if ($ret->isError()) {

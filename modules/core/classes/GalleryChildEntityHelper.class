@@ -35,56 +35,9 @@
 class GalleryChildEntityHelper {
 
     /**
-     * Return the number of children for the items specified
+     * Return the ids of all the immediate child entities of the given entity.
      *
-     * @access public
-     * @param array item ids
-     * @return array object GalleryStatus a status code
-     *               int a count
-     * @static
-     */
-    function getChildCounts($ids) {
-	global $gallery;
-
-	if (empty($ids)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-
-	$storage = $gallery->getStorage();
-
-	foreach ($ids as $id) {
-	    $parentIdClause[] = '[GalleryChildEntity::parentId] = ?';
-	}
-
-	$query = '
-        SELECT
-          [GalleryChildEntity::parentId], COUNT(DISTINCT([GalleryChildEntity::id]))
-        FROM
-          [GalleryChildEntity]
-        WHERE
-          ( ' . join(' OR ', $parentIdClause) . ' )
-          AND
-        GROUP BY
-          [GalleryChildEntity::parentId]
-        ';
-	$data = $ids;
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$counts = array();
-	while ($result = $searchResults->nextResult()) {
-	    $counts[$result[0]] = $result[1];
-	}
-
-	return array(GalleryStatus::success(), $counts);
-    }
-
-    /**
-     * Return the ids of all the child items of the given item.
+     * Note: this call ignores permissions so it must be used very carefully!
      *
      * @access public
      * @param array item ids
@@ -104,7 +57,7 @@ class GalleryChildEntityHelper {
 
 	$query = '
         SELECT
-          DISTINCT([GalleryChildEntity::id])
+          [GalleryChildEntity::id]
         FROM
           [GalleryChildEntity]
         WHERE
@@ -120,11 +73,59 @@ class GalleryChildEntityHelper {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = $result[0];
+	    $data[] = (int)$result[0];
 	}
 
 	return array(GalleryStatus::success(), $data);
     }
-    
+
+    /**
+     * Return the ids of all the parent entities of the given entity.
+     *
+     * @access public
+     * @param array item ids
+     * @return array object GalleryStatus a status code
+     *               array (root id, id, id, id)
+     * @static
+     */
+    function fetchParentIds($entityId) {
+	global $gallery;
+
+	if (!isset($entityId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+	
+	$storage = $gallery->getStorage();
+	$query = '
+        SELECT
+          [GalleryChildEntity::parentId]
+        FROM
+          [GalleryChildEntity]
+        WHERE
+          [GalleryChildEntity::id] = ?
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($entityId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+	$parentId = (int)$result[0];
+
+	if (empty($parentId)) {
+	    $data = array();
+	} else {
+	    list ($ret, $data) = GalleryChildEntityHelper::fetchParentIds($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $data[] = $parentId;
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
 }
 ?>

@@ -380,7 +380,7 @@ class ItemEditPermissionsView extends GalleryView {
 	list ($ret, $adminGroupId) =
 	    $gallery->getModuleParameter('core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/*
@@ -398,7 +398,7 @@ class ItemEditPermissionsView extends GalleryView {
 		list ($ret, $subPermissions) =
 		    GalleryPermissionSetMap::getSubPermissions($permission['permission']);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$userPermissions[] = 
@@ -415,7 +415,7 @@ class ItemEditPermissionsView extends GalleryView {
 		    list ($ret, $subPermissions) =
 			GalleryPermissionSetMap::getSubPermissions($permission['permission']);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		} else {
 		    $subPermissions = array();
@@ -433,12 +433,12 @@ class ItemEditPermissionsView extends GalleryView {
 	/* Figure out the owner */
 	list ($ret, $owner) = $gallery->loadEntitiesById($item->getOwnerId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Figure out what we can display on the form */

@@ -1,0 +1,191 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Child functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ChildTest extends GalleryTestCase {
+
+    function ChildTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function _createRandomAlbum($parentId) {
+	global $gallery;
+	
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($album)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	if (isset($parentId)) {
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $ret = $album->create($parentId, 'albumtest' . rand());
+	} else {
+	    $ret = $album->createRoot('albumtest' . rand());
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$album->setTitle('This is my title');
+	$album->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $album);
+    }
+    
+    function _createDerivative($parentId) {
+	global $gallery;
+
+	list ($ret, $derivative) = 
+	    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ret = $derivative->create($parentId, DERIVATIVE_TYPE_IMAGE_RESIZE);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Set bogus values */
+	$derivative->setDerivativeMimeType('');
+	$derivative->setDerivativeSourceId($parentId);
+	$derivative->setDerivativeOperations('');
+			
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return array(GalleryStatus::success(), $derivative);
+    }
+
+    
+    function setUp() {
+	parent::setUp();
+
+	/* Create a little tree of mixed items/entities */
+	list ($ret, $this->_root) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_root->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    for ($j = 0; $j < 2; $j++) {
+		list ($ret, $this->_derivative[$i][$j]) =
+		    $this->_createDerivative($this->_child[$i]->getId());
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+	    }
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	/*
+	$ret = $gallery->deleteEntityById($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	*/
+	
+	parent::tearDown();
+    }
+
+    function testFetchParentIds() {
+	list ($ret, $parentIds) =
+	    GalleryChildEntityHelper::fetchParentIds($this->_derivative[0][0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_root->getId(),
+				  $this->_child[0]->getId()),
+			    $parentIds);
+    }
+
+    function testFetchChildIds() {
+	list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($this->_root->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[1]->getId()),
+			    $childIds);
+
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($this->_child[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals(array($this->_derivative[$i][0]->getId(),
+				      $this->_derivative[$i][1]->getId()),
+				$childIds);
+	}
+    }
+
+}
+
+?>

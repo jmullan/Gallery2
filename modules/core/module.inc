@@ -343,7 +343,7 @@ class CoreModule extends GalleryModule {
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.addAlbum',
+								   'core.addAlbumItem',
 								   $gallery->i18n('[core] Add sub-album'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
@@ -351,7 +351,7 @@ class CoreModule extends GalleryModule {
 		}
 
 		$ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-								   'core.addItem',
+								   'core.addDataItem',
 								   $gallery->i18n('[core] Add sub-item'), 
 								   GALLERY_PERMISSION_ITEM_ADMIN);
 		if ($ret->isError()) {
@@ -504,11 +504,11 @@ class CoreModule extends GalleryModule {
 		}
 
 		if ($item->getCanContainChildren()) {
-		    if (isset($permissions['core.addItem'])) {
+		    if (isset($permissions['core.addDataItem'])) {
 			$showAddItemLink = true;
 		    }
 		    
-		    if (isset($permissions['core.addAlbum'])) {
+		    if (isset($permissions['core.addAlbumItem'])) {
 			$showAddAlbumLink = true;
 		    }
 		}
@@ -725,7 +725,7 @@ class CoreModule extends GalleryModule {
 			     'view' => 'core:ItemEditPermissions');
 	}
 	
-	if (isset($permissions['core.addItem'])) {
+	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
@@ -927,6 +927,12 @@ class CoreModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/*
+	 * The rest of the bootstrap code won't work so well unless we're
+	 * logged in, so log in as the admin user now.
+	 */
+	$gallery->setActiveUserId($user->getId());
+
 	return GalleryStatus::success();
     }
 
@@ -944,25 +950,6 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::success();
 	}
 
-	list ($ret, $adminGroupId) = $this->getModuleParameter('id.adminGroup');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if (sizeof($results) == 0) {
-	    $gallery->debug('There is no admin user!');
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}
-
-	/* Pick the first admin user in the group */
-	$results = array_keys($results);
-	$adminId = $results[0];
-	
 	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -972,7 +959,7 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $album->createRoot('root', $adminId);
+	$ret = $album->createRoot('root');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -46,7 +46,7 @@ class ItemAddChildrenController extends GalleryController {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addItem');
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -258,7 +258,7 @@ class ItemAddChildrenView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addItem');
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addDataItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -105,6 +105,17 @@ class GalleryTemplateAdapter {
 	}
     }
 
+    /**
+     * Return a transformed element name, useful when we're trying to use
+     * Javascript to access a form element.
+     *
+     * @param array key => value attributes
+     * @return HTML content
+     */
+    function elementName($params) {
+	return GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+    }
+
     /* ================================================== */
     /* BEGIN DELEGATION METHODS */
 

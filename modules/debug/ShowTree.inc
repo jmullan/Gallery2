@@ -55,138 +55,61 @@ class ShowTreeView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 	$formName = GalleryUtilities::getRequestVariables('formName');
+	list ($entityId, $itemId) = GalleryUtilities::getRequestVariables('entityId', 'itemId');
 
-	$filterMembers = '';
-	if ($formName == 'FilterMembers' && !empty($form['filterMembers'])) {
-	    $filterMembers = $form['filterMembers'];
-	} else {
-		$form['filterMembers'] = '';
-	}
-
-	list ($ret, $item) = $this->_getItem();
+	/* Make sure we have permission */
+	$ret = GalleryUserHelper::assertSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Make sure we have permission do view things on this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($item->getId(), 'core.all');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/*
-	 * Build the entityTree, starting at the current item. 
-	 * (making a non-recursive pre-order transversal)
-	 *  $entityTree[]['classname']
-	 *  $entityTree[]['itemId']
-	 *  $entityTree[]['level']
-	 *  $entityTree[]['members']
-	 */
-	$entityTree = array();
-	$current = 0;
-	$maxLevel = 0;
-	$startItem = array('level' => 0,
-			   'itemId' => $item->getId(),
-			   'className' => get_class($item),
-			   'members' => DebugHelper::filterMembers($item->getMemberData(), $filterMembers),
-			   'completePath' => $item->getPathComponent()
-		     );
-	$entityTree = array($startItem);
-	while ($current < count($entityTree)) {
-	    $currentItemId = $entityTree[$current]['itemId'];
-	    $currentLevel = $entityTree[$current]['level'];
-	    $currentPath = $entityTree[$current]['completePath'];
-
-	    /* Get the childIds of the current item */
-	    list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($currentItemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!empty($childIds)) {
-		/* Load the children */
-		$childItems = array();
-		list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
+	/* Try the entity id.  Fall back to the item id, then the root album id */
+	if (empty($entityId)) {
+	    if (empty($itemId)) {
+		$entityId = $itemId;
+	    } else {
+		list ($ret, $entityId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$newlevel = $currentLevel + 1;
-		if ($newlevel > $maxLevel) {
-		    $maxLevel = $newlevel;
-		}
-		$childrenList = array();
-		foreach ($childItems as $child) {
-		    $childId = $child->getId();
-		    if (is_subclass_of($child, "GalleryFileSystemEntity")
-			 || get_class($child) == strtolower("GalleryFileSystemEntity")) {
-			$thisPath = $currentPath . "/" . $child->getPathComponent();
-		    } else {
-			$itemType = get_class($child);
-			if (is_subclass_of($child, "GalleryDerivativeImage")
-			     || get_class($child) == strtolower("GalleryDerivativeImage")) {
-			    switch ($child->getDerivativeType()) {
-			    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-				$itemType = "Thumbnail";
-				break;
-			    case DERIVATIVE_TYPE_IMAGE_RESIZE:
-				$itemType = "Resized";
-				break;
-			    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
-				$itemType = "Preferred";
-				break;
-			    }
-			}
-			$thisPath = $currentPath . " (" . $itemType . ")";
-		    }
-		    $childrenList[] = array('level' => $newlevel,
-					    'itemId' => $childId,
-					    'className' => get_class($child),
-					    'members' => DebugHelper::filterMembers($child->getMemberData(), $filterMembers),
-					    'completePath' => $thisPath
-				      );
-		}
-		/* put child items after currentItem in the array */
-		$entityTree = array_merge(
-				  array_slice($entityTree, 0, $current + 1),
-				  $childrenList,
-				  array_slice($entityTree, $current + 1)
-			      );
 	    }
-	    $current++;
+	}
+
+	/* Get the parent ids leading up to this entity */
+	list ($ret, $parentIds) = GalleryChildEntityHelper::fetchParentIds($entityId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get all of this entity's children */
+	list ($ret, $childIds) = GalleryChildEntityHelper::fetchChildIds($entityId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Load everything at once */
+	list ($ret, $entityObjects) =
+	    $gallery->loadEntitiesById(array_merge($parentIds, $childIds, array($entityId)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($entityObjects as $entity) {
+	    $entityTable[$entity->getId()] = $entity->getMemberData();
 	}
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('view', 'debug:ShowTree');
-	$template->setVariable('itemId', $item->getId());
+	$template->setVariable('parentIds', $parentIds);
+	$template->setVariable('childIds', $childIds);
+	$template->setVariable('entityId', $entityId);
+	$template->setVariable('entityTable', $entityTable);
 	$template->setVariable('form', $form);
 	$template->setVariable('return', $return);
-	$template->setVariable('maxLevel', $maxLevel);
-	$template->setVariable('entityTree', $entityTree);
 	$html = $template->render('ShowTree.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }
-
-    /**
-     * Filter the keys of an array using a regular expression.
-     *
-     * @param array key => values
-     * @param string regular expression
-     * @return array
-     */
-    function _filterMembers($members, $filter) {
-	if (!empty($filter)) {
-	    $newMembers = array();
-	    foreach ($members as $member => $data) {
-		if (preg_match("/" . $filter . "/i", $member)) {
-		    $newMembers[$member] = $data;
-		}
-	    }
-	    $members = $newMembers;
-	}
-	return $members;
-    }
-
 }
 ?>

@@ -190,6 +190,79 @@ class GalleryItemHelper {
 	return array(GalleryStatus::success(), $data);
     }
     
+    /**
+     * Return the ids of all items that match the given type and have the extra
+     * required permissions AND the core.view permission.
+     *
+     * @access public
+     * @param string an item type (eg, 'GalleryAlbumItem')
+     * @param 
+     * @return array object GalleryStatus a status code
+     *               array(id, id, id, ...)
+     * @static
+     */
+    function fetchAllItemIds($itemType, $extraRequiredPermission=null) {
+	global $gallery;
+
+	if (empty($itemType)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$permissions[] = 'core.view';
+	if (isset($extraRequiredPermission)) {
+	    $permissions[] = $extraRequiredPermission;
+	}
+
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits($permissions);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage = $gallery->getStorage();
+
+	$query = '
+        SELECT
+          DISTINCT([GalleryItem::id]),
+	  BIT_OR([GalleryPermissionMap::permission])
+        FROM
+          [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+        WHERE
+          [GalleryEntity::entityType] = ?
+          AND
+          [GalleryItem::id] = [GalleryEntity::id]
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+        GROUP BY
+          [GalleryItem::id]
+        HAVING
+          BIT_OR([GalleryPermissionMap::permission]) & ? = ?
+        ';
+	$data = array();
+	$data[] = $itemType;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits($permissionBits);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
 
     /**
      * Study the permissions for all items (for the given user)

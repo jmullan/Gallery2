@@ -29,7 +29,7 @@
 
 /**
  * This controller will handle moving one or more items from one album to
- * another
+ * another.
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -38,7 +38,8 @@
 class ItemMoveController extends GalleryController {
 
     /**
-     * 
+     * Move the selected items into the destination album, if all the
+     * permissions are set correctly.
      */
     function handleRequest() {
 	global $gallery;
@@ -61,21 +62,23 @@ class ItemMoveController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		if (isset($permissions['core.addItem'])) {
+		if (isset($permissions['core.addDataItem'])) {
 		    $canAddItem = true;
 		}
-		if (isset($permissions['core.addAlbum'])) {
+		if (isset($permissions['core.addAlbumItem'])) {
 		    $canAddAlbum = true;
 		}
-		if (! $canAddAlbum && ! $canAddItem) {
+		if (!$canAddAlbum && !$canAddItem) {
 		    $problem = true;
 		    GalleryUtilities::putRequestVariable('form.error.destination.permission', 1);
 		}
+
 		/* Load the destination item */
 		list($ret, $newParent) = $gallery->loadEntitiesById($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
 		/* Load its parents: we don't want recursive moves */
 		list($ret, $newParentAncestors) = $newParent->fetchParents();
 		if ($ret->isError()) {
@@ -90,9 +93,11 @@ class ItemMoveController extends GalleryController {
 		$problem = true;
 		GalleryUtilities::putRequestVariable('form.error.destination.empty', 1);
 	    }
+	    
 	    if ($form['selectedIds']) {
 		$selectedIds = array_keys($form['selectedIds']);
 		GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
+		
 		/* Load the source items */
 		list ($ret, $selectedItems) = $gallery->loadEntitiesById($selectedIds);
 		if ($ret->isError()) {
@@ -102,46 +107,48 @@ class ItemMoveController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		
 		foreach ($selectedItems as $selectedItem) {
 		    $selectedId = $selectedItem->getId();
+
 		    /* Can't move into a tree that is included in the source */
-		    $recursiveError = false;
 		    foreach ($newParentAncestorIds as $newParentAncestorId) {
 			if ($selectedId == $newParentAncestorId) {
 			    $problem = true;
 			    GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.selfMove', 1);
-			    continue;
+			    continue 2; // Skip out of the foreach($selectedItem) also
 			}
 		    }
-		    if ($recursiveError) {
-			continue;
-		    }
+		    
 		    $oldParentIds[] = $selectedItem->getParentId();
 		    list ($ret, $permissions) = GalleryItemHelper::getPermissions($selectedId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    
 		    /* Can we delete this item from here? */
 		    if (! isset($permissions['core.delete'])) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.deleteSource', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.delete', 1);
 		    }
+		    
 		    /* Check if the destination allows this source to be added */
 		    if ($selectedItem->getCanContainChildren() && ! $canAddAlbum) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addAlbum', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addAlbumItem', 1);
 		    } elseif (! $selectedItem->getCanContainChildren() && ! $canAddItem) {
 			$problem = true;
-			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addItem', 1);
+			GalleryUtilities::putRequestVariable('form.error.source.' . $selectedId . '.permission.addDataItem', 1);
 		    }
 		}
 		$oldParentIds = array_values(array_unique($oldParentIds));
 	    }
-	    if (! $problem && !empty($selectedIds) && !empty($newParentId)) {
+	    
+	    if (!$problem && !empty($selectedIds) && !empty($newParentId)) {
 
-		/* Read lock myself and the new parent id */
+		/* Read lock myself, my parent id and the new parent id */
 		$lockIds = array();
-		list ($ret, $lockIds[]) = $gallery->acquireReadLock($newParentId, $itemId);
+		list ($ret, $lockIds[]) = $gallery->acquireReadLock(array($newParentId, $itemId));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -168,6 +175,7 @@ class ItemMoveController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
 		/* Figure out where to redirect upon success */
 		$redirectParams['view'] = 'core:ItemAdmin';
 		$redirectParams['itemId'] = $itemId;
@@ -224,103 +232,138 @@ class ItemMoveView extends GalleryView {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-        /* Get all data we have from our peers */
+	/* Get all peers that we can delete */
         list ($ret, $peerIds) =
             GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.delete');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
+
+	/* Load all the peers */
         list ($ret, $peerItems) = $gallery->loadEntitiesById($peerIds);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-        /* Find out which ones we can move away from here */
-        $ret = GalleryItemHelper::studyPermissions($peerIds);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-        $peers = array();
-        $onlyItems = true;
-        $onlyAlbums = true;
-        foreach ($peerItems as $peerItem) {
-            list ($ret, $permissions) = GalleryItemHelper::getPermissions($peerItem->getId());
-            if (! isset($permissions['core.delete'])) {
-                continue;
-            }
+	/* Build our peers table */
+	$peers = array();
+	foreach ($peerItems as $peerItem) {
             $peers[$peerItem->getId()] = $peerItem->getMemberData();
-            $peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]) ? true : false;
-            if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
-                $onlyItems = false;
-                $peers[$peerItem->getId()]['type'] = 'album';
-            } else {
-                $onlyAlbums = false;
-                $peers[$peerItem->getId()]['type'] = 'item';
-            }
+	    if (GalleryUtilities::isA($peerItem, 'GalleryAlbumItem')) {
+		$peerTypes['album'][$peerItem->getId()] = 1;
+	    } else {
+		$peerTypes['data'][$peerItem->getId()] = 1;
+	    }
+            $peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
         }
 
-        /* Get all possible destinations (where user has write permission in) */
+        /* Get all possible destinations (where user has write permission) */
         list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-        list ($ret, $root) = $gallery->loadEntitiesById($rootId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        list ($ret, $entityTree) = $root->getDescendantsList();
+
+	/* Get ids of all all albums where we can add new data items */
+        list ($ret, $albumIds['addDataItem']) =
+	    GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
 
-        $destinations = array();
-        foreach ($entityTree as $treeItem) {
-            if (! GalleryUtilities::isA($treeItem['entity'], 'GalleryItem')) {
-                continue;
-            }
-            if (! $treeItem['entity']->getCanContainChildren()) {
-                continue;
-            }
-            if ($treeItem['entity']->getId() == $itemId) {
-                continue;
-            }
-            /* Check for write permission in the destination album */
-            list ($ret, $permissions) = GalleryItemHelper::getPermissions($treeItem['entity']->getId());
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
-
-            if ($onlyAlbums && ! isset($permissions['core.addAlbum'])) {
-                continue;
-            }
-            if ($onlyItems && ! isset($permissions['core.addItem'])) {
-                continue;
-            }
-            if (!$onlyAlbums && !$onlyItems
-                && ! isset($permissions['core.addItem'])
-                && ! isset($permissions['core.addAlbum'])) {
-                /* Check for the specific permission in the controller, we 
-                 * don't know which items/albums we will have to move yet
-                 */
-                continue;
-            }
-            $destinations[] = array_merge(
-                                array('level' => $treeItem['level']),
-                                $treeItem['entity']->getMemberData()
-                              );
+	/* Get ids of all all albums where we can add new album items */
+        list ($ret, $albumIds['addAlbumItem']) =
+	    GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
         }
+
+	/* Merge them together to get the master list of ids */
+	$albumIds['allIds'] = array_unique(array_merge($albumIds['addDataItem'],
+						       $albumIds['addAlbumItem']));
+
+	/* Load all the album entities */
+        list ($ret, $albums) = $gallery->loadEntitiesById($albumIds['allIds']);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	$albumTree = $this->_createAlbumTree($albums);
 
         /* Render the HTML body */
         $template = $this->_getTemplate();
+	$template->setVariable('albumIds', $albumIds);
         $template->setVariable('itemId', $itemId);
         $template->setVariable('form', $form);
         $template->setVariable('peers', $peers);
-        $template->setVariable('destinations', $destinations);
+        $template->setVariable('peerTypes', $peerTypes);
+        $template->setVariable('albumTree', $albumTree);
         $template->setVariable('controller', 'core:ItemMove');
         $html = $template->render('ItemMove.tpl');
 
         return array(GalleryStatus::success(), $html);
+    }
+
+    /**
+     * Turn a set of albums into a depth tree suitable for display in a
+     * hierarchical format.
+     *
+     * @access private
+     */
+    function _createAlbumTree($albums) {
+	/* Index the albums by id */
+	$map = array();
+	foreach ($albums as $album) {
+	    $albumId = $album->getId();
+	    $parentId = $album->getParentId();
+	    $map[$albumId]['instance'] = $album;
+	    if (!empty($parentId)) {
+		$map[$albumId]['parent'] = $parentId;
+		$map[$parentId]['children'][] = $albumId;
+	    }
+	}
+
+	/*
+	 * Prune parents that don't exist.  This can occur if we have multiple
+	 * roots (unusual) or an album in the middle of the hierarchy that is
+	 * not viewable.
+	 */
+	foreach ($map as $id => $info) {
+	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
+		unset($map[$info['parent']]);
+	    }
+	}
+
+	/* Find root albums */
+	foreach ($map as $id => $info) {
+	    if (!isset($info['parent']) || !isset($map[$info['parent']])) {
+		$roots[] = $id;
+	    }
+	}
+
+	/* Walk the root albums */
+	$tree = array();
+	foreach ($roots as $id) {
+	    $tree = array_merge($tree, $this->_createDepthTree($map, $id));
+	}
+
+	return $tree;
+    }
+
+    /**
+     * Recursively walk a parent/child map and build the depth tree.
+     *
+     * @access private
+     */
+    function _createDepthTree(&$map, $id, $depth=0) {
+	$data = array();
+	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
+	if (isset($map[$id]['children'])) {
+	    foreach ($map[$id]['children'] as $childId) {
+		$data = array_merge($data, $this->_createDepthTree($map, $childId, $depth+1));
+	    }
+	}
+
+	return $data;
     }
 }
 ?>

@@ -46,7 +46,7 @@ class ItemAddAlbumController extends GalleryController {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbum');
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -155,7 +155,7 @@ class ItemAddAlbumView extends GalleryView {
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
-	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbum');
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.addAlbumItem');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

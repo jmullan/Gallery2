@@ -159,6 +159,12 @@ class GalleryTheme {
 	    $method = $params['method'];
 	    unset($params['method']);
 	}
+	
+	$name = null;
+	if (isset($params['name'])) {
+	    $name = $params['name'];
+	    unset($params['name']);
+	}
 
 	$urlGenerator = $gallery->getUrlGenerator();
 	$baseUrl = $urlGenerator->generateUrl();
@@ -166,6 +172,9 @@ class GalleryTheme {
 	$result .= ' accept-charset="UTF-8"';
 	if (!empty($enctype)) {
 	    $result .= ' enctype="' . $enctype . '"';
+	}
+	if (isset($name)) {
+	    $result .= ' name="' . $name . '"';
 	}
 	$result .= '">';
 	$result .= "\n";

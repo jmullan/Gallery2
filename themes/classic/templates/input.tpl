@@ -12,19 +12,28 @@
  *  $params.size (string)
  *    The size of the widget (applies to text and password types)
  * 
+ *  $params.onChange (string)
+ *    Javascript action to take when a new option is selected
+ * 
  *  $params.value (string)
  *    The initial value of the widget
  *}
-{if ($params.type == 'checkbox' || $params.type == 'radio')}
-{if empty($params.value)}
-<input type="{$params.type}" name="{$params.name}">
-{else}
-<input type="{$params.type}" name="{$params.name}" CHECKED>
+<input type="{$params.type}" 
+{if (!empty($params.name))}
+       name="{$params.name}"
 {/if}
-{else}
-<input type="{$params.type}" name="{$params.name}" value="{$params.value}"
+{if !empty($params.onChange)}
+       onChange="{$params.onChange}" 
+{/if}
 {if !empty($params.size)}
-size="{$params.size}"
+       size="{$params.size}"
+{/if}
+
+{if ! empty($params.value)}
+  {if ($params.type == 'checkbox' || $params.type == 'radio')}
+       CHECKED
+  {else}
+       value="{$params.value}"
+  {/if}
 {/if}
 >
-{/if}
