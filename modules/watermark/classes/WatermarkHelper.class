@@ -252,13 +252,13 @@ class WatermarkHelper {
 		}
 
 		if (in_array($derivative->getId(), $add)) {
-		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%.3f,%.3f',
+		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%s,%s',
 				      $watermark->getFileName(),
 				      $watermark->getMimeType(),
 				      $watermark->getWidth(),
 				      $watermark->getHeight(),
-				      $xPercent,
-				      $yPercent);
+				      number_format($xPercent, 3, '.', ''),
+				      number_format($yPercent, 3, '.', ''));
 		    list ($ret, $newPostFilters) =
 			GalleryCoreApi::mergeDerivativeOperations($derivative->getPostFilterOperations(), $filter);
 		    if ($ret->isError()) {
@@ -375,8 +375,8 @@ class WatermarkHelper {
 		$item->setApplyToResizes(isset($form['whichDerivative']['resizes']));
 		$item->setApplyToThumbnail(isset($form['whichDerivative']['thumbnail']));
 		$item->setName($form['name']);
-		$item->setXPercentage(sprintf('%.3f', $form['xPercentage']));
-		$item->setYPercentage(sprintf('%.3f', $form['yPercentage']));
+		$item->setXPercentage(number_format($form['xPercentage'], 3, '.', ''));
+		$item->setYPercentage(number_format($form['yPercentage'], 3, '.', ''));
 
 		$ret = $item->save();
 		if ($ret->isError()) {
