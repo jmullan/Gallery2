@@ -149,7 +149,6 @@ if (!function_exists('_')) {
 
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
-$stepOrder[] = 'InstallChecks';
 $stepOrder[] = 'SystemChecks';
 $stepOrder[] = 'AdminUserSetup';
 $stepOrder[] = 'StorageSetup';
@@ -157,6 +156,7 @@ $stepOrder[] = 'DatabaseSetup';
 $stepOrder[] = 'CreateConfigFile';
 $stepOrder[] = 'InstallCoreModule';
 $stepOrder[] = 'InstallOtherModules';
+$stepOrder[] = 'Secure';
 $stepOrder[] = 'Finished';
 
 foreach ($stepOrder as $stepName) {

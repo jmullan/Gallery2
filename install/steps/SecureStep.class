@@ -20,13 +20,28 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class InstallChecksStep extends InstallStep {
+class SecureStep extends InstallStep {
     function stepName() {
-	return _('Install Checks');
+	return _('Check Security');
     }
 
     function loadTemplateData(&$templateData) {
-	$templateData['bodyFile'] = 'InstallChecks.html';
+	$configFilePath = dirname(__FILE__) . '/../../config.php';
+
+	if (!file_exists($configFilePath)) {
+	    $templateData['errors']['missingConfigFile'] = 1;
+	} else {
+	    $stats = stat($configFilePath);
+	    $mode = sprintf("%o", $stats['mode']);
+
+	    // Grab the last 3 characters of the mode
+	    $mode = substr($mode, -3, 3);
+	    $templateData['configFilePath'] = realpath($configFilePath);
+	    $templateData['modes'] = $mode;
+	    $templateData['secure'] = !((int)$mode[1] & 2 || (int)$mode[2] & 2);
+	}
+	
+	$templateData['bodyFile'] = 'Secure.html';
 	$this->setComplete(true);
     }
 }
