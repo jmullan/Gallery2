@@ -1,16 +1,18 @@
     <h1><?php print _("Install Other Modules") ?></h1>
 
     <script type="text/javascript">
+      // <![CDATA[
       function checkAll(newValue) {
          for (var i = 0; i < document.forms[0].length; i++) {
              var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox' && 
+             if (element.type == 'checkbox' &&
                    element.name.substr(0,6) == 'module' &&
                    ! element.disabled) {
                  element.checked = newValue;
              }
          }
       }
+      // ]]>
     </script>
 
     <p>
@@ -21,7 +23,7 @@
     </p>
 
     <?php if (!empty($templateData['groupedModules'])): ?>
-    <form name="othermodules_form" method="post">
+    <form method="post" action="">
       <table class="modules">
         <tr style="background: #ccc;">
           <th>
@@ -46,7 +48,7 @@
 	  <?php $isInstalled = $templateData['moduleInstalled'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
             <td>
-              <input type=checkbox id="module[<?php print $id ?>]" name="module[<?php print $id ?>]"
+              <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
                 <?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
                   checked="checked"
                 <?php endif; ?>
@@ -57,7 +59,7 @@
             </td>
             <td class="modules">
 	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
-	      <label for="module[<?php print $id ?>]">
+	      <label for="module_<?php print $id ?>">
 		<?php print $module->getName() ?>
 	      </label>
 	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
@@ -82,17 +84,16 @@
           </td>
           <td colspan="3">
             <?php print _("(un)check all") ?>
+            <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
+            <input type="hidden" name="activate" value="1"/>
           </td>
         </tr>
       </table>
-      <br/>
-      <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
-      <input type="hidden" name="activate" value="1"/>
     </form>
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.othermodules_form.submit();"><?php print _('Activate Selected Modules') ?></a>
+	<a href="javascript:document.forms[0].submit();"><?php print _('Activate Selected Modules') ?></a>
       </span>
       <?php $nextStep = $stepNumber + 1 ?>
       <span class="goToNextL">

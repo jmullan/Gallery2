@@ -3,7 +3,7 @@
       <?php print _("In order to proceed with the install, we have to verify that you are who you claim.  When you performed the install, you entered a password which went into your config.php.  Type that in now.  Refer to your config.php if you've forgotten what you entered."); ?>
     </p>
 
-    <form name="password_form" method="post">
+    <form method="post" action="">
       <table>
 	<tr>
 	  <td style="text-align: left;">
@@ -28,7 +28,7 @@
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.password_form.submit()">
+	<a href="javascript:document.forms[0].submit()">
 	  <?php print _('Authenticate Me') ?>
 	</a>
       </span>

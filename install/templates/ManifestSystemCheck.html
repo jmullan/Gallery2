@@ -14,8 +14,8 @@
       ManifestSystemCheck_missing_visible = !ManifestSystemCheck_missing_visible;
     }
   </script>
- 
-  <span id="ManifestSystemCheck_missing_toggle" href="#" onclick="toggleManifestSystemCheckMissing()">
+
+  <span id="ManifestSystemCheck_missing_toggle" onclick="toggleManifestSystemCheckMissing()">
     <span id="ManifestSystemCheck_missing_toggle_indicator" class="showHideToggle">+</span>
     <b>
       <?php printf(_("Missing files (%d)"), sizeof($manifest['missing'])) ?>
@@ -23,7 +23,7 @@
   </span>
   <?php if ($isCvsInstall): ?>
   <br/>
-    
+
   <?php print sprintf(_("Note: You're running Gallery from CVS, so there might be some missing files.  If you see this, please report it <a href=\"%s\">in the forums</a>."),
     "http://gallery.sourceforge.net/forums.php?forum=10"); ?>
   <?php endif; ?>
@@ -61,7 +61,7 @@
     }
   </script>
 
-  <span id="ManifestSystemCheck_modified_toggle" href="#" onclick="toggleManifestSystemCheckModified()">
+  <span id="ManifestSystemCheck_modified_toggle" onclick="toggleManifestSystemCheckModified()">
     <span id="ManifestSystemCheck_modified_toggle_indicator" class="showHideToggle">+</span>
     <b>
       <?php printf(_("Modified files (%d)"), sizeof($manifest['modified'])) ?>

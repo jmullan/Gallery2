@@ -31,35 +31,34 @@
     <p>
       <?php print _("Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:"); ?>
     </p>
-    
+
     <div class="example">
       <h3> <?php print _("MySQL"); ?> </h3>
-      <?php printf(_("mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"), 
-                   $templateData['storeConfig']['username'], 
+      <?php printf(_("mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"),
+                   $templateData['storeConfig']['username'],
                    $templateData['storeConfig']['database'],
                    $templateData['storeConfig']['database']); ?>
     </div>
 
     <div class="example">
       <h3> <?php print _("PostgreSQL"); ?> </h3>
-      <?php printf(_("pg_dump %s > %s.sql"), 
+      <?php printf(_("pg_dump %s > %s.sql"),
                    $templateData['storeConfig']['database'],
                    $templateData['storeConfig']['database']); ?>
     </div>
 
-    <form name="upgrade_form" method="post">
-      <input type="hidden" name="confirm" value="1" />
-    </form>
-
     <p>
+      <form method="post" action="">
+        <input type="hidden" name="confirm" value="1" />
+      </form>
+
       <?php print _("Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may interfere with the upgrade process."); ?>
     </p>
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.upgrade_form.submit()">
+	<a href="javascript:document.forms[0].submit()">
 	  <?php print _('Begin Upgrade') ?>
 	</a>
       </span>
     </div>
-

@@ -2,13 +2,14 @@
 <html>
   <head>
     <title> <?php print _('Welcome to the Gallery Installer') ?> </title>
-    <link rel="stylesheet" type="text/css" href="styles/style.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" type="text/css" href="styles/style.css"/>
   </head>
 
   <body>
     <div id="box">
       <div id="header">
-	<img src="images/g2Logo_install_head.png" />
+	<img src="images/g2Logo_install_head.png" alt="Gallery Installer"/>
       </div>
       <div id="navbar">
 	<h2><?php print _('Install Steps') ?></h2>
@@ -85,7 +86,7 @@
 
 	  <?php if ($currentStep->isRedoable()): ?>
 	  <span class="goToNextL">
-	    <a href="index.php?step=<?php print $stepNumber?>&doOver=1">
+	    <a href="index.php?step=<?php print $stepNumber?>&amp;doOver=1">
 	      <?php print _('Redo this step'); ?>
 	    </a>
 	  </span>
@@ -103,18 +104,12 @@
 	  </tr>
 
 	  <tr>
-	    <?php $progressBarColor = ($templateData['percentComplete'] >= 100) ? '#fd6704' : '#fd6704'; ?>
 	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td width="<?php print $templateData['percentComplete'] ?>%"
-	      align="center"
-	      bgcolor="<?php print $progressBarColor; ?>"
-	      style="border: 1px solid #ddd">&nbsp;</td>
+	    <td class="progressMade" style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
 	    <?php endif; ?>
 
 	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td width="<?php print 100 - $templateData['percentComplete'] ?>%"
-	      bgcolor="#eeeeee"
-	      style="border: 1px solid #ddd; <?php print ($templateData['percentComplete'] == 0) ? '' : 'border-left: none;'?>">&nbsp;</td>
+	    <td class="progressToGo" style="width:<?php print (100 - $templateData['percentComplete']) . '%' . (($templateData['percentComplete'] == 0) ? '' : ';border-left:none') ?>">&nbsp;</td>
 	    <?php endif; ?>
 	  </tr>
 	  <tr>

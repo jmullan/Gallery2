@@ -3,14 +3,14 @@
       <?php print _("Every Gallery will have at least one administrator user who has full access to view/modify everything. Please choose a username and password for your main administrator account. You can add additional users later.") ?>
     </p>
 
-    <form name="admin_form" method="post">
+    <form method="post" action="">
       <table class="adminForm">
 	<tr>
 	  <td>
 	    <?php print _('Admin username') ?><span class="error">*</span>
 	  </td>
 	  <td>
-	    <input disabled name="fakeuname" type="text" value="admin"/>
+	    <input type="text" name="fakeuname" value="admin" disabled="disabled"/>
 	    <input type="hidden" name="action" value="create"/>
 	  </td>
 	</tr>
@@ -55,6 +55,6 @@
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.admin_form.submit();"><?php print _('Create') ?></a>
+	<a href="javascript:document.forms[0].submit();"><?php print _('Create') ?></a>
       </span>
     </div>

@@ -9,7 +9,7 @@
 		. $templateData['galleryId'] ?>
     </p>
     <script type="text/javascript">
-      <!--
+      // <![CDATA[
       function toggle(objId, togId) {
         var o = document.getElementById(objId), t = document.getElementById(togId);
         if (o.style.display == 'none') {
@@ -19,8 +19,8 @@
           o.style.display = 'none';
           t.innerHTML = '+';
         }
-      }  
-      //-->
+      }
+      // ]]>
     </script>
     <p>
       <?php print _('There are multiple methods to direct different URLs to the same Gallery code:') ?>
@@ -44,7 +44,7 @@ ls newgallery</pre>
       <span id="htaccess-toggle" class="showHideToggle"
        onclick="toggle('htaccess-info', 'htaccess-toggle')"> + </span>
       <div id="htaccess-info" style="display:none;padding:0.5em">
-        <?php printf(_('Below is a <a href="%s">sample</a> .htaccess to point <tt>/path/photos</tt> to a <tt>gallery2</tt> directory where the Gallery code resides.'), 'index.php?step=' . $stepNumber . '&downloadHtaccess=1') ?>
+        <?php printf(_('Below is a <a href="%s">sample</a> .htaccess to point <tt>/path/photos</tt> to a <tt>gallery2</tt> directory where the Gallery code resides.'), 'index.php?step=' . $stepNumber . '&amp;downloadHtaccess=1') ?>
         <div class="example" style="margin:0.5em">
 <pre>RedirectMatch permanent ^/<b>path/photos</b>$ /<b>path/photos</b>/main.php
 &lt;IfModule mod_rewrite.c&gt;

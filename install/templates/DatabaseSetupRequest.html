@@ -2,8 +2,8 @@
 
     <p> <?php print _('Please select your database type and enter your database authentication information.  The installer will not create the database for you, so you must create one yourself and enter the database name here.  If you are installing Gallery into a database that already has tables in it, the table and column prefixes will keep Gallery data from conflicting with what you already have.') ?> </p>
 
-    <form name="database_form" method="post">
-      <table> 
+    <form method="post" action="">
+      <table>
         <tr>
 	  <td style="text-align: left;">
 	    <?php print _('Database type:') ?>
@@ -32,7 +32,7 @@
 	<tr>
 	  <td style="text-align: left;"><?php print _('DB Hostname:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="hostname" type="text" 
+	    <input name="hostname" type="text"
 	      value="<?php print $templateData['config']['hostname'] ?>" />
 	    <input type="hidden" name="action" value="save"/>
 	    <input type="hidden" name="confirmReuseTables" value=""/>
@@ -41,28 +41,28 @@
 	<tr>
 	  <td style="text-align: left;"><?php print _('DB Username:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="username" type="text" 
+	    <input name="username" type="text"
 	      value="<?php print $templateData['config']['username'] ?>" />
 	  </td>
 	</tr>
 	<tr>
 	  <td style="text-align: left;"><?php print _('DB Password:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="password" type="password" 
+	    <input name="password" type="password"
 	      value="<?php print $templateData['config']['password'] ?>" />
 	  </td>
 	</tr>
 	<tr>
 	  <td style="text-align: left;"><?php print _('DB Name:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="database" type="text" 
+	    <input name="database" type="text"
 	      value="<?php print $templateData['config']['database'] ?>" />
 	  </td>
 	</tr>
 	<tr>
 	  <td style="text-align: left;"><?php print _('Table Prefix:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="tablePrefix" type="text" 
+	    <input name="tablePrefix" type="text"
 	      value="<?php print $templateData['config']['tablePrefix'] ?>" />
 	  </td>
 	</tr>
@@ -76,7 +76,7 @@
 	<tr>
 	  <td style="text-align: left;"><?php print _('Column Prefix:') ?></td>
 	  <td style="text-align: left;">
-	    <input name="columnPrefix" type="text" 
+	    <input name="columnPrefix" type="text"
 	      value="<?php print $templateData['config']['columnPrefix'] ?>" />
 	  </td>
 	</tr>
@@ -101,11 +101,11 @@
 
     <div class="go">
       <span class="goToNext">
-	<a href="javascript:document.database_form.submit()"><?php print _('Save') ?></a>
+	<a href="javascript:document.forms[0].submit()"><?php print _('Save') ?></a>
       </span>
       <?php if (isset($templateData['showConfirm'])): ?>
       <span class="goToNextL">
-	<a href="javascript:document.database_form.confirmReuseTables.value='true'; document.database_form.submit()"><?php print _('Reuse Existing Tables') ?></a>
+	<a href="javascript:document.forms[0].confirmReuseTables.value='true'; document.forms[0].submit()"><?php print _('Reuse Existing Tables') ?></a>
       </span>
       <?php endif; ?>
     </div>
