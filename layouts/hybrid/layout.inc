@@ -311,6 +311,11 @@ class HybridLayout extends GalleryLayout {
 			     'data' => $child->getMemberData(),
 			     'isContainer' => $child->getCanContainChildren());
 	    if (isset($thumbnails[$childId])) {
+		list ($ret, $thumbnails[$childId]) =
+		    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnails[$childId]->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 		$newItem['thumb'] = $thumbnails[$childId]->getMemberData();
 	    }
 
@@ -353,14 +358,7 @@ class HybridLayout extends GalleryLayout {
 		    }
 		}
 		if (isset($thumbnails[$childId])) {
-		    $thumbnail = $thumbnails[$childId];
-		    if (!$thumbnail->getWidth()) {
-			list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCache($thumbnail->getId());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    }
-		    $images[] = $thumbnail;
+		    $images[] = $thumbnails[$childId];
 		}
 
 		if (!empty($images)) {
