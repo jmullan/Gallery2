@@ -61,6 +61,14 @@
     
     , 
   
+    INDEX (DB_COLUMN_PREFIXpluginType
+      ,
+    DB_COLUMN_PREFIXpluginId
+      ,
+    DB_COLUMN_PREFIXitemId)
+    
+      ,
+    
     INDEX (DB_COLUMN_PREFIXpluginType)
     
 

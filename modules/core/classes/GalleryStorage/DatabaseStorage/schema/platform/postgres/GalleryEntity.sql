@@ -65,6 +65,11 @@
     (DB_COLUMN_PREFIXmodificationTimestamp);
 
   
+    CREATE INDEX Entity_serialNumber 
+    ON DB_TABLE_PREFIXEntity
+    (DB_COLUMN_PREFIXserialNumber);
+
+  
     ALTER TABLE DB_TABLE_PREFIXEntity
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     

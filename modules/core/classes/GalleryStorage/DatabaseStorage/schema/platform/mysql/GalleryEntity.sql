@@ -63,6 +63,10 @@
     
     INDEX (DB_COLUMN_PREFIXmodificationTimestamp)
     
+      ,
+    
+    INDEX (DB_COLUMN_PREFIXserialNumber)
+    
 
     ) TYPE=DB_TABLE_TYPE;
 

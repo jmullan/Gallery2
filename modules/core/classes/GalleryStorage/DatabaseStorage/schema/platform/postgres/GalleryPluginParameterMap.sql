@@ -52,6 +52,15 @@
     );
 
   
+    CREATE INDEX PluginParameterMap_pluginType_pluginId_itemId 
+    ON DB_TABLE_PREFIXPluginParameterMap
+    (DB_COLUMN_PREFIXpluginType
+        ,
+      DB_COLUMN_PREFIXpluginId
+        ,
+      DB_COLUMN_PREFIXitemId);
+
+  
     CREATE INDEX PluginParameterMap_pluginType 
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType);
