@@ -33,7 +33,10 @@
 var sel = -1, list = new Array();
 var html = new Array();
 {foreach from=$RearrangeItems.children key=idx item=child}
-  html[{$idx}] = '{include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl" child=$child}';
+  {capture name="html"}
+  {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl" child=$child}
+  {/capture}
+  html[{$idx}] = '{$smarty.capture.html|escape:javascript}';
 {/foreach}
 for (var i = 0; i < {$RearrangeItems.count}; i++) {literal} {
   list[i] = i;
