@@ -78,6 +78,12 @@ msgstr "(sida %d av %d)"
 msgid "180&deg;"
 msgstr "180&deg;"
 
+#, c-format
+msgid ""
+"<b>Note:</b> you can upload up to %s at one time.  If you want to upload "
+"more than that, you must upload the files separately, or use an upload format"
+msgstr ""
+
 msgid "<none>"
 msgstr "<ingen>"
 
@@ -168,6 +174,10 @@ msgstr "Verkst&auml;ll &auml;ndringar"
 msgid "Apply to sub-items"
 msgstr "Verkst&auml;ll p&aring; underliggande album"
 
+#, fuzzy
+msgid "Archive"
+msgstr "Aktiv"
+
 #, c-format
 msgid "Are you sure you want to delete this %s?"
 msgstr "&Auml;r du s&auml;ker p&aring; att du vill ta bort detta %s?"
@@ -183,6 +193,10 @@ msgstr "Fallande"
 
 msgid "Aspect Ratio: "
 msgstr "L&auml;gesf&ouml;rh&aring;llande:"
+
+#, fuzzy
+msgid "Audio"
+msgstr "&aring;ngra"
 
 msgid "B"
 msgstr "B"
@@ -348,6 +362,9 @@ msgstr "Katalog"
 #, c-format
 msgid "Directory: %s"
 msgstr "Katalog: %s"
+
+msgid "Document"
+msgstr ""
 
 msgid "Done"
 msgstr "Klar"
@@ -763,7 +780,7 @@ msgstr "Moduler"
 
 #, c-format
 msgid "Move %s"
-msgstr "Flytta %S"
+msgstr "Flytta %s"
 
 msgid "Move Album"
 msgstr "Flytta album"
@@ -1010,7 +1027,6 @@ msgstr "Inst&auml;llningar sparades framg&aring;ngsrikt"
 msgid "Settings saved successfully."
 msgstr "Inst&auml;llningar sparades framg&aring;ngsrikt."
 
-#, fuzzy
 msgid ""
 "Shrink or enlarge the original photo.  When Gallery scales a photo, it "
 "maintains the same aspect ratio (height to width) of the original photo to "
@@ -1020,10 +1036,8 @@ msgstr ""
 "F&ouml;rminska eller f&ouml;rstora originalfotot.  N&auml;r Gallery &auml;"
 "ndrar ett foto skalenligt s&aring; beh&aring;lls samma bildf&ouml;rh&aring;"
 "llanden (h&ouml;jd till bredd) som p&aring; originalfotot f&ouml;r att "
-"undvika f&ouml;rvr&auml;ngning.  V&auml;rdet du skriver in nedan (i "
-"bildpunkter) skapar en begr&auml;nsad ruta.  Gallery kommer att &auml;ndra "
-"fotot skalenligt tils det &auml;r s&aring; stort som m&ouml;jligt men "
-"fortfarande passar inuti rutan."
+"undvika f&ouml;rvr&auml;ngning.  Fotot kommer att &auml;ndras skalenligt "
+"tils den st&ouml;rsta sidan har samma v&auml;rde som du skriver in h&auml;r."
 
 msgid "Site Admin"
 msgstr "Sidadministrat&ouml;r"
@@ -1077,6 +1091,10 @@ msgstr ""
 
 msgid "Specify the lifetime of the session here."
 msgstr "Ange livstiden f&ouml;r sessionen h&auml;r."
+
+#, fuzzy
+msgid "Spreadsheet"
+msgstr "&aring;terst&auml;ll"
 
 msgid "Square 1x1"
 msgstr "Kvadrat 1x1"
@@ -1362,9 +1380,8 @@ msgstr "Detta objekt &auml;gs av anv&auml;ndare: %s (%s)"
 msgid "This item is owned by user: %s"
 msgstr "Detta objekt &auml;gs av anv&auml;ndare: %s"
 
-#, fuzzy
 msgid "This page is valid XHTML 1.0"
-msgstr "Denna sida &auml;r validerad HTML 4.01"
+msgstr "Denna sida &auml;r validerad XHTML 1.0"
 
 msgid ""
 "This sets the default sort order for the album.  This applies to all new "
@@ -1646,6 +1663,21 @@ msgstr ""
 "Ditt namn inneh&aring;ller ogiltiga tecken.  V&auml;nligen v&auml;lj ett "
 "annat."
 
+msgid ""
+"Your webserver does not support localization.  Please instruct your system "
+"administrator to reconfigure PHP with the <a href=\"http://php.net/gettext"
+"\">gettext</a> option enabled."
+msgstr ""
+
+#, fuzzy
+msgid ""
+"Your webserver is configured to disallow file uploads from your web browser "
+"at this time.  Please contact your system administrator for assistance."
+msgstr ""
+"Din webbserver &auml;r konfigurerad f&ouml;r att hindra dig att tilltr&auml;"
+"da den katalogen.  V&auml;nligen v&auml;nd dig till %s och konsultera din "
+"webbserveradministrat&ouml;r."
+
 #, c-format
 msgid ""
 "Your webserver is configured to prevent you from accessing that directory.  "
@@ -1712,6 +1744,14 @@ msgstr "album"
 msgid "animation"
 msgstr "Animering"
 
+#, fuzzy
+msgid "archive"
+msgstr "aktivera"
+
+#, fuzzy
+msgid "audio"
+msgstr "&aring;ngra"
+
 msgid "before"
 msgstr "f&ouml;re"
 
@@ -1739,12 +1779,14 @@ msgstr "ta bort album"
 msgid "delete"
 msgstr "ta bort"
 
+msgid "document"
+msgstr ""
+
 msgid "edit album"
 msgstr "redigera album"
 
-#, fuzzy
 msgid "edit permissions"
-msgstr "r&auml;ttigheter"
+msgstr "redigera r&auml;ttigheter"
 
 msgid "edit user"
 msgstr "redigera anv&auml;ndare"
@@ -1821,6 +1863,10 @@ msgstr "spara"
 msgid "site admin"
 msgstr "sidadministrat&ouml;r"
 
+#, fuzzy
+msgid "spreadsheet"
+msgstr "&aring;terst&auml;ll"
+
 msgid "test url"
 msgstr "pr&ouml;va webbadress"
 
@@ -1831,7 +1877,7 @@ msgid "unknown"
 msgstr "ok&auml;nd"
 
 msgid "url"
-msgstr ""
+msgstr "url"
 
 msgid "yes"
 msgstr "ja"
@@ -1859,6 +1905,18 @@ msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d timme"
 msgstr[1] "%d timmar"
+
+#, fuzzy, c-format
+msgid "%d kilobytes"
+msgid_plural "%d kilobytes"
+msgstr[0] "%d byte"
+msgstr[1] "%d byte"
+
+#, fuzzy, c-format
+msgid "%d megabyte"
+msgid_plural "%d megabytes"
+msgstr[0] "%d byte"
+msgstr[1] "%d byte"
 
 #, c-format
 msgid "%d minute"
