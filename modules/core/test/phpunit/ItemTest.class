@@ -151,6 +151,45 @@ class ItemTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
+    function testFetchChildIdsByTitle() {
+	global $gallery;
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_parentItem) = $this->_parentItem->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_parentItem->setOrderBy('title');
+	$this->_parentItem->setOrderDirection(ORDER_ASCENDING);
+
+	/* Save it */
+	$ret = $this->_parentItem->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unlock it */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $ids) = $this->_parentItem->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_childItems[1]->getId(),
+				  $this->_childItems[2]->getId()),
+			    $ids);
+    }
+
     function testNewItemByMimeType() {
 	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('image/jpeg');
 	if ($ret->isError()) {
