@@ -206,6 +206,7 @@ class TestCase extends Assert /* implements Test */ {
   var $fResult;
   var $fExceptions = array();
   var $fTiming;
+  var $fLifeCycle = array();
 
   function TestCase($name) {
     $this->fName = $name;
@@ -275,11 +276,13 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function setUp() /* expect override */ {
-    //print("TestCase::setUp()<br>\n");
+      //print("TestCase::setUp()<br>\n");
+      $this->fLifeCycle['setUp'] = 1;
   }
 
   function tearDown() /* possible override */ {
-    //print("TestCase::tearDown()<br>\n");
+      //print("TestCase::tearDown()<br>\n");
+      $this->fLifeCycle['tearDown'] = 1;
   }
 
   ////////////////////////////////////////////////////////////////
@@ -338,8 +341,10 @@ class TestCase extends Assert /* implements Test */ {
   function runBare() {
     $this->fTiming['start'] = microtime();
     $this->setUp();
+    $this->assert(!empty($this->fLifeCycle['setUp']), 'TestSuite setUp() method did not call parent::setUp()');
     $this->runTest();
     $this->tearDown();
+    $this->assert(!empty($this->fLifeCycle['tearDown']), 'TestSuite tearDown() method did not call parent::tearDown()');
     $this->fTiming['stop'] = microtime();
   }
 }
