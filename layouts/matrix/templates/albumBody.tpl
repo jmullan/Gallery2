@@ -100,7 +100,7 @@
 	    {/if}
 
             {if !empty($layout.moduleItemLinks[$child.id])}
-            <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">
+            <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}" class="giActionSelect">
               <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
               {foreach from=$layout.moduleItemLinks[$child.id] item=link}

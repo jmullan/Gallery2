@@ -39,7 +39,7 @@
               {if sizeof($layout.imageViews) > 1}
               <li>
                 {g->text text="Size: "}
-                <select onchange="javascript:if (this.value) location.href=this.value">
+                <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation;{/literal}">
                   {section name=imageView loop=$layout.imageViews}
                   {if $smarty.section.imageView.index == $layout.imageViewsIndex}
                   {assign var="selected" value="selected=\"selected\""}
