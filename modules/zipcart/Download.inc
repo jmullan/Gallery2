@@ -54,7 +54,9 @@ class DownloadView extends GalleryView {
 
 	if ($platform->is_readable($file)) {
 	    // Send multipart reply: zip + html-to-reload
-	    header('Content-Type: multipart/mixed;boundary=G2ZipCart');
+	    header('Content-Type: multipart/mixed; boundary=G2ZipCart');
+	    // Poor IE6 doesn't know multipart.. add filename in main headers so IE will see it
+	    header('Content-Disposition: inline; filename="G2cart.zip"');
 	    print "--G2ZipCart\nContent-Type: application/zip\n";
 	    print "Content-Disposition: inline; filename=\"G2cart.zip\"\n";
 
