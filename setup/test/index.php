@@ -116,9 +116,9 @@ function runTest($testName) {
 	
 	$config = $gallery->getConfig('storage.config');
 	if ($class->useDefaultDatabase()) {
-	    $config['useDefault'] = 1;
+	    $config['useDefaultDatabase'] = 1;
 	} else {
-	    $config['useDefault'] = 0;
+	    $config['useDefaultDatabase'] = 0;
 	}
 	$gallery->setConfig('storage.config', $config);
     }
