@@ -270,7 +270,7 @@ class Gallery {
      */
     function getConfig($key) {
 	assert('!empty($key)');
-	return $this->_config[$key];
+	return (isset($this->_config[$key])) ? $this->_config[$key] : null;
     }
 
     /**
