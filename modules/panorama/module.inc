@@ -133,8 +133,10 @@ class PanoramaModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Panorama Settings'),
-				 'view' => 'panorama:PanoramaSiteAdmin')));
+		     array(array('name' => $this->translate('Panorama'),
+				 'view' => 'panorama:PanoramaSiteAdmin',
+				 'group' => 'display',
+				 'groupLabel' => $this->translate('Display'))));
     }
 
     /**

@@ -246,11 +246,12 @@ class GalleryModule {
     
     /**
      * Get the name of the GalleryView containing the various site
-     * administration views for this module.  Note that the text value is
-     * localized since it will be displayed directly to the user.
+     * administration views for this module.  Note that the text values are
+     * localized since they will be displayed directly to the user.
      *
      * @return array object GalleryStatus a status code
-     *               array( array('name' => name, 'view' => view), ...)
+     *               array( array('name' => name, 'view' => view,
+     *                            optional: 'group' => group, 'groupLabel' => label), ...)
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(), array());

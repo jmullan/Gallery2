@@ -189,8 +189,10 @@ class ThumbnailModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Thumbnail Manager'),
-				 'view' => 'thumbnail:ThumbnailSiteAdmin')));
+		     array(array('name' => $this->translate('Thumbnails'),
+				 'view' => 'thumbnail:ThumbnailSiteAdmin',
+				 'group' => 'display',
+				 'groupLabel' => $this->translate('Display'))));
     }
 }
 ?>

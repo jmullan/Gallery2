@@ -180,7 +180,9 @@ class ExifModule extends GalleryModule {
 
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('EXIF Parser'),
-				 'view' => 'exif:AdminExif')));
+				 'view' => 'exif:AdminExif',
+				 'group' => 'data',
+				 'groupLabel' => $this->translate('Extra Data'))));
     }
 
     /**

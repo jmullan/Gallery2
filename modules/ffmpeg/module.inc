@@ -277,7 +277,9 @@ class FfmpegModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Ffmpeg'),
-				 'view' => 'ffmpeg:AdminFfmpeg')));
+				 'view' => 'ffmpeg:AdminFfmpeg',
+				 'group' => 'toolkits',
+				 'groupLabel' => $this->translate('Graphics Toolkits'))));
     }
 
     /**

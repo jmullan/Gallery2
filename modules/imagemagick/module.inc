@@ -287,8 +287,10 @@ class ImageMagickModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('ImageMagick Settings'),
-				 'view' => 'imagemagick:AdminImageMagick')));
+		     array(array('name' => $this->translate('ImageMagick'),
+				 'view' => 'imagemagick:AdminImageMagick',
+				 'group' => 'toolkits',
+				 'groupLabel' => $this->translate('Graphics Toolkits'))));
     }
 
     /**

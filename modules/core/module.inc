@@ -409,18 +409,24 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews();
      */
     function getSiteAdminViews() {
+	$label = $this->translate('Gallery');
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('General Settings'),
-				 'view' => 'core:AdminCore'),
-			   array('name' => $this->translate('User Management'),
-				 'view' => 'core:AdminUsers'),
-			   array('name' => $this->translate('Group Management'),
-				 'view' => 'core:AdminGroups'),
-			   array('name' => $this->translate('Gallery Modules'),
-				 'view' => 'core:AdminModules'),
-			   array('name' => $this->translate('Gallery Layouts'),
-				 'view' => 'core:AdminLayouts')
-			   ),
+		     array(array('name' => $this->translate('General'),
+				 'view' => 'core:AdminCore',
+				 'group' => 'gallery', 'groupLabel' => $label),
+			   array('name' => $this->translate('Users'),
+				 'view' => 'core:AdminUsers',
+				 'group' => 'gallery', 'groupLabel' => $label),
+			   array('name' => $this->translate('Groups'),
+				 'view' => 'core:AdminGroups',
+				 'group' => 'gallery', 'groupLabel' => $label),
+			   array('name' => $this->translate('Modules'),
+				 'view' => 'core:AdminModules',
+				 'group' => 'gallery', 'groupLabel' => $label),
+			   array('name' => $this->translate('Layouts'),
+				 'view' => 'core:AdminLayouts',
+				 'group' => 'gallery', 'groupLabel' => $label)
+			   )
 		     );
     }
 

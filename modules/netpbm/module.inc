@@ -342,7 +342,9 @@ class NetPbmModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('NetPBM'),
-				 'view' => 'netpbm:AdminNetPbm')));
+				 'view' => 'netpbm:AdminNetPbm',
+				 'group' => 'toolkits',
+				 'groupLabel' => $this->translate('Graphics Toolkits'))));
     }
 
     /**

@@ -101,8 +101,10 @@ class ImageBlockModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Image Block Settings'),
-				 'view' => 'imageblock:ImageBlockSiteAdmin')));
+		     array(array('name' => $this->translate('Random/Popular'),
+				 'view' => 'imageblock:ImageBlockSiteAdmin',
+				 'group' => 'blocks',
+				 'groupLabel' => $this->translate('Blocks'))));
     }
 
     /**

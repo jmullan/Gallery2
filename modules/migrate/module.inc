@@ -83,8 +83,10 @@ class MigrateModule extends GalleryModule {
     function getSiteAdminViews() {
 	global $gallery;
 	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Import from Gallery 1'),
-				 'view' => 'migrate:SelectGallery'
+		     array(array('name' => $this->translate('Gallery 1'),
+				 'view' => 'migrate:SelectGallery',
+				 'group' => 'import',
+				 'groupLabel' => $this->translate('Import')
 				 )
 			   )
 		     );
