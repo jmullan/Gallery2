@@ -1,6 +1,6 @@
 <?php
 /*
-V3.30 3 March 2003  (c) 2000-2003 John Lim. All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -23,6 +23,7 @@ class ADODB_oci8po extends ADODB_oci8 {
 	var $databaseType = 'oci8po';
 	var $dataProvider = 'oci8';
 	var $metaColumnsSQL = "select lower(cname),coltype,width from col where tname='%s' order by colno";
+	var $metaTablesSQL = "select lower(table_name) from cat where table_type in ('TABLE','VIEW')";
 	
 	function Prepare($sql)
 	{
@@ -136,15 +137,16 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	// Create associative array
 	function _updatefields()
 	{
-		//if (ADODB_ASSOC_CASE == 2) return; // native
+		if (ADODB_ASSOC_CASE == 2) return; // native
 		
 		$arr = array();
+		$lowercase = ADODB_ASSOC_CASE == 0;
 		foreach ($this->fields as $k => $v) {
 			if (is_integer($k)) $arr[$k] = $v;
 			else {
-				if (ADODB_ASSOC_CASE != 1)
+				if ($lowercase)
 					$arr[strtolower($k)] = $v;
-				else // if (ADODB_ASSOC_CASE == 1)
+				else
 					$arr[strtoupper($k)] = $v;
 			}
 		}

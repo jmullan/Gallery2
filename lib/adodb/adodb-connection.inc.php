@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -10,13 +10,20 @@
  * Latest version is available at http://php.weblogs.com
  *
  */
- 
- 	class ADO_DBX {
-		var $handle;
-		var $database;
-		var $module;
-	};
 
+	
+	function ADODB_TransMonitor($dbms, $fn, $errno, $errmsg, $p1, $p2, &$thisConnection)
+	{
+		//print "Errorno ($fn errno=$errno m=$errmsg) ";
+		
+		$thisConnection->_transOK = false;
+		if ($thisConnection->_oldRaiseFn) {
+			$fn = $thisConnection->_oldRaiseFn;
+			$fn($dbms, $fn, $errno, $errmsg, $p1, $p2,$thisConnection);
+		}
+	}
+	
+	
     /**
 	 * Connection object. For connecting to databases, and executing queries.
 	 */ 
@@ -78,6 +85,8 @@
 	 //
 	 // PRIVATE VARS
 	 //
+	var $_oldRaiseFn =  false;
+	var $_transOK = null;
 	var $_connectionID	= false;	/// The returned link identifier whenever a successful database connection is made.	
 	var $_errorMsg = '';		/// A variable which was used to keep the returned last error message.  The value will
 								/// then returned by the errorMsg() function	
@@ -87,7 +96,7 @@
 	var $_isPersistentConnection = false;	/// A boolean variable to state whether its a persistent connection or normal connection.	*/
 	var $_bindInputArray = false; /// set to true if ADOConnection.Execute() permits binding of array parameters.
 	var $autoCommit = true; 	/// do not modify this yourself - actually private
-	var $transOff = false; 		/// temporarily disable transactions
+	var $transOff = 0; 			/// temporarily disable transactions
 	var $transCnt = 0; 			/// count of nested transactions
 	
 	var $fetchMode=false;
@@ -165,7 +174,7 @@
 			}
 			$err = $this->ErrorMsg();
 			if (empty($err)) $err = "Connection error to server '$argHostname' with user '$argUsername'";
-			$fn($this->databaseType,'CONNECT',$this->ErrorNo(),$err,$this->host,$this->database);
+			$fn($this->databaseType,'CONNECT',$this->ErrorNo(),$err,$this->host,$this->database,$this);
 		} else {
 			if ($forceNew) {
 				if ($this->_nconnect($this->host, $this->user, $this->password, $this->database)) return true;
@@ -225,7 +234,7 @@
 			if ($this->_pconnect($this->host, $this->user, $this->password, $this->database)) return true;
 			$err = $this->ErrorMsg();
 			if (empty($err)) $err = "Connection error to server '$argHostname' with user '$argUsername'";
-			$fn($this->databaseType,'PCONNECT',$this->ErrorNo(),$err,$this->host,$this->database);
+			$fn($this->databaseType,'PCONNECT',$this->ErrorNo(),$err,$this->host,$this->database,$this);
 		} else 
 			if ($this->_pconnect($this->host, $this->user, $this->password, $this->database)) return true;
 
@@ -401,6 +410,66 @@
 	}
 	
 	/**
+		Improved method of initiating a transaction. Used together with CompleteTrans().
+		Advantages include:
+		
+		a. StartTrans/CompleteTrans is nestable, unlike BeginTrans/CommitTrans/RollbackTrans.
+		   Only the outermost block is treated as a transaction.<br>
+		b. CompleteTrans auto-detects SQL errors, and will rollback on errors, commit otherwise.<br>
+		c. All BeginTrans/CommitTrans/RollbackTrans inside a StartTrans/CompleteTrans block
+		   are disabled, making it backward compatible.
+	*/
+	function StartTrans($errfn = 'ADODB_TransMonitor')
+	{
+		
+		if ($this->transOff > 0) {
+			$this->transOff += 1;
+			return;
+		}
+		
+		$this->_oldRaiseFn = $this->raiseErrorFn;
+		$this->raiseErrorFn = $errfn;
+		$this->_transOK = true;
+		
+		if ($this->debug && $this->transCnt > 0) ADOConnection::outp("Bad Transaction: StartTrans called within BeginTrans");
+		$this->BeginTrans();
+		$this->transOff = 1;
+	}
+	
+	/**
+		Used together with StartTrans() to end a transaction. Monitors connection
+		for sql errors, and will commit or rollback as appropriate.
+		
+		@autoComplete if true, monitor sql errors and commit and rollback as appropriate, 
+		and if set to false force rollback even if no SQL error detected.
+		@returns true on commit, false on rollback.
+	*/
+	function CompleteTrans($autoComplete = true)
+	{
+		if ($this->transOff > 1) {
+			$this->transOff -= 1;
+			return true;
+		}
+		$this->raiseErrorFn = $this->_oldRaiseFn;
+		
+		$this->transOff = 0;
+		if ($this->_transOK && $autoComplete) $this->CommitTrans();
+		else $this->RollbackTrans();
+		
+		return $this->_transOK;
+	}
+	
+	/*
+		At the end of a StartTrans/CompleteTrans block, perform a rollback.
+	*/
+	function FailTrans()
+	{
+		if ($this->debug && $this->transOff == 0) {
+			ADOConnection::outp("FailTrans outside StartTrans/CompleteTrans");
+		}
+		$this->_transOK = false;
+	}
+	/**
 	 * Execute SQL 
 	 *
 	 * @param sql		SQL statement to execute, or possibly an array holding prepared statement ($sql[0] will hold sql text)
@@ -479,7 +548,9 @@
 				}
 			} else 
 				if (!$this->_queryID) {
-					ADOConnection::outp( $this->ErrorNo().': '.$this->ErrorMsg() );
+					$e = $this->ErrorNo();
+					$m = $this->ErrorMsg();
+					ADOConnection::outp($e .': '. $m );
 					flush();
 				}
 		} else {
@@ -492,7 +563,7 @@
 		if ($this->_queryID === false) {
 			$fn = $this->raiseErrorFn;
 			if ($fn) {
-				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,$inputarr);
+				$fn($this->databaseType,'EXECUTE',$this->ErrorNo(),$this->ErrorMsg(),$sql,$inputarr,$this);
 			}
 			return false;
 		} else if ($this->_queryID === true) {
@@ -623,6 +694,18 @@
 		return ($this->_errorMsg) ? -1 : 0;
 	}
 	
+	function MetaError($err=false)
+	{
+		include_once(ADODB_DIR."/adodb-error.inc.php");
+		if ($err === false) $err = $this->ErrorNo();
+		return adodb_error($this->dataProvider,$this->databaseType,$err);
+	}
+	
+	function MetaErrorMsg($errno)
+	{
+		include_once(ADODB_DIR."/adodb-error.inc.php");
+		return adodb_errormsg($errno);
+	}
 	
 	/**
 	 * @returns an array with the primary key columns in it.
@@ -725,7 +808,6 @@
 			else $rs = &$this->Execute($sql,$inputarr,$arg3);
 		}
 		$ADODB_COUNTRECS = $savec;
-		
 		if ($rs && !$rs->EOF) {
 			return $this->_rs2rs($rs,$nrows,$offset);
 		}
@@ -747,11 +829,18 @@
 	function &_rs2rs(&$rs,$nrows=-1,$offset=-1,$close=true)
 	{
 		if (! $rs) return false;
-		if (($rs->databaseType == 'array' || $rs->databaseType == 'csv') && $nrows == -1 && $offset == -1) {
-			$rs->MoveFirst();
-			$rs = &$rs; // required to prevent crashing in 4.2.1-- why ?
+		
+		$dbtype = $rs->databaseType;
+		if (!$dbtype) {
+			$rs = &$rs;  // required to prevent crashing in 4.2.1, but does not happen in 4.3.1 -- why ?
 			return $rs;
 		}
+		if (($dbtype == 'array' || $dbtype == 'csv') && $nrows == -1 && $offset == -1) {
+			$rs->MoveFirst();
+			$rs = &$rs; // required to prevent crashing in 4.2.1, but does not happen in 4.3.1-- why ?
+			return $rs;
+		}
+		
 		for ($i=0, $max=$rs->FieldCount(); $i < $max; $i++) {
 			$flds[] = $rs->FetchField($i);
 		}
@@ -869,7 +958,13 @@
 	*/
 	function GetAll($sql,$inputarr=false)
 	{
+	global $ADODB_COUNTRECS;
+		
+		$savec = $ADODB_COUNTRECS;
+		$ADODB_COUNTRECS = false;
 		$rs = $this->Execute($sql,$inputarr);
+		$ADODB_COUNTRECS = $savec;
+		
 		if (!$rs) 
 			if (defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 			else return false;
@@ -880,7 +975,13 @@
 	
 	function CacheGetAll($secs2cache,$sql=false,$inputarr=false)
 	{
+	global $ADODB_COUNTRECS;
+		
+		$savec = $ADODB_COUNTRECS;
+		$ADODB_COUNTRECS = false;
 		$rs = $this->CacheExecute($secs2cache,$sql,$inputarr);
+		$ADODB_COUNTRECS = $savec;
+		
 		if (!$rs) 
 			if (defined('ADODB_PEAR')) return ADODB_PEAR_Error();
 			else return false;
@@ -905,6 +1006,8 @@
 		$ADODB_COUNTRECS = false;
 		
 		$rs = $this->Execute($sql,$inputarr);
+		
+		$ADODB_COUNTRECS = $crecs;
 		if ($rs) {
 			$arr = false;
 			if (!$rs->EOF) $arr = $rs->fields;
@@ -912,7 +1015,6 @@
 			return $arr;
 		}
 		
-		$crecs = $ADODB_COUNTRECS;
 		return false;
 	}
 	
@@ -983,17 +1085,22 @@
 			$update = "UPDATE $table SET $uSet WHERE $where";
 		
 			$rs = $this->Execute($update);
-			
 			if ($rs) {
 				if ($this->poorAffectedRows) {
+				/*
+				 The Select count(*) wipes out any errors that the update would have returned. 
+				http://phplens.com/lens/lensforum/msgs.php?id=5696
+				*/
+					if ($this->ErrorNo()<>0) return 0;
+					
 				# affected_rows == 0 if update field values identical to old values
-				# for mysql - which is silly.
+				# for mysql - which is silly. 
+			
 					$cnt = $this->GetOne("select count(*) from $table where $where");
 					if ($cnt > 0) return 1; // record already exists
 				} else
 					 if (($this->Affected_Rows()>0)) return 1;
 			}
-			
 				
 		}
 	//	print "<p>Error=".$this->ErrorNo().'<p>';
@@ -1151,7 +1258,7 @@
 		
 				if (!adodb_write_file($md5file,$txt,$this->debug)) {
 					if ($fn = $this->raiseErrorFn) {
-						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql);
+						$fn($this->databaseType,'CacheExecute',-32000,"Cache write error",$md5file,$sql,$this);
 					}
 					if ($this->debug) ADOConnection::outp( " Cache write error");
 				}

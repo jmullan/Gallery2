@@ -1,6 +1,6 @@
 <?php
 /*
-V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -419,7 +419,7 @@ class ADORecordSet_mysql extends ADORecordSet{
 
 	function &GetRowAssoc($upper=true)
 	{
-		if ($this->fetchMode == MYSQL_ASSOC && !$upper) return $rs->fields;
+		if ($this->fetchMode == MYSQL_ASSOC && !$upper) return $this->fields;
 		return ADORecordSet::GetRowAssoc($upper);
 	}
 	
@@ -449,16 +449,16 @@ class ADORecordSet_mysql extends ADORecordSet{
 	// 10% speedup to move MoveNext to child class
 	function MoveNext() 
 	{
-	//global $ADODB_EXTENSION;if ($ADODB_EXTENSION) return @adodb_movenext($this);
+	//global $ADODB_EXTENSION;if ($ADODB_EXTENSION) return adodb_movenext($this);
 	
-		if (!$this->EOF) {		
-			$this->_currentRow++;
-			// using & below slows things down by 20%!
-			$this->fields = @mysql_fetch_array($this->_queryID,$this->fetchMode);
-			if (is_array($this->fields)) return true;
-			
-			$this->EOF = true;
-		}
+		if ($this->EOF) return false;
+				
+		$this->_currentRow++;
+		$this->fields = @mysql_fetch_array($this->_queryID,$this->fetchMode);
+		if (is_array($this->fields)) return true;
+		
+		$this->EOF = true;
+		
 		/* -- tested raising an error -- appears pointless
 		$conn = $this->connection;
 		if ($conn && $conn->raiseErrorFn && ($errno = $conn->ErrorNo())) {

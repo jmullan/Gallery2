@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -30,6 +30,8 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 	var $leftOuter = '*=';
 	var $rightOuter = '=*';
 	var $ansiOuter = true; // for mssql7 or later
+	var $identitySQL = 'select @@IDENTITY'; // 'select SCOPE_IDENTITY'; # for mssql 2000
+	var $hasInsertID = true;
 	
 	function ADODB_odbc_mssql()
 	{
@@ -44,6 +46,16 @@ class  ADODB_odbc_mssql extends ADODB_odbc {
 		return $arr;
 	}
 	
+	
+	function _insertid()
+	{
+	// SCOPE_IDENTITY()
+	// Returns the last IDENTITY value inserted into an IDENTITY column in 
+	// the same scope. A scope is a module -- a stored procedure, trigger, 
+	// function, or batch. Thus, two statements are in the same scope if 
+	// they are in the same stored procedure, function, or batch.
+			return $this->GetOne($this->identitySQL);
+	}
 	
 	function MetaTables()
 	{

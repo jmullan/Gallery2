@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V3.30 3 March 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V3.40 7 April 2003 (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -151,7 +151,6 @@
 			$this->MoveNext();
 			$cnt++;
 		}
-		
 		return $results;
 	}
 	
@@ -175,7 +174,10 @@
 	 */
 	function GetArrayLimit($nrows,$offset=-1) 
 	{	
-		if ($offset <= 0) return $this->GetArray($nrows);
+		if ($offset <= 0) {
+			return $this->GetArray($nrows);
+		} 
+		
 		$this->Move($offset);
 		
 		$results = array();
@@ -228,8 +230,8 @@
 		if (!$first2cols && ($cols > 2 || $force_array)) {
 			if ($numIndex) {
 				while (!$this->EOF) {
-				$results[trim($this->fields[0])] = array_slice($this->fields, 1);
-				$this->MoveNext();
+					$results[trim($this->fields[0])] = array_slice($this->fields, 1);
+					$this->MoveNext();
 				}
 			} else {
 				while (!$this->EOF) {
@@ -451,11 +453,13 @@
 	 */
 	function Move($rowNumber = 0) 
 	{
+		$this->EOF = false;
 		if ($rowNumber == $this->_currentRow) return true;
 		if ($rowNumber >= $this->_numOfRows)
 	   		if ($this->_numOfRows != -1) $rowNumber = $this->_numOfRows-2;
-   
-		if ($this->canSeek) {
+  				
+		if ($this->canSeek) { 
+	
 			if ($this->_seek($rowNumber)) {
 				$this->_currentRow = $rowNumber;
 				if ($this->_fetch()) {
@@ -466,12 +470,19 @@
 				return false;
 			}
 		} else {
-		
 			if ($rowNumber < $this->_currentRow) return false;
-			while (! $this->EOF && $this->_currentRow < $rowNumber) {
-				$this->_currentRow++;
-				
-				if (!$this->_fetch()) $this->EOF = true;
+			global $ADODB_EXTENSION;
+			if ($ADODB_EXTENSION) {
+				while (!$this->EOF && $this->_currentRow < $rowNumber) {
+					adodb_movenext($this);
+				}
+			} else {
+			
+				while (! $this->EOF && $this->_currentRow < $rowNumber) {
+					$this->_currentRow++;
+					
+					if (!$this->_fetch()) $this->EOF = true;
+				}
 			}
 			return !($this->EOF);
 		}
@@ -495,6 +506,15 @@
 		return $this->fields[$colname];
 	}
 	
+	function GetAssocKeys($upper=true)
+	{
+		$this->bind = array();
+		for ($i=0; $i < $this->_numOfFields; $i++) {
+			$o = $this->FetchField($i);
+			if ($upper === 2) $this->bind[$o->name] = $i;
+			else $this->bind[($upper) ? strtoupper($o->name) : strtolower($o->name)] = $i;
+		}
+	}
 	
   /**
    * Use associative array to get fields array for databases that do not support
@@ -509,12 +529,7 @@
 	{
 	 
 	   	if (!$this->bind) {
-			$this->bind = array();
-			for ($i=0; $i < $this->_numOfFields; $i++) {
-				$o = $this->FetchField($i);
-				if ($upper === 2) $this->bind[$o->name] = $i;
-				else $this->bind[($upper) ? strtoupper($o->name) : strtolower($o->name)] = $i;
-			}
+			$this->GetAssocKeys($upper);
 		}
 		
 		$record = array();
@@ -755,6 +770,7 @@
 		'VARYING' => 'C',
 		'BPCHAR' => 'C',
 		'CHARACTER' => 'C',
+		'INTERVAL' => 'C',  # Postgres
 		##
 		'LONGCHAR' => 'X',
 		'TEXT' => 'X',

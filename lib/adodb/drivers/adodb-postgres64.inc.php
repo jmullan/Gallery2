@@ -1,6 +1,6 @@
 <?php
 /*
- V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -17,6 +17,15 @@
   31 Jan 2002 jlim - finally installed postgresql. testing
   01 Mar 2001 jlim - Freek Dijkstra changes, also support for text type
 */
+
+function adodb_addslashes($s)
+{
+	$len = strlen($s);
+	if ($len == 0) return "''";
+	if (substr($s,0,1) == "'" && substr(s,$len-1) == "'") return $s; // already quoted
+	
+	return "'".addslashes($s)."'";
+}
 
 class ADODB_postgres64 extends ADOConnection{
 	var $databaseType = 'postgres64';
@@ -140,7 +149,7 @@ a different OID if a database must be reloaded. */
 		$this->transCnt -= 1;
 		return @pg_Exec($this->_connectionID, "rollback");
 	}
-	
+	/*
 	// if magic quotes disabled, use pg_escape_string()
 	function qstr($s,$magic_quotes=false)
 	{
@@ -158,6 +167,7 @@ a different OID if a database must be reloaded. */
 		$s = str_replace('\\"','"',$s);
 		return "'$s'";
 	}
+	*/
 	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
@@ -205,11 +215,22 @@ a different OID if a database must be reloaded. */
 	* postgres proprietary blob handling routines 
 	*
 	* contributed by Mattia Rossi mattia@technologist.com
+	* modified for safe mode by juraj chlebec
 	*/ 
 	function UpdateBlobFile($table,$column,$path,$where,$blobtype='BLOB') 
 	{ 
 		pg_exec ($this->_connectionID, "begin"); 
-		$oid = pg_lo_import ($path); 
+		
+		$fd = fopen($path,'r');
+		$contents = fread($fd,filesize($path));
+		fclose($fd);
+		
+		$oid = pg_lo_create($this->_connectionID);
+		$handle = pg_lo_open($this->_connectionID, $oid, 'w');
+		pg_lo_write($handle, $contents);
+		pg_lo_close($handle);
+		
+		// $oid = pg_lo_import ($path); 
 		pg_exec ($this->_connectionID, "commit"); 
 		$rs = ADOConnection::UpdateBlob($table,$column,$oid,$where,$blobtype); 
 		$rez = !empty($rs); 
@@ -273,13 +294,14 @@ a different OID if a database must be reloaded. */
 	{
 	global $ADODB_FETCH_MODE;
 	
+		if (strncmp(PHP_OS,"WIN",3) === 0) $table = strtolower($table);
+	
 		if (!empty($this->metaColumnsSQL)) { 
-			// the following is the only difference -- we lowercase it
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-			
+			if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
 			$rs = $this->Execute(sprintf($this->metaColumnsSQL,($table)));
-			
+			if (isset($savem)) $this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			
 			if ($rs === false) return false;
@@ -295,7 +317,7 @@ a different OID if a database must be reloaded. */
 				$rskey = $this->Execute(sprintf($this->metaKeySQL,($table)));
 				// fetch all result in once for performance.
 				$keys = $rskey->GetArray();
-				
+				if (isset($savem)) $this->SetFetchMode($savem);
 				$ADODB_FETCH_MODE = $save;
 				
 				$rskey->Close();
@@ -304,12 +326,16 @@ a different OID if a database must be reloaded. */
 
 			$rsdefa = array();
 			if (!empty($this->metaDefaultsSQL)) {
+				$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 				$sql = sprintf($this->metaDefaultsSQL, ($table));
 				$rsdef = $this->Execute($sql);
+				if (isset($savem)) $this->SetFetchMode($savem);
+				$ADODB_FETCH_MODE = $save;
+				
 				if ($rsdef) {
 					while (!$rsdef->EOF) {
-						$num = $rsdef->Fields('num');
-						$s = $rsdef->Fields('def');
+						$num = $rsdef->fields['num'];
+						$s = $rsdef->fields['def'];
 						if (substr($s, 0, 1) == "'") { /* quoted strings hack... for now... fixme */
 							$s = substr($s, 1);
 							$s = substr($s, 0, strlen($s) - 1);
@@ -386,9 +412,13 @@ a different OID if a database must be reloaded. */
 	// examples:
 	// 	$db->Connect("host=host1 user=user1 password=secret port=4341");
 	// 	$db->Connect('host1','user1','secret');
-	function _connect($str,$user='',$pwd='',$db='')
+	function _connect($str,$user='',$pwd='',$db='',$persist=false)
 	{		   
 		if ($user || $pwd || $db) {
+			$str = adodb_addslashes($str);
+			$user = adodb_addslashes($user);
+			$pwd = adodb_addslashes($pwd);
+			$db = adodb_addslashes($db);
 		   	if ($str)  {
 			 	$host = split(":", $str);
 				if ($host[0]) $str = "host=$host[0]";
@@ -401,7 +431,8 @@ a different OID if a database must be reloaded. */
 		}
 		
 		//if ($user) $linea = "user=$user host=$linea password=$pwd dbname=$db port=5432";
-		$this->_connectionID = pg_connect($str);
+		if ($persist) $this->_connectionID = pg_pconnect($str);
+		else $this->_connectionID = pg_connect($str);
 		if ($this->_connectionID === false) return false;
 		$this->Execute("set datestyle='ISO'");
 		return true;
@@ -414,21 +445,7 @@ a different OID if a database must be reloaded. */
 	// 	$db->PConnect('host1','user1','secret');
 	function _pconnect($str,$user='',$pwd='',$db='')
 	{
-		if ($user || $pwd || $db) {
-		   		if ($str)  {
-			 	$host = split(":", $str);
-				if ($host[0]) $str = "host=$host[0]";
-				else $str = 'localhost';
-				if (isset($host[1])) $str .= " port=$host[1]";
-			}
-		   		if ($user) $str .= " user=".$user;
-		   		if ($pwd)  $str .= " password=".$pwd;
-			if ($db)   $str .= " dbname=".$db;
-		}//print $str;
-		$this->_connectionID = pg_pconnect($str);
-		if ($this->_connectionID === false) return false;
-		$this->Execute("set datestyle='ISO'");
-		return true;
+		return $this->_connect($str,$user,$pwd,$db,true);
 	}
 
 	// returns queryID or false
@@ -450,10 +467,10 @@ a different OID if a database must be reloaded. */
 		if (ADODB_PHPVER >= 0x4300) {
 			if (!empty($this->_resultid)) {
 				$this->_errorMsg = @pg_result_error($this->_resultid);
-				if (empty($this->_errorMsg)) {
-					$this->_errorMsg = @pg_last_error($this->_connectionID);
-				}
-			} else if (!empty($this->_connectionID)) {
+				if ($this->_errorMsg) return $this->_errorMsg;
+			}
+			
+			if (!empty($this->_connectionID)) {
 				$this->_errorMsg = @pg_last_error($this->_connectionID);
 			} else $this->_errorMsg = @pg_last_error();
 		} else {
@@ -465,7 +482,8 @@ a different OID if a database must be reloaded. */
 	
 	function ErrorNo()
 	{
-		return (strlen($this->ErrorMsg())) ? -1 : 0;
+		$e = $this->ErrorMsg();
+		return (strlen($e)) ? $e : 0;
 	}
 
 	// returns true or false
@@ -525,7 +543,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	
 	function &GetRowAssoc($upper=true)
 	{
-		if ($this->fetchMode == PGSQL_ASSOC && !$upper) return $rs->fields;
+		if ($this->fetchMode == PGSQL_ASSOC && !$upper) return $this->fields;
 		return ADORecordSet::GetRowAssoc($upper);
 	}
 
@@ -609,6 +627,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 					return true;
 				}
 			}
+			$this->fields = false;
 			$this->EOF = true;
 		}
 		return false;
@@ -616,9 +635,9 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 	
 	function _fetch()
 	{
-	    if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows != -1)
-		return false;
-	    
+		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0)
+        	return false;
+
 		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
 		if (isset($this->_blobArr)) $this->_fixblobs();
 			
@@ -638,6 +657,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 			$len = $fieldobj->max_length;
 		}
 		switch (strtoupper($t)) {
+				case 'INTERVAL':
 				case 'CHAR':
 				case 'CHARACTER':
 				case 'VARCHAR':

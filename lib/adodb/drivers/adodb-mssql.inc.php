@@ -1,6 +1,6 @@
 <?php
 /* 
-V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -90,6 +90,7 @@ class ADODB_mssql extends ADOConnection {
 	var $ansiOuter = true; // for mssql7 or later
 	var $poorAffectedRows = true;
 	var $identitySQL = 'select @@IDENTITY'; // 'select SCOPE_IDENTITY'; # for mssql 2000
+	
 	
 	function ADODB_mssql() 
 	{		
@@ -538,46 +539,48 @@ class ADORecordset_mssql extends ADORecordSet {
 	// speedup
 	function MoveNext() 
 	{
-		if (!$this->EOF) {		
-			$this->_currentRow++;
-			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
-				if ($this->fetchMode & ADODB_FETCH_NUM) {
-					//ADODB_FETCH_BOTH mode
-					$this->fields = @mssql_fetch_array($this->_queryID);
-				}
-				else {
-					if (ADODB_PHPVER >= 0x4200) {// only for PHP 4.2.0 or later
-						 $this->fields = @mssql_fetch_assoc($this->_queryID);
-					} else {
-						$flds = @mssql_fetch_array($this->_queryID);
-						if (is_array($flds)) {
-							$fassoc = array();
-							foreach($flds as $k => $v) {
-								if (is_numeric($k)) continue;
-								$fassoc[$k] = $v;
-							}
-							$this->fields = $fassoc;
-						}
-					}
-				}
-				
-				if (is_array($this->fields)) {
-					if (ADODB_ASSOC_CASE == 0) {
-						foreach($this->fields as $k=>$v) {
-							$this->fields[strtolower($k)] = $v;
-						}
-					} else if (ADODB_ASSOC_CASE == 1) {
-						foreach($this->fields as $k=>$v) {
-							$this->fields[strtoupper($k)] = $v;
-						}
-					}
-				}
-			} else {
-				$this->fields = @mssql_fetch_row($this->_queryID);
+		if ($this->EOF) return false;
+		
+		$this->_currentRow++;
+		
+		if ($this->fetchMode & ADODB_FETCH_ASSOC) {
+			if ($this->fetchMode & ADODB_FETCH_NUM) {
+				//ADODB_FETCH_BOTH mode
+				$this->fields = @mssql_fetch_array($this->_queryID);
 			}
-			if ($this->fields) return true;
-			$this->EOF = true;
+			else {
+				if (ADODB_PHPVER >= 0x4200) {// only for PHP 4.2.0 or later
+					 $this->fields = @mssql_fetch_assoc($this->_queryID);
+				} else {
+					$flds = @mssql_fetch_array($this->_queryID);
+					if (is_array($flds)) {
+						$fassoc = array();
+						foreach($flds as $k => $v) {
+							if (is_numeric($k)) continue;
+							$fassoc[$k] = $v;
+						}
+						$this->fields = $fassoc;
+					}
+				}
+			}
+			
+			if (is_array($this->fields)) {
+				if (ADODB_ASSOC_CASE == 0) {
+					foreach($this->fields as $k=>$v) {
+						$this->fields[strtolower($k)] = $v;
+					}
+				} else if (ADODB_ASSOC_CASE == 1) {
+					foreach($this->fields as $k=>$v) {
+						$this->fields[strtoupper($k)] = $v;
+					}
+				}
+			}
+		} else {
+			$this->fields = @mssql_fetch_row($this->_queryID);
 		}
+		if ($this->fields) return true;
+		$this->EOF = true;
+		
 		return false;
 	}
 

@@ -304,7 +304,7 @@ function adodb_date_test()
 	
 	// Test string formating
 	print "<p>Testing date formating</p>";
-	$fmt = '\d\a\t\e T Y-m-d H:i:s a A d D F g G h H i j l L m M n O r s t U w y Y z Z 2003';
+	$fmt = '\d\a\t\e T Y-m-d H:i:s a A d D F g G h H i j l L m M n O \R\F\C822 r s t U w y Y z Z 2003';
 	$s1 = date($fmt,0);
 	$s2 = adodb_date($fmt,0);
 	if ($s1 != $s2) {

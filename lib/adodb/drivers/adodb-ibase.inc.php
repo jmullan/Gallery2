@@ -1,6 +1,6 @@
 <?php
 /*
-V3.30 3 March 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V3.40 7 April 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -420,7 +420,7 @@ class ADODB_ibase extends ADOConnection {
 		
 		/* fill with data */ 
 		
-		while ($val = fread($fd,8192)){ 
+		while ($val = fread($fd,32768)){ 
 			ibase_blob_add($blob_id, $val); 
 		} 
 		
@@ -440,7 +440,41 @@ class ADODB_ibase extends ADOConnection {
 		$conn->Execute('INSERT INTO blobtable (id, blobcol) VALUES (1, null)');
 		$conn->UpdateBlob('blobtable','blobcol',$blob,'id=1');
 	*/
-	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
+	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB') 
+	{ 
+	$blob_id = ibase_blob_create($this->_connectionID); 
+	
+	// ibase_blob_add($blob_id, $val); 
+	
+	// replacement that solves the problem by which only the first modulus 64K / 
+	// of $val are stored at the blob field //////////////////////////////////// 
+	// Thx Abel Berenstein  aberenstein#afip.gov.ar
+	$len = strlen($val); 
+	$chunk_size = 32768; 
+	$tail_size = $len % $chunk_size; 
+	$n_chunks = ($len - $tail_size) / $chunk_size; 
+	
+	for ($n = 0; $n < $n_chunks; $n++) { 
+		$start = $n * $chunk_size; 
+		$data = substr($val, $start, $chunk_size); 
+		ibase_blob_add($blob_id, $data); 
+	} 
+	
+	if ($tail_size) {
+		$start = $n_chunks * $chunk_size; 
+		$data = substr($val, $start, $tail_size); 
+		ibase_blob_add($blob_id, $data); 
+	}
+	// end replacement ///////////////////////////////////////////////////////// 
+	
+	$blob_id_str = ibase_blob_close($blob_id); 
+	
+	return $this->Execute("UPDATE $table SET $column=(?) WHERE $where",array($blob_id_str)) != false; 
+	
+	} 
+	
+	
+	function OldUpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
 	{
 		$blob_id = ibase_blob_create($this->_connectionID);
 		ibase_blob_add($blob_id, $val);
