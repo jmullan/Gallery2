@@ -80,9 +80,6 @@ class AddCommentController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		/* Sanitize the comment */
-		$form['comment'] = strip_tags($form['comment']);
-		
 		$comment->setCommenterId($gallery->getActiveUserId());
 		$comment->setHost(GalleryUtilities::getRemoteHostAddress());
 		$comment->setSubject($form['subject']);
