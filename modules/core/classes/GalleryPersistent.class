@@ -113,7 +113,7 @@ class GalleryPersistent {
 	    $this->_persistentStatus->originalValue[$name] = $this->$method();
 	}
 
-	if ($this->_persistentStatus->originalValue[$name] == $newValue) {
+	if ($this->_persistentStatus->originalValue[$name] === $newValue) {
 	    unset($this->_persistentStatus->modified[$name]);
 	} else {
 	    $this->_persistentStatus->modified[$name] = MEMBER_MODIFIED;
