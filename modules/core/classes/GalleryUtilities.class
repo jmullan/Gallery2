@@ -627,14 +627,14 @@ class GalleryUtilities {
 		    /* No room to show anything! */
 		    return '';
 		}
-		
+
 		if ($substringCount > $lengthMinusMarker) {
 		    /* We don't have room for the marker */
 		    list ($substringCount, $newString) =
 			GalleryUtilities::entitySubstr($string, 0, $lengthMinusMarker, $countEntitiesAsOne);
 		}
 	    }
-	    
+
 	    if (!$breakWords) {
 		$newStringLen = strlen($newString);
 	        $testString = substr($string, 0, $newStringLen + 1);
@@ -693,7 +693,7 @@ class GalleryUtilities {
 	if (!$countEntitiesAsOne && $start == 0 && $length >= $stringLength) {
 	    return array(strlen($string), $string);
 	}
-	
+
 	if (preg_match_all('(&#x[A-Fa-f0-9]+;|&#[0-9]+;|&[A-Za-z0-9]+;|.|\n)', $string, $reg)) {
 	    $charArray = $reg[0];
 	    $charArrayLength = count($charArray);
@@ -855,7 +855,6 @@ class GalleryUtilities {
 		$value = GalleryUtilities::smartHtmlEntities($value);
 	    }
 
-
 	    /* Undo the damage caused by magic_quotes */
 	    if (get_magic_quotes_gpc()) {
 		$value = stripslashes($value);
@@ -907,6 +906,36 @@ class GalleryUtilities {
 	    /* Unsanitize dangerous html entities */
 	    $value = GalleryUtilities::htmlEntityDecode($value);
 	}
+	$value = preg_replace('/&#(\d+);/me', "GalleryUtilities::unicodeToUtf8(\\1)", $value);
+    }
+
+    /**
+     * Convert a numerical unicode value to a multibyte UTF-8 string
+     * Adapted from code found here: http://us2.php.net/utf8_encode
+     *
+     * @param num the unicode value
+     * @return string the UTF-8 string
+     */
+    function unicodeToUtf8($num){
+	if ($num < 128) {
+	    return chr($num);
+	}
+	if ($num < 1024) {
+	    return (chr(192 + ($num >> 6)) .
+		    chr(128 + ($num & 63)));
+	}
+	if ($num < 32768) {
+	    return (chr(224 + ($num >> 12)) .
+		    chr(128 + (($num >> 6 ) & 63)) .
+		    chr(128 + ($num & 63)));
+	}
+	if ($num < 2097152) {
+	    return (chr(240 + ($num >> 18)) .
+		    chr(128 + (($num >> 12) & 63)) .
+		    chr(128 + (($num >> 6) & 63)) .
+		    chr(128 + ($num & 63)));
+	}
+	return '';
     }
 
     /**
@@ -1021,7 +1050,7 @@ class GalleryUtilities {
         } else {
             return null;
         }
-        return $ip;		
+        return $ip;
     }
 
     /**
@@ -1305,7 +1334,7 @@ class GalleryUtilities {
 
     /**
      * Return the id of the search engine currently crawling the site by
-     * analyzing the current request.  
+     * analyzing the current request.
      *
      * @return string the crawler id, or null if it's a regular user
      */

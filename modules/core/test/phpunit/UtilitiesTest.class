@@ -186,6 +186,14 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
     }
 
+    function testSanitizeRoundTrip() {
+	/* Verify that UTF-8 values can be sanitized and unsanitized safely */
+	$original = $value = "t\xc3\xa9st";
+	GalleryUtilities::sanitizeInputValues($value);
+	GalleryUtilities::unsanitizeInputValues($value);
+	$this->assertEquals($original, $value);
+    }
+
     function testMakeMarkers() {
 	$this->assertEquals('?, ?, ?, ?, ?',
 			    GalleryUtilities::makeMarkers(5));
