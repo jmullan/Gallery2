@@ -73,13 +73,12 @@ class ConfirmImportController extends GalleryController {
 	    /* go through the list of chosen users */
 	    foreach (array_keys ($form['migrateUser']) as $uid) {
 		/* convert from uid to username */
-		$userName = $uidMap[$uid];
 		list ($ret, $fields) =
-		    Gallery1DataParser::getUserFieldsByUsername($albumsPath, $userName);
+			Gallery1DataParser::getUserFieldsByUid($albumsPath, $uid);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+		$userName = $fields['username'];
 		/*
 		 * Go ahead and create the user instance
 		 */
