@@ -92,7 +92,8 @@ function _GalleryMain($returnHtml=false) {
     /* Figure out the target view/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
-    if (!$returnHtml && $gallery->getConfig('mode.embed.only') && $viewName != 'core:DownloadItem') {
+    if (!$returnHtml && $gallery->getConfig('mode.embed.only')
+		     && $viewName != 'core:DownloadItem') {
 	/* Lock out direct access when embed-only is set */
 	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
     }
@@ -152,7 +153,8 @@ function _GalleryMain($returnHtml=false) {
 	/* Check to make sure we got back everything we want */
 	if (!isset($results['status']) ||
 	    !isset($results['error']) ||
-	    (!isset($results['redirect']) && !isset($results['delegate']) && !isset($results['return']))) {
+	    (!isset($results['redirect']) && !isset($results['delegate'])
+					  && !isset($results['return']))) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					      'Controller results are missing status, ' .
 					      'error or (redirect,delegate,return)'),
@@ -260,7 +262,8 @@ function _GalleryMain($returnHtml=false) {
 	}
 	if (isset($results['redirect'])) {
 	    $redirectUrl = $urlGenerator->generateUrl($results['redirect']);
-	    return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl, $template));
+	    return array(GalleryStatus::success(),
+			 _GalleryMain_doRedirect($redirectUrl, $template));
 	} else {
 	    if (isset($results['html'])) {
 		$main['html'] = $results['html'];
@@ -311,7 +314,8 @@ function _GalleryMain($returnHtml=false) {
 		 * embedding app requested no sidebar in G2 content..
 		 */
 		$layout['show']['sidebar'] = true;
-		list ($ret, $data['sidebarHtml']) = $template->fetch('gallery:templates/sidebar.tpl');
+		list ($ret, $data['sidebarHtml']) =
+		    $template->fetch('gallery:templates/sidebar.tpl');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -441,8 +445,10 @@ function _GalleryMain_errorHandler($error, $g2Data=null, $initOk=true) {
 	    $main['error']['phpversion'] = phpversion();
 	    $main['error']['php_uname'] = php_uname();
 	    $main['error']['php_sapi_name'] = php_sapi_name();
-	    $main['error']['webserver'] = isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
-	    $main['error']['browser'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+	    $main['error']['webserver'] =
+		isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : '';
+	    $main['error']['browser'] =
+		isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 	    if ($gallery->isStorageInitialized()) {
 		$storage =& $gallery->getStorage();
 		$main['error']['dbType'] = $storage->_impl->getAdoDbType();

@@ -87,7 +87,7 @@ class StorageSetupStep extends InstallStep {
 	    print join("\n", $dirs);
 	    return false;
 	}
-	
+
 	return true;
     }
 
@@ -108,7 +108,7 @@ class StorageSetupStep extends InstallStep {
 		} else {
 		    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
 		}
-		
+
 		if (is_dir($file)) {
 		    $dirList[] = $file;
 		}

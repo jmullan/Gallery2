@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -70,7 +70,7 @@ class DatabaseSetupStep extends InstallStep {
 			'You must have the Oracle OCI8 PHP module installed';
 		}
 		break;
-        }
+	}
 
 	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
 	    if (empty($this->_config['columnPrefix'])) {
@@ -93,8 +93,9 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_captureEnd();
 
 		if (empty($db)) {
-		    $templateData['errors'][] = _('Unable to create a database connection of type %s',
-						  $this->_config['type']);
+		    $templateData['errors'][] = sprintf(
+			_('Unable to create a database connection of type %s'),
+			$this->_config['type']);
 		}
 
 		if (empty($templateData['errors'])) {
@@ -105,7 +106,8 @@ class DatabaseSetupStep extends InstallStep {
 					    $this->_config['database']);
 		    $this->_captureEnd();
 		    if ($result === false) {
-			$templateData['errors'][] = _('Unable to connect to database with the information provided.');
+			$templateData['errors'][] =
+			    _('Unable to connect to database with the information provided.');
 		    }
 		}
 	    }
@@ -115,7 +117,8 @@ class DatabaseSetupStep extends InstallStep {
 		$result = $db->MetaTables();
 		$this->_captureEnd();
 		if ($result === false) {
-		    $templateData['errors'][] = _('The database you specified does not exist.  Please create it.');
+		    $templateData['errors'][] =
+			_('The database you specified does not exist.  Please create it.');
 		}
 
 		if (empty($_POST['confirmReuseTables'])) {
@@ -144,7 +147,7 @@ class DatabaseSetupStep extends InstallStep {
 			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
 		$templateData['config'] = $this->_config;
 	    }
-	    
+
 	    foreach (array('mysql'  => _('MySQL (all versions)'),
 			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
 			   'postgres7' => _('PostgreSQL v7.x'),
@@ -174,7 +177,7 @@ class DatabaseSetupStep extends InstallStep {
     function _getCaptured() {
 	if (empty($this->_debugContents)) {
 	    return "";
-	} 
+	}
 
 	$contents = $this->_debugContents;
 	unset($this->_debugContents);

@@ -93,11 +93,12 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.gallery.sessions', $dataBase . 'sessions' . $slash);
     $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp' . $slash);
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
-    $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty' . $slash . 'templates_c' . $slash);
+    $gallery->setConfig('data.smarty.templates_c',
+			$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {
-	list ($ret, $urlGenerator) = GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator', null);
+	list ($ret, $urlGenerator) = GalleryCoreApi::newFactoryInstance('GalleryUrlGenerator');
 	/* Swallow ERROR_STORAGE_FAILURE, or automatic upgrading fails */
 	if ($ret->isError() && !($ret->getErrorCode() & ERROR_STORAGE_FAILURE)) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -107,9 +108,10 @@ function GalleryInitFirstPass($params=array()) {
 	GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
 	$urlGenerator = new GalleryUrlGenerator();
     }
-    $urlGenerator->init(isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
-			isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
-			isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
+    $urlGenerator->init(
+	isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
+	isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
+	isset($params['embedSessionString']) ? $params['embedSessionString'] : null);
     $urlGenerator->registerViewPrefix('v', 'core:ShowItem');
     $urlGenerator->registerViewPrefix('d', 'core:DownloadItem');
 

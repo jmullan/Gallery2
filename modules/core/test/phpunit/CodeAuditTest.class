@@ -27,7 +27,8 @@
  */
 
 /**
- * Scan through all of our source code and verify that we're not doing anything "bad"
+ * Scan through all of our source code and verify that we're not doing anything "bad".
+ * Checks for style guidelines too.
  *
  * @package GalleryCore
  * @subpackage PHPUnit
@@ -40,6 +41,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$this->_exception = array(
 	    'endphp' => array('layout.css.php' => 1)
 	);
+	$this->_longLineCount = 0;
     }
 
     /**
@@ -74,12 +76,37 @@ class CodeAuditTest extends CodeAuditTestCase {
 		$crlfHit = true;
 		$this->assert(false, sprintf('%s has CR character on line %d', $fileName, $i + 1));
 	    }
+
+	    /* Check for lines wider than 100 characters */
+	    /* Do a simple tab->8spaces conversion.. good enough for this check */
+	    $line = str_replace('	', '        ', $lines[$i]);
+	    if (strlen($line) > 100) {
+		$this->_longLineCount++;
+	    }
 	}
 
 	/* Check that php files end with ?> */
 	if (!isset($this->_exception['endphp'][basename($fileName)])
 		&& !preg_match('/\?>$/', $buffer)) {
 	    $this->assert(false, $fileName . ' does not end with ?&gt;');
+	}
+    }
+
+    /**
+     * @see CodeAuditTestCase::testCodeAudit()
+     */
+    function testCodeAudit() {
+	parent::testCodeAudit();
+
+	/* Check result of longLineCount */
+	if ($this->_longLineCount > 3000) {
+	    $this->assert(false, 'Found too many lines longer than 100 characters (' .
+			  $this->_longLineCount . ')');
+	}
+	if ($this->_longLineCount < 2500) {
+	    $this->_assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
+			   ' lines longer than 100 characters; update the failure' .
+			   ' thresholds in this unit test.');
 	}
     }
 }

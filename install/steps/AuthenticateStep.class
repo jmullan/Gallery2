@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,7 +33,7 @@ class AuthenticateStep extends InstallStep {
 	$this->_uniqueKey = md5($rand);
 	$this->_firstTime = true;
     }
-    
+
     function stepName() {
 	return _('Authenticate');
     }
@@ -47,14 +47,15 @@ class AuthenticateStep extends InstallStep {
 	    print $this->_uniqueKey;
 	    return false;
 	}
-	
+
 	return true;
     }
 
     function loadTemplateData(&$templateData) {
 	$installerDir = dirname(dirname(__FILE__));
-	if (isset($_SERVER['DOCUMENT_ROOT']) && preg_match('#^' . $_SERVER['DOCUMENT_ROOT'] . '/(.*)#',
-							   $installerDir, $matches)) {
+	if (isset($_SERVER['DOCUMENT_ROOT'])
+		&& preg_match('#^' . $_SERVER['DOCUMENT_ROOT'] . '/(.*)#',
+			      $installerDir, $matches)) {
 	    $installerDir = $matches[1];
 	}
 
@@ -66,14 +67,15 @@ class AuthenticateStep extends InstallStep {
 		if (!$this->_firstTime) {
 		    $templateData['errors'][] =
 			sprintf(_('<b>Error:</b> could not locate <b>login.txt</b>. ' .
-				  'Please place it in your <tt>%s/</tt> directory.'), $installerDir);
+				  'Please place it in your <tt>%s/</tt> directory.'),
+				$installerDir);
 		}
 	    } else if (!is_readable($authFile)) {
 		$templateData['errors'][] =
 		    _('<b>Error:</b> your <b>login.txt</b> file is not readable. ' .
 		      'Please give Gallery read permissions on the file.');
 	    } else {
-		
+
 		$fileAuth = trim(join("", file($authFile)));
 		if ($fileAuth == $this->_uniqueKey) {
 		    $this->setComplete(true);
@@ -86,9 +88,9 @@ class AuthenticateStep extends InstallStep {
 	}
 
 	$this->_firstTime = false;
-	
+
 	$templateData['installerDir'] = $installerDir;
-    
+
 	if ($this->isComplete()) {
 	    $templateData['bodyFile'] = 'AuthenticateSuccessful.html';
 	} else {
