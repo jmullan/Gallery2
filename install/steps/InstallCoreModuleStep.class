@@ -59,10 +59,8 @@ class InstallCoreModuleStep extends InstallStep {
 	    /*
 	     * Check to see if the database tables already exist.  If they do then
 	     * we should assume that they said that it was ok to reuse existing tables
-	     * in the Database setup step.  Which means we don't have to perform an
-	     * install now.  Use a separate storage instance to avoid possibly
-	     * interfering with the main storage instance's transaction (which causes
-	     * problems on Postgres).
+	     * in the Database setup step, which means we don't have to perform an
+	     * install now.
 	     */
 	    $storage =& $gallery->getStorage();
 	    list ($ret, $isInstalled) = $storage->isInstalled();
@@ -100,7 +98,16 @@ class InstallCoreModuleStep extends InstallStep {
 		    $templateData['stackTrace'] = $ret->getAsHtml();
 		}
 	    } else {
-		$storage->rollbackTransaction(); // Ignore any errors from this
+		$storage->rollbackTransaction(); /* Ignore any errors from this */
+		/*
+		 * Don't allow this step to complete when only partially installed.
+		 * Verify that versions.dat is up to date.
+		 */
+		$versions = $core->getInstalledVersions();
+		if (empty($versions['core']) || $versions['core'] != $core->getVersion()) {
+		    $templateData['errors'][] = _('Core module is only partially installed.');
+		    $templateData['stackTrace'] = '';
+		}
 	    }
 	}
 
