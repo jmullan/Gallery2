@@ -100,55 +100,46 @@ function GalleryMain($startTime) {
 
     /* Load and run the appropriate controller */
     if (!empty($controllerName)) {
-	if (preg_match('/^(\w+):(\w+)$/', $controllerName, $regs) == 1) {
-	    $module = $regs[1];
-	    $class = $regs[2];
+	list ($ret, $controller) = GalleryController::loadController($controllerName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    require_once($gallery->getConfig('code.gallery.modules') .
-			 $module . '/' . $class . '.inc');
-	    $controllerClassName = $class . 'Controller';
-	    $controller = new $controllerClassName;
-    
-	    /* Let the controller handle the input */
-	    list ($ret, $results) = $controller->handleRequest();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Redirect, if so instructed */
-	    if (!empty($results['redirect'])) {
-		header("Location: $results[redirect]");
-		return GalleryStatus::success();
-	    }
-
-	    /* Let the controller specify the next view */
-	    if (!empty($results['view'])) {
-		$viewName = $results['view'];
-	    }
-	    
-	} else {
-	    $viewName = 'core:SecurityViolation';
+	/* Let the controller handle the input */
+	list ($ret, $results) = $controller->handleRequest();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Redirect, if so instructed */
+	if (!empty($results['redirect'])) {
+	    header("Location: $results[redirect]");
+	    return GalleryStatus::success();
+	}
+	
+	/* Let the controller specify the next view */
+	if (!empty($results['view'])) {
+	    $viewName = $results['view'];
 	}
     }
 
     /* Load and run the appropriate view */
     if (empty($viewName)) {
-	$module = 'core';
-	$class = 'ShowItem';
-    } else {
-	if (preg_match('/^(\w+):(\w+)$/', $viewName, $regs) == 1) {
-	    $module = $regs[1];
-	    $class = $regs[2];
+	$viewName = 'core:ShowItem';
+    }
+    
+    list ($ret, $view) = GalleryView::loadView($viewName);
+    if ($ret->isError()) {
+	if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
+	    list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
+
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	} else {
-	    $module = 'core';
-	    $class = 'SecurityViolation';
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
-
-    require_once($gallery->getConfig('code.gallery.modules') .
-		 $module . '/' . $class . '.inc');
-    $viewClassName = $class . 'View';
-    $view = new $viewClassName();
     
     /*
      * If this is an immediate view, it will send its own output directly.  This is

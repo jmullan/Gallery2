@@ -101,22 +101,11 @@ class SiteAdminView extends GalleryView {
 	}
 
 	/* If we have a specific sub view, render it now */
-	$subView = GalleryUtilities::getRequestVariables('subView');
+	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (!empty($subView)) {
-	    if (preg_match('/^(\w+):(\w+)$/', $subView, $regs) == 1) {
-		$module = $regs[1];
-		$class = $regs[2];
-	    } else {
-		$module = 'core';
-		$class = 'SecurityViolation';
-	    }
+	    list ($ret, $subView) = GalleryView::loadView($subViewName);
 
-	    require_once($gallery->getConfig('code.gallery.modules') .
-			 $module . '/' . $class . '.inc');
-	    $viewClassName = $class . 'View';
-	    $view = new $viewClassName();
-
-	    list ($ret, $subViewHtml) = $view->renderBody();
+	    list ($ret, $subViewHtml) = $subView->renderBody();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

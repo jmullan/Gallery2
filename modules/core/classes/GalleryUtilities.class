@@ -538,5 +538,28 @@ class GalleryUtilities {
 
 	return $relativePath;
     }
+
+    /**
+     * Load a file in a security conscious fashion
+     *
+     * @param string a local filename
+     * @return object GalleryStatus a status code
+     */
+    function requireOnce($filename) {
+	global $gallery;
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$platform->file_exists($filename)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	}
+
+	require_once($filename);
+
+	return GalleryStatus::success();
+    }
 }
 ?>

@@ -79,6 +79,44 @@ class GalleryView {
     }
 
     /**
+     * Load a view
+     *
+     * Be very security conscious about checking the inputs for possible misuse
+     *
+     *
+     * @param string a view name (eg 'core:ShowItem')
+     * @return array object GalleryStatus a status code
+     *               object GalleryView a view
+     */
+    function loadView($viewName) {
+	global $gallery;
+
+	if (preg_match('/^(\w+):(\w+)$/', $viewName, $regs) == 1) {
+	    $module = $regs[1];
+	    $class = $regs[2];
+	} else {
+	    $gallery->debug("$viewName can't be parsed");
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	$fileName = $gallery->getConfig('code.gallery.modules') .
+	    $module . '/' . $class . '.inc';
+
+	$ret = GalleryUtilities::requireOnce($fileName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$viewClassName = $class . 'View';
+	if (!class_exists($viewClassName)) {
+	    $gallery->debug("Class $viewClassName not defined in ${moduleName}:$viewName");
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
+	return array(GalleryStatus::success(), new $viewClassName);
+    }
+
+    /**
      * Return the head and body content with a single call
      *
      * @return array object GalleryStatus a status code
