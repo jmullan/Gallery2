@@ -33,13 +33,13 @@
 		{g->text text="Size: "}
 		<select onchange="javascript:if (this.value) location.href=this.value">
 		  {section name=imageView loop=$layout.imageViews}
-		  {if $smarty.section.imageView.index != $layout.imageViewsIndex}
+		  {if $smarty.section.imageView.index == $layout.imageViewsIndex}
 		  {assign var="selected" value="selected=\"selected\""}
 		  {else}
 		  {assign var="selected" value=""}
 		  {/if}
 
-		  <option {$selected} value="{g->url view="core:ShowItem" itemId=$layout.item.id imageViewsIndex=$smarty.section.imageView.index}">
+		  <option {$selected} value="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="imageViewsIndex=`$smarty.section.imageView.index`"}">
 		    {if empty($layout.imageViews[imageView].width)}
 		    {g->text text="Unknown"}
 		    {else}
