@@ -193,7 +193,7 @@ class SlideshowView extends GalleryView {
 		    array_fill(0, count($this->sizeClasses) + 1, -1);
 		foreach ($images as $i => $image) {
 		    // Rebuild derivatives if needed so width/height known..
-		    if (is_a($image, 'GalleryDerivativeImage')) {
+		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
 			list ($ret, $image) =
 			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
 				    $image->getId());
