@@ -85,10 +85,14 @@ class WebHelper_simple {
 				       $components['host']));
 	$platform->fflush($fd);
 
-	/* Read the response and headers first */
+	/*
+	 * Read the response code. fgets stops after newlines.
+	 * The first line contains only the status code (200, 404, etc.).
+	 */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
 
+	/* Read the headers. */
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
@@ -223,10 +227,14 @@ class WebHelper_simple {
 				       empty($extraHeaderLines) ? '' : join("\r\n", $extraHeaderLines) . "\r\n"));
 	$platform->fflush($fd);
 
-	/* Read the response and headers first */
+	/*
+	 * Read the response code. fgets stops after newlines.
+	 * The first line contains only the status code (200, 404, etc.).
+	 */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
 
+	/* Read the headers. */
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
@@ -348,10 +356,14 @@ class WebHelper_simple {
 	$platform->fwrite($fd, $postRequest);
 	$platform->fflush($fd);
 
-	/* Read the response and headers first */
+	/*
+	 * Read the response code. fgets stops after newlines.
+	 * The first line contains only the status code (200, 404, etc.).
+	 */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
 
+	/* Read the headers. */
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
