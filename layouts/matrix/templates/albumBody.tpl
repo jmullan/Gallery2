@@ -99,32 +99,35 @@
 			{/g->title}
 		      {/g->item}
 		    {/g->infoset}
-		    {g->actionset}
-		      {g->actionitem}
-			{g->title}
-			  {if $child.canContainChildren} 
-			    {g->text text="&laquo; album actions &raquo;"}
-			  {else}
-			    {g->text text="&laquo; item actions &raquo;"}
-			  {/if}
-			{/g->title}
-			{g->value}
-			  &nbsp;
-			{/g->value}
-		      {/g->actionitem}
-		      {assign var="childId" value=$child.id}
-		      {foreach from=$layout.moduleItemLinks.$childId item=link}
+
+		    {assign var="childId" value=$child.id}
+		    {if !empty($layout.moduleItemLinks.$childId)}
+		      {g->actionset}
 			{g->actionitem}
 			  {g->title}
-			    {$link.text}
+			    {if $child.canContainChildren} 
+			      {g->text text="&laquo; album actions &raquo;"}
+			    {else}
+			      {g->text text="&laquo; item actions &raquo;"}
+			    {/if}
 			  {/g->title}
-			  
 			  {g->value}
-			    {$link.url}
+			    &nbsp;
 			  {/g->value}
 			{/g->actionitem}
-		      {/foreach}
-		    {/g->actionset}
+			{foreach from=$layout.moduleItemLinks.$childId item=link}
+			  {g->actionitem}
+			    {g->title}
+			      {$link.text}
+			    {/g->title}
+			    
+			    {g->value}
+			      {$link.url}
+			    {/g->value}
+			  {/g->actionitem}
+			{/foreach}
+		      {/g->actionset}
+		    {/if}
 		  {/g->itemthumbnail}
 		{/g->column}
 	      {/foreach}
