@@ -44,7 +44,7 @@ class GalleryEntityHelper_simple {
      */
     function loadEntitiesById($ids) {
 	global $gallery;
-	
+
 	$gallery->guaranteeTimeLimit(5);
 
 	if (empty($ids)) {
@@ -84,7 +84,7 @@ class GalleryEntityHelper_simple {
 	if (!empty($missing)) {
 	    /* Get our storage object */
 	    $storage =& $gallery->getStorage();
-	    
+
 	    /* Load the entities from our persistent store */
 	    list ($ret, $missing) = $storage->loadEntities($missing);
 	    if ($ret->isError()) {
@@ -106,12 +106,43 @@ class GalleryEntityHelper_simple {
 	foreach ($ids as $id) {
 	    $results[] = $cached[$id];
 	}
-	
+
 	if (!$returnArray) {
 	    $results = $results[0];
 	}
 
 	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Map external id to G2 id and then load the entity
+     *
+     * @param string external id
+     * @param string entity type
+     * @return array object GalleryStatus a status code
+     *               object GalleryEntity
+     * @static
+     */
+    function loadEntityByExternalId($externalId, $entityType) {
+	global $gallery;
+
+	$query = 'SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap] ' .
+		 'WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?';
+	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!($result = $results->nextResult())) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+					      "$externalId $entityType"), null);
+	}
+
+	list ($ret, $entity) = GalleryEntityHelper_simple::loadEntitiesById($result[0]);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $entity);
     }
 }
 ?>

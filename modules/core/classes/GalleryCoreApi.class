@@ -2021,6 +2021,20 @@ class GalleryCoreApi {
     }
 
     /**
+     * Map external id to G2 id and then load the entity
+     *
+     * @param string external id
+     * @param string entity type
+     * @return array object GalleryStatus a status code
+     *               object GalleryEntity
+     * @static
+     */
+    function loadEntityByExternalId($externalId, $entityType) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryEntityHelper_simple.class');
+	return GalleryEntityHelper_simple::loadEntityByExternalId($externalId, $entityType);
+    }
+
+    /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection
      * field, that are visible to the given user.
