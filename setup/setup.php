@@ -23,6 +23,8 @@
 /* Turn on displaying errors, if possible */
 @ini_set('display_errors', 1);
 
+require_once(dirname(__FILE__) . '/security.inc');
+
 ob_start();
 
 if (phpversion() < '4.0.4') {
@@ -52,16 +54,6 @@ if ($ret->isError()) {
 }
 
 $platform = $gallery->getPlatform();
-
-if (!CheckSetupPassword()) {
-    error('missingPassword');
-    return;
-}
-
-if (!CheckPasswordIsCorrect()) {
-    message('passwordForm');
-    return;
-}
 
 $dirStatus = CheckDirectories();
 if (!empty($dirStatus)) {
@@ -145,9 +137,9 @@ function error($messageName, $messageData=null) {
 	$message['password'] = $_POST['g2_password'];
     }
 
-    include(dirname(__FILE__) . '/messages/errorHeader.php');
-    include(dirname(__FILE__) . '/messages/' . $messageName . '.php');
-    include(dirname(__FILE__) . '/messages/errorFooter.php');
+    include(dirname(__FILE__) . '/messages/errorHeader.inc');
+    include(dirname(__FILE__) . '/messages/' . $messageName . '.inc');
+    include(dirname(__FILE__) . '/messages/errorFooter.inc');
 }
 
 function message($messageName, $messageData=null) {
@@ -162,9 +154,9 @@ function message($messageName, $messageData=null) {
 	$message['password'] = $_POST['g2_password'];
     }
 
-    include(dirname(__FILE__) . '/messages/messageHeader.php');
-    include(dirname(__FILE__) . '/messages/' . $messageName . '.php');
-    include(dirname(__FILE__) . '/messages/messageFooter.php');
+    include(dirname(__FILE__) . '/messages/messageHeader.inc');
+    include(dirname(__FILE__) . '/messages/' . $messageName . '.inc');
+    include(dirname(__FILE__) . '/messages/messageFooter.inc');
 }
 
 function CheckSetupPassword() {

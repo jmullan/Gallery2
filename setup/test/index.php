@@ -1,4 +1,5 @@
 <?php
+include('../security.inc');
 require_once('../../init.php');
 require_once('TestCase.class');
 require_once('TestCase/ActivateModule.class');
