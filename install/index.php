@@ -88,7 +88,7 @@ if ($step == 1 && isset($_GET['action']) && $_GET['action'] == 'authDownload') {
 // authenticate
 $authenticated = false;
 if ($step > 1 || ($step == 1 && (!isset($_GET['error']) && ((isset($_GET['action']) && !($_GET['action'] === 'new')) || !isset($_GET['action']))))) {
-    $authFile = dirname(__FILE__) . '/../login.txt';
+    $authFile = dirname(__FILE__) . '/login.txt';
     if (!file_exists($authFile)) {
 	header('Location: index.php?step=1&error=nofile');
     } elseif (!is_readable($authFile)) {
@@ -114,7 +114,8 @@ if ($step == 1) {
 	$error = $_GET['error'];
 	// uh oh...
 	if ($error === 'nofile') {
-	    array_push($errorMsg, _('<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>gallery</tt> directory.'));
+	    $installerDir = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(__FILE__));
+	    array_push($errorMsg, _("<b>Error:</b> could not locate <b>login.txt</b>. Please place it in your <tt>$installerDir/</tt> directory."));
 	    $keyGen = false;
 	} elseif ($error === 'noperms') {
 	    array_push($errorMsg, _('<b>Error:</b> your <b>login.txt</b> file is not readable. Please give Gallery read permissions on the file.'));

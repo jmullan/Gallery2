@@ -25,7 +25,9 @@
 if (!$authenticated) {?>
 <h2>Authenticate</h2>
 <p>
-<?php print _("In order to verify your identity, you'll need to upload a text file called <strong>login.txt</strong> to your <tt>gallery</tt> directory on your webserver (or wherever you have Gallery installed). It must contain the following randomly generated word:"); ?>
+<?php
+$installerDir = str_replace($_SERVER['DOCUMENT_ROOT'], '', dirname(dirname(__FILE__)));
+print _("In order to verify your identity, you'll need to upload a text file called <strong>login.txt</strong> to your <tt>$installerDir/</tt> directory on your webserver (where this installer is located). It must contain the following randomly generated word:"); ?>
 </p>
 
 <p class="bold"><?php print $rand; ?></p>
