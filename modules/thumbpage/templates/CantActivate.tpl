@@ -15,7 +15,13 @@
 
   <div id="gsStatus">
     <div class="giError">
-      {g->text text="This module requires you to have an active graphics toolkit that supports a multi-page file type such as TIFF, PDF or Postscript.  For example, ImageMagick with gs (GhostScript) support."}
+      {g->text text="This module requires an active graphics toolkit that supports either:"}
+      <ol>
+      <li> {g->text text="A multi-page file type such as TIFF, PDF or Postscript"}
+           <br/> {g->text text="Example: ImageMagick module with gs (GhostScript) support"} <p/>
+      <li> {g->text text="A movie type such as Mpeg or AVI"}
+           <br/> {g->text text="Example: Ffmpeg module"}
+      </ol>
     </div>
   </div>
 </div>

@@ -37,7 +37,7 @@ class ThumbPageModule extends GalleryModule {
 
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
-	$this->setDescription($gallery->i18n('Select which page of a multi-page file to use for the thumbnail'));
+	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
 	$this->setVersion('0.8');
 	$this->setGroup('display', $gallery->i18n('Display'));
     }
@@ -48,6 +48,8 @@ class ThumbPageModule extends GalleryModule {
     function performFactoryRegistrations() {
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 	    'ItemEditThumbPage', 'ItemEditThumbPage', dirname(__FILE__) . '/ItemEditThumbPage.inc');
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
+	    'ItemEditThumbOffset', 'ItemEditThumbOffset', dirname(__FILE__) . '/ItemEditThumbOffset.inc');
     }
 
     /**
@@ -94,17 +96,25 @@ class ThumbPageModule extends GalleryModule {
      * @see GalleryModule::activate()
      */
     function activate() {
-	list ($ret, $list) = $this->_getSupportedMimeTypes();
+	list ($ret, $page) = $this->_getSupportedMultiPageTypes();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $movie) = $this->_getSupportedMovieTypes();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (empty($list)) {
+	if (empty($page) && empty($movie)) {
 	    // Can't activate unless there's already toolkit support
 	    return array(GalleryStatus::success(), array('view' => 'core:SiteAdmin',
 							 'subView' => 'thumbpage:CantActivate'));
 	} else {
-	    $ret = $this->setModuleParameter('mimeTypes', implode('|', $list));
+	    $ret = $this->setModuleParameter('pageTypes', implode('|', $page));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = $this->setModuleParameter('movieTypes', implode('|', $movie));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -132,7 +142,7 @@ class ThumbPageModule extends GalleryModule {
      * @return array object GalleryStatus a status code
      *               array mime types
      */
-    function _getSupportedMimeTypes() {
+    function _getSupportedMultiPageTypes() {
 	list ($ret, $thumbnail) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -150,6 +160,40 @@ class ThumbPageModule extends GalleryModule {
 	    }
 	    foreach ($properties as $tmp) {
 		if ($tmp['name'] == 'page-count') {
+		    $mimeTypes[] = $mimeType;
+		    break;
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $mimeTypes);
+    }
+
+    /**
+     * Find out what mime types currently have support for:
+     *   convert-to-image/jpeg, select-page, dimensions_and_duration
+     *
+     * @return array object GalleryStatus a status code
+     *               array mime types
+     */
+    function _getSupportedMovieTypes() {
+	list ($ret, $convert) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $select) = GalleryCoreApi::getToolkitOperationMimeTypes('select-offset');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$mimeTypes = array();
+	foreach (array_keys(array_merge($convert, $select)) as $mimeType) {
+	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($properties as $tmp) {
+		if ($tmp['name'] == 'dimensions_and_duration') {
 		    $mimeTypes[] = $mimeType;
 		    break;
 		}

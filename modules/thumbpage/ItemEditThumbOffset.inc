@@ -28,13 +28,13 @@
  */
 
 /**
- * This plugin handles selecting the page to use for thumbnails
+ * This plugin handles selecting the time offset to use for movie thumbnails
  *
  * @package ThumbPage
  * @subpackage UserInterface
  *
  */
-class ItemEditThumbPage extends ItemEditPlugin {
+class ItemEditThumbOffset extends ItemEditPlugin {
 
     /**
      * @see ItemEditPlugin::handleRequest
@@ -48,6 +48,16 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	}
 
 	if (isset($form['action']['save'])) {
+	    list ($ret, $duration) = $this->_getDuration($item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if ($form['offset'] > $duration || $form['offset'] < 0) {
+		$error[] = 'form[error][offset][invalid]';
+	    }
+	}
+
+	if (isset($form['action']['save']) && empty($error)) {
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
@@ -55,14 +65,14 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	    }
 	    $thumb = array_shift($thumbnails);
 	    $operations = $thumb->getDerivativeOperations();
-	    if ($form['page'] == 1) {
-		$operations = preg_replace('/(^|;)select-page\|\d+(;|$)/', '$1', $operations);
-	    } else if (preg_match('/(((^|;)select-page\|)(\d+))(;|$)/', $operations, $regs)) {
-		if ($form['page'] != $regs[4]) {
-		    $operations = str_replace($regs[1], $regs[2] . $form['page'], $operations);
+	    if ($form['offset'] == 0) {
+		$operations = preg_replace('/(^|;)select-offset\|[0-9.]+(;|$)/', '$1', $operations);
+	    } else if (preg_match('/(((^|;)select-offset\|)([0-9.]+))(;|$)/', $operations, $regs)) {
+		if ($form['offset'] != $regs[4]) {
+		    $operations = str_replace($regs[1], $regs[2] . $form['offset'], $operations);
 		}
 	    } else {
-		$operations = 'select-page|' . $form['page'] . ';' . $operations;
+		$operations = 'select-offset|' . $form['offset'] . ';' . $operations;
 	    }
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($thumb->getId());
 	    if ($ret->isError()) {
@@ -88,25 +98,20 @@ class ItemEditThumbPage extends ItemEditPlugin {
      * @see ItemEditPlugin::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	if ($form['formName'] != 'ItemEditThumbPage') {
-	    $form['formName'] = 'ItemEditThumbPage';
-	    $form['page'] = 1;
-	    if (preg_match('/(^|;)select-page\|(\d+)/',
+	if ($form['formName'] != 'ItemEditThumbOffset') {
+	    $form['formName'] = 'ItemEditThumbOffset';
+	    $form['offset'] = '0';
+	    if (preg_match('/(^|;)select-offset\|([0-9.]+)/',
 			   $thumbnail->getDerivativeOperations(), $regs)) {
-		$form['page'] = $regs[2];
+		$form['offset'] = $regs[2];
 	    }
 	}
-	list ($ret, $count) = $this->_getPageCount($item);
+	list ($ret, $form['duration']) = $this->_getDuration($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditThumbPage = array('pageList' => array());
-	for ($i = 1; $i <= $count; $i++) {
-	    $ItemEditThumbPage['pageList'][$i] = $i;
-	}
-	$template->setVariable('ItemEditThumbPage', $ItemEditThumbPage);
-	$template->setVariable('controller', 'thumbpage:ItemEditThumbPage');
-	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Page.tpl');
+	$template->setVariable('controller', 'thumbpage:ItemEditThumbOffset');
+	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Offset.tpl');
     }
 
     /**
@@ -115,13 +120,10 @@ class ItemEditThumbPage extends ItemEditPlugin {
     function isSupported($item, $thumbnail) {
 	if (GalleryUtilities::isA($item, 'GalleryDataItem') && isset($thumbnail)) {
 	    list ($ret, $mimeTypes) =
-		GalleryCoreApi::getPluginParameter('module', 'thumbpage', 'pageTypes');
+		GalleryCoreApi::getPluginParameter('module', 'thumbpage', 'movieTypes');
 	    if ($ret->isSuccess()) {
 		$list = explode('|', $mimeTypes);
-		if (in_array($item->getMimeType(), $list)) {
-		    list ($ret, $count) = $this->_getPageCount($item);
-		    return ($ret->isSuccess() && $count > 1);
-		}
+		return in_array($item->getMimeType(), $list);
 	    }
 	}
 	return false;
@@ -139,31 +141,32 @@ class ItemEditThumbPage extends ItemEditPlugin {
     }
 
     /**
-     * Get the page-count property..
+     * Get the movie duration..
      *
      * @param object GalleryDataItem
      * @return array object GalleryStatus a status code
-     *               int page count
+     *               float duration
      * @access private
      */
-    function _getPageCount(&$item) {
+    function _getDuration(&$item) {
 	list ($ret, $path) = $item->fetchPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByProperty($item->getMimeType(), 'page-count');
+	    GalleryCoreApi::getToolkitByProperty($item->getMimeType(), 'dimensions_and_duration');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!isset($toolkit)) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
-	list ($ret, $result) = $toolkit->getProperty($item->getMimeType(), 'page-count', $path);
+	list ($ret, $result) = $toolkit->getProperty(
+	    $item->getMimeType(), 'dimensions_and_duration', $path);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	return array(GalleryStatus::success(), $result[0]);
+	return array(GalleryStatus::success(), $result[2]);
     }
 }
 ?>
