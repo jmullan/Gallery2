@@ -57,15 +57,13 @@ class ThumbnailModule extends GalleryModule {
 	$classDir = dirname(__FILE__) . '/classes/';
 
 	/* Register our entity */
-        GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-                                                      'ThumbnailImage',
-                                                      'ThumbnailImage',
-                                                      $classDir . 'ThumbnailImage.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'ThumbnailImage', 'ThumbnailImage',
+						      $classDir . 'ThumbnailImage.class');
 
 	/* Register our graphics class with the factory */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'ThumbnailToolkit',
-						      'Thumbnail',
+						      'ThumbnailToolkit', 'Thumbnail',
 						      $classDir . 'ThumbnailToolkit.class');
 
 	return GalleryStatus::success();
@@ -126,11 +124,6 @@ class ThumbnailModule extends GalleryModule {
 	require_once(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 	global $gallery;
 	
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Register toolkit operation for any mime type settings already in the database */
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret->isError()) {
@@ -155,6 +148,9 @@ class ThumbnailModule extends GalleryModule {
 		 as $audioMime) {
 	    if (!isset($toolkitMime[$audioMime])) {
 		if (!isset($itemId)) {
+		    GalleryCoreApi::registerFactoryImplementation(
+			'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
+			dirname(__FILE__) . '/classes/ThumbnailImage.class');
 		    list ($ret, $itemId) = ThumbnailHelper::addItem($audioMime, 'G2audio.jpg',
 			dirname(__FILE__) . '/images/G2audio.jpg', 'image/jpeg');
 		    if ($ret->isError()) {
@@ -167,6 +163,11 @@ class ThumbnailModule extends GalleryModule {
 		    }
 		}
 	    }
+	}
+
+	$ret = parent::activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
