@@ -375,7 +375,8 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	$path = $parentPath . $this->getPathComponent();
 	if ($this->isContainer()) {
-	    $path .= '/';
+	    $platform = $gallery->getPlatform();
+	    $path .= $platform->getDirectorySeparator();
 	}
 
 	return array(GalleryStatus::success(), $path);
