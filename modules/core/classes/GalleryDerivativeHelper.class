@@ -68,6 +68,10 @@ class GalleryDerivativeHelper {
      * @static
      */
     function fetchThumbnailsByItemIds($ids) {
+	if (empty($ids)) {
+	    return array(GalleryStatus::success(), array());
+	}
+	
 	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
@@ -119,6 +123,10 @@ class GalleryDerivativeHelper {
      * @static
      */
     function fetchResizesByItemIds($ids) {
+	if (empty($ids)) {
+	    return array(GalleryStatus::success(), array());
+	}
+
 	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
