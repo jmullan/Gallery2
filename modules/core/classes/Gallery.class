@@ -137,6 +137,14 @@ class Gallery {
      * @access private
      */
     var $_debugBuffer;
+
+    /**
+     * The time at which we should cease whatever operation we're doing
+     *
+     * @var int $_timeLimit
+     * @access private
+     */
+    var $_timeLimit;
     
     /*
      * ****************************************
@@ -253,7 +261,7 @@ class Gallery {
 	if ($ret->isError()) {
 	    return $ret;
 	}
-	
+
 	foreach (array_keys($this->_nucleusCache) as $key) {
 	    $nucleus =& $this->_nucleusCache[$key];
 
@@ -329,6 +337,9 @@ class Gallery {
 	}
 
 	list($ret, $nucleus) = $this->loadNucleusByIdNoCache($id);
+	if ($ret->isError()) {
+	    return array($ret, null);
+	}
 
 	/* Add this item to the cache */
 	$this->cacheNucleus($nucleus);
@@ -694,6 +705,34 @@ class Gallery {
 	    $this->_storage = $storage;
 	}
 	return array(GalleryStatus::success(), $this->_storage);
+    }
+
+    /**
+     * Set the maximum amount of time we should contine to work
+     *
+     * @param int a time interval in seconds
+     */
+    function setTimeLimit($limit) {
+	set_time_limit($limit);
+	$now = time();
+	$this->_timeLimit = $now + $limit;
+	$this->debug("[$now] Set time limit to " . $this->_timeLimit);
+    }
+
+    /**
+     * Guarantee that we have at least this many more seconds to work
+     *
+     * After this function completes, we will be guaranteed to have at least
+     * this much more time to work.
+     *
+     * @param int a time interval in seconds
+     */
+    function guaranteeTimeLimit($limit) {
+	$now = time();
+	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < 5)) {
+	    $this->debug("[$now] can't guarantee $limit!");
+	    $this->setTimeLimit($limit);
+	}
     }
 
     /**
