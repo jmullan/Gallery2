@@ -59,9 +59,12 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    continue;
 		}
 
-		if (empty($form['resizes'][$i]['size'])) {
+		if (empty($form['resizes'][$i]['width']) || empty($form['resizes'][$i]['height'])) {
 		    $error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
-		} else if (!is_numeric($form['resizes'][$i]['size']) || $form['resizes'][$i]['size'] <= 0) {
+		} else if (!is_numeric($form['resizes'][$i]['width'])
+			   || !is_numeric($form['resizes'][$i]['height'])
+			   || $form['resizes'][$i]['width'] <= 0
+			   || $form['resizes'][$i]['height'] <= 0) {
 		    $error[] = sprintf('form[error][resizes][%d][size][invalid]', $i);
 		}
 	    }
@@ -159,11 +162,10 @@ class ItemEditPhoto extends ItemEditPlugin {
 		}
 
 		/*
-		 * Make sure that we have a toolkit before adding back
-		 * the resizes
+		 * Make sure that we have a toolkit before adding back the resizes
 		 */
 		list ($ret, $toolkit, $outputMimeType) =
-		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'scale');
+		    GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'resize');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -193,7 +195,9 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 			$derivative->setMimeType($outputMimeType);
 			$derivative->setDerivativeSourceId($source->getId());
-			$derivative->setDerivativeOperations('scale|' . $form['resizes'][$i]['size']);
+			$derivative->setDerivativeOperations(
+			    'resize|' . $form['resizes'][$i]['width']
+				. ',' . $form['resizes'][$i]['height']);
 			if (isset($postFilter)) {
 			    $derivative->setPostFilterOperations($postFilter);
 			}
@@ -234,23 +238,20 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    /* First time around, reset the form */
 
 	    /* Load the resizes */
-	    list ($ret, $resizes) =
-		GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+	    list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
-		    if (preg_match('/scale\|(\d+)/',
+		    if (preg_match('/(?:scale|resize)\|(\d+)(?:,(\d+))/',
 				   $resize->getDerivativeOperations(),
 				   $matches)) {
-			$size = $matches[1];
-		    }
-		    if (empty($size)) {
-			$form['resizes'][] = array('active' => 0, 'size' => '');
-		    } else {
-			$form['resizes'][] = array('active' => 1, 'size' => $size);
+			$width = $matches[1];
+			$height = empty($matches[2]) ? $width : $matches[2];
+			$form['resizes'][] = array('active' => 1,
+						   'width' => $width, 'height' => $height);
 		    }
 		}
 	    }
@@ -278,7 +279,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	}
 
 	while ($extraBlanks-- > 0) {
-	    $form['resizes'][] = array('active' => 0, 'size' => '');
+	    $form['resizes'][] = array('active' => 0, 'width' => '', 'height' => '');
 	}
 
 	/* Make sure that 'active' is set to a value */
@@ -297,8 +298,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
 
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'resize');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

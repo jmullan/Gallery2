@@ -55,21 +55,18 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
-							array('test/file'),
-							'scale',
-							array(array('type' => 'int',
-								    'description' => 'test')),
-							'test-description');
+		array('test/file'), 'resize',
+		array(array('type' => 'int', 'description' => 'test'),
+		      array('type' => 'int', 'description' => 'test')),
+		'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
-							array('test/file'),
-							'rotate',
-							array(array('type' => 'int',
-								    'description' => 'test')),
-							'test-description');
+		array('test/file'), 'rotate',
+		array(array('type' => 'int', 'description' => 'test')),
+		'test-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -108,7 +105,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_derivative[2]) =
 	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500', 'test/file',
+				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'resize|500,500', 'test/file',
 				     array('postFilterOperations' => 'test-operation|0'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -141,8 +138,10 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	for ($i = 0; $i < 3; $i++) {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][width]', 100 * ($i+1));
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][height]', 100 * ($i+1));
 	}
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 600);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_preferred);
@@ -170,8 +169,9 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	if (!empty($resizeTable[$this->_item->getId()])) {
 	    $this->assertEquals(3, sizeof($resizeTable[$this->_item->getId()]));
 	    for ($i = 0; $i < 3; $i++) {
-		$this->assertEquals('scale|' . 100 * ($i+1),
-				    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
+		$this->assertEquals(
+		    ($i < 2) ? ('resize|' . 100 * ($i+1) . ',' . 100 * ($i+1)) : 'resize|300,600',
+		    $resizeTable[$this->_item->getId()][$i]->getDerivativeOperations());
 		// check that postfilteroperations are maintained and added to new resizes..
 		$this->assertEquals('test-operation|0',
 		    $resizeTable[$this->_item->getId()][$i]->getPostFilterOperations(), "postfilter $i");
@@ -209,8 +209,11 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 
 	for ($i = 0; $i < 3; $i++) {
 	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 'x' . rand());
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][width]', 'x' . rand());
+	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][height]', 100);
 	}
+	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 100);
+	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 'x' . rand());
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest($this->_item, $this->_preferred);
@@ -227,7 +230,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 /**
  * Required by our test toolkit
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkit

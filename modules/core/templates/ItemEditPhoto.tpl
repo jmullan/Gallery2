@@ -52,7 +52,8 @@
   {counter start=0 assign=index}
   {foreach from=$form.resizes item=resize}
   <input type="checkbox" name="{g->formVar var="form[resizes][$index][active]"}" {if $form.resizes.$index.active}checked="checked"{/if}/>
-  <input type="text" size="6" name="{g->formVar var="form[resizes][$index][size]"}" value="{$form.resizes.$index.size}"/>
+  {g->dimensions formVar="form[resizes][$index]" width=$form.resizes.$index.width
+						 height=$form.resizes.$index.height}
 
   <br/>
 

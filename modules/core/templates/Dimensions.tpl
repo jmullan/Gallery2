@@ -27,7 +27,9 @@ function dim_copy(id) {
 // ]]>
 </script>
 {/literal}{/if}
-<input id="{$formVar}" name="{g->formVar var=$formVar}[width]" type="text" size="4"
-       onkeypress="dim_keypress({$callCount},this,event)" onkeydown="dim_keydown({$callCount},this)"/>
+<input id="{$formVar}" name="{g->formVar var=$formVar}[width]" type="text" size="6"
+       onkeypress="dim_keypress({$callCount},this,event)" onkeydown="dim_keydown({$callCount},this)"
+       {if isset($width)}value="{$width}"{/if}/>
 x
-<input id="{$formVar}_h" name="{g->formVar var=$formVar}[height]" type="text" size="4"/>
+<input id="{$formVar}_h" name="{g->formVar var=$formVar}[height]" type="text" size="6"
+       {if isset($height)}value="{$height}"{/if}/>

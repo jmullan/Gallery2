@@ -349,8 +349,11 @@ class GalleryTemplateAdapter {
 	}
 	return $smarty->_smarty_include(
 	    array('smarty_include_tpl_file' => 'gallery:modules/core/templates/Dimensions.tpl',
-		  'smarty_include_vars' => array('formVar' => $params['formVar'],
-						 'callCount' => ++$this->_callCount['dimensions'])));
+		  'smarty_include_vars' => array(
+				 'formVar' => $params['formVar'],
+				 'width' => isset($params['width']) ? $params['width'] : null,
+				 'height' => isset($params['height']) ? $params['height'] : null,
+				 'callCount' => ++$this->_callCount['dimensions'])));
     }
 }
 ?>
