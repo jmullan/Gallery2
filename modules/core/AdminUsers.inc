@@ -199,7 +199,7 @@ class AdminUsersView extends GalleryView {
 	}
 
 	$form['list']['count'] = $totalUserCount;
-	$form['list']['pageSize'] = 15;
+	$form['list']['pageSize'] = $totalUserCount > 10 ? 10 : $totalUserCount + 2;
 
 	/* If we have a filter, find out how many users match it */
 	if (!empty($form['list']['filter'])) {
