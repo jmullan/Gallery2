@@ -29,6 +29,8 @@
     {include file="gallery:$moduleFile" l10Domain="modules_search"} 
   {/if}
 
+  {if isset($smarty.capture.sidebarInsert_1)} {$smarty.capture.sidebarInsert_1} {/if}
+
   {* Item actions *}
   {if ($layout.show.sidebarActions && !empty($layout.itemLinks))}
   <div class="gbMenu">
@@ -71,11 +73,16 @@
   </div>
   {/if}
 
+  {if isset($smarty.capture.sidebarInsert_2)} {$smarty.capture.sidebarInsert_2} {/if}
+
   {* System content *}
   {foreach from=$layout.systemContentFiles key=moduleId item=moduleFile}
   {if ($moduleId != 'search')}
   {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}
   {/foreach}
+
+  {if isset($smarty.capture.sidebarInsert_3)} {$smarty.capture.sidebarInsert_3} {/if}
+
 </div>
 {/if}

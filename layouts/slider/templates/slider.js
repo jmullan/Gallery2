@@ -221,6 +221,7 @@ function toolbar_setbuttons() {
  document.prev_off.className = j<0?'on':'off';
 }
 function options_onoff() {
+ if (!options_on) set_itemLinks(image_index);
  ui_vis('options', options_on=options_on?0:1);
 }
 function thumbs_horizvert() {
@@ -322,6 +323,17 @@ function slide_setbutton() {
  document.slide_fwd.className = (!slide_on&&slide_order>0)?'on':'off';
  document.slide_rev.className = (!slide_on&&slide_order<0)?'on':'off';
  document.slide_rand.className = (!slide_on&&!slide_order)?'on':'off';
+}
+//Item Links
+function set_itemLinks(idx) {
+ var list = document.getElementById('linkList'), links = document.getElementById('links_' + idx), i;
+ while (list.options.length > 1) { list.options[1] = null; }
+ for (i = 0; i < links.options.length; i++) {
+  list.options[i+1] = new Option(links.options[i].text, links.options[i].value);
+ }
+ list.options[0].selected = true;
+ list = document.getElementById('photoActions');
+ list.style.display = (links.options.length > 0) ? 'inline' : 'none';
 }
 //UI Util
 function ui_vis(id,vis,scroll) {

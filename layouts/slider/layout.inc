@@ -101,6 +101,7 @@ class SliderLayout extends GalleryLayout {
 	$layout['maxThumbHeight'] = $maxTH;
 	$layout['imageCount'] = count($imageWidths);
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
+	$layout['show']['sidebarActions'] = false;
 
 	$urlGenerator = $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
