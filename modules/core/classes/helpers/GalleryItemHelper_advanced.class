@@ -460,6 +460,7 @@ class GalleryItemHelper_advanced {
 	
 	$ret = $album->create($parentAlbumId, $name);
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
@@ -472,15 +473,14 @@ class GalleryItemHelper_advanced {
 	/* Save it */
 	$ret = $album->save();
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Leggo of our locks */
-	if (isset($lockIds)) {
-	    $ret = GalleryCoreApi::releaseLocks($lockIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $album);
