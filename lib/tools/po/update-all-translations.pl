@@ -49,7 +49,7 @@ foreach my $poDir (keys(%PO_DIRS)) {
 	    $report{$locale}{$poDir}{'translated'} = $1;
 	  }
 
-	  if ($line =~ /(\d+) fuzzy messages/) {
+	  if ($line =~ /(\d+) fuzzy translation/) {
 	    $report{$locale}{$poDir}{'fuzzy'} = $1;
 	  }
 
