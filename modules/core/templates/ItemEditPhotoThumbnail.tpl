@@ -130,7 +130,7 @@
   <input id="crop_y" type="hidden" name="{g->formVar var="form[crop][y]"}"/>
   <input id="crop_width" type="hidden" name="{g->formVar var="form[crop][width]"}"/>
   <input id="crop_height" type="hidden" name="{g->formVar var="form[crop][height]"}"/>
-  <input type="submit" name="{g->formVar var="form[action][crop]"}" onclick="javascript:setCropFields(); submit()" value="{g->text text="Crop"}"/>
+  <input type="submit" name="{g->formVar var="form[action][crop]"}" onclick="javascript:setCropFields(); submit()" value="{g->text text="Crop"}" class="button"/>
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot crop the thumbnail."}

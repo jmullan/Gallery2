@@ -15,11 +15,11 @@
 
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.rotate}
   <input type="hidden" name="{g->formVar var="mode"}" value="editPhoto"/>
-  <input type="submit" name="{g->formVar var="form[action][rotate][counterClockwise]"}" value="{g->text text="CC 90&deg;"}"/>
+  <input type="submit" name="{g->formVar var="form[action][rotate][counterClockwise]"}" value="{g->text text="CC 90&deg;"}" class="button"/>
   &nbsp;
-  <input type="submit" name="{g->formVar var="form[action][rotate][flip]"}" value="{g->text text="180&deg;"}"/>
+  <input type="submit" name="{g->formVar var="form[action][rotate][flip]"}" value="{g->text text="180&deg;"}" class="button"/>
   &nbsp;
-  <input type="submit" name="{g->formVar var="form[action][rotate][clockwise]"}" value="{g->text text="C 90&deg;"}"/>
+  <input type="submit" name="{g->formVar var="form[action][rotate][clockwise]"}" value="{g->text text="C 90&deg;"}" class="button"/>
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
@@ -42,8 +42,8 @@
   </p>
   
   {if $ItemEditRotateAndScalePhoto.editPhoto.can.scale}
-  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}"/>
-  <input type="submit" name="{g->formVar var="form[action][scale]"}" value="{g->text text="Scale"}"/>
+  <input type="text" size="6" name="{g->formVar var="form[scale][size]"}" value="{$form.scale.size}" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';"/>
+  <input type="submit" name="{g->formVar var="form[action][scale]"}" value="{g->text text="Scale"}" class="button"/>
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
@@ -101,7 +101,7 @@
     {g->text text="You are using a copy of the original photo that has been scaled or rotated.  The original photo is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
   </p>
 	
-  <input type="submit" name="{g->formVar var="form[action][revertToOriginal]"}" value="{g->text text="Restore original"}"/>
+  <input type="submit" name="{g->formVar var="form[action][revertToOriginal]"}" value="{g->text text="Restore original"}" class="button"/>
   {/if}
 </div>
 {/if}
