@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<form name="gItemAdmin" action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
+<form action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
   <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>

@@ -26,7 +26,8 @@
     {/if}
     {/foreach}
     {/strip}
-    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}" value="{$form.pathComponent}"/>
+    <input type="text" size="40" name="{g->formVar var="form[pathComponent]"}"
+     value="{$form.pathComponent}"/>
 
     {if !empty($form.error.pathComponent.invalid)}
     <div class="giError">
@@ -60,7 +61,8 @@
              viewL10domain="modules_core" 
 	     element="title"
 	     firstMarkupBar=true}
-    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}" value="{$form.title}"/>
+    <input id="title" type="text" size="40" name="{g->formVar var="form[title]"}"
+     value="{$form.title}"/>
   </div>
   {if !empty($form.error.title.missingRootTitle)}
     <div class="giError">
@@ -79,7 +81,8 @@
     {include file="gallery:modules/core/templates/MarkupBar.tpl" 
              viewL10domain="modules_core" 
 	     element="summary"}
-    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}" value="{$form.summary}"/>
+    <input id="summary" type="text" size="40" name="{g->formVar var="form[summary]"}"
+     value="{$form.summary}"/>
   </div>
 
   <div class="gbDataEntry">
@@ -134,7 +137,7 @@
   <script type="text/javascript" language="javascript">
   // <![CDATA[
   function setOriginationTimestamp() {ldelim}
-    var frm = document.gItemAdmin;
+    var frm = document.forms[0];
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Month]'].value = '{$ItemEditItem.originationTimestamp.Date_Month}';
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Day]'].value = '{$ItemEditItem.originationTimestamp.Date_Day}';
     frm.elements['{$smarty.capture.originationTimestampField}[Date_Year]'].value = '{$ItemEditItem.originationTimestamp.Date_Year}';
