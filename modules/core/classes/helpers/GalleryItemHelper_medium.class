@@ -52,7 +52,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			 null);
 	}
 
-	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits(array($permission));
+	list ($ret, $permissionBits) =
+	    GalleryCoreApi::convertPermissionIdsToBits(array($permission));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -130,12 +131,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	/* Search the item table for all items with owner = $ownerId */
 	$query = '
-    SELECT DISTINCT
-      [GalleryItem::id]
-    FROM
-      [GalleryItem]
-    WHERE
-      [GalleryItem::ownerId] = ?
+        SELECT DISTINCT
+          [GalleryItem::id]
+        FROM
+          [GalleryItem]
+        WHERE
+          [GalleryItem::ownerId] = ?
 	';
 	list ($ret, $queryResults) = $gallery->search($query, array($ownerId));
 	if ($ret->isError()) {
@@ -217,7 +218,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 				 null);
 		}
 
-		$ret = $newItem->create($albumId, $fileName, $mimeType, substr($itemName, 0, 64), $symlink);
+		$ret = $newItem->create($albumId, $fileName, $mimeType,
+					substr($itemName, 0, 64), $symlink);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -366,7 +368,6 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    }
 
 	    if (!empty($derivs[$type])) {
-
 		/*
 		 * Check if we already have a derivative with matching operations.
 		 * If so, keep it.
@@ -486,7 +487,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    }
 
 	    if (empty($thumbnailTable)) {
-		list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
+		list ($ret, $success) =
+		    GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -603,11 +605,11 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		$derivativeOperations = $derivative->getDerivativeOperations();
 	    } else {
 		/* Create a new one */
-		list ($ret, $derivative) =
-		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
+                    'GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -615,16 +617,17 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		if (!isset($derivative)) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
 		}
 
 		$ret = $derivative->create($itemId, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -633,25 +636,27 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		$createdNewParentThumbnail = true;
 
 		/*
-		 * The dimensions of the album's thumbnail are governed by the album's parent, so load the
-		 * album, get its parent's id, get that album's preferences and use those for the thumbnail.
+		 * The dimensions of the album's thumbnail are governed by the
+		 * album's parent, so load the album, get its parent's id, get
+		 * that album's preferences and use those for the thumbnail.
 		 */
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		// It's possible that the parent id is empty (only for the root album)
+		/* It's possible that the parent id is empty (only for the root album) */
 		$parentId = $item->getParentId();
 		if (!empty($parentId)) {
-		    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
+		    list ($ret, $preferences) =
+			GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
 		    if ($ret->isError()) {
 			if (!empty($lockIds)) {
-			    // Ignore errors -- we're already in an error handler
+			    /* Ignore errors -- we're already in an error handler */
 			    GalleryCoreApi::releaseLocks($lockIds);
 			}
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -666,15 +671,17 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		    if (empty($derivativeOperations)) {
 			if (!empty($lockIds)) {
-			    // Ignore errors -- we're already in an error handler
+			    /* Ignore errors -- we're already in an error handler */
 			    GalleryCoreApi::releaseLocks($lockIds);
 			}
-			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__),
+				     null);
 		    }
 		} else {
 		    /*
-		     * There's no parent id, which means the target album is the root, which means it doesn't
-		     * need a thumbnail so even though we didn't create one this is a success.
+		     * There's no parent id, which means the target album is the
+		     * root, which means it doesn't need a thumbnail so even
+		     * though we didn't create one this is a success.
 		     */
 		    $success = true;
 		    $derivative = null;
@@ -687,7 +694,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		 * they're supported by an active toolkit.
 		 */
 		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $derivativeOperations);
+		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType,
+								 $derivativeOperations);
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
 			/* Ignore errors -- we're already in an error handler */
@@ -712,7 +720,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -721,7 +729,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		$ret = $derivative->save();
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -737,8 +745,9 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	}
 
 	/*
-	 * If we created a new thumbnail for the album, we should seek to propagate the thumbnail up to the
-	 * parent album if it does not have a thumbnail.
+	 * If we created a new thumbnail for the album, we should seek to
+	 * propagate the thumbnail up to the parent album if it does not have a
+	 * thumbnail.
 	 */
 	if ($success && !empty($parentId) && $createdNewParentThumbnail) {
 	    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($parentId));
@@ -747,7 +756,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    }
 
 	    if (empty($thumbTable)) {
-		list ($ret, $success) = GalleryItemHelper_medium::setThumbnailFromItem($parentId, $itemId);
+		list ($ret, $success) =
+		    GalleryItemHelper_medium::setThumbnailFromItem($parentId, $itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -758,8 +768,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
     }
 
     /**
-     * Invalidate our descendent count cache, any time we make a change that would possibly affect
-     * any of our counts:
+     * Invalidate our descendent count cache, any time we make a change that
+     * would possibly affect any of our counts:
      * <ul>
      * <li> adding a new item
      * <li> deleting an item
@@ -769,9 +779,10 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
      * <li> removing a user from a group
      * </ul>
      *
-     * If you provide just a user id, it will invalidate all cached values for that user.  If you provide just
-     * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it
-     * will only invalidate for the intersection of the user and the item ids.
+     * If you provide just a user id, it will invalidate all cached values for
+     * that user.  If you provide just an item id, it'll invalidate that id and
+     * all of its parents for all users.  If you provide both, it will only
+     * invalidate for the intersection of the user and the item ids.
      *
      * @param mixed user id or array of ids or null
      * @param mixed item id or array of ids or null
@@ -791,13 +802,16 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    if (!is_array($itemId)) {
 		$itemId = array($itemId);
 	    }
-	    // Gather up all ancestors of all specified ids
+	    /* Gather up all ancestors of all specified ids */
 	    $ids = array();
 	    foreach ($itemId as $id) {
 		list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($id);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			// It's legal to invalidate for objects that are in the process of being created
+			/*
+			 * It's legal to invalidate for objects that are in the
+			 * process of being created
+			 */
 			continue;
 		    }
 		    return $ret->wrap(__FILE__, __LINE__);
