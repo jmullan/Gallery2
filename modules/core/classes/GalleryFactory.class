@@ -117,6 +117,8 @@ class GalleryFactory {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'image/jpeg')
+     * @return array object GalleryStatus a status code,
+     *               object an instance
      */
     function newInstanceByHint($classType, $hint) {
 	$registry =& GalleryFactory::_getFactoryData();
@@ -146,6 +148,8 @@ class GalleryFactory {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPBM')
+     * @return array object GalleryStatus a status code,
+     *               object an instance
      */
     function newInstanceById($classType, $id) {
 	$registry =& GalleryFactory::_getFactoryData();

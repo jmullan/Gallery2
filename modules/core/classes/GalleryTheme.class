@@ -93,7 +93,7 @@ class GalleryTheme {
      * @return HTML content
      */
     function input($params, $content=null) {
-	$params['value'] = $content;
+	$params['value'] = trim($content);
 
 	/* Translate the form variable name */
 	$params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];

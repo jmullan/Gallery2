@@ -3,6 +3,15 @@
 	<tr>
 	  <td>
 	    <table border="0" width="100%" cellspacing="0%" cellpadding="0%">
+		<tr>
+		  <td colspan="2" align="right">
+		    {foreach from=$moduleSystemContent item=module}
+		    {foreach from=$module item=content}
+		    {$content}
+		    {/foreach}
+		    {/foreach}
+		  </td>
+		</tr>
 		<tr>	
 		  <td>
 		    {foreach from=$moduleItemLinks item=module}

@@ -225,10 +225,17 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Get system content */
+	list ($ret, $moduleSystemContent) = $this->_getModuleSystemContent($urlParams);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Tell Smarty about everything we've learned */
 	$template =& $this->getTemplate();
 	$template->setVariable('moduleItemLinks', $moduleItemLinks);
 	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
+	$template->setVariable('moduleSystemContent', $moduleSystemContent);
 	$template->setVariable('moduleItemDetails', $moduleItemDetails);
 	$template->setVariable('navigator', $navigator);
 	$template->setVariable('children', $children);
@@ -428,11 +435,18 @@ class ClassicLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Get system content */
+	list ($ret, $moduleSystemContent) = $this->_getModuleSystemContent($urlParams);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	/* Tell Smarty about everything we've learned */
 	$template =& $this->getTemplate();
 	$template->setVariable('navigator', $navigator);
 	$template->setVariable('moduleItemLinks', $moduleItemLinks);
 	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
+	$template->setVariable('moduleSystemContent', $moduleSystemContent);
 	$template->setVariable('moduleItemDetails', $moduleItemDetails);
 	$template->setVariable('layoutUrl',
 			       GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));

@@ -13,6 +13,13 @@
 		    {galleryText text="on %d pages" arg1=$totalPageCount}
 		    {/if}
 		  </td>
+		  <td align="right">
+		    {foreach from=$moduleSystemContent item=module}
+		    {foreach from=$module item=content}
+		    {$content}
+		    {/foreach}
+		    {/foreach}
+		  </td>
 		</tr>
 		<tr>	
 		  <td>

@@ -298,11 +298,15 @@ class DatabaseStorage extends GalleryStorage {
 						  __FILE__, __LINE__),
 			     null);
 	    }
-	    $classNames[$types[$i]][] = $ids[$i];
+	    $classNames[$types[$i]][$ids[$i]] = 1;
 	}
 
 	/* Load them in groups */
-	foreach ($classNames as $className => $targetIds) {
+	foreach ($classNames as $className => $targetIdHash) {
+
+	    /* Get unique target ids */
+	    $targetIds = array_keys($targetIdHash);
+	    
 	    /* Get our member info for this class */
 	    list ($ret, $memberInfo) = $this->_describeEntityMembers($className);
 	    if ($ret->isError()) {
@@ -1045,6 +1049,7 @@ class DatabaseStorage extends GalleryStorage {
 	 *   'order-by' => '[Class1.member1] ASC',
 	 *   'limit'    => array('offset' => 0, 'count' => 10),
 	 *   'group-by' => '[Class1.member1]'
+	 *   'no-implicit-joins' => true (or false, which is the default)
 	 *
 	 * Into:
 	 *
@@ -1105,16 +1110,18 @@ class DatabaseStorage extends GalleryStorage {
 	if (sizeof($allTables)) {
 	    $query['from'] = join(", ", $allTables);
 
-	    if (sizeof($entityTables) > 1) {
-		$query['where'] .= ' AND (';
-		$idCol = $this->_prefixColumnName('id');
-		for ($i = 1; $i < sizeof($entityTables); $i++) {
-		    $query['where'] .= "($entityTables[0].$idCol = $entityTables[$i].$idCol)";
-		    if ($i < (sizeof($entityTables)-1)) {
-			$query['where'] .= ' AND ';
+	    if (empty($query['no-implicit-joins'])) {
+		if (sizeof($entityTables) > 1) {
+		    $query['where'] .= ' AND (';
+		    $idCol = $this->_prefixColumnName('id');
+		    for ($i = 1; $i < sizeof($entityTables); $i++) {
+			$query['where'] .= "($entityTables[0].$idCol = $entityTables[$i].$idCol)";
+			if ($i < (sizeof($entityTables)-1)) {
+			    $query['where'] .= ' AND ';
+			}
 		    }
+		    $query['where'] .= ')';
 		}
-		$query['where'] .= ')';
 	    }
 	}
 
@@ -1125,12 +1132,12 @@ class DatabaseStorage extends GalleryStorage {
 	    $finalQuery .= ' WHERE ' . $query['where'];
 	}
 
-	if (!empty($query['order-by'])) {
-	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
-	}
-
 	if (!empty($query['group-by'])) {
 	    $finalQuery .= ' GROUP BY ' . $query['group-by'];
+	}
+
+	if (!empty($query['order-by'])) {
+	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
 	}
 
 	/* Run it with the right limits and return the results */

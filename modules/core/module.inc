@@ -170,7 +170,12 @@ class CoreModule extends GalleryModule {
 					       'GalleryUnknownItem',
 					       $classDir . 'GalleryUnknownItem.class',
 					       array(FACTORY_DEFAULT));
-						     
+
+	/* Register our search implementation */
+	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
+					       'GalleryCoreSearch',
+					       'core',
+					       $classDir . 'GalleryCoreSearch.class');
 
 	return GalleryStatus::success();
     }

@@ -1,0 +1,102 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * This is an implementation of the search module's SearchInterface_1_0
+ */
+class GalleryCommentSearch extends GallerySearchInterface_1_0 {
+
+    /**
+     * @see GallerySearchInterface_1_0.getSearchModuleInfo()
+     */
+    function getSearchModuleInfo() {
+	global $gallery;
+
+	list ($ret, $module) = $gallery->loadModule('comment');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$info = array('name' => $module->translate('Comments'),
+		      'description' => $module->translate('Comment Module'),
+		      'options' => array('comments' => array('description' => $module->translate('Search comments'),
+							     'enabled' => 1)));
+	return array(GalleryStatus::success(), $info);
+    }
+
+    /**
+     * @see GallerySearchInterface_1_0.search()
+     */
+    function search($options, $criteria, $limit=null) {
+	global $gallery;
+
+	$data = array();
+	foreach (array('comments' => '[GalleryComment::comment]')
+		 as $key => $column) {
+
+	    if (isset($options[$key])) {
+		$whereList[] = "$column LIKE ?";
+		$data[] = '%' . $criteria . '%';
+	    }
+	}
+	$where = join(' OR ', $whereList);
+
+	/* Factor in item permissions */
+	list ($permissionWhere, $permissionData) =
+	    GalleryItemHelper::getViewPermissionClause($gallery->getActiveUserId());
+	$where = $where . ' AND ' . $permissionWhere;
+	$data = array_merge($data, $permissionData);
+
+	/*
+	 * We're going to be selecting all the child entities but we care about
+	 * the permissions of the parent item, so we need to join
+	 * GalleryChildEntity::parentId against GalleryItem::id.  Since this is
+	 * a non-standard entity join, we have to override the entity joins
+	 * that the DatabaseStorage layer gives us for free and do all the
+	 * joins ourself (ugh).
+	 */
+	$joins = ('((g2_GalleryChildEntity.g_id = g2_GalleryComment.g_id) ' .
+		  'AND (g2_GalleryChildEntity.g_parentId = g2_GalleryItem.g_id) ' .
+                  'AND (g2_GalleryChildEntity.g_parentId = g2_GalleryEntity.g_id))');
+	$where = $where . ' AND ' . $joins;
+
+	list ($ret, $results) = 
+	    $gallery->search(array('select' => 'DISTINCT([GalleryChildEntity::parentId])',
+				   'where' => $where,
+				   'group-by' => '[GalleryChildEntity::parentId]',
+				   'order-by' => '[GalleryEntity::modificationTimestamp] DESC',
+				   'limit' => array('offset' => 0, 'count' => $limit),
+				   'no-implicit-joins' => 1,
+				   'boolean-operator' => 'OR'),
+			     $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$itemIds = array();
+	while ($result = $results->nextResult()) {
+	    $itemIds[] = $result[0];
+	}
+	
+	return array(GalleryStatus::success(), $itemIds);
+    }
+}

@@ -109,16 +109,21 @@ class GalleryItemHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$groupIdString = join(', ', array_values($groupIds));
-	    
-	$where = ' ([GalleryItem::ownerId] = ? OR';
+
+	$where = ' ([GalleryItem::ownerId] = ?';
 	$data[] = $userId;
-	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
-	    $groupIdString . ')';
-	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
+	$where .= ' OR (([GalleryPermissionMap::itemId] = [GalleryItem::id]';
+	$where .= '      AND ([GalleryPermissionMap::groupId] IN (' . $groupIdString . ')';
+	$where .= '           OR [GalleryPermissionMap::userId] = ?))';
 	$data[] = $userId;
-	$where .= ' AND';
-	$where .= ' [GalleryPermissionMap::permission] IN (?, ?, ?)))';
-	$data = array_merge($data, array('core.view', 'core.viewAll', 'core.all'));
+	$where .= '       AND ([GalleryPermissionMap::permission] = ? ';
+	$data[] = 'core.all';
+	$where .= '            OR ([GalleryPermissionMap::permission] IN (?, ?)';
+	$data = array_merge($data, array('core.view', 'core.viewAll'));
+	$where .= '               )';
+	$where .= '           )';
+	$where .= '    )';
+	$where .= ')';
 
 	return array($where, $data);
     }

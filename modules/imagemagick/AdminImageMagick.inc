@@ -70,7 +70,8 @@ class AdminImageMagickController extends GalleryController {
 	    $results['redirect'] = $templateAdapter->url($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
-		$results['view'] = 'imagemagick:AdminImageMagick';
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'imagemagick:AdminImageMagick');
 	    }
 	}
 

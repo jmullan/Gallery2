@@ -84,7 +84,8 @@ class AdminNetPbmController extends GalleryController {
 	    $results['redirect'] = $templateAdapter->url($redirectParams);
 	} else {
 	    if (empty($results['view'])) {
-		$results['view'] = 'netpbm:AdminNetPbm';
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'netpbm:AdminNetPbm');
 	    }
 	}
 

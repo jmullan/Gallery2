@@ -81,6 +81,12 @@ class CommentModule extends GalleryTemplateModule {
 						 false);
 
 
+	/* Register our search implementation */
+	GalleryFactory::registerImplementation('GallerySearchInterface_1_0',
+					       'GalleryCommentSearch',
+					       'comment',
+					       $classDir . 'GalleryCommentSearch.class');
+	
 	return GalleryStatus::success();
     }
 

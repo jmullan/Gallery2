@@ -110,7 +110,7 @@ class GalleryLayout {
 
 	$templateAdapter = $gallery->getTemplateAdapter();
 
-	$itemLinks = array();
+	$links = array();
 	foreach ($moduleStatus as $moduleName => $status) {
 	    if (empty($status['active'])) {
 		continue;
@@ -141,6 +141,53 @@ class GalleryLayout {
 	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
 
 	return array(GalleryStatus::success(), $links);
+    }
+
+    /**
+     * Call getSystemContent on every active module
+     *
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array('moduleName' => array('text' => ...),
+     *                     ...)
+     */
+    function _getModuleSystemContent($urlParams) {
+	global $gallery;
+
+	GalleryProfiler::start('GalleryLayout::_getModuleSystemLinks');
+
+	/* Load the module list */
+	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$systemContent = array();
+	foreach ($moduleStatus as $moduleName => $status) {
+	    if (empty($status['active'])) {
+		continue;
+	    }
+	    
+	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Get all module-related links for these items */
+	    list ($ret, $systemContent[$moduleName]) = $module->getSystemContent($urlParams);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (empty($systemContent[$moduleName])) {
+		unset($systemContent[$moduleName]);
+	    }
+	}
+
+	GalleryProfiler::stop('GalleryLayout::_getModuleSystemLinks');
+
+	return array(GalleryStatus::success(), $systemContent);
     }
 
     /**
