@@ -5,9 +5,11 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <form action="{g->url}" method="post">
+  <div>      
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
+  </div>
 
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">
@@ -60,8 +62,7 @@
       </div>
     </div>
 
-  {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
+    {include file="gallery:`$UserAdmin.viewBodyFile`" l10Domain=$UserAdmin.viewL10Domain}
 
   </div>
-
 </form>
