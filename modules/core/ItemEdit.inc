@@ -170,7 +170,7 @@ class ItemEditView extends GalleryView {
 	$editPluginSessionKey = 'core.view.ItemEdit.editPlugin.' . get_class($item);
 	if (empty($editPlugin)) {
 	    $editPlugin = $session->get($editPluginSessionKey);
-	    if (empty($editPlugin)) {
+	    if (empty($editPlugin) || !in_array($editPlugin, array_keys($pluginInstances)) {
 		$ids = array_keys($pluginInstances);
 		$editPlugin = $ids[0];
 	    }
