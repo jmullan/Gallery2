@@ -54,31 +54,33 @@ class CreateThumbnailOption extends ItemAddOption {
     /**
      * @see ItemAddOption::handleRequestAfterAdd
      */
-    function handleRequestAfterAdd($form, &$item) {
-	$error = array();
-	$warning = array();
-
-	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	if (!empty($thumbTable[$item->getId()])) {
-	    $thumbnail = $thumbTable[$item->getId()];
-	    list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+    function handleRequestAfterAdd($form, $items) {
+	$errors = array();
+	$warnings = array();
+	for ($i = 0; $i < count($items); $i++) {
+	    $warnings[$i] = array();
+	    list ($ret, $thumbTable) = 
+	        GalleryCoreApi::fetchThumbnailsByItemIds(array($items[$i]->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    
-	    if (!$isCurrent) {
-		$ret = $thumbnail->rebuildCache();
+
+	    if (!empty($thumbTable[$items[$i]->getId()])) {
+		$thumbnail = $thumbTable[$items[$i]->getId()];
+		list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
+	    
+		if (!$isCurrent) {
+		    $ret = $thumbnail->rebuildCache();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
 	    }
 	}
-
-	return array(GalleryStatus::success(), $error, $warning);
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }
 ?>

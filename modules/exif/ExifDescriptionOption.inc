@@ -49,51 +49,59 @@ class ExifDescriptionOption extends ItemAddOption {
     /**
      * @see ItemAddOption::handleRequestAfterAdd
      */
-    function handleRequestAfterAdd($form, &$item) {
+    function handleRequestAfterAdd($form, $items) {
+	$errors = array();
+	$warnings = array();
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifExtractor.class');
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
-	$itemId = $item->getId();
-
-	list ($ret, $exifData) =
-	    ExifExtractor::getMetaData(array($itemId), array('ImageDescription'));
+	$itemIds = array();
+	foreach ($items as $item) {
+	    $itemIds[] = $item->getId();
+	}
+	
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+	
+	for ($i = 0; $i < count($items); $i++) {
+	    $warnings[$i] = array();
+	    $itemId = $items[$i]->getId();
 
-	if (!empty($exifData[$itemId]['ImageDescription']['value'])) {
-	    $exifDescription = $exifData[$itemId]['ImageDescription']['value'];
-
-	    list ($ret, $addOption) =
-		GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	    list ($ret, $exifData) =
+	    	ExifExtractor::getMetaData(array($itemId), array('ImageDescription'));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	        return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    if (!empty($exifData[$itemId]['ImageDescription']['value'])) {
+	    	$exifDescription = $exifData[$itemId]['ImageDescription']['value'];
 
-	    if ($addOption & EXIF_ITEM_SUMMARY) {
-		$item->setSummary($exifDescription);
-	    }
-	    if ($addOption & EXIF_ITEM_DESCRIPTION) {
-		$item->setDescription($exifDescription);
-	    }
+	    	list ($ret, $addOption) =
+		    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	    	if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    	}
 
-	    $ret = $item->save();
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+	    	if ($addOption & EXIF_ITEM_SUMMARY) {
+		    $items[$i]->setSummary($exifDescription);
+	    	}
+	    	if ($addOption & EXIF_ITEM_DESCRIPTION) {
+		    $items[$i]->setDescription($exifDescription);
+	    	}
 
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    	$ret = $items[$i]->save();
+	    	if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    	}
 	    }
 	}
-
-	return array(GalleryStatus::success(), array(), array());
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }
 ?>

@@ -179,8 +179,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function testHandleRequestWithArchiveExtract() {
-	$sortAddedFilesFunc = create_function('$a, $b',
-		'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
+	$sortAddedFilesFunc = 
+	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
 
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem(
 	    $this->_album->getId(), 'test/archive',
@@ -309,8 +309,15 @@ class ItemAddTestOption extends ItemAddOption {
     function ItemAddTestOption() {
     }
 
-    function handleRequestAfterAdd($form, &$item) {
-	return array(GalleryStatus::success(), array('an error'), array('a warning'));
+    function handleRequestAfterAdd($form, $items) {
+	$errors = array();
+	$warnings = array();
+	for ($i = 0; $i < count($items); $i++) {
+	    $errors[] = 'an error';
+	    $warnings[$i] = array(); 
+	    $warnings[$i][] = 'a warning';
+	}
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 
     function isAppropriate() {

@@ -79,7 +79,7 @@ class ItemAddController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
+	    $addedItems = array();
 	    for ($i = 0; $i < count($status['addedFiles']); $i++) {
 		$file =& $status['addedFiles'][$i];
 		list ($ret, $addedItem) = GalleryCoreApi::loadEntitiesById($file['id']);
@@ -104,21 +104,27 @@ class ItemAddController extends GalleryController {
 		    }
 		    unset($status['addedFiles'][$i--]);
 		    $status['addedFiles'] = array_merge($status['addedFiles'], $addedFiles);
-		    continue;
-		}
-
-		/* Allow ItemAddOptions to process added item(s) */
-		foreach ($optionInstances as $option) {
-		    list ($ret, $optionErrors, $optionWarnings) =
-			$option->handleRequestAfterAdd($form, $addedItem);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    $error = array_merge($error, $optionErrors);
-		    $file['warnings'] = array_merge($file['warnings'], $optionWarnings);
+		} else {
+		    /* This is not an archive, add it to our array of item objects */
+		    $addedItems[] = $addedItem;
 		}
 	    }
 
+	    /* Allow ItemAddOptions to process added item(s) */
+	    foreach ($optionInstances as $option) {
+		list ($ret, $optionErrors, $optionWarnings) =
+		    $option->handleRequestAfterAdd($form, $addedItems);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$error = array_merge($error, $optionErrors);
+		/* for each item, put the items warnings into our status array */
+		for ($j = 0; $j < count($optionWarnings); $j++) {
+		    $status['addedFiles'][$j]['warnings'] = 
+		        array_merge($status['addedFiles'][$j]['warnings'], $optionWarnings[$j]);
+		}
+	    }
+	    
 	    $results['redirect'] = array('view' => 'core:ItemAdmin',
 					 'subView' => 'core:ItemAddConfirmation',
 					 'itemId' => $item->getId());
@@ -481,12 +487,12 @@ class ItemAddOption {
      * @see GalleryController::handleRequest
      *
      * @param array the form values
-     * @param reference to a GalleryDataItem
+     * @param array GalleryDataItem
      * @return array object GalleryStatus a status code
      *               array localized error messages
      *               array localized warning messages
      */
-    function handleRequestAfterAdd($form, &$item) {
+    function handleRequestAfterAdd($form, $items) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 

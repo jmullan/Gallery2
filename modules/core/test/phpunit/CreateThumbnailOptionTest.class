@@ -69,12 +69,25 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 		array(array('type' => 'int', 'description' => 'test'),
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
-
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	$this->_items = array();
+	list ($ret, $this->_items[0]) = $this->_createRandomDataItem($this->_album->getId(), 
+								    'test/file');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	$this->_itemThumbnail = array();
+	list ($ret, $this->_itemThumbnail[0]) =
+	    $this->_createDerivative($this->_items[0], $this->_items[0]->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+				     'thumbnail|200');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_noWarnings = array(array());
+	$this->_noErrors = array();
     }
 
     function tearDown() {
@@ -87,19 +100,13 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
     }
 
     function testCreateThumbnail() {
-	list ($ret, $thumbnail) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-				     'thumbnail|200');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 	
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
-	$result = $this->_handleRequestAfterAdd($form, $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals($warnings, $this->_noWarnings);
+	$this->assertEquals($errors, $this->_noErrors);
 
-	list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
+	list ($ret, $isCurrent) = $this->_itemThumbnail[0]->isCacheCurrent();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -107,11 +114,62 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	$this->assert($isCurrent, 'Thumbnail was not created!');
     }
 
+    function testCreateMultipleThumbnails() {
+	$totalTestItems = 3;	
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(), 
+									  'test/file');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $this->_itemThumbnail[$j]) =
+	    	$this->_createDerivative($this->_items[$j], $this->_items[$j]->getId(),
+				     	 DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+				     	 'thumbnail|200');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    	
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	}
+	
+	$form['CreateThumbnailOption']['createThumbnail'] = 1;
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals($warnings, $this->_noWarnings);
+	$this->assertEquals($errors, $this->_noErrors);
+	
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    list ($ret, $isCurrent) = $this->_itemThumbnail[$j]->isCacheCurrent();
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assert($isCurrent, "Thumbnail $j was not created!");
+	}
+    }
+
     /* This won't do anything, but shouldn't have any errors either. */
     function testCreateWithNoThumbnail() {
 	$form['CreateThumbnailOption']['createThumbnail'] = 1;
-	$result = $this->_handleRequestAfterAdd($form, $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals($warnings, $this->_noWarnings);
+	$this->assertEquals($errors, $this->_noErrors);
+    }
+
+    /* This won't do anything, but shouldn't have any errors either. */
+    function testCreateMultipleWithNoThumbnail() {
+	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(), 
+									 'test/file');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_noWarnings[] = $this->_noWarnings[$j-1];
+	}    
+	$form['CreateThumbnailOption']['createThumbnail'] = 1;
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals($warnings, $this->_noWarnings);
+	$this->assertEquals($errors, $this->_noErrors);
     }
 }
 

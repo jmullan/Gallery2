@@ -81,28 +81,32 @@ class WatermarkOption extends ItemAddOption {
     /**
      * @see ItemAddOption::handleRequestAfterAdd
      */
-    function handleRequestAfterAdd($form, &$item) {
-	$error = array();
-	if (!empty($form['WatermarkOption']['watermarkId']) &&
-		GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-	    list ($ret, $watermark) =
-		GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $ret = WatermarkHelper::watermarkItem($watermark, $item,
-                $watermark->getXPercentage(),
-		$watermark->getYPercentage(),
-		array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
-		      DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
-		      DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred()));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+    function handleRequestAfterAdd($form, $items) {
+	$errors = array();
+	$warnings = array();
+	for ($i = 0; $i < count($items); $i++) {
+	    $warnings[$i] = array();
+	    if (!empty($form['WatermarkOption']['watermarkId']) &&
+		GalleryUtilities::isA($items[$i], 'GalleryPhotoItem')) {
+		list ($ret, $watermark) =
+		    GalleryCoreApi::loadEntitiesById($form['WatermarkOption']['watermarkId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		$watermarkArray = 
+		    array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => $watermark->getApplyToThumbnail(),
+			  DERIVATIVE_TYPE_IMAGE_RESIZE => $watermark->getApplyToResizes(),
+			  DERIVATIVE_TYPE_IMAGE_PREFERRED => $watermark->getApplyToPreferred());
+		$ret = WatermarkHelper::watermarkItem($watermark, $items[$i],
+						      $watermark->getXPercentage(),
+						      $watermark->getYPercentage(),
+						      $watermarkArray);
+	    	if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
 	    }
 	}
-
-	return array(GalleryStatus::success(), $error, array());
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }
 ?>

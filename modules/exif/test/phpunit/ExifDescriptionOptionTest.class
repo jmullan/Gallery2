@@ -52,19 +52,26 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_save) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	list ($ret, $this->_save) = GalleryCoreApi::getPluginParameter('module', 'exif', 
+								       'addOption');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
-	    array('summary' => 'original summary', 'description' => 'original description'),
-	    dirname(__FILE__) . '/../data/descr.jpg');
+	$this->_items = array();
+	list ($ret, $this->_items[0]) = 
+	    $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					 array('summary' => 'original summary 0', 
+					       'description' => 'original description 0'),
+					 dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	$this->_noWarnings = array(array());
+	$this->_noErrors = array();
     }
 
     function tearDown() {
@@ -78,21 +85,57 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
     }
 
     function testCreateDescription() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', EXIF_ITEM_DESCRIPTION);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+						  EXIF_ITEM_DESCRIPTION);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$result = $this->_handleRequestAfterAdd(array(), $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	list ($ret, $item) = $this->_item->refresh();
+	list ($ret, $item) = $this->_items[0]->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('exif description', $item->getDescription(), 'description');
-	$this->assertEquals('original summary', $item->getSummary(), 'summary');
+	$this->assertEquals('exif description', $item->getDescription(), 'description 0');
+	$this->assertEquals('original summary 0', $item->getSummary(), 'summary 0');
+    }
+    
+    function testMultipleCreateDescription() {
+	
+	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) = 
+	        $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					     array('summary' => "original summary $j", 
+					           'description' => "original description $j"),
+					     dirname(__FILE__) . '/../data/descr.jpg');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_noWarnings[] = array();
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+						  EXIF_ITEM_DESCRIPTION);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+	
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    list ($ret, $item) = $this->_items[$j]->refresh();
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals('exif description', $item->getDescription(), "description $j");
+	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
+	}
     }
 
     function testCreateWithCheckDisabled() {
@@ -101,16 +144,51 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$result = $this->_handleRequestAfterAdd(array(), $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	list ($ret, $item) = $this->_item->refresh();
+	list ($ret, $item) = $this->_items[0]->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('original description', $item->getDescription(), 'description');
-	$this->assertEquals('original summary', $item->getSummary(), 'summary');
+	$this->assertEquals('original description 0', $item->getDescription(), 'description 0');
+	$this->assertEquals('original summary 0', $item->getSummary(), 'summary 0');
+    }
+    
+    function testMultipleCreateWithCheckDisabled() {
+    
+	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) = 
+	    	$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+					     array('summary' => "original summary $j", 
+					           'description' => "original description $j"),
+					     dirname(__FILE__) . '/../data/descr.jpg');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_noWarnings[] = array();
+	}  
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+	
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    list ($ret, $item) = $this->_items[$j]->refresh();
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals("original description $j", $item->getDescription(), 
+	    			"description $j");
+	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
+	}
     }
 }
 ?>

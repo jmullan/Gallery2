@@ -49,37 +49,40 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
-
-	list ($ret, $this->_image) =
+	$this->_images = array();
+	list ($ret, $this->_images[0]) =
 	    $this->_createRandomDataItem($this->_album->getId(), 'image/test');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_thumbnail) =
-	    $this->_createDerivative($this->_image, $this->_image->getId(),
+	$this->_thumbnails = array();
+	list ($ret, $this->_thumbnails[0]) =
+	    $this->_createDerivative($this->_images[0], $this->_images[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_resize) =
-	    $this->_createDerivative($this->_image, $this->_image->getId(),
+	$this->_resizes = array();
+	list ($ret, $this->_resizes[0]) =
+	    $this->_createDerivative($this->_images[0], $this->_images[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'rotate|90');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	$this->_items = array();
+	list ($ret, $this->_items[0]) = $this->_createRandomDataItem($this->_album->getId(), 
+								 'test/file');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_itemThumbnail) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-			  DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'convert-to-image/jpeg;thumbnail|150');
+	$this->_itemThumbnails = array();
+	list ($ret, $this->_itemThumbnails[0]) =
+	    $this->_createDerivative($this->_items[0], 
+	    			     $this->_items[0]->getId(),
+			  	     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 
+			  	     'convert-to-image/jpeg;thumbnail|150');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -103,17 +106,20 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
 	$this->_markForCleanup($this->_watermark);
+
+	$this->_noWarnings = array(array());
+	$this->_noErrors = array();
     }
 
     function testWatermarkItem() {
 	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
-	$result = $this->_handleRequestAfterAdd($form, $this->_image);
-	$this->assertEquals(array(array(), array()), $result);
+	$result = $this->_handleRequestAfterAdd($form, $this->_images);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
 	$expected = sprintf('composite|watermark/%s,image/gif,62,75,manual,1.200,2.300',
 			    $this->_watermark->getFileName());
 
-	foreach (array($this->_thumbnail, $this->_resize) as $derivative) {
+	foreach (array($this->_thumbnails[0], $this->_resizes[0]) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -122,13 +128,72 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    $this->assertEquals($expected, $derivative->getPostFilterOperations());
 	}
     }
+    
+    function testMultipleWatermarkItem() {
+    	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_images[$j]) =
+	    	$this->_createRandomDataItem($this->_album->getId(), 'image/test');
+	    if ($ret->isError()) {
+	    	print $ret->getAsHtml();
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }	
+	    list ($ret, $this->_thumbnails[$j]) =
+	    	$this->_createDerivative($this->_images[$j], 
+	    				 $this->_images[$j]->getId(),
+				     	 DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 
+				     	 'crop|10,10,30,40;scale|200');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }	
+	    list ($ret, $this->_resizes[$j]) =
+	    	$this->_createDerivative($this->_images[$j], $this->_images[$j]->getId(),
+				     	 DERIVATIVE_TYPE_IMAGE_RESIZE, 'rotate|90');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(), 
+								  	 'test/file');
+	    if ($ret->isError()) {
+	    	print $ret->getAsHtml();
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $this->_itemThumbnails[$j]) =
+	    	$this->_createDerivative($this->_items[$j], 
+	    				 $this->_items[$j]->getId(),
+			  		 DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 
+			  		 'convert-to-image/jpeg;thumbnail|150');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_noWarnings[] = array();
+    	}
+    	
+	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
+	$result = $this->_handleRequestAfterAdd($form, $this->_images);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+
+	$expected = sprintf('composite|watermark/%s,image/gif,62,75,manual,1.200,2.300',
+			    $this->_watermark->getFileName());
+
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    foreach (array($this->_thumbnails[$j], $this->_resizes[$j]) as $derivative) {
+	    	list ($ret, $derivative) = $derivative->refresh();
+	    	if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    	}
+	    	$this->assertEquals($expected, $derivative->getPostFilterOperations());
+	    }
+	}
+    }
 
     function testWatermarkItemWithNoWatermark() {
 	$form['WatermarkOption']['watermarkId'] = '';
-	$result = $this->_handleRequestAfterAdd($form, $this->_image);
-	$this->assertEquals(array(array(), array()), $result);
+	$result = $this->_handleRequestAfterAdd($form, $this->_images);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	foreach (array($this->_thumbnail, $this->_resize) as $derivative) {
+	foreach (array($this->_thumbnails[0], $this->_resizes[0]) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -138,19 +203,96 @@ class WatermarkOptionTest extends ItemAddOptionTestCase {
 	    $this->assertEquals(1, $derivative->getSerialNumber());
 	}
     }
+    
+    function testMultipleWatermarkItemWithNoWatermark() {
+    	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_images[$j]) =
+	    	$this->_createRandomDataItem($this->_album->getId(), 'image/test');
+	    if ($ret->isError()) {
+	    	print $ret->getAsHtml();
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }	
+	    list ($ret, $this->_thumbnails[$j]) =
+	    	$this->_createDerivative($this->_images[$j], 
+	    				 $this->_images[$j]->getId(),
+				     	 DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 
+				     	 'crop|10,10,30,40;scale|200');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }	
+	    list ($ret, $this->_resizes[$j]) =
+	    	$this->_createDerivative($this->_images[$j], $this->_images[$j]->getId(),
+				     	 DERIVATIVE_TYPE_IMAGE_RESIZE, 'rotate|90');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_noWarnings[] = array();
+    	}  
+
+	$form['WatermarkOption']['watermarkId'] = '';
+	$result = $this->_handleRequestAfterAdd($form, $this->_images);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    foreach (array($this->_thumbnails[$j], $this->_resizes[$j]) as $derivative) {
+	    	list ($ret, $derivative) = $derivative->refresh();
+	    	if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    	}
+	    	$this->assertEquals(null, $derivative->getPostFilterOperations());
+	    	$this->assertEquals(1, $derivative->getSerialNumber());
+	    }
+	}
+    }
 
     function testWatermarkNonImage() {
 	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
-	$result = $this->_handleRequestAfterAdd($form, $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	$result = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
 
-	list ($ret, $derivative) = $this->_itemThumbnail->refresh();
+	list ($ret, $derivative) = $this->_itemThumbnails[0]->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals(null, $derivative->getPostFilterOperations());
 	$this->assertEquals(1, $derivative->getSerialNumber());
+    }
+    
+    function testMultipleWatermarkNonImage() {
+    	$totalTestItems = 3;
+        for ($j = 1; $j < $totalTestItems; $j++) {
+	    list ($ret, $this->_items[$j]) = $this->_createRandomDataItem($this->_album->getId(), 
+								  	 'test/file');
+	    if ($ret->isError()) {
+	    	print $ret->getAsHtml();
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    list ($ret, $this->_itemThumbnails[$j]) =
+	    	$this->_createDerivative($this->_items[$j], 
+	    				 $this->_items[$j]->getId(),
+			  		 DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 
+			  		 'convert-to-image/jpeg;thumbnail|150');
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->_noWarnings[] = array();
+    	} 
+	$form['WatermarkOption']['watermarkId'] = $this->_watermark->getId();
+	$result = $this->_handleRequestAfterAdd($form, $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+	
+	for ($j = 0; $j < $totalTestItems; $j++) {
+	    list ($ret, $derivative) = $this->_itemThumbnails[$j]->refresh();
+	    if ($ret->isError()) {
+	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals(null, $derivative->getPostFilterOperations());
+	    $this->assertEquals(1, $derivative->getSerialNumber());
+	}
     }
 }
 ?>
