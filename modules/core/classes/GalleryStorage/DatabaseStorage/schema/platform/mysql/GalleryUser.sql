@@ -31,7 +31,7 @@
     DB_COLUMN_PREFIXhashedPassword
       varchar(
       
-          32
+          128
         
       )
     
