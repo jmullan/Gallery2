@@ -130,7 +130,7 @@ class PhotoAccessHelper {
 	    $entries[] = $entry;
 	    /* We should scan the results for a "200 OK" result */
 	}
-	
+
 	/* Turn our data into an XML request like this:
 	 *
 	 * <add-cart-request cobrand="CB_GP"
@@ -166,7 +166,7 @@ class PhotoAccessHelper {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf("Post Data:\n%s", htmlentities(print_r($postData, 1))));
 	}
-	list ($body, $headers) =
+	list ($body, $response, $headers) =
 	    GalleryCoreApi::postToWebPage($cartUrl, $postData,
 					  array('User-Agent' => $_SERVER['HTTP_USER_AGENT']));
 

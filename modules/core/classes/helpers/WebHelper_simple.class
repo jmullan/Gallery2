@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -33,21 +33,21 @@
  * @static
  */
 class WebHelper_simple {
-    
+
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the body, headers and the actual URL that we used to
-     * get the data.
+     * upon completion return the http response, headers and the actual URL that we used
+     * to get the data.
      *
      * @param string the url
      * @param string the output file
      * @param int the redirect depth (pass in 0 or leave this empty to start)
-     * @return array(body, headers, url)
+     * @return array(boolean success, http response, headers, url)
      */
     function fetchWebFile($url, $outputFile, $depth=0) {
 	global $gallery;
 
-	// Convert illegal characters
+	/* Convert illegal characters */
 	$url = str_replace(' ', '%20', $url);
 
 	$components = parse_url($url);
@@ -58,15 +58,15 @@ class WebHelper_simple {
 
 	/* Don't redirect too far */
 	if ($depth > 5) {
-	    $gallery->debug("Too many levels of HTTP redirection!");
-	    return array(null, null, null);
+	    $gallery->debug('Too many levels of HTTP redirection!');
+	    return array(false, null, null, null);
 	}
 
 	$platform = $gallery->getPlatform();
 	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
-	    return array(null, null, null);
+	    return array(false, null, null, null);
 	}
 
 	$get = $components['path'];
@@ -74,8 +74,8 @@ class WebHelper_simple {
 	    $get .= '?' . $components['query'];
 	}
 
-	// Unescape ampersands, since if the url comes from form input it will be escaped
-	$get = str_replace("&amp;", "&", $get);
+	/* Unescape ampersands, since if the url comes from form input it will be escaped */
+	$get = str_replace('&amp;', '&', $get);
 
 	/* Read the web page into a buffer */
 	$platform->fwrite($fd, sprintf("GET %s HTTP/1.0\r\n" .
@@ -88,17 +88,17 @@ class WebHelper_simple {
 	/* Read the response and headers first */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
-	
+
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
 		break;
 	    }
 
-	    // Normalize the line endings 
-	    $line = str_replace("\r", "", $line);
-	    
-	    list ($key, $value) = split(":", $line, 2);
+	    /* Normalize the line endings */
+	    $line = str_replace("\r", '', $line);
+
+	    list ($key, $value) = explode(':', $line, 2);
 	    $headers[$key] = trim($value);
 	}
 
@@ -140,7 +140,7 @@ class WebHelper_simple {
 	$success = false;
 	$ofd = $platform->fopen($outputFile, 'wb');
 	if ($ofd) {
-	    // Read the body
+	    /* Read the body */
 	    $failed = false;
 	    while (!$platform->feof($fd) && !$failed) {
 		$buf = $platform->fread($fd, 4096);
@@ -156,23 +156,23 @@ class WebHelper_simple {
 	}
 	$platform->fclose($fd);
 
-	return array($success, $response, $headers);
+	return array($success, $response, $headers, $url);
     }
 
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the body, headers and the actual URL that we used to
-     * get the data.
+     * upon completion return the body, http response, headers and the actual URL that
+     * we used to get the data.
      *
      * @param string the url
-     * @param array extra headers to pass to the server
+     * @param array (optional) extra headers to pass to the server
      * @param int the redirect depth (pass in 0 or leave this empty to start)
-     * @return array(body, headers, url)
+     * @return array(body, http response, headers, url)
      */
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
 	global $gallery;
 
-	// Convert illegal characters
+	/* Convert illegal characters */
 	$url = str_replace(' ', '%20', $url);
 
 	$components = parse_url($url);
@@ -183,15 +183,15 @@ class WebHelper_simple {
 
 	/* Don't redirect too far */
 	if ($depth > 5) {
-	    $gallery->debug("Too many levels of HTTP redirection!");
-	    return array(null, null, null);
+	    $gallery->debug('Too many levels of HTTP redirection!');
+	    return array(null, null, null, null);
 	}
 
 	$platform = $gallery->getPlatform();
 	$fd = @$platform->fsockopen($components['host'], $port, $errno, $errstr, 1);
 	if (empty($fd)) {
 	    $gallery->debug("Error $errno: '$errstr' retrieving $url");
-	    return array(null, null, null);
+	    return array(null, null, null, null);
 	}
 
 	$get = $components['path'];
@@ -199,8 +199,8 @@ class WebHelper_simple {
 	    $get .= '?' . $components['query'];
 	}
 
-	// Unescape ampersands, since if the url comes from form input it will be escaped
-	$get = str_replace("&amp;", "&", $get);
+	/* Unescape ampersands, since if the url comes from form input it will be escaped */
+	$get = str_replace('&amp;', '&', $get);
 
 	/* Read the web page into a buffer */
 	$extraHeaderLines = array();
@@ -219,17 +219,17 @@ class WebHelper_simple {
 	/* Read the response and headers first */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
-	
+
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
 		break;
 	    }
 
-	    // Normalize the line endings 
-	    $line = str_replace("\r", "", $line);
+	    /* Normalize the line endings */
+	    $line = str_replace("\r", '', $line);
 
-	    list ($key, $value) = split(":", $line, 2);
+	    list ($key, $value) = explode(':', $line, 2);
 	    $headers[$key] = trim($value);
 	}
 
@@ -268,7 +268,7 @@ class WebHelper_simple {
 	    return WebHelper_simple::fetchWebPage($redirectUrl, $extraHeaders, $depth+1);
 	}
 
-	// Read the body
+	/* Read the body */
 	$body = '';
 	while (!$platform->feof($fd)) {
 	    $body .= $platform->fread($fd, 4096);
@@ -279,15 +279,16 @@ class WebHelper_simple {
     }
 
     /**
-     * Post form data to a remote url and return the headers and body of the reply
+     * Post form data to a remote url and return the http response, headers and body of the reply
      *
      * @param string the url
      * @param array the key/value post data
-     * @return array(body, headers)
+     * @param array (optional) extra headers to pass to the server
+     * @return array(body, http response, headers)
      */
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	global $gallery;
-	
+
 	$components = parse_url($url);
 	$port = empty($components['port']) ? 80 : $components['port'];
 	if (empty($components['path'])) {
@@ -336,17 +337,17 @@ class WebHelper_simple {
 	/* Read the response and headers first */
 	$headers = array();
 	$response = trim($platform->fgets($fd, 4096));
-	
+
 	while (!$platform->feof($fd)) {
 	    $line = trim($platform->fgets($fd, 4096));
 	    if (empty($line)) {
 		break;
 	    }
 
-	    // Normalize the line endings 
-	    $line = str_replace("\r", "", $line);
-	    
-	    list ($key, $value) = split(":", $line, 2);
+	    /* Normalize the line endings */
+	    $line = str_replace("\r", '', $line);
+
+	    list ($key, $value) = explode(':', $line, 2);
 	    $headers[$key] = trim($value);
 	}
 

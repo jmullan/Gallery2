@@ -242,7 +242,7 @@ class GalleryCoreApi {
      */
     function removePluginParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
-	return GalleryPluginHelper_medium::removeParameterByValue($pluginType, $pluginId, 
+	return GalleryPluginHelper_medium::removeParameterByValue($pluginType, $pluginId,
 								  $parameterName, $parameterValue);
     }
 
@@ -2302,12 +2302,12 @@ class GalleryCoreApi {
 
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the body, headers and the actual URL that we used to
+     * upon completion return the http response, headers and the actual URL that we used to
      * get the data.
      *
      * @param string the url
      * @param string the output file
-     * @return array(body, headers, url)
+     * @return array(boolean success, http response, headers, url)
      */
     function fetchWebFile($url, $outputFile) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
@@ -2316,12 +2316,12 @@ class GalleryCoreApi {
 
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
-     * upon completion return the body, headers and the actual URL that we used to
-     * get the data.
+     * upon completion return the body, http response, headers and the actual URL that
+     * we used to get the data.
      *
      * @param string the url
-     * @param array extra headers to pass to the server
-     * @return array(body, headers, url)
+     * @param array (optional) extra headers to pass to the server
+     * @return array(body, http response, headers, url)
      */
     function fetchWebPage($url, $extraHeaders=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
@@ -2329,11 +2329,12 @@ class GalleryCoreApi {
     }
 
     /**
-     * Post form data to a remote url and return the headers and body of the reply
+     * Post form data to a remote url and return the http response, headers and body of the reply
      *
      * @param string the url
      * @param array the key/value post data
-     * @return array(body, headers)
+     * @param array (optional) extra headers to pass to the server
+     * @return array(body, http response, headers)
      */
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
