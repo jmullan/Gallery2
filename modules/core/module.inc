@@ -413,14 +413,14 @@ class CoreModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('General'),
 				 'view' => 'core:AdminCore'),
-			   array('name' => $this->translate('Users'),
-				 'view' => 'core:AdminUsers'),
-			   array('name' => $this->translate('Groups'),
-				 'view' => 'core:AdminGroups'),
 			   array('name' => $this->translate('Modules'),
 				 'view' => 'core:AdminModules'),
 			   array('name' => $this->translate('Layouts'),
-				 'view' => 'core:AdminLayouts')
+				 'view' => 'core:AdminLayouts'),
+			   array('name' => $this->translate('Users'),
+				 'view' => 'core:AdminUsers'),
+			   array('name' => $this->translate('Groups'),
+				 'view' => 'core:AdminGroups')
 			   )
 		     );
     }
