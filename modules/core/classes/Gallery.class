@@ -316,16 +316,19 @@ class Gallery {
 
 	$lockIds = array();
 
-	list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	if ($lockIds[0] == null) {
-	    /*
-	     * No lock was acquired - only in the case where I have no parents
-	     */
-	    unset($lockIds[0]);
+	if (is_subclass_of($this, 'GalleryChildEntity')) {
+	    list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if ($lockIds[0] == null) {
+		/*
+		 * No lock was acquired - only in the case where I have no
+		 * parents
+		 */
+		unset($lockIds[0]);
+	    }
 	}
 
 	/* Don't write lock it if it's already locked somewhere else */
