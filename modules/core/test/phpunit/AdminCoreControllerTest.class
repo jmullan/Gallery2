@@ -91,11 +91,5 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 				    'subView' => 'core:AdminCore'),
 			      $results['redirect']);
     }
-
-    function assertRedirect($params, $redirectUrl) {
-	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
-	$this->assertEquals($urlGenerator->generateUrl($params), $redirectUrl);
-    }
 }
 ?>
