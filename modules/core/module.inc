@@ -876,11 +876,11 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $user->create($this->translate('anonymous'));
+	$ret = $user->create($this->translate('guest'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$user->setFullName($this->translate('Anonymous'));
+	$user->setFullName($this->translate('Guest'));
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
