@@ -22,11 +22,11 @@
 ?>
 <h1>Welcome</h1>
 <p>
-<?php print _("Getting Gallery installed on your webserver requires 7 steps. This installer will guide you through these steps and provide assistance along the way if additional steps are required to get your Gallery up and running. Once a step has been completed, you can go back and make changes at any time.") ?>
+<?php print _("Getting Gallery 2.0 installed on your webserver requires 7 steps. This installer will guide you through these steps and provide assistance along the way if additional steps are required to get your Gallery up and running. Once a step has been completed, you can go back and make changes at any time.") ?>
 </p>
 
 <div class="go">
   <span class="goToNext">
     <a href="index.php?step=1&action=new"><?php print _('Go to Step 1&raquo;') ?></a>
-</span>
-</di>
+  </span>
+</div>

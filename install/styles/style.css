@@ -19,13 +19,20 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/*
+        colors:
+        x-light-blue: rgb(236,242,248)
+        light-blue: rgb(209,224,238)
+
+*/
+
 /*      re-define       */
 
 body {
 	font-family: Verdana, Arial, sans-serif;
 	font-size: 62.5%;
-	color: #444;
-	background-color: #ddd;
+	color: #333;
+	background-color: #eee;
 	/*background-image: url('../images/background.png');
 	background-repeat: repeat;*/
 	text-align: center;
@@ -36,7 +43,10 @@ h1, h2, h3, h4 {
         padding: 0;
 }
 
-p { font-size: 1.1em; }
+p {
+        font-size: 1.1em;
+        line-height: 1.3em;
+}
 
 a {
 	text-decoration: none;
@@ -89,8 +99,8 @@ tt {
 #navbar {
         width: 160px;
         float: left;
-	background-color: #eee;
-        border-right: 1px solid #ddd;
+	background-color: rgb(209,224,238);
+	border-right: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
         padding: 16px 0;
 }
@@ -109,7 +119,7 @@ tt {
 
 #navbar li {
         display: block;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid rgb(236,242,248);
         margin: 0 0 0 -6px;
         padding: 8px 0px;
 }
@@ -225,7 +235,7 @@ tt {
 }
 
 .nav_arrow {
-	border-bottom: 1px solid #ffffff;
+	border-bottom: 1px solid #fff;
 	margin: 0px;
 	padding: 2px;
 	font-size: x-small;
