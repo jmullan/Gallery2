@@ -242,7 +242,7 @@ class ItemEditPlugin {
      *               string the path to a template file to include
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
     /**
@@ -257,7 +257,7 @@ class ItemEditPlugin {
      *               string status message
      */
     function handleRequest($form, &$item, &$preferred) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED), null, null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -267,7 +267,7 @@ class ItemEditPlugin {
      *               return-array (same as GalleryController::handleRequest)
      */
     function getTitle() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED), null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 }
 ?>

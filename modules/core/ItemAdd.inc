@@ -203,7 +203,7 @@ class ItemAddPlugin {
      *               string the path to a template file to include
      */
     function loadTemplate(&$template, &$form, $item) {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
     /**
@@ -217,7 +217,7 @@ class ItemAddPlugin {
      *               array files that were added: array(array('file' => '...', 'id' => ##), ...)
      */
     function handleRequest($form, &$item) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED), null, null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -227,7 +227,7 @@ class ItemAddPlugin {
      *               return-array (same as GalleryController::handleRequest)
      */
     function getTitle() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED), null);
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 }
 ?>
