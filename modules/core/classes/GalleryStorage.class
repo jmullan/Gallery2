@@ -107,6 +107,20 @@ define('STORAGE_MODIFIER_MEDIUM', 0x00080000);
 define('STORAGE_MODIFIER_LARGE', 0x00100000);
 
 /**
+ * This is field should be indexed for performance
+ *
+ * @constant STORAGE_MODIFIER_INDEXED
+ */
+define('STORAGE_MODIFIER_INDEXED', 0x00200000);
+
+/**
+ * This is field should be fulltext indexed for performance
+ *
+ * @constant STORAGE_MODIFIER_FULLTEXT_INDEXED
+ */
+define('STORAGE_MODIFIER_FULLTEXT_INDEXED', 0x00400000);
+
+/**
  * Newly created flag
  *
  * @constant STORAGE_FLAG_NEWLY_CREATED
