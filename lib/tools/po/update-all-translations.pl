@@ -23,7 +23,7 @@ my %MO_FILES = ();
 
 my $curdir = cwd();
 my $basedir = cwd();
-$basedir =~ s{/(lib|docs|layouts|modules|setup|templates|themes)/.*}{};
+$basedir =~ s{(/.*)/(lib|docs|layouts|modules|setup|templates|themes)/.*?$}{$1};
 
 find(\&locatePoDir, $basedir);
 
