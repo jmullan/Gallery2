@@ -85,10 +85,12 @@ class ItemAddChildrenController extends GalleryController {
 		    $mimeType = $file['type'];
 
 		    /*
-		     * If we don't get useful data from that, take a swing at
-		     * it using the file name.
+		     * If we don't get useful data from that or its a type we don't
+		     * recognize, take a swing at it using the file name.
 		     */
-		    if ($mimeType == 'application/octet-stream' || $mimeType == 'application/unknown') {
+		    if ($mimeType == 'application/octet-stream' ||
+			    $mimeType == 'application/unknown' ||
+			    GalleryUtilities::convertMimeToExtension($mimeType) == null) {
 			$extension = GalleryUtilities::getFileExtension($file['name']);
 			$mimeType = GalleryUtilities::convertExtensionToMime($extension);
 		    }
