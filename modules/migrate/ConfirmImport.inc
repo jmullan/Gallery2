@@ -757,10 +757,11 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}
 
-				if (isset($importAlbumItem['owner']) && strcmp($importAlbumItem['owner'],$album['owner'])) {
-				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem['owner']);
+				if (isset($importAlbumItem->owner) && strcmp($importAlbumItem->owner,$album['owner'])) {
+				    $validItemUID = Gallery1DataParser::isValidUid($albumsPath,$importAlbumItem->owner);
 				    if ($validItemUID) {
-					list($ret, $albumItemUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem['owner']);
+					list($ret, $albumItemUserFields) =
+					    Gallery1DataParser::getUserFieldsByUid($albumsPath, $importAlbumItem['owner']);
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
