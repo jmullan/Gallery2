@@ -4,12 +4,7 @@
 	theme.css
 	by Ross A. Reyman, Jon Huang and Chad Kieffer
 
-        This css file defines all aspects of the Gallery layout.
-	
-	TO DO:
-	1. Remove span definition's after spans are removed from .tpl markup
-	2. Look for layout tags and move to layout.css
-
+    This css file defines all aspects of the Gallery layout.
 */
 
 /*      Standard CSS definitions */
@@ -60,7 +55,7 @@ body {
 }
 
 #gsSidebar, #gsAdminSidebar {
-        float: left;
+    float: left;
 	/*width: 156px;*/
 	width: 20%;
 	border-top: 1px solid #ccc;
@@ -86,18 +81,18 @@ body {
 /* End hide from IE-mac */
 
 #gsAlbumContents, #gsAdminContents, .gsOtherContents, #gsOtherContents {
-        float: left;
-        border-top: 1px solid #ccc;
-        border-left: 1px solid #ccc;
-        width: 78%;
-        margin: 0;
-        padding: 0;
+    float: left;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    width: 78%;
+    margin: 0;
+    padding: 0;
 }
 
 * html #gsAlbumContents { overflow: auto; } /* style for IE */
 
 .gbExif {
-        padding: 8px 14px;
+    padding: 8px 14px;
 }
 
 /*      .gbDataTable	*/
@@ -230,7 +225,7 @@ table.gbDataTable img { border: none; }
 
 .gbMenu { 
 	border-bottom: 1px solid #ddd;
-        margin: 16px 0 0 8px;
+    margin: 16px 0 0 8px;
 	padding: 0 0 16px 0;
 }
 
@@ -247,7 +242,7 @@ table.gbDataTable img { border: none; }
 }
 
 .gbMenu ul, .gbMenu ol {
-        list-style-type: none;
+    list-style-type: none;
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
 }
@@ -284,14 +279,14 @@ table.gbDataTable img { border: none; }
 
 /*      horizontal history links - 'trail of breadcrumbs' */
 .gbBreadCrumb { 
-        font-size: 1.2em;
-        font-weight: bold;
+    font-size: 1.2em;
+    font-weight: bold;
 	margin: 0;
 	padding: 16px 8px; 
 }
 
 .gbBreadCrumb li { 
-        display: inline;
+    display: inline;
 	background-image: url('../images/icon_path_separator.gif');
 	background-repeat: no-repeat;
 	background-position: left;
@@ -330,9 +325,9 @@ table.gbDataTable img { border: none; }
 /* End hide from IE-mac */
 
 .gbNavBar {
-        background-color: #e7e7e7;
-        margin: 0;
-        padding: 0 14px;
+    background-color: #e7e7e7;
+    margin: 0;
+    padding: 0 14px;
 }
 
 .gbNavBar:after {
@@ -349,7 +344,11 @@ table.gbDataTable img { border: none; }
 
 .gbTitleBanner { padding: 8px 14px; }
 
-.gbTitleBanner h1 { font-size: 1.2em; margin: 0; padding: 0; }
+.gbTitleBanner h1 { 
+    font-size: 1.2em; 
+    margin: 0; 
+    padding: 0;
+}
 
 table.gbTitleBanner {
 	margin: 0 0 0 14px;
@@ -371,37 +370,30 @@ td.gbItemAlbum,
 td.gbItemImage, 
 td.gbItemMovie, 
 td.gbItemOther {
-        width: 20%;
-        vertical-align: top;
-	background-color: #fff;
-        padding: 14px;
+    width: 20%;
+    vertical-align: top;
+    background-color: #fff;
+    padding: 14px;
 }
 
-td.gbItemAlbum {
-	background-color: #eee;        
-}
+td.gbItemAlbum { background-color: #eee; }
 
-.gsSingleImage {
-	margin: 16px;
-}
+.gsSingleImage { margin: 16px; }
 
 /*	  #gsComments	 */
 
 .gbComment {
-	border-bottom: 1px dotted #ddd;
-        margin: 0;	
-	padding: 8px 0 8px 0;
-
+    border-bottom: 1px dotted #ddd;
+    margin: 0;	
+    padding: 8px 0 8px 0;
 }
 
 .gbComment span {
-        font-size: 0.9em;
-        color: #bbb;
+    font-size: 0.9em;
+    color: #bbb;
 }
 
-.gbComment p {
-        margin: 6px 0;
-}
+.gbComment p { margin: 6px 0; }
 
 /*	  #gsFooter  */
 
@@ -422,8 +414,7 @@ td.gbItemAlbum {
 #gsSearchContents .giThumbMovie, 
 #gsSearchContents .giThumbOther { border: 0px solid #ccc; }
 
-/*	  override the normal title clear so as to wrap information
- on the right of the thumbnail */
+/*	  override the normal title clear so as to wrap information on the right of the thumbnail */
 
 #gsSearchContents .gbItemImage .giTitle {
 	border-width: 0;
@@ -459,30 +450,24 @@ td.gbItemAlbum {
 
 /*      Error inside a gsStatus section */
 
-#gsStatus {
-	margin: 4px 0 0 4px;
-}
+#gsStatus { margin: 4px 0 0 4px; }
 
 #gsStatus .giError, #gsStatus .giWarning, #gsStatus .giStatus  {
 	font-weight: bold;
 	font-size: 1.3em;
 }
 
-#gsStatus .giError {
-	color: #AA4444;
-}
+#gsStatus .giError { color: #a44; }
 
 /*      Warning inside a gsStatus section */
 
-#gsStatus .giWarning {
-	color: #DDDD77;
-}
+#gsStatus .giWarning { color: #dd7; }
+
+#gsStatus .giEmpty { font-weight: bold; margin: 0 0 400px 0; }
 
 /*      Status inside a gsStatus section */
 
-#gsStatus .giStatus {
-	color: #44AA44;
-}
+#gsStatus .giStatus { color: #4a4; }
 
 /*      ITEMS
 	Category 4: item and span definitions		 
@@ -516,8 +501,8 @@ td.gbItemAlbum {
 }
 
 .giInfo li {
-        margin: 0;
-        padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 /*      horizontal link styles page navigations */
@@ -526,9 +511,7 @@ td.gbItemAlbum {
 	padding: 2px 8px;
 }
 
-.gbNavBar .giHorizontalLinks {
-        float: right;
-}
+.gbNavBar .giHorizontalLinks { float: right; }
 
 .giHorizontalLinks li { 
 	display: inline;
@@ -539,9 +522,9 @@ td.gbItemAlbum {
 .giHorizontalLinks a { text-decoration: none; }
 
 .gbExif .giHorizontalLinks, .gbExif li, .gbComment .giHorizontalLinks, .gbComment li {
-        color: #888;
-        margin: 4px 0;
-        padding: 0 2px 0 0;
+    color: #888;
+    margin: 4px 0;
+    padding: 0 2px 0 0;
 }
 
 
@@ -646,43 +629,43 @@ discused the options of generating a table-based border (ie_test) and alistapart
 
 .gbMenu .button,
 #gsSearchContents .button  { 
-        padding: 1px 3px; 
-        color: #333; 
-        background:#eee; 
-        border: 2px solid #eee; 
-        border-right: 2px solid #666; 
-        border-bottom: 2px solid #666; 
-        text-decoration: none; 
+    padding: 1px 3px; 
+    color: #333; 
+    background:#eee; 
+    border: 2px solid #eee; 
+    border-right: 2px solid #666; 
+    border-bottom: 2px solid #666; 
+    text-decoration: none; 
 }
 
 #SearchSystemContent a.button:hover { color: #fff; background: #666; }
 
 #SearchSystemContent input, .gbDataEntry input { 
-        padding: 2px; 
-        border:1px solid #ccc; 
-        color: #666;
-        background: #eee;
+    padding: 2px; 
+    border:1px solid #ccc; 
+    color: #666;
+    background: #eee;
 }
 
 #SearchSystemContent input { font-size: 1.0em; }
 
 #gsSearchContents .gbAdmin {
-        margin: 12px;
-        border-bottom: 1px solid #ddd;
+    margin: 12px;
+    border-bottom: 1px solid #ddd;
 }
 
 #gsSearchContents ul.giSearchCheck {
-        margin: 16px 0;
-        padding: 0;
+    margin: 16px 0;
+    padding: 0;
 }
 
 #gsSearchContents ul.giSearchCheck li {
-        margin: 0;
-        padding: 0 8px 0 0;
-        display: inline;
+    margin: 0;
+    padding: 0 8px 0 0;
+    display: inline;
 }       
 
 #gsSearchContents .giSearchHighlight { 
-        font-weight: bold;
-        background: #ff6;
+    font-weight: bold;
+    background: #ff6;
 }

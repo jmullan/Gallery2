@@ -159,7 +159,11 @@
       </tr>
     </table>
     {else}
-    {g->text text="This album is empty"}
+    <div id="gsStatus">
+      <p class="giEmpty">
+      {g->text text="This album is empty."}
+      </p>
+    </div>
     {/if}
 
     {if !empty($layout.moduleItemDetailFiles)}

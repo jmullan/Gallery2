@@ -44,7 +44,16 @@
     {/if}
 
     {if empty($ViewCart.items)}
-      {g->text text="Your cart is empty"}
+    <div id="gsStatus">
+      <div class="giEmpty">
+          <p>
+          {g->text text="Your cart is empty."}
+          </p>
+          <p>
+          {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
+          </p>
+      </div>
+    </div>
     {else}
     <form action="{g->url}" method="post">
       <div>
