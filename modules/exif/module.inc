@@ -57,6 +57,10 @@ class ExifModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	GalleryFactory::registerImplementation(
+	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
+	    dirname(__FILE__) . '/classes/ExifExtractor.class');
+
 	return GalleryStatus::success();
     }
 
