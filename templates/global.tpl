@@ -46,6 +46,13 @@
 	  alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  title="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  style="border: none" width="80" height="15"/></a>
+
+        <a href="http://www.google.com/search?q=&quot;Gallery+2+-+Beta+1&quot;"><img
+                style="border: 0px"
+                src="{g->url href="modules/core/data/g2b1-dark_fibre.png"}"
+                alt="{g->text text="Gallery 2 - Beta 1: Dark Fibre"}"
+                height="15"
+                width="80"/></a>
       </div>
     </div>
 
