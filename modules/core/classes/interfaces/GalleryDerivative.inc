@@ -115,12 +115,24 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSourceId($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_derivativeSourceId) || $this->_derivativeSourceId != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeSourceId) ? $this->_derivativeSourceId : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_derivativeSourceId = $value;
             $this->setModifiedFlag('derivativeSourceId', MEMBER_MODIFIED);
         }
@@ -144,10 +156,19 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setderivativeCommands($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_derivativeCommands) || $this->_derivativeCommands != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeCommands) ? $this->_derivativeCommands : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_derivativeCommands = $value;
             $this->setModifiedFlag('derivativeCommands', MEMBER_MODIFIED);
         }
@@ -171,12 +192,24 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSize($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_derivativeSize) || $this->_derivativeSize != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeSize) ? $this->_derivativeSize : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_derivativeSize = $value;
             $this->setModifiedFlag('derivativeSize', MEMBER_MODIFIED);
         }
@@ -200,12 +233,24 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeType($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_derivativeType) || $this->_derivativeType != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeType) ? $this->_derivativeType : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_derivativeType = $value;
             $this->setModifiedFlag('derivativeType', MEMBER_MODIFIED);
         }
@@ -229,10 +274,19 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setderivativeMimeType($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_derivativeMimeType) || $this->_derivativeMimeType != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_derivativeMimeType) ? $this->_derivativeMimeType : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_derivativeMimeType = $value;
             $this->setModifiedFlag('derivativeMimeType', MEMBER_MODIFIED);
         }

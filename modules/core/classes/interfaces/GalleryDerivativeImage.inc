@@ -94,12 +94,24 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_width) || $this->_width != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_width) ? $this->_width : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_width = $value;
             $this->setModifiedFlag('width', MEMBER_MODIFIED);
         }
@@ -123,12 +135,24 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_height) || $this->_height != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_height) ? $this->_height : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_height = $value;
             $this->setModifiedFlag('height', MEMBER_MODIFIED);
         }

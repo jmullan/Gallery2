@@ -27,6 +27,7 @@ class ItemAdminView extends GalleryView {
 	global $gallery;
 	
 	/* Render the HTML head */
+	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$html = $this->_renderTemplate('core', 'ItemAdminHead.tpl');
 
 	return array(GalleryStatus::success(), $html);

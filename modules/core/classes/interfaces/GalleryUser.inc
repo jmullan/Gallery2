@@ -115,10 +115,19 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setuserName($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_userName) || $this->_userName != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_userName) ? $this->_userName : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_userName = $value;
             $this->setModifiedFlag('userName', MEMBER_MODIFIED);
         }
@@ -142,10 +151,19 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setfullName($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_fullName) || $this->_fullName != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_fullName) ? $this->_fullName : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_fullName = $value;
             $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
         }
@@ -169,10 +187,19 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function sethashedPassword($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_hashedPassword) || $this->_hashedPassword != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_hashedPassword = $value;
             $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
         }
@@ -196,10 +223,19 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setemail($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_email) || $this->_email != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_email) ? $this->_email : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_email = $value;
             $this->setModifiedFlag('email', MEMBER_MODIFIED);
         }
@@ -223,10 +259,19 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setlanguage($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_language) || $this->_language != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_language) ? $this->_language : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_language = $value;
             $this->setModifiedFlag('language', MEMBER_MODIFIED);
         }

@@ -87,10 +87,19 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @param STRING the value
      */
     function setpathComponent($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_pathComponent) || $this->_pathComponent != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_pathComponent) ? $this->_pathComponent : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_pathComponent = $value;
             $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
         }

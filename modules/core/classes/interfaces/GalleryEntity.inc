@@ -115,12 +115,24 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setid($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_id) || $this->_id != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_id) ? $this->_id : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_id = $value;
             $this->setModifiedFlag('id', MEMBER_MODIFIED);
         }
@@ -144,10 +156,19 @@ class GalleryEntity extends GalleryEntity_core {
      * @param TIMESTAMP the value
      */
     function setcreationTimestamp($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_creationTimestamp) || $this->_creationTimestamp != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_creationTimestamp = $value;
             $this->setModifiedFlag('creationTimestamp', MEMBER_MODIFIED);
         }
@@ -171,10 +192,19 @@ class GalleryEntity extends GalleryEntity_core {
      * @param TIMESTAMP the value
      */
     function setmodificationTimestamp($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_modificationTimestamp) || $this->_modificationTimestamp != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_modificationTimestamp = $value;
             $this->setModifiedFlag('modificationTimestamp', MEMBER_MODIFIED);
         }
@@ -198,12 +228,24 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setserialNumber($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_serialNumber) || $this->_serialNumber != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_serialNumber) ? $this->_serialNumber : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_serialNumber = $value;
             $this->setModifiedFlag('serialNumber', MEMBER_MODIFIED);
         }
@@ -227,10 +269,19 @@ class GalleryEntity extends GalleryEntity_core {
      * @param STRING the value
      */
     function setentityType($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_entityType) || $this->_entityType != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_entityType) ? $this->_entityType : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_entityType = $value;
             $this->setModifiedFlag('entityType', MEMBER_MODIFIED);
         }

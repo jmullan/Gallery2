@@ -71,7 +71,11 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     <xsl:for-each select="member">
-        $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
+        if (!isset($this->_<xsl:value-of select="member-name"/>)) {
+            $data['<xsl:value-of select="member-name"/>'] = null;
+        } else {
+            $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
+        }
     </xsl:for-each>
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
@@ -188,17 +192,32 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @param <xsl:value-of select="member-type"/> the value
      */
     function set<xsl:value-of select="member-name"/>($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;
+
     <xsl:choose>
       <xsl:when test="member-type='BOOLEAN'">
-        $value = (bool)$value;
+        /* Type case the incoming value to be a boolean */
+        if ($value != null) {
+            $value = (bool)$value;
+        }
       </xsl:when>
       <xsl:when test="member-type='INTEGER'">
-        $value = (int)$value;
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
       </xsl:when>
     </xsl:choose>
-
-        /* Only take action if the value actually changes */
-        if (!isset($this->_<xsl:value-of select="member-name"/>) || $this->_<xsl:value-of select="member-name"/> != $value) {
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_<xsl:value-of select="member-name"/> = $value;
             $this->setModifiedFlag('<xsl:value-of select="member-name"/>', MEMBER_MODIFIED);
         }

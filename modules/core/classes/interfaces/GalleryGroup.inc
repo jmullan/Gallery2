@@ -94,12 +94,24 @@ class GalleryGroup extends GalleryGroup_core {
      * @param INTEGER the value
      */
     function setgroupType($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_groupType) || $this->_groupType != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_groupType) ? $this->_groupType : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_groupType = $value;
             $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
         }
@@ -123,10 +135,19 @@ class GalleryGroup extends GalleryGroup_core {
      * @param STRING the value
      */
     function setgroupName($value) {
-    
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_groupName) || $this->_groupName != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_groupName) ? $this->_groupName : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_groupName = $value;
             $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
         }

@@ -265,18 +265,22 @@ class GalleryPlatform {
 	 * We can use raw functions from this point on because the paths have
 	 * already been imported.
 	 */
-	if (file_exists("$newname.bak")) {
-	    unlink("$newname.bak");
-	}
-	if (file_exists("$newname")) {
-	    return
-		rename($newname, "$newname.bak") &&
-		copy($oldname, $newname) &&
-		unlink($oldname);
+	if (is_dir($oldname)) {
+	    return rename($oldname, $newname);
 	} else {
-	    return
-		copy($oldname, $newname) &&
-		unlink($oldname);
+	    if (file_exists("$newname.bak")) {
+		unlink("$newname.bak");
+	    }
+	    if (file_exists("$newname")) {
+		return
+		    rename($newname, "$newname.bak") &&
+		    copy($oldname, $newname) &&
+		    unlink($oldname);
+	    } else {
+		return
+		    copy($oldname, $newname) &&
+		    unlink($oldname);
+	    }
 	}
     }
 
@@ -396,6 +400,36 @@ class GalleryPlatform {
 	$results = mkdir($path, $octalPerms);
 	umask($umask);
 	return $results;
+    }
+
+    /**
+     * Return true if the path component specified is composed of legal
+     * characters.
+     *
+     * @param string the path component (must not contain path separators)
+     * @return true if yes
+     */
+    function isLegalPathComponent($component) {
+	$legalChars = $this->getLegalPathCharacters();
+	if (strspn($component, $legalChars) == strlen($component)) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    /**
+     * Legal characters on all systems: A-Z a-z 0-9 _ -
+     *
+     * Specific platform implementations can override this.
+     *
+     * @return string a string composed of all legal path characters
+     */
+    function getLegalPathCharacters() {
+	return "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+	    "abcdefghijklmnopqrstuvwxyz" .
+	    "0123456789" .
+	    "_-";
     }
     
     /**

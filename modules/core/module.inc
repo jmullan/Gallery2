@@ -189,7 +189,7 @@ class CoreModule extends GalleryModule {
 			       'default.language' => 'en_US',
 			       'session.idParameter' => 'GALLERYSID',
 			       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
-			       'session.inactivityTimeout' => 14 * 365 * 86400, /* two weeks */
+			       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			       )
 			 as $key => $value) {
 

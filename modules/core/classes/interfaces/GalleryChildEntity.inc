@@ -87,12 +87,24 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @param INTEGER the value
      */
     function setparentId($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_parentId) || $this->_parentId != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_parentId) ? $this->_parentId : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_parentId = $value;
             $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
         }

@@ -238,25 +238,42 @@ class GalleryAlbumItem_core extends GalleryItem {
      */
     function rename($newname) {
 	global $gallery;
-	
-	/*
-	 * XXX: the entire parent tree needs to be read locked to make sure
-	 * that things aren't getting moved out from under us.
-	 */
+
+	if ($newname == $this->getPathComponent()) {
+	    return GalleryStatus::success();
+	}
 
 	/*
-	 * Check to see if the desired path exists.
+	 * Read lock the parent so that we don't have a race condition below.
 	 */
+	list ($ret, $lockId) = $gallery->acquireReadLock($this->getParentId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	list($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/*
+	 * Get the current path
+	 */
 	list($ret, $currentPath) = $this->fetchPath();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/*
+	 * Set the new path in the database.  If that succeeds then we should
+	 * be ok in general.
+	 */
+	$ret = parent::rename($newname);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Check to see if the desired path exists. */
 	$newPath = dirname($currentPath) . '/' . $newname;
 	if ($platform->file_exists($newPath)) {
 	    return GalleryStatus::error(ERROR_COLLISION,
@@ -267,12 +284,16 @@ class GalleryAlbumItem_core extends GalleryItem {
 	    return GalleryStatus::error(ERROR_BAD_PATH,
 					__FILE__, __LINE__);
 	}
-				   
-	$this->setPathComponent($newname);
 
+	/* Release locks */
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+				   
 	return GalleryStatus::success();
     }
-
+    
     /**
      * Is this album the root album?
      * 

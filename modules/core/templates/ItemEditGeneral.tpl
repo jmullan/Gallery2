@@ -1,4 +1,6 @@
     {galleryForm controller="$controller"}
+    {galleryInput name="formName" type="hidden"}ItemEditGeneral{/galleryInput}
+    {galleryInput name="itemId" type="hidden"}{$itemId}{/galleryInput}
     <table border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	  <td align="center">
@@ -30,7 +32,7 @@
 
 	<tr>
 	  <td>
-	    {galleryInput size=40 name="form.item.title"}{$form.item.title}{/galleryInput}
+	    {galleryInput size=40 name="form.title"}{$form.title}{/galleryInput}
 	  </td>
 	</tr>
 
@@ -50,15 +52,35 @@
 
 	<tr>
 	  <td>
-	    {galleryText text="The name must be unique in this album.  NOTE: The name cannot contain any of the following characters: \ / * ? &quot; ' &amp; < > | . + # or spaces"}
+	    {galleryText text="The name must be unique in this album.  <b>Note:</b> You can only use alphanumeric characters, underscore (_) and hyphen (-) in your names."}
 	  </td>
 	</tr>
 
 	<tr>
 	  <td>
-	    {galleryInput size=40 name="form.item.pathComponent"}{$form.item.pathComponent}{/galleryInput}
+	    {galleryInput size=40 name="form.pathComponent"}{$form.pathComponent}{/galleryInput}
 	  </td>
 	</tr>
+
+        {if !empty($form.error.pathComponent.invalid)}
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="Your name contains invalid characters.  Please enter another."}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+        {/if}
+
+        {if !empty($form.error.pathComponent.collision)}
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="The name you entered is already in use.  Please enter another."}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+        {/if}
 
 	<tr>
 	  <td>
@@ -82,7 +104,7 @@
 
 	<tr>
 	  <td>
-	    {galleryTextArea rows=2 cols=60 name="form.item.keywords"}{$form.item.keywords}{/galleryTextArea}
+	    {galleryTextArea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/galleryTextArea}
 	  </td>
 	</tr>
 
@@ -108,7 +130,20 @@
 
 	<tr>
 	  <td>
-	    {galleryTextArea rows=8 cols=60 name="form.item.description"}{$form.item.description}{/galleryTextArea}
+	    {galleryTextArea rows=8 cols=60 name="form.description"}{$form.description}{/galleryTextArea}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryInput type="submit" name="form.action.save"}{galleryText text="Save"}{/galleryInput}
+	    {galleryInput type="submit" name="form.action.undo"}{galleryText text="Undo"}{/galleryInput}
 	  </td>
 	</tr>
 

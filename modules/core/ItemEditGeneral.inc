@@ -37,14 +37,74 @@ class ItemEditGeneralController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* ... take action here ... */
+	if (isset($form['action']['save'])) {
 
-	/* Figure out where to redirect upon success */
-	$urlParams['view'] = 'core:SiteAdmin';
-	$urlParams['subView'] = 'core:ItemEditGeneral';
+	    /*
+	     * Validate the input data.
+	     */
+	    list ($ret, $platform) = $gallery->getPlatform();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+		GalleryUtilities::putRequestVariable('form.error.pathComponent.invalid', 1);
+	    } else {
+		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    
+		list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($urlParams);
+		/*
+		 * It's possible to get a collision when we rename, so try that
+		 * first.  If there's no collision then make the rest of the changes.
+		 */
+		$ret = $item->rename($form['pathComponent']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
+		    GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);
+		} else {
+		    $item->setTitle($form['title']);
+		    $item->setKeywords($form['keywords']);
+		    $item->setDescription($form['description']);
+
+		    $ret = $item->save();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    /* Figure out where to redirect upon success */
+		    /*
+		    $redirectParams['view'] = 'core:ItemAdmin';
+		    $redirectParams['subView'] = 'core:ItemEditGeneral';
+		    $redirectParams['itemId'] = $itemId;
+		    */
+		}
+
+		$ret = $gallery->releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	if (!empty($redirectParams)) {
+	    $templateAdapter = $gallery->getTemplateAdapter();
+	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	} else {
+	    if (empty($results['view'])) {
+		$results['view'] = 'core:ItemAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:ItemEditGeneral');
+	    }
+	}
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -58,7 +118,8 @@ class ItemEditGeneralView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	list ($itemId, $formName) =
+	    GalleryUtilities::getRequestVariables('itemId', 'formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
 	/* Make sure we have permission do edit this item */
@@ -74,11 +135,28 @@ class ItemEditGeneralView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$form['item'] = $item->getMemberData();
+	if ($formName == 'ItemEditGeneral' && empty($form['action']['undo'])) {
+	    /* Complain if we have any invalid data */
+	    list ($ret, $platform) = $gallery->getPlatform();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+		$form['error']['pathComponent']['invalid'] = 1;
+	    }
+	} else {
+	    /* First time around, load the form with item data */
+	    $form['title'] = $item->getTitle();
+	    $form['keywords'] = $item->getKeywords();
+	    $form['description'] = $item->getDescription();
+	    $form['pathComponent'] = $item->getPathComponent();
+	}
 
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
+	$this->_setTemplateVariable('itemId', $itemId);
 	$this->_setTemplateVariable('controller', 'core:ItemEditGeneral');
 	$html = $this->_renderTemplate('core', 'ItemEditGeneral.tpl');
 

@@ -21,7 +21,9 @@
 	      {galleryText text="Editting this item"}
 	      {/galleryBigFont}
 	      <br>
-	      <img src="about:blank" width="200" height="150" alt="thumbnail goes here">
+	      <a href="{galleryUrl view="core:ShowItem" itemId=$itemId}">
+		<img src="about:blank" width="200" height="150" alt="thumbnail goes here">
+	      </a>
 	    </center>
 	    
 	    <br>

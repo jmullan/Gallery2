@@ -77,6 +77,21 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function create($parentId, $path) {
 	global $gallery;
 
+	if (empty($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$platform->isLegalPathComponent($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
 	/*
 	 * The parent must be read locked at this point to make sure that it's
 	 * not going to be moved around while we're adding stuff to it.
@@ -88,30 +103,13 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 					__FILE__, __LINE__);
 	}
 
-	if (empty($path)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	/*
-	 * Typically, we create a FileSystemEntity with a specific path.  This
-	 * allows us to check for name collisions at this point.  However, in
-	 * some circumstances (like derivative DataContainers) we use the id
-	 * itself as the path name, and we don't know the id yet.  So, if we
-	 * don't specify a path, don't do the extra collision checking.
-	 */
 	/* Make sure that we don't have a collision in the db. */
-	list($ret, $results) =
-	    $gallery->search(array('select' => 'COUNT([GalleryFileSystemEntity::id])',
-				   'where' => ('[GalleryChildEntity::parentId]=? AND ' .
-					       '[GalleryFileSystemEntity::pathComponent]=?')),
-			     array($parentId, $path));
+	list ($ret, $isCollision) = $this->_checkCollision($path);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$result = $results->nextResult();
-	if ($result[0] > 0) {
+	if ($isCollision) {
 	    return GalleryStatus::error(ERROR_COLLISION,
 					__FILE__, __LINE__);
 	}
@@ -140,30 +138,27 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     function createRoot($path) {
 	global $gallery;
 
-	/* XXX: We should check for a root level lock here. */
-	
 	if (empty($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
-	/*
-	 * Typically, we create a FileSystemEntity with a specific path.  This
-	 * allows us to check for name collisions at this point.
-	 *
-	 * XXX: Will this cause problems with Derivative data containers?
-	 */
-	list($ret, $searchResults) =
-	    $gallery->search(array('select' => 'COUNT([GalleryChildEntity::id])',
-				   'where' => ('[GalleryChildEntity::parentId] is NULL AND ' .
-					       '[GalleryFileSystemEntity::pathComponent]=?')),
-			     array($path));
+	list ($ret, $platform) = $gallery->getPlatform();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$result = $searchResults->nextResult();
-	if ($result[0] > 0) {
+	if (!$platform->isLegalPathComponent($path)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list ($ret, $isCollision) = $this->_checkPathCollision($path);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($isCollision) {
 	    return GalleryStatus::error(ERROR_COLLISION,
 					__FILE__, __LINE__);
 	}
@@ -177,6 +172,47 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	/* Set our path component */
 	$this->setPathComponent($path);
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Rename this album
+     *
+     * @access public
+     * @param string the path component
+     * @return object GalleryStatus a status code
+     */
+    function rename($newname) {
+	global $gallery;
+
+	if (empty($newname)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$platform->isLegalPathComponent($newname)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Make sure that we don't have a collision in the db. */
+	list ($ret, $isCollision) = $this->_checkCollision($newname);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($isCollision) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+
+	$this->setPathComponent($newname);
+	
 	return GalleryStatus::success();
     }
 
@@ -275,6 +311,51 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 	return array(GalleryStatus::success(),
 		     $path . $this->_pathComponent . '/');
+    }
+
+    /**
+     * Typically, we create a FileSystemEntity with a specific path.  This
+     * allows us to check for name collisions at this point.
+     *
+     * @param string the path component
+     * @return array object GalleryStatus a status code
+     *               boolean true if there's a collision
+     * @access private
+     */
+    function _checkCollision($pathComponent) {
+	global $gallery;
+
+	$parentId = $this->getParentId();
+	    
+	$searchParams = array();
+	$searchParams['select'] = 'COUNT([GalleryChildEntity::id])';
+
+	if (empty($parentId)) {
+	    $searchParams['where'] = '[GalleryChildEntity::parentId] is NULL';
+	} else {
+	    $searchParams['where'] = '[GalleryChildEntity::parentId] = ?';
+	    $data[] = $parentId;
+	}
+
+	$searchParams['where'] .= ' AND [GalleryFileSystemEntity::pathComponent] = ?';
+	$data[] = $pathComponent;
+	
+	$searchParams['where'] .= ' AND [GalleryChildEntity::id] <> ?';
+	$data[] = $this->getId();
+	    
+	list($ret, $searchResults) = $gallery->search($searchParams, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+	if ($result[0] > 0) {
+	    $isCollision = true;
+	} else {
+	    $isCollision = false;
+	}
+
+	return array(GalleryStatus::success(), $isCollision);
     }
 }
 

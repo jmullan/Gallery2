@@ -68,9 +68,17 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
         $data = parent::getMemberData();
         GalleryProfiler::start('GalleryPersistent::getMemberData');
     
-        $data['childIntermediateResize'] = $this->_childIntermediateResize;
+        if (!isset($this->_childIntermediateResize)) {
+            $data['childIntermediateResize'] = null;
+        } else {
+            $data['childIntermediateResize'] = $this->_childIntermediateResize;
+        }
     
-        $data['childThumbSize'] = $this->_childThumbSize;
+        if (!isset($this->_childThumbSize)) {
+            $data['childThumbSize'] = null;
+        } else {
+            $data['childThumbSize'] = $this->_childThumbSize;
+        }
     
         GalleryProfiler::stop('GalleryPersistent::getMemberData');
         return $data;
@@ -94,12 +102,24 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param INTEGER the value
      */
     function setchildIntermediateResize($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_childIntermediateResize) || $this->_childIntermediateResize != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_childIntermediateResize) ? $this->_childIntermediateResize : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_childIntermediateResize = $value;
             $this->setModifiedFlag('childIntermediateResize', MEMBER_MODIFIED);
         }
@@ -123,12 +143,24 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param INTEGER the value
      */
     function setchildThumbSize($value) {
-    
-        $value = (int)$value;
-      
 
-        /* Only take action if the value actually changes */
-        if (!isset($this->_childThumbSize) || $this->_childThumbSize != $value) {
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_childThumbSize) ? $this->_childThumbSize : null;
+
+    
+        /* Type case the incoming value to be an integer */
+        if ($value != null) {
+            $value = (int)$value;
+        }
+      
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
             $this->_childThumbSize = $value;
             $this->setModifiedFlag('childThumbSize', MEMBER_MODIFIED);
         }
