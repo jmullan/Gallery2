@@ -391,7 +391,7 @@ class GalleryDataCache {
 	    }
 	    $platform->fwrite($fd, "\$data = unserialize(<<<END\n");
 	    $platform->fwrite($fd, serialize($data));
-	    $platform->fwrite($fd, "\nEND\n);");
+	    $platform->fwrite($fd, "\nEND\n); ?>");
 	    $platform->fclose($fd);
 	}
     }
