@@ -27,11 +27,11 @@
     </div>
     <input name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="unlimited" 
       type="radio" onclick="javascript:SetSizeLimitOption_toggleXY()"
-      {if $SizeLimitOption.dimensionChoice == "unlimited"}checked{/if}/>
+      {if $SizeLimitOption.dimensionChoice == "unlimited"}checked="checked"{/if}/>
     {g->text text="No Limits"} <br>
     <input name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="explicit" 
       type="radio" onclick="javascript:SetSizeLimitOption_toggleXY()"
-      {if $SizeLimitOption.dimensionChoice == "explicit"}checked{/if}/>
+      {if $SizeLimitOption.dimensionChoice == "explicit"}checked="checked"{/if}/>
     {g->dimensions formVar="SizeLimitOption_dimensions" 
       height=$SizeLimitOption.height width=$SizeLimitOption.width}
     {if $SizeLimitOption.dimensionChoice == "unlimited"}
@@ -51,13 +51,13 @@
     </div>
     <input name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="unlimited" 
       type="radio" onclick="javascript:SetSizeLimitOption_toggleSize()"
-      {if $SizeLimitOption.sizeChoice == "unlimited"}checked{/if}/>
+      {if $SizeLimitOption.sizeChoice == "unlimited"}checked="checked"{/if}/>
       {g->text text="No Limits"}<br>
     <input name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="explicit" 
       type="radio" onclick="javascript:SetSizeLimitOption_toggleSize()"
-      {if $SizeLimitOption.sizeChoice == "explicit"}checked{/if}/>
+      {if $SizeLimitOption.sizeChoice == "explicit"}checked="checked"{/if}/>
     <input name="{g->formVar var="form[SizeLimitOption][filesize]"}" type="text" size="7" 
-      {if $SizeLimitOption.sizeChoice != "explicit"}disabled{/if}
+      {if $SizeLimitOption.sizeChoice != "explicit"}disabled="disabled"{/if}
       maxlength="6" value="{$SizeLimitOption.filesize}"/>
     {if !empty($form.error.SizeLimitOption.filesize.invalid)}
     <div class="giError">
@@ -66,7 +66,7 @@
     {/if}
     <p>
     <input name="{g->formVar var="form[SizeLimitOption][keepOriginal]"}" type="checkbox"
-      {if $SizeLimitOption.keepOriginal}checked{/if}/> 
+      {if $SizeLimitOption.keepOriginal}checked="checked"{/if}/> 
     {g->text text="Keep original image?"} 
     </p>
   </div>
