@@ -24,7 +24,8 @@
   <?php if ($isCvsInstall): ?>
   <br/>
     
-  <?php print _("Note: You're running Gallery from CVS, so there might be some missing files.  If you see this, please report it in the forums."); ?>
+  <?php print sprintf(_("Note: You're running Gallery from CVS, so there might be some missing files.  If you see this, please report it <a href=\"%s\">in the forums</a>."),
+    "http://gallery.sourceforge.net/forums.php?forum=10"); ?>
   <?php endif; ?>
   <div id="ManifestSystemCheck_missing" style="display: none">
     <ul class="manifestListing">
