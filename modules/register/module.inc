@@ -96,8 +96,7 @@ class RegisterModule extends GalleryModule {
      * @see GalleryModule::canBeAutoInstalled
      */
     function canBeAutoInstalled() {
-	/* Could auto install but not everyone wants to offer self registration */
-	return false;
+	return true;
     }
 
     /**
