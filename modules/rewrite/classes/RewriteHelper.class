@@ -1,0 +1,267 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package Rewrite
+ * @version $Revision$ $Date$
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Required class
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+
+/**
+ * Status codes
+ */
+define('REWRITE_STATUS_OK', 0);
+define('REWRITE_STATUS_APACHE_NO_MOD_REWRITE', 1);
+define('REWRITE_STATUS_APACHE_UNABLE_TO_TEST', 2);
+define('REWRITE_STATUS_HTACCESS_MISSING', 3);
+define('REWRITE_STATUS_HTACCESS_CANT_READ', 4);
+define('REWRITE_STATUS_HTACCESS_CANT_WRITE', 5);
+define('REWRITE_STATUS_HTACCESS_READY', 6);
+define('REWRITE_STATUS_SHORT_URLS_ON', 7);
+
+/**
+ * A helper class for the RewriteUrlGenerator class
+ *
+ * @package Rewrite
+ * @subpackage Classes
+ */
+class RewriteHelper {
+
+    /**
+     * Return valid Gallery2 .htaccess content
+     *
+     * @return array object GalleryStatus a status code
+     *               string valid Gallery2 .htaccess
+     */
+    function getTemplate() {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+
+	$Htaccess = array();
+	$Htaccess['usePrefixes'] = '';
+	$Htaccess['baseFile'] = $urlGenerator->_baseFile;
+	$Htaccess['g2Prefix'] = GALLERY_FORM_VARIABLE_PREFIX;
+
+	$Htaccess['galleryDirectory'] = '/' . substr($urlGenerator->getCurrentUrlDir(),
+		strlen($urlGenerator->makeUrl('/')));
+	if ($Htaccess['galleryDirectory'] == '//') {
+	    $Htaccess['galleryDirectory'] = '/';
+	}
+	
+	list ($ret, $usePrefixes) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($usePrefixes == 'false') {
+	    if (empty($urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'])) {
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	    }
+	    $Htaccess['usePrefixes'] =
+		    $urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'] . '/';
+	}
+
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
+	$template->setVariable('Htaccess', $Htaccess);
+	list ($ret, $content) = $template->fetch('Htaccess.tpl', 'modules_rewrite');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+ 	return array(GalleryStatus::success(), $content);
+    }
+
+    /**
+     * Return .htaccess absolute file name
+     *
+     * @return array object GalleryStatus a status code
+     *               string .htaccess file name
+     */
+    function getHtaccessPath() {
+	return array(GalleryStatus::success(),
+		dirname(dirname(dirname(dirname(__FILE__)))) . '/.htaccess');
+    }
+
+    /**
+     * Checks if the .htaccess file is valid with Gallery2 data.
+     *
+     * @return array object GalleryStatus a status code
+     *               int rewrite status code
+     */
+    function checkFile() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	list ($ret, $file) = RewriteHelper::getHtaccessPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* No .htaccess file */
+	if (!$platform->file_exists($file)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISSING);
+	}
+
+	/* Can't read the .htaccess file  */
+	if (!$platform->is_readable($file)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	}
+
+	$content = implode('', $platform->file($file));
+
+	list($ret, $template) = RewriteHelper::getTemplate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (strpos($content, $template) !== false) {
+	    /* The .htaccess file contains our rewrite rules. */
+	    return array(GalleryStatus::success(), REWRITE_STATUS_OK);
+	}
+
+	/* Can't write the .htaccess file  */
+	if (!$platform->is_writeable($file)) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_WRITE);
+	}
+
+	/* It exists, is writeable, and doesn't contain our rules already */
+	return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_READY);
+    }
+
+    /**
+     * Writes Gallery2 data to the .htaccess file.
+     *
+     * @return array object GalleryStatus a status code
+     *               int rewrite status code
+     */
+    function writeFile() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	
+	list ($ret, $file) = RewriteHelper::getHtaccessPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $htaccess) = RewriteHelper::getTemplate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Check the file, do we need to write the Gallery2 data? */
+	list ($ret, $code) = RewriteHelper::checkFile();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($code == REWRITE_STATUS_OK) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_OK);
+	} else if ($code != REWRITE_STATUS_HTACCESS_READY) {
+	    return array(GalleryStatus::success(), $code);
+	} else {
+	    $oldHtaccess = implode('', $platform->file($file));
+	
+	    /* Strip out the existing section and add the new one */
+	    $newHtaccess = preg_replace(
+		    '/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section\n/s',
+		    '', $oldHtaccess) . $htaccess;
+	}
+
+	/* Write the new file */
+	if ($fd = @$platform->fopen($file, 'w')) {
+	    $platform->fwrite($fd, $newHtaccess);
+	    $platform->fclose($fd);
+	} else {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_CANT_WRITE);
+	}
+
+	return array(GalleryStatus::success(), REWRITE_STATUS_OK);
+    }
+    
+    /**
+     * Returns array of prefixes to map onto Gallery views.
+     *
+     * @return array object GalleryStatus a status code
+     *               array viewName => prefix
+     */
+    function getPrefixMap() {
+	list ($ret, $map) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'prefixMap');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	return array(GalleryStatus::success(), unserialize($map));
+    }
+    
+    /**
+     * Returns one of the following codes:
+     *   REWRITE_STATUS_OK                              everything is fine
+     *   REWRITE_STATUS_APACHE_NO_MOD_REWRITE           no mod rewrite support
+     *   REWRITE_STATUS_APACHE_UNABLE_TO_TEST           unable to properly test mod_rewrite
+     *
+     * @return int rewrite status code.
+     */
+    function checkModRewrite() {
+	global $gallery;
+	$urlGenerator = $gallery->getUrlGenerator();
+	$result = array();
+    	
+    	/*
+	 * Testing mod_rewrite functionality.  In order for mod_rewrite to work
+	 * properly, it needs a .htaccess file containing a RewriteBase
+	 * directive that matches the URL of its containing directory.
+	 */
+	$components = parse_url($urlGenerator->getCurrentUrl());
+	$path = $components['path'];
+	if (!strncasecmp($path, '/gallery2/', 10)) {
+	    $target = 'gallery2';
+	} else if (!strncasecmp($path, '/gallery/', 9)) {
+	    $target = 'gallery';
+	} else {
+	    $target = 'custom';
+	}
+	
+	$fetch = $urlGenerator->generateUrl(
+	array('href' => 'modules/rewrite/test/mod_rewrite/' .
+		$target . '/Rewrite.php'));
+	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
+
+	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {
+	    return REWRITE_STATUS_OK;
+	}
+	
+	/*
+	 * If we fail trying to test with the custom setup dont whyne too much. Instead give
+	 * the user directions to edit the custom .htaccess file and then test again.
+	 */
+	if ($target == 'custom') {
+	    return REWRITE_STATUS_APACHE_UNABLE_TO_TEST;
+	}
+
+	return REWRITE_STATUS_APACHE_NO_MOD_REWRITE;
+    }
+}
+?>

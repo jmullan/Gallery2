@@ -1,0 +1,262 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rewrite
+ * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Test RewriteUrlGenerator functionality
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ *
+ */
+class RewriteUrlGeneratorTest extends GalleryTestCase {
+    var $_urlGenerator;
+
+    function RewriteUrlGeneratorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+    	global $gallery;
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	
+	foreach (array('galleryLocation' => 'http://example.com/gallery2/',
+		    'usePrefixes' => 'true',
+		    'prefixMap' => serialize(array()))
+		as $param => $value) {
+	    list ($ret, $this->_saveParameters[$param]) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+	list ($ret, $this->_saveCoreParameter) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->_urlGenerator = new RewriteUrlGenerator();
+	$this->_urlGenerator->init('phpunit_test.php');
+	$gallery->setUrlGenerator($this->_urlGenerator);
+	parent::setUp();
+    }
+    
+    function tearDown() {
+    	global $gallery;
+    	parent::tearDown();
+    	
+    	foreach ($this->_saveParameters as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key,
+		    $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+	$ret = GalleryCoreApi::setPluginParameter(
+		'module', 'core', 'misc.useShortUrls', $this->_saveCoreParameter);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    function testInit() {
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testRegisterViewPrefix() {
+	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
+	$this->assertEquals('test',
+		$this->_urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'],
+		'reverse');
+	$this->assertEquals('core:ShowItem',
+		$this->_urlGenerator->_viewPrefixRegistry['forward']['test'],
+		'forward');
+	
+	/* Make sure we dont write over the 'reverse' array */
+	$this->_urlGenerator->registerViewPrefix('test2', 'core:ShowItem');
+	$this->assertEquals('test',
+		$this->_urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'],
+		'reverse2');
+	$this->assertEquals('core:ShowItem',
+		$this->_urlGenerator->_viewPrefixRegistry['forward']['test2'],
+		'forward2');
+    }
+    
+    function testGetCurrentUrl() {
+	$expected = 'http://example.com/gallery2/phpunit_test.php';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testGetCurrentUrlDir() {
+	$expected = 'http://example.com/gallery2/';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlDir());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testGetCurrentShortUrl() {
+	GalleryUtilities::putRequestVariable('RewriteUrlGenerator', '/test/album/picture.jpg.html');
+	
+	$urlGenerator = new RewriteUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
+	$this->assertEquals(false, $urlGenerator->_error, 'init error');
+	
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php/test/album/picture.jpg.html',
+		$urlGenerator->getCurrentUrl(), 'get current url');
+	$this->assertEquals(false, $urlGenerator->_error, 'call error');
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php/test/album/picture.jpg.html',
+		$urlGenerator->_currentUrl, 'get cached url');
+    }
+    
+    function testShortUrls() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Setup.. */
+	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($testAlbum);
+	list ($ret, $testItem) = $this->_createRandomDataItem($testAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'false');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Test url.. */
+	$params = array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId());
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
+	$short = 'http://example.com/gallery2/test/' . $testAlbum->getPathComponent() . '/';
+	if (!$session->isUsingCookies()) {
+	    $sid = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		    '=' . $session->getId();
+	    $values[] = $sid;
+	    $short .= '?' . $sid;
+	}
+
+	$itemParams = array('view' => 'core:ShowItem', 'itemId' => $testItem->getId());
+	foreach ($itemParams as $key => $value) {
+	    $itemValues[] = GalleryUtilities::prefixFormVariable($key) .
+		    '=' . htmlentities($value);
+	}
+	$itemShort = 'http://example.com/gallery2/test/' . $testAlbum->getPathComponent() .
+		'/' . $testItem->getPathComponent() . '.html';
+	if (!$session->isUsingCookies()) {
+	    $sid = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		    '=' . $session->getId();
+	    $itemValues[] = $sid;
+	    $itemShort .= '?' . $sid;
+	}
+
+	/* View prefix for short urls.. */
+	if (isset($this->_urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem'])) {
+	    unset($this->_urlGenerator->_viewPrefixRegistry['reverse']['core:ShowItem']);
+	}
+	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
+
+	/* Short url */
+	unset($params['forceShortUrls']);
+	unset($itemParams['forceShortUrls']);
+	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params),
+		'short url, album');
+	$this->assertEquals($itemShort, $this->_urlGenerator->generateUrl($itemParams),
+			    'short url, item');
+	
+	/* Dont use prefix urls */
+	$this->_urlGenerator->_cache = array();
+	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'usePrefixes', 'false');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Rebuild url's */
+	$params = array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId());
+	foreach ($params as $key => $value) {
+	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
+	}
+	$short = 'http://example.com/gallery2/' . $testAlbum->getPathComponent() . '/';
+	if (!$session->isUsingCookies()) {
+	    $sid = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		    '=' . $session->getId();
+	    $values[] = $sid;
+	    $short .= '?' . $sid;
+	}
+
+	$itemParams = array('view' => 'core:ShowItem', 'itemId' => $testItem->getId());
+	foreach ($itemParams as $key => $value) {
+	    $itemValues[] = GalleryUtilities::prefixFormVariable($key) .
+		    '=' . htmlentities($value);
+	}
+	$itemShort = 'http://example.com/gallery2/' . $testAlbum->getPathComponent() .
+		'/' . $testItem->getPathComponent() . '.html';
+	if (!$session->isUsingCookies()) {
+	    $sid = GalleryUtilities::prefixFormVariable($session->getKey()) .
+		    '=' . $session->getId();
+	    $itemValues[] = $sid;
+	    $itemShort .= '?' . $sid;
+	}
+	
+	$this->assertEquals($short, $this->_urlGenerator->generateUrl($params),
+		'short url, album, no prefix');
+	$this->assertEquals($itemShort, $this->_urlGenerator->generateUrl($itemParams),
+			    'short url, item, no prefix');
+	
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'call error');
+    }
+    
+    function testGetNavigationReturnUrl() {
+    	GalleryUtilities::putRequestVariable('foo', 'bar');
+    	GalleryUtilities::putRequestVariable('return', 'http://blabla');
+    	GalleryUtilities::putRequestVariable('returnName', 'name');
+    	GalleryUtilities::putRequestVariable('navId', 'navId');
+    	GalleryUtilities::putRequestVariable('fromNavId', 'fromNavId');
+	GalleryUtilities::putRequestVariable('RewriteUrlGenerator', '/album/image.jpg.html');
+	$expected = 'http://example.com/gallery2/phpunit_test.php?g2_foo=bar';
+
+	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'call error');
+    }
+}

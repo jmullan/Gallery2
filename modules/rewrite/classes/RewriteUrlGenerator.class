@@ -1,0 +1,220 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package Rewrite
+ * @version $Revision$ $Date$
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Required class
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUrlGenerator.class');
+GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
+
+/**
+ * Url Generator
+ *
+ * @package Rewrite
+ * @subpackage Classes
+ */
+class RewriteUrlGenerator extends GalleryUrlGenerator {
+
+    /**
+     * If there's an error, use parent GalleryUrlGenerator functions.
+     *
+     * @var bool has an error uccured?
+     * @access private
+     */
+    var $_error = false;
+    
+    /**
+     * Current Url cache.
+     *
+     * @var string current url cache
+     * @access private
+     */
+    var $_currentUrl = '';
+    
+    /**
+     * Cached preferences.
+     *
+     * @var array $variable => $value
+     * @access private
+     */
+    var $_cache = array();
+
+    /**
+     * @see GalleryUrlGenerator::init
+     */
+    function init($baseFile, $relativeG2Path=null, $embedSessionString=null) {
+	parent::init($baseFile, $relativeG2Path, $embedSessionString);
+
+	list ($ret, $prefixMap) = RewriteHelper::getPrefixMap();
+	if ($ret->isError()) {
+	    $this->_error = true;
+	}
+	$this->_registerCustomViewPrefix($prefixMap);
+	
+	list ($ret, $useShortUrls) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
+	if ($ret->isError() || $useShortUrls == 'true') {
+	    $this->_error = true;
+	}
+    }
+
+    /**
+     * @see GalleryUrlGenerator::registerViewPrefix
+     */
+    function registerViewPrefix($prefix, $viewName, $deprecated=false) {
+	return parent::registerViewPrefix($prefix, $viewName,
+		(isset($this->_viewPrefixRegistry['reverse'][$viewName]) || $deprecated));
+    }
+
+    /**
+     * @see GalleryUrlGenerator::getCurrentUrl
+     */
+    function getCurrentUrl() {
+	if ($this->_error) {
+	    return parent::getCurrentUrl();
+	}
+	
+	if (empty($this->_currentUrl)) {
+	    list ($ret, $galleryLocation) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
+	    if ($ret->isError()) {
+		$this->_error = true;
+		return parent::getCurrentUrl();
+	    }
+	
+	    $this->_currentUrl = $galleryLocation . $this->_baseFile;
+	    if (GalleryUtilities::hasRequestVariable('RewriteUrlGenerator')) {
+		$this->_currentUrl .= GalleryUtilities::getRequestVariables('RewriteUrlGenerator');
+	    }
+	}
+
+	return $this->_currentUrl;
+    }
+    
+    /**
+     * @see GalleryUrlGenerator::getNavigationReturnUrl
+     */
+    function getNavigationReturnUrl() {
+	if ($this->_error) {
+	    return parent::getNavigationReturnUrl();
+	}
+	
+	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
+	if (!empty($formUrl)) {
+	    return $formUrl;
+	}
+
+	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
+		array('return', 'returnName', 'navId', 'fromNavId', 'RewriteUrlGenerator'));
+	foreach ($urlVariables as $key => $value) {
+	    $urlVariables[substr($key, strlen(GALLERY_FORM_VARIABLE_PREFIX))] = $value;
+	    unset($urlVariables[$key]);
+	}
+	
+	return $this->generateUrl($urlVariables);
+    }
+    
+    /**
+     * @see GalleryUrlGenerator::generateUrl()
+     */
+    function generateUrl($params=array(), $forceSessionId=null) {
+	if ($this->_error) {
+	    return parent::generateUrl($params, $forceSessionId);
+	}
+	
+	if (empty($this->_cache)) {
+	    $error = $this->_generateCache();
+	    
+	    if ($error) {
+		$this->_error = true;
+		return parent::generateUrl($params, $forceSessionId);
+	    }
+	}
+	
+	$prefix = ($this->_cache['usePrefixes'] == 'true') ? ''
+		: $this->_viewPrefixRegistry['reverse']['core:ShowItem'] . '/';
+
+	$params['forceShortUrls'] = 'true';
+	$url = parent::generateUrl($params, $forceSessionId);
+	
+	if (strpos($url, '/' . $this->_baseFile . '/' . $prefix) !== false) {
+	    $url = str_replace('/' . $this->_baseFile . '/' . $prefix, '/', $url);
+	    $url = $this->makeUrl($this->_cache['rewriteBase']) .
+		    substr($url, strlen($this->getCurrentUrlDir()));
+	} else if (strpos($url, '/' . $this->_baseFile . '/') !== false) {
+	    /*
+	     * Fall back to basic URL for all other prefixes than core:ShowItem,
+	     * if prefixes are disabeled.
+	     */
+	    unset($params['forceShortUrls']);
+	    $url = parent::generateUrl($params, $forceSessionId);
+	}
+	
+	return $url;
+    }
+
+    /**
+     * Override default viewName prefixes.
+     *
+     * @param array of views to override ($viewName => $prefix)
+     * @access private
+     */
+    function _registerCustomViewPrefix($prefixMap) {
+	foreach ($prefixMap as $view => $prefix) {
+	    if (isset($this->_viewPrefixRegistry['reverse'][$view])) {
+		unset($this->_viewPrefixRegistry['reverse'][$view]);
+	    }
+	    $this->registerViewPrefix($prefix, $view);
+	}
+    }
+    
+    /**
+     * Creates cache from database values.
+     *
+     * @return bool true on error
+     * @access private
+     */
+    function _generateCache() {
+    	global $gallery;
+    	$urlGenerator = $gallery->getUrlGenerator();
+    	
+	list ($ret, $this->_cache['usePrefixes']) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
+	if ($ret->isError()) {
+	    $this->_error = true;
+	    return parent::generateUrl($params, $forceSessionId);
+	}
+	
+	$this->_cache['rewriteBase'] = '/' . substr($urlGenerator->getCurrentUrlDir(),
+		strlen($urlGenerator->makeUrl('/')));
+	if ($this->_cache['rewriteBase'] == '//') {
+	    $this->_cache['rewriteBase'] = '/';
+	}
+    }
+}
+
+?>
