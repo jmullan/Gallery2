@@ -1,19 +1,17 @@
     {foreach from=$ImageBlockSystemContent.blocks item=block}
-      <div class="gbMenu">
+      <div class="gbMenu" style="width:144px">
 	<div class="giTitle">
 	  {g->text text=$block.title}
 	</div>
 
 	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}">
-	  {g->image item=$block.item image=$block.thumb class="giThumbImage"}
-	</a>
+	  {g->image item=$block.item image=$block.thumb class="giThumbImage" maxSize=140}
+	</a><p style="clear:both" />
 
-	{if isset($ImageBlockSystemContent.show.title)}
-	{if isset($block.item.title)}
-	<b>
+	{if isset($ImageBlockSystemContent.show.title) && isset($block.item.title)}
+	<span class="giDescription">
 	  {$block.item.title}
-	</b>
-	{/if}
+	</span>
 	{/if}
 
 	<div class="giInfo">
