@@ -120,7 +120,7 @@ class GalleryTemplateAdapter {
      */
     function hiddenFormVars($params, &$smarty) {
 	if (GalleryUtilities::hasRequestVariable('return')) {
-	    return sprintf('<input type="hidden" name="%s" value="%s">',
+	    return sprintf('<input type="hidden" name="%s" value="%s"/>',
 			   GALLERY_FORM_VARIABLE_PREFIX . 'return',
 			   GalleryUtilities::getRequestVariables('return'));
 	}
