@@ -57,7 +57,7 @@ class RandomHighlightDerivativeImage_core extends GalleryDerivativeImage {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	// Check age and refresh from external source if needed..
+	// Check age and set new highlight if needed..
 	list ($ret, $duration) =
 	    GalleryCoreApi::getPluginParameter('module', 'randomhighlight', 'duration');
 	if ($ret->isError()) {
