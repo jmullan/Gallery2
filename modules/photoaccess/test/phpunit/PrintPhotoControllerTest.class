@@ -155,13 +155,13 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$expectedHref = 'http://www.photoaccess.com/REDIRECT_URL2';
+	$expectedHref = 'http://www.photoaccess.com/REDIRECT_URL2?foo=1&bar=2';
 	$this->assertEquals(array('redirect' => array('href' => $expectedHref),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
 
-	$this->assertEquals('/REQUEST_URL2', $session->get('photoaccess.cartUrlFragment')); 
+	$this->assertEquals('/REQUEST_URL2?foo=1&bar=2', $session->get('photoaccess.cartUrlFragment')); 
     }
     
 }
@@ -234,7 +234,7 @@ class PrintPhotoControllerTestPlatform {
 				  'Content-Length: ' . strlen($postData),
 				  '',
 				  $postData)) . "\r\n") {
-	    $response = '<add-cart-response request-url="/REQUEST_URL2" redirect-url="/REDIRECT_URL2"/>';
+	    $response = '<add-cart-response request-url="/REQUEST_URL2?foo=1&#38;bar=2" redirect-url="/REDIRECT_URL2?foo=1&#38;bar=2"/>';
 	    $buffer = array();
 	    $buffer[] = 'HTTP/1.1 200 OK';
 	    $buffer[] = 'Connection: close';

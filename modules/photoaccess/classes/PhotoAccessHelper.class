@@ -152,8 +152,9 @@ class PhotoAccessHelper {
 	 */
 
 	if (preg_match('{<add-cart-response\s*request-url="(\S+)"\s*redirect-url="(\S+)"/>}', $body, $matches)) {
-	    $session->put('photoaccess.cartUrlFragment', $matches[1]);
-	    $redirectUrl = 'http://' . $photoAccessServer . $matches[2];
+	    $cartUrlFragment = str_replace('&#38;', '&', $matches[1]);
+	    $session->put('photoaccess.cartUrlFragment', $cartUrlFragment);
+	    $redirectUrl = 'http://' . $photoAccessServer . str_replace('&#38;', '&', $matches[2]);
 	} else {
 	    $redirectUrl = $urlGenerator->generateUrl(array('view' => 'photoaccess:FulfillmentError'));
 	}
