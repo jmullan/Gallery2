@@ -68,12 +68,17 @@ class CommentModule extends GalleryModule {
 	/* XXX: Permission check "can the user add a comment to this item?" */
 	$gallery->debug("XXX: Comment.getItemLinks should be checking perms");
 
+	foreach ($returnUrlParams as $param => $value) {
+	    $params['return.' . $param] = $value;
+	}
+
 	$links = array();
 	foreach ($items as $item) {
+	    $params['view'] = 'comment:AddComment';
+	    $params['itemId'] = $item->getId();
 	    $links[$item->getId()] =
 		array('text' => $this->translate('add comment'),
-		      'params' => array('view' => 'comment:AddComment',
-					'itemId' => $item->getId()));
+		      'params' => $params);
 	}
 
 	return array(GalleryStatus::success(), $links);

@@ -31,6 +31,7 @@ class AddCommentController extends GalleryController {
 
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	$form = GalleryUtilities::getFormVariables('form.');
+	$return = GalleryUtilities::getFormVariables('return.');
 
 	if (isset($form['action']['add']) && !empty($form['comment'])) {
 	    /* Add the comment */
@@ -59,11 +60,8 @@ class AddCommentController extends GalleryController {
 	} 
 
 	/* Redirect back to the item */
-	$redirectParams = array();
-	$redirectParams['view'] = 'core:ShowItem';
-	$redirectParams['itemId'] = $itemId;
 	$templateAdapter = $gallery->getTemplateAdapter();
-	$results['redirect'] = $templateAdapter->url($redirectParams);
+	$results['redirect'] = $templateAdapter->url($return);
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -147,11 +145,14 @@ class AddCommentView extends GalleryView {
 	if (!empty($thumbnailTable)) {
 	    $smarty->assign('thumbnail', $thumbnailTable[$item->getId()][0]);
 	}
+	
+	$return = GalleryUtilities::getFormVariables('return.');
 
-	$smarty->assign('item', $item->getMemberData());
+	$smarty->assign('return', $return);
+	$smarty->assign('itemId', $item->getId());
 	$smarty->assign('controller', 'comment:AddComment');
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AddCommentBody.tpl');
+	$html = $smarty->fetch('AddComment.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

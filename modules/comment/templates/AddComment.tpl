@@ -1,5 +1,11 @@
   {galleryForm controller=$controller}
-  {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+  {galleryInput type="hidden" name="itemId"}{$itemId}{/galleryInput}
+	
+  <!-- Embed the hidden return fields -->
+  {foreach from=$return key=key item=value}
+  {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+  {/foreach}
+
   {if !empty($thumbnail)}
   <center>
     <img src="{galleryUrl view='core:DownloadItem' itemId=$thumbnail.id}"
