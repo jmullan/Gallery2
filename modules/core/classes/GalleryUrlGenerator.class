@@ -97,7 +97,13 @@ class GalleryUrlGenerator {
      */
     function getCurrentUrl() {
 	global $HTTP_SERVER_VARS;
-	return $HTTP_SERVER_VARS['REQUEST_URI'];
+	if (!empty($HTTP_SERVER_VARS['REQUEST_URI'])) {
+	    return $HTTP_SERVER_VARS['REQUEST_URI'];
+	}
+	    
+	if (!empty($HTTP_SERVER_VARS['SCRIPT_NAME'])) {
+	    return $HTTP_SERVER_VARS['SCRIPT_NAME'];
+	}
     }
 
     /**
