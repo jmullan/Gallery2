@@ -326,7 +326,7 @@ class ItemAddOption {
      *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item) {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	return array(GalleryStatus::success(), null, null);
     }
 
     /**
