@@ -83,7 +83,7 @@ $tags['box'] = array('attributes' => 'style=null', 'children' => 'title,subtitle
 $tags['pagebox'] = array('attributes' => 'style=null', 'children' => 'element[]');
 $tags['banner'] = array('children' => 'title,description,element[]');
 $tags['item'] = array('attributes' => 'selected=false', 'children' => 'title,subtitle');
-$tags['actionitem'] = array('children' => 'title,value');
+$tags['actionitem'] = array('attributes' => 'selected=false', 'children' => 'title,value');
 
 foreach ($tags as $tagName => $tagInfo) {
     /* Process children */
