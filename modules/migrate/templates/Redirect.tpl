@@ -8,10 +8,19 @@
   {g->text text="To enable URL Redirection under Apache webserver:"}
 </p>
 <ol>
-  <li> {g->text text="Ensure the <a href=\"%s\">mod_rewrite</a> Apache module is enabled."
-                arg1="http://httpd.apache.org/docs/mod/mod_rewrite.html"}
-  <li> {g->text text="Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory and add the text shown below to the file. This will also work in your Gallery2 directory if G2 is installed in the path where G1 used to be."}
-  <li> {g->text text="Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if you also wish to redirect links to image files and album directories."}
+  {capture name=mod_rewrite_anchor}
+  <a href="http://httpd.apache.org/docs/mod/mod_rewrite.html">mod_rewrite</a>
+  {/capture}
+  <li>
+    {g->text text="Ensure the %s Apache module is enabled."
+             arg1=$smarty.capture.mod_rewrite_anchor}
+  </li>
+  <li>
+    {g->text text="Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory and add the text shown below to the file. This will also work in your Gallery2 directory if G2 is installed in the path where G1 used to be."}
+  </li>
+  <li>
+    {g->text text="Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if you also wish to redirect links to image files and album directories."}
+  </li>
 </ol>
 
 <pre class="giDescription">&lt;IfModule mod_rewrite.c&gt;
