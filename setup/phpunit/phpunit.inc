@@ -48,7 +48,26 @@ function trace($msg) {
 if (phpversion() >= '4') {
     function PHPUnit_error_handler($errno, $errstr, $errfile, $errline) {
 	global $PHPUnit_testRunning;
-	$PHPUnit_testRunning[0]->fail("<B>PHP ERROR:</B> ".$errstr." <B>in</B> ".$errfile." <B>at line</B> ".$errline);
+
+	$message = "<B>PHP ERROR:</B> ".$errstr;
+	if (function_exists('debug_backtrace')) {
+	    $traceSource = debug_backtrace();
+	    array_shift($traceSource);
+	    foreach ($traceSource as $traceEntry) {
+		$buf = '<B>in</B> ' . $traceEntry['file'];
+		if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		    $buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+		} else if (isset($traceEntry['class'])) {
+		    $buf .= " ($traceEntry[function]) ";
+		}
+		$buf .= " <B>at line</B> $traceEntry[line]";
+		$trace[] = $buf;
+	    }
+	    $message .= '<BR>' . join('<BR>', $trace);
+	} else {
+	    $message .=" <B>in</B> ".$errfile." <B>at line</B> ".$errline;
+	}
+	$PHPUnit_testRunning[0]->fail($message);
     }
 }
 
