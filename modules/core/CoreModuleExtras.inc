@@ -351,7 +351,6 @@ class CoreModuleExtras {
         
 	case '0.9.3':
 	    /* CSS refactor across entire app */
-	    break;
 
 	case '0.9.4': 
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
