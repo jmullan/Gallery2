@@ -675,7 +675,7 @@ class CoreModule extends GalleryModule {
 	}
 	
         if ($isAdmin) {
-            $links[] = array('text' => $this->translate('Site admin'),
+            $links[] = array('text' => $this->translate('Site Admin'),
                              'params' => array('view' => 'core:SiteAdmin'));
 	}
 	
@@ -685,7 +685,7 @@ class CoreModule extends GalleryModule {
 					       'view' => 'core:UserAdmin',
 					       'subView' => 'core:UserLogin'));
 	} else {
-            $links[] = array('text' => $this->translate('Your account'),
+            $links[] = array('text' => $this->translate('Your Account'),
                              'params' => array('return' => 'true',
 					       'view' => 'core:UserAdmin',
 					       'subView' => 'core:UserPreferences'));
