@@ -157,5 +157,12 @@ class UnixPlatform extends GalleryPlatform {
     function isSymlinkSupported() {
 	return true;
     }
+
+    /**
+     * @see GalleryPlatform::getLineEnding()
+     */
+    function getLineEnding() {
+	return "\n";	
+    }
 }
 ?>

@@ -1061,7 +1061,7 @@ class GalleryPlatform {
 
 
     /**
-     * Retrun a boolean specifying whether or not this platform can perform
+     * Return a boolean specifying whether or not this platform can perform
      * a symbolic link (symlink) command
      *
      * @return boolean true if the platform supports symlinks
@@ -1072,6 +1072,19 @@ class GalleryPlatform {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
+
+    /** 
+     * Return the string of characters which represent the line ending on
+     * this platform
+     *      
+     * @return string Line ending
+     *              
+     * @access public
+     */     
+    function getLineEnding() {
+        /* This must be implemented in a platform specific way */
+        assert(false);
+    }       
 
 
     /**

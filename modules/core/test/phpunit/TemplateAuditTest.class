@@ -38,7 +38,13 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class'
 class TemplateAuditTest extends CodeAuditTestCase {
 
     function TemplateAuditTest($methodName) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+
 	$this->CodeAuditTestCase($methodName);
+
+	$this->_lineEnding = $platform->getLineEnding();
 
 	$this->_revisionPattern = ' \* \$Revision(:.+)?\$';
 	$lines[] = '\{\*';
@@ -51,7 +57,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	$lines[] = ' \*}';
 
 	$this->_revisionPlaceHolder = ' * REVISION PLACEHOLDER';
-	$this->_headerPattern = join("\n", $lines);
+	$this->_headerPattern = join($this->_lineEnding, $lines);
 	$this->_headerLines = $lines;
 	$this->_expectedHeaderLines = $lines;
 	array_splice($this->_expectedHeaderLines, 1, 1, $this->_revisionPlaceHolder);
@@ -86,7 +92,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	    return;
 	} else {
 	    /* Grab the expected number of lines and compare them */
-	    $actual = explode("\n", $buffer, sizeof($this->_expectedHeaderLines)+1);
+	    $actual = explode($this->_lineEnding, $buffer, sizeof($this->_expectedHeaderLines)+1);
 	    array_splice($actual, sizeof($this->_expectedHeaderLines), 1);
 
 	    /* Get rid of the revision line, since we can't compare that */

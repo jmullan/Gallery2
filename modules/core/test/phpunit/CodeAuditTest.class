@@ -36,7 +36,11 @@
 class CodeAuditTest extends CodeAuditTestCase {
 
     function CodeAuditTest($methodName) {
+	global $gallery;
+
 	$this->CodeAuditTestCase($methodName);
+
+	$platform = $gallery->getPlatform();
 
 	$this->_exception['endphp'] =
 	    array(
@@ -68,6 +72,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	
 	$this->_longLineCount = 0;
 	$this->_errorCount = 0;
+
+	$this->_lineEnding = $platform->getLineEnding();
     }
 
     /**
@@ -85,7 +91,7 @@ class CodeAuditTest extends CodeAuditTestCase {
      */
     function checkFile($fileName, $buffer) {
 	$fileName = substr($fileName, strlen($this->_baseDir) + 1);
-	$lines = explode("\n", $buffer);
+	$lines = explode($this->_lineEnding, $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
 	for ($i = 0; $i < count($lines); $i++) {
 

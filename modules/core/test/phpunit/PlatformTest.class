@@ -228,6 +228,19 @@ class PlatformTest extends GalleryTestCase {
 	$realSeparator = $file[strlen(dirname(__FILE__))];
 	$this->assertEquals($realSeparator, $this->_platform->getDirectorySeparator());
     }
+
+    function testGetLineEnding() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
+	    $realLineEnding = "\n";
+	} else if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $realLineEnding = "\r\n";
+	}
+
+	$this->assertEquals($platform->getLineEnding(), $realLineEnding, "Line Endings Don't Match");
+    }
     
     function testIsRestrictedByOpenBaseDir() {
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
