@@ -78,7 +78,8 @@
         {/if}
 
         {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
-        <td class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" width="10%">
+        <td class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" 
+            style="width: 10%">
           <div class="giThumbImage">
             <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
               {if isset($child.thumbnail)}
@@ -89,13 +90,13 @@
             </a>
 
             {if !empty($layout.moduleItemLinks[$child.id])}
-              <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">
-                <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
+            <select onchange="javascript:if (this.value) location.href=this.value" class="giActionSelect">
+              <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
-                {foreach from=$layout.moduleItemLinks[$child.id] item=link}
-                <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
-                {/foreach}
-              </select>
+              {foreach from=$layout.moduleItemLinks[$child.id] item=link}
+              <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+              {/foreach}
+            </select>
             {/if}
           </div>
 
@@ -112,10 +113,12 @@
           </p>
 
           <ul class="giInfo">
-              {capture name=modificationTimestamp}
-              {g->date timestamp=$child.modificationTimestamp}
-              {/capture}
-              {g->text text="<li>Date: %s</li>" arg1=$smarty.capture.modificationTimestamp}
+            {capture name=modificationTimestamp}
+            {g->date timestamp=$child.modificationTimestamp}
+            {/capture}
+            <li>
+              {g->text text="Date: %s" arg1=$smarty.capture.modificationTimestamp}
+            </li>
             
             {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
             <li>
@@ -124,26 +127,26 @@
             </li>
             {/if}
 
-            {if ($child.childCount > 0) }
-            
-              {g->text one="<li>Size: %d item</li>"
-                       many="<li>Size: %d items</li>"
+            {if ($child.childCount > 0)}
+            <li>
+              {g->text one="Size: %d item"
+                       many="Size: %d items"
                        count=$child.childCount
                        arg1=$child.childCount}
               {g->text one="(%d item total)"
                        many="(%d items total)"
                        count=$child.descendentCount
                        arg1=$child.descendentCount}
-            
+            </li>
             {/if}
 
-            {if ($layout.viewCounts[$child.id] > 0) }
-            
-              {g->text one="<li>Viewed: %d time</li>"
-                       many="<li>Viewed: %d times</li>"
+            {if ($layout.viewCounts[$child.id] > 0)}
+            <li>
+              {g->text one="Viewed: %d time"
+                       many="Viewed: %d times"
                        count=$layout.viewCounts[$child.id]
                        arg1=$layout.viewCounts[$child.id]}
-            
+            </li>
             {/if}
           </ul>
         </td>
@@ -167,34 +170,34 @@
 
     <div class="gbBottomFlag">
       <div class="gbNavBar">
-          {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+        {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
       </div>
-        <ul class="giHorizontalLinks">
-          <li>{g->text text="Page:"}</li>
-          {assign var="lastPage" value=0}
-          {foreach name=jumprange from=$layout.jumprange item=page}
-          {if ($page - $lastPage >= 2)}
-          <li>
-            {if ($page - $lastPage == 2)}
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}">{$page-1}</a>
-            {else}
-            ...
-            {/if}
-          </li>
-          {/if}
-  
-          {if ($layout.currentPage == $page)}
-          <li>
-            {$page}
-          </li>
+      <ul class="giHorizontalLinks">
+        <li>{g->text text="Page:"}</li>
+        {assign var="lastPage" value=0}
+        {foreach name=jumprange from=$layout.jumprange item=page}
+        {if ($page - $lastPage >= 2)}
+        <li>
+          {if ($page - $lastPage == 2)}
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=`$page-1`"}">{$page-1}</a>
           {else}
-          <li>
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}">{$page}</a>
-          </li>
+          ...
           {/if}
-          {assign var="lastPage" value=$page}
-          {/foreach}
-        </ul>
+        </li>
+        {/if}
+
+        {if ($layout.currentPage == $page)}
+        <li>
+          {$page}
+        </li>
+        {else}
+        <li>
+          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`" arg3="page=$page"}">{$page}</a>
+        </li>
+        {/if}
+        {assign var="lastPage" value=$page}
+        {/foreach}
+      </ul>
     </div>
   </div>
 </div>

@@ -105,5 +105,5 @@
     </div>
 
   {include file="gallery:`$ItemAdmin.viewBodyFile`" l10Domain=$ItemAdmin.viewL10Domain}
-</form>
   </div>
+</form>

@@ -4,9 +4,9 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-    {* Jump through hoops because "$layout.imageViews.`$layout.imageViewsIndex`" doesn't work *}
-      {assign var="currentIndex" value=$layout.imageViewsIndex}
-      {assign var="image" value=$layout.imageViews.$currentIndex}
+{* Jump through hoops because "$layout.imageViews.`$layout.imageViewsIndex`" doesn't work *}
+{assign var="currentIndex" value=$layout.imageViewsIndex}
+{assign var="image" value=$layout.imageViews.$currentIndex}
       
 <div id="gsHeader">
   {include file="gallery:layouts/matrix/templates/banner.tpl"}      
@@ -18,7 +18,6 @@
   {include file="gallery:layouts/matrix/templates/sidebar.tpl"} 
   
   <div id="gsAlbumContents">
-      
     <div class="gbTopFlag">
       <table class="gbTitleBanner">
         <tr>
