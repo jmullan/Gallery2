@@ -47,12 +47,26 @@ class SystemChecksStep extends InstallStep {
 	}
     }
 
+    function processRequest() {
+	if (!empty($_GET['zendtest'])) {
+	    header("Content-Type: text/plain");
+	    header("Content-Length: 8");
+	    $x = array(new stdclass());
+	    /* v-- This may cause PHP to crash! */
+	    $x = $x[0];
+	    print "SUCCESS\n";
+	    return false;
+	}
+
+	return true;
+    }
+
     function loadTemplateData(&$templateData) {
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
 
-	// assert compatible version of PHP
+	/* assert compatible version of PHP */
 	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0') < 0) {
 	    $templateData['check'][] =
 		array('title' => _('PHP version >= 4.1.0'),
@@ -64,7 +78,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('PHP Version'), 'success' => true);
 	}
 
-	// assert that __FILE__ works correctly
+	/* assert that __FILE__ works correctly */
 	if (!SystemChecksStep::CheckFileDirective()) {
 	    $templateData['check'][] =
 		array('title' => _('FILE directive supported'),
@@ -76,7 +90,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('FILE Directive'), 'success' => true);
 	}
 
-	// Make sure that safe mode is not enabled
+	/* Make sure that safe mode is not enabled */
 	if (GalleryUtilities::getPhpIniBool('safe_mode')) {
 	    $templateData['check'][] =
 		array('title' => _('Safe mode disabled'),
@@ -88,7 +102,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('Safe Mode'), 'success' => true);
 	}
 
-	// Make sure session.auto_start is OFF during the installer
+	/* Make sure session.auto_start is OFF during the installer */
 	if (GalleryUtilities::getPhpIniBool('session.auto_start')) {
 	    $templateData['check'][] =
 		array('title' => _('Session auto-start disabled'),
@@ -101,7 +115,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('Session Auto-Start disabled'), 'success' => true);
 	}
 
-	// Warning when exec() is disabled
+	/* Warning when exec() is disabled */
 	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
 	    $templateData['check'][] =
 		array('title' => _('exec() allowed'),
@@ -113,7 +127,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('exec() allowed'), 'success' => true);
 	}
 
-	// Warning when set_time_limit() is disabled
+	/* Warning when set_time_limit() is disabled */
 	if (in_array('set_time_limit', split(',\s*', ini_get('disable_functions')))) {
 	    $timeLimit = ini_get('max_execution_time');
 	    $templateData['check'][] =
@@ -126,7 +140,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => _('set_time_limit() allowed'), 'success' => true);
 	}
 
-	// Warning if memory_limit is set and is too low
+	/* Warning if memory_limit is set and is too low */
 	$memoryLimit = ini_get('memory_limit');
 	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
 	$minimumMemoryLimit = 16;
@@ -142,7 +156,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => $title, 'success' => true);
 	}
 
-	// Warning if file_uploads are not allowed
+	/* Warning if file_uploads are not allowed */
 	if (! GalleryUtilities::getPhpIniBool('file_uploads')) {
 	    $templateData['check'][] =
 		array('title' => 'File uploads allowed',
@@ -155,7 +169,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => 'File uploads allowed', 'success' => true);
 	}
 
-	// Warning if upload_max_filesize is less than 2M
+	/* Warning if upload_max_filesize is less than 2M */
 	$title = sprintf('%s (%sb)', _('Maximum upload size'), ini_get('upload_max_filesize'));
 	$minimumUploadsize = 2;
 	$uploadSize = $this->_getBytes(ini_get('upload_max_filesize')) / (1024 * 1024);
@@ -171,7 +185,7 @@ class SystemChecksStep extends InstallStep {
 		array('title' => $title, 'success' => true);
 	}
 
-	// Warning if post_max_size is less than 2M
+	/* Warning if post_max_size is less than 2M */
 	$title = sprintf('%s (%sb)', _('Maximum POST size'), ini_get('post_max_size'));
 	$minimumPostsize = 2;
 	if ((int)ini_get('post_max_size') < $minimumPostsize) {
@@ -186,7 +200,16 @@ class SystemChecksStep extends InstallStep {
 		array('title' => $title, 'success' => true);
 	}
 
-	// Check all files against MANIFEST
+	/* $x=$x[0] <--(an object) can crash PHP with zend.ze1_compatibility_mode ON */
+	if (GalleryUtilities::getPhpIniBool('zend.ze1_compatibility_mode')) {
+	    $templateData['check'][] =
+		array('title' => _('Zend compatibility mode'),
+		      'warning' => true,
+		      'notice' => sprintf(_('Warning: Your PHP is configured with Zend ze1_compatibility_mode which can cause PHP to crash.  Click <a href="%s">here</a> to test your PHP.  If you see "SUCCESS" then your PHP is ok.  If you get an error then you must turn off ze1_compatibility_mode before proceeding.'), 'index.php?step=' . $this->_stepNumber . '&amp;zendtest=1'),
+		);
+	} /* skip showing 'success' for this one */
+
+	/* Check all files against MANIFEST */
 	$title = _('Gallery file integrity');
 	if (!SystemChecksStep::CheckFileDirective()) {
 	    $templateData['check'][] =
