@@ -4,15 +4,54 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content= "text/html; charset=us-ascii" />
-      <title>README: Gallery 2 alpha</title>
+      <title>README: Gallery 2 Alpha</title>
       <style type="text/css">
 	<!--
-	body,td,a,p,.h{font-family:arial,sans-serif;}
-	
-	.instructions { background: #C0C0C0; border: 2px; width: 480px; margin-left: 12px; }
-	.instructions .title{ background: #C0C0C0; font-size: 18px; }
-	.instructions .content{ background: #D0D0D0; padding-left: 12px; }
-	.q{color:#0000cc;}
+	html {
+	        font-family: "Lucida Grande", Verdana, Arial, sans-serif;
+	        font-size: 62.5%;
+	}
+        body {
+                font-size: 1.2em;
+	        margin: 16px 32px;
+        }
+	p {
+	        line-height: 1.5em;
+	}
+	h2 {
+	        font-family: Georgia, Palatino, "Times New Roman", serif;
+	        font-size: 1.5em;
+	        color: #333;
+	        border-bottom: 1px solid #ddd;
+	        margin: 0;
+	        padding: 1.0em 0 0.15em 0;
+	}
+	ul, ol {
+	        margin: 1.2em 0 1.2em 1.75em;
+	        padding: 0;
+	}
+	li {
+	        padding: 0.2em 0;
+                line-height: 1.5em;
+	}
+	ol ul { margin-top: 0.4em; margin-bottom: 0.4em;  }
+	code {
+	        font-size: 1.3em;
+	        line-height: 1.2em;
+	}
+	.instructions {
+	        background: #ddd;
+	        border: 2px;
+	        width: 480px;
+	        margin: 0.6em 0 0.2em 0;
+	        padding: 0.4em;
+	}
+	.instructions h3 {
+	        background: #ccc;
+	        font-size: 1.3em;
+	        margin: -0.2em -0.2em 0.2em -0.2em;
+	        padding: 0.2em 0.2em;
+	}
 	//-->
       </style>
   </head>
@@ -25,7 +64,7 @@
       right now the new README (this one) has instructions to use the
       new installer which doesn't quite work yet.  You should refer to
       the <a
-      href="http://cvs.sourceforge.net/viewcvs.py/gallery/gallery2/Attic/README?rev=1.20&hideattic=0&view=markup">old
+      href="http://cvs.sourceforge.net/viewcvs.py/gallery/gallery2/Attic/README?rev=1.20&amp;hideattic=0&amp;view=markup">old
       README</a> for now to actually get your G2 installed.  We'll
       remove this note when the installer is ready and this new README
       is fully operational.  In the meantime, please do review this
@@ -33,9 +72,9 @@
     </p>
     </div>
 
-    <h1>Gallery 2.0 Alpha</h1>
+    <img src="images/g2Logo.png" alt="Gallery 2.0 Alpha" />
     <p>
-      Welcome to Gallery 2.0 (G2).  This is the first "alpha" release
+      Welcome to Gallery 2.0 (G2).  This is the first "Alpha" release
       of G2.  Please read through this document carefully before
       installing G2 and before asking for help.  We have taken care to
       try to answer as many of your questions here as possible.
@@ -46,14 +85,14 @@
     <ul>
       <li> <a href="#quick_start">Quick Start</a> </li>
       <li> <a href="#what_is_gallery">What is Gallery?</a> </li>
-      <li> <a href="#what_is_g2">What is G2 alpha?</a> </li>
-      <li> <a href="#alpha_requirements">G2 alpha requirements</a> </li>
-      <li> <a href="#when_to_use">When to use G2 alpha</a> </li>
-      <li> <a href="#when_not_to_use">When not to use G2 alpha</a> </li>
-      <li> <a href="#whats_new">What's new in G2 alpha</a> </li>
-      <li> <a href="#prerequisites">G2 alpha Installation Prerequisites</a> </li>
-      <li> <a href="#installing">Installing G2 alpha</a> </li>
-      <li> <a href="#getting_started">Getting started with G2 alpha</a> </li>
+      <li> <a href="#what_is_g2">What is G2 Alpha?</a> </li>
+      <li> <a href="#Alpha_requirements">G2 Alpha requirements</a> </li>
+      <li> <a href="#when_to_use">When to use G2 Alpha</a> </li>
+      <li> <a href="#when_not_to_use">When not to use G2 Alpha</a> </li>
+      <li> <a href="#whats_new">What's new in G2 Alpha</a> </li>
+      <li> <a href="#prerequisites">G2 Alpha Installation Prerequisites</a> </li>
+      <li> <a href="#installing">Installing G2 Alpha</a> </li>
+      <li> <a href="#getting_started">Getting started with G2 Alpha</a> </li>
       <li> <a href="#getting_help">Getting Help</a> </li>
       <li> <a href="#known_issues">Known Issues / Bugs</a> </li>
       <li> <a href="#updating">Updating your Gallery 2 Installation</a> </li>
@@ -83,17 +122,17 @@
       manage their own photos on your website!
     </p>
 
-    <h2><a name="what_is_g2">What is G2 alpha?</a></h2>
+    <h2><a name="what_is_g2">What is G2 Alpha?</a></h2>
     <p>
-      An alpha version or alpha release is the first official release
-      of a product.  An alpha release will probably be unstable,
+      An Alpha version or Alpha release is the first official release
+      of a product.  An Alpha release will probably be unstable,
       contain both known and unknown bugs, and will be missing some
       intended features.  We release it early so that you can see what
       is coming and give us feedback that will help us improve the
       final release.
     </p>
     
-    <h2><a name="alpha_requirements">G2 alpha requirements</a></h2>
+    <h2><a name="Alpha_requirements">G2 Alpha requirements</a></h2>
     <ul>
       <li>
 	Webserver that can run PHP (Apache 1, Apache 2, IIS, Zeus, etc)
@@ -109,7 +148,7 @@
       </li>
     </ul>
 
-    <h2><a name="when_to_use">When to use G2 alpha</a></h2>
+    <h2><a name="when_to_use">When to use G2 Alpha</a></h2>
     <p>
       You should install G2 Alpha to try it out.  You could install it next to
       your production version of Gallery 1.x in a hidden directory.  You could
@@ -119,7 +158,7 @@
       and all of the data at any time and start from scratch.
     </p>
       
-    <h2><a name="when_not_to_use">When not to use G2 alpha</a></h2>
+    <h2><a name="when_not_to_use">When not to use G2 Alpha</a></h2>
     <p>
       Do not use it as the main repository for your data.  Do not use
       it for a production web site.  We will probably not provide an
@@ -127,11 +166,11 @@
       know that it's much better than G1, and it may be tempting to
       just replace your G1 with it.  But be warned that we know that
       <b>the database schema will change</b> between now and beta and
-      we won't support upgrading your G2 alpha data so if you use it
+      we won't support upgrading your G2 Alpha data so if you use it
       in production, you're on your own.
     </p>
 
-    <h2><a name="whats_new">What's new in G2 alpha</a></h2>
+    <h2><a name="whats_new">What's new in G2 Alpha</a></h2>
     <p>
       G2 has been redesigned from the ground up and is database
       driven! It is secure, scalable, reliable, modular, customizable,
@@ -144,7 +183,7 @@
       can be enabled separately for maximum control.  
     </p>
 
-    <h2><a name="prerequisites">G2 alpha Installation Prerequisites</a></h2>
+    <h2><a name="prerequisites">G2 Alpha Installation Prerequisites</a></h2>
     <ol>
       <li>
 	<b><a name="get_latest_code">Latest Version</a></b> - 
@@ -174,21 +213,19 @@
 	root.  If you put it in the web root, then it circumvents G2's
 	security.  
 	<div class="instructions">
-	  <span class="title">Unix Example</span>
-	  <div class="content">
+	  <h3>Unix Example</h3>
+	  <code>
 	    % cd $HOME <br/>
 	    % mkdir gallerydata <br/>
 	    % chmod 777 gallerydata
-	  </div>
+	  </code>
 	</div>
-
-	<br/>
-
+	
 	<div class="instructions">
-	  <span class="title">Windows Example</span>
-	  <div class="content">
+	  <h3>Windows Example</h3>
+	  <code>
 	    C:\> mkdir gallerydata
-	  </div>
+	  </code>
 	</div>
 
 	In the Unix example, you may note that modes of 777 on your
@@ -211,11 +248,12 @@
 	choose.
 
 	<div class="instructions">
-	  <span class="title">MySQL</span>
-	  <div class="content">
+	  <h3>MySQL</h3>
+	  <code>
 	    mysqladmin -uroot create gallery2  <br />
 	    mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO <strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>" <br />
-	  </div>
+	  </code>
+	</div>
 	  <ul class="note">
 	    <li> Choose your own <strong>username</strong> and
 	      <strong>password</strong>
@@ -223,16 +261,13 @@
 	    <li>
 	      If mysql denies you access, try adding "-p" right before the "-e "
 	    </li>
-	  </ul>
-	</div>
-
-	<br />
+	  </ul>	
 
 	<div class="instructions">
-	  <span class="title">PostgreSQL</span>
-	  <div class="content">
+	  <h3>PostgreSQL</h3>
+	  <code>
 	    createdb gallery2
-	  </div>
+	  </code>
         </div>
       </li>
 
@@ -247,23 +282,20 @@
       </li>
     </ol>
 
-    <h2><a name="installing">Installing G2 alpha</a></h2>
+    <h2><a name="installing">Installing G2 Alpha</a></h2>
     <p>
       Open up your web browser and browse to the <a href="install/" target="_guided">G2
       install directory</a>.  G2 will walk you through the process of
       validating that your system is properly configured and will set
       everything up for you.
-
-      <br />
-
-      <i>Note</i> - the installer requires that you have cookies
-      enabled in your browser!
+      <em><strong>Note</strong> - the installer requires that you have cookies
+      enabled in your browser!</em>
     </p>
 
-    <h2><a name="getting_started">Getting started with G2 alpha</a></h2>
+    <h2><a name="getting_started">Getting started with G2 Alpha</a></h2>
     <ol>
       <li>
-	<b> Log in </b> - Once you've successfully got G2 alpha installed, you should
+	<b> Log in </b> - Once you've successfully got G2 Alpha installed, you should
 	start by <a
 	href="main.php?g2_view=core:UserAdmin&amp;g2_subView=core:UserLogin&amp;g2_form[formName]=UserLogin&amp;g2_form[username]=admin" target="_guided">logging
 	in</a> as the admin user that was created for you at install
@@ -400,8 +432,8 @@
     <ul>
       <li>
 	<b>Upgrade Path</b> - There's no upgrade path from this
-	version of G2 alpha to future versions.  You'll have to throw
-	out all your data and start over when the next alpha or beta
+	version of G2 Alpha to future versions.  You'll have to throw
+	out all your data and start over when the next Alpha or beta
 	release comes out.  We will offer an upgrade path as we get
 	closer to beta.
       </li>
@@ -418,7 +450,7 @@
 	<b>Performance</b> - G2 is not as fast as we want it to be.
 	We know about this and know how to greatly improve it.  We've
 	been focused on features and reliability before performance,
-	and will optimize during the alpha cycle.
+	and will optimize during the Alpha cycle.
       </li>
       <li>
 	<b> MembersList shows email addresses to everybody </b> - this is a known
@@ -485,9 +517,7 @@
       state of localization</a> and then <a
       href="docs/LOCALIZING">read the localization how-to</a> and get
       started.  <a
-      href="http://sourceforge.net/tracker/?atid=582564&amp;group_id=7130&amp;func=browse">Submit
-      your localizations</a> early and often -- no need to wait until
-      you're entirely done. 
+      href="http://sourceforge.net/tracker/?atid=582564&amp;group_id=7130&amp;func=browse">Submit your localizations</a> early and often - no need to wait until you're entirely done. 
     </p>
 
     <a href="http://validator.w3.org/check?uri=referer">
