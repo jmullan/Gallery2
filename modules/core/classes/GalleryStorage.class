@@ -288,6 +288,20 @@ class GalleryStorage {
     }
     
     /**
+     * Execute a database statement
+     *
+     * @access public
+     * @param array the SQL statement
+     * @param array any explicit data values required by the query
+     * @return object GalleryStatus a status code,
+     */
+    function execute($statement, $data=array()) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
+					  __FILE__, __LINE__),
+		     null);
+    }
+    
+    /**
      * Add a new entry to a map
      *
      * @param object the map we're working on
