@@ -48,6 +48,18 @@ class MembersListView extends GalleryView {
 	    $form['formName'] = 'MembersList';
 	    $MembersList = array();
 	}
+
+	/* Bring in the root album information for the breadcrumb */
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+	$MembersList['rootAlbum'] = $rootAlbum->getMemberData(); 
 	
 	if (!isset($form['list']['page']) || $form['list']['page'] < 1) {
 	    $form['list']['page'] = 1;

@@ -4,7 +4,7 @@
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
-    <a href="{g->url}">{g->text text="Gallery"}</a>
+    <a href="{g->url}">{$MembersProfile.rootAlbum.title}</a>
   </li>
   <li>
     <a href="{g->url arg1="view=members:MembersList"}">{g->text text="Members List"}</a>
