@@ -327,5 +327,28 @@ class GalleryProfiler {
 
 	return 0;
     }
+
+    /**
+     * Mark the current moment, to be used with getElapsedFromMark()
+     */
+    function mark() {
+	$this->_mark = microtime();
+    }
+
+    /**
+     * Return the elapsed time since the mark() call
+     *
+     * @param the time to use instead of the mark
+     * @return elapsed time in secs.microsecs
+     */
+    function getElapsedFromMark($mark=null) {
+	if (!isset($mark)) {
+	    $mark = $this->_mark;
+	}
+	
+	list ($u2, $s2) = explode(' ', microtime());
+	list ($u1, $s1) = explode(' ', $mark);
+	return ($s2 - $s1) + ($u2 - $u1);
+    }
 }
 ?>
