@@ -1740,7 +1740,7 @@ class DatabaseStorage extends GalleryStorage {
 		    if (empty($row[1])) {
 			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		    } else {
-			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])", $row[1]);
+			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])", $row[1], true);
 		    }
 		}
 	    } else {
