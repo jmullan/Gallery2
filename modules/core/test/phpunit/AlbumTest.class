@@ -479,6 +479,129 @@ class AlbumTest extends GalleryTestCase {
 	    $this->assertEquals($child->getId(), $thumb->getDerivativeSourceId());
 	}
     }
+
+
+    /**
+     * Verify that creating a second album with the same path as 
+     * an existing one throws a collision error.
+     */
+    function testCreateCollision() {
+	global $gallery;
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $basePath) = $this->_parentAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	for ($i = 0; $i < 3; $i++) {
+	    $entity[$i] = new GalleryAlbumItem();
+	    $ret = $entity[$i]->create($this->_parentAlbum->getId(), 'valid_path');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = $entity[$i]->save();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    if ($i > 0) {
+		$expectedPathComponent = sprintf('valid_path_%03d', $i);
+		$this->assertEquals($expectedPathComponent, $entity[$i]->getPathComponent(),
+				    'path component mismatch');
+
+		list ($ret, $entityPath) = $entity[$i]->fetchPath();
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		$this->assertEquals($basePath . $expectedPathComponent . $slash, $entityPath,
+				    'full path mismatch');
+
+		$this->assert($platform->file_exists($entityPath), "$entityPath does not exist");
+		$this->assert($platform->is_dir($entityPath), "$entityPath is not a directory");
+	    }
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testMoveCollision() {
+	global $gallery;
+	
+	list ($ret, $outerAlbum) = $this->_createRandomAlbum($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $innerAlbum) = $this->_createRandomAlbum($outerAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $lockIds[]) =
+	    GalleryCoreApi::acquireReadLock(array($this->_getRootId(), $this->_parentAlbum->getId()));
+	
+	list ($ret, $lockIds[]) =
+	    GalleryCoreApi::acquireWriteLock(array($innerAlbum->getId(), $outerAlbum->getId()));
+
+	$ret = $innerAlbum->rename('test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $innerAlbum->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $outerAlbum->rename('test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $outerAlbum->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$ret = $innerAlbum->move($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $basePath) = $this->_parentAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newPath) = $innerAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$this->assertEquals($basePath . 'test_001' . $slash, $newPath, 'full path mismatch');
+
+	$platform = $gallery->getPlatform();
+	$this->assert($platform->file_exists($newPath), "$newPath does not exist");
+	$this->assert($platform->is_dir($newPath), "$newPath is not a file");
+
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 /**

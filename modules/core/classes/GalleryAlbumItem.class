@@ -87,8 +87,7 @@ class GalleryAlbumItem_core extends GalleryItem {
 	global $gallery;
 	
 	if (empty($albumName) || empty($parentId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-				       __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
@@ -96,6 +95,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	$albumName = $this->getPathComponent();
 
 	/* Albums can contain children */
 	$this->setCanContainChildren(true);
