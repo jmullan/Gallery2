@@ -1,0 +1,232 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package RandomHighlight
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/RandomHighlightHelper.class');
+
+/**
+ * SiteAdminRandomHighlight controller tests
+ * Also tests RandomHighlightHelper::assignEntityType,resetRandomHighlightItems,fetchItemCount
+ *
+ * @package RandomHighlight
+ * @subpackage PHPUnit
+ */
+class SiteAdminRandomHighlightControllerTest extends GalleryControllerTestCase {
+
+    function SiteAdminRandomHighlightControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'randomhighlight:SiteAdminRandomHighlight');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	foreach (array('duration') as $key) {
+	    list ($ret, $params[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$this->_params = $params;
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $item) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $thumb) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $highlight) = $this->_createDerivative(
+	    $this->_album, $thumb->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = RandomHighlightHelper::assignEntityType($this->_album, true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	foreach (array('duration') as $key) {
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'randomhighlight', $key, $this->_params[$key]);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	parent::tearDown();
+    }
+
+    function testSiteAdminRandomHighlightControllerUndo() {
+
+	GalleryUtilities::putRequestVariable('form[action][undo]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'randomhighlight:SiteAdminRandomHighlight'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSiteAdminRandomHighlightControllerSave() {
+
+	GalleryUtilities::putRequestVariable('form[duration]', '123.4');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'randomhighlight:SiteAdminRandomHighlight'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $duration) =
+	    GalleryCoreApi::getPluginParameter('module', 'randomhighlight', 'duration');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('7404', $duration, 'duration');
+    }
+
+    function testSiteAdminRandomHighlightControllerSaveNoWidth() {
+
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'randomhighlight:SiteAdminRandomHighlight'),
+				  'status' => array(),
+				  'error' => array('form[error][duration]')),
+			    $results);
+    }
+
+    function testSiteAdminRandomHighlightControllerSaveBadWidth() {
+
+	GalleryUtilities::putRequestVariable('form[duration]', 'abc5000');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'randomhighlight:SiteAdminRandomHighlight'),
+				  'status' => array(),
+				  'error' => array('form[error][duration]')),
+			    $results);
+    }
+
+    function testSiteAdminRandomHighlightControllerReset() {
+	$ret = $this->_saveRandomHighlightItems();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $count) = RandomHighlightHelper::fetchItemCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($count > 0, 'Should be at least one RandomHighlight entity in db');
+
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'randomhighlight:SiteAdminRandomHighlight'),
+				  'status' => array('reset' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $count) = RandomHighlightHelper::fetchItemCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $count, 'Should be no RandomHighlight entities in db after reset');
+
+	$ret = $this->_restoreRandomHighlightItems();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function _saveRandomHighlightItems() {
+	global $gallery;
+	$query = 'SELECT [GalleryEntity::id] FROM [GalleryEntity]
+	WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'';
+
+	list ($ret, $results) = $gallery->search($query);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ids = array();
+	while ($result = $results->nextResult()) {
+	    $ids[] = (int)$result[0];
+	}
+	$this->_randomHighlightIds = $ids;
+	return GalleryStatus::success();
+    }
+
+    function _restoreRandomHighlightItems() {
+	if (empty($this->_randomHighlightIds)) {
+	    return GalleryStatus::success();
+	}
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($this->_randomHighlightIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach ($items as $item) {
+	    $ret = RandomHighlightHelper::assignEntityType($item, true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	return GalleryStatus::success();
+    }
+}
+?>
