@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -86,7 +86,7 @@ class GalleryView {
     function renderImmediate($status, $error) {
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Try to handle this request very quickly.  This method is called very early
      * on in the process in the case that this view has a simple cached reply that
@@ -98,18 +98,17 @@ class GalleryView {
     function renderShortcut() {
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * Load the template with data from this view.
      *
      * @param object GalleryTemplate the template instance
      * @param array the form values
      * @return array object GalleryStatus a status code
-     *               string path to the head template
-     *               string path to the body template
+     *               array ('head' => head HTML, 'body' => body html)
      */
     function loadTemplate(&$template, &$form) {
-	return array(GalleryStatus::success(), null, null);
+	return array(GalleryStatus::success(), null);
     }
 
     /**
@@ -190,7 +189,7 @@ class GalleryView {
 
 	/* Tell the view what module its in */
 	$view->init($module);
-	
+
 	return array(GalleryStatus::success(), $view);
     }
 
@@ -221,7 +220,7 @@ class GalleryView {
 	/* Pass the theme to the template adapter */
 	$templateAdapter =& $gallery->getTemplateAdapter();
 	$templateAdapter->setTheme($theme);
-	
+
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
 	if (!isset($form['formName'])) {
@@ -298,7 +297,7 @@ class GalleryView {
      */
     function _getItem() {
 	global $gallery;
-	
+
 	/* If we don't have an item id, default to the root */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
