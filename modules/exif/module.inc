@@ -160,7 +160,7 @@ class ExifModule extends GalleryModule {
     function loadItemDetails(&$template, $item) {
 	global $gallery;
 
-	require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
 
 	/* We only work on data items */
 	if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
