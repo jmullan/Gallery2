@@ -3,21 +3,17 @@
 <a id="href_{$i}" href="{$it.href}"></a>
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
-var index = {$SlideShow.start};
-var count = {$SlideShow.count};
-var is_cached = new Array;
-var item_ids = new Array;
+var image = new Image(), timer, stoplink;
+var index = {$SlideShow.start}, count = {$SlideShow.count};
+var is_cached = new Array(count), item_ids = new Array(count);
 {foreach from=$SlideShow.itemList key=i item=it}
 item_ids[{$i}] = '{$it.id}';
 {/foreach}
-var timer;
-
 {literal}
 function preload(i) {
   if (!is_cached[i]) {
     is_cached[i] = 1;
-    var img = new Image();
-    img.src = document.getElementById("item_"+i).href;
+    image.src = document.getElementById("item_"+i).href;
   }
 }
 function slide_view_start() {
@@ -27,7 +23,7 @@ function slide_view_start() {
 function goto_next_photo() {
   index = (index+1)%count;
   document.images.slide.src = document.getElementById('item_'+index).href;
-  document.getElementById("stop").href = document.getElementById("href_"+index).href;
+  stoplink.href = document.getElementById("href_"+index).href;
 }
 {/literal}
 </script>
@@ -48,6 +44,7 @@ function goto_next_photo() {
         {g->media}
           <img name="slide" alt="" src="">
           <script language="JavaScript" type="text/JavaScript">
+            stoplink = document.getElementById("stop");
             document.images.slide.onload = slide_view_start;
             document.images.slide.onerror = goto_next_photo;
             document.images.slide.src =
