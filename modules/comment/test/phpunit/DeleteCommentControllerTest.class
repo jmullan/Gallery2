@@ -44,36 +44,38 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Create a random item */
-	list ($ret, $this->_item) = $this->_createRandomDataItem($rootId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	/* Create two random items */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 
-	/* Create a comment in it that we can delete */
-	list ($ret, $this->_comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$this->assert(isset($this->_comment), 'Missing comment instance');
-	$this->_comment->create($this->_item->getId());
-	$this->_comment->setCommenterId($gallery->getActiveUserId());
-	$this->_comment->setHost('127.0.0.1');
-	$this->_comment->setComment('this is a test comment');
-	$this->_comment->setDate(time());
-	$ret = $this->_comment->save();
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    /* Create a comment in it that we can delete */
+	    list ($ret, $this->_comment[$i]) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->assert(isset($this->_comment[$i]), 'Missing comment instance');
+	    $this->_comment[$i]->create($this->_item[$i]->getId());
+	    $this->_comment[$i]->setCommenterId($gallery->getActiveUserId());
+	    $this->_comment[$i]->setHost('127.0.0.1');
+	    $this->_comment[$i]->setComment('this is a test comment');
+	    $this->_comment[$i]->setDate(time());
+	    $ret = $this->_comment[$i]->save();
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
     }
 
     function tearDown() {
 	global $gallery;
 	
-	$ret = $gallery->deleteEntityById($this->_item->getId());
+	$ret = $gallery->deleteEntityById($this->_item[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -82,14 +84,37 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
     }
 
     function testDeleteComment() {
-	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
-	GalleryUtilities::putRequestVariable('commentId', $this->_comment->getId());
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
 	GalleryUtilities::putRequestVariable('form.action.delete', 1);
 	GalleryUtilities::putRequestVariable('return.x', 'y');
 
 	$results = $this->handleRequest();
 	$this->assertRedirect(array('x' => 'y'), $results);
     }
-    
+
+    /**
+     * Use a bogus comment id
+     */
+    function testMaliciousDeleteComment1() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', 123123123);
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
+    }
+
+    /**
+     * Use mismatched item id and comment id
+     */
+    function testMaliciousDeleteComment2() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[1]->getId());
+	GalleryUtilities::putRequestVariable('form.action.delete', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+    }
 }
 ?>

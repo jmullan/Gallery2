@@ -59,7 +59,7 @@ class DeleteCommentController extends GalleryController {
 
 	    /* Make sure that the comment<->parent relationship is right */
 	    if ($comment->getParentId() != $itemId) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__));
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
 
 	    $ret = $gallery->deleteEntityById($comment->getId());
