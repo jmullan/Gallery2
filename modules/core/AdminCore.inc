@@ -324,6 +324,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['themeList'] = GalleryTheme::getThemeList();
 	$AdminCore['localServerDirList'] = $localServerDirList;
 	$AdminCore['languageList'] = $languageList;
+	$AdminCore['translationsSupported'] = function_exists('dngettext');
 	$AdminCore['orderByList'] = $orderByList;
 	$AdminCore['orderDirectionList'] = $orderDirectionList;
 	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;

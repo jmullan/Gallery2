@@ -57,6 +57,7 @@
       {/if}
     </div>
       
+    {if $UserPreferences.translationsSupported}
     <div class="gbDataEntry">
       <div class="giTitle">
 	{g->text text="Language"}
@@ -66,6 +67,7 @@
 	  {html_options options=$UserPreferences.languageList selected=$form.language}
       </select>
     </div>
+    {/if}
   </div>
 
   <div class="gbButtons">

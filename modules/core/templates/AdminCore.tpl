@@ -93,6 +93,7 @@
       {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
     </div>
 
+    {if $AdminCore.translationsSupported}
     <table class="gbDataTable">
       <tr>
 	<td>
@@ -101,11 +102,16 @@
 
 	<td>
 	  <select name="{g->formVar var="form[default][language]"}">
-	      {html_options options=$AdminCore.languageList selected=$form.default.language}
+	    {html_options options=$AdminCore.languageList selected=$form.default.language}
 	  </select>
 	</td>
       </tr>
     </table>
+    {else}
+    <div class="giWarning">
+      {g->text text="Your webserver does not support localization.  Please instruct your system administrator to reconfigure PHP with the <a href=\"http://php.net/gettext\">gettext</a> option enabled."}
+    </div>
+    {/if}
   </div>
 
   <div class="gbAdmin">
