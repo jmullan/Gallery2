@@ -57,11 +57,28 @@ class GalleryEvent {
      */
     var $_entity;
 
+    /**
+     * Event specific data
+     *
+     * @var string $_data
+     * @access private
+     */
+    var $_data;
+
     /*
      * ****************************************
      *                 Methods
      * ****************************************
      */
+
+    /**
+     * Constructor
+     */
+    function GalleryEvent() {
+	$this->setEventName(null);
+	$this->setEntity(null);
+	$this->setData(null);
+    }
 
     /**
      * Set this event's name
@@ -99,6 +116,23 @@ class GalleryEvent {
 	return $this->_entity;
     }
     
+    /**
+     * Set this event's data
+     *
+     * @param object GalleryData the data
+     */
+    function setData($data) {
+	$this->_data = $data;
+    }
+
+    /**
+     * Return the event's data
+     *
+     * @return object GalleryData
+     */
+    function getData() {
+	return $this->_data;
+    }
 }
 
 ?>

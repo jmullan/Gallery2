@@ -162,7 +162,7 @@ class AdminModulesControllerTestModule {
 
     function activate() {
 	$this->_setCalled('activate');
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), array());
     }
 
     function deactivate() {

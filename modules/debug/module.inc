@@ -75,42 +75,6 @@ class DebugModule extends GalleryModule {
     }
 	
     /**
-     * @see GalleryModule::activate()
-     */
-    function activate() {
-	global $gallery;
-	
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-	
-    /**
-     * @see GalleryModule::deactivate()
-     */
-    function deactivate() {
-	global $gallery;
-
-	list ($ret, $redirect) = parent::deactivate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	return array(GalleryStatus::success(), $redirect);
-    }
-	
-    /**
-     * @see GalleryModule::needsConfiguration()
-     * No configuration needed in this module
-     */
-    function needsConfiguration() {
-	global $gallery;
-
-	return array(GalleryStatus::success(), false);
-    }
-
-    /**
      * @see GalleryModule::getItemLinks
      */
     function getItemLinks($items) {

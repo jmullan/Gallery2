@@ -52,6 +52,7 @@ class EventTest extends GalleryTestCase {
 	
 	$event = GalleryCoreApi::newEvent($eventName);
 	$event->setEntity("bogus entity");
+	$event->setData('some data');
 	$ret = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

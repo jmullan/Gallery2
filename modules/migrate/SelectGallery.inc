@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
 
 /**
  * @version $Revision$ $Date$
@@ -126,8 +126,22 @@ class SelectGalleryView extends GalleryView {
 	    $recentPaths = array();
 	}
 
+	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$hasToolkit = false;
+	for ($i = 0; $i < sizeof($operations); $i++) {
+	    if ($operations[$i]['name'] == 'thumbnail') {
+		$hasToolkit = true;
+		break;
+	    }
+	}
+
 	$SelectGallery = array();
 	$SelectGallery['recentPaths'] = $recentPaths;
+	$SelectGallery['hasToolkit'] = $hasToolkit;
 
         $template->setVariable('controller', 'migrate:SelectGallery');
 	$template->setVariable('SelectGallery', $SelectGallery);

@@ -104,6 +104,7 @@ class GalleryEventHelper_simple {
 	}
 	
 	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+
 	if (!empty($eventListeners[$event->getEventName()])) {
 	    $listeners = $eventListeners[$event->getEventName()];
 	    for ($i = 0; $i < sizeof($listeners); $i++) {

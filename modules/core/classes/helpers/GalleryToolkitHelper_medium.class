@@ -384,7 +384,7 @@ class GalleryToolkitHelper_medium {
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
             SELECT
-              [GalleryToolkitOperationMap::name],
+              DISTINCT([GalleryToolkitOperationMap::name]),
               [GalleryToolkitOperationMap::outputMimeType],
               [GalleryToolkitOperationMap::description],
               [GalleryToolkitOperationParameterMap::type],
@@ -409,24 +409,20 @@ class GalleryToolkitHelper_medium {
 	    }
 
 	    $data = array();
-	    $current = array();
+	    $pointers = array();
 	    while ($result = $searchResults->nextResult()) {
-		if (!empty($current)) {
-		    if ($current['name'] != $result[0]) {
-			$data[] = $current;
-			$current = array();
-		    }
+		if (empty($pointers[$result[0]])) {
+		    $pointers[$result[0]] =
+			array('name' => $result[0],
+			      'outputMimeType' => empty($result[1]) ? $mimeType : $result[1],
+			      'description' => $result[2]);
+		    $data[] =& $pointers[$result[0]];
 		}
-		    
-		if (empty($current)) {
-		    $current = array('name' => $result[0],
-				     'outputMimeType' => empty($result[1]) ? $mimeType : $result[1],
-				     'description' => $result[2]);
-		}
-		$current['parameters'][] = array('type' => $result[3],
-						 'description' => $result[4]);
+
+		$pointers[$result[0]]['parameters'][] =
+		    array('type' => $result[3], 'description' => $result[4]);
 	    }
-	    $data[] = $current;
+	    
 	    GalleryDataCache::put($cacheKey, $data);
 	} else {
 	    $data = GalleryDataCache::get($cacheKey);

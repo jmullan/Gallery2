@@ -186,11 +186,6 @@ class FfmpegModule extends GalleryModule {
     function activate() {
 	global $gallery;
 	
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Load any classes we require */
 	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
 
@@ -198,7 +193,7 @@ class FfmpegModule extends GalleryModule {
 	list ($ret, $results) =
 	    FfmpegToolkitHelper::getOperationsAndProperties();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach ($results['operations'] as $operation => $info) {
@@ -209,7 +204,7 @@ class FfmpegModule extends GalleryModule {
 							   $info['description'],
 							   $info['outputMimeType']);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -220,11 +215,16 @@ class FfmpegModule extends GalleryModule {
 							  $info['type'],
 							  $info['description']);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 	
-	return GalleryStatus::success();
+	list ($ret, $redirect) = parent::activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
     }
 	
     /**

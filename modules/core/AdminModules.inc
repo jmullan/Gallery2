@@ -89,13 +89,15 @@ class AdminModulesController extends GalleryController {
 			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 		    }
 		
-		    $ret = $module->activate();
+		    list ($ret, $redirect) = $module->activate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
+		    if (empty($redirect)) {
+			$redirect['view'] = 'core:SiteAdmin';
+			$redirect['subView'] = 'core:AdminModules';
+		    }
 		    $status['activated'] = $module->getName();
 		}
 		break;

@@ -57,6 +57,13 @@ class SquareThumbModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::registerEventListeners();
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new SquareThumbModule());
+    }
+    
+    /**
      * @see GalleryModule::install()
      */
     function install() {
@@ -99,27 +106,9 @@ class SquareThumbModule extends GalleryModule {
     function activate() {
 	global $gallery;
 
-	/* Find out what mime-types currently have toolkit support for: scale, crop, dimensions */
-	list ($ret, $scale) = GalleryCoreApi::getToolkitOperationMimeTypes('scale');
+	list ($ret, $mimeTypes) = $this->_getSupportedMimeTypes();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	list ($ret, $crop) = GalleryCoreApi::getToolkitOperationMimeTypes('crop');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	$mimeTypes = array();
-	foreach (array_keys(array_merge($scale, $crop)) as $mimeType) {
-	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    foreach ($properties as $tmp) {
-		if ($tmp['name'] == 'dimensions') {
-		    $mimeTypes[] = $mimeType;
-		    break;
-		}
-	    }
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Register toolkit operation using high priority */
@@ -128,16 +117,56 @@ class SquareThumbModule extends GalleryModule {
 			array(array('type' => 'int', 'description' => $gallery->i18n('target size'))),
 			$gallery->i18n('Create square thumbnail'), '', 3);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    /* Can't activate unless there's a toolkit to leech off of */
+	    return array(GalleryStatus::success(),
+			 array('view' => 'core:SiteAdmin',
+			       'subView' => 'squarethumb:CantActivate'));
+	}
+
+	list ($ret, $redirect) = parent::activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
+    }
+
+    /**
+     * Find out what mime-types currently have toolkit support for:
+     *    scale, crop, dimensions
+     *
+     * @return array object GalleryStatus a status code
+     *               array mime types
+     */
+    function _getSupportedMimeTypes() {
+	list ($ret, $scale) = GalleryCoreApi::getToolkitOperationMimeTypes('scale');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	list ($ret, $crop) = GalleryCoreApi::getToolkitOperationMimeTypes('crop');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$mimeTypes = array();
+	foreach (array_keys(array_merge($scale, $crop)) as $mimeType) {
+	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($properties as $tmp) {
+		if ($tmp['name'] == 'dimensions') {
+		    $mimeTypes[] = $mimeType;
+		    break;
+		}
 	    }
 	}
-
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
+	
+	return array(GalleryStatus::success(), $mimeTypes);
     }
 
     /**
@@ -158,6 +187,49 @@ class SquareThumbModule extends GalleryModule {
 	}
 
 	return array(GalleryStatus::success(), $redirect);
+    }
+
+    /**
+     * Handler for Gallery::DeactivatePlugin event.
+     *
+     * @param object GalleryEvent the event
+     * @return object GalleryStatus a status code
+     */
+    function handleEvent($event) {
+	/*
+	 * We're going to deactivate this plugin which will generate another Gallery::DeactivatePlugin event,
+	 * so make sure that we don't handle *that* event and get into an infinite loop!
+	 */
+	$data = $event->getData();
+	if ($event->getEventName() == 'Gallery::DeactivatePlugin' && $data['pluginId'] != 'squarethumb') {
+
+	    list ($ret, $isActive) = $this->isActive();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($isActive) {
+		list ($ret, $redirect) = $this->deactivate();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		list ($ret, $mimeTypes) = $this->_getSupportedMimeTypes();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if (!empty($mimeTypes)) {
+		    list ($ret, $redirect) = $this->activate();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    /* Redirect should be empty since we verified the mime types exist */
+		}
+	    }
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

@@ -87,7 +87,7 @@ class GalleryPluginHelper_medium {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginMap.class');
 	$ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
 						      'pluginId' => $pluginId),
 						array('active' => 0));
@@ -99,6 +99,13 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
+	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
+	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
+	$ret = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	return GalleryStatus::success();
     }
 

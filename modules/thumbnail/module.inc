@@ -107,27 +107,27 @@ class ThumbnailModule extends GalleryModule {
      * @see GalleryModule::activate()
      */
     function activate() {
-	require_once(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 	global $gallery;
 	
 	/* Register toolkit operation for any mime type settings already in the database */
 	list ($ret, $mimeTypeMap) = ThumbnailHelper::fetchMimeTypeMap();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (!empty($mimeTypeMap)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
 				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
 	/* Set some defaults if not already supported */
 	list ($ret, $toolkitMime) = ThumbnailHelper::fetchToolkitSupport();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$itemId = array();
 	foreach (array(
@@ -144,24 +144,24 @@ class ThumbnailModule extends GalleryModule {
 			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg',
 			    array('width' => 400, 'height' => 352));
 			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
 			$ret = ThumbnailHelper::updateItem($itemId[$mimeImage], $mime);
 			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
 		}
 	    }
 	}
 
-	$ret = parent::activate();
+	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $redirect);
     }
 
     /**

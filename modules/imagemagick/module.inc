@@ -98,11 +98,6 @@ class ImageMagickModule extends GalleryModule {
     function activate() {
 	global $gallery;
 
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	/* Load any classes we require */
 	require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
 
@@ -110,7 +105,7 @@ class ImageMagickModule extends GalleryModule {
 	list ($ret, $results) =
 	    ImageMagickToolkitHelper::getOperationsAndProperties();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach ($results['operations'] as $operation => $info) {
@@ -122,7 +117,7 @@ class ImageMagickModule extends GalleryModule {
 							    $info['description'],
 							    $outputMimeType);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -133,11 +128,16 @@ class ImageMagickModule extends GalleryModule {
 							   $info['type'],
 							   $info['description']);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 	
-	return GalleryStatus::success();
+	list ($ret, $redirect) = parent::activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $redirect);
     }
 
     /**
@@ -146,13 +146,17 @@ class ImageMagickModule extends GalleryModule {
     function deactivate() {
 	global $gallery;
 
-	list ($ret, $redirect) = parent::deactivate();
+	/*
+	 * Unregister all of our properties and operations.  Do this before the parent deactivates so that any
+	 * event handlers triggered by the deactivation will see the world as it will be after the
+	 * deactivation is done.
+	 */
+	$ret = GalleryCoreApi::unregisterToolkit('ImageMagick');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	/* Unregister all of our properties and operations */
-	$ret = GalleryCoreApi::unregisterToolkit('ImageMagick');
+	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
