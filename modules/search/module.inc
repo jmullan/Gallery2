@@ -88,9 +88,24 @@ class SearchModule extends GalleryModule {
 	
 	return array(GalleryStatus::success(), $installed);
     }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
 	
     /**
-     * @see GalleryModule::oadSystemContent
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
+    }
+	
+    /**
+     * @see GalleryModule::loadSystemContent
      */
     function loadSystemContent(&$template) {
 	global $gallery;

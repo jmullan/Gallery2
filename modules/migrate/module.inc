@@ -86,6 +86,21 @@ class MigrateModule extends GalleryModule {
     }
 
     /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+	
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
+    }
+	
+    /**
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {

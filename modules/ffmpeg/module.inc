@@ -98,6 +98,88 @@ class FfmpegModule extends GalleryModule {
 	
 	return array(GalleryStatus::success(), $installed);
     }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+	
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	global $gallery;
+	
+	list ($ret, $needsConfiguration) = $this->needsConfiguration();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
+	}
+
+	if (!$needsConfiguration) {
+	    return array(GalleryStatus::success(), true);
+	}
+
+	/* Try a bunch of likely seeming paths to see if any of them work. */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	/* Start with system paths.  Tack on a trailing slash if necessary. */
+	$paths = array();
+	foreach (explode(':', getenv('PATH')) as $path) {
+	    $path = trim($path);
+	    if ($path{strlen($path)-1} != $slash) {
+		$path .= $slash;
+	    }
+	    $paths[] = $path . 'ffmpeg';
+	}
+	
+	/* Tack on other likely paths, based on our OS */
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $paths[] = 'C:\Program Files\ffmpeg';
+	    $paths[] = 'C:\apps\ffmpeg';
+	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    $paths[] = '/usr/bin/ffmpeg';
+	    $paths[] = '/usr/local/bin/ffmpeg';
+	    $paths[] = '/bin/ffmpeg';
+	} else {
+	    return array(GalleryStatus::success(), false);
+	}
+
+	/* Load any classes we require */
+	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+
+	/* Now try each path in turn to see which ones work */
+	foreach ($paths as $path) {
+	    list ($ret, $testResults) = FfmpegToolkitHelper::testBinary($path);
+	    if ($ret->isError()) {
+		/* Something went wrong with this path -- try the next path */
+		continue;
+	    }
+	    
+	    $failCount = 0;
+	    foreach ($testResults as $testResult) {
+		/* At least one test should work, else this path is not a valid one */
+		if (!$testResult['success']) {
+		    $failCount++;
+		}
+	    }
+			
+	    if ($failCount == 0) {
+		/* We have a winner */
+		$ret = $gallery->setModuleParameter('ffmpeg', 'path', $path);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), false);
+		}
+
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
 	
     /**
      * @see GalleryModule::activate()

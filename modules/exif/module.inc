@@ -41,6 +41,9 @@ class ExifModule extends GalleryModule {
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
 	$this->setVersion('1.0');
+
+	require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
+	require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
     }
 
     /**
@@ -54,9 +57,6 @@ class ExifModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/classes/ExifHelper.class');
-	require_once(dirname(__FILE__) . '/classes/ExifPropertiesMap.class');
-	
 	return GalleryStatus::success();
     }
 
@@ -101,6 +101,21 @@ class ExifModule extends GalleryModule {
 	}
 	
 	return array(GalleryStatus::success(), $installed);
+    }
+
+    /**
+     * @see GalleryModule::canBeAutoInstalled
+     */
+    function canBeAutoInstalled() {
+	return true;
+    }
+	
+    /**
+     * @see GalleryModule::autoConfigure
+     */
+    function autoConfigure() {
+	/* We don't require any special configuration */
+	return array(GalleryStatus::success(), true);
     }
 	
     /**

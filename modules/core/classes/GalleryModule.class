@@ -217,7 +217,7 @@ class GalleryModule {
      * Can this module be installed automatically if possible?  Default is false
      * which is a security measure.  Only activate modules that by default do not
      * expose any sensitive data.  For example, the debug module shouldn't be auto
-     * installed cause it can show filesystem paths.
+     * installed cause it can show filesystem paths.  
      *
      */
     function canBeAutoInstalled() {
@@ -228,7 +228,8 @@ class GalleryModule {
      * Allow this module to autoconfigure itself.  It should only autoconfigure if it is
      * marked as needing configuration (see GalleryModule::needsConfiguration) and it should
      * do its best to choose a reasonable configuration.  Return true upon success,
-     * even if nothing has to be done to get a successful configuration.
+     * even if nothing has to be done to get a successful configuration.  This method
+     * should accept all the module's defaults wherever possible.
      *
      * @return array object GalleryStatus a status code
      *               boolean

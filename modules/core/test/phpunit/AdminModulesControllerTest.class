@@ -150,7 +150,7 @@ class AdminModulesControllerTestModule {
     
     function install() {
 	$this->_setCalled('install');
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), true);
     }
 
     function activate() {

@@ -233,7 +233,8 @@ class ImageMagickModule extends GalleryModule {
 	
 	/* Tack on other likely paths, based on our OS */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    $paths = array('C:\apps\imagemagick');
+	    $paths[] = 'C:\Program Files\ImageMagick';
+	    $paths[] = 'C:\apps\ImageMagick';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';

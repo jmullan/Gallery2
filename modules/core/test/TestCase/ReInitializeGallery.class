@@ -27,20 +27,7 @@ class ReInitializeGalleryTestCase extends TestCase {
 			      array('moduleId' => 'netpbm', 'testName' => 'ConfigureNetPbm'),
 			      array('moduleId' => 'netpbm', 'testName' => 'ActivateModule'),
 			      array('moduleId' => 'debug', 'testName' => 'ActivateModule'),
-			      array('moduleId' => 'search', 'testName' => 'ActivateModule'),
-			      array('moduleId' => 'comment', 'testName' => 'ConfigureComment'),
-			      array('moduleId' => 'comment', 'testName' => 'ActivateModule'),
-			      array('moduleId' => 'migrate', 'testName' => 'ActivateModule'),
-			      array('moduleId' => 'exif', 'testName' => 'ConfigureExif'),
-			      array('moduleId' => 'exif', 'testName' => 'ActivateModule'),
 			      );
-
-	/* No Ffmpeg on Windows, yet */
-	$platform = $gallery->getPlatform();
-	if (get_class($platform) == 'unixplatform') {
-	    $dependencies[] = array('moduleId' => 'ffmpeg', 'testName' => 'ConfigureFfmpeg');
-	    $dependencies[] = array('moduleId' => 'ffmpeg', 'testName' => 'ActivateModule');
-	}
 
 	return $dependencies;
     }
