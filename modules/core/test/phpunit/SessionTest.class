@@ -48,6 +48,30 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assertEquals(array(GalleryStatus::success(), $value), $session->get($key));
     }
+
+    function testStatus() {
+	global $gallery;
+	
+	$session =& $gallery->getSession();
+
+	$status = array('x' => 'y', 'a' => 'b');
+	list ($ret, $statusId) = $session->putStatus($status);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $result) = $session->getStatus($statusId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $session->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($status, $result);
+    }
 }
 
 ?>

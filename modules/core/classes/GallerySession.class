@@ -482,6 +482,44 @@ class GallerySession_core {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Store a status message
+     *
+     * @param array status data
+     * @return array object GalleryStatus a status code
+     *               string the status id
+     */
+    function putStatus($status) {
+	$tod = gettimeofday();
+	$statusId = substr(md5($tod['usec'] + rand(1,1000)), 0, 8);
+	$ret = $this->put('core.status.' . $statusId, serialize($status));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $statusId);
+    }
+
+    /**
+     * Get a status message
+     *
+     * @param string the status id
+     * @return array object GalleryStatus a status code
+     *               array the status message
+     */
+    function getStatus($statusId) {
+	list ($ret, $status) = $this->get('core.status.' . $statusId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($status)) {
+	    $status = unserialize($status);
+	}
+
+	return array(GalleryStatus::success(), $status);
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GallerySession.inc');
