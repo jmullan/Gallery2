@@ -119,12 +119,15 @@ if (isset($HTTP_GET_VARS['filter'])) {
 $testSuite = new TestSuite();
 $ret = GalleryMain($testSuite, $filter);
 if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
+    print $gallery->getDebugBuffer();
     return;
 }
 
 list ($ret, $moduleStatusList) = $gallery->getModuleStatus();
 if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     return;
 }
@@ -137,6 +140,7 @@ if (!$session->isUsingCookies()) {
 
 list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 if ($ret->isError()) {
+    $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
     return;
 }
