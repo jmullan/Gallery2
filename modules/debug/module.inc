@@ -1,0 +1,168 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Debug
+ * @author Ernesto Baschny <ernst@baschny.de>
+ */
+
+/**
+ * Debug Module
+ *
+ * This module provides some debug information on Gallery
+ *
+ * @package Debug
+ */
+class DebugModule extends GalleryModule {
+
+    function DebugModule() {
+	$this->setName('debug');
+	$this->setDescription('Debugging Options');
+	$this->setVersion('1.0');
+    }
+
+    /**
+     * 
+     */
+    function init() {
+	global $gallery;
+
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$classDir = dirname(__FILE__) . '/classes/';
+	require_once($classDir . 'DebugHelper.class');
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * 
+     */
+    function install() {
+	list ($ret, $version) = $this->getModuleParameter('version');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($version != $this->getVersion()) {
+	    if (empty($version)) {
+		/*
+		 * This is an initial install. 
+		 */
+	    }
+
+	    $ret = $this->setModuleParameter('version', $this->getVersion());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+	
+    /**
+     * 
+     */
+    function activate() {
+	global $gallery;
+	
+	$ret = parent::activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+	
+    /**
+     * 
+     */
+    function deactivate() {
+	global $gallery;
+
+	$ret = parent::deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+	
+    /**
+     * No configuration needed in this module
+     */
+    function needsConfiguration() {
+	global $gallery;
+
+	return array(GalleryStatus::success(), false);
+    }
+
+    /**
+     * 
+     */
+    function getItemLinks($items, $returnUrlParams) {
+	global $gallery;
+
+	foreach ($returnUrlParams as $param => $value) {
+	    $params['return.' . $param] = $value;
+	}
+
+	$links = array();
+	foreach ($items as $item) {
+	    /* Permissions for this item */
+	    list ($ret, $permissions) =
+		GalleryItemHelper::getPermissions($item->getId(),
+						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($permissions['core.all'])) {
+		$links[$item->getId()][] =
+		    array('text' => "show debug tree",
+			  'params' => array_merge(array('view' => 'debug:ShowTree',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+	}
+
+	return array(GalleryStatus::success(), $links);
+    }
+    
+    /**
+     * 
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Debug'),
+				 'view' => 'debug:AdminDebug')));
+    }
+
+    /**
+     * 
+     */
+    function getConfigurationView() {
+	return array(GalleryStatus::success(), 'debug:AdminDebug');
+    }
+}
+?>
