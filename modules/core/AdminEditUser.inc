@@ -129,13 +129,6 @@ class AdminEditUserController extends GalleryController {
 class AdminEditUserView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
-     */
-    function renderHead() {
-	return array(GalleryStatus::success(), false);
-    }
-    
-    /**
      * @see GalleryView::renderBody
      */
     function renderBody() {

@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class AdminEditUserConfirmationView extends GalleryView {
+class AdminDeleteUserConfirmationView extends GalleryView {
 
     /**
      * @see GalleryView::renderBody
@@ -46,7 +46,7 @@ class AdminEditUserConfirmationView extends GalleryView {
 	}
 	$smarty->assign('username', $username);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('AdminEditUserConfirmation.tpl');
+	$html = $smarty->fetch('AdminDeleteUserConfirmation.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }

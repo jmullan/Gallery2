@@ -65,31 +65,35 @@ class AdminUsersController extends GalleryController {
 	    $results['view'] = 'core:SiteAdmin';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateUser');
 	    
-	} else if (isset($form['action']['editFromText'])) {
+	} else if (isset($form['action']['editFromText']) ||
+		   isset($form['action']['editFromList'])) {
+
+	    if (isset($form['action']['editFromText'])) {
+		$username = $form['text']['username'];
+	    } else {
+		$username = $form['list']['username'];
+	    }
 
 	    /* Show the "edit user" view */
-	    if (!empty($form['text']['username'])) {
+	    if ($username) {
 		$results['view'] = 'core:SiteAdmin';
 		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-		GalleryUtilities::putRequestVariable('username', $form['text']['username']);
+		GalleryUtilities::putRequestVariable('username', $username);
 	    }
 	    
-	} else if (isset($form['action']['editFromList'])) {
+	} else if (isset($form['action']['deleteFromText']) ||
+		   isset($form['action']['deleteFromList'])) {
 
-	    if (!empty($form['list']['username'])) {
-		/* Show the "edit user" view */
-		$results['view'] = 'core:SiteAdmin';
-		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-		GalleryUtilities::putRequestVariable('username', $form['list']['username']);
+	    if (isset($form['action']['deleteFromText'])) {
+		$username = $form['text']['username'];
+	    } else {
+		$username = $form['list']['username'];
 	    }
-	    
-	} else if (isset($form['action']['deleteFromText'])) {
 
 	    /* Show the "delete user" view */
 	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('username', $form['text']['username']);
+	    GalleryUtilities::putRequestVariable('username', $username);
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminDeleteUser');
-	    
 	}
 
 	if (empty($results['view'])) {
@@ -188,5 +192,6 @@ class AdminUsersView extends GalleryView {
 
 	return array(GalleryStatus::success(), $html);
     }
+
 }
 ?>

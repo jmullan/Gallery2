@@ -102,13 +102,6 @@ class AdminCreateUserController extends GalleryController {
 class AdminCreateUserView extends GalleryView {
 
     /**
-     * @see GalleryView::renderHead
-     */
-    function renderHead() {
-	return array(GalleryStatus::success(), false);
-    }
-    
-    /**
      * @see GalleryView::renderBody
      */
     function renderBody() {
