@@ -335,7 +335,10 @@ class CommentModule extends GalleryTemplateModule {
 	    $template->setVariable('can', $can);
 	    $template->setVariable('item', $item->getMemberData());
 	    $template->setVariable('totalComments', $totalComments);
-	    $html = $template->render('ItemDetails.tpl');
+	    list($ret, $html) = $template->render('ItemDetails.tpl');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), $html);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $html);

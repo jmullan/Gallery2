@@ -178,7 +178,10 @@ class AdminCreateUserView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('languageList', $languageList);
 	$template->setVariable('controller', 'core:AdminCreateUser');
-	$html = $template->render('AdminCreateUser.tpl');
+	list($ret, $html) = $template->render('AdminCreateUser.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

@@ -257,7 +257,11 @@ function GalleryMain($startTime) {
 	$galleryData['version'] = '2';
 	$template->setVariable('master', $master);
 	$template->setVariable('gallery', $galleryData);
-	print $template->render('global.tpl');
+	list($ret, $html) = $template->render('global.tpl');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	print $html;
     }
 
     return GalleryStatus::success();

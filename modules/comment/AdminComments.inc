@@ -77,7 +77,10 @@ class AdminCommentsView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'comment:AdminComments');
-	$html = $template->render('AdminComments.tpl');
+	list($ret, $html) = $template->render('AdminComments.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

@@ -151,7 +151,10 @@ class ItemDeleteView extends GalleryView {
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('childCount', $childCount);
 	$template->setVariable('controller', 'core:ItemDelete');
-	$html = $template->render('ItemDelete.tpl');
+	list($ret, $html) = $template->render('ItemDelete.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

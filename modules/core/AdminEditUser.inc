@@ -235,7 +235,10 @@ class AdminEditUserView extends GalleryView {
 	    $template->setVariable('languageList', $languageList);
 	}
 	$template->setVariable('controller', 'core:AdminEditUser');
-	$html = $template->render('AdminEditUser.tpl');
+	list($ret, $html) = $template->render('AdminEditUser.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

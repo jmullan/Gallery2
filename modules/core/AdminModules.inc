@@ -221,7 +221,10 @@ class AdminModulesView extends GalleryView {
 	$template = $this->_getTemplate();
 	$template->setVariable('modules', $modules);
 	$template->setVariable('controller', 'core:AdminModules');
-	$html = $template->render('AdminModules.tpl');
+	list($ret, $html) = $template->render('AdminModules.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

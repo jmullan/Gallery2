@@ -57,8 +57,11 @@ class ShowCommentsView extends GalleryView {
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('ShowCommentsHead.tpl');
-	
+	list($ret, $html) = $template->render('ShowCommentsHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+    
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -138,7 +141,10 @@ class ShowCommentsView extends GalleryView {
 	$template->setVariable('can', $can);
 	$template->setVariable('return', $return);
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('ShowComments.tpl');
+	list($ret, $html) = $template->render('ShowComments.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

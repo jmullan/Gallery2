@@ -297,7 +297,10 @@ class ItemMoveView extends GalleryView {
         $template->setVariable('peerTypes', $peerTypes);
         $template->setVariable('albumTree', $albumTree);
         $template->setVariable('controller', 'core:ItemMove');
-        $html = $template->render('ItemMove.tpl');
+        list($ret, $html) = $template->render('ItemMove.tpl');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), $html);
+        }
 
         return array(GalleryStatus::success(), $html);
     }

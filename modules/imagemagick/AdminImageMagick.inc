@@ -194,8 +194,11 @@ class AdminImageMagickView extends GalleryView {
 	$template->setVariable('mimeTypes', $mimeTypes);
 	$template->setVariable('jpegQualityList', $jpegQualityList);
 	$template->setVariable('controller', 'imagemagick:AdminImageMagick');
-	$html = $template->render('AdminImageMagick.tpl');
-
+	list($ret, $html) = $template->render('AdminImageMagick.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+	
 	return array(GalleryStatus::success(), $html);
     }
 }

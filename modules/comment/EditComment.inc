@@ -153,7 +153,10 @@ class EditCommentView extends GalleryView {
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('EditCommentHead.tpl');
+	list($ret, $html) = $template->render('EditCommentHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -218,7 +221,10 @@ class EditCommentView extends GalleryView {
 	$template->setVariable('comment', $comment->getMemberData());
 	$template->setVariable('form', $form);
 	$template->setVariable('controller', 'comment:EditComment');
-	$html = $template->render('EditComment.tpl');
+	list($ret, $html) = $template->render('EditComment.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

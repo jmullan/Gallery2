@@ -421,7 +421,10 @@ class ItemEditAlbumView extends GalleryView {
 	$template->setVariable('orderByList', $orderByList);
 	$template->setVariable('orderDirectionList', $orderDirectionList);
 	$template->setVariable('controller', 'core:ItemEditAlbum');
-	$html = $template->render('ItemEditAlbum.tpl');
+	list($ret, $html) = $template->render('ItemEditAlbum.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

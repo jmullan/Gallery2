@@ -202,7 +202,10 @@ class AdminNetPbmView extends GalleryView {
 	$template->setVariable('pnmToJpegList', $pnmToJpegList);
 	$template->setVariable('jpegQualityList', $jpegQualityList);
 	$template->setVariable('controller', 'netpbm:AdminNetPbm');
-	$html = $template->render('AdminNetPbm.tpl');
+	list($ret, $html) = $template->render('AdminNetPbm.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

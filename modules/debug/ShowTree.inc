@@ -41,8 +41,11 @@ class ShowTreeView extends GalleryView {
     function renderHead() {
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
-	$html = $template->render('DebugHead.tpl');
-
+	list($ret, $html) = $template->render('DebugHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+    
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -105,8 +108,11 @@ class ShowTreeView extends GalleryView {
 	$template->setVariable('entityTable', $entityTable);
 	$template->setVariable('form', $form);
 	$template->setVariable('return', $return);
-	$html = $template->render('ShowTree.tpl');
-
+	list($ret, $html) = $template->render('ShowTree.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+	
 	return array(GalleryStatus::success(), $html);
     }
 }

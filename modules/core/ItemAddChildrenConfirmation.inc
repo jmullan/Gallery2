@@ -68,7 +68,10 @@ class ItemAddChildrenConfirmationView extends GalleryView {
 	$template->setVariable('status', $status);
 	$template->setVariable('count', $count);
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('ItemAddChildrenConfirmation.tpl');
+	list($ret, $html) = $template->render('ItemAddChildrenConfirmation.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

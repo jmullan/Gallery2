@@ -332,7 +332,10 @@ class ItemAddChildrenView extends GalleryView {
 	$template->setVariable('localServerDirList', $localServerDirList);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemAddChildren');
-	$html = $template->render('ItemAddChildren.tpl');
+	list($ret, $html) = $template->render('ItemAddChildren.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

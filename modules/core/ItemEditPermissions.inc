@@ -451,7 +451,10 @@ class ItemEditPermissionsView extends GalleryView {
 	$template->setVariable('groupPermissions', $groupPermissions);
 	$template->setVariable('allPermissions', $allPermissions);
 	$template->setVariable('controller', 'core:ItemEditPermissions');
-	$html = $template->render('ItemEditPermissions.tpl');
+	list($ret, $html) = $template->render('ItemEditPermissions.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

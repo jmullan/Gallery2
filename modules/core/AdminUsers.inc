@@ -229,7 +229,10 @@ class AdminUsersView extends GalleryView {
 	$template->setVariable('status', $status);
 	$template->setVariable('totalUserCount', $totalUserCount);
 	$template->setVariable('controller', 'core:AdminUsers');
-	$html = $template->render('AdminUsers.tpl');
+	list($ret, $html) = $template->render('AdminUsers.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

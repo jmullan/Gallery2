@@ -335,7 +335,10 @@ class ItemEditImageView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemEditImage');
-	$html = $template->render('ItemEditImage.tpl');
+	list($ret, $html) = $template->render('ItemEditImage.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

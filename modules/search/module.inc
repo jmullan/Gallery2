@@ -93,7 +93,11 @@ class SearchModule extends GalleryTemplateModule {
 	$template = $this->_getTemplate();
 	$template->setVariable('view', 'search:SearchScan');
 	$template->setVariable('return', $return);
-	$html = $template->render('SystemContent.tpl');
+	list($ret, $html) = $template->render('SystemContent.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), array('content' => $html));
     }
 

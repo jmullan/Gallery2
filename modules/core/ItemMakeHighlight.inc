@@ -128,7 +128,10 @@ class ItemMakeHighlightView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemMakeHighlight');
-	$html = $template->render('ItemMakeHighlight.tpl');
+	list($ret, $html) = $template->render('ItemMakeHighlight.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

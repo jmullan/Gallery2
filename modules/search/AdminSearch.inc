@@ -68,7 +68,10 @@ class AdminSearchView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'comment:AdminSearch');
-	$html = $template->render('AdminSearch.tpl');
+	list($ret, $html) = $template->render('AdminSearch.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

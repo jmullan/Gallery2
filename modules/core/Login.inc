@@ -95,7 +95,11 @@ class LoginView extends GalleryView {
 	global $gallery;
 
 	$template = $this->_getTemplate();
-	$html = $template->render('LoginHead.tpl');
+	list($ret, $html) = $template->render('LoginHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -124,8 +128,10 @@ class LoginView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('return', $return);
 	$template->setVariable('controller', 'core:Login');
-	$html = $template->render('Login.tpl');
-
+	list($ret, $html) = $template->render('Login.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);	    
+	}
 	return array(GalleryStatus::success(), $html);
     }
 }

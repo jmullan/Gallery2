@@ -172,6 +172,8 @@ class GallerySession_core {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$this->_isSessionDataModified = false;
+
 	/*
 	 * Send back a cookie.
 	 *

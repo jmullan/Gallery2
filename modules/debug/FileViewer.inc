@@ -39,8 +39,11 @@ class FileViewerView extends GalleryView {
     function renderHead() {
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
-	$html = $template->render('FileViewerHead.tpl');
-
+	list($ret, $html) = $template->render('FileViewerHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+	
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -96,9 +99,12 @@ class FileViewerView extends GalleryView {
 	if ($legal) {
 	    $template->setVariable('currentLine', $line);
 	    $template->setVariable('lines', $lines);
-	    $html = $template->render('FileViewerLegalFile.tpl');
+	    list($ret, $html) = $template->render('FileViewerLegalFile.tpl');
 	}  else {
-	    $html = $template->render('FileViewerIllegalFile.tpl');
+	    list($ret, $html) = $template->render('FileViewerIllegalFile.tpl');
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
 	}
 	
 	return array(GalleryStatus::success(), $html);

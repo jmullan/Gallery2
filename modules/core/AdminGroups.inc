@@ -272,7 +272,10 @@ class AdminGroupsView extends GalleryView {
 	$template->setVariable('status', $status);
 	$template->setVariable('totalGroupCount', $totalGroupCount);
 	$template->setVariable('controller', 'core:AdminGroups');
-	$html = $template->render('AdminGroups.tpl');
+	list($ret, $html) = $template->render('AdminGroups.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

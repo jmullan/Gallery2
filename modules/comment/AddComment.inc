@@ -113,7 +113,10 @@ class AddCommentView extends GalleryView {
 
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
-	$html = $template->render('AddCommentHead.tpl');
+	list($ret, $html) = $template->render('AddCommentHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -155,7 +158,10 @@ class AddCommentView extends GalleryView {
 	$template->setVariable('return', $return);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'comment:AddComment');
-	$html = $template->render('AddComment.tpl');
+	list($ret, $html) = $template->render('AddComment.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

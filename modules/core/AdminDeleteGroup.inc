@@ -136,7 +136,10 @@ class AdminDeleteGroupView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('group', $group->getMemberData());
 	$template->setVariable('controller', 'core:AdminDeleteGroup');
-	$html = $template->render('AdminDeleteGroup.tpl');
+	list($ret, $html) = $template->render('AdminDeleteGroup.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

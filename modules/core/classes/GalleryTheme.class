@@ -596,7 +596,12 @@ class GalleryTheme {
 	$template = $this->_getTemplate();
 	$template->setVariable('params', $params);
 	$template->setVariable('content', $content);
-	return $template->render($templateName . '.tpl');
+	list($ret, $html) = $template->render($templateName . '.tpl');
+	if ($ret->isError()) {
+	    $ret = $ret->wrap(__FILE__, __LINE__);
+	    return $ret->getAsHtml();
+	}
+	return $html;
     }
 }
 

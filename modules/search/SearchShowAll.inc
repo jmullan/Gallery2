@@ -63,8 +63,11 @@ class SearchShowAllView extends GalleryView {
     function renderHead() {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
-	$html = $template->render('SearchHead.tpl');
-	
+	list($ret, $html) = $template->render('SearchHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -175,7 +178,10 @@ class SearchShowAllView extends GalleryView {
 	$template->setVariable('return', $return);
 	$template->setVariable('searchResults', $searchResults);
 	$template->setVariable('thumbnails', $thumbnails);
-	$html = $template->render('SearchShowAll.tpl');
+	list($ret, $html) = $template->render('SearchShowAll.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

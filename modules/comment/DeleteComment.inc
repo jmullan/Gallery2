@@ -99,7 +99,11 @@ class DeleteCommentView extends GalleryView {
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('DeleteCommentHead.tpl');
+	list($ret, $html) = $template->render('DeleteCommentHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), $html);
     }
     
@@ -157,7 +161,10 @@ class DeleteCommentView extends GalleryView {
 	$template->setVariable('comment', $comment->getMemberData());
 	$template->setVariable('commenter', $commenter->getMemberData());
 	$template->setVariable('controller', 'comment:DeleteComment');
-	$html = $template->render('DeleteComment.tpl');
+	list($ret, $html) = $template->render('DeleteComment.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

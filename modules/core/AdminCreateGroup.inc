@@ -141,7 +141,10 @@ class AdminCreateGroupView extends GalleryView {
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
 	$template->setVariable('controller', 'core:AdminCreateGroup');
-	$html = $template->render('AdminCreateGroup.tpl');
+	list($ret, $html) = $template->render('AdminCreateGroup.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

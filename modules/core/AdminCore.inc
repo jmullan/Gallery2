@@ -271,8 +271,11 @@ class AdminCoreView extends GalleryView {
 	$template->setVariable('permissionsFileList', $permissionsFileList);
 	$template->setVariable('sessionTimeList', $sessionTimeList);
 	$template->setVariable('controller', 'core:AdminCore');
-	$html = $template->render('AdminCore.tpl');
-
+	list($ret, $html) = $template->render('AdminCore.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+	
 	return array(GalleryStatus::success(), $html);
     }
 }

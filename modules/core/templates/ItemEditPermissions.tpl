@@ -46,7 +46,7 @@
 	<!-- {if $can.changeOwner} -->
 	<tr>
 	  <td>
-	    {gallery->text text="Change album owner to:"}
+	    {gallery->text text="Change item owner to:"}
 	    {gallery->input type="text" name="form.owner.ownerName"}
 	    {$form.owner.ownerName}
 	    {/gallery->input}

@@ -72,7 +72,10 @@ class AdminDebugView extends GalleryView {
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('controller', 'comment:AdminDebug');
-	$html = $template->render('AdminDebug.tpl');
+	file($ret, $html) = $template->render('AdminDebug.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	
 	return array(GalleryStatus::success(), $html);
     }

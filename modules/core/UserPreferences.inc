@@ -161,7 +161,10 @@ class UserPreferencesView extends GalleryView {
 	global $gallery;
 	
 	$template = $this->_getTemplate();
-	$html = $template->render('SiteAdminHead.tpl');
+	list($ret, $html) = $template->render('SiteAdminHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -219,7 +222,10 @@ class UserPreferencesView extends GalleryView {
 	$template->setVariable('user', $user->getMemberData());
 	$template->setVariable('languageList', $languageList);
 	$template->setVariable('controller', 'core:UserPreferences');
-	$html = $template->render('UserPreferences.tpl');
+	list($ret, $html) = $template->render('UserPreferences.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

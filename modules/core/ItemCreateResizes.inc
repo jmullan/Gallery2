@@ -320,7 +320,10 @@ class ItemCreateResizesView extends GalleryView {
 	$template->setVariable('form', $form);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('controller', 'core:ItemCreateResizes');
-	$html = $template->render('ItemCreateResizes.tpl');
+	list($ret,$html) = $template->render('ItemCreateResizes.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

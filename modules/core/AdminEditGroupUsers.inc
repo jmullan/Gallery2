@@ -175,7 +175,10 @@ class AdminEditGroupUsersView extends GalleryView {
 	$template->setVariable('status', $status);
 	$template->setVariable('group', $group->getMemberData());
 	$template->setVariable('controller', 'core:AdminEditGroupUsers');
-	$html = $template->render('AdminEditGroupUsers.tpl');
+	list($ret, $html) = $template->render('AdminEditGroupUsers.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

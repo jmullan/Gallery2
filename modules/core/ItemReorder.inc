@@ -223,8 +223,11 @@ class ItemReorderView extends GalleryView {
         $template->setVariable('peers', $peers);
         $template->setVariable('peerTypes', $peerTypes);
         $template->setVariable('controller', 'core:ItemReorder');
-        $html = $template->render('ItemReorder.tpl');
-
+        list($ret, $html) = $template->render('ItemReorder.tpl');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), $html);
+        }
+	
         return array(GalleryStatus::success(), $html);
     }
 }

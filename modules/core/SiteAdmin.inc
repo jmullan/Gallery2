@@ -49,7 +49,10 @@ class SiteAdminView extends GalleryView {
 	}
 
 	$template = $this->_getTemplate();
-	$html = $template->render('SiteAdminHead.tpl');
+	list($ret, $html) = $template->render('SiteAdminHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -112,7 +115,10 @@ class SiteAdminView extends GalleryView {
 	$template = $this->_getTemplate();
 	$template->setVariable('subViewChoices', $subViewChoices);
 	$template->setVariable('subViewHtml', $subViewHtml);
-	$html = $template->render('SiteAdmin.tpl');
+	list($ret, $html) = $template->render('SiteAdmin.tpl');
+    if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+    }
 
 	return array(GalleryStatus::success(), $html);
     }

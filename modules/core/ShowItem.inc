@@ -60,7 +60,11 @@ class ShowItemView extends GalleryView {
 
 	$template = $this->_getTemplate();
 	$template->setVariable('item', $item->getMemberData());
-	$html = $template->render('ShowItemHead.tpl');
+	list($ret, $html) = $template->render('ShowItemHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -123,7 +127,7 @@ class ShowItemView extends GalleryView {
 	$urlParams['itemId'] = $item->getId();
 	list ($ret, $html) = $layout->render($item, $urlParams);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
 	}
 	
 	return array(GalleryStatus::success(), $html);

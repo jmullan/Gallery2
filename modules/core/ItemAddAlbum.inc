@@ -189,7 +189,10 @@ class ItemAddAlbumView extends GalleryView {
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('parents', $parents);
 	$template->setVariable('controller', 'core:ItemAddAlbum');
-	$html = $template->render('ItemAddAlbum.tpl');
+	list($ret, $html) = $template->render('ItemAddAlbum.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

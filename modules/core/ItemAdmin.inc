@@ -44,8 +44,11 @@ class ItemAdminView extends GalleryView {
 	
 	/* Render the HTML head */
 	$template = $this->_getTemplate();
-	$html = $template->render('ItemAdminHead.tpl');
-
+	list($ret, $html) = $template->render('ItemAdminHead.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+	
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -154,7 +157,10 @@ class ItemAdminView extends GalleryView {
 	$template->setVariable('thumbnail', $thumbnailData);
 	$template->setVariable('subViewChoices', $subViewChoices);
 	$template->setVariable('subViewHtml', $subViewHtml);
-	$html = $template->render('ItemAdmin.tpl');
+	list($ret, $html) = $template->render('ItemAdmin.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 
 	return array(GalleryStatus::success(), $html);
     }

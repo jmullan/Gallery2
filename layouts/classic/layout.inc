@@ -270,7 +270,11 @@ class ClassicLayout extends GalleryLayout {
 	$template->setVariable('parents', $parents);
 	
 	/* Parse the body template and send it back */
-	$html = $template->render('albumBody.tpl');
+	list($ret, $html) = $template->render('albumBody.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
+
 	return array(GalleryStatus::success(), $html);
     }
 
@@ -487,7 +491,10 @@ class ClassicLayout extends GalleryLayout {
 	$template->setVariable('totalPeerCount', $totalPeerCount);
 	
 	/* Parse the header and body and send them back */
-	$html = $template->render('singleBody.tpl');
+	list($ret, $html) = $template->render('singleBody.tpl');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), $html);
+	}
 	return array(GalleryStatus::success(), $html);
     }
 }
