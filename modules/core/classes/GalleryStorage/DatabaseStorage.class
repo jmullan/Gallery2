@@ -233,6 +233,20 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
+     * Turn debugging on or off.
+     */
+    function setDebug($bool) {
+	parent::setDebug($bool);
+
+	/* Flip the switch in the ADOdb class, also */
+	if ($this->_debug) {
+	    $this->_db->debug = true;
+	} else {
+	    $this->_db->debug = false;
+	}
+    }
+
+    /**
      * Return the id of the GalleryItem associated with the path provided
      *
      * Return the id associated with the given path. Example path: 
@@ -266,11 +280,14 @@ class DatabaseStorage extends GalleryStorage {
 	    return ERROR | ERROR_DATABASE_NOT_CONNECTED;
 	}
 
+	$this->_traceStart();
+	
 	/*
 	 * Figure out what kind of nucleus this is
 	 */
 	list($ret, $targetType) = $this->_identifyNucleus($id);
 	if ($ret & ERROR) {
+	    $this->_traceStop();
 	    return $ret;
 	}
 
@@ -327,8 +344,10 @@ class DatabaseStorage extends GalleryStorage {
 
 	    $prototype->clearModifiedFlags();
 	    $nucleus = $prototype;
+	    $this->_traceStop();
 	    return SUCCESS;
 	} else {
+	    $this->_traceStop();
 	    return array(ERROR | ERROR_DATABASE_FAILURE, null);
 	}
     }
