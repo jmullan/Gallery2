@@ -110,7 +110,8 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	}
 
 	list($ret, $width, $height) =
-		$graphics->getImageDimensions($imageFileName);
+	    $graphics->getImageDimensions($this->getMimeType(),
+					  $imageFileName);
 	if ($ret->isError()) {
 
 	    /*
@@ -124,6 +125,46 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	/* Create our data item */
 	$ret = parent::create($parentId, $imageFileName, $ownerId, $targetName);
 	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->setWidth($width);
+	$this->setHeight($height);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryDataItem::rescan()
+     */
+    function rescan() {
+	global $gallery;
+	
+	$ret = parent::rescan();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $graphics) = $gallery->getGraphics();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $path) = $this->fetchPath();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list($ret, $width, $height) =
+	    $graphics->getImageDimensions($this->getMimeType(),
+					  $path);
+	if ($ret->isError()) {
+
+	    /*
+	     * If we can't get the dimensions, it's probably a bad image.
+	     * Or our graphics code is broken.  Hard to tell which at this point.
+	     */
+	    $ret->addErrorCode(ERROR_BAD_DATA_TYPE);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 

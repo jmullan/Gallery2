@@ -147,12 +147,13 @@ class GalleryGraphics {
      * Calculate the dimensions of the image file
      * 
      * @access public
+     * @param string a mime type
      * @param string a file name
      * @param string an optional mime type hint
      * @return array object GalleryStatus a status code,
      *               int the image width, int the image height
      */
-    function getImageDimensions($filename, $mimeType=false) {
+    function getImageDimensions($mimeType, $filename, $mimeType=false) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null, null);
@@ -166,13 +167,14 @@ class GalleryGraphics {
      * changes to the aspect ratio.
      *	
      * @access public
+     * @param string a mime type
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param string int the target width
      * @param string int the target height
      * @return object GalleryStatus a status code
      */
-    function resizeImage($sourceFilename, $destFilename, $width, $height) {
+    function resizeImage($mimeType, $sourceFilename, $destFilename, $width, $height) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 		
@@ -185,12 +187,13 @@ class GalleryGraphics {
      * aspect ratio.
      *	
      * @access public
+     * @param string a mime type
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param string int the target size
      * @return object GalleryStatus a status code
      */
-    function scaleImage($sourceFilename, $destFilename, $targetSize) {
+    function scaleImage($mimeType, $sourceFilename, $destFilename, $targetSize) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 		
@@ -201,12 +204,13 @@ class GalleryGraphics {
      * destFilename.
      *	
      * @access public
+     * @param string a mime type
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param string int the degrees to be rotated (one of -90, 180, 90)
      * @return object GalleryStatus a status code
      */
-    function rotateImage($sourceFilename, $destFilename, $degrees) {
+    function rotateImage($mimeType, $sourceFilename, $destFilename, $degrees) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 		
@@ -219,6 +223,7 @@ class GalleryGraphics {
      * x+width, y+height.
      *	
      * @access public
+     * @param string a mime type
      * @param string the source file name
      * @param string the destination file name (it will be overwritten if it exists)
      * @param int x-axis origin
@@ -227,7 +232,7 @@ class GalleryGraphics {
      * @param int height of crop rectangle
      * @return object GalleryStatus a status code
      */
-    function cropImage($sourceFilename, $destFilename, $x, $y, $width, $height) {
+    function cropImage($mimeType, $sourceFilename, $destFilename, $x, $y, $width, $height) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
     }
 
@@ -237,11 +242,12 @@ class GalleryGraphics {
      * Is this image valid?  Can it be handled by this toolkit?
      * 
      * @access public
+     * @param string a mime type
      * @param string the image file name
      * @return array object a status code
      *               boolean true if the filename represents an image file
      */
-    function isValidImage($filename) {
+    function isValidImage($mimeType, $filename) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }

@@ -200,6 +200,14 @@ class GalleryDataItem_core extends GalleryItem {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Scan this item's data for changes.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function rescan() {
+	return GalleryStatus::success();
+    }
 
     /**
      * Get the size of the source object.  

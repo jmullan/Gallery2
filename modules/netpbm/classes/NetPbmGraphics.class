@@ -51,13 +51,9 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * @see GalleryGraphics::getImageDimensions()
      */
-    function getImageDimensions($filename, $mimeType=false) {
+    function getImageDimensions($mimeType, $filename) {
 
-	if (empty($mimeType)) {
-	    $mimeType = GalleryUtilities::getMimeType($filename);
-	}
-
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($filename, $mimeType);
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -85,13 +81,14 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * @see GalleryGraphics::resizeImage()
      */
-    function resizeImage($sourceFilename, $destFilename, $width, $height) {
+    function resizeImage($mimeType, $sourceFilename, $destFilename, $width, $height) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_RESIZE)) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 
-	return $this->_transformImage(array($this->_pnmCmd('pnmscale'),
+	return $this->_transformImage($mimeType,
+				      array($this->_pnmCmd('pnmscale'),
 					    '--quiet',
 					    '-xsize', $width,
 					    '-ysize', $height),
@@ -102,13 +99,14 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * @see GalleryGraphics::scaleImage()
      */
-    function scaleImage($sourceFilename, $destFilename, $targetSize) {
+    function scaleImage($mimeType, $sourceFilename, $destFilename, $targetSize) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_SCALE)) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	
-	return $this->_transformImage(array($this->_pnmCmd('pnmscale'),
+	return $this->_transformImage($mimeType,
+				      array($this->_pnmCmd('pnmscale'),
 					    '--quiet',
 					    '-xysize', $targetSize, $targetSize),
 				      $sourceFilename,
@@ -118,25 +116,47 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * @see GalleryGraphics::rotateImage()
      */
-    function rotateImage($sourceFilename, $destFilename, $degrees) {
+    function rotateImage($mimeType, $sourceFilename, $destFilename, $degrees) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_ROTATE)) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
-	
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+
+	switch($degrees) {
+	case -90:
+	    $flipArgument = "-cw";
+	    break;
+
+	case 90:
+	    $flipArgument = "-ccw";
+	    break;
+
+	case 180:
+	    $flipArgument = "-r180";
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	return $this->_transformImage($mimeType,
+				      array($this->_pnmCmd('pnmflip'),
+					    $flipArgument),
+				      $sourceFilename,
+				      $destFilename);
     }
 		
     /**
      * @see GalleryGraphics::cropImage()
      */
-    function cropImage($sourceFilename, $destFilename, $x, $y, $width, $height) {
+    function cropImage($mimeType, $sourceFilename, $destFilename, $x, $y, $width, $height) {
 	if (!$this->isSupportedFunction(IMAGE_FUNCTION_CROP)) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION,
 					__FILE__, __LINE__);
 	}
 	
-	return $this->_transformImage(array($this->_pnmCmd('pnmcut'),
+	return $this->_transformImage($mimeType,
+				      array($this->_pnmCmd('pnmcut'),
 					    $x, $y, $width, $height),
 				      $sourceFilename,
 				      $destFilename);
@@ -145,10 +165,10 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * @see GalleryGraphics::isValidImage()
      */
-    function isValidImage($filename) {
+    function isValidImage($mimeType, $filename) {
 
 	/* Test validity by getting image dimensions */
-	list($ret, $width, $height) = $this->getImageDimensions($filename);
+	list($ret, $width, $height) = $this->getImageDimensions($mimeType, $filename);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -164,16 +184,17 @@ class NetPbmGraphics extends GalleryGraphics {
     /**
      * Do the given transform on the source image 
      *
+     * @param string a mime type
      * @param string the command to execute
      * @param string the path to a source file
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($command, $sourceFilename, $destFilename) {
+    function _transformImage($mimeType, $command, $sourceFilename, $destFilename) {
 	global $gallery;
 
 	/* Figure out our convert-to-pnm command */
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($sourceFilename);
+	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $sourceFilename);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -187,9 +208,8 @@ class NetPbmGraphics extends GalleryGraphics {
 					__FILE__, __LINE__);
 	}
 
-	$mimeType = GalleryUtilities::getMimeType($sourceFilename);
 	list($ret, $convertFromPnmCmd) =
-		$this->_convertFromPnmCmd($tmpFilename, $mimeType);
+		$this->_convertFromPnmCmd($mimeType, $tmpFilename);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -222,13 +242,9 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertToPnmCmd($filename, $mimeType=false) {
+    function _convertToPnmCmd($mimeType, $filename) {
 	global $gallery;
 
-	if (empty($mimeType)) {
-	    $mimeType = GalleryUtilities::getMimeType($filename);
-	}
-	
 	switch($mimeType) {
 	case 'image/png':
 	    $cmd = $this->_pnmCmd('pngtopnm');
@@ -261,7 +277,7 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertFromPnmCmd($filename, $mimeType) {
+    function _convertFromPnmCmd($mimeType, $filename) {
 	global $gallery;
 
 	list ($ret, $pnmtojpeg) =

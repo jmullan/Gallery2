@@ -137,6 +137,10 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 	$merged = false;
 	foreach (split(';', $commands) as $command) {
+	    if (empty($command)) {
+		continue;
+	    }
+	    
 	    $pieces = split(' ', $command);
 	    if ($pieces[0] == $mergePieces[0]) {
 		switch ($pieces[0]) {
@@ -258,6 +262,9 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	/* Now apply our derivative commands to create the cache file */
 	$commands = split(';', $this->getDerivativeCommands());
 	foreach ($commands as $command) {
+	    if (empty($command)) {
+		continue;
+	    }
 	    $pieces = split(' ', $command);
 	    switch (array_shift($pieces)) {
 	    case 'rotate':
@@ -266,7 +273,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 						__FILE__, __LINE__);
 		}
 		
-		$ret = $graphics->rotateImage($sourcePath,
+		$ret = $graphics->rotateImage($this->getDerivativeMimeType(),
+					      $sourcePath,
 					      $destPath,
 					      $pieces[0]);
 		break;
@@ -277,7 +285,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 						__FILE__, __LINE__);
 		}
 		
-		$ret = $graphics->cropImage($sourcePath,
+		$ret = $graphics->cropImage($this->getDerivativeMimeType(),
+					    $sourcePath,
 					    $destPath,
 					    $pieces[0],
 					    $pieces[1],
@@ -291,7 +300,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 						__FILE__, __LINE__);
 		}
 		
-		$ret = $graphics->resizeImage($sourcePath,
+		$ret = $graphics->resizeImage($this->getDerivativeMimeType(),
+					      $sourcePath,
 					      $destPath,
 					      $pieces[0],
 					      $pieces[1]);
@@ -303,7 +313,8 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 						__FILE__, __LINE__);
 		}
 		
-		$ret = $graphics->scaleImage($sourcePath,
+		$ret = $graphics->scaleImage($this->getDerivativeMimeType(),
+					     $sourcePath,
 					     $destPath,
 					     $pieces[0]);
 		break;
@@ -341,29 +352,31 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    $this->setDerivativeSize($size);
 	}
 
-	/*
-	 * If we don't have any dimensions, find them out here.
-	 */
-	if ($this->getWidth() == 0 || $this->getHeight() == 0) {
-	    list ($ret, $width, $height) =
-		$graphics->getImageDimensions($destPath, $this->getDerivativeMimeType());
+	/* Update the dimensions */
+	list ($ret, $width, $height) =
+	    $graphics->getImageDimensions($this->getDerivativeMimeType(), $destPath);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->setWidth($width);
+	$this->setHeight($height);
+
+	/* Save our changes */
+	if ($this->isModified()) {
+	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->getId(), 1);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $this->setWidth($width);
-	    $this->setHeight($height);
-	}
+	    $ret = $this->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-	/*
-	 * Save our changes.  If we fail to update the database then don't
-	 * worry about it.
-	 */
-	if ($this->isModified()) {
-	    list ($ret, $lockId) = $gallery->acquireWriteLock($this->getId(), 1);
-	    if ($ret->isSuccess()) {
-		$ret = $this->save();
-		$gallery->releaseLocks($lockId);
+	    $ret = $gallery->releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 

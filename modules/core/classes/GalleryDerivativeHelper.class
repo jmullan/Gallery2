@@ -235,5 +235,121 @@ class GalleryDerivativeHelper {
 	
 	return array(GalleryStatus::success(), $derivativeTable);
     }
+
+    /**
+     * Expire all derivatives that depend on the source ids specified
+     *
+     * @param array source ids
+     * @return object GalleryStatus a status code
+     */
+    function expireDerivativeTreeBySourceIds($ids) {
+	global $gallery;
+
+	$idMarkers = GalleryUtilities::makeMarkers($ids);
+	list ($ret, $searchResults) =
+	    $gallery->search(array('select' => '[GalleryDerivative::id]',
+				   'where' => ('[GalleryDerivative::derivativeSourceId] IN (' .
+					       $idMarkers . ')')),
+			     $ids);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get all derivative ids */
+	$derivativeIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $derivativeIds[] = $result[0];
+	}
+
+	if (!empty($derivativeIds)) {
+	    /* Turn ids into objects */
+	    list ($ret, $derivatives) = $gallery->loadEntitiesById($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Expire each derivative */
+	    foreach ($derivatives as $derivative) {
+		$ret = $derivative->expireCache();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /* Repeat the process on the next set of derivatives */
+	    $ret = GalleryDerivativeHelper::expireDerivativeTreeBySourceIds($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Find all derivatives attached to one source and switch them to another one
+     *
+     * @param string the original source id
+     * @param string the new source id
+     * @return object GalleryStatus a status code
+     */
+    function remapSourceIds($originalSourceId, $newSourceId) {
+	global $gallery;
+
+	if ($originalSourceId == $newSourceId) {
+	    return GalleryStatus::success();
+	}
+
+	list ($ret, $searchResults) =
+	    $gallery->search(array('select' => '[GalleryDerivative::id]',
+				   'where' => ('[GalleryDerivative::derivativeSourceId] = ? ' .
+					       ' AND [GalleryDerivative::id] NOT IN (?, ?)')),
+			     array($originalSourceId, $originalSourceId, $newSourceId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get all derivative ids */
+	$derivativeIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $derivativeIds[] = $result[0];
+	}
+
+	if (!empty($derivativeIds)) {
+	    /* Lock them all */
+	    list ($ret, $lockId) = $gallery->acquireWriteLock($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    /* Turn ids into objects */
+	    list ($ret, $derivatives) = $gallery->loadEntitiesById($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Remap each derivative */
+	    foreach ($derivatives as $derivative) {
+		$derivative->setDerivativeSourceId($newSourceId);
+		$ret = $derivative->expireCache();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$ret = $derivative->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /* Release locks */
+	    $ret = $gallery->releaseLocks($lockId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>

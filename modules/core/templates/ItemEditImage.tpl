@@ -38,16 +38,14 @@
 
 	<tr>
 	  <td>
-	    {strip}
-	    {galleryInput type="submit" name="form.action.rotate.clockwise"}
-	    {galleryText text="Clockwise 90&ordm;"}
-	    {/galleryInput}
-	    {/strip}
 	    {galleryInput type="submit" name="form.action.rotate.counterClockwise"}
 	    {galleryText text="Counter-Clockwise 90&ordm;"}
 	    {/galleryInput}
 	    {galleryInput type="submit" name="form.action.rotate.flip"}
 	    {galleryText text="Flip 180&ordm;"}
+	    {/galleryInput}
+	    {galleryInput type="submit" name="form.action.rotate.clockwise"}
+	    {galleryText text="Clockwise 90&ordm;"}
 	    {/galleryInput}
 	  </td>
 	</tr>
@@ -135,13 +133,10 @@
 
 	<tr>
 	  <td>
-	   {galleryText text="You are using a copy of the original image that has been scaled or rotated.  The original image is still available, but is not being used.  Any changes you make will be applied to the copy, as long as it exists."}
+	   {galleryText text="You are using a copy of the original image that has been scaled or rotated.  The original image is still available, but is no longer being used.  Any changes you make will be applied to the copy instead."}
 	   <br>
 	   {galleryInput type="submit" name="form.action.revertToOriginal"}
 	   {galleryText text="Revert to original"}
-	   {/galleryInput}
-	   {galleryInput type="submit" name="form.action.replaceOriginalWithCopy"}
-	   {galleryText text="Replace original with copy"}
 	   {/galleryInput}
 	  </td>
 	</tr>
