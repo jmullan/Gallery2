@@ -108,6 +108,7 @@ class SlideshowView extends GalleryView {
 	$itemList = array();
 	$childItems = array();
 	if (!empty($childIds)) {
+	    $gallery->guaranteeTimeLimit(30);
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -145,6 +146,9 @@ class SlideshowView extends GalleryView {
 	    $start = 0;
 	}
 	foreach ($childItems as $child) {
+	    if (count($itemList) % 100 == 0) {
+		$gallery->guaranteeTimeLimit(30);
+	    }
 
 	    $childId = $child->getId();
 	    if (!isset($start) && $childId == $startId) {
