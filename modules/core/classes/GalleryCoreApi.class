@@ -373,9 +373,9 @@ class GalleryCoreApi {
      * @param string an optional substring to match against the username
      * @static
      */
-    function fetchUserCount($substring=null) {
+    function fetchUserCount($substring=null, $groupId=null) {
 	require_once(dirname(__FILE__) . '/helpers/GalleryUserHelper_medium.class');
-	return GalleryUserHelper_medium::fetchUserCount($substring);
+	return GalleryUserHelper_medium::fetchUserCount($substring, $groupId);
     }
     
     /**

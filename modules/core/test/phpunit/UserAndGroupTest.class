@@ -183,7 +183,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	global $gallery;
 
 	$unique = rand(0, 65535);
-	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique);
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -198,7 +198,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	
 	GalleryDataCache::reset();
 
-	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique);
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -208,6 +208,131 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	// Clean up
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /*
+     * Verify that we can fetch a count of the users from any particular group
+     */
+    function testFetchUserCountByGroupId() {
+	global $gallery;
+
+	/* Create a user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 0 */
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount(null, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $countBefore);
+
+	/* Put the user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 1 */
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount(null, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $countAfter);
+
+	/* Delete user */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Verify that we can fetch all users from a group with a given substring in their username
+     */
+    function testFetchUserCountBySubstringAndGroupId() {
+	global $gallery;
+
+	$strSearch = 'rand';
+	$uniqueFirst = rand(0, 65535);
+	$uniqueSecond = rand(0, 65535);
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 0 */
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount($strSearch, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $countBefore);
+	
+	/* Create the first user */
+	list ($ret, $userFirst) = $this->_createRandomUser($strSearch . $uniqueFirst);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create the second user */
+	list ($ret, $userSecond) = $this->_createRandomUser($strSearch . $uniqueSecond);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Put the first user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userFirst->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Put the second user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userSecond->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 1 */
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst,
+                                                                  $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $countAfter);
+
+	/* Delete first user */
+	$ret = $this->_deleteAndVerifyEntity($userFirst->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete second user */
+	$ret = $this->_deleteAndVerifyEntity($userSecond->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

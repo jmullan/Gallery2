@@ -102,32 +102,51 @@ class GalleryUserHelper_medium {
      * @param string an optional substring to match against the username
      * @static
      */
-    function fetchUserCount($substring=null) {
+   
+    function fetchUserCount($substring=null, $groupId=null) {
 	global $gallery;
-
+	if (empty($groupId)) {
+	    list($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 	$data = array();
-	$query = '
-        SELECT
-          COUNT([GalleryUser::id])
-        FROM
-          [GalleryUser]
-        ';
 
 	if (!empty($substring)) {
-	    $query .= '
-        WHERE
-	  [GalleryUser::userName] LIKE ?
+            $query = '
+            SELECT
+              COUNT([GalleryUserGroupMap::userId])
+            FROM
+              [GalleryUserGroupMap],
+              [GalleryUser]
+            WHERE
+              [GalleryUser::id] = [GalleryUserGroupMap::userId]
+            AND
+              [GalleryUser::userName] LIKE ?
+            AND
+              [GalleryUserGroupMap::groupId] = ?
             ';
-	    $data[] = "%$substring%";
-	}
-
-	list ($ret, $searchResults) = $gallery->search($query, $data);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$result = $searchResults->nextResult();
-	return array(GalleryStatus::success(), (int)$result[0]);
+            $data[] = "%$substring%";
+        } else {
+            $query = '
+            SELECT
+              COUNT([GalleryUserGroupMap::userId])
+            FROM
+              [GalleryUserGroupMap]
+            WHERE
+              [GalleryUserGroupMap::groupId] = ?
+            ';
+        }
+        $data[] = $groupId;
+    
+        list ($ret, $searchResults) = $gallery->search($query, $data);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+    
+        $result = $searchResults->nextResult();
+        return array(GalleryStatus::success(), (int)$result[0]);
     }
 
     /**
