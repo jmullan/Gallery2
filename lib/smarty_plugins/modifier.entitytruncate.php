@@ -41,28 +41,6 @@
  * @return string
  */
 function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $breakWords = false) {
-    if ($length == 0) {
-        return '';
-    }
-
-    if (preg_match_all("(&[^&;]*;|[^&;])", $string, $regs)) {	
-	if (count($regs[0]) > $length) {
-	    $length -= strlen($etc);
-	    $substring = '';
-	    for ($i = 0; $i < $length; $i++) {
-		$substring .= $regs[0][$i];
-	    }
-	    if (!$breakWords) {
-		$substring = preg_replace('/\s+?(\S+)?$/', '' , $substring);
-	    }	    
-	    $string = $substring . $etc;
-	}
-	return $string;	
-    } else {
-	return '';
-    }
-    
-
+    return GalleryUtilities::entity_truncate($string, $length, $etc, $breakWords);
 }
-
 ?>

@@ -360,6 +360,14 @@ class UtilitiesTest extends GalleryTestCase {
 						     '&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
+
+    function testEntityTruncate() {
+	$this->assertEquals('abcdef'   ,GalleryUtilities::entity_truncate('abcdef', 6));
+	$this->assertEquals(''         ,GalleryUtilities::entity_truncate('abcdef', 0));
+	$this->assertEquals('&am...'   ,GalleryUtilities::entity_truncate('&amp;bcdef', 6));
+	$this->assertEquals('&amp;b...',GalleryUtilities::entity_truncate('&amp;bcdef', 9));
+	$this->assertEquals('abc...',GalleryUtilities::entity_truncate('abc&amp;', 6));
+    }
     function testEntitySubstr() {
 	$this->assertEquals('abcdef',GalleryUtilities::entity_substr('abcdef', 0));
 	$this->assertEquals(   'def',GalleryUtilities::entity_substr('abcdef', 3));

@@ -557,6 +557,32 @@ class GalleryUtilities {
 	return (!strcasecmp(get_class($instance), $className));
     }
 
+
+    /**
+     * An entity-safe truncate for smarty
+     *
+     * @param string
+     * @param integer
+     * @param string
+     * @param boolean
+     * @return string
+     *
+     */
+    
+    function entity_truncate($string, $length = 80, $etc = '...', $breakWords = false) {
+	if ($length == 0) {
+	    return '';
+	}
+	if (strlen($string) > $length) {
+	    $length -= strlen($etc);
+	    if (!$breakWords) {
+		$string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
+	    }
+	    return GalleryUtilities::entity_substr($string, 0, $length) . $etc;
+	} else {
+	    return $string;
+	}
+    }
     
     /**
      * An entity-safe substr
