@@ -87,6 +87,12 @@ class InstallCoreModuleStep extends InstallStep {
 		    $templateData['stackTrace'] = $ret->getAsHtml();
 		}
 
+		list ($ret, $ignored) = $core->activate();
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _('Unable to activate the core module');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+
 		$ret = $storage->commitTransaction();
 		if ($ret->isError()) {
 		    $templateData['errors'][] = _('Unable to commit database transaction');

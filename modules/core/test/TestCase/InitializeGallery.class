@@ -64,6 +64,11 @@ class InitializeGalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
+	list ($ret, $ignored) = $core->activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

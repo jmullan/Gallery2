@@ -40,11 +40,11 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName('Debugging');
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -56,16 +56,9 @@ class DebugModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::performFactoryRegistrations()
      */
-    function upgrade($currentVersion) {
-	global $gallery;
-
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
             'DebugStatusFormatter',
             'DebugStatusFormatter',

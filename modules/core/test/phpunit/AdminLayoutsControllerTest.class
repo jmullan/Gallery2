@@ -103,7 +103,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
     function testDeactivate() {
 	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    $ret = GalleryCoreApi::activatePlugin('layout', $layoutId);
+	    list ($ret, $ignored) = GalleryCoreApi::activatePlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

@@ -86,7 +86,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 8);
+	return array(0, 9);
     }
     
     /**
@@ -213,10 +213,32 @@ class GalleryModule extends GalleryPlugin {
     }
 
     /**
-     * Activate this module
+     * Deactivate this module
      *
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
+     */
+    function deactivate() {
+	list ($ret, $redirect) = parent::deactivate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($redirect)) {
+	    return array(GalleryStatus::success(), $redirect);
+	}
+
+	/* Unregister all factory implementations */
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return array(GalleryStatus::success(), array());
+    }
+    
+    /**
+     * @see GalleryPlugin::activate()
      */
     function activate() {
 	global $gallery;
@@ -231,9 +253,19 @@ class GalleryModule extends GalleryPlugin {
 	}
 
 	if ($needs) {
-	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
+			 null);
 	} else {
-	    $ret = GalleryCoreApi::activatePlugin('module', $this->getId());
+	    list ($ret, $redirect) = parent::activate();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!empty($redirect)) {
+		return array(GalleryStatus::success(), $redirect);
+	    }
+	    
+	    $ret = $this->performFactoryRegistrations();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -409,6 +441,17 @@ class GalleryModule extends GalleryPlugin {
      */
     function loadItemDetails(&$template, $item) {
 	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Register any factory implementations.  This is called at module
+     * activation time.  All implementations are unregistered when the module is
+     * deactivated.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function performFactoryRegistrations() {
+	return GalleryStatus::success();
     }
 
     /* Getters and setters below */

@@ -46,31 +46,62 @@ class FactoryTest extends GalleryTestCase {
 							     'FactoryTestDummy',
 							     'FactoryTestDummyId',
 							     $path,
-							     'coreTest',
+							     'factoryTest',
 							     array('dummy', '*'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markFactoryModuleForCleanup('factoryTest');
 
 	$ret = GalleryCoreApi::registerFactoryImplementation('FactoryTest',
 							     'FactoryTestDummy',
 							     'FactoryTestDummyId2',
 							     $path,
-							     'coreTest',
+							     'factoryTest2',
 							     array('dummy'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+
+	$this->_markFactoryModuleForCleanup('factoryTest2');
+
+	foreach (array('factoryTest', 'factoryTest2') as $moduleId) {
+	    GalleryPluginHelper_medium::setPluginInstance(
+                'module', $moduleId, new FactoryTestModule($moduleId));
+	    list ($ret, $ignored) = GalleryCoreApi::activatePlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	foreach (array('factoryTest', 'factoryTest2') as $moduleId) {
+	    list ($ret, $ignored) = GalleryCoreApi::deactivatePlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $ret = GalleryCoreApi::removePlugin('module', $moduleId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	parent::tearDown();
     }
 
     /**
      * Register an implementation, create new instance
      */
     function testNewInstance() {
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest', 'FactoryTestDummy');
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstance('FactoryTest', 'FactoryTestDummy');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -83,7 +114,8 @@ class FactoryTest extends GalleryTestCase {
      * empty instance
      */
     function testMissingInstance() {
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstance('FactoryTest', 'MISSING IMPLEMENTATION NAME');
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstance('FactoryTest', 'MISSING IMPLEMENTATION NAME');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -132,7 +164,8 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create instance by default hint
      */
     function testNewInstanceByHintDefault() {
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'nomatch');
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'nomatch');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -144,8 +177,9 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create instance by hint list
      */
     function testNewInstanceByHintList() {
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest',
-									  array('nomatch', 'dummy'));
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstanceByHint('FactoryTest',
+						     array('nomatch', 'dummy'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -157,7 +191,8 @@ class FactoryTest extends GalleryTestCase {
      * Register an implementation, create instance by id
      */
     function testNewInstanceById() {
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceById('FactoryTest', 'FactoryTestDummyId');
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstanceById('FactoryTest', 'FactoryTestDummyId');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -180,7 +215,8 @@ class FactoryTest extends GalleryTestCase {
     }
 
     function testGetAllImplementationIdsWithHint() {
-	list ($ret, $ids) = GalleryCoreApi::getAllFactoryImplementationIdsWithHint('FactoryTest', 'dummy');
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIdsWithHint('FactoryTest', 'dummy');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -188,6 +224,64 @@ class FactoryTest extends GalleryTestCase {
 	$this->assertEquals(array('FactoryTestDummyId' => 'FactoryTestDummy',
 				  'FactoryTestDummyId2' => 'FactoryTestDummy'),
 			    $ids);
+    }
+
+    function testInactiveModule() {
+	global $gallery;
+	
+	/* Deactivate FactoryTestModule */
+	list ($ret, $ignored) = GalleryCoreApi::deactivatePlugin('module', 'factoryTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Now ask the factory for implementations and ids.  We should only get
+	 * data back for the active module (factoryTest2) and not for the one we
+	 * just deactivated.
+	 */
+	list ($ret, $ids) =
+	    GalleryCoreApi::getAllFactoryImplementationIdsWithHint('FactoryTest', 'dummy');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy'),
+			    $ids,
+			    'getAllFactoryImplementationIdsWithHint');
+
+	list ($ret, $ids) = GalleryCoreApi::getAllFactoryImplementationIds('FactoryTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('FactoryTestDummyId2' => 'FactoryTestDummy'),
+			    $ids,
+			    'getAllFactoryImplementationIds');
+
+	/* Deactivate the other factory test module also */
+	list ($ret, $ignored) = GalleryCoreApi::deactivatePlugin('module', 'factoryTest2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'dummy');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $instance, 'newFactoryInstanceByHint');
+
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstance('FactoryTest', 'FactoryTestDummy');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $instance, 'newFactoryInstance');
+
+	list ($ret, $instance) =
+	    GalleryCoreApi::newFactoryInstanceById('FactoryTest', 'FactoryTestDummyId2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $instance, 'newFactoryInstanceById');
     }
 }
 
@@ -197,6 +291,17 @@ class FactoryTest extends GalleryTestCase {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class FactoryTestDummy {
+class FactoryTestDummy { }
+
+/**
+ * Bogus class that we can feed to the factory
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class FactoryTestModule extends GalleryModule {
+    function FactoryTestModule($id) {
+	$this->setId($id);
+    }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,17 +37,30 @@ class GalleryFactoryHelper_simple {
     /**
      * Reset the static factory registry
      *
-     * @access private
      * @static
      */
-    function &_resetData() {
+    function deleteCache() {
 	$cacheParams = array('type' => 'module',
 			     'itemId' => 'GalleryFactoryHelper_loadRegistry',
 			     'id' => '_all');
 	GalleryDataCache::removeFromDisk($cacheParams);
 
-	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
+	$registry =& GalleryFactoryHelper_simple::_getSingleton();
 	$registry = array();
+    }
+
+    /**
+     * The single copy of the factory registry data
+     *
+     * @return object GalleryStatus a status code
+     * @access private
+     */
+    function &_getSingleton() {
+	static $registry;
+	if (!isset($registry)) {
+	    $registry = array();
+	}
+	return $registry;
     }
 
     /**
@@ -61,12 +74,15 @@ class GalleryFactoryHelper_simple {
     function &_getFactoryData() {
 	global $gallery;
 	static $registry;
-	if (!isset($registry)) {
+	$registry =& GalleryFactoryHelper_simple::_getSingleton();
+	if (empty($registry)) {
 	    $storage =& $gallery->getStorage();
 	    $cacheParams = array('type' => 'module',
 				 'itemId' => 'GalleryFactoryHelper_loadRegistry',
 				 'id' => '_all');
-	    $registry =& GalleryDataCache::getFromDisk($cacheParams);
+
+	    /* Don't get by reference here, it'll detach $registry from the singleton */
+	    $registry = GalleryDataCache::getFromDisk($cacheParams);
 	    if (!isset($registry)) {
 		$query = '
                 SELECT
@@ -171,14 +187,14 @@ class GalleryFactoryHelper_simple {
 	    $className = $classNames[0];
 	}
 
-	if (!class_exists($className)) {
-	    if (empty($registry['implementations'][$classType][$className])) {
-		if ($gallery->getDebug()) {
-		    $gallery->debug("Unimplemented: $classType, $className");
-		}
-		return array(GalleryStatus::success(), null);
+	if (empty($registry['implementations'][$classType][$className])) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Unimplemented: $classType, $className");
 	    }
-	    
+	    return array(GalleryStatus::success(), null);
+	}
+
+	if (!class_exists($className)) {
 	    $relativePath = $registry['implementations'][$classType][$className];
 
 	    $platform = $gallery->getPlatform();

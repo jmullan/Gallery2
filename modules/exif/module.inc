@@ -40,11 +40,11 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName('Exif Parser');
 	$this->setDescription($gallery->i18n('Extract EXIF data from JPEG photos'));
-	$this->setVersion('0.8.5');
+	$this->setVersion('0.8.6');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -80,14 +80,18 @@ class ExifModule extends GalleryModule {
 		}
 		
 	    case '0.8.4':
+	    case '0.8.5':
+	    case '0.8.6':
 	    }
 	}
 
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	return GalleryStatus::success();
+    }
 
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ExifInterface_1_0', 'ExifExtractor', 'Exif',
             'modules/exif/classes/ExifExtractor.class', 'exif', null);

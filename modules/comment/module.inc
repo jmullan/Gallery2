@@ -40,12 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.81.3');
+	$this->setVersion('0.81.4');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -58,27 +58,32 @@ class CommentModule extends GalleryModule {
 	    /* Initial install.  Register our permissions */
 	    $permissions[] = array('add', $gallery->i18n('[comment] Add comments'), 0, array());
 	    $permissions[] = array('edit', $gallery->i18n('[comment] Edit comments'), 0, array());
-	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'), 0, array());
+	    $permissions[] = array('delete', $gallery->i18n('[comment] Delete comments'),
+				   0, array());
 	    $permissions[] = array('view', $gallery->i18n('[comment] View comments'), 0, array());
 	    $permissions[] = array('all', $gallery->i18n('[comment] All access'),
-				   GALLERY_PERMISSION_COMPOSITE,
-				   array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
+                GALLERY_PERMISSION_COMPOSITE,
+		array('comment.add', 'comment.edit', 'comment.delete', 'comment.view'));
 	    $permissions[] = array('search', $gallery->i18n('[comment] Search comments'),
-				   GALLERY_PERMISSION_COMPOSITE,
-				   array('core.view', 'comment.view'));
+		GALLERY_PERMISSION_COMPOSITE,
+		array('core.view', 'comment.view'));
 	    foreach ($permissions as $p) {
-		$ret = GalleryCoreApi::registerPermission($this->getId(), 'comment.' . $p[0], $p[1], $p[2], $p[3]);
+		$ret = GalleryCoreApi::registerPermission($this->getId(),
+							  'comment.' . $p[0],
+							  $p[1], $p[2], $p[3]);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
 
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryEntity', 'GalleryComment', 'GalleryComment',
             'modules/comment/classes/GalleryComment.class', 'comment', null);

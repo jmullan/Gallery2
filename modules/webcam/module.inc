@@ -32,11 +32,11 @@ class WebCamModule extends GalleryModule {
 	$this->setId('webcam');
 	$this->setName('WebCam');
 	$this->setDescription($gallery->i18n('Support periodically updated images like a webcam'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -50,11 +50,13 @@ class WebCamModule extends GalleryModule {
 	    }
 	}
 
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	return GalleryStatus::success();
+    }
 
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryEntity', 'GalleryLiveImage', 'GalleryLiveImage',
             'modules/webcam/classes/GalleryLiveImage.class', 'webcam', null);

@@ -38,22 +38,17 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName('PhotoAccess');
 	$this->setDescription($gallery->i18n('PhotoAccess Photo Printing Module'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::performFactoryRegistrations()
      */
-    function upgrade($currentVersion) {
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
 	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'CartPluginInterface_1_0', 'PhotoAccessCartPlugin', 'photoaccess',

@@ -40,11 +40,11 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName('Panorama');
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -63,11 +63,13 @@ class PanoramaModule extends GalleryModule {
 	    }
 	}
 
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	return GalleryStatus::success();
+    }
 
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryEntity', 'PanoramaDerivativeImage', 'PanoramaDerivativeImage',
             'modules/panorama/classes/PanoramaDerivativeImage.class', 'panorama', null);

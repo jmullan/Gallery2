@@ -40,11 +40,11 @@ class NewItemsModule extends GalleryModule {
 	$this->setId('newitems');
 	$this->setName($gallery->i18n('New Items'));
 	$this->setDescription($gallery->i18n('Highlight new/updated Gallery items'));
-	$this->setVersion('0.3.0');
+	$this->setVersion('0.4.0');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
@@ -62,11 +62,13 @@ class NewItemsModule extends GalleryModule {
 	    }
 	}
 
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	return GalleryStatus::success();
+    }
 
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GallerySortInterface_1_1', 'NewItemsSortOrder', 'NewItems',
             'modules/newitems/classes/NewItemsSortOrder.class', 'newitems', null);

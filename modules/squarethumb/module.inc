@@ -41,22 +41,17 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.8.5');
+	$this->setVersion('0.8.6');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::performFactoryRegistrations()
      */
-    function upgrade($currentVersion) {
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryToolkit', 'SquareThumbToolkit', 'SquareThumb',
             'modules/squarethumb/classes/SquareThumbToolkit.class', 'squarethumb', null);
@@ -71,7 +66,8 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new SquareThumbModule());
+	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin',
+					      new SquareThumbModule());
     }
 
     /**
@@ -96,9 +92,9 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	/* Register toolkit operation using high priority */
 	if (!empty($mimeTypes)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('SquareThumb', $mimeTypes, 'thumbnail',
-			array(array('type' => 'int', 'description' => $gallery->i18n('target size')),
-			      array('type' => 'int', 'description' => $gallery->i18n('(optional)'))),
-			$gallery->i18n('Create square thumbnail'), '', 10);
+                array(array('type' => 'int', 'description' => $gallery->i18n('target size')),
+		      array('type' => 'int', 'description' => $gallery->i18n('(optional)'))),
+		$gallery->i18n('Create square thumbnail'), '', 10);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -37,22 +37,17 @@ class ImageFrameModule extends GalleryModule {
 	$this->setId('imageframe');
 	$this->setName('ImageFrame');
 	$this->setDescription($gallery->i18n('Render frames around images'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::performFactoryRegistrations()
      */
-    function upgrade($currentVersion) {
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ImageFrameInterface_1_1', 'ImageFrameImpl', 'ImageFrame',
 	    'modules/imageframe/classes/ImageFrameImpl.class', 'imageframe', null);

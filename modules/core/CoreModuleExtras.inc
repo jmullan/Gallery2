@@ -120,7 +120,7 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $ret = $layout->activate();
+	    list ($ret, $ignored) = $layout->activate();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -170,7 +170,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.10';
+	    $currentVersion = '0.8.11';
 	    break;
 
 	case '0.8':
@@ -261,7 +261,7 @@ class CoreModuleExtras {
 	case '0.8.8':
 	    $currentVersion = '0.8.9';
 	    /* fall through */
-	    
+
 	case '0.8.9':
 	    $storage =& $gallery->getStorage();
 
@@ -275,8 +275,12 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    $currentVersion = '0.8.10';
+	    /* fall through */
+
+	case '0.8.10':
+	    $currentVersion = '0.8.11';
 	    break;
 	    
 	default:
@@ -284,56 +288,6 @@ class CoreModuleExtras {
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-	/* Register all of our factory implementations. */
-	$regs[] = array('GalleryEntity', 'GalleryEntity', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryChildEntity', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryAlbumItem', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryUser', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryGroup', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryDerivative', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryDerivativeImage', 'class', null);
-	$regs[] = array('GalleryDerivative', 'GalleryDerivativeImage', 'class', array('*'));
-	$regs[] = array('GalleryEntity', 'GalleryMovieItem', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryAnimationItem', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryPhotoItem', 'class', null);
-	$regs[] = array('GalleryEntity', 'GalleryUnknownItem', 'class', null);
-	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class', array('image/*'));
-	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class',
-			array('video/x-msvideo', 'video/quicktime', 'video/mpeg',
-			      'video/x-ms-asf', 'video/x-ms-wmv'));
-	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
-			array('application/x-director', 'application/x-shockwave-flash'));
-	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
-	$regs[] = array('GallerySearchInterface_1_0', 'GalleryCoreSearch', 'class', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditLayout', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null);
-	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
-	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
-	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
-
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($module->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	foreach ($regs as $entry) {
-	    $ret = GalleryCoreApi::registerFactoryImplementation(
-		$entry[0], $entry[1], $entry[1],
-                $entry[2] == 'class' ?
-		  sprintf('modules/core/classes/%s.class', $entry[1]) :
-		  sprintf('modules/core/%s.inc', $entry[1]),
-		'core', $entry[3], 4);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-	
 	$platform = $gallery->getPlatform();
 	$baseDir = $gallery->getConfig('data.gallery.base');
 	$versionFile = sprintf('%s%s%s',
@@ -383,7 +337,7 @@ class CoreModuleExtras {
 
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
 	$group = new GalleryGroup();
-	
+
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('All Users'));
 	$ret = $group->create($groupName, GROUP_ALL_USERS);
 	if ($ret->isError()) {
@@ -660,16 +614,65 @@ class CoreModuleExtras {
     }
 
     /**
-     * In version 0.8.9 we moved all factory registrations into the database.
-     * Normally this means that we'd have to put all of this into the main
-     * update loop in two places (in the install section and in the 0.8.8 ->
-     * 0.8.9 section).  That was redundant, so we've refactored it out here.
-     *
-     * @access private
-     * @return object GalleryStatatus a status code
-     * @static
+     * @see GalleryModule::performFactoryRegistrations
      */
-    function _registerAllFactoryImplementations_0_8_9() {
+    function performFactoryRegistrations($module) {
+	/* Register all of our factory implementations. */
+	$regs[] = array('GalleryEntity', 'GalleryEntity', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryChildEntity', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryAlbumItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryUser', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryGroup', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryDerivative', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryDerivativeImage', 'class', null);
+	$regs[] = array('GalleryDerivative', 'GalleryDerivativeImage', 'class', array('*'));
+	$regs[] = array('GalleryEntity', 'GalleryMovieItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryAnimationItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryPhotoItem', 'class', null);
+	$regs[] = array('GalleryEntity', 'GalleryUnknownItem', 'class', null);
+	$regs[] = array('GalleryItem', 'GalleryPhotoItem', 'class', array('image/*'));
+	$regs[] = array('GalleryItem', 'GalleryMovieItem', 'class',
+			array('video/x-msvideo', 'video/quicktime', 'video/mpeg',
+			      'video/x-ms-asf', 'video/x-ms-wmv'));
+	$regs[] = array('GalleryItem', 'GalleryAnimationItem', 'class',
+			array('application/x-director', 'application/x-shockwave-flash'));
+	$regs[] = array('GalleryItem', 'GalleryUnknownItem', 'class', array('*'));
+	$regs[] = array('GallerySearchInterface_1_0', 'GalleryCoreSearch', 'class', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditItem', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAnimation', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditMovie', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditAlbum', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditLayout', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhoto', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditRotateAndScalePhoto', 'inc', null);
+	$regs[] = array('ItemEditPlugin', 'ItemEditPhotoThumbnail', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromBrowser', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromServer', 'inc', null);
+	$regs[] = array('ItemAddPlugin', 'ItemAddFromWeb', 'inc', null);
+	$regs[] = array('ItemAddOption', 'CreateThumbnailOption', 'inc', null);
+
+	/*
+	 * Unlike other modules, the core module doesn't get deactivated so its
+	 * factory registrations may still be around from before.  Unregister
+	 * them now before reregistering them all.
+	 */
+	/* Unregister all factory implementations */
+	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($module->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($regs as $entry) {
+	    $ret = GalleryCoreApi::registerFactoryImplementation(
+		$entry[0], $entry[1], $entry[1],
+                $entry[2] == 'class' ?
+		  sprintf('modules/core/classes/%s.class', $entry[1]) :
+		  sprintf('modules/core/%s.inc', $entry[1]),
+		'core', $entry[3], 4);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 
 	return GalleryStatus::success();
     }

@@ -71,7 +71,7 @@ class SetSizeOption extends ItemAddOption {
                 $ret = SizeLimitHelper::buildDerivativeWithLimits($item, 'resize', $args);                
             }
             if ($ret->isError()) {
-                if ($ret->getErrorCode() | ERROR_UNSUPPORTED_FILE_TYPE) {
+                if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
                     $warnings[] = $module->translate(array('text' => 'WARNING: Cannot resize mime type %s',
                         'arg1' => $item->getMimeType()));
                 } else {
@@ -90,7 +90,7 @@ class SetSizeOption extends ItemAddOption {
                     $ret = SizeLimitHelper::buildDerivativeWithLimits($item, 'compress', $args);                
                 }
                 if ($ret->isError()) {
-                    if ($ret->getErrorCode() | ERROR_UNSUPPORTED_FILE_TYPE) {
+                    if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
                         $warnings[] = $module->translate(
                             array('text' => 'WARNING: Cannot compress mime type %s',
                             'arg1' => $item->getMimeType()));

@@ -61,11 +61,17 @@ class UpgradeCoreModuleStep extends UpgradeStep {
 	$templateData['storeConfig'] = $gallery->getConfig('storage.config');
 
 	if (isset($_POST['confirm'])) {
-	    /* Do the upgrade in bootstrap mode so that we avoid going to the database */
+	    /*
+	     * Do the upgrade in bootstrap mode so that we avoid going to the
+	     * database for anything that's not vital.
+	     */
 	    $ret = $core->installOrUpgrade(true);
 	    if ($ret->isSuccess()) {
-		$storage =& $gallery->getStorage();
-		$ret = $storage->commitTransaction();
+		list ($ret,  $ignored) = $core->activate();
+		if ($ret->isSuccess()) {
+		    $storage =& $gallery->getStorage();
+		    $ret = $storage->commitTransaction();
+		}
 	    }
 	    if ($ret->isError()) {
 		$templateData['stackTrace'] = $ret->getAsHtml();

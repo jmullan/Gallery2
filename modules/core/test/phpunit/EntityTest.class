@@ -41,12 +41,7 @@ class EntityTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_entity) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+	$this->_entity = new EntityTestEntity();
 	$ret = $this->_entity->create();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -70,10 +65,12 @@ class EntityTest extends GalleryTestCase {
     }
 
     function testDoLoad() {
-	// Ensure GalleryEntity::onLoad() is called whether entity is
-	// loaded from database or disk cache..
+	/*
+	 * Ensure GalleryEntity::onLoad() is called whether entity is
+	 * loaded from database or disk cache..
+	 */
 
-	// Load the entity back and verify it
+	/* Load the entity back and verify it */
 	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
 	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->_entity->getId()));
@@ -88,7 +85,7 @@ class EntityTest extends GalleryTestCase {
 	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
 
 	if (GalleryDataCache::isFileCachingEnabled()) {
-	    // Load back from disk cache and verify it
+	    /* Load back from disk cache and verify it */
 	    GalleryDataCache::reset();
 	    $data = GalleryDataCache::getFromDisk(
 				      array('type' => 'entity', 'itemId' => $this->_entity->getId()));
@@ -106,8 +103,10 @@ class EntityTest extends GalleryTestCase {
     }
 
     function testSetSameValueDifferentType() {
-	// Ensure modified flag is not set if we assign a value that once casted
-	// to the right type is the same as the old value..
+	/*
+	 * Ensure modified flag is not set if we assign a value that once casted
+	 * to the right type is the same as the old value..
+	 */
 
 	$oldValue = $this->_entity->getModificationTimestamp();
 	$newValue = (string)$oldValue;
@@ -117,8 +116,10 @@ class EntityTest extends GalleryTestCase {
     }
 
     function testSetBackToOldValue() {
-	// Ensure modified flag is cleared if we change an attribute and then
-	// change it back to its original value..
+	/*
+	 * Ensure modified flag is cleared if we change an attribute and then
+	 * change it back to its original value..
+	 */
 
 	$oldValue = $this->_entity->getModificationTimestamp();
 	$this->_entity->setModificationTimestamp(10);
@@ -129,15 +130,12 @@ class EntityTest extends GalleryTestCase {
     }
 
     function testSetSetSet() {
-	// Ensure modified flag stays set if value goes null->A->B->A (ie first set of A
-	// doesn't become the "original value" when it should stay as null)
+	/*
+	 * Ensure modified flag stays set if value goes null->A->B->A (ie first set of A
+	 * doesn't become the "original value" when it should stay as null)
+	 */
 
-	list ($ret, $entity) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
+	$entity = new EntityTestEntity();
 	$this->assert(!$entity->isModified(), 'not yet modified');
 	$entity->setIsLinkable(true);
 	$entity->setIsLinkable(false);

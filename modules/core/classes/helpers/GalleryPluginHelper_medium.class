@@ -39,43 +39,27 @@ class GalleryPluginHelper_medium {
      * @param string the plugin type
      * @param string the plugin id
      * @return object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      * @static
      */
     function activate($pluginType, $pluginId) {
-	global $gallery;
-
-	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	if (empty($pluginId) || empty($pluginType)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
 	}
-
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginMap.class');
-	if (isset($pluginStatus[$pluginId]['active'])) {
-	    $ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
-							  'pluginId' => $pluginId),
-						    array('active' => 1));
-	} else {
-	    $ret = GalleryPluginMap::addMapEntry(array('pluginType' => $pluginType,
-						       'pluginId' => $pluginId,
-						       'active' => 1));
-	}
+	
+	list ($ret, $plugin) =
+	    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Flush the cache */
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
-	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-					       'id' => '_all'));
+	list ($ret, $redirect) = $plugin->activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
-
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $redirect);
     }
 
     /**
@@ -83,37 +67,28 @@ class GalleryPluginHelper_medium {
      *
      * @param string the plugin type
      * @param string the plugin id
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      * @static
      */
     function deactivate($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
 	}
-
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginMap.class');
-	$ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
-						      'pluginId' => $pluginId),
-						array('active' => 0));
+	
+	list ($ret, $plugin) =
+	    GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Flush the cache */
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
-	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
-					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
-					       'id' => '_all'));
-	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
-
-	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
-	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
-	list ($ret) = GalleryCoreApi::postEvent($event);
+	list ($ret, $redirect) = $plugin->deactivate();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $redirect);
     }
 
     /**

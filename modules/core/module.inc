@@ -38,21 +38,21 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName('Core');
 	$this->setGalleryVersion('2.0-alpha-4+');
-	$this->setVersion('0.8.10');
+	$this->setVersion('0.8.11');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|loadSystemContent|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(2, 1));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/helpers/GalleryItemHelper_medium.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange',
 					      new GalleryItemHelper_medium());
 
@@ -127,12 +127,14 @@ class CoreModule extends GalleryModule {
 	    if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
-			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
+			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
+                            'GalleryAlbumItem', 'core.addAlbumItem');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
-			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
+			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
+                            'GalleryAlbumItem', 'core.addDataItem');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -199,7 +201,8 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if (!$isRoot && !$isParentRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
+	    if (!$isRoot && !$isParentRoot && isset($thumbTable[$item->getId()]) &&
+		    isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',
@@ -209,8 +212,8 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    if ($isAlbum && isset($permissions['core.edit']) &&
-		!empty($childCounts[$item->getId()]) &&
-		$childCounts[$item->getId()] > 1) {
+		    !empty($childCounts[$item->getId()]) &&
+		    $childCounts[$item->getId()] > 1) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array('view' => 'core:ItemAdmin',
@@ -550,6 +553,18 @@ class CoreModule extends GalleryModule {
 	}
 
 	return $versions;
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');
+	$ret = CoreModuleExtras::performFactoryRegistrations($this);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
     }
 }
 ?>

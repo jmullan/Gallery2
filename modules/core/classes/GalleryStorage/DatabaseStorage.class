@@ -1619,9 +1619,14 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	global $gallery;
 
 	if (empty($this->_entityInfoCache[$entityName])) {
-	    list ($ret, $entity) = GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (class_exists($entityName)) {
+		$entity = new $entityName();
+	    } else {
+		list ($ret, $entity) =
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', $entityName);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	    if (!isset($entity)) {
 		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,

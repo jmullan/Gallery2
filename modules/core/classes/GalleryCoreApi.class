@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(2, 1);
+	return array(3, 0);
     }
 
     /**
@@ -250,7 +250,8 @@ class GalleryCoreApi {
      *
      * @param string the plugin type
      * @param string the plugin id
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      * @static
      */
     function activatePlugin($pluginType, $pluginId) {
@@ -263,7 +264,8 @@ class GalleryCoreApi {
      *
      * @param string the plugin type
      * @param string the plugin id
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      * @static
      */
     function deactivatePlugin($pluginType, $pluginId) {

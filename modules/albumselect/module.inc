@@ -37,11 +37,11 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setId('albumselect');
 	$this->setName('Album Select');
 	$this->setDescription($gallery->i18n('Jump directly to any album using a select box'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|loadSystemContent');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**

@@ -47,7 +47,7 @@ class GalleryLayout extends GalleryPlugin {
     function getApiVersion() {
 	return array(0, 8);
     }
-    
+
     /**
      * Return whether the layout uses simple or advanced settings.
      * To support simple settings the layout needs to implement getSettings and validateSettings.
@@ -124,22 +124,33 @@ class GalleryLayout extends GalleryPlugin {
     }
 
     /**
-     * Activate this layout
+     * Activate this layout.
      *
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      */
     function activate() {
 	global $gallery;
 
+	list ($ret, $redirect) = parent::activate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!empty($redirect)) {
+	    return array(GalleryStatus::success(), $redirect);
+	}
+
 	/* Set the default value for all settings that don't have values */
 	list ($ret, $settings) = $this->getSettings();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $currentParameters) = GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId());
+	list ($ret, $currentParameters) =
+	    GalleryCoreApi::fetchAllPluginParameters('layout', $this->getId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/*
@@ -150,17 +161,12 @@ class GalleryLayout extends GalleryPlugin {
 	    if (!isset($currentParameters[$setting['key']])) {
 		$ret = $this->setParameter($setting['key'], $setting['value']);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
 
-	$ret = GalleryCoreApi::activatePlugin('layout', $this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), array());
     }
 
     /**
@@ -412,7 +418,7 @@ class GalleryLayout extends GalleryPlugin {
 	    foreach ($parentSequence as $id) {
 		$layout['parents'][] = $entities[$id]->getMemberData();
 	    }
- 	    $layout['parent'] = empty($parentSequence) ? null : 
+ 	    $layout['parent'] = empty($parentSequence) ? null :
  		$layout['parents'][count($parentSequence) - 1];
 
 	}
@@ -483,7 +489,7 @@ class GalleryLayout extends GalleryPlugin {
 			break;
 		    }
 		}
-		
+
 		if (!$required) {
 		    // This module doesn't have anything we need.  Don't bother with it
 		    continue;

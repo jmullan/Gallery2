@@ -75,14 +75,16 @@ class AdminLayoutsController extends GalleryController {
 	if (isset($form['action']['activate'])) {
 	    /* Only activate if we're not already active! */
 	    if (empty($layoutStatus['active'])) {
-		$ret = $layout->activate();
+		list ($ret, $redirect) = $layout->activate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
-		$redirect['mode'] = 'config';
+		if (empty($redirect)) {
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminLayouts';
+		    $redirect['mode'] = 'config';
+		}
 		$status['activated'] = $layout->getName();
 	    }
 	} else if (isset($form['action']['deactivate'])) {

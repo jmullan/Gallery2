@@ -38,22 +38,17 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(2, 0));
-	$this->setRequiredModuleApi(array(0, 8));
+	$this->setRequiredCoreApi(array(3, 0));
+	$this->setRequiredModuleApi(array(0, 9));
     }
 
     /**
-     * @see GalleryModule::upgrade()
+     * @see GalleryModule::performFactoryRegistrations()
      */
-    function upgrade($currentVersion) {
-	$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+    function performFactoryRegistrations() {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'ItemEditPlugin', 'ItemEditThumbPage', 'ItemEditThumbPage',
             'modules/thumbpage/ItemEditThumbPage.inc', 'thumbpage', null);
@@ -75,7 +70,8 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new ThumbPageModule());
+	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin',
+					      new ThumbPageModule());
     }
 
     /**
@@ -106,7 +102,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	if (empty($page) && empty($movie)) {
-	    // Can't activate unless there's already toolkit support
+	    /* Can't activate unless there's already toolkit support */
 	    return array(GalleryStatus::success(), array('view' => 'core:SiteAdmin',
 							 'subView' => 'thumbpage:CantActivate'));
 	} else {
