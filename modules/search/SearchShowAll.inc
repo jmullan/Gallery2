@@ -20,7 +20,27 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-class SearchView extends GalleryView {
+class SearchShowAllController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest() {
+	global $gallery;
+
+	$form = GalleryUtilities::getFormVariables('form.');
+
+	if (isset($form['action']['scan'])) {
+	    $results['view'] = 'search:SearchScan';
+	} else {
+	    $results['view'] = 'search:SearchShowAll';
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+class SearchShowAllView extends GalleryView {
 
     /**
      * @see GalleryView::renderHead
@@ -40,64 +60,70 @@ class SearchView extends GalleryView {
 	global $gallery;
 
 	// XXX: Parameterize this
-	$searchLimit = 3;
+	$pageSize = 2;
 
 	$form = GalleryUtilities::getFormVariables('form.');
 	$return = GalleryUtilities::getFormVariables('return.');
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	
-	/* Find all the modules that support the Search interface */
-	$ids = GalleryFactory::getAllImplementationIds('GallerySearchInterface_1_0');
-	foreach ($ids as $id => $className) {
-	    list ($ret, $searchInstances[$id]) =
-		GalleryFactory::newInstance('GallerySearchInterface_1_0', $className);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	/* Load the search info for each module */
-	foreach ($searchInstances as $id => $instance) {
-	    list ($ret, $modules[$id]) = $instance->getSearchModuleInfo();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
+	print "<pre>";
+	print_r($form);
+	print "</pre>";
 
 	$searchResults = array();
 	$searchResultItems = array();
 	$searchResultThumbnails = array();
-	if ($formName == 'Search') {
+	if ($formName == 'SearchShowAll' || $formName == 'SearchScan') {
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
-		if (isset($form['useDefaultSettings'])) {
-		    foreach ($searchInstances as $id => $instance) {
-			$form['options'][$id] = $modules[$id]['options'];
-		    }
+		if (isset($form['action']['showAll'])) {
+		    $form['moduleId'] = array_pop(array_keys($form['action']['showAll']));
+		    $form['page'] = 1;
 		}
 
-		/* Execute a limited search */
-		foreach ($searchInstances as $id => $instance) {
-		    if (isset($form['options'][$id])) {
-			list ($ret, $searchResults[$id]) =
-			    $instance->search($form['options'][$id],
-					      $form['searchCriteria'],
-					      $searchLimit);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
+		/* Reset the page number if we start a new search */
+		if (isset($form['action']['search'])) {
+		    $form['page'] = 1;
+		}
+
+		if (isset($form['action']['nextPage'])) {
+		    $form['page']++;
+		} else if (isset($form['action']['previousPage'])) {
+		    $form['page']--;
+		}
+
+		if ($form['page'] < 1) {
+		    $form['page'] = 1;
+		}
+
+		$moduleId = $form['moduleId'];
+		list ($ret, $searchInstance) =
+		    GalleryFactory::newInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		list ($ret, $moduleInfo) = $searchInstance->getSearchModuleInfo();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (isset($form['options'][$moduleId])) {
+		    list ($ret, $searchResults) =
+			$searchInstance->search($form['options'][$moduleId],
+						$form['searchCriteria'],
+						($form['page']-1) * $pageSize,
+						$pageSize);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
+		$maxPages = ceil($searchResults['count'] / $pageSize);
 	    }
 
-	    $itemIds = array();
-	    foreach ($searchResults as $id => $results) {
-		$itemIds = array_merge($itemIds, $results);
-	    }
-
-	    if (!empty($itemIds)) {
-		list ($ret, $items) = $gallery->loadEntitiesById($itemIds);
+	    if (!empty($searchResults['ids'])) {
+		list ($ret, $items) = $gallery->loadEntitiesById($searchResults['ids']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -109,7 +135,7 @@ class SearchView extends GalleryView {
 
 		/* Fetch thumbnails */
 		list ($ret, $thumbnails) =
-		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds);
+		    GalleryDerivativeHelper::fetchThumbnailsByItemIds($searchResults['ids']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -124,14 +150,16 @@ class SearchView extends GalleryView {
 
 	/* Render the HTML body */
 	$template = $this->getTemplate();
-	$template->setVariable('view', 'search:Search');
-	$template->setVariable('modules', $modules);
+	$template->setVariable('controller', 'search:SearchShowAll');
 	$template->setVariable('form', $form);
+	$template->setVariable('maxPages', $maxPages);
+	$template->setVariable('moduleInfo', $moduleInfo);
+	$template->setVariable('moduleId', $moduleId);
 	$template->setVariable('return', $return);
 	$template->setVariable('searchResults', $searchResults);
 	$template->setVariable('searchResultItems', $searchResultItems);
 	$template->setVariable('searchResultThumbnails', $searchResultThumbnails);
-	$html = $template->render('Search.tpl');
+	$html = $template->render('SearchShowAll.tpl');
 	
 	return array(GalleryStatus::success(), $html);
     }

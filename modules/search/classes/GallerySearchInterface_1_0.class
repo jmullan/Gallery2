@@ -52,9 +52,15 @@ class GallerySearchInterface_1_0 {
      *
      * @param array array('option_key_1', 'option_key_3')
      * @param string search criteria
-     * @return array(object GalleryStatus a status code, array(id, id, ...))
+     * @param int which hit to start with
+     * @param int how many hits to show
+     * @return array(object GalleryStatus a status code,
+     *               array('start' => 1..#,
+     *                     'end' => 1..#,
+     *                     'count' => #,
+     *                     'ids' => array(id, id, ...))
      */
-    function search($options, $criteria, $limit=null) {
+    function search($options, $criteria, $offset=0, $count=-1) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__),
 		     null);
     }

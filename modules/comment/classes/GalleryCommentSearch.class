@@ -46,7 +46,7 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
     /**
      * @see GallerySearchInterface_1_0.search()
      */
-    function search($options, $criteria, $limit=null) {
+    function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;
 
 	/* Get our separate permission bit settings */
@@ -61,6 +61,30 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	$countQuery = '
+	SELECT
+	  COUNT(DISTINCT([GalleryChildEntity::parentId])),
+	  BIT_OR([GalleryPermissionMap::permission])
+	FROM
+	  [GalleryChildEntity], [GalleryComment], [GalleryPermissionMap], [GalleryUserGroupMap]
+	WHERE
+	  [GalleryChildEntity::id] = [GalleryComment::id]
+	  AND
+          [GalleryChildEntity::parentId] = [GalleryPermissionMap::itemId]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryComment::comment] LIKE ?
+	HAVING
+	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+          AND
+	  (BIT_OR([GalleryPermissionMap::permission]) & ? > ?)
+        ';
 
 	$query = '
 	SELECT
@@ -102,7 +126,19 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	$data[] = $storage->convertIntToBits($commentBits);
 	$data[] = $storage->convertIntToBits(0);
 	
-	list ($ret, $results) = $gallery->search($query, $data);
+	/* Find the total */
+	list ($ret, $results) = $gallery->search($countQuery, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = $results->nextResult();
+	$numRows = $result[0];
+	
+	list ($ret, $results) =
+	    $gallery->search($query,
+			     $data,
+			     array('limit' => array('offset' => $offset,
+						    'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -111,7 +147,11 @@ class GalleryCommentSearch extends GallerySearchInterface_1_0 {
 	while ($result = $results->nextResult()) {
 	    $itemIds[] = $result[0];
 	}
-	
-	return array(GalleryStatus::success(), $itemIds);
+
+	$data = array('start' => $offset+1,
+		      'end' => $offset + sizeof($itemIds),
+		      'count' => $numRows,
+		      'ids' => $itemIds);
+	return array(GalleryStatus::success(), $data);
     }
 }

@@ -1,29 +1,32 @@
-      {galleryForm view="$view" method="GET"}
-      {galleryInput type="hidden" name="formName"}Search{/galleryInput}
+      {galleryForm controller=$controller method="GET"}
+      {galleryInput type="hidden" name="formName"}SearchScan{/galleryInput}
 
       <!-- Embed the hidden return fields -->
       {foreach from=$return key=key item=value}
       {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
       {/foreach}
-      
+
+      {galleryThinFrame width="100%"}
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr>
 	  <td colspan="2" align="center">
+	    {galleryHighlight1}
 	    {galleryBiggerFontSize}
+	    <center>
 	    {galleryText text="Search the Gallery"}
+	    </center>
 	    {/galleryBiggerFontSize}
-	  </td>
-	</tr>
 
-	<!-- {if !empty($return)} -->
-	<tr>
-	  <td colspan="2" align="center">
+	    {if !empty($return)}
+	    <center>
 	    <a href="{galleryUrl view=$return.view itemId=$return.itemId}">
 	      [{galleryText text="Back to Gallery"}]
 	    </a>
+	    </center>
+	    {/galleryHighlight1}
+	    {/if}
 	  </td>
 	</tr>
-	<!-- {/if} -->
 
 	<tr>
 	  <td colspan="2">
@@ -48,9 +51,11 @@
 	<!-- {foreach from=$modules key=moduleId item=moduleInfo} -->
 	<tr>
 	  <td colspan="2">
+	    {galleryHighlight2}
 	    {galleryBigFontSize}
 	    {$moduleInfo.name}
 	    {/galleryBigFontSize}
+	    {/galleryHighlight2}
 	  </td>
 	</tr>
 	
@@ -61,45 +66,69 @@
 	  </td>
 	  <td>
 	    {capture name=checkboxName}form.options.{$moduleId}.{$optionId}{/capture}
-	    {galleryInput type="checkbox" name=$smarty.capture.checkboxName}{$optionInfo.enabled}{/galleryInput}
+	    {galleryInput type="checkbox" name=$smarty.capture.checkboxName}
+	    {if isset($form.options.$moduleId.$optionId)}1{/if}
+	    {/galleryInput}
 	    {$optionInfo.description}
 	  </td>
 	</tr>
 	<!-- {/foreach} -->
 	<!-- {/foreach} -->
     </table>
+    {/galleryThinFrame}
 
+    <br>
 
-    <!-- {if isset($searchResults)} -->
+    <!-- {if !empty($searchResults)} -->
+    {galleryThinFrame}
     <table border="0" cellspacing="0" cellpadding="0" width="100%">
-
-	<tr>
-	  <td>
-	    &nbsp;
-	  </td>
-	</tr>
-
-	<tr>
-	  <td colspan="6" align="center">
-	    {galleryBiggerFontSize}
-	    {galleryText text="Search Results"}
-	    {/galleryBiggerFontSize}
-	  </td>
-	</tr>
-
-	<!-- {foreach from=$searchResults key=moduleId item=resultIds} -->
 	<tr>
 	  <td colspan="6">
+	    {galleryHighlight1}
+	    {galleryBiggerFontSize}
+	    <center>
+	      {galleryText text="Search Results"}
+	    </center>
+	    {/galleryBiggerFontSize}
+	    {/galleryHighlight1}
+	  </td>
+	</tr>
+
+	<!-- {foreach from=$searchResults key=moduleId item=results} -->
+	<tr>
+	  <td colspan="6">
+	    {galleryHighlight2}
 	    {galleryBigFontSize}
 	    {$modules.$moduleId.name}
 	    {/galleryBigFontSize}
+	    &nbsp;
+	    &nbsp;
+	    &nbsp;
+	    {if ($results.count > 0)}
+	    {galleryText text="(Results %d - %d)"
+	                 arg1=$results.start
+	                 arg2=$results.end}
+	    {/if}
+	    {if ($results.count > $results.end)}
+	    {assign var="moduleId" value=$moduleId}
+	    {galleryInput type="submit" name="form.action.showAll.$moduleId"}
+	    {galleryText text="Show all %d" arg1=$results.count}
+	    {/galleryInput}
+	    {/if}
+	    {/galleryHighlight2}
 	  </td>
 	</tr>
 
-	<!-- {foreach from=$resultIds item=resultId} -->
 	<tr>
-	  <td width="20" rowspan="2">
+	  <td colspan="6">
 	    &nbsp;
+	  </td>
+	</tr>
+
+	<!-- {foreach from=$results.ids item=resultId} -->
+	<tr>
+	  <td rowspan="2">
+	    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	  </td>
 	  <td rowspan="2" valign="top">
 	    <a href="{galleryUrl view=core:ShowItem itemId=$resultId}">
@@ -109,6 +138,7 @@
 	      width="{$searchResultThumbnails.$resultId.width}"
 	      height="{$searchResultThumbnails.$resultId.height}"
 	      {/if}
+	      border="0"
 	      >
 	      {else}
 	      {galleryText text="No thumbnail"}
@@ -157,6 +187,8 @@
 	<!-- {/foreach} -->
 	<!-- {/foreach} -->
     </table>
+    {/galleryThinFrame}
     <!-- {/if} -->
+
     {/galleryForm}
     

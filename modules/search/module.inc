@@ -71,13 +71,7 @@ class SearchModule extends GalleryTemplateModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /* Register our permissions */
-	    // translate('[search] All access')
-	    $ret = GalleryPermissionSetMap::registerPermission($this->getName(),
-							       'search.all', '[search] All access');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	    /* XXX: Register permissions here */
 	}
 	
 	return GalleryStatus::success();
@@ -94,7 +88,7 @@ class SearchModule extends GalleryTemplateModule {
 	}
 	
 	$template = $this->getTemplate();
-	$template->setVariable('view', 'search:Search');
+	$template->setVariable('view', 'search:SearchScan');
 	$template->setVariable('return', $return);
 	$html = $template->render('SystemContent.tpl');
 	return array(GalleryStatus::success(), array('content' => $html));

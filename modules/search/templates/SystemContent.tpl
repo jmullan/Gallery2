@@ -1,6 +1,6 @@
 {galleryForm view="$view" method="GET"}
-{galleryInput type="hidden" name="formName"}Search{/galleryInput}
-<a href="{galleryUrl view="search:Search" return_view=$return.view return_itemId=$return.itemId}">
+{galleryInput type="hidden" name="formName"}SearchSystemContent{/galleryInput}
+<a href="{galleryUrl view="search:SearchScan" return_view=$return.view return_itemId=$return.itemId}">
 {galleryText text="Search: "}
 </a>
 {galleryInput type="text" name="form.searchCriteria" size="15"}{/galleryInput}

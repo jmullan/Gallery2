@@ -52,7 +52,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
     /**
      * @see GallerySearchInterface_1_0.search()
      */
-    function search($options, $criteria, $limit=null) {
+    function search($options, $criteria, $offset=0, $count=-1) {
 	global $gallery;
 
 	$whereList = array();
@@ -68,6 +68,25 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 		$whereData[] = '%' . $criteria . '%';
 	    }
 	}
+
+	$countQuery = '
+        SELECT
+          COUNT(DISTINCT([GalleryItem::id]))
+        FROM
+          [GalleryItem], [GalleryPermissionMap], [GalleryUserGroupMap]
+        WHERE
+          (' . join(' OR ', $whereList) . ')
+          AND
+          [GalleryItem::id] = [GalleryPermissionMap::itemId]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+        ';
 
 	$query = '
         SELECT
@@ -108,10 +127,20 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	$data[] = $storage->convertIntToBits($viewPermission);
 	$data[] = $storage->convertIntToBits(0);
 
-	list ($ret, $results) = 
-	    $gallery->search($query, $data,
-			      array('limit' => array('offset' => 0, 'count' => $limit)),
-			      $data);
+	/* Find the total */
+	list ($ret, $results) = $gallery->search($countQuery, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$result = $results->nextResult();
+	$numRows = $result[0];
+
+	/* Get the results that we're interested in */
+	list ($ret, $results) =
+	    $gallery->search($query,
+			     $data,
+			     array('limit' => array('offset' => $offset,
+						    'count' => $count)));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -120,7 +149,11 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	while ($result = $results->nextResult()) {
 	    $itemIds[] = $result[0];
 	}
-	
-	return array(GalleryStatus::success(), $itemIds);
+
+	$data = array('start' => $offset+1,
+		      'end' => $offset + sizeof($itemIds),
+		      'count' => $numRows,
+		      'ids' => $itemIds);
+	return array(GalleryStatus::success(), $data);
     }
 }
