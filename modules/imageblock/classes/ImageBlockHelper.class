@@ -210,9 +210,7 @@ class ImageBlockHelper {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    } else {
-		global $gallery;
-		$storage =& $gallery->getStorage();
-		$ret = $storage->execute('DELETE FROM [ImageBlockCacheMap]', array());
+		$ret = ImageBlockCacheMap::removeAllMapEntries();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
