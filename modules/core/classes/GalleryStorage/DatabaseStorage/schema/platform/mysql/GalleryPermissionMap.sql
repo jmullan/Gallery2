@@ -37,6 +37,10 @@
     
     INDEX (COLUMN_PREFIXgroupId)
     
+      ,
+    
+    INDEX (COLUMN_PREFIXpermission)
+    
 
     ) TYPE=MyISAM;
 

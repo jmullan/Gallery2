@@ -101,6 +101,10 @@
     
       ,
     
+    INDEX (COLUMN_PREFIXownerId)
+    
+      ,
+    
     INDEX (COLUMN_PREFIXtitle)
     
 

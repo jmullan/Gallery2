@@ -19,6 +19,10 @@
   
     INDEX (COLUMN_PREFIXid)
     
+      ,
+    
+    INDEX (COLUMN_PREFIXparentId)
+    
 
     ) TYPE=MyISAM;
 

@@ -15,6 +15,8 @@
     COLUMN_PREFIXderivativeSourceId
       int(11)
     
+    NOT NULL
+  
       ,
     COLUMN_PREFIXderivativeCommands
       varchar(
@@ -42,6 +44,14 @@
     , 
   
     INDEX (COLUMN_PREFIXid)
+    
+      ,
+    
+    INDEX (COLUMN_PREFIXderivativeSourceId)
+    
+      ,
+    
+    INDEX (COLUMN_PREFIXderivativeType)
     
 
     ) TYPE=MyISAM;
