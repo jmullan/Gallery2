@@ -45,6 +45,14 @@ function GalleryMain() {
      */
     $gallery =& $GLOBALS['gallery'];
 
+    /*
+     * Specify the base URL to the Gallery.  In standalone mode this will be the
+     * empty string (since everything is relative to main.php).  But when we're
+     * embedded, we need to put in the relative path from the outer app to the
+     * Gallery directory (eg for PostNuke it might be 'modules/gallery')
+     */
+    $gallery->setConfig('url.gallery.base', '');
+
     /* Figure out the target module/controller */
     list($viewName, $controllerName) =
 	GalleryUtilities::getRequestVariables('view', 'controller');
@@ -62,10 +70,22 @@ function GalleryMain() {
 	    $controller = new $controllerClassName;
     
 	    /* Let the controller handle the input */
-	    $ret = $controller->handleRequest();
+	    list ($ret, $results) = $controller->handleRequest();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    /* Redirect, if so instructed */
+	    if (!empty($results['redirect'])) {
+		header("Location: $results[redirect]");
+		return GalleryStatus::success();
+	    }
+
+	    /* Let the controller specify the next view */
+	    if (!empty($results['view'])) {
+		$viewName = $results['view'];
+	    }
+	    
 	} else {
 	    $viewName = 'core:SecurityViolation';
 	}
@@ -85,14 +105,6 @@ function GalleryMain() {
 	    $class = $regs[2];
 	}
     }
-
-    /*
-     * Specify the base URL to the Gallery.  In standalone mode this will be the
-     * empty string (since everything is relative to main.php).  But when we're
-     * embedded, we need to put in the relative path from the outer app to the
-     * Gallery directory (eg for PostNuke it might be 'modules/gallery')
-     */
-    $gallery->setConfig('url.gallery.base', '');
 
     require_once($gallery->getConfig('code.gallery.modules') .
 		 $module . '/' . $class . '.inc');
@@ -153,47 +165,97 @@ function GalleryMain() {
 /*
  * Define our URL generator hook
  */
-function galleryUrlGenerator($params, &$smarty) {
+function galleryUrlGenerator($params) {
+    global $gallery;
+    
+    $baseUrl = $gallery->getConfig('url.gallery.base');
+    
     foreach ($params as $key => $value) {
 	$args[] = GALLERY_ARGUMENT_PREFIX . "$key=$value";
     }
-    print 'main.php?' . join('&amp;', $args);
+    $result = $baseUrl . 'main.php?' . join('&', $args);
+
+    if (func_num_args() == 2) {
+	/* Executed from within Smarty */
+	print $result;
+    } else {
+	return $result;
+    }
+}
+
+/*
+ * Define our form variable hook.
+ */
+function galleryFormVarGenerator($params) {
+    /*
+     * Convert dots to underscores.  Some versions of PHP seem to do
+     * this when processing POST data, so we force the issue here so
+     * that we get consistent behaviour across all versions.
+     */
+    $var = strtr($params['var'], '.', '_');
+    $result = GALLERY_ARGUMENT_PREFIX . $var;
+    
+    if (func_num_args() == 2) {
+	/* Executed from within Smarty */
+	print $result;
+    } else {
+	return $result;
+    }
 }
 
 /*
  * Define our form open generator
  */
-function galleryFormOpenGenerator($params, &$smarty) {
-    if (empty($params['method'])) {
-	$method = 'POST';
+function galleryFormGenerator($params, $content) {
+
+    /*
+     * This function gets called twice.  Once at the beginning of the block
+     * (without any content) and once at the end.  For simplicity we'll just
+     * ignore the beginning call and print out everything at the end.
+     */
+    $result = "";
+    if ($content) {
+	if (empty($params['method'])) {
+	    $method = 'POST';
+	} else {
+	    $method = $params['method'];
+	    unset($params['method']);
+	}
+
+	$result .= '<form method="' . $method . '" action="main.php">';
+	$result .= "\n";
+	foreach ($params as $key => $value) {
+	    $result .= '<input type="hidden" ' .
+		'name="' . GALLERY_ARGUMENT_PREFIX . $key . '" ' .
+		'value="' . $value . '">';
+	    $result .= "\n";
+	}
+	$result .= $content;
+	$result .= "\n";
+	$result .= '</form>';
+    }
+
+    if (func_num_args() == 3) {
+	/* Executed from within Smarty */
+	print $result;
     } else {
-	$method = $params['method'];
-	unset($params['method']);
+	return $result;
     }
-
-    $url = $params['url'];
-    unset($params['url']);
-    
-    print '<form method="' . $method . '" action="' . $url . '">';
-    foreach ($params as $key => $value) {
-	print '<input type="hidden" ' .
-	    'name="' . $key . '"' .
-	    'value="' . $value . '">';
-    }
-}
-
-/*
- * Define our form close generator
- */
-function galleryFormCloseGenerator($params, &$smarty) {
-    print '</form>';
 }
 
 /*
  * Define our translator hook
  */
-function galleryTranslator($params, &$smarty) {
+function galleryTranslator($params) {
     global $gallery;
-    print $gallery->translate($params);
+    $result = $gallery->translate($params);
+
+    if (func_num_args() == 2) {
+	/* Executed from within Smarty */
+	print $result;
+    } else {
+	return $result;
+    }
+    
 }
 ?>

@@ -24,7 +24,27 @@ class SiteAdminView extends GalleryView {
      * @see GalleryView::fetchHead
      */
     function fetchHead() {
-	return array(GalleryStatus::success(), false);
+	global $gallery;
+	
+	/* Get our style */
+	list ($ret, $style) = $gallery->getModuleParameter('core', 'default.style');
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$style = $gallery->getConfig('code.gallery.styles') . $style . '/style.css';
+	$style = GalleryUtilities::convertPathToRelativeUrl($style);
+	
+	/* Render the HTML head */
+	list ($ret, $smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$smarty->assign('style', $style);
+	$smarty->template_dir = dirname(__FILE__) . '/templates';
+	$html = $smarty->fetch('SiteAdminHead.tpl');
+
+	return array(GalleryStatus::success(), $html);
     }
 
     /**
@@ -33,10 +53,15 @@ class SiteAdminView extends GalleryView {
     function fetchBody() {
 	global $gallery;
 
-	/* Figure out which tab is active (default to 'core') */
-	$selectedTab = GalleryUtilities::getRequestVariables('selectedTab');
-	if (empty($selectedTab)) {
-	    $selectedTab = 'core';
+	/* Make sure we have adequate permissions */
+	list ($ret, $inGroup) =
+	    GalleryUserGroupMap::isUserInAdminGroup($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$inGroup) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
+			 null);
 	}
 
 	/* Load the module list */
@@ -44,37 +69,51 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	/* Build a tab for each module */
-	$tabs = array();
-	ksort($moduleStatus);
+
+	/* Get a list of all the admin views for each module */
+	$subViewChoices = array();
 	foreach ($moduleStatus as $moduleName => $status) {
 	    if (empty($status['active'])) {
 		continue;
 	    }
 
-	    $tab = array('name' => $moduleName,
-			 'selected' => 0);
-	    if ($selectedTab == $moduleName) {
-		$tab['selected'] = 1;
+	    /* Get the selected module's admin view */
+	    list($ret, $module) = $gallery->loadModule($moduleName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $tabs[] = $tab;
+
+	    list ($ret, $moduleViews) = $module->getAdminViews();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
 	}
 
-	/* Get the selected module's admin view */
-	list($ret, $module) = $gallery->loadModule($selectedTab);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	/* If we have a specific sub view, render it now */
+	$subView = GalleryUtilities::getRequestVariables('subView');
+	if (!empty($subView)) {
+	    ereg('^([[:alnum:]]+):([[:alnum:]]+)$', $subView, $regs);
+	    if (sizeof($regs) != 3) {
+		$module = 'core';
+		$class = 'SecurityViolation';
+	    } else {
+		$module = $regs[1];
+		$class = $regs[2];
+	    }
 
-	list ($ret, $view) = $module->getAdminView();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	    require_once($gallery->getConfig('code.gallery.modules') .
+			 $module . '/' . $class . '.inc');
+	    $viewClassName = $class . 'View';
+	    $view = new $viewClassName();
 
-	list ($ret, $moduleHtml) = $view->fetchBody();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    list ($ret, $subViewHtml) = $view->fetchBody();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $subViewHtml = "";
 	}
 
 	/* Render our HTML body */
@@ -82,10 +121,11 @@ class SiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$smarty->assign('tabs', $tabs);
-	$smarty->assign('moduleHtml', $moduleHtml);
+	
+	$smarty->assign('subViewChoices', $subViewChoices);
+	$smarty->assign('subViewHtml', $subViewHtml);
 	$smarty->template_dir = dirname(__FILE__) . '/templates';
-	$html = $smarty->fetch('SiteAdminBody.tpl');
+	$html = $smarty->fetch('SiteAdmin.tpl');
 
 	return array(GalleryStatus::success(), $html);
     }    

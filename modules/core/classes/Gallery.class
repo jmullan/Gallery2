@@ -730,8 +730,8 @@ class Gallery {
 	    /* Set up some hooks */
 	    $this->_smarty->register_function('galleryUrl', 'galleryUrlGenerator');
 	    $this->_smarty->register_function('galleryText', 'galleryTranslator');
-	    $this->_smarty->register_function('galleryFormOpen', 'galleryFormOpenGenerator');
-	    $this->_smarty->register_function('galleryFormClose', 'galleryFormCloseGenerator');
+	    $this->_smarty->register_function('galleryFormVar', 'galleryFormVarGenerator');
+	    $this->_smarty->register_block('galleryForm', 'galleryFormGenerator');
 	}
 
 	return array(GalleryStatus::success(), $this->_smarty);
@@ -997,12 +997,16 @@ class Gallery {
      *              argn => data
      */
     function translate($data) {
-	/* XXX: implement this using gettext */
-	$args = array($data['text']);
-	$i = 1;
-	while (isset($data['arg' . $i])) {
-	    $args[] = $data['arg' . $i];
-	    $i++;
+	if (is_array($data)) {
+	    /* XXX: implement this using gettext */
+	    $args = array($data['text']);
+	    $i = 1;
+	    while (isset($data['arg' . $i])) {
+		$args[] = $data['arg' . $i];
+		$i++;
+	    }
+	} else {
+	    $args = $data;
 	}
 	return call_user_func_array('sprintf', $args);
     }

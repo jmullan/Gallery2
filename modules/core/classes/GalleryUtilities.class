@@ -122,16 +122,25 @@ class GalleryUtilities {
      * Sanitize the input data
      */
     function getRequestVariables() {
+	global $HTTP_POST_VARS;
+	global $HTTP_GET_VARS;
 
 	$values = array();
 	foreach (func_get_args() as $argName) {
 	    /* Prepend our prefix here */
 	    $argName = GALLERY_ARGUMENT_PREFIX . $argName;
+
+	    /*
+	     * Convert dots to underscores.  Some versions of PHP seem to do
+	     * this when processing POST data, so we force the issue here so
+	     * that we get consistent behaviour across all versions.
+	     */
+	    $argName = strtr($argName, '.', '_');
 	    
-	    if (!empty($GLOBALS['HTTP_GET_VARS'][$argName])) {
-		$values[] = $GLOBALS['HTTP_GET_VARS'][$argName];
-	    } else if (!empty($GLOBALS['HTTP_POST_VARS'][$argName])) {
-		$values[] = $GLOBALS['HTTP_POST_VARS'][$argName];
+	    if (!empty($HTTP_GET_VARS[$argName])) {
+		$values[] = $HTTP_GET_VARS[$argName];
+	    } else if (!empty($HTTP_POST_VARS[$argName])) {
+		$values[] = $HTTP_POST_VARS[$argName];
 	    } else {
 		$values[] = null;
 	    }
@@ -373,6 +382,29 @@ class GalleryUtilities {
 
 	return array($ret, $results);
     }
-    
+
+    /**
+     * Convert a filesystem path inside the gallery directory to a relative URL
+     *
+     *  ie /path/to/gallery/styles/classic/style.css => styles/classic/style.css
+     *
+     * @param string path to a file in the gallery directory tree
+     * @return string a relative url
+     */
+    function convertPathToRelativeUrl($path) {
+	global $gallery;
+
+	/* Factor the gallery code base out of the path */
+	$dirbase = $gallery->getConfig('code.gallery.base');
+	$relativePath = str_replace($dirbase, '', $path);
+
+	/* Prepend the URL base */
+	$urlBase = $gallery->getConfig('url.gallery.base');
+	if (!empty($urlBase)) {
+	    return $urlBase . '/' . $relativePath;
+	}
+
+	return $relativePath;
+    }
 }
 ?>

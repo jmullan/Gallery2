@@ -57,5 +57,22 @@ class GalleryGraphicsFactory {
 					  __FILE__, __LINE__),
 		     null);
     }
+
+    /**
+     * Return the ids of all the available implementations
+     *
+     * @return array string ids
+     */
+    function getAllImplementationIds() {
+	global $gallery;
+
+	$implementations = $gallery->lookupRegistry('GalleryGraphicsFactory');
+	$ids = array();
+	foreach ($implementations as $impl) {
+	    $ids[] = $impl['id'];
+	}
+
+	return $ids;
+    }
 }
 ?>

@@ -101,6 +101,29 @@ class GalleryModule {
     }
 
     /**
+     * Is this module active?
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if active
+     */
+    function isActive() {
+	global $gallery;
+
+	list($ret, $moduleStatus) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (empty($moduleStatus[$this->_name])) {
+	    return array(GalleryStatus::error(ERROR_BAD_DATA, __FILE__, __LINE__),
+			 null);
+	}
+
+	return array(GalleryStatus::success(),
+		     empty($moduleStatus[$this->_name]['active']) ? false : true);
+    }
+
+    /**
      * Does this module require configuration?
      *
      * @return array object GalleryStatus a status code
@@ -124,13 +147,27 @@ class GalleryModule {
     }
     
     /**
-     * Get the GalleryView containing the administration view for this module
+     * Get the name of the GalleryView containing the various administration
+     * views for this module
      *
      * @param the type of view requested
      * @return array object GalleryStatus a status code
-     *               object GalleryView a view
+     *               array( array('name' => name, 'view' => view), ...)
      */
-    function getAdminView() {
+    function getAdminViews() {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+    }
+
+    /**
+     * Get the name of the GalleryView containing the administration
+     * view specifically for configuring this module.  It may be one that is
+     * also listed in getAdminViews()
+     *
+     * @param the type of view requested
+     * @return array object GalleryStatus a status code
+     *               string view name
+     */
+    function getConfigurationView() {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
     }
 

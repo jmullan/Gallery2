@@ -173,12 +173,12 @@ if (empty($HTTP_POST_VARS['g2_storeAction'])) {
  * Make sure that we have some reasonable defaults for the core.
  */
 foreach (array('permissions.directory' => '0755',
-	       'permissions.file' => '0755',
+	       'permissions.file' => '0644',
 	       'exec.expectedStatus' => '0',
 	       'default.orderBy' => 'id',
 	       'default.orderDirection' => '1',
 	       'default.layout' => 'classic',
-	       'default.style' => 'classic',
+	       'default.style' => 'classic.css',
 	       'graphics.type' => 'netpbm')
 	 as $key => $value) {
 
@@ -188,7 +188,7 @@ foreach (array('permissions.directory' => '0755',
 	return;
     }
 
-    if (empty($oldValue)) {
+    if (isset($oldValue)) {
 	$ret = $gallery->setModuleParameter('core', $key, $value);
 	if ($ret->isError()) {
 	    error('unknownError', array('error' => $ret));

@@ -40,13 +40,8 @@ class ShowItemView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$style = $gallery->getConfig('code.gallery.styles') . $style . '.css';
-	$dirbase = $gallery->getConfig('code.gallery.base');
-	$style = str_replace($dirbase, '', $style);
-	$urlbase = $gallery->getConfig('url.gallery.base');
-	if (!empty($urlbase)) {
-	    $style = $urlbase . '/' . $style;
-	}
+	$style = $gallery->getConfig('code.gallery.styles') . $style . '/style.css';
+	$style = GalleryUtilities::convertPathToRelativeUrl($style);
 
 	/* Render the HTML head */
 	list ($ret, $smarty) = $gallery->getSmarty();

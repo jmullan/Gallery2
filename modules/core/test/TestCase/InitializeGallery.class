@@ -16,12 +16,12 @@ class InitializeGalleryTestCase extends TestCase {
 
 	$retArray = array();
 	$retArray[] = $gallery->setModuleParameter('core', 'permissions.directory', 0755);
-	$retArray[] = $gallery->setModuleParameter('core', 'permissions.file', 0755);
+	$retArray[] = $gallery->setModuleParameter('core', 'permissions.file', 0644);
 	$retArray[] = $gallery->setModuleParameter('core', 'exec.expectedStatus', 0);
 	$retArray[] = $gallery->setModuleParameter('core', 'default.orderBy', 'id');
 	$retArray[] = $gallery->setModuleParameter('core', 'default.orderDirection', 1);
 	$retArray[] = $gallery->setModuleParameter('core', 'default.layout', 'classic');
-	$retArray[] = $gallery->setModuleParameter('core', 'default.style', 'classic');
+	$retArray[] = $gallery->setModuleParameter('core', 'default.style', 'classic.css');
 	$retArray[] = $gallery->setModuleParameter('core', 'graphics.type', 'netpbm');
 
 	foreach ($retArray as $ret) {

@@ -79,7 +79,7 @@ class GalleryPlatform {
 	$filename = $this->importPath($filename);
 	$gallery->debug("file_exists($filename)");
 
-	return file_exists($filename);
+	return @file_exists($filename);
     }
 
     /**

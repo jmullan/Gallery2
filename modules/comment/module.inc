@@ -24,7 +24,7 @@
  * This module provides support for adding comments to items
  *
  * @version $Id$
- * @package NetPBM
+ * @package Comments
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 class CommentModule extends GalleryModule {
@@ -54,5 +54,25 @@ class CommentModule extends GalleryModule {
 	return parent::init();
     }
 
+    /**
+     * @see GalleryModule::getAdminViews
+     */
+    function getAdminViews() {
+	global $gallery;
+
+	return array(GalleryStatus::success(),
+		     array(array('name' => $gallery->translate('Comments'),
+				 'view' => 'comment:AdminComments')));
+    }
+
+    /**
+     * @see GalleryModule::getConfigurationView
+     */
+    function getConfigurationView() {
+	global $gallery;
+
+	return array(GalleryStatus::success(), 'comment:AdminComments');
+    }
+    
 }
 ?>

@@ -76,6 +76,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryModuleMap.class');
 	require_once($classDir . 'GalleryModuleParameterMap.class');
 	require_once($classDir . 'GalleryView.class');
+	require_once($classDir . 'GalleryController.class');
 
 	/*
 	 * Set up our Gallery global.  It's important to use a reference here because
@@ -113,11 +114,20 @@ class CoreModule extends GalleryModule {
     }
 
     /**
-     * @see GalleryModule::getAdminContent();
+     * @see GalleryModule::getAdminViews();
      */
-    function getAdminView() {
-	require_once(dirname(__FILE__) . '/CoreModuleAdmin.inc');
-	return array(GalleryStatus::success(), new CoreModuleAdminView());
+    function getAdminViews() {
+	global $gallery;
+
+	return array(GalleryStatus::success(),
+		     array(array('name' => $gallery->translate('General'),
+				 'view' => 'core:AdminCore'),
+			   array('name' => $gallery->translate('Users'),
+				 'view' => 'core:AdminUsers'),
+			   array('name' => $gallery->translate('Groups'),
+				 'view' => 'core:AdminGroups'),
+			   array('name' => $gallery->translate('Modules'),
+				 'view' => 'core:AdminModules')));
     }
 }
 ?>

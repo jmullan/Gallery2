@@ -116,6 +116,7 @@ class UnixPlatform extends GalleryPlatform {
 		    while (!feof($fd)) {
 			$buf = fgets($fd, 4096);
 			$buf = rtrim($buf);
+			$results[] = $buf;
 			$gallery->debug($buf);
 			if (!empty($buf)) {
 			    $lineCount++;

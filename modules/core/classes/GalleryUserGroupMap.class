@@ -188,6 +188,47 @@ class GalleryUserGroupMap_core {
 	return array($ret, $data);
     }
     
+
+    /**
+     * Is the given user id in the admin group?
+     *
+     * @param int the id of the user
+     * @return object GalleryStatus a status code
+     */
+    function isUserInAdminGroup($userId) {
+	global $gallery;
+	list ($ret, $adminGroupId) =
+	    $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryUserGroupMap::isUserInGroup($userId, $adminGroupId);
+    }
+
+    /**
+     * Is the given user id in the given group?
+     *
+     * @param int the id of the user
+     * @return object GalleryStatus a status code
+     */
+    function isUserInGroup($userId, $groupId) {
+	global $gallery;
+
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => 'COUNT(*)',
+				   'where' => ('[GalleryUserGroupMap::userId] = ? ' .
+					       'AND [GalleryUserGroupMap::groupId] = ?')),
+			     array($userId, $groupId));
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$result = $searchResults->nextResult();
+	return array($ret, $result[0] == 1);
+    }
+    
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryUserGroupMap.inc');
