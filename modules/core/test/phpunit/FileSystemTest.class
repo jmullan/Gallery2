@@ -126,6 +126,42 @@ class FileSystemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testMoveCollision() {
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_albums[0]->getId(),
+								      $this->_albums[1]->getId(),
+								      $this->_albums[2]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $this->_albums[1]->rename('foo');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_albums[1]->save();
+	
+	$ret = $this->_albums[1]->move($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $this->_albums[2]->rename('foo');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_albums[2]->move($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('foo_001', $this->_albums[2]->getPathComponent());
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 ?>

@@ -272,6 +272,9 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	    }
 	}
 
+	// Our path component may have changed when it got "legalized"
+	$this->setPathComponent($newPathComponent);
+
 	return GalleryStatus::success();
     }
 
