@@ -1,0 +1,289 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditImage controller tests
+ */
+class ItemEditImageControllerTest extends GalleryControllerTestCase {
+
+    function ItemEditImageControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditImage');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($rootId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register a dummy toolkit */
+	GalleryFactory::registerImplementation('GalleryToolkit',
+					       'ItemEditImageTestToolkit',
+					       'ItemEditImageTestToolkit',
+					       __FILE__);
+
+	/* Register operations that we can perform on our mock data items */
+	GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
+						       array('test/file'),
+						       'scale',
+						       array(array('type' => 'int')),
+						       'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryToolkitHelper::registerOperation('ItemEditImageTestToolkit',
+						       array('test/file'),
+						       'rotate',
+						       array(array('type' => 'int')),
+						       'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_derivative[0]) =
+	    $this->_createDerivative($this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_derivative[1]) =
+	    $this->_createDerivative($this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_derivative[2]) =
+	    $this->_createDerivative($this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testScale() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.scale', 1);
+	GalleryUtilities::putRequestVariable('form.scale.size', 200);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditImage',
+				    'itemId' => $this->_item->getId()),
+			      $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('rotate+scale|90,+,200', $this->_derivative[0]->getDerivativeOperations());
+    }
+
+    function testScaleMissing() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.scale', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditImage', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_item->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.scale.size.missing'));
+    }
+    
+    function testScaleInvalid() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.scale', 1);
+	GalleryUtilities::putRequestVariable('form.scale.size', 'scooby doo');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemEditImage', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_item->getId(), (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.scale.size.invalid'));
+    }
+
+    function testRotateClockwise() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.rotate.clockwise', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditImage',
+				    'itemId' => $this->_item->getId()),
+			      $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('rotate+rotate|90,+,90', $this->_derivative[0]->getDerivativeOperations());
+    }
+
+    function testRotateCounterClockwise() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.rotate.counterClockwise', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditImage',
+				    'itemId' => $this->_item->getId()),
+			      $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('rotate+rotate|90,+,-90', $this->_derivative[0]->getDerivativeOperations());
+    }
+
+    function testRotateFlip() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.rotate.flip', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditImage',
+				    'itemId' => $this->_item->getId()),
+			      $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('rotate+rotate|90,+,180', $this->_derivative[0]->getDerivativeOperations());
+    }
+
+    function testRevertToOriginal() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.action.revertToOriginal', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemEditImage',
+				    'itemId' => $this->_item->getId()),
+			      $results);
+
+	/* Verify that the preferred is gone */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT);
+
+	/* And that the other derivatives now point at the item */
+	for ($i = 1; $i <= 2; $i++) {
+	    list ($ret, $this->_derivative[$i]) = $this->_derivative[$i]->refresh();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assert($this->_item->getId(), $this->_derivative[$i]->getDerivativeSourceId());
+	}
+    }
+}
+
+// Dummy test toolkit
+class ItemEditImageTestToolkit extends GalleryToolkit {
+    /**
+     * @see GalleryToolkit::performOperation()
+     * Dummy operation
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$platform->copy($sourceFilename, $destFilename);
+	return array(GalleryStatus::success(), $mimeType);
+    }
+
+    /**
+     * @see GalleryToolkit::mergeOperations()
+     * Dummy operation
+     */
+    function mergeOperations($mimeType, $operation1, $args1, $operation2, $args2) {
+	// Do something stupid, but predictable
+	return array(GalleryStatus::success(),
+		     $operation1 . '+' . $operation2,
+		     array_merge($args1, array('+'), $args2));
+    }
+}
+?>
