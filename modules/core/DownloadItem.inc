@@ -139,8 +139,18 @@ class DownloadItemView extends GalleryView {
 
 	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 		$mimeType = $entity->getMimeType();
+		$pseudoFileName = $entity->getPathComponent();
 	    } else {
 		$mimeType = $entity->getDerivativeMimeType();
+
+		list ($ret, $sourceEntity) = $gallery->loadEntitiesById($entity->getDerivativeSourceId());
+		if ($ret->isSuccess()) {
+		    $pseudoFileName = $sourceEntity->getPathComponent();
+		}
+	    }
+
+	    if (isset($pseudoFileName)) {
+		$buf .= '/' . $pseudoFileName;
 	    }
 
 	    $extension = GalleryUtilities::convertMimeToExtension($mimeType);
