@@ -71,17 +71,8 @@ class ItemAddAlbumController extends GalleryController {
 
 	    if (empty($error)) {
 		list ($ret, $instance) =
-		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if (!isset($instance)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				 null);
-		}  
-
-		$ret = $instance->create($itemId, $form['pathComponent']);
+		    GalleryCoreApi::createAlbum($itemId, $form['pathComponent'], $form['title'],
+		    				$form['summary'], $form['description'], $form['keywords']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
 			$error[] = 'form[error][pathComponent][collision]';
@@ -89,18 +80,14 @@ class ItemAddAlbumController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
+
+		if (!isset($instance)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
+		}  
 	    }
 
 	    if (empty($error)) {
-		$instance->setTitle($form['title']);
-		$instance->setSummary($form['summary']);
-		$instance->setKeywords($form['keywords']);
-		$instance->setDescription($form['description']);
-		$ret = $instance->save();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
 		$ret = GalleryCoreApi::addUserPermission($instance->getId(),
 							 $instance->getOwnerId(),
 							 'core.all',

@@ -274,5 +274,34 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('testfile.txt', $newItem->getTitle());
 	$this->assertEquals($platform->filesize(__FILE__), $newItem->getSize());
     }    
+
+    function testNewAlbum() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	GalleryUtilities::putRequestVariable('form[cmd]', 'new-album');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[newAlbumName]', 'name'.rand());
+	GalleryUtilities::putRequestVariable('form[newAlbumTitle]', 'title');
+	GalleryUtilities::putRequestVariable('form[newAlbumDesc]', 'desc');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote:GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+	
+	$newAlbumId = (int)$response->getProperty('album_name');
+
+	/* Make sure the item was added */
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($newAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('title', $newAlbum->getTitle());
+	$this->assertEquals('desc', $newAlbum->getDescription());
+    }    
 }
 ?>

@@ -405,5 +405,81 @@ class GalleryItemHelper_advanced {
 
 	return array(GalleryStatus::success(), $success);
     }
+
+    /**
+     * Create a new album.
+     *
+     * @param int the id of the parent album
+     * @param string the name of the new album
+     * @param string the title of the new album
+     * @param string the summary of the new album
+     * @param string the description of the new album
+     * @param string the keywords of the new album
+     * @return array object GalleryStatus a status code
+     *               object GalleryAlbumItem a new album
+     * @static
+     */
+    function createAlbum($parentAlbumId, $name, $title, $summary, $description, $keywords) {
+	global $gallery;
+
+	/* Can't work without a name and a parentAlbum */
+	if (empty($parentAlbumId) || empty($name)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
+	/* Make sure the parent album is indeed an album */
+	list ($ret, $parentAlbum) = GalleryCoreApi::loadEntitiesById($parentAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($parentAlbum->getentityType() != 'GalleryAlbumItem') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
+	/* create the album object */
+	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!isset($album)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	/* acquire lock to reference the parent in our new object */
+	// todo: do we really need this, since the parent's id will not change? Or should the caller do this?
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$ret = $album->create($parentAlbumId, $name);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change album settings */
+	$album->setTitle($title);
+	$album->setDescription($description);
+	$album->setSummary($summary);
+	$album->setKeywords($keywords);
+
+	/* Save it */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $album);
+    }
 }
 ?>

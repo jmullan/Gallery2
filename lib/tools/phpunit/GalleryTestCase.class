@@ -220,45 +220,38 @@ class GalleryTestCase extends TestCase {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	
-	list ($ret, $album) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryAlbumItem');
+	list ($ret, $album) = GalleryCoreApi::createAlbum($parentId, 'albumtest' . rand(),
+							     'This is my title', 'This is my summary',
+							     'This is my description', null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (!isset($album)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-
-	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
-	$ret = $album->create($parentId, 'albumtest' . rand());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Change some settings */
-	$album->setTitle('This is my title');
-	$album->setDescription('This is a description');
-	$album->setSummary('This is a summary');
-	foreach ($fields as $field => $value) {
-	    $func = "set$field";
-	    $album->$func($value);
-	}
-
-	/* Save it */
-	$ret = $album->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Leggo of our locks */
-	if (isset($lockIds)) {
-	    $ret = GalleryCoreApi::releaseLocks($lockIds);
+	if (!empty($fields)) {
+	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($album->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    /* Change some settings */
+    
+	    foreach ($fields as $field => $value) {
+		$func = "set$field";
+		$album->$func($value);
+	    }
+    
+	    /* Save it */
+	    $ret = $album->save();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+    
+	    /* Leggo of our locks */
+	    if (isset($lockIds)) {
+		$ret = GalleryCoreApi::releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 

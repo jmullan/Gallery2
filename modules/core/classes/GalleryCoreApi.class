@@ -1246,6 +1246,25 @@ class GalleryCoreApi {
     }
     
     /**
+     * Create a new album.
+     *
+     * @param int the id of the parent album
+     * @param string the name of the new album
+     * @param string the title of the new album
+     * @param string the summary of the new album
+     * @param string the description of the new album
+     * @param string the keywords of the new album
+     * @return array object GalleryStatus a status code
+     *               object GalleryAlbumItem a new album
+     * @static
+     */
+    function createAlbum($parentAlbumId, $name, $title, $summary, $description, $keywords) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::createAlbum($parentAlbumId, $name, $title, $summary,
+							$description, $keywords);
+    }
+    
+    /**
      * Add a new data item to an album from a data file.
      *
      * @param string the path to the file on the local disk
