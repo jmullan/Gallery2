@@ -69,20 +69,12 @@ class GallerySession {
     var $_isUsingCookies;
 
     /**
-     * Is this a new session?
+     * The session data as loaded from file
      *
-     * @var bool $_isNewSession
+     * @var array $_loadedSessionData;
      * @access private
      */
-    var $_isNewSession;
-
-    /**
-     * Has the session data been modified?
-     *
-     * @var bool $_isSessionDataModified
-     * @access private
-     */
-    var $_isSessionDataModified;
+    var $_loadedSessionData;
 
     /**
      * The session data
@@ -125,7 +117,6 @@ class GallerySession {
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
-
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
@@ -230,28 +221,13 @@ class GallerySession {
 	$dieRoll = rand(1, 100);
 	
 	/* Only bother saving if we've been modified at all */
-	if ($this->_isSessionDataModified) {
+	if ($this->_sessionData != $this->_loadedSessionData) {
+	    $serialized = serialize($this->_sessionData);
 	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
-	    $fd = $platform->fopen($sessionFile, 'wb');
-	    if ($fd) {
-		/*
-		 * TODO: it's still possible for two simultaneous requests to step on each
-		 * others session changes, but there's no easy way to resolve that.  Right?
-		 */
-		$platform->flock($fd, LOCK_EX, $wouldBlock);
-		$serialized = serialize($this->_sessionData);
-		$size = strlen($serialized);
-		$bytesWritten = $platform->fwrite($fd, $serialized, $size);
-		if ($bytesWritten != $size) {
-		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						sprintf('Failed to write complete session file (%s)',
-							$this->_sessionId));
-		}
-	    } else {
-		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					    sprintf('Can\'t write to session file (%s)',
-						    $this->_sessionId));
-		}
+	    $ret = $platform->concurrentWrite($sessionFile, $serialized);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	} else {
 	    /*
 	     * 5% of the time touch the session file so that it doesn't get expired.
@@ -408,7 +384,6 @@ class GallerySession {
      */
     function put($key, $value) {
 	$this->_sessionData[$key] = $value;
-	$this->_isSessionDataModified = true;
     }
 
     /**
@@ -418,7 +393,6 @@ class GallerySession {
      */
     function remove($key) {
 	unset($this->_sessionData[$key]);
-	$this->_isSessionDataModified = true;
     }
 
     /**
@@ -443,22 +417,16 @@ class GallerySession {
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
 	if ($platform->file_exists($sessionFile)) {
-	    $fd = $platform->fopen($sessionFile, 'rb');
-	    if ($fd) {
-		$this->_sessionData =
-		    unserialize($platform->fread($fd, $platform->filesize($sessionFile)));
-		$this->_isSessionDataModified = false;
-		$this->_isNewSession = false;
-		$platform->fclose($fd);
-	    } else {
-		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					    sprintf('Session file for id %s is broken', $this->_sessionId));
+	    list ($ret, $serialized) = $platform->concurrentRead($sessionFile, 'rb');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $this->_sessionData = unserialize($serialized);
+	    $this->_loadedSessionData = $this->_sessionData;
 	} else {
 	    /* No session file */
 	    $this->_sessionData = array();
-	    $this->_isSessionDataModified = true;
-	    $this->_isNewSession = true;
+	    $this->_loadedSessionData = array();
 	    $this->_creationTime = time();
 	}
 

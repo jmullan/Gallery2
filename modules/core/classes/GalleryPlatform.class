@@ -323,6 +323,132 @@ class GalleryPlatform {
     }
 
     /**
+     * Opens a file with locking
+     *
+     * @param string a filename
+     * @param boolean do we want to lock in exclusive (write) mode?
+     * @param string the mode for fopen()
+     * @return array object GalleryStatus
+     *               resource the opened filehandle (if everything went ok)
+     * @access public
+     */
+    function openAndLock($filename, $lockExclusive = false, $fopenMode = 'rb') {
+	if (true) {
+	    $fd = $this->fopen($filename, $fopenMode);
+	    if (! $fd) {
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						  sprintf('Can\'t open file (%s) in mode (%s)', $filename, $fopenMode)),
+			     null);
+	    }
+	    $lockMode = ($lockExclusive ? LOCK_EX : LOCK_SH) | LOCK_NB;
+	    $i = 0;
+	    $locked = false;
+	    $wouldBlock = false;
+	    while (! $locked && $i++ < 20) {
+		/* Try to get a lock 20 times */
+		$this->flock($fd, $lockMode, $wouldBlock);
+		if (! $wouldBlock) {
+		    $locked = true;
+		} else {
+		    usleep(rand(2,50));
+		}
+	    }
+	    if ($wouldBlock) {
+		/* Still no lock? Somethings wrong... */
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						  sprintf('Failed to get a%s to (%s)', ($lockExclusive ? 'n exclusive' : ' shared'), $filename)),
+			     null);
+	    }
+	} else {
+	    /* TODO: If we can't flock... */
+	    $fd = $this->fopen($filename, $mode);	    
+	}
+	return array(GalleryStatus::success(), $fd);
+    }
+
+    /**
+     * Close a file opened with openAndLock()
+     *
+     * @param resource a filehandle
+     * @return object GalleryStatus
+     * @access public
+     */
+    function closeAndUnlock($fd) {
+	if (true) {
+	    $this->flock($fd, LOCK_UN, $wouldBlock);
+	} else {
+	    /* TODO: Here we should do stuff if flock() is not supported */
+	}
+	$this->fclose($fd);
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Write some data to a file using exclusive locks
+     *
+     * @param filename
+     * @param string data to be written
+     * @param boolean binary mode?
+     * @return object GalleryStatus
+     * @access public
+     */
+    function concurrentWrite($filename, $data) {
+	$size = strlen($data);
+	if (! $this->file_exists($filename)) {
+	    /* We are the first to create the file, just do it! */
+	    list ($ret, $fd) = $this->openAndLock($filename, true, 'wb');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $bytesWritten = $this->fwrite($fd, $data, $size);
+	} else {
+	    /* File already exists, open read-write to be able to fseek to 0 */
+	    list ($ret, $fd) = $this->openAndLock($filename, true, 'r+b');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    /* Move back to beginnnig of the file and write our stuff */
+	    if ($this->fseek($fd, 0) != 0) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    sprintf('Could not seek to beginning of (%s)', $filename));
+	    }
+	    $bytesWritten = $this->fwrite($fd, $data, $size);
+	    if (! $this->ftruncate($fd, $size)) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    sprintf('Could not truncate file (%s)', $filename));
+	    }
+	}
+	$this->closeAndUnlock($fd);
+	if ($bytesWritten != $size) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					sprintf('Failed to write complete file (%s)', $filename));
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Read some data to a file using shared locks
+     *
+     * @param filename
+     * @return array object GalleryStatus
+     *               string data (file content)
+     * @access public
+     */
+    function concurrentRead($filename) {
+	$size = $this->filesize($filename);
+	list ($ret, $fd) = $this->openAndLock($filename, 'rb');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$data = $this->fread($fd, $size);
+	$ret = $this->closeAndUnlock($fd);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $data);
+    }
+
+    /**
      * Open a file or URL
      *
      * @param string a file path
@@ -724,7 +850,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Tests for end-of-file on a file pointer
+     * Reads data from an open file handle
      *
      * @param resource the handle
      * @param int the length
@@ -737,6 +863,46 @@ class GalleryPlatform {
 	}
 
 	return fread($handle, $length);
+    }
+
+    /**
+     * Seeks on a file pointer
+     *
+     * @param resource the handle
+     * @param int offset
+     * @param int whence
+     * @return int 0 upon success, otherwise -1
+     */
+    function fseek($handle, $offset, $whence = SEEK_SET) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("fseek($handle, $offset, $whence)");
+	}
+
+	return fseek($handle, $offset, $whence);
+    }
+
+    /**
+     * Truncates a file to a given length
+     *
+     * @param resource the handle
+     * @param int the size
+     * @return boolean success?
+     */
+    function ftruncate($handle, $size) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("ftruncate($handle, $size)");
+	}
+
+	$ret = ftruncate($handle, $size);
+	if ($ret === 1) {
+	    /* Prior to PHP 4.3.3, ftruncate() returns an integer value of 1
+             * on success, instead of boolean TRUE. We correct this here.
+             */
+	    return true;
+	}
+	return $ret;
     }
 
     /**
