@@ -267,13 +267,13 @@ class GalleryUserGroupMap_core {
 	list ($ret, $adminGroupId) =
 	    $gallery->getModuleParameter('core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
 	list ($ret, $result) = GalleryUserGroupMap::isUserInGroup($gallery->getActiveUserId(),
 								  $adminGroupId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
 
 	return array(GalleryStatus::success(), $result);
