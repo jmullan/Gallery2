@@ -292,6 +292,7 @@ class AdminLayoutsView extends GalleryView {
 		'modificationTimestamp' => $module->translate('Last Changed Date'),
 		'description' => $module->translate('Description'),
 		'keywords' => $module->translate('Keywords'),
+		'pathComponent' => $module->translate('Name'),
 		'viewCount' => $module->translate('View Count'),
 		'pathName' => $module->translate('Filename'),
 	    );

@@ -471,6 +471,11 @@ class GalleryChildEntityHelper_simple {
 	    $condition = '[GalleryItem::id] = [GalleryChildEntity::id]';
 	    break;
 
+	case 'pathComponent':
+	    $orderColumn = '[GalleryFileSystemEntity::pathComponent]';
+	    $condition = '[GalleryFileSystemEntity::id] = [GalleryChildEntity::id]';
+	    break;
+
 	case 'viewCount':
 	    $orderColumn = '[GalleryItemAttributesMap::viewCount]';
 	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
