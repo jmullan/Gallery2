@@ -1055,7 +1055,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		continue;
 	    }
 
-	    list ($tableName, $unused) = $this->_translateTableName($rawTableName);
+	    list ($tableName, $unused, $tableNameInSchema) = $this->_translateTableName($rawTableName);
 	    if (!in_array(strtolower($tableName), $metatables)) {
 		$ret = $this->_executeSqlFile($sqlFile);
 		if ($ret->isError()) {
@@ -1064,7 +1064,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    } else {
 		while (1) {
 		    /* The table exists -- see if we have an upgrade for it */
-		    if (empty($tableVersions[$rawTableName])) {
+		    if (empty($tableVersions[$tableNameInSchema])) {
 			/*
 			 * We've found a SQL file that matches a table in the
 			 * database, but has no matching version info in the
