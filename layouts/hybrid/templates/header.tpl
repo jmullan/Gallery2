@@ -1,5 +1,5 @@
 <title>{$layout.title|markup}</title>
-<link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css">
+<link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css" />
 {g->style}
 <script type="text/javascript">
 {if $layout.imageCount==1}
