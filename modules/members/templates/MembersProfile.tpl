@@ -9,7 +9,7 @@
     </a>
   </li>
   <li>
-    <a href="{g->url arg1="view=members:MembersList"}">
+    <a href="{g->url arg1="view=core:Navigation" arg2="subView=members:MembersList"}">
       {g->text text="Members List"}
     </a>
   </li>
@@ -19,6 +19,8 @@
 </ul>
 
 <div id="gsOtherContents">
+  {include file="gallery:`$Navigation.sidebar`" l10Domain=$Navigation.l10Domain}	    
+
   <div class="gbTopFlag">
     <div class="gbTitleBanner">
       <div class="gbTitle">

@@ -88,7 +88,8 @@ class MembersModule extends GalleryModule {
      */
     function getSystemLinks() {
 	$links[] = array('text' => $this->translate('Members List'),
-                         'params' => array('view' => 'members:MembersList'));
+                         'params' => array('view' => 'core:Navigation',
+					   'subView' => 'members:MembersList'));
 	return array(GalleryStatus::success(), $links);
     }
 
@@ -98,7 +99,8 @@ class MembersModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Members'),
-				 'view' => 'members:AdminMembers')));
+				 'view' => 'core:Navigation',
+				 'subView' => 'members:AdminMembers')));
     }
 
     /**
