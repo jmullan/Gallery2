@@ -111,6 +111,9 @@ class UserPreferencesController extends GalleryController {
 
 		if (isset($form['language'])) {
 		    $user->setLanguage($form['language']);
+		    /* update the effective language in the current session */
+		    $session =& $gallery->getSession();
+		    $session->put('core.language', $form['language']);
 		}
 
 		$ret = $user->save();
