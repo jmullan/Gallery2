@@ -8,7 +8,7 @@
 <title>
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
-<link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/tile.css" />
+<link rel="stylesheet" type="text/css" href="{g->url href=$layout.layoutUrl forceSessionId=false}/templates/tile.css" />
 {g->style}
 <script type="text/javascript">
 {if $layout.imageCount==1}
