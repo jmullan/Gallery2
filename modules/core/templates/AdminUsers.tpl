@@ -12,7 +12,7 @@
   </div>
 
   {if isset($status)}
-  <div class="gsStatus">
+  <div id="gsStatus">
     <div class="giStatus">
       {if isset($status.deletedUser)}
 	{g->text text="Removed user '%s'" arg1=$status.deletedUser}
