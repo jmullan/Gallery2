@@ -231,6 +231,37 @@ class ToolkitTest extends GalleryTestCase {
 
 	$this->assert(!$isSupported, '4-1');
     }
+
+    function testGetOperationMimeTypes() {
+
+	$params = array(array('type' => 'test-type1',
+			      'description' => 'test-description1'),
+			array('type' => 'test-type2',
+			      'description' => 'test-description2')
+			);
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit',
+						       array('test/type', 'test/type2'),
+						       'test-operation',
+						       $params,
+						       'test-description',
+						       'test/outputType');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $data) = GalleryCoreApi::getToolkitOperationMimeTypes('test-operation');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($data['test/type']) && in_array('TestToolkit', $data['test/type']),
+		      'Operation mime type');
+
+	/* Unregister */
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
 }
 
 /**

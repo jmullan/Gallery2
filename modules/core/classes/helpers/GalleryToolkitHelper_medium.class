@@ -492,6 +492,43 @@ class GalleryToolkitHelper_medium {
     }
 
     /**
+     * Get all valid input mime types for a certain operation
+     *
+     * @access public
+     * @static
+     * @param string operation name
+     * @return object GalleryStatus a status code
+     *         array(mime type => array(toolkit ids))
+     */
+    function getOperationMimeTypes($operationName) {
+	global $gallery;
+
+	$query = '
+	SELECT
+	  [GalleryToolkitOperationMimeTypeMap::mimeType],
+	  [GalleryToolkitOperationMimeTypeMap::toolkitId]
+	FROM
+	  [GalleryToolkitOperationMimeTypeMap]
+	WHERE
+	  [GalleryToolkitOperationMimeTypeMap::operationName] = ?
+	ORDER BY
+	  [GalleryToolkitOperationMimeTypeMap::mimeType] ASC
+	';
+
+	list ($ret, $searchResults) = $gallery->search($query, array($operationName));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]][] = $result[1];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+
+    /**
      * Verify that a given mime-type/operation-sequence combination is
      * supported by our existing toolkits by walking the sequence and making
      * sure that we have a toolkit that can handle each operation.

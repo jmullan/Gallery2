@@ -1709,6 +1709,21 @@ class GalleryCoreApi {
 	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::getOperations($mimeType);
     }
+
+    /**
+     * Get all valid input mime types for a certain operation
+     *
+     * @access public
+     * @static
+     * @param string operation name
+     * @return array object GalleryStatus a status code
+     *               array(mime type => array(toolkit ids))
+     */
+    function getToolkitOperationMimeTypes($operationName) {
+	GalleryCoreApi::apiMethodUsed('getToolkitOperationMimeTypes', 'GalleryToolkitHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryToolkitHelper_medium.class');
+	return GalleryToolkitHelper_medium::getOperationMimeTypes($operationName);
+    }
     
     /**
      * Get all valid properties of a certain mime type
