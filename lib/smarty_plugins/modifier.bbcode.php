@@ -33,10 +33,12 @@ require_once(dirname(__FILE__) . '/../bbcode/bbcode.class');
 function smarty_modifier_bbcode($text) {
     static $bbcode;
     if (!isset($bbcode)) {
-	$bbcode = new BBCode ();
+	$bbcode = new BBCode();
+	$helper = new GalleryBbcodeHelper();
 
 	// Convert line breaks everywhere
-	$bbcode->addParser('galleryBbcodeConvertLineBreaks', array('block', 'inline', 'link', 'listitem', 'list'));
+	$bbcode->addParser(array($helper, 'convertLineBreaks'),
+			   array('block', 'inline', 'link', 'listitem', 'list'));
 
 	// Escape all characters everywhere
 	$bbcode->addParser('htmlspecialchars', array('block', 'inline', 'link', 'listitem'));
@@ -45,10 +47,10 @@ function smarty_modifier_bbcode($text) {
 	$bbcode->addParser('nl2br', array('block', 'inline', 'link', 'listitem'));
 
 	// Strip last line break in list items
-	$bbcode->addParser('galleryBbcodeStripLastLineBreak', array ('listitem'));
+	$bbcode->addParser(array($helper, 'stripLastLineBreak'), array ('listitem'));
 
 	// Strip contents in list elements
-	$bbcode->addParser('galleryBbcodeStripContents', array('list'));
+	$bbcode->addParser(array($helper, 'stripContents'), array('list'));
 
 	// [b], [i]
 	$bbcode->addCode('b', 'simple_replace', null, array ('<b>', '</b>'),
@@ -57,11 +59,11 @@ function smarty_modifier_bbcode($text) {
 			 'inline', array ('listitem', 'block', 'inline', 'link'), array ());
 	
 	// [url]http://...[/url], [url=http://...]Text[/url]
-	$bbcode->addCode('url', 'usecontent?', 'galleryDoBbcodeUrl', array ('default'),
+	$bbcode->addCode('url', 'usecontent?', array($helper, 'url'), array ('default'),
 			 'link', array ('listitem', 'block', 'inline'), array ('link'));
 	
 	// [img]http://...[/img]
-	$bbcode->addCode('img', 'usecontent', 'galleryDoBbcodeImg', array (),
+	$bbcode->addCode('img', 'usecontent', array($helper, 'image'), array (),
 			 'image', array ('listitem', 'block', 'inline', 'link'), array ());
 
 	// [list]
@@ -77,37 +79,39 @@ function smarty_modifier_bbcode($text) {
     return $bbcode->parse($text);
 }
 
-function galleryDoBbcodeUrl($tag_name, $attrs, $elementContents, $funcParam, $openClose) {
-    if ($openClose == 'all') {
-	return sprintf('<a href="%s">%s</a>',
-		       htmlspecialchars($elementContents), htmlspecialchars($elementContents));
-    } else if ($openClose == 'open') {
-	return sprintf('<a href="%s">%s</a>', htmlspecialchars($attrs['default']));
-    } else if ($openClose == 'close') {
-        return '</a>';
-    } else {
-        return false;
+class GalleryBbcodeHelper {
+    function url($tag_name, $attrs, $elementContents, $funcParam, $openClose) {
+	if ($openClose == 'all') {
+	    return sprintf('<a href="%s">%s</a>',
+			   htmlspecialchars($elementContents), htmlspecialchars($elementContents));
+	} else if ($openClose == 'open') {
+	    return sprintf('<a href="%s">', htmlspecialchars($attrs['default']));
+	} else if ($openClose == 'close') {
+	    return '</a>';
+	} else {
+	    return false;
+	}
     }
-}
 
-function galleryDoBbcodeImg($tagName, $attrs, $elementContents, $funcParam, $openClose) {
-    if ($openClose == 'all') {
-	return sprintf('<img src="%s" alt="">', htmlspecialchars($elementContents));
-    } else {
-	return false;
+    function image($tagName, $attrs, $elementContents, $funcParam, $openClose) {
+	if ($openClose == 'all') {
+	    return sprintf('<img src="%s" alt="">', htmlspecialchars($elementContents));
+	} else {
+	    return false;
+	}
     }
-}
 
-function galleryBbcodeConvertLineBreaks ($text) {
-    return preg_replace("/\015\012|\015|\012/", "\n", $text);
-}
+    function convertLineBreaks($text) {
+	return preg_replace("/\015\012|\015|\012/", "\n", $text);
+    }
 
-function galleryBbcodeStripContents ($text) {
-    return preg_replace("/[^\n]/", '', $text);
-}
+    function stripContents($text) {
+	return preg_replace("/[^\n]/", '', $text);
+    }
 
-function galleryBbcodeStripLastLineBreak ($text) {
-    return preg_replace("/\n( +)?$/", '$1', $text);
+    function stripLastLineBreak ($text) {
+	return preg_replace("/\n( +)?$/", '$1', $text);
+    }
 }
 
 ?>

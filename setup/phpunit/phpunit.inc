@@ -151,25 +151,23 @@ class Assert {
   }
 
   function _formatValue($value, $class="") {
-      $translateValue = $value;
+      $translateValue = htmlentities($value);
       if (phpversion() >= '4.0.0') {
 	  if (is_object($value)) {
 	      if (method_exists($value, "toString") ) {
-		  $translateValue = htmlspecialchars($value->toString());
+		  $translateValue = htmlentities($value->toString());
 	      }
 	      else {
-		  $translateValue = htmlspecialchars(serialize($value));
+		  $translateValue = htmlentities(serialize($value));
 	      }
 	  }
 	  else if (is_array($value)) {
 	      if (phpversion() >= '4.3.0') {
-		  $translateValue = '<pre>' . htmlspecialchars(print_r($value, 1)) . '</pre>';
+		  $translateValue = '<pre>' . htmlentities(print_r($value, 1)) . '</pre>';
 	      } else {
-		  $translateValue = htmlspecialchars(serialize($value));
+		  $translateValue = htmlentities(serialize($value));
 	      }
 	  }
-      } else {
-	  $translateValue = htmlspecialchars($translateValue);
       }
       $htmlValue = "<code class=\"$class\">" . $translateValue . "</code>";
       if (phpversion() >= '4.0.0') {

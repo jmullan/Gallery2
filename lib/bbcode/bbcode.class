@@ -102,7 +102,7 @@ class BBCode {
 		}
 		// go through parser function list
 		foreach ($this->parser_funcs[$type] as $pf) {
-			$text = $pf ($text);
+		        $text = call_user_func($pf, $text);
 		}
 		return $text;
 	}
@@ -202,7 +202,7 @@ class BBCode {
 						case 'callback_replace':
 						case 'usecontent?':
 							// pass over to processing function
-							$nta = $this->codes[$tag_contents]['proc_func'] ($tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
+						        $nta = call_user_func($this->codes[$tag_contents]['proc_func'], $tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
 							// error?
 							if ($nta === false) {
 								$saved_newtext .= '[';
@@ -276,7 +276,7 @@ class BBCode {
 								case 'callback_replace':
 								case 'usecontent?':
 									// pass over to processing function
-									$nta = $this->codes[$tag_contents]['proc_func'] ($tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
+								        $nta = call_user_func($this->codes[$tag_contents]['proc_func'], $tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
 									// error?
 									if ($nta === false) {
 										$saved_newtext .= '[';
@@ -308,7 +308,7 @@ class BBCode {
 									case 'callback_replace':
 									case 'usecontent?':
 										// pass over to processing function
-										$nta = $this->codes[$tag_contents]['proc_func'] ($tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
+									        $nta = call_user_func($this->codes[$tag_contents]['proc_func'], $tag_contents, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
 										// error?
 										if ($nta === false) {
 											$saved_newtext .= '[';
@@ -406,7 +406,7 @@ class BBCode {
 						break;
 					case 'callback_replace':
 						// pass over to processing function
-						$nta = $this->codes[$tag_name]['proc_func'] ($tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
+					        $nta = call_user_func($this->codes[$tag_name]['proc_func'], $tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
 						// error?
 						if ($nta === false) {
 							$saved_newtext .= '[';
@@ -425,7 +425,7 @@ class BBCode {
 						break;
 					case 'callback_replace_single':
 						// pass over to processing function
-						$nta = $this->codes[$tag_name]['proc_func'] ($tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
+					        $nta = call_user_func($this->codes[$tag_name]['proc_func'], $tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
 						// error?
 						if ($nta === false) {
 							$saved_newtext .= '[';
@@ -451,7 +451,7 @@ class BBCode {
 						// get contents
 						$elem_contents = substr ($text, $npos2+1, $npos3-$npos2-1);
 						// pass over to processing function
-						$nta = $this->codes[$tag_name]['proc_func'] ($tag_name, $attrs, $elem_contents, $this->codes[$tag_name]['proc_func_param'], 'all');
+						$nta = call_user_func($this->codes[$tag_name]['proc_func'], $tag_name, $attrs, $elem_contents, $this->codes[$tag_name]['proc_func_param'], 'all');
 						// error?
 						if ($nta === false) {
 							$saved_newtext .= '[';
@@ -469,7 +469,7 @@ class BBCode {
 						// if attr is specified
 						if (isset ($attrs[$this->codes[$tag_name]['proc_func_param'][0]])) {
 							// pass over to processing function
-							$nta = $this->codes[$tag_name]['proc_func'] ($tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
+						        $nta = call_user_func($this->codes[$tag_name]['proc_func'], $tag_name, $attrs, null, $this->codes[$tag_name]['proc_func_param'], 'open');
 							// error?
 							if ($nta === false) {
 								$saved_newtext .= '[';
@@ -498,7 +498,7 @@ class BBCode {
 							// get contents
 							$elem_contents = substr ($text, $npos2+1, $npos3-$npos2-1);
 							// pass over to processing function
-							$nta = $this->codes[$tag_name]['proc_func'] ($tag_name, $attrs, $elem_contents, $this->codes[$tag_name]['proc_func_param'], 'all');
+							$nta = call_user_func($this->codes[$tag_name]['proc_func'], $tag_name, $attrs, $elem_contents, $this->codes[$tag_name]['proc_func_param'], 'all');
 							// error?
 							if ($nta === false) {
 								$saved_newtext .= '[';
@@ -547,7 +547,7 @@ class BBCode {
 				case 'callback_replace':
 				case 'usecontent?':
 					// pass over to processing function
-					$nta = $this->codes[$ctn]['proc_func'] ($ctn, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
+				        $nta = call_user_func($this->codes[$ctn]['proc_func'], $ctn, null, null, $this->codes[$tag_name]['proc_func_param'], 'close');
 					// error?
 					if ($nta === false) {
 						// do nothing
