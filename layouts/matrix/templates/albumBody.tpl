@@ -13,7 +13,7 @@
 	{$layout.item.title|markup}
       </div>
       <div class="giDescription">
-	{$layout.item.summary|markup}
+	{$layout.item.description|markup}
       </div>
     </div>
 
