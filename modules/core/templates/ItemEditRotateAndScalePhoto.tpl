@@ -83,7 +83,7 @@
     {g->text text="There are links to this photo, so you cannot change the original"}
   </b>
   {else}
-  <input type="checkbox" name="{g->formVar var="form[preserveOriginal]"}" {if $form.preserveOriginal}checked="checked"}{/if}/> {g->text text="Preserve Original Photo"}
+  <input type="checkbox" name="{g->formVar var="form[preserveOriginal]"}" {if $form.preserveOriginal}checked="checked"{/if}/> {g->text text="Preserve Original Photo"}
   {/if}
   {/if}
   {else}
