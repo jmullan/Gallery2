@@ -17,12 +17,17 @@ class DeleteAllItemsTestCase extends TestCase {
 	}
 	    
 	while (true) {
-	    set_time_limit(60);
+	    $gallery->setTimeLimit(60);
 	    
 	    list ($ret, $results) =
-		    $gallery->search(array(),
+		    $gallery->search(array(array('GalleryNucleus::objectType',
+						 'EXACT',
+						 'albumitem')),
 				     array('GalleryNucleus::id'),
-				     array(array(SEARCH_LIMIT, 1)));
+				     array(array(SEARCH_LIMIT, 1),
+					   array(SEARCH_ORDER,
+						 'GalleryNucleus::id',
+						 SEARCH_DIRECTION_DOWN)));
 	    if ($ret->isError()) {
 		return $ret;
 	    }
@@ -35,9 +40,7 @@ class DeleteAllItemsTestCase extends TestCase {
 	    print "<H2> Delete Item $id </H2>\n";
 	    $ret = $gallery->deleteNucleusById($id);
 	    if ($ret->isError()) {
-		if (!($ret->getErrorCode() & ERROR_DELETED_OBJECT)) {
-		    return $ret;
-		}
+		return $ret;
 	    }
 
 	    /* Commit the cache */
