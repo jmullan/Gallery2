@@ -764,6 +764,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['totalPeerCount'] = $totalPeerCount;
 	$layout['item'] = $item->getMemberData();
 	$layout['navigator'] = $navigator;
+	$layout['showImageOwner'] = $properties['showImageOwner'];
 
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');

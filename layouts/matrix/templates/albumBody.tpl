@@ -48,9 +48,11 @@
                                 count=$layout.totalDescendentCount
                                 arg1=$layout.totalDescendentCount}
               </li>    
+              {if $layout.showAlbumOwner}
               <li>
                 {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
               </li>
+              {/if}
             </ul>
           </td>
         </tr>

@@ -76,10 +76,12 @@
                 {/if}
               </li>
               {/if}
-          
+
+              {if $layout.showImageOwner}
               <li>
                 {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
               </li>
+              {/if}
             </ul>
           </td>
         </tr>
