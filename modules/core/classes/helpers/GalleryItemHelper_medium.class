@@ -367,130 +367,127 @@ class GalleryItemHelper_medium {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Don't make derivatives for unknown items -- even if we recognize the mime type */
-	if (!GalleryUtilities::isA($item, 'GalleryUnknownItem')) {
-	    /*
-	     * Now create thumbnails and resizes according to the
-	     * wishes of the parent album.
-	     */
-	    list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	/*
+	 * Now create thumbnails and resizes according to the
+	 * wishes of the parent album.
+	 */
+	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($albumId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-	    $mimeType = $source->getMimeType();
+	$mimeType = $source->getMimeType();
 
-	    $itemHasThumbnail = false;
-	    foreach ($preferences as $preference) {
-		$operations = $preference['derivativeOperations'];
+	$itemHasThumbnail = false;
+	foreach ($preferences as $preference) {
+	    $operations = $preference['derivativeOperations'];
 
-		/* Special case to make sure that we don't upsample photos */
-		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $maxDimension = max($item->getWidth(), $item->getHeight());
-		    if (preg_match('/^scale\|(\d+)/', $operations, $matches)) {
-			if ($matches[1] >= $maxDimension) {
-			    continue;
-			}
-		    }
-		}
-		
-		/*
-		 * Validate the stored preferences to make sure that
-		 * they're supported by an active toolkit.
-		 */
-		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		if (!$isSupported) {
-		    /*
-		     * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
-		     */
-		    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-			$operations = 'convert-to-image/jpeg;' . $preference['derivativeOperations'];
-			list ($ret, $isSupported, $outputMimeType) =
-			    GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
-			if ($ret->isError()) {
-			    return $ret->wrap(__FILE__, __LINE__);
-			}
-
-			if (!$isSupported) {
-			    /* Oh well -- try the next preference */
-			    continue;
-			}
-		    } else {
-			/* Otherwise, for resizes, just try the next preference */
+	    /* Special case to make sure that we don't upsample photos */
+	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		$maxDimension = max($item->getWidth(), $item->getHeight());
+		if (preg_match('/^scale\|(\d+)/', $operations, $matches)) {
+		    if ($matches[1] >= $maxDimension) {
 			continue;
 		    }
 		}
-
-		list ($ret, $derivative) =
-		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		if (!isset($derivative)) {
-		    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-		}
-
-		$ret = $derivative->create($item->getId(), $preference['derivativeType']);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		/*
-		 * If the output type isn't viewable, then try to turn it into a form that *is*
-		 * viewable.
-		 */
-		if (!GalleryUtilities::isViewableMimeType($outputMimeType)) {
-		    $tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
-		    list ($ret, $isSupported, $outputMimeType) =
-			GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+	    }
 		
-		    if ($isSupported) {
-			$operations = $tmpOperations;
-		    } else {
-			/* Oh well */
-		    }
-		}
+	    /*
+	     * Validate the stored preferences to make sure that
+	     * they're supported by an active toolkit.
+	     */
+	    list ($ret, $isSupported, $outputMimeType) =
+		GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
-		$derivative->setMimeType($outputMimeType);
-		$derivative->setDerivativeSourceId($source->getId());
-		$derivative->setDerivativeOperations($operations);
-			
-		$ret = $derivative->save();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
+	    if (!$isSupported) {
+		/*
+		 * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
+		 */
 		if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-		    $itemHasThumbnail = true;
+		    $operations = 'convert-to-image/jpeg;' . $preference['derivativeOperations'];
+		    list ($ret, $isSupported, $outputMimeType) =
+			GalleryCoreApi::isSupportedOperationSequence($mimeType, $operations);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    if (!$isSupported) {
+			/* Oh well -- try the next preference */
+			continue;
+		    }
+		} else {
+		    /* Otherwise, for resizes, just try the next preference */
+		    continue;
 		}
 	    }
 
-	    if ($itemHasThumbnail) {
-		/* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
-		list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
+	    list ($ret, $derivative) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (!isset($derivative)) {
+		return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    }
+
+	    $ret = $derivative->create($item->getId(), $preference['derivativeType']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /*
+	     * If the output type isn't viewable, then try to turn it into a form that *is*
+	     * viewable.
+	     */
+	    if (!GalleryUtilities::isViewableMimeType($outputMimeType)) {
+		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
+		list ($ret, $isSupported, $outputMimeType) =
+		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		if (empty($thumbnailTable)) {
-		    list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
+		if ($isSupported) {
+		    $operations = $tmpOperations;
+		} else {
+		    /* Oh well */
+		}
+	    }
+
+	    $derivative->setMimeType($outputMimeType);
+	    $derivative->setDerivativeSourceId($source->getId());
+	    $derivative->setDerivativeOperations($operations);
+			
+	    $ret = $derivative->save();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		$itemHasThumbnail = true;
+	    }
+	}
+
+	if ($itemHasThumbnail) {
+	    /* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
+	    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+		
+	    if (empty($thumbnailTable)) {
+		list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $item->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 	}
