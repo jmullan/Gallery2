@@ -50,7 +50,7 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_platform = $gallery->getPlatform();
-	$gallery->_platform = new AdminNetPbmControllerTestPlatform();
+	$gallery->_platform = new AdminNetPbmControllerTestPlatform($this->_platform);
     }
 
     function tearDown() {
@@ -173,6 +173,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
  * @subpackage PHPUnit
  */
 class AdminNetPbmControllerTestPlatform {
+    function AdminNetPbmControllerTestPlatform($originalPlatform) {
+	$this->_platform = $originalPlatform;
+    }
+    
     function getDirectorySeparator() {
 	return '/';
     }
@@ -230,6 +234,10 @@ class AdminNetPbmControllerTestPlatform {
 	default:
 	    return array(0, null);
 	}
+    }
+
+    function realpath($file) {
+	return $this->_platform->realpath($file);
     }
 }
 ?>
