@@ -4,7 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{*
- * You shouldn't have to modify this page unless you're a G2 developer.
- *}
-<p><a href="{$redirectUrl}">[{g->text text="Please click to continue"}]</a></p>
+<div class="gbBottomFlag">
+  <div class="giActionSelect">
+    <a href="{$redirectUrl}">[{g->text text="Please click to continue"}]</a>
+  </div>
+</div>

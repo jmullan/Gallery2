@@ -30,14 +30,6 @@
  * @subpackage GalleryImmediateStatusView
  */
 class GalleryImmediateStatusView extends GalleryView {
-
-
-    /*
-     * ****************************************
-     *                 Members
-     * ****************************************
-     */
-
     /**
      * The template that this view will be using
      *
@@ -51,12 +43,6 @@ class GalleryImmediateStatusView extends GalleryView {
      * @access private
      */
     var $_main;
-
-    /*
-     * ****************************************
-     *                 Methods
-     * ****************************************
-     */
 
     /**
      * This is the class that prepares the global template for display
@@ -85,11 +71,12 @@ class GalleryImmediateStatusView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$this->_main['viewBodyFile'] = 'modules/core/templates/SplitMarker.tpl';
+	$this->_main['viewBodyFile'] = 'modules/core/templates/ImmediateStatus.tpl';
+	$this->_main['viewL10Domain'] = 'modules_core';
 	
 	/* This is basically a copy of the code in main.php */
-	$this->_template->setVariable('l10Domain', 'modules_core');
 	$this->_template->setVariable('main', $this->_main);
+	$this->_template->setVariable('l10Domain', 'modules_core');
 	return GalleryStatus::success();
     }    
 
@@ -100,7 +87,13 @@ class GalleryImmediateStatusView extends GalleryView {
      * 
      * @return object GalleryStatus a status code
      */
-    function renderHeader() {
+    function renderHeader($pageTitle, $sectionTitle, $sectionDescription) {
+	$this->_template->setVariable('ImmediateStatus',
+				      array('pageTitle' => $pageTitle,
+					    'sectionTitle' => $sectionTitle,
+					    'sectionDescription' => $sectionDescription,
+					    'percentComplete' => 0));
+
 	list ($ret, $html) = $this->_template->fetch('templates/global.tpl');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -119,11 +112,14 @@ class GalleryImmediateStatusView extends GalleryView {
      * @param string a string to print
      * @return object GalleryStatus a status code
      */
-    function renderStatusMessage($statusMessage) {
+    function renderStatusMessage($title, $description, $percentComplete) {
 	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	$statusTemplate->setVariable('l10Domain', 'modules_core');
-	$statusTemplate->setVariable('statusMessage', $statusMessage);
-	$ret = $statusTemplate->display('modules/core/templates/StatusMessage.tpl');
+	$statusTemplate->setVariable('ImmediateStatusMessage',
+				     array('sectionTitle' => $title,
+					   'sectionDescription' => $description,
+					   'percentComplete' => $percentComplete));
+	$ret = $statusTemplate->display('modules/core/templates/ImmediateStatusMessage.tpl');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -11,12 +11,11 @@
 	{g->text text="Deletion Complete"}
       </h2>
     </div>
-    
   </div>
 
   <div class="gbAdmin">
-    <div class="giTitle">
+    <h2 class="giTitle">
       {g->text text="Item successfully deleted"}
-    </div>
+    </h2>
   </div>
 </div>

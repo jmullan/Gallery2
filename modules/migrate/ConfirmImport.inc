@@ -46,39 +46,32 @@ class ConfirmImportController extends GalleryController {
 
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	
+
 	/*
 	 * If we want to check the connection status at each operation
 	 * ignore_user_abort(true);
 	 */
-	
+
 	/* We reuse this instance all the way through */
 	list ($ret, $immediateView) = $this->getImmediateStatusView();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$ret = $immediateView->doLoadImmediateTemplate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/*
 	 * This flushes all buffers and outputs the header directly to the
 	 * browser
 	 */
-	$ret = $immediateView->renderHeader();
+	$ret = $immediateView->renderHeader($module->translate('Migration Status'), '', '');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	$statusMessage = $module->translate(array('text' => 'Starting migration'));
-	
-	$ret = $immediateView->renderStatusMessage($statusMessage);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
+
 	list ($ret, $moduleStatusList) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -208,7 +201,9 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    /* go through the list of chosen users */
-	    foreach (array_keys ($form['migrateUser']) as $uid) {
+	    $totalUsersToImport = count($form['migrateUser']);
+	    $numberOfUsersImported = 0;
+	    foreach (array_keys($form['migrateUser']) as $uid) {
 		/* convert from uid to username */
 		list ($ret, $fields) =
 		    Gallery1DataParser::getUserFieldsByUid($albumsPath, $uid);
@@ -221,21 +216,22 @@ class ConfirmImportController extends GalleryController {
 		 * We maybe don't have to notify users of each imported user,
 		 * since they don't take long to import.
 		 */
-		$statusMessage = $module->translate(array('text' => 'Importing user %s', 'arg1' => $userName));
-		
-		$ret = $immediateView->renderStatusMessage($statusMessage);
+		$ret = $immediateView->renderStatusMessage(
+                    $module->translate('Importing Users'), $userName,
+		    $numberOfUsersImported / $totalUsersToImport);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/*
 		 * Go ahead and create the user instance
 		 */
-		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+		list ($ret, $user) =
+		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Verify that the user was created successfully */
 		if (!isset($user)) {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
@@ -286,31 +282,18 @@ class ConfirmImportController extends GalleryController {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 		    }
-		    
-		    /*
-		     * We maybe don't have to notify users of each imported user,
-		     * since they don't take long to import, so a notice before
-		     * AND after is probably way overkill
-		     */
-		    $statusMessage = $module->translate(array('text' => 'Imported user %s', 'arg1' => $userName));
-		     
-		    $ret = $immediateView->renderStatusMessage($statusMessage);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
 
 		    /* Set a positive note for later.  Hooray! */
 		    $status['userImportSuccess'][$userName] = 1;
 		    $user = null;
 		}
 		$uid = null;
+		$numberOfUsersImported++;
 	    }
 
-            /* Import Any Selected Albums
-	     *
-	     */
-
 	    /*
+	     * Import Any Selected Albums
+	     *
 	     * First initialize the $form['sourceAlbums'] array to avoid php
 	     * warnings
 	     */
@@ -333,8 +316,10 @@ class ConfirmImportController extends GalleryController {
 	    $destinationAlbumID = $form['destinationAlbumID'];
 	    /* Go through the list of selected gallery1 albums to import */
 
+	    $totalItemsToImport = 0;
 	    foreach (array_keys ($form['sourceAlbums']) as $sourceAlbumName) {
-		/* attempt to load the metadata from the selected album into a
+		/*
+		 * attempt to load the metadata from the selected album into a
 		 * local cache for later manipulation
 		 */
 		$sourceAlbumName = urldecode($sourceAlbumName);
@@ -342,10 +327,14 @@ class ConfirmImportController extends GalleryController {
 		    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 		}
 		list ($ret, $albumfields[$sourceAlbumName]) =
-			Gallery1DataParser::loadAlbumFields($albumsPath.$sourceAlbumName);
+			Gallery1DataParser::loadAlbumFields($albumsPath . $sourceAlbumName);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		list ($ret, $photos) =
+		    Gallery1DataParser::getPhotos($albumsPath . $sourceAlbumName);
+		$totalItemsToImport += count($photos);
 	    }
 	    $i=0;
 	    /* First initialize the $albumfields array to avoid php warnings */
@@ -353,14 +342,16 @@ class ConfirmImportController extends GalleryController {
 		$albumfields = array();
 	    }
 	    $albumHighlight = array();
+
 	    /*
 	     * Go through the array of albums' metadata one album at a time.
 	     * We limit the number of passes through this list to n^2 times to
 	     * avoid an infinite loop.  This allows us to make sure that we add
 	     * parent albums first by taking albums out of the list as they are
 	     * handled.
-	    */
-	    while ($albumfields && $i<count($form['sourceAlbums'])^2 && !connection_aborted()) {
+	     */
+	    $numberOfItemsImported = 0;
+	    while ($albumfields && $i < count($form['sourceAlbums'])^2 && !connection_aborted()) {
 		$album = array_shift($albumfields);
 
 		/*
@@ -387,9 +378,9 @@ class ConfirmImportController extends GalleryController {
 		    /*
 		     * We definitely need notices before each album.
 		     */
-		    $statusMessage = $module->translate(array('text' => 'Importing album %s', 'arg1' => $album['name']));
-		     
-		    $ret = $immediateView->renderStatusMessage($statusMessage);
+		    $ret = $immediateView->renderStatusMessage(
+                        $module->translate('Importing photos'),
+                        $album['name'], $numberOfItemsImported / $totalItemsToImport);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -541,8 +532,6 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 
-
-				
 				/*
 				 * $album->fields["extra_fields"]
 				 *
@@ -554,9 +543,7 @@ class ConfirmImportController extends GalleryController {
 				 * }
 				 *
 				 */
-				
 
-				
 				$itemsCreated[] = $newAlbumInstance->getId();
 
 				// Set order weight
@@ -752,7 +739,8 @@ class ConfirmImportController extends GalleryController {
 			}
 
 			unset($photos);
-			list ($ret, $photos)=Gallery1DataParser::getPhotos($albumsPath . $album['name']);
+			list ($ret, $photos) =
+			    Gallery1DataParser::getPhotos($albumsPath . $album['name']);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -760,17 +748,19 @@ class ConfirmImportController extends GalleryController {
 			    $photos = array();
 			}
 
-			$albumHighlight[$newAlbumInstanceId]=false;
+			$albumHighlight[$newAlbumInstanceId] = false;
 			list ($ret, $item) = GalleryCoreApi::loadEntitiesById($newAlbumInstanceId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 
-			list ($ret, $importLockIds[]) = GalleryCoreApi::acquireReadLock($item->getId());
+			list ($ret, $importLockIds[]) =
+			    GalleryCoreApi::acquireReadLock($item->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+			list ($ret, $thumbnailTable) =
+			    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -782,7 +772,7 @@ class ConfirmImportController extends GalleryController {
 				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 				}
 				list ($ret, $weight) = GalleryCoreApi::fetchExtremeChildWeight(
-							$newAlbumInstanceId, HIGHER_WEIGHT);
+                                    $newAlbumInstanceId, HIGHER_WEIGHT);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -790,34 +780,29 @@ class ConfirmImportController extends GalleryController {
 				$importAlbumItem = null;
 			    } else {
 				$dir = $albumsPath . $album['name'] . $slash;
-				$filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
+				$filename = $importAlbumItem->image->name . '.' .
+				    $importAlbumItem->image->type;
 				$filepath = $dir . $filename;
 
-				/*
-				 * We might consider just printing a dot or
-				 * whatnot - when one is migrating thousands
-				 * of images there will be pages and pages
-				 */
-				$statusMessage = $module->translate(array('text' => 'Importing item %s', 'arg1' => $filename));
-				$ret = $immediateView->renderStatusMessage($statusMessage);
-				if ($ret->isError()) {
+				$ret = $immediateView->renderStatusMessage(
+                                    $module->translate('Importing photos'),
+                                    $album['name'] . ' ' . $filename,
+                                    $numberOfItemsImported / $totalItemsToImport);
+ 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 
 				list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 				$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 
-				list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
-										       $filename,
-										       $filename,
-										       $base,
-										       $base,
-										       $mimeType,
-										       $item->getId());
+				list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+				    $filepath, $filename, $filename, $base,
+                                    $base, $mimeType, $item->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				$itemsCreated[] = $newItem->getId();
+				$numberOfItemsImported++;
 
 				if (isset($form['urlRedirect'])) {
 				    $ret = $this->createG1ToG2Mapping($newItem->getId(),
@@ -827,7 +812,8 @@ class ConfirmImportController extends GalleryController {
 				    }
 				}
 				$itemLockIds = array();
-				list ($ret, $itemLockIds[]) = GalleryCoreApi::acquireWriteLock($newItem->getId());
+				list ($ret, $itemLockIds[]) =
+				    GalleryCoreApi::acquireWriteLock($newItem->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -837,10 +823,13 @@ class ConfirmImportController extends GalleryController {
 
 				if (strlen($convertedCaption) > 128) {
 				    $newItem->setTitle($convertedCaption);
-				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
-					$newItem->setDescription($convertedCaption
-								 . "\n"
-								 . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description'], $sourceEncoding));
+				    if (isset($importAlbumItem->extraFields['description']) &&
+					    $importAlbumItem->extraFields['description'] != '') {
+					$newItem->setDescription(
+					    $convertedCaption . "\n" .
+                                            $this->convertHtmlToBbcode(
+					        $importAlbumItem->extraFields['description'],
+						$sourceEncoding));
 				    } else {
 					$newItem->setDescription($convertedCaption);
 				    }
@@ -930,8 +919,10 @@ class ConfirmImportController extends GalleryController {
 					}
 
 					/*
-					 * Changing the crop size causes our derivative dimensions to change,
-					 * which affects all our dependent derivatives also.
+					 * Changing the crop size causes our
+					 * derivative dimensions to change,
+					 * which affects all our dependent
+					 * derivatives also.
 					 */
 					$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(
 					    array($thumbnail->getId()));
@@ -1040,7 +1031,7 @@ class ConfirmImportController extends GalleryController {
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
-					
+
 					if (!isset($comment)) {
 					    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 						     null);
@@ -1099,12 +1090,6 @@ class ConfirmImportController extends GalleryController {
 				}
 			    }
 			}
-			$statusMessage = $module->translate(array('text' => 'Imported album %s', 'arg1' => $album['name']));
-			$ret = $immediateView->renderStatusMessage($statusMessage);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-
 		    }
 		    $album = null;
 		    /* $i keeps track of how many passes we make over the data */
@@ -1138,26 +1123,9 @@ class ConfirmImportController extends GalleryController {
 		 * Note: this destroys the $itemsCreated array!
 		 */
 		$itemsCreatedCount = count($itemsCreated);
+		$thumbsCreated = 0;
 		while (!empty($itemsCreated)) {
 		    $chunk = array_splice($itemsCreated, 0, 20);
-
-		    /*
-		     * I'm assuming that we can just do one update per batch of
-		     * thumbs - but it is possible that each thumb could suck
-		     * up enough time to require a ping
-		     */
-		    $statusMessage = $module->translate(array('text' => 'Creating thumbs for images %s of %s',
-							      'arg1' => $itemsCreatedCount - count($itemsCreated),
-							      'arg2' => $itemsCreatedCount
-							      )
-							);
-
-		    $ret = $immediateView->renderStatusMessage($statusMessage);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-
 		    list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($chunk);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -1169,10 +1137,26 @@ class ConfirmImportController extends GalleryController {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
+
+			$thumbsCreated++;
+			$ret = $immediateView->renderStatusMessage(
+                            $module->translate('Creating thumbnails'),
+                            $module->translate(array('text' => 'Thumbnail %d of %d',
+					             'arg1' => $thumbsCreated,
+					             'arg2' => $itemsCreatedCount)),
+                            $thumbsCreated / $itemsCreatedCount);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 		    GalleryDataCache::reset();
 		}
+	    }
 
+	    $ret = $immediateView->renderStatusMessage(
+                $module->translate('Import complete'), '', 100);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    $redirect['view'] = 'core:SiteAdmin';
@@ -1189,27 +1173,13 @@ class ConfirmImportController extends GalleryController {
 
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
-	/*
-	 * Here we prepare everything that we will need to display the footer.
-	 * We are giving it all to the immediate status view and then also
-	 * returning it like normal.  If we were to take out all of the calls
-	 * to the immediate view, everything should function completely
-	 * normally.  However, currently we don't output debug info and we
-	 * don't tell main not to output the redirect.
-	 */
-	
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	    $results['sendLateRedirect'] = $immediateView;
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
 	    $results['delegate']['subView'] = 'migrate:ConfirmImport';
-	}
-
-	$ret = $immediateView->doLoadImmediateTemplate('modules_migrate');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $results);
     }
@@ -1225,7 +1195,7 @@ class ConfirmImportController extends GalleryController {
     function canUseImmediateView() {
 	return true;
     }
-    
+
     /**
      *
      * Converts HTML to BBCode

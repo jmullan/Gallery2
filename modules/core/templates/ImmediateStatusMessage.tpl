@@ -4,4 +4,5 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<p class="giStatus">{$statusMessage}</p>
+<script type="text/javascript">updateStatus("{$ImmediateStatusMessage.sectionTitle}", "{$ImmediateStatusMessage.sectionDescription}", {$ImmediateStatusMessage.percentComplete})</script>
+

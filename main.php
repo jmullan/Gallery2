@@ -156,7 +156,7 @@ function _GalleryMain($returnHtml=false) {
 	    
 	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryImmediateStatusView.class');
 	    $galleryImmediateStatusView = new GalleryImmediateStatusView();
-	    $galleryImmediateStatusView->setMain($main);
+	    $galleryImmediateStatusView->setMain($mainForImmediate);
 	    $controller->setImmediateStatusView($galleryImmediateStatusView);
 	}
 	

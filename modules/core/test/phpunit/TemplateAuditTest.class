@@ -57,7 +57,7 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	array_splice($this->_expectedHeaderLines, 1, 1, $this->_revisionPlaceHolder);
 
 	$this->_exceptions = array();
-	$this->_exceptions['header']['modules/core/templates/SplitMarker.tpl'] = 1;
+	$this->_exceptions['header'] = array();
 
 	/* Get rid of backslashes so that we can perform string compares later */
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
