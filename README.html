@@ -1071,7 +1071,7 @@
 
 	  <li>
 	    You can <a
-	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts&g2_mode=config"
+	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminLayouts&amp;g2_mode=config"
 	    target="_guided">activate different layouts</a> and then
 	    experiment with layouts and themes.  You can use different
 	    layouts and themes on each album!
@@ -1202,6 +1202,23 @@
 	on the webserver and database because of our image firewall.
 	We have a solution for this and will implement it during the
 	beta cycle.
+      </li>
+      <li>
+	<b>URL Redirection</b> - Rewrite module and G1-&gt;G2 URL redirection
+	do not work together in the same .htaccess file (G2 is installed where
+	G1 used to be).  To use G1 redirection and short urls, remove the
+	Rewrite module code from .htaccess, deactivate Rewrite module and
+	turn on pathinfo based short urls in Site Admin / General.
+      </li>
+      <li>
+	<b>Toolkit upgrades</b> - Upgrade of graphics toolkits (ImageMagick, NetPBM, GD)
+	from alpha-4 to beta-1 via the upgrader does not properly update the database.
+	Toolkits should still work after upgrade but if you later try to activate another
+	toolkit or the Square Thumbnails module you'll see ERROR_COLLISION: CRC mismatch.
+	To resolve this visit <a
+	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules"
+	target="_guided">Site Admin/Modules</a> and deactivate <i>all</i> of the toolkits
+	and Square Thumbnails.  Then reactivate any you wish to use.
       </li>
     </ol>
 
