@@ -44,7 +44,7 @@ class ItemTest extends GalleryTestCase {
 	
 	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	if (!isset($album)) {
@@ -57,9 +57,9 @@ class ItemTest extends GalleryTestCase {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    $ret = $album->create($parentId, 'albumtest' . rand(), $gallery->getActiveUserId());
+	    $ret = $album->create($parentId, 'albumtest' . rand());
 	} else {
-	    $ret = $album->createRoot('albumtest' . rand(), $gallery->getActiveUserId());
+	    $ret = $album->createRoot('albumtest' . rand());
 	}
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

@@ -63,7 +63,6 @@ class PhotoTest extends GalleryTestCase {
 
 	$ret = $photo->create($rootId,
 			      dirname(__FILE__) . '/../data/test1.jpg',
-			      $gallery->getActiveUserId(),
 			      'image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

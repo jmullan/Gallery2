@@ -106,7 +106,6 @@ class ItemAddChildrenController extends GalleryController {
 
 		    $ret = $newItem->create($item->getId(),
 					    $file['tmp_name'],
-					    $gallery->getActiveUserId(),
 					    $mimeType,
 					    basename($file['name']));
 		    if ($ret->isError()) {

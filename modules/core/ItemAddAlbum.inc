@@ -89,9 +89,7 @@ class ItemAddAlbumController extends GalleryController {
 				 null);
 		}  
 
-		$ret = $instance->create($itemId,
-					 $form['pathComponent'],
-					 $gallery->getActiveUserId());
+		$ret = $instance->create($itemId, $form['pathComponent']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_COLLISION) {
 			GalleryUtilities::putRequestVariable('form.error.pathComponent.collision', 1);

@@ -68,16 +68,16 @@ class GalleryAlbumItem_core extends GalleryItem {
      * @param int the id of the parent of this object
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $albumName, $ownerId) {
+    function create($parentId, $albumName) {
 	global $gallery;
 	
-	if (empty($albumName) || empty($ownerId) || empty($parentId)) {
+	if (empty($albumName) || empty($parentId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 				       __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
-	$ret = parent::create($parentId, $albumName, $ownerId);
+	$ret = parent::create($parentId, $albumName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -116,16 +116,16 @@ class GalleryAlbumItem_core extends GalleryItem {
      *
      * @return object GalleryStatus a status code
      */
-    function createRoot($albumName, $ownerId) {
+    function createRoot($albumName) {
 	global $gallery;
 
-	if (empty($albumName) || empty($ownerId)) {
+	if (empty($albumName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 				       __FILE__, __LINE__);
 	}
 
 	/* Let our superclass take care of creation in the persistent store */
-	$ret = parent::createRoot($albumName, $ownerId);
+	$ret = parent::createRoot($albumName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

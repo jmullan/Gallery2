@@ -89,9 +89,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
 	
-	$ret = $album->create($parentId,
-			      $this->_randomName(),
-			      $gallery->getActiveUserId());
+	$ret = $album->create($parentId, $this->_randomName());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -140,7 +138,6 @@ class CreateRandomTreeTestCase extends TestCase {
 	    
 	    $ret = $item->create($album->getId(),
 				 $imageFile,
-				 $gallery->getActiveUserId(),
 				 $mimeType,
 				 $this->_randomName() . '.' . $extension);
 	    if ($ret->isError()) {

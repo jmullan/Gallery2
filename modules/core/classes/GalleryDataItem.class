@@ -109,7 +109,7 @@ class GalleryDataItem_core extends GalleryItem {
      * @param string the desired name of the new item
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $inputFileName, $ownerId, $mimeType, $targetName=null) {
+    function create($parentId, $inputFileName, $mimeType, $targetName=null) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
@@ -178,7 +178,7 @@ class GalleryDataItem_core extends GalleryItem {
 					__FILE__, __LINE__);
 	}
 
-	$ret = parent::create($parentId, $baseName, $ownerId);
+	$ret = parent::create($parentId, $baseName);
 	if ($ret->isError()) {
 	    $platform->unlink($newFileName);
 	    return $ret->wrap(__FILE__, __LINE__);

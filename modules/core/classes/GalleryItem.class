@@ -244,10 +244,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @param int the id of the parent object
      * @return object GalleryStatus a status code
      */
-    function create($parentId, $path, $ownerId) {
+    function create($parentId, $path) {
 	global $gallery;
 
-	if (!isset($ownerId) || !isset($path) || !isset($parentId)) {
+	if (!isset($path) || !isset($parentId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
@@ -268,7 +268,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	/* Record the owner */
-	$this->setOwnerId($ownerId);
+	$this->setOwnerId($gallery->getActiveUserId());
 
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
@@ -289,25 +289,24 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * Let the parent do its work, then add any initialization specific to this
      * class.
      *
-     * @param int the id of the GalleryEntity parent of this object
-     * @param int the id of the parent object
+     * @param string the path component of this new object
      * @return object GalleryStatus a status code
      */
-    function createRoot($path, $ownerId) {
+    function createRoot($path) {
 	global $gallery;
 
-	if (!isset($ownerId) || !isset($path)) {
+	if (!isset($path)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
-	$ret = parent::createRoot($path, $ownerId);
+	$ret = parent::createRoot($path);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Record the owner */
-	$this->setOwnerId($ownerId);
+	$this->setOwnerId($gallery->getActiveUserId());
 
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
