@@ -87,6 +87,23 @@ class Gallery {
     var $_debugBuffer;
 
     /**
+     * A secondary debug buffer used to record debug output even if regular
+     * debug mode is disabled.
+     *
+     * @var string $_debugSnippet
+     * @access private
+     */
+    var $_debugSnippet = null;
+
+    /**
+     * Are we currently recording a debug snippet?
+     *
+     * @var bool $_debugSnippetActive
+     * @access private
+     */
+    var $_debugSnippetActive = false;
+
+    /**
      * The active GalleryLockSystem implementation
      */
     var $_lockSystem;
@@ -623,7 +640,13 @@ class Gallery {
      * @return mixed the debug state
      */
     function getDebug() {
-	return $this->_debug;
+	if ($this->_debug) {
+	    return $this->_debug;
+	}
+	if ($this->_debugSnippetActive) {
+	    return 'snippet';
+	}
+	return false;
     }
 
     /**
@@ -643,6 +666,25 @@ class Gallery {
     }
 
     /**
+     * Start recording a debug snippet.
+     */
+    function startRecordingDebugSnippet() {
+	$this->_debugSnippetActive = true;
+	$this->_debugSnippet = '';
+    }
+
+    /**
+     * Stop recording the debug snippet and return whatever got recorded.
+     * @return string the snippet
+     */
+    function stopRecordingDebugSnippet() {
+	$this->_debugSnippetActive = false;
+	$tmp = $this->_debugSnippet;
+	$this->_debugSnippet = '';
+	return $tmp;
+    }
+
+    /**
      * Output a debug message
      *
      * @param string a message
@@ -654,7 +696,7 @@ class Gallery {
 
 	if (!empty($this->_debug)) {
 	    if (!strcmp($this->_debug, 'buffered')) {
-		$this->_debugBuffer .= wordwrap("$msg\n");
+		$this->_debugBuffer .= wordwrap($msg) . "\n";
 	    } else if (!strcmp($this->_debug, 'logged')) {
 		/* Don't use platform calls for these as they call debug internally! */
 		if ($fd = fopen($this->_debugLogFile, 'a')) {
@@ -671,6 +713,10 @@ class Gallery {
 	    } else if (!strcmp($this->_debug, 'immediate')) {
 		print "$msg\n";
 	    }
+	}
+
+	if ($this->_debugSnippetActive) {
+	    $this->_debugSnippet .= wordwrap($msg) . "\n";
 	}
     }
 
