@@ -60,6 +60,15 @@ class FfmpegToolkit extends GalleryToolkit {
 	    $results = array($width, $height);
 	    break;
 
+	case 'dimensions_and_duration':
+	    list ($ret, $width, $height, $duration) = $this->_getMovieDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),
+			     null);
+	    }
+	    $results = array($width, $height, $duration);
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					      __FILE__, __LINE__),
@@ -93,16 +102,33 @@ class FfmpegToolkit extends GalleryToolkit {
 
 	/* Search for a line like:
 	 *
+	 *   Duration: 00:00:03.0
 	 *   Stream #0.0: Video: svq1, 200x240, 15.00 fps
 	 */
+	$unknownFormat = false;
+	$successfulRun = false;
+	$width = $height = $duration = 0;
 	foreach ($results as $resultLine) {
-	    if (preg_match("/Stream.*?(\d+)x(\d+)/", $resultLine, $regs)) {
+	    if (preg_match("/Unknown format/", $resultLine, $regs)) {
+		$unknownFormat = true;
+		$successfulRun = true;
+	    }
+
+	    if (preg_match("/Duration: (\d+):(\d+):(\d+)\.(\d+)/", $resultLine, $regs)) {
+		$successfulRun = true;
+		$duration = 3600*$regs[1] + 60*$regs[2] + $regs[3];
+	    }
+	    
+	    if (preg_match("/Stream.*?Video:.*?(\d+)x(\d+)/", $resultLine, $regs)) {
+		$successfulRun = true;
 		list ($width, $height) = array($regs[1], $regs[2]);
-		return array(GalleryStatus::success(), $width, $height);
 	    }
 	}
-
-	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	if ($successfulRun) {
+	    return array(GalleryStatus::success(), $width, $height, $duration);
+	} else {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
+	}
     }
 
     /**

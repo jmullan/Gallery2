@@ -74,9 +74,14 @@ class FfmpegToolkitHelper {
 
 	/* Dimensions */
 	$properties['dimensions']['type'] = 'int,int';
-	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the video'); 
+	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the movie'); 
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
+	$properties['dimensions_and_duration']['type'] = 'int,int,int';
+	$properties['dimensions_and_duration']['description'] =
+	    $gallery->i18n('Get the width, height and duration of the movie'); 
+	$properties['dimensions_and_duration']['mimeTypes'] = $mimeTypes;
+	
 	return array(GalleryStatus::success(), array('operations' => $operations,
 						     'properties' => $properties));
     }

@@ -81,8 +81,15 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(200, 240), $results);
+	$this->assertEquals(array(200, 240), $results, 'dimensions mismatch');
 
+	list ($ret, $results) =
+	    $this->_toolkit->getProperty('video/x-msvideo', 'dimensions_and_duration', 'testGetProperties1.avi');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(200, 240, 3), $results, 'dimensions_and_duration mismatch');
+	
 	list ($ret, $results) = $this->_toolkit->getProperty('video/x-msvideo', 'BOGUS', 'BOGUS');
 	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
     }
@@ -93,11 +100,18 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
-							'description' => 'Get the width and height of the video',
+							'description' => 'Get the width and height of the movie',
 							'mimeTypes' => array('video/mpeg',
 									     'video/x.ms.asf',
 									     'video/x-msvideo',
-									     'video/quicktime'))),
+									     'video/quicktime')),
+				  'dimensions_and_duration' => array('type' => 'int,int,int',
+								     'description' => ('Get the width, height ' .
+										       'and duration of the movie'),
+								     'mimeTypes' => array('video/mpeg',
+											  'video/x.ms.asf',
+											  'video/x-msvideo',
+											  'video/quicktime'))),
 			    $results['properties']);
     }
 
