@@ -4,8 +4,8 @@
  * Smarty plugin
  * -------------------------------------------------------------
  * Type:     modifier
- * Name:     repeat
- * Purpose:  repeat a word a couple of times
+ * Name:     print_r
+ * Purpose:  Dump out the object, reasonably formatted
  * -------------------------------------------------------------
  */
 function smarty_modifier_print_r($object) {
