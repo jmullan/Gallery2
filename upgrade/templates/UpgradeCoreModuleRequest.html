@@ -42,7 +42,7 @@
 
     <div class="example">
       <h3> <?php print _("PostgreSQL"); ?> </h3>
-      <?php printf(_("pg_dump %s > %s.sql"),
+      <?php printf(_("pg_dump --format=t %s > %s.sql"),
                    $templateData['storeConfig']['database'],
                    $templateData['storeConfig']['database']); ?>
     </div>
