@@ -199,7 +199,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	// This is what the browser will send us (urlencoded):
-	GalleryUtilities::putRequestVariable('form[localServerFiles][December+-+%23952.jpg][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerFiles][December+-+%3C%23952%3E.jpg][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
@@ -208,9 +208,9 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('December - #952.jpg', $item->getPathComponent(), 'pathComponent');
-	$this->assertEquals('December - #952', $item->getTitle(), 'title');
-	$this->assertEquals('December - #952', $item->getSummary(), 'summary');
+	$this->assertEquals('December - _#952_.jpg', $item->getPathComponent(), 'pathComponent');
+	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
+	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
     }
 
     function testAddWithOption() {
@@ -248,7 +248,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function file_exists($path) {
 	switch ($path) {
-	case dirname(__FILE__) . '/../data/December - #952.jpg':
+	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
@@ -261,7 +261,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function copy($source, $dest) {
 	switch ($source) {
-	case dirname(__FILE__) . '/../data/December - #952.jpg':
+	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
@@ -273,7 +273,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function symlink($source, $dest) {
 	switch ($source) {
-	case dirname(__FILE__) . '/../data/December - #952.jpg':
+	case dirname(__FILE__) . '/../data/December - <#952>.jpg':
 	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */ 
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':

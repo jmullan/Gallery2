@@ -203,7 +203,7 @@
       </td>
 
       <td>
-        {$file.fileName}
+        {$file.fileName|escape}
       </td>
 
       <td>
@@ -225,9 +225,9 @@
 
       <td>
 	{if $file.legal}
-	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName}</a>
+	<a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer" arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`" arg5="form[action][findFilesFromLocalServer]=1" arg6="form[formName]=ItemAddFromServer"}">{$file.fileName|escape}</a>
 	{else}
-	<i>{$file.fileName}</i>
+	<i>{$file.fileName|escape}</i>
 	{/if}
       </td>
 

@@ -72,6 +72,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
 		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+		    GalleryUtilities::sanitizeInputValues($base);
 
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
 									   $filename,
