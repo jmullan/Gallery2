@@ -1,0 +1,215 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Migrate
+ * @author Jesse Mullan <jmullan@visi.com>
+ */
+
+/**
+ * This class provides an API for parsing Gallery 1 data files 
+ *
+ * @package Migrate
+ * @subpackage Gallery1DataParser
+ * @abstract
+ */
+
+class Gallery1DataParser {
+
+    function isValidAlbumsPath($path) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+  
+	if ($platform->file_exists($path . 'albumdb.dat')
+	    && $platform->is_readable($path . 'albumdb.dat')) {
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    function loadFile($fileName) {
+        global $gallery;
+        $platform = $gallery->getPlatform();
+
+	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+        $tmp = $platform->file($fileName);
+
+	if (empty($tmp)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
+	}
+	
+	$tmp = join('', $tmp);
+
+	/*
+	 * We renamed User.php to Gallery_User.php in v1.2, so port forward
+	 * any saved user objects.
+	 */
+	if (!strcmp(substr($tmp, 0, 10), 'O:4:"user"')) {
+	    $tmp = ereg_replace('O:4:"user"', 'O:12:"gallery_user"', $tmp);
+	}
+
+	$object = unserialize($tmp);
+	return array(GalleryStatus::success(), $object);
+    }
+    
+    function getAlbumList($path) {
+	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach ($albumOrder as $albumName){
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),'');
+	    }
+	    $albumList[$albumName] = $albumFields;
+	}
+
+	return array(GalleryStatus::success(), $albumList);
+    }
+
+    function getParentAlbumList($path) {
+	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach($albumOrder as $albumName){
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),'');
+	    }
+	    $parentAlbumList[$albumName] = $albumFields['parentAlbumName'];
+	}
+	return array(GalleryStatus::success(), $parentAlbumList);
+    }
+
+    function getAlbumHierarchy($path) {
+	list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($path);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	foreach($parentAlbumList as $myName => $parentName) {
+	    if (!isset($tempAlbums[$myName])) {
+		$tempAlbums[$myName] = array();
+	    }
+	    if (empty($parentName) || $parentName=='.root') {
+		$hierarchy[$myName] = &$tempAlbums[$myName];
+	    } else {
+		if (!isset($tempAlbums[$parentName])) {
+		    $tempAlbums[$parentName] = array();
+		}
+		$tempAlbums[$parentName][$myName] = &$tempAlbums[$myName];
+	    }
+	}
+	return array(GalleryStatus::success(), $hierarchy);
+    }
+
+    function getRootAlbums($path) {
+	list ($ret, $albumOrder) = Gallery1DataParser::loadFile($path . 'albumdb.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	foreach($albumOrder as $albumName){
+	    list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($path . $albumName . '/');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__),'');
+	    }
+	    if ($albumFields['parentAlbumName'] == '.root') {
+		$rootAlbums[] = $albumName;
+	    }
+	}
+	return array(GalleryStatus::success(), $rootAlbums);
+    }
+
+    function loadAlbumFields($path) {
+	list ($ret, $album) = Gallery1DataParser::loadFile($path . 'album.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$album->fields['parentAlbumName']){
+	    $album->fields['parentAlbumName'] = '.root';
+	}
+	return array(GalleryStatus::success(), $album->fields);
+    }
+
+    function getPhotoCount($path) {
+	list ($ret, $photos) = Gallery1DataParser::loadFile($path . 'photos.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $photos);
+    }
+    
+    function getUserUids($path) {
+	list ($ret, $userDB) = Gallery1DataParser::loadFile($path . '.users/userdb.dat');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$uids = array();
+	foreach ($userDB->userMap as $username => $uid) {
+	    if (!ereg('^[0-9]{9,}[^0-9][0-9]+$', $username) &&
+		    !eregi('nobody|everybody|loggedin', $username)) {
+		$uids[$uid] = $username;
+	    }
+	}
+	return array(GalleryStatus::success(), $uids);
+    }
+    
+    function getUserFieldsByUsername($path, $username) {
+        global $gallery;
+        list($ret, $uids) = Gallery1DataParser::getUserUids($path);
+        if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	$usernames = array_flip($uids);
+        $uid = $usernames[$username];
+	
+	list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users/' . $uid);
+        if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+	foreach ($user as $key => $value){
+	    $fields[$key] = $value;
+	}
+	
+	return array(GalleryStatus::success(), $fields);
+    }
+}
+
+/* Define these classes so that unserialize can use them */
+class AlbumDB{ }
+class Album { }
+class Gallery_UserDB { }
+class Gallery_User { }
+?>

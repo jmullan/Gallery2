@@ -1,0 +1,165 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Migrate
+ * @subpackage PHPUnit
+ * @author Jesse Mullan <jmullan@visi.com>
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Gallery1DataParser tests
+ */
+class Gallery1DataParserTest extends GalleryControllerTestCase {
+
+    function Gallery1DataParserTest($methodName) {
+        $this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	$this->_albumsDir = dirname(__FILE__) . '/../data/albums/';
+	parent::setUp();
+    }
+
+    function tearDown() {
+	global $gallery;
+	parent::tearDown();
+    }
+
+    function testGetFieldsFromAlbum() {
+        list ($ret, $albumFields) = Gallery1DataParser::loadAlbumFields($this->_albumsDir . 'album01/');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('title' => 'Untitled',
+                                  'description' => 'No description',
+                                  'summary' => '',
+                                  'nextname' => 'aaa',
+                                  'bgcolor' => '',
+                                  'textcolor' => '',
+                                  'linkcolor' => '',
+                                  'font' => 'verdana',
+                                  'border' => 1,
+                                  'bordercolor' => 'black',
+                                  'returnto' => 'yes',
+                                  'thumb_size' => 150,
+                                  'resize_size' => 400,
+                                  'rows' => 5,
+                                  'cols' => 5,
+                                  'fit_to_window' => 'no',
+                                  'use_fullOnly' => 'no',
+                                  'print_photos' => 'none',
+                                  'use_exif' => 'yes',
+                                  'perms' => Array ('canRead' => Array('everybody' => 1),
+						    'canViewFullImages' => Array('everybody' => 1)
+                                                    ),
+                                  'parentAlbumName' => 0,
+                                  'clicks' => 0,
+                                  'clicks_date' => 1056014708,
+                                  'display_clicks' => 'yes',
+                                  'public_comments' => 'yes',
+                                  'serial_number' => 8,
+                                  'extra_fields' => Array(0 => 'Description'),
+                                  'cached_photo_count' => 2,
+                                  'photos_separate' => 1,
+                                  'name' => 'album01',
+                                  'owner' => '1054014347:1233740678',
+                                  'last_mod_time' => 1056015246), $albumFields);
+    }
+
+    function testGetPhotoCountFromAlbum() {
+        list ($ret, $photoList) = Gallery1DataParser::getPhotoCount($this->_albumsDir . 'album01/');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(2, count($photoList));
+    }
+
+    function testGetRootAlbums() {
+        list ($ret, $rootAlbums) = Gallery1DataParser::getRootAlbums($this->_albumsDir);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('album01', 'album03'), $rootAlbums);
+    }
+
+    function testGetParentAlbumList() {
+        list ($ret, $parentAlbumList) = Gallery1DataParser::getParentAlbumList($this->_albumsDir);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('album01' => 0,
+				  'album02' => 'album03',
+				  'album03' => 0),
+			    $parentAlbumList);
+    }
+
+    function testGetAlbumList() {
+        list ($ret, $albumList) = Gallery1DataParser::getAlbumList($this->_albumsDir);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('album01', 'album02', 'album03'), array_keys($albumList));
+    }
+
+    function testGetAlbumHierarchy() {
+        list ($ret, $albumList) = Gallery1DataParser::getAlbumHierarchy($this->_albumsDir);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('album01' => array(),
+				  'album03' => array('album02' => array())
+				  ),
+			    $albumList);
+    }
+
+    function testGetUserUids() {
+        list ($ret, $uids) = Gallery1DataParser::getUserUids($this->_albumsDir);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('1054014347:1233740678' => 'admin',
+                                  '1057837115:2072132305' => 'monkey',
+                                  '1057837154:228147420' => 'phpunit_foobar'),
+			    $uids);
+    }
+    
+    function testGetUserFieldsByUsername() {
+        // monkey is the target username
+        list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUsername($this->_albumsDir, 'monkey');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+	
+        $this->assertEquals(array('username' => 'monkey',
+                                  'fullname' => 'This is a Full Name',
+                                  'password' => '1c40c25608fd7435cdaa4a8efab49bbd',
+                                  'email' => 'jmullan@visi.com',
+                                  'isAdmin' => '',
+                                  'canCreateAlbums' => '1',
+                                  'uid' => '1057837115:2072132305'),
+			    $fields);
+    }
+}
+?>

@@ -1,0 +1,90 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ConfirmImport controller tests
+ */
+class ConfirmImportControllerTest extends GalleryControllerTestCase {
+
+    function ConfirmImportControllerTest($methodName) {
+        $this->GalleryControllerTestCase($methodName, 'migrate:ConfirmImport');
+    }
+
+    function setUp() {
+        global $gallery;
+        parent::setUp();
+    }
+
+    function tearDown() {
+        global $gallery;
+
+	/* Clean up our test user */
+	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
+	if ($ret->isSuccess()) {
+	    $ret = $gallery->deleteEntityById($user->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+        parent::tearDown();
+    }
+
+    function testImportUserSuccessful() {
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
+        GalleryUtilities::putRequestVariable('form.migrateUser.1057837154:228147420', 1);
+        GalleryUtilities::putRequestVariable('form.action.import', 1);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'migrate:ImportResults'),
+				  'status' => array('userImportSuccess' => array('phpunit_foobar' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the user exists */
+	list ($ret, $user) = GalleryUserHelper::fetchUserByUsername('phpunit_foobar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testImportUserFailure() {
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
+        GalleryUtilities::putRequestVariable('form.migrateUser.1054014347:1233740678', 1);
+        GalleryUtilities::putRequestVariable('form.action.import', 1);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'migrate:ImportResults'),
+				  'status' => array('userImportFailure' => array('admin' => 1)),
+				  'error' => array()),
+			    $results);
+    }
+}
+?>
