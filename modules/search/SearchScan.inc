@@ -69,6 +69,7 @@ class SearchScanView extends GalleryView {
 	$scanSize = 3;
 
 	/* Find all the modules that support the Search interface */
+	require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
 	$ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
 	foreach ($ids as $id => $className) {
 	    list ($ret, $searchInstances[$id]) =

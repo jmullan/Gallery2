@@ -102,6 +102,7 @@ class SearchShowAllView extends GalleryView {
 		}
 
 		$moduleId = $form['moduleId'];
+		require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
 		list ($ret, $searchInstance) =
 		    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
 		if ($ret->isError()) {

@@ -54,9 +54,6 @@ class SearchModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$classDir = dirname(__FILE__) . '/classes/';
-	require_once($classDir . 'GallerySearchInterface_1_0.class');
-
 	return GalleryStatus::success();
     }
 
