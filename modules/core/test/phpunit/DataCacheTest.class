@@ -126,24 +126,24 @@ class DataCacheTest extends GalleryTestCase {
 	
 	$testdata = "testdata";
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize(<<<END\ns:8:\"testdata\";\nEND\n); ?>"),
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
 			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
 	DataCacheTestPlatform::reset();
 
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 1), $testdata, array('required-class'));
 	$this->assertEquals(htmlentities("<?php GalleryCoreApi::relativeRequireOnce(\"required-class\"); " .
-					 "\$data = unserialize(<<<END\ns:8:\"testdata\";\nEND\n); ?>"),
+					 "\$data = unserialize('s:8:\"testdata\";'); ?>"),
 			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/0/1.inc')));
 	DataCacheTestPlatform::reset();
 	
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 21), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize(<<<END\ns:8:\"testdata\";\nEND\n); ?>"),
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:8:\"testdata\";'); ?>"),
 			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/0/2/21.inc')));
 	DataCacheTestPlatform::reset();
 
 	$testdata = '|test#with\'funky"chars? \\*&%$[]}{ end';
 	GalleryDataCache::putToDisk(array('type' => 'entity', 'itemId' => 721), $testdata);
-	$this->assertEquals(htmlentities("<?php \$data = unserialize(<<<END\ns:37:\"|test#with'funky\"chars? \\*&%\$[]}{ end\";\nEND\n); ?>"),
+	$this->assertEquals(htmlentities("<?php \$data = unserialize('s:37:\"|test#with\\'funky\"chars? \\*&%\$[]}{ end\";'); ?>"),
 			    htmlentities(DataCacheTestPlatform::getFileContents('/entity/7/2/721.inc')));
 	DataCacheTestPlatform::reset();
     }
