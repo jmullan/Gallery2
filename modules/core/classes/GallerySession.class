@@ -257,6 +257,12 @@ class GallerySession {
      * @return object GalleryStatus a status code
      */
     function reset() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+	if ($platform->file_exists($sessionFile)) {
+	    $platform->unlink($sessionFile);
+	}
 	$ret = $this->init();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
