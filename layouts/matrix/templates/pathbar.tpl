@@ -16,9 +16,7 @@
   {/section}
   {g->item}
     {g->title}
-      {g->link arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`"}
-	{$layout.item.title|default:$layout.item.pathComponent|markup}
-      {/g->link}
+      {$layout.item.title|default:$layout.item.pathComponent|markup}
     {/g->title}
   {/g->item}
 {/g->breadcrumb}
