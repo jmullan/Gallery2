@@ -316,6 +316,25 @@ class GalleryPermissionSetMap_core {
 	
 	return array(GalleryStatus::success(), $ids);
     }
+
+    /**
+     * Unregister all permission associated with a given module.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function unregisterModulePermissions($moduleName) {
+
+	if (empty($moduleName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	
+	$ret = GalleryPermissionSetMap::removeMapEntry(array('module' => $moduleName));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
     
     /**
      * Return an unused permission bit that we can use for our purposes
