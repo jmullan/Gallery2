@@ -222,7 +222,7 @@ class GallerySession_core {
 	    $dataSet['sessionId'] = $this->_sessionId;
 	    $dataSet['creationTime'] = time();
 	    
-	    $ret = $this->addMapEntry(array($dataSet));
+	    $ret = $this->addMapEntry($dataSet);
 	} else {
 	    $ret = $this->updateMapEntry(array('sessionId' => $this->_sessionId),
 					 $dataSet);
