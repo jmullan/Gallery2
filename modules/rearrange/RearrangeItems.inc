@@ -111,6 +111,12 @@ class RearrangeItemsView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 
+	/* Check permissions */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.edit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'RearrangeItems') {
 	    $form['formName'] = 'RearrangeItems';
 	}
