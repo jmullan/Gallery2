@@ -360,6 +360,26 @@ class UtilitiesTest extends GalleryTestCase {
 						     '&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
+    function testEntitySubstr() {
+	$this->assertEquals('abcdef',GalleryUtilities::entity_substr('abcdef', 0));
+	$this->assertEquals(   'def',GalleryUtilities::entity_substr('abcdef', 3));
+	$this->assertEquals(      '',GalleryUtilities::entity_substr('abcdef', 6));
+	$this->assertEquals(   FALSE,GalleryUtilities::entity_substr('abcdef', 7));
+	$this->assertEquals('abcdef',GalleryUtilities::entity_substr('abcdef',-6));
+	$this->assertEquals(    'ef',GalleryUtilities::entity_substr('abcdef',-2));
+	$this->assertEquals('',      GalleryUtilities::entity_substr('abcdef', 0,-6));
+	$this->assertEquals('a',     GalleryUtilities::entity_substr('abcdef', 0,-5));
+	$this->assertEquals('abcde', GalleryUtilities::entity_substr('abcdef', 0,-1));
+	$this->assertEquals('',      GalleryUtilities::entity_substr('abcdef', 0, 0));
+	$this->assertEquals( 'bcde' ,GalleryUtilities::entity_substr('abcdef',-5,-1),'-5,-1');
+	$this->assertEquals(  'cde' ,GalleryUtilities::entity_substr('abcdef',-4,-1),'-4,-1');
+	$this->assertEquals(   'de' ,GalleryUtilities::entity_substr('abcdef',-3,-1),'-3,-1');
+	$this->assertEquals(    'e' ,GalleryUtilities::entity_substr('abcdef',-2,-1),'-2,-1');
+	$this->assertEquals( 'bcde' ,GalleryUtilities::entity_substr('abcdef', 1,4),'1,4');
+	$this->assertEquals('&amp;abcdef',GalleryUtilities::entity_substr('&amp;abcdef',-7),'-7');
+	$this->assertEquals('abc&amp;def',GalleryUtilities::entity_substr('abc&amp;def',-7),'-7');
+	$this->assertEquals('abcdef',GalleryUtilities::entity_substr('&amp;abcdef',-6),'-6');
+    }
 
     function testCreateAlbumTree() {
 	/* Make up some bogus albums that we can use to simulate our tree. */

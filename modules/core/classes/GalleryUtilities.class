@@ -557,6 +557,50 @@ class GalleryUtilities {
 	return (!strcasecmp(get_class($instance), $className));
     }
 
+    
+    /**
+     * An entity-safe substr
+     *
+     * @param string
+     * @param integer
+     * @param integer
+     * @return string
+     */
+
+    function entity_substr($string, $start, $length="") {
+	$stringLength = strlen($string);
+	if ($stringLength < $start) {
+	    return FALSE;
+	}
+	if (''===$length) {
+	    $length = $stringLength;
+	}
+	if (0 == $length) {
+	    return '';
+	}
+	if ((0 == $start) && ($length >= $stringLength)) {
+	    return $string;
+	}
+	if (preg_match_all('(&#x[A-Fa-f0-9]+;|&#[0-9]+;|&[A-Za-z0-9]+;|.|\n)', $string, $reg)) {
+	    $cookedText = '';
+	    $charArray = $reg[0];
+	    $charArrayLength = count($charArray);
+	    
+	    $cookedStart = ($start < 0) ? $charArrayLength + $start : $start;
+	    $cookedLength = ($length < 0) ? $charArrayLength - $cookedStart + $length : $length;
+	    $cookedEnd = min($cookedStart + $cookedLength,$charArrayLength);
+	    for ($i=$cookedStart; $i<$cookedEnd; $i++) {
+		if (0 > $length || strlen($cookedText . $charArray[$i]) <= $length) {
+		    $cookedText .= $charArray[$i];
+		}
+	    }
+	    return $cookedText;
+	} else {
+	    return $string;
+	}
+    }
+
+
     /**
      * Takes a string of utf-8 encoded characters and converts it to a string
      * of unicode entities.  Each unicode entity has the form &#nnnnn; n={0..9}
@@ -570,6 +614,7 @@ class GalleryUtilities {
      * @return string of unicode entities [STRING]
      * @access public
      */
+
     function utf8ToUnicodeEntities($source) {
 	// array used to figure what number to decrement from character order
 	// value
