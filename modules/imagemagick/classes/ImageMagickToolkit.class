@@ -79,6 +79,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	$outputMimeType = $mimeType;
 	switch($operationName) {
 	case 'thumbnail':
+	    $cmd = 'convert';
 	    /* Don't enlarge images for a thumbnail */
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
@@ -93,25 +94,131 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 	    
 	case 'scale':
+	    $cmd = 'convert';
 	    $transform = array('-scale', $parameters[0] . 'x' . $parameters[0]);
 	    break;
 	    
 	case 'resize':
+	    $cmd = 'convert';
 	    $transform = array('-geometry', $parameters[0] . 'x' . $parameters[1]);
 	    break;
 
 	case 'rotate':
+	    $cmd = 'convert';
 	    $transform = array('-rotate', $parameters[0]);
 	    break;
 	    
 	case 'crop':
+	    $cmd = 'convert';
 	    $transform = array('-crop', $parameters[2] . 'x' . $parameters[3] .
 			       '+' . $parameters[0] . '+' . $parameters[1]);
 	    break;
 
 	case 'convert-to-image/jpeg':
+	    $cmd = 'convert';
 	    $transform = null;
 	    $outputMimeType = 'image/jpeg';
+	    break;
+	    
+	case 'composite':
+	    $cmd = 'composite';
+	    $compositeOverlayPath = $parameters[0];
+	    $compositeOverlayMimeType = $parameters[1];
+	    $compositeWidth = $parameters[2];
+	    $compositeHeight = $parameters[3];
+	    $compositeAlignX = $parameters[4];
+	    $compositeAlignY = $parameters[5];
+	    $compositeAlignmentType = $parameters[6];
+
+	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+	        return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    switch ($compositeAlignmentType) {   // Alignment is the third parameter
+	    case 1: // Top - Left
+	        $compositeAlignX = 0;
+	        $compositeAlignY = 0;
+	        break;
+
+	    case 2: // Top
+	        $compositeAlignX = ($sourceWidth - $compositeWidth) / 2;
+	        $compositeAlignY = 0;
+	        break;
+		
+	    case 3: // Top - Right
+	        $compositeAlignX = ($sourceWidth - $compositeWidth);
+	        $compositeAlignY = 0;
+	        break;
+		
+	    case 4: // Left
+	        $compositeAlignX = 0;
+	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	        break;
+		
+	    case 5: // Center
+	        $compositeAlignX = ($sourceWidth  - $compositeWidth)  / 2;
+	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	        break;
+		
+	    case 6: // Right
+	        $compositeAlignX = ($sourceWidth  - $compositeWidth);
+	        $compositeAlignY = ($sourceHeight - $compositeHeight) / 2;
+	        break;
+		
+	    case 7: // Bottom - Left
+	        $compositeAlignX = 0;
+	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        break;
+		
+	    case 8: // Bottom
+	        $compositeAlignX = ($sourceWidth  - $compositeWidth) / 2;
+	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        break;
+		
+	    case 9: // Bottom Right
+	        $compositeAlignX = ($sourceWidth  - $compositeWidth);
+	        $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        break;
+		
+	    default: // Other
+	        // Check for percents
+	        if (ereg('([0-9]+)(\%?)', $compositeAlignX, $regs)) {
+	            if ($regs[2] == '%') {
+	                $compositeAlignX = round($regs[1] / 100 * ($sourceWidth - $compositeWidth));
+	            } else {
+	                $compositeAlignX = $regs[1];
+	            }
+	        } else {
+	            $compositeAlignX = 0;
+	        }
+		
+	        if (ereg('([0-9]+)(\%?)', $compositeAlignY, $regs)) {
+	            if ($regs[2] == '%') {
+	                $compositeAlignY = round($regs[1] / 100 * ($sourceHeight - $compositeHeight));
+	            } else {
+	                $compositeAlignY = $regs[1];
+	            }
+	        } else {
+	            $compositeAlignY = 0;
+	        }
+
+	        if ($compositeAlignX < 1) { // clip left side
+	            $compositeAlignX = 0;
+	        } else if ($compositeAlignX > ($sourceWidth - $compositeWidth)) { // clip right side
+	            $compositeAlignX = ($sourceWidth - $compositeWidth);
+	        }
+		
+	        if ($compositeAlignY < 1) { // clip top
+	            $compositeAlignY = 0;
+	        } else if ($compositeAlignY > ($sourceHeight - $compositeHeight)) { // clip bottom
+	            $compositeAlignY = ($sourceHeight - $compositeHeight);
+	        }
+	        break;
+	    }
+
+	    $transform = array('-geometry', '+' . $compositeAlignX . '+' . $compositeAlignY,
+			       $compositeOverlayPath);
 	    break;
 	    
 	default:
@@ -125,7 +232,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	    }
 	} else {
-	    $ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
+	    $ret = $this->_transformImage($mimeType, $cmd, $transform, $sourceFilename, $destFilename, $outputMimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -153,6 +260,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'resize':
 	case 'scale':
 	case 'thumbnail':
+	case 'composite':
 	    /* For like operations, the second operation takes precedence */
 	    return array(true, $operation2, $args2);
 	    break;
@@ -204,9 +312,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 	}
 
-	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,
-					  __FILE__, __LINE__),
-		     null, null);
+	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null, null);
     }
 
     /**
@@ -217,7 +323,7 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @param string the path to a destination file
      * @return object GalleryStatus a status code
      */
-    function _transformImage($mimeType, $args, $sourceFilename, $destFilename, $outputMimeType) {
+    function _transformImage($mimeType, $cmd, $args, $sourceFilename, $destFilename, $outputMimeType) {
 	global $gallery;
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
@@ -229,7 +335,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
-	$command = array($this->_imageMagickCmd('convert'));
+	$command = array($this->_imageMagickCmd($cmd));
 
 	list ($ret, $jpegQuality) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
@@ -251,11 +357,23 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 	}
 
-	/* Do the conversion */
+	/*
+	 * Prepare our command.  If one of the arguments is %s, then put the source file path there, else put
+	 * it at the end.
+	 */
 	if (isset($args)) {
 	    $command = array_merge($command, $args);
 	}
-	$command[] = $sourceFilename;
+	$replaced = false;
+	for ($i = 0; $i < sizeof($command); $i++) {
+	    if ($command[$i] == '%s') {
+		$command[$i] = $sourceFilename;
+		$replaced = true;
+	    }
+	}
+	if (!$replaced) {
+	    $command[] = $sourceFilename;
+	}
 
 	if ($mimeType == $outputMimeType) {
 	    $command[] = $tmpFilename;

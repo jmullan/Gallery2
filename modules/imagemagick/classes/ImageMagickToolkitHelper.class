@@ -102,6 +102,22 @@ class ImageMagickToolkitHelper {
 	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 
+	/* Composite */
+	$operations['composite']['params'][] = array('type' => 'string',
+						     'description' => $gallery->i18n('overlay path'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay width'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay height'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location x'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location y'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment type'));
+	$operations['composite']['description'] = $gallery->i18n('Composite the image'); 
+	$operations['composite']['mimeTypes'] = $mimeTypes;
+
 	/*
 	 * -------------------- Properties --------------------
 	 */
@@ -213,7 +229,7 @@ class ImageMagickToolkitHelper {
 	}
 
 	/* What do we want to test */
-	$binaries = array('identify', 'convert');
+	$binaries = array('identify', 'convert', 'composite');
 
 	$slash = $platform->getDirectorySeparator();
 	$dataPath = dirname(__FILE__) . "${slash}..${slash}test${slash}data${slash}";
@@ -302,6 +318,44 @@ class ImageMagickToolkitHelper {
 					 'success' => true);
 		}
 		@$platform->unlink($tmpFilename);
+		break;
+	    case 'composite':
+		$tmpDir = $gallery->getConfig('data.gallery.tmp');
+		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
+		if (empty($tmpFilename)) {
+		    /* This can happen if the $tmpDir path is bad */
+		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+		                                      "Could not create tmp file in '$tmpDir'"),
+		                 null);
+		}
+                $command = array($imageMagickPath . 'composite',
+                                 '-geometry', '+0+0',
+                                 $dataPath . 'test.png',
+                                 $dataPath . 'test.gif',
+                                 $tmpFilename
+                                );
+		list ($success, $results) = $platform->exec(array($command));
+                if (!$success) {
+                    $testArray[] = array('name' => 'composite',
+                                         'success' => false,
+                                         'message' => array_merge(array($module->translate('Problem executing binary:')),
+                                                                  $results));
+                } else if (!empty($results)) {
+                    /*
+                     * 'composite' normaly doesn't say anything: if it does,
+                     * it was an error message
+                     */
+                    $testArray[] = array('name' => 'composite',
+                                         'success' => false,
+                                         'message' => array_merge(array($module->translate('Binary output:')),
+                                                                  $results));
+                } else {
+                    $testArray[] = array('name' => 'composite',
+                                         'success' => true);
+                }
+		if ($platform->file_exists($tmpFilename)) {
+		    @$platform->unlink($tmpFilename);
+		}
 		break;
 	    default:
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER,

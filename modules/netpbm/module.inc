@@ -146,7 +146,9 @@ class NetPbmModule extends GalleryModule {
 	    
 	    $paths[] = 'C:\Program Files\netpbm\\';
 	    $paths[] = 'C:\apps\netpbm\\';
+	    $paths[] = 'C:\apps\jhead\\';
 	    $paths[] = 'C:\netpbm\\';
+	    $paths[] = 'C:\jhead\\';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
@@ -226,6 +228,22 @@ class NetPbmModule extends GalleryModule {
 		}
 	    }
 
+	}
+	/* Now try each path in turn to see which ones work for jhead */
+	foreach ($paths as $path) {
+	    list ($ret, $testResults) =
+	        NetPbmToolkitHelper::testJhead($path);
+	    if ($ret->isError()) {
+	        return array($ret->wrap(__FILE__, __LINE__), false);
+	    }
+	    foreach ($testResults as $testResult) {
+	        if ($testResult['success'] && ($testResult['name'] == 'jhead')) {
+	            $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $path);
+	            if ($ret->isError()) {
+	                return array($ret->wrap(__FILE__, __LINE__), false);
+	            }
+	        }
+	    }
 	}
 
 	return array(GalleryStatus::success(), $success);

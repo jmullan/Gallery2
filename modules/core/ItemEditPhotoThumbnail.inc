@@ -45,11 +45,6 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	$status = null;
 	$error = array();
 
-		$form['crop']['x'] = 40;
-		$form['crop']['y'] = 40;
-		$form['crop']['width'] = 200;
-		$form['crop']['height'] = 400;
-
 	$remapSourceIds = array();
 	$operation = null;
 	if (isset($form['action']['crop'])) {

@@ -82,6 +82,31 @@
 	  {/g->select}
 	{/g->column}
       {/g->row}
+
+      {g->row}
+	{g->column colspan="2"}
+	  {g->text text="NetPBM will lose embedded EXIF data if you modify the original image, unless you have the optional <b>jhead</b> binary installed on your system.  If you have jhead installed, enter the path below.  Without it, NetPBM will still perform all of its normal functions, but you should always use the <i>preserve original image</i> option when rotating and scaling images"}
+	{/g->column}
+      {/g->row}
+	  
+      {g->row}
+	{g->column}
+	  {g->text text="Path to jhead:"}
+	{/g->column}
+	{g->column}
+	  {g->input type="text" size="40" name="form[jheadPath]"}{$form.jheadPath}{/g->input}
+	{/g->column}
+      {/g->row}
+      {if isset($form.error.jheadPath.missing)}
+	{g->row}
+	  {g->column colspan="2"}
+	    {g->warning}
+	      {g->text text="You should enter a path to the optional jhead binary"}
+	    {/g->warning}
+	  {/g->column}
+	{/g->row}
+      {/if}
+
     {/g->table}
   {/g->box}
 

@@ -165,6 +165,8 @@ class ItemDeleteView extends GalleryView {
 	$peers = array();
 	$peerTypes = array();
 	$peerDescendentCounts = array();
+	$numPages = 1;
+	$selectedIds = array();
 	if (!empty($peerIds)) {
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
 	    if (empty($page)) {
@@ -179,7 +181,6 @@ class ItemDeleteView extends GalleryView {
 
 	    $start = $form['numPerPage'] * ($page - 1);
 	    $peerIds = array_slice($peerIds, $start, $form['numPerPage']);
-	    $selectedIds = array();
 	    if (isset($form['selectedIds'])) {
 		$selectedIds = $form['selectedIds'];
 		foreach ($peerIds as $peerId) {

@@ -118,11 +118,40 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	// Test a basic composite operation (top right corner)
+        list ($ret, $mimeType) =
+            $this->_toolkit->performOperation('image/png', 'composite',
+                                              'testPerformOperations10.png', // composite
+                                              'testPerformOperations11.png', // composited
+                                              array('testPerformOperations12.gif', // image
+						    'testPerformOperations13.gif', // mask
+						    50, 50, // image width, height
+						    0, 0, // image alignment x, y
+						    3));    // alignment type
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	// Test another composite with out of range params that should get corrected
+        list ($ret, $mimeType) =
+            $this->_toolkit->performOperation('image/png', 'composite',
+                                              'testPerformOperations10.png', // composite (200x200)
+                                              'testPerformOperations11.png', // composited
+                                              array('testPerformOperations12.gif', // image
+						    'testPerformOperations13.gif', // mask
+						    50, 50, // image width, height
+						    151, 151, // image alignment x, y
+						    0));    // alignment type
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/png', 'BOGUS',
 					      'BOGUS',
 					      'BOGUS',
 					      array('BOGUS'));
+
 	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
     }
 
@@ -313,7 +342,27 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 								       'image/pjpeg',
 								       'image/png',
 								       'image/tiff',
-								       'image/svg+xml'))),
+								       'image/svg+xml')),
+				  'composite' => array('params' =>
+						       array(array('type' => 'string',
+								   'description' => 'overlay path'),
+							     array('type' => 'int',
+								   'description' => 'overlay width'),
+							     array('type' => 'int',
+								   'description' => 'overlay height'),
+							     array('type' => 'int',
+								   'description' => 'alignment location x'),
+							     array('type' => 'int',
+								   'description' => 'alignment location y'),
+							     array('type' => 'int',
+								   'description' => 'alignment type')),
+						       'description' => 'Composite the image',
+						       'mimeTypes' => array('image/gif',
+									     'image/jpeg',
+									     'image/pjpeg',
+									     'image/png',
+									     'image/tiff',
+									     'image/svg+xml'))),
 			    $results['operations']);
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the image',
@@ -333,7 +382,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(array('name' => 'identify', 'success' => 1),
-				  array('name' => 'convert', 'success' => 1)),
+				  array('name' => 'convert', 'success' => 1),
+				  array('name' => 'composite', 'success' => 1)),
 			    $results);
     }
 }
@@ -393,6 +443,10 @@ class ImageMagickToolkitTestPlatform {
 
 		case 'testPerformOperations4.jpg':
 		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
+		    break;
+
+		case 'testPerformOperations10.png':
+		    $lines[] = 'testPerformOperations10.png PNG 200x200+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
 		    break;
 		}
 	    }
@@ -473,10 +527,37 @@ class ImageMagickToolkitTestPlatform {
 		return array(1, array());
 	    }
 	    break;
+	    
+	case $imageMagickPath . 'composite':
+	case '/validPath/composite':
+	    if ($cmd[0][1] == '-geometry' &&
+		    $cmd[0][2] == '+0+0' &&
+		    realpath($cmd[0][3]) == realpath(dirname(__FILE__) . '/../data/test.png') &&
+		    realpath($cmd[0][4]) == realpath(dirname(__FILE__) . '/../data/test.gif') &&
+   		    $cmd[0][5] == 'TEMPFILE') {
+		return array(1, array());
+	    }  else if ($cmd[0][1] == '-quality' &&
+   		    $cmd[0][2] == 75 &&
+		    $cmd[0][3] == '-geometry' &&
+		    $cmd[0][4] == '+150+0' &&
+   		    $cmd[0][5] == 'testPerformOperations12.gif' && // image
+   		    $cmd[0][6] == 'testPerformOperations10.png' && // composite
+   		    $cmd[0][7] == 'TEMPFILE') { // composited
+		return array(1, array());
+	    } else if ($cmd[0][1] == '-quality' &&
+   		    $cmd[0][2] == 75 &&
+		    $cmd[0][3] == '-geometry' &&
+		    $cmd[0][4] == '+150+150' &&
+   		    $cmd[0][5] == 'testPerformOperations12.gif' && // image
+   		    $cmd[0][6] == 'testPerformOperations10.png' && // composite
+   		    $cmd[0][7] == 'TEMPFILE') { // composited
+		return array(1, array());
+	    } 
+	    break;
 	}
 
 	print_r($cmd);
-	return array(0, 'unprepared for exec()');
+	return array(0, array('unprepared for exec()'));
     }
 
     function rename($oldName, $newName) {
@@ -485,6 +566,7 @@ class ImageMagickToolkitTestPlatform {
 	case 'testPerformOperations5.jpg':
 	case 'testPerformOperations7.tiff':
 	case 'testPerformOperations9.png':
+	case 'testPerformOperations11.png':
 	    return true;
 
 	default:

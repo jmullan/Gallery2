@@ -110,6 +110,15 @@ class AdminNetPbmController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		/*
+		 * Set the jhead binary name
+		 */
+		$jheadPath = isset($form['jheadPath']) ? $form['jheadPath'] : '';
+		$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'jheadPath', $jheadPath);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'netpbm:AdminNetPbm';
 		$status['saved'] = 1;
@@ -147,7 +156,7 @@ class AdminNetPbmView extends GalleryView {
 
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminNetPbm') {
-	    foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
+	    foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
 		if ($ret->isError()) {
@@ -157,13 +166,15 @@ class AdminNetPbmView extends GalleryView {
 	    $form['formName'] = 'AdminNetPbm';
 	}
 
-	/* Guarantee that the path has a trailing slash. */
+	/* Guarantee that the path and jheadPath have a trailing slash. */
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	$form['path'] = trim($form['path']);
-	if (!empty($form['path'])) {
-	    if ($form['path']{strlen($form['path'])-1} != $slash) {
-		$form['path'] .= $slash;
+	foreach (array('path', 'jheadPath') as $key) {
+	    $form[$key] = trim($form[$key]);
+	    if (!empty($form[$key])) {
+		if ($form[$key]{strlen($form[$key])-1} != $slash) {
+		    $form[$key] .= $slash;
+		}
 	    }
 	}
 	
@@ -190,6 +201,15 @@ class AdminNetPbmView extends GalleryView {
 
 		foreach ($tests as $test) {
 		    $failCount += !$test['success'];
+		}
+	    }
+	    if (empty($form['jheadPath'])) {
+		$form['error']['jheadPath']['missing'] = 1;
+	    } else {
+		list ($ret, $jheadTests, $jheadMimeTypes) =
+		    NetPbmToolkitHelper::testJhead($form['jheadPath']);
+		foreach ($jheadTests as $test) {
+		    $tests[] = $test;
 		}
 	    }
 	}

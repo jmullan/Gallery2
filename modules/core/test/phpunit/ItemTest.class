@@ -145,9 +145,9 @@ class ItemTest extends GalleryTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-					       'ItemTestToolkit',
-					       'ItemTestToolkit',
-					       __FILE__);
+						      'ItemTestToolkit',
+						      'ItemTestToolkit',
+						      __FILE__);
 	
 	/* Register an operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
@@ -166,6 +166,16 @@ class ItemTest extends GalleryTestCase {
 						       array(),
 						       'itemtest-description',
 						       'image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Register a jpeg thumbnail in case there are no other toolkits active */
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
+						       array('image/jpeg'),
+						       'thumbnail',
+						       array(array('type' => 'int', 'description' => 'foo')),
+						       'itemtest-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -499,12 +509,12 @@ class ItemTest extends GalleryTestCase {
 
 	/* Add our item to the album */
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
-								  'itemName',
-								  'title',
-								  'caption',
-								  'description',
-								  'test/movie',
-								  $this->_childItems[0]->getId());
+							       'itemName',
+							       'title',
+							       'caption',
+							       'description',
+							       'test/movie',
+							       $this->_childItems[0]->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

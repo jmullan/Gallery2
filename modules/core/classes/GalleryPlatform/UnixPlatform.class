@@ -70,6 +70,7 @@ class UnixPlatform extends GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
 	}
+	$results = array();
 	exec($command, $results, $status);
 
 	list ($ret, $expected) =

@@ -233,6 +233,10 @@ class AdminImageMagickControllerTestPlatform {
     }
 
     function exec($args) {
+	/*
+	 * We're going to test all of this in detail in the ImageMagickToolkitTest, so for now let's just aim
+	 * for success.
+	 */
 	$slash = $this->getDirectorySeparator();
 	switch ($args[0][0]) {
 	case "${slash}validPath${slash}identify":
@@ -241,8 +245,11 @@ class AdminImageMagickControllerTestPlatform {
 	case "${slash}validPath${slash}convert":
 	    return array(1, array());
 
+	case "${slash}validPath${slash}composite":
+	    return array(1, array());
+
 	default:
-	    return array(0, null);
+	    return array(0, array());
 	}
     }
 

@@ -118,6 +118,22 @@ class NetPbmToolkitHelper {
 	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 
+	/* Watermark */
+	$operations['composite']['params'][] = array('type' => 'string',
+						     'description' => $gallery->i18n('overlay path'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay width'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('overlay height'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location x'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment location y'));
+	$operations['composite']['params'][] = array('type' => 'int',
+						     'description' => $gallery->i18n('alignment type'));
+	$operations['composite']['description'] = $gallery->i18n('Composite the image'); 
+	$operations['composite']['mimeTypes'] = $mimeTypes;
+
 	/*
 	 * -------------------- Properties --------------------
 	 */
@@ -129,6 +145,54 @@ class NetPbmToolkitHelper {
 
 	return array(GalleryStatus::success(), array('operations' => $operations,
 						     'properties' => $properties));
+    }
+
+    /**
+     * Test if the given path has a working jhead binary.
+     *
+     * This is done by calling jhead with the -V flag
+     *
+     * @param string path to the jhead binary
+     * @return array object GalleryStatus general status of tests
+     *	       array ('name' => string: the name of the binary,
+     *		      'success' => boolean: test successfull?
+     *		      'message' => string: the error message
+     *		     )
+     *         array hash map of mime types
+     *
+     * @static
+     */
+    function testJhead($jheadPath) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	/*
+	 * If the path is not restricted by open_basedir, then verify that it's
+	 * legal.  Else just hope that it's valid and use it.
+	 */
+	if (!$platform->isRestrictedByOpenBasedir($jheadPath)) {
+	    if (! $platform->file_exists($jheadPath)
+	        || ! $platform->is_dir($jheadPath) ) {
+	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    }
+	}
+	$tests = array();
+	$fullPath = $jheadPath . 'jhead';
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $fullPath .= '.exe';
+	}
+
+	if (!$platform->isRestrictedByOpenBasedir($fullPath) && !$platform->file_exists($fullPath)) {
+	    $success = false;
+	    $results = array('File does not exist');
+	} else {
+	    list ($success, $results) = $platform->exec(array(array($fullPath, '-V')));
+	}
+	$tests[] = array('name' => 'jhead',
+	                 'success' => $success,
+	                 'message' => $results);
+
+	return array(GalleryStatus::success(), $tests, array());
     }
 
     /**
@@ -176,6 +240,8 @@ class NetPbmToolkitHelper {
 	$binaries['pnmtopng'] = array('image/png');
 	$binaries['tifftopnm'] = array('image/tiff');
 	$binaries['pnmtotiff'] = array('image/tiff');
+	$binaries['pnmcomp'] = array(); /* pnmcomp doesn't help support a mime type,
+	                                   it allows for watermarking                */
 
 	/* Get a list of all possible supported mime types */
 	$mimeTypes = array();
@@ -204,7 +270,7 @@ class NetPbmToolkitHelper {
 	    }
 	    $tests[] = array('name' => $binary,
 			     'success' => $success,
-			     'results' => $results);
+			     'message' => $results);
 	}
 
 	$tmp = array();
