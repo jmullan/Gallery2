@@ -53,7 +53,7 @@ class ImageBlockModule extends GalleryModule {
     /**
      * @see GalleryModule::upgrade()
      */
-    function upgrade() {
+    function upgrade($currentVersion) {
 	global $gallery;
 
 	if (!isset($currentVersion)) {
@@ -108,7 +108,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	return array(GalleryStatus::success(), $tpl);
     }
-	
+
     function _loadImageBlocks(&$template, $params = array('heading' => 1)) {
 	global $gallery;
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
