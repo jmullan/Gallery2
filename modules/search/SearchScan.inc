@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -45,6 +45,11 @@ class SearchScanController extends GalleryController {
 
 	$results = array();
 	if (isset($form['action']['slideshow'])) {
+
+	    if (isset($form['searchCriteria'])) {
+		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    }
+
 	    list ($ret, $slideshow) =
 		GalleryCoreApi::newFactoryInstance('SlideshowInterface_1_0');
 	    if ($ret->isError() || !isset($slideshow)) {
@@ -60,14 +65,12 @@ class SearchScanController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	    $form['searchCriteria'] =
-		SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
 	    $itemIds = array();
 	    foreach ($searchInstances as $id => $instance) {
 		if (isset($form['options'][$id])) {
 		    list ($ret, $resultSet) =
 			$instance->search($form['options'][$id],
-					  $form['searchCriteria']);
+					  SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -138,13 +141,14 @@ class SearchScanView extends GalleryView {
 	    $form['formName'] == 'SearchShowAll' ||
 	    $form['formName'] == 'SearchSystemContent') {
 
+	    if (isset($form['searchCriteria'])) {
+		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    }
+
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
 
-		$form['searchCriteria'] =
-		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
-		
 		if (isset($form['useDefaultSettings']) || $form['formName'] == 'SearchShowAll') {
 		    foreach ($searchInstances as $id => $instance) {
 			$form['options'][$id] = $modules[$id]['options'];
@@ -156,7 +160,7 @@ class SearchScanView extends GalleryView {
 		    if (isset($form['options'][$id])) {
 			list ($ret, $searchResults[$id]) =
 			    $instance->search($form['options'][$id],
-					      $form['searchCriteria'],
+					      SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
 					      0,
 					      $scanSize);
 			if ($ret->isError()) {
@@ -188,7 +192,7 @@ class SearchScanView extends GalleryView {
 		foreach ($itemList as $item) {
 		    $items[$item->getId()] = $item->getMemberData();
 		}
-		
+
 		/* Fetch thumbnails */
 		list ($ret, $thumbnailList) =
 		    GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
@@ -228,7 +232,7 @@ class SearchScanView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/search/templates/SearchHead.tpl',
 			   'body' => 'modules/search/templates/SearchScan.tpl'));

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -76,7 +76,11 @@ class SearchShowAllView extends GalleryView {
 	$searchResultThumbnails = array();
 	if ($form['formName'] == 'SearchShowAll' ||
 	    $form['formName'] == 'SearchScan') {
-	    
+
+	    if (isset($form['searchCriteria'])) {
+		$form['searchCriteria'] = trim($form['searchCriteria']);
+	    }
+
 	    if (empty($form['searchCriteria'])) {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
@@ -89,9 +93,6 @@ class SearchShowAllView extends GalleryView {
 		    $form['searchCriteria'] = $form['lastSearchCriteria'];
 		}
 
-		$form['searchCriteria'] =
-		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
-		    
 		if (isset($form['action']['showAll'])) {
 		    $form['moduleId'] = array_pop(array_keys($form['action']['showAll']));
 		    $form['page'] = 1;
@@ -123,7 +124,7 @@ class SearchShowAllView extends GalleryView {
 		if (!isset($searchInstance)) {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $moduleInfo) = $searchInstance->getSearchModuleInfo();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -132,7 +133,7 @@ class SearchShowAllView extends GalleryView {
 		if (isset($form['options'][$moduleId])) {
 		    list ($ret, $results) =
 			$searchInstance->search($form['options'][$moduleId],
-						$form['searchCriteria'],
+						SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
 						($form['page']-1) * $pageSize,
 						$pageSize);
 		    if ($ret->isError()) {
@@ -161,7 +162,7 @@ class SearchShowAllView extends GalleryView {
 		    foreach ($itemList as $item) {
 			$items[$item->getId()] = $item->getMemberData();
 		    }
-		
+
 		    /* Fetch thumbnails */
 		    list ($ret, $thumbnailList) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 		    if ($ret->isError()) {
@@ -186,7 +187,7 @@ class SearchShowAllView extends GalleryView {
 	$SearchShowAll['items'] = $items;
 	$SearchShowAll['controller'] = 'search:SearchShowAll';
 	$template->setVariable('SearchShowAll', $SearchShowAll);
-	
+
 	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -196,7 +197,7 @@ class SearchShowAllView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(),
 		     array('head' => 'modules/search/templates/SearchHead.tpl',
 			   'body' => 'modules/search/templates/SearchShowAll.tpl'));
