@@ -57,7 +57,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
     function testImportUserSuccessful() {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
-        GalleryUtilities::putRequestVariable('form[migrateUser][1057837154u228147420]', 1);
+        GalleryUtilities::putRequestVariable('form[migrateUser][1057837154_228147420]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
         $results = $this->handleRequest();
@@ -79,7 +79,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
     function testImportUserFailure() {
         GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . '/../data/albums/');
-        GalleryUtilities::putRequestVariable('form[migrateUser][1054014347u1233740678]', 1);
+        GalleryUtilities::putRequestVariable('form[migrateUser][1054014347_1233740678]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 
         $results = $this->handleRequest();
