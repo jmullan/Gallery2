@@ -4,7 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div style="dislay:none">
+<div style="dislay:none;visibility:hidden">
 {foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     {if isset($it.renderItem)}
