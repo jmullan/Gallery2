@@ -42,8 +42,6 @@
  */
 class GalleryAlbumItem extends GalleryAlbumItem_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,26 +49,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['layout'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['layout'] = array(
-	    'class' => 'GalleryAlbumItem',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['theme'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['theme'] = array(
-	    'class' => 'GalleryAlbumItem',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['orderBy'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['orderBy'] = array(
-	    'class' => 'GalleryAlbumItem',
-	    'type' => STORAGE_TYPE_STRING
-	);
-    
-	$meta['members']['orderDirection'] = array(
-	    'class' => 'GalleryAlbumItem',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['orderDirection'] = array('class' => 'GalleryAlbumItem', 'type' => STORAGE_TYPE_STRING);
     
 	return $meta;
     }
@@ -82,35 +67,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_layout)) {
- 	    $data['layout'] = null;
- 	} else {
-	    $data['layout'] = $this->_layout;
-	}
-	
-	if (!isset($this->_theme)) {
- 	    $data['theme'] = null;
- 	} else {
-	    $data['theme'] = $this->_theme;
-	}
-	
-	if (!isset($this->_orderBy)) {
- 	    $data['orderBy'] = null;
- 	} else {
-	    $data['orderBy'] = $this->_orderBy;
-	}
-	
-	if (!isset($this->_orderDirection)) {
- 	    $data['orderDirection'] = null;
- 	} else {
-	    $data['orderDirection'] = $this->_orderDirection;
-	}
-	
+        $data['layout'] = isset($this->_layout) ? $this->_layout : null;
+        $data['theme'] = isset($this->_theme) ? $this->_theme : null;
+        $data['orderBy'] = isset($this->_orderBy) ? $this->_orderBy : null;
+        $data['orderDirection'] = isset($this->_orderDirection) ? $this->_orderDirection : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -131,7 +94,6 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryAlbumItem.class'; 
     }
-
     
     /**
      * Get the value of layout
@@ -139,12 +101,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return STRING the value
      */
     function getlayout() {
- 	
-
 	if (!isset($this->_layout)) {
 	    return null;
 	}
-
 	return $this->_layout;
     }
 
@@ -154,20 +113,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function setlayout($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_layout) ? $this->_layout : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_layout) ? $this->_layout : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('layout', $value);
 	    $this->_layout = $value;
 	}
@@ -179,12 +131,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return STRING the value
      */
     function gettheme() {
- 	
-
 	if (!isset($this->_theme)) {
 	    return null;
 	}
-
 	return $this->_theme;
     }
 
@@ -194,20 +143,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function settheme($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_theme) ? $this->_theme : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_theme) ? $this->_theme : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('theme', $value);
 	    $this->_theme = $value;
 	}
@@ -219,12 +161,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return STRING the value
      */
     function getorderBy() {
- 	
-
 	if (!isset($this->_orderBy)) {
 	    return null;
 	}
-
 	return $this->_orderBy;
     }
 
@@ -234,20 +173,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function setorderBy($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_orderBy) ? $this->_orderBy : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_orderBy) ? $this->_orderBy : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('orderBy', $value);
 	    $this->_orderBy = $value;
 	}
@@ -259,12 +191,9 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return STRING the value
      */
     function getorderDirection() {
- 	
-
 	if (!isset($this->_orderDirection)) {
 	    return null;
 	}
-
 	return $this->_orderDirection;
     }
 
@@ -274,20 +203,13 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function setorderDirection($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_orderDirection) ? $this->_orderDirection : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_orderDirection) ? $this->_orderDirection : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('orderDirection', $value);
 	    $this->_orderDirection = $value;
 	}

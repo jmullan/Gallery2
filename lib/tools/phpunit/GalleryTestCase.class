@@ -316,7 +316,7 @@ class GalleryTestCase extends TestCase {
 	$message = $gallery->getDebugBuffer() . $message;
 	$err = $this->DeepCompare($expected, $actual);
 	if ($err) {
-	    $message .= sprintf('&nbsp;<br/><b>Mismatch At</b>: %s', htmlentities($err));
+	    $message .= sprintf('&nbsp;<br/><b>Mismatch At</b>: %s', htmlspecialchars($err));
 	}
 	parent::assertEquals($expected, $actual, $message);
     }

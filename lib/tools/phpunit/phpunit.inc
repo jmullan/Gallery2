@@ -162,20 +162,20 @@ class Assert {
       if (phpversion() >= '4.0.0') {
 	  if (is_object($value)) {
 	      if (method_exists($value, "toString") ) {
-		  $translateValue = htmlentities($value->toString());
+		  $translateValue = htmlspecialchars($value->toString());
 	      }
 	      else {
-		  $translateValue = htmlentities(serialize($value));
+		  $translateValue = htmlspecialchars(serialize($value));
 	      }
 	  }
 	  else if (is_array($value)) {
 	      if (phpversion() >= '4.2.0') {
-		  $translateValue = '<pre>' . htmlentities(var_export($value, 1)) . '</pre>';
+		  $translateValue = '<pre>' . htmlspecialchars(var_export($value, 1)) . '</pre>';
 	      } else {
-		  $translateValue = htmlentities(serialize($value));
+		  $translateValue = htmlspecialchars(serialize($value));
 	      }
 	  } else {
-	      $translateValue = htmlentities($value);
+	      $translateValue = htmlspecialchars($value);
 	  }
       }
       else {

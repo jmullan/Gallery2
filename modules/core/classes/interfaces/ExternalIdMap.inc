@@ -42,9 +42,6 @@
  */
 class ExternalIdMap extends ExternalIdMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class ExternalIdMap extends ExternalIdMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/ExternalIdMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,13 +70,9 @@ class ExternalIdMap extends ExternalIdMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['externalId'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['entityType'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['entityId'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -93,27 +85,18 @@ class ExternalIdMap extends ExternalIdMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('externalId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('entityType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('entityId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('externalId', 'entityType', 'entityId', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('ExternalIdMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -132,12 +115,10 @@ class ExternalIdMap extends ExternalIdMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('ExternalIdMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -151,12 +132,10 @@ class ExternalIdMap extends ExternalIdMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('ExternalIdMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -176,12 +155,10 @@ class ExternalIdMap extends ExternalIdMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('ExternalIdMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

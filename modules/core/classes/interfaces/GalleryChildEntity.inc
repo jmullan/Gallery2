@@ -42,8 +42,6 @@
  */
 class GalleryChildEntity extends GalleryChildEntity_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,11 +49,7 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
-    
-	$meta['members']['parentId'] = array(
-	    'class' => 'GalleryChildEntity',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['parentId'] = array('class' => 'GalleryChildEntity', 'type' => STORAGE_TYPE_INTEGER);
     
 	return $meta;
     }
@@ -67,17 +61,10 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_parentId)) {
- 	    $data['parentId'] = null;
- 	} else {
-	    $data['parentId'] = $this->_parentId;
-	}
-	
+        $data['parentId'] = isset($this->_parentId) ? $this->_parentId : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -98,7 +85,6 @@ class GalleryChildEntity extends GalleryChildEntity_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryChildEntity.class'; 
     }
-
     
     /**
      * Get the value of parentId
@@ -106,12 +92,9 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return INTEGER the value
      */
     function getparentId() {
- 	
-
 	if (!isset($this->_parentId)) {
 	    return null;
 	}
-
 	return $this->_parentId;
     }
 
@@ -121,25 +104,18 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @param INTEGER the value
      */
     function setparentId($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_parentId) ? $this->_parentId : null;
+	$orig = isset($this->_parentId) ? $this->_parentId : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('parentId', $value);
 	    $this->_parentId = $value;
 	}

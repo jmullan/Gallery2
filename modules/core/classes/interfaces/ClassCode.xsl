@@ -47,10 +47,6 @@
  * @subpackage Classes
  */
 class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-name"/>_core {
-  <!-- If the class has members then we must create a 
-       getPersistentMemberInfo() method 
-   -->
-
   <xsl:if test="/class/member">
     /**
      * Return meta information about the members of this class
@@ -58,12 +54,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-	$meta = parent::getPersistentMemberInfo();
-    <xsl:for-each select="member">
-	$meta['members']['<xsl:value-of select="member-name"/>'] = array(
-	    'class' => '<xsl:value-of select="/class/class-name"/>',
-	    'type' => STORAGE_TYPE_<xsl:value-of select="member-type"/><xsl:if test="id"> | STORAGE_TYPE_ID</xsl:if>
-	);
+	$meta = parent::getPersistentMemberInfo();<xsl:for-each select="member">
+	$meta['members']['<xsl:value-of select="member-name"/>'] = array('class' => '<xsl:value-of select="/class/class-name"/>', 'type' => STORAGE_TYPE_<xsl:value-of select="member-type"/><xsl:if test="id"> | STORAGE_TYPE_ID</xsl:if>);
     </xsl:for-each>
 	return $meta;
     }
@@ -74,33 +66,18 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
-    <xsl:for-each select="member">
- 	<xsl:if test="linked">
-	if (isset($this->_linkedEntity)) {
-	    if (!isset($this->_linkedEntity->_<xsl:value-of select="member-name"/>)) {
- 	        $data['<xsl:value-of select="member-name"/>'] = null;
-	    } else {
-		$data['<xsl:value-of select="member-name"/>'] = $this->_linkedEntity->_<xsl:value-of select="member-name"/>;
-	    }
-	} else if (!isset($this->_<xsl:value-of select="member-name"/>)) {
- 	    $data['<xsl:value-of select="member-name"/>'] = null;
- 	} else {
-	    $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
-	}
-	</xsl:if>
- 	<xsl:if test="not(linked)">
-	if (!isset($this->_<xsl:value-of select="member-name"/>)) {
- 	    $data['<xsl:value-of select="member-name"/>'] = null;
- 	} else {
-	    $data['<xsl:value-of select="member-name"/>'] = $this->_<xsl:value-of select="member-name"/>;
-	}
-	</xsl:if>
+	$data = parent::getMemberData();<xsl:for-each select="member">
+ 	<xsl:if test="linked">if (isset($this->_linkedEntity)) {
+            $data['<xsl:value-of select="member-name"/>'] = isset($this->_linkedEntity->_<xsl:value-of select="member-name"/>) ? $this->_linkedEntity->_<xsl:value-of select="member-name"/> : null;
+	} else {
+            $data['<xsl:value-of select="member-name"/>'] = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;
+        }
+	</xsl:if><xsl:if test="not(linked)">
+        $data['<xsl:value-of select="member-name"/>'] = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;</xsl:if>
     </xsl:for-each>
 	return $data;
     }
   </xsl:if>
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -121,7 +98,6 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/<xsl:value-of select="class-name"/>.class'; 
     }
-
     <xsl:apply-templates select="map" />
     <xsl:apply-templates select="member" />
 }
@@ -134,10 +110,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @return array map member => type
      */
     function getMapInfo() {
-	$info = array();
-    <xsl:for-each select="member">
-	$info['members']['<xsl:value-of select="member-name"/>'] = STORAGE_TYPE_<xsl:value-of select="member-type"/>;
-  </xsl:for-each>
+	$info = array();<xsl:for-each select="member">
+	$info['members']['<xsl:value-of select="member-name"/>'] = STORAGE_TYPE_<xsl:value-of select="member-type"/>;</xsl:for-each>
 	return $info; 
     }
 
@@ -150,19 +124,18 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      */
     function addMapEntry($data) {
 	global $gallery;
-    <xsl:for-each select="member/member-name">
-	if (!array_key_exists('<xsl:value-of select="."/>', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    </xsl:for-each>
+        foreach (array(<xsl:for-each select="member/member-name">'<xsl:value-of select="."/>', </xsl:for-each>) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =&amp; $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -181,12 +154,10 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	}
 
 	$storage =&amp; $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -200,12 +171,10 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	global $gallery;
 
 	$storage =&amp; $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('<xsl:value-of select="/class/class-name"/>');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -225,12 +194,10 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 	}
 
 	$storage =&amp; $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   </xsl:template>
@@ -241,18 +208,15 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      *
      * @return <xsl:value-of select="member-type"/> the value
      */
-    function get<xsl:value-of select="member-name"/>() {
- 	<xsl:if test="linked">
+    function get<xsl:value-of select="member-name"/>() {<xsl:if test="linked">
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->get<xsl:value-of select="member-name"/>();
 	}
 	</xsl:if>
-
 	if (!isset($this->_<xsl:value-of select="member-name"/>)) {
 	    return null;
 	}
-
 	return $this->_<xsl:value-of select="member-name"/>;
     }
 
@@ -261,40 +225,33 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      *
      * @param <xsl:value-of select="member-type"/> the value
      */
-    function set<xsl:value-of select="member-name"/>($value) {
-    <xsl:choose>
-      <xsl:when test="member-type='BOOLEAN'">
+    function set<xsl:value-of select="member-name"/>($value) {<xsl:choose>
+        <xsl:when test="member-type='BOOLEAN'">
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
-      </xsl:when>
-      <xsl:when test="member-type='INTEGER'">
+        </xsl:when>
+        <xsl:when test="member-type='INTEGER'">
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
-      </xsl:when>
-    </xsl:choose>
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;
+        </xsl:when>
+      </xsl:choose>
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+      <xsl:if test="member-type='STRING'">  $value = $this->_truncateString($value, <xsl:choose>
+        <xsl:when test="member-size='SMALL'">32</xsl:when>
+        <xsl:when test="member-size='MEDIUM' or not(member-size)">128</xsl:when>
+        <xsl:when test="member-size='LARGE'">255</xsl:when>
+      </xsl:choose>);</xsl:if>
+	$orig = isset($this->_<xsl:value-of select="member-name"/>) ? $this->_<xsl:value-of select="member-name"/> : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    <xsl:choose>
-      <xsl:when test="member-type='INTEGER'">
-	if ($a !== $b) {
-      </xsl:when>
-      <xsl:when test="member-type='BOOLEAN'">
-	if ($a !== $b) {
-      </xsl:when>
-      <xsl:otherwise>
-	if ($a != $b) {
-      </xsl:otherwise>
-    </xsl:choose>
+        /* Only take action if the value actually changes */
+        <xsl:choose>
+          <xsl:when test="member-type='INTEGER'">if ($value !== $orig) {</xsl:when>
+          <xsl:when test="member-type='BOOLEAN'">if ($value !== $orig) {</xsl:when>
+          <xsl:otherwise>if ($value != $orig) {</xsl:otherwise>
+        </xsl:choose>
 	    $this->setModifiedFlag('<xsl:value-of select="member-name"/>', $value);
 	    $this->_<xsl:value-of select="member-name"/> = $value;
 	}

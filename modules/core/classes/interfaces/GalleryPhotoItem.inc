@@ -42,8 +42,6 @@
  */
 class GalleryPhotoItem extends GalleryPhotoItem_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,16 +49,9 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['width'] = array('class' => 'GalleryPhotoItem', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['width'] = array(
-	    'class' => 'GalleryPhotoItem',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
-    
-	$meta['members']['height'] = array(
-	    'class' => 'GalleryPhotoItem',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['height'] = array('class' => 'GalleryPhotoItem', 'type' => STORAGE_TYPE_INTEGER);
     
 	return $meta;
     }
@@ -71,36 +62,20 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
-    
+	$data = parent::getMemberData();if (isset($this->_linkedEntity)) {
+            $data['width'] = isset($this->_linkedEntity->_width) ? $this->_linkedEntity->_width : null;
+	} else {
+            $data['width'] = isset($this->_width) ? $this->_width : null;
+        }
 	if (isset($this->_linkedEntity)) {
-	    if (!isset($this->_linkedEntity->_width)) {
- 	        $data['width'] = null;
-	    } else {
-		$data['width'] = $this->_linkedEntity->_width;
-	    }
-	} else if (!isset($this->_width)) {
- 	    $data['width'] = null;
- 	} else {
-	    $data['width'] = $this->_width;
-	}
-	
-	if (isset($this->_linkedEntity)) {
-	    if (!isset($this->_linkedEntity->_height)) {
- 	        $data['height'] = null;
-	    } else {
-		$data['height'] = $this->_linkedEntity->_height;
-	    }
-	} else if (!isset($this->_height)) {
- 	    $data['height'] = null;
- 	} else {
-	    $data['height'] = $this->_height;
-	}
+            $data['height'] = isset($this->_linkedEntity->_height) ? $this->_linkedEntity->_height : null;
+	} else {
+            $data['height'] = isset($this->_height) ? $this->_height : null;
+        }
 	
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -121,7 +96,6 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryPhotoItem.class'; 
     }
-
     
     /**
      * Get the value of width
@@ -129,17 +103,14 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @return INTEGER the value
      */
     function getwidth() {
- 	
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getwidth();
 	}
 	
-
 	if (!isset($this->_width)) {
 	    return null;
 	}
-
 	return $this->_width;
     }
 
@@ -149,25 +120,18 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_width) ? $this->_width : null;
+	$orig = isset($this->_width) ? $this->_width : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('width', $value);
 	    $this->_width = $value;
 	}
@@ -179,17 +143,14 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @return INTEGER the value
      */
     function getheight() {
- 	
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getheight();
 	}
 	
-
 	if (!isset($this->_height)) {
 	    return null;
 	}
-
 	return $this->_height;
     }
 
@@ -199,25 +160,18 @@ class GalleryPhotoItem extends GalleryPhotoItem_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_height) ? $this->_height : null;
+	$orig = isset($this->_height) ? $this->_height : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('height', $value);
 	    $this->_height = $value;
 	}

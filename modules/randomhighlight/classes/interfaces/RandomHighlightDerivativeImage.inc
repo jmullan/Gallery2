@@ -42,9 +42,6 @@
  */
 class RandomHighlightDerivativeImage extends RandomHighlightDerivativeImage_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class RandomHighlightDerivativeImage extends RandomHighlightDerivativeImage_core
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/RandomHighlightDerivativeImage.class'; 
     }
-
     
 }
 ?>

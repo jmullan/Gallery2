@@ -42,9 +42,6 @@
  */
 class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryPluginParameterMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,17 +70,11 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['pluginType'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['pluginId'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['parameterName'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['parameterValue'] = STORAGE_TYPE_STRING;
-  
 	return $info; 
     }
 
@@ -97,35 +87,18 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('pluginType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('pluginId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('parameterName', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('parameterValue', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('pluginType', 'pluginId', 'itemId', 'parameterName', 'parameterValue', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryPluginParameterMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -144,12 +117,10 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryPluginParameterMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -163,12 +134,10 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryPluginParameterMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -188,12 +157,10 @@ class GalleryPluginParameterMap extends GalleryPluginParameterMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryPluginParameterMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

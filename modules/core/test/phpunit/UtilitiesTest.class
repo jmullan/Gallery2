@@ -180,16 +180,17 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
     }
 
+    /* We don't convert UTF8 to entities (we used to) */
     function testSanitizeInputValue2() {
-	$rawInput = 'Opções de Administração';
+	$rawInput = "Op\xf0\x88\xb4\xa5s de Administra\xf0\x88\xa2\xaf";
 	GalleryUtilities::sanitizeInputValues($rawInput);
-	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
+	$this->assertEquals("Op\xf0\x88\xb4\xa5s de Administra\xf0\x88\xa2\xaf", $rawInput);
     }
 
+    /* Verify that UTF-8 values can be sanitized and unsanitized safely */
     function testSanitizeRoundTrip() {
-	/* Verify that UTF-8 values can be sanitized and unsanitized safely */
-	foreach (array("t\xc3\xa9st" => "t&#233;st",
-		       "\x47\x32\xce\x93\xce\xb2\xc3\x80" => "G2&#915;&#946;&#192;") as
+	foreach (array("t\xc3\xa9st" => "t\xc3\xa9st",
+		       "\x47\x32\xce\x93\xce\xb2\xc3\x80" => "G2\xce\x93\xce\xb2\xc3\x80") as
 		 $raw => $cooked) {
 	    $value = $raw;
 	    GalleryUtilities::sanitizeInputValues($value);
@@ -677,6 +678,71 @@ class UtilitiesTest extends GalleryTestCase {
 		$this->assertEquals($key, GalleryUtilities::identifySearchEngine($userAgent), $userAgent);
 	    }
 	}
+    }
+
+    function testUnicodeValueToUtf8Value() {
+	$this->assertEquals("\xe0\xac\x93",
+			    GalleryUtilities::unicodeValueToUtf8Value('2835'),
+			    'decimal');
+	$this->assertEquals("\xe0\xac\x93",
+			    GalleryUtilities::unicodeValueToUtf8Value('x0B13'),
+			    'hex');
+	$this->assertEquals("\xc3\xb1",
+			    GalleryUtilities::unicodeValueToUtf8Value('241'),
+			    'decimal');
+	$this->assertEquals("\xc3\xb1",
+			    GalleryUtilities::unicodeValueToUtf8Value('xF1'),
+			    'hex');
+    }
+    
+    function testUnicodeEntitiesToUtf8() {
+	$this->assertEquals("foo \xe0\xac\x93 bar",
+            GalleryUtilities::unicodeEntitiesToUtf8('foo &#2835; bar'));
+
+	$this->assertEquals("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne",
+            GalleryUtilities::unicodeEntitiesToUtf8('accentu&#233;s. &#231;&#224; donne'));
+    }
+
+    function testUtf8ToUnicodeEntities() {
+	$this->assertEquals('foo &#2835; bar',
+            GalleryUtilities::utf8ToUnicodeEntities("foo \xe0\xac\x93 bar"));
+
+	$this->assertEquals('accentu&#233;s. &#231;&#224; donne',
+            GalleryUtilities::utf8ToUnicodeEntities("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne"));
+    }
+
+    function testUtf8Substring() {
+	/* Russian */
+	$utf8 = ("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0\xba\xd0" .
+		 "\xb8\xd0\xb9\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0" .
+		 "\xd0\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83");
+	$this->assertEquals("\xd0\xa0",
+			    GalleryUtilities::utf8Substring($utf8, 0, 1));
+	$this->assertEquals("\xd0\xa0",
+			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
+			    'php version');
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
+			    GalleryUtilities::utf8Substring($utf8, 0, 4));
+	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
+			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
+			    'php version');
+
+
+	/* Hebrew */
+	$utf8 = ("\xd7\x90\xd7\xa0\xd7\x99 \xd7\x99\xd7\x9b\xd7\x95\xd7" .
+		 "\x9c \xd7\x9c\xd7\x90\xd7\x9b\xd7\x95\xd7\x9c \xd7\x96" .
+		 "\xd7\x9b\xd7\x95\xd7\x9b\xd7\x99\xd7\xaa \xd7\x95\xd7" .
+		 "\x96\xd7\x94 \xd7\x9c\xd7\x90 \xd7\x9e\xd7\x96\xd7\x99");
+	$this->assertEquals("\xd7\x90",
+			    GalleryUtilities::utf8Substring($utf8, 0, 1));
+	$this->assertEquals("\xd7\x90",
+			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
+			    'php version');
+	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
+			    GalleryUtilities::utf8Substring($utf8, 0, 4));
+	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
+			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
+			    'php version');
     }
 }
 

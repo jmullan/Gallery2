@@ -42,8 +42,6 @@
  */
 class GalleryPendingUser extends GalleryPendingUser_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,36 +49,17 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['userName'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['userName'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['fullName'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['fullName'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['hashedPassword'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['hashedPassword'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['email'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['email'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['language'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['language'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
-    
-	$meta['members']['registrationKey'] = array(
-	    'class' => 'GalleryPendingUser',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['registrationKey'] = array('class' => 'GalleryPendingUser', 'type' => STORAGE_TYPE_STRING);
     
 	return $meta;
     }
@@ -92,47 +71,15 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_userName)) {
- 	    $data['userName'] = null;
- 	} else {
-	    $data['userName'] = $this->_userName;
-	}
-	
-	if (!isset($this->_fullName)) {
- 	    $data['fullName'] = null;
- 	} else {
-	    $data['fullName'] = $this->_fullName;
-	}
-	
-	if (!isset($this->_hashedPassword)) {
- 	    $data['hashedPassword'] = null;
- 	} else {
-	    $data['hashedPassword'] = $this->_hashedPassword;
-	}
-	
-	if (!isset($this->_email)) {
- 	    $data['email'] = null;
- 	} else {
-	    $data['email'] = $this->_email;
-	}
-	
-	if (!isset($this->_language)) {
- 	    $data['language'] = null;
- 	} else {
-	    $data['language'] = $this->_language;
-	}
-	
-	if (!isset($this->_registrationKey)) {
- 	    $data['registrationKey'] = null;
- 	} else {
-	    $data['registrationKey'] = $this->_registrationKey;
-	}
-	
+        $data['userName'] = isset($this->_userName) ? $this->_userName : null;
+        $data['fullName'] = isset($this->_fullName) ? $this->_fullName : null;
+        $data['hashedPassword'] = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
+        $data['email'] = isset($this->_email) ? $this->_email : null;
+        $data['language'] = isset($this->_language) ? $this->_language : null;
+        $data['registrationKey'] = isset($this->_registrationKey) ? $this->_registrationKey : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -153,7 +100,6 @@ class GalleryPendingUser extends GalleryPendingUser_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryPendingUser.class'; 
     }
-
     
     /**
      * Get the value of userName
@@ -161,12 +107,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function getuserName() {
- 	
-
 	if (!isset($this->_userName)) {
 	    return null;
 	}
-
 	return $this->_userName;
     }
 
@@ -176,20 +119,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setuserName($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_userName) ? $this->_userName : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_userName) ? $this->_userName : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('userName', $value);
 	    $this->_userName = $value;
 	}
@@ -201,12 +137,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function getfullName() {
- 	
-
 	if (!isset($this->_fullName)) {
 	    return null;
 	}
-
 	return $this->_fullName;
     }
 
@@ -216,20 +149,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setfullName($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_fullName) ? $this->_fullName : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_fullName) ? $this->_fullName : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('fullName', $value);
 	    $this->_fullName = $value;
 	}
@@ -241,12 +167,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function gethashedPassword() {
- 	
-
 	if (!isset($this->_hashedPassword)) {
 	    return null;
 	}
-
 	return $this->_hashedPassword;
     }
 
@@ -256,20 +179,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function sethashedPassword($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('hashedPassword', $value);
 	    $this->_hashedPassword = $value;
 	}
@@ -281,12 +197,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function getemail() {
- 	
-
 	if (!isset($this->_email)) {
 	    return null;
 	}
-
 	return $this->_email;
     }
 
@@ -296,20 +209,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setemail($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_email) ? $this->_email : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_email) ? $this->_email : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('email', $value);
 	    $this->_email = $value;
 	}
@@ -321,12 +227,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function getlanguage() {
- 	
-
 	if (!isset($this->_language)) {
 	    return null;
 	}
-
 	return $this->_language;
     }
 
@@ -336,20 +239,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setlanguage($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_language) ? $this->_language : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_language) ? $this->_language : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('language', $value);
 	    $this->_language = $value;
 	}
@@ -361,12 +257,9 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return STRING the value
      */
     function getregistrationKey() {
- 	
-
 	if (!isset($this->_registrationKey)) {
 	    return null;
 	}
-
 	return $this->_registrationKey;
     }
 
@@ -376,20 +269,13 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setregistrationKey($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_registrationKey) ? $this->_registrationKey : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_registrationKey) ? $this->_registrationKey : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('registrationKey', $value);
 	    $this->_registrationKey = $value;
 	}

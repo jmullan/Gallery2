@@ -42,9 +42,6 @@
  */
 class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParameterMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryToolkitOperationParameterMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,15 +70,10 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['operationName'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['position'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['type'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['description'] = STORAGE_TYPE_STRING;
-  
 	return $info; 
     }
 
@@ -95,31 +86,18 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('operationName', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('position', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('type', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('description', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('operationName', 'position', 'type', 'description', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryToolkitOperationParameterMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -138,12 +116,10 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryToolkitOperationParameterMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -157,12 +133,10 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryToolkitOperationParameterMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -182,12 +156,10 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryToolkitOperationParameterMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

@@ -42,9 +42,6 @@
  */
 class CustomFieldMap extends CustomFieldMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class CustomFieldMap extends CustomFieldMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/CustomFieldMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,17 +70,11 @@ class CustomFieldMap extends CustomFieldMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['field'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['value'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['setId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['setType'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -97,35 +87,18 @@ class CustomFieldMap extends CustomFieldMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('field', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('value', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('setId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('setType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', 'field', 'value', 'setId', 'setType', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('CustomFieldMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -144,12 +117,10 @@ class CustomFieldMap extends CustomFieldMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('CustomFieldMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -163,12 +134,10 @@ class CustomFieldMap extends CustomFieldMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('CustomFieldMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -188,12 +157,10 @@ class CustomFieldMap extends CustomFieldMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('CustomFieldMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

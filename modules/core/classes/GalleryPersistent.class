@@ -27,13 +27,11 @@
 
 /**
  * This member is unmodified
- *
  */
 define('MEMBER_UNMODIFIED', 0x00000000);
 
 /**
  * This member is modified
- *
  */
 define('MEMBER_MODIFIED', 0x00000001);
 
@@ -183,6 +181,21 @@ class GalleryPersistent {
      */								     
     function testPersistentFlag($flag) {
 	return $this->_persistentStatus->flags & $flag;
+    }
+
+    /**
+     * Truncate a string to the given size.
+     *
+     * @param string the input string
+     * @param in the target max string size
+     * @return the truncated string 
+     */
+    function _truncateString($input, $size) {
+	if ($input == '') {
+	    return $input;
+	}
+
+	return GalleryUtilities::utf8Substring($input, 0, $size);
     }
 }
 ?>

@@ -42,9 +42,6 @@
  */
 class ExifPropertiesMap extends ExifPropertiesMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/ExifPropertiesMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,13 +70,9 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['property'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['viewMode'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['sequence'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -93,27 +85,18 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('property', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('viewMode', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('sequence', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('property', 'viewMode', 'sequence', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('ExifPropertiesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -132,12 +115,10 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('ExifPropertiesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -151,12 +132,10 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('ExifPropertiesMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -176,12 +155,10 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('ExifPropertiesMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

@@ -42,9 +42,6 @@
  */
 class GalleryFactoryMap extends GalleryFactoryMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryFactoryMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,21 +70,13 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['classType'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['className'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['implId'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['implPath'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['implModuleId'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['hints'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['orderWeight'] = STORAGE_TYPE_STRING;
-  
 	return $info; 
     }
 
@@ -101,43 +89,18 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('classType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('className', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('implId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('implPath', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('implModuleId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('hints', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('orderWeight', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('classType', 'className', 'implId', 'implPath', 'implModuleId', 'hints', 'orderWeight', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryFactoryMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -156,12 +119,10 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryFactoryMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -175,12 +136,10 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryFactoryMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -200,12 +159,10 @@ class GalleryFactoryMap extends GalleryFactoryMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryFactoryMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

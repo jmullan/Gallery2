@@ -42,9 +42,6 @@
  */
 class GalleryPermissionMap extends GalleryPermissionMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryPermissionMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,15 +70,10 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['groupId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['permission'] = STORAGE_TYPE_BIT;
-  
 	return $info; 
     }
 
@@ -95,31 +86,18 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('userId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('groupId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('permission', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', 'userId', 'groupId', 'permission', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryPermissionMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -138,12 +116,10 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryPermissionMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -157,12 +133,10 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryPermissionMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -182,12 +156,10 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryPermissionMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

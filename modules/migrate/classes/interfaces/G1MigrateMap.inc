@@ -42,9 +42,6 @@
  */
 class G1MigrateMap extends G1MigrateMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class G1MigrateMap extends G1MigrateMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/G1MigrateMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,13 +70,9 @@ class G1MigrateMap extends G1MigrateMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['g1album'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['g1item'] = STORAGE_TYPE_STRING;
-  
 	return $info; 
     }
 
@@ -93,27 +85,18 @@ class G1MigrateMap extends G1MigrateMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('g1album', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('g1item', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', 'g1album', 'g1item', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('G1MigrateMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -132,12 +115,10 @@ class G1MigrateMap extends G1MigrateMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('G1MigrateMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -151,12 +132,10 @@ class G1MigrateMap extends G1MigrateMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('G1MigrateMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -176,12 +155,10 @@ class G1MigrateMap extends G1MigrateMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('G1MigrateMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

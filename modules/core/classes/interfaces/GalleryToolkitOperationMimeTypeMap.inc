@@ -42,9 +42,6 @@
  */
 class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeTypeMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryToolkitOperationMimeTypeMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,15 +70,10 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['operationName'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['toolkitId'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['mimeType'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['priority'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -95,31 +86,18 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('operationName', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('toolkitId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('mimeType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('priority', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('operationName', 'toolkitId', 'mimeType', 'priority', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryToolkitOperationMimeTypeMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -138,12 +116,10 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryToolkitOperationMimeTypeMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -157,12 +133,10 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryToolkitOperationMimeTypeMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -182,12 +156,10 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryToolkitOperationMimeTypeMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

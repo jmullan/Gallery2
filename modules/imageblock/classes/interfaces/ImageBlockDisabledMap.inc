@@ -42,9 +42,6 @@
  */
 class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/ImageBlockDisabledMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,9 +70,7 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -89,19 +83,18 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('ImageBlockDisabledMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -120,12 +113,10 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('ImageBlockDisabledMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -139,12 +130,10 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('ImageBlockDisabledMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -164,12 +153,10 @@ class ImageBlockDisabledMap extends ImageBlockDisabledMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('ImageBlockDisabledMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

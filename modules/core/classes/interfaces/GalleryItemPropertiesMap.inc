@@ -42,9 +42,6 @@
  */
 class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryItemPropertiesMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,13 +70,9 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['key'] = STORAGE_TYPE_STRING;
-  
 	$info['members']['value'] = STORAGE_TYPE_TEXT;
-  
 	return $info; 
     }
 
@@ -93,27 +85,18 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('key', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('value', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', 'key', 'value', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryItemPropertiesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -132,12 +115,10 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryItemPropertiesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -151,12 +132,10 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryItemPropertiesMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -176,12 +155,10 @@ class GalleryItemPropertiesMap extends GalleryItemPropertiesMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryItemPropertiesMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

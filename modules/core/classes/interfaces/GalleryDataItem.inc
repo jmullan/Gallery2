@@ -42,8 +42,6 @@
  */
 class GalleryDataItem extends GalleryDataItem_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,16 +49,9 @@ class GalleryDataItem extends GalleryDataItem_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['mimeType'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['mimeType'] = array(
-	    'class' => 'GalleryDataItem',
-	    'type' => STORAGE_TYPE_STRING
-	);
-    
-	$meta['members']['size'] = array(
-	    'class' => 'GalleryDataItem',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['size'] = array('class' => 'GalleryDataItem', 'type' => STORAGE_TYPE_INTEGER);
     
 	return $meta;
     }
@@ -71,36 +62,20 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-	$data = parent::getMemberData();
-    
+	$data = parent::getMemberData();if (isset($this->_linkedEntity)) {
+            $data['mimeType'] = isset($this->_linkedEntity->_mimeType) ? $this->_linkedEntity->_mimeType : null;
+	} else {
+            $data['mimeType'] = isset($this->_mimeType) ? $this->_mimeType : null;
+        }
 	if (isset($this->_linkedEntity)) {
-	    if (!isset($this->_linkedEntity->_mimeType)) {
- 	        $data['mimeType'] = null;
-	    } else {
-		$data['mimeType'] = $this->_linkedEntity->_mimeType;
-	    }
-	} else if (!isset($this->_mimeType)) {
- 	    $data['mimeType'] = null;
- 	} else {
-	    $data['mimeType'] = $this->_mimeType;
-	}
-	
-	if (isset($this->_linkedEntity)) {
-	    if (!isset($this->_linkedEntity->_size)) {
- 	        $data['size'] = null;
-	    } else {
-		$data['size'] = $this->_linkedEntity->_size;
-	    }
-	} else if (!isset($this->_size)) {
- 	    $data['size'] = null;
- 	} else {
-	    $data['size'] = $this->_size;
-	}
+            $data['size'] = isset($this->_linkedEntity->_size) ? $this->_linkedEntity->_size : null;
+	} else {
+            $data['size'] = isset($this->_size) ? $this->_size : null;
+        }
 	
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -121,7 +96,6 @@ class GalleryDataItem extends GalleryDataItem_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryDataItem.class'; 
     }
-
     
     /**
      * Get the value of mimeType
@@ -129,17 +103,14 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return STRING the value
      */
     function getmimeType() {
- 	
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getmimeType();
 	}
 	
-
 	if (!isset($this->_mimeType)) {
 	    return null;
 	}
-
 	return $this->_mimeType;
     }
 
@@ -149,20 +120,13 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_mimeType) ? $this->_mimeType : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_mimeType) ? $this->_mimeType : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
 	}
@@ -174,17 +138,14 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return INTEGER the value
      */
     function getsize() {
- 	
 	$linkedEntity = $this->getLinkedEntity();
 	if (isset($linkedEntity)) {
 	    return $linkedEntity->getsize();
 	}
 	
-
 	if (!isset($this->_size)) {
 	    return null;
 	}
-
 	return $this->_size;
     }
 
@@ -194,25 +155,18 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param INTEGER the value
      */
     function setsize($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_size) ? $this->_size : null;
+	$orig = isset($this->_size) ? $this->_size : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('size', $value);
 	    $this->_size = $value;
 	}

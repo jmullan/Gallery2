@@ -42,9 +42,6 @@
  */
 class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryDescendentCountsMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,13 +70,9 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['descendentCount'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -93,27 +85,18 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('userId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('descendentCount', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('userId', 'itemId', 'descendentCount', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryDescendentCountsMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -132,12 +115,10 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryDescendentCountsMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -151,12 +132,10 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryDescendentCountsMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -176,12 +155,10 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryDescendentCountsMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

@@ -42,9 +42,6 @@
  */
 class ImageBlockCacheMap extends ImageBlockCacheMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/ImageBlockCacheMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,15 +70,10 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['userId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['itemType'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['itemTimestamp'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	return $info; 
     }
 
@@ -95,31 +86,18 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('userId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('itemType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('itemTimestamp', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('userId', 'itemType', 'itemTimestamp', 'itemId', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('ImageBlockCacheMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -138,12 +116,10 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('ImageBlockCacheMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -157,12 +133,10 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('ImageBlockCacheMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -182,12 +156,10 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('ImageBlockCacheMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

@@ -42,9 +42,6 @@
  */
 class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_core {
   
-
-  
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -65,7 +62,6 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryDerivativePreferencesMap.class'; 
     }
-
     
     /**
      * Get meta information about this class' map 
@@ -74,15 +70,10 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
      */
     function getMapInfo() {
 	$info = array();
-    
 	$info['members']['itemId'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['order'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['derivativeType'] = STORAGE_TYPE_INTEGER;
-  
 	$info['members']['derivativeOperations'] = STORAGE_TYPE_STRING;
-  
 	return $info; 
     }
 
@@ -95,31 +86,18 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
      */
     function addMapEntry($data) {
 	global $gallery;
-    
-	if (!array_key_exists('itemId', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('order', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('derivativeType', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
-	if (!array_key_exists('derivativeOperations', $data)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-    
+        foreach (array('itemId', 'order', 'derivativeType', 'derivativeOperations', ) as $key) {
+	    if (!array_key_exists($key, $data)) {
+	        return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+                                            'Missing parameter: ' . $key);
+	    }
+        }
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->addMapEntry('GalleryDerivativePreferencesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -138,12 +116,10 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeMapEntry('GalleryDerivativePreferencesMap', $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -157,12 +133,10 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
 	global $gallery;
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->removeAllMapEntries('GalleryDerivativePreferencesMap');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -182,12 +156,10 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
 	}
 
 	$storage =& $gallery->getStorage();
-
 	$ret = $storage->updateMapEntry('GalleryDerivativePreferencesMap', $match, $change);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
 	return GalleryStatus::success();
     }
   

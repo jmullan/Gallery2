@@ -34,6 +34,7 @@ require_once(dirname(__FILE__) . '/../../classes/G1MigrateHelper.class');
  * @subpackage PHPUnit
  */
 class ConfirmImportControllerTest extends GalleryControllerTestCase {
+
     var $_temporaryAlbumId;
     //    var $_phpUnitMigrateLockIds;
     
@@ -429,7 +430,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('&#161;Time to migrate!',              // title
+	$this->assertEquals(array("\xc2\xa1Time to migrate!",              // title
 				  NULL,                                  // summary
 				  'stump grinder chipper shredder',      // keywords
 				  'chipper',                             // description
@@ -1099,18 +1100,20 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(array('Western European (ISO)' . "\r\n"
-				      . 'Hello World ' . "\r\n"
-				      . 'Norwegian Norsk' . "\r\n"
-				      . 'Hallo Verden' . "\r\n"
-				      . 'Gallery er s&#229; utrolig bra at jeg har satt det opp...',              // title
+	    $this->assertEquals(array("Western European (ISO)\r\n" .
+				      "Hello World \r\n" .
+				      "Norwegian Norsk\r\n" .
+				      "Hallo Verden\r\n" .
+				      "Gallery er s\xc3\xa5 utrolig bra at jeg " .
+				      "har satt det opp til flere",        // title
 				      '',                                  // summary
 				      NULL,      // keywords
-				      'Western European (ISO)' . "\r\n"
-				      . 'Hello World ' . "\r\n"
-				      . 'Norwegian Norsk' . "\r\n"
-				      . 'Hallo Verden' . "\r\n"
-				      . 'Gallery er s&#229; utrolig bra at jeg har satt det opp til flere venner. ',                             // description
+				      "Western European (ISO)\r\n" .
+				      "Hello World \r\n" .
+				      "Norwegian Norsk\r\n" .
+				      "Hallo Verden\r\n" .
+				      "Gallery er s\xc3\xa5 utrolig bra at jeg " .
+				      "har satt det opp til flere venner. ", // description
 				      1090163050,                            // album creation
 				      1090162985                             // clicks counted since
 				      
@@ -1245,15 +1248,19 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(array('CHARSET=8859-1, fr-Fr, Hello World, french, fran&#231;ais, Bonjour Monde'
-				      . "\r\n"
-				      . 'Voil&#224; du texte contenant des caract&#232;res...', // title
+	    $this->assertEquals(array("CHARSET=8859-1, fr-Fr, Hello World, french, " .
+				      "fran\xc3\xa7ais, Bonjour Monde\r\n" .
+				      "Voil\xc3\xa0 du texte " .
+				      "contenant des caract\xc3\xa8res " .
+				      "accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 " .
+				      "donne",                             // title
 				      '',                                  // summary
 				      NULL,      // keywords
-				      'CHARSET=8859-1, fr-Fr, Hello World, french, fran&#231;ais, Bonjour Monde'
-				      . "\r\n"
-				      . 'Voil&#224; du texte contenant des caract&#232;res '
-				      . 'accentu&#233;s. &#231;&#224; donne une id&#233;e de la migration.', // description
+				      "CHARSET=8859-1, fr-Fr, Hello World, french, " .
+				      "fran\xc3\xa7ais, Bonjour Monde\r\n" .
+				      "Voil\xc3\xa0 du texte contenant des caract\xc3\xa8res " .
+				      "accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne une " .
+				      "id\xc3\xa9e de la migration.", // description
 				      1084222738,                            // album creation
 				      1084222662                             // clicks counted since
 				      ),
@@ -1300,8 +1307,10 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
-	    $this->assertEquals(array('&#1053;&#1077;&#1085;&#1072;&#1079;&#1074;&#1072;&#1085;&#1085;&#1099;&#1081;', // title
+
+	    $this->assertEquals(array("\xd0\x9d\xd0\xb5\xd0\xbd\xd0\xb0\xd0" .
+				      "\xb7\xd0\xb2\xd0\xb0\xd0\xbd\xd0\xbd" .
+				      "\xd1\x8b\xd0\xb9",                    // title
 				      NULL,                                  // summary
 				      NULL,                                  // keywords
 				      NULL,               // description
@@ -1387,20 +1396,19 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(array("Russian - KOI-8\r\n"
-				      . "Hello World\r\n"
-				      . "Russian\r\n"
-				      . "&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;...",
-				      '',                                  // summary
-				      'Gallery 2 migration testing',      // keywords
-				      "Russian - KOI-8\r\n"
-				      . "Hello World\r\n"
-				      . "Russian\r\n"
-				      . "&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;\r\n"
-				      . "&#1047;&#1076;&#1088;&#1072;&#1074;&#1089;&#1090;&#1074;&#1091;&#1081; &#1084;&#1080;&#1088;",                             // description
+	    $this->assertEquals(array("Russian - KOI-8\r\n" .
+				      "Hello World\r\n" .
+				      "Russian\r\n" .
+				      "\xd0\xa0\xd1\x83\xd1\x81\xd1\x81\xd0" .
+				      "\xba\xd0\xb8\xd0\xb9\r\n" .
+				      "\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0\xd0" .
+				      "\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83" .
+				      "\xd0\xb9 \xd0\xbc\xd0\xb8\xd1\x80",   // title
+				      '',                                    // summary
+				      'Gallery 2 migration testing',         // keywords
+				      'head_left',                           // description
 				      1089666791,                            // album creation
 				      1089666683                             // clicks counted since
-				      
 				      ),
 				array($testItem->getTitle(),                 // title
 				      $testItem->getSummary(),               // summary
@@ -1414,12 +1422,14 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
     
     function testConvertHtmlToBbcode() {
-	/* Basic HTML styling with edge cases */
-	$this->assertEquals('&ntilde;o' . "\n" . 'this',
-			    ConfirmImportController::convertHtmlToBbcode('&ntilde;o'. "\n" . 'this'));
-			    
-	$this->assertEquals('Se&ntilde;or Guapo&#039;s favorite!',
-			    ConfirmImportController::convertHtmlToBbcode('Se&ntilde;or Guapo\'s favorite!'));
+	/* UTF8 characters are ignored */
+	$this->assertEquals("\xc3\xb1o\nthis",
+	    ConfirmImportController::convertHtmlToBbcode("\xc3\xb1o\nthis"));
+
+	/* Quotes are escaped */
+	$this->assertEquals("Se\xc3\xb1or Guapo&#039;s favorite!",
+            ConfirmImportController::convertHtmlToBbcode("Se\xc3\xb1or Guapo\x27s favorite!"));
+	
 	$this->assertEquals('[b]bold[/b]',
 			    ConfirmImportController::convertHtmlToBbcode('<b>bold</b>'));
 	$this->assertEquals('[i]italic[/i]',
@@ -1498,6 +1508,5 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 *     ConfirmImportController::convertHtmlToBbcode('<li>foo'));
 	 */
     }
-
 }
 ?>

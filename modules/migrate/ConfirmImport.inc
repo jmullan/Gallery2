@@ -390,9 +390,7 @@ class ConfirmImportController extends GalleryController {
 				 * album */
 				if (isset($album['title'])) {
 				    $newAlbumInstance->setTitle(
-                                        GalleryUtilities::entityTruncate(
-					    $this->convertHtmlToBbcode($album['title'], $sourceEncoding)),
-					        128);
+				        $this->convertHtmlToBbcode($album['title'], $sourceEncoding));
 				}
 				if (isset($album['summary'])) {
 				    $newAlbumInstance->setDescription($this->convertHtmlToBbcode($album['summary'], $sourceEncoding));
@@ -400,9 +398,7 @@ class ConfirmImportController extends GalleryController {
 				$newAlbumInstance->setKeywords('');
 				if (isset($album['description'])) {
 				    $newAlbumInstance->setSummary(
-				        GalleryUtilities::entityTruncate(
-			                    $this->convertHtmlToBbcode($album['description'], $sourceEncoding),
-						255));
+			                $this->convertHtmlToBbcode($album['description'], $sourceEncoding));
 				}
 				// $newAlbumInstance->settheme
 				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
@@ -708,12 +704,13 @@ class ConfirmImportController extends GalleryController {
 				$caption = $importAlbumItem->caption;
 
 				$convertedCaption = $this->convertHtmlToBbcode($caption,$sourceEncoding);
+
 				if (strlen($convertedCaption) > 128) {
-				    $newItem->setTitle(GalleryUtilities::entityTruncate($convertedCaption, 128));
+				    $newItem->setTitle($convertedCaption);
 				    if (isset($importAlbumItem->extraFields['description']) && $importAlbumItem->extraFields['description'] != '') {
 					$newItem->setDescription($convertedCaption
 								 . "\n"
-								 . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description'],$sourceEncoding));
+								 . $this->convertHtmlToBbcode($importAlbumItem->extraFields['description'], $sourceEncoding));
 				    } else {
 					$newItem->setDescription($convertedCaption);
 				    }

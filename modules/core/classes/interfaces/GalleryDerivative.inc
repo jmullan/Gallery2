@@ -42,8 +42,6 @@
  */
 class GalleryDerivative extends GalleryDerivative_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,41 +49,19 @@ class GalleryDerivative extends GalleryDerivative_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['derivativeSourceId'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['derivativeSourceId'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['derivativeOperations'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['derivativeOperations'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['derivativeOrder'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['derivativeOrder'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['derivativeSize'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['derivativeSize'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['derivativeType'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['derivativeType'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['mimeType'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['mimeType'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_STRING
-	);
-    
-	$meta['members']['postFilterOperations'] = array(
-	    'class' => 'GalleryDerivative',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['postFilterOperations'] = array('class' => 'GalleryDerivative', 'type' => STORAGE_TYPE_STRING);
     
 	return $meta;
     }
@@ -97,53 +73,16 @@ class GalleryDerivative extends GalleryDerivative_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_derivativeSourceId)) {
- 	    $data['derivativeSourceId'] = null;
- 	} else {
-	    $data['derivativeSourceId'] = $this->_derivativeSourceId;
-	}
-	
-	if (!isset($this->_derivativeOperations)) {
- 	    $data['derivativeOperations'] = null;
- 	} else {
-	    $data['derivativeOperations'] = $this->_derivativeOperations;
-	}
-	
-	if (!isset($this->_derivativeOrder)) {
- 	    $data['derivativeOrder'] = null;
- 	} else {
-	    $data['derivativeOrder'] = $this->_derivativeOrder;
-	}
-	
-	if (!isset($this->_derivativeSize)) {
- 	    $data['derivativeSize'] = null;
- 	} else {
-	    $data['derivativeSize'] = $this->_derivativeSize;
-	}
-	
-	if (!isset($this->_derivativeType)) {
- 	    $data['derivativeType'] = null;
- 	} else {
-	    $data['derivativeType'] = $this->_derivativeType;
-	}
-	
-	if (!isset($this->_mimeType)) {
- 	    $data['mimeType'] = null;
- 	} else {
-	    $data['mimeType'] = $this->_mimeType;
-	}
-	
-	if (!isset($this->_postFilterOperations)) {
- 	    $data['postFilterOperations'] = null;
- 	} else {
-	    $data['postFilterOperations'] = $this->_postFilterOperations;
-	}
-	
+        $data['derivativeSourceId'] = isset($this->_derivativeSourceId) ? $this->_derivativeSourceId : null;
+        $data['derivativeOperations'] = isset($this->_derivativeOperations) ? $this->_derivativeOperations : null;
+        $data['derivativeOrder'] = isset($this->_derivativeOrder) ? $this->_derivativeOrder : null;
+        $data['derivativeSize'] = isset($this->_derivativeSize) ? $this->_derivativeSize : null;
+        $data['derivativeType'] = isset($this->_derivativeType) ? $this->_derivativeType : null;
+        $data['mimeType'] = isset($this->_mimeType) ? $this->_mimeType : null;
+        $data['postFilterOperations'] = isset($this->_postFilterOperations) ? $this->_postFilterOperations : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -164,7 +103,6 @@ class GalleryDerivative extends GalleryDerivative_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryDerivative.class'; 
     }
-
     
     /**
      * Get the value of derivativeSourceId
@@ -172,12 +110,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeSourceId() {
- 	
-
 	if (!isset($this->_derivativeSourceId)) {
 	    return null;
 	}
-
 	return $this->_derivativeSourceId;
     }
 
@@ -187,25 +122,18 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSourceId($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeSourceId) ? $this->_derivativeSourceId : null;
+	$orig = isset($this->_derivativeSourceId) ? $this->_derivativeSourceId : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('derivativeSourceId', $value);
 	    $this->_derivativeSourceId = $value;
 	}
@@ -217,12 +145,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return STRING the value
      */
     function getderivativeOperations() {
- 	
-
 	if (!isset($this->_derivativeOperations)) {
 	    return null;
 	}
-
 	return $this->_derivativeOperations;
     }
 
@@ -232,20 +157,13 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setderivativeOperations($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeOperations) ? $this->_derivativeOperations : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 255);
+	$orig = isset($this->_derivativeOperations) ? $this->_derivativeOperations : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('derivativeOperations', $value);
 	    $this->_derivativeOperations = $value;
 	}
@@ -257,12 +175,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeOrder() {
- 	
-
 	if (!isset($this->_derivativeOrder)) {
 	    return null;
 	}
-
 	return $this->_derivativeOrder;
     }
 
@@ -272,25 +187,18 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeOrder($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeOrder) ? $this->_derivativeOrder : null;
+	$orig = isset($this->_derivativeOrder) ? $this->_derivativeOrder : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('derivativeOrder', $value);
 	    $this->_derivativeOrder = $value;
 	}
@@ -302,12 +210,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeSize() {
- 	
-
 	if (!isset($this->_derivativeSize)) {
 	    return null;
 	}
-
 	return $this->_derivativeSize;
     }
 
@@ -317,25 +222,18 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSize($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeSize) ? $this->_derivativeSize : null;
+	$orig = isset($this->_derivativeSize) ? $this->_derivativeSize : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('derivativeSize', $value);
 	    $this->_derivativeSize = $value;
 	}
@@ -347,12 +245,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return INTEGER the value
      */
     function getderivativeType() {
- 	
-
 	if (!isset($this->_derivativeType)) {
 	    return null;
 	}
-
 	return $this->_derivativeType;
     }
 
@@ -362,25 +257,18 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeType($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_derivativeType) ? $this->_derivativeType : null;
+	$orig = isset($this->_derivativeType) ? $this->_derivativeType : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('derivativeType', $value);
 	    $this->_derivativeType = $value;
 	}
@@ -392,12 +280,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return STRING the value
      */
     function getmimeType() {
- 	
-
 	if (!isset($this->_mimeType)) {
 	    return null;
 	}
-
 	return $this->_mimeType;
     }
 
@@ -407,20 +292,13 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_mimeType) ? $this->_mimeType : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_mimeType) ? $this->_mimeType : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('mimeType', $value);
 	    $this->_mimeType = $value;
 	}
@@ -432,12 +310,9 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @return STRING the value
      */
     function getpostFilterOperations() {
- 	
-
 	if (!isset($this->_postFilterOperations)) {
 	    return null;
 	}
-
 	return $this->_postFilterOperations;
     }
 
@@ -447,20 +322,13 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setpostFilterOperations($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_postFilterOperations) ? $this->_postFilterOperations : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 255);
+	$orig = isset($this->_postFilterOperations) ? $this->_postFilterOperations : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('postFilterOperations', $value);
 	    $this->_postFilterOperations = $value;
 	}

@@ -42,8 +42,6 @@
  */
 class GalleryGroup extends GalleryGroup_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,16 +49,9 @@ class GalleryGroup extends GalleryGroup_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['groupType'] = array('class' => 'GalleryGroup', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['groupType'] = array(
-	    'class' => 'GalleryGroup',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
-    
-	$meta['members']['groupName'] = array(
-	    'class' => 'GalleryGroup',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['groupName'] = array('class' => 'GalleryGroup', 'type' => STORAGE_TYPE_STRING);
     
 	return $meta;
     }
@@ -72,23 +63,11 @@ class GalleryGroup extends GalleryGroup_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_groupType)) {
- 	    $data['groupType'] = null;
- 	} else {
-	    $data['groupType'] = $this->_groupType;
-	}
-	
-	if (!isset($this->_groupName)) {
- 	    $data['groupName'] = null;
- 	} else {
-	    $data['groupName'] = $this->_groupName;
-	}
-	
+        $data['groupType'] = isset($this->_groupType) ? $this->_groupType : null;
+        $data['groupName'] = isset($this->_groupName) ? $this->_groupName : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -109,7 +88,6 @@ class GalleryGroup extends GalleryGroup_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryGroup.class'; 
     }
-
     
     /**
      * Get the value of groupType
@@ -117,12 +95,9 @@ class GalleryGroup extends GalleryGroup_core {
      * @return INTEGER the value
      */
     function getgroupType() {
- 	
-
 	if (!isset($this->_groupType)) {
 	    return null;
 	}
-
 	return $this->_groupType;
     }
 
@@ -132,25 +107,18 @@ class GalleryGroup extends GalleryGroup_core {
      * @param INTEGER the value
      */
     function setgroupType($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_groupType) ? $this->_groupType : null;
+	$orig = isset($this->_groupType) ? $this->_groupType : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('groupType', $value);
 	    $this->_groupType = $value;
 	}
@@ -162,12 +130,9 @@ class GalleryGroup extends GalleryGroup_core {
      * @return STRING the value
      */
     function getgroupName() {
- 	
-
 	if (!isset($this->_groupName)) {
 	    return null;
 	}
-
 	return $this->_groupName;
     }
 
@@ -177,20 +142,13 @@ class GalleryGroup extends GalleryGroup_core {
      * @param STRING the value
      */
     function setgroupName($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_groupName) ? $this->_groupName : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_groupName) ? $this->_groupName : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('groupName', $value);
 	    $this->_groupName = $value;
 	}

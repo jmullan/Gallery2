@@ -42,8 +42,6 @@
  */
 class GalleryComment extends GalleryComment_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,31 +49,15 @@ class GalleryComment extends GalleryComment_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['commenterId'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['commenterId'] = array(
-	    'class' => 'GalleryComment',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['host'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['host'] = array(
-	    'class' => 'GalleryComment',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['subject'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_STRING);
     
-	$meta['members']['subject'] = array(
-	    'class' => 'GalleryComment',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['comment'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_TEXT);
     
-	$meta['members']['comment'] = array(
-	    'class' => 'GalleryComment',
-	    'type' => STORAGE_TYPE_TEXT
-	);
-    
-	$meta['members']['date'] = array(
-	    'class' => 'GalleryComment',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['date'] = array('class' => 'GalleryComment', 'type' => STORAGE_TYPE_INTEGER);
     
 	return $meta;
     }
@@ -87,41 +69,14 @@ class GalleryComment extends GalleryComment_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_commenterId)) {
- 	    $data['commenterId'] = null;
- 	} else {
-	    $data['commenterId'] = $this->_commenterId;
-	}
-	
-	if (!isset($this->_host)) {
- 	    $data['host'] = null;
- 	} else {
-	    $data['host'] = $this->_host;
-	}
-	
-	if (!isset($this->_subject)) {
- 	    $data['subject'] = null;
- 	} else {
-	    $data['subject'] = $this->_subject;
-	}
-	
-	if (!isset($this->_comment)) {
- 	    $data['comment'] = null;
- 	} else {
-	    $data['comment'] = $this->_comment;
-	}
-	
-	if (!isset($this->_date)) {
- 	    $data['date'] = null;
- 	} else {
-	    $data['date'] = $this->_date;
-	}
-	
+        $data['commenterId'] = isset($this->_commenterId) ? $this->_commenterId : null;
+        $data['host'] = isset($this->_host) ? $this->_host : null;
+        $data['subject'] = isset($this->_subject) ? $this->_subject : null;
+        $data['comment'] = isset($this->_comment) ? $this->_comment : null;
+        $data['date'] = isset($this->_date) ? $this->_date : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -142,7 +97,6 @@ class GalleryComment extends GalleryComment_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryComment.class'; 
     }
-
     
     /**
      * Get the value of commenterId
@@ -150,12 +104,9 @@ class GalleryComment extends GalleryComment_core {
      * @return INTEGER the value
      */
     function getcommenterId() {
- 	
-
 	if (!isset($this->_commenterId)) {
 	    return null;
 	}
-
 	return $this->_commenterId;
     }
 
@@ -165,25 +116,18 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setcommenterId($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_commenterId) ? $this->_commenterId : null;
+	$orig = isset($this->_commenterId) ? $this->_commenterId : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('commenterId', $value);
 	    $this->_commenterId = $value;
 	}
@@ -195,12 +139,9 @@ class GalleryComment extends GalleryComment_core {
      * @return STRING the value
      */
     function gethost() {
- 	
-
 	if (!isset($this->_host)) {
 	    return null;
 	}
-
 	return $this->_host;
     }
 
@@ -210,20 +151,13 @@ class GalleryComment extends GalleryComment_core {
      * @param STRING the value
      */
     function sethost($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_host) ? $this->_host : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_host) ? $this->_host : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('host', $value);
 	    $this->_host = $value;
 	}
@@ -235,12 +169,9 @@ class GalleryComment extends GalleryComment_core {
      * @return STRING the value
      */
     function getsubject() {
- 	
-
 	if (!isset($this->_subject)) {
 	    return null;
 	}
-
 	return $this->_subject;
     }
 
@@ -250,20 +181,13 @@ class GalleryComment extends GalleryComment_core {
      * @param STRING the value
      */
     function setsubject($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_subject) ? $this->_subject : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 128);
+	$orig = isset($this->_subject) ? $this->_subject : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('subject', $value);
 	    $this->_subject = $value;
 	}
@@ -275,12 +199,9 @@ class GalleryComment extends GalleryComment_core {
      * @return TEXT the value
      */
     function getcomment() {
- 	
-
 	if (!isset($this->_comment)) {
 	    return null;
 	}
-
 	return $this->_comment;
     }
 
@@ -290,20 +211,13 @@ class GalleryComment extends GalleryComment_core {
      * @param TEXT the value
      */
     function setcomment($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_comment) ? $this->_comment : null;
-
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
+	$orig = isset($this->_comment) ? $this->_comment : null;
+
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('comment', $value);
 	    $this->_comment = $value;
 	}
@@ -315,12 +229,9 @@ class GalleryComment extends GalleryComment_core {
      * @return INTEGER the value
      */
     function getdate() {
- 	
-
 	if (!isset($this->_date)) {
 	    return null;
 	}
-
 	return $this->_date;
     }
 
@@ -330,25 +241,18 @@ class GalleryComment extends GalleryComment_core {
      * @param INTEGER the value
      */
     function setdate($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_date) ? $this->_date : null;
+	$orig = isset($this->_date) ? $this->_date : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('date', $value);
 	    $this->_date = $value;
 	}

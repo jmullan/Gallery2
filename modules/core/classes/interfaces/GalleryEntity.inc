@@ -42,8 +42,6 @@
  */
 class GalleryEntity extends GalleryEntity_core {
   
-
-  
     /**
      * Return meta information about the members of this class
      *
@@ -51,41 +49,19 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function getPersistentMemberInfo() {
 	$meta = parent::getPersistentMemberInfo();
+	$meta['members']['id'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER | STORAGE_TYPE_ID);
     
-	$meta['members']['id'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_INTEGER | STORAGE_TYPE_ID
-	);
+	$meta['members']['creationTimestamp'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['creationTimestamp'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['isLinkable'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_BOOLEAN);
     
-	$meta['members']['isLinkable'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_BOOLEAN
-	);
+	$meta['members']['linkId'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['linkId'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['modificationTimestamp'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['modificationTimestamp'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
+	$meta['members']['serialNumber'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_INTEGER);
     
-	$meta['members']['serialNumber'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_INTEGER
-	);
-    
-	$meta['members']['entityType'] = array(
-	    'class' => 'GalleryEntity',
-	    'type' => STORAGE_TYPE_STRING
-	);
+	$meta['members']['entityType'] = array('class' => 'GalleryEntity', 'type' => STORAGE_TYPE_STRING);
     
 	return $meta;
     }
@@ -97,53 +73,16 @@ class GalleryEntity extends GalleryEntity_core {
      */
     function getMemberData() {
 	$data = parent::getMemberData();
-    
-	if (!isset($this->_id)) {
- 	    $data['id'] = null;
- 	} else {
-	    $data['id'] = $this->_id;
-	}
-	
-	if (!isset($this->_creationTimestamp)) {
- 	    $data['creationTimestamp'] = null;
- 	} else {
-	    $data['creationTimestamp'] = $this->_creationTimestamp;
-	}
-	
-	if (!isset($this->_isLinkable)) {
- 	    $data['isLinkable'] = null;
- 	} else {
-	    $data['isLinkable'] = $this->_isLinkable;
-	}
-	
-	if (!isset($this->_linkId)) {
- 	    $data['linkId'] = null;
- 	} else {
-	    $data['linkId'] = $this->_linkId;
-	}
-	
-	if (!isset($this->_modificationTimestamp)) {
- 	    $data['modificationTimestamp'] = null;
- 	} else {
-	    $data['modificationTimestamp'] = $this->_modificationTimestamp;
-	}
-	
-	if (!isset($this->_serialNumber)) {
- 	    $data['serialNumber'] = null;
- 	} else {
-	    $data['serialNumber'] = $this->_serialNumber;
-	}
-	
-	if (!isset($this->_entityType)) {
- 	    $data['entityType'] = null;
- 	} else {
-	    $data['entityType'] = $this->_entityType;
-	}
-	
+        $data['id'] = isset($this->_id) ? $this->_id : null;
+        $data['creationTimestamp'] = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
+        $data['isLinkable'] = isset($this->_isLinkable) ? $this->_isLinkable : null;
+        $data['linkId'] = isset($this->_linkId) ? $this->_linkId : null;
+        $data['modificationTimestamp'] = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
+        $data['serialNumber'] = isset($this->_serialNumber) ? $this->_serialNumber : null;
+        $data['entityType'] = isset($this->_entityType) ? $this->_entityType : null;
 	return $data;
     }
   
-
     /**
      * Return the name of this class with the proper mix of uppercase and
      * lowercase (get_class() always returns lowercase)
@@ -164,7 +103,6 @@ class GalleryEntity extends GalleryEntity_core {
             basename(dirname(dirname(dirname(__FILE__)))) .  
             '/classes/GalleryEntity.class'; 
     }
-
     
     /**
      * Get the value of id
@@ -172,12 +110,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getid() {
- 	
-
 	if (!isset($this->_id)) {
 	    return null;
 	}
-
 	return $this->_id;
     }
 
@@ -187,25 +122,18 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setid($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_id) ? $this->_id : null;
+	$orig = isset($this->_id) ? $this->_id : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('id', $value);
 	    $this->_id = $value;
 	}
@@ -217,12 +145,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getcreationTimestamp() {
- 	
-
 	if (!isset($this->_creationTimestamp)) {
 	    return null;
 	}
-
 	return $this->_creationTimestamp;
     }
 
@@ -232,25 +157,18 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setcreationTimestamp($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
+	$orig = isset($this->_creationTimestamp) ? $this->_creationTimestamp : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('creationTimestamp', $value);
 	    $this->_creationTimestamp = $value;
 	}
@@ -262,12 +180,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return BOOLEAN the value
      */
     function getisLinkable() {
- 	
-
 	if (!isset($this->_isLinkable)) {
 	    return null;
 	}
-
 	return $this->_isLinkable;
     }
 
@@ -277,23 +192,16 @@ class GalleryEntity extends GalleryEntity_core {
      * @param BOOLEAN the value
      */
     function setisLinkable($value) {
-    
 	/* Set the incoming value to be a 1 or 0 */
 	$value = empty($value) ? 0 : 1;
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_isLinkable) ? $this->_isLinkable : null;
+	$orig = isset($this->_isLinkable) ? $this->_isLinkable : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('isLinkable', $value);
 	    $this->_isLinkable = $value;
 	}
@@ -305,12 +213,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getlinkId() {
- 	
-
 	if (!isset($this->_linkId)) {
 	    return null;
 	}
-
 	return $this->_linkId;
     }
 
@@ -320,25 +225,18 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setlinkId($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_linkId) ? $this->_linkId : null;
+	$orig = isset($this->_linkId) ? $this->_linkId : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('linkId', $value);
 	    $this->_linkId = $value;
 	}
@@ -350,12 +248,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getmodificationTimestamp() {
- 	
-
 	if (!isset($this->_modificationTimestamp)) {
 	    return null;
 	}
-
 	return $this->_modificationTimestamp;
     }
 
@@ -365,25 +260,18 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setmodificationTimestamp($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
+	$orig = isset($this->_modificationTimestamp) ? $this->_modificationTimestamp : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('modificationTimestamp', $value);
 	    $this->_modificationTimestamp = $value;
 	}
@@ -395,12 +283,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return INTEGER the value
      */
     function getserialNumber() {
- 	
-
 	if (!isset($this->_serialNumber)) {
 	    return null;
 	}
-
 	return $this->_serialNumber;
     }
 
@@ -410,25 +295,18 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setserialNumber($value) {
-    
 	/* Type cast the incoming value to be an integer */
 	if ($value != null) {
 	    $value = (int)$value;
 	}
+        
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
       
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_serialNumber) ? $this->_serialNumber : null;
+	$orig = isset($this->_serialNumber) ? $this->_serialNumber : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a !== $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value !== $orig) {
 	    $this->setModifiedFlag('serialNumber', $value);
 	    $this->_serialNumber = $value;
 	}
@@ -440,12 +318,9 @@ class GalleryEntity extends GalleryEntity_core {
      * @return STRING the value
      */
     function getentityType() {
- 	
-
 	if (!isset($this->_entityType)) {
 	    return null;
 	}
-
 	return $this->_entityType;
     }
 
@@ -455,20 +330,13 @@ class GalleryEntity extends GalleryEntity_core {
      * @param STRING the value
      */
     function setentityType($value) {
-    
-	/* 
-	 * Convert unset values to null, to avoid generating warnings.
-	 */
-	$a = isset($value) ? $value : null;
-	$b = isset($this->_entityType) ? $this->_entityType : null;
+	/* Convert unset values to null, to avoid generating warnings. */
+	$value = isset($value) ? $value : null;
+        $value = $this->_truncateString($value, 32);
+	$orig = isset($this->_entityType) ? $this->_entityType : null;
 
-	/* 
-	 * Only take action if the value actually changes, but take care not to 
-	 * generate warnings for unset values.
-	 */
-    
-	if ($a != $b) {
-      
+        /* Only take action if the value actually changes */
+        if ($value != $orig) {
 	    $this->setModifiedFlag('entityType', $value);
 	    $this->_entityType = $value;
 	}
