@@ -56,7 +56,7 @@
       {foreach from=$SelectGallery.recentPaths key=path item=count}
       {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}
       <li>
-	<a href="{g->url javascript="selectPath('`$smarty.capture.escapedPath`')"}">
+	<a href="javascript:selectPath('{$smarty.capture.escapedPath}')">
 	  {$path}
 	</a>
       </li>
