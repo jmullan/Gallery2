@@ -26,7 +26,7 @@
  */
 
 define('G2_EMBED', 1);
-require_once(dirname(__FILE__) . '/main.php');
+require(dirname(__FILE__) . '/main.php');
 
 class GalleryEmbed {
 
@@ -35,7 +35,7 @@ class GalleryEmbed {
      *
      * @param string URI to access G2 via CMS application (example: index.php?module=gallery2)
      * @param string relative path from CMS (dir with embedUri) to G2 base dir
-     * @param string URL for redirect to CMS login view (example: /cms/index.php)
+     * @param string URI for redirect to CMS login view (example: /cms/index.php)
      * @param string (optional) To support cookieless browsing, pass in key=value for CMS
                       session key and session id value to be added as query parameter in urls
      * @param string (optional) To support cookieless browsing, pass in G2 session id (when
@@ -66,52 +66,96 @@ class GalleryEmbed {
      * CMS should not send any additional output.  If isDone is false then check
      * headHtml and bodyHtml keys for content to display via CMS.
      *
+     * @param string username of active user (null or empty for anonymous/guest user)
      * @return array ('isDone' => boolean,
      *                [optional: 'headHtml' => string, 'bodyHtml' => string])
      * @static
      */
-    function handleRequest() {
+    function handleRequest($activeUserName) {
+	$ret = GalleryEmbed::_checkActiveUser($activeUserName);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
 	return GalleryMain(true);
     }
 
     /**
-     * Login the specified user in the G2 session.
-     *
-     * @param string username
-     * @return object GalleryStatus a status object
-     * @static
+     * Ensure G2 session has same active user as CMS session.
+     * @param string username of active user (null or empty for anonymous/guest user)
+     * @return object GalleryStatus a status code
+     * @private
      */
-    function login($userName) {
+    function _checkActiveUser($activeUserName) {
 	global $gallery;
-	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
+	$session =& $gallery->getSession();
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$gallery->setActiveUser($user);
-	$session =& $gallery->getSession();
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$g2UserName = null;
+	$g2UserId = $session->get('core.id.activeUser');
+	if (!empty($g2UserId) && $g2UserId == $anonymousUserId) {
+	    $g2UserId = null; // Empty for anonymous/guest
+	}
+	if (!empty($g2UserId)) {
+	    list ($ret, $user) = GalleryCoreApi::loadEntitiesById($g2UserId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $g2UserName = $user->getUserName();
+	}
+
+	if ( (empty($activeUserName) && empty($g2UserName)) || ($activeUserName == $g2UserName) ) {
+	    // All is ok..
+	} else if (empty($activeUserName)) {
+	    // Logout..
+	    $ret = $session->reset();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    // Set G2 active user..
+	    list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($activeUserName);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $session->put('core.id.activeUser', $user->getId());
 	}
 	return GalleryStatus::success();
     }
 
     /**
      * Reset the G2 session.
+     * This is the only GalleryEmbed method that should be called without a prior init().
      *
      * @return object GalleryStatus a status object
      * @static
      */
     function logout() {
-	global $gallery;
-	$session =& $gallery->getSession();
-	$ret = $session->reset();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	require_once(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
+	$hasSession = !empty($_COOKIE[SESSION_ID_PARAMETER]);
+	if (!$hasSession) {
+	    require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
+	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
 	}
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($hasSession) {
+	    $ret = GalleryInitFirstPass();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    global $gallery;
+	    $session =& $gallery->getSession();
+	    $ret = $session->reset();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $session->save();
+	    if ($ret->isError()) {
+	        return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 	return GalleryStatus::success();
     }
