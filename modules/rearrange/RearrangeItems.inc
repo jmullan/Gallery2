@@ -62,7 +62,7 @@ class RearrangeItemsController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    // Verify valid input..
+	    /* Verify valid input */
 	    if (count($list) != count($childIds)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	    }
@@ -159,14 +159,15 @@ class RearrangeItemsView extends GalleryView {
 		if (isset($thumbnails[$childId])) {
 		    $thumb = $thumbnails[$childId];
 		    if (!($thumb->getWidth() && $thumb->getHeight())) {
-			list ($ret, $thumb) = GalleryCoreApi::rebuildDerivativeCache($thumb->getId());
+			list ($ret, $thumb) =
+			    GalleryCoreApi::rebuildDerivativeCache($thumb->getId());
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
 			}
 		    }
 		    $child['thumbnail'] = $thumb->getMemberData();
 		    list ($w, $h) = GalleryUtilities::shrinkDimensionsToFit(
-						      $thumb->getWidth(), $thumb->getHeight(), 100);
+			$thumb->getWidth(), $thumb->getHeight(), 100);
 		    $maxWidth = max($w, $maxWidth);
 		    $maxHeight = max($h, $maxHeight);
 		}
@@ -177,8 +178,12 @@ class RearrangeItemsView extends GalleryView {
 	    $RearrangeItems['maxWidth'] = $maxWidth + 5;
 	    $RearrangeItems['maxHeight'] = $maxHeight + 5;
 
-	    // See if the album's layout has "rows" and/or "columns"
-	    list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
+	    /* See if the album's layout has "rows" and/or "columns" */
+	    list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
