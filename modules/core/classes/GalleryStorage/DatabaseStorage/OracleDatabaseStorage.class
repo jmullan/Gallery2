@@ -110,7 +110,7 @@ class OracleDatabaseStorage extends DatabaseStorage {
 	case 'RAND':
 	    if (!empty($args)) {
 		return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-						  implode(' ', $args)), null);
+						  $functionName . ' ' . implode(' ', $args)), null);
 	    }
 	    $sql = 'DBMS_RANDOM.RANDOM';
 	    break;
@@ -121,7 +121,7 @@ class OracleDatabaseStorage extends DatabaseStorage {
 
 	default:
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__,
-					      implode(' ', $args)), null);
+					      $functionName . ' ' . implode(' ', $args)), null);
 	}
 
 	return array(GalleryStatus::success(), $sql);
