@@ -93,8 +93,8 @@ class PanoramaItemEdit extends ItemEditPlugin {
      * @see ItemEditPlugin::isSupported
      */
     function isSupported($item, $thumbnail) {
-	if (strcasecmp(get_class($item), 'GalleryPhotoItem') &&
-		strcasecmp(get_class($item), 'PanoramaPhotoItem')) {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryPhotoItem') &&
+	        !GalleryUtilities::isExactlyA($item, 'PanoramaPhotoItem')) {
 	    return false;
 	}
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');

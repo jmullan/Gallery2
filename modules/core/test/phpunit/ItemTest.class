@@ -153,25 +153,25 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryphotoitem', strtolower(get_class($instance)));
+	$this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryPhotoItem'));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('image/randomimagetype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryphotoitem', strtolower(get_class($instance)));
+	$this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryPhotoItem'));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('video/x-msvideo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('gallerymovieitem', strtolower(get_class($instance)));
+	$this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem'));
 
 	list ($ret, $instance) = GalleryCoreApi::newItemByMimeType('randomtype/randomtype');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('galleryunknownitem', strtolower(get_class($instance)));
+	$this->assert(GalleryUtilities::isExactlyA($instance, 'GalleryUnknownItem'));
     }
 
     function testGetChildCounts() {

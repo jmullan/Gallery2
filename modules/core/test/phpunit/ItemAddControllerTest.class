@@ -124,7 +124,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
  */
 class ItemAddControllerTestPluginContinue {
     function handleRequest($form, &$item) {
-	if (strtolower(get_class($item)) != 'galleryalbumitem') {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	
@@ -139,7 +139,7 @@ class ItemAddControllerTestPluginContinue {
  */
 class ItemAddControllerTestPluginSuccess {
     function handleRequest($form, &$item) {
-	if (strtolower(get_class($item)) != 'galleryalbumitem') {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	
@@ -156,7 +156,7 @@ class ItemAddControllerTestPluginSuccess {
  */
 class ItemAddControllerTestPluginFail {
     function handleRequest($form, &$item) {
-	if (strtolower(get_class($item)) != 'galleryalbumitem') {
+	if (!GalleryUtilities::isExactlyA($item, 'GalleryAlbumItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 	return array(GalleryStatus::success(), array('failed'), array());

@@ -229,7 +229,7 @@ class SliderLayout extends GalleryLayout {
 		    $image = $image->getMemberData();
 		    $newItem['image'] = $image;
 		    $newItem['imageIndex'] = count($imageWidths);
-		    if (get_class($child) == 'galleryphotoitem' &&
+		    if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
 			    $image['width'] > 0 && $image['height'] > 0) {
 			// Display in <img>
 			$imageWidths[] = $image['width'];
