@@ -211,7 +211,7 @@ class AdminLayoutsView extends GalleryView {
 	}
 	
 	/* Load the module list */
-	list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout');
+	list ($ret, $layouts) = GalleryCoreApi::fetchPluginStatus('layout', true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
