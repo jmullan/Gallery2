@@ -125,13 +125,11 @@ class GalleryItemHelper_medium {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	$storage = $gallery->getStorage();
 
 	$query = '
         SELECT
-          DISTINCT([GalleryItem::id]),
-	  [GalleryPermissionMap::permission]
+          DISTINCT([GalleryItem::id])
         FROM
           [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
         WHERE

@@ -344,6 +344,9 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
 	$this->assert(in_array($this->_childItems[2]->getId(), $ids), 'child 2');
 
+	/* Make sure there's no duplication */
+	$this->assertEquals(sizeof($ids), sizeof(array_flip(array_flip($ids))));
+
 	list ($ret, $ids) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -354,6 +357,9 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(!in_array($this->_childItems[0]->getId(), $ids), 'child 0');
 	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
 	$this->assert(!in_array($this->_childItems[2]->getId(), $ids), 'child 2');
+
+	/* Make sure there's no duplication */
+	$this->assertEquals(sizeof($ids), sizeof(array_flip(array_flip($ids))));
     }
 
     function testSetThumbnailFromItem() {
