@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -101,7 +101,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	);
 	return (in_array($mimeType, $canBeViewedInline));
     }
-    
+
     /**
      * Create a new GalleryAnimationItem from a animation file
      *
@@ -109,7 +109,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      * @param string the path to the source animation
      * @param string the mime type
      * @param string the desired name of the new item
-     * @param boolean (optional) a boolean true if we should symlink instead 
+     * @param boolean (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return object GalleryStatus a status code
      */
@@ -154,7 +154,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      */
     function rescan() {
 	global $gallery;
-	
+
 	$ret = parent::rescan();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -189,7 +189,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * @see GalleryEntity::itemTypeName
      */
@@ -209,12 +209,12 @@ class GalleryAnimationItem_core extends GalleryDataItem {
      */
     function render($format, $params) {
 	global $gallery;
-	
+
 	$fallback = trim(preg_replace("/[\r\n]/", '', $params['fallback']));
-	
+
 	switch($format) {
 	case 'HTML':
-	    $urlGenerator = $gallery->getUrlGenerator();
+	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
 						    'itemId' => $this->getId(),
 						    'serialNumber' => $this->getSerialNumber()));
@@ -321,7 +321,7 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 			       $fallback);
 	    default:
 		return $fallback;
-		
+
 	    }
 	default:
 	    return null;

@@ -90,8 +90,7 @@ class GalleryUrlGenerator {
      * @static
      */
     function getCurrentUrl() {
-	static $currentUrl;
-	if (!isset($currentUrl)) {
+	if (!isset($this->_currentUrl)) {
 	    if (!empty($_SERVER['REQUEST_URI'])) {
 		$path = $_SERVER['REQUEST_URI'];
 	    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
@@ -100,11 +99,11 @@ class GalleryUrlGenerator {
 		    $path .= $_SERVER['PATH_INFO'];
 		}
 	    }
-	    
-	    $currentUrl = GalleryUrlGenerator::makeUrl($path);
+
+	    $this->_currentUrl = GalleryUrlGenerator::makeUrl($path);
 	}
-	
-	return $currentUrl;
+
+	return $this->_currentUrl;
     }
 
     /**
@@ -256,11 +255,10 @@ class GalleryUrlGenerator {
      * @return string the current URL directory
      */
     function getCurrentUrlDir($forceG2Base=false) {
- 	static $currentUrlDir;
- 	if (isset($currentUrlDir[$forceG2Base])) {
- 	    return $currentUrlDir[$forceG2Base];
- 	}
-	
+	if (isset($this->_currentUrlDir[$forceG2Base])) {
+	    return $this->_currentUrlDir[$forceG2Base];
+	}
+
 	$url = $this->getCurrentUrl();
 
 	/*
@@ -292,7 +290,7 @@ class GalleryUrlGenerator {
 	    $url .= $relativePath;
 	}
 
-	$currentUrlDir[$forceG2Base] = $url;
+	$this->_currentUrlDir[$forceG2Base] = $url;
 	return $url;
     }
 

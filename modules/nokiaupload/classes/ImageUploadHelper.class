@@ -4,24 +4,24 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
 /**
- * Error codes and other constants for NokiaUpload module. 
+ * Error codes and other constants for NokiaUpload module.
  * These are defined in the Image Upload Server API document
  * available at forum.nokia.com.
  */
@@ -94,7 +94,7 @@ class ImageUploadHelper {
 	$gallery->setActiveUser($user);
 
 	/* Add user to the mobile users' group if s/he isn't yet a member of it. */
-	list($ret, $groupId) = 
+	list($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.mobileGroup');
 	if ($ret->isError()) {
 	    $gallery->debug("ERROR: Couldn't get Mobile Group id.\n" . $ret->getAsText());
@@ -119,7 +119,7 @@ class ImageUploadHelper {
 	}
 
 	/* Generate URL for Remote Storage Capabilities query. */
-	$generator = $gallery->getUrlGenerator();
+	$generator =& $gallery->getUrlGenerator();
 	$rsurl = $generator->generateUrl(array('view' => 'nokiaupload:RemoteStorageCapabilities'));
 	$rsurl = GalleryUtilities::htmlEntityDecode($rsurl);
 	$rsurl .= '&';  /* API specification requires URL to end with '&' (or '?'). */
@@ -145,7 +145,7 @@ class ImageUploadHelper {
     /**
      * Remote Storage Capabilities
      *
-     * Returns the remote storage capabilities in "print-ready" form. 
+     * Returns the remote storage capabilities in "print-ready" form.
      * Currently supported are: 'Create New Directory', 'Upload' and 'Retrieve Directory Listing'.
      *
      * @return array remote storage capabilities
@@ -156,7 +156,7 @@ class ImageUploadHelper {
 	$gallery->debug('Active userId is ' . $gallery->getActiveUserId());
 
 	/* Generate URLs for all supported API calls. Specification requires URLs to end in '&'. */
-	$urlGen = $gallery->getUrlGenerator();
+	$urlGen =& $gallery->getUrlGenerator();
 
 	$createDirUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload:NewDirectory'));
 	$createDirUrl = GalleryUtilities::htmlEntityDecode($createDirUrl) . '&';
@@ -202,7 +202,7 @@ class ImageUploadHelper {
 	/* If the client didn't give the parent id we need to use our own upload album. */
 	if (empty($parentId)) {
 	    $gallery->debug("Parent album id not given by client. Trying our own upload album.");
-	    list($ret, $parentId) = 
+	    list($ret, $parentId) =
 		GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.uploadAlbum');
 	    if ($ret->isError()) {
 		$gallery->debug("ERROR: Couldn't get id.uploadAlbum parameter.\n" . $ret->getAsText());
@@ -214,7 +214,7 @@ class ImageUploadHelper {
 	    $gallery->debug("Invalid parent album id.");
 	    return $status;
 	}
-	
+
 	$gallery->debug("Using parent id $parentId");
 
 	/* Make sure we have right permissions. */
@@ -278,7 +278,7 @@ class ImageUploadHelper {
 
 	/* We don't allow other (mobile) users to add anything to our personal album.
 	 * If we get an error here it doesn't really matter so we don't check for errors. */
-	list($ret, $groupId) = 
+	list($ret, $groupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'nokiaupload', 'id.mobileGroup');
 	if ($ret->isSuccess()) {
 	    $ret = GalleryCoreApi::removeGroupPermission($instance->getId(), $groupId,
@@ -376,7 +376,7 @@ class ImageUploadHelper {
 
 	/* If there was an error at some point write that to log. */
 	if ($ret->isError()) {
-	    $gallery->debug("ERROR: Something went wrong while trying to add new item.\n" 
+	    $gallery->debug("ERROR: Something went wrong while trying to add new item.\n"
 			   . $ret->getAsText());
 	}
 
@@ -400,7 +400,7 @@ class ImageUploadHelper {
 	$status['success'] = NOKIAUPLOAD_ERR_DIRLIST;
 
 	/* Get all album ids where we have addDataItem permission. */
-	list($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 
+	list($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem',
 								'core.addDataItem');
 	if ($ret->isError() || count($albumIds) < 1) {
 	    $gallery->debug("ERROR: No albums with addDataItem permission.\n" . $ret->getAsText());
@@ -433,9 +433,9 @@ class ImageUploadHelper {
 
 
     /*
-     * Create new group for mobile phone users. 
+     * Create new group for mobile phone users.
      *
-     * All users who try to use the Nokia Image Uploader module 
+     * All users who try to use the Nokia Image Uploader module
      * will be added to this group in LoginController.
      *
      * @param string name for group
@@ -470,7 +470,7 @@ class ImageUploadHelper {
 	return array(GalleryStatus::success(), $group->getId());
     }
 
-    /* 
+    /*
      * Create new album for uploading images.
      *
      * @param string title for album
@@ -510,7 +510,7 @@ class ImageUploadHelper {
 	}
 
 	/* Set the album info and save it. */
-	$urlGen = $gallery->getUrlGenerator();
+	$urlGen =& $gallery->getUrlGenerator();
 	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload:Login'), false);
 
 	$title = GalleryUtilities::utf8ToUnicodeEntities($title);
@@ -547,7 +547,7 @@ class ImageUploadHelper {
     }
 
     /**
-     * Set permissions for the mobile upload album. 
+     * Set permissions for the mobile upload album.
      * Only members of Mobile Users group can add data and albums to Phone Uploads
      * album. Admins can do everything and other users can only view items.
      * First we remove all possible inherited permissions and then add
@@ -559,12 +559,12 @@ class ImageUploadHelper {
      */
    function setAlbumPermissions($albumId, $groupId) {
 	/* Few ids that we will need. */
-	list ($ret, $everybodyId) = 
+	list ($ret, $everybodyId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	list ($ret, $adminGroupId) = 
+	list ($ret, $adminGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

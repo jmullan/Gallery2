@@ -246,7 +246,7 @@ class ItemDeleteView extends GalleryView {
 	}
 
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$ItemDelete = array();
 	$ItemDelete['canCancel'] = $urlGenerator->isNavigationBackPossible();

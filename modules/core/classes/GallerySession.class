@@ -233,7 +233,7 @@ class GallerySession {
 		$cookie .= '; expires=' . $expirationDate;
 	    }
 
-	    $urlGenerator = $gallery->getUrlGenerator();
+	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $this->_cookiePath = $urlGenerator->getCookiePath();
 	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
 

@@ -81,7 +81,7 @@ class PhotoAccessModule extends GalleryModule {
     function getItemLinks($items) {
 	global $gallery;
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$links = array();
 	foreach ($items as $item) {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {

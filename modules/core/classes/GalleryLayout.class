@@ -238,7 +238,7 @@ class GalleryLayout extends GalleryPlugin {
      */
     function loadLayoutTemplate(&$template, $item, $dataToLoad, $childIds=array()) {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	// -------------------------------------------------------------------------------------
 	// Initialize..

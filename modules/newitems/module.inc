@@ -135,7 +135,7 @@ class NewItemsModule extends GalleryModule {
      */
     function getItemSummaries($items) {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$newImage = $urlGenerator->generateUrl(
 				   array('href' => 'modules/newitems/images/new.gif'), false);
 	$updatedImage = $urlGenerator->generateUrl(

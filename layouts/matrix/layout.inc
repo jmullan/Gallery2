@@ -138,7 +138,7 @@ class MatrixLayout extends GalleryLayout {
      */
     function loadTemplate(&$template, $item) {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	list ($ret, $params) = $this->fetchParameters($item->getId());
 	if ($ret->isError()) {

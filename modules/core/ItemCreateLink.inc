@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -62,7 +62,7 @@ class ItemCreateLinkController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		if (!isset($permissions['core.addDataItem'])) {
 		    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				 null);
@@ -78,26 +78,26 @@ class ItemCreateLinkController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		/* Look out for monkey business */
 		foreach ($selectedItems as $selectedItem) {
 		    if (!isset($permissions[$selectedItem->getId()]['core.viewSource'])) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
 		    }
-		    
+
 		    if ($selectedItem->getParentId() != $itemId) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
 		    }
-		    
+
 		    if (!$selectedItem->getIsLinkable()) {
 			return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__),
 				     null);
 		    }
 
 		}
-		
+
 		/*
 		 * Ok we've got linkable items and a legal destination album.
 		 * Lock everything up and start linkin'.  We need to read lock
@@ -108,7 +108,7 @@ class ItemCreateLinkController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $locks[]) = GalleryCoreApi::acquireReadLockParents($itemId);
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($locks);
@@ -120,7 +120,7 @@ class ItemCreateLinkController extends GalleryController {
 		    GalleryCoreApi::releaseLocks($locks);
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-	    
+
 		/* Create all our links */
 		$status['linked']['count'] = 0;
 		foreach ($selectedItems as $selectedItem) {
@@ -151,7 +151,7 @@ class ItemCreateLinkController extends GalleryController {
 			GalleryCoreApi::releaseLocks($locks);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    $status['linked']['count']++;
 		}
 
@@ -175,7 +175,7 @@ class ItemCreateLinkController extends GalleryController {
 	    }
 
 	    $numPages = ceil(sizeof($peerIds) / $form['numPerPage']);
-	    
+
 	    $results['delegate']['itemId'] = $itemId;
 	    $results['delegate']['page'] = min($page + 1, $numPages);
 	} else if (isset($form['action']['previous'])) {
@@ -267,7 +267,7 @@ class ItemCreateLinkView extends GalleryView {
 		    }
 		}
 	    }
-	    
+
 	    /* Load all the peers */
 	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
@@ -286,7 +286,7 @@ class ItemCreateLinkView extends GalleryView {
 		$peers[$peerItem->getId()] = $peerItem->getMemberData();
 		$peers[$peerItem->getId()]['selected'] =
 		    isset($form['selectedIds'][$peerItem->getId()]);
-		
+
 		/* While we're at it, attach the thumbnails */
 		if (isset($thumbnails[$peerItem->getId()])) {
 		    $thumbnail = $thumbnails[$peerItem->getId()];
@@ -309,7 +309,7 @@ class ItemCreateLinkView extends GalleryView {
 	    }
 	}
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$ItemCreateLink = array();
 	$ItemCreateLink['canCancel'] = $urlGenerator->isNavigationBackPossible();

@@ -192,10 +192,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 	unset($_SERVER['PATH_INFO']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
+	unset($this->_urlGenerator->_currentUrl);
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis');
 
 	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
+	unset($this->_urlGenerator->_currentUrl);
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl(), 'iis path_info');
     }
 
@@ -395,6 +397,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($testAlbum);
 
 	/* View prefix for short urls.. */
 	$this->_urlGenerator->registerViewPrefix('test', 'core:ShowItem');
@@ -410,6 +413,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Path info in REQUEST_URI.. */
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/';
+	unset($this->_urlGenerator->_currentUrl);
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -423,6 +427,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* Extra stuff in path info.. */
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php/test/' . $testAlbum->getPathComponent() . '/badpath';
+	unset($this->_urlGenerator->_currentUrl);
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -439,6 +444,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$_SERVER['PATH_INFO'] = '/test/' . $testAlbum->getPathComponent() . '/';
 	unset($_SERVER['REQUEST_URI']);
+	unset($this->_urlGenerator->_currentUrl);
 	list ($ret, $redirect) = $this->_urlGenerator->parseCurrentUrl();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -449,12 +455,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals((string)$testAlbum->getId(), $itemId, 'cgi itemId');
 	GalleryUtilities::removeFormVariables('view');
 	GalleryUtilities::removeFormVariables('itemId');
-
-	/* Cleanup.. */
-	$ret = GalleryCoreApi::deleteEntityById($testAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testGetCookiePath() {

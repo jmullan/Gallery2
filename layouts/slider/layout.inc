@@ -104,7 +104,7 @@ class SliderLayout extends GalleryLayout {
 	$layout['imageCount'] = count($imageWidths);
 	$layout['show']['sidebarActions'] = false;
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
 	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/slider'), false);

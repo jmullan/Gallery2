@@ -476,7 +476,7 @@ class GalleryUtilities {
 	$relativePath = str_replace($dirbase, '', $path);
 
 	/* Prepend the G2 base URL */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$urlBase = $urlGenerator->getCurrentUrlDir(true);
 	return $urlBase . $relativePath;
     }
@@ -684,7 +684,7 @@ class GalleryUtilities {
      *                of characters. (default: true)
      * @return array int the number of entities in the string
      *               string the output string
-     *               
+     *
      */
     function entitySubstr($string, $start, $length=null, $countEntitiesAsOne=true) {
 	$stringLength = strlen($string);
@@ -940,7 +940,7 @@ class GalleryUtilities {
 	    /* Convert hex to decimal */
 	    $num = hexdec(substr($num, 1));
 	}
-	
+
 	if ($num < 128) {
 	    return chr($num);
 	}

@@ -123,7 +123,7 @@ class HybridLayout extends GalleryLayout {
 	$layout['imageHeights'] = implode(',',$imageHeights);
 	$layout['imageCount'] = count($imageWidths);
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
 	$layout['cookiePath'] = $cookiePath;
 	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/hybrid'), false);

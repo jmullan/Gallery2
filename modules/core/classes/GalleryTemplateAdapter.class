@@ -111,7 +111,7 @@ class GalleryTemplateAdapter {
 	    $forceSessionId = null;
 	}
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$url = $urlGenerator->generateUrl($hrefParams, $forceSessionId);
 
 	if (!empty($params['forJavascript'])) {

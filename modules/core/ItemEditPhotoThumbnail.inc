@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -95,7 +95,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 								  $cropWidth,
 								  $cropHeight),
 							  true);
-	    
+
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -131,7 +131,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		GalleryCoreApi::removeDerivativeOperation('crop', $thumbnail->getDerivativeOperations());
 
 	    $thumbnail->setDerivativeOperations($operations);
-	
+
 	    $ret = $thumbnail->save();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -171,7 +171,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    /* First time around, reset the form */
 	    $form['formName'] = 'ItemEditPhotoThumbnail';
 	}
-	
+
 	$targetThumbnailSize = 0;
 	$crop = array();
 	if (preg_match('/thumbnail\|(\d+)/',
@@ -257,9 +257,9 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	     * that cookie back to the JVM, which will overwrite the browser's session with it, effectively
 	     * logging out the user.
 	     */
-	    $urlGenerator = $gallery->getUrlGenerator();
+	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $source->getId()), true);
-	    
+
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletJarFile'] = 'ImageCrop.jar';
@@ -277,7 +277,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $aspectRatioList[] = array('label' => $module->translate('Screen 4x3'),
 				       'width' => 4,
 				       'height' => 3);
@@ -325,7 +325,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $selectedOrientation = "portrait";
 	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] = $aspectRatioList[0]['width'];
 	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] = $aspectRatioList[0]['height'];
-	    
+
 	    foreach ($aspectRatioList as $aspect) {
 		$landscapeCompare = round($aspect['width'] / $aspect['height'], 2);
 		$portraitCompare = round($aspect['height'] / $aspect['width'], 2);
@@ -344,7 +344,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    $ItemEditPhotoThumbnail['editThumbnail']['selectedOrientation'] = $selectedOrientation;
 	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioWidth'] = $aspectRatioList[$selectedAspect]['width'];
 	    $ItemEditPhotoThumbnail['editThumbnail']['cropRatioHeight'] = $aspectRatioList[$selectedAspect]['height'];
-	} 
+	}
 
 	$template->setVariable('ItemEditPhotoThumbnail', $ItemEditPhotoThumbnail);
 	$template->setVariable('controller', 'core:ItemEditPhotoThumbnail');

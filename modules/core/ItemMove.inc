@@ -355,7 +355,7 @@ class ItemMoveView extends GalleryView {
 	    $albumTree = GalleryUtilities::createAlbumTree($albums);
 	}
 
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$ItemMove = array();
 	$ItemMove['canCancel'] = $urlGenerator->isNavigationBackPossible();

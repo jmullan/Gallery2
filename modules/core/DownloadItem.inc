@@ -241,8 +241,7 @@ class DownloadItemView extends GalleryView {
 
 	/* Add in anything else as a standard query element */
 	if (!empty($params)) {
-	    $urlGenerator = $gallery->getUrlGenerator();
-	    $buf .= $urlGenerator->buildQueryString($params);
+	    $buf .= GalleryUrlGenerator::buildQueryString($params);
 	}
 
 	return $buf;
