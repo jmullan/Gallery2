@@ -22,7 +22,7 @@
       {/g->title}
 
       {g->element}
-	{g->input type="text" size="60" name="form.albumsPath"}{$form.albumsPath}{/g->input}
+	{g->input type="text" size="60" name="form[albumsPath]"}{$form.albumsPath}{/g->input}
       {/g->element}
     {/g->box}
 
@@ -37,9 +37,32 @@
 	{g->text text="The path that you entered is invalid."}
       {/g->error}
     {/if}
+
+    {if !empty($SelectGallery.recentPaths)}
+      {g->element}
+	<script type="text/javascript" language="javascript">
+          function selectPath(path) {ldelim}
+            document.forms[0].elements['{g->elementName name="form[albumsPath]"}'].value = path;
+          {rdelim}
+	</script>
+
+	{g->text text="Recent paths:"}
+	{g->listing}
+	  {foreach from=$SelectGallery.recentPaths key=path item=count}
+	    {g->item}
+	      {g->title}
+		{g->link javascript="selectPath('$path')"}
+		  {$path}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/foreach}
+	{/g->listing}
+      {/g->element}
+    {/if}
 	
     {g->element}
-      {g->input type="submit" name="form.action.select"}
+      {g->input type="submit" name="form[action][select]"}
 	{g->text text="Select"}
       {/g->input}
     {/g->element}
