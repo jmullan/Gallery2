@@ -520,7 +520,13 @@ class GalleryUrlGenerator {
 	    /* Prepend G2 base dir to all relative urls */
 	    $components = parse_url($url);
 	    if (!isset($components['host']) && (isset($components['path']) && $components['path'][0] != '/')) {
-		/* It's a relative URL */
+		/* It's a relative URL.  Check for overrides */
+		$override = sprintf('%s/local/%s', dirname($url), basename($url));
+		$overrideRealPath = dirname($this->_baseFile) . '/' . $override;
+		$platform = $gallery->getPlatform();
+		if ($platform->file_exists($overrideRealPath)) {
+		    $url = $override;
+		}
 		$url = $this->getCurrentUrlDir(true) . $url;
 	    }
 	} else {

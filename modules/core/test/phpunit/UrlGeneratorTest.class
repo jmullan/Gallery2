@@ -498,5 +498,44 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	$session->_isUsingCookies = $savedIsUsingCookies;
     }
+
+    function testRelativeUrlOverrides() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	$gallery->setPlatform(new UrlGeneratorTestPlatform());
+	$qs = $session->isUsingCookies() ? ''
+	    : '?' . GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId();
+
+	/* Try with a file that has no local override */
+	$params['href'] = 'test/test1.css';
+	$actual = $this->_urlGenerator->generateUrl($params);
+	$this->assertEquals('http://example.com/gallery2/test/test1.css' . $qs,
+			    $actual);
+
+	/* Try with a file that has a local override */
+	$params['href'] = 'test/test2.css';
+	$actual = $this->_urlGenerator->generateUrl($params);
+	$this->assertEquals('http://example.com/gallery2/test/local/test2.css' . $qs,
+			    $actual);
+    }
+}
+
+class UrlGeneratorTestPlatform extends GalleryPlatform {
+
+    function file_exists($filename) {
+	switch($filename) {
+	case './test/local/test1.css':
+	    return false;
+	    
+	case './test/test1.css':
+	case './test/local/test2.css':
+	    return true;
+
+	default:
+	    print "Unexpected file_exists($filename) call";
+	    return false;
+	}
+    }
 }
 ?>
