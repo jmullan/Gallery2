@@ -190,13 +190,13 @@ class GalleryTemplate {
 
         $ret = $this->_initCompiledTemplateDir();
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return $ret->wrap(__FILE__, __LINE__);
         }
 	$this->_smarty->compile_dir = $this->_compiledTemplateDir;
 
         list ($ret, $junk) = $this->_smarty->fetch($templateName, null, null, true);
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return $ret->wrap(__FILE__, __LINE__);
         }
 	return GalleryStatus::success();
     }
