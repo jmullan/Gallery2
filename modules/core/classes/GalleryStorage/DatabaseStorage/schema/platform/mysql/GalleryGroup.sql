@@ -28,6 +28,12 @@
     
     , 
   
+    UNIQUE KEY (
+    g_groupName
+    )
+    
+    , 
+  
     INDEX (
     g_id
     )

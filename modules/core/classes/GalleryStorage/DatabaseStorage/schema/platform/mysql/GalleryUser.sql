@@ -14,7 +14,7 @@
   
     ,
   
-    g_username
+    g_userName
       varchar(
       
           32
@@ -53,7 +53,7 @@
     , 
   
     UNIQUE KEY (
-    g_username
+    g_userName
     )
     
       ,
@@ -71,7 +71,7 @@
       ,
     
     INDEX (
-    g_username
+    g_userName
     )
     
     ) TYPE=MyISAM;
