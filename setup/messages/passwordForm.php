@@ -4,7 +4,7 @@
 
     Your password is defined in your gallery/config.php file like this:
 
-    <pre>$gallery->setConfig('storage.password', '<b>your password here</b>');</pre>
+    <pre>$gallery->setConfig('setup.password', '<b>your password here</b>');</pre>
 
     <br><br>
     
