@@ -474,7 +474,7 @@ class GalleryItemHelper_medium {
 		list ($ret, $isSupported, $tmpOutputMimeType) =
 		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
 		if ($isSupported) {
@@ -555,7 +555,7 @@ class GalleryItemHelper_medium {
 	    /* See if the album has a thumbnail.  If not, try to use this item as the thumbnail. */
 	    list ($ret, $thumbnailTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 		
 	    if (empty($thumbnailTable)) {
