@@ -119,14 +119,6 @@ class Gallery {
     var $_locks;
 
     /**
-     * Information about Gallery modules
-     *
-     * @var array
-     * @access private
-     */
-    var $_modules;
-
-    /**
      * An instance of the GalleryPlatform class
      *
      * @var object GalleryPlatform $_platform
@@ -203,7 +195,6 @@ class Gallery {
      */
     function Gallery() {
 	$this->reset();
-	$this->_modules = array();
 	$this->_locks = array();
 	$this->_boundDomains = array();
 	$this->_activeUserId = null;
@@ -879,204 +870,71 @@ class Gallery {
     /**
      * Get the status of all modules
      *
+     * @param string the plugin type (eg 'module', 'layout')
      * @return array object GalleryStatus as status code
      *                      array (moduleName => array('active' => true/false,
      *                                                 'installed' => true/false)
      */
     function getModuleStatus() {
-	GalleryProfiler::start('modules.core.classes.Gallery::getModuleStatus');
-
-	if (!isset($this->_modules['_status'])) {
-	    list ($ret, $modules) = GalleryModuleMap::fetchModuleList();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $platform = $this->getPlatform();
-
-	    /* Scan modules directory for installed modules */
-	    $modulesDir = $this->getConfig('code.gallery.modules');
-	    if ($dir = $platform->opendir($modulesDir)) {
-		while ($moduleName = readdir($dir)) {
-		    if ($moduleName{0} == '.') {
-			continue;
-		    }
-		    if (!$platform->is_dir($modulesDir . $moduleName)) {
-		        continue;
-		    }
-
-		    $path = $modulesDir . $moduleName . '/module.inc';
-		    if ($platform->file_exists($path)) {
-			$modules[$moduleName]['installed'] = 1;
-		    }
-		}
-		closedir($dir);
-	    }
-
-	    /* Find and remove modules that are active, but not installed */
-	    foreach ($modules as $moduleName => $moduleStatus) {
-		if (!isset($moduleStatus['installed'])) {
-		    $this->debug("Module $moduleName no longer installed");
-		    unset($modules[$moduleName]);
-		}
-	    }
-
-	    /* Force the core module's status */
-	    $modules['core'] = array('active' => 1, 'installed' => 1);
-
-	    $this->_modules['_status'] = $modules;
+	list ($ret, $status) = GalleryPluginMap::getPluginStatus('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryProfiler::stop('modules.core.classes.Gallery::getModuleStatus');
-	
-	return array(GalleryStatus::success(),
-		     $this->_modules['_status']);
+	return array(GalleryStatus::success(), $status);
     }
-
+    
     /**
-     * Set the core module instance in the modules table.
-     *
-     * The core module can't be loaded from inside Gallery with the
-     * loadModule() call for chicken-and-egg reasons, so we have to be able to
-     * set it here.
-     *
-     * @param object GalleryModule a module
-     */
-    function setCoreModule(&$instance) {
-	$this->_modules['core']['instance'] =& $instance;
-    }
-
-    /**
-     * Load and initialize the given module
+     * Convenience method to load a specific module
      *
      * @param string the module name
      * @return array object GalleryStatus a status code
      *               object GalleryModule the module
      */
     function loadModule($moduleName) {
-	GalleryProfiler::start('modules.core.classes.Gallery::loadModule');
-
-	if (!isset($this->_modules[$moduleName]['instance'])) {
-
-	    /* Figure out where the module lives */
-	    $galleryBase = $this->getConfig('code.gallery.modules');
-	    $moduleFile = $galleryBase . $moduleName . '/module.inc';
-
-	    $platform = $this->getPlatform();
-
-	    if (!$platform->file_exists($moduleFile)) {
-		return array(GalleryStatus::error(ERROR_BAD_MODULE,
-						  __FILE__, __LINE__,
-						  'Missing file: ' . $moduleFile),
-			     null);
-	    }
-
-	    /* Load it */
-	    require_once($moduleFile);
-
-	    /* Try to instantiate it */
-	    $moduleClass = $moduleName . 'Module';
-	    if (!class_exists($moduleClass)) {
-		return array(GalleryStatus::error(ERROR_BAD_MODULE,
-						  __FILE__, __LINE__),
-			     null);
-	    }
-	    $module = new $moduleClass();
-
-	    /* Initialize it */
-	    $ret = $module->init();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    /* Store it in our table */
-	    $this->_modules[$moduleName]['instance'] = $module;
+	list ($ret, $module) = GalleryPluginMap::loadPlugin('module', $moduleName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	GalleryProfiler::stop('modules.core.classes.Gallery::loadModule');
-	return array(GalleryStatus::success(),
-		     $this->_modules[$moduleName]['instance']);
+	return array(GalleryStatus::success(), $module);
     }
 
     /**
-     * Get the list of all available modules
+     * Convenience method to get all module names
      *
      * @return array object GalleryStatus a status code
      *               string module names
      */
     function getAllModuleNames() {
-	$modulesDir = $this->getConfig('code.gallery.modules');
-
-	$platform = $this->getPlatform();
-	
-	if ($dir = $platform->opendir($modulesDir)) {
-	    while (($file = readdir($dir)) != false) {
-		$path = $modulesDir . $file;
-		if (preg_match('/^(\.|CVS)/', $file)) {
-		    continue;
-		}
-		
-		if ($platform->is_dir($path)) {
-		    $moduleNames[] = $file;
-		}
-	    }
-	    closedir($dir);
+	list ($ret, $moduleNames) = GalleryPluginMap::getAllPluginNames('module');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $moduleNames);
     }
 
     /**
-     * Retrieve all the parameters for a module
-     *
-     * @param string the module name
-     * @return array object GalleryStatus a status code
-     *               string a value
-     */
-    function getAllModuleParameters($moduleName) {
-	if (!isset($this->_modules[$moduleName]['parameters'])) {
-	    list ($ret, $this->_modules[$moduleName]['parameters']) =
-		GalleryModuleParameterMap::fetchAllParameters($moduleName);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	return array(GalleryStatus::success(),
-		     $this->_modules[$moduleName]['parameters']);
-    }
-
-    /**
-     * Retrieve a module parameter
+     * Convenience method to retrieve a module parameter
      *
      * @param string the module name
      * @param string the parameter name
      * @return array object GalleryStatus a status code
      *               string a value
      */
-    function getModuleParameter($moduleName, $parameterName) {
-	if (empty($moduleName) || empty($parameterName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
-					      __FILE__, __LINE__),
-			 null);
-	}
-	
-	/* Load all parameters for the module, if necessary */
-	list ($ret, $params) = $this->getAllModuleParameters($moduleName);
+    function getModuleParameter($moduleName, $parameterName, $itemId=0) {
+	list ($ret, $value) =
+	    GalleryPluginParameterMap::getParameter('module', $moduleName, $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	/* Return the value, or null if the param doesn't exist */
-	if (!isset($params[$parameterName])) {
-	    return array(GalleryStatus::success(), null);
-	} else {
-	    return array(GalleryStatus::success(), $params[$parameterName]);
-	}
+	return array(GalleryStatus::success(), $value);
     }
 
     /**
-     * Set a module parameter
+     * Convenience method to set a module parameter
      *
      * @param string the module name
      * @param string the parameter name
@@ -1084,42 +942,10 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function setModuleParameter($moduleName, $parameterName, $parameterValue) {
-	if (empty($moduleName) || empty($parameterName)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	$ret = GalleryPluginParameterMap::setParameter('module', $moduleName, $parameterName, $parameterValue);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/*
-	 * Figure out if this is an insert or an update.  It's an insert if
-	 * we don't have an existing parameter by that name.  Otherwise, it's
-	 * an update.
-	 */
-	if (!isset($this->_modules[$moduleName]['parameters'])) {
-	    list ($ret, $this->_modules[$moduleName]['parameters']) =
-		GalleryModuleParameterMap::fetchAllParameters($moduleName);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	if (!isset($this->_modules[$moduleName]['parameters'][$parameterName])) {
-	    $ret = GalleryModuleParameterMap::addParameter($moduleName,
-							   $parameterName,
-							   $parameterValue);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	} else {
-	    $ret = GalleryModuleParameterMap::updateParameter($moduleName,
-							      $parameterName,
-							      $parameterValue);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	/* Update our local cache */
-	$this->_modules[$moduleName]['parameters'][$parameterName] = $parameterValue;
 
 	return GalleryStatus::success();
     }

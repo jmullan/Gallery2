@@ -27,16 +27,30 @@
  */
 
 /**
- * Test Photo functionality
+ * Test plugin parameters
  *
  * @package GalleryCore
  * @subpackage PHPUnit
  *
  */
-class ModuleParameterTest extends GalleryTestCase {
+class PluginParameterTest extends GalleryTestCase {
 
-    function ModuleParameterTest($methodName) {
+    function PluginParameterTest($methodName) {
 	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+    }
+
+    function tearDown() {
+	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => 'module',
+							       'pluginName' => 'unitTestModule'));
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret);
+	}
+							
+	parent::tearDown();
     }
 
     function testAddParameter() {
@@ -44,12 +58,22 @@ class ModuleParameterTest extends GalleryTestCase {
 	$key = 'testParameter';
 	$value = 'testValue';
 
-	$ret = $gallery->setModuleParameter('core', $key, $value);
+	$ret = GalleryPluginParameterMap::setParameter('module', 'unitTestModule', $key, $value);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $newValue) = $gallery->getModuleParameter('core', $key);
+	list ($ret, $newValue) = GalleryPluginParameterMap::getParameter('module', 'unitTestModule', $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value, $newValue);
+
+	/* Reset the cache and try again */
+	GalleryDataCache::reset();
+
+	list ($ret, $newValue) = GalleryPluginParameterMap::getParameter('module', 'unitTestModule', $key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -63,13 +87,13 @@ class ModuleParameterTest extends GalleryTestCase {
 	$value = 'testValue';
 
 	for ($i = 0; $i < 3; $i++) {
-	    $ret = $gallery->setModuleParameter('core', $key, "${value}-$i");
+	    $ret = GalleryPluginParameterMap::setParameter('module', 'unitTestModule', $key, "${value}-$i");
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
-	list ($ret, $newValue) = $gallery->getModuleParameter('core', $key);
+	list ($ret, $newValue) = GalleryPluginParameterMap::getParameter('module', 'unitTestModule', $key);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -83,19 +107,41 @@ class ModuleParameterTest extends GalleryTestCase {
 	$value = 'testValue';
 
 	for ($i = 0; $i < 3; $i++) {
-	    $ret = $gallery->setModuleParameter('core', "${key}-$i", "${value}-$i");
+	    $ret = GalleryPluginParameterMap::setParameter('module', 'unitTestModule', "${key}-$i", "${value}-$i");
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
-	list ($ret, $newValues) = $gallery->getAllModuleParameters('core');
+	list ($ret, $newValues) = GalleryPluginParameterMap::fetchAllParameters('module', 'unitTestModule');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 3; $i++) {
 	    $this->assertEquals("${value}-$i", $newValues["${key}-$i"]);
+	}
+    }
+
+    function testAddItemParameters() {
+	global $gallery;
+	$key = 'testParameter';
+	$value = 'testValue';
+
+	for ($i = 0; $i < 3; $i++) {
+	    $ret = GalleryPluginParameterMap::setParameter('module', 'unitTestModule', $key, "${value}-$i", $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $newValue) = GalleryPluginParameterMap::getParameter('module', 'unitTestModule', $key, $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals("${value}-$i", $newValue);
 	}
     }
 }

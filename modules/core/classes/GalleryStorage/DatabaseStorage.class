@@ -1231,6 +1231,7 @@ class DatabaseStorage extends GalleryStorage {
 	$data = array();
 	$set = array();
 	$where = array();
+
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($match[$memberName])) {
 		$where[] = $this->_translateColumnName($memberName) . '=?';

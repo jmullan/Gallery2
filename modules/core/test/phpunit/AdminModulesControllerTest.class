@@ -36,118 +36,107 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
-
-	/*
-	 * Cheat a little bit and insert our own module into the master list.
-	 * It's either this (ugh), or create a dummy module just for testing
-	 * (ugh).  This means we don't test $gallery->loadModule(), but it is
-	 * getting plenty of testing via everything else we do.
-	 */
 	
-	$this->_modules[0] = new AdminModulesTestModule('ConfigRequired', true);
-	$this->_modules[1] = new AdminModulesTestModule('ConfigNotRequired', false);
-
-	for ($i = 0; $i < sizeof($this->_modules); $i++) {
-	    $module = $this->_modules[$i];
-	    $name = $module->getName();
-	    $gallery->_modules[$name]['instance'] = $module;
-	    $gallery->_modules['_status'][$name]['installed'] = 1;
-	    $ret = $gallery->_modules[$name]['instance']->init();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
+	$this->_testModule =& AdminModulesControllerTestModule::getSingleton();
     }
 
     function tearDown() {
 	global $gallery;
 
-	for ($i = 0; $i < sizeof($this->_modules); $i++) {
-	    unset($gallery->_modules[$this->_modules[$i]->getName()]);
-	}
+	$this->_testModule->resetCalls();
+
 	parent::tearDown();
     }
 
     function testInstall() {
-	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'install');
+	$this->_testModule->_isActive = false;
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('installed' => 'ConfigNotRequired'),
+				  'status' => array('installed' => 'AdminModulesControllerTest'),
 				  'error' => array()),
 			    $results);
 
-	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'install'),
-		      'install not called');
+	$this->assert($this->_testModule->wasCalled('install'), 'install not called');
     }
 
+    /**
+     * Activate a module that doesn't require configuration (this should succeed)
+     */
     function testActivate() {
-	/*
-	 * Activate a module that doesn't require configuration (this should succeed)
-	 */
-	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'activate');
-	$results = $this->handleRequest();
+	$this->_testModule->_isActive = false;
+	$this->_testModule->_needsConfiguration = false;
 
+	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('activated' => 'ConfigNotRequired'),
+				  'status' => array('activated' => 'AdminModulesControllerTest'),
 				  'error' => array()),
 			    $results);
 
-	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'activate'),
-		      'activate not called');
+	$this->assert($this->_testModule->wasCalled('activate'), 'activate not called');
+    }
 
-	/*
-	 * Activate a module that requires configuration (this should fail)
-	 */
-	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
+    /**
+     * Activate a module that requires configuration (this should fail)
+     */
+    function testActivateNeedsConfiguration() {
+	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'activate');
+	$this->_testModule->_isActive = false;
+	$this->_testModule->_needsConfiguration = true;
+	
 	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
     }
 
+    /* Dectivate a module that is active (should succeed) */
     function testDeactivate() {
-	global $gallery;
-	
-	/* Dectivate a module that is active (should succeed) */
-	$gallery->_modules['_status']['ConfigNotRequired']['active'] = 1;
-	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
+	$this->_testModule->_isActive = true;
+	
 	$results = $this->handleRequest();
-
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('deactivated' => 'ConfigNotRequired'),
+				  'status' => array('deactivated' => 'AdminModulesControllerTest'),
 				  'error' => array()),
 			    $results);
-	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'deactivate'), 'deactivate not called');
+	$this->assert($this->_testModule->wasCalled('deactivate'), 'deactivate not called');
+    }
 
-	/* Dectivate a module that is active (should succeed silently) */
-	$gallery->_modules['_status']['ConfigRequired']['active'] = 0;
-	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
+    /* Dectivate a module that is inactive (should succeed silently) */
+    function testDeactivateAlreadyDeactivated() {
+	GalleryUtilities::putRequestVariable('moduleName', 'AdminModulesControllerTest');
 	GalleryUtilities::putRequestVariable('action', 'deactivate');
+	$this->_testModule->_isActive = false;
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+	$this->assert(!$this->_testModule->wasCalled('deactivate'), 'deactivate called');
     }
 }
 
 /* Test module */
-class AdminModulesTestModule extends GalleryModule {
+class AdminModulesControllerTestModule {
 
-    function AdminModulesTestModule($name, $shouldNeedConfiguration) {
-	$this->setName($name);
-	$this->_shouldNeedConfiguration = $shouldNeedConfiguration;
+    function &getSingleton() {
+	static $singleton;
+	if (!isset($singleton)) {
+	    $singleton = new AdminModulesControllerTestModule();
+	}
+
+	return $singleton;
     }
 
     function init() {
@@ -156,62 +145,44 @@ class AdminModulesTestModule extends GalleryModule {
     }
     
     function install() {
-	$ret = parent::install();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$this->_setCalled('install');
 	return GalleryStatus::success();
     }
 
     function activate() {
-	/*
-	 * Don't call the parent class -- it'll try to muck with the database.
-	 *
-	$ret = parent::activate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	
-}
-	*/
-
 	$this->_setCalled('activate');
 	return GalleryStatus::success();
     }
 
     function deactivate() {
-	/*
-	 * Don't call the parent class -- it'll try to muck with the database.
-	 *
-	$ret = parent::deactivate();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	*/
-
 	$this->_setCalled('deactivate');
 	return GalleryStatus::success();
     }
 
     function _setCalled($function) {
-	$map =& $this->_getMap();
-	$map[$this->getName()][$function] = 1;
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap[$function] = 1;
     }
 
-    function wasCalled($name, $function) {
-	$map =& AdminModulesTestModule::_getMap();
-	return isset($map[$name][$function]);
+    function wasCalled($function) {
+	$singleton = &$this->getSingleton();
+	return isset($singleton->_callMap[$function]);
     }
 
-    function &_getMap() {
-	static $map;
-	return $map;
+    function resetCalls() {
+	$singleton = &$this->getSingleton();
+	$singleton->_callMap = array();
+    }
+
+    function isActive() {
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_isActive);
     }
 
     function needsConfiguration() {
-	$this->_setCalled('needsConfiguration');
-	return array(GalleryStatus::success(), $this->_shouldNeedConfiguration);
+	$singleton = &$this->getSingleton();
+	return array(GalleryStatus::success(), $singleton->_needsConfiguration);
     }
 }
+
 ?>

@@ -113,14 +113,10 @@ class ShowItemView extends GalleryView {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
-	require_once($gallery->getConfig('code.gallery.layouts') .
-		     $layoutName . '/layout.inc');
-	$layoutClassName = $layoutName . 'Layout';
-	if (!class_exists($layoutClassName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	list ($ret, $layout) = GalleryLayout::loadLayout($layoutName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	$layout = new $layoutClassName();
-	$layout->init($layoutName);
 
 	$ShowItem = array();
 	$ShowItem['item'] = $item->getMemberData();
@@ -179,7 +175,7 @@ class ShowItemView extends GalleryView {
 	while ($itemId == null && !empty($queryString)) {
 	    list ($ret, $itemId) = GalleryFileSystemEntityHelper::fetchItemIdByPath(urldecode($queryString));
 	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if ($ret->isSuccess()) {

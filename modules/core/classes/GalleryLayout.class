@@ -41,7 +41,31 @@ class GalleryLayout {
      */
 
     /**
-     * The localization domain for this view
+     * The name of this layout
+     * 
+     * @var string _name
+     * @access private
+     */
+    var $_name;
+
+    /**
+     * The description of this layout
+     * 
+     * @var string _description
+     * @access private
+     */
+    var $_description;
+
+    /**
+     * The version of this layout
+     * 
+     * @var string _version
+     * @access private
+     */
+    var $_version;
+
+    /**
+     * The localization domain for this layout
      *
      * @access private
      */
@@ -54,25 +78,76 @@ class GalleryLayout {
      */
 
     /**
-     * Initialize this instance to use the layout specified.
+     * Initialize this layout
      *
-     * @param layoutName the name of a layout in the layouts directory.
      * @return object GalleryStatus a status code
      */
-    function init($layoutName) {
-	global $gallery;
-	$this->_l10Domain = 'layouts_' . $layoutName;
+    function init() {
+	return GalleryStatus::success();
     }
 
     /**
-     * Get the localization domain for this view
+     * Localize the given content
      *
-     * @return string
+     * @see Gallery::translate()
+     *
+     * @param mixed a single string, or an array of parameters
+     * @return array object GalleryStatus a status code
+     *               string the localized value
      */
-    function getL10Domain() {
-	return $this->_l10Domain;
+    function translate($params) {
+	global $gallery;
+	
+	if (!is_array($params)) {
+	    $params = array('text' => $params);
+	}
+
+	$translator =& $gallery->getTranslator();
+	list ($ret, $content) = $translator->translateDomain($this->getL10Domain(), $params);
+	if ($ret->isError()) {
+	    if ($gallery->getDebug()) {
+		$gallery->debug($ret->getAsHtml());
+	    }
+	    return 'Translation error';
+	} else {
+	    return $content;
+	}
     }
     
+    /**
+     * Return the possible settings that a layout can specify on a global or per
+     * item basis.
+     *
+     * Each setting contains:
+     *   key:         a unique identifier
+     *   name:        a localized, displayable text string
+     *   type:        single-select, multiple-select, input
+     *   choices:     [only valid for single-select, multiple-select type]
+     *                array of:
+     *                   key:     a unique identifier within this set of choices
+     *                   display: a localized displayable text string
+     *   values:      the current value(s) for this choice
+     *
+     * @return array object GalleryStatus a status code
+     *               settings array
+     */
+    function getSettings() {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Return true if all the values are legal, or false if not.  If there are errors,
+     * return an array of localized error messages to display for each invalid setting.
+     *
+     * @param settings array('key' => array(value, ...), ...)
+     * @return array object GalleryStatus a status code
+     *               boolean
+     *               errors
+     */
+    function validateSettings($settings) {
+	return array(GalleryStatus::success(), true, array());
+    }
+
     /**
      * Load the template with data from this view.
      *
@@ -363,7 +438,7 @@ class GalleryLayout {
      * Get an array of available layout-names
      *
      * @static
-     * @return array string name of the themes
+     * @return array of layout names
      */
     function getLayoutList() {
 	global $gallery;
@@ -384,6 +459,69 @@ class GalleryLayout {
 	    closedir($dir);
 	}
 	return $layoutList;
+    }
+
+    /**
+     * Load given layout
+     *
+     * @static
+     * @return array object GalleryStatus a status code
+     *               object GalleryLayout instance
+     */
+    function loadLayout($layoutName) {
+	global $gallery;
+	require_once($gallery->getConfig('code.gallery.layouts') . $layoutName . '/layout.inc');
+	$layoutClassName = $layoutName . 'Layout';
+	if (!class_exists($layoutClassName)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	}
+	$layout = new $layoutClassName();
+	$layout->init($layoutName);
+	return array (GalleryStatus::success(), $layout);
+    }
+
+    /* Getters and setters below */
+
+    function setName($name) {
+	$this->_name = $name;
+    }
+
+    function getName() {
+	return $this->_name;
+    }
+    
+    function setDescription($description) {
+	$this->_description = $description;
+    }
+
+    function getDescription() {
+	return $this->_description;
+    }
+
+    function setVersion($version) {
+	$this->_version = $version;
+    }
+
+    function getVersion() {
+	return $this->_version;
+    }
+
+    /**
+     * Get the localization domain for this layout
+     *
+     * @return string
+     */
+    function getL10Domain() {
+	return $this->_l10Domain;
+    }
+
+    /**
+     * Set the localization domain for this layout
+     *
+     * @param string the l10 domain
+     */
+    function setL10Domain($l10Domain) {
+	$this->_l10Domain = $l10Domain;
     }
 }
 

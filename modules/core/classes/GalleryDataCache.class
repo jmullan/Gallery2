@@ -52,6 +52,14 @@ class GalleryDataCache {
      */
     var $_cache = array();
     
+    /**
+     * Protected cache entries
+     *
+     * @var array
+     * @access private
+     */
+    var $_protected = array();
+    
     /*
      * ****************************************
      *                 Methods
@@ -89,17 +97,64 @@ class GalleryDataCache {
      *
      * @param string the key
      * @param mixed the data
+     * @param boolean should this key survive a reset call?
      * @static
      */
-    function put($key, $data) {
+    function put($key, $data, $protected=false) {
 	    
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'gallerydatacache') {
 	    $galleryDataCache =& GalleryDataCache::_singleton();
-	    return $galleryDataCache->put($key, $data);
+	    return $galleryDataCache->put($key, $data, $protected);
 	}
 
 	$this->_cache[$key] = $data;
+	if ($protected) {
+	    $this->_protected[$key] = 1;
+	}
+    }
+
+    /**
+     * Remove data from the cache
+     *
+     * @param string the key
+     * @param mixed the data
+     * @static
+     */
+    function remove($key) {
+	    
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'gallerydatacache') {
+	    $galleryDataCache =& GalleryDataCache::_singleton();
+	    return $galleryDataCache->remove($key);
+	}
+
+	unset($this->_cache[$key]);
+	unset($this->_protected[$key]);
+    }
+
+    /**
+     * Store a reference to the data in the cache
+     *
+     * You must provide a unique key.  Existing keys are overwritten.
+     *
+     * @param string the key
+     * @param mixed the data
+     * @param boolean should this key survive a reset call?
+     * @static
+     */
+    function putByReference($key, &$data, $protected=false) {
+	    
+	/* Delegate to the singleton */
+	if (empty($this) || get_class($this) != 'gallerydatacache') {
+	    $galleryDataCache =& GalleryDataCache::_singleton();
+	    return $galleryDataCache->putByReference($key, $data, $protected);
+	}
+
+	$this->_cache[$key] =& $data;
+	if ($protected) {
+	    $this->_protected[$key] = 1;
+	}
     }
 
     /**
@@ -141,18 +196,27 @@ class GalleryDataCache {
     }
 
     /**
-     * Empty the cache
+     * Empty the cache of all but protected entries
      *
+     * @param boolean purge protected also?
      * @static
      */
-    function reset() {
+    function reset($purgeProtected=false) {
 	/* Delegate to the singleton */
 	if (empty($this) || get_class($this) != 'gallerydatacache') {
 	    $galleryDataCache =& GalleryDataCache::_singleton();
 	    return $galleryDataCache->reset();
 	}
 
-	$this->_cache = array();
+	if ($purgeProtected) {
+	    $this->_cache = array();
+	} else {
+	    foreach (array_keys($this->_cache) as $key) {
+		if (!isset($this->_protected[$key])) {
+		    unset($this->_cache[$key]);
+		}
+	    }
+	}
     }
 }
 ?>

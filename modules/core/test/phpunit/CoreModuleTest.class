@@ -87,7 +87,9 @@ class CoreModuleTest extends GalleryTestCase {
 				  array('name' => $this->_module->translate('Groups'),
 					'view' => 'core:AdminGroups'),
 				  array('name' => $this->_module->translate('Modules'),
-					'view' => 'core:AdminModules')
+					'view' => 'core:AdminModules'),
+				  array('name' => $this->_module->translate('Layouts'),
+					'view' => 'core:AdminLayouts'),
 				  ),
 			    $content);
     }
@@ -255,7 +257,13 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals($value, $newValue);
+	/* Clean up */
+	$ret = GalleryPluginParameterMap::removeParameter('module', 'core', $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value, (int)$newValue);
     }
 }
 

@@ -75,8 +75,8 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryItemHelper.class');
 	require_once($classDir . 'GalleryLayout.class');
 	require_once($classDir . 'GalleryLock.class');
-	require_once($classDir . 'GalleryModuleMap.class');
-	require_once($classDir . 'GalleryModuleParameterMap.class');
+	require_once($classDir . 'GalleryPluginMap.class');
+	require_once($classDir . 'GalleryPluginParameterMap.class');
 	require_once($classDir . 'GalleryPermissionSetMap.class');
 	require_once($classDir . 'GalleryPermissionMap.class');
 	require_once($classDir . 'GalleryProfiler.class');
@@ -104,7 +104,7 @@ class CoreModule extends GalleryModule {
 	 */
 	$gallery =& new Gallery();
 	$GLOBALS['gallery'] =& $gallery;
-	$gallery->setCoreModule($this);
+	GalleryPluginMap::setPluginInstance('module', 'core', $this);
 
 	/* Configure the Platform */
 	$gallery->setConfig('platform.type', strtolower(PHP_OS));
@@ -674,7 +674,11 @@ class CoreModule extends GalleryModule {
 			   array('name' => $this->translate('Groups'),
 				 'view' => 'core:AdminGroups'),
 			   array('name' => $this->translate('Modules'),
-				 'view' => 'core:AdminModules')));
+				 'view' => 'core:AdminModules'),
+			   array('name' => $this->translate('Layouts'),
+				 'view' => 'core:AdminLayouts')
+			   ),
+		     );
     }
 
     /**

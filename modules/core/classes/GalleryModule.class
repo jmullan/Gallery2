@@ -147,7 +147,7 @@ class GalleryModule {
 	if ($needs) {
 	    return GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__);
 	} else {
-	    $ret = GalleryModuleMap::activate($this->getName());
+	    $ret = GalleryPluginMap::activate('module', $this->getName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -162,7 +162,7 @@ class GalleryModule {
      * @return object GalleryStatus a status code
      */
     function deactivate() {
-	return GalleryModuleMap::deactivate($this->getName());
+	return GalleryPluginMap::deactivate('module', $this->getName());
     }
 
     /**

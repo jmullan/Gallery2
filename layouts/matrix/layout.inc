@@ -34,6 +34,35 @@
 class MatrixLayout extends GalleryLayout {
 
     /**
+     * @see GalleryLayout::init()
+     */
+    function init() {
+	$this->setName('Matrix');
+	$this->setDescription($this->translate('Classic albums styling'));
+	$this->setVersion('1.0');
+	$this->setL10Domain('layouts_matrix');
+	$ret = parent::init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryLayout::getSettings()
+     */
+    function getSettings() {
+	$settings = array();
+	$settings[] = array('key' => 'perPage',
+			    'name' => $this->translate('Visible items per album page'),
+			    'description' => $this->translate('The number of visible items on one page'),
+			    'type' => 'input',
+			    'values' => array(9));
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
      * @see GalleryLayout::render
      */
     function loadTemplate(&$template, $item) {
@@ -77,15 +106,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	$rows = $properties['rows'];
-	if (empty($rows)) {
-	    $rows = 3;
-	}
-	
 	$columns = $properties['columns'];
-	if (empty($columns)) {
-	    $columns = 3;
-	}
-
 	$perPage = $rows * $columns;
 	$start = $perPage * ($page - 1);
 	$children = array();

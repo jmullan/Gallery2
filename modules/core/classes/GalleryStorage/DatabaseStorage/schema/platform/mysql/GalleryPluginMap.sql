@@ -3,8 +3,16 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXModuleMap (
-  DB_COLUMN_PREFIXmoduleName
+    CREATE TABLE DB_TABLE_PREFIXPluginMap (
+  DB_COLUMN_PREFIXpluginType
+      varchar(
+      
+          128
+        
+      )
+    
+      ,
+    DB_COLUMN_PREFIXpluginName
       varchar(
       
           128
@@ -17,7 +25,9 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXmoduleName)
+    UNIQUE KEY (DB_COLUMN_PREFIXpluginType
+        ,
+      DB_COLUMN_PREFIXpluginName)
     
 
     ) TYPE=DB_TABLE_TYPE;
@@ -27,7 +37,7 @@
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ModuleMap',
+      'PluginMap',
       1,
       0
       );

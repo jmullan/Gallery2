@@ -36,7 +36,7 @@ class DebugStatusFormatter {
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
 	$template->setVariable('l10Domain', 'modules_debug');
 	$template->setVariable('codes', join(" ", $codes));
-	$template->setVariable('message', $message);
+	$template->setVariable('message', htmlentities($message));
 	$template->setVariable('trace', $trace);
 	list ($ret, $html) = $template->render('DebugStatusFormatter.tpl');
 	if ($ret->isError()) {

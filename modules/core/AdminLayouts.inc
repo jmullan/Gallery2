@@ -34,7 +34,7 @@
  * @subpackage UserInterface
  *
  */
-class AdminModulesController extends GalleryController {
+class AdminLayoutsController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -71,7 +71,7 @@ class AdminModulesController extends GalleryController {
 		}
 
 		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminModules';
+		$redirect['subView'] = 'core:AdminLayouts';
 		$status['installed'] = $moduleName;
 		break;
 		
@@ -86,7 +86,8 @@ class AdminModulesController extends GalleryController {
 		
 		    /* Can't activate if we need to be configured! */
 		    if ($needsConfiguration) {
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+				     null);
 		    }
 		
 		    $ret = $module->activate();
@@ -95,7 +96,7 @@ class AdminModulesController extends GalleryController {
 		    }
 
 		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core:AdminLayouts';
 		    $status['activated'] = $moduleName;
 		}
 		break;
@@ -109,7 +110,7 @@ class AdminModulesController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core:AdminLayouts';
 		    $status['deactivated'] = $moduleName;
 		}
 		break;
@@ -124,7 +125,7 @@ class AdminModulesController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminModules';
+	    $results['delegate']['subView'] = 'core:AdminLayouts';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -134,12 +135,12 @@ class AdminModulesController extends GalleryController {
 }
 
 /**
- * This view will show administration possibilities for available modules
+ * This view will show administration possibilities for available layouts
  *
  * @package GalleryCore
  * @subpackage UserInterface
  */
-class AdminModulesView extends GalleryView {
+class AdminLayoutsView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -158,89 +159,38 @@ class AdminModulesView extends GalleryView {
 	}
 	
 	/* Load the module list */
-	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	$layoutList = GalleryLayout::getLayoutList();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if ($form['formName'] != 'AdminModules') {
+	if ($form['formName'] != 'AdminLayouts') {
 	    /* We have no form variables */
-	    $form['formName'] = 'AdminModules';
+	    $form['formName'] = 'AdminLayouts';
 	}
 
-	ksort($moduleStatus);
-
-	foreach ($moduleStatus as $moduleName => $status) {
-	    /* Get the selected module's admin view */
-	    list($ret, $module) = $gallery->loadModule($moduleName);
+	/* Add the l10 domain for convenience */
+	$layouts = array();
+	foreach ($layoutList as $layoutName) {
+	    list ($ret, $layout) = GalleryLayout::loadLayout($layoutName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    $entry = array();
-	    $entry['name'] = $moduleName;
-	    $entry['l10Domain'] = 'modules_' . $moduleName;
-	    if ($moduleName != 'core') {
-		if (empty($status['active'])) {
-		    list ($ret, $version) = $module->getModuleParameter('version');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-
-		    /*
-		     * If the database versions doesn't match the module
-		     * version, we need to get the user to install the module.
-		     */
-		    if ($version != $module->getVersion()) {
-			$entry['action'] = array('text' => $coreModule->translate('install'),
-						 'controller' => 'core:AdminModules',
-						 'moduleName' => $module->getName(),
-						 'action' => 'install');
-		    } else {
-
-			/*
-			 * The versions match, but the module can still demand
-			 * to be configured before being activated.
-			 */
-			list ($ret, $needsConfig) = $module->needsConfiguration();
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-
-			if ($needsConfig) {
-			    list ($ret, $configView) = $module->getConfigurationView();
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
-			    }
-			    $entry['action'] = array('text' => $coreModule->translate('configure'),
-						     'view' => $configView);
-			} else {
-			    $entry['action'] = array('text' => $coreModule->translate('activate'),
-						     'controller' => 'core:AdminModules',
-						     'moduleName' => $moduleName,
-						     'action' => 'activate');
-			}
-		    }
-		} else {
-		    $entry['action'] = array('text' => $coreModule->translate('deactivate'),
-					     'controller' => 'core:AdminModules',
-					     'moduleName' => $moduleName,
-					     'action' => 'deactivate');
-		}
-	    }
-	    
-	    $entry['description'] = $module->getDescription();
-	    $entry['version'] = $module->getVersion();
-	    $modules[] = $entry;
+	    $layouts[] = array('name' => $layout->getName(),
+			       'description' => $layout->getDescription(),
+			       'version' => $layout->getVersion(),
+			       'l10Domain' => $layout->getL10Domain(),
+			       'actions' => array());
 	}
 
-	$AdminModules['modules'] = $modules;
+	$AdminLayouts['layouts'] = $layouts;
 
 	/* Render the HTML body */
-	$template->setVariable('AdminModules', $AdminModules);
-	$template->setVariable('controller', 'core:AdminModules');
+	$template->setVariable('AdminLayouts', $AdminLayouts);
+	$template->setVariable('controller', 'core:AdminLayouts');
 	
-	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminModules.tpl');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/AdminLayouts.tpl');
     }
 }
 ?>

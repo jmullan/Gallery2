@@ -1,0 +1,370 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Track all plugins and their state
+ *
+ * @g2 <class-name>GalleryPluginMap</class-name>
+ * @g2 <schema>
+ * @g2   <schema-major>1</schema-major>
+ * @g2   <schema-minor>0</schema-minor>
+ * @g2 </schema>
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GalleryPluginMap_core {
+
+    /**
+     * @g2 <map>
+     * @g2   <member>
+     * @g2     <member-name>pluginType</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>pluginName</member-name>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>active</member-name>
+     * @g2     <member-type>BOOLEAN</member-type>
+     * @g2   </member>
+     * @g2   <key>
+     * @g2     <member-name>pluginType</member-name>
+     * @g2     <member-name>pluginName</member-name>
+     * @g2   </key>
+     * @g2 </map>
+     */
+
+    /**
+     * Activate the given plugin
+     *
+     * @param string the plugin type
+     * @param string the plugin name
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function activate($pluginType, $pluginName) {
+	global $gallery;
+
+	list ($ret, $pluginStatus) = GalleryPluginMap::getPluginStatus($pluginType);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (empty($pluginName) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	if (isset($pluginStatus[$pluginName]['active'])) {
+	    $ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
+							  'pluginName' => $pluginType),
+						    array('active' => 1));
+	} else {
+	    $ret = GalleryPluginMap::addMapEntry(array('pluginType' => $pluginType,
+						       'pluginName' => $pluginName,
+						       'active' => 1));
+	}
+	
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Deactivate the given plugin
+     *
+     * @param string the plugin type
+     * @param string the plugin name
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function deactivate($pluginType, $pluginName) {
+	if (empty($pluginName) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
+						      'pluginName' => $pluginName),
+						array('active' => 0));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remoe the given plugin from the map
+     *
+     * @param string the plugin type
+     * @param string the plugin name
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function remove($pluginType, $pluginName) {
+	if (empty($pluginName) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$ret = GalleryModuleMap::removeMapEntry(array('pluginType' => $pluginType,
+						      'pluginName' => $pluginName));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return a plugin list by plugin type
+     *
+     * @param string the plugin type
+     * @return array GalleryStatus a status code
+     *               array an array of (pluginName => (active, version))
+     * @static
+     */
+    function fetchPluginList($pluginType) {
+	global $gallery;
+
+	if (empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+	GalleryProfiler::start('plugins.core.classes.GalleryPluginMap::fetchPluginList');
+
+	$query = '
+        SELECT
+          [GalleryPluginMap::pluginName],
+          [GalleryPluginMap::active]
+        FROM
+          [GalleryPluginMap]
+        WHERE
+          [GalleryPluginMap::pluginType] = ?
+        ';
+	
+	list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = array('active' => $result[1]);
+	}
+	
+	GalleryProfiler::stop('plugins.core.classes.GalleryPluginMap::fetchPluginList');
+	return array(GalleryStatus::success(), $data);
+    }
+
+    /**
+     * Get the status of all plugins of a given type
+     *
+     * @param string the plugin type (eg 'module', 'layout')
+     * @return array object GalleryStatus as status code
+     *                      array (moduleName => array('active' => true/false,
+     *                                                 'installed' => true/false)
+     */
+    function getPluginStatus($pluginType) {
+	global $gallery;
+	
+	GalleryProfiler::start('modules.core.classes.GalleryPluginMap::getPluginStatus');
+
+	$cacheKey = "GalleryPluginMap::getPluginStatus($pluginType)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+	    list ($ret, $plugins) = GalleryPluginMap::fetchPluginList($pluginType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $platform = $gallery->getPlatform();
+
+	    /* Scan modules directory for installed modules */
+	    switch ($pluginType) {
+	    case 'module':
+		$pluginsDir = $gallery->getConfig('code.gallery.modules');
+		$pluginFile = 'module.inc';
+		break;
+
+	    case 'layout':
+		$pluginsDir = $gallery->getConfig('code.gallery.layouts');
+		$pluginFile = 'layout.inc';
+		break;
+	    }
+		
+	    if ($dir = $platform->opendir($pluginsDir)) {
+		while ($pluginName = readdir($dir)) {
+		    if ($pluginName{0} == '.') {
+			continue;
+		    }
+		    if (!$platform->is_dir($pluginsDir . $pluginName)) {
+			continue;
+		    }
+			
+		    $path = $pluginsDir . $pluginName . '/' . $pluginFile;
+		    if ($platform->file_exists($path)) {
+			$plugins[$pluginName]['installed'] = 1;
+		    }
+		}
+		closedir($dir);
+	    }
+
+	    /* Find and remove plugins that are active, but not installed */
+	    foreach ($plugins as $pluginName => $pluginStatus) {
+		if (!isset($pluginStatus['installed'])) {
+		    $this->debug("Plugin $pluginName no longer installed");
+		    unset($plugins[$pluginName]);
+		}
+	    }
+
+	    if ($pluginType == 'module') {
+		/* Force the core module's status */
+		$plugins['core'] = array('active' => 1, 'installed' => 1);
+	    }
+
+	    GalleryDataCache::put($cacheKey, $plugins);
+	} else {
+	    $plugins = GalleryDataCAche::get($cacheKey);
+	}
+
+	GalleryProfiler::stop('modules.core.classes.GalleryPluginMap::getPluginStatus');
+	
+	return array(GalleryStatus::success(), $plugins);
+    }
+
+    /**
+     * Load and initialize the given plugin
+     *
+     * @param string the module name
+     * @return array object GalleryStatus a status code
+     *               object the plugin
+     */
+    function loadPlugin($pluginType, $pluginName) {
+	GalleryProfiler::start('modules.core.classes.GalleryPluginMap::loadPlugin');
+
+	$cacheKey = "GalleryPluginMap::($pluginType, $pluginName)";
+	if (!GalleryDataCache::containsKey($cacheKey)) {
+
+	    switch($pluginType) {
+	    case 'module':
+		$pluginFile = $this->getConfig('code.gallery.modules') . $pluginName . '/module.inc';
+		$pluginClass = $pluginName . 'Module';
+		break;
+		
+	    case 'layout':
+		$pluginFile = $this->getConfig('code.gallery.layouts') . $pluginName . '/layout.inc';
+		$pluginClass = $pluginName . 'Layout';
+		break;
+	    }
+
+	    if (!class_exists($pluginClass)) {
+		$ret = GalleryUtilities::requireOnce($pluginFile);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (!class_exists($pluginClass)) {
+		    return array(GalleryStatus::error(ERROR_BAD_MODULE, __FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* Instantiate and initialize it */
+	    $plugin = new $pluginClass();
+	    $ret = $plugin->init();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Store it in our table */
+	    GalleryDataCache::put($cacheKey, $plugin, true);
+	} else {
+	    $plugin = GalleryDataCache::get($cacheKey);
+	}
+
+	GalleryProfiler::stop('modules.core.classes.GalleryPluginMap::loadPlugin');
+	return array(GalleryStatus::success(), $plugin);
+    }
+
+    /**
+     * Get the list of all available plugins of a given type
+     *
+     * @param string the plugin type
+     * @return array object GalleryStatus a status code
+     *               string module names
+     */
+    function getAllPluginNames($pluginType) {
+
+	switch($pluginType) {
+	case 'module':
+	    $pluginsDir = $this->getConfig('code.gallery.modules');
+	    $pluginFile = 'module.inc';
+	    break;
+	    
+	case 'layout':
+	    $pluginsDir = $this->getConfig('code.gallery.layouts');
+	    $pluginFile = 'layout.inc';
+	    break;
+	}
+	
+	$platform = $this->getPlatform();
+	if ($dir = $platform->opendir($pluginsDir)) {
+	    while (($file = readdir($dir)) != false) {
+		$path = $pluginsDir . $file;
+		if (preg_match('/^(\.|CVS)/', $file)) {
+		    continue;
+		}
+		
+		if ($platform->is_file($path . '/' . $pluginFile)) {
+		    $pluginNames[] = $file;
+		}
+	    }
+	    closedir($dir);
+	}
+	
+	return array(GalleryStatus::success(), $pluginNames);
+    }
+    
+    /**
+     * Set a given plugin instance in the plugin cache
+     *
+     * The core module can't be loaded from inside Gallery with the
+     * loadModule() call for chicken-and-egg reasons, so we have to be able to
+     * set it here.
+     *
+     * @param object a plugin
+     */
+    function setPluginInstance($pluginType, $pluginName, &$instance) {
+	GalleryDataCache::putByReference("GalleryPluginMap::($pluginType, $pluginName)", $instance);
+    }
+
+}
+
+include(dirname(__FILE__) . '/interfaces/GalleryPluginMap.inc');
+?>

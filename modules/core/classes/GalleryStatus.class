@@ -519,7 +519,7 @@ class GalleryStatusFormatterHtml extends GalleryStatusFormatter {
     function format($codes, $trace, $message=null) {
 	$buf = 'Error  (' . join(', ', $codes) . ')';
 	if (!is_null($message)) {
-	    $buf .= ' : ' . $message;
+	    $buf .= ' : ' . htmlentities($message);
 	}
 	$buf .= '<UL>';
 	foreach ($trace as $traceEntry) {

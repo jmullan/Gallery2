@@ -54,7 +54,7 @@ class InitializeGalleryTestCase extends TestCase {
 	$oldGallery = $gallery;
 
 	/* Get rid of the data cache */
-	GalleryDataCache::reset();
+	GalleryDataCache::reset(true);
 
 	/* Commit any outstanding transactions */
 	$ret = $gallery->commitTransaction();

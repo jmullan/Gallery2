@@ -615,7 +615,8 @@ class GalleryUtilities {
 	$platform = $gallery->getPlatform();
 
 	if (!$platform->file_exists($filename)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
+					sprintf("File %s does not exist", $filename));
 	}
 
 	require_once($filename);

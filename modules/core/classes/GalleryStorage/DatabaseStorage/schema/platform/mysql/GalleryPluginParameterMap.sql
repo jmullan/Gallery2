@@ -3,17 +3,29 @@
     -- why it looks so ugly.  Editing it by hand would be a bad idea.
     --
 
-    CREATE TABLE DB_TABLE_PREFIXModuleParameterMap (
-  DB_COLUMN_PREFIXmoduleName
-      VARCHAR(
+    CREATE TABLE DB_TABLE_PREFIXPluginParameterMap (
+  DB_COLUMN_PREFIXpluginType
+      varchar(
       
           128
         
       )
     
       ,
+    DB_COLUMN_PREFIXpluginName
+      varchar(
+      
+          128
+        
+      )
+    
+      ,
+    DB_COLUMN_PREFIXitemId
+      int(11)
+    
+      ,
     DB_COLUMN_PREFIXparameterName
-      VARCHAR(
+      varchar(
       
           128
         
@@ -21,29 +33,31 @@
     
       ,
     DB_COLUMN_PREFIXparameterValue
-      VARCHAR(
+      varchar(
       
           255
         
       )
     
-    );
-
+    , 
   
-    CREATE UNIQUE INDEX ModuleParameterMap_moduleName_parameterName 
-    ON DB_TABLE_PREFIXModuleParameterMap
-    (DB_COLUMN_PREFIXmoduleName
+    UNIQUE KEY (DB_COLUMN_PREFIXpluginType
         ,
-      DB_COLUMN_PREFIXparameterName);
+      DB_COLUMN_PREFIXpluginName
+        ,
+      DB_COLUMN_PREFIXitemId
+        ,
+      DB_COLUMN_PREFIXparameterName)
+    
 
-  
+    ) TYPE=DB_TABLE_TYPE;
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,
       DB_COLUMN_PREFIXmajor,
       DB_COLUMN_PREFIXminor
       ) VALUES (
-      'ModuleParameterMap',
+      'PluginParameterMap',
       1,
       0
       );

@@ -184,7 +184,7 @@ function GalleryMain($startTime) {
 	
 	/* If we have a redirect url .. use it */ 
 	if (!empty($redirectUrl)) {
-	    if ($gallery->getDebug() == false) {
+	    if ($gallery->getDebug() == false || $gallery->getDebug() == 'logged') {
 		/*
 		 * The URL generator makes HTML 4.01 compliant URLs using
 		 * &amp; but we don't want those in our Location: header.
