@@ -111,11 +111,12 @@ class ItemAddChildrenController extends GalleryController {
 		}
 
 		if ($albumNeedsThumbnail) {
-		    list ($ret, $albumNeedsThumbnail) =
+		    list ($ret, $success) =
 			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    $albumNeedsThumbnail = !$success;
 		}
 	    }
 
@@ -147,13 +148,14 @@ class ItemAddChildrenController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		if ($albumNeedsThumbnail) {
-		    list ($ret, $albumNeedsThumbnail) =
+		    list ($ret, $success) =
 			GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    $albumNeedsThumbnail = !$success;
 		}
 
 		$status['addFromLocalServer'][] = array('fileName' => $filename,
