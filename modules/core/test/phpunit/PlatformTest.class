@@ -1,0 +1,186 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Platform functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class PlatformTest extends GalleryTestCase {
+
+    function PlatformTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	$this->_platform = $gallery->getPlatform();
+	$this->_sourceFile = dirname(__FILE__) . '/../data/test1.gif';
+	$this->_destFile = $gallery->getConfig('data.gallery.tmp') . 'test.dat';
+    }
+
+    function testCopy() {
+	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
+	$this->assert($this->_platform->unlink($this->_destFile));
+    }
+    
+    function testMoveUploadedFile() {
+	// XXX: How do we test this?  We don't have an uploaded file :-(
+	$this->assert(!$this->_platform->move_uploaded_file($this->_sourceFile, $this->_destFile));
+    }
+    
+    function testFileExists() {
+	$this->assert($this->_platform->file_exists($this->_sourceFile));
+	$this->assert(!$this->_platform->file_exists($this->_destFile));
+    }
+    
+    function testIsLink() {
+	$this->assert(!$this->_platform->is_link($this->_sourceFile));
+    }
+    
+    function testIsDir() {
+	$this->assert($this->_platform->is_dir(dirname(__FILE__)));
+	$this->assert(!$this->_platform->is_dir(__FILE__));
+    }
+    
+    function testIsFile() {
+	$this->assert($this->_platform->is_file(__FILE__));
+	$this->assert(!$this->_platform->is_file('bogus-file-name'));
+    }
+    
+    function testIsWriteable() {
+	$this->assert(!$this->_platform->is_writeable(__FILE__));
+	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
+	$this->assert($this->_platform->is_writeable($this->_destFile));
+	$this->assert($this->_platform->unlink($this->_destFile));
+    }
+    
+    function testIsReadable() {
+	$this->assert($this->_platform->is_readable($this->_sourceFile));
+    }
+    
+    function testIsUploadedFile() {
+	$this->assert(!$this->_platform->is_uploaded_file($this->_sourceFile));
+    }
+    
+    function testIsExecutable() {
+	$this->assert(!$this->_platform->is_executable($this->_sourceFile));
+    }
+    
+    function testFilesize() {
+	$this->assertEquals($this->_platform->filesize($this->_sourceFile),
+			    1083);
+    }
+    
+    function testFopen() {
+	$fd = $this->_platform->fopen($this->_sourceFile, 'r');
+	$this->assert($fd);
+	fclose($fd);
+    }
+    
+    function testOpendir() {
+	$dir = $this->_platform->opendir(dirname(__FILE__));
+	$this->assert($dir);
+	closedir($dir);
+    }
+    
+    function testRename() {
+	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
+	$this->assert($this->_platform->rename($this->_destFile,
+					       $this->_destFile . '-new'));
+	$this->assert($this->_platform->unlink($this->_destFile . '-new'));
+    }
+    
+    function testStat() {
+	$this->assert($this->_platform->stat($this->_sourceFile));
+    }
+    
+    function testUnlink() {
+	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
+	$this->assert($this->_platform->unlink($this->_destFile));
+    }
+    
+    function testRmdir() {
+	$this->assert($this->_platform->mkdir($this->_destFile));
+	$this->assert($this->_platform->mkdir($this->_destFile . '/1'));
+
+	// XXX: this generates a PHP error that I can't seem to turn off.
+	// $this->assert(!$this->_platform->rmdir($this->_destFile));
+	
+	$this->assert($this->_platform->rmdir($this->_destFile . '/1'));
+	$this->assert($this->_platform->rmdir($this->_destFile));
+    }
+    
+    function testRecursiveRmdir() {
+	$this->assert($this->_platform->mkdir($this->_destFile));
+	$this->assert($this->_platform->mkdir($this->_destFile . '/1'));
+	$this->assert($this->_platform->mkdir($this->_destFile . '/1/2'));
+	$this->assert($this->_platform->mkdir($this->_destFile . '/1/2/3'));
+	$this->assert($this->_platform->recursiveRmdir($this->_destFile));
+    }
+    
+    function testMkdir() {
+	$this->assert($this->_platform->mkdir($this->_destFile));
+	$this->assert($this->_platform->recursiveRmdir($this->_destFile));
+    }
+    
+    function testIsLegalPathComponent() {
+	$this->assert($this->_platform->isLegalPathComponent("TheQuickBrownFox"));
+	$this->assert(!$this->_platform->isLegalPathComponent("The!QuickBrownFox"));
+    }
+    
+    function testgetLegalPathCharacters() {
+	$this->assertEquals($this->_platform->getLegalPathCharacters(),
+			    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
+			    "abcdefghijklmnopqrstuvwxyz" .
+			    "0123456789" .
+			    " _.-");
+    }
+    
+    function testLegalizePathComponent() {
+	$this->assertEquals($this->_platform->legalizePathComponent("The!Quick$"),
+			    "The_Quick_");
+    }
+    
+    function testExec() {
+	$this->assertEquals($this->_platform->exec(array(array('/bogus/path'))),
+			    array(false, array('/bogus/path: not found', '')));
+    }
+    
+    function testGetDirectorySeparator() {
+	$this->assertEquals($this->_platform->getDirectorySeparator(), '/');
+    }
+    
+    function testisRestrictedByOpenBaseDir() {
+	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
+    }
+}
+
+?>
