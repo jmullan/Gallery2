@@ -257,11 +257,6 @@ class GallerySession {
      * @return object GalleryStatus a status code
      */
     function reset() {
-	$ret = $this->removeMapEntry(array('sessionId' => $this->_sessionId));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	$ret = $this->init();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
