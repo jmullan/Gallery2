@@ -40,7 +40,7 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName('Panorama');
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews|' .
 			    'getItemLinks');
@@ -66,10 +66,10 @@ class PanoramaModule extends GalleryModule {
 						      'PanoramaDerivativeImage',
 						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class',
 						      array('PanoramaPhotoItem'));
-	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
-						      'PanoramaItemEdit',
-						      'PanoramaItemEdit',
-						      dirname(__FILE__) . '/PanoramaItemEdit.inc');
+	GalleryCoreApi::registerFactoryImplementation('ItemEditPhotoSizesOption',
+						      'PanoramaOption',
+						      'PanoramaOption',
+						      dirname(__FILE__) . '/PanoramaOption.inc');
     }
 
     /**

@@ -29,18 +29,20 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/PanoramaHelper.class');
+GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemEditOptionTestCase.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../classes/PanoramaHelper.class');
 
 /**
- * PanoramaItemEdit controller tests
+ * PanoramaOption tests
  * Also tests PanoramaHelper::fetchViewableImages
  * @package Panorama
  * @subpackage PHPUnit
  */
-class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
+class PanoramaOptionTest extends ItemEditOptionTestCase {
 
-    function PanoramaItemEditPluginTest($methodName) {
-	$this->ItemEditPluginTestCase($methodName, 'panorama', 'PanoramaItemEdit');
+    function PanoramaOptionTest($methodName) {
+	$this->ItemEditOptionTestCase(
+	    $methodName, 'panorama', 'ItemEditPhotoSizes', 'PanoramaOption');
     }
 
     function setUp() {
@@ -58,6 +60,7 @@ class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_item = $item;
+	$this->_markForCleanup($this->_item);
 
 	list ($ret, $derivative) =
 	    $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
@@ -73,22 +76,9 @@ class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
 	$this->_derivative = $derivative;
     }
 
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
-    }
-
     function testPanoramaOff() {
-
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
-	$results = $this->handleRequest($this->_item, $this->_derivative);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
-			    $results);
+	$error = $this->handleRequestAfterEdit(array(), $this->_item);
+	$this->assertEquals(array(), $error);
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret->isError()) {
@@ -106,13 +96,10 @@ class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
     }
 
     function testPanoramaOn() {
+	$form['PanoramaOption']['isPanorama'] = 1;
 
-	GalleryUtilities::putRequestVariable('form[isPanorama]', 1);
-	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-
-	$results = $this->handleRequest($this->_item, $this->_derivative);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
-			    $results);
+	$error = $this->handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(), $error);
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret->isError()) {
