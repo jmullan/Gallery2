@@ -140,6 +140,9 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function file_exists($path) {
 	switch ($path) {
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */ 
+ 
+	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
 	    return true;
 
 	default:
@@ -149,6 +152,9 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
     function copy($source, $dest) {
 	switch ($source) {
+	case dirname(__FILE__) . '/../data/\\apo\'strophe.jpg':
+	    /* The windows path is a little weird -- but we can live with it */ 
+ 
 	case dirname(__FILE__) . '/../data/apo\'strophe.jpg':
 	    $source = dirname(__FILE__) . '/../data/test1.jpg';
 	    break;
