@@ -157,10 +157,15 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Set up our language selection list */
-	$translator =& $gallery->getTranslator();
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$languageList = array();
+	$languageList[''] = $module->translate('<none>');
+	
+	$translator =& $gallery->getTranslator();
 	$supportedLanguages = $translator->getSupportedLanguages();
-
 	foreach ($supportedLanguages as $language => $countryList) {
 	    foreach ($countryList as $country => $languageData) {
 		$languageList[$language . '_' . $country] =
