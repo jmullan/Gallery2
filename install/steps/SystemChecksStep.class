@@ -224,7 +224,8 @@ class SystemChecksStep extends InstallStep {
 		    array('title' => $title,
 			  'warning' => true,
 			  'notice' => _('Manifest missing or inaccessible.'));
-	    } else if (empty($manifest['missing']) && empty($manifest['modified'])) {
+	    } else if (empty($manifest['missing']) && empty($manifest['modified'])
+		       && empty($manifest['shouldRemove'])) {
 		$templateData['check'][] = array('title' => $title, 'success' => true);
 	    } else {
 		ob_start();
@@ -262,15 +263,18 @@ class SystemChecksStep extends InstallStep {
 	    return null;
 	}
 
-	$missing = array();
-	$modified = array();
+	$missing = $modified = $shouldRemove = array();
 	foreach ($manifest as $file => $info) {
 	    if ($file == 'MANIFEST') {
 		continue;
 	    }
-
 	    $path = $base . $file;
-	    if (!file_exists($path)) {
+
+	    if (!empty($info['removed'])) {
+		if (file_exists($path)) {
+		    $shouldRemove[] = $file;
+		}
+	    } else if (!file_exists($path)) {
 		$missing[] = $file;
 	    } else {
 		/*
@@ -290,7 +294,8 @@ class SystemChecksStep extends InstallStep {
 	    }
 	}
 
-	return array('missing' => $missing, 'modified' => $modified);
+	return array('missing' => $missing, 'modified' => $modified,
+		     'shouldRemove' => $shouldRemove);
     }
 
     function abbreviate($str, $len=60) {

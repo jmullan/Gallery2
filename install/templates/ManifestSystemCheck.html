@@ -1,24 +1,23 @@
-  <?php if (!empty($manifest['missing'])): ?>
   <script type="text/javascript">
-    ManifestSystemCheck_missing_visible = false;
-    function toggleManifestSystemCheckMissing() {
-      myList = document.getElementById('ManifestSystemCheck_missing');
-      myIndicator = document.getElementById('ManifestSystemCheck_missing_toggle_indicator');
-      if (ManifestSystemCheck_missing_visible) {
-        myList.style.display = 'none';
-        myIndicator.innerHTML = '+';
+    // <![CDATA[
+    function BlockToggle(objId, togId) {
+      var o = document.getElementById(objId), t = document.getElementById(togId);
+      if (o.style.display == 'none') {
+	o.style.display = 'inline';
+	t.innerHTML = '-';
       } else {
-        myList.style.display = 'inline';
-        myIndicator.innerHTML = '-';
+	o.style.display = 'none';
+	t.innerHTML = '+';
       }
-      ManifestSystemCheck_missing_visible = !ManifestSystemCheck_missing_visible;
     }
+    // ]]>
   </script>
 
-  <span id="ManifestSystemCheck_missing_toggle" onclick="toggleManifestSystemCheckMissing()">
+  <?php if (!empty($manifest['missing'])): ?>
+  <span id="ManifestSystemCheck_missing_toggle" onclick="BlockToggle('ManifestSystemCheck_missing', 'ManifestSystemCheck_missing_toggle_indicator')">
     <span id="ManifestSystemCheck_missing_toggle_indicator" class="showHideToggle">+</span>
     <b>
-      <?php printf(_("Missing files (%d)"), sizeof($manifest['missing'])) ?>
+      <?php printf(_("Missing files (%d)"), count($manifest['missing'])) ?>
     </b>
   </span>
   <?php if ($isCvsInstall): ?>
@@ -33,7 +32,7 @@
       <li>
 	<span title="<?php print $fileName ?>">
 	<?php print SystemChecksStep::abbreviate($fileName) ?>
-        </span>
+	</span>
       </li>
       <?php endforeach; ?>
     </ul>
@@ -45,26 +44,10 @@
   <?php endif; ?>
 
   <?php if (!empty($manifest['modified'])): ?>
-  <script type="text/javascript">
-    ManifestSystemCheck_modified_visible = false;
-    function toggleManifestSystemCheckModified() {
-      myList = document.getElementById('ManifestSystemCheck_modified');
-      myIndicator = document.getElementById('ManifestSystemCheck_modified_toggle_indicator');
-      if (ManifestSystemCheck_modified_visible) {
-        myList.style.display = 'none';
-        myIndicator.innerHTML = '+';
-      } else {
-        myList.style.display = 'inline';
-        myIndicator.innerHTML = '-';
-      }
-      ManifestSystemCheck_modified_visible = !ManifestSystemCheck_modified_visible;
-    }
-  </script>
-
-  <span id="ManifestSystemCheck_modified_toggle" onclick="toggleManifestSystemCheckModified()">
+  <span id="ManifestSystemCheck_modified_toggle" onclick="BlockToggle('ManifestSystemCheck_modified', 'ManifestSystemCheck_modified_toggle_indicator')">
     <span id="ManifestSystemCheck_modified_toggle_indicator" class="showHideToggle">+</span>
     <b>
-      <?php printf(_("Modified files (%d)"), sizeof($manifest['modified'])) ?>
+      <?php printf(_("Modified files (%d)"), count($manifest['modified'])) ?>
     </b>
   </span>
   <?php if ($isCvsInstall): ?>
@@ -77,7 +60,33 @@
       <li>
 	<span title="<?php print $fileName ?>">
 	<?php print SystemChecksStep::abbreviate($fileName) ?>
-        </span>
+	</span>
+      </li>
+      <?php endforeach; ?>
+    </ul>
+  </div>
+  <?php endif; ?>
+
+  <?php if (!empty($manifest['modified']) && !empty($manifest['shouldRemove'])): ?>
+  <br /> <br />
+  <?php endif; ?>
+
+  <?php if (!empty($manifest['shouldRemove'])): ?>
+  <span id="ManifestSystemCheck_shouldRemove_toggle" onclick="BlockToggle('ManifestSystemCheck_shouldRemove', 'ManifestSystemCheck_shouldRemove_toggle_indicator')">
+    <span id="ManifestSystemCheck_shouldRemove_toggle_indicator" class="showHideToggle">+</span>
+    <b>
+      <?php printf(_("Old files (%d)"), count($manifest['shouldRemove'])) ?>
+    </b>
+  </span>
+  <br/>
+  <?php print _("These files are no longer part of Gallery. They probably won't cause any problems but it is a good idea to remove them to keep your install clean."); ?>
+  <div id="ManifestSystemCheck_shouldRemove" style="display: none">
+    <ul class="manifestListing">
+      <?php foreach ($manifest['shouldRemove'] as $fileName): ?>
+      <li>
+	<span title="<?php print $fileName ?>">
+	<?php print SystemChecksStep::abbreviate($fileName) ?>
+	</span>
       </li>
       <?php endforeach; ?>
     </ul>

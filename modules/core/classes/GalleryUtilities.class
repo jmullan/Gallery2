@@ -1250,22 +1250,24 @@ class GalleryUtilities {
 	    $lines = file($base . $file);
 	    if (!empty($lines)) {
 		foreach ($lines as $line) {
-		    $line = preg_replace('/#.*/', '', $line);
-		    $line = trim($line);
+		    $line = trim(preg_replace('/#.*/', '', $line));
 		    if (empty($line)) {
 			continue;
 		    }
 
-		    list ($file,
-			  $cksum, $cksum_crlf,
-			  $size, $size_crlf,
-			  $viewable) = preg_split('/\t/', $line);
-		    $manifest[trim($file)] =
-			array('checksum' => $cksum,
-			      'checksum_crlf' => $cksum_crlf,
-			      'size' => $size,
-			      'size_crlf' => $size_crlf,
-			      'viewable' => ($viewable > 0));
+		    $line = explode("\t", $line);
+		    if (count($line) == 2 && $line[0] == 'R') {
+			$file = trim($line[1]);
+			$manifest[$file] = array('removed' => 1);
+		    } else {
+			list ($file, $cksum, $cksum_crlf, $size, $size_crlf) = $line;
+			$file = trim($file);
+			$manifest[$file] =
+			    array('checksum' => $cksum,
+				  'checksum_crlf' => $cksum_crlf,
+				  'size' => $size,
+				  'size_crlf' => $size_crlf);
+		    }
 		}
 	    }
 	}

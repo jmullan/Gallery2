@@ -29,9 +29,6 @@ map(s{$basedir/}{}, @entries);
 @entries = sort @entries;
 print STDERR "\n";
 
-# Get list of .class, .inc, .php files in basedir/modules/layouts/themes..
-my @viewable = grep(m{^(install/.*|modules/.*|layouts/.*|themes/.*|[^/]*)\.(class|inc|php)@@\d$}, @entries);
-
 # Split into sections
 #
 my %sections;
@@ -52,7 +49,7 @@ my $changed = 0;
 my $total = 0;
 foreach my $manifest (keys %sections) {
   open(my $out, ">$manifest.new") or die;
-  print $out "# File crc32 crc32(crlf) size size(crlf) viewable\n";
+  print $out "# File crc32 crc32(crlf) size size(crlf)  or  R File\n";
   my @entries = @{$sections{$manifest}};
   foreach my $entry (@entries) {
     my ($file, $isBinary) = split(/\@\@/, $entry);
@@ -79,12 +76,17 @@ foreach my $manifest (keys %sections) {
 
     my $cksum = crc32($data);
     my $cksum_crlf = crc32($data_crlf);
-    my $view = grep(m{^\Q$file\E@@\d$}, @viewable) ? 1 : 0;
-    print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\t$view\n";
+    print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\n";
+  }
+  my $oldContent = '';
+  if (open(FD, "<$manifest")) {
+    @_ = <FD>;
+    $oldContent = join('', @_);
+    print $out join('', grep(/^R\t/, @_));
   }
   close $out;
 
-  $changed += replaceIfNecessary("$manifest", "$manifest.new");
+  $changed += replaceIfNecessary($oldContent, $manifest, "$manifest.new");
   $total++;
 
   print STDERR ".";
@@ -94,16 +96,13 @@ printf(STDERR "Completed in %d seconds\n", time - $^T);
 printf(STDERR "Manifests changed: $changed (total: $total)\n");
 
 sub replaceIfNecessary {
-  my ($oldFile, $newFile) = @_;
-  open(FD, "<$oldFile") || die;
-  my $old = join("", <FD>);
-  close(FD);
+  my ($oldContent, $oldFile, $newFile) = @_;
 
   open(FD, "<$newFile") || die;
   my $new = join("", <FD>);
   close(FD);
 
-  if ($old ne $new) {
+  if ($oldContent ne $new) {
     rename($newFile, $oldFile);
     return 1;
   } else {
