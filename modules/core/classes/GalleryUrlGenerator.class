@@ -95,6 +95,11 @@ class GalleryUrlGenerator {
 	$this->_baseFile = $baseFile;
 	$this->_relativeG2Path = $relativeG2Path;
 	$this->_embedSessionString = $embedSessionString;
+
+	if (!empty($this->_relativeG2Path) &&
+		$this->_relativeG2Path{strlen($this->_relativeG2Path)-1} != '/') {
+	    $this->_relativeG2Path .= '/';
+	}
     }
 
     /**
