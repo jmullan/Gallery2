@@ -1,7 +1,7 @@
     <h1><?php print _('Create a config file') ?></h1>
 
     <p class="error">
-      <?php print $templateData['error'] ?>
+      <?php if (!empty($templateData['error']) print $templateData['error'] ?>
     </p>
 
     <p>
