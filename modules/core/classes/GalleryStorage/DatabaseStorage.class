@@ -35,12 +35,12 @@ require_once(dirname(__FILE__) . '/DatabaseStorage/ErrorHandler.inc');
 /**
  * Name of the sequence we'll use for GalleryEntity ids
  */
-define('DATABASE_SEQUENCE_ID', 'sequence_id');
+define('DATABASE_SEQUENCE_ID', 'SequenceId');
 
 /**
  * Name of the sequence we'll use for lock ids
  */
-define('DATABASE_SEQUENCE_LOCK', 'sequence_lock');
+define('DATABASE_SEQUENCE_LOCK', 'SequenceLock');
 
 /**
  * Default prefix to prepend to table names
@@ -685,7 +685,7 @@ class DatabaseStorage extends GalleryStorage {
 	 * Get the id of the next object from our sequence.
 	 */
 	$this->_traceStart();
-	$id = $this->_db->GenId(DATABASE_SEQUENCE_ID);
+	$id = $this->_db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_traceStop();
 
 	$entity->setId($id);
@@ -1363,7 +1363,7 @@ class DatabaseStorage extends GalleryStorage {
 		     as $sequenceId) {
 
 		$this->_traceStart();
-		$recordSet = $this->_db->CreateSequence($sequenceId);
+		$recordSet = $this->_db->CreateSequence($this->_tablePrefix . $sequenceId);
 		$this->_traceStop();
 		if (empty($recordSet)) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
@@ -1560,7 +1560,7 @@ class DatabaseStorage extends GalleryStorage {
 		     as $sequenceId) {
 
 		$this->_traceStart();
-		$recordSet = $this->_db->DropSequence($sequenceId);
+		$recordSet = $this->_db->DropSequence($this->_tablePrefix . $sequenceId);
 		$this->_traceStop();
 		if (empty($recordSet)) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
@@ -1785,7 +1785,7 @@ class DatabaseStorage extends GalleryStorage {
 
 	/* Get a new lock id */
 	$this->_traceStart();
-	$lockId = $db->GenId(DATABASE_SEQUENCE_LOCK);
+	$lockId = $db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_LOCK);
 	$this->_traceStop();
 
 	/* Put in a lock request */
