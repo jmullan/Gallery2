@@ -40,7 +40,7 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName('Debugging');
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.8.8');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(4, 0));
@@ -53,20 +53,6 @@ class DebugModule extends GalleryModule {
     function autoConfigure() {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
-    }
-
-    /**
-     * @see GalleryModule::performFactoryRegistrations()
-     */
-    function performFactoryRegistrations() {
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryStatusFormatter',
-	    'DebugStatusFormatter', 'DebugStatusFormatter',
-	    'modules/debug/classes/DebugStatusFormatter.class', 'debug', array('text/html'));
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
     }
 
     /**

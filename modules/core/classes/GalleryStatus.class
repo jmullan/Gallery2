@@ -386,27 +386,24 @@ class GalleryStatus {
     function getAsHtml($showMessage=true) {
 	list ($codes, $trace) = $this->_getAsArray();
 
-	/*
-	 * It's possible that we're having this problem at a very low level so
-	 * we may not want to try to use the factory if things have gone
-	 * catastrophically wrong.  Use the $storage and $translator objects as
-	 * our acid test.  If we have them we're ok to continue, as long as
-	 * we're not in a unit test.
-	 */
-	global $gallery;
-	$storage =& $gallery->getStorage();
-	$translator = $gallery->getTranslator();
-	if (isset($storage) && isset($translator) && !class_exists('GalleryTestCase')) {
-	    list ($ret, $formatter) =
-		GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
-	    /* Swallow errors here -- we're already in an error handling situation */
+	$message = $showMessage ? $this->_errorMessage : '';
+	$buf = 'Error  (' . join(', ', $codes) . ')';
+	if (!is_null($message)) {
+	    $buf .= ' : ' . htmlentities($message);
 	}
-
-	if (!isset($formatter)) {
-	    $formatter = new GalleryStatusFormatterHtml();
+	$buf .= '<UL>';
+	foreach ($trace as $traceEntry) {
+	    $buf .= sprintf("<LI><B>in</B> %s <B>at line</B> %d",
+			    $traceEntry['file'], $traceEntry['line']);
+	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+	    } else if (isset($traceEntry['class'])) {
+		$buf .= " ($traceEntry[function]) ";
+	    }
 	}
+	$buf .= '</UL>';
 
-	return $formatter->format($codes, $trace, $showMessage ? $this->_errorMessage : '');
+	return $buf;
     }
 
     /**
@@ -418,16 +415,22 @@ class GalleryStatus {
     function getAsText($showMessage=true) {
 	list ($codes, $trace) = $this->_getAsArray();
 
-	if (class_exists('GalleryTestCase')) {
-	    $formatter = new GalleryStatusFormatterText();
-	} else {
-	    list ($ret, $formatter) =
-		GalleryCoreApi::newFactoryInstance('GalleryStatusFormatter', 'text/plain');
-	    if ($ret->isError() || !isset($formatter)) {
-		$formatter = new GalleryStatusFormatterText();
-	    }
+	$message = $showMessage ? $this->_errorMessage : '';
+	$buf = 'Error (' . join(', ', $codes) . ')';
+	if (!is_null($message)) {
+	    $buf .= ' : ' . htmlentities($message);
 	}
-	return $formatter->format($codes, $trace, $showMessage ? $this->_errorMessage : '');
+	foreach ($trace as $traceEntry) {
+	    $buf .= sprintf("<B>in</B> %s <B>at line</B> %d",
+			    $traceEntry['file'], $traceEntry['line']);
+	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
+		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
+	    } else if (isset($traceEntry['class'])) {
+		$buf .= " ($traceEntry[function]) ";
+	    }
+	    $buf .= "\n";
+	}
+	return $buf;
     }
 
     /**
@@ -435,7 +438,6 @@ class GalleryStatus {
      * @return array of strings
      */
     function getErrorCodeConstants($errorCode) {
-
 	if ($errorCode == 0) {
 	    return array('GALLERY_SUCCESS');
 	}
@@ -488,94 +490,16 @@ class GalleryStatus {
 		if (empty($traceEntry['line'])) {
 		    $traceEntry['line'] = '???';
 		}
-		$trace[] = array('file' => str_replace($base, '', $traceEntry['file']),
-				 'line' => $traceEntry['line'],
-				 'class' => empty($traceEntry['class']) ? null : $traceEntry['class'],
-				 'function' => empty($traceEntry['function']) ?
-				                     null : $traceEntry['function']);
+		$trace[] =
+		    array('file' => str_replace($base, '', $traceEntry['file']),
+			  'line' => $traceEntry['line'],
+			  'class' => empty($traceEntry['class']) ? null : $traceEntry['class'],
+			  'function' => empty($traceEntry['function']) ?
+			  null : $traceEntry['function']);
 	    }
 	}
 
 	return array($codes, $trace);
     }
 }
-
-/**
- * Public interface for formatting status results.
- *
- * @package GalleryCore
- * @subpackage Classes
- */
-class GalleryStatusFormatter {
-
-    /**
-     * Format a status message into presentable HTML
-     */
-    function format($codes, $trace) {
-	return "Unimplemented";
-    }
-}
-
-/**
- * HTML status formatter
- *
- * @package GalleryCore
- * @subpackage Classes
- */
-class GalleryStatusFormatterHtml extends GalleryStatusFormatter {
-
-    /**
-     * @see GalleryStatus::format()
-     */
-    function format($codes, $trace, $message=null) {
-	$buf = 'Error  (' . join(', ', $codes) . ')';
-	if (!is_null($message)) {
-	    $buf .= ' : ' . htmlentities($message);
-	}
-	$buf .= '<UL>';
-	foreach ($trace as $traceEntry) {
-	    $buf .= sprintf("<LI><B>in</B> %s <B>at line</B> %d",
-			    $traceEntry['file'], $traceEntry['line']);
-	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
-		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
-	    } else if (isset($traceEntry['class'])) {
-		$buf .= " ($traceEntry[function]) ";
-	    }
-	}
-	$buf .= '</UL>';
-
-	return $buf;
-    }
-}
-
-/**
- * Text status formatter
- *
- * @package GalleryCore
- * @subpackage Classes
- */
-class GalleryStatusFormatterText extends GalleryStatusFormatter {
-
-    /**
-     * @see GalleryStatus::format()
-     */
-    function format($codes, $trace, $message=null) {
-	$buf = 'Error (' . join(', ', $codes) . ')';
-	if (!is_null($message)) {
-	    $buf .= ' : ' . htmlentities($message);
-	}
-	foreach ($trace as $traceEntry) {
-	    $buf .= sprintf("<B>in</B> %s <B>at line</B> %d",
-			    $traceEntry['file'], $traceEntry['line']);
-	    if (isset($traceEntry['class']) && isset($traceEntry['function'])) {
-		$buf .= " ($traceEntry[class]::$traceEntry[function]) ";
-	    } else if (isset($traceEntry['class'])) {
-		$buf .= " ($traceEntry[function]) ";
-	    }
-	    $buf .= "\n";
-	}
-	return $buf;
-    }
-}
-
 ?>
