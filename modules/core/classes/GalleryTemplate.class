@@ -250,6 +250,9 @@ class GalleryTemplate {
 	    /* Compiled templates go here */
 	    $smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
 
+	    /* Don't let Smarty change the error reporting level */
+	    $smarty->tpl_error_reporting = error_reporting();
+
 	    /* We have our own plugins */
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
