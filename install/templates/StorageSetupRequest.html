@@ -1,7 +1,14 @@
+    <script type="text/javascript" src="../lib/javascript/AutoComplete.js"></script>
+    <script type="text/javascript" src="../lib/javascript/XmlHttp.js"></script>
+
     <h1><?php print _("Storage Setup") ?></h1>
 
     <p>
       <?php print sprintf(_("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> of your web site so that it cannot be browse directly via the web. This is necessary if you wish to have your images accessible only via Gallery [%s]. Note that the default path provided below is inside the webserver area. This is because we are unable to reliably guess a directory outside of your web site. You should update it with a secure location, such as a path under your user home directory, if possible. If you access your site via FTP, you might not have this option."), "<b><a href=\"#footnote_firewall\">*</a></b>"); ?>
+    </p>
+
+    <p>
+      <?php print _("If you're using a modern browser, we'll try to autocomplete any path you enter here.  So if you're having trouble finding the right path to your g2data directory, try experimenting with paths in the text box below and see what completions it provides for you."); ?>
     </p>
 
     <form name="storage_form" method="post">
@@ -12,8 +19,13 @@
 	  </td>
 
 	  <td>
-	    <input name="dir" type="text" size="50" value="<?php print $templateData['dir'] ?>"/>
+	    <input id="dir" name="dir" type="text" size="50" value="<?php print $templateData['dir'] ?>" autocomplete="off"/>
 	    <input type="hidden" name="action" value="save" />
+            <script type="text/javascript">
+              // <![CDATA[
+              autoCompleteAttach('dir', '<?php print 'index.php?step=' . $currentStep->getStepNumber() . '&doAutoComplete=1&path=__VALUE__'; ?>');
+              // ]]>
+            </script>
 	  </td>
 	</tr>
 

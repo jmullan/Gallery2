@@ -76,6 +76,50 @@ class StorageSetupStep extends InstallStep {
 	}
     }
 
+    function processRequest() {
+	if (!empty($_GET['doAutoComplete'])) {
+	    $path = !empty($_GET['path']) ? $_GET['path'] : '';
+
+	    /* Find all matching paths */
+	    $dirs = $this->_getAllImmediateSubdirs($path);
+
+	    header("Content-Type: text/plain");
+	    print join("\n", $dirs);
+	    return false;
+	}
+	
+	return true;
+    }
+
+    function _getAllImmediateSubdirs($path) {
+	$dirList = array();
+	if (!file_exists($path) || !is_dir($path)) {
+	    return $dirList;
+	}
+
+	if ($dir = opendir($path)) {
+	    while (($file = readdir($dir)) !== false) {
+		if ($file == '.' || $file == '..') {
+		    continue;
+		}
+
+		if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
+		    $file = $path . $file;
+		} else {
+		    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
+		}
+		
+		if (is_dir($file)) {
+		    $dirList[] = $file;
+		}
+	    }
+	    closedir($dir);
+	}
+
+	sort($dirList);
+	return $dirList;
+    }
+
     function populateDataDirectory($dataBase) {
 	/* Use non-restrictive umask to create directories with lax permissions */
 	umask(0);
