@@ -41,56 +41,6 @@ class ItemPropertiesTest extends GalleryTestCase {
     }
 
     /**
-     * Internal function to create a random album
-     */
-    function _createRandomAlbum($parentId) {
-	global $gallery;
-	
-	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!isset($album)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-
-	if (isset($parentId)) {
-	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    $ret = $album->create($parentId, 'albumtest' . rand());
-	} else {
-	    $ret = $album->createRoot('albumtest' . rand());
-	}
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Change some settings */
-	$album->setTitle('This is my title');
-	$album->setDescription('This is a description');
-
-	/* Save it */
-	$ret = $album->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Leggo of our locks */
-	if (isset($lockIds)) {
-	    $ret = $gallery->releaseLocks($lockIds);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	return array(GalleryStatus::success(), $album);
-    }
-
-    /**
      * Create a random album to start the test
      */
     function setUp() {
