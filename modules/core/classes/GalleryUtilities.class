@@ -154,11 +154,9 @@ class GalleryUtilities {
 	    }
 	}
 
-	/* Undo the damage caused by magic_quotes */
-	if (get_magic_quotes_gpc()) {
-	    foreach (array_keys($values) as $key) {
-		$values[$key] = stripslashes($values[$key]);
-	    }
+	/* Sanitize the input */
+	foreach (array_keys($values) as $key) {
+	    $values[$key] = GalleryUtilities::sanitizeInputValue($values[$key]);
 	}
 
 	/*
@@ -220,11 +218,9 @@ class GalleryUtilities {
 	    }
 	}
 
-	/* Undo the damage caused by magic_quotes */
-	if (get_magic_quotes_gpc()) {
-	    for ($i = 0; $i < sizeof($values); $i++) {
-		$values[$i] = stripslashes($values[$i]);
-	    }
+	/* Sanitize the input */
+	for ($i = 0; $i < sizeof($values); $i++) {
+	    $values[$i] = GalleryUtilities::sanitizeInputValue($values[$i]);
 	}
 
 	if (sizeof($values) == 1) {
@@ -232,6 +228,37 @@ class GalleryUtilities {
 	} else {
 	    return $values;
 	}
+    }
+
+    /**
+     * Remove any potentially dangerous content from input values.
+     *
+     * @param string an input value 
+     * @return string the sanitized version 
+     */
+    function sanitizeInputValue($value) {
+	
+	/* Undo the damage caused by magic_quotes */
+	if (get_magic_quotes_gpc()) {
+	    $value = stripslashes($value);
+	}
+
+	/*
+	 * This was lifted verbatim from PostNuke 0.72
+	 */
+	$search = array('|</?\s*SCRIPT.*?>|si',
+			'|</?\s*FRAME.*?>|si',
+			'|</?\s*OBJECT.*?>|si',
+			'|</?\s*META.*?>|si',
+			'|</?\s*APPLET.*?>|si',
+			'|</?\s*LINK.*?>|si',
+			'|</?\s*IFRAME.*?>|si',
+			'|STYLE\s*=\s*"[^"]*"|si');
+	$replace = array('');
+
+	$value = preg_replace($search, $replace, $value);
+
+	return $value;
     }
 
     /**
