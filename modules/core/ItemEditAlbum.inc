@@ -147,7 +147,11 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    } elseif ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
-			    $sourceMimeType = $source->getDerivativeMimeType();
+			    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+				$sourceMimeType = $source->getDerivativeMimeType();
+			    } else {
+				$sourceMimeType = $source->getMimeType();
+			    }
 			} else {
 			    /* There is no thumbnail yet (maybe the file was uploaded
 			       when there was no graphic toolkit). Build new thumbnail
