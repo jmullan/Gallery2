@@ -30,32 +30,26 @@
   <div class="gbAdmin">
     {*XXX:remove later*}<p class="giError"> {g->text text="Module incomplete: here you can manage watermark images, but you can't actually use them in watermarking yet"} </p>
 
-    <table class="gbDataTable">
+    <table class="gbDataTable" width="100%">
       <tr>
         <th> {g->text text="File"} </th>
         <th> {g->text text="Image"} </th>
         <th> {g->text text="Action"} </th>
       </tr>
       {foreach from=$form.list item=item}
-        <tr class="{cycle values="gbEven,gbOdd"}">
-          <td> {$item.name} </td>
-          <td> {g->image item=$item image=$item} </td>
-          <td>
-            <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
-                             arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
-              {g->text text="delete"}
-            </a>
-          </td>
-        </tr>
-      {/foreach}
-      <tr>
+      <tr class="{cycle values="gbEven,gbOdd"}">
+        <td> {$item.name} </td>
+        <td> {g->image item=$item image=$item maxSize=150} </td>
         <td>
-          <input type="file" name="{g->formVar var="form[1]"}" size="60"/>
-        </td>
-        <td>
-          <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="add"}"/>
+          <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
+                           arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
+            {g->text text="delete"}
+          </a>
         </td>
       </tr>
+      {/foreach}
     </table>
+    <input type="file" name="{g->formVar var="form[1]"}" size="60"/>
+    <input type="submit" name="{g->formVar var="form[action][add]"}" value="{g->text text="add"}"/>
   </div>
 </div>
