@@ -66,39 +66,49 @@
         {/foreach}
       {rdelim}
     </script>
+ 
+    <table>
+      {foreach from=$ItemDelete.peers item=peer}
+      {assign var="peerItemId" value=$peer.id}
+      <tr>
+        <td width="60">
+          {if isset($peer.thumbnail)}
+          {g->image item=$peer image=$peer.thumbnail maxSize=50}
+          {/if}
+        </td>
+        <td>
+          <input type="checkbox" name="{g->formVar var="form[selectedIds][`$peer.id`]"}" {if $peer.selected}checked="checked"{/if} />
+	</td>
+	<td>
+          {$peer.title|default:$peer.pathComponent}
 
-    {foreach from=$ItemDelete.peers item=peer}
-    {assign var="peerItemId" value=$peer.id}
-    <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}" {if $peer.selected}checked="checked"{/if} />
-    {$peer.title|default:$peer.pathComponent}
-
-    <i>
-      {if isset($ItemDelete.peerTypes.data.$peerItemId)}
-      {g->text text="(data)"}
-      {/if}
-      {if isset($ItemDelete.peerTypes.album.$peerItemId)}
-      {if isset($ItemDelete.peerDescendentCounts.$peerItemId)}
-      {g->text one="(album containing %d item)" 
-	       many="(album containing %d items)"
-               count=$ItemDelete.peerDescendentCounts.$peerItemId
-               arg1=$ItemDelete.peerDescendentCounts.$peerItemId}
-      {else}
-      {g->text text="(empty album)"}
-      {/if}
-      {/if}
-    </i>
-    <br />
-    {/foreach}
+          <i>
+            {if isset($ItemDelete.peerTypes.data.$peerItemId)}
+            {g->text text="(data)"}
+            {/if}
+            {if isset($ItemDelete.peerTypes.album.$peerItemId)}
+            {if isset($ItemDelete.peerDescendentCounts.$peerItemId)}
+            {g->text one="(album containing %d item)" 
+      	       many="(album containing %d items)"
+                     count=$ItemDelete.peerDescendentCounts.$peerItemId
+                     arg1=$ItemDelete.peerDescendentCounts.$peerItemId}
+            {else}
+            {g->text text="(empty album)"}
+            {/if}
+            {/if}
+          </i>
+	</td>
+      </tr>
+      {/foreach}
+    </table>
 
     {foreach from=$ItemDelete.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
     {/foreach}
     <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemDelete.numPerPage}"/>
-  </div>
 
-  <div class="gbAdmin">
-    <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+    <br/>
+
     <input type="button" name="{g->formVar var="form[action][checkall]"}" onclick="javascript:setCheck(1)" value="{g->text text="Check All"}"/>
     <input type="button" name="{g->formVar var="form[action][checknone]"}" onclick="javascript:setCheck(0)" value="{g->text text="Check None"}"/>
     <input type="button" name="{g->formVar var="form[action][invert]"}" onclick="javascript:invertCheck()" value="{g->text text="Invert"}"/>
@@ -108,6 +118,12 @@
     {if ($ItemDelete.page < $ItemDelete.numPages)}
     <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
     {/if}
+
+  </div>
+
+  <div class="gbButtons">
+    <input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
   </div>
   {else}
   <div class="gbAdmin">

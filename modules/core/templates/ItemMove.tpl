@@ -115,54 +115,64 @@
       {rdelim}
       //]]>
     </script>
-      
-    {foreach from=$ItemMove.peers item=peer}
-    {assign var="peerItemId" value=$peer.id}
-    <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}" {if $peer.selected}checked="checked"{/if}/>
-    {$peer.title|default:$peer.pathComponent}
-    <i>
-      {if isset($ItemMove.peerTypes.data.$peerItemId)}
-      {g->text text="(data)"}
-      {/if}
-      {if isset($ItemMove.peerTypes.album.$peerItemId)}
-      {if isset($ItemMove.peerDescendentCounts.$peerItemId)}
-      {g->text one="(album containing %d item)" 
-	       many="(album containing %d items)"
-               count=$ItemMove.peerDescendentCounts.$peerItemId
-               arg1=$ItemMove.peerDescendentCounts.$peerItemId}
-      {else}
-      {g->text text="(empty album)"}
-      {/if}
-      {/if}
-    </i>
-    <br/>
 
-    {if !empty($form.error.source.$peerItemId.permission.delete)}
-    <div class="giError">
-      {g->text text="You are not allowed to move this item away from here."}<br>
-    </div>
-    {/if}
-    
-    {if !empty($form.error.source.$peerItemId.permission.addAlbumItem)}
-    <div class="giError">
-      {g->text text="You are not allowed to move an album to the chosen destination."}<br>
-    </div>
-    {/if}
-    
-    {if !empty($form.error.source.$peerItemId.permission.addDataItem)}
-    <div class="giError">
-      {g->text text="You are not allowed to move an item to the chosen destination."}<br>
-    </div>
-    {/if}
-    
-    {if !empty($form.error.source.$peerItemId.selfMove)}
-    <div class="giError">
-      {g->text text="You cannot move an album into its own subtree."}<br>
-    </div>
-    {/if}
-    {/foreach}
+    <table>      
+      {foreach from=$ItemMove.peers item=peer}
+      {assign var="peerItemId" value=$peer.id}
+      <tr>
+        <td width="60">
+          {if isset($peer.thumbnail)}
+          {g->image item=$peer image=$peer.thumbnail maxSize=50}
+          {/if}
+        </td>
+        <td>
+          <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}" {if $peer.selected}checked="checked"{/if}/>
+        </td>
+        <td>
+          {$peer.title|default:$peer.pathComponent}
+          <i>
+            {if isset($ItemMove.peerTypes.data.$peerItemId)}
+            {g->text text="(data)"}
+            {/if}
+            {if isset($ItemMove.peerTypes.album.$peerItemId)}
+            {if isset($ItemMove.peerDescendentCounts.$peerItemId)}
+            {g->text one="(album containing %d item)" 
+      	       many="(album containing %d items)"
+                     count=$ItemMove.peerDescendentCounts.$peerItemId
+                     arg1=$ItemMove.peerDescendentCounts.$peerItemId}
+            {else}
+            {g->text text="(empty album)"}
+            {/if}
+            {/if}
+          </i>
 
-    <br/>
+          {if !empty($form.error.source.$peerItemId.permission.delete)}
+          <div class="giError">
+            {g->text text="You are not allowed to move this item away from here."}<br>
+          </div>
+          {/if}
+          
+          {if !empty($form.error.source.$peerItemId.permission.addAlbumItem)}
+          <div class="giError">
+            {g->text text="You are not allowed to move an album to the chosen destination."}<br>
+          </div>
+          {/if}
+          
+          {if !empty($form.error.source.$peerItemId.permission.addDataItem)}
+          <div class="giError">
+            {g->text text="You are not allowed to move an item to the chosen destination."}<br>
+          </div>
+          {/if}
+          
+          {if !empty($form.error.source.$peerItemId.selfMove)}
+          <div class="giError">
+            {g->text text="You cannot move an album into its own subtree."}<br>
+          </div>
+          {/if}
+        </td>
+      </tr>
+      {/foreach}
+    </table>
 
     {if ($ItemMove.page > 1)}
     <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>

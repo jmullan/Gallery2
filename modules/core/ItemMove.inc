@@ -227,7 +227,7 @@ class ItemMoveView extends GalleryView {
             }
             $form['destination'] = '';
 	    $form['formName'] = 'ItemMove';
-	    $form['numPerPage'] = 30;
+	    $form['numPerPage'] = 15;
         }
 
         list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
@@ -280,6 +280,12 @@ class ItemMoveView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /* get peer thumbnails */
+	    list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($peerIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    /* Build our peers table */
 	    $peers = array();
 	    foreach ($peerItems as $peerItem) {
@@ -290,11 +296,20 @@ class ItemMoveView extends GalleryView {
 		    $peerTypes['data'][$peerItem->getId()] = 1;
 		}
 		$peers[$peerItem->getId()]['selected'] = isset($form['selectedIds'][$peerItem->getId()]);
+
+		/* While we're at it, attach the thumbnails */
+		if (isset($thumbnails[$peerItem->getId()])) {
+		    $thumbnail = $thumbnails[$peerItem->getId()];
+		    list ($ret, $thumbnail) =
+			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+		    $peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
+		}
 	    }
 
 	    /* Get child counts */
 	    if (!empty($peerTypes['album'])) {
-		list ($ret, $peerDescendentCounts) = GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
+		list ($ret, $peerDescendentCounts) =
+		    GalleryCoreApi::fetchDescendentCounts(array_keys($peerTypes['album']));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
