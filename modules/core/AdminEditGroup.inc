@@ -74,6 +74,15 @@ class AdminEditGroupController extends GalleryController {
 
 	    if (empty($form['groupName'])) {
 		$error[] = 'form[error][groupName][missing]';
+	    } else {
+		list ($ret, $tmpGroup) = GalleryCoreApi::fetchGroupByGroupname($form['groupName']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (!empty($tmpGroup) && $tmpGroup->getId() != $groupId) {
+		    $error[] = 'form[error][groupName][exists]';
+		}
 	    }
 
 	    if (empty($error)) {
