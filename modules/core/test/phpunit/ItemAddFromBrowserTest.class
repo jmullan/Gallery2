@@ -82,9 +82,9 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    }
 
 	    GalleryUtilities::putRequestVariable('form[name][' . $i . ']', $file);
-        list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fullPath);
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fullPath);
 	    if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    GalleryUtilities::putRequestVariable('form[type][' . $i . ']', $mimeType);
 	    GalleryUtilities::putRequestVariable('form[tmp_name][' . $i . ']', $fullPath);

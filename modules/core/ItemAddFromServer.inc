@@ -362,10 +362,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileKey' => $filePath,
 					  'legal' => $legal);
 			    } else {
-                    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
-                    if ($ret->isError()) {
-                        return array($ret->wrap(__FILE__, __LINE__), null, null);
-                    }
+				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
+				}
 				if (!isset($mimeTypeItemMap[$mimeType])) {
 				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
@@ -383,8 +383,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'stat' => $platform->stat($filePath),
 					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
 					  'unknown' => GalleryUtilities::isA(
-							 $mimeTypeItemMap[$mimeType]['instance'],
-							 'GalleryUnknownItem'),
+					      $mimeTypeItemMap[$mimeType]['instance'],
+					      'GalleryUnknownItem'),
 					  'fileKey' => $fileName);
 			    }
 			}
@@ -393,9 +393,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
 		    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($path);
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null);
-            }
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
 			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 			    GalleryCoreApi::newItemByMimeType($mimeType);

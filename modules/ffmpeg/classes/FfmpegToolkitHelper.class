@@ -184,10 +184,11 @@ class FfmpegToolkitHelper {
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
-            list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null, null, null);
-            }
+			list ($ret, $mime) =
+			    GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			}
 			$mimeTypes[$mime] = 1;
 		    }
 		}
@@ -196,11 +197,11 @@ class FfmpegToolkitHelper {
 		do {
 		    foreach (explode(' ', $regs[1]) as $type) {
 			if (isset($relevantTypes[$type])) {
-                list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
-                    $relevantTypes[$type]);
-                if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
-                }
+			    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
+				$relevantTypes[$type]);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+			    }
 			    $mimeTypes[$mime] = 1;
 			}
 		    }
@@ -219,11 +220,11 @@ class FfmpegToolkitHelper {
 		    foreach (explode(',', $types) as $type) {
 			if (isset($relevantTypes[$type])) {
 			    if (preg_match('|D|', $capabilities)) {
-                    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
-                        $relevantTypes[$type]);
-                    if ($ret->isError()) {
-                        return array($ret->wrap(__FILE__, __LINE__), null, null, null);
-                    }
+				list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
+				    $relevantTypes[$type]);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+				}
 				$mimeTypes[$mime] = 1;
 			    }
 			}
@@ -238,7 +239,7 @@ class FfmpegToolkitHelper {
 			 'success' => $success,
 			 'results' => $results);
 
-	// Test if this ffmpeg supports -ss flag..
+	/* Test if this ffmpeg supports -ss flag.. */
 	$supportsOffset = false;
 	list ($ok, $flags) = $platform->exec(array(array($ffmpegPath, '-h')));
 	foreach ($flags as $line) {

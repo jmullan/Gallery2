@@ -76,6 +76,8 @@ class ThumbnailModule extends GalleryModule {
 	case '0.8.4':
 	case '0.8.5':
 	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
 	}
 
 	return GalleryStatus::success();

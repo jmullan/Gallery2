@@ -52,7 +52,8 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $photo) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
+	list ($ret, $photo) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -63,10 +64,10 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$extension = GalleryUtilities::getFileExtension($imagePath);
-    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
-    if ($ret->isError()) {
-        return $ret->wrap(__FILE__, __LINE__);
-    }
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	$ret = $photo->create($rootId, $imagePath, $mimeType,
 			      'itemPath_' . time() . '.' . $extension);
 	if ($ret->isError()) {

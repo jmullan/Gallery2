@@ -59,15 +59,17 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 		$successfullyCopied = false;
 		$url = GalleryUtilities::htmlEntityDecode($url);
-		list ($successfullyCopied, $response, $headers) = GalleryCoreApi::fetchWebFile($url, $tmpFile);
+		list ($successfullyCopied, $response, $headers) =
+		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
 
 		/* Add it */
 		if ($successfullyCopied && strpos($response, '404 Not Found') === false) {
-		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-            list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-            if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
-            }
+		    list ($base, $extension) =
+			GalleryUtilities::getFileNameComponents(basename($url));
+		    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
 		    /* If we can't get a mime type, try stripping off the query string */
 		    if ($mimeType == 'application/unknown') {
@@ -75,11 +77,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			    $tmpUrl = preg_replace("/\?.*$/", "", $url);
 			    if (!empty($tmpUrl)) {
 				$url = $tmpUrl;
-				list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-                list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-                if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
-                }
+				list ($base, $extension) =
+				    GalleryUtilities::getFileNameComponents(basename($url));
+				list ($ret, $mimeType) =
+				    GalleryCoreApi::convertExtensionToMime($extension);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 			    }
 			}
 		    }
@@ -237,24 +241,26 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				continue;
 			    }
 
-				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['path']);
+			    list ($ret, $mimeType) =
+				GalleryCoreApi::getMimeType($urlComponents['path']);
 			    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null, null);
+				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
 			    if ($mimeType == 'application/unknown') {
 				/*
-				 * Try again with end of the query string -- just in case.  Some sites, like
-				 * Google's image search feature puts the file name at the end of the query
-				 * string.
+				 * Try again with end of the query string -- just in case.  Some
+				 * sites, like Google's image search feature puts the file name
+				 * at the end of the query string.
 				 */
 				if (empty($urlComponents['query'])) {
 				    continue;
 				}
 
-				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['query']);
-			    if ($ret->isError()) {
-					return array($ret->wrap(__FILE__, __LINE__), null, null);
-			    }
+				list ($ret, $mimeType) =
+				    GalleryCoreApi::getMimeType($urlComponents['query']);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null, null);
+				}
 				if ($mimeType == 'application/unknown') {
 				    continue;
 				}
@@ -279,7 +285,8 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				$tmp .= ':' . $urlComponents['port'];
 			    }
 			    if (!empty($urlComponents['path'])) {
-				if ($urlComponents['path'][0] != '/' && $tmp[strlen($tmp)-1] != '/') {
+				if ($urlComponents['path'][0] != '/' &&
+				        $tmp[strlen($tmp)-1] != '/') {
 				    $tmp .= '/';
 				}
 				$tmp .= $urlComponents['path'];

@@ -245,10 +245,10 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $gallery->guaranteeTimeLimit(10);
 
 	    $imageFile = $this->_imagePath[rand(0, sizeof($this->_imagePath)-1)];
-        list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imageFile);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imageFile);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    list ($ret, $item) = GalleryCoreApi::addItemToAlbum(
 			$imageFile, $this->_randomName(),
 			$this->_randomWords(rand(2, 4)),    // title

@@ -77,8 +77,12 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    
+	case '0.8.9':
+	case '0.8.10':
 	}
 
+    
 	return GalleryStatus::success();
     }
 

@@ -45,7 +45,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	parent::setUp();
 	global $gallery;
 
-	// Create a new subalbum and add some jpegs
+	/* Create a new subalbum and add some jpegs */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -94,10 +94,10 @@ class ExifExtractorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
-    if ($ret->isError()) {
+	list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-    }
+	}
 	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
 	if ($ret->isError()) {
@@ -110,7 +110,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	// add thumbnail
+	/* add thumbnail */
 	list ($ret, $thumbId) = $this->_addDerivative($photo,
 	    'thumbnail', DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
 	if ($ret->isError()) {

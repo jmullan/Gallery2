@@ -768,9 +768,11 @@ class ConfirmImportController extends GalleryController {
 
 			foreach($photos as $j => $importAlbumItem) {
 			    $gallery->guaranteeTimeLimit(30);
-			    if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
+			    if (isset($importAlbumItem->isAlbumName) &&
+				    $importAlbumItem->isAlbumName) {
 				if ($importAlbumItem->highlight == 1) {
-				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
+				    $albumHighlight[$newAlbumInstanceId] =
+					 $importAlbumItem->isAlbumName;
 				}
 				list ($ret, $weight) = GalleryCoreApi::fetchExtremeChildWeight(
 				    $newAlbumInstanceId, HIGHER_WEIGHT);
@@ -795,7 +797,8 @@ class ConfirmImportController extends GalleryController {
 
 				list ($base, $extension) =
 				    GalleryUtilities::getFileNameComponents($filename);
-				list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+				list ($ret, $mimeType) =
+				    GalleryCoreApi::convertExtensionToMime($extension);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}

@@ -220,9 +220,9 @@ class ItemAddController extends GalleryController {
 	foreach ($list as $file) {
 	    $extension = GalleryUtilities::getFileExtension($file);
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-        if ($ret->isError()) {
-            $mimeType = 'application/unknown';
-        }
+	    if ($ret->isError()) {
+		$mimeType = 'application/unknown';
+	    }
 	    $filename = basename($file);
 	    if ($archiveTitle == $archiveName) {
 		$title = $filename;

@@ -83,6 +83,9 @@ class ExifModule extends GalleryModule {
 	    case '0.8.5':
 	    case '0.8.6':
 	    case '0.8.7':
+	    case '0.8.8':
+	    case '0.8.9':
+	    case '0.9.1':
 	    }
 	}
 

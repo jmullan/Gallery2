@@ -180,12 +180,12 @@ class CoreModuleExtras {
 		}
 	    }
         
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
-            '/classes/helpers/GalleryMimeTypeHelper_simple.class');
-        $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	    GalleryCoreApi::requireOnce(
+		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	    break;
 
 	case '0.8':
@@ -353,13 +353,13 @@ class CoreModuleExtras {
 	    /* CSS refactor across entire app */
 
 	case '0.9.4': 
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
-            '/classes/helpers/GalleryMimeTypeHelper_simple.class');
-        $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-        break;
+	    GalleryCoreApi::requireOnce(
+		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    break;
 
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,

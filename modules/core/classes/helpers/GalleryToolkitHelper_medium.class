@@ -625,7 +625,8 @@ class GalleryToolkitHelper_medium {
 
 	if (!$isSupported && $forThumbnail) {
 	    /*
-	     * Try harder to make thumbnails.  See if we can convert the input type into a jpeg first.
+	     * Try harder to make thumbnails.  See if we can convert the input type into
+	     * a jpeg first.
 	     */
 	    $operations = 'convert-to-image/jpeg;' . $operations;
 	    list ($ret, $isSupported, $outputMimeType) =
@@ -638,13 +639,11 @@ class GalleryToolkitHelper_medium {
 	    return array(GalleryStatus::success(), null, null);
 	}
 
-	/*
-	 * If the output type isn't viewable, then try to turn it into a form that *is* viewable.
-	 */
-    list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($outputMimeType);
-    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-    }
+	/* If the output type isn't viewable, then try to turn it into a form that *is* viewable. */
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($outputMimeType);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 	if (!$isViewable) {
 	    $tmpOperations = $operations . ';convert-to-image/jpeg';
 	    list ($ret, $isSupported, $tmpOutputMimeType) =

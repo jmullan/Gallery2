@@ -97,6 +97,10 @@ class RandomHighlightModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '0.9.0':
+	case '0.9.1':
+	case '0.9.2':
 	}
 
 	return GalleryStatus::success();

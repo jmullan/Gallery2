@@ -90,6 +90,10 @@ class WebCamModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    break;
+
+	case '0.9.2':
+	    break;
 	}
 
 	return GalleryStatus::success();
