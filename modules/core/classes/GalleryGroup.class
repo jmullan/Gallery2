@@ -89,6 +89,7 @@ class GalleryGroup_core extends GalleryEntity {
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>SMALL</member-size>
      * @g2   <indexed/>
+     * @g2   <unique/>
      * @g2 </member>
      *
      * @var string $_groupName
@@ -108,12 +109,31 @@ class GalleryGroup_core extends GalleryEntity {
      * @param int the type of group
      * @return object GalleryStatus a status code
      */
-    function create($groupType) {
+    function create($groupName, $groupType=GROUP_NORMAL) {
+	global $gallery;
+
+	/* Check to see if we have a collision */
+	list($ret, $results) =
+	    $gallery->search(array('select' => 'COUNT([GalleryGroup::id])',
+				   'where' => ('[GalleryGroup::groupName]=?')),
+			     array($groupName));
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$result = $results->nextResult();
+	if ($result[0] > 0) {
+	    return GalleryStatus::error(ERROR_COLLISION,
+					__FILE__, __LINE__);
+	}
+	
 	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$this->setGroupName($groupName);
 	$this->setGroupType($groupType);
 
 	return GalleryStatus::success();
