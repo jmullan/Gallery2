@@ -113,6 +113,11 @@ class GalleryTheme {
      * @return HTML content
      */
     function select($params, $content) {
+	/* Translate the form variable name */
+	if (isset($params['name'])) {
+	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	}
+
 	return $this->_renderTemplate('select', $params, $content);
     }
     
@@ -124,6 +129,11 @@ class GalleryTheme {
      * @return HTML content
      */
     function textarea($params, $content) {
+	/* Translate the form variable name */
+	if (isset($params['name'])) {
+	    $params['name'] = GALLERY_FORM_VARIABLE_PREFIX . $params['name'];
+	}
+
 	return $this->_renderTemplate('textarea', $params, $content);
     }
 
@@ -236,6 +246,28 @@ class GalleryTheme {
 	return $this->_renderTemplate('errorFontColor', $params, $content);
     }
 
+    /**
+     * Return the given content inside a highlight box
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function highlight1($params, $content) {
+	return $this->_renderTemplate('highlight1', $params, $content);
+    }
+    
+    /**
+     * Return the given content inside a highlight box
+     *
+     * @param array key => value attributes
+     * @param string content to go inside the block
+     * @return HTML content
+     */
+    function highlight2($params, $content) {
+	return $this->_renderTemplate('highlight2', $params, $content);
+    }
+    
     /**
      * Return the given content inside a thin themed frame
      *
