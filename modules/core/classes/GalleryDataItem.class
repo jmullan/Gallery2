@@ -119,10 +119,8 @@ class GalleryDataItem_core extends GalleryItem {
 					__FILE__, __LINE__);
 	}
 
-	if (!$platform->is_uploaded_file($inputFileName) &&
-	        !$platform->file_exists($inputFileName)) {
-	    return GalleryStatus::error(ERROR_BAD_PATH,
-					__FILE__, __LINE__);
+	if (!$platform->is_uploaded_file($inputFileName) && !$platform->file_exists($inputFileName)) {
+	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 	
 	/*
