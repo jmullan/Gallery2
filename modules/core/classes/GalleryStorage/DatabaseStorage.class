@@ -1234,8 +1234,17 @@ class DatabaseStorage extends GalleryStorage {
 	$where = array();
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($entry[$memberName])) {
-		$where[] = $this->_translateColumnName($memberName) . '=?';
-		$data[] = $entry[$memberName];
+		if (is_array($entry[$memberName])) {
+		    $qs = array();
+		    foreach ($entry[$memberName] as $value) {
+			$qs[] = '?';
+			$data[] = $value;
+		    }
+		    $where[] = $this->_translateColumnName($memberName) . ' IN (' . implode(',', $qs) . ')';
+		} else {
+		    $where[] = $this->_translateColumnName($memberName) . '=?';
+		    $data[] = $entry[$memberName];
+		}
 	    }
 	}
 
