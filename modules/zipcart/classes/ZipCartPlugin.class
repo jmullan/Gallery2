@@ -166,14 +166,14 @@ class ZipCartPlugin extends CartPluginInterface_1_0 {
 	    $cmd[] = $relativePath;
 	}
 
-	$cwd = getcwd();
-	if (!chdir($zipDir)) {
+	$cwd = $platform->getcwd();
+	if (!$platform->chdir($zipDir)) {
 	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
 	}
 	$gallery->guaranteeTimeLimit(60);
 	list ($success) = $platform->exec(array($cmd));
 	if (!empty($cwd)) {
-	    @chdir($cwd);
+	    @$platform->chdir($cwd);
 	}
 
 	foreach ($tmpFiles as $path) {

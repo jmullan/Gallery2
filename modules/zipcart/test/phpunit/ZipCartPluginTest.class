@@ -321,6 +321,14 @@ class ZipCartPluginTestPlatform {
     function is_dir($path) {
 	return $this->_platform->is_dir($path);
     }
+
+    function getcwd() {
+	return $this->_platform->getcwd();
+    }
+
+    function chdir($path) {
+	return $this->_platform->chdir($path);
+    }
 }
 
 require_once(dirname(__FILE__) . '/../../../core/classes/GalleryToolkit.class');
