@@ -128,26 +128,6 @@ class GalleryDerivativeHelper {
     }
 
     /**
-     * Load the derivative images owned by the given item id(s) of
-     * the type(s) specified
-     *
-     * @param array GalleryItem ids
-     * @param array derivative types (eg, 'DERIVATIVE_TYPE_IMAGE_THUMBNAIL')
-     * @return array object GalleryStatus a status code 
-     *               array(GalleryItem id => GalleryDerivativeImage, ...)
-     * @access private
-     * @static
-     */
-    function fetchDerivativesByItemIds($ids, $types=null) {
-	list ($ret, $results) =
-		GalleryDerivativeHelper::_loadDerivatives($ids, null, $types);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	return array(GalleryStatus::success(), $results);
-    }
-
-    /**
      * Load the derivative images that have the specified source id(s) with
      * the type(s) specified
      *
@@ -215,8 +195,6 @@ class GalleryDerivativeHelper {
             FROM
               [GalleryDerivative]
             WHERE
-              [GalleryDerivative::id] = [GalleryChildEntity::id]
-              AND
               [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
             ';
 	}
