@@ -108,6 +108,10 @@
         {foreach from=$AdminLayouts.layouts key=layoutId item=layout}
         <tr class="{cycle values="gbEven,gbOdd"}">
 	  <td>
+	    {if $layout.state == 'install'}
+            <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="{g->text text="Status: Not
+Installed"}" />
+            {/if}
 	    {if $layout.state == 'active'}
 	    <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="{g->text text="Status: Active"}" />
 	    {/if}
