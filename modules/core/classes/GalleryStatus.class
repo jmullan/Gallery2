@@ -163,6 +163,27 @@ define("ERROR_GRAPHICS_FAILURE", 0x00010000);
 define("ERROR_PLATFORM_FAILURE", 0x00020000);
 
 /**
+ * We attempted an operation that failed because of a dependency
+ *
+ * @constant ERROR_DEPENDENCY_VIOLATION
+ */
+define("ERROR_DEPENDENCY_VIOLATION", 0x00040000);
+
+/**
+ * We tried a file operation on an unsupported file type
+ *
+ * @constant ERROR_UNSUPPORTED_FILE_TYPE
+ */
+define("ERROR_UNSUPPORTED_FILE_TYPE", 0x00080000);
+
+/**
+ * We tried an unsupported operation
+ *
+ * @constant ERROR_UNSUPPORTED_OPERATION
+ */
+define("ERROR_UNSUPPORTED_OPERATION", 0x00080000);
+
+/**
  * The operation you attempted is unimplemented
  *
  * @constant ERROR_UNIMPLEMENTED
