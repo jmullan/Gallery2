@@ -51,6 +51,12 @@ class NetPbmToolkitHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if (empty($netPbmPath)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+					      __FILE__, __LINE__),
+			 null);
+	}
+
 	$paths = array();
 	foreach (array('pnmtojpeg') as $key) {
 	    list ($ret, $paths[$key]) = 

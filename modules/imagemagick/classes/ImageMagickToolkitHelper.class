@@ -129,6 +129,12 @@ class ImageMagickToolkitHelper {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+
+	    if (empty($imageMagickPath)) {
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE,
+						  __FILE__, __LINE__),
+			     null);
+	    }
 	}
 
 	$command = array($imageMagickPath . 'identify',
