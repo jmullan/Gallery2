@@ -82,8 +82,8 @@ class WatermarkSiteAdminEditController extends GalleryController {
 		$item->setApplyToResizes(isset($form['whichDerivative']['resizes']));
 		$item->setApplyToThumbnail(isset($form['whichDerivative']['thumbnail']));
 		$item->setName($form['name']);
-		$item->setXPercentage(sprintf('%2.3f', $form['xPercentage']));
-		$item->setYPercentage(sprintf('%2.3f', $form['yPercentage']));
+		$item->setXPercentage(sprintf('%.3f', $form['xPercentage']));
+		$item->setYPercentage(sprintf('%.3f', $form['yPercentage']));
 
 		$ret = $item->save();
 		if ($ret->isError()) {

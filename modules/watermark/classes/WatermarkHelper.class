@@ -252,7 +252,7 @@ class WatermarkHelper {
 		}
 
 		if (in_array($derivative->getId(), $add)) {
-		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%2.3f,%2.3f',
+		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%.3f,%.3f',
 				      $watermark->getFileName(),
 				      $watermark->getMimeType(),
 				      $watermark->getWidth(),
