@@ -167,6 +167,7 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	$template->head('layouts/hybrid/templates/header.tpl');
+	$template->style('layouts/hybrid/layout.css');
 	return array(GalleryStatus::success(),
 		     array('body' => 'layouts/hybrid/templates/hybrid.tpl'));
     }

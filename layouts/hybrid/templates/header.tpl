@@ -7,7 +7,6 @@
 <title>
   {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
 </title>
-<link rel="stylesheet" type="text/css" href="{$layout.layoutUrl}/templates/hybrid.css"/>
 <script type="text/javascript">
 {if $layout.imageCount==1}
 var data_iw = new Array(1); data_iw[0] = {$layout.imageWidths};
@@ -23,4 +22,4 @@ var data_count = data_iw.length, data_name = '{$layout.item.id}',
     album_showlinks = '{g->text text="show item links"}',
     album_hidelinks = '{g->text text="hide item links"}';
 </script>
-<script type="text/javascript" src="{$layout.layoutUrl}/templates/hybrid.js"></script>
+<script type="text/javascript" src="{$layout.layoutUrl}/hybrid.js"></script>
