@@ -1,0 +1,112 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class UpgradeOtherModulesStep extends UpgradeStep {
+    function stepName() {
+	return _('Upgrade Modules');
+    }
+
+    function loadTemplateData(&$templateData) {
+
+	$groupedModules = array();
+	$groupLabel = array();
+	$moduleInstalledStatus = array();
+	$installedVersion = array();
+
+	if (empty($templateData['errors'])) {
+	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the module list');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
+
+	if (empty($templateData['errors'])) {
+	    foreach (array_keys($moduleList) as $moduleId) {
+		list ($ret, $modules[$moduleId]) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _(sprintf('Unable to load the %s module', $moduleId));
+		}
+	    }
+
+	    ksort($modules);
+	    foreach (array_keys($modules) as $moduleId) {
+		$module =& $modules[$moduleId];
+		$moduleIsCurrent[$moduleId] =
+		    !empty($moduleList[$moduleId]['version']) &&
+		    $moduleList[$moduleId]['version'] == $module->getVersion();
+		$currentVersion[$moduleId] = $moduleList[$moduleId]['version'];
+		
+		if (isset($_REQUEST['upgrade']) &&
+		      isset($_REQUEST['module'][$moduleId]) &&
+		      $moduleList[$moduleId]['active'] &&
+		      !$moduleIsCurrent[$moduleId]) {
+		    $ret = $module->installOrUpgrade();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				_(sprintf('Unable to upgrade the %s module', $module->getName()));
+			continue;
+		    }
+		    $moduleIsCurrent[$moduleId] = true;
+		    $templateData['upgraded'][$moduleId] = $module->getName();
+		}
+
+		$group = $module->getGroup();
+		if (empty($group)) {
+		    $group = array('group' => 'others', 'groupLabel' => _('Other'));
+		}
+		$groupedModules[$group['group']][$moduleId] =& $module;
+		$groupLabel[$group['group']] = $group['groupLabel'];
+	    }
+	    ksort($groupedModules);
+	}
+
+	if (isset($_REQUEST['upgrade'])) {
+	    global $gallery;
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->commitTransaction();
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to commit database transaction');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	    $templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
+	} else {
+	    $templateData['groupedModules'] =& $groupedModules;
+	    $templateData['groupLabel'] = $groupLabel;
+	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
+	    $templateData['moduleIsCurrent'] = $moduleIsCurrent;
+	    $templateData['currentVersion'] = $currentVersion;
+	}
+
+	/* This step is never truly complete */
+	$this->setComplete(false);
+    }
+
+    function isRedoable() {
+	return false;
+    }
+
+    function isOptional() {
+	return true;
+    }
+}
+?>

@@ -55,6 +55,7 @@ if (!function_exists('_')) {
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'UpgradeCoreModule';
+$stepOrder[] = 'UpgradeOtherModules';
 $stepOrder[] = 'CleanCache';
 $stepOrder[] = 'Finished';
 

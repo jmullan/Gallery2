@@ -1,0 +1,107 @@
+    <h1><?php print _("Upgrade Other Modules") ?></h1>
+
+    <script type="text/javascript">
+      function checkAll(newValue) {
+         for (var i = 0; i < document.forms[0].length; i++) {
+             var element = document.forms[0].elements[i];
+             if (element.type == 'checkbox' && 
+                   element.name.substr(0,6) == 'module' &&
+                   ! element.disabled) {
+                 element.checked = newValue;
+             }
+         }
+      }
+    </script>
+
+    <p>
+      <?php print _("The following modules can be automatically upgraded for you.  If you choose not to upgrade them now, you may experience problems with your Gallery.   You can always upgrade or deactivate them on the Site Administration page, or return to this page later so any decision you make here is not permanent.") ?>
+    </p>
+
+    <?php if (!empty($templateData['groupedModules'])): ?>
+    <form name="othermodules_form" method="post">
+      <table class="modules">
+        <tr style="background: #ccc;">
+          <th>
+            &nbsp;
+          </th>
+          <th>
+            <?php print _("Name") ?>
+          </th>
+          <th>
+            <?php print _("Current") ?>
+          </th>
+          <th>
+            <?php print _("New") ?>
+          </th>
+          <th>
+            <?php print _("Description") ?>
+          </th>
+        </tr>
+        <?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
+	  <tr style="background:#ffff">
+	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
+	  </tr>
+	  <?php $counter = 0; ?>
+          <?php foreach ($modules as $id => $module): ?>
+	  <?php $isCurrent = $templateData['moduleIsCurrent'][$id]; ?>
+	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
+            <td>
+              <input type=checkbox name="module[<?php print $id ?>]"
+                <?php if (!$isCurrent): ?>
+                  checked="checked"
+                <?php endif; ?>
+	        <?php if ($isCurrent): ?>
+	          disabled="disabled"
+	        <?php endif; ?>
+              />
+            </td>
+            <td class="modules">
+	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php print $module->getName() ?>
+	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+            </td>
+            <td>
+	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php print $templateData['currentVersion'][$id]; ?>
+	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+            </td>
+            <td>
+	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php print $module->getVersion() ?>
+	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+            </td>
+            <td>
+	      <?php if ($isCurrent): ?> <span class="disabled"> <?php endif; ?>
+	      <?php print $module->getDescription() ?>
+	      <?php if ($isCurrent): ?> </span> <?php endif; ?>
+            </td>
+          </tr>
+	  <?php $counter++; ?>
+	  <?php endforeach; ?>
+	<?php endforeach; ?>
+        <tr style="background: #ccc;">
+          <td>
+            <input type="checkbox" onclick="checkAll(this.checked);" checked="checked"/>
+          </td>
+          <td colspan="4">
+            <?php print _("(un)check all") ?>
+          </td>
+        </tr>
+      </table>
+      <br/>
+      <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
+      <input type="hidden" name="upgrade" value="1"/>
+    </form>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.othermodules_form.submit();"><?php print _('Upgrade Selected') ?></a>
+      </span>
+      <?php $nextStep = $stepNumber + 1 ?>
+      <span class="goToNextL">
+        <a href="index.php?step=<?php print $nextStep?>">
+          <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
+        </a>
+      </span>
+    </div>
+    <?php endif; ?>
