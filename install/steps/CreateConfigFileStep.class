@@ -39,7 +39,7 @@ class CreateConfigFileStep extends InstallStep {
 	    } else {
 		$newStoreConfig = $gallery->getConfig('storage.config');
 		$in = @fopen(dirname(__FILE__) . '/../config.php-sample', 'r');
-		while ($line = fgets($in)) {
+		while ($line = fgets($in, 2000)) {
 		    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
 			$tmp = addslashes($gallery->getConfig('setup.password'));
 			$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
