@@ -128,7 +128,8 @@ class GalleryGroup_core extends GalleryEntity {
           [GalleryGroup::groupName] = ?
         ';
 	list($ret, $results) =
-	    $gallery->search($query, array($groupName), array('count' => 1));
+	    $gallery->search($query, array($groupName),
+			     array('limit' => array('count' => 1)));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
