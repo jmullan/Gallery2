@@ -62,9 +62,9 @@
 	    <input type="hidden" name="{g->formVar var="form[lastSearchCriteria]"}" value="{$form.searchCriteria}"/>
 
 	    {if isset($form.error.searchCriteria.missing)}
-	    <div class="giError">
+	    <h4 class="giError">
 	      {g->text text="You must enter some text to search for!"}
-	    </div>
+	    </h4>
 	    {/if}
 	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
 	  </div>
@@ -96,15 +96,15 @@
 	</div>
 
 	<div class="gbAdmin">
-	  <div class="giTitle">
+	  <h2 class="giTitle">
 	    {g->text text="Searching %s only" arg1=$SearchShowAll.moduleInfo.name}
-	    <input type="submit" name="{g->formVar var="form[action][scan]"}" value="{g->text text="Search all modules"}" class="button"/>
+	  </h2>
+	  <input type="submit" name="{g->formVar var="form[action][scan]"}" value="{g->text text="Search all modules"}" class="button"/>
 	    {$SearchShowAll.moduleInfo.name}
-	  </div>
 	</div>
 
 	<div class="gbAdmin">
-	  <div class="giTitle">
+
 	    {if ($SearchShowAll.results.count > 0)}
 	    {if ($form.page > 1)}
 	    <input type="submit" name="{g->formVar var="form[action][previousPage]"}" value="{g->text text="&laquo; Back"}" class="button"/>
@@ -120,7 +120,6 @@
 	    {if ($form.page < $SearchShowAll.maxPages)}
 	    <input type="submit" name="{g->formVar var="form[action][nextPage]"}" value="{g->text text="Next &raquo;"}" class="button"/>
 	    {/if}
-	  </div>
 
 	  {if (sizeof($SearchShowAll.results.results) > 0)}
 	  {assign var="childrenInColumnCount" value=0}
@@ -149,7 +148,7 @@
 		  {foreach from=$result.fields item=field} 
 		  <li>
 		    {$field.key}
-		    {$field.value|default:"&nbsp;"|ireplace:$form.searchCriteria:"<span class=\"searchHighlight\">\\1</span>"|markup}
+		    {$field.value|default:"&nbsp;"|ireplace:$form.searchCriteria:"<span class=\"giSearchHighlight\">\\1</span>"|markup}
 		  </li>
 		  {/foreach}
 		</ul>

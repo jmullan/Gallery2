@@ -12,12 +12,13 @@
   </p>
     
   <div id="gsHeader">
-    <div class="gbTitleBanner">
-      <h1 class="giTitle">
-	{g->text text="Site Administration"}
-      </h1>
-    </div>
+    <!-- header -->
   </div>
+  <ul class="gbBreadCrumb">
+    <li class="giBreadCrumbFirst">
+      {g->text text="Site Administration"}
+    </li>
+  </ul>
   <div id="gsContents">
     <div id="gsAdminSidebar">
       <div class="gbMenu">
