@@ -79,12 +79,15 @@ class StorageSetupStep extends InstallStep {
     function processRequest() {
 	if (!empty($_GET['doAutoComplete'])) {
 	    $path = !empty($_GET['path']) ? $_GET['path'] : '';
+	    /* Undo the damage caused by magic_quotes */
+	    if (get_magic_quotes_gpc()) {
+		$path = stripslashes($path);
+	    }
 
 	    /* Find all matching paths */
-	    $dirs = $this->_getAllImmediateSubdirs($path);
-
 	    header("Content-Type: text/plain");
-	    print join("\n", $dirs);
+ 	    $dirs = $this->_getAllImmediateSubdirs($path);
+ 	    print join("\n", $dirs);
 	    return false;
 	}
 
