@@ -61,6 +61,7 @@ function GalleryMain(&$testSuite, $filter) {
 
     $platform = $gallery->getPlatform();
     $modulesDir = $gallery->getConfig('code.gallery.modules');
+    $suiteArray = array();
     foreach ($moduleNames as $moduleName) {
 	$testDir = $modulesDir . $moduleName . '/test/phpunit';
 
@@ -73,7 +74,7 @@ function GalleryMain(&$testSuite, $filter) {
 		    require_once($testDir . '/' . $file);
 
 		    $className = $matches[1];
-		    if (!$filter || stristr($className, $filter)) {
+		    if (!$filter || stristr($className, $filter) || !strcasecmp($className, $filter)) {
 			if (class_exists($className) &&
 			    GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 
