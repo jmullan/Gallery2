@@ -1,0 +1,260 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Item functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ItemTest extends GalleryTestCase {
+
+    function ItemTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function _createRandomAlbum($parentId) {
+	global $gallery;
+	
+	list ($ret, $album) = GalleryFactory::newInstance('GalleryEntity', 'GalleryAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!isset($album)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+
+	if (isset($parentId)) {
+	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $ret = $album->create($parentId, 'albumtest' . rand(), $gallery->getActiveUserId());
+	} else {
+	    $ret = $album->createRoot('albumtest' . rand(), $gallery->getActiveUserId());
+	}
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Change some settings */
+	$album->setTitle('This is my title');
+	$album->setDescription('This is a description');
+
+	/* Save it */
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Leggo of our locks */
+	if (isset($lockIds)) {
+	    $ret = $gallery->releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $album);
+    }
+    
+    function setUp() {
+	global $gallery;
+	
+	parent::setUp();
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $groupIds) =
+	    GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupId = $groupIds[0];
+
+	list ($ret, $this->_parentItem) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_childItems[$i]) = $this->_createRandomAlbum($this->_parentItem->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Remove all permissions */
+	    $ret = GalleryPermissionMap::removeItemPermissions($this->_childItems[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    switch ($i) {
+	    case 0:
+		// Can't view this one
+		
+		// Has an extra perm that we care about
+		$ret = GalleryPermissionMap::addUserPermission($this->_childItems[$i]->getId(),
+							       $userId,
+							       'core.delete',
+							       false);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		break;
+
+	    case 1:
+		// Can view via user perm
+		$ret = GalleryPermissionMap::addUserPermission($this->_childItems[$i]->getId(),
+							       $userId,
+							       'core.view',
+							       false);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		break;
+
+	    case 2:
+		// Can view via group perm
+		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+								$groupId,
+								'core.view',
+								false);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+
+		// Has an extra perm that we care about
+		$ret = GalleryPermissionMap::addGroupPermission($this->_childItems[$i]->getId(),
+								$groupId,
+								'core.delete',
+								false);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		
+		break;
+	    }
+	}
+
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_parentItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testNewItemByMimeType() {
+	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('galleryphotoitem', get_class($instance));
+
+	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('image/randomimagetype');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('galleryphotoitem', get_class($instance));
+
+	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('video/randomvideotype');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('gallerymovieitem', get_class($instance));
+
+	list ($ret, $instance) = GalleryItemHelper::newItemByMimeType('randomtype/randomtype');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('galleryunknownitem', get_class($instance));
+    }
+
+    function testGetChildCounts() {
+	global $gallery;
+
+	list ($ret, $counts) = GalleryItemHelper::getChildCounts(array($this->_parentItem->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Can't view child 1
+	 * Can view child 2 via group perm
+	 * Can view child 3 via user perm
+	 */
+	$this->assertEquals(array($this->_parentItem->getId() => 2),
+			    $counts);
+    }
+
+    function testFetchChildItemIdsWithPermission() {
+	global $gallery;
+
+	list ($ret, $itemIds) =
+	    GalleryItemHelper::fetchChildItemIdsWithPermission($this->_parentItem->getId(),
+							       'core.delete');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Child 1 has it
+	 * Child 2 doesn't
+	 * Child 3 has it
+	 */
+	$this->assertEquals(array($this->_childItems[0]->getId(),
+				  $this->_childItems[2]->getId()),
+			    $itemIds);
+    }
+
+    function testGetPermissions() {
+	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[0]->getId());
+	$this->assertEquals(array('core.delete' => 1), $perms);
+
+	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[1]->getId());
+	$this->assertEquals(array('core.view' => 1), $perms);
+
+	list ($ret, $perms) = GalleryItemHelper::getPermissions($this->_childItems[2]->getId());
+	$this->assertEquals(array('core.view' => 1,
+				  'core.delete' => 1), $perms);
+    }
+
+}
+
+?>
