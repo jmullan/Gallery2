@@ -151,33 +151,41 @@ class ItemAddChildrenController extends GalleryController {
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFile = tempnam($tmpDir, 'add');
 
+		$successfullyCopied = false;
 		$fin = $platform->fopen($url, 'rb');
-		$fout = $platform->fopen($tmpFile, 'wb');
-		while (!$platform->feof($fin)) {
-		    $buf = $platform->fread($fin, 4096);
-		    $platform->fwrite($fout, $buf);
+		if ($fin) {
+		    $fout = $platform->fopen($tmpFile, 'wb');
+		    if ($fout) {
+			while (!$platform->feof($fin)) {
+			    $buf = $platform->fread($fin, 4096);
+			    $platform->fwrite($fout, $buf);
+			}
+			$platform->fclose($fout);
+			$successfullyCopied = true;
+		    }
+		    $platform->fclose($fin);
 		}
-		$platform->fclose($fin);
-		$platform->fclose($fout);
 
 		/* Add it */
-		list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+		if ($successfullyCopied) {
+		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
+		    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
-		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($tmpFile,
-									  $base,
-									  $base,
-									  $base,
-									  $base,
-									  $mimeType,
-									  $item->getId());
-		$platform->unlink($tmpFile);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($tmpFile,
+									      $base,
+									      $base,
+									      $base,
+									      $base,
+									      $mimeType,
+									      $item->getId());
+		    $platform->unlink($tmpFile);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $status['addFromWebPage'][] = array('fileName' => $url,
+							'id' => $newItem->getId());
 		}
-
-		$status['addFromWebPage'][] = array('fileName' => $url,
-						    'id' => $newItem->getId());
 	    }
 
 	    /* Figure out where to redirect upon success */
@@ -361,7 +369,7 @@ class ItemAddChildrenView extends GalleryView {
 		} else {
 		    list ($buffer, $headers, $actualUrl) =
 			GalleryUtilities::fetchWebPage($form['webPage']);
-		    if (!isset($buffer)) {
+		    if (!isset($buffer) || strpos($headers, '404 Not Found') !== false) {
 			$form['error']['webPage']['unavailable'] = 1;
 		    } else {
 			if (isset($actualUrl) && $actualUrl != $form['webPage']) {
@@ -388,6 +396,7 @@ class ItemAddChildrenView extends GalleryView {
 			$webPageUrlList = array();
 			$isSupported = array();
 			$seenBefore = array();
+			$form['webPageUrls'] = array();
 			foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
 			    if (empty($url)) {
 				continue;
@@ -406,8 +415,8 @@ class ItemAddChildrenView extends GalleryView {
 			    }
 
 			    /*
-			     * parse_url() isn't guaranteed to be reliable on relative urls, so try to make it
-			     * non relative if possible.
+			     * parse_url() isn't guaranteed to be reliable on relative urls, so try to make them
+			     * absolute if possible.
 			     */
 			    if ($url[0] == '/') {
 				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
@@ -415,8 +424,29 @@ class ItemAddChildrenView extends GalleryView {
 				    $tmp .= $baseUrlComponents['port'];
 				}
 				$url = $tmp . $url;
-			    }
+			    } else if (!preg_match('/^\w+:/', $url)) {
+				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
+				if (!empty($baseUrlComponents['port'])) {
+				    $tmp .= $baseUrlComponents['port'];
+				}
 
+				/*
+				 * The current url might be one of:
+				 *   http://example.com/path/to/file.html
+				 *   http://example.com/path/to/
+				 *
+				 * If it's a directory, it should have a trailing slash at this point.
+				 * Either way, we want the base path to be:
+				 *   http://example.com/path/to/
+				 */
+				$basePath = $baseUrlComponents['path'];
+				if (!preg_match('/\/$/', $basePath)) {
+				    $basePath = dirname($basePath) . '/';
+				}
+				$tmp .= $basePath;
+				$url = $tmp . $url;
+			    }
+			    
 			    $urlComponents = parse_url($url);
 			    if (empty($urlComponents['scheme'])) {
 				$urlComponents['scheme'] = $baseUrlComponents['scheme'];

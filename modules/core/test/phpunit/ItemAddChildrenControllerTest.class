@@ -191,6 +191,7 @@ class ItemAddChildrenControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.gif]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/404.jpg]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
@@ -226,6 +227,10 @@ class ItemAddChildrenControllerTestPlatform extends GalleryPlatform {
 
 	case 'http://test/test1.jpg':
 	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
+	    break;
+
+	case 'http://test/404.jpg':
+	    return null;
 	    break;
 	}
 
