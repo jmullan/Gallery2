@@ -49,7 +49,7 @@ class AdminFfmpegController extends GalleryController {
 
 	$status = array();
 	$error = array();
-	if (isset($form['action']['save'])) {
+	if (isset($form['action']['save']) || isset($form['action']['test'])) {
 
 	    if (empty($form['path'])) {
 		$error[] = 'form.error.path.missing';
@@ -59,7 +59,7 @@ class AdminFfmpegController extends GalleryController {
 		$platform = $gallery->getPlatform();
 		$slash = $platform->getDirectorySeparator();
 		if (!$platform->isRestrictedByOpenBasedir($form['path'])) {
-		    if (!$platform->file_exists($form['path']) && $platform->is_dir($form['path'])) {
+		    if ($platform->file_exists($form['path']) && $platform->is_dir($form['path'])) {
 			$form['path'] = trim($form['path']);
 			if (!empty($form['path'])) {
 			    if ($form['path']{strlen($form['path'])-1} != $slash) {
@@ -111,7 +111,7 @@ class AdminFfmpegController extends GalleryController {
 		}
 	    }
 	    
-	    if (empty($error)) {
+	    if (empty($error) && isset($form['action']['save'])) {
 		$ret = $gallery->setModuleParameter('ffmpeg', 'path', $form['path']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);

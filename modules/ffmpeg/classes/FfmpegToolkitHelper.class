@@ -130,13 +130,37 @@ class FfmpegToolkitHelper {
 	$relevantTypes['mov'] = 1;
 	list ($success, $results) = $platform->exec(array(array($ffmpegPath, '-formats')));
 	$mimeTypes = array();
-	foreach ($results as $resultLine) {
+	$i = 0;
+	while ($i < sizeof($results)) {
+	    $resultLine = $results[$i++];
+            # ffmpeg 0.4.6 says:
+	    # 
+	    #   Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe
+	    # ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw
+	    # rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device
+	    # audio_device rtsp redir sdp rtp
+	    # [multiple lines]
+	    #
+	    # ffmpeg 0.4.7 says:
+	    # Input audio/video file formats: mpeg mpegts image ...
+	    # [all on one line]
+	    # 
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
 			$mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
 		    }
 		}
+		$success = true;
+	    } else if (preg_match('|  Decoding: (.*)$|', $resultLine, $regs)) {
+	        do {
+		    foreach (explode(' ', $regs[1]) as $type) {
+		        if (isset($relevantTypes[$type])) {
+			    $mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
+		        }
+		    }
+		    $resultLine = $results[$i++];
+		} while ($i < sizeof($results) && !preg_match('|Codecs:|', $resultLine));
 		$success = true;
 	    }
 	}
