@@ -26,7 +26,7 @@
  */
 
 /**
- * The implementation of the core-module
+ * Photo printing at photoaccess.com
  *
  * @package PhotoAccess
  */
@@ -49,10 +49,9 @@ class PhotoAccessModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-	/* Register our graphics class with the factory */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'CartPluginInterface_1_0', 'PhotoAccessCartPlugin', 'photoaccess',
-            'modules/photoaccess/classes/PhotoAccessCartPlugin.class', 'netpbm', null);
+	    'CartPluginInterface_1_0', 'PhotoAccessCartPlugin', 'photoaccess',
+	    'modules/photoaccess/classes/PhotoAccessCartPlugin.class', 'photoaccess', null);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
