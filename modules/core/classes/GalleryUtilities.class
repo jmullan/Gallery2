@@ -1142,7 +1142,8 @@ class GalleryUtilities {
      * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
      *
      * @param object entity a GalleryEntity
-     * @return string pseudoFileName a filename
+     * @return array object GalleryStatus a status code
+     *               string pseudoFileName a filename
      */
     function getPseudoFileName($entity) {
 
@@ -1225,6 +1226,7 @@ class GalleryUtilities {
 		    $list[] = $dir . '/' . $file . '/MANIFEST';
 		}
 	    }
+	    closedir($dh);
 	}
 	$manifest = array();
 	foreach ($list as $file) {
