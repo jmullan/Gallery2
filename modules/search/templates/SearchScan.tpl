@@ -11,19 +11,18 @@
 	<tr>
 	  <td colspan="2" align="center">
 	    {gallery->highlight1}
-	    {gallery->biggerFontSize}
 	    <center>
-	    {gallery->text text="Search the Gallery"}
+	      {gallery->biggerFontSize}
+	      {gallery->text text="Search the Gallery"}
+	      {/gallery->biggerFontSize}
+	      
+	      {if !empty($return)}
+	      <br>
+	      <a href="{gallery->url view=$return.view itemId=$return.itemId}">
+		[{gallery->text text="Back to Gallery"}]
+	      </a>
+	      {/if}
 	    </center>
-	    {/gallery->biggerFontSize}
-
-	    {if !empty($return)}
-	    <center>
-	    <a href="{gallery->url view=$return.view itemId=$return.itemId}">
-	      [{gallery->text text="Back to Gallery"}]
-	    </a>
-	    </center>
-	    {/if}
 	    {/gallery->highlight1}
 	  </td>
 	</tr>
@@ -85,11 +84,11 @@
 	<tr>
 	  <td colspan="6">
 	    {gallery->highlight1}
-	    {gallery->biggerFontSize}
 	    <center>
+	      {gallery->biggerFontSize}
 	      {gallery->text text="Search Results"}
+	      {/gallery->biggerFontSize}
 	    </center>
-	    {/gallery->biggerFontSize}
 	    {/gallery->highlight1}
 	  </td>
 	</tr>
@@ -130,7 +129,7 @@
 	<!-- {foreach from=$results.results item=result} -->
 	<!-- {assign var=itemId value=$result.itemId} -->
 	<tr>
-	  <td valign="center">
+	  <td valign="baseline">
 	    <a href="{gallery->url view=core:ShowItem itemId=$itemId}">
 	      {if isset($thumbnails.$itemId)}
 	      {assign var=thumbnail value=$thumbnails.$itemId}
@@ -140,6 +139,7 @@
 	      height="{$thumbnail.height}"
 	      {/if}
 	      border="0"
+	      alt="{gallery->text text="thumbnail"}"
 	      >
 	      {else}
 	      {gallery->text text="No thumbnail"}

@@ -107,13 +107,19 @@
     {/if}
 
     <a href="http://validator.w3.org/check/referer">
-      [{gallery->text text="Validate this Page"}]
+      <img border="0" 
+	   src="{gallery->url href="images/html401.gif"}"
+           alt="{gallery->text text="This page is valid HTML 4.01"}" 
+           height="15" width="80">
     </a>
 
     <a href="http://gallery.sourceforge.net">
-      [{gallery->text text="Powered by Gallery %s"
-      arg1=$gallery.version}]
+      <img border="0" 
+	   src="{gallery->url href="images/gallery.gif"}"
+           alt="{gallery->text text="Powered by Gallery %s" arg1=$gallery.version}"
+           height="15"  
+           width="80">
     </a>
-    
+
   </body>
 </html>

@@ -147,7 +147,7 @@
 	<!-- {foreach from=$searchResults.results item=result} -->
 	<!-- {assign var=itemId value=$result.itemId} -->
 	<tr>
-	  <td valign="center">
+	  <td valign="baseline">
 	    <a href="{gallery->url view=core:ShowItem itemId=$itemId}">
 	      {if isset($thumbnails.$itemId)}
 	      {assign var=thumbnail value=$thumbnails.$itemId}

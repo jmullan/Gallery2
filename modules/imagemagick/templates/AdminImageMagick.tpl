@@ -117,7 +117,7 @@
 	    </tr>
 	{foreach from=$tests item=test}
 	<tr>
-	  <td align="center" valign="top">
+	  <td align="baseline" valign="top">
 	    {$test.name}
 	  </td>
 	  <td align="center">
