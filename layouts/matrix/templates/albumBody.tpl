@@ -78,6 +78,7 @@
 	{else}
 	  {assign var=frameType value="itemFrame"}
 	{/if}
+	<div>
 	{if isset($layout.$frameType) && isset($child.thumbnail)}
 	  {g->block type="imageframe" frame=$layout.$frameType}
 	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
@@ -87,12 +88,13 @@
 	{else}
 	  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
 	    {if isset($child.thumbnail)}
-	      {g->image item=$child image=$child.thumbnail class="giThumbnail"}<br/>
+	      {g->image item=$child image=$child.thumbnail class="giThumbnail"}
 	    {else}
-	      {g->text text="no thumbnail"}<br/>
+	      {g->text text="no thumbnail"}
 	    {/if}
 	  </a>
 	{/if}
+	</div>
 
 	{if !empty($child.itemLinks)}
 	  <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
