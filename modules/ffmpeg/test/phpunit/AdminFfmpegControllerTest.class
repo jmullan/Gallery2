@@ -42,7 +42,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	foreach (array('path') as $param) {
-	    list ($ret, $this->_saveParameters[$param]) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $param);
+	    list ($ret, $this->_saveParameters[$param]) =
+		GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $param);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -57,7 +58,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
 
 	foreach (array('path') as $param) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', $param, $this->_saveParameters[$param]);
+	    $ret = GalleryCoreApi::setPluginParameter(
+		'module', 'ffmpeg', $param, $this->_saveParameters[$param]);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -261,7 +263,7 @@ class AdminFfmpegControllerTestPlatform {
 	switch ($args[0][0]) {
 	case '/validPath/ffmpeg':
 	case '/incompletePath/ffmpeg':
-	    return array(1, array());
+	    return array(1, array('Input audio/video file formats: mpeg'));
 
 	default:
 	    return array(0, array());

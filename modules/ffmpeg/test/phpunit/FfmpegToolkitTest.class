@@ -80,8 +80,8 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array(200, 240), $results, 'dimensions mismatch');
 
-	list ($ret, $results) =
-	    $this->_toolkit->getProperty('video/x-msvideo', 'dimensions-and-duration', 'testGetProperties1.avi');
+	list ($ret, $results) = $this->_toolkit->getProperty(
+	    'video/x-msvideo', 'dimensions-and-duration', 'testGetProperties1.avi');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -128,17 +128,33 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
-	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
-	$output[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux audio_device rtsp redir sdp rtp';
+	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo',
+		'video/quicktime', 'video/x-ms-wmv');
+	$output[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image ' .
+	    'imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be ' .
+	    's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
+	    'singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
+	$output[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ' .
+	    'ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw ' .
+	    'alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm ' .
+	    'video4linux audio_device rtsp redir sdp rtp';
 	$output[] = 'Output image formats: pbm pgm ppm pam pgmyuv yuv png jpeg gif';
 	$output[] = 'Input image formats: pnm pam pgmyuv yuv png jpeg gif';
 	$output[] = 'Codecs:';
-	$output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
-	$output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio mjpeg mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr 4xm mdec ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	$output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 ' .
+	    'msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le ' .
+	    'pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt ' .
+	    'adpcm_ima_wav adpcm_ms adpcm_4xm';
+	$output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 ' .
+	    'h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio mjpeg ' .
+	    'mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr 4xm mdec ' .
+	    'ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 ' .
+	    'pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
 	$output[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
-	$output[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif qcif cif 4cif';
-	$output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+	$output[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif ' .
+	    'qcif cif 4cif';
+	$output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+	    'epzs(default) x1';
 
 	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
 			    $results);
@@ -148,12 +164,14 @@ class FfmpegToolkitTest extends GalleryTestCase {
     }
 
     function testBinariesAlternateFormatsOutput() {
-	list ($ret, $results, $mimeTypes) = FfmpegToolkitHelper::testBinary('/validPath/ffmpegAlternateFormatsOutput');
+	list ($ret, $results, $mimeTypes) =
+	    FfmpegToolkitHelper::testBinary('/validPath/ffmpegAlternateFormatsOutput');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
+	$expectedMimeTypes = array(
+	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
 	
 	$output[] = 'File formats:';
@@ -351,19 +369,31 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$expectedMimeTypes = array('video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
+	$expectedMimeTypes = array(
+	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
 
         $output = array();
         $output[] = 'File formats:';
-        $output[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg jpeg ffm audio_device rtp';
-        $output[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device rtsp redir sdp rtp';
+        $output[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+	    'ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be ' .
+	    's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
+	    'singlejpeg jpeg ffm audio_device rtp';
+        $output[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe ' .
+	    'mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm ' .
+	    'asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device rtsp redir sdp rtp';
         $output[] = 'Codecs:';
-        $output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-        $output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 mpegvideo h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 mace6 huffyuv ac3 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
+        $output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
+	    'msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be ' .
+	    'pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
+        $output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 mpegvideo ' .
+	    'h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 mace6 huffyuv ac3 ' .
+	    'pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw ' .
+	    'adpcm_ima_qt adpcm_ima_wav adpcm_ms';
         $output[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
         $output[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
-        $output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+        $output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+	    'epzs(default) x1';
 	
 	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
 			    $results);
@@ -371,6 +401,19 @@ class FfmpegToolkitTest extends GalleryTestCase {
 
 	sort($mimeTypes);
 	$this->assertEquals($expectedMimeTypes, $mimeTypes);
+    }
+
+    function testBogusBinary() {
+	list ($ret, $results, $mimeTypes, $supportsOffset) =
+	    FfmpegToolkitHelper::testBinary('/validPath/bogusBinary');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$output[] = 'Bogus stdout';
+	$this->assertEquals(
+	    array(array('name' => 'ffmpeg', 'success' => 0, 'results' => $output)),
+	    $results);
     }
 
     function testPerformOperation() {
@@ -426,7 +469,8 @@ class FfmpegToolkitTestPlatform {
 
     function init() {
 	global $gallery;
-	list ($ret, $this->_ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
+	list ($ret, $this->_ffmpegPath) =
+	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -454,28 +498,55 @@ class FfmpegToolkitTestPlatform {
 
 	case serialize(array(array('/validPath/ffmpeg', '-formats'))):
 	case serialize(array(array($this->_ffmpegPath, '-formats'))):
-	    $results[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg dv flv yuv4mpegpipe ffm audio_device rtp';
-	    $results[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux audio_device rtsp redir sdp rtp';
+	    $results[] = 'Output audio/video file formats: mpeg vcd vob mpegts crc image ' .
+	    'imagepipe mp2 ac3 h263 m4v h264 mpeg1video mjpeg s16le s16be u16le u16be s8 u8 ' .
+	    'mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg ' .
+	    'dv flv yuv4mpegpipe ffm audio_device rtp';
+	    $results[] = 'Input audio/video file formats: mpeg mpegts image imagepipe mp3 ac3 ' .
+		'h263 m4v h264 mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw ' .
+		'rawvideo rm asf avi wav swf au gif mov dv 4xm flv yuv4mpegpipe ffm video4linux ' .
+		'audio_device rtsp redir sdp rtp';
 	    $results[] = 'Output image formats: pbm pgm ppm pam pgmyuv yuv png jpeg gif';
 	    $results[] = 'Input image formats: pnm pam pgmyuv yuv png jpeg gif';
 	    $results[] = 'Codecs:';
-	    $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
-	    $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 wmv2 h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio mjpeg mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr 4xm mdec ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
+	    $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p flv rv10 mpeg4 msmpeg4v1 ' .
+		'msmpeg4v2 msmpeg4 wmv1 wmv2 mjpeg ljpeg huffyuv asv1 ffv1 rawvideo pcm_s16le ' .
+		'pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt ' .
+		'adpcm_ima_wav adpcm_ms adpcm_4xm';
+	    $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 ' .
+		'wmv2 h263i flv rv10 svq1 svq3 wmav1 wmav2 indeo3 mpegvideo dvvideo dvaudio ' .
+		'mjpeg mjpegb mp2 mp3 mace3 mace6 huffyuv ffv1 cyuv h264 vp3 asv1 vcr1 cljr ' .
+		'4xm mdec ac3 real_144 real_288 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 ' .
+		'pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms adpcm_4xm';
 	    $results[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
-	    $results[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif qcif cif 4cif';
-	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+	    $results[] = 'Frame size, frame rate abbreviations: ntsc pal film ntsc-film sqcif ' .
+		'qcif cif 4cif';
+	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+		'epzs(default) x1';
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array('/validPath/ffmpeg046FormatsOutput', '-formats'))):
             $results[] = 'File formats:';
-            $results[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg singlejpeg jpeg ffm audio_device rtp';
-            $results[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device rtsp redir sdp rtp';
+            $results[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+		'ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be ' .
+		's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
+		'singlejpeg jpeg ffm audio_device rtp';
+            $results[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+		'ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw ' .
+		'rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device ' .
+		'rtsp redir sdp rtp';
             $results[] = 'Codecs:';
-            $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-            $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 mpegvideo h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 mace6 huffyuv ac3 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
+            $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
+		'msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le ' .
+		'pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
+            $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 ' .
+		'mpegvideo h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 ' .
+		'mace6 huffyuv ac3 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 ' .
+		'pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
             $results[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
             $results[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
-            $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods epzs(default) x1';
+            $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+		'epzs(default) x1';
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array('/validPath/ffmpegAlternateFormatsOutput', '-formats'))):
@@ -656,9 +727,12 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = ' zero(fastest) full(slowest) log phods epzs(default) x1';
 	    $results[] = '';
 	    $results[] = 'Note, the names of encoders and decoders dont always match, so there are';
-	    $results[] = 'several cases where the above table shows encoder only or decoder only entries';
-	    $results[] = 'even though both encoding and decoding are supported for example, the h263';
-	    $results[] = 'decoder corresponds to the h263 and h263p encoders, for file formats its even';
+	    $results[] = 'several cases where the above table shows encoder only or decoder ' .
+		'only entries';
+	    $results[] = 'even though both encoding and decoding are supported for example, ' .
+		'the h263';
+	    $results[] = 'decoder corresponds to the h263 and h263p encoders, for file formats ' .
+		'its even';
 	    $results[] = 'worse';
 	    return array(1, $results, $stderr);
 
@@ -698,6 +772,12 @@ class FfmpegToolkitTestPlatform {
 
 	case serialize(array(array('/validPath/ffmpeg046FormatsOutput', '-h'))):
 	    return array(1, $results, $stderr);
+
+	case serialize(array(array('/validPath/bogusBinary', '-h'))):
+	case serialize(array(array('/validPath/bogusBinary', '-formats'))):
+	    $results[] = 'Bogus stdout';
+	    $stderr[] = 'Bogus stderr';
+	    return array(1, $results, $stderr);
 	}
 
 	printf("Unexpected command for mock toolkit<pre>%s</pre>", print_r($cmd, 1));
@@ -727,6 +807,7 @@ class FfmpegToolkitTestPlatform {
 	case '/validPath/ffmpegAlternateFormatsOutput':
 	case '/validPath/ffmpeg046FormatsOutput':
 	case '/validPath/ffmpeg':
+	case '/validPath/bogusBinary':
 	    return true;
 	}
     }
@@ -737,6 +818,7 @@ class FfmpegToolkitTestPlatform {
 	case '/validPath/ffmpegAlternateFormatsOutput':
 	case '/validPath/ffmpeg046FormatsOutput':
 	case '/validPath/ffmpeg':
+	case '/validPath/bogusBinary':
 	    return true;
 	}
 	
