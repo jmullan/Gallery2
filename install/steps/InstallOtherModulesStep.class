@@ -34,6 +34,7 @@ class InstallOtherModulesStep extends InstallStep {
 	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
 	GalleryDataCache::setFileCachingEnabled(false);
 
+	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
 	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
 	if ($ret->isError()) {

@@ -26,6 +26,7 @@ class InstallCoreModuleStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
 	$ret = GalleryInitFirstPass(array('debug' => 'buffered',
 					  'noDatabase' => 1));
