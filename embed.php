@@ -520,6 +520,7 @@ class GalleryEmbed {
      * Return the SystemContent block for a specific module
      * 
      * @param string module id
+     * @param string the name of the content (see the module for a description of available systemContents)
      * @return array object GalleryStatus
      *               string html content
      */
