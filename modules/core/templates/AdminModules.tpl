@@ -72,6 +72,9 @@
       {assign var="group" value=$module.group}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
+          {if $module.state == 'install'}
+	  <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13" alt="{g->text text="Status: Not Installed"}" />
+	  {/if}
           {if $module.state == 'active'}
 	  <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="{g->text text="Status: Active"}" />
 	  {/if}
