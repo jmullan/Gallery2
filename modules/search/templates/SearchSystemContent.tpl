@@ -21,14 +21,14 @@ function checkForm() {ldelim}
 </script>
 
 <div class="gbMenu">
-  <form id="SearchSystemContent" name="SearchSystemContent" action="{g->url}" method="post">
+  <form id="SearchSystemContent" action="{g->url}" method="post">
     <p>
       <input type="hidden" name="{g->formVar var="view"}" value="core:Navigation"/>
       <input type="hidden" name="{g->formVar var="subView"}" value="{$SearchSystemContent.subView}"/>
       <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchSystemContent"/>
       <input type="text" value="{g->text text="Search the Gallery"}" name="{g->formVar var="form[searchCriteria]"}" id="searchCriteria" size="15" onfocus="this.style.background='#fff';this.value='';this.style.color='#333';" onblur="this.style.background='#eee';this.style.color='#ccc';"/>
       <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1"/>
-	  <a href="#" onClick="return checkForm()" class="button">
+	  <a href="#" onclick="return checkForm()" class="button">
 		{g->text text="Go"}
 	  </a>
     </p>
