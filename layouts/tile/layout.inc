@@ -254,16 +254,32 @@ class TileLayout extends GalleryLayout {
 		    }
 		}
 		if (isset($thumbnails[$childId])) {
-		    $images[] = $thumbnails[$childId];
+		    $thumbnail = $thumbnails[$childId];
+		    if (!$thumbnail->getWidth()) {
+			list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCache($thumbnail->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		    $images[] = $thumbnail;
 		}
 
 		if (!empty($images)) {
 		    $image = $images[0];
+
+		    // Rebuild derivative if needed so width/height known..
+		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
+			if (!($image->getWidth() && $image->getHeight())) {
+			    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($image->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+		    }
 		    $image = $image->getMemberData();
 		    $newItem['image'] = $image;
 		    $newItem['imageIndex'] = count($imageWidths);
-		    if (get_class($child) == 'galleryphotoitem' &&
-			    $image['width'] > 0 && $image['height'] > 0) {
+		    if (GalleryUtilities::isA($child, 'GalleryPhotoItem') && $image['width'] > 0 && $image['height'] > 0) {
 			// Display in <img>
 			$imageWidths[] = $image['width'];
 			$imageHeights[] = $image['height'];

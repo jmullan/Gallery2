@@ -171,7 +171,15 @@ class SliderLayout extends GalleryLayout {
 			     'data' => $child->getMemberData(),
 			     'isContainer' => $child->getCanContainChildren());
 	    if (isset($thumbnails[$childId])) {
-		$newItem['thumb'] = $thumb = $thumbnails[$childId]->getMemberData();
+		// Rebuild derivative if needed so width/height known..
+		$thumb = $thumbnails[$childId];
+		if (!($thumb->getWidth() && $thumb->getHeight())) {
+		    list ($ret, $thumb) = GalleryCoreApi::rebuildDerivativeCache($thumb->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		$newItem['thumb'] = $thumb = $thumb->getMemberData();
 		if ($thumb['width'] > $maxTW) {
 		    $maxTW = $thumb['width'];
 		}

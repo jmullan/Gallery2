@@ -589,14 +589,16 @@ class GalleryToolkitHelper_medium {
 	if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
 	    $width = $source->getWidth();
 	    $height = $source->getHeight();
+	    if ($width && $height) {
 	    $operations = $derivative->getDerivativeOperations();
-	    if (preg_match('/(?:thumbnail|scale)\|(\d+)$/', $operations, $matches)) {
+		if (preg_match('/^(?:thumbnail|scale)\|(\d+)$/', $operations, $matches)) {
 		$target = $matches[1];
 		if (!empty($target)) {
-		    list ($width, $height) =
+			list ($newWidth, $newHeight) =
 			GalleryUtilities::shrinkDimensionsToFit($matches[1], $width, $height);
-		    $derivative->setWidth($width);
-		    $derivative->setHeight($height);
+			$derivative->setWidth($newWidth);
+			$derivative->setHeight($newHeight);
+		    }
 		}
 	    }
 	}

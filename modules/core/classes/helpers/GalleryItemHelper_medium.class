@@ -705,9 +705,9 @@ class GalleryItemHelper_medium {
 	    if ($success && isset($derivative)) {
 		$derivative->setDerivativeSourceId($source->getId());
 
-		if (!$derivative->getWidth()) {
-		    GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
-		}
+		/* After changing sources, the derivative dimensions are no longer valid. */
+		$derivative->setWidth(0);
+		$derivative->setHeight(0);
 
 		$ret = $derivative->save();
 		if ($ret->isError()) {

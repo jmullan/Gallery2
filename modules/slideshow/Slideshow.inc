@@ -191,7 +191,16 @@ class SlideshowView extends GalleryView {
 		    array_fill(0, count($this->sizeClasses) + 1, -1);
 		$sizeClassArea =
 		    array_fill(0, count($this->sizeClasses) + 1, -1);
-		foreach ($images as $i => $image) {
+		for ($i = 0; $i < sizeof($images); $i++) {
+		    $image = $images[$i];
+		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
+			if (!($image->getWidth() && $image->getHeight())) {
+			    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+		    }
 		    $image = $images[$i] = $image->getMemberData();
 		    if (!isset($image['width']) || !isset($image['height'])) {
 			continue; // Should not happen
@@ -209,6 +218,7 @@ class SlideshowView extends GalleryView {
 			}
 		    }
 		}
+
 		for ($j = 0, $i = count($this->sizeClasses); $i >= 0; $i--) {
 		    if ($sizeClassMap[$i] < 0) {
 			$sizeClassMap[$i] = $j;

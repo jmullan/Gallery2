@@ -339,12 +339,26 @@ class MatrixLayout extends GalleryLayout {
 
 	    /* put it all together */
 	    $i = 0;
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Begin: Rebuilding cache");
+	    }
 	    foreach ($childIds as $id) {
 		$children[$i] = $childTable[$id];
 		if (isset($thumbTable[$id])) {
+		    /* Make sure we have width and height */
+		    if (!($thumbTable[$id]->getWidth() && $thumbTable[$id]->getHeight())) {
+			list ($ret, $thumbTable[$id]) =
+			    GalleryCoreApi::rebuildDerivativeCache($thumbTable[$id]->getId());
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
 		    $children[$i]['thumbnail'] = $thumbTable[$id]->getMemberData();
 		}
 		$i++;
+	    }
+	    if ($gallery->getDebug()) {
+		$gallery->debug("End: Rebuilding cache");
 	    }
 	}
 
@@ -548,11 +562,22 @@ class MatrixLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    if ($gallery->getDebug()) {
+		$gallery->debug("Begin: Rebuilding cache");
+	    }
 	    if (!empty($resizes)) {
 		foreach ($resizes[$item->getId()] as $resize) {
+		    /* Rebuild cache, to be prepared to the getMemberData() call */
+		    list ($ret, $resize) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    $imageViews[] = $resize->getMemberData();
 		    $can['viewInline'][] = 1;
 		}
+	    }
+	    if ($gallery->getDebug()) {
+		$gallery->debug("End: Rebuilding cache");
 	    }
 	}
 

@@ -291,6 +291,84 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testEstimateDerivativeDimensions() {
+	list ($ret, $source) = GalleryCoreApi::newItemByMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($source, 'GalleryPhotoItem'));
+
+	$source->setWidth(1024);
+	$source->setHeight(768);
+
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
+
+	$derivative->setDerivativeOperations('thumbnail|200');
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$this->assertEquals(200, $derivative->getWidth());
+	$this->assertEquals(150, $derivative->getHeight());
+    }
+
+    function testEstimateDerivativeDimensions2() {
+	list ($ret, $source) = GalleryCoreApi::newItemByMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($source, 'GalleryPhotoItem'));
+
+	$source->setWidth(1024);
+	$source->setHeight(768);
+
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
+
+	$derivative->setDerivativeOperations('scale|150');
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$this->assertEquals(150, $derivative->getWidth());
+	$this->assertEquals(112, $derivative->getHeight());
+    }
+
+    function testEstimateDerivativeDimensions3() {
+	list ($ret, $source) = GalleryCoreApi::newItemByMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($source, 'GalleryPhotoItem'));
+
+	$source->setWidth(1024);
+	$source->setHeight(768);
+
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'));
+
+	$derivative->setDerivativeOperations('crop|1,2,3,4;scale|150');
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	$this->assertEquals(0, $derivative->getWidth());
+	$this->assertEquals(0, $derivative->getHeight());
+    }
 }
 
 /**

@@ -686,12 +686,24 @@ class ConfirmImportController extends GalleryController {
 					}
 					$thumbnail->setDerivativeOperations($operations);
 					
+					$thumbnail->setWidth(0);
+					$thumbnail->setHeight(0);
+
 					$ret = $thumbnail->save();
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
 					
 					$ret = GalleryCoreApi::releaseLocks($lock);
+					if ($ret->isError()) {
+					    return array($ret->wrap(__FILE__, __LINE__), null);
+					}
+
+					/*
+					 * Changing the crop size causes our derivative dimensions to change,
+					 * which affects all our dependent derivatives also.
+					 */
+					$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($thumbnail->getId()));
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}

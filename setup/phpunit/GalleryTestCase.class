@@ -359,7 +359,8 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $group);
     }
     
-    function _createDerivative(&$parent, $type, $operations='test-operation|100', $mimeType='test/file') {
+    function _createDerivative(&$parent, $type, $operations='test-operation|100', $mimeType='test/file',
+			       $fields=array()) {
 	global $gallery;
 	$parentId = $parent->getId();
 
@@ -378,6 +379,11 @@ class GalleryTestCase extends TestCase {
 	$derivative->setMimeType($mimeType);
 	$derivative->setDerivativeSourceId($parentId);
 	$derivative->setDerivativeOperations($operations);
+
+	foreach ($fields as $field => $value) {
+	    $func = "set$field";
+	    $derivative->$func($value);
+	}
 			
 	$ret = $derivative->save();
 	if ($ret->isError()) {

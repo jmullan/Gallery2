@@ -490,6 +490,84 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
+     * Zero out the dimensions for all derivatives that depend on the given source id so that
+     * they will be recalculated before the next view.
+     *
+     * @param array source ids
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function invalidateDerivativeDimensionsBySourceIds($ids) {
+	global $gallery;
+
+	if (!is_array($ids)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$idMarkers = GalleryUtilities::makeMarkers($ids);
+
+	$query = '
+        SELECT
+          [GalleryDerivativeImage::id]
+        FROM
+          [GalleryDerivative], [GalleryDerivativeImage]
+        WHERE
+          [GalleryDerivative::id] = [GalleryDerivativeImage::id]
+          AND
+          [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+        ';
+	
+	list ($ret, $searchResults) = $gallery->search($query, $ids);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get all derivative ids */
+	$derivativeIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $derivativeIds[] = $result[0];
+	}
+
+	if (!empty($derivativeIds)) {
+	    /* Lock them all */
+	    list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    /* Turn ids into objects */
+	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Null out the dimensions and save them */
+	    foreach ($derivatives as $derivative) {
+		$derivative->setWidth(0);
+		$derivative->setHeight(0);
+
+		$ret = $derivative->save();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Repeat the process on the next set of derivatives */
+	    $ret = GalleryDerivativeHelper_advanced::invalidateDerivativeDimensionsBySourceIds($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Rebuild the cache for the given derivative
      *
      * @param the id of the derivative

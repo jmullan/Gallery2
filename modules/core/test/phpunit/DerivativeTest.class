@@ -175,6 +175,33 @@ class DerivativeTest extends GalleryTestCase {
 	}
     }
 
+    function testInvalidateDerivativeDimensionsBySourceIds() {
+
+	/* Create a sub-derivative and give it some dimensions*/
+	list ($ret, $derivative) =
+	     $this->_createDerivative($this->_mockDerivative[0], DERIVATIVE_TYPE_IMAGE_RESIZE,
+				      'bogus-operation|123', 'image/jpeg', array('width' => 100, 'height' => 200));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(100, $derivative->getWidth());
+	$this->assertEquals(200, $derivative->getHeight());
+
+	$ret = GalleryCoreApi::invalidateDerivativeDimensionsBySourceIds(array($this->_mockDerivative[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $derivative) = $derivative->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(0, $derivative->getWidth());
+	$this->assertEquals(0, $derivative->getHeight());
+    }
+
     function testExpireDerivatives() {
 
 	list ($ret, $this->_mockDerivative[0], $rebuilt) =

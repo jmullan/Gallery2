@@ -746,6 +746,20 @@ class GalleryCoreApi {
     }
 
     /**
+     * Zero out the dimensions for all derivatives that depend on the given source id so that
+     * they will be recalculated before the next view.
+     *
+     * @param array source ids
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function invalidateDerivativeDimensionsBySourceIds($ids) {
+	GalleryCoreApi::apiMethodUsed('invalidateDerivativeDimensionsBySourceId', 'GalleryDerivativeHelper_advanced');
+	require_once(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
+	return GalleryDerivativeHelper_advanced::invalidateDerivativeDimensionsBySourceIds($ids);
+    }
+
+    /**
      * Return the preferred source for this item by returning the first occurrence of the following:
      * 1. This item's preferred derivative
      * 2. This item's linked item's preferred derivative (if applicable)
