@@ -2,6 +2,9 @@ SHORT TERM
 ----------
 - implement simple/advanced user setting
 - make query definitions static where possible
+- investigate why "CreateRandomTree" test case isn't an ACID transaction
+  (while it's running, you can see the items getting added to the db from 
+   another transaction??)
 
 MEDIUM TERM
 -----------
@@ -18,6 +21,7 @@ MEDIUM TERM
   - GalleryComment's module.inc getItemDetails should delegate to a view
     instead of being inline in module.inc
 - optimization
+  - use primary keys wherever possible
   - Come up with an easy way for *Map classes to cache their results.
   - put size/mimeType into GalleryFileSystemEntity, since anything on the
     filesystem should have both (and then we can remove it from GalleryDataItem
