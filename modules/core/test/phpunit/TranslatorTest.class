@@ -40,16 +40,28 @@ class TranslatorTest extends GalleryTestCase {
     }
 
     function setUp() {
+	global $gallery;
 	parent::setUp();
-	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-	    $this->_acceptLanguageSave = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+
+	list ($ret, $this->_languageCode) = $gallery->getActiveLanguageCode();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function tearDown() {
-	if (isset($this->_acceptLanguageSave)) {
-	    $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	global $gallery;
+	$ret = $gallery->setActiveLanguageCode($this->_languageCode);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	// Init a new translator so that we reset our locale
+	$translator = new GalleryTranslator();
+	$translator->init($this->_languageCode);
+	
 	parent::tearDown();
     }
 
