@@ -461,12 +461,12 @@ class ConfirmImportController extends GalleryController {
 			    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 			    
 			    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
-										      $base,
-										      $base,
-										      $base,
-										      $base,
-										      $mimeType,
-										      $item->getId());
+										   $filename,
+										   $filename,
+										   $base,
+										   $base,
+										   $mimeType,
+										   $item->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
