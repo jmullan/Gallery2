@@ -173,6 +173,26 @@ class SystemChecksStep extends InstallStep {
 		array('title' => $title, 'success' => true);
 	}
 
+	// Check all files against MANIFEST
+	$title = _('File Integrity');
+	$warnings = SystemChecksStep::CheckManifest();
+	if (empty($warnings)) {
+	    $templateData['check'][] = array('title' => $title, 'success' => true);
+	} else {
+	    $notice = isset($warnings['manifest']) ?
+			    'lib/MANIFEST.txt ' . _('missing or inaccessible.') . '<br/>' : '';
+	    if (!empty($warnings['missing'])) {
+		$notice .= _('Missing files:') .
+			   '<ul>' . join('<br/>', $warnings['missing']) . '</ul>';
+	    }
+	    if (!empty($warnings['corrupt'])) {
+		$notice .= _('Corrupt or modified files:') .
+			   '<ul>' . join('<br/>', $warnings['corrupt']) . '</ul>';
+	    }
+	    $templateData['check'][] = array('title' => $title, 'warning' => true,
+					     'notice' => $notice);
+	}
+
 	$templateData['suggestedHtaccess'] = join("\n", $suggestedHtaccess);
 	$templateData['bodyFile'] = 'SystemChecks.html';
 	$this->setComplete($failCount == 0);
@@ -186,6 +206,30 @@ class SystemChecksStep extends InstallStep {
 	} else {
 	    return false;
 	}
+    }
+
+    function CheckManifest() {
+	$base = realpath(dirname(__FILE__) . '/../..') . '/';
+	$manifest = @file($base . 'lib/MANIFEST.txt');
+	if (empty($manifest)) {
+	    return array('manifest' => 1);
+	}
+	$warnings = array();
+	foreach ($manifest as $fileInfo) {
+	    list ($file, $cksum, $size, $viewable) = split(' ', $fileInfo);
+	    $path = $base . trim($file);
+
+	    if (!file_exists($path)) {
+		$warnings['missing'][] = $file;
+	    } else {
+		$lines = @file($path);
+		$actualChecksum = sprintf('%u', crc32(join('', $lines)));
+		if ($actualChecksum != $cksum) {
+		    $warnings['corrupt'][] = $file;
+		}
+	    }
+	}
+	return $warnings;
     }
 }
 ?>
