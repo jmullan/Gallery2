@@ -66,10 +66,10 @@ function GalleryInitFirstPass($params=array()) {
     }
 
     /* Configure our url Generator for standalone mode. */
-    $urlGenerator = new GalleryUrlGenerator('main.php');
+    $urlGenerator = new GalleryUrlGenerator( defined('G2_EMBED_URI') ? G2_EMBED_URI : 'main.php' );
     $urlGenerator->registerViewPrefix('view', 'core:ShowItem');
     $urlGenerator->registerViewPrefix('download', 'core:DownloadItem');
-    
+
     $gallery->setUrlGenerator($urlGenerator);
 
     $platform = $gallery->getPlatform();

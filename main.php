@@ -26,7 +26,7 @@ if (!file_exists(dirname(__FILE__) . '/config.php') ||
 }
 
 /* Go! */
-list($ret, $isDone, $headHtml, $bodyHtml) = GalleryMain( defined('G2_MODE_EMBEDDED') );
+list($ret, $isDone, $headHtml, $bodyHtml) = GalleryMain( defined('G2_EMBED_URI') );
 
 /* Save our session */
 if ($ret->isSuccess()) {
