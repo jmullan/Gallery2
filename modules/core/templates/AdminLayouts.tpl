@@ -60,7 +60,9 @@
         </li>
         {else}
         <li>
+          <span>
           <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=config"}">{g->text text="All Layouts"}</a>
+          </span>
         </li>
         {/if}
 
@@ -74,7 +76,9 @@
         </li>
         {else}
         <li>
+          <span>
           <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminLayouts" arg3="mode=editLayout" arg4="layoutId=$layoutId"}">{g->text text=$layout.name l10Domain=$layout.l10Domain}</a>
+          </span>
         </li>
         {/if}
         {/if}
