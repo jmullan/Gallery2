@@ -73,22 +73,22 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	}
 
 	$query = '
-        SELECT DISTINCT
-          [GalleryItem::id]
-        FROM
-          [GalleryEntity], [GalleryItem], [GalleryPermissionMap]
-        WHERE
-          [GalleryEntity::entityType] = ?
-          AND
-          [GalleryItem::id] = [GalleryEntity::id]
-          AND
-          [GalleryPermissionMap::itemId] = [GalleryEntity::id]
-          AND
-          ([GalleryPermissionMap::userId] = ?
-           OR
-           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
-        ' . $andPermission . ' = ?';
+	SELECT DISTINCT
+	  [GalleryItem::id]
+	FROM
+	  [GalleryEntity], [GalleryItem], [GalleryPermissionMap]
+	WHERE
+	  [GalleryEntity::entityType] = ?
+	  AND
+	  [GalleryItem::id] = [GalleryEntity::id]
+	  AND
+	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+	  AND
+	  ([GalleryPermissionMap::userId] = ?
+	   OR
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+	  AND
+	' . $andPermission . ' = ?';
 	$data = array();
 	$data[] = $itemType;
 	$data[] = $gallery->getActiveUserId();
@@ -131,12 +131,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	/* Search the item table for all items with owner = $ownerId */
 	$query = '
-        SELECT DISTINCT
-          [GalleryItem::id]
-        FROM
-          [GalleryItem]
-        WHERE
-          [GalleryItem::ownerId] = ?
+	SELECT DISTINCT
+	  [GalleryItem::id]
+	FROM
+	  [GalleryItem]
+	WHERE
+	  [GalleryItem::ownerId] = ?
 	';
 	list ($ret, $queryResults) = $gallery->search($query, array($ownerId));
 	if ($ret->isError()) {
@@ -214,8 +214,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    GalleryCoreApi::newFactoryInstanceById('GalleryEntity', 'GalleryUnknownItem');
 		if (!isset($newItem)) {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-						      'Unable to get a GalleryUnknownItem instance'),
-				 null);
+			'Unable to get a GalleryUnknownItem instance'), null);
 		}
 
 		$ret = $newItem->create($albumId, $fileName, $mimeType, $itemName, $symlink);
@@ -393,8 +392,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		if ($type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		    $list = explode('|', $operations);
 		    if (count($list) == 2) {
-			$tmpOperations = preg_replace('/((^|;)' . $list[0] . '\|).*?(;|$)/',
-						      '${1}' . $list[1] . '${3}',
+			$tmpOperations = preg_replace('/((^|;)' . $list[0] . ')\|.*?(;|$)/',
+						      '$1|' . $list[1] . '$3',
 						      $derivative->getDerivativeOperations());
 			if ($tmpOperations != $derivative->getDerivativeOperations()) {
 			    $operations = $tmpOperations;
@@ -606,7 +605,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    } else {
 		/* Create a new one */
 		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
-                    'GalleryDerivative', $source->getEntityType());
+		    'GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
 			/* Ignore errors -- we're already in an error handler */
@@ -862,7 +861,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $groupIds = array_keys($groupIds);
-	    
+
 	    foreach (array('core.view', 'core.viewResizes', 'core.viewSource') as $permissionId) {
 		list ($ret, $bits[]) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
 		if ($ret->isError()) {
@@ -873,7 +872,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    $groupIntersect = array_intersect(array($param['groupId']), $groupIds);
 	    if ($param['userId'] == $anonymousUserId || !empty($groupIntersect)) {
 		$targetDerivatives = array();
-		
+
 		/* If we've removed core.view then delete the thumbnail fast download */
 		if (($param['removeBits'] & $bits[0]) == $bits[0]) {
 		    list ($ret, $thumbnails) =
@@ -898,7 +897,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			    array_merge($targetDerivatives, $resizes[$param['itemId']]);
 		    }
 		}
-	    
+
 		/* If we've removed core.viewSource then delete the preferred fast downloads */
 		if (($param['removeBits'] & $bits[2]) == $bits[2]) {
 		    list ($ret, $preferreds) =

@@ -342,7 +342,7 @@ class ThumbnailHelper {
 	    }
 	    /* Make sure operations just contains thumbnail|{size} */
 	    $derivative->setDerivativeOperations(
-		preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '${1}',
+		preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '$1',
 			     $derivative->getDerivativeOperations()));
 	} else {
 	    list ($ret, $derivative) =
@@ -415,7 +415,7 @@ class ThumbnailHelper {
 	}
 
 	/* Make sure operations just contains thumbnail|{size} */
-	$operations = preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '${1}',
+	$operations = preg_replace('/^(?:.*;)?(thumbnail\|\d+)(?:;.*)?$/', '$1',
 				   $derivative->getDerivativeOperations());
 
 	list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);

@@ -57,7 +57,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    continue;
 		}
 
-		if (empty($form['resizes'][$i]['width']) || 
+		if (empty($form['resizes'][$i]['width']) ||
 		    empty($form['resizes'][$i]['height'])) {
 		    $error[] = sprintf('form[error][resizes][%d][size][missing]', $i);
 		} else if (!is_numeric($form['resizes'][$i]['width'])
@@ -76,18 +76,18 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		if (isset($thumbTable[$item->getId()]) && 
-		    !empty($form['thumbnail']['size']) && 
+		if (isset($thumbTable[$item->getId()]) &&
+		    !empty($form['thumbnail']['size']) &&
 		    $form['thumbnail']['size'] > 0) {
 		    /* Change the thumbnail */
 		    $thumbnail = $thumbTable[$item->getId()];
 		    $thumbnail->setDerivativeOperations(
-			preg_replace('/((^|;)thumbnail\|)\d+/', '${1}' . 
+			preg_replace('/((^|;)thumbnail)\|\d+/', '$1|' .
 				     $form['thumbnail']['size'],
 				     $thumbnail->getDerivativeOperations()));
 
 		    if ($thumbnail->isModified()) {
-			list ($ret, $lockId) = 
+			list ($ret, $lockId) =
 			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -102,8 +102,8 @@ class ItemEditPhoto extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
-		} else if (!isset($thumbTable[$item->getId()]) && 
-			   !empty($form['thumbnail']['size']) && 
+		} else if (!isset($thumbTable[$item->getId()]) &&
+			   !empty($form['thumbnail']['size']) &&
 			   $form['thumbnail']['size'] > 0) {
 		    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
 		    if ($ret->isError()) {
@@ -117,16 +117,16 @@ class ItemEditPhoto extends ItemEditPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    if (isset($toolkit)) {
-			list ($ret, $thumbnail) = 
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', 
+			list ($ret, $thumbnail) =
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
 								     $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
 			if (!isset($thumbnail)) {
-			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-					 null, null);
+			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+							      __FILE__, __LINE__), null, null);
 			}
 
 			$ret = $thumbnail->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
@@ -136,21 +136,21 @@ class ItemEditPhoto extends ItemEditPlugin {
 
 			$thumbnail->setMimeType($outputMimeType);
 			$thumbnail->setDerivativeSourceId($source->getId());
-			$thumbnail->setDerivativeOperations('thumbnail|' . 
+			$thumbnail->setDerivativeOperations('thumbnail|' .
 							    $form['thumbnail']['size']);
-		
+
 			$ret = $thumbnail->save();
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 		    }
-		} else if (isset($thumbTable[$item->getId()]) && 
+		} else if (isset($thumbTable[$item->getId()]) &&
 			   empty($form['thumbnail']['size'])) {
-                    /* Delete the thumbnail */
+		    /* Delete the thumbnail */
 		    $ret = GalleryCoreApi::deleteEntityById($thumbTable[$item->getId()]->getId());
-                    if ($ret->isError()) {
-                	return array($ret->wrap(__FILE__, __LINE__), null, null);
-                    }		    
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
 		}
 
 		/* Get and delete all current resizes */
@@ -191,15 +191,15 @@ class ItemEditPhoto extends ItemEditPlugin {
 			}
 
 			list ($ret, $derivative) =
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', 
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
 								     $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
 			if (!isset($derivative)) {
-			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-					 null, null);
+			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+							      __FILE__, __LINE__), null, null);
 			}
 
 			$ret = $derivative->create($item->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);

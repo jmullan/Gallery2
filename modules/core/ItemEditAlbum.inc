@@ -150,8 +150,8 @@ class ItemEditAlbum extends ItemEditPlugin {
 				return array($ret->wrap(__FILE__, __LINE__), null, null);
 			    }
 
-			    $operation = preg_replace('/((^|;)thumbnail\|)\d+/',
-						      '${1}' . $form['thumbnail']['size'],
+			    $operation = preg_replace('/((^|;)thumbnail)\|\d+/',
+						      '$1|' . $form['thumbnail']['size'],
 						      $thumbnail->getDerivativeOperations());
 			} else {
 			    /*
