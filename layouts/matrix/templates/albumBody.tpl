@@ -22,46 +22,48 @@
     {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
 
     <div class="gbTopFlag">
-      <div class="gbTitleBanner">
-        <h1 class="giTitle">
-          {$layout.item.title|markup}
-        </h1>
-
-        <p class="giDescription">
-          {$layout.item.description|markup}
-        </p>
-      </div>
-
-      <div class="giInfo">
-        <ul>
-          <li>
-            {capture name=creationTimestamp}
-            {g->date timestamp=$layout.item.creationTimestamp}
-            {/capture}
-            {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
-          </li>
-
-          <li>
-            {g->text one="Size: %d item"
-                     many="Size: %d items"
-                            count=$layout.totalChildCount
-                            arg1=$layout.totalChildCount}
-            {g->text one="(%d item total)"
-                            many="(%d items total)"
-                            count=$layout.totalDescendentCount
-                            arg1=$layout.totalDescendentCount}
-          </li>
-
-          <li>
-            {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
-          </li>
-        </ul>
-      </div>
+      <table class="gbTitleBanner">
+        <tr>
+          <td>
+            <h1 class="giTitle">
+              {$layout.item.title|markup}
+            </h1>
+            <p class="giDescription">
+              {$layout.item.description|markup}
+            </p>      
+          </td>
+  
+          <td>
+            <ul class="giInfo">
+              <li>
+                {capture name=creationTimestamp}
+                {g->date timestamp=$layout.item.creationTimestamp}
+                {/capture}
+                {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+              </li>
+    
+              <li>
+                {g->text one="Size: %d item"
+                         many="Size: %d items"
+                                count=$layout.totalChildCount
+                                arg1=$layout.totalChildCount}
+                {g->text one="(%d item total)"
+                                many="(%d items total)"
+                                count=$layout.totalDescendentCount
+                                arg1=$layout.totalDescendentCount}
+              </li>    
+              <li>
+                {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </table>
     </div>
 
     {if (sizeof($layout.children) > 0)}
     {assign var="childrenInColumnCount" value=0}
-    <table>
+    <table id="gbThumbMatrix">
       <tr>
         {foreach from=$layout.children item=child}
 
@@ -73,7 +75,7 @@
         {/if}
 
         {assign var=childrenInColumnCount value="`$childrenInColumnCount+1`"}
-        <td class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" valign="top">
+        <td class="{if $child.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" width="10%">
           <div class="giThumbImage">
             <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
               {if isset($child.thumbnail)}

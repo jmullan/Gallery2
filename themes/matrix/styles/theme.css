@@ -194,23 +194,26 @@ body {
 #gsAlbumContents .gbTopFlag,
 #gsAdminContents .gbTopFlag  {
 	background-color: #eee;
-	padding: 8px 0;
+	padding: 0;
 }
 
 .gbTitleBanner {
 	margin: 0 0 0 8px;
 }
 
-#gsAlbumContents .gbItemAlbum {
-	background-color: #eee;
-	padding: 8px 0;
-}
-
+#gsAlbumContents .gbItemAlbum,
 #gsAlbumContents .gbItemImage, 
 #gsAlbumContents .gbItemMovie, 
 #gsAlbumContents .gbItemOther {
+        vertical-align: top;
 	background-color: #fff;
+        padding: 14px;
 }
+
+#gsAlbumContents .gbItemAlbum {
+	background-color: #eee;        
+}
+
 
 #gsAlbumContents .gbExif {
 	margin: 8px;
@@ -226,7 +229,7 @@ body {
 }
 
 .gsSingleImage {
-	margin: 8px 0 8px 6px;
+	margin: 16px;
 }
 
 /*	  #gsComments	 */
@@ -250,7 +253,7 @@ body {
 /*	  small grey border around all the thumbnails */
 #gsSearchContents .giThumbImage, 
 #gsSearchContents .giThumbMovie, 
-#gsSearchContents .giThumbOther { border: 2px solid #ccc; }
+#gsSearchContents .giThumbOther { border: 0px solid #ccc; }
 
 /*	  override the normal title clear so as to wrap information
  on the right of the thumbnail */
@@ -259,7 +262,6 @@ body {
 	border-width: 0;
 	margin: 0;
 	padding: 0;
-	clear: both; 
 }
 
 #gsSearchContents .gbItemImage img { border: 0px; }
@@ -335,17 +337,16 @@ body {
 
 .giInfo {
 	display: block;
-	float: left;
 	font-size: 0.9em;
 	color: #888;
+	margin: 0;
 	padding: 8px 0;
 	list-style: none;
 }
 
-.giInfo ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+.giInfo li {
+        margin: 0;
+        padding: 0;
 }
 
 span.giDate { }
@@ -355,8 +356,7 @@ span.giCount { }
 /*  thumbnails */
 .giThumbImage, .giThumbMovie, .giThumbOther {
 	border: 0;
-	float: left;
-	margin: 0 8px 8px 8px;
+	margin: 0 0 12px 0;
 }
 
 .giThumbImage img { border: 0; }

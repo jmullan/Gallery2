@@ -71,18 +71,26 @@
       </div>
       
       <ul>
+        {if ($ItemAdmin.isSiteAdmin)}
+        <li>
+          <a href="{g->url arg1="view=core:SiteAdmin"}">
+            {g->text text="Site Admin"}
+          </a>
+        </li>
+        {/if}
+
         {if ($ItemAdmin.itemType == 'item')}
         <li>
           <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
             {g->text text="Back to Item View"}
           </a>
         </li>
-        
         <li>
           <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.parent.id`"}">
             {g->text text="Back to Album View"}
           </a>
         </li>
+
         {else}
         <li>
           <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
@@ -91,13 +99,6 @@
         </li>
         {/if}
 
-        {if ($ItemAdmin.isSiteAdmin)}
-        <li>
-          <a href="{g->url arg1="view=core:SiteAdmin"}">
-            {g->text text="Site Admin"}
-          </a>
-        </li>
-        {/if}
       </ul>
     </div>
   </div>
