@@ -137,6 +137,7 @@ class GallerySession {
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
 	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+	    $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
 	} else {
 	    /* Sanitize user input to avoid writing outside the session's dir */
 	    $this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
@@ -146,6 +147,20 @@ class GallerySession {
 	$ret = $this->_loadSessionData();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Verify the remote address to avoid casual session hijacking */
+	if (!isset($this->_remoteIp) || $this->_remoteIp != $_SERVER['REMOTE_ADDR']) {
+	    /*
+	     * The session was not created from this browser address, so reset
+	     * our data to prevent hijacking.
+	     */
+	    $this->_remoteIp = $_SERVER['REMOTE_ADDR'];
+	    $this->_emptySessionData();
+	    $ret = $this->save(true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) || 
@@ -226,8 +241,10 @@ class GallerySession {
 	$dieRoll = rand(1, 100);
 	
 	/* Only bother saving if we've been modified at all */
-	if ($this->_sessionData != $this->_loadedSessionData) {
-	    $serialized = serialize($this->_sessionData);
+	$serialized = serialize(array($this->_creationTime,
+				      $this->_remoteIp,
+				      $this->_sessionData));
+	if ($serialized != $this->_loadedSessionData) {
 	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 	    $ret = $platform->concurrentWrite($sessionFile, $serialized);
 	    if ($ret->isError()) {
@@ -421,25 +438,39 @@ class GallerySession {
 	$platform = $gallery->getPlatform();
 	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
 
+	$valid = false;
 	if ($platform->file_exists($sessionFile)) {
 	    list ($ret, $serialized) = $platform->concurrentRead($sessionFile);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    /* Make sure we create two *separate* arrays here or our
-	     * comparison later will fail sometimes if we just assign
-	     * one to the other with '='.
-	     */
-	    $this->_sessionData = unserialize($serialized);
-	    $this->_loadedSessionData = array_merge(array(), $this->_sessionData);
-	} else {
+	    $data = unserialize($serialized);
+	    if (sizeof($data) == 3) {
+		list ($this->_creationTime,
+		      $this->_remoteIp,
+		      $this->_sessionData) = $data;
+		$this->_loadedSessionData = $serialized;
+	    }
+	    $valid = true;
+	}
+
+	if (!$valid) {
 	    /* No session file */
-	    $this->_sessionData = array();
-	    $this->_loadedSessionData = array();
-	    $this->_creationTime = time();
+	    $this->_emptySessionData();
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Get rid of all session data
+     *
+     * @access private
+     */
+    function _emptySessionData() {
+	$this->_sessionData = array();
+	$this->_loadedSessionData = array();
+	$this->_creationTime = time();
     }
 
     /**
