@@ -28,13 +28,14 @@ class GetChildrenTestCase extends TestCase {
 	}
 
 	for ($i = 0; $i < $iterations; $i++) {
-	    /* Count 'em all */
-	    list ($ret, $count) = $root->fetchChildCount($userId);
+	    /* Get the child count */
+	    list ($ret, $count) =
+		GalleryItemHelper::getChildCounts(array($root->getId()), $userId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $gallery->debug("count: $count");
+	    $gallery->debug("count: $count[$rootId]");
 
 	    /* Get 'em all */ 
 	    list ($ret, $childIds) = $root->fetchChildren($userId);

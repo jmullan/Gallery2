@@ -34,10 +34,12 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 	
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
-	$extension = 'jpg';
+	$extension = GalleryUtilities::getFileExtension($imagePath);
+	$mimeType = GalleryUtilities::getMimeType($imagePath);
 	$ret = $photo->create($rootId,
 			      $imagePath,
 			      $gallery->getActiveUserId(),
+			      $mimeType,
 			      $extension,
 			      'itemPath_' . time());
 	if ($ret->isError()) {

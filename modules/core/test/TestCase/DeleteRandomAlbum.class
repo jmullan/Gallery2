@@ -41,19 +41,17 @@ class DeleteRandomAlbumTestCase extends TestCase {
 	}
 
 	/* Get the children */ 
-	list ($ret, $childIds) = $root->fetchChildrenWithTypes($userId);
+	list ($ret, $children) = $root->fetchChildren($userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$gallery->debug_r($childIds);
-
 	$i = 0;
 	$chosen = 0;
-	foreach ($childIds as $id => $type) {
-	    if (!strcasecmp($type, "GalleryAlbumItem")) {
+	foreach ($children as $child) {
+	    if (!strcasecmp($child->getEntityType(), "GalleryAlbumItem")) {
 		if (rand(0, $i++) == 0) {
-		    $chosen = $id;
+		    $chosen = $child->getId();
 		}
 	    }
 	}
