@@ -53,36 +53,38 @@ class ThumbnailModule extends GalleryModule {
     function upgrade($currentVersion) {
 	global $gallery;
 
-	switch ($currentVersion) {
-	case '0.8.1':
-	case '0.8.2':
-	    /*
-	     * Assign parent to existing ThumbnailImage entities
-	     */
-	    list ($ret, $rootId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $storage =& $gallery->getStorage();
-	    $query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
-		   . $rootId . ' FROM [ThumbnailImage]';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	if (!empty($currentVersion)) {
+	    switch ($currentVersion) {
+	    case '0.8.1':
+	    case '0.8.2':
+		/*
+		 * Assign parent to existing ThumbnailImage entities
+		 */
+		list ($ret, $rootId) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$storage =& $gallery->getStorage();
+		$query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
+		       . $rootId . ' FROM [ThumbnailImage]';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
-	case '0.8.3':
-	case '0.8.4':
-	case '0.8.5':
-	case '0.8.6':
-	case '0.8.7':
-	case '0.8.8':
-	    break;
+	    case '0.8.3':
+	    case '0.8.4':
+	    case '0.8.5':
+	    case '0.8.6':
+	    case '0.8.7':
+	    case '0.8.8':
+		break;
 
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					    sprintf('Unknown module version %s', $currentVersion));
+	    }
 	}
 
 	return GalleryStatus::success();

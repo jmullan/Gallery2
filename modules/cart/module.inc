@@ -51,43 +51,44 @@ class CartModule extends GalleryModule /* and GalleryEventListener */ {
     function upgrade($currentVersion) {
 	global $gallery;
 
-	switch ($currentVersion) {
-	case '0.8':
-	case '0.8.1':
-	case '0.8.2':
-	case '0.8.3':
-	case '0.8.4':
-	case '0.8.5':
-	case '0.8.6':
-	case '0.8.7':
-	case '0.8.8':
-	    $storage =& $gallery->getStorage();
-	    $query = '
-	    DROP TABLE [CartMap]
-	    ';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $query = '
-	    DELETE FROM [Schema]
-	    WHERE [Schema::name] = \'CartMap\'
-	    ';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	case '0.8.9':
-	case '0.8.10':
-	    break;
+	if (!empty($currentVersion)) {
+	    switch ($currentVersion) {
+	    case '0.8':
+	    case '0.8.1':
+	    case '0.8.2':
+	    case '0.8.3':
+	    case '0.8.4':
+	    case '0.8.5':
+	    case '0.8.6':
+	    case '0.8.7':
+	    case '0.8.8':
+		$storage =& $gallery->getStorage();
+		$query = '
+		DROP TABLE [CartMap]
+		';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$query = '
+		DELETE FROM [Schema]
+		WHERE [Schema::name] = \'CartMap\'
+		';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+	    case '0.8.9':
+	    case '0.8.10':
+		break;
+
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					    sprintf('Unknown module version %s', $currentVersion));
+	    }
 	}
 
-    
 	return GalleryStatus::success();
     }
 

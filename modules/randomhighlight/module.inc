@@ -64,48 +64,50 @@ class RandomHighlightModule extends GalleryModule {
 	    }
 	}
 
-	switch ($currentVersion) {
-	case '0.5':
-	case '0.8.1':
-	case '0.8.2':
-	case '0.8.3':
-	case '0.8.4':
-	case '0.8.5':
-	case '0.8.6':
-	    /* Changed from RandomHighlightDerivativeImage entity type to onLoadHandler */
-	    $storage =& $gallery->getStorage();
-	    $query = 'UPDATE [GalleryEntity]
-		SET [::entityType] = \'GalleryDerivativeImage\',
-		    [::onLoadHandlers] = \'|RandomHighlight|\'
-		WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
-		  AND [GalleryEntity::onLoadHandlers] IS NULL';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    list ($ret, $handlers) = $storage->getFunctionSql('CONCAT',
-		array('[GalleryEntity::onLoadHandlers]', "'RandomHighlight|'"));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $query = 'UPDATE [GalleryEntity]
-		SET [::entityType] = \'GalleryDerivativeImage\',
-		    [::onLoadHandlers] = ' . $handlers . '
-		WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
-		  AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	if (!empty($currentVersion)) {
+	    switch ($currentVersion) {
+	    case '0.5':
+	    case '0.8.1':
+	    case '0.8.2':
+	    case '0.8.3':
+	    case '0.8.4':
+	    case '0.8.5':
+	    case '0.8.6':
+		/* Changed from RandomHighlightDerivativeImage entity type to onLoadHandler */
+		$storage =& $gallery->getStorage();
+		$query = 'UPDATE [GalleryEntity]
+		    SET [::entityType] = \'GalleryDerivativeImage\',
+			[::onLoadHandlers] = \'|RandomHighlight|\'
+		  WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
+		    AND [GalleryEntity::onLoadHandlers] IS NULL';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $handlers) = $storage->getFunctionSql('CONCAT',
+		    array('[GalleryEntity::onLoadHandlers]', "'RandomHighlight|'"));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$query = 'UPDATE [GalleryEntity]
+		    SET [::entityType] = \'GalleryDerivativeImage\',
+			[::onLoadHandlers] = ' . $handlers . '
+		  WHERE [GalleryEntity::entityType] = \'RandomHighlightDerivativeImage\'
+		    AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
-	case '0.9.0':
-	case '0.9.1':
-	case '0.9.2':
-	    break;
+	    case '0.9.0':
+	    case '0.9.1':
+	    case '0.9.2':
+		break;
 
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					    sprintf('Unknown module version %s', $currentVersion));
+	    }
 	}
 
 	return GalleryStatus::success();

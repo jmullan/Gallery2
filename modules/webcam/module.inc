@@ -58,47 +58,49 @@ class WebCamModule extends GalleryModule {
 	    }
 	}
 
-	switch ($currentVersion) {
-	case '0.8':
-	case '0.8.1':
-	case '0.8.2':
-	case '0.8.3':
-	case '0.8.4':
-	case '0.8.5':
-	    /* Changed from GalleryLiveImage entity type to onLoadHandler */
-	    $storage =& $gallery->getStorage();
-	    $query = 'UPDATE [GalleryEntity]
-		SET [::entityType] = \'GalleryPhotoItem\',
-		    [::onLoadHandlers] = \'|WebCam|\'
-		WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
-		  AND [GalleryEntity::onLoadHandlers] IS NULL';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    list ($ret, $handlers) = $storage->getFunctionSql('CONCAT',
-		array('[GalleryEntity::onLoadHandlers]', "'WebCam|'"));
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $query = 'UPDATE [GalleryEntity]
-		SET [::entityType] = \'GalleryPhotoItem\',
-		    [::onLoadHandlers] = ' . $handlers . '
-		WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
-		  AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
-	    $ret = $storage->execute($query);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    break;
+	if (!empty($currentVersion)) {
+	    switch ($currentVersion) {
+	    case '0.8':
+	    case '0.8.1':
+	    case '0.8.2':
+	    case '0.8.3':
+	    case '0.8.4':
+	    case '0.8.5':
+		/* Changed from GalleryLiveImage entity type to onLoadHandler */
+		$storage =& $gallery->getStorage();
+		$query = 'UPDATE [GalleryEntity]
+		    SET [::entityType] = \'GalleryPhotoItem\',
+			[::onLoadHandlers] = \'|WebCam|\'
+		  WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
+		    AND [GalleryEntity::onLoadHandlers] IS NULL';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $handlers) = $storage->getFunctionSql('CONCAT',
+		    array('[GalleryEntity::onLoadHandlers]', "'WebCam|'"));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$query = 'UPDATE [GalleryEntity]
+		    SET [::entityType] = \'GalleryPhotoItem\',
+			[::onLoadHandlers] = ' . $handlers . '
+		  WHERE [GalleryEntity::entityType] = \'GalleryLiveImage\'
+		    AND [GalleryEntity::onLoadHandlers] IS NOT NULL';
+		$ret = $storage->execute($query);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		break;
 
-	case '0.9.1':
-	case '0.9.2':
-	    break;
+	    case '0.9.1':
+	    case '0.9.2':
+		break;
 
-	default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %s', $currentVersion));
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					    sprintf('Unknown module version %s', $currentVersion));
+	    }
 	}
 
 	return GalleryStatus::success();
@@ -168,7 +170,7 @@ class WebCamModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (time() - $item->getModificationTimestamp() > $duration && !isset($loop[$id])) {
-	    // Lock and refresh to ensure another request didn't just update image..
+	    /* Lock and refresh to ensure another request didn't just update image.. */
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
