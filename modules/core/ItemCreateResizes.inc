@@ -306,7 +306,7 @@ class ItemCreateResizesView extends GalleryView {
 	    if (empty($form['resizes'])) {
 		$extraBlanks = 3;
 	    } else {
-		$extraBlanks = max(2 - sizeof($form['resizes']), 0) + 1;
+		$extraBlanks = max(2 - sizeof($form['resizes']), 0) + 2;
 	    }
 
 	    while ($extraBlanks-- > 0) {
