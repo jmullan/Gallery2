@@ -253,9 +253,10 @@ class ConfirmImportController extends GalleryController {
 		     */
 		    $user->setEmail($fields['email']);
 		    $user->setHashedPassword($fields['password']);
-		    $user->setFullName(
-			Gallery1DataParser::convertString($fields['fullname'], $sourceEncoding));
-
+		    $fullName = Gallery1DataParser::convertString(trim($fields['fullname']), $sourceEncoding);
+		    $fullName = (!empty($fullName)) ? $fullName : $userName;
+		    $user->setFullName($fullName);
+		    
 		    /*
 		     * $fields['canCreateAlbums'] if they have that perm, give them "core.addAlbumItem"
 		     * permission on the root album
