@@ -1,7 +1,7 @@
 /****************************
  * Hybrid layout for Gallery2
- * $Revision$
  * @author Alan Harder <alan.harder@sun.com>
+ * $Revision$ $Date$
  */
 
 //Class app
@@ -19,9 +19,7 @@ if (window.attachEvent) { // IE
   window.addEventListener("unload", app_setcookie, false);
 }
 function app_init() {
-  if (!app_is_ie && !app_is_safari)
-    document.getElementById('gsAlbumContent').style.marginTop =
-      document.getElementById('album_titlebar').offsetHeight + 'px';
+  if (!app_is_ie && !app_is_safari) album_setfixedtitle();
   app_body = document.getElementById('hybridMain');
   while (app_body && app_body.tagName != 'BODY') app_body = app_body.parentNode;
   if (app_is_ie) app_body = app_body.parentNode;
@@ -68,8 +66,7 @@ function app_onresize() {
 }
 function app_onload() {
   if (data_count > 0) image_precache(0);
-  if (app_is_safari) document.getElementById('gsAlbumContent').style.marginTop =
-		     document.getElementById('album_titlebar').offsetHeight + 'px';
+  if (app_is_safari) album_setfixedtitle();
 }
 function app_setcookie() {
   var d = new Date(), c = slide_order + ';' + (slide_delay/1000) + ';' + sidebar_on + ';' +
@@ -169,13 +166,13 @@ function app_onkeydown() {
 
 //Class album :: gsContent(album_titlebar(album_tools,album_desc,album_info),gsAlbumContent)
 var album_detailson=1, // Details are visible
-    album_itemlinkson=1; // Item links are visible
+    album_itemlinkson=1, // Item links are visible
+    album_fixedtitle=0; // Using fixed position for album_titlebar
 function album_detailsonoff() {
   ui_vis('album_info', (album_detailson = album_detailson?0:1));
   ui_vis('album_desc', album_detailson);
   ui_sethtml('dtl_link', album_detailson ? album_hidetext : album_showtext);
-  if (!app_is_ie) document.getElementById('gsAlbumContent').style.marginTop =
-		  document.getElementById('album_titlebar').offsetHeight + 'px';
+  if (album_fixedtitle) album_setmargin();
 }
 function album_itemlinksonoff() {
   var imgs = document.getElementById('gsAlbumContent').getElementsByTagName('IMG');
@@ -184,6 +181,19 @@ function album_itemlinksonoff() {
     if (imgs[i].className == 'popup_button')
       imgs[i].style.visibility = album_itemlinkson ? 'visible' : 'hidden';
   ui_sethtml('lnk_link', album_itemlinkson ? album_hidelinks : album_showlinks);
+}
+function album_setfixedtitle() {
+  var t = document.getElementById('album_titlebar');
+  if (t.offsetTop == 0) {
+    album_fixedtitle = 1;
+    album_setmargin();
+  } else { // Disable fixed position titlebar if it isn't at very top
+    t.style.position = 'static';
+  }
+}
+function album_setmargin() {
+  document.getElementById('gsAlbumContent').style.marginTop =
+    document.getElementById('album_titlebar').offsetHeight + 'px';
 }
 
 //Class sidebar :: div sidebar
