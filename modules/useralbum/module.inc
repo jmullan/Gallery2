@@ -37,7 +37,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('useralbum');
 	$this->setName('User Albums');
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.8.6');
+	$this->setVersion('0.8.7');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getSystemLinks');
 	$this->setRequiredCoreApi(array(2, 0));
@@ -67,7 +67,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('view' => 'everybody', 'fullSize' => '1', 'targetLocation' => $rootId,
-		       'loginRedirect' => 0, 'homeLink' => 0)
+		       'loginRedirect' => 0, 'homeLink' => 0, 'create' => 'immediate')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
@@ -110,15 +110,15 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 	if (!empty($homeLink)) {
 	    global $gallery;
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
-
-	    list ($ret, $albumId) = UserAlbumHelper::fetchUserAlbumId($gallery->getActiveUserId());
+	    $userId = $gallery->getActiveUserId();
+	    list ($ret, $anonymousUserId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    if (isset($albumId)) {
+	    if ($userId != $anonymousUserId) {
 		$links[] = array('text' => $this->translate('Your Album'),
-				 'params' => array('view' => 'core:ShowItem', 'itemId' => $albumId));
+				 'params' => array('controller' => 'useralbum:UserAlbum'));
 	    }
 	}
 	return array(GalleryStatus::success(), $links);
@@ -139,11 +139,17 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    $user = $event->getEntity();
 	    if (GalleryUtilities::isA($user, 'GalleryUser') &&
 		    $user->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
-
-		$ret = UserAlbumHelper::createUserAlbum($user);
+		list ($ret, $createMode) = $this->getParameter('create');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($createMode == 'immediate') {
+		    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
+
+		    $ret = UserAlbumHelper::createUserAlbum($user);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 	    }
 	    break;
@@ -156,8 +162,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		break;
 	    }
 
-	    list ($ret, $targetId) =
-		GalleryCoreApi::getPluginParameter('module', 'useralbum', 'targetLocation');
+	    list ($ret, $targetId) = $this->getParameter('targetLocation');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -169,8 +174,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum',
-							  'targetLocation', $rootId);
+		$ret = $this->setParameter('targetLocation', $rootId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -179,26 +183,13 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 
 	case 'Gallery::Login':
 	    /* Check if redirect is enabled.. */
-	    list ($ret, $loginRedirect) =
-		GalleryCoreApi::getPluginParameter('module', 'useralbum', 'loginRedirect');
+	    list ($ret, $loginRedirect) = $this->getParameter('loginRedirect');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    if (empty($loginRedirect)) {
-		break;
-	    }
-
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/UserAlbumHelper.class');
-	    $user = $event->getEntity();
-
-	    list ($ret, $albumId) = UserAlbumHelper::fetchUserAlbumId($user->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($albumId)) {
+	    if (!empty($loginRedirect)) {
 		/* Return a redirect to the user album.. */
-		$result = array('view' => 'core:ShowItem', 'itemId' => $albumId);
+		$result = array('controller' => 'useralbum:UserAlbum');
 	    }
 	    break;
 	}

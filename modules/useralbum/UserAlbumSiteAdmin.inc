@@ -43,7 +43,7 @@ class UserAlbumSiteAdminController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['save'])) {
-	    foreach (array('view', 'fullSize', 'targetLocation') as $key) {
+	    foreach (array('create', 'view', 'fullSize', 'targetLocation') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $form[$key]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -82,8 +82,8 @@ class UserAlbumSiteAdminView extends GalleryView {
 	global $gallery;
 	if ($form['formName'] != 'UserAlbumSiteAdmin') {
 	    $form['formName'] = 'UserAlbumSiteAdmin';
-	    foreach (array('view', 'fullSize', 'targetLocation', 'loginRedirect', 'homeLink')
-		    as $key) {
+	    foreach (array('create', 'view', 'fullSize', 'targetLocation',
+			   'loginRedirect', 'homeLink') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', $key);
 		if ($ret->isError()) {
@@ -110,6 +110,8 @@ class UserAlbumSiteAdminView extends GalleryView {
         $g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
 
 	$UserAlbumSiteAdmin = array(
+	    'createList' => array('immediate' => $module->translate('When user is created'),
+				  'access' => $module->translate('When first accessed')),
 	    'viewList' => array('everybody' => $module->translate('Everybody'),
 				'allusers' => $module->translate('All Users'),
 				'user' => $module->translate('User Only')),

@@ -47,12 +47,12 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Create random album to test assignment
-        list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	/* Create random album to test assignment */
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
     }
 
@@ -64,13 +64,9 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-        if (isset($this->_parentAlbum)) {
-            $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->_id);
-            if ($ret->isError()) {
-                print $ret->getAsHtml();
-                return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-        }
+	if (isset($this->_parentAlbum)) {
+	    $this->_markForCleanup($this->_parentAlbum);
+	}
 	parent::tearDown();
     }
 
@@ -90,6 +86,7 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
     function testUserAlbumSiteAdminControllerSave() {
 
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	GalleryUtilities::putRequestVariable('form[create]', 'immediate');
 	GalleryUtilities::putRequestVariable('form[view]', 'allusers');
 	GalleryUtilities::putRequestVariable('form[fullSize]', '0');
 	GalleryUtilities::putRequestVariable('form[targetLocation]', $this->_getRootId());
@@ -103,17 +100,17 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	// Verify the information in the DB
+	/* Verify the information in the DB */
 	list ($ret, $verifyParams) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	foreach ($verifyParams as $key => $value) {
 	    if ($key[0] == '_') {
 		unset($verifyParams[$key]);
 	    }
 	}
-	ksort($verifyParams);
-	$this->assertEquals(array('fullSize' => '0',
-				  'targetLocation' => $this->_getRootId(),
+	$this->assertEquals(array('create' => 'immediate',
 				  'view' => 'allusers',
+				  'fullSize' => '0',
+				  'targetLocation' => $this->_getRootId(),
 				  'loginRedirect' => '0',
 				  'homeLink' => '1',
 				  ),

@@ -23,13 +23,21 @@
 
   <div class="gbAdmin">
     <p class="giDescription">
-      {g->text text="A new top level album will be added each time a new user is created.  The user will have full permissions on the album.  Select view permissions for the albums below."}
+      {g->text text="An album will be created for each user.  The user will have full permissions on the album."}
     </p>
 
     <table class="gbDataTable">
       <tr>
-        <td> {g->text text="User albums viewable by"} </td>
-        <td>
+	<td> {g->text text="Create albums"} </td>
+	<td>
+	  <select name="{g->formVar var="form[create]"}">
+	    {html_options options=$UserAlbumSiteAdmin.createList selected=$form.create}
+	  </select>
+	</td>
+      </tr><tr>
+      <tr>
+	<td> {g->text text="Albums viewable by"} </td>
+	<td>
 	  <select name="{g->formVar var="form[view]"}">
 	    {html_options options=$UserAlbumSiteAdmin.viewList selected=$form.view}
 	  </select>
@@ -44,14 +52,14 @@
       </tr><tr>
 	<td> {g->text text="Location for new user albums"} </td>
 	<td>
-      <select name="{g->formVar var="form[targetLocation]"}">
-        {foreach from=$UserAlbumSiteAdmin.targetLocation item=album}
-	<option value="{$album.data.id}"{if $album.data.id==$form.targetLocation} selected="selected"{/if}>
-          {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
-	  {$album.data.title|default:$album.data.pathComponent}
-	</option>
-        {/foreach}
-      </select>
+	  <select name="{g->formVar var="form[targetLocation]"}">
+	    {foreach from=$UserAlbumSiteAdmin.targetLocation item=album}
+	    <option value="{$album.data.id}"{if $album.data.id==$form.targetLocation} selected="selected"{/if}>
+	      {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
+	      {$album.data.title|default:$album.data.pathComponent}
+	    </option>
+	    {/foreach}
+	  </select>
 	</td>
       </tr><tr>
 	<td> {g->text text="Login page"} </td>

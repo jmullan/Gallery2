@@ -1,0 +1,161 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package UserAlbum
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * UserAlbum controller tests
+ *
+ * @package UserAlbum
+ * @subpackage PHPUnit
+ */
+class UserAlbumControllerTest extends GalleryControllerTestCase {
+
+    function UserAlbumControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'useralbum:UserAlbum');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_param) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($targetAlbum);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'useralbum', 'targetLocation', $targetAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_userWithAlbum) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_userWithAlbum);
+
+	GalleryCoreApi::relativeRequireOnce('modules/useralbum/classes/UserAlbumHelper.class');
+	$ret = UserAlbumHelper::createUserAlbum($this->_userWithAlbum);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_userAlbumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_userWithoutAlbum) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_userWithoutAlbum);
+    }
+
+    function tearDown() {
+	foreach ($this->_param as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	parent::tearDown();
+    }
+
+    function testExistingAlbum() {
+	global $gallery;
+	$gallery->setActiveUser($this->_userWithAlbum);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+						      'itemId' => $this->_userAlbumId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testCreateAlbum() {
+	global $gallery;
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+
+	$results = $this->handleRequest();
+
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($albumId), 'album id');
+
+	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+						      'itemId' => $albumId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testUserIdParameter() {
+	GalleryUtilities::putRequestVariable('userId', $this->_userWithAlbum->getId());
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+						      'itemId' => $this->_userAlbumId),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testNotForAnonymous() {
+	global $gallery;
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->setActiveUser($anonymousUser);
+
+	$this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+}
+?>

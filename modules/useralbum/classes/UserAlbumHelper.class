@@ -50,7 +50,7 @@ class UserAlbumHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	// Create album..
+	/* Create album.. */
 	$albumName = $user->getUserName();
 	while (true) {
 	    list ($ret, $album) = GalleryCoreApi::createAlbum(
@@ -70,7 +70,7 @@ class UserAlbumHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	// Set owner..
+	/* Set owner.. */
 	$album->setOwnerId($user->getId());
 	$ret = $album->save();
 	if ($ret->isError()) {
@@ -79,7 +79,7 @@ class UserAlbumHelper {
 	}
 	$albumId = $album->getId();
 
-	// Set permissions..
+	/* Set permissions.. */
 	$ret = GalleryCoreApi::removeItemPermissions($albumId);
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
@@ -121,39 +121,14 @@ class UserAlbumHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Return the id of a user's first album
-     *
-     * @param int user id
-     * @return array object GalleryStatus a status code
-     *               int album id or null if no albums
-     * @static
-     */
-    function fetchUserAlbumId($userId) {
-	global $gallery;
-
-	$query = 'SELECT [GalleryAlbumItem::id]
-		  FROM [GalleryAlbumItem], [GalleryItem], [GalleryEntity]
-		  WHERE [GalleryAlbumItem::id] = [GalleryItem::id]
-		  AND [GalleryAlbumItem::id] = [GalleryEntity::id] AND [GalleryItem::ownerId] = ?
-		  ORDER BY [GalleryEntity::creationTimestamp] ASC, [GalleryEntity::id] ASC';
-
-	list ($ret, $searchResults) =
-	    $gallery->search($query, array($userId), array('limit' => array('count' => 1)));
+	/* Record id of album */
+	$ret = GalleryCoreApi::setPluginParameter(
+			       'module', 'useralbum', 'albumId', $albumId, $user->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($result = $searchResults->nextResult()) {
-	    $albumId = (int)$result[0];
-	} else {
-	    $albumId = null;
-	}
-
-	return array(GalleryStatus::success(), $albumId);
+	return GalleryStatus::success();
     }
 }
 ?>
