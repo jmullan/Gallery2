@@ -93,7 +93,11 @@
 		  {g->row}
 		    {g->column}
 		      {g->link arg1="view=core:ShowItem" arg2="itemId=$itemId"}
-			{g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+			{if isset($SearchScan.thumbnails.$itemId)}
+			  {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+			{else}
+			  {g->text text="No thumbnail"}
+			{/if}
 		      {/g->link}
 		    {/g->column}
 
