@@ -48,6 +48,11 @@ class GdToolkit extends GalleryToolkit {
      */
     var $_gdFunctionality;
 
+    /**
+     * Does our GD library has a working imageCreateTrueColor?
+     */
+    var $_hasImageCreateTrueColor;
+
     /*
      * ****************************************
      *		 Methods
@@ -60,11 +65,13 @@ class GdToolkit extends GalleryToolkit {
      * Default is GdFunctionality.class if no other is set.
      * 
      * @return object implementation of GdFunctionality
+     * @access private
      */
     function &_getGdFunctionality() {
 	if (!isset($this->_gdFunctionality)) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GdFunctionality.class');
-	    $this->_gdFunctionality =& new GdFunctionality();
+	    $gd =& new GdFunctionality();
+	    $this->setGdFunctionality($gd);
 	}
 	return $this->_gdFunctionality;
     }
@@ -79,6 +86,26 @@ class GdToolkit extends GalleryToolkit {
      */
     function setGdFunctionality(&$obj) {
 	$this->_gdFunctionality =& $obj;
+	unset($this->_hasImageCreateTrueColor);
+    }
+
+    /**
+     * Do we have a working version of imageCreateTrueColor()?
+     * 
+     * @return array object GalleryStatus
+     *	       boolean true if this function should work
+     * @access private
+     */
+    function _hasImageCreateTrueColor() {
+	if (! isset($this->_hasImageCreateTrueColor)) {
+	    $gd =& $this->_getGdFunctionality();
+	    /* Remember the info for later calls */
+	    list ($ret, $this->_hasImageCreateTrueColor) = GdToolkitHelper::hasImageCreateTrueColor($gd);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	return array(GalleryStatus::success(), $this->_hasImageCreateTrueColor);
     }
 
     /**
@@ -89,8 +116,7 @@ class GdToolkit extends GalleryToolkit {
 	case 'dimensions':
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__),
-			     null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $results = array((int)$width, (int)$height);
 	    break;
@@ -107,12 +133,11 @@ class GdToolkit extends GalleryToolkit {
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
-	global $gallery;
-	
 	$gd =& $this->_getGdFunctionality();
 
+	global $gallery;
 	if ($gallery->getDebug()) {
-	    $gallery->debug(sprintf("performOperation(%s,%s,%s,%s,%s)",
+	    $gallery->debug(sprintf('GdToolkit::performOperation(%s,%s,%s,%s,%s)',
 				    $mimeType, $operationName, $sourceFilename,
 				    $destFilename, join('|', $parameters)));
 	}
@@ -130,9 +155,6 @@ class GdToolkit extends GalleryToolkit {
 	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if ($gallery->getDebug()) {
-		$gallery->debug("width x height: " . $width . "x" . $height);
 	    }
 	    if ($operationName == 'thumbnail') {
 		/* Don't enlarge images for a thumbnail */
@@ -191,12 +213,12 @@ class GdToolkit extends GalleryToolkit {
 	     * $parameters[2]: width
 	     * $parameters[3]: height
 	     */
-	    list($ret, $destRes) = $gd->imageCreateTruecolor($parameters[2], $parameters[3]);
+	    list($ret, $destRes) = $this->_getTrueColorImageRes($parameters[2], $parameters[3]);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
-		       0, 0,			          // dst x,y
+		       0, 0,				  // dst x,y
 		       $parameters[0], $parameters[1],    // src x,y
 		       $parameters[2], $parameters[3]
 		       );
@@ -402,6 +424,7 @@ class GdToolkit extends GalleryToolkit {
      */
     function _getImageResource($mimeType, $filename) {
 	$gd =& $this->_getGdFunctionality();
+	
 	$res = null;
 	switch ($mimeType) {
 	case 'image/gif':
@@ -425,6 +448,52 @@ class GdToolkit extends GalleryToolkit {
 	}
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (! $res) {
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $res);
+    }
+
+    /**
+     * Create a truecolor GD resource with the specified sizes.
+     * 
+     * On GD >= 2.0.1 there is a function to do this directly.
+     * On earlier versions, we need to create a temporary JPEG image and
+     * create the image from that.
+     * 
+     * @return array object GalleryStatus
+     *	       resource the GD resource
+     * @access private
+     */
+    function _getTrueColorImageRes($width, $height) {
+	$gd =& $this->_getGdFunctionality();
+	list ($ret, $hasImageCreateTrueColor) = $this->_hasImageCreateTrueColor();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($hasImageCreateTrueColor) {
+	    list ($ret, $res) = $gd->imageCreateTruecolor($width, $height);
+	} else {
+	    /* Do something else to get a truecolor GD resource */
+	    global $gallery;
+	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
+	    $tmpFile = $gd->tempnam($tmpDir, 'gd');
+	    /* Create a temporary jpeg file ... */
+	    list ($ret, $tmpRes) = $gd->imageCreate($width, $height);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = $gd->imageJpeg($tmpRes, $tmpFile);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    /* ... and load it back into a resource (now truecolor) */
+	    list ($ret, $res) = $gd->imageCreateFromJpeg($tmpFile);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $gd->unlink($tmpFile);
 	}
 	if (! $res) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
@@ -484,11 +553,8 @@ class GdToolkit extends GalleryToolkit {
      * @access private
      */
     function _resizeImageResource($sourceRes, $destWidth, $destHeight) {
-	global $gallery;
-	
 	$gd =& $this->_getGdFunctionality();
-	$gallery->debug(sprintf("_resizeImageResource(%s,%s,%s)", $sourceRes, $destWidth, $destHeight));
-
+	
 	list ($ret, $sourceWidth) = $gd->imageSX($sourceRes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -498,9 +564,7 @@ class GdToolkit extends GalleryToolkit {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$gallery->debug(sprintf("source size: %sx%s", $sourceWidth, $sourceHeight));
-	
-	list($ret, $destRes) = $gd->imageCreateTruecolor($destWidth, $destHeight);
+	list($ret, $destRes) = $this->_getTrueColorImageRes($destWidth, $destHeight);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -521,13 +585,12 @@ class GdToolkit extends GalleryToolkit {
      * @access private
      */
     function _getImageDimensions($mimeType, $filename) {
-	global $gallery;
+	$gd =& $this->_getGdFunctionality();
 
 	/*
 	 * Try PHPs getimagesize first. If it runs afoul of open_basedir
 	 * it'll return false and we can try using the GD functions
 	 */
-	$gd =& $this->_getGdFunctionality();
 	$results = $gd->getImageSize($filename);
 	if (($results != false) &&
 	    (($results[0] > 1) && ($results[1] > 1))) {
@@ -579,16 +642,15 @@ class GdToolkit extends GalleryToolkit {
     function _imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	$gd =& $this->_getGdFunctionality();
 	if ($gd->functionExists('imageCopyResampled')) {
-	    $result = $gd->imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	    $ret = $gd->imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 	} else {
 	    /* Fallback */
-	    $result = $gd->imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
+	    $ret = $gd->imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 	}
-	if ($result) {
-	    return GalleryStatus::success();
-	} else {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	return GalleryStatus::success();
     }
 
 }

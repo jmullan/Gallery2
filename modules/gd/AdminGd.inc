@@ -106,10 +106,15 @@ class AdminGdView extends GalleryView {
 	    $jpegQualityList[] = $i;
 	}
 
-	$gd = GdToolkitHelper::getGdFunctionality();
-	$gdVersion = $gd->discoverGdVersion();
-	$isGdBundled = $gd->isBundled();
-	list($ret, $isGdVersionSupported) = GdToolkitHelper::isGdVersionSupported($gdVersion);
+	list ($ret, $gdVersion) = GdToolkitHelper::discoverGdVersion();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isGdBundled) = GdToolkitHelper::isBundled();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isGdVersionSupported) = GdToolkitHelper::isGdVersionSupported($gdVersion);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

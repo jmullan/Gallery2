@@ -31,6 +31,7 @@
  */
 GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkitHelper.class');
 GalleryCoreApi::relativeRequireOnce('modules/gd/classes/GdToolkit.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/TestGdFunctionality.class');
 
 /**
  * Test GdToolkit functionality
@@ -106,8 +107,9 @@ class GdToolkitTest extends GalleryTestCase {
 	     */
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    $this->_toolkit->setGdFunctionality($this->_gdFunctionality);
-	
-	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $this->_gdFunctionality);
+	    $gd =& $this->_gdFunctionality;
+	    
+	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $gd);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -115,7 +117,7 @@ class GdToolkitTest extends GalleryTestCase {
 		continue;
 	    }
 	    
-	    list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($this->_gdFunctionality);
+	    list ($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes($gd);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -125,80 +127,89 @@ class GdToolkitTest extends GalleryTestCase {
 		 * Check operations on the mime types this PHP environment seems
 		 * to understand
 		 */
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'thumbnail',
-						      '200x200.ext',
-						      '/valid/thumbnail.ext',
-						      array(100, 100));
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		if (GdToolkitHelper::isOperationSupported('thumbnail', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'thumbnail',
+							  '200x200.ext',
+							  '/valid/thumbnail.ext',
+							  array(100, 100));
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
+					array('x' => '100', 'y' => '100', 'mimeType' => $mimeType));
 		}
-		$this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/thumbnail.ext'),
-				    array('x' => '100', 'y' => '100', 'mimeType' => $mimeType));
 		
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'crop',
-						      '300x300.ext',
-						      '/valid/cropped.ext',
-						      array(1, 2, 3, 4));
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'crop',
+							  '300x300.ext',
+							  '/valid/cropped.ext',
+							  array(1, 2, 3, 4));
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/cropped.ext'),
+					array('x' => '3', 'y' => '4', 'mimeType' => $mimeType));
 		}
-		$this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/cropped.ext'),
-				    array('x' => '3', 'y' => '4', 'mimeType' => $mimeType));
-	
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'rotate',
-						      '300x200.ext',
-						      '/valid/rotated.ext',
-						      array(90));
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		
+		if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'rotate',
+							  '300x200.ext',
+							  '/valid/rotated.ext',
+							  array(90));
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/rotated.ext'),
+					array('x' => '200', 'y' => '300', 'mimeType' => $mimeType));
 		}
-		$this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/rotated.ext'),
-				    array('x' => '200', 'y' => '300', 'mimeType' => $mimeType));
+		
+		if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'convert-to-image/jpeg',
+							  '400x400.ext',
+							  '/valid/converted.jpeg',
+							  array());
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/converted.jpeg'),
+					array('x' => '400', 'y' => '400', 'mimeType' => 'image/jpeg'));
+		}
 
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'convert-to-image/jpeg',
-						      '400x400.ext',
-						      '/valid/converted.jpeg',
-						      array());
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-		$this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/converted.jpeg'),
-				    array('x' => '400', 'y' => '400', 'mimeType' => 'image/jpeg'));
+		if (GdToolkitHelper::isOperationSupported('composite', $gd)) {
+		    /* Test a basic composite operation (top right corner) */
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'composite',
+							  '300x300.ext', // composite
+							  '/valid/composited.ext', // composited
+							  array('50x50.ext', // image
+								$mimeType, // mimeType
+								50, 50, // image width, height
+								0, 0, // image alignment x, y
+								3));    // alignment type
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
 		
-		/* Test a basic composite operation (top right corner) */
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'composite',
-						      '300x300.ext', // composite
-						      '/valid/composited.ext', // composited
-						      array('50x50.ext', // image
-							    $mimeType, // mimeType
-							    50, 50, // image width, height
-							    0, 0, // image alignment x, y
-							    3));    // alignment type
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    /* Test another composite with out of range params that should
+		     * get corrected
+		     */
+		    list ($ret, $mimeType) =
+			$this->_toolkit->performOperation($mimeType, 'composite',
+							  '300x300.png', // composite (200x200)
+							  '/valid/composited.ext', // composited
+							  array('50x50.ext', // image
+								$mimeType, // mimeType
+								50, 50, // image width, height
+								151, 151, // image alignment x, y
+								0));    // alignment type
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
 		}
-	
-		/* Test another composite with out of range params that should
-		 * get corrected
-		 */
-		list ($ret, $mimeType) =
-		    $this->_toolkit->performOperation($mimeType, 'composite',
-						      '300x300.png', // composite (200x200)
-						      '/valid/composited.ext', // composited
-						      array('50x50.ext', // image
-							    $mimeType, // mimeType
-							    50, 50, // image width, height
-							    151, 151, // image alignment x, y
-							    0));    // alignment type
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	
 	    }
 	}
 
@@ -326,7 +337,8 @@ class GdToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($environment['mimeTypes'],
-				$results);
+				$results,
+				'Environment ' . $environment['name']);
 	}
     }
 
@@ -348,17 +360,22 @@ class GdToolkitTest extends GalleryTestCase {
 	    }
 	    if (! $isSupported) {
 		/* No support, so the function should return empty maps */
-		$this->assertEquals(array(), $results['operations']);
-		$this->assertEquals(array(), $results['properties']);
+		$this->assertEquals(array(), $results['operations'], 'Environment ' . $environment['name']);
+		$this->assertEquals(array(), $results['properties'], 'Environment ' . $environment['name']);
 		continue;
 	    }
-	    $this->assertEquals(array(
-		'convert-to-image/jpeg' => array(
+	    
+	    $expectedOperations = array();
+	    if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $this->_gdFunctionality)) {
+		$expectedOperations['convert-to-image/jpeg'] = array(
 		    'params' => array(),
 		    'description' => 'Convert to a JPEG',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    'outputMimeType' => 'image/jpeg'),
-		'scale' => array(
+		    'outputMimeType' => 'image/jpeg'
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('scale', $this->_gdFunctionality)) {
+		$expectedOperations['scale'] = array(
 		    'params' => array(
 			array(
 			    'type' => 'int',
@@ -367,8 +384,10 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Scale the image to the target size',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    ),
-		'thumbnail' => array(
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('thumbnail', $this->_gdFunctionality)) {
+		$expectedOperations['thumbnail'] = array(
 		    'params' => array(
 			array(
 			    'type' => 'int',
@@ -377,8 +396,10 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Scale the image to the target size',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    ),
-		'resize' => array(
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('resize', $this->_gdFunctionality)) {
+		$expectedOperations['resize'] = array(
 		    'params' => array(
 			array(
 			    'type' => 'int',
@@ -391,8 +412,10 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Resize the image to the target dimensions',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    ),
-		'rotate' => array(
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('rotate', $this->_gdFunctionality)) {
+		$expectedOperations['rotate'] = array(
 		    'params' => array(
 			array(
 			    'type' => 'int',
@@ -401,8 +424,10 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Rotate the image',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    ),
-		'crop' => array(
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('crop', $this->_gdFunctionality)) {
+		$expectedOperations['crop'] = array(
 		    'params' => array(
 			array('type' => 'int',
 			      'description' => 'left edge'),
@@ -415,8 +440,10 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Crop the image',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    ),
-		'composite' => array(
+		    );
+	    }
+	    if (GdToolkitHelper::isOperationSupported('composite', $this->_gdFunctionality)) {
+		$expectedOperations['composite'] = array(
 		    'params' => array(
 			array('type' => 'string',
 			      'description' => 'overlay path'),
@@ -435,9 +462,11 @@ class GdToolkitTest extends GalleryTestCase {
 			),
 		    'description' => 'Composite the image',
 		    'mimeTypes' => $environment['mimeTypes'],
-		    )
-		),
-		$results['operations']);
+		    );
+	    }
+
+	    $this->assertEquals($expectedOperations, $results['operations'],
+				'Environment ' . $environment['name']);
 	    
 	    $this->assertEquals(array(
 		'dimensions' => array(
@@ -446,415 +475,10 @@ class GdToolkitTest extends GalleryTestCase {
 		    'mimeTypes' => $environment['mimeTypes'],
 		    )
 		),
-		$results['properties']);
+		$results['properties'], 'Environment ' . $environment['name']);
 	}
     }
 
-}
-
-/**
- * Test Gd Functionality
- *
- * @package Gd
- * @subpackage PHPUnit
- */
-class TestGdFunctionality {
-
-    /*
-     * Our current environment
-     */
-    var $_gdEnvironment;
-
-    /*
-     * Keep track of our resources
-     */
-    var $_resourceCounter = 0;
-    var $_resources;
-    var $_outputFiles;
-
-    function TestGdFunctionality() {
-    }
-    
-    function functionExists($fct) {
-	$fct = strtolower($fct);
-	if (isset($this->_gdEnvironment['function_exists'][$fct])) {
-	    return $this->_gdEnvironment['function_exists'][$fct];
-	}
-	return false;
-    }
-    
-    /**
-     * Set the environment we want to simulate
-     * -> 1. PHP 4.1.0, GD 1.6.2 not bundled (4.1.0|1.6.2|0)
-     *    2. PHP 4.2.0, GD 1.8.2 not bundled
-     * -> 3. PHP 4.3.1, GD 2.0 bundled       (4.3.1|2.0|1)
-     *    4. PHP 4.3.9, GD 1.6.2 not bundled 
-     * -> 5. PHP 4.3.9RC1, GD 2.0.28 bundled (4.3.9RC1|2.0.28|1)
-     *    6. PHP 5.0.1, GD 2.0.28 bundled
-     */
-    function setEnvironment($environment) {
-	$this->_gdEnvironment = $environment;
-    }
-    
-    function getEnvironmentName() {
-	return $this->_gdEnvironment['name'];
-    }
-
-    function discoverGdVersion() {
-	return $this->_gdEnvironment['gdVersion'];
-    }
-
-    function isBundled() {
-	return $this->_gdEnvironment['gdBundled'];
-    }
-    
-    function canRotate() {
-	return $this->functionExists('imageRotate');
-    }
-
-    /**
-     * Return the name of a new resource
-     * 
-     * From a filename like '200x300.gif' set the sizes x=200 y=300
-     *
-     */
-    function getNewResource($filename = '') {
-	$this->_resourceCounter++;
-	$name = 'res #' . $this->_resourceCounter;
-	$this->_resources[$name] = array(
-	    'x' => 0,
-	    'y' => 0,
-	    'trueColor' => false,
-	);
-	if ($filename != '') {
-	    if (preg_match('/(\d+)x(\d+)\./i', $filename, $matches)) {
-		$this->_resources[$name]['x'] = (int) $matches[1];
-		$this->_resources[$name]['y'] = (int) $matches[2];
-	    }
-	}
-	return $name;
-    }
-    /**
-     * Make a copy of some resource
-     */
-    function copyResource($otherRes) {
-	$this->_resourceCounter++;
-	$newRes = 'Resource #' . $this->_resourceCounter;
-	$this->_resources[$newRes] = $this->_resources[$otherRes];
-	return $newRes;
-    }
-    function setResourceData($res, $field, $value) {
-	$this->_resources[$res][$field] = $value;
-    }
-    function getResourceData($res, $field) {
-	if (isset($this->_resources[$res][$field])) {
-	    return $this->_resources[$res][$field];
-	}
-	return '';
-    }
-    function isValidResource($res) {
-	return isset($this->_resources[$res]);
-    }
-    function saveResource($res, $filename, $mimeType) {
-	$this->_outputFiles[$filename] = array(
-	    'x' => $this->getResourceData($res, 'x'),
-	    'y' => $this->getResourceData($res, 'y'),
-	    'mimeType' => $mimeType,
-	);
-    }
-    function getOutputFileData($filename) {
-	if (! isset($this->_outputFiles[$filename])) {
-	    return null;
-	}
-	return $this->_outputFiles[$filename];
-    }
-
-    function isValidFile($filename) {
-	if (preg_match('/valid/i', $filename)) {
-	    return true;
-	} else {
-	    return false;
-	}
-    }
-
-    /*
-     * Here is our implementation of the GdFunctionality-interface
-     * This will do nothing with images, but simulate what might
-     * happen.
-     */
-    
-    function getImageSize($filename) {
-	return array(0, 0);
-    }
-    
-    function imageTypes() {
-	return $this->_gdEnvironment['imageTypes'];
-    }
-    
-    function imageCreate($width, $height) {
-	if (! $this->functionExists('imageCreate')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	$res = $this->getNewResource();
-	$this->setResourceData($res, 'x', $width);
-	$this->setResourceData($res, 'y', $height);
-	$this->setResourceData($res, 'trueColor', false);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateTruecolor($width, $height) {
-	if (! $this->functionExists('imageCreateTruecolor')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	$res = $this->getNewResource();
-	$this->setResourceData($res, 'x', $width);
-	$this->setResourceData($res, 'y', $height);
-	$this->setResourceData($res, 'trueColor', true);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromGif($filename) {   
-	if (! $this->functionExists('imageCreateFromGif')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromJpeg($filename) {   
-	if (! $this->functionExists('imageCreateFromJpeg')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromPng($filename) {   
-	if (! $this->functionExists('imageCreateFromPng')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromWbmp($filename) {
-	if (! $this->functionExists('imageCreateFromWbmp')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromXbm($filename) {   
-	if (! $this->functionExists('imageCreateFromXbm')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageCreateFromXpm($filename) {   
-	if (! $this->functionExists('imageCreateFromXpm')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	$res = $this->getNewResource($filename);
-	return array(GalleryStatus::success(), $res);
-    }
-
-    function imageGif($res, $filename) {
-	if (! $this->functionExists('imageGif')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/gif');
-	return GalleryStatus::success();
-    }
-
-    function imageJpeg($res, $filename) {
-	if (! $this->functionExists('imageJpeg')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/jpeg');
-	return GalleryStatus::success();
-    }
-
-    function imagePng($res, $filename) {
-	if (! $this->functionExists('imagePng')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/png');
-	return GalleryStatus::success();
-    }
-
-    function imageWbmp($res, $filename) {
-	if (! $this->functionExists('imageWbmp')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/vnd.wap.wbmp');
-	return GalleryStatus::success();
-    }
-
-    function imageXbm($res, $filename) {
-	if (! $this->functionExists('imageXbm')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/x-xbitmap');
-	return GalleryStatus::success();
-    }
-
-    function imageXpm($res, $filename) {
-	if (! $this->functionExists('imageXpm')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($res)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	if (! $this->isValidFile($filename)) {
-	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__);
-	}
-	$this->saveResource($res, $filename, 'image/x-xpixmap');
-	return GalleryStatus::success();
-    }
-
-    function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
-	if (! $this->functionExists('imageCopyResampled')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
-	if (! $this->functionExists('imageCopyResized')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    function imageCopyMerge($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH, $pct) {
-	if (! $this->functionExists('imageCopyMerge')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    function imageCopy($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $srcW, $srcH) {
-	if (! $this->functionExists('imageCopy')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					'Environment: ' . $this->getEnvironmentName());
-	}
-	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    function imageSx($res) {
-	if (! $this->functionExists('imageSx')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	if (! $this->isValidResource($res)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-	return array(GalleryStatus::success(), $this->getResourceData($res, 'x'));
-    }
-
-    function imageSy($res) {
-	if (! $this->functionExists('imageSy')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	if (! $this->isValidResource($res)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
-			 null);
-	}
-	return array(GalleryStatus::success(), $this->getResourceData($res, 'y'));
-    }
-
-    /* Currently this only handles rotation in 90deg-steps */
-    function imageRotate($srcRes, $angle, $bgdColor) {
-	if (! $this->functionExists('imageRotate')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
-					      'Environment: ' . $this->getEnvironmentName()),
-			 null);
-	}
-	if ($angle % 90 == 0) {
-	    /* Swap width and height */
-	    $newX = $this->getResourceData($srcRes, 'y');
-	    $newY = $this->getResourceData($srcRes, 'x');
-	} else {
-	    $newX = $this->getResourceData($srcRes, 'x');
-	    $newY = $this->getResourceData($srcRes, 'y');
-	}
-	$res = $this->copyResource($srcRes);
-	$this->setResourceData($res, 'x', $newX);
-	$this->setResourceData($res, 'y', $newY);
-	return array(GalleryStatus::success(), $res);
-    }
 }
 
 ?>
