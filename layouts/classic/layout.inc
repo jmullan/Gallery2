@@ -435,7 +435,7 @@ class ClassicLayout extends GalleryLayout {
 	$template->setVariable('moduleSystemLinks', $moduleSystemLinks);
 	$template->setVariable('moduleItemDetails', $moduleItemDetails);
 	$template->setVariable('layoutUrl',
-			       $template->setVariable(dirname(__FILE__)));
+			       GalleryUtilities::convertPathToRelativeUrl(dirname(__FILE__)));
 	$template->setVariable('parents', $parents);
 	$template->setVariable('item', $item->getMemberData());
 	$template->setVariable('itemIndex', $itemIndex+1);
