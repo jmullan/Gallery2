@@ -212,12 +212,12 @@ class ConfirmImportController extends GalleryController {
 		if ($targetAlbumID) {
 		    list($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    
 		    list($ret, $parentPath) = $parent->fetchPath();
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    
 		    $desiredname = $platform->legalizePathComponent($album['name']);
@@ -303,7 +303,7 @@ class ConfirmImportController extends GalleryController {
 				if ($validUID) {
 				    list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
 				    if ($ret->isError()) {
-					return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
 				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername($albumUserFields['username']);
 				    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
@@ -325,7 +325,7 @@ class ConfirmImportController extends GalleryController {
 				/* Click counts must be set after the item is first saved */
 				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
 				if ($ret->isError()) {
-				    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 				
 				
@@ -375,7 +375,7 @@ class ConfirmImportController extends GalleryController {
 				    $finishedAlbums[$album['name']] = $newAlbumInstanceId;
 				    $status['albumImportSuccess'][$album['name']] = $newAlbumInstanceId;
 				} else {
-				    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__), null);
+				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}	
 				
 			    }
