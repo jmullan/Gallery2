@@ -35,7 +35,7 @@ class InstallOtherModulesStep extends InstallStep {
 
 	// We want to avoid using the cache
 	GalleryDataCache::setFileCachingEnabled(false);
-	
+
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret->isError()) {
@@ -105,13 +105,6 @@ class InstallOtherModulesStep extends InstallStep {
 		    }
 		}
 
-		global $gallery;
-		$storage =& $gallery->getStorage();
-		$ret = $storage->commitTransaction();
-		if ($ret->isError()) {
-		    $templateData['errors'][] = _('Unable to commit database transaction');
-		    $templateData['stackTrace'] = $ret->getAsHtml();
-		}
 		$group = $module->getGroup();
 		if (empty($group)) {
 		    $group = array('group' => 'others', 'groupLabel' => _('Other'));
@@ -120,6 +113,16 @@ class InstallOtherModulesStep extends InstallStep {
 		$groupLabel[$group['group']] = $group['groupLabel'];
 	    }
 	    ksort($groupedModules);
+	}
+
+	if (isset($_REQUEST['action']['activate'])) {
+	    global $gallery;
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->commitTransaction();
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to commit database transaction');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
 	}
 
 	$this->setComplete(true);
