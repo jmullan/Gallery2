@@ -116,14 +116,12 @@ class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $item) = $this->_item->refresh();
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('PanoramaPhotoItem', $item->getEntityType());
 
 	list ($ret, $item) = $this->_derivative->refresh();
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
@@ -132,7 +130,6 @@ class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
     function testHelper() {
 	list ($ret, $images) = PanoramaHelper::fetchViewableImages(array($this->_item));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($images[$this->_item->getId()]), 'Missing result');

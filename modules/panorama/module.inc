@@ -47,16 +47,18 @@ class PanoramaModule extends GalleryModule {
      * @see GalleryModule::performFactoryRegistrations
      */
     function performFactoryRegistrations() {
-	$classDir = dirname(__FILE__) . '/classes/';
-	
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'PanoramaDerivativeImage',
 						      'PanoramaDerivativeImage',
-						      dirname(__FILE__) . '/classes/GalleryDerivativeImage.class');
+						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'PanoramaPhotoItem',
+						      'PanoramaPhotoItem',
+						      dirname(__FILE__) . '/classes/PanoramaPhotoItem.class');
 	GalleryCoreApi::registerFactoryImplementation('GalleryDerivative',
 						      'PanoramaDerivativeImage',
 						      'PanoramaDerivativeImage',
-						      dirname(__FILE__) . '/classes/GalleryDerivativeImage.class',
+						      dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class',
 						      array('PanoramaPhotoItem'));
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'PanoramaItemEdit',

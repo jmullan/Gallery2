@@ -55,7 +55,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 
 	/* Delete our layouts */
 	foreach (array('testLayoutId1', 'testLayoutId2') as $layoutId) {
-	    $ret = GalleryCoreApi::removePlugin('layout', $layoutId);
+	    $ret = GalleryCoreApi::removeAllPluginParameters('layout', $layoutId);
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
