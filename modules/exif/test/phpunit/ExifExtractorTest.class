@@ -173,7 +173,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	$this->assertEquals(2, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
-	$this->assertEquals('21.31 mm',
+	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
     }
 
@@ -183,7 +183,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	$this->assertEquals(3, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
-	$this->assertEquals('21.31 mm',
+	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
     }
 
