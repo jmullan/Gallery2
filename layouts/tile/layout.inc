@@ -67,7 +67,7 @@ class TileLayout extends GalleryLayout {
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
-			 array('main' => 'layouts/tile/templates/render.tpl'));
+			 array('html' => 'layouts/tile/templates/render.tpl'));
 	}
 
 	if (!$item->getCanContainChildren()) {

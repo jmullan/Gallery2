@@ -68,7 +68,7 @@ class HybridLayout extends GalleryLayout {
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
-	                 array('main' => 'layouts/hybrid/templates/render.tpl'));
+	                 array('immediate' => 'layouts/hybrid/templates/render.tpl'));
 	}
 
 	if (!$item->getCanContainChildren() && !$detail) {
@@ -124,7 +124,7 @@ class HybridLayout extends GalleryLayout {
 	    $layout['owner'] = $tmp->getMemberData();
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
-	                 array('main' => 'layouts/hybrid/templates/detail.tpl'));
+	                 array('html' => 'layouts/hybrid/templates/detail.tpl'));
 	}
 
 	list ($ret, $itemList, $imageWidths, $imageHeights) = $this->_buildItemList($item);

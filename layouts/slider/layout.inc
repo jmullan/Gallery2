@@ -68,7 +68,7 @@ class SliderLayout extends GalleryLayout {
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
-			 array('main' => 'layouts/slider/templates/render.tpl'));
+			 array('html' => 'layouts/slider/templates/render.tpl'));
 	}
 
 	if (!$item->getCanContainChildren()) {

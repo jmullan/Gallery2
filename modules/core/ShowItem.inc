@@ -127,6 +127,8 @@ class ShowItemView extends GalleryView {
 
 	if (isset($results['redirect'])) {
 	    return array(GalleryStatus::success(), $results);
+	} else if (isset($results['html'])) {
+	    return array(GalleryStatus::success(), $results);
 	} else {
 	    $ShowItem = array();
 	    $ShowItem['item'] = $item->getMemberData();

@@ -286,8 +286,8 @@ function GalleryMain() {
 			$main['redirectUrl'] = $redirectUrl;
 		    }
 		} else {
-		    if (isset($results['main'])) {
-			$main['viewMainFile'] = $results['main'];
+		    if (isset($results['html'])) {
+			$main['html'] = $results['html'];
 		    }
 		    if (isset($results['onLoad'])) {
 			$main['onLoad'] = $results['onLoad'];
@@ -363,6 +363,8 @@ function GalleryMain() {
 	    list ($ret, $html) = $template->fetch('gallery:templates/redirect.tpl');
 	} else if (isset($main['error'])) {
 	    list ($ret, $html) = $template->fetch('gallery:templates/error.tpl');
+	} else if (isset($main['html'])) {
+	    list ($ret, $html) = $template->fetch('gallery:templates/standalone.tpl');
 	} else {
 	    list ($ret, $html) = $template->fetch('gallery:templates/global.tpl');
 	}

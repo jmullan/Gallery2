@@ -3,6 +3,11 @@
  * Instead, copy it to debug.tpl.local and edit that version instead.
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
+ *
+ * This XHTML snippet is included from other pages that display G2
+ * debug output.
+ *
+ * You shouldn't have to modify this page unless you're a G2 developer.
  *}
 <div id="gpDebug">
   <div class="giTitle">
