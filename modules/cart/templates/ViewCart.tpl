@@ -28,42 +28,6 @@
       </div>
     </div>
     
-    <div class="gbNavBar">
-      <div class="gbAdmin">
-    	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">
-    	  <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected="selected">{g->text text="&laquo; cart actions &raquo;"}</option>
-    	  <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
-    	  <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
-    	  {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
-    	  <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
-    	  {/foreach}
-    	</select>
-    	<input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}"/>
-      </div>
-    </div>
-
-  
-    {if isset($status) || empty($ViewCart.items)}
-    <div id="gsStatus">
-      {if isset($status.cartModified)}
-      <div class="giStatus">
-	{g->text text="Cart updated successfully"}
-      </div>
-      {/if}
-
-      {if empty($ViewCart.items)}
-      <div class="giEmpty">
-        <p>
-          {g->text text="Your cart is empty."}
-        </p>
-        <p>
-          {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
-        </p>
-      </div>
-      {/if}
-    </div>
-    {/if}
-
     {if !empty($ViewCart.items)}
     <form action="{g->url}" method="post">
       <div>
@@ -71,7 +35,43 @@
         <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
         <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
       </div>
+      <div class="gbNavBar">
+        <div class="gbAdmin">
+	  <select name="{g->formVar var="form[pluginId]"}" class="giActionSelect" onfocus="this.style.background='#fff';this.style.color='#000';" onblur="this.style.background='#eee';this.style.color='#333';">
+      	    <option label="{g->text text="&laquo; cart actions &raquo;"}" value="" selected="selected">{g->text text="&laquo; cart actions &raquo;"}</option>
+      	    <option label="{g->text text="Update Quantities"}" value="updateCart"> {g->text text="Update Quantities"} </option>
+      	    <option label="{g->text text="Empty Cart"}" value="emptyCart"> {g->text text="Empty Cart"} </option>
+      	    {foreach from=$ViewCart.plugins key=pluginId item=pluginData}
+      	    <option label="{$pluginData.actionDisplayName}" value="{$pluginId}"> {$pluginData.actionDisplayName} </option>
+      	    {/foreach}
+    	  </select>
+    	  <input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}"/>
+        </div>
+      </div>
+      {/if}
 
+      {if isset($status) || empty($ViewCart.items)}
+      <div id="gsStatus">
+        {if isset($status.cartModified)}
+        <div class="giStatus">
+  	{g->text text="Cart updated successfully"}
+        </div>
+        {/if}
+  
+        {if empty($ViewCart.items)}
+        <div class="giEmpty">
+          <p>
+            {g->text text="Your cart is empty."}
+          </p>
+          <p>
+            {g->text text="To add items, browse the gallery and select 'Add to cart' from the item's action menu."}
+          </p>
+        </div>
+        {/if}
+      </div>
+      {/if}
+    
+      {if !empty($ViewCart.items)}
       <div class="gbAdmin">
     	<table class="gbDataTable">
     	  <tr>
@@ -132,10 +132,9 @@
     	  {/foreach}
     	</table>
       </div>
-
     </form>
-    
     {/if}
+
     <div class="gbBottomFlag">
       <div class="gbButtonBar">
         &nbsp;
