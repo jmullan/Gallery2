@@ -74,12 +74,15 @@ class AdminNetPbmController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
+	        $success = false;
 		foreach ($testResults as $testResult) {
-		    /* All tests should work, else this path is not a valid one */
-		    if (! $testResult['success']) {
-			$success = false;
+		    /* At least one test should work, else this path is not a valid one */
+		    if ($testResult['success']) {
+		        $success = true;
+		    }
+		    
+		    if (!$success) {
 			GalleryUtilities::putRequestVariable('form.error.path.testError', 1);
-			break;
 		    }
 		}
 	    }
