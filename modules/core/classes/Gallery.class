@@ -355,10 +355,20 @@ class Gallery {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySearchResults.class');
 	    $this->_storage = new GalleryStorage();
 	}
-	
+
 	return $this->_storage;
     }
-    
+
+    /**
+     * Check if GalleryStorage has been instantiated
+     *
+     * @access public
+     * @return boolean
+     */
+    function isStorageInitialized() {
+	return isset($this->_storage);
+    }
+
     /**
      * Set the URL generator
      *

@@ -54,7 +54,7 @@ function GalleryMain($returnHtml=false) {
     }
 
     /* Complete our transaction */
-    if ($ret->isSuccess()) {
+    if ($ret->isSuccess() && $gallery->isStorageInitialized()) {
 	$storage =& $gallery->getStorage();
 	$ret = $storage->commitTransaction();
     }
