@@ -54,6 +54,43 @@ class GalleryModule {
     var $_version;
 
     /**
+     * Localize the given content
+     *
+     * @see Gallery::translate()
+     *
+     * @param mixed a single string, or an array of parameters
+     * @return array object GalleryStatus a status code
+     *               string the localized value
+     */
+    function translate($params) {
+	global $gallery;
+	
+	if (!is_array($params)) {
+	    $params = array('text' => $params);
+	}
+
+	/* Get the translator.  Jump through hoops to get it as a reference */
+	$reply = $gallery->getTranslator();
+	if ($reply[0]->isError()) {
+	    $gallery->debug($ret->getAsHtml());
+	    return "Translation error";
+	} else {
+	    $translator =& $reply[1];
+	}
+
+	list ($ret, $content) = $translator->translate(
+	    'modules_' . $this->getName(),
+	    $gallery->getConfig('code.gallery.modules') . $this->getName(), $params);
+
+	if ($ret->isError()) {
+	    $gallery->debug($ret->getAsHtml());
+	    return "Translation error";
+	} else {
+	    return $content;
+	}
+    }
+
+    /**
      * Do any initialization required for this module to run.
      *
      * @return object GalleryStatus a status code
@@ -174,7 +211,7 @@ class GalleryModule {
     /**
      * Return 0 or more item-specific links to an arbitrary module view.
      *
-     * @param object GalleryItem a target item
+     * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
@@ -182,6 +219,32 @@ class GalleryModule {
      *                                     'params' => array(key => value, key => value))
      */
     function getItemLinks($item, $urlParams) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Return module-specific summary content about the item
+     *
+     * @param mixed object GalleryItem a target item, or array of object GalleryItem
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               string HTML content
+     */
+    function getItemSummaries($item, $urlParams) {
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Return module-specific details content about the item
+     *
+     * @param mixed object GalleryItem a target item, or array of object GalleryItem
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               string HTML content
+     */
+    function getItemDetails($item, $urlParams) {
 	return array(GalleryStatus::success(), array());
     }
 

@@ -38,6 +38,7 @@ class AdminCoreController extends GalleryController {
 		       'default.orderDirection',
 		       'default.layout',
 		       'default.theme',
+		       'default.language',
 		       'graphics.type') as $key) {
 	    $value = GalleryUtilities::getRequestVariables($key);
 
@@ -88,6 +89,7 @@ class AdminCoreView extends GalleryView {
 		       'default.orderDirection',
 		       'default.layout',
 		       'default.theme',
+		       'default.language',
 		       'graphics.type') as $key) {
 
 	    list ($ret, $value) =
@@ -100,22 +102,31 @@ class AdminCoreView extends GalleryView {
 	    $form[$outer][$inner] = $value;
 	}
 
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Set up our sort order selection list */
 	$orderByList = array();
-	$orderByList['title'] = $gallery->translate('Title');
-	$orderByList['creationTimestamp'] = $gallery->translate('Creation Date');
-	$orderByList['modificationTimestamp'] = $gallery->translate('Last Changed Date');
-	$orderByList['description'] = $gallery->translate('Description');
-	$orderByList['keywords'] = $gallery->translate('Keywords');
+	$orderByList['title'] = $module->translate('Title');
+	$orderByList['creationTimestamp'] = $module->translate('Creation Date');
+	$orderByList['modificationTimestamp'] = $module->translate('Last Changed Date');
+	$orderByList['description'] = $module->translate('Description');
+	$orderByList['keywords'] = $module->translate('Keywords');
 
 	/* Set up our sort direction selection list */
 	$orderDirectionList = array();
-	$orderDirectionList['asc'] = $gallery->translate("Ascending");
-	$orderDirectionList['desc'] = $gallery->translate("Descending");
+	$orderDirectionList['asc'] = $module->translate("Ascending");
+	$orderDirectionList['desc'] = $module->translate("Descending");
+
+	list ($ret, $platform) = $gallery->getPlatform();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Set up our layout selection list */
 	$layoutList = array();
-	list ($ret, $platform) = $gallery->getPlatform();
 	$layoutDir = $gallery->getConfig('code.gallery.layouts');
 	if ($dir = $platform->opendir($layoutDir)) {
 	    while (($file = readdir($dir)) !== false) {
@@ -129,10 +140,23 @@ class AdminCoreView extends GalleryView {
 	    }
 	    closedir($dir);
 	}
+
+	/* Set up our language selection list */
+	list ($ret, $translator) = $gallery->getTranslator();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$languageList = array();
+	$supportedLanguages = $translator->getSupportedLanguages();
+	foreach ($supportedLanguages as $language => $countryList) {
+	    foreach ($countryList as $country => $languageData) {
+		$languageList[$language . '_' . $country] =
+		    $languageData['description'];
+	    }
+	}
 	
 	/* Set up our theme selection list */
 	$themeList = array();
-	list ($ret, $platform) = $gallery->getPlatform();
 	$themeDir = $gallery->getConfig('code.gallery.themes');
 	if ($dir = $platform->opendir($themeDir)) {
 	    while (($subdir = readdir($dir)) !== false) {
@@ -157,6 +181,12 @@ class AdminCoreView extends GalleryView {
 	/* Set up our graphics selection list */
 	$graphicsTypeList = GalleryGraphicsFactory::getAllImplementationIds();
 
+	/* Specify our translation module */
+	$ret = $this->_setTranslationModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {
@@ -165,6 +195,7 @@ class AdminCoreView extends GalleryView {
 	$smarty->assign('form', $form);
 	$smarty->assign('layoutList', $layoutList);
 	$smarty->assign('themeList', $themeList);
+	$smarty->assign('languageList', $languageList);
 	$smarty->assign('orderByList', $orderByList);
 	$smarty->assign('orderDirectionList', $orderDirectionList);
 	$smarty->assign('permissionsDirectoryList', $permissionsDirectoryList);

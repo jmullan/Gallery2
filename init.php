@@ -74,6 +74,13 @@ function GalleryInit() {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty/');
     $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty/templates_c/');
 
+    /* Check for the existance of various functions that we care about */
+    foreach (array('dgettext', 'dngettext')
+	     as $functionName) {
+	$key = 'function.exists.' . $functionName;
+	$gallery->setConfig($key, function_exists($functionName) ? 1 : 0);
+    }
+
     /*
      * During the setup process, we may have bogus database credentials.  So,
      * anything that can be set without using the database should be defined

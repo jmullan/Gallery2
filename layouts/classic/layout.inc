@@ -31,6 +31,12 @@ class ClassicLayout extends GalleryLayout {
 	$properties = array('rows' => 3,
 			    'columns' => 3);
 
+	/* Specify our translation */
+	$ret = $this->_setTranslationLayout('classic');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	if ($item->canContainChildren()) {
 	    return $this->_renderAlbum($item, $urlParams, $properties);
 	} else {
@@ -94,12 +100,26 @@ class ClassicLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /* Get item summaries */
+	    list ($ret, $moduleChildSummaries) =
+		$this->_getModuleItemSummaries($childEntities, $urlParams);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
             /* Create a table of child id -> child data */
 	    $childTable = array();
 	    foreach ($childEntities as $child) {
-		$childTable[$child->getId()] = $child->getMemberData();
+		$childId = $child->getId();
+		$childTable[$childId] = $child->getMemberData();
+
+		if (!empty($moduleChildSummaries[$childId])) {
+		    $childTable[$childId]['moduleSummaries'] = $moduleChildSummaries[$childId];
+		} else {
+		    $childTable[$childId]['moduleSummaries'] = array();
+		}
 	    }
-	    
+
 	    /* Load the thumbnails */
 	    list ($ret, $imageTable) =
 		GalleryDerivative::loadDerivatives($childIds,

@@ -21,7 +21,6 @@ class CreateAdminUserTestCase extends TestCase {
 	}
 	$user->setPassword('admin');
 	$user->setFullName('Admin');
-	$user->setLanguage('en_US');
 	
 	$ret = $user->save();
 	if ($ret->isError()) {

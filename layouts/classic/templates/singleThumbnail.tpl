@@ -17,3 +17,9 @@
     {$children[$child].id}
     {/if}
   </a>
+  {if (!empty($children[$child].moduleSummaries)) }
+  {foreach from=$children[$child].moduleSummaries item=summary}
+  <br>
+  {$summary}
+  {/foreach}
+  {/if}

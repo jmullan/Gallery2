@@ -37,6 +37,14 @@ class GalleryTemplateAdapter {
     var $_theme;
 
     /**
+     * The location of the translation base
+     *
+     * @var string a directory
+     * @access private
+     */
+    var $_translationBase;
+
+    /**
      * Set the base URL to be used in all template methods
      *
      * @param string the base URL
@@ -119,7 +127,28 @@ class GalleryTemplateAdapter {
      */
     function text($params) {
 	global $gallery;
-	return $gallery->translate($params);
+
+	/* Get the translator.  Jump through hoops to get it as a reference */
+	$reply = $gallery->getTranslator();
+	if ($reply[0]->isError()) {
+	    $gallery->debug($ret->getAsHtml());
+	    return "Translation error";
+	} else {
+	    $translator =& $reply[1];
+	}
+
+	/* Translate using the active module */
+	list ($ret, $content) =
+	    $translator->translate($this->_translationBase[0],
+				   $this->_translationBase[1],
+				   $params);
+
+	if ($ret->isError()) {
+	    $gallery->debug($ret->getAsHtml());
+	    return "Translation error";
+	} else {
+	    return $content;
+	}
     }
 
     /**
@@ -170,4 +199,23 @@ class GalleryTemplateAdapter {
     function getTheme() {
 	return $this->_theme;
     }
+
+    /**
+     * Set the active translation base
+     *
+     * @param string a translation base
+     */ 
+    function setTranslationBase($module, $path) {
+	$this->_translationBase = array($module, $path);
+    }
+
+    /**
+     * Get the active translation base
+     *
+     * @return string a translation base
+     */ 
+    function getTranslationBase() {
+	return $this->_translationBase;
+    }
+    
 }

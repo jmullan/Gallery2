@@ -4,7 +4,10 @@
 	<table border="1" width="100%" cellspacing="0%" cellpadding="0%">
 	  <tr>
 	    <td>
-	      {galleryText text="%d items in this album" arg1=$totalChildCount}
+	      {galleryText one="%d item in this album" 
+	                   many="%d items in this album"
+	                   count=$totalChildCount
+	                   arg1=$totalChildCount}
 	      {if $totalPageCount > 1}
 	      {galleryText text="on %d pages" arg1=$totalPageCount}
 	      {/if}
@@ -45,12 +48,12 @@
 
     <tr>
       <td>
-	<table width="100%">
+	<table border="0" width="100%">
 	  {counter assign=child start=0 print=false}
 	  {section name=outer loop=$children step=$properties.columns}
 	  <tr>
 	    {section name=inner loop=$children start=$child max=$properties.columns}
-	    <td align="center">
+	    <td valign="top" align="center">
 	      {if $children[$child].entityType == 'galleryalbumitem'}
 	      {include file="albumThumbnail.tpl"}
 	      {else}

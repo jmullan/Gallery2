@@ -164,6 +164,12 @@ function GalleryMain() {
 	    unset($master['profile']);
 	}
 
+	/* Specify our translation module */
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTranslationBase(
+	    'modules_core',
+	    $gallery->getConfig('code.gallery.modules') . 'core');
+	
 	/* Display the global output */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {

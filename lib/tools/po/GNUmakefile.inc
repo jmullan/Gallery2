@@ -1,0 +1,65 @@
+#
+# Gallery .mo files makefile
+#
+# This makefile is based on the one provided with the Horde project
+# http://www.horde.org/.  As such, it inherits the license from the 
+# original version.  You can find that license here:
+#
+# http://cvs.horde.org/co.php/horde/COPYING?r=2.1
+#
+# I'm not exactly sure what the license restrictions are in this case,
+# but I want to give full credit to the original authors:
+#
+# Copyright 2000-2002 Joris Braakman <jbraakman@yahoo.com>
+# Copyright 2001-2002 Chuck Hagenbuch <chuck@horde.org>
+# Copyright 2001-2002 Jan Schneider <jan@horde.org>
+#
+# $Id$
+#
+MODULE_DIR = $(shell dirname `pwd`)
+TYPE_DIR = $(shell dirname $(MODULE_DIR))
+APPLICATION = $(shell basename $(TYPE_DIR))_$(shell basename $(MODULE_DIR))
+MSGFMT = msgfmt --statistics -c -v -o
+MSGFMTSOL = msgfmt -v -o
+
+all: install
+
+extract:
+	perl $(TOOLDIR)/po/extract.pl $(MODULE_DIR) $(EXTRA_DIR) > strings.raw
+	xgettext --keyword=_ -C --no-location strings.raw
+
+clean:
+	$(RM) strings.raw messages.po
+
+install: *.po
+	@echo "Checking for os ... ${OSTYPE}"; \
+	if test "${OSTYPE}" = "solaris"; then \
+		echo "You'll probably get some warnings on Solaris. This is normal."; \
+	fi; \
+	for LOCALE in `ls *.po | sed 's/\.[^.]*$$//g'`; do \
+		if test $${LOCALE}.po = "messages.po"; then \
+			continue; \
+		fi; \
+		echo "Compiling locale $${LOCALE}:"; \
+		if $(TOOLDIR)/po/shtool mkdir -p ../locale/$${LOCALE}/LC_MESSAGES; then \
+			if test "${OSTYPE}" = "solaris"; then \
+				if ${MSGFMTSOL} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo $${LOCALE}.po; then \
+					echo "  ... done"; \
+					echo; \
+				else \
+					echo "  ... FAILED"; \
+					echo; \
+				fi \
+			else \
+				if ${MSGFMT} ../locale/$${LOCALE}/LC_MESSAGES/${APPLICATION}.mo $${LOCALE}.po; then \
+					echo "  ... done"; \
+					echo; \
+				else \
+					echo "  ... FAILED"; \
+					echo; \
+				fi \
+			fi; \
+		else \
+			echo "Could not create locale directory for $${LOCALE}."; \
+		fi \
+	done;

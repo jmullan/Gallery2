@@ -44,11 +44,10 @@ class GalleryView {
      * global templating.  This style of view should be reserved for binary
      * data.
      *
-     * @return array object GalleryStatus a status code
-     *               array ('head' => header html,
-     *                      'body' => body html)
+     * @return object GalleryStatus a status code
      */
     function renderImmediate() {
+	return GalleryStatus::success();
     }
     
     /**
@@ -122,6 +121,22 @@ class GalleryView {
 					__FILE__, __LINE__);
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Specify which module's translation database to use for localized content
+     * in templates
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _setTranslationModule($moduleName) {
+	global $gallery;
+	
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTranslationBase(
+	    'modules_' . $moduleName,
+	    $gallery->getConfig('code.gallery.modules') . $moduleName);
 	return GalleryStatus::success();
     }
 

@@ -45,6 +45,14 @@ class Gallery {
     var $_activeUserId;
 
     /**
+     * The active GalleryUser instance
+     *
+     * @var object GalleryUser $_activeUser
+     * @access private
+     */
+    var $_activeUser;
+
+    /**
      * Storage for all configuration variables, set in config.php.
      * The values contained here can't be modified.  Well, they
      * can be modified but they can't be saved so it's not a good
@@ -96,6 +104,14 @@ class Gallery {
      * @access private
      */
     var $_storage;
+
+    /**
+     * Instance of the GalleryTranslator class
+     *
+     * @var array $_translator
+     * @access private
+     */
+    var $_translator;
 
     /**
      * An instance of the GalleryPlatform class
@@ -167,6 +183,7 @@ class Gallery {
     function Gallery() {
 	$this->reset();
 	$this->_registry = array();
+	$this->_boundDomains = array();
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_releaseHangingLocks'));
@@ -333,6 +350,28 @@ class Gallery {
     function setActiveUserId($id) {
 	assert('!empty($id)');
 	$this->_activeUserId = $id;
+    }
+
+    /**
+     * Get the active user
+     *
+     * Cache the results of the first call and return that same value each
+     * time.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryUser the active user
+     */
+    function getActiveUser() {
+	if (empty($this->_activeUser)) {
+	    list ($ret, $user) = $this->loadEntitiesById($this->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $this->_activeUser = $user;
+	}
+
+	return array(GalleryStatus::success(), $this->_activeUser);
     }
 
     /**
@@ -1012,28 +1051,28 @@ class Gallery {
     }
 
     /**
-     * Translate a message into the user's locale
+     * Return a reference to the GalleryTranslator instance
      *
-     * @param array an associative array of data of the form
-     *              text => the message
-     *              arg1 => data
-     *              arg2 => data
-     *                ...
-     *              argn => data
+     * Create and initialize new instance if necessary.
+     *
+     * @return object GalleryTranslator
      */
-    function translate($data) {
-	if (is_array($data)) {
-	    /* XXX: implement this using gettext */
-	    $args = array($data['text']);
-	    $i = 1;
-	    while (isset($data['arg' . $i])) {
-		$args[] = $data['arg' . $i];
-		$i++;
+    function &getTranslator() {
+	if (empty($this->_translator)) {
+	    $this->_translator = new GalleryTranslator();
+
+	    list ($ret, $activeUser) = $this->getActiveUser();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	} else {
-	    $args = $data;
+
+	    $ret = $this->_translator->init($activeUser->getLanguage());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
-	return call_user_func_array('sprintf', $args);
+
+	return array(GalleryStatus::success(), &$this->_translator);
     }
 
     /**

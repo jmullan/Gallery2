@@ -59,7 +59,7 @@ class NetPbmModule extends GalleryModule {
 	global $gallery;
 
 	return array(GalleryStatus::success(),
-		     array(array('name' => $gallery->translate('NetPBM'),
+		     array(array('name' => $this->translate('NetPBM'),
 				 'view' => 'netpbm:AdminNetPbm')));
     }
 

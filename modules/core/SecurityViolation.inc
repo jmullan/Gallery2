@@ -26,7 +26,12 @@ class SecurityViolationView extends GalleryView {
     function renderHead() {
 	global $gallery;
 
-	$text = $gallery->translate("Security Violation!");
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$text = $module->translate("Security Violation!");
 	$html = "<title>$text</title>";
 	return array(GalleryStatus::success(), $html);
     }
@@ -38,7 +43,12 @@ class SecurityViolationView extends GalleryView {
     function renderBody() {
 	global $gallery;
 
-	$text = $gallery->translate("Security Violation!");
+	list ($ret, $module) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$text = $module->translate("Security Violation!");
 	return array(GalleryStatus::success(), $text);
     }
 }

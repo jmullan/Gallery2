@@ -1,0 +1,247 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * Internationalization and Localization utilities
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryTranslator {
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * Keep track of the gettext domains we've already bound
+     *
+     * @var array $_boundDomains
+     * @access private
+     */
+    var $_boundDomains;
+
+    /**
+     * This is the list of languages that the core module supports.  Other
+     * modules may not support them, but that's not something we can really
+     * do much about.
+     *
+     * @var array $_supportedLanguages
+     * @access private
+     */
+    var $_supportedLanguages;
+    
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    function GalleryTranslator() {
+	$this->_supportedLanguages = array();
+	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
+	$this->_supportedLanguages['en']['US']['charset'] = 'ISO-8859-1';
+    
+	$this->_supportedLanguages['es']['ES']['description'] = 'Espa&ntilde;ol (Espa&ntilde;a)';
+	$this->_supportedLanguages['es']['ES']['charset'] = 'ISO-8859-1';
+
+	$this->_supportedLanguages['zh']['CN']['description'] = 'Chinese (Simplified)';
+	$this->_supportedLanguages['zh']['CN']['charset'] = 'GB2312';
+
+	$this->_boundDomains = array();
+    }
+
+    /**
+     * Return the list of languages that we support.
+     *
+     * @return array['language code']['country code'] =
+     *              array('description', 'charset code')
+     */
+    function getSupportedLanguages() {
+	return $this->_supportedLanguages;
+    }
+
+    /**
+     * Initialize the translator with the specified language code hint
+     *
+     * @param string the language code hint (eg. 'en_US' or 'zh_CN')
+     * @return object GalleryStatus a status code
+     */
+    function init($languageCode=null) {
+	global $gallery;
+	global $HTTP_SERVER_VARS;
+
+	/* If we're using gettext, try to bind to a language */
+	if ($gallery->getConfig('function.exists.dgettext')) {
+
+	    /* Split the language code into language/country */
+	    if (!empty($languageCode)) {
+		list ($language, $country) = split('_', $languageCode);
+		
+		/* Make sure that the language specified is one that we support */
+		if (!isset($this->_supportedLanguages[$language][$country])) {
+		    $language = null;
+		    $country = null;
+		}
+	    }
+	    
+	    /* If no language is specified, see what the browser takes */
+	    if (empty($language)) {
+		if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
+		    foreach (explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])
+			     as $code) {
+			list ($language, $country) = preg_split('/[-_]/', $code);
+			$country = strtoupper($country);
+			
+			if (isset($this->_supportedLanguages[$language][$country])) {
+			    break;
+			} else {
+			    $language = null;
+			    $country = null;
+			}
+		    }
+		}
+	    }
+
+	    /* Fall back to English (US) */
+	    if (empty($language)) {
+		$language = 'en';
+		$country = 'US';
+	    }
+
+	    /* Set the appropriate charset in our HTTP header */
+	    if (!headers_sent()) {
+		header('Content-Type: text/html; charset=' .
+		       $this->_supportedLanguages[$language][$country]['charset']);
+	    }
+	    
+	    putenv("LANG=${language}_${country}");
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Localize the given content
+     *
+     * Expected inputs are of the form:
+     *
+     * Example 1:
+     *  $data['text'] = 'Some text to localize with %d arguments'
+     *  $data['arg1'] = 5;
+     *
+     *  localized:  'Some text to localize with 5 arguments' 
+     *
+     * Example 2:
+     *  $data['one'] =   'You have %d orange'
+     *  $data['many'] =  'You have %d oranges'
+     *  $data['count'] = 3 (or 1);
+     *
+     * localized:  'You have 3 oranges'  (or 'You have 1 orange')
+     *
+     * @param string a directory
+     * @param mixed a single string, or an array of parameters
+     * @return array object GalleryStatus a status code
+     *               string the localized value
+     */
+    function translate($domain, $basePath, $data) {
+	global $gallery;
+
+	/* Validate our parameters */
+	if (!(isset($data['text']) ||
+	      (isset($data['one']) && isset($data['many']) && isset($data['count'])))) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	if ($gallery->getConfig('function.exists.dgettext')) {
+	    if (!isset($this->_boundDomains[$domain])) {
+		$basePath .= '/locale';
+		$gallery->debug("Binding text domain: $domain -> $basePath");
+		$result = bindtextdomain($domain, $basePath);
+		if ($result != $basePath) {
+		    $gallery->debug("Got [$result] binding $basePath");
+		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+				 null);
+		}
+		$this->_boundDomains[$domain] = $basePath;
+	    }
+
+	    /*
+	     * We have to have dcgettext (which is only available > PHP 4.2.0,
+	     * according to the PHP manual) in order to do pluralization
+	     * translations.  
+	     */
+	    if (isset($data['one'])) {
+		if ($gallery->getConfig('function.exists.dngettext')) {
+		    $localized = dngettext($domain, $data['one'], $data['many'], $data['count']);
+		} else {
+		    $localized = dgettext($domain, $data['many']);
+		}
+	    } else {
+		$localized = dgettext($domain, $data['text']);
+	    }
+	} else {
+	    /*
+	     * The server doesn't have gettext, so fake it using the source of
+	     * the message (which is almost definitely in US English)
+	     */
+	    if (isset($data['text'])) {
+		$localized = $data['text'];
+	    } else if ($data['count'] == 1) {
+		$localized = $data['one'];
+	    } else {
+		$localized = $data['many'];
+	    }
+	}
+
+	$i = 1;
+	$args = array();
+	while (isset($data['arg' . $i])) {
+	    $args[] = $data['arg' . $i];
+	    $i++;
+	    
+	    /* Catch runaways */
+	    if ($i > 100) {
+		return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
+	    }
+	}
+
+	/*
+	 * If we have arguments, then feed the localized string and the
+	 * arguments into sprintf.
+	 */
+	if (sizeof($args) > 0) {
+	    array_unshift($args, $localized);
+	    $localized = call_user_func_array('sprintf', $args);
+	}
+
+	/*
+	 * This is a useful debug routine.  Uncomment it to have every
+	 * string prefixed with the domain it was localized in.
+	 */
+	// $localized = "[$domain: $localized]";
+
+	return array(GalleryStatus::success(), $localized);
+    }
+}

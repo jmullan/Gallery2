@@ -119,6 +119,11 @@ class AdminModulesView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	list ($ret, $coreModule) = $gallery->loadModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	    
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
@@ -149,16 +154,16 @@ class AdminModulesView extends GalleryView {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			$entry['action'] = array('text' => $gallery->translate('configure'),
+			$entry['action'] = array('text' => $coreModule->translate('configure'),
 						 'view' => $configView);
 		    } else {
-			$entry['action'] = array('text' => $gallery->translate('activate'),
+			$entry['action'] = array('text' => $coreModule->translate('activate'),
 						 'controller' => 'core:AdminModules',
 						 'module' => $moduleName,
 						 'action' => 'activate');
 		    }
 		} else {
-		    $entry['action'] = array('text' => $gallery->translate('deactivate'),
+		    $entry['action'] = array('text' => $coreModule->translate('deactivate'),
 					     'controller' => 'core:AdminModules',
 					     'module' => $moduleName,
 					     'action' => 'deactivate');
@@ -170,6 +175,12 @@ class AdminModulesView extends GalleryView {
 	    $modules[] = $entry;
 	}
 
+	/* Specify our translation module */
+	$ret = $this->_setTranslationModule('core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	/* Render the HTML body */
 	list ($ret, $smarty) = $gallery->getSmarty();
 	if ($ret->isError()) {

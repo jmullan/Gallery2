@@ -1035,6 +1035,7 @@ class DatabaseStorage extends GalleryStorage {
 	 *   'where'    => '[Class3.member3] is NULL',
 	 *   'order-by' => '[Class1.member1] ASC',
 	 *   'limit'    => array('offset' => 0, 'count' => 10),
+	 *   'group-by' => '[Class1.member1]'
 	 *
 	 * Into:
 	 *
@@ -1043,6 +1044,7 @@ class DatabaseStorage extends GalleryStorage {
 	 * WHERE    table3.member3 IS NULL
 	 *          AND ((table1.id = table2.id) AND (table1.id = table3.id))
 	 * ORDER BY table1.member1 ASC
+	 * GROUP BY table1.member1
 	 *
 	 * Which would then be called like this:
 	 *
@@ -1051,7 +1053,7 @@ class DatabaseStorage extends GalleryStorage {
 	 */
 	$allTables = array();
 	$entityTables = array();
-	foreach (array('select', 'where', 'order-by') as $elementName) {
+	foreach (array('select', 'where', 'order-by', 'group-by') as $elementName) {
 	    if (empty($query[$elementName])) {
 		/* XXX: We should verify that 'select' exists here */
 		continue;
@@ -1107,8 +1109,13 @@ class DatabaseStorage extends GalleryStorage {
 	if (isset($query['where'])) {
 	    $finalQuery .= ' WHERE ' . $query['where'];
 	}
+
 	if (isset($query['order-by'])) {
 	    $finalQuery .= ' ORDER BY ' . $query['order-by'];
+	}
+
+	if (isset($query['group-by'])) {
+	    $finalQuery .= ' GROUP BY ' . $query['group-by'];
 	}
 
 	/* Run it with the right limits and return the results */

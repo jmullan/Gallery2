@@ -179,6 +179,7 @@ foreach (array('permissions.directory' => '0755',
 	       'default.orderDirection' => '1',
 	       'default.layout' => 'classic',
 	       'default.theme' => 'classic',
+	       'default.language' => 'en_US',
 	       'graphics.type' => 'netpbm')
 	 as $key => $value) {
 
@@ -498,7 +499,6 @@ function CreateAdminUser() {
     }
     $user->setPassword('admin');
     $user->setFullName('Gallery Administrator');
-    $user->setLanguage('en_US');
 	
     $ret = $user->save();
     if ($ret->isError()) {

@@ -49,6 +49,7 @@ class CoreModule extends GalleryModule {
 	require_once($classDir . 'GalleryEntity.class');
 	require_once($classDir . 'GalleryChildEntity.class');
 	require_once($classDir . 'GalleryFileSystemEntity.class');
+	require_once($classDir . 'GalleryTranslator.class');
 	require_once($classDir . 'Gallery.class');
 	require_once($classDir . 'GalleryStorage.class');
 	require_once($classDir . 'GalleryStorageFactory.class');
@@ -131,13 +132,13 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 
 	return array(GalleryStatus::success(),
-		     array(array('name' => $gallery->translate('General'),
+		     array(array('name' => $this->translate('General'),
 				 'view' => 'core:AdminCore'),
-			   array('name' => $gallery->translate('Users'),
+			   array('name' => $this->translate('Users'),
 				 'view' => 'core:AdminUsers'),
-			   array('name' => $gallery->translate('Groups'),
+			   array('name' => $this->translate('Groups'),
 				 'view' => 'core:AdminGroups'),
-			   array('name' => $gallery->translate('Modules'),
+			   array('name' => $this->translate('Modules'),
 				 'view' => 'core:AdminModules')));
     }
 }

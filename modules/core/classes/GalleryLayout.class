@@ -36,17 +36,39 @@ class GalleryLayout {
     }
 
     /**
+     * Specify which layout's translation database to use for localized content
+     * in templates
+     *
+     * @return object GalleryStatus a status code
+     */
+    function _setTranslationLayout($layoutName) {
+	global $gallery;
+	
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTranslationBase(
+	    'layouts_' . $layoutName,
+	    $gallery->getConfig('code.gallery.layouts') . $layoutName);
+	return GalleryStatus::success();
+    }
+
+    /**
      * Call getItemLinks on every active module
      *
-     * @param object GalleryItem a target item
+     * @param mixed object GalleryItem a target item, or array of object GalleryItem
      * @param array key => value parameters provided by the
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
-     *               array ('module' => array 0 or more array('text' => 'localized text',
-     *                                                        'params' => array(key => value, key => value)))
+     *               array('itemId' => array('moduleName' =>
+     *                                            array('text' => ...,
+     *                                                  'params' => ...,
+     *                                                  'url' => ...))),
      */
-    function _getModuleItemLinks($item, $urlParams) {
+    function _getModuleItemLinks($items, $urlParams) {
 	global $gallery;
+
+	if (!is_array($items)) {
+	    $items = array($items);
+	}
 
 	/* Load the module list */
 	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
@@ -61,25 +83,80 @@ class GalleryLayout {
 	    if (empty($status['active'])) {
 		continue;
 	    }
-
+	    
 	    list ($ret, $module) = $gallery->loadModule($moduleName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $itemLinks[$moduleName]) =
-		$module->getItemLinks($item, $urlParams);
+	    /* Get all module-related links for these items */
+	    list ($ret, $moduleLinks) =
+		$module->getItemLinks($items, $urlParams);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    for ($i = 0; $i < sizeof($itemLinks[$moduleName]); $i++) {
-		$itemLinks[$moduleName][$i]['url'] =
-		    $templateAdapter->url($itemLinks[$moduleName][$i]['params']);
+	    /* Turn the URL params into an actual URL */
+	    foreach ($moduleLinks as $itemId => $links) {
+		$moduleLinks[$itemId]['url'] =
+		    $templateAdapter->url($moduleLinks[$itemId]['params']);
+	    }
+	    
+	    /* Refactor into: array[itemId][moduleName][links] */
+	    foreach ($moduleLinks as $itemId => $links) {
+		$itemLinks[$itemId][$moduleName] = $links;
 	    }
 	}
 
 	return array(GalleryStatus::success(), $itemLinks);
     }
 
+    /**
+     * Call getItemSummaries on every active module
+     *
+     * @param mixed object GalleryItem a target item, or array of object GalleryItem
+     * @param array key => value parameters provided by the
+     *              parent view -- the module can augment or override these.
+     * @return array object GalleryStatus a status code
+     *               array ('itemId' => array('moduleName' => html, ...))
+     */
+    function _getModuleItemSummaries($items, $urlParams) {
+	global $gallery;
+
+	if (!is_array($items)) {
+	    $items = array($items);
+	}
+	
+	/* Load the module list */
+	list ($ret, $moduleStatus) = $gallery->getModuleStatus();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$itemSummaries = array();
+	foreach ($moduleStatus as $moduleName => $status) {
+	    if (empty($status['active'])) {
+		continue;
+	    }
+
+	    list ($ret, $module) = $gallery->loadModule($moduleName);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $moduleSummaries) =
+		$module->getItemSummaries($items, $urlParams);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Refactor into: array[itemId][moduleName][links] */
+	    foreach ($moduleSummaries as $itemId => $html) {
+		$itemSummaries[$itemId][$moduleName] = $html;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $itemSummaries);
+    }
+    
 }
