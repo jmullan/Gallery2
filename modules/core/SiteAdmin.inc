@@ -107,6 +107,7 @@ class SiteAdminView extends GalleryView {
 		$subViewChoices = array_merge($subViewChoices, $moduleViews);
 	    }
 	}
+
 	// Sort and group..
 	$subViewGroups = $groupLabels = array();
 	foreach ($subViewChoices as $adminView) {
@@ -122,6 +123,7 @@ class SiteAdminView extends GalleryView {
 		}
 	    }
 	}
+
 	// Set labels..
 	foreach (array_keys($subViewGroups) as $group) {
 	    $data =& $subViewGroups[$group];
