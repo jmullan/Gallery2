@@ -321,6 +321,23 @@
       <em><strong>Note</strong> - the installer requires that you have cookies
       enabled in your browser!</em>
     </p>
+	<ol>
+      <li>
+	<b> Authenticate </b> - You will be asked to create and save a small text file in order to authenticate, If ths step is successful you can proceed to Step 2. </li>
+      <li>
+	<b> Install Checks </b> - This is where we would check to make sure that all your files have been uploaded 
+properly. This is not implimented in this alpha release. Go onto Step 3.</li>
+		<li>
+	<b> System Checks </b> - The installer looks for valid versions of PHP and other items. Proceed to Step 4.</li>
+		<li>
+	<b> Admin User Setup </b> - You are prompted for an administrator username and password. In this alpha release the default Admin username is set to <strong>admin</strong> and cannot be changed. Type in a password and type it again to validate it. Then click 'Create' to create the admin user for this installation of Gallery 2. You are them prompted to go to Step 5. </li>
+		<li>
+	<b> Storge Setup </b> - Read the instructions on the installer to set up a storage location for Gallery 2. Save this path, then proceed to Step 6. </li>
+		<li>
+	<b> Database Setup </b> - This is where you select your database type and enter your database authentication information. Select and enter the corerct information and save it. Proceed to Step 7. </li>
+		<li>
+	<b> Finished! </b> - Congratulations! Your Gallery 2 <span style="FONT-STYLE: italic">Alpha</span> has successfully installed! See... that wasn't so hard, was it? Now it's time to upload some photos! Click on 'Go to my Gallery!'</li>
+	  </ol>
 
     <h2><a name="getting_started">Getting started with G2 Alpha</a></h2>
     <ol>
@@ -459,7 +476,7 @@
     </p>
 
     <h2><a name="known_issues">Known Issues / Bugs</a></h2>
-    <ol>
+    <ul>
       <li>
 	<b>Upgrade Path</b> - There&rsquo;s no upgrade path from this
 	version of G2 Alpha to future versions.  You&rsquo;ll have to throw
@@ -468,26 +485,17 @@
 	closer to beta.
       </li>
       <li>
-	<b>G1 -> G2 Migration</b> - 
-	<ul>
-	  <li>
-	    Migration does not preserve album order currently.  Your
-	    albums may show up in a seemingly random order.
-	  </li>
-	  <li> 
-	    Migration seems to abort after 5 minutes so if you do a
-	    large import and it suddenly stops without giving you any
-	    feedback, you might want to import in small chunks of
-	    albums for now.
-	  </li>
-	  <li>
-	    If your G1 uses a character set besides UTF-8, any
-	    non-ASCII characters in your captions, description, and
-	    comments will probably be displayed incorrectly.
-	    Converting them to UTF-8 (and then HTML entities) is one
-	    of the high-priority post-alpha tasks.
-	  </li>
-	</ul>
+	<b>G1 -> G2 Migration</b> - You can migrate your albums from
+	G1 to G2 (it doesn&rsquo;t affect your G1 install at all).  It will
+	migrate your permissions and comments, but it doesn&rsquo;t maintain
+	the order of photos, yet.  We also know that it seems to abort
+	after 5 minutes so if you do a large import and it suddenly
+	stops without giving you any feedback, you might want to
+	import in small chunks of albums for now.  If your G1 uses a
+	character set besides UTF-8, any non-ASCII characters in your
+	captions, description, and comments will probably be displayed
+	incorrectly.  Converting them to UTF-8 (and then HTML entities)
+	is one of the high-priority post-alpha tasks.
       </li>
       <li>
 	<b>Performance</b> - G2 is not as fast as we want it to be.
@@ -499,7 +507,7 @@
 	<b> MembersList shows email addresses to everybody </b> - this is a known
         issue that we will fix in an upcoming release.
       </li>
-    </ol>
+    </ul>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
     <p>
@@ -507,12 +515,28 @@
       G2 data any time you upgrade.  The proper way to upgrade is to
       <a href="#get_latest_code">get the latest code</a> and overwrite
       your existing copy with it.  If you see weird errors, then it&rsquo;s
-      time to delete your database and the contents of your
-      gallerydata directory (but leave the directory itself around)
-      and <a href="#installing">perform a complete reinstall</a>.
-      Yes, we know that this sucks.
-    </p>
-
+    time to delete your database.</p>
+    
+	<div class="instructions">
+	  <h3>MySQL</h3>
+	  <code>
+	    mysqladmin -uroot drop gallery2  <br />
+	  </code>
+	</div>
+	
+	<div class="instructions">
+	  <h3>PostgreSQL</h3>
+	  <code>
+	    dropdb gallery2
+	  </code>
+  </div>
+		<ul class="note">
+	    <li> These commands assumes the database is called <strong>gallery2</strong> </li>
+		</ul>
+    <p> Make sure you delete the contents of your
+        gallerydata directory (but leave the directory itself around)
+        and <a href="#installing">perform a complete reinstall</a>.
+        Yes, we know that this sucks. </p>
     <p>
       We sneaky developer types have a back-door that lets us do
       reinstalls much faster.  You can play with this too, but we ask
