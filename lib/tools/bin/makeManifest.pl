@@ -48,8 +48,10 @@ print STDERR "\n";
 # Now generate the checksum files
 #
 print STDERR "Generating checksums...";
+my $changed = 0;
+my $total = 0;
 foreach my $manifest (keys %sections) {
-  open(my $out, ">$manifest") or die;
+  open(my $out, ">$manifest.new") or die;
   print $out "# File crc32 crc32(crlf) size size(crlf) viewable\n";
   my @entries = @{$sections{$manifest}};
   foreach my $entry (@entries) {
@@ -81,10 +83,34 @@ foreach my $manifest (keys %sections) {
     print $out "$file\t$cksum\t$cksum_crlf\t$size\t$size_crlf\t$view\n";
   }
   close $out;
+
+  $changed += replaceIfNecessary("$manifest", "$manifest.new");
+  $total++;
+
   print STDERR ".";
 }
 print STDERR "\n";
 printf(STDERR "Completed in %d seconds\n", time - $^T);
+printf(STDERR "Manifests changed: $changed (total: $total)\n");
+
+sub replaceIfNecessary {
+  my ($oldFile, $newFile) = @_;
+  open(FD, "<$oldFile") || die;
+  my $old = join("", <FD>);
+  close(FD);
+
+  open(FD, "<$newFile") || die;
+  my $new = join("", <FD>);
+  close(FD);
+
+  if ($old ne $new) {
+    rename($newFile, $oldFile);
+    return 1;
+  } else {
+    unlink($newFile);
+    return 0;
+  }
+}
 
 sub parseCvs {
   my $activeDir = shift;
