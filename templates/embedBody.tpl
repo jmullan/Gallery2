@@ -22,5 +22,5 @@
 
 {* If debugging or profiling is enabled, we'll display it here *}
 {if isset($main.debug) || isset($main.profile)}
-  {include file="gallery:templates/debug.tpl"}
+  {include file="gallery:templates/debug.tpl" fetchDebug=true}
 {/if}

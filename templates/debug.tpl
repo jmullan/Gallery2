@@ -28,7 +28,7 @@
   </span>
   {/if}
 
-  {if isset($main.debug)}
+  {if isset($main.debug) && isset($fetchDebug)}
   {debug output=""}
   {/if}
 </div>
