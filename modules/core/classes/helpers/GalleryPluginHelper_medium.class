@@ -1,0 +1,444 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Track all plugins and their state
+ *
+ * @package GalleryCore
+ * @subpackage Helpers
+ */
+class GalleryPluginHelper_medium {
+    
+    /**
+     * Activate the given plugin
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function activate($pluginType, $pluginId) {
+	global $gallery;
+
+	list ($ret, $pluginStatus) = GalleryCoreApi::fetchPluginStatus($pluginType);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (empty($pluginId) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginMap.class');
+	if (isset($pluginStatus[$pluginId]['active'])) {
+	    $ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
+							  'pluginId' => $pluginId),
+						    array('active' => 1));
+	} else {
+	    $ret = GalleryPluginMap::addMapEntry(array('pluginType' => $pluginType,
+						       'pluginId' => $pluginId,
+						       'active' => 1));
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Flush the cache */
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Deactivate the given plugin
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function deactivate($pluginType, $pluginId) {
+	if (empty($pluginId) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginMap.class');
+	$ret = GalleryPluginMap::updateMapEntry(array('pluginType' => $pluginType,
+						      'pluginId' => $pluginId),
+						array('active' => 0));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Flush the cache */
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
+
+	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
+	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
+	$ret = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove the given plugin from the map
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function remove($pluginType, $pluginId) {
+	if (empty($pluginId) || empty($pluginType)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	require_once(dirname(__FILE__) . '/../GalleryPluginMap.class');
+	$ret = GalleryPluginMap::removeMapEntry(array('pluginType' => $pluginType,
+						      'pluginId' => $pluginId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get rid of the specified plugin.
+     *
+     * TODO: This is incomplete, since if the plugin has already been initialized
+     *       then it may have registered implementations with the factory or otherwise
+     *       left tendrils of itself in memory.
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @static
+     */
+    function unloadPlugin($pluginType, $pluginId) {
+	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
+	GalleryDataCache::remove($cacheKey);
+    }
+
+    /**
+     * Get the list of all available plugins of a given type
+     *
+     * @param string the plugin type
+     * @return array object GalleryStatus a status code
+     *               string plugin ids
+     * @static
+     */
+    function getAllPluginIds($pluginType) {
+	global $gallery;
+
+	switch($pluginType) {
+	case 'module':
+	    $pluginsDir = dirname(__FILE__) . '/../../../../modules/';
+	    $pluginFile = 'module.inc';
+	    break;
+	    
+	case 'layout':
+	    $pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
+	    $pluginFile = 'layout.inc';
+	    break;
+	}
+	
+	$platform = $gallery->getPlatform();
+	if ($dir = $platform->opendir($pluginsDir)) {
+	    while (($file = $platform->readdir($dir)) != false) {
+		$path = $pluginsDir . $file;
+		if (preg_match('/^(\.|CVS)/', $file)) {
+		    continue;
+		}
+		
+		if ($platform->is_file($path . '/' . $pluginFile)) {
+		    $pluginIds[] = $file;
+		}
+	    }
+	    $platform->closedir($dir);
+	}
+	
+	return array(GalleryStatus::success(), $pluginIds);
+    }
+
+    /**
+     * Remove all parameters for a given item id
+     *
+     * @param int the id of the GalleryItem
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeParametersForItemId($itemId) {
+	global $gallery;
+	
+	if (empty($itemId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::removeMapEntry(array('itemId' => $itemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\(.*, $itemId\)");
+	GalleryDataCache::removeFromDisk(array('type' => 'module',
+					       'itemId' => $itemId));
+	GalleryDataCache::removeFromDisk(array('type' => 'layout',
+					       'itemId' => $itemId));
+
+	return GalleryStatus::success();
+    }
+
+
+    /**
+     * Remove a parameter for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param string the name of the parameter
+     * @param integer the id of item (or null for a global setting)
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
+	global $gallery;
+	
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+
+	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => $pluginType,
+							       'pluginId' => $pluginId,
+							       'itemId' => $itemId,
+							       'parameterName' => $parameterName));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
+	GalleryDataCache::remove($cacheKey);
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => $itemId,
+					       'id' => $pluginId));
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove all parameters for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removeAllParameters($pluginType, $pluginId) {
+	if (empty($pluginType) || empty($pluginId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::removeMapEntry(array('pluginType' => $pluginType,
+							       'pluginId' => $pluginId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, ");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'id' => $pluginId));
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Set a module parameter
+     *
+     * @param string the plugin type
+     * @param string the plugin id
+     * @param string the parameter name
+     * @param string the value
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function setParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	/*
+	 * Figure out if this is an insert or an update.  It's an insert if
+	 * we don't have an existing parameter by that name.  Otherwise, it's
+	 * an update.
+	 */
+	list ($ret, $params) =
+	    GalleryPluginHelper_simple::fetchAllParameters($pluginType, $pluginId, $itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!array_key_exists($parameterName, $params)) {
+	    $ret = GalleryPluginHelper_medium::_addParameter($pluginType,
+							     $pluginId,
+							     $parameterName,
+							     $parameterValue,
+							     $itemId);
+	} else {
+	    $ret = GalleryPluginHelper_medium::_updateParameter($pluginType,
+								$pluginId,
+								$parameterName,
+								$parameterValue,
+								$itemId);
+	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Invalidate our cache */
+	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
+	GalleryDataCache::remove($cacheKey);
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => $itemId,
+					       'id' => $pluginId));
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Add a new parameter for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param string the name of the parameter
+     * @param string the value of the parameter
+     * @param integer the id of item (or null for a global setting)
+     * @return object GalleryStatus a status code
+     * @static
+     * @access private
+     */
+    function _addParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+
+	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::addMapEntry(
+	    array('pluginType' => $pluginType,
+		  'pluginId' => $pluginId,
+		  'itemId' => $itemId,
+		  'parameterName' => $parameterName,
+		  'parameterValue' => $parameterValue));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Update an existing parameter for this plugin
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param string the name of the parameter
+     * @param string the value of the parameter
+     * @param integer the id of item (or null for a global setting)
+     * @return object GalleryStatus a status code
+     * @static
+     * @access private
+     */
+    function _updateParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	/* Convert null to 0, just in case */
+	if ($itemId == null) {
+	    $itemId = 0;
+	}
+	
+	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
+	$ret = GalleryPluginParameterMap::updateMapEntry(
+	    array('pluginType' => $pluginType,
+		  'pluginId' => $pluginId,
+		  'itemId' => $itemId,
+		  'parameterName' => $parameterName),
+	    array('parameterValue' => $parameterValue));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Set a given plugin instance in the plugin cache
+     *
+     * This should only be used by unit tests that want to force a specific
+     * dummy plugin to exist, temporarily.
+     *
+     * @param object Plugin a plugin instance
+     * @static
+     */
+    function setPluginInstance($pluginType, $pluginId, &$instance) {
+	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
+					 $instance, true);
+    }
+}
+?>

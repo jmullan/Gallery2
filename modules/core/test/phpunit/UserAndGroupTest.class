@@ -1,0 +1,686 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test User and Group functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class UserAndGroupTest extends GalleryTestCase {
+
+    function UserAndGroupTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * Create user, delete user
+     */
+    function testCreateUser() {
+	global $gallery;
+
+	/* Create a new user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, modify user, delete user
+     */
+    function testCreateAndModifyUser() {
+	global $gallery;
+
+	/* Create a new user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $user) = $user->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Modify it */
+	$user->setFullName('newname-' . rand());
+
+	/* Save it */
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unlock it */
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, fetch user names, make sure it's in there, delete user
+     */
+    function testFetchUserNames() {
+	global $gallery;
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $names) = GalleryCoreApi::fetchUserNames();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array($user->getUserName(), $names));
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Count users, Create user, count users again, delete user
+     */
+    function testFetchUserCount() {
+	global $gallery;
+
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($countBefore+1, $countAfter);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Verify that we can fetch all users with a given substring in their username
+     */
+    function testFetchUserCountBySubstring() {
+	global $gallery;
+
+	$unique = rand(0, 65535);
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Nobody matches our unique tag
+	$this->assertEquals(0, $count);
+	
+	list ($ret, $user) = $this->_createRandomUser($unique);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique, null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// We now have one user that matches the description
+	$this->assertEquals(1, $count);
+
+	// Clean up
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /*
+     * Verify that we can fetch a count of the users from any particular group
+     */
+    function testFetchUserCountByGroupId() {
+	global $gallery;
+
+	/* Create a user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 0 */
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount(null, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $countBefore);
+
+	/* Put the user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 1 */
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount(null, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $countAfter);
+
+	/* Delete user */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Verify that we can fetch all users from a group with a given substring in their username
+     */
+    function testFetchUserCountBySubstringAndGroupId() {
+	global $gallery;
+
+	$strSearch = 'rand';
+	$uniqueFirst = rand(0, 65535);
+	$uniqueSecond = rand(0, 65535);
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 0 */
+	list ($ret, $countBefore) = GalleryCoreApi::fetchUserCount($strSearch, $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(0, $countBefore);
+	
+	/* Create the first user */
+	list ($ret, $userFirst) = $this->_createRandomUser($strSearch . $uniqueFirst);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create the second user */
+	list ($ret, $userSecond) = $this->_createRandomUser($strSearch . $uniqueSecond);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Put the first user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userFirst->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Put the second user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($userSecond->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* fetchUserCount should return 1 */
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst,
+                                                                  $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, $countAfter);
+
+	/* Delete first user */
+	$ret = $this->_deleteAndVerifyEntity($userFirst->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete second user */
+	$ret = $this->_deleteAndVerifyEntity($userSecond->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, fetch it by name, delete user
+     */
+    function testFetchUserByName() {
+	global $gallery;
+
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $newUser) = GalleryCoreApi::fetchUserByUserName($user->getUserName());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($user, $newUser);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    /**
+     * Create group, delete group
+     */
+    function testCreateGroup() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create duplicate group
+     */
+    function testCreateDuplicateGroup() {
+	global $gallery;
+
+	$groupTag = rand();
+
+	list ($ret, $group) = $this->_createRandomGroup($groupTag);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Create it again */
+	list ($ret, $duplicateGroup) = $this->_createRandomGroup($groupTag);
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'There should have been a collision');
+	$this->assert(!isset($duplicateGroup));
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create duplicate user
+     */
+    function testCreateDuplicateUser() {
+	global $gallery;
+
+	$userTag = rand();
+
+	list ($ret, $user) = $this->_createRandomUser($userTag);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($user);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	/* Create it again */
+	list ($ret, $duplicateUser) = $this->_createRandomUser($userTag);
+	$this->assert($ret->getErrorCode() & ERROR_COLLISION, 'There should have been a collision');
+	$this->assert(!isset($duplicateUser));
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, modify group, delete group
+     */
+    function testCreateAndModifyGroup() {
+	global $gallery;
+
+	/* Create a new group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Lock and refresh it */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $group) = $group->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Modify it */
+	$group->setGroupName('newname-' . rand());
+
+	/* Save it */
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unlock it */
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify it */
+	$ret = $this->_verifyEntity($group);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create user, create group, add user to group, remove user from group,
+     * delete user, delete group
+     */
+    function testAddAndRemoveUserFromGroup() {
+	global $gallery;
+
+	/* Create a user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a group */
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Put the user into the group */
+	$ret = GalleryCoreApi::addUserToGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify */
+	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($inGroup);
+
+	/* Remove user from group */
+	$ret = GalleryCoreApi::removeUserFromGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify */
+	list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$inGroup);
+
+	/* Delete user */
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Delete group */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, fetch group names, make sure it's in there, delete group
+     */
+    function testFetchGroupNames() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $names) = GalleryCoreApi::fetchGroupNames();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array($group->getGroupName(), $names));
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Count groups, Create group, count groups again, delete group
+     */
+    function testFetchGroupCount() {
+	global $gallery;
+
+	list ($ret, $countBefore) = GalleryCoreApi::fetchGroupCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $countAfter) = GalleryCoreApi::fetchGroupCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($countBefore+1, $countAfter);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Create group, fetch it by name, delete group
+     */
+    function testFetchGroupByName() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createRandomGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $newGroup) = GalleryCoreApi::fetchGroupByGroupName($group->getGroupName());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($group, $newGroup);
+
+	/* Delete it */
+	$ret = $this->_deleteAndVerifyEntity($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testAssertSiteAdministrator() {
+	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testAssertHasItemPermission() {
+	global $gallery;
+	
+	$ret = GalleryCoreApi::assertHasItemPermission($this->_getRootId(), 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testHasItemPermission() {
+	global $gallery;
+	
+	list ($ret, $hasPermission) =
+	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+
+?>

@@ -1,0 +1,142 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A helper class for GalleryUsers
+ *
+ * Utility functions useful in managing GalleryUsers
+ *
+ * @package GalleryCore
+ * @subpackage Helpers
+ */
+class GalleryUserHelper_simple {
+	
+    /**
+     * Assert that the given user has one of the specific permissions for the
+     * target item
+     *
+     * @return object GalleryStatus success if the user is an administrator
+     *                              ERROR_PERMISSION_DENIED if not.
+     * @static
+     */
+    function assertHasItemPermission($itemId, $permission) {
+	global $gallery;
+
+	if (GalleryDataCache::hasPermission($itemId, $permission)) {
+	    return GalleryStatus::success();
+	}
+
+	/* Use the active user id */
+	$userId = $gallery->getActiveUserId();
+	
+	list ($ret, $hasPermission) =
+	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (!$hasPermission) {
+	    return GalleryStatus::error(ERROR_PERMISSION_DENIED,
+					__FILE__, __LINE__,
+					sprintf('user id: %s doesn\'t have permission: %s for item id: %s',
+						$gallery->getActiveUserId(),
+						$permission,
+						$itemId));
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return true if the given user has the specific permission for the
+     * target item
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if yes
+     * @static
+     */
+    function hasItemPermission($itemId, $permission) {
+	global $gallery;
+
+	if (GalleryDataCache::hasPermission($itemId, $permission)) {
+	    return array(GalleryStatus::success(), true);
+	}
+
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+						array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$query = '
+        SELECT
+          COUNT([GalleryPermissionMap::itemId])
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+          AND
+        ' . $andPermission . ' = ?
+        GROUP BY
+          [GalleryPermissionMap::itemId]
+        ';
+
+	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits($permission);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	$data[] = $itemId;
+	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = $storage->convertIntToBits($bits);
+	$data[] = $storage->convertIntToBits($bits);
+
+	list($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$hasPermission = ($searchResults->resultCount() > 0);
+	
+	return array(GalleryStatus::success(), $hasPermission);
+    }
+}
+?>

@@ -1,0 +1,122 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Required classes
+ */
+require_once(dirname(__FILE__) . '/../../../../lib/smarty_plugins/modifier.entitytruncate.php');
+
+/**
+ * Test Truncate functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class TruncateTest extends GalleryTestCase {
+
+    function TruncateTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function testTruncate1() {
+	$string = 'truncate will default to truncating at 80 characters with no word break and append an ellipse';
+	$result = smarty_modifier_entitytruncate($string);
+	$this->assertEquals('truncate will default to truncating at 80 characters with no word break and...',
+			    $result);
+    }
+
+    function testTruncate2() {
+	$string = 'truncate at 30 characters with no word break and ellipses';
+	$result = smarty_modifier_entitytruncate($string, 30);
+	$this->assertEquals('truncate at 30 characters...',
+			    $result);
+    }
+
+    function testTruncate3() {
+	$string = 'truncate at 10 characters with XXX instead of ellipses and no word break';
+	$result = smarty_modifier_entitytruncate($string, 10, 'XXX');
+
+	/* Can't honor word break because it's less than one word */
+	$this->assertEquals('truncatXXX', $result);
+    }
+
+    function testTruncate4() {
+	$string = 'truncate at 20 characters with word break and ellipses';
+	$result = smarty_modifier_entitytruncate($string, 20, '...', true);
+	$this->assertEquals('truncate at 20 ch...', $result);
+    }
+
+    function testTruncate5() {
+	$string = '&amp; respect html entities entities';
+	$result = smarty_modifier_entitytruncate($string, 5, '', true);
+	$this->assertEquals('&amp; res', $result);
+    }
+    
+    function testTruncate6() {
+	$string = 'respect &amp; &amp;';
+	$result = smarty_modifier_entitytruncate($string, 9, '', true);
+	$this->assertEquals('respect &amp;', $result);
+    }
+    
+    function testTruncate7() {
+	$string = 'monkey&amp;foo&#1234;bar';
+	$result = smarty_modifier_entitytruncate($string, 10, '', true);
+	$this->assertEquals('monkey&amp;foo', $result);
+    }
+    
+    function testTruncate8() {
+	$string = '';
+	$result = smarty_modifier_entitytruncate($string, 9, '', true);
+	$this->assertEquals('', $result);
+    }
+    
+    function testTruncate9() {
+	$string = 'monkey&amp;foo&#1234;bar';
+	$result = smarty_modifier_entitytruncate($string, 11, '', true);
+	$this->assertEquals('monkey&amp;foo&#1234;', $result);
+    }
+    
+    function testTruncate10() {
+	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
+	$result = smarty_modifier_entitytruncate($string, 11, '', true);
+	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;', $result);
+    }
+    
+    function testTruncate11() {
+	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
+	$result = smarty_modifier_entitytruncate($string, 6, '...', false);
+	$this->assertEquals('&#1040;&#1088;&#1093;...', $result);
+    }
+    
+    function testTruncate12() {
+	$string = '&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;&#1086;&#1077; 09.03.2004';
+	$result = smarty_modifier_entitytruncate($string, 14);
+	$this->assertEquals('&#1040;&#1088;&#1093;&#1072;&#1085;&#1075;&#1077;&#1083;&#1100;&#1089;&#1082;...', $result);
+    }
+}
+?>

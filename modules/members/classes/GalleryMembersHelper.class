@@ -1,0 +1,204 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @package Comment
+ * @version $Revision$ $Date$
+ * @author Robert Balousek <rbalousek@hotmail.com>
+ */
+
+/**
+ * A helper class for GalleryMembers
+ *
+ * Utility functions useful in managing GalleryMembers
+ *
+ * @package Members
+ * @subpackage Classes
+ */
+class GalleryMembersHelper {
+	
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Return the last N items a user created
+     *
+     * @param array int User id
+     * @return array (object GalleryStatus a status code,
+     *                array (GalleryItem, GalleryItem, ...)
+     * @static
+     */
+    function fetchLastUserItems($userId, $offset, $count, $orderDirection=ORDER_DESCENDING) {
+	global $gallery;
+
+	switch($orderDirection) {
+	case ORDER_ASCENDING:
+	    $direction = 'ASC';
+	    break;
+
+	case ORDER_DESCENDING:
+	    $direction = 'DESC';
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+        list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	list ($ret, $andPermission) = 
+            $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$query = '
+        SELECT DISTINCT
+          [GalleryItem::id], [GalleryEntity::creationTimestamp]
+        FROM
+          [GalleryItem], [GalleryEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
+        WHERE
+          [GalleryItem::id] = [GalleryEntity::id]
+        AND
+          [GalleryItem::ownerId] = ?
+        AND
+          ([GalleryPermissionMap::userId] = ?
+         OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+        AND
+	' . $andPermission . ' > ?
+        AND
+	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
+        ORDER BY
+          [GalleryEntity::creationTimestamp] ' . $direction . '
+        ';
+
+	$data[] = $userId;
+	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+	$options = array();
+	$options['limit'] = array('count' => $count, 'offset' => $offset);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Get all of our item ids */
+	$itemIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $itemIds[] = $result[0];
+	}
+
+	/* Convert them to entities */
+	if (sizeof($itemIds) > 0) {
+	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($itemIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $items = array();
+	}
+
+        return array(GalleryStatus::success(), $items);
+    }
+
+    function canViewMembersModule($userId) {
+        global $gallery;
+        list ($ret, $viewSelectedGroupId) = 
+            GalleryCoreApi::getPluginParameter('module','members','viewSelected');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+        list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        return array(GalleryStatus::success(), $result);    
+    }
+    
+    function canViewProfileEmail($userId) {
+        global $gallery;
+        $result = false;
+        list ($ret, $resultOne) = 
+            GalleryCoreApi::getPluginParameter('module','members','emailSelected');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	list ($ret, $groupId) = 
+            GalleryCoreApi::getPluginParameter('module','core','id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        if ($resultOne || $resultTwo) {
+            $result = true;
+        }
+        
+        return array(GalleryStatus::success(), $result);    
+    }
+    
+    function daysSinceCreation ($userId) {
+        global $gallery;
+        $query = '
+        SELECT
+          (TO_DAYS(CURRENT_DATE()) - TO_DAYS(FROM_UNIXTIME([GalleryEntity::creationTimestamp])))
+        FROM
+          [GalleryEntity]
+        WHERE
+          [GalleryEntity::id] = ?
+        ';
+    
+    	$data[] = $userId;
+    	list ($ret, $searchResults) = $gallery->search($query, $data);
+    	if ($ret->isError()) {
+    	    return array($ret->wrap(__FILE__, __LINE__), null);
+    	}
+    
+	$result = $searchResults->nextResult();
+        return array(GalleryStatus::success(), (int)$result[0]);  
+    }
+}
+?>

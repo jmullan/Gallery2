@@ -1,0 +1,133 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package UserAlbum
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test UserAlbum functionality
+ *
+ * @package UserAlbum
+ * @subpackage PHPUnit
+ */
+class UserAlbumTest extends GalleryTestCase {
+
+    function UserAlbumTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	// Enable event (normally disabled for unit tests)
+	$this->_registerTestEventListener('GalleryEntity::save', new UserAlbumModule());
+
+	list ($ret, $this->_param) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'view', 'allusers');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'fullsize', '0');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_allUserGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	foreach ($this->_param as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	if (isset($this->_albumId)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_albumId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	if (isset($this->_userId)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_userId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	parent::tearDown();
+    }
+
+    function testUserAlbum() {
+
+	// Create new user..
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_userId = $user->getId();
+
+	// Verify user's album was created..
+	list ($ret, $this->_albumId) = GalleryCoreApi::fetchItemIdByPath('/' . $user->getUserName());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($this->_albumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($album, 'GalleryAlbumItem'), 'album');
+	$this->assertEquals($user->getId(), $album->getOwnerId(), 'owner');
+
+	// Verify permissions..
+	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($this->_albumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(in_array(
+	    array('userId' => 0, 'groupId' => $this->_allUserGroupId,
+		  'permission' => 'core.viewResizes'),
+	    $permissions), 'view resizes for all users');
+	$this->assert(!in_array(
+	    array('userId' => 0, 'groupId' => $this->_allUserGroupId,
+		  'permission' => 'core.viewSource'),
+	    $permissions), 'no view source for all users');
+    }
+}
+?>

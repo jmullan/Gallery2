@@ -1,0 +1,187 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test Entity functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTest extends GalleryTestCase {
+
+    function EntityTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_entity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_entity->create();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_entity->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::deleteEntityById($this->_entity->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testDoLoad() {
+	// Ensure GalleryEntity::onLoad() is called whether entity is
+	// loaded from database or disk cache..
+
+	// Load the entity back and verify it
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->_entity->getId()));
+
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
+	$this->assertEquals($this->_entity, $newEntity, 'Entity check');
+	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
+
+	if (GalleryDataCache::isFileCachingEnabled()) {
+	    // Load back from disk cache and verify it
+	    GalleryDataCache::reset();
+	    $data = GalleryDataCache::getFromDisk(
+				      array('type' => 'entity', 'itemId' => $this->_entity->getId()));
+	    $this->assert(!empty($data), 'Entity data should be in disk cache');
+
+	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class 2');
+	    $this->assertEquals($this->_entity, $newEntity, 'Entity check 2');
+	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for disk cache load');
+	}
+    }
+
+    function testSetSameValueDifferentType() {
+	// Ensure modified flag is not set if we assign a value that once casted
+	// to the right type is the same as the old value..
+
+	$oldValue = $this->_entity->getModificationTimestamp();
+	$newValue = (string)$oldValue;
+
+	$this->_entity->setModificationTimestamp($newValue);
+	$this->assert(!$this->_entity->isModified(), 'is not modified');
+    }
+
+    function testSetBackToOldValue() {
+	// Ensure modified flag is cleared if we change an attribute and then
+	// change it back to its original value..
+
+	$oldValue = $this->_entity->getModificationTimestamp();
+	$this->_entity->setModificationTimestamp(10);
+	$this->assert($this->_entity->isModified(), 'is modified');
+
+	$this->_entity->setModificationTimestamp($oldValue);
+	$this->assert(!$this->_entity->isModified(), 'is not modified');
+    }
+
+    function testSetSetSet() {
+	// Ensure modified flag stays set if value goes null->A->B->A (ie first set of A
+	// doesn't become the "original value" when it should stay as null)
+
+	list ($ret, $entity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$entity->isModified(), 'not yet modified');
+	$entity->setIsLinkable(true);
+	$entity->setIsLinkable(false);
+	$entity->setIsLinkable(true);
+	$this->assert($entity->isModified(), 'is modified');
+    }
+}
+
+/**
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTestEntity extends GalleryEntity {
+
+    function create() {
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->setEntityType('EntityTestEntity');
+	return GalleryStatus::success();
+    }
+
+    function onLoad() {
+	$this->_wasOnLoadCalled(true);
+	$ret = parent::onLoad();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    function _wasOnLoadCalled($set=null) {
+	static $wasCalled;
+	if (!isset($wasCalled)) {
+	    $wasCalled = false;
+	}
+	if (isset($set)) {
+	    $value = $wasCalled = $set;
+	} else {
+	    $value = $wasCalled;
+	    $wasCalled = false;
+	}
+	return $value;
+    }
+}
+?>

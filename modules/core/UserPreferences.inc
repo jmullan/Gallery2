@@ -1,0 +1,204 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle changes made to an user
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class UserPreferencesController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($userId == $anonymousUserId) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	}
+
+	$results = array();
+	$status = array();
+	$error = array();
+	if (isset($form['action']['cancel'])) {
+
+	    /* Redirect back to the current view */
+	    $redirect['view'] = 'core:UserAdmin';
+	    $redirect['subView'] = 'core:UserPreferences';
+	    
+	} else if (isset($form['action']['undo'])) {
+
+	    /* Redirect back to the same view to reset the form */
+	    $redirect['view'] = 'core:UserAdmin';
+	    $redirect['subView'] = 'core:UserPreferences';
+	    
+	} else if (isset($form['action']['save'])) {
+
+	    /*
+	     * Validate our data before we continue.
+	     */
+
+	    /* full name is optional */
+	    
+	    /* language is optional for everybody */
+
+	    /* email required for non-anonymous */
+	    if (empty($form['email'])) {
+		$error[] = 'form[error][email][missing]';
+	    } else {
+		$form['email'] = trim($form['email']);
+		if (!GalleryUtilities::isValidEmailString($form['email'])) {
+		    $error[] = 'form[error][email][invalid]';
+		}
+	    }
+
+	    /*
+	     * If all the right fields are in place then go ahead and modify
+	     * the user.
+	     */
+	    if (empty($error)) {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($userId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$user->setFullname($form['fullName']);
+		$user->setEmail($form['email']);
+		if (isset($form['language'])) {
+		    $user->setLanguage($form['language']);
+		}
+
+		$ret = $user->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Request a redirect to the confirmation screen */
+		$redirect['view'] = 'core:UserAdmin';
+		$redirect['subView'] = 'core:UserPreferences';
+		$status['saved'] = 1;
+	    }
+	}
+
+	if (!empty($redirect)) {
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:UserAdmin';
+	    $results['delegate']['subView'] = 'core:UserPreferences';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view will show a form to change user options
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class UserPreferencesView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($userId == $anonymousUserId) {
+	    return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+	}
+
+	$user = $gallery->getActiveUser();
+	
+	/* Load the form with user data the first time around. */
+	if ($form['formName'] != 'UserPreferences') {
+	    $form['userName'] = $user->getUserName();
+	    $form['fullName'] = $user->getFullName();
+	    $form['email'] = $user->getEmail();
+	    $form['language'] = $user->getLanguage();
+	    $form['formName'] = 'UserPreferences';
+	}
+
+	/* Set up our language selection list */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$languageList = array();
+	$languageList[''] = $module->translate('<none>');
+	$translator =& $gallery->getTranslator();
+	$supportedLanguages = $translator->getSupportedLanguages();
+	foreach ($supportedLanguages as $language => $countryList) {
+	    foreach ($countryList as $country => $languageData) {
+		$languageList[$language . '_' . $country] = $languageData['description'];
+	    }
+	}
+
+	$UserPreferences['translationsSupported'] = $translator->canTranslate();
+	$UserPreferences['languageList'] = $languageList;
+
+	/* Render the HTML body */
+	$template->setVariable('UserPreferences', $UserPreferences);
+	$template->setVariable('controller', 'core:UserPreferences');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/UserPreferences.tpl'));
+    }
+}
+?>

@@ -1,0 +1,649 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Global storage container and utility class for Gallery
+ *
+ * This is a container for global information required for gallery
+ * operation, such as configuration, session, user, etc.  
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class Gallery {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The active GalleryUser instance
+     *
+     * @var object GalleryUser $_activeUser
+     * @access private
+     */
+    var $_activeUser;
+
+    /**
+     * Storage for all configuration variables, set in config.php.
+     * The values contained here can't be modified.  Well, they
+     * can be modified but they can't be saved so it's not a good
+     * idea.  
+     *
+     * @var array $_config
+     * @access private
+     */
+    var $_config;
+
+    /**
+     * The current debugging mode.  One of 'buffered', 'logged', 'immediate' or false
+     * 
+     * @var string $_debug
+     * @access private
+     */
+    var $_debug;
+    
+    /**
+     * Where to send debug output (when the debugging mode is set to 'logged')
+     * 
+     * @var bool $_debugLogFile
+     * @access private
+     */
+    var $_debugLogFile;
+    
+    /**
+     * A place to temporarily store debug output when the debugging mode is set
+     * to 'buffered'
+     * 
+     * @var bool $_debugBuffer
+     * @access private
+     */
+    var $_debugBuffer;
+
+    /**
+     * An instance of the GalleryPlatform class
+     *
+     * @var object GalleryPlatform $_platform
+     * @access private
+     */
+    var $_platform;
+
+    /**
+     * The current profiling mode.  
+     * 
+     * @var string $_profile
+     * @access private
+     */
+    var $_profile;
+    
+    /**
+     * Storage for all session variables.  
+     *
+     * @var object GallerySession $_session
+     * @access private
+     */
+    var $_session;
+
+    /**
+     * The backend persistent store for the Gallery class
+     *
+     * @var object GalleryStorage $_storage
+     * @access private
+     */
+    var $_storage;
+
+    /**
+     * The adapter between the template system and any Gallery callbacks that
+     * we want to use during the template process.
+     *
+     * @var object GalleryTemplateAdapter $_templateAdapter
+     * @access private
+     */
+    var $_templateAdapter;
+
+    /**
+     * Instance of the GalleryTranslator class
+     *
+     * @var object $_translator
+     * @access private
+     */
+    var $_translator;
+
+    /**
+     * Instance of the GalleryUrlGenerator class
+     *
+     * @var object $_urlGenerator
+     * @access private
+     */
+    var $_urlGenerator;
+
+    /**
+     * The time at which we should cease whatever operation we're doing
+     *
+     * @var int $_timeLimit
+     * @access private
+     */
+    var $_timeLimit;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     */
+    function Gallery() {
+	$this->_activeUser = null;
+	    
+	/* Set up a shutdown function to release any hanging locks. */
+	register_shutdown_function(array(&$this, '_shutdown'));
+    }
+
+    /**
+     * @see GalleryStorage::search()
+     */
+    function search($query, $data=array(), $options=array()) {
+	$storage =& $this->getStorage();
+	list ($ret, $results) = $storage->search($query, $data, $options);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Set the id of the active user
+     *
+     * The active user is the user who is logged on in this session.
+     * 
+     * @param object GalleryUser the current user
+     * @access public
+     */
+    function setActiveUser($user) {
+	$this->_activeUser = $user;
+
+	$session =& $this->getSession();
+
+	// It's possible for the session not to exist during bootstrap time
+	$activeUserId = $session->get('core.id.activeUser');
+	if ($activeUserId != $user->getId()) {
+	    $session->put('core.id.activeUser', $user->getId());
+	    $language = $user->getLanguage();
+	    if (!empty($language)) {
+		$session->put('core.language', $language);
+	    }
+	}
+    }
+    
+    /**
+     * Get the Id of the active user
+     *
+     * The active user is the user who is logged on in this 
+     * session.
+     * 
+     * @access public
+     * @return int the id of the current User.
+     */
+    function getActiveUserId() {
+	if (isset($this->_activeUser)) {
+	    return $this->_activeUser->getId();
+	} else {
+	    $session =& $this->getSession();
+	    return $session->get('core.id.activeUser');
+	}
+    }
+
+    /**
+     * Get the active user
+     *
+     * Cache the results of the first call and return that same value each
+     * time.
+     *
+     * @return array object GalleryStatus a status code
+     *               object GalleryUser the active user
+     */
+    function getActiveUser() {
+	return $this->_activeUser;
+    }
+
+    /**
+     * Store a value in the Gallery config table
+     *
+     * @param string the key name
+     * @param mixed the value
+     * @access public
+     */
+    function setConfig($key, $value) {
+	assert('!empty($key)');
+	$this->_config[$key] = $value;
+    }
+
+    /**
+     * Get a value from the Gallery configuration settings
+     *
+     * @access public
+     * @return mixed an arbitrary value
+     */
+    function getConfig($key) {
+	assert('!empty($key)');
+	return $this->_config[$key];
+    }
+
+    /**
+     * Get the Gallery session object.
+     *
+     * Return a reference to the unique Gallery session object.  Any changes
+     * made to this object will be saved in the session.
+     * 
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function initSession() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySession.class');
+	if (empty($this->_session)) {
+	    $this->_session = new GallerySession();
+	    $ret = $this->_session->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the Gallery session object.
+     *
+     * Return a reference to the unique Gallery session object.  Any changes
+     * made to this object will be saved in the session.
+     * 
+     * @access public
+     * @return object GallerySession a session instance
+     */
+    function &getSession() {
+	return $this->_session;
+    }
+
+    /**
+     * Set the Gallery platform object.
+     *
+     * @access public
+     * @param object GalleryPlatform the Gallery platform object
+     */
+    function setPlatform(&$platform) {
+	unset($this->_platform);
+	$this->_platform =& $platform;
+    }
+
+    /**
+     * Get the Gallery platform object.
+     *
+     * Return a copy of the unique Gallery platform object.
+     * 
+     * @access public
+     * @return object GalleryPlatform the Gallery platform object
+     */
+    function getPlatform() {
+	return $this->_platform;
+    }
+
+    /**
+     * Perform any necessary shutdown tasks.
+     *
+     * This should only be invoked as a register_shutdown callback.
+     *
+     * @access private
+     */
+    function _shutdown() {
+
+	/* Bitch about open locks */
+	$lockIds = GalleryCoreApi::getLockIds();
+	foreach ($lockIds as $lockId) {
+	    if ($this->getDebug()) {
+		$this->debug(sprintf('Lock id %d was left hanging!', $lockId));
+	    }
+	}
+		 
+	/* Release all locks and ignore any errors */
+	GalleryCoreApi::releaseAllLocks(false);
+
+	/* Roll back any transactions */
+	if (isset($this->_storage)) {
+	    $this->_storage->rollbackTransaction();
+	}
+    }
+
+    /**
+     * Return an instance of the GalleryStorage class
+     *
+     * @access public
+     * @return object GalleryStorage a storage instance
+     */
+    function &getStorage() {
+	if (!isset($this->_storage)) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryStorage.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySearchResults.class');
+	    $this->_storage = new GalleryStorage();
+	}
+	
+	return $this->_storage;
+    }
+    
+    /**
+     * Set the URL generator
+     *
+     * @param object GalleryUrlGenerator
+     */
+    function setUrlGenerator(&$urlGenerator) {
+	unset($this->_urlGenerator);
+	$this->_urlGenerator =& $urlGenerator;
+    }
+
+    /**
+     * Get the URL generator
+     *
+     * @return object GalleryUrlGenerator
+     */
+    function &getUrlGenerator() {
+	return $this->_urlGenerator;
+    }
+
+    /**
+     * Return a reference to our GalleryTranslator instance
+     *
+     * @return array object GalleryTranslator
+     */
+    function &getTranslator() {
+	return $this->_translator;
+    }
+
+    /**
+     * Initialize our GalleryTranslator
+     *
+     * @return object GalleryStatus a status code
+     */
+    function initTranslator() {
+	if (empty($this->_translator)) {
+	    /* Load the translator class */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
+
+	    list ($ret, $language) = $this->getActiveLanguageCode();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $this->_translator = new GalleryTranslator();
+	    $ret = $this->_translator->init($language);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the active language code.
+     *
+     * @return array object GalleryStatus a status code
+     *               string language code
+     */
+    function getActiveLanguageCode() {
+	$session =& $this->getSession();
+	$language = $session->get('core.language');
+
+	if (empty($language)) {
+	    list ($ret, $language) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		    /*
+		     * During installation it's possible that the database isn't around yet.
+		     * Just keep going.
+		     */
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $language);
+    }
+
+    /**
+     * Set the active language code for this session.
+     *
+     * @param string language code
+     * @return object GalleryStatus a status code
+     */
+    function setActiveLanguageCode($language) {
+	$session =& $this->getSession();
+	$session->put('core.language', $language);
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Guarantee that we have at least this many more seconds to work
+     *
+     * After this function completes, we will be guaranteed to have at least
+     * this much more time to work. 
+     *
+     * @param int a time interval in seconds, must be greater than 0
+     */
+    function guaranteeTimeLimit($limit) {
+	if ($limit <= 0) {
+	    $limit = 30;
+	}
+	
+	$now = time();
+	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
+	    $this->debug("[$now] can't guarantee $limit -- extending!");
+
+	    // Make sure that we extend at least a minimum of 30 seconds
+	    $this->_timeLimit = $now + max($limit, 30);
+	    set_time_limit($this->_timeLimit - $now);
+
+	    /*
+	     * Then make sure our locks stick around.  Even though this returns a status code, we really don't
+	     * want to make guaranteeTimeLimit() return a status code since we want to keep it lightweight.
+	     * So swallow the return code and don't sweat it for now.
+	     */
+	    $ret = GalleryCoreApi::refreshLocks($this->_timeLimit);
+	}
+    }
+
+    /**
+     * Set the profiling state.  Pass in an array containing the different kinds of things that
+     * you want to profile.  Right now, we only do sql profiling so the only valid values are:
+     *
+     *   false             <-- no profiling
+     *   array()           <-- no profiling
+     *   array('sql')      <-- SQL profiling
+     *
+     * @param array the profiling modes
+     */
+    function setProfile($profile=array()) {
+	if ($profile === false) {
+	    $this->_profile = array();
+	} else {
+	    $this->_profile = $profile;
+	}
+    }
+
+    /**
+     * Get the profiling state
+     *
+     * @return bool
+     */
+    function isProfiling($type) {
+	return in_array($type, $this->_profile);
+    }
+
+    /**
+     * Change the debugging state
+     *
+     * @param mixed one of 'buffered', 'logged', 'immediate' or false
+     */
+    function setDebug($debug) {
+
+	// Try to do the right thing in the face of bogus input
+	if ($debug === true) {
+	    $debug = 'buffered';
+	}
+
+	$this->_debug = $debug;
+	if (!isset($this->_debugBuffer)) {
+	    $this->clearDebugBuffer();
+	}
+	if (!empty($this->_debug)) {
+	    error_reporting(E_ALL);
+	    ini_set('short_open_tag', false);
+	    ini_set('allow_call_time_pass_reference', false);
+	}
+    }
+
+    /**
+     * Set the location of debugging output
+     *
+     * @param string a filename
+     */
+    function setDebugLogFile($debugLogFile) {
+	$this->_debugLogFile = $debugLogFile;
+    }
+
+    /**
+     * Get the debug state
+     *
+     * @return mixed the debug state
+     */
+    function getDebug() {
+	return $this->_debug;
+    }
+
+    /**
+     * Get any buffered debug output
+     *
+     * @return string the debug state
+     */
+    function getDebugBuffer() {
+	return $this->_debugBuffer;
+    }
+
+    /**
+     * Clear any buffered debug output
+     */
+    function clearDebugBuffer() {
+	$this->_debugBuffer = '';
+    }
+
+    /**
+     * Output a debug message
+     *
+     * @param string a message
+     */
+    function debug($msg) {
+	if (empty($msg)) {
+	    return;
+	}
+
+	if (!empty($this->_debug)) {
+	    if (!strcmp($this->_debug, 'buffered')) {
+		$this->_debugBuffer .= wordwrap("$msg\n");
+	    } else if (!strcmp($this->_debug, 'logged')) {
+		/* Don't use platform calls for these as they call debug internally! */
+		if ($fd = fopen($this->_debugLogFile, 'a')) {
+		    $date = date('Y-m-d H:i:s');
+		    $session =& $this->getSession();
+		    if (!empty($session)) {
+			$id = $session->getId();
+		    } else {
+			$id = '<no session id>';
+		    }
+		    fwrite($fd, "$date [" . $id . "] $msg\n");
+		    fclose($fd);
+		}
+	    } else if (!strcmp($this->_debug, 'immediate')) {
+		print "$msg\n";
+	    }
+	}
+    }
+
+    /**
+     * Output a print_r style debug message
+     *
+     * @param mixed any object or value
+     */
+    function debug_r($object) {
+	if (!empty($this->_debug)) {
+	    if (phpversion() >= '4.3.0') {
+		$buf = print_r($object, true);
+	    } else {
+		ob_start();
+		print_r($object);
+		$buf = ob_get_contents();
+		ob_end_clean();
+	    }
+	    
+	    $this->debug($buf);
+	}
+    }
+
+    /**
+     * Return the template adapter.  There is only ever one in the system.
+     *
+     * @return object GalleryTemplateAdapter
+     */
+    function &getTemplateAdapter() {
+	if (!isset($this->_templateAdapter)) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplateAdapter.class');
+	    $this->_templateAdapter = new GalleryTemplateAdapter();
+	}
+
+	return $this->_templateAdapter;
+    }
+
+    /**
+     * Mark a string as being internationalized.  This is a semaphore method; it
+     * does nothing but it allows us to easily identify strings that require
+     * translation.  Generally this is used to mark strings that will be stored
+     * in the database (like descriptions of permissions).
+     *
+     * @param string the value
+     * @return string the same value
+     */
+    function i18n($value) {
+	/* Just pass the value through */
+	return $value;
+    }
+}
+?>
