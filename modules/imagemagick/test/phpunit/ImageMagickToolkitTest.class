@@ -201,7 +201,9 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 				  'image/jpeg',
 				  'image/pjpeg',
 				  'image/png',
-				  'image/tiff'), $results);
+				  'image/tiff',
+				  'image/svg+xml'),
+			    $results);
     }
 
     function testGetOperationsAndProperties() {
@@ -211,7 +213,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array('convert-to-image/jpeg' => array('params' => array(),
 								   'description' => 'Convert to a JPEG',
-								   'mimeTypes' => array('image/tiff'),
+								   'mimeTypes' => array('image/tiff',
+											'image/svg+xml'),
 								   'outputMimeType' => 'image/jpeg'),
 				  'scale' => array('params' =>
 						   array(array('type' => 'int',
@@ -221,7 +224,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									'image/jpeg',
 									'image/pjpeg',
 									'image/png',
-									'image/tiff')
+									'image/tiff',
+									'image/svg+xml')
 						   ),
 				  'thumbnail' => array('params' =>
 						       array(array('type' => 'int',
@@ -231,7 +235,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									    'image/jpeg',
 									    'image/pjpeg',
 									    'image/png',
-									    'image/tiff')),
+									    'image/tiff',
+									    'image/svg+xml')),
 				  'resize' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'target width'),
@@ -242,7 +247,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/jpeg',
 									 'image/pjpeg',
 									 'image/png',
-									 'image/tiff')),
+									 'image/tiff',
+									 'image/svg+xml')),
 				  'rotate' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'rotation degrees')),
@@ -251,7 +257,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/jpeg',
 									 'image/pjpeg',
 									 'image/png',
-									 'image/tiff')),
+									 'image/tiff',
+									 'image/svg+xml')),
 				  'crop' => array('params' =>
 						  array(array('type' => 'int',
 							      'description' => 'left edge'),
@@ -266,7 +273,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 								       'image/jpeg',
 								       'image/pjpeg',
 								       'image/png',
-								       'image/tiff'))),
+								       'image/tiff',
+								       'image/svg+xml'))),
 			    $results['operations']);
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the image',
@@ -274,12 +282,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									     'image/jpeg',
 									     'image/pjpeg',
 									     'image/png',
-									     'image/tiff'))),
+									     'image/tiff',
+									     'image/svg+xml'))),
 			    $results['properties']);
     }
 
     function testBinaries() {
-	list ($ret, $results) = ImageMagickToolkitHElper::testBinaries('/validPath/');
+	list ($ret, $results) = ImageMagickToolkitHelper::testBinaries('/validPath/');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -308,11 +317,12 @@ class ImageMagickToolkitTestPlatform {
 	case $imageMagickPath . 'identify':
 	    if ($cmd[0][1] == 'testGetProperties2.gif') {
 		return array(1, array('testGetProperties2.gif GIF 30x40+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
-	    } else if (sizeof($cmd[0]) == 5) {
+	    } else if (sizeof($cmd[0]) == 6) {
 		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01',
 				      'test.jpg[1] JPEG 50x50+0+0 DirectClass 8-bit 763.0 0.000u 0:01',
 				      'test.png[2] PNG 50x50+0+0 DirectClass 8-bit 730.0 0.000u 0:01',
-				      'test.tif[3] TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01'));
+				      'test.tif[3] TIFF 50x50+0+0 DirectClass 8-bit 7.8k 0.000u 0:01',
+				      'test.svg[4] SVG 595x841+0+0 DirectClass 16-bit 7.8kb 0.008u 0:01'));
 	    } else if (strstr($cmd[0][1], 'test.gif')) {
 		return array(1, array('test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01'));
 	    } else if ($cmd[0][1] == 'testPerformOperations1.gif') {

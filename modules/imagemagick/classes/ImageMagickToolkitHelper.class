@@ -55,12 +55,15 @@ class ImageMagickToolkitHelper {
 	 */
 
 	/*
-	 * TIFF isn't viewable inline, so provide a means to convert it to a JPEG
+	 * TIFF, SVG aren't viewable inline.  Ok, SVG is, but we can't count on it because it
+	 * requires a special viewer.  So provide a means to convert it to a JPEG.
 	 */
-	if (in_array('image/tiff', $mimeTypes)) {
+	$convertToJpegMimeTypes = array_intersect(array('image/tiff', 'image/svg+xml'),
+						  $mimeTypes);
+	if (!empty($convertToJpegMimeTypes)) {
 	    $operations['convert-to-image/jpeg']['params'] = array();
 	    $operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG'); 
-	    $operations['convert-to-image/jpeg']['mimeTypes'] = array('image/tiff');
+	    $operations['convert-to-image/jpeg']['mimeTypes'] = $convertToJpegMimeTypes;
 	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 	}
 
@@ -143,7 +146,8 @@ class ImageMagickToolkitHelper {
 			 $dataPath . 'test.gif',
 			 $dataPath . 'test.jpg',
 			 $dataPath . 'test.png',
-			 $dataPath . 'test.tif');
+			 $dataPath . 'test.tif',
+			 $dataPath . 'test.svg');
 
 	list ($success, $results) = $platform->exec(array($command));
 	if (!$success) {
@@ -161,6 +165,8 @@ class ImageMagickToolkitHelper {
 		$mimeTypes['image/png'] = 1;
 	    } elseif (ereg('TIFF.*(Pseudo|Direct)Class', $resultLine)) {
 		$mimeTypes['image/tiff'] = 1;
+	    } elseif (ereg('SVG.*DirectClass', $resultLine)) {
+		$mimeTypes['image/svg+xml'] = 1;
 	    }
 	}
 
