@@ -200,12 +200,12 @@ class ItemEditAlbum extends ItemEditPlugin {
 			    $thumbnail->setMimeType($outputMimeType);
 			    $thumbnail->setDerivativeSourceId($source->getId());
 			    $thumbnail->setDerivativeOperations($operation);
+			    $thumbnail->expireCache();
 			    if ($thumbnail->isModified()) {
 				list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
-				$thumbnail->expireCache();
 				GalleryCoreApi::estimateDerivativeDimensions($thumbnail, $source);
 				$ret = $thumbnail->save();
 				if ($ret->isError()) {
