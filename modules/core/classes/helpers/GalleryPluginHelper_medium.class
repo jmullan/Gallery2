@@ -238,7 +238,7 @@ class GalleryPluginHelper_medium {
 	}
 
 	/* Invalidate our cache */
-	$cacheKeyPattern = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId";
+	$cacheKeyPattern = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, ";
 	foreach (GalleryDataCache::getAllKeys() as $key) {
 	    if (!strncmp($key, $cacheKeyPattern, strlen($cacheKeyPattern))) {
 		GalleryDataCache::remove($key);
@@ -336,10 +336,6 @@ class GalleryPluginHelper_medium {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
-	GalleryDataCache::remove($cacheKey);
-	
 	return GalleryStatus::success();
     }
 
@@ -376,10 +372,6 @@ class GalleryPluginHelper_medium {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Invalidate our cache */
-	$cacheKey = "GalleryPluginHelper::fetchAllParameters($pluginType, $pluginId, $itemId)";
-	GalleryDataCache::remove($cacheKey);
-	
 	return GalleryStatus::success();
     }
 }
