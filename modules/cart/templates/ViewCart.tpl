@@ -25,14 +25,13 @@
 
   <div class="gsOtherContents">
 
-      <div class="gbTopFlag">
-        <div class="gbTitleBanner">
-          <h1 class="gbTitle">
+    <div class="gbTopFlag">
+      <div class="gbTitleBanner">
+        <h1 class="gbTitle">
     	  {g->text text="Items Currently in Your Cart"}
-          </h1>
-        </div>
+        </h1>
       </div>
-  
+    </div>
   
     {if isset($status)}
     <div id="gsStatus">
@@ -44,8 +43,10 @@
     </div>
     {/if}
 
+    {if empty($ViewCart.items)}
+      {g->text text="Your cart is empty"}
+    {else}
     <form action="{g->url}" method="post">
-
       {g->hiddenFormVars}
       <input type="hidden" name="{g->formVar var="controller"}" value="{$ViewCart.controller}"/>
       <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
@@ -87,17 +88,16 @@
     	    </td>
     
     	    <td>
-        		<ul class="gbCartInfo">
-        		  <li>
-        		      <strong>{g->text text="Title:"}</strong> 
-        		    {$item.title|markup}
-        		  </li>
-    
-        		  <li>
-        		      <strong>{g->text text="Summary:"}</strong> 
-        		    {$item.summary|markup}
-        		  </li>
-        	    </ul>
+              <ul class="gbCartInfo">
+                <li>
+                  <strong>{g->text text="Title:"}</strong> 
+                 {$item.title|markup}
+                </li>
+                <li>
+                  <strong>{g->text text="Summary:"}</strong> 
+                  {$item.summary|markup}
+                </li>
+              </ul>
     	    </td>
     
     	    <td>
@@ -110,6 +110,7 @@
     	  </tr>
     	  {/foreach}
     	</table>
+      </div>
 
       <div class="gbAdmin">
 	<select name="{g->formVar var="form[pluginId]"}" class="giActionSelect">
@@ -122,5 +123,6 @@
 	<input type="submit" name="{g->formVar var="form[action][modify]"}" value="{g->text text="Go"}" class="button"/>
       </div>
     </form>
+    {/if}
   </div>
 </div>
