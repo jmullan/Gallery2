@@ -4,7 +4,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div style="gbExif">
+<div class="gbExif">
   <div class="giTitle">
     {g->text text="Photo Properties"}
   </div>
