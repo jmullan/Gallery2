@@ -1321,6 +1321,131 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
+     * Search the persistent store for the target values matching the given criteria
+     *
+     * This is a flexible and powerful search mechanism.  You specify which
+     * class members you wish to search for, how you want to search them, and
+     * which class members you want returned.
+     *
+     * Right now we do a logical AND of all criteria.  Later on we should
+     * extend this.
+     *
+     * Example criteria:
+     * array(array('GalleryNucleus::parentId',
+     *             'EXACT',
+     *             $parentId),
+     *       array('FileSystemNucleus::pathComponent',
+     *             'EXACT',
+     *             $path));
+     *
+     * Example target:
+     * array('GalleryNucleus::id')
+     *
+     * @access public
+     * @param array the search criteria
+     * @param array the target values (default GalleryNucleus::id)
+     * @return array object GalleryStatus a status code,
+     *               array a list of target values
+     */
+    function search($criteriaArray, $targetArray) {
+	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
+	    return GalleryStatus::error(ERROR_DATABASE_NOT_CONNECTED,
+					__FILE__, __LINE__);
+	}
+
+	$whereComponents = array();
+	$targetTableList = array();
+	$whereTableList = array();
+	$targetMap = array();
+	
+	foreach ($targetArray as $target) {
+	    list($class, $member) = split('::', $target);
+	    if (empty($class) || empty($member)) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+
+	    $tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
+	    $colName = $this->prefixColumnName($member);
+	    $targetTableList[$tableName] = 1;
+	    $targetComponents[] = $tableName. '.' . $colName;
+	    $targetMap[$colName] = $target;
+	}
+	
+	foreach ($criteriaArray as $criteria) {
+	    if (sizeof($criteria) != 3) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+	    list($member, $compareType, $value) = $criteria;
+	    
+	    list($class, $member) = split('::', $member);
+	    if (empty($class) || empty($member)) {
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+
+	    $tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
+	    $colName = $this->prefixColumnName($member);
+	    $whereTableList[$tableName] = 1;
+
+	    // If it's in the WHERE, it has to be in the target.
+	    $targetTableList[$tableName] = 1;
+
+	    switch($compareType) {
+	    case 'EXACT':
+		$whereComponents[] = $tableName . '.' . $colName . '=?';
+		$whereData[] = $value;
+		break;
+		
+	    default:
+		return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					    __FILE__, __LINE__);
+	    }
+	}
+
+	if (sizeof($whereTableList) > 1) {
+	    $idCol = $this->prefixColumnName('id');
+	    $keys = array_keys($whereTableList);
+	    for ($i = 1; $i < sizeof($keys); $i++) {
+		$whereComponents[] =
+			$keys[0] . '.' . $idCol . '=' .
+			$keys[$i] . '.' . $idCol;
+	    }
+	}
+
+	$query = 'SELECT ';
+	$query .= join(', ', $targetComponents);
+	$query .= ' FROM ';
+	$query .= join(', ', array_keys($targetTableList));
+	$query .= ' WHERE ';
+	$query .= join(' AND ', $whereComponents);
+	$data = $whereData;
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, $data);
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_DATABASE_FAILURE,
+					__FILE__, __LINE__);
+	}
+
+	/* Push all our data into the map */
+	$results = array();
+	while (!$recordSet->EOF) {
+	    $row = array();
+	    foreach ($targetMap as $colName => $classMember) {
+		$row[$classMember] = $recordSet->fields[$colName];
+	    }
+	    array_push($results, $row);
+	    $recordSet->MoveNext();
+	}
+
+	$this->_traceStop();
+
+	return array(GalleryStatus::success(), $results);
+    }
+    
+    /**
      * Initialize the DatabaseSchema instance
      *
      * @access private

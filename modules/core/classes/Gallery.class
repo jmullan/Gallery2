@@ -305,24 +305,35 @@ class Gallery {
     }
     
     /**
-     * Search this item to see if it contains the search string.
+     * Search the persistent store for the target values matching the given criteria
      *
-     * If this item has sub-items, search them also.
+     * This is a flexible and powerful search mechanism.  You specify which
+     * class members you wish to search for, how you want to search them, and
+     * which class members you want returned.
+     *
+     * Right now we do a logical AND of all criteria.  Later on we should
+     * extend this.
+     *
+     * Example criteria:
+     * 
+     * array(array('GalleryNucleus::parentId',
+     *             'EXACT',
+     *             $parentId),
+     *       array('FileSystemNucleus::pathComponent',
+     *             'EXACT',
+     *             $path));
+     *
+     * Example target:
+     * array('GalleryNucleus::id')
      *
      * @access public
-     * @param string the search criteria
+     * @param array the search criteria
+     * @param array the target values (default GalleryNucleus::id)
      * @return array object GalleryStatus a status code,
-                     array a list of of GalleryItem ids
+     *               array a list of target values
      */
-    function search($criteria) {
-	// XXX: should this method live in Gallery or in GalleryItem?
-	// If we're aiming for speed, then we'd really like to do one search
-	// across the entire GalleryItem database.  But, that won't let us
-	// restrict the search to just one branch of the tree.  For now let's
-	// leave it here and then perhaps later we can introduce the concept of
-	// a "narrower" search
-	print "<H1>DO SOME SEARCHING HERE!</H1>";
-	return array(GalleryStatus::success(), array());
+    function search($criteria, $target=array('GalleryNucleus::id')) {
+	return $this->_storage->search($criteria, $target);
     }
 
     /**
