@@ -197,7 +197,7 @@ class DatabaseStorage extends GalleryStorage {
     function _getConnection($forceNew=false) {
 	global $gallery;
 	
-	if (empty($this->_username) || empty($this->_hostname)) {
+	if (empty($this->_hostname)) {
 	    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	}
 

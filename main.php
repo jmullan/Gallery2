@@ -61,7 +61,9 @@ if ($ret->isError()) {
 
     /* Nuke our transaction, too */
     $storage =& $gallery->getStorage();
-    $storage->rollbackTransaction();
+    if (isset($storage)) {
+	$storage->rollbackTransaction();
+    }
     return;
 }
 

@@ -406,11 +406,23 @@ class GalleryStatus {
     function getAsHtml() {
 	list ($codes, $trace) = $this->_getAsArray();
 
-	list ($ret, $formatter) =
-	    GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
-	if ($ret->isError() || !isset($formatter)) {
+	/*
+	 * It's possible that we're having this problem at a very low level so we may not want to try to use
+	 * the factory if things have gone catastrophically wrong.  Use the $storage object as our acid test.
+	 * If we have one then we're ok to continue
+	 */
+	global $gallery;
+	$storage =& $gallery->getStorage();
+	if (isset($storage)) {
+	    list ($ret, $formatter) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryStatusFormatter', 'text/html');
+	    if ($ret->isError() || !isset($formatter)) {
+		$formatter = new GalleryStatusFormatterHtml();
+	    }
+	} else {
 	    $formatter = new GalleryStatusFormatterHtml();
 	}
+	
 	return $formatter->format($codes, $trace, $this->_errorMessage);
     }
 
