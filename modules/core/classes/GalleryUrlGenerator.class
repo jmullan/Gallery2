@@ -41,7 +41,7 @@ class GalleryUrlGenerator {
     /**  
      * The base filename for the application
      *
-     * @var array $_baseFile
+     * @var string $_baseFile
      * @access private
      */
     var $_baseFile;
@@ -54,6 +54,15 @@ class GalleryUrlGenerator {
      */
     var $_viewPrefixRegistry;
 
+    /**
+     * The relative path between G2 request urls and the G2 basedir.
+     * Should only be nonempty when G2 is embedded.
+     *
+     * @var string $_relativeG2Path
+     * @private
+     */
+    var $_relativeG2Path;
+
     /*
      * ****************************************
      *                 Methods
@@ -65,8 +74,9 @@ class GalleryUrlGenerator {
      *
      * @param string the base URL
      */
-    function GalleryUrlGenerator($baseFile) {
+    function GalleryUrlGenerator($baseFile, $relativeG2Path=null) {
 	$this->_baseFile = $baseFile;
+	$this->_relativeG2Path = $relativeG2Path;
     }
 
     /**
@@ -152,9 +162,10 @@ class GalleryUrlGenerator {
      * Then we return:
      *   http://example.com/gallery2/
      *
+     * @param boolean (optional) if true, ensure G2 base url is returned (different when embedded)
      * @return string the current URL directory
      */
-    function getCurrentUrlDir() {
+    function getCurrentUrlDir($forceG2Base=false) {
 	$url = $this->getCurrentUrl();
 
 	/*
@@ -169,6 +180,23 @@ class GalleryUrlGenerator {
 	if (($i = strpos($url, $this->_baseFile)) !== false) {
 	    $url = substr($url, 0, $i);
 	}
+
+	/*
+	 * If requested, apply relativeG2Path setting to get G2 base url, eg:
+	 *    http://example.com/cms/index.php?module=g2&g2_view=...
+	 * to:
+	 *    http://example.com/gallery2/
+	 * where relativeG2Path is ../gallery2/
+	 */
+	if ($forceG2Base && !empty($this->_relativeG2Path)) {
+	    $relativePath = $this->_relativeG2Path;
+	    while (strncmp($relativePath, "../", 3) == 0) {
+		$url = dirname($url) . "/";
+		$relativePath = substr($relativePath, 3);
+	    }
+	    $url .= $relativePath;
+	}
+
 	return $url;
     }
 
