@@ -359,6 +359,12 @@ class DatabaseStorage extends GalleryStorage {
 
 	$recordSet = $this->_db->Execute($query, $data);
 	if ($recordSet) {
+	    if ($recordSet->RecordCount() == 0) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
+						  __FILE__, __LINE__),
+			     null);
+	    }
+	    
 	    $nucleus = new $targetType;
 	    foreach ($recordSet->fields as $prefixedColumnName => $value) {
 		if (isset($value)) {
@@ -1114,46 +1120,91 @@ class DatabaseStorage extends GalleryStorage {
      * Example target:
      * array('GalleryNucleus::id')
      *
-     * If the target is not an array, it can be one of the following
-     * special targets:
-     *
-     * SEARCH_COUNT   -- return only the number of hits
+     * Example modifiers:
+     * SEARCH_COUNT          -- return only the number of hits
+     * SEARCH_LIMIT #        -- return only the first x hits
+     * SEARCH_ORDER GalleryNucleus::id SEARCH_DIRECTION_UP
+     *                       -- sort by id
      *
      * @access public
      * @param array the search criteria
      * @param array the target values (default GalleryNucleus::id)
+     * @param array the modifiers
      * @return array object GalleryStatus a status code,
      *               array a list of target values
      */
-    function search($criteriaArray, $targetArray) {
+    function search($criteriaArray, $targetArray, $modifiers) {
 	if ($this->_connectionStatus != DATABASE_STATUS_FULLY_CONNECTED) {
 	    return GalleryStatus::error(ERROR_DATABASE_CONNECTION,
 					__FILE__, __LINE__);
 	}
 
 	$whereComponents = array();
+	$modifierComponents = array();
 	$targetTableList = array();
 	$whereTableList = array();
 	$targetMap = array();
 
-	if (is_array($targetArray)) {
-	    foreach ($targetArray as $target) {
-		list($class, $member) = split('::', $target);
-		if (empty($class) || empty($member)) {
-		    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-						__FILE__, __LINE__);
+	/*
+	 * XXX: This is all MySQL specific and will need to get moved into the
+	 * MySQLDatabaseStorage class eventually.
+	 */
+	if (!empty($modifiers)) {
+	    foreach ($modifiers as $modifier) {
+		switch($modifier[0]) {
+		case SEARCH_COUNT:
+		    $targetComponents[] = 'COUNT(*)';
+		    $targetMap['COUNT(*)'] = 'count';
+		    break;
+
+		case SEARCH_LIMIT:
+		    $modifierComponents['LIMIT'] = $modifier[1];
+		    break;
+		    
+		case SEARCH_ORDER:
+		    switch ($modifier[2]) {
+		    case SEARCH_DIRECTION_UP:
+			$dir = 'ASC';
+			break;
+
+		    case SEARCH_DIRECTION_DOWN:
+			$dir = 'DESC';
+			break;
+
+		    default:
+			return GalleryStatus::error(ERROR_BAD_PARAMETER,
+						    __FILE__, __LINE__);
+		    }
+
+		    list($ret, $tableName, $colName) =
+			    $this->_memberNameToTableAndColumnName($modifier[1]);
+		    if ($ret->isError()) {
+			return $ret;
+		    }
+		    
+		    $modifierComponents['ORDER'] = 'BY ' .
+			    $tableName . '.' . $colName .
+			    ' ' . $dir;
 		}
-		
-		$tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
-		$colName = $this->prefixColumnName($member);
-		$targetTableList[$tableName] = 1;
+	    }
+	}
+
+	foreach ($targetArray as $target) {
+	    list($ret, $tableName, $colName) =
+		    $this->_memberNameToTableAndColumnName($target);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+
+	    $targetTableList[$tableName] = 1;
+
+	    /*
+	     * If we're doing a SEARCH_COUNT then don't look for other
+	     * targets.
+	     */
+	    if (empty($targetMap['COUNT(*)'])) {
 		$targetComponents[] = $tableName. '.' . $colName;
 		$targetMap[$colName] = $target;
-	    }
-	} else {
-	    if ($targetArray == SEARCH_COUNT) {
-		$targetComponents[] = 'COUNT(*)';
-		$targetMap['COUNT(*)'] = 'count';
 	    }
 	}
 	
@@ -1213,12 +1264,22 @@ class DatabaseStorage extends GalleryStorage {
 	$query .= join(', ', $targetComponents);
 	$query .= ' FROM ';
 	$query .= join(', ', array_keys($targetTableList));
+
+	/* Tack on our WHERE clause, if applicable */
 	if (sizeof($whereComponents)) {
 	    $query .= ' WHERE ';
 	    $query .= join(' AND ', $whereComponents);
 	    $data = $whereData;
 	} else {
 	    $data = array();
+	}
+
+	/* Tack on our ORDER and LIMIT modifiers, in that order */
+	foreach (array('ORDER', 'LIMIT') as $modifierName) {
+	    if (!empty($modifierComponents[$modifierName])) {
+		$query .= ' ' . $modifierName .
+			' ' . $modifierComponents[$modifierName];
+	    }
 	}
 
 	$this->_traceStart();
@@ -1243,7 +1304,29 @@ class DatabaseStorage extends GalleryStorage {
 
 	return array(GalleryStatus::success(), $results);
     }
-    
+
+    /**
+     * Convert a member name to its table and column names
+     *
+     * @access private
+     * @param string the member name
+     * @param array object GalleryStatus a status code
+     *              string the table name
+     *              string the column name 
+     */
+    function _memberNameToTableAndColumnName($memberName) {
+	list($class, $member) = split('::', $memberName);
+	if (empty($class) || empty($member)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+	
+	$tableName = DATABASE_TABLE_PREFIX  . strtolower($class);
+	$colName = $this->prefixColumnName($member);
+
+	return array(GalleryStatus::success(), $tableName, $colName);
+    }
+
     /**
      * Initialize the DatabaseSchema instance
      *

@@ -103,7 +103,6 @@ class GalleryItem extends FileSystemNucleus {
      *
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_LIST
-     * @gallery flag STORAGE_TYPE_INTEGER
      *
      * @var object GalleryList $_childIds
      * @access private
@@ -115,7 +114,6 @@ class GalleryItem extends FileSystemNucleus {
      *
      * @gallery persistent
      * @gallery flag STORAGE_TYPE_LIST
-     * @gallery flag STORAGE_TYPE_INTEGER
      *
      * @var object GalleryList $_commentIds
      * @access private
@@ -550,7 +548,7 @@ class GalleryItem extends FileSystemNucleus {
     function _updateParentPermissionExceptions($userId) {
 	global $gallery;
 
-	list ($ret, $parent) = $this->_getParent();
+	list($ret, $parent) = $this->_getParent();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -666,7 +664,7 @@ class GalleryItem extends FileSystemNucleus {
 	    if ($ret->isError()) {
 		return $ret;
 	    }
-	    
+
 	    $this->setParentId($parent->getId());
 	}
 
@@ -694,6 +692,19 @@ class GalleryItem extends FileSystemNucleus {
 	}
 
 	/*
+	 * My parent's delete might have changed caused a change to the
+	 * canonical cache of this instance, so reload myself from the cache
+	 * just to be sure.
+	 */
+	list($ret, $this) = $gallery->loadNucleusById($this->getId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/*
 	 * Remove this item from its parent
 	 */
 	if (isset($this->_parentId)) {
@@ -712,12 +723,21 @@ class GalleryItem extends FileSystemNucleus {
 
 	if ($this->canContainChildren()) {
 	    $childIds =& $this->getChildIds();
-	    while ($childIds->count() > 0) {
-		$childId = $childIds->get(0);
+	    $vals = $childIds->values();
+	    foreach ($childIds->values() as $childId) {
 		$ret = $gallery->deleteNucleusById($childId);
 		if ($ret->isError()) {
 		    return $ret;
 		}
+	    }
+
+	    /*
+	     * Removing items from my children cause them to modify me, so
+	     * get with the latest copy of myself.
+	     */
+	    list($ret, $this) = $gallery->loadNucleusById($this->getId());
+	    if ($ret->isError()) {
+		return $ret;
 	    }
 
 	    /*

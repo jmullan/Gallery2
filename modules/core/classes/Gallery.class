@@ -181,7 +181,7 @@ class Gallery {
      * @param object GalleryNucleus a reference to the GalleryNucleus to cache
      * @return object GalleryStatus a status code
      */
-    function updateCachedNucleus(&$nucleus) {
+    function updateCachedNucleus($nucleus) {
 
 	/*
 	 * We want to make sure that we don't have parallel versions of objects
@@ -222,7 +222,7 @@ class Gallery {
 	 * and update the cached copy and bump the serial number.
 	 */
 	$nucleus->_cacheSerial++;
-	$this->_nucleusCache[$id] =& $nucleus;
+	$this->_nucleusCache[$id] = $nucleus;
 	return GalleryStatus::success();
     }
 
@@ -265,9 +265,6 @@ class Gallery {
 		if ($ret->isError()) {
 		    return $ret;
 		}
-
-		/* Remove the deleted nucleus from the cache */
-		unset($this->_nucleusCache[$key]);
 	    } else if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
 		       $nucleus->isModified()) {
 		$ret = $storage->saveNucleus($nucleus);
@@ -276,6 +273,15 @@ class Gallery {
 		}
 	    }
 	}
+
+	/*
+	 * Empty out the cache.  For some reason that I don't quite understand,
+	 * if we don't do this then objects that have been saved don't get
+	 * their flags updated correctly.  This is probably indicative of a
+	 * deeper bug, but for now let's just take the easy way out and force
+	 * objects to be reloaded, if they're still needed.
+	 */
+	$this->_nucleusCache = array();
 
 	return GalleryStatus::success();
     }
@@ -384,7 +390,7 @@ class Gallery {
 	if ($ret->isError()) {
 	    return $ret;
 	}
-
+	
 	return $nucleus->delete();
     }
 
@@ -411,24 +417,28 @@ class Gallery {
      * Example target:
      * array('GalleryNucleus::id')
      *
-     * If the target is not an array, it can be one of the following
-     * special targets:
-     *
-     * SEARCH_COUNT   -- return only the number of hits
+     * Example modifiers:
+     * SEARCH_COUNT          -- return only the number of hits
+     * SEARCH_LIMIT #        -- return only the first x hits
+     * SEARCH_ORDER FileSystemNucleus::pathComponent SEARCH_DIRECTION_UP
+     *                       -- sort by path compnent
      *
      * @access public
      * @param array the search criteria
      * @param array the target values (default GalleryNucleus::id)
+     * @param array the modifiers
      * @return array object GalleryStatus a status code,
      *               array a list of target values
      */
-    function search($criteria, $target=array('GalleryNucleus::id')) {
+    function search($criteria,
+		    $target=array('GalleryNucleus::id'),
+		    $modifiers=array()) {
 	list($ret, $storage) = $this->getStorage();
 	if ($ret->isError()) {
 	    return $ret;
 	}
 	
-	return $storage->search($criteria, $target);
+	return $storage->search($criteria, $target, $modifiers);
     }
 
     /**
@@ -500,7 +510,7 @@ class Gallery {
 	if (empty($this->_graphics)) {
 	    $type = $this->getConfig('graphics.type');
 	    $config = $this->getConfig('graphics.config');
-	    list ($ret, $this->_graphics) =
+	    list($ret, $this->_graphics) =
 		    GalleryGraphicsFactory::newInstance($type, $config);
 	    if ($ret->isError()) {
 		return $ret;

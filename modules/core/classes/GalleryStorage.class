@@ -149,6 +149,34 @@ define('STORAGE_FLAG_MARKED_FOR_DELETION', 0x00000004);
 define('SEARCH_COUNT', 1);
 
 /**
+ * Limit the search results
+ *
+ * @constant SEARCH_LIMIT
+ */
+define('SEARCH_LIMIT', 2);
+
+/**
+ * Specify a search order
+ *
+ * @constant SEARCH_ORDER
+ */
+define('SEARCH_ORDER', 3);
+
+/**
+ * Specify an ascending search order direction
+ *
+ * @constant SEARCH_DIRECTION_UP
+ */
+define('SEARCH_DIRECTION_UP', 4);
+
+/**
+ * Specify a descending search order direction 
+ *
+ * @constant SEARCH_DIRECTION_DOWN
+ */
+define('SEARCH_DIRECTION_DOWN', 5);
+
+/**
  * Interface to the storage mechanism
  *
  * This object provides the hooks for saving and restoring objects in the persistent store.
@@ -336,18 +364,20 @@ class GalleryStorage {
      * Example target:
      * array('GalleryNucleus::id')
      *
-     * If the target is not an array, it can be one of the following
-     * special targets:
-     *
-     * SEARCH_COUNT   -- return only the number of hits
+     * Example modifiers:
+     * SEARCH_COUNT          -- return only the number of hits
+     * SEARCH_LIMIT #        -- return only the first x hits
+     * SEARCH_ORDER FileSystemNucleus::pathComponent SEARCH_DIRECTION_UP
+     *                       -- sort by path compnent
      *
      * @access public
      * @param array the search criteria
      * @param array the target values (default GalleryNucleus::id)
+     * @param array the modifiers
      * @return array object GalleryStatus a status code,
      *               array a list of target values
      */
-    function search($criteria, $target) {
+    function search($criteria, $target, $modifiers) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
 					  __FILE__, __LINE__),
 		     null);

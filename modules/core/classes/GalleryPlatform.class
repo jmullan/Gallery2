@@ -338,9 +338,7 @@ class GalleryPlatform {
 	}
 	
 	$path = $this->importPath($path);
-	$gallery->debug("mkdir($path, " .
-			sprintf("%o", $perms) .
-			")");
+	$gallery->debug(sprintf("mkdir(%s, %o)", $path, $perms));
 	
 	$umask = umask(0);
 	$results = mkdir($path, $perms);
