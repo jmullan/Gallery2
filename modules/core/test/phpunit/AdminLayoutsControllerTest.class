@@ -43,6 +43,12 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	parent::setUp();
 
 	$gallery->_platform = new AdminLayoutsTestPlatform();
+
+	/*
+	 * Clear the cached layout status list, because we specifically want to
+	 * load it in our tests (our dummy platform will feed in mock data)
+	 */
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus(layout)");
     }
 
     /**
