@@ -49,22 +49,33 @@ class ItemMakeHighlightController extends GalleryController {
 	}
 	$parentId = $item->getParentId();
 
-	/* Make sure we have permission do edit this item */
+	/* Make sure we have permission to edit this item */
 	$ret = GalleryUserHelper::assertHasItemPermission($parentId, 'core.changeProperties');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Load the current album thumbnail and the thumbnail of the item we */
-	/* are making a highlight of */
+	/* Load the current album thumbnail. */ 
 	list ($ret, $thumbnailTable) =
-	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId(), $parentId));
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($parentId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$sourceItem = $thumbnailTable[$item->getId()];
 
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($sourceItem->getId());
+	/* See if we have a preferred derivative for the item */
+	list ($ret, $results) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($results[$item->getId()])) {
+	    $source = $results[$item->getId()];
+	    $sourceMimeType = $source->getDerivativeMimeType();
+	} else {
+	    $source = $item;
+	    $sourceMimeType = $item->getMimeType();
+	}
+
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($source->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -102,7 +113,7 @@ class ItemMakeHighlightController extends GalleryController {
 	     * they're supported by an active toolkit.
 	     */
 	    list ($ret, $isSupported, $outputMimeType) =
-		GalleryToolkitHelper::isSupportedOperationSequence($mimeType,
+		GalleryToolkitHelper::isSupportedOperationSequence($sourceMimeType,
 								   $derivativeOperations);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -127,7 +138,7 @@ class ItemMakeHighlightController extends GalleryController {
 		}
 
 		$derivative->setDerivativeMimeType($outputMimeType);
-		$derivative->setDerivativeSourceId($sourceItem->getId());
+		$derivative->setDerivativeSourceId($source->getId());
 		$derivative->setDerivativeOperations($derivativeOperations);
 
 		$ret = $derivative->save();
