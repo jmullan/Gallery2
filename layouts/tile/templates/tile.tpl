@@ -26,7 +26,7 @@
 {/foreach}
 </div>
 
-<div id="image" style="visibility:hidden;overflow:hidden" onClick="ui_vis('image',0,1)">
+<div id="image" style="visibility:hidden;overflow:hidden" onclick="ui_vis('image',0,1)">
   <div id="title" class="giTitle"></div>
   <span id="image_view"></span>
 </div>
@@ -42,7 +42,7 @@
   {assign var="id" value=$layout.map[row][col]}
   {if $id>0}
     {assign var="it" value=$layout.itemMap[$id]}
-    <a href="" onClick="image_show({$it.imageIndex});return false">
+    <a href="" onclick="image_show({$it.imageIndex});return false">
       {g->image item=$it.data image=$it.thumb class=thumb}
     </a>
   {else}
