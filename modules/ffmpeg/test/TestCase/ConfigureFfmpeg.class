@@ -59,7 +59,11 @@ class ConfigureFfmpegTestCase extends TestCase {
 	/* Hardcode a path we know will work (on Bharat's dev box) */
 	$platform = $gallery->getPlatform();
 	if (get_class($platform) == 'unixplatform') {
-	    $ret = $module->setModuleParameter('path', '/usr/local/bin/ffmpeg');
+	    if ($platform->file_exists('/usr/local/bin/ffmpeg')) {
+		$ret = $module->setModuleParameter('path', '/usr/local/bin/ffmpeg');
+	    } else {
+		$ret = $module->setModuleParameter('path', '/home/bharat/bin/ffmpeg');
+	    }
 	} else {
 	    $ret = $module->setModuleParameter('path', 'c:\\apps\\ffmpeg\\ffmpeg.exe');
 	}
