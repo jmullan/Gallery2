@@ -86,10 +86,10 @@
     </div>
     <div class="giInfo">
       <span>
-	{g->text text="Title: %s" arg1=$ConfirmImport.targetAlbum.title}
-      </span>
+	{g->text text="Title: %s" arg1=$ConfirmImport.targetAlbum.title|default:$ConfirmImport.targetAlbum.pathComponent}
+      </span><br />
       <span>
-	{g->text text="Description: %s" arg1=$ConfirmImport.targetAlbum.description}
+	{g->text text="Description: %s" arg1=$ConfirmImport.targetAlbum.description|default:""}
       </span>
     </div>
     <input type="hidden" name="{g->formVar var="form[destinationAlbumID]"}" value="{$ConfirmImport.destinationAlbumID}"/>

@@ -133,7 +133,7 @@
       <select multiple="multiple" size="10" name="{g->formVar var="form[sourceAlbums][]"}">
 	{foreach from=$ChooseObjects.g1AlbumTree item=album}
 	<option value="{$album.data.urlencodedname}">
-  	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+  	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
   	  {g->text text="%s (%s)" arg1=$album.data.title|htmlentities arg2=$album.data.name}
 	</option>
         {/foreach}
@@ -148,7 +148,7 @@
       <select name="{g->formVar var="form[destinationAlbumID]"}">
 	{foreach from=$ChooseObjects.g2AlbumTree item=album}
 	<option value="{$album.data.id}">
-  	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}`--
+  	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
   	  {$album.data.title|default:$album.data.pathComponent}
 	</option>
         {/foreach}
