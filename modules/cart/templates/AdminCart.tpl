@@ -11,10 +11,6 @@
 	{g->text text="Cart Settings"}
       </div>
     </div>
-    
-    <div class="spacer">
-      &nbsp;
-    </div>
   </div>
 
   <div class="gbAdmin">
