@@ -229,11 +229,14 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 		    GalleryUtilities::shrinkDimensionsToFit($params['maxSize'], $width, $height);
 	    }
 
-	    return sprintf('<img %s src="%s" width="%s" height="%s" alt="%s" longdesc="%s"/>',
-			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
+	    $sizeStr = ($width > 0 && $height > 0)
+		? sprintf(' width="%s" height="%s"', $width, $height) : '';
+
+	    return sprintf('<img%s src="%s"%s%s alt="%s" longdesc="%s"/>',
+			   $params['class'] ? ' class="' . $params['class'] . '"' : '',
 			   $src,
-			   $width,
-			   $height,
+			   $sizeStr,
+			   $params['name'] ? ' name="' . $params['name'] . '"' : '',
 			   $item->getTitle() ? $item->getTitle() : $item->getPathComponent(),
 			   $item->getDescription());
 

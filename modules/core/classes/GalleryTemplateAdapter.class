@@ -207,17 +207,23 @@ class GalleryTemplateAdapter {
 	    $params['class'] = null;
 	}
 
+	if (!isset($params['name'])) {
+	    $params['name'] = null;
+	}
+
 	if (!isset($params['fallback'])) {
 	    $params['fallback'] = null;
 	}
 
 	if ($entity->getId() == $item->getId()) {
 	    $html = $item->render('HTML', array('class' => $params['class'],
+						'name' => $params['name'],
 						'maxSize' => $params['maxSize'],
 						'fallback' => $params['fallback']));
 	} else {
 	    $html = $entity->render('HTML', $item, 
 				    array('class' => $params['class'],
+					  'name' => $params['name'],
 					  'maxSize' => $params['maxSize'],
 					  'fallback' => $params['fallback']));
 	}

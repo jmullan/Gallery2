@@ -214,10 +214,11 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    $sizeStr = ($width > 0 && $height > 0)
 		? sprintf(' width="%s" height="%s"', $width, $height) : '';
 
-	    return sprintf('<img %s src="%s"%s alt="%s" longdesc="%s"/>',
-			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
+	    return sprintf('<img%s src="%s"%s%s alt="%s" longdesc="%s"/>',
+			   $params['class'] ? ' class="' . $params['class'] . '"' : '',
 			   $src,
 			   $sizeStr,
+			   $params['name'] ? ' name="' . $params['name'] . '"' : '',
 			   $this->getTitle() ? $this->getTitle() : $this->getPathComponent(),
 			   $this->getDescription());
 
