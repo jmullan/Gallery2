@@ -10,20 +10,7 @@ class TestCase {
 
     function start($iterations) {
 	$this->startTiming($iterations);
-	
-	if ($iterations > 1) {
-	    /* Temporarily turn off debug mode */
-	    global $gallery;
-	    $debug = $gallery->getDebug();
-	    $gallery->setDebug(false);
-	}
-
 	$ret = $this->testStart($iterations);
-
-	if ($iterations > 1) {
-	    $gallery->setDebug($debug);
-	}
-
 	$this->stopTiming();
 	$timing = $this->timingReport();
 

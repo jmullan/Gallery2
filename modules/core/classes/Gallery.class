@@ -316,21 +316,6 @@ class Gallery {
 
 	$lockIds = array();
 
-	if (is_subclass_of($this, 'GalleryChildEntity')) {
-	    list ($ret, $lockIds[]) = $this->acquireReadLockParents($id);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    
-	    if ($lockIds[0] == null) {
-		/*
-		 * No lock was acquired - only in the case where I have no
-		 * parents
-		 */
-		unset($lockIds[0]);
-	    }
-	}
-
 	/* Don't write lock it if it's already locked somewhere else */
 	if (!$this->isWriteLocked($id)) {
 	    list ($ret, $lockIds[]) = $this->acquireWriteLock($id);
@@ -344,6 +329,18 @@ class Gallery {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
+	if (is_subclass_of($entity, 'GalleryChildEntity')) {
+	    list ($ret, $newLock) = $this->acquireReadLockParents($id);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* The new lock can be null if we have no parents */
+	    if ($newLock != null) {
+		$lockIds[] = $newLock;
+	    }
+	}
+
 	$ret = $entity->delete();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

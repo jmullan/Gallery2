@@ -58,6 +58,16 @@
     NOT NULL
   
       ,
+    COLUMN_PREFIXsummary
+      varchar(
+      
+          128
+        
+      )
+    
+    NOT NULL
+  
+      ,
     COLUMN_PREFIXtheme
       varchar(
       
@@ -69,7 +79,7 @@
     COLUMN_PREFIXtitle
       varchar(
       
-          255
+          128
         
       )
     
@@ -98,6 +108,10 @@
       ,
     
     INDEX (COLUMN_PREFIXownerId)
+    
+      ,
+    
+    INDEX (COLUMN_PREFIXsummary)
     
       ,
     

@@ -71,9 +71,16 @@
 	      {include file="singleThumbnail.tpl"}
 	      {/if}
 
-	      <br>
 	      {if !empty($child.title)}
+	      <br>
 	      <b>{$child.title}</b>
+	      {else}
+	      &nbsp;
+	      {/if}
+	      
+	      {if !empty($child.summary)}
+	      <br>
+	      <i>{$child.summary}</i>
 	      {else}
 	      &nbsp;
 	      {/if}

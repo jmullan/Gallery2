@@ -81,6 +81,11 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_INTEGER
         );
     
+        $meta['members']['summary'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         $meta['members']['theme'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_STRING
@@ -148,6 +153,12 @@ class GalleryItem extends GalleryItem_core {
             $data['ownerId'] = null;
         } else {
             $data['ownerId'] = $this->_ownerId;
+        }
+    
+        if (!isset($this->_summary)) {
+            $data['summary'] = null;
+        } else {
+            $data['summary'] = $this->_summary;
         }
     
         if (!isset($this->_theme)) {
@@ -431,6 +442,42 @@ class GalleryItem extends GalleryItem_core {
         if ($a != $b) {
             $this->_ownerId = $value;
             $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+        }
+    }
+  
+    /**
+     * Get the value of summary
+     *
+     * @return STRING the value
+     */
+    function getsummary() {
+        if (!isset($this->_summary)) {
+            return null;
+        }
+        return $this->_summary;
+    }
+
+    /**
+     * Set the value of summary
+     *
+     * @param STRING the value
+     */
+    function setsummary($value) {
+
+        /* 
+         * Convert unset values to null, to avoid generating warnings.
+         */
+	$a = isset($value) ? $value : null;
+	$b = isset($this->_summary) ? $this->_summary : null;
+
+    
+        /* 
+         * Only take action if the value actually changes, but take care not to 
+         * generate warnings for unset values.
+         */
+        if ($a != $b) {
+            $this->_summary = $value;
+            $this->setModifiedFlag('summary', MEMBER_MODIFIED);
         }
     }
   

@@ -120,11 +120,23 @@ function GalleryTestHarness() {
 	$moduleName = $HTTP_GET_VARS['moduleName'];
     
 	$iterations = 1;
+	$disableDebug = false;
 	if (!empty($HTTP_GET_VARS['iterations'])) {
 	    $iterations = $HTTP_GET_VARS['iterations'];
+	    $disableDebug = true;
 	}
 
+	if ($disableDebug) {
+	    /* Temporarily turn off debug mode */
+	    global $gallery;
+	    $debug = $gallery->getDebug();
+	    $gallery->setDebug(false);
+	}
+	
 	$results = $results + runTest($moduleName, $testName, $iterations);
+	if ($disableDebug) {
+	    $gallery->setDebug($debug);
+	}
     }
 
     $rollup = array();

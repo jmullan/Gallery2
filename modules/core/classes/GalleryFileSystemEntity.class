@@ -226,7 +226,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	$parentId = $this->getParentId();
 	if (!empty($parentId)) {
 	    if (!$gallery->isReadLocked($parentId) &&
-		!$gallery->isWriteLocked($parentId)) {
+		    !$gallery->isWriteLocked($parentId)) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
 	    }
