@@ -60,9 +60,12 @@ class AdminController extends GalleryController {
 		$zipBase = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'zip_');
 		$zipFile = $zipBase . '.zip';
 		$gallery->guaranteeTimeLimit(30);
+		$gallery->startRecordingDebugSnippet();
 		list ($success) = $platform->exec(array(array($form['path'], $zipFile, __FILE__)));
+		$debugSnippet = $gallery->stopRecordingDebugSnippet();
 		if (!$success || !$platform->file_exists($zipFile)) {
 		    $error[] = 'form[error][path][badZip]';
+		    GalleryUtilities::putRequestVariable('debugSnippet', $debugSnippet);
 		}
 		@$platform->unlink($zipFile);
 		@$platform->unlink($zipBase);
@@ -120,6 +123,16 @@ class AdminView extends GalleryView {
 	    $form['test'] = empty($form['error']);
 	}
 
+	$Admin = array();
+	if (isset($form['error']['path']['badZip']) > 0) {
+	    $Admin['debugSnippet'] = GalleryUtilities::getRequestVariables('debugSnippet');
+
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	    $template->javascript($jsUrl);
+	}
+
+	$template->setVariable('Admin', $Admin);
 	$template->setVariable('controller', 'zipcart:Admin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/zipcart/templates/Admin.tpl'));

@@ -44,6 +44,24 @@
   {/if}
 </div>
 
+{if isset($form.error.path.badZip)}
+<div class="gbBlock">
+  <h3>
+    {g->text text="Debug output"}
+    <span id="Admin_trace-toggle"
+     class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px"
+     onclick="BlockToggle('Admin_debugSnippet', 'Admin_trace-toggle')">+</span>
+  </h3>
+  <p class="giDescription">
+    {g->text text="We gathered this debug output while testing your zip installation.  If you read through this carefully you may discover the reason why it failed our tests."}
+  </p>
+  <pre id="Admin_debugSnippet" class="gcBackground1 gcBorder2"
+   style="display: none; border-width: 1px; border-style: dotted; padding: 4px">
+    {$Admin.debugSnippet}
+  </pre>
+</div>
+{/if}
+
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
