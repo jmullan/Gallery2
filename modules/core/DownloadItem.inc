@@ -59,19 +59,24 @@ class DownloadItemView extends GalleryView {
 	    $headers = GetAllHeaders();
 	    if (isset($headers['If-Modified-Since'])) {
 		header('HTTP/1.x 304 Not Modified');
-		return;
+		return GalleryStatus::success();
 	    }
 	}
 	
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
 	/* Load the item */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+        /* Figure out the filename */
+        list ($ret, $pseudoFileName) = $this->getPseudoFileName($item);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -121,18 +126,13 @@ class DownloadItemView extends GalleryView {
 	    $size = $item->getSize();
 	}
 	$mimeType = $item->getMimeType();
-
-	if (false) {
-	    printf("<pre>%s</pre>", print_r($GLOBALS['GalleryCoreApi'], 1));
-	    printf("<pre>\b(%s)\b\n\n&nbsp;</pre>", join("|", get_declared_classes()));
-	    printf("<pre>%s</pre>", print_r(get_declared_classes(), 1));
-	    return GalleryStatus::success();
-	}
-
+	header('Content-type: ' . $mimeType);
+	
+	header('Content-Disposition: inline; filename="' . $pseudoFileName . '"');
+	
 	if ($size > 0) {
 	    header('Content-length: ' . $size);
 	}
-	header('Content-type: ' . $mimeType);
 
 	$platform = $gallery->getPlatform();
 	$stats = $platform->stat($path);
@@ -150,7 +150,6 @@ class DownloadItemView extends GalleryView {
 	    }
 	    $platform->fclose($fd);
 	}
-
 	return GalleryStatus::success();
     }
 
@@ -167,39 +166,28 @@ class DownloadItemView extends GalleryView {
 	unset($params['itemId']);
 	
 	$buf = '/' . $itemId;
-
+	
 	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isSuccess()) {
-	    $buf .= '-' . $entity->getSerialNumber();
-	    unset($params['serialNumber']);
+	if ($ret->isError()) {
+	    return null;
+	}
+	
+	$buf .= '-' . $entity->getSerialNumber();
+	unset($params['serialNumber']);
 
-	    if (GalleryUtilities::isA($entity, 'GalleryDataItem')) {
-		$pseudoFileName = $entity->getPathComponent();
-	    } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
-		list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
-		if ($ret->isSuccess()) {
-		    if (GalleryUtilities::isA($sourceEntity, 'GalleryDataItem')) {
-			$pseudoFileName = $sourceEntity->getPathComponent();
-		    }
-		}
-	    } else {
-		return null;
-	    }
-	    
-	    $mimeType = $entity->getMimeType();
-
-	    if (isset($pseudoFileName)) {
-		$buf .= '/' . $pseudoFileName;
-	    }
-
-	    if (!isset($pseudoFileName) || strpos($pseudoFileName, '.') === false) {
-		$extension = GalleryUtilities::convertMimeToExtension($mimeType);
-		if (!empty($extension)) {
-		    $buf .= '.' . $extension;
-		}
+	list ($ret, $pseudoFileName) = $this->getPseudoFileName($entity);
+	if ($ret->isError()) {
+	    return null;
+	}
+	$buf .= '/' . $pseudoFileName;
+	
+	if (strpos($pseudoFileName, '.') === false) {
+	    $extension = GalleryUtilities::convertMimeToExtension($entity->getMimeType());
+	    if (!empty($extension)) {
+		$buf .= '.' . $extension;
 	    }
 	}
-
+	
 	/* Add in anything else as a standard query element */
 	if (!empty($params)) {
 	    $urlGenerator = $gallery->getUrlGenerator();
@@ -221,6 +209,42 @@ class DownloadItemView extends GalleryView {
 	$queryString = preg_match('|/(\d+)-|', $queryString, $regs);
 	GalleryUtilities::putRequestVariable('itemId', $regs[1]);
 	return array(GalleryStatus::success(), null);
+    }
+    
+    /**
+     * Return an approximate filename of the given GalleryEntity, or "unknown" if we can't figure it out
+     *
+     * @param object entity a GalleryEntity
+     * @return string pseudoFileName a filename
+     */
+    function getPseudoFileName($entity) {
+    
+        /*
+	 * If our GalleryEntity is a GalleryFileSystemEntity, then we've got a path component so we're cool.
+	 * If it's a derivative, then get the pseudo filename of its derivative source and use that instead.
+	 * If it's neither, then return 'unknown' for now.
+         */
+       	if (GalleryUtilities::isA($entity, 'GalleryFileSystemEntity')) {
+	    $pseudoFileName = $entity->getPathComponent();
+        } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
+	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
+	    if ($ret->isError()) {
+		return 'unknown';
+	    }
+
+	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
+		$pseudoFileName = $sourceEntity->getPathComponent();
+	    } else {
+		list ($ret, $pseudoFileName) = $this->getPseudoFileName($sourceEntity);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+        } else {
+	    return 'unknown';
+	}
+	
+	return array(GalleryStatus::success(), $pseudoFileName);
     }
 }
 ?>
