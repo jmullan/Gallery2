@@ -37,7 +37,7 @@ class ItemAddFromBrowser extends ItemAddPlugin {
     /**
      * @see ItemAddPlugin::handleRequest
      */
-    function handleRequest($form, &$item) {
+    function handleRequest($form, &$item, $options) {
 	global $gallery;
 
 	$status = array();
@@ -80,6 +80,15 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
+
+		    foreach ($options as $option) {
+			list ($ret, $optionErrors) = $option->handleRequestAfterAdd($form, $newItem);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+			$error = array_merge($error, $optionErrors);
+		    }
+		    
 		    $status['addedFiles'][] = array('fileName' => $file['name'], 'id' => $newItem->getId());
 		}
 	    }
