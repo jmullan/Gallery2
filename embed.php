@@ -811,5 +811,34 @@ class GalleryEmbed {
 	}
 	return array(GalleryStatus::success(), $map);
     }
+
+    /**
+     * Check if externalId is mapped to a G2 user/group.
+     * If GalleryStatus is a success, the externalId is mapped. Else, check for the status code.
+     * ERROR_MISSING_OBJECT -> externalId is not mapped to a G2 entity.
+     * other error codes -> unexpected behavior / bug.
+     *
+     * @param integer/string the user/group id in the embedded application
+     * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
+     * @return object GalleryStatus
+     * 
+     * @static
+     */
+    function isExternalIdMapped($externalId, $entityType) {
+        global $gallery;
+
+	$query = 'SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap] ' .
+		 'WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?';
+	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!($result = $results->nextResult())) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+					      "$externalId $entityType");
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>
