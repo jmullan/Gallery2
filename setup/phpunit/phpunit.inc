@@ -202,12 +202,21 @@ class TestCase extends Assert /* implements Test */ {
      that specializes the runTest() method. */
   var $fName;
   var $fClassName;
+  var $fModuleName;
   var $fResult;
   var $fExceptions = array();
   var $fTiming;
 
   function TestCase($name) {
     $this->fName = $name;
+  }
+
+  function setModuleName($moduleName) {
+      $this->fModuleName = $moduleName;
+  }
+
+  function getModuleName() {
+      return $this->fModuleName;
   }
 
   function run(&$testResult) {
@@ -341,8 +350,9 @@ class TestSuite /* implements Test */ {
      run them all. */
   var $fTests = array();
   var $fClassname;
+  var $fModuleName;
 
-  function TestSuite($classname=false) {
+  function TestSuite($classname=false,$modulename=false) {
     // Find all methods of the given class whose name starts with
     // "test" and add them to the test suite.
 
@@ -361,6 +371,7 @@ class TestSuite /* implements Test */ {
     if (empty($classname))
       return;
     $this->fClassname = $classname;
+    $this->fModuleName = $modulename;
 
     if (floor(phpversion()) >= 4) {
       // PHP4 introspection, submitted by Dylan Kuhn
@@ -378,6 +389,7 @@ class TestSuite /* implements Test */ {
             //print "skipping $method<br>";
           }
           else {
+	    $test->setModuleName($this->fModuleName);
             $this->addTest($test);
           }
         }
@@ -608,7 +620,7 @@ class PrettyTestResult extends TestResult {
 	echo "<h2>Test Results</h2>";
 	
 	echo "<TABLE CELLSPACING=\"1\" CELLPADDING=\"1\" BORDER=\"0\" WIDTH=\"90%\" ALIGN=\"CENTER\" class=\"details\">";
-	echo "<TR><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
+	echo "<TR><TH>Module</TH><TH>Class</TH><TH>Function</TH><TH>Success?</TH><TH>Time</TH></TR>";
   }
   
   function report() {
@@ -641,7 +653,7 @@ class PrettyTestResult extends TestResult {
   }
 
   function _startTest($test) {
-    printf("<TR><TD>%s </TD><TD>%s </TD>", $test->classname(),$test->name());
+    printf("<TR><TD>%s </TD><TD>%s </TD><TD>%s </TD>", $test->getModuleName(), $test->classname(),$test->name());
     flush();
   }
 

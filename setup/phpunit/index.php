@@ -78,7 +78,7 @@ function GalleryMain(&$testSuite, $filter) {
 			if (class_exists($className) &&
 			    GalleryUtilities::isA(new $className(null), 'GalleryTestCase')) {
 
-			    $suiteArray[$className] = new TestSuite($className);
+			    $suiteArray[$className] = new TestSuite($className, $moduleName);
 			}
 		    }
 		}
