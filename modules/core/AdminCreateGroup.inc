@@ -63,7 +63,6 @@ class AdminCreateGroupController extends GalleryController {
 	     * create the group.
 	     */
 	    if (!empty($form['groupName'])) {
-	    
 		list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -73,17 +72,15 @@ class AdminCreateGroupController extends GalleryController {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 				 null);
 		}
-		
+
 		$ret = $group->create($form['groupName']);
 		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_COLLISION) {
-			/*
-			 * Fall through -- the view will let the group know about
-			 * the duplication.
-			 */
-		    } else {
+		    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    // Set our error status and fall back to the view.
+		    GalleryUtilities::putRequestVariable('form.error.groupName.exists', 1);
 		} else {
 		    $ret = $group->save();
 		    if ($ret->isError()) {
@@ -95,6 +92,9 @@ class AdminCreateGroupController extends GalleryController {
 		    $redirectParams['subView'] = 'core:AdminCreateGroupConfirmation';
 		    $redirectParams['groupName'] = $form['groupName'];
 		}
+	    } else {
+		// Set our error status and fall back to the view.
+		GalleryUtilities::putRequestVariable('form.error.groupName.missing', 1);
 	    }
 	}
 
@@ -134,29 +134,8 @@ class AdminCreateGroupView extends GalleryView {
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	if ($formName == 'AdminCreateGroup') {
-	    if (empty($form['groupName'])) {
-		$form['error']['groupName']['missing'] = 1;
-	    }
-	    
-	    if (!empty($form['groupName'])) {
-		list ($ret, $group) = GalleryGroupHelper::fetchGroupByGroupname($form['groupName']);
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			/* We're good -- no use by that name */
-		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		} else {
-		    /* A group exists by that name */
-		    $form['error']['groupName']['exists'] = 1;
-		}
-	    }
-	} else {
-	    /*
-	     * Otherwise we just arrived at this page the first time so set
-	     * defaults
-	     */
+	if ($formName != 'AdminCreateGroup') {
+	    // Set the form defaults
 	    $form['groupName'] = '';
 	}
 
