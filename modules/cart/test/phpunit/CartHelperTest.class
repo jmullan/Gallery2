@@ -152,7 +152,7 @@ class CartHelperTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($item);
 
-	$ret = CartHelper::setCartItemCounts(array('invalid' => 3, $item->getId() => 2));
+	$ret = CartHelper::setCartItemCounts(array('1000000' => 3, $item->getId() => 2));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
