@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,7 +32,7 @@
  * @package GalleryCore
  */
 class CoreModuleExtras {
-    
+
     /**
      * @see GalleryModule::upgrade()
      * @param object GalleryModule the core module
@@ -122,9 +122,9 @@ class CoreModuleExtras {
 	    $permissions[] = array('all', $gallery->i18n('All access'),
 				   GALLERY_PERMISSION_ALL_ACCESS, array());
 	    $permissions[] = array('view', $gallery->i18n('[core] View item'), 0, array());
-	    $permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'), 0, array()); 
-	    $permissions[] = array('viewSource', $gallery->i18n('[core] View original version'), 0, array()); 
-	    $permissions[] = array('viewAll', $gallery->i18n('[core] View all versions'), 
+	    $permissions[] = array('viewResizes', $gallery->i18n('[core] View resized version(s)'), 0, array());
+	    $permissions[] = array('viewSource', $gallery->i18n('[core] View original version'), 0, array());
+	    $permissions[] = array('viewAll', $gallery->i18n('[core] View all versions'),
 				   GALLERY_PERMISSION_COMPOSITE,
 				   array('core.view', 'core.viewResizes', 'core.viewSource'));
 	    $permissions[] = array('addAlbumItem', $gallery->i18n('[core] Add sub-album'),
@@ -143,14 +143,14 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    foreach (array('_createAllUsersGroup',
 			   '_createSiteAdminsGroup',
 			   '_createEverybodyGroup',
 			   '_createAnonymousUser',
 			   '_createAdminUser',
 			   '_createRootAlbumItem') as $func) {
-		
+
 		$ret = CoreModuleExtras::$func($module);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -170,7 +170,6 @@ class CoreModuleExtras {
 	    $data = sprintf("%s\n%s",
 			    $module->getVersion(),
 			    $module->getGalleryVersion());
-	    $x = $platform->fwrite($fd, $data);
 	    if ($platform->fwrite($fd, $data) != strlen($data)) {
 		$versionDatError = 1;
 	    }
@@ -181,7 +180,7 @@ class CoreModuleExtras {
 
 	if ($versionDatError) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-					'Can\'t write to the versions file'); 
+					'Can\'t write to the versions file');
 	}
 
 	return GalleryStatus::success();
@@ -204,7 +203,7 @@ class CoreModuleExtras {
 	if (!empty($id)) {
 	    return GalleryStatus::success();
 	}
-    
+
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -224,12 +223,12 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    
+
 	$ret = $module->setModuleParameter('id.allUserGroup', $group->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    
+
 	return GalleryStatus::success();
     }
 
@@ -250,22 +249,22 @@ class CoreModuleExtras {
 	if (!empty($id)) {
 	    return GalleryStatus::success();
 	}
-    
+
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-					     
+
 	if (!isset($group)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-    
+	}
+
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Site Admins'));
 	$ret = $group->create($groupName, GROUP_SITE_ADMINS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $group->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -275,7 +274,7 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -296,22 +295,22 @@ class CoreModuleExtras {
 	if (!empty($id)) {
 	    return GalleryStatus::success();
 	}
-    
+
 	list ($ret, $group) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryGroup');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-					     
+
 	if (!isset($group)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-    
+	}
+
 	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Everybody'));
 	$ret = $group->create($groupName, GROUP_EVERYBODY);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $group->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -321,7 +320,7 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -342,16 +341,16 @@ class CoreModuleExtras {
 	if (!empty($id)) {
 	    return GalleryStatus::success();
 	}
-    
+
 	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-					     
+
 	if (!isset($user)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-    
+	}
+
 	$userName = GalleryUtilities::utf8ToUnicodeEntities('guest');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Guest'));
 	$ret = $user->create($userName);
@@ -360,7 +359,7 @@ class CoreModuleExtras {
 	}
 	$user->setFullName($fullName);
 	$user->changePassword('');
-	
+
 	$ret = $user->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -371,7 +370,7 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	GalleryCoreApi::removeUserFromGroup($user->getId(), $allUserGroupId);
 
 	$ret = $module->setModuleParameter('id.anonymousUser', $user->getId());
@@ -411,10 +410,10 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-					     
+
 	if (!isset($user)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
+	}
 
 	$userName = GalleryUtilities::utf8ToUnicodeEntities('admin');
 	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery Administrator'));
@@ -424,7 +423,7 @@ class CoreModuleExtras {
 	}
 	$user->changePassword($gallery->getConfig('setup.password'));
 	$user->setFullName($fullName);
-	
+
 	$ret = $user->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -464,11 +463,11 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-					     
+
 	if (!isset($album)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
-	}  
-    
+	}
+
 	$ret = $album->createRoot();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -511,7 +510,7 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 }
