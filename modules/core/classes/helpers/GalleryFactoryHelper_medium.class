@@ -155,11 +155,12 @@ class GalleryFactoryHelper_medium {
      * @param string the id of the module containing the implementation (eg. 'netpbm')
      * @param array hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
+     * @param int the priority of this implementation (lower number == higher priority)
      * @return object GalleryStatus a status class
      * @static
      */
     function registerImplementation($classType, $className, $implId, $implPath,
-				    $implModuleId, $hints) {
+				    $implModuleId, $hints, $orderWeight) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists(dirname(__FILE__) . '/../../../../' . $implPath)) {
@@ -174,12 +175,6 @@ class GalleryFactoryHelper_medium {
 	    for ($i = 0; $i < sizeof($hints); $i++) {
 		$hints[$i] = strtolower($hints[$i]);
 	    }
-	}
-
-	if ($implModuleId == 'core') {
-	    $orderWeight = 0;
-	} else {
-	    $orderWeight = 1;
 	}
 
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryFactoryMap.class');

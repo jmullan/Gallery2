@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(2, 0);
+	return array(2, 1);
     }
 
     /**
@@ -68,13 +68,15 @@ class GalleryCoreApi {
      * @param string the id of the module containing the implementation (eg. 'netpbm')
      * @param array optional hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
+     * @param int the priority of this implementation (lower number == higher priority)
      * @static
      */
     function registerFactoryImplementation($classType, $className, $implId, $implPath,
-					   $implModuleId, $hints) {
+					   $implModuleId, $hints, $orderWeight=5) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFactoryHelper_medium.class');
 	return GalleryFactoryHelper_medium::registerImplementation($classType, $className, $implId,
-								   $implPath, $implModuleId, $hints);
+								   $implPath, $implModuleId, $hints,
+								   $orderWeight);
     }
 
     /**

@@ -170,7 +170,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.9';
+	    $currentVersion = '0.8.10';
 	    break;
 
 	case '0.8':
@@ -260,6 +260,23 @@ class CoreModuleExtras {
 
 	case '0.8.8':
 	    $currentVersion = '0.8.9';
+	    /* fall through */
+	    
+	case '0.8.9':
+	    $storage =& $gallery->getStorage();
+
+	    /*
+	     * Set all factory implementation weights to 5.  We'll re-register
+	     * all core implementations with a weight of 4 so that they get
+	     * precedence.
+	     */
+	    $query = 'UPDATE [GalleryFactoryMap] SET [::orderWeight] = 5';
+	    $ret = $storage->execute($query, array());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    $currentVersion = '0.8.10';
 	    break;
 	    
 	default:
@@ -311,7 +328,7 @@ class CoreModuleExtras {
                 $entry[2] == 'class' ?
 		  sprintf('modules/core/classes/%s.class', $entry[1]) :
 		  sprintf('modules/core/%s.inc', $entry[1]),
-		'core', $entry[3]);
+		'core', $entry[3], 4);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
