@@ -16,8 +16,8 @@
       <div class="gbTopFlag">
         <div class="gbTitleBanner">
             <h1 class="gbTitle">
-            {g->text one="%d user"
-                     many="%d users"
+            {g->text one="%d member"
+                     many="%d members"
                      count=$form.list.totalUserCount
                      arg1=$form.list.totalUserCount}
             </h1>
@@ -81,7 +81,10 @@
     	    {g->text text="Username"}
           </th>
           <th>
-	    {g->text text="Full Name"}
+	        {g->text text="Full Name"}
+          </th>
+          <th>
+	        {g->text text="Member Since"}
           </th>
         </tr>
     
@@ -97,6 +100,9 @@
           </td>
           <td>
             {$user.fullName}
+          </td>
+          <td>
+            {g->date timestamp=$user.creationTimestamp}
           </td>
         </tr>
         {/foreach}

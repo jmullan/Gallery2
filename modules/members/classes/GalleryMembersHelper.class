@@ -79,8 +79,8 @@ class GalleryMembersHelper {
 	$storage =& $gallery->getStorage();
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
-	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
-						array('[GalleryPermissionMap::permission]', '?'));
+	list ($ret, $andPermission) = 
+            $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -92,15 +92,15 @@ class GalleryMembersHelper {
           [GalleryItem], [GalleryEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
         WHERE
           [GalleryItem::id] = [GalleryEntity::id]
-          AND
+        AND
           [GalleryItem::ownerId] = ?
-          AND
+        AND
           ([GalleryPermissionMap::userId] = ?
-           OR
+         OR
            [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
-          AND
+        AND
 	' . $andPermission . ' > ?
-          AND
+        AND
 	  [GalleryPermissionMap::itemId] = [GalleryEntity::id]
         ORDER BY
           [GalleryEntity::creationTimestamp] ' . $direction . '
@@ -136,6 +136,69 @@ class GalleryMembersHelper {
 	}
 
         return array(GalleryStatus::success(), $items);
+    }
+
+    function canViewMembersModule($userId) {
+        global $gallery;
+        list ($ret, $viewSelectedGroupId) = 
+            GalleryCoreApi::getPluginParameter('module','members','viewSelected');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+        list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        return array(GalleryStatus::success(), $result);    
+    }
+    
+    function canViewProfileEmail($userId) {
+        global $gallery;
+        $result = false;
+        list ($ret, $resultOne) = 
+            GalleryCoreApi::getPluginParameter('module','members','emailSelected');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	list ($ret, $groupId) = 
+            GalleryCoreApi::getPluginParameter('module','core','id.adminGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
+	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        if ($resultOne || $resultTwo) {
+            $result = true;
+        }
+        
+        return array(GalleryStatus::success(), $result);    
+    }
+    
+    function daysSinceCreation ($userId) {
+        global $gallery;
+        $query = '
+        SELECT
+          (TO_DAYS(CURRENT_DATE()) - TO_DAYS(FROM_UNIXTIME([GalleryEntity::creationTimestamp])))
+        FROM
+          [GalleryEntity]
+        WHERE
+          [GalleryEntity::id] = ?
+        ';
+    
+    	$data[] = $userId;
+    	list ($ret, $searchResults) = $gallery->search($query, $data);
+    	if ($ret->isError()) {
+    	    return array($ret->wrap(__FILE__, __LINE__), null);
+    	}
+    
+	$result = $searchResults->nextResult();
+        return array(GalleryStatus::success(), (int)$result[0]);  
     }
 }
 ?>

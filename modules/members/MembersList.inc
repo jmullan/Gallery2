@@ -39,7 +39,16 @@ class MembersListView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
+    	global $gallery;
+        GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
+        list ($ret, $result) = GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+        if (!$result) {
+            return array(GalleryStatus::success(), 
+                         array('redirect' => array('view' => 'core:ShowItem')));
+        }
 	
 	if ($form['formName'] != 'MembersList') {
 	    /* Set some defaults */

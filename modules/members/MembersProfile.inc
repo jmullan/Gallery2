@@ -40,14 +40,24 @@ class MembersProfileView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
+	
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
+        list ($ret, $result) = 
+            GalleryMembersHelper::canViewMembersModule($gallery->getActiveUserId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+        if (!$result) {
+            return array(GalleryStatus::success(), 
+                         array('redirect' => array('view' => 'core:ShowItem')));
+        }
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	if (empty($userId)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	
-	if ($form['formName'] != 'MembersProfile') {
-	    
+	if ($form['formName'] != 'MembersProfile') {    
 	    /* Set some defaults */
 	    $form['formName'] = 'MembersProfile';
 	}
@@ -66,14 +76,12 @@ class MembersProfileView extends GalleryView {
         }
         $MembersProfile['rootAlbum'] = $rootAlbum->getMemberData();
 
-
         list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
         $MembersProfile['user'] = $user->getMemberData();
 
-        require_once(dirname(__FILE__) . '/classes/GalleryMembersHelper.class');
 	list ($ret, $lastItems) = GalleryMembersHelper::fetchLastUserItems($user->getId(),
 									   0, 5, ORDER_DESCENDING);
 	if ($ret->isError()) {
@@ -85,6 +93,19 @@ class MembersProfileView extends GalleryView {
 	    $MembersProfile['lastItems'][] = $item->getMemberData();
 	}
 	
+	list ($ret, $daysSinceCreation) = GalleryMembersHelper::daysSinceCreation($user->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$MembersProfile['daysSinceCreation'] = $daysSinceCreation;
+    
+        list ($ret, $canViewProfileEmail) = 
+            GalleryMembersHelper::canViewProfileEmail($gallery->getActiveUserId());
+        if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$MembersProfile['canViewProfileEmail'] = $canViewProfileEmail;
+        
         $template->setVariable('MembersProfile', $MembersProfile);
 
 	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
@@ -99,7 +120,7 @@ class MembersProfileView extends GalleryView {
 	
         return array(GalleryStatus::success(),
 		     array('head' => 'modules/members/templates/MembersProfileHead.tpl',
-			   'body' => 'modules/members/templates/MembersProfile.tpl'));
+        		   'body' => 'modules/members/templates/MembersProfile.tpl'));
     }
 }
 ?>

@@ -33,23 +33,35 @@
         </td>
       </tr>
   
-      {if sizeof($MembersProfile.user.email)}	
+      {if $MembersProfile.canViewProfileEmail}	
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td>
           {g->text text="E-mail:"}
         </td>
         <td>
+          {if sizeof($MembersProfile.user.email)} 
           {mailto address=$MembersProfile.user.email encode="hex"}
+          {else}
+          {g->text text="None"}
+          {/if}        
         </td>
       </tr>
       {/if}
   
       <tr class="{cycle values="gbEven,gbOdd"}">
         <td>
-  	{g->text text="Sign-up Date:"}
+  	{g->text text="Member Since:"}
         </td>
         <td>
   	{g->date timestamp=$MembersProfile.user.creationTimestamp}
+  	{if $MembersProfile.daysSinceCreation > 0}
+  	{g->text one="(%d day)"
+                     many="(%d days)"
+                     count=$MembersProfile.daysSinceCreation
+                     arg1=$MembersProfile.daysSinceCreation}
+    {elseif $MembersProfile.daysSinceCreation == 0}
+    {g->text text="(today)"}                
+    {/if}                 
         </td>
       </tr>
   
