@@ -569,7 +569,7 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if (!$isRoot && isset($permissions['core.edit'])) {
+	    if (isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit general'),
 			  'params' => array('view' => 'core:ItemAdmin',
@@ -598,7 +598,7 @@ class CoreModule extends GalleryModule {
 					    'selectedId' => $item->getId()));
 	    }
 
-	    if (!$isRoot && isset($thumbTable[$item->getId()])) {
+	    if (!$isRoot && isset($thumbTable[$item->getId()]) && isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',
