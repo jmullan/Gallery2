@@ -45,10 +45,9 @@ class GalleryPlatform {
      */
     function copy($source, $dest) {
 	global $gallery;
-	$gallery->debug("copy($source, $dest)");
-	
 	$source = $this->importPath($source);
 	$dest = $this->importPath($dest);
+	$gallery->debug("copy($source, $dest)");
 	
 	$umask = umask(0133);
 	$results = copy($source, $dest);
@@ -76,9 +75,10 @@ class GalleryPlatform {
      */
     function file_exists($filename) {
 	global $gallery;
-	$gallery->debug("file_exists($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("file_exists($filename)");
+
 	return file_exists($filename);
     }
 
@@ -91,9 +91,10 @@ class GalleryPlatform {
      */
     function is_link($filename) {
 	global $gallery;
-	$gallery->debug("is_link($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("is_link($filename)");
+	
 	return is_link($filename);
     }
 
@@ -106,9 +107,10 @@ class GalleryPlatform {
      */
     function is_dir($filename) {
 	global $gallery;
-	$gallery->debug("is_dir($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("is_dir($filename)");
+	
 	return is_dir($filename);
     }
 
@@ -121,9 +123,10 @@ class GalleryPlatform {
      */
     function is_file($filename) {
 	global $gallery;
-	$gallery->debug("is_file($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("is_file($filename)");
+	
 	return is_file($filename);
     }
 
@@ -136,9 +139,10 @@ class GalleryPlatform {
      */
     function is_executable($filename) {
 	global $gallery;
-	$gallery->debug("is_executable($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("is_executable($filename)");
+	
 	return is_executable($filename);
     }
 
@@ -151,9 +155,10 @@ class GalleryPlatform {
      */
     function filesize($filename) {
 	global $gallery;
-	$gallery->debug("filesize($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("filesize($filename)");
+	
 	return filesize($filename);
     }
 
@@ -168,9 +173,10 @@ class GalleryPlatform {
      */
     function fopen($filename, $mode, $use_include_path=0) {
 	global $gallery;
-	$gallery->debug("fopen($filename, $mode, $use_include_path)");
 	
 	$path = $this->importPath($filename);
+	$gallery->debug("fopen($filename, $mode, $use_include_path)");
+	
 	return fopen($filename, $mode, $use_include_path);
     }
 
@@ -183,9 +189,10 @@ class GalleryPlatform {
      */
     function opendir($path) {
 	global $gallery;
-	$gallery->debug("opendir($path)");
 	
 	$path = $this->importPath($path);
+	$gallery->debug("opendir($path)");
+	
 	return opendir($path);
     }
 
@@ -201,10 +208,10 @@ class GalleryPlatform {
      */
     function rename($oldname, $newname) {
 	global $gallery;
-	$gallery->debug("rename($oldname, $newname)");
 	
 	$oldname = $this->importPath($oldname);
 	$newname = $this->importPath($newname);
+	$gallery->debug("rename($oldname, $newname)");
 
 	/*
 	 * We can use raw functions from this point on because the paths have
@@ -230,9 +237,10 @@ class GalleryPlatform {
      */
     function stat($filename) {
 	global $gallery;
-	$gallery->debug("stat($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("stat($filename)");
+	
 	return stat($filename);
     }
 
@@ -245,9 +253,10 @@ class GalleryPlatform {
      */
     function unlink($filename) {
 	global $gallery;
-	$gallery->debug("unlink($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("unlink($filename)");
+	
 	return unlink($filename);
     }
 
@@ -260,9 +269,10 @@ class GalleryPlatform {
      */
     function rmdir($filename) {
 	global $gallery;
-	$gallery->debug("rmdir($filename)");
 	
 	$filename = $this->importPath($filename);
+	$gallery->debug("rmdir($filename)");
+	
 	return rmdir($filename);
     }
 
@@ -275,9 +285,10 @@ class GalleryPlatform {
      */
     function recursiveRmdir($dirname) {
 	global $gallery;
-	$gallery->debug("recursiveRmdir($dirname)");
 	
 	$dirname = $this->importPath($dirname);
+	$gallery->debug("recursiveRmdir($dirname)");
+	
 
 	if (!($fd = $this->opendir($dirname))) {
 	    return false;
@@ -323,14 +334,14 @@ class GalleryPlatform {
 	global $gallery;
 
 	if (empty($perms)) {
-	    $perms = $gallery->getconfigValue('core.permissions.directory');
+	    $perms = $gallery->getConfig('core.permissions.directory');
 	}
 	
+	$path = $this->importPath($path);
 	$gallery->debug("mkdir($path, " .
 			sprintf("%o", $perms) .
 			")");
 	
-	$path = $this->importPath($path);
 	$umask = umask(0);
 	$results = mkdir($path, $perms);
 	umask($umask);
@@ -376,17 +387,12 @@ class GalleryPlatform {
     /**
      * Execute a command and record the results and status.
      *
-     * If the optional debugfile parameter is specified, dump the STDERR
-     * results from executing this command out to the file.  (Unix only)
-     *
      * @param string the command to excute
      * @param array the location to put output from the command 
-     * @param int the location to put the status code from the command
-     * @param string optional file to record STDERR output
-     * @return bool TRUE if the copy succeeded, FALSE otherwise.
+     * @return bool TRUE if the command succeeded, FALSE otherwise.
      * @access public
      */
-    function exec($cmd, &$results, &$status, $debugfile="") {
+    function exec($cmd, &$results) {
 	/* This must be implemented in a platform specific way */
 	assert(false);
     }
