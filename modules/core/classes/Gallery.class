@@ -385,7 +385,7 @@ class Gallery {
      */
     function setActiveUserId($id) {
 	assert('!empty($id)');
-	$this->_activeUserId = $id;
+	$this->_activeUserId = (int)$id;
 	$this->_activeUser = null;
     }
 
