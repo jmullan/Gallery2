@@ -278,12 +278,10 @@ class Gallery1DataParser {
     function getUserUids($path) {
         global $gallery;
 	static $uids;
-	if (!isset($uids)) {
-	    $uids = array();
-	}
-	if (isset($uids[$path])) {
-	    return array(GalleryStatus::success(), $uids[$path]);
-	} else {
+	if (!isset($uids[$path])) {
+	    if (!isset($uids)) {
+		$uids = array();
+	    }
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    
@@ -299,8 +297,8 @@ class Gallery1DataParser {
 		    $uids[$path][$uid] = $username;
 		}
 	    }
-	    return array(GalleryStatus::success(), $uids[$path]);
 	}
+	return array(GalleryStatus::success(), $uids[$path]);
     }
     
     /**
@@ -325,31 +323,30 @@ class Gallery1DataParser {
      */
     function isValidUid($path, $uid) {
 	global $gallery;
-	static $memoized;
-	
-	if (!isset($memoized)) {
-	    $memoized = array();
-	}
-	if (!isset($memoized[$path])) {
-	    $memoized[$path] = array();
-	}
-	if (isset($memoized[$path][$uid])) {
-	    return $memoized[$path][$uid];
-	} else {
+	static $valid;
+	if (!isset($valid[$path][$uid])) {
+	    if (!isset($valid)) {
+		$valid = array();
+	    }
+	    if (!isset($valid[$path])) {
+		$valid[$path] = array();
+	    }
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    if (Gallery1DataParser::isValidUidString($uid)) {
 		list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
 		if ($ret->isSuccess()) {
-		    $memoized[$path][$uid] = TRUE;
-		    return TRUE;
+		    $valid[$path][$uid] = TRUE;
+		} else {
+		    $valid[$path][$uid] = FALSE;
 		}
+	    } else {
+		$valid[$path][$uid] = FALSE;
 	    }
 	}
-	$memoized[$path][$uid] = FALSE;
-	return FALSE;
+	return $valid[$path][$uid];
     }
-
+    
     /**
      * Load user metadata given a path and uid
      *
@@ -361,17 +358,14 @@ class Gallery1DataParser {
     function getUserFieldsByUid($path, $uid) {
         global $gallery;
 	static $fields;
-
-	if (!isset($fields)) {
-	    $fields = array();
-	}
-	if (!isset($fields[$path])) {
-	    $fields[$path] = array();
-	}
 	
-	if (isset($fields[$path][$uid])) {
-	    return array(GalleryStatus::success(), $fields[$path][$uid]);
-	} else {	
+	if (!isset($fields[$path][$uid])) {
+	    if (!isset($fields)) {
+		$fields = array();
+	    }
+	    if (!isset($fields[$path])) {
+		$fields[$path] = array();
+	    }
 	    $platform = $gallery->getPlatform();
 	    $slash = $platform->getDirectorySeparator();
 	    $fields[$path][$uid] = array();
@@ -384,8 +378,8 @@ class Gallery1DataParser {
 		    $fields[$path][$uid][$key] = $value;
 		}
 	    }
-	    return array(GalleryStatus::success(), $fields[$path][$uid]);
 	}
+	return array(GalleryStatus::success(), $fields[$path][$uid]);
     }
 
     /**
