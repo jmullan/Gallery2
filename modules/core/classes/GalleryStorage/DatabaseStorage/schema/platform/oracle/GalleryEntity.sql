@@ -40,9 +40,7 @@
       ,
     DB_COLUMN_PREFIXentityType
       VARCHAR2(
-      
-          32
-        
+       32 
       )
     
     NOT NULL
@@ -50,29 +48,26 @@
     );
 
   
-    CREATE INDEX Entity_I1
+    CREATE INDEX DB_TABLE_PREFIXEntity_3550976255
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXcreationTimestamp);
-
   
-    CREATE INDEX Entity_I2
+    CREATE INDEX DB_TABLE_PREFIXEntity_2265935978
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXisLinkable);
-
   
-    CREATE INDEX Entity_I3
+    CREATE INDEX DB_TABLE_PREFIXEntity_883663025
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXmodificationTimestamp);
-
   
-    CREATE INDEX Entity_I4
+    CREATE INDEX DB_TABLE_PREFIXEntity_2069360702
     ON DB_TABLE_PREFIXEntity
     (DB_COLUMN_PREFIXserialNumber);
-
   
     ALTER TABLE DB_TABLE_PREFIXEntity
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

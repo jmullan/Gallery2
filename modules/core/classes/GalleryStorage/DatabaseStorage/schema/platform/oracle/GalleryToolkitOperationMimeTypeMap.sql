@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXTkOperationMimeTypeMap (
   DB_COLUMN_PREFIXoperationName
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -16,9 +14,7 @@
       ,
     DB_COLUMN_PREFIXtoolkitId
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -26,9 +22,7 @@
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -42,15 +36,13 @@
     );
 
   
-    CREATE INDEX TkOperationMimeTypeMap_I1
+    CREATE INDEX DB_TABLE_PREFIXTkOperationMimeTypeMap_2891702014
     ON DB_TABLE_PREFIXTkOperationMimeTypeMap
     (DB_COLUMN_PREFIXoperationName);
-
   
-    CREATE INDEX TkOperationMimeTypeMap_I2
+    CREATE INDEX DB_TABLE_PREFIXTkOperationMimeTypeMap_3639779463
     ON DB_TABLE_PREFIXTkOperationMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

@@ -18,9 +18,7 @@
       ,
     DB_COLUMN_PREFIXderivativeOperations
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
     NOT NULL
@@ -44,9 +42,7 @@
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -54,24 +50,22 @@
     );
 
   
-    CREATE INDEX Derivative_I1
+    CREATE INDEX DB_TABLE_PREFIXDerivative_843485338
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeSourceId);
-
   
-    CREATE INDEX Derivative_I2
+    CREATE INDEX DB_TABLE_PREFIXDerivative_397325243
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeOrder);
-
   
-    CREATE INDEX Derivative_I3
+    CREATE INDEX DB_TABLE_PREFIXDerivative_3011797216
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeType);
-
   
     ALTER TABLE DB_TABLE_PREFIXDerivative
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

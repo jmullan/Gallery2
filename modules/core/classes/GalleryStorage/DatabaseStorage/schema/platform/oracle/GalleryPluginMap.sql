@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXPluginMap (
   DB_COLUMN_PREFIXpluginType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -16,9 +14,7 @@
       ,
     DB_COLUMN_PREFIXpluginId
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -33,10 +29,11 @@
 
   
     ALTER TABLE DB_TABLE_PREFIXPluginMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXpluginType
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXpluginType
         ,
-      DB_COLUMN_PREFIXpluginId);
-    
+      DB_COLUMN_PREFIXpluginId)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

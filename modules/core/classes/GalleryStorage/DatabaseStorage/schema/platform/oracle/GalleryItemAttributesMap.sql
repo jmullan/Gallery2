@@ -20,22 +20,20 @@
       ,
     DB_COLUMN_PREFIXparentSequence
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
     );
 
   
-    CREATE INDEX ItemAttributesMap_I1
+    CREATE INDEX DB_TABLE_PREFIXItemAttributesMap_2918195270
     ON DB_TABLE_PREFIXItemAttributesMap
     (DB_COLUMN_PREFIXparentSequence);
-
   
     ALTER TABLE DB_TABLE_PREFIXItemAttributesMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXitemId);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXitemId)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

@@ -26,20 +26,17 @@
     );
 
   
-    CREATE INDEX PermissionMap_I1
+    CREATE INDEX DB_TABLE_PREFIXPermissionMap_3052975985
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXitemId);
-
   
-    CREATE INDEX PermissionMap_I2
+    CREATE INDEX DB_TABLE_PREFIXPermissionMap_1689669068
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXuserId);
-
   
-    CREATE INDEX PermissionMap_I3
+    CREATE INDEX DB_TABLE_PREFIXPermissionMap_3984689328
     ON DB_TABLE_PREFIXPermissionMap
     (DB_COLUMN_PREFIXgroupId);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

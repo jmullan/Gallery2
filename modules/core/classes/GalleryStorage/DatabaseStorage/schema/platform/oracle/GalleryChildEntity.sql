@@ -18,14 +18,14 @@
     );
 
   
-    CREATE INDEX ChildEntity_I1
+    CREATE INDEX DB_TABLE_PREFIXChildEntity_284052718
     ON DB_TABLE_PREFIXChildEntity
     (DB_COLUMN_PREFIXparentId);
-
   
     ALTER TABLE DB_TABLE_PREFIXChildEntity
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

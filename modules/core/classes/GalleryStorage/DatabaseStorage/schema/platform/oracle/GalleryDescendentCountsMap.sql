@@ -25,10 +25,11 @@
 
   
     ALTER TABLE DB_TABLE_PREFIXDescendentCountsMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXuserId
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXuserId
         ,
-      DB_COLUMN_PREFIXitemId);
-    
+      DB_COLUMN_PREFIXitemId)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

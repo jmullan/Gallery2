@@ -12,17 +12,16 @@
       ,
     DB_COLUMN_PREFIXlayout
       VARCHAR2(
-      
-          32
-        
+       32 
       )
     
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXAlbumItem
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

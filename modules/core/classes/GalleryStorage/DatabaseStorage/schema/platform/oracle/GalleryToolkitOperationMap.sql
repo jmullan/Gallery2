@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXTkOperationMap (
   DB_COLUMN_PREFIXname
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -16,9 +14,7 @@
       ,
     DB_COLUMN_PREFIXparametersCrc
       VARCHAR2(
-      
-          32
-        
+       32 
       )
     
     NOT NULL
@@ -26,25 +22,22 @@
       ,
     DB_COLUMN_PREFIXoutputMimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
     );
 
   
     ALTER TABLE DB_TABLE_PREFIXTkOperationMap
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXname);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXname)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

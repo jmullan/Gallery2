@@ -22,25 +22,19 @@
       ,
     DB_COLUMN_PREFIXkeywords
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
       ,
     DB_COLUMN_PREFIXorderBy
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
     DB_COLUMN_PREFIXorderDirection
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -52,25 +46,19 @@
       ,
     DB_COLUMN_PREFIXsummary
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
       ,
     DB_COLUMN_PREFIXtheme
       VARCHAR2(
-      
-          32
-        
+       32 
       )
     
       ,
     DB_COLUMN_PREFIXtitle
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -82,29 +70,26 @@
     );
 
   
-    CREATE INDEX Item_I1
+    CREATE INDEX DB_TABLE_PREFIXItem_2858399070
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXkeywords);
-
   
-    CREATE INDEX Item_I2
+    CREATE INDEX DB_TABLE_PREFIXItem_3764321573
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXownerId);
-
   
-    CREATE INDEX Item_I3
+    CREATE INDEX DB_TABLE_PREFIXItem_3458754147
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXsummary);
-
   
-    CREATE INDEX Item_I4
+    CREATE INDEX DB_TABLE_PREFIXItem_724990059
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXtitle);
-
   
     ALTER TABLE DB_TABLE_PREFIXItem
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

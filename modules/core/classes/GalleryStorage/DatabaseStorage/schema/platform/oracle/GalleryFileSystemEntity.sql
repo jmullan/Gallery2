@@ -12,22 +12,20 @@
       ,
     DB_COLUMN_PREFIXpathComponent
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     );
 
   
-    CREATE INDEX FileSystemEntity_I1
+    CREATE INDEX DB_TABLE_PREFIXFileSystemEntity_2814003406
     ON DB_TABLE_PREFIXFileSystemEntity
     (DB_COLUMN_PREFIXpathComponent);
-
   
     ALTER TABLE DB_TABLE_PREFIXFileSystemEntity
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

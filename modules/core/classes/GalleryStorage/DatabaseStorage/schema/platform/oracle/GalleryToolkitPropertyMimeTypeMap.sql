@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXTkPropertyMimeTypeMap (
   DB_COLUMN_PREFIXpropertyName
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -16,9 +14,7 @@
       ,
     DB_COLUMN_PREFIXtoolkitId
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -26,9 +22,7 @@
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -36,15 +30,13 @@
     );
 
   
-    CREATE INDEX TkPropertyMimeTypeMap_I1
+    CREATE INDEX DB_TABLE_PREFIXTkPropertyMimeTypeMap_1900452881
     ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXpropertyName);
-
   
-    CREATE INDEX TkPropertyMimeTypeMap_I2
+    CREATE INDEX DB_TABLE_PREFIXTkPropertyMimeTypeMap_3639779463
     ON DB_TABLE_PREFIXTkPropertyMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXTkOperationParameterMap (
   DB_COLUMN_PREFIXoperationName
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -22,9 +20,7 @@
       ,
     DB_COLUMN_PREFIXtype
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -32,18 +28,15 @@
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR2(
-      
-          255
-        
+       255 
       )
     
     );
 
   
-    CREATE INDEX TkOperationParameterMap_I1
+    CREATE INDEX DB_TABLE_PREFIXTkOperationParameterMap_2891702014
     ON DB_TABLE_PREFIXTkOperationParameterMap
     (DB_COLUMN_PREFIXoperationName);
-
   
 
     INSERT INTO DB_TABLE_PREFIXSchema (

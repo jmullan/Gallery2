@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXSchema (
   DB_COLUMN_PREFIXname
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -29,8 +27,9 @@
 
   
     ALTER TABLE DB_TABLE_PREFIXSchema
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXname);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXname)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

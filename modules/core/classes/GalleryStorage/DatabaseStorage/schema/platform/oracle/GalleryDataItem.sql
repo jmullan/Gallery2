@@ -12,9 +12,7 @@
       ,
     DB_COLUMN_PREFIXmimeType
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
       ,
@@ -25,8 +23,9 @@
 
   
     ALTER TABLE DB_TABLE_PREFIXDataItem
-    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
-    
+      ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
+  ;
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

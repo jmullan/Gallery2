@@ -12,9 +12,7 @@
       ,
     DB_COLUMN_PREFIXkey
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL

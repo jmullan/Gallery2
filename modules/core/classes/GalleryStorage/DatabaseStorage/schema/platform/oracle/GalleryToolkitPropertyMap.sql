@@ -6,9 +6,7 @@
     CREATE TABLE DB_TABLE_PREFIXTkPropertyMap (
   DB_COLUMN_PREFIXname
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -16,9 +14,7 @@
       ,
     DB_COLUMN_PREFIXtype
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
@@ -26,9 +22,7 @@
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR2(
-      
-          128
-        
+       128 
       )
     
     NOT NULL
