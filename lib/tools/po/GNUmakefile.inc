@@ -33,7 +33,7 @@ messages.po:
 
 %.po: messages.po
 	perl $(TOOLDIR)/po/premerge-messages.pl $@ messages.po > messages.tmp
-	msgmerge --update $@ messages.tmp
+	-msgmerge --update $@ messages.tmp  # ignore errors here, we'll catch them on the msgfmt command
 	$(RM) messages.tmp
 
 clean:
