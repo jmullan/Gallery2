@@ -1,36 +1,44 @@
 /*
 	matrix.css - core Gallery 2 css
-	by Ross A. Reyman and Jon Huang
+	by Ross A. Reyman, Jon Huang and Chad Kiefer
 
 */
 
-
-/* DEFAULTS *********************** */
-
-
-/* ***************** GALLERY  ********************** */
-/*   Category 1: Gallery                             */
-/*    declare Gallery Module Borders, etc.           */
+/*      GALLERY
+        Category 1: Gallery                
+        declare Gallery Module Borders, etc
+*/
 
 #gallery { }
 
-/* basic html defs for the stand-alone install */
+/*      basic html defs for the stand-alone install     */
 body {
 	font-family: Verdana, sans-serif;
-	font-size: 72%;
+	font-size: 62.5%;
 }
 
+/*      Font-size using ems
+        assumes browser is set to Medium Size or 16px
 
+        62.5% = 10px
 
-/* ***************** SECTIONS ********************** */
-/*   Category 2: section definitions                 */
-/* declare section styles                            */
+        2em     = 20px
+        1.5em   = 15px
+        1.3em   = 13px
+        1em     = 10px
+        0.8em   = 8px
+*/
+
+/*      SECTIONS
+        Category 2: section definitions
+        declare section styles                   
+*/
 
 #gsHeader { border-bottom: 1px solid #ddd; }
 
 #gsFooter {
 	border-top: 1px solid #ddd;
-	font-size: 0.8em;
+	font-size: 0.9em;
 	color: #bbb;
 	clear: both;
 	padding: 8px;
@@ -64,7 +72,9 @@ body {
 }
 
 #gsStatus {
-	text-align: center;
+        margin: 0 0 0 0;
+        padding: 8px;
+	text-align: left;
 }
 
 #gsItemImages {
@@ -73,13 +83,13 @@ body {
 #gsAlbumImages {
 }
 
-/* ***************** BOXES ******************************* */
-/*   Category 3: box definitions                           */
-/*   This also includes Category 4: items that are defined */
-/*   with respect to sections.
+/*      BOXES
+        Category 3: box definitions                           
+        This also includes Category 4: items that are defined 
+        with respect to sections.
+*/
 
-
-/* GLOBALS *********************** */
+/*      GLOBALS */
 
 .gbDataEntry { }
 
@@ -87,7 +97,7 @@ body {
 .guSpacer, .gpSpacer, .gsSpacer, .gbSpacer, .giSpacer { }
 
 
-/* Tabs ******** */
+/*      Tabs    */
 .gbTabBar {
 	background: #eee url('../images/tab_bg.jpg') repeat-x bottom;
 	font-size: 0.9em;
@@ -120,8 +130,7 @@ body {
         float: left;
 }
 
-/* Commented Backslash Hack
-	   hides rule from IE5-Mac \*/
+/* commented Backslash Hack hides rule from IE5-Mac \*/
 .gbTabBar a { float: none; }
 /* End IE5-Mac hack */
 
@@ -134,7 +143,7 @@ body {
 	padding-bottom: 5px;
 }
 
-/* Menus ****** */
+/*      Menus   */
 
 .gbMenu { 
 	border-bottom: 1px solid #ddd;
@@ -149,7 +158,7 @@ body {
 /*	icons for admin menu	*/
 .gbMenu li {
 	padding: 6px 0 0 0;
-	font-size: 10px;
+	font-size: 1.0em;
 }
 
 .gbMenu ul, .gbMenu ol {
@@ -169,28 +178,28 @@ body {
 
 
 
-/* #gsHeader ****************************** */
+/*      #gsHeader       */
 
-/* The title banner is the light grey 'search' at the very top */
+/*      The title banner is the light grey 'search' at the very top */
 #gsHeader .gbTitleBanner {
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 }
 
-/* Text inside the title bar */
+/*      Text inside the title bar */
 #gsHeader .gbTitleBanner .giTitle {
 	color: #ccc;
 	font-weight: bold;
-	font-size: 11px;
+	font-size: 1.1em;
 }
 
-/* horizontal history links - 'trail of breadcrumbs' */
+/*      horizontal history links - 'trail of breadcrumbs' */
 #gsHeader .gbBreadCrumb { }
 
-/* horizontal link divider */
+/*      horizontal link divider */
 #gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }
 
-/* #gsAlbumContents  ************************** */
+/*      #gsAlbumContents        */
 
 #gsAlbumContents .gbTopFlag,
 #gsAdminContents .gbTopFlag  {
@@ -224,7 +233,7 @@ body {
 }
 
 #gsAlbumContents .giHorizontalLinks {
-	font-size: 80%;
+	font-size: 0.9em;
 	padding: 8px;
 }
 
@@ -232,30 +241,30 @@ body {
         margin: 8px 0 8px 6px;
 }
 
-/* #gsComments ****************** */
+/*      #gsComments     */
 
 #gsComments .gbComment {
 	border-bottom: 1px solid #ddd;
 }
 
-/* #gsFooter ********************* */
+/*      #gsFooter  */
 
 #gsFooter .gbMiniBanner { 
 			float: left; 
 			margin-right: 8px;
 }
 
-/* #gsSidebar ******************** */
+/*      #gsSidebar  */
 
 
-/* #gsSearchContents ******************** */
+/*      #gsSearchContents  */
 
-/* small grey border around all the thumbnails */
+/*      small grey border around all the thumbnails */
 #gsSearchContents .giThumbImage, 
 #gsSearchContents .giThumbMovie, 
 #gsSearchContents .giThumbOther { border: 2px solid #ccc; }
 
-/* override the normal title clear so as to wrap information
+/*      override the normal title clear so as to wrap information
  on the right of the thumbnail */
 
 #gsSearchContents .gbItemImage .giTitle {
@@ -269,7 +278,7 @@ body {
   border: 0px;
 }
 
-/* ********* #gsAdminContents *********** */
+/*      #gsAdminContents        */
 
 #gsAdminContents .gbAdmin, .gbButtons {
 	border-bottom: 1px solid #bbb;
@@ -288,64 +297,65 @@ body {
 /* for tabular data */
 #gsAdminContents .gbDataTable {
 	border-width: 0;
-	font-size: 10px;
-		margin: 4px;
+	font-size: 1.0em;
+	margin: 4px;
 }
 
 
-/* Status section *********************** */
+/*      Status section  */
 
-/* Error inside a gsStatus section */
+/*      Error inside a gsStatus section */
 #gsStatus .giError {
 	color: #AA4444;
-	font-weight: normal;
-	font-size: 20px;
+	font-weight: bold;
+	font-size: 1.3em;
 }
 
-/* Warning inside a gsStatus section */
+/*      Warning inside a gsStatus section */
 #gsStatus .giWarning {
 	color: #DDDD77;
-	font-weight: normal;
-	font-size: 20px;
+	font-weight: bold;
+	font-size: 1.3em;
 }
 
-/* Status inside a gsStatus section */
+/*      Status inside a gsStatus section */
 #gsStatus .giStatus {
 	color: #44AA44;
-	font-weight: normal;
-	font-size: 20px;
+	font-weight: bold;
+	font-size: 1.3em;
 }
 
 
 
-/* ***************** ITEMS ******************************* */
-/*   Category 4: item and span definitions                 */
-/* declares styles for items that are defined globally or  */
-/* with respect to boxes. items defined uniquely per       */
-/* section are in the BOXES part of this file.             */
+/*      ITEMS
+        Category 4: item and span definitions                 
+        declares styles for items that are defined globally or  
+        with respect to boxes. items defined uniquely per       
+        section are in the BOXES part of this file.             
+*/
 
-/* Global / Defaults ************* */
+/*      Global / Defaults */
 
 .giTitle { 
 	font-weight: bold;
-	font-size: 11px;
+	font-size: 1.1em;
 }
 
 .giMarkupBar input {
-        font-size: 11px;
+        font-size: 1.1em;
         margin: 0;
         padding: 0px;
 }
 
 .giDescription {
-	font-size: 0.85em;
+	font-size: 1em;
 	width: 100%;
 }
 .giDescription span { display: block; }
 
 .giInfo {
 	display: block;
-	font-size: 80%;
+	font-size: 0.9em;
 	color: #888;
 	padding: 8px 0;
 	list-style:none;
@@ -379,7 +389,7 @@ span.giCount { }
 */
 
 .giPageNumber {
-	font-size: 80%;
+	font-size: 0.9em;
 	padding: 8px;
 }
 
@@ -388,7 +398,7 @@ span.giCount { }
 	list-style-type: none;
 }
 
-/*  Form elements */
+/*      Form elements */
 
 .giFormButton, .giFormInput {
 	margin-top: 4px;
@@ -407,7 +417,7 @@ span.giCount { }
 .giFormFile,
 .giFormText { }
 
-/* Status class local error */
+/*      Status class local error */
 
 .giError {
 	color: #AA4444;
@@ -416,14 +426,14 @@ span.giCount { }
 }
 
 
-/* .gbTopFlag ************ */
+/*      .gbTopFlag   */
 
 .gbTopFlag .giTitle {
-	font-weight: 800;
-	font-size: 12px; 
+	font-weight: bold;
+	font-size: 1.2em; 
 }
 
-/* .gbComment ************* */
+/*      .gbComment */
 
 .gbComment .giComment { padding-bottom: 8px; }
 
@@ -435,34 +445,35 @@ span.giCount { }
 .gbComment span.giOwner { }
 .gbComment span.giInternetAddress { }
 
-/* .gbBottomFlag ********* */
+/*      .gbBottomFlag   */
 
 .gbBottomFlag .giHorizontalLinks {
-	font-size: 80%;
+	font-size: 0.9em;
 	padding: 8px;
 }
 
-/* .gbDataEntry ************ */
+/*      .gbDataEntry */
 
 .gbDataEntry .giFormButton {
-	font-size: 10px;
+	font-size: 1.0em;
 	margin-top: 0;
 	margin-bottom: 0;
 	padding-top: 0;
 	padding-bottom: 0;
 }
 
-/* .gbDataTable ************* */
+/*      .gbDataTable    */
 
-/* even and odd rows have different backgrounds */
-/* I count from 0, so the first row is even! */
+/*      even and odd rows have different backgrounds I count from 0,
+        so the first row is even!
+*/
 .gbDataTable {
         margin: 0;
 }
 .gbDataTable .gbEven {	background-color: #cdcdcd; }
 .gbDataTable .gbOdd { background-color: #dcdcdc; }
 
-/* cell padding */
+/*      cell padding    */
 .gbDataTable td { padding: 4px; }
 .gbDataTable th { 
 	padding: 2px; 
