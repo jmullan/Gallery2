@@ -49,7 +49,23 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	/* Assign our test layout */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_temporaryAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
+	$this->_temporaryAlbum->setLayout('matrix');
+	$ret = $this->_temporaryAlbum->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	$this->_temporaryAlbumId = $this->_temporaryAlbum->getId();
     }
 
@@ -264,9 +280,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
 				  $testOwner->getId(),                   // owner
-				  1080631485,                            // album creation
+				  1081143716,                            // album creation
 				  1056015077,                            // clicks counted since
-				  5,                                     // count of clicks
+				  6,                                     // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -304,7 +320,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 *    [hidden] =>
 	 *   +[highlight] => 1
 	 *   +[isAlbumName] =>
-	 *    [clicks] =>
+	 *   +[clicks] =>
 	 *   +[keywords] =>
 	 *    [comments] =>
 	 *   +[uploadDate] => 1056014783
