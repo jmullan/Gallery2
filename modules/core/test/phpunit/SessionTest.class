@@ -110,31 +110,8 @@ class SessionTest extends GalleryTestCase {
 	/* Get the status back and compare */
 	$this->assertEquals($status, $session->getStatus($statusId));
 
-	/* Make sure that it's gone now */
-	$this->assert(!$session->exists($statusId), 'status should be null the second time!');
-	
-    }
-
-    function testStatusOnceOnly() {
-	global $gallery;
-	
-	$session =& $gallery->getSession();
-
-	/* Store a status and get its id */
-	$status = array('x' => 'y', 'a' => 'b');
-	$statusId = $session->putStatus($status);
-
-	/* Save and reset */
-	$ret = $session->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	GalleryDataCache::reset();
-
-	/* Get the status back and compare */
-	$result = $session->getStatus($statusId);
-	$this->assertEquals($status, $result);
-
+	/* Get the status back again and verify that its gone */
+	$this->assertEquals(null, $session->getStatus($statusId));
     }
 }
 

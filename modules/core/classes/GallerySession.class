@@ -214,7 +214,7 @@ class GallerySession_core {
 
 	$dataSet['lastModificationTime'] = time();
 	$dataSet['userId'] = $gallery->getActiveUserId();
-	if ($this->_isSessionDataModified) {
+	if ($this->_isSessionDataModified || $this->_isNewSession) {
 	    $dataSet['sessionData'] = serialize($this->_sessionData);
 	}
 
@@ -433,7 +433,10 @@ class GallerySession_core {
      * @return array the status message
      */
     function getStatus($statusId) {
-	return $this->get('core.status.' . $statusId);
+	$key = 'core.status.' . $statusId;
+	$status = $this->get($key);
+	$this->remove($key);
+	return $status;
     }
 }
 
