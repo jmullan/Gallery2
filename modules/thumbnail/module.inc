@@ -132,7 +132,7 @@ class ThumbnailModule extends GalleryModule {
 	if (!empty($mimeTypeMap)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
 				   array_keys($mimeTypeMap), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg');
+				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg', 8);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -143,23 +143,27 @@ class ThumbnailModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$itemId = null;
-	foreach (array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic')
-		 as $audioMime) {
-	    if (!isset($toolkitMime[$audioMime])) {
-		if (!isset($itemId)) {
-		    GalleryCoreApi::registerFactoryImplementation(
-			'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
-			dirname(__FILE__) . '/classes/ThumbnailImage.class');
-		    list ($ret, $itemId) = ThumbnailHelper::addItem($audioMime, 'G2audio.jpg',
-			dirname(__FILE__) . '/images/G2audio.jpg', 'image/jpeg');
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		} else {
-		    $ret = ThumbnailHelper::updateItem($itemId, $audioMime);
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+	$itemId = array();
+	foreach (array(
+	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic'),
+	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x.ms.asf')
+	    ) as $mimeImage => $mimeList) {
+	    foreach ($mimeList as $mime) {
+		if (!isset($toolkitMime[$mime])) {
+		    if (!isset($itemId[$mimeImage])) {
+			GalleryCoreApi::registerFactoryImplementation(
+			    'GalleryEntity', 'ThumbnailImage', 'ThumbnailImage',
+			    dirname(__FILE__) . '/classes/ThumbnailImage.class');
+			list ($ret, $itemId[$mimeImage]) = ThumbnailHelper::addItem($mime,
+			    $mimeImage, dirname(__FILE__) . '/images/' . $mimeImage, 'image/jpeg');
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    } else {
+			$ret = ThumbnailHelper::updateItem($itemId[$mimeImage], $mime);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
 		    }
 		}
 	    }
