@@ -104,7 +104,7 @@ class GalleryRemoteController extends GalleryController {
 		    
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 	$grVersionCodes = GalleryRemoteConstants::getVersionCodes();
-
+	
 	/* If they don't provide a username, try the anonymous user */
 	if (!empty($form['uname'])) {
 	    list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['uname']);
@@ -117,7 +117,7 @@ class GalleryRemoteController extends GalleryController {
 		// login successful
 		$gallery->setActiveUser($user);
 		$response->setProperty('server_version',
-				       sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		       sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'Login successful.');
 		return GalleryStatus::success();
@@ -128,24 +128,36 @@ class GalleryRemoteController extends GalleryController {
 		return GalleryStatus::success();
     	    }
 	} else {
-	    // They're logged in as the guest account
-	    list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    if ($gallery->getActiveUser()) {
+		// already logged in... this sounds like the applet logging in with a cookie
+		$user = $gallery->getActiveUser();
+		$response->setProperty('debug_user', $user->getuserName());
+
+		$response->setProperty('server_version',
+		       sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		$response->setProperty('status', $grStatusCodes['LOGIN_MISSING']);
+		$response->setProperty('status_text', 'Login parameters not found.');
+		return GalleryStatus::success();
+	    } else {
+		// They're logged in as the guest account
+		list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+    
+		list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+    
+		$gallery->setActiveUser($anonymousUser);
+    
+		$response->setProperty('debug_anonymous_login', true);
+		$response->setProperty('server_version', sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		$response->setProperty('status', $grStatusCodes['SUCCESS']);
+		$response->setProperty('status_text', 'Login successful.');
+		return GalleryStatus::success();
 	    }
-
-	    list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $gallery->setActiveUser($anonymousUser);
-
-	    $response->setProperty('debug_anonymous_login', true);
-	    $response->setProperty('server_version', sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
-	    $response->setProperty('status', $grStatusCodes['SUCCESS']);
-	    $response->setProperty('status_text', 'Login successful.');
-	    return GalleryStatus::success();
 	}
     }
     

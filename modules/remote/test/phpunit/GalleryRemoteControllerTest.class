@@ -141,9 +141,10 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
+	// logging in as anonymous works when no existing session exists. Simulate this by dropping the activeUser.
+	$gallery->_activeUser = null;
+	
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
-	GalleryUtilities::putRequestVariable('form[uname]', '');
-	GalleryUtilities::putRequestVariable('form[password]', '');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error']);
@@ -156,6 +157,25 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assert($response->hasProperty('status_text'));
 
 	$this->assertEquals((int)$anonymousUserId, $gallery->getActiveUserId());
+    }
+
+    function testLoginCurrentUser() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote:GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['LOGIN_MISSING'], (int)$response->getProperty('status'));
+	$this->assertEquals(sprintf('%d.%d', $this->_version['MAJ'], $this->_version['MIN']),
+			    $response->getProperty('server_version'));
+	$this->assert($response->hasProperty('status_text'));
+	
+	$user = $gallery->getActiveUser();
+	$this->assertEquals($response->getProperty('debug_user'), $user->getuserName());
     }
 
     function testFetchAlbums() {
