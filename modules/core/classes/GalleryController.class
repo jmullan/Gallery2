@@ -37,18 +37,67 @@
 class GalleryController {
 
     /**
-     * Take the appropriate action based on the user input provided
+     * Take the appropriate action based on the user input provided.
      *
-     * When done, we return an array where we can indicate actions that we'd
-     * like to take at this point.  The return array contains:
+     * When done, we return a data structure with results from the controller's actions and information about
+     * where we should send the user next.  We can either delegate the user to a view in the same request, or
+     * we can redirect the user to a different url.  Whenever a controller makes a change to the data model,
+     * it should pass back a redirect so that the browser is sent to a fresh page.  Otherwise if you hit
+     * reload on the browser it will want to re-post the form data and it will attempt to change the model
+     * again, which may not be what the user wants.
      *
-     * Either
-     *   redirect => url to redirect the browser
-     * Or:
-     *   delegate => array('view' => ... [, 'subView' => ...'])
+     * To redirect, return:
+     * <pre>
+     *     array('redirect' => [url params],
+     *           'status' => [status data])
+     * </pre>
      *
-     *  status   => array('key' => 'value')
-     *  view     => array('error code', 'error code', ...)
+     * To delegate, return:
+     * <pre>
+     *     array('delegate' => [url params],
+     *           'return' => [boolean],   <i>optional</i>
+     *           'error' => [error],
+     *           'status' => [status data])
+     * </pre>
+     *
+     * If you delegate, your form and request variables will persist to the view, since it's being handled
+     * inside the same request.  However, if you redirect you'll have to put any form variables that you want
+     * to pass to the subsequent view into the redirect url, since it will be processed in a new request.  The
+     * browser will receive a redirect and then post the new url.  So for example, if you want to redirect to
+     * a confirmation view and specify a username to that view, you'd return:
+     *
+     * <pre>
+     *    array('redirect' => array('view' => 'module:Confirmation',
+     *                              'username' => 'johndoe'),
+     *          'status' => array('success' => 'true'),
+     *          'error' => array())
+     * </pre>
+     *
+     * <b>Status</b> data is passed to the view and can be in any form that you want.  Typically it's simple key
+     * value pairs, like this:
+     * <pre>
+     *    array('myAction' => 'wasSuccessful')
+     * </pre>
+     *
+     * If you pass status data back on a redirect, it will be automatically stored in the session and the url
+     * will be modified to contain a marker to this status information.  After the redirect, we'll retrieve it
+     * back from the database and pass it to the view.  Status data sent back upon delegation is passed
+     * directly to the view.
+     *
+     * <b>Error</b> data is an array of values, like this:
+     *    array('form[widget][missing]')
+     *
+     * This data is only processed on delegation.  It gets put into the request and is accessible when the
+     * delegated view is called.  Since we only redirect on success, you never pass back error data when you
+     * redirect.
+     *
+     * <b>Return</b> is a special parameter.  If you set this to a non-false value, it will look for a special
+     * request variable called "return" in the request scope.  This variable is expected to contain a URL, and
+     * we'll return a redirect to that URL.  This is useful in the case where we want to use this controller
+     * in the middle of a workflow.  A good example of this is when we click the "Login" link on the main
+     * page.  We pass control to the UserLogin controller, and when its done, it uses the "return" flag to
+     * indicate that we should return to the URL where the login link was clicked.
+     * </pre>
      *
      * @param array the form values
      * @return array object GalleryStatus a status code
