@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -72,7 +72,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 
 	$this->assertEquals($response, 'HTTP/1.1 200 OK');
@@ -96,7 +96,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -122,7 +122,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -147,7 +147,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -172,7 +172,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -197,7 +197,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'test';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -205,6 +205,32 @@ class WebTest extends GalleryTestCase {
 	$this->assertEquals($expectedHeaders, $headers);
 	$this->assertEquals(join("\n", $expectedBody), $body);
 	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchWebPage');
+    }
+
+    function testFetchRepeatedHeader() {
+	list ($body, $response, $headers, $actualUrl) =
+	    GalleryCoreApi::fetchWebPage('http://www.test.server/testFetchCookieWebPage');
+
+	$expectedHeaders['Connection'] = 'close';
+	$expectedHeaders['Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Accept-Ranges'] = 'bytes';
+	$expectedHeaders['ETag'] = '"122ae4-5-3fc199b0"';
+	$expectedHeaders['Server'] = 'Apache/1.3.28 (Unix)';
+	$expectedHeaders['Set-Cookie'] = array('sessionid=12345; Path=/', 'mycookie=foo; Path=/');
+	$expectedHeaders['Content-Length'] = '5';
+	$expectedHeaders['Content-Type'] = 'text/html';
+	$expectedHeaders['Last-Modified'] = 'Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
+	$expectedHeaders['Client-Response-Num'] = '1';
+
+	$expectedBody[] = 'test';
+	$expectedBody[] = '';			  // newline at the end of the file
+
+	$this->assertEquals($response, 'HTTP/1.1 200 OK');
+	$this->assertEquals($expectedHeaders, $headers);
+	$this->assertEquals(join("\n", $expectedBody), $body);
+	$this->assertEquals($actualUrl, 'http://www.test.server/testFetchCookieWebPage');
     }
 
     function testPostToWebPage() {
@@ -225,7 +251,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Date'] = 'Mon, 24 Nov 2003 05:40:03 GMT';
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
-	
+
 	$expectedBody[] = 'post successful';
 	$expectedBody[] = '';			  // newline at the end of the file
 
@@ -250,7 +276,7 @@ class WebTest extends GalleryTestCase {
 	$expectedHeaders['Client-Peer'] = '209.237.226.157:80';
 	$expectedHeaders['Client-Response-Num'] = '1';
 
-	
+
 	$this->assertEquals(true, $return);
 	$this->assertEquals($response, 'HTTP/1.1 200 OK');
 	$this->assertEquals("test\n",
@@ -345,6 +371,30 @@ class WebTestPlatform {
 		$buffer[] = '<HR>';
 		$buffer[] = '<ADDRESS>Apache/1.3.26 Server at www.test.server Port 80</ADDRESS>';
 		$buffer[] = '</BODY></HTML>';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /testFetchCookieWebPage HTTP/1.0\r\n" .
+		"Host: www.test.server\r\n" .
+		"\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Accept-Ranges: bytes';
+		$buffer[] = 'ETag: "122ae4-5-3fc199b0"';
+		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
+		$buffer[] = 'Set-Cookie: sessionid=12345; Path=/';
+		$buffer[] = 'Set-Cookie: mycookie=foo; Path=/';
+		$buffer[] = 'Content-Length: 5';
+		$buffer[] = 'Content-Type: text/html';
+		$buffer[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
+		$buffer[] = 'Client-Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Client-Peer: 209.237.226.157:80';
+		$buffer[] = 'Client-Response-Num: 1';
+		$buffer[] = '';
+		$buffer[] = 'test';
+		$buffer[] = '';
 		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
@@ -481,11 +531,11 @@ class WebTestPlatform {
 	case '/bar':
 	    return $file;
 	}
-	
+
 	$path = realpath($file);
 
 	// Stick with Unix slashes for the purpose of our tests
-	return str_replace('\\', '/', $path); 
+	return str_replace('\\', '/', $path);
     }
 }
 

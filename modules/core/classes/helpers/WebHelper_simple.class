@@ -99,7 +99,14 @@ class WebHelper_simple {
 	    $line = str_replace("\r", '', $line);
 
 	    list ($key, $value) = explode(':', $line, 2);
-	    $headers[$key] = trim($value);
+	    if (isset($headers[$key])) {
+		if (!is_array($headers[$key])) {
+		    $headers[$key] = array($headers[$key]);
+		}
+		$headers[$key][] = trim($value);
+	    } else {
+		$headers[$key] = trim($value);
+	    }
 	}
 
 	if (isset($headers['Location'])) {
@@ -230,7 +237,14 @@ class WebHelper_simple {
 	    $line = str_replace("\r", '', $line);
 
 	    list ($key, $value) = explode(':', $line, 2);
-	    $headers[$key] = trim($value);
+	    if (isset($headers[$key])) {
+		if (!is_array($headers[$key])) {
+		    $headers[$key] = array($headers[$key]);
+		}
+		$headers[$key][] = trim($value);
+	    } else {
+		$headers[$key] = trim($value);
+	    }
 	}
 
 	if (isset($headers['Location'])) {
@@ -348,7 +362,14 @@ class WebHelper_simple {
 	    $line = str_replace("\r", '', $line);
 
 	    list ($key, $value) = explode(':', $line, 2);
-	    $headers[$key] = trim($value);
+	    if (isset($headers[$key])) {
+		if (!is_array($headers[$key])) {
+		    $headers[$key] = array($headers[$key]);
+		}
+		$headers[$key][] = trim($value);
+	    } else {
+		$headers[$key] = trim($value);
+	    }
 	}
 
 	/* Now read the body */
