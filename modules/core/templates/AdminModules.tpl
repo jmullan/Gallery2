@@ -52,13 +52,13 @@
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
           {if $module.state == 'active'}
-	  <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="Status: Active" />
+	  <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13" alt="{g->text text="Status: Active"}" />
 	  {/if}
           {if $module.state == 'inactive'}
-	  <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="Status: Inactive" />
+	  <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13" alt="{g->text text="Status: Inactive"}" />
 	  {/if}
           {if $module.state == 'upgrade'}
-	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="Status: Upgrade Required (Inactive)" />
+	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13" alt="{g->text text="Status: Upgrade Required (Inactive)"}" />
 	  {/if}
         </td>
 
