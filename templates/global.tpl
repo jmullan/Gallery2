@@ -23,9 +23,11 @@
     {* We're experimenting with Dean Edward's IE7 patch:  http://dean.edwards.name/IE7 *}
     <!-- compliance patch for microsoft browsers -->
     <!--[if lt IE 7]>
-    <script src="{g->url href="lib/IE7/ie7-standard.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-core.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-html4.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-css2.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-fixed.js"}" type="text/javascript"></script>
     <script src="{g->url href="lib/IE7/ie7-css3.js"}" type="text/javascript"></script>
-    <script src="{g->url href="lib/IE7/ie7-css-strict.js"}" type="text/javascript"></script>
     <![endif]-->
 
     {* Content that G2 wants to display inside the <head> element *}
@@ -34,7 +36,7 @@
   <body>
     <div id="gallery">
       <div id="gsHeader">
-        <img src="{g->url href="images/galleryLogo_sm.png"}" alt="" />
+        <img src="{g->url href="images/galleryLogo_sm.gif"}" alt="" />
       </div>
 
       {* Content that G2 wants to display inside the <body> element *}

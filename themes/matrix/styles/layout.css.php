@@ -21,8 +21,14 @@
  */
 
 /* We use the base layout CSS and override anything that we want to change */
+
+$cssFile = dirname(__FILE__) . '/../../../templates/layout.css.php';
+$gmDate = gmdate("D, d M Y H:i:s", (filemtime(__FILE__) > filemtime($cssFile)) ? filemtime(__FILE__) : filemtime($cssFile)) . " GMT";
 header("Content-type: text/css");
-include_once(dirname(__FILE__) . '/../../../templates/layout.css.php');
+header("Last-Modified: " . $gmDate);
+header("Date: " . $gmDate);
+include_once($cssFile);
+
 ?>
 
 .gbMenu ul ul {
