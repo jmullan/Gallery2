@@ -128,13 +128,13 @@ class CoreModule extends GalleryModule {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-                            'GalleryAlbumItem', 'core.addAlbumItem');
+			    'GalleryAlbumItem', 'core.addAlbumItem');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    } else {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
-                            'GalleryAlbumItem', 'core.addDataItem');
+			    'GalleryAlbumItem', 'core.addDataItem');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -192,7 +192,9 @@ class CoreModule extends GalleryModule {
 					    'return' => 1));
 	    }
 
-	    if ($isAlbum && isset($permissions['core.edit'])) {
+	    if ($isAlbum && isset($permissions['core.edit']) &&
+		    !empty($childCounts[$item->getId()]) &&
+		    $childCounts[$item->getId()] > 0) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit captions'),
 			  'params' => array('view' => 'core:ItemAdmin',
