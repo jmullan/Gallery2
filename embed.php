@@ -724,10 +724,12 @@ class GalleryEmbed {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    // render and get the imageblock html
-	    list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/' . $tpl);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (!empty($tpl)) {
+		// render and get the imageblock html
+		list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/' . $tpl);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 	return array(GalleryStatus::success(), $blockHtml);

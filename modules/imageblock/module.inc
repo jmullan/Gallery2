@@ -42,7 +42,6 @@ class ImageBlockModule extends GalleryModule {
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent|performFactoryRegistrations');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -117,10 +116,7 @@ class ImageBlockModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$tpl = array();
-	if (strlen($block) > 0) {
-	    $tpl = array('imageblock' => $block);
-	}
+	$tpl = empty($block) ? array() : array('imageblock' => $block);
 	return array(GalleryStatus::success(), $tpl);
     }
 
