@@ -1,0 +1,127 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test PermissionSet functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class PermissionSetTest extends GalleryTestCase {
+
+    function PermissionSetTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	
+	$ret = GalleryPermissionSetMap::registerPermission('testModule',
+							   'test.test1',
+							   'item admin permission',
+							   GALLERY_PERMISSION_ITEM_ADMIN);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryPermissionSetMap::registerPermission('testModule',
+							   'test.test2',
+							   'regular permission');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$ret = GalleryPermissionSetMap::registerPermission('testModule',
+							   'test.test3',
+							   'composite permission',
+							   GALLERY_PERMISSION_COMPOSITE,
+							   array('test.test1', 'test.test2'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryPermissionSetMap::registerPermission('testModule',
+							   'test.test4',
+							   'all access permission',
+							   GALLERY_PERMISSION_ALL_ACCESS);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryPermissionSetMap::unregisterModulePermissions('testModule');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testGetPermissionIds() {
+	/* Four defined perms */
+	list ($ret, $ids) = GalleryPermissionSetMap::getPermissionIds();
+	$this->assertEquals($ids['test.test1'], 'item admin permission', $ids);
+	$this->assertEquals($ids['test.test2'], 'regular permission', $ids);
+	$this->assertEquals($ids['test.test3'], 'composite permission', $ids);
+	$this->assertEquals($ids['test.test4'], 'all access permission', $ids);
+
+	/* Only one item admin perm */
+	list ($ret, $ids) = GalleryPermissionSetMap::getPermissionIds(GALLERY_PERMISSION_ITEM_ADMIN);
+	$this->assertEquals($ids['test.test1'], 'item admin permission', $ids);
+	$this->assert(!isset($ids['test.test2']));
+	$this->assert(!isset($ids['test.test3']));
+	$this->assert(!isset($ids['test.test4']));
+
+	/* Only one all access perm */
+	list ($ret, $ids) = GalleryPermissionSetMap::getPermissionIds(GALLERY_PERMISSION_ALL_ACCESS);
+	$this->assert(!isset($ids['test.test1']));
+	$this->assert(!isset($ids['test.test2']));
+	$this->assert(!isset($ids['test.test3']));
+	$this->assertEquals($ids['test.test4'], 'all access permission', $ids);
+    }
+
+    function testGetSubPermissions() {
+	/* test.test3 is a composite of tests 1 and 2 */
+	list ($ret, $ids) = GalleryPermissionSetMap::getSubPermissions('test.test3');
+
+	array(array('id' => 'test.test1',
+		    'module' => 'testModule',
+		    'description' => 'item admin permission'),
+	      array('id' => 'test.test2',
+		    'module' => 'testModule',
+		    'description' => 'regular permission'),
+	      array('id' => 'test.test3',
+		    'module' => 'testModule',
+		    'description' => 'composite permission'),
+	      $ids);
+    }
+}
+
+?>
