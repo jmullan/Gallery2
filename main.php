@@ -36,13 +36,8 @@ if (!defined('G2_EMBED')) {
 	return;
     }
 
-    global $gallery;
-    if (!$gallery->getConfig('mode.embed.only')) {
-
-	/* Process the request */
-	GalleryMain();
-
-    }
+    /* Process the request */
+    GalleryMain();
 }
 
 function GalleryMain($returnHtml=false) {
@@ -104,6 +99,10 @@ function _GalleryMain($returnHtml=false) {
 
     /* Figure out the target module/controller */
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
+
+    if (!$returnHtml && $gallery->getConfig('mode.embed.only') && $viewName != 'core:DownloadItem') {
+	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
+    }
 
     if (!empty($viewName)) {
 	list ($ret, $view) = GalleryView::loadView($viewName);
