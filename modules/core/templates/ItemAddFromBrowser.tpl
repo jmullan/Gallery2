@@ -7,10 +7,7 @@
 {if $ItemAddFromBrowser.uploadsPermitted}
 <div class="gbAdmin">
   <p class="giDescription">
-    {g->text one="Upload a file directly from your computer."
-    many="Upload up to %d files directly from your computer."
-    count=$form.uploadBoxCount
-    arg1=$form.uploadBoxCount}
+    {g->text text="Upload files directly from your computer."}
     {g->text text="Enter the full path to the file and an optional caption in the boxes below."}
     <input type="hidden" name="{g->formVar var="form[uploadBoxCount]"}" value="{$form.uploadBoxCount}" />
   </p>
@@ -24,7 +21,8 @@
   </p>
   {section name="uploadBoxes" loop=$form.uploadBoxCount}
   {assign var=iteration value=$smarty.section.uploadBoxes.iteration}
-  <div class="gbDataEntry">
+  <div class="gbDataEntry"
+       {if $iteration > $form.visibleBoxCount} id="fileDiv_{$iteration}" style="display:none"{/if}>
     <h3 class="giTitle">
       {g->text text="File"}
     </h3>
@@ -36,6 +34,23 @@
     <textarea rows="2" cols="60" name="{g->formVar var="form[caption][$iteration]"}"></textarea>
   </div>
   {/section}
+  {if $form.uploadBoxCount > $form.visibleBoxCount}
+    <script type="text/javascript">
+      // <![CDATA[
+      document.write('<a id="addOne" href="javascript:addOne()">{g->text text="More.."}</a>');
+      var fileIndex = {$form.visibleBoxCount};
+      {literal}
+      function addOne() {
+	var link = document.getElementById('addOne');
+	link.blur();
+	document.getElementById('fileDiv_' + ++fileIndex).style.display = 'block';
+	if (fileIndex >= {/literal}{$form.uploadBoxCount}{literal}) {
+	  link.style.display = 'none';
+	}
+      }
+      // ]]>
+    {/literal}</script>
+  {/if}
 </div>
 
 {* Include our extra ItemAddOptions *}

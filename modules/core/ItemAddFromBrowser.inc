@@ -139,7 +139,8 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 
 	if ($form['formName'] != 'ItemAddFromBrowser') {
 	    /* First time around, load the form with item data */
-	    $form['uploadBoxCount'] = 4;
+	    $form['uploadBoxCount'] = 20;
+	    $form['visibleBoxCount'] = 4;
 	    $form['formName'] = 'ItemAddFromBrowser';
 	}
 
