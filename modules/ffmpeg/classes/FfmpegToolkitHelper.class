@@ -57,7 +57,8 @@ class FfmpegToolkitHelper {
 			 null);
 	}
 
-	list ($ret, $tests, $mimeTypes) = FfmpegToolkitHelper::testBinary($ffmpegPath);
+	list ($ret, $tests, $mimeTypes, $supportsOffset) =
+	    FfmpegToolkitHelper::testBinary($ffmpegPath);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -72,12 +73,14 @@ class FfmpegToolkitHelper {
 	$operations['convert-to-image/jpeg']['mimeTypes'] = $mimeTypes;
 	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
-	$operations['select-offset'] = array(
-	    'params' => array(array('type' => 'float',
-				    'description' => $gallery->i18n('offset in seconds'))),
-	    'description' => $gallery->i18n('Select time offset in movie file'),
-	    'mimeTypes' => $mimeTypes,
-	    'outputMimeType' => null);
+	if ($supportsOffset) {
+	    $operations['select-offset'] = array(
+		'params' => array(array('type' => 'float',
+					'description' => $gallery->i18n('offset in seconds'))),
+		'description' => $gallery->i18n('Select time offset in movie file'),
+		'mimeTypes' => $mimeTypes,
+		'outputMimeType' => null);
+	}
 
 	/*
 	 * -------------------- Properties --------------------
@@ -88,28 +91,29 @@ class FfmpegToolkitHelper {
 	$properties['dimensions']['description'] = $gallery->i18n('Get the width and height of the movie'); 
 	$properties['dimensions']['mimeTypes'] = $mimeTypes;
 
-	$properties['dimensions_and_duration']['type'] = 'int,int,int';
-	$properties['dimensions_and_duration']['description'] =
+	$properties['dimensions-and-duration']['type'] = 'int,int,float';
+	$properties['dimensions-and-duration']['description'] =
 	    $gallery->i18n('Get the width, height and duration of the movie'); 
-	$properties['dimensions_and_duration']['mimeTypes'] = $mimeTypes;
+	$properties['dimensions-and-duration']['mimeTypes'] = $mimeTypes;
 	
 	return array(GalleryStatus::success(), array('operations' => $operations,
 						     'properties' => $properties));
     }
 
     /**
-     * Test if the given path has a working set of Ffmpeg binaries.
+     * Test if the given path has a working Ffmpeg binary.
      *
-     * This is done by calling all the binaries with the --version flag and
-     * making sure they run properly.
+     * This is done by calling the binary with the -formats flag and
+     * making sure it runs properly.
      *
      * @param string path to the Ffmpeg we are testing
      * @return array object GalleryStatus general status of tests
      *	       array ('name' => string: the name of the binary,
      *		      'success' => boolean: test successfull?
-     *		      'message' => string: the error message
+     *		      'results' => string: the ffmpeg output
      *		     )
      *         array hash map of mime types
+     *         boolean true if ffmpeg supports -ss time_offset
      *
      * @static
      */
@@ -222,7 +226,18 @@ class FfmpegToolkitHelper {
 	$tests[] = array('name' => 'ffmpeg',
 			 'success' => $success,
 			 'results' => $results);
-	return array(GalleryStatus::success(), $tests, array_keys($mimeTypes));
+
+	// Test if this ffmpeg supports -ss flag..
+	$supportsOffset = false;
+	list ($ok, $flags) = $platform->exec(array(array($ffmpegPath, '-h')));
+	foreach ($flags as $line) {
+	    if (!strncmp($line, '-ss ', 4)) {
+		$supportsOffset = true;
+		break;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $tests, array_keys($mimeTypes), $supportsOffset);
     }
 }
 ?>

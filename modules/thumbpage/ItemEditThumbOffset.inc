@@ -106,10 +106,11 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 		$form['offset'] = $regs[2];
 	    }
 	}
-	list ($ret, $form['duration']) = $this->_getDuration($item);
+	list ($ret, $duration) = $this->_getDuration($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$form['duration'] = sprintf('%.3f', $duration);
 	$template->setVariable('controller', 'thumbpage:ItemEditThumbOffset');
 	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Offset.tpl');
     }
@@ -154,7 +155,7 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByProperty($item->getMimeType(), 'dimensions_and_duration');
+	    GalleryCoreApi::getToolkitByProperty($item->getMimeType(), 'dimensions-and-duration');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -162,7 +163,7 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}
 	list ($ret, $result) = $toolkit->getProperty(
-	    $item->getMimeType(), 'dimensions_and_duration', $path);
+	    $item->getMimeType(), 'dimensions-and-duration', $path);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

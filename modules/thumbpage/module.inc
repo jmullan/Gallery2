@@ -171,7 +171,7 @@ class ThumbPageModule extends GalleryModule {
 
     /**
      * Find out what mime types currently have support for:
-     *   convert-to-image/jpeg, select-page, dimensions_and_duration
+     *   convert-to-image/jpeg, select-page, dimensions-and-duration
      *
      * @return array object GalleryStatus a status code
      *               array mime types
@@ -193,7 +193,7 @@ class ThumbPageModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($properties as $tmp) {
-		if ($tmp['name'] == 'dimensions_and_duration') {
+		if ($tmp['name'] == 'dimensions-and-duration') {
 		    $mimeTypes[] = $mimeType;
 		    break;
 		}

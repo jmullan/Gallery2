@@ -60,7 +60,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	    $results = array($width, $height);
 	    break;
 
-	case 'dimensions_and_duration':
+	case 'dimensions-and-duration':
 	    list ($ret, $width, $height, $duration) = $this->_getMovieDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__),
@@ -163,7 +163,7 @@ class FfmpegToolkit extends GalleryToolkit {
 		$successfulRun = true;
 	    }
 
-	    if (preg_match("/Duration: (\d+):(\d+):(\d+)\.(\d+)/", $resultLine, $regs)) {
+	    if (preg_match("/Duration: (\d+):(\d+):(\d+\.\d+)/", $resultLine, $regs)) {
 		$successfulRun = true;
 		$duration = 3600*$regs[1] + 60*$regs[2] + $regs[3];
 	    }

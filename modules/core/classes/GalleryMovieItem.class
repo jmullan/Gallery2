@@ -182,13 +182,13 @@ class GalleryMovieItem_core extends GalleryDataItem {
 	}
 
 	$mimeType = $this->getMimeType();
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions_and_duration');
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByProperty($mimeType, 'dimensions-and-duration');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (isset($toolkit)) {
-	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions_and_duration', $path);
+	    list ($ret, $dimensions) = $toolkit->getProperty($mimeType, 'dimensions-and-duration', $path);
 	    if ($ret->isError()) {
 
 		/*
@@ -201,7 +201,7 @@ class GalleryMovieItem_core extends GalleryDataItem {
 
 	    $this->setWidth($dimensions[0]);
 	    $this->setHeight($dimensions[1]);
-	    $this->setDuration($dimensions[2]);
+	    $this->setDuration(round($dimensions[2]));
 	}
 
 	return GalleryStatus::success();
