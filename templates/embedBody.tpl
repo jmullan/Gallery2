@@ -5,7 +5,7 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-<div id="gallery">
+<div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>
   {* Content that G2 wants to display inside the <body> element *}
   {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 

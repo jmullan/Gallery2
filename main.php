@@ -393,6 +393,9 @@ function _GalleryMain($returnHtml=false) {
 	}
 	$main['validationUri'] = urlencode($main['validationUri']);
 
+	$translator =& $gallery->getTranslator();
+	$main['isRightToLeft'] = $translator->isRightToLeft();
+
 	$main['gallery']['version'] = $installedVersions['gallery'];
 	$template->setVariable('main', $main);
 	$template->setVariable('l10Domain', 'modules_core');

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,31 +47,20 @@ class GalleryTranslator {
     var $_boundDomains;
 
     /**
-     * This is the list of languages that the core module supports.  Other
-     * modules may not support them, but that's not something we can really
-     * do much about.
-     *
-     * @var array $_supportedLanguages
-     * @access private
-     */
-    var $_supportedLanguages;
-
-    /**  
-     * Default country for languages spoken in more than one country. Used
-     * when the browser doesn't send the country information.
-     *
-     * @var array $_defaultCountry
-     * @access private
-     */
-    var $_defaultCountry;
-
-    /**
      * The active character set.
      *
      * @var string $_activeCharset
      * @access private
      */
     var $_activeCharset;
+
+    /**
+     * Does the active language read right-to-left?
+     *
+     * @var array $_isRightToLeft
+     * @access private
+     */
+    var $_isRightToLeft;
 
     /*
      * ****************************************
@@ -87,6 +76,7 @@ class GalleryTranslator {
      * Can we translate?
      *
      * @return boolean
+     * @static
      */
     function canTranslate() {
 	return function_exists('dgettext');
@@ -96,9 +86,19 @@ class GalleryTranslator {
      * Can we make plural translations?
      *
      * @return boolean
+     * @static
      */
     function canTranslatePlural() {
 	return function_exists('dngettext');
+    }
+
+    /**
+     * Does the active language read right-to-left?
+     *
+     * @return boolean
+     */
+    function isRightToLeft() {
+	return $this->_isRightToLeft;
     }
 
     /**
@@ -113,83 +113,102 @@ class GalleryTranslator {
     function getLanguageData() {
 	static $supportedLanguages = array();
 	static $defaultCountry = array();
-	
+
 	if (empty($supportedLanguages)) {
 	    /* XXX: Move this information into a configuration file */
+	    // German
 	    $supportedLanguages['de']['DE']['description'] = 'Deutsch';
 	    $supportedLanguages['de']['DE']['charset'] = 'UTF-8';
 	    $defaultCountry['de'] = 'DE';
-	
+
+	    // Greek
 	    $supportedLanguages['el']['GR']['description'] = 'Greek';
 	    $supportedLanguages['el']['GR']['charset'] = 'UTF-8';
 	    $defaultCountry['el'] = 'GR';
-    
+
+	    // English
 	    $supportedLanguages['en']['US']['description'] = 'English (US)';
 	    $supportedLanguages['en']['US']['charset'] = 'UTF-8';
 	    $supportedLanguages['en']['GB']['description'] = 'English (UK)';
 	    $supportedLanguages['en']['GB']['charset'] = 'UTF-8';
 	    $defaultCountry['en'] = 'US';
-    
+
+	    // Spanish
 	    $supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
 	    $supportedLanguages['es']['AR']['charset'] = 'UTF-8';
 	    $defaultCountry['es'] = 'AR';
-    
+
+	    // Finnish
 	    $supportedLanguages['fi']['FI']['description'] = 'Suomi';
 	    $supportedLanguages['fi']['FI']['charset'] = 'UTF-8';
 	    $defaultCountry['fi'] = 'FI';
-    
+
+	    // Polish
 	    $supportedLanguages['pl']['PL']['description'] = 'Polski';
 	    $supportedLanguages['pl']['PL']['charset'] = 'UTF-8';
 	    $defaultCountry['pl'] = 'PL';
-	
+
+	    // Portuguese
 	    $supportedLanguages['pt']['BR']['description'] = 'Portugu&#234;s Brasileiro';
 	    $supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
 	    $supportedLanguages['pt']['PT']['description'] = 'Portugu&#234;s (PT)';
 	    $supportedLanguages['pt']['PT']['charset'] = 'UTF-8';
 	    $defaultCountry['pt'] = 'BR';
-	
+
+	    // Chinese
 	    $supportedLanguages['zh']['CN']['description'] = '&#31616;&#20307;&#20013;&#25991;';
 	    $supportedLanguages['zh']['CN']['charset'] = 'UTF-8';
 	    $supportedLanguages['zh']['TW']['description'] = '&#32321;&#39636;&#20013;&#25991;';
 	    $supportedLanguages['zh']['TW']['charset'] = 'UTF-8';
 	    $defaultCountry['zh'] = 'TW';
 
+	    // Dutch
 	    $supportedLanguages['nl']['NL']['description'] = 'Nederlands';
 	    $supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
 	    $defaultCountry['nl'] = 'NL';
 
+	    // Norwegian
 	    $supportedLanguages['no']['NO']['description'] = 'Norsk bokm&#229;l';
 	    $supportedLanguages['no']['NO']['charset'] = 'UTF-8';
 	    $defaultCountry['no'] = 'NO';
 
+	    // Japanese
 	    $supportedLanguages['ja']['JP']['description'] = '&#x65e5;&#x672c;&#x8a9e;';
 	    $supportedLanguages['ja']['JP']['charset'] = 'UTF-8';
 	    $defaultCountry['ja'] = 'JP';
 
+	    // Irish
 	    $supportedLanguages['ga']['IE']['description'] = 'Irish';
 	    $supportedLanguages['ga']['IE']['charset'] = 'UTF-8';
 	    $defaultCountry['ga'] = 'IE';
-	
+
+	    // French
 	    $supportedLanguages['fr']['FR']['description'] = 'Fran&#231;ais';
 	    $supportedLanguages['fr']['FR']['charset'] = 'UTF-8';
 	    $defaultCountry['fr'] = 'FR';
 
+	    // Swedish
 	    $supportedLanguages['sv']['SE']['description'] = 'Svenska';
 	    $supportedLanguages['sv']['SE']['charset'] = 'UTF-8';
 	    $defaultCountry['sv'] = 'SE';
 
+	    // Hebrew
 	    $supportedLanguages['he']['IL']['description'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 	    $supportedLanguages['he']['IL']['charset'] = 'UTF-8';
+	    $supportedLanguages['he']['IL']['right-to-left'] = true;
 	    $defaultCountry['he'] = 'IL';
 
+	    // Italian
 	    $supportedLanguages['it']['IT']['description'] = 'Italiano';
 	    $supportedLanguages['it']['IT']['charset'] = 'UTF-8';
 	    $defaultCountry['it'] = 'IT';
 
+	    // Danish
 	    $supportedLanguages['da']['DK']['description'] = 'Dansk';
 	    $supportedLanguages['da']['DK']['charset'] = 'UTF-8';
 	    $defaultCountry['da'] = 'DK';
 
+	    // Turkish
 	    $supportedLanguages['tr']['TR']['description'] = 'T&#252;rk&#231;e';
 	    $supportedLanguages['tr']['TR']['charset'] = 'UTF-8';
 	    $defaultCountry['tr'] = 'TR';
@@ -233,6 +252,7 @@ class GalleryTranslator {
 	    if (!headers_sent()) {
 		header('Content-Type: text/html; charset=' . $this->_activeCharset);
 	    }
+	    $this->_isRightToLeft = isset($data['right-to-left']);
 	    /*
 	     * Some systems only require LANG, others (like Mandrake) seem to require
 	     * LANGUAGE also.
@@ -312,7 +332,7 @@ class GalleryTranslator {
      *  $data['text'] = 'Some text to localize with %d arguments'
      *  $data['arg1'] = 5;
      *
-     *  localized:  'Some text to localize with 5 arguments' 
+     *  localized:  'Some text to localize with 5 arguments'
      *
      * Example 2:
      *  $data['one'] =   'You have %d orange'
@@ -417,7 +437,7 @@ class GalleryTranslator {
 	while (isset($data['arg' . $i])) {
 	    $args[] = $data['arg' . $i];
 	    $i++;
-	    
+
 	    /* Catch runaways */
 	    if ($i > 100) {
 		return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);

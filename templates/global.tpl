@@ -25,7 +25,7 @@
     {include file="gallery:`$main.viewHeadFile`" l10Domain=$main.viewL10Domain}
   </head>
   <body>
-    <div id="gallery">
+    <div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>
       <div id="gsHeader">
         <img src="{g->url href="images/galleryLogo_sm.gif"}" alt="" />
       </div>
