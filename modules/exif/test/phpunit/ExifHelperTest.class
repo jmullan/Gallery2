@@ -136,6 +136,14 @@ class ExifHelperTest extends GalleryTestCase {
 	$this->assertEquals(147, sizeof($exifKeys));
 	$this->assert(isset($exifKeys['ImageType']));
     }
+
+    /**
+     * Check post processing code
+     */
+    function testPostProcessKeys() {
+	$this->assertEquals(
+            "1/400 sec", ExifHelper::postProcessValue("ShutterSpeedValue", "25/10000 sec"));
+    }
 }
 
 ?>
