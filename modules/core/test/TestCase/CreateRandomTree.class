@@ -11,22 +11,33 @@ class CreateRandomTreeTestCase extends TestCase {
     }
 
     function getDescription() {
-	return "Create a random album tree containing $this->_maxItems photos";
+	return "Create a random album tree containing $this->_maxItems photos with comments";
     }
 
     function testStart($iterations) {
 	global $gallery;
-	$rootId = $gallery->getRootAlbumId();
+	$rootId = $gallery->getConfig('core.id.rootAlbum');
 	$lockIds = array();
 
 	$this->_imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$this->_maxItems = $iterations;
 
+	list($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	while ($this->_photoCount < $this->_maxItems) {
-	    $ret = $this->_createRandomAlbum($rootId);
+	    $ret = $this->_createRandomAlbum($rootId, $lockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
+
+	/* Release our locks */
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
@@ -36,16 +47,11 @@ class CreateRandomTreeTestCase extends TestCase {
 	return "foo_" . $this->_photoCount . "_" . rand(1000,5000);
     }
 
-    function _createRandomAlbum($parentId) {
+    function _createRandomAlbum($parentId, &$lockIds) {
 	global $gallery;
 
 	$gallery->guaranteeTimeLimit(10);
 	
-	list($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
 	if ($this->_photoCount >= $this->_maxItems) {
 	    return GalleryStatus::success();
 	}
@@ -58,6 +64,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$album->setTitle("Random album, child of $parentId");
 
 	/* Save the album */
 	$ret = $album->save();
@@ -94,7 +101,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    }
 
 	    /* Read lock it */
-	    list($ret, $lockIds[]) = $gallery->acquireReadLock($photo->getId());
+	    list($ret, $photoLock) = $gallery->acquireReadLock($photo->getId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -148,15 +155,39 @@ class CreateRandomTreeTestCase extends TestCase {
 		}
 	    }
 
+	    /* Create 0-3 comments */
+	    $rand4 = rand(0, 3);
+	    for ($j = 0; $j < $rand4; $j++) {
+		$comment = new GalleryComment();
+		$ret = $comment->create($photo->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$comment->setCommenterId($gallery->getActiveUserId());
+		$comment->setComment('This is a test of the emergency broadcas'.
+				     't system.  This is only a test.  This is'.
+				     'a test of the emergency broadcast system'.
+				     '.  This is only a test.  This is a test '.
+				     'of the emergency broadcast system.  This'.
+				     'is only a test.');
+		$comment->setDate(time());
+		$host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_HOST'];
+		if (empty($host)) {
+		    $host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_ADDR'];
+		}
+		$comment->setHost($host);
+	    }
+
+	    /* Release the photo lock */
+	    $ret = $gallery->releaseLocks($photoLock);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    if ($this->_photoCount >= $this->_maxItems) {
 		break;
 	    }
-	}
-
-	/* Release our locks */
-	$ret = $gallery->releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* 1-in-3 chance of having sub-albums */
@@ -166,7 +197,7 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $rand3 = rand(1, 3);
 	    $gallery->debug("<h3> Create $rand3 sub-albums </h3>");
 	    for ($i = 0; $i < $rand3; $i++) {
-		$ret = $this->_createRandomAlbum($album->getId());
+		$ret = $this->_createRandomAlbum($album->getId(), $lockIds);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

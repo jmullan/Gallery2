@@ -17,15 +17,34 @@
     
     ,
   
-    g_permission
+    g_groupId
       int(11)
+    
+    ,
+  
+    g_permission
+      varchar(
+      
+          32
+        
+      )
     
     , 
   
-    UNIQUE KEY (
+    INDEX (
     g_itemId
-        ,
-      g_userId
+    )
+    
+      ,
+    
+    INDEX (
+    g_userId
+    )
+    
+      ,
+    
+    INDEX (
+    g_groupId
     )
     
     ) TYPE=MyISAM;

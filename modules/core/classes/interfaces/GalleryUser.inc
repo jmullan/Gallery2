@@ -66,11 +66,6 @@ class GalleryUser extends GalleryUser_core {
             'type' => STORAGE_TYPE_STRING
         );
     
-        $meta['members']['isAdmin'] = array(
-            'class' => 'GalleryUser',
-            'type' => STORAGE_TYPE_BOOLEAN
-        );
-    
         return $meta;
     }
   
@@ -164,31 +159,6 @@ class GalleryUser extends GalleryUser_core {
     
         $this->_email = $value;
         $this->setModifiedFlag('email', MEMBER_MODIFIED);
-    }
-  
-    /**
-     * Get the value of isAdmin
-     *
-     * @return BOOLEAN the value
-     */
-    function getisAdmin() {
-        if (!isset($this->_isAdmin)) {
-            return null;
-        }
-        return $this->_isAdmin;
-    }
-
-    /**
-     * Set the value of isAdmin
-     *
-     * @param BOOLEAN the value
-     */
-    function setisAdmin($value) {
-    
-        $value = (bool)$value;
-      
-        $this->_isAdmin = $value;
-        $this->setModifiedFlag('isAdmin', MEMBER_MODIFIED);
     }
   
 }

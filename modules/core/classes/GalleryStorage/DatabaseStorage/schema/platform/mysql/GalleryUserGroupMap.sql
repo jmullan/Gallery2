@@ -15,6 +15,18 @@
     g_groupId
       int(11)
     
+    , 
+  
+    INDEX (
+    g_userId
+    )
+    
+      ,
+    
+    INDEX (
+    g_groupId
+    )
+    
     ) TYPE=MyISAM;
 
     INSERT INTO g2_Schema (

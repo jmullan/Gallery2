@@ -46,12 +46,42 @@ class GalleryGroup extends GalleryGroup_core {
     function getPersistentMemberInfo() {
         $meta = parent::getPersistentMemberInfo();
     
+        $meta['members']['groupType'] = array(
+            'class' => 'GalleryGroup',
+            'type' => STORAGE_TYPE_INTEGER
+        );
+    
         $meta['members']['groupName'] = array(
             'class' => 'GalleryGroup',
             'type' => STORAGE_TYPE_STRING
         );
     
         return $meta;
+    }
+  
+    /**
+     * Get the value of groupType
+     *
+     * @return INTEGER the value
+     */
+    function getgroupType() {
+        if (!isset($this->_groupType)) {
+            return null;
+        }
+        return $this->_groupType;
+    }
+
+    /**
+     * Set the value of groupType
+     *
+     * @param INTEGER the value
+     */
+    function setgroupType($value) {
+    
+        $value = (int)$value;
+      
+        $this->_groupType = $value;
+        $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
     }
   
     /**

@@ -124,64 +124,6 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 
         return $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
     }
-
-    /**
-     * Update an entry in this map
-     *
-     * @param array an associative array of the entry data to match and remove
-     * @return object GalleryStatus a status code
-     */
-    function updateMapEntry($data) {
-        global $gallery;
-
-    <xsl:for-each select="key/member-name">
-        if (!isset($data['<xsl:value-of select="."/>'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-    </xsl:for-each>
-
-        list ($ret, $storage) = $gallery->getStorage();
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
-  
-        return $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
-    }
-
-    /**
-     * Return an array of matching entries in this map
-     *
-     * @param array an associative array of the entry data to match
-     * @return array object GalleryStatus a status code
-     *               array the entries
-     */
-    function getMatchingMapEntries($array) {
-        global $gallery;
-
-    <xsl:for-each select="key/member-name">
-        if (!isset($data['<xsl:value-of select="."/>'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-  </xsl:for-each>
-
-        $query = 'SELECT <xsl:for-each select="column">[<xsl:value-of select="//class-name"/>.<xsl:value-of select="member-name"/>] </xsl:for-each>';
-        $where = array();
-        $data = array();
-        foreach ($array as $key => $value) {
-            $where[] = "[<xsl:value-of select="//class-name"/>.$key]=? ";
-            $data[] = $value;
-        }
-        if (sizeof($where)) {
-            $query .= 'WHERE ' . join(', ', $where);
-        }
-
-        list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-        return array(GalleryStatus::success(), $searchResults->allResults());
-    }
   </xsl:template>
 
   <xsl:template match="member">

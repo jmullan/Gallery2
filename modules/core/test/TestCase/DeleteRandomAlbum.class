@@ -1,0 +1,86 @@
+<?php
+
+class DeleteRandomAlbumTestCase extends TestCase {
+
+    function getIterations() {
+	return array(1, 2, 3, 5, 10, 20);
+    }
+
+    function getDescription() {
+	return "Pick delete a random album that lives under the root";
+    }
+
+    function testStart($iterations) {
+	global $gallery;
+
+	print("Choose an album\n");
+	$lockIds = array();
+	$rootId = $gallery->getConfig('core.id.rootAlbum');
+	$userId = $gallery->getActiveUserId();
+
+	/* Load the root */
+	list ($ret, $root) = $gallery->loadEntityById($rootId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Read lock it so it doesn't move around.  If we were deleting
+	 * something that lives under multiple levels we'd need to read lock
+	 * all the parents.
+	 */
+	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the children */ 
+	list ($ret, $childIds) = $root->getChildren($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$gallery->debug_r($childIds);
+
+	$i = 0;
+	$chosen = 0;
+	foreach ($childIds as $id => $type) {
+	    if (!strcasecmp($type, "GalleryAlbumItem")) {
+		if (rand(0, $i++) == 0) {
+		    $chosen = $id;
+		}
+	    }
+	}
+
+	if ($chosen == 0) {
+	    $gallery->debug("No album chosen!");
+	} else {
+	    list ($ret, $lockIds[]) = $gallery->acquireWriteLock($chosen);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    list ($ret, $album) = $gallery->loadEntityById($chosen);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $title = $album->getTitle();
+	    $gallery->debug("Deleting: $chosen ($title)");
+	    
+	    $ret = $album->delete();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	$ret = $gallery->releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+}
+
+?>

@@ -18,6 +18,75 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/*
+ * ****************************************
+ *           Permission flags
+ * ****************************************
+ */
+
+/**
+ * The user has permission to comment on the item.
+ *
+ * @constant PERMISSION_ALL
+ */
+define('PERMISSION_ALL', 'core.all');
+
+/**
+ * The user has permission to view the thumbnail image.
+ *
+ * @constant PERMISSION_VIEW
+ */
+define('PERMISSION_VIEW', 'core.view');
+
+/**
+ * The user has permission to view the resized image.
+ *
+ * @constant PERMISSION_VIEW_RESIZES
+ */
+define('PERMISSION_VIEW_RESIZES', 'core.viewResizes');
+
+/**
+ * The user has permission to view the source image.
+ *
+ * @constant PERMISSION_VIEW_SOURCE
+ */
+define('PERMISSION_VIEW_SOURCE', 'core.viewSource');
+
+/**
+ * The user has permission to insert a new item.
+ *
+ * @constant PERMISSION_INSERT
+ */
+define('PERMISSION_INSERT', 'core.insert');
+
+/**
+ * The user has permission to change the item.
+ *
+ * @constant PERMISSION_CHANGE
+ */
+define('PERMISSION_CHANGE', 'core.change');
+
+/**
+ * The user has permission to move the item.
+ *
+ * @constant PERMISSION_MOVE
+ */
+define('PERMISSION_MOVE', 'core.move');
+
+/**
+ * The user has permission to change the item's text.
+ *
+ * @constant PERMISSION_CHANGE_TEXT
+ */
+define('PERMISSION_CHANGE_TEXT', 'core.changeText');
+
+/**
+ * The user has permission to delete the item.
+ *
+ * @constant PERMISSION_DELETE
+ */
+define('PERMISSION_DELETE', 'core.delete');
+
 /**
  * Representation of the many-to-many relationship between users and groups
  *
@@ -46,41 +115,95 @@ class GalleryPermissionMap_core {
      * @g2     <member-name>userId</member-name>
      * @g2     <member-type>INTEGER</member-type>
      * @g2     <member-size>MEDIUM</member-size>
-     * @ge     <indexed/>
+     * @g2     <indexed/>
+     * @g2   </member>
+     * @g2   <member>
+     * @g2     <member-name>groupId</member-name>
+     * @g2     <member-type>INTEGER</member-type>
+     * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <indexed/>
      * @g2   </member>
      * @g2   <member>
      * @g2     <member-name>permission</member-name>
-     * @g2     <member-type>INTEGER</member-type>
-     * @g2     <member-size>MEDIUM</member-size>
+     * @g2     <member-type>STRING</member-type>
+     * @g2     <member-size>SMALL</member-size>
      * @g2   </member>
-     * @g2   <key>
-     * @g2     <member-name>itemId</member-name>
-     * @g2     <member-name>userId</member-name>
-     * @g2   </key>
      * @g2 </map>
-     * 
      */
     
     /**
-     * Add the user to the group id specified.
+     * Add the given itemid, userid, permission mapping
+     *
+     * @param int the id of the GalleryGroup
+     * @param array userid => permission
+     * @return object GalleryStatus a status code
+     */
+    function addUserPermission($itemId, $userId, $permission) {
+	global $gallery;
+	if (empty($itemId) || empty($userId) || empty($permission)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Add a new entry in our map to represent this relationship. */
+	$ret = GalleryPermissionMap::addMapEntry(array('itemId' => $itemId,
+						       'userId' => $userId,
+						       'permission' => $permission));
+						     
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Add the given itemid, userid, permission mapping
+     *
+     * @param int the id of the GalleryGroup
+     * @param array userid => permission
+     * @return object GalleryStatus a status code
+     */
+    function addGroupPermission($itemId, $groupId, $permission) {
+	global $gallery;
+	if (empty($itemId) || empty($groupId) || empty($permission)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/* Add a new entry in our map to represent this relationship. */
+	$ret = GalleryPermissionMap::addMapEntry(array('itemId' => $itemId,
+						       'userId' => 0,
+						       'groupId' => $groupId,
+						       'permission' => $permission));
+						     
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove the given itemid, userid, permission mapping
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
      */
-    function addRelationship($itemId, $userId, $permission) {
+    function removeUserPermission($itemId, $userId, $permission) {
 	global $gallery;
-	if (empty($userId) || empty($groupId) || empty($permission)) {
+	if (empty($itemId) || empty($userId) || empty($permission)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
 	/*
-	 * Add a new entry in our groups table to represent this
-	 * relationship.
+	 * Remove this relationship from our map.
 	 */
-	$this->addToPermissions(array("itemId" => $itemId,
-				      "userId" => $userId,
-				      "permission" => $permission));
+	$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId,
+							  'userId' => $userId,
+							  'groupId' => 0, 
+							  'permission' => $permission));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -88,24 +211,24 @@ class GalleryPermissionMap_core {
     }
 
     /**
-     * Remove the user from the group id specified.
+     * Remove the given itemid, userid, permission mapping
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
      */
-    function removeRelationship($itemId, $userId, $permission) {
+    function removeGroupPermission($itemId, $groupId, $permission) {
 	global $gallery;
-	if (empty($userId) || empty($groupId) || empty($permission)) {
+	if (empty($itemId) || empty($groupId) || empty($permission)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
 
 	/*
-	 * Remove this relationship from our groups table.
+	 * Remove this relationship from our map.
 	 */
-	$ret = $this->removeFromPermissions(array("itemId" => $itemId,
-						  "userId" => $userId,
-						  "permission" => $permission));
+	$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId,
+							  'groupId' => $groupId,
+							  'permission' => $permission));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -113,24 +236,98 @@ class GalleryPermissionMap_core {
     }
 
     /**
-     * Return a list of user ids belonging to a group
+     * Remove all permissions for the given itemid
      *
-     * You can specify how many userids to list, and where the windows is in
-     * the list of all users.
+     * @param int the id of the GalleryGroup
+     * @return object GalleryStatus a status code
+     */
+    function removePermissions($itemId) {
+	global $gallery;
+	if (empty($itemId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Remove all relationships for this item from our map.
+	 */
+	$ret = GalleryPermissionMap::removeMapEntry(array('itemId' => $itemId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return a list of permissions for the given item id
      *
-     * @param int the number of userids desired
-     * @param int the start of the range
+     * @param int the id of the item
      * @return array object GalleryStatus a status code
      *               array group ids
      */
     function getPermissionsForItem($itemId) {
 	global $gallery;
 
-	$query = ;
-	return $gallery->search(array('select' => ('[GalleryPermissionRelationship::userId], ' .
-						   '[GalleryPermissionRelationship::permission] '),
-				      'where' => '[GalleryPermissionRelationship::itemId] = ?'),
-				array($itemId));
+	if (empty($itemId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
+					      __FILE__, __LINE__), null);
+	}
+	
+	list($ret, $searchResults) =
+	    $gallery->search(array('select' => ('[GalleryPermissionMap::userId], ' .
+						'[GalleryPermissionMap::groupId], ' .
+						'[GalleryPermissionMap::permission] '),
+				   'where' => '[GalleryPermissionMap::itemId] = ?'),
+			     array($itemId));
+
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($searchResults->resultCount() == 0) {
+	    return null;
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = array('userId' => $result[0],
+			    'groupId' => $result[1],
+			    'permission' => $result[2]);
+	}
+	return array($ret, $data);
+    }
+
+    /**
+     * Copy a set of permissions from one id to another
+     *
+     * @param int the id of the target item
+     * @param int the id of the source item
+     * @return object GalleryStatus a status code
+     */
+    function copyPermissions($itemId, $fromId) {
+	global $gallery;
+
+	if (empty($itemId) || empty($fromId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list ($ret, $permissions) =
+	    GalleryPermissionMap::getPermissionsForItem($fromId);
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($permissions as $entry) {
+	    $entry = array_merge($entry, array('itemId' => $itemId));
+	    $ret = GalleryPermissionMap::addMapEntry($entry);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
 }

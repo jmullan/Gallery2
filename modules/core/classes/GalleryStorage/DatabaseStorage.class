@@ -272,7 +272,7 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Get our member info for this class
 	 */
-	$memberInfo = $this->_describeClassMembers($className);
+	$memberInfo = $this->_describeEntityMembers($className);
 	$idCol = $this->_prefixColumnName('id');
 
 	$columns = array();
@@ -358,7 +358,7 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Get our member info for this class
 	 */
-	$memberInfo = $this->_describeClassMembers(get_class($entity));
+	$memberInfo = $this->_describeEntityMembers(get_class($entity));
 	$idColumn = null;
 
 	/*
@@ -544,7 +544,7 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * Get our persistent and member info for this class
 	 */
-	$memberInfo = $this->_describeClassMembers($entity->getEntityType());
+	$memberInfo = $this->_describeEntityMembers($entity->getEntityType());
 	$idCol = $this->_prefixColumnName('id');
 
 	$tables = array();
@@ -552,6 +552,10 @@ class DatabaseStorage extends GalleryStorage {
 	    $tables[$this->_prefixTableName($columnInfo['class'])] = 1;
 	}
 
+	/*
+	 * XXX OPT:  Override this for specific database implementations that
+	 * allow multi-table delete.
+	 */
 	foreach ($tables as $tableName => $junk) {
 	    $query = 'DELETE FROM ' . $tableName .
 		    ' WHERE ' . $idCol . '=?';
@@ -968,7 +972,8 @@ class DatabaseStorage extends GalleryStorage {
 	 * $db->SelectLimit($query, limit['count'], limit['offset']);
 	 *
 	 */
-	$tables = array();
+	$allTables = array();
+	$entityTables = array();
 	foreach (array('select', 'where', 'order-by') as $elementName) {
 	    if (empty($query[$elementName])) {
 		/* XXX: We should verify that 'select' exists here */
@@ -983,8 +988,12 @@ class DatabaseStorage extends GalleryStorage {
 		
 		$table = $this->_prefixTableName($class);
 		$column = $this->_prefixColumnName($member);
-		
-		$tables[$table] = 1;
+
+		$allTables[$table] = 1;
+		if (!strcmp($this->_getClassType($class), 'entity')) {
+		    $entityTables[$table] = 1;
+		}
+		    
 		$elementValue = str_replace($outer, "$table.$column", $elementValue);
 	    }
 
@@ -996,16 +1005,18 @@ class DatabaseStorage extends GalleryStorage {
 	 * Now that we know 'tables' is unique, convert it to a list for easier
 	 * processing.
 	 */
-	$tables = array_keys($tables);
-	if (sizeof($tables)) {
-	    $query['from'] = join(", ", $tables);
+	$entityTables = array_keys($entityTables);
+	$allTables = array_keys($allTables);
 
-	    if (sizeof($tables) > 1) {
+	if (sizeof($allTables)) {
+	    $query['from'] = join(", ", $allTables);
+
+	    if (sizeof($entityTables) > 1) {
 		$query['where'] .= ' AND (';
 		$idCol = $this->_prefixColumnName('id');
-		for ($i = 1; $i < sizeof($tables); $i++) {
-		    $query['where'] .= "($tables[0].$idCol = $tables[$i].$idCol)";
-		    if ($i < (sizeof($tables)-1)) {
+		for ($i = 1; $i < sizeof($entityTables); $i++) {
+		    $query['where'] .= "($entityTables[0].$idCol = $entityTables[$i].$idCol)";
+		    if ($i < (sizeof($entityTables)-1)) {
 			$query['where'] .= ' AND ';
 		    }
 		}
@@ -1060,6 +1071,7 @@ class DatabaseStorage extends GalleryStorage {
      *
      * @param object the map we're working on
      * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
      */
     function addMapEntry($mapName, $entry) {
 

@@ -14,6 +14,11 @@
   
     ,
   
+    g_groupType
+      int(11)
+    
+    ,
+  
     g_groupName
       varchar(
       

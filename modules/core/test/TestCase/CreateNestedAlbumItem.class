@@ -2,50 +2,38 @@
 
 class CreateNestedAlbumItemTestCase extends TestCase {
 
-    function getDescription() {
-	return "Create several nested album items";
+    function getIterations() {
+	return array(1, 3, 5, 10, 50, 100);
     }
 
-    function testStart() {
+    function getDescription() {
+	return 'Create several nested album items';
+    }
+
+    function testStart($iterations) {
 	global $gallery;
 
 	$lockIds = array();
+
+	$time = time();
 	
-	print("Creating new root album item\n");
-	$rootAlbum = new GalleryAlbumItem();
-	$ret = $rootAlbum->createRoot("nestedRoot",
-				      $gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	$parentId = $gallery->getConfig('core.id.rootAlbum');
+	for ($i = 0; $i < $iterations; $i++) {
+	    $gallery->guaranteeTimeLimit(5);
 
-	print("Saving new root album\n");
-	$ret = $rootAlbum->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	print("Read locking root album\n");
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($rootAlbum->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$parentId = $rootAlbum->getId();
-	for ($i = 0; $i < 5; $i++) {
-
-	    print("Read locking parent album\n");
+	    $gallery->debug('Read locking parent album');
 	    list ($ret, $lockIds[]) = $gallery->acquireReadLock($parentId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    
 	    $nested[$i] = new GalleryAlbumItem();
-	    $ret = $nested[$i]->create($parentId, "nested_$i",
+	    $ret = $nested[$i]->create($parentId, "nested_${time}_$i",
 				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	    $nested[$i]->setTitle("Nested album $i, created at $time");
 	    
 	    $ret = $nested[$i]->save();
 	    if ($ret->isError()) {

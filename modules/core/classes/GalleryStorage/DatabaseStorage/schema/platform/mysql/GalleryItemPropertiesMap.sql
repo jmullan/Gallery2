@@ -32,6 +32,14 @@
       g_key
     )
     
+    , 
+  
+    INDEX (
+    g_value
+          (255)
+          
+    )
+    
     ) TYPE=MyISAM;
 
     INSERT INTO g2_Schema (

@@ -18,6 +18,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+
+/**
+ * A normal group
+ *
+ * @constant GROUP_NORMAL
+ */
+define('GROUP_NORMAL', 1);
+
+/**
+ * The "all users" group 
+ *
+ * @constant GROUP_ALL_USERS
+ */
+define('GROUP_ALL_USERS', 2);
+
+/**
+ * The "all admins" group 
+ *
+ * @constant GROUP_ALL_ADMINS
+ */
+define('GROUP_ALL_ADMINS', 3);
+
+
 /**
  * Representation of a group of users
  *
@@ -45,6 +68,20 @@ class GalleryGroup_core extends GalleryEntity {
      */
 
     /**
+     * The group type
+     *
+     * @g2 <member>
+     * @g2   <member-name>groupType</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <member-size>SMALL</member-size>
+     * @g2 </member>
+     *
+     * @var int $_groupType
+     * @access private
+     */
+    var $_groupType;
+
+    /**
      * The group name
      *
      * @g2 <member>
@@ -64,6 +101,23 @@ class GalleryGroup_core extends GalleryEntity {
      *                 Methods
      * ****************************************
      */
+
+    /**
+     * Create a new instance of this GalleryGroup in the persistent store
+     *
+     * @param int the type of group
+     * @return object GalleryStatus a status code
+     */
+    function create($groupType) {
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->setGroupType($groupType);
+
+	return GalleryStatus::success();
+    }
 
     /**
      * Return a map of group names => ids

@@ -9,6 +9,7 @@ class CreateAdminUserTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
+	/* Create the user */
 	$user = new GalleryUser();
 	$ret = $user->create('admin');
 	if ($ret->isError()) {
@@ -16,9 +17,15 @@ class CreateAdminUserTestCase extends TestCase {
 	}
 	$user->setPassword('admin');
 	$user->setFullName('Admin');
-	$user->setIsAdmin(true);
 	
 	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Add her to the admin group */
+	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
+            $gallery->getConfig('core.id.adminGroup'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

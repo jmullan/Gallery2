@@ -278,6 +278,7 @@ class GalleryStorage {
      *
      * @param object the map we're working on
      * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
      */
     function addMapEntry($map, $entry) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
@@ -289,6 +290,7 @@ class GalleryStorage {
      *
      * @param object the map we're working on
      * @param array an associative array of data about the entry
+     * @return object GalleryStatus a status code
      */
     function removeMapEntry($map, $entry) {
 	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
@@ -301,9 +303,8 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function createStore() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
     
     /**
@@ -312,9 +313,8 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function configureStore() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
     
     /**
@@ -323,30 +323,31 @@ class GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function removeStore() {
-	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED,
-					  __FILE__, __LINE__),
-		     null);
+	return GalleryStatus::error(ERROR_UNIMPLEMENTED,
+				    __FILE__, __LINE__);
     }
     
     /**
-     * Describe all the members of a class
+     * Describe all the members of a entity
      *
+     * @param string a class name
      * @return array member => info associative array
      * @access protected
      */
-    function _describeClassMembers($className) {
+    function _describeEntityMembers($entityName) {
 
-	if (empty($this->_entityInfoCache[$className])) {
-	    $entity = new $className;
-	    $this->_entityInfoCache[$className] = $entity->getPersistentMemberInfo();
+	if (empty($this->_entityInfoCache[$entityName])) {
+	    $entity = new $entityName;
+	    $this->_entityInfoCache[$entityName] = $entity->getPersistentMemberInfo();
 	}
 
-	return $this->_entityInfoCache[$className];
+	return $this->_entityInfoCache[$entityName];
     }
 
     /**
      * Describe all the members of a map
      *
+     * @param string a class name
      * @return array member name => member type
      * @access protected
      */
@@ -358,6 +359,22 @@ class GalleryStorage {
 	}
 
 	return $this->_mapInfoCache[$mapName];
+    }
+
+    /**
+     * Identify this class as an entity or a map
+     *
+     * @param string the name of a class
+     * @return string 'entity' or 'map'
+     * @access protected
+     */
+    function _getClassType($className) {
+	$instance = new $className;
+	if (method_exists($instance, 'getPersistentMemberInfo')) {
+	    return 'entity';
+	} else {
+	    return 'map';
+	}
     }
     
     /**

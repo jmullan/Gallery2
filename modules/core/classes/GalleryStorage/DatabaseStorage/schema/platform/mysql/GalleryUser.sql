@@ -50,11 +50,6 @@
         
       )
     
-    ,
-  
-    g_isAdmin
-      int(1)
-    
     , 
   
     UNIQUE KEY (

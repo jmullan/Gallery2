@@ -154,9 +154,9 @@ function runTest($testName, $iterations) {
 
     print '<b>Test: ' . $testName . '</b>';
     print '<br>';
-    
+
     print '<b>Start</b><br>';
-    set_time_limit(30);
+    $gallery->setTimeLimit(30);
     $ret1 = $class->start($iterations);
     if ($ret1->isSuccess()) {
 	print 'Status: Success<br>';

@@ -50,7 +50,9 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
   
         $info['members']['userId'] = STORAGE_TYPE_INTEGER;
   
-        $info['members']['permission'] = STORAGE_TYPE_INTEGER;
+        $info['members']['groupId'] = STORAGE_TYPE_INTEGER;
+  
+        $info['members']['permission'] = STORAGE_TYPE_STRING;
   
         return $info; 
     }
@@ -69,6 +71,10 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
         }
     
         if (!isset($data['userId'])) {
+            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+        }
+    
+        if (!isset($data['groupId'])) {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
     
@@ -104,72 +110,6 @@ class GalleryPermissionMap extends GalleryPermissionMap_core {
         }
 
         return $storage->removeMapEntry('GalleryPermissionMap', $data);
-    }
-
-    /**
-     * Update an entry in this map
-     *
-     * @param array an associative array of the entry data to match and remove
-     * @return object GalleryStatus a status code
-     */
-    function updateMapEntry($data) {
-        global $gallery;
-
-    
-        if (!isset($data['itemId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-    
-        if (!isset($data['userId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-    
-
-        list ($ret, $storage) = $gallery->getStorage();
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
-  
-        return $storage->updateMapEntry('GalleryPermissionMap', $data);
-    }
-
-    /**
-     * Return an array of matching entries in this map
-     *
-     * @param array an associative array of the entry data to match
-     * @return array object GalleryStatus a status code
-     *               array the entries
-     */
-    function getMatchingMapEntries($array) {
-        global $gallery;
-
-    
-        if (!isset($data['itemId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-  
-        if (!isset($data['userId'])) {
-            return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
-        }
-  
-
-        $query = 'SELECT ';
-        $where = array();
-        $data = array();
-        foreach ($array as $key => $value) {
-            $where[] = "[GalleryPermissionMap.$key]=? ";
-            $data[] = $value;
-        }
-        if (sizeof($where)) {
-            $query .= 'WHERE ' . join(', ', $where);
-        }
-
-        list ($ret, $searchResults) = $gallery->search($query, $data);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-
-        return array(GalleryStatus::success(), $searchResults->allResults());
     }
   
 }

@@ -20,58 +20,23 @@
 
 /*
  * ****************************************
- *           Permission bitflags
+ *             Ordering Tags
  * ****************************************
  */
 
 /**
- * The user has permission to view the source image.
+ * Order in an ascending fashion
  *
- * @constant PERMISSION_VIEW_SOURCE
+ * @constant ORDER_ASCENDING
  */
-define("PERMISSION_VIEW_SOURCE", 0x00000001);
+define('ORDER_ASCENDING', 1);
 
 /**
- * The user has permission to view the thumbnail image.
+ * Order in an descending fashion
  *
- * @constant PERMISSION_VIEW_THUMB
+ * @constant ORDER_DESCENDING
  */
-define("PERMISSION_VIEW_THUMB", 0x00000004);
-
-/**
- * The user has permission to view the resized image.
- *
- * @constant PERMISSION_VIEW_RESIZES
- */
-define("PERMISSION_VIEW_RESIZES", 0x00000010);
-
-/**
- * The user has permission to insert a new item.
- *
- * @constant PERMISSION_INSERT
- */
-define("PERMISSION_INSERT", 0x00000020);
-
-/**
- * The user has permission to change the item.
- *
- * @constant PERMISSION_CHANGE
- */
-define("PERMISSION_CHANGE", 0x00000040);
-
-/**
- * The user has permission to change the item's text.
- *
- * @constant PERMISSION_CHANGE_TEXT
- */
-define("PERMISSION_CHANGE_TEXT", 0x00000080);
-
-/**
- * The user has permission to delete the item.
- *
- * @constant PERMISSION_DELETE
- */
-define("PERMISSION_DELETE", 0x00000100);
+define('ORDER_DESCENDING', 2);
 
 /**
  * Abstract base class for all objects in the Gallery
@@ -144,6 +109,32 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @access private
      */
     var $_keywords;
+
+    /**
+     * Specify the name of the field that we're using to order children
+     *
+     * @g2 <member>
+     * @g2  <member-name>orderBy</member-name>
+     * @g2  <member-type>STRING</member-type>
+     * @g2 </member>
+     *
+     * @var int $_orderBy
+     * @access private
+     */
+    var $_orderBy;
+
+    /**
+     * Specify the order direction that we're applying to the orderBy field.
+     *
+     * @g2 <member>
+     * @g2  <member-name>orderDirection</member-name>
+     * @g2  <member-type>STRING</member-type>
+     * @g2 </member>
+     *
+     * @var int $_orderDirection
+     * @access private
+     */
+    var $_orderDirection;
 
     /**
      * An arbitrary integer value that fixes this item in a position relative
@@ -257,7 +248,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	if (!$parent->canContainChildren()) {
 	    return GalleryStatus::error(ERROR_ILLEGAL_CHILD,
 					__FILE__, __LINE__);
@@ -273,6 +264,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
+
+	/* Adopt the parent's ordering scheme */
+	$this->setOrderBy($parent->getOrderBy());
+	$this->setOrderBy($parent->getOrderDirection());
 
 	return GalleryStatus::success();
     }
@@ -306,90 +301,126 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
 
+	/* Pick up the default order */
+	$this->setOrderBy($gallery->getConfig('core.default.orderBy'));
+	$this->setOrderDirection($gallery->getConfig('core.default.orderDirection'));
+
 	return GalleryStatus::success();
     }
 
     /**
-     * Return the number of children in this Entity
+     * Return the number of children in this Entity that are visible to the
+     * user specified.
      *
      * @access public
      * @return array object GalleryStatus a status code
      *               int a count
      */
-    function countChildren() {
+    function countChildren($userId) {
 	global $gallery;
 
-	list($ret, $itemIds) = 
-	    $gallery->search(array('select' => '[GalleryItem::id]',
-				   'where' => '[GalleryItem::parentId] = ?',
-				   array($this->getParentId())));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$where = '[GalleryChildEntity::parentId] = ?';
+	$data[] = $this->getId();
 
-	$userId = $gallery->getActiveUserId();
+	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
+
+	/* Figure out what groups this user is in. */
 	list ($ret, $groupIds) =
-		GalleryUserGroupMap::getGroupsForUser($userId);
+	    GalleryUserGroupMap::getGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$groupIdString = join(', ', $groupIds);
+	    
+	$where .= ' AND';
+	$where .= ' ([GalleryItem::ownerId] = ? OR';
+	$data[] = $userId;
+	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
+	    $groupIdString . ')';
+	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
+	$data[] = $userId;
+	$where .= ' AND';
+	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
+	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
 
-	$select = 'COUNT([GalleryPermissionMap::itemId])';
-	$where = '[GalleryPermissionMap::itemId] IN ' .
-	    '(' . join(', ', $itemIds) . ') ' .
-	    'AND ([GalleryPermissionMap::userId] = ? ' .
-	    'OR [GalleryPermissionMap::groupId] IN ' .
-	    '(' . join(', ', $groupIds) . ') '.
-	    ') AND [GalleryPermissionRelationship::permission] = ?';
-	$data = array($userId, PERMISSION_VIEW_THUMB);
-	
-	list ($ret, $count) =
-	    $gallery->search(array('select' => $select, 'where' => $where),
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => 'COUNT(DISTINCT([GalleryChildEntity::id]))',
+				   'where' => $where),
 			     $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$ids = array();
+	$result = $searchResults->nextResult();
+	$count = $result[0];
 	return array(GalleryStatus::success(), $count);
     }
 
-    function getChildren($startRange, $count) {
+    /**
+     * Return the ids of the children of this entity, in the order specified
+     * by the orderBy field and the direction specified by the orderDirection
+     * field, that are visible to the given user.
+     *
+     * @param int the user id of the user making the request
+     * @param int where to start
+     * @param int how many to return
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     */
+    function getChildren($userId, $offset=null, $count=null) {
 	global $gallery;
-	
-	list ($ret, $itemIds) = 
-	    $gallery->search(array('select' => '[GalleryChildEntity::id]',
-				   'where' => '[GalleryChildEntity::parentId] = ?'),
-			     array($this->getParentId()));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	
 
-	$userId = $gallery->getActiveUserId();
+	$where = '[GalleryChildEntity::parentId] = ?';
+	$data[] = $this->getId();
+
+	$where .= ' AND [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]';
+
+	/* Figure out what groups this user is in. */
 	list ($ret, $groupIds) =
-		GalleryUserGroupRelationship::getGroupsForUser($userId);
+	    GalleryUserGroupMap::getGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$groupIdString = join(', ', $groupIds);
+	    
+	$where .= ' AND';
+	$where .= ' ([GalleryItem::ownerId] = ? OR';
+	$data[] = $userId;
+	$where .= ' (([GalleryPermissionMap::groupId] IN (' .
+	    $groupIdString . ')';
+	$where .= ' OR [GalleryPermissionMap::userId] = ?)';
+	$data[] = $userId;
+	$where .= ' AND';
+	$where .= ' [GalleryPermissionMap::permission] IN (?, ?)))';
+	$data = array_merge($data, array(PERMISSION_VIEW, PERMISSION_ALL));
 
-	$select = '[GalleryPermissionMap::itemId] ' .
-	    'WHERE ' .
-	    '[GalleryPermissionMap::itemId] IN ' .
-	    '(' . join(', ', $itemIds) . ') ' .
-	    'AND ([GalleryPermissionMap::userId] = ? ' .
-	    'OR ' .
-	    '[GalleryPermissionMap::groupId] IN ' .
-	    '(' . join(', ', $groupIds) . ') '.
-	    ') AND [GalleryPermissionRelationship::permission] = ?';
-	$data = array($userId, PERMISSION_VIEW_THUMB);
-	
-	list ($ret, $ids) =
-	    $gallery->search(array('select' => $select, 'where' => $where),
+	$orderBy = ' [GalleryItem::' . $this->getOrderBy() . ']';
+	if ($this->getOrderDirection() == ORDER_ASCENDING) {
+	    $orderBy .= ' ASC';
+	} else {
+	    $orderBy .= ' DESC';
+	}
+
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => ('DISTINCT([GalleryChildEntity::id]), ' .
+						'[GalleryEntity::entityType]'),
+				   'where' => $where,
+				   'order-by' => $orderBy,
+				   'limit' => array('count' => $count,
+						    'offset' => $offset)),
 			     $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$ids = array();
+	while ($result = $searchResults->nextResult()) {
+	    $ids[$result[0]] = $result[1];
+	}
+	
 	return array(GalleryStatus::success(), $ids);
     }
     
@@ -426,12 +457,56 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Remove all my properties */
-	$ret = GalleryItemPropertiesMap::removeProperties($this->getId());
+	/* Remove all my properties and permissions */
+	$ret1 = GalleryItemPropertiesMap::removeProperties($this->getId());
+	$ret2 = GalleryPermissionMap::removePermissions($this->getId());
+	
+	if ($ret1->isError()) {
+	    return $ret1->wrap(__FILE__, __LINE__);
+	}
+	
+	if ($ret2->isError()) {
+	    return $ret2->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Save the changes to this GalleryItem
+     *
+     * Save the changes to this GalleryItem.
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function save() {
+
+	/*
+	 * If I'm a new item and I have a parent, adopt my parent's
+	 * permissions
+	 */
+	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) &&
+	        $this->getParentId()) {
+	    $copyPermissions = true;
+	} else {
+	    $copyPermissions = false;
+	}
+
+	/* Save myself */
+	$ret = parent::save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if ($copyPermissions) {
+	    $ret = GalleryPermissionMap::copyPermissions($this->getId(),
+							 $this->getParentId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	return GalleryStatus::success();
     }
 }

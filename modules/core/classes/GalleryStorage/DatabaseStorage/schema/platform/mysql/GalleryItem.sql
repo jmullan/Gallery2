@@ -33,6 +33,24 @@
     
     ,
   
+    g_orderBy
+      varchar(
+      
+          128
+        
+      )
+    
+    ,
+  
+    g_orderDirection
+      varchar(
+      
+          128
+        
+      )
+    
+    ,
+  
     g_orderWeight
       int(11)
     

@@ -106,19 +106,6 @@ class GalleryUser_core extends GalleryEntity {
      */
     var $_email;
 
-    /**
-     * Is the user a Gallery administrator?
-     *
-     * @g2 <member>
-     * @g2   <member-name>isAdmin</member-name>
-     * @g2   <member-type>BOOLEAN</member-type>
-     * @g2 </member>
-     *
-     * @var boolean $_isAdmin
-     * @access private
-     */
-    var $_isAdmin;
-
     /*
      * ****************************************
      *                 Methods
@@ -196,6 +183,64 @@ class GalleryUser_core extends GalleryEntity {
 				   'offset' => $offset)));
     }
 
+    /**
+     * Save the changes to this GalleryUser
+     *
+     * Do some bookkeeping, like adding the user to the all user and admin
+     * groups.
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function save() {
+	global $gallery;
+
+	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	    $newlyCreated = 1;
+	} else {
+	    $newlyCreated = 0;
+	}
+
+	$ret = parent::save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($newlyCreated) {
+	    /* Add her to the all user group */
+	    $ret = GalleryUserGroupMap::addUserToGroup($this->getId(),
+                $gallery->getConfig('core.id.allUserGroup'));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Delete this GalleryUser
+     *
+     * Do some bookkeeping, like removing the user from all groups.
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ret = GalleryUserGroupMap::removeUser($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryUser.inc');

@@ -1,0 +1,47 @@
+<?php
+
+class GetChildrenTestCase extends TestCase {
+
+    function getIterations() {
+	return array(1, 5, 10, 100);
+    }
+     
+    function getDescription() {
+	return "Anonymous user's view of root's children";
+    }
+
+    function testStart($iterations) {
+	global $gallery;
+
+	$rootId = $gallery->getConfig('core.id.rootAlbum');
+	$userId = $gallery->getActiveUserId();
+
+	/* Load the root */
+	list ($ret, $root) = $gallery->loadEntityById($rootId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	for ($i = 0; $i < $iterations; $i++) {
+	    /* Count 'em all */
+	    list ($ret, $count) = $root->countChildren($userId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $gallery->debug("count: $count");
+
+	    /* Get 'em all */ 
+	    list ($ret, $childIds) = $root->getChildren($userId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $gallery->debug_r($childIds);
+	}
+	
+	return GalleryStatus::success();
+    }
+}
+
+?>

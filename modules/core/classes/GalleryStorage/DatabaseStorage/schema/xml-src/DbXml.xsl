@@ -37,6 +37,12 @@
         </index>
       </xsl:for-each>
 
+      <xsl:for-each select="map/member[indexed]">
+        <index>
+          <column-name><xsl:value-of select="member-name"/></column-name>
+        </index>
+      </xsl:for-each>
+
       <xsl:for-each select="member[unique]">
         <key>
           <column-name><xsl:value-of select="member-name"/></column-name>

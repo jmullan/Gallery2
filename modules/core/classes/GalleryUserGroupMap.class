@@ -100,11 +100,35 @@ class GalleryUserGroupMap_core {
     }
 
     /**
+     * Remove the user from all groups
+     *
+     * @param int the id of the GalleryGroup
+     * @return object GalleryStatus a status code
+     */
+    function removeUser($userId) {
+	global $gallery;
+	if (empty($userId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	/*
+	 * Remove this relationship from our groups table.
+	 */
+	$ret = GalleryUserGroupMap::removeMapEntry(array("userId" => $userId));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
      * Return a list of user ids belonging to a group
      *
      * You can specify how many userids to list, and where the windows is in
      * the list of all users.
      *
+     * @param int the group id
      * @param int the number of userids desired
      * @param int the start of the range
      * @return array object GalleryStatus a status code
@@ -113,34 +137,57 @@ class GalleryUserGroupMap_core {
     function getUsersForGroup($groupId, $count=null, $offset=null) {
 	global $gallery;
 
-	return $gallery->search(array('select' => '[GalleryUserGroupMap::userId]',
-				      'where' => '[GalleryUserGroupMap::groupId] = ?',
-				      'limit' => array('count' => $count,
-						       'offset' => $offset)),
-				array($groupId));
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => '[GalleryUserGroupMap::userId]',
+				   'where' => '[GalleryUserGroupMap::groupId] = ?',
+				   'limit' => array('count' => $count,
+						    'offset' => $offset)),
+			     array($groupId));
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+	return array($ret, $data);
     }
 
     /**
-     * Return a list of group ids the user belongs to
+     * Return a list of user ids belonging to a group
      *
      * You can specify how many userids to list, and where the windows is in
      * the list of all users.
      *
-     * @param int the number of userids desired
+     * @param int the user id
+     * @param int the number of group ids desired
      * @param int the start of the range
      * @return array object GalleryStatus a status code
-     *               array user ids
+     *               array group ids
      */
     function getGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
 
-	return $gallery->search(array('select' => '[GalleryUserGroupMap::groupId]',
-				      'where' => '[GalleryUserGroupMap::userId] = ?',
-				      'limit' => array('count' => $count,
-						       'offset' => $start)),
-				array($userId));
-    }
+	list ($ret, $searchResults) = 
+	    $gallery->search(array('select' => '[GalleryUserGroupMap::groupId]',
+				   'where' => '[GalleryUserGroupMap::userId] = ?',
+				   'limit' => array('count' => $count,
+						    'offset' => $offset)),
+			     array($userId));
+	
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+	return array($ret, $data);
+    }
+    
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryUserGroupMap.inc');

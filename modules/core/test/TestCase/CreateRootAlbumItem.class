@@ -25,6 +25,28 @@ class CreateAlbumItemTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	print("ASSIGN PERMISSIONS\n");
+	/* Give all users some stuff */
+	$groupId = $gallery->getConfig('core.id.allUserGroup');
+	foreach (array(PERMISSION_VIEW,
+		       PERMISSION_VIEW_RESIZES) as $permission) {
+	    $ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+							    $groupId,
+							    $permission);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Grant admin users everything */
+	$groupId = $gallery->getConfig('core.id.adminGroup');
+	$ret = GalleryPermissionMap::addGroupPermission($album->getId(),
+							$groupId,
+							PERMISSION_ALL);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
 	return GalleryStatus::success();
     }

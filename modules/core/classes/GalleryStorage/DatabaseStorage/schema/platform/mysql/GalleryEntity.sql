@@ -51,6 +51,12 @@
     
     NOT NULL
   
+    , 
+  
+    INDEX (
+    g_id
+    )
+    
     ) TYPE=MyISAM;
 
     INSERT INTO g2_Schema (

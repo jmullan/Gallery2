@@ -61,6 +61,16 @@ class GalleryItem extends GalleryItem_core {
             'type' => STORAGE_TYPE_STRING
         );
     
+        $meta['members']['orderBy'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
+        $meta['members']['orderDirection'] = array(
+            'class' => 'GalleryItem',
+            'type' => STORAGE_TYPE_STRING
+        );
+    
         $meta['members']['orderWeight'] = array(
             'class' => 'GalleryItem',
             'type' => STORAGE_TYPE_INTEGER
@@ -158,6 +168,52 @@ class GalleryItem extends GalleryItem_core {
     
         $this->_keywords = $value;
         $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of orderBy
+     *
+     * @return STRING the value
+     */
+    function getorderBy() {
+        if (!isset($this->_orderBy)) {
+            return null;
+        }
+        return $this->_orderBy;
+    }
+
+    /**
+     * Set the value of orderBy
+     *
+     * @param STRING the value
+     */
+    function setorderBy($value) {
+    
+        $this->_orderBy = $value;
+        $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
+    }
+  
+    /**
+     * Get the value of orderDirection
+     *
+     * @return STRING the value
+     */
+    function getorderDirection() {
+        if (!isset($this->_orderDirection)) {
+            return null;
+        }
+        return $this->_orderDirection;
+    }
+
+    /**
+     * Set the value of orderDirection
+     *
+     * @param STRING the value
+     */
+    function setorderDirection($value) {
+    
+        $this->_orderDirection = $value;
+        $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
     }
   
     /**

@@ -37,14 +37,6 @@ class Gallery {
      */
 
     /**
-     * The id of the root AlbumItem in the Gallery
-     *
-     * @var string $_rootAlbumItemId
-     * @access private
-     */
-    var $_rootAlbumItemId;
-
-    /**
      * The id of the active user
      *
      * @var int $_activeUserId
@@ -150,7 +142,7 @@ class Gallery {
 	$this->_locks = array();
 
 	/* Set up a shutdown function to release any hanging locks. */
-	register_shutdown_function(array($this, '_releaseHangingLocks'));
+	register_shutdown_function(array(&$this, '_releaseHangingLocks'));
     }
 
     /**
@@ -245,35 +237,6 @@ class Gallery {
 	}
 	
 	return $storage->search($query, $data);
-    }
-
-    /**
-     * Return the id of the root GalleryItem
-     *
-     * The root GalleryItem should be an AlbumItem
-     *
-     * @access public
-     * @return int the id of the root album
-     */
-    function getRootAlbumId() {
-	return $this->_rootAlbumItemId;
-    }
-
-    /**
-     * Set the id of the root GalleryItem
-     *
-     * The root GalleryItem should be an AlbumItem.
-     *
-     * @access public
-     * @param int the id of the GalleryItem
-     */
-    function setRootAlbumId($id) {
-	if (empty($id)) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
-					__FILE__, __LINE__);
-	}
-
-	$this->_rootAlbumItemId = $id;
     }
 
     /**
@@ -500,6 +463,8 @@ class Gallery {
 
 	$lockId = $lock->getId();
 	$this->_locks[$lockId] = $lock;
+
+	$this->FOO = 1;
 	return array(GalleryStatus::success(), $lockId);
     }
 
@@ -665,7 +630,7 @@ class Gallery {
 	set_time_limit($limit);
 	$now = time();
 	$this->_timeLimit = $now + $limit;
-	$this->debug("[$now] Set time limit to " . $this->_timeLimit);
+	// $this->debug("[$now] Set time limit to " . $this->_timeLimit);
     }
 
     /**
@@ -740,6 +705,22 @@ class Gallery {
 	    } else if (!strcmp($this->_debug, 'immediate')) {
 		print "$msg\n";
 	    }
+	}
+    }
+
+    /**
+     * Output a print_r style debug message
+     *
+     * @param mixed any object or value
+     */
+    function debug_r($object) {
+	if (!empty($this->_debug)) {
+	    ob_start();
+	    print_r($object);
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	    
+	    $this->debug($buf);
 	}
     }
 

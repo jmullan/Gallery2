@@ -178,6 +178,34 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
     }
 
     /**
+     * Delete this GalleryFileSystemEntity
+     *
+     * @access public
+     * @return object GalleryStatus a status code
+     */
+    function delete() {
+	global $gallery;
+
+	/*
+	 * The parent must be read or write locked at this point to make sure
+	 * that it's not going to be moved around while we're deleting stuff
+	 * from its children.  Realistically, the entire parent tree must be at
+	 * least read locked but it's not really practical to check the entire
+	 * tree so just check the parent.
+	 */
+	$parentId = $this->getParentId();
+	if (!empty($parentId)) {
+	    if (!$gallery->isReadLocked($parentId) &&
+		!$gallery->isWriteLocked($parentId)) {
+		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
+					    __FILE__, __LINE__);
+	    }
+	}
+
+	return parent::delete();
+    }
+
+    /**
      * Return a path for any objects contained within this one (ie, children)
      *
      * Subclasses should specify their container-ness by overloading

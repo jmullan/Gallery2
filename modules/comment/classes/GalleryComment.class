@@ -20,6 +20,13 @@
 
 
 /**
+ * The user has permission to comment on the item.
+ *
+ * @constant PERMISSION_ADD_COMMENT
+ */
+define('PERMISSION_ADD_COMMENT', 'comment.add');
+
+/**
  * A GalleryEntity for comments.
  *
  * GalleryComments are basically just structured text objects.
@@ -44,46 +51,32 @@ class GalleryComment_core extends GalleryChildEntity {
      */
 
     /**
-     * Name of the commenter
+     * Id of the commenter
      *
      * @g2 <member>
-     * @g2   <member-name>name</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>MEDIUM</member-size>
+     * @g2   <member-name>commenterId</member-name>
+     * @g2   <member-type>INTEGER</member-type>
+     * @g2   <member-size>LARGE</member-size>
      * @g2 </member>
      *
-     * @var $_name
+     * @var $_commenterId
      * @access private
      */
-    var $_name;
+    var $_commenterId;
 
     /**
-     * Email address of the commenter
+     * Commenter's host name or address
      *
      * @g2 <member>
-     * @g2   <member-name>emailAddress</member-name>
+     * @g2   <member-name>host</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
-     * @var $_emailAddress
+     * @var $_host
      * @access private
      */
-    var $_emailAddress;
-
-    /**
-     * Hostname of the commenter
-     *
-     * @g2 <member>
-     * @g2   <member-name>hostname</member-name>
-     * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>MEDIUM</member-size>
-     * @g2 </member>
-     *
-     * @var $_hostname
-     * @access private
-     */
-    var $_hostname;
+    var $_host;
 
     /**
      * Text of the comment
