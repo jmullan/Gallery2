@@ -41,8 +41,13 @@
 	
 	<a href="http://gallery.sourceforge.net"><img style="border: 0px"
 	    src="{g->url href="images/gallery.gif"}"
-	    alt="{g->text text="Powered by Gallery %s" arg1=$main.gallery.version}"
+	    alt="{g->text text="Powered by Gallery 2"}"
 	    height="15"  
+	    width="80"/></a>
+	<a href="{g->url href="modules/core/data/test/cowbell.mp3"}"><img style="border: 0px"
+	    src="{g->url href="images/cowbell.png"}"
+	    alt="{g->text text="Gallery %s (Cowbell)" arg1=$main.gallery.version}"
+	    height="15"
 	    width="80"/></a>
       </div>
     </div>
