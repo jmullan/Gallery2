@@ -156,7 +156,7 @@ class GalleryTemplateAdapter {
      */
     function _getContext(&$params, $smarty) {
 	$context = array();
-	$context['params'] = $params;
+	$context['params'] =& $params;
 	for ($i = sizeof($smarty->_tag_stack)-2; $i >= 0; $i--) {
 	    $context['stack'][] = $smarty->_tag_stack[$i][0];
 	}
@@ -256,6 +256,9 @@ class GalleryTemplateAdapter {
      */
     function style($params, &$smarty) {
         $context = $this->_getContext($params, $smarty);
+
+        /* Verify all attributes */
+
         return $this->_theme->style($context);
     }
 
@@ -626,6 +629,18 @@ class GalleryTemplateAdapter {
      */
     function image($params, &$smarty) {
         $context = $this->_getContext($params, $smarty);
+
+        /* Verify all attributes */
+        if (!isset($params['item'])) {
+            $params['item'] = array();
+        }
+        if (!isset($params['image'])) {
+            $params['image'] = array();
+        }
+        if (!isset($params['fallback'])) {
+            $params['fallback'] = null;
+        }
+
         return $this->_theme->image($context);
     }
 

@@ -503,24 +503,26 @@ class CoreModule extends GalleryModule {
 					    'itemId' => $item->getId()));
 	    }
 
-	    if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit animation'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditAnimation',
-					    'itemId' => $item->getId()));
-	    } else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit movie'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditMovie',
-					    'itemId' => $item->getId()));
-	    } else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('edit image'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditMovie',
-					    'itemId' => $item->getId()));
+	    if (isset($permissions['core.edit'])) {
+		if (GalleryUtilities::isA($item, 'GalleryAnimationItem')) {
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('edit animation'),
+			      'params' => array('view' => 'core:ItemAdmin',
+						'subView' => 'core:ItemEditAnimation',
+						'itemId' => $item->getId()));
+		} else if (GalleryUtilities::isA($item, 'GalleryMovieItem')) {
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('edit movie'),
+			      'params' => array('view' => 'core:ItemAdmin',
+						'subView' => 'core:ItemEditMovie',
+						'itemId' => $item->getId()));
+		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('edit image'),
+			      'params' => array('view' => 'core:ItemAdmin',
+						'subView' => 'core:ItemEditMovie',
+						'itemId' => $item->getId()));
+		}
 	    }
 
 

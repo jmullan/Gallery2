@@ -54,7 +54,7 @@ $tags['link'] = array('children' => 'content');
 $tags['success'] = array('children' => 'content');
 $tags['warning'] = array('children' => 'content');
 $tags['error'] = array('children' => 'content');
-$tags['image'] = array('attributes' => 'item=array(),image=array()');
+$tags['image'] = array('attributes' => 'item=array(),image=array(),fallback=null');
 $tags['listing'] = array('children' => 'item[]');
 $tags['breadcrumb'] = array('children' => 'item[]');
 $tags['linkset'] = array('attributes' => 'style=null', 'children' => 'title,item[]');

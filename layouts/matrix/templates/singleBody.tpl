@@ -100,12 +100,16 @@
 	    {$layout.item.description}
 	  {/g->description}
 	  {g->media}
-	    {if ($layout.can.viewInline.$currentIndex)}
-	      {g->image item=$layout.item image=$image}
-	    {else}
+	    {capture name="fallback"}
 	      {g->link url_view="core:DownloadItem" url_itemId=$image.id}
 		{g->text text="Download this item"} 
 	      {/g->link}
+	    {/capture}
+
+	    {if ($layout.can.viewInline.$currentIndex)}
+	      {g->image item=$layout.item image=$image fallback=$smarty.capture.fallback}
+	    {else}
+	      {$smarty.capture.fallback}
 	    {/if}
 	  {/g->media}
 	{/g->itemview}
@@ -117,31 +121,33 @@
 	{/foreach}
       {/if}
 
-      {g->box}
-	{assign var="id" value=$layout.item.id}
-	{g->actionset}
-	  {g->actionitem}
-	    {g->title}
-	      {g->text text="&laquo; actions &raquo;"}
-	    {/g->title}
-	    {g->value}
-	      &nbsp;
-	    {/g->value}
-	  {/g->actionitem}
-
-	  {foreach from=$layout.moduleItemLinks.$id item=link}
+      {assign var="id" value=$layout.item.id}
+      {if !empty($layout.moduleItemLinks.$id)}
+	{g->box}
+	  {g->actionset}
 	    {g->actionitem}
 	      {g->title}
-		{$link.text}
+		{g->text text="&laquo; actions &raquo;"}
 	      {/g->title}
-	      
 	      {g->value}
-		{$link.url}
+		&nbsp;
 	      {/g->value}
 	    {/g->actionitem}
-	  {/foreach}
-	{/g->actionset}
-      {/g->box}
+
+	    {foreach from=$layout.moduleItemLinks.$id item=link}
+	      {g->actionitem}
+		{g->title}
+		  {$link.text}
+		{/g->title}
+		
+		{g->value}
+		  {$link.url}
+		{/g->value}
+	      {/g->actionitem}
+	    {/foreach}
+	  {/g->actionset}
+	{/g->box}
+      {/if}
 
       {g->banner}
 	{include file="layouts/matrix/templates/itemNavigator.tpl"}

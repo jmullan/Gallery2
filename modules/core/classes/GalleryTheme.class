@@ -596,17 +596,21 @@ class GalleryTheme {
 	}
 
 	if ($entity->getId() == $item->getId()) {
-	    $html = $item->render('HTML', array('class' => $class, 'maxSize' => $maxSize));
+	    $html = $item->render('HTML', array('class' => $class,
+						'maxSize' => $maxSize,
+						'fallback' => $params['fallback']));
 	} else {
 	    $html = $entity->render('HTML', $item, 
-				    array('class' => $class, 'maxSize' => $maxSize));
+				    array('class' => $class,
+					  'maxSize' => $maxSize,
+					  'fallback' => $params['fallback']));
 	}
 	if (empty($html)) {
 	    /*
 	     * XXX: We should let the {g->image} tag provide some kind of fallback in case the image can't
 	     * be rendered.
 	     */
-	    return '[Render error: Unable to render]';
+	    return $params['fallback'];
 	}
 
 	return $html;

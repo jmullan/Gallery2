@@ -24,6 +24,14 @@
 {if (isset($contracted_tag.$tagName))}
     function {$tagName}($params, &$smarty) {ldelim}
         $context = $this->_getContext($params, $smarty);
+
+        /* Verify all attributes */
+{foreach from=$tagInfo.attributes key=attributeName item=attributeDefaultValue}
+        if (!isset($params['{$attributeName}'])) {ldelim}
+            $params['{$attributeName}'] = {$attributeDefaultValue};
+        {rdelim}
+{/foreach}
+
         return $this->_theme->{$tagName}($context);
     {rdelim}
 {else}

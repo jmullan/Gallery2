@@ -191,6 +191,8 @@ class GalleryAnimationItem_core extends GalleryDataItem {
     function render($format, $params) {
 	global $gallery;
 	
+	$fallback = trim($params['fallback']);
+	
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator = $gallery->getUrlGenerator();
@@ -201,70 +203,100 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 	    switch($this->getMimeType()) {
 	    case 'application/x-shockwave-flash':
-		return sprintf('<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" 
-                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"
-                                  %s
-                                  width="%d"
-                                  height="%d">
-                                  <param name="movie" value="%s" />
-                                  <param name="quality" value="high" />
-                                  <param name="salign" value="TL" />
-                                  <embed src="%s"
-                            	         quality="high"
-                            	         pluginspage="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"
-                            	         type="%s"
-                            	         width="%d"
-                            	         height="%d"
-                            	         salign="TL">
-                                  </embed>
-                                </object>',
+		return sprintf('<script type="text/javascript" language="javascript">
+                                  if (window.ActiveXObject) {
+                                      document.write(\'<object id="animation"\');
+                                      document.write(\'        %s\');
+                                      document.write(\'        width="%s"\');
+                                      document.write(\'        height="%s"\');
+                                      document.write(\'        autoplay="true"\');
+                                      document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
+                                      document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"\');
+                                      document.write(\'        classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">\');
+                                      document.write(\'  <param name="movie" value="%s" />\');
+                                      document.write(\'  <param name="quality" value="high" />\');
+                                      document.write(\'  <param name="salign" value="TL" />\');
+                                      document.write(\'  <param name="swliveconnect" value="true" />\');
+                                      document.write(\'  %s\');
+                                      document.write(\'</object>\');
+                                  } else {
+                                      document.write(\'<object id="movie"\');
+                                      document.write(\'        %s\');
+                                      document.write(\'        type="%s"\');
+                                      document.write(\'        data="%s"\');
+                                      document.write(\'        width="%s"\');
+                                      document.write(\'        height="%s">\');
+                                      document.write(\'  <param name="movie" value="%s" />\');
+                                      document.write(\'  <param name="quality" value="high" />\');
+                                      document.write(\'  <param name="salign" value="TL" />\');
+                                      document.write(\'  <param name="swliveconnect" value="true" />\');
+                                      document.write(\'  %s\');
+                                      document.write(\'</object>\');
+                                  }
+                                  </script>',
+
+			       // IE Object
 			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $width,
 			       $height,
 			       $src,
-			       $src,
+			       $fallback,
+
+			       // Mozilla Object
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $this->getMimeType(),
+			       $src,
 			       $width,
-			       $height);
+			       $height,
+			       $src,
+			       $fallback);
 
 	    case 'application/x-director':
-		return sprintf('<object classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000" 
-                                        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"
-                                        %s
-                                        width="%d"
-                                        height="%d"
-                                        name="%s"
-                                        id="sw">
-                                  <param name="src" value="%s" />
-                                  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />
-                                  <param name="sw3" value="2" />
-                                  <param name="swStretchStyle" value="none" />
-                                  <param name="bgColor" value="#000000" />
-                                  <embed src="%s" 
-                                         bgcolor="#000000"
-                                         width="%d"
-                                         height="%d" 
-                            	         swremote="swSaveEnabled=\'false\' 
-                            	                   swVolume=\'false\' 
-                            	                   swRestart=\'false\' 
-                            	                   swPausePlay=\'false\' 
-                            	                   swFastForward=\'false\' 
-                            	                   swContextMenu=\'true\'" 
-                            	         swstretchstyle="none" 
-                            	         sw3="2" 
-                            	         type="%s" 
-                            	         pluginspage="http://www.macromedia.com/shockwave/download/">
-                                  </embed>
-                                </object>',
+		return sprintf('<script type="text/javascript" language="javascript">
+                                  if (window.ActiveXObject) {
+                                      document.write(\'<object id="animation"\');
+                                      document.write(\'        %s\');
+                                      document.write(\'        width="%s"\');
+                                      document.write(\'        height="%s"\');
+                                      document.write(\'        autoplay="true"\');
+                                      document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
+                                      document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"\');
+                                      document.write(\'        classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000">\');
+
+                                      document.write(\'  <param name="src" value="%s" />\');
+                                      document.write(\'  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />\');
+                                      document.write(\'  <param name="sw3" value="2" />\');
+                                      document.write(\'  <param name="swStretchStyle" value="none" />\');
+                                      document.write(\'  <param name="bgColor" value="#000000" />\');
+                                      document.write(\'  %s\');
+                                      document.write(\'</object>\');
+                                  } else {
+                                      document.write(\'<object id="movie"\');
+                                      document.write(\'        %s\');
+                                      document.write(\'        type="%s"\');
+                                      document.write(\'        data="%s"\');
+                                      document.write(\'        width="%s"\');
+                                      document.write(\'        height="%s">\');
+                                      document.write(\'  %s\');
+                                      document.write(\'</object>\');
+                                  }
+                                  </script>',
+
+			       // IE Object
 			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
 			       $width,
 			       $height,
-			       $this->getPathComponent(),
 			       $src,
+			       $fallback,
+
+			       // Mozilla Object
+			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
+			       $this->getMimeType(),
 			       $src,
 			       $width,
 			       $height,
-			       $this->getMimeType());
+			       $src,
+			       $fallback);
 	    default:
 		return sprintf('[Render for %s not implemented  yet]', $this->getMimeType());
 		
