@@ -107,7 +107,7 @@ class GalleryPermissionHelper_simple {
 	     */
 
 	    $translator =& $gallery->getTranslator();
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    while ($result = $searchResults->nextResult()) {
 		$bits = $storage->convertBitsToInt($result[3]);
 

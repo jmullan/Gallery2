@@ -174,7 +174,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	global $gallery;
 
 	/* Create a new instance of this entity in the persistent store */
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$ret = $storage->newEntity($this);
 	if ($ret->isError()) {
@@ -209,7 +209,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	}
 
 	/* Follow our usual creation process (same as create() above) */
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	$ret = $storage->newEntity($this);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -262,7 +262,7 @@ class GalleryEntity_core extends GalleryPersistent {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 
 	    $ret = $storage->saveEntity($this);
 	    if ($ret->isError()) {
@@ -300,7 +300,7 @@ class GalleryEntity_core extends GalleryPersistent {
 			 null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $freshEntity) = $storage->refreshEntity($this);
 	if ($ret->isError()) {
@@ -338,7 +338,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	GalleryLockHelper_medium::deleteLockFile($this->getId());
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	return $storage->deleteEntity($this);
     }
 

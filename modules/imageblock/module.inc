@@ -72,7 +72,7 @@ class ImageBlockModule extends GalleryModule {
 	    }
 
 	    /* The store requires configuration. */
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore('imageblock');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);

@@ -114,7 +114,7 @@ class GallerySession extends GallerySession_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GallerySession', $data);
         if ($ret->isError()) {
@@ -138,7 +138,7 @@ class GallerySession extends GallerySession_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GallerySession', $data);
         if ($ret->isError()) {
@@ -163,7 +163,7 @@ class GallerySession extends GallerySession_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GallerySession', $match, $change);
         if ($ret->isError()) {

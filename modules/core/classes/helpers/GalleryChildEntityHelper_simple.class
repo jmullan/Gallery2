@@ -60,7 +60,7 @@ class GalleryChildEntityHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', '[GalleryItem]', '[GalleryPermissionMap]');
@@ -169,7 +169,7 @@ class GalleryChildEntityHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', '[GalleryDataItem]', '[GalleryPermissionMap]');
@@ -278,7 +278,7 @@ class GalleryChildEntityHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	/* List of classes that we will need */
 	$classes = array('[GalleryChildEntity]', '[GalleryItem]');

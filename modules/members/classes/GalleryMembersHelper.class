@@ -100,7 +100,7 @@ class GalleryMembersHelper {
           [GalleryEntity::creationTimestamp] ' . $direction . '
         ';
           
-        $storage = $gallery->getStorage();
+        $storage =& $gallery->getStorage();
         $data[] = $userId;
         $data[] = $gallery->getActiveUserId();
 	array_splice($data, sizeof($data), 0, $groupIds);

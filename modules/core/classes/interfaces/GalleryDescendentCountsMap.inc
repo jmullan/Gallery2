@@ -96,7 +96,7 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryDescendentCountsMap', $data);
         if ($ret->isError()) {
@@ -120,7 +120,7 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryDescendentCountsMap', $data);
         if ($ret->isError()) {
@@ -145,7 +145,7 @@ class GalleryDescendentCountsMap extends GalleryDescendentCountsMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryDescendentCountsMap', $match, $change);
         if ($ret->isError()) {

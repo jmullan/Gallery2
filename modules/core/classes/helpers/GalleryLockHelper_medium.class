@@ -83,7 +83,7 @@ class GalleryLockHelper_medium {
 	 * parent's parent sequence and then tack on the parent id.
 	 */
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	/* Get the parent entity id */
 	$query = '

@@ -191,7 +191,7 @@ class Gallery {
      * @see GalleryStorage::search()
      */
     function search($query, $data=array(), $options=array()) {
-	$storage = $this->getStorage();
+	$storage =& $this->getStorage();
 	list ($ret, $results) = $storage->search($query, $data, $options);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -364,7 +364,7 @@ class Gallery {
 	GalleryCoreApi::releaseAllLocks(false);
 
 	/* Roll back any transactions */
-	$this->rollbackTransaction();
+	$this->_storage->rollbackTransaction();
     }
 
     /**
@@ -401,64 +401,10 @@ class Gallery {
      * @access public
      * @return object GalleryStorage a storage instance
      */
-    function getStorage() {
+    function &getStorage() {
 	return $this->_storage;
     }
     
-    /**
-     * Begin a new transaction, if the storage layer supports them.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function beginTransaction() {
-	if ($this->_storage == null) {
-	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
-	}
-	
-	$ret = $this->_storage->beginTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Commit our transaction, if the storage layer supports them.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function commitTransaction() {
-	if ($this->_storage == null) {
-	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
-	}
-
-	$ret = $this->_storage->commitTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Roll back our transaction, if the storage layer supports transactions.
-     *
-     * @return object GalleryStatus a status code
-     */
-    function rollbackTransaction() {
-	if ($this->_storage == null) {
-	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
-	}
-
-	$ret = $this->_storage->rollbackTransaction();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
     /**
      * Set the URL generator
      *
@@ -693,26 +639,6 @@ class Gallery {
 	    
 	    $this->debug($buf);
 	}
-    }
-
-    /**
-     * Get the string representation(s) of an error.
-     *
-     * An error is a set of bitflags, so we return an array of strings.
-     * @param int the error code
-     * @return array string names of the errors
-     */
-    function getErrorAsStrings($errorCode) {
-	$codes = array();
-	foreach (get_defined_constants() as $constantName => $constantValue) {
-	    if (strpos($constantName, 'ERROR_') === 0) {
-		if ($errorCode & $constantValue) {
-		    $codes[] = $constantName;
-		}
-	    }
-	}
-
-	return $codes;
     }
 
     /**

@@ -96,7 +96,7 @@ class GalleryToolkitPropertyMimeTypeMap extends GalleryToolkitPropertyMimeTypeMa
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryToolkitPropertyMimeTypeMap', $data);
         if ($ret->isError()) {
@@ -120,7 +120,7 @@ class GalleryToolkitPropertyMimeTypeMap extends GalleryToolkitPropertyMimeTypeMa
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryToolkitPropertyMimeTypeMap', $data);
         if ($ret->isError()) {
@@ -145,7 +145,7 @@ class GalleryToolkitPropertyMimeTypeMap extends GalleryToolkitPropertyMimeTypeMa
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryToolkitPropertyMimeTypeMap', $match, $change);
         if ($ret->isError()) {

@@ -70,8 +70,16 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 			    $results,
 			    'Failed to create user');
 
-	/* Clean up */
-	$this->_deleteUser($user);
+	/* Verify the user is gone */
+	list ($ret, $user) = $user->refresh();
+	if ($ret->isError() && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    // This is correct -- we expect it to be gone
+	} else {
+	    $this->assert(false, 'The user was not actually deleted');
+	      
+	    /* Clean up */
+	    $this->_deleteUser($user);
+	}
     }
 
     /**

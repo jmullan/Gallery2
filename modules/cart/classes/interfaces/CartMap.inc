@@ -90,7 +90,7 @@ class CartMap extends CartMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('CartMap', $data);
         if ($ret->isError()) {
@@ -114,7 +114,7 @@ class CartMap extends CartMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('CartMap', $data);
         if ($ret->isError()) {
@@ -139,7 +139,7 @@ class CartMap extends CartMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('CartMap', $match, $change);
         if ($ret->isError()) {

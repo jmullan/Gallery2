@@ -102,7 +102,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryDerivativePreferencesMap', $data);
         if ($ret->isError()) {
@@ -126,7 +126,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryDerivativePreferencesMap', $data);
         if ($ret->isError()) {
@@ -151,7 +151,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryDerivativePreferencesMap', $match, $change);
         if ($ret->isError()) {

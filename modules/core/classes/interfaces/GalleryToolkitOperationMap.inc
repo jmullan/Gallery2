@@ -102,7 +102,7 @@ class GalleryToolkitOperationMap extends GalleryToolkitOperationMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryToolkitOperationMap', $data);
         if ($ret->isError()) {
@@ -126,7 +126,7 @@ class GalleryToolkitOperationMap extends GalleryToolkitOperationMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryToolkitOperationMap', $data);
         if ($ret->isError()) {
@@ -151,7 +151,7 @@ class GalleryToolkitOperationMap extends GalleryToolkitOperationMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryToolkitOperationMap', $match, $change);
         if ($ret->isError()) {

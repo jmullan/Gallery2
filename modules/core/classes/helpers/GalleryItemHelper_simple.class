@@ -95,7 +95,7 @@ class GalleryItemHelper_simple {
 			 null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
@@ -174,7 +174,7 @@ class GalleryItemHelper_simple {
            AND
            [GalleryDescendentCountsMap::itemId] IN (%s)
         ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$data = array();
 	$data[] = $activeUserId;
@@ -247,7 +247,7 @@ class GalleryItemHelper_simple {
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers(sizeof($groupIds));
 	
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
 
 	list ($ret, $concat) =
@@ -338,7 +338,7 @@ class GalleryItemHelper_simple {
 	    $groupIds = array_keys($groupIds);
 	    $groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
 	
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    $query = '
             SELECT
               COUNT(DISTINCT([GalleryItem::id]))

@@ -52,7 +52,7 @@ class CartHelper {
 	global $gallery;
 
 	$session =& $gallery->getSession();
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	
 	$query = '
         SELECT

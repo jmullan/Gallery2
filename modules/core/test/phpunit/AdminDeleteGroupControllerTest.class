@@ -67,10 +67,18 @@ class AdminDeleteGroupControllerTest extends GalleryControllerTestCase {
 				  'status' => array('deletedGroup' => $group->getGroupName()),
 				  'error' => array()),
 			    $results,
-			    'Failed to create user');
-	
-	/* Clean up */
-	$this->_deleteGroup($group);
+			    'Failed to delete group');
+
+	/* Verify the group is gone */
+	list ($ret, $group) = $group->refresh();
+	if ($ret->isError() && $ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    // This is correct -- we expect it to be gone
+	} else {
+	    $this->assert(false, 'The group was not actually deleted');
+	      
+	    /* Clean up */
+	    $this->_deleteGroup($group);
+	}
     }
 
     /**

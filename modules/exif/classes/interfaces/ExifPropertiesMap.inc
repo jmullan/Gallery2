@@ -96,7 +96,7 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('ExifPropertiesMap', $data);
         if ($ret->isError()) {
@@ -120,7 +120,7 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('ExifPropertiesMap', $data);
         if ($ret->isError()) {
@@ -145,7 +145,7 @@ class ExifPropertiesMap extends ExifPropertiesMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('ExifPropertiesMap', $match, $change);
         if ($ret->isError()) {

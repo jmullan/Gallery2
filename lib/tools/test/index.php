@@ -33,7 +33,8 @@ function main() {
     }
 
     global $gallery;
-    $ret = $gallery->beginTransaction();
+    $storage =& $gallery->getStorage();
+    $ret = $storage->beginTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -49,11 +50,11 @@ function main() {
 
     $ret = GalleryTestHarness();
     if ($ret->isError()) {
-	$gallery->rollbackTransaction();
+	$storage->rollbackTransaction();
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    $ret = $gallery->commitTransaction();
+    $ret = $storage->commitTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

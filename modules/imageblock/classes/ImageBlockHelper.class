@@ -60,7 +60,7 @@ class ImageBlockHelper {
      */
     function fetchViewableData($itemType, $order) {
 	global $gallery;
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	$typeMap = array('GalleryPhotoItem' => 1, 'GalleryAlbumItem' => 2);
 
 	/* Prepare the query */
@@ -133,7 +133,7 @@ class ImageBlockHelper {
      */
     function cacheViewableTree() {
 	global $gallery;
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
@@ -211,7 +211,7 @@ class ImageBlockHelper {
 		}
 	    } else {
 		global $gallery;
-		$storage = $gallery->getStorage();
+		$storage =& $gallery->getStorage();
 		$ret = $storage->execute('DELETE FROM [ImageBlockCacheMap]', array());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);

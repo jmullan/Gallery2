@@ -102,7 +102,7 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryToolkitOperationParameterMap', $data);
         if ($ret->isError()) {
@@ -126,7 +126,7 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryToolkitOperationParameterMap', $data);
         if ($ret->isError()) {
@@ -151,7 +151,7 @@ class GalleryToolkitOperationParameterMap extends GalleryToolkitOperationParamet
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryToolkitOperationParameterMap', $match, $change);
         if ($ret->isError()) {

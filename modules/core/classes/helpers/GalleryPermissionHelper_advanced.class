@@ -381,7 +381,7 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
@@ -440,7 +440,7 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
@@ -480,7 +480,7 @@ class GalleryPermissionHelper_advanced {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$data = array();
 	require_once(dirname(__FILE__) . '/../GalleryPermissionMap.class');
@@ -533,7 +533,7 @@ class GalleryPermissionHelper_advanced {
 	    }
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	
 	$query = '
 	SELECT

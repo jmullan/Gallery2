@@ -145,7 +145,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
         }
     </xsl:for-each>
 
-	$storage = $gallery->getStorage();
+	$storage =&amp; $gallery->getStorage();
 
         $ret = $storage->addMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
         if ($ret->isError()) {
@@ -169,7 +169,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =&amp; $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('<xsl:value-of select="/class/class-name"/>', $data);
         if ($ret->isError()) {
@@ -194,7 +194,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =&amp; $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('<xsl:value-of select="/class/class-name"/>', $match, $change);
         if ($ret->isError()) {

@@ -39,7 +39,8 @@ class InitializeGalleryTestCase extends TestCase {
 	}
 
 	/* Commit any outstanding transactions */
-	$ret = $gallery->commitTransaction();
+	$storage =& $gallery->getStorage();
+	$ret = $storage->commitTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -67,7 +68,8 @@ class InitializeGalleryTestCase extends TestCase {
 	}
 
 	/* Start a new transaction */
-	$ret = $gallery->beginTransaction();
+	$storage =& $gallery->getStorage();
+	$ret = $storage->beginTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -38,7 +38,8 @@ if ($ret->isSuccess()) {
 
 /* Complete our transaction */
 if ($ret->isSuccess()) {
-    $ret = $gallery->commitTransaction();
+    $storage =& $gallery->getStorage();
+    $ret = $storage->commitTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -59,6 +60,7 @@ if ($ret->isError()) {
     }
 
     /* Nuke our transaction, too */
+    $storage =& $gallery->getStorage();
     $gallery->rollbackTransaction();
     return;
 }
@@ -80,7 +82,7 @@ function GalleryMain() {
      * @global Gallery $gallery
      */
     $gallery =& $GLOBALS['gallery'];
-
+    
     /* Init our storage */
     $ret = GalleryInitStorage();
     if ($ret->isError()) {
@@ -88,7 +90,8 @@ function GalleryMain() {
     }
 
     /* Start our transaction */
-    $ret = $gallery->beginTransaction();
+    $storage =& $gallery->getStorage();
+    $ret = $storage->beginTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }

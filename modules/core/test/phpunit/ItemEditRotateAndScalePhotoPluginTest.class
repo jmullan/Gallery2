@@ -106,7 +106,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	list ($ret, $this->_derivative[1]) =
-	    $this->_createDerivative($this->_derivative[0], $this->_derivative[0]->getId(),
+	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -114,7 +114,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	list ($ret, $this->_derivative[2]) =
-	    $this->_createDerivative($this->_derivative[0], $this->_derivative[0]->getId(),
+	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();

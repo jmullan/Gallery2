@@ -102,7 +102,7 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryToolkitOperationMimeTypeMap', $data);
         if ($ret->isError()) {
@@ -126,7 +126,7 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryToolkitOperationMimeTypeMap', $data);
         if ($ret->isError()) {
@@ -151,7 +151,7 @@ class GalleryToolkitOperationMimeTypeMap extends GalleryToolkitOperationMimeType
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryToolkitOperationMimeTypeMap', $match, $change);
         if ($ret->isError()) {

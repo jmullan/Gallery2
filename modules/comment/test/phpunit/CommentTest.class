@@ -81,12 +81,12 @@ class CommentTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	parent::tearDown();
-
 	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	parent::tearDown();
     }
 
     function testFetchComments() {

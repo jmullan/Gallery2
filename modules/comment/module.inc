@@ -85,7 +85,7 @@ class CommentModule extends GalleryModule {
 	if ($version != $this->getVersion()) {
 
 	    /* The store requires configuration. */
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore('comment');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);

@@ -24,7 +24,8 @@ function GalleryMain(&$testSuite, $filter) {
     }
 
     global $gallery;
-    $ret = $gallery->beginTransaction();
+    $storage =& $gallery->getStorage();
+    $ret = $storage->beginTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -50,7 +51,7 @@ function GalleryMain(&$testSuite, $filter) {
      * Commit our transaction here because we're going to have a new
      * transaction for every test.
      */
-    $ret = $gallery->commitTransaction();
+    $ret = $storage->commitTransaction();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
@@ -113,6 +114,10 @@ function GalleryMain(&$testSuite, $filter) {
 	    $testSuite->addTest($suiteArray[$className]);
 	}
     }
+
+    $counter =& GalleryTestCase::getEntityCounter();
+    GalleryCoreApi::registerEventListener('GalleryEntity::save', $counter);
+    GalleryCoreApi::registerEventListener('GalleryEntity::delete', $counter);
 
     return GalleryStatus::success();
 }

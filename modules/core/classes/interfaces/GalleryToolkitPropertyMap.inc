@@ -96,7 +96,7 @@ class GalleryToolkitPropertyMap extends GalleryToolkitPropertyMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryToolkitPropertyMap', $data);
         if ($ret->isError()) {
@@ -120,7 +120,7 @@ class GalleryToolkitPropertyMap extends GalleryToolkitPropertyMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryToolkitPropertyMap', $data);
         if ($ret->isError()) {
@@ -145,7 +145,7 @@ class GalleryToolkitPropertyMap extends GalleryToolkitPropertyMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryToolkitPropertyMap', $match, $change);
         if ($ret->isError()) {

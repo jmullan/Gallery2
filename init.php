@@ -69,7 +69,7 @@ function GalleryInitFirstPass() {
     
     /* Load our local configuration */
     include(dirname(__FILE__) . $slash . 'config.php');
-
+    
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
     if ($dataBase{strlen($dataBase)-1} != $slash) {

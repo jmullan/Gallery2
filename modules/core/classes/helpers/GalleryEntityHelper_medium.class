@@ -148,7 +148,7 @@ class GalleryEntityHelper_medium {
         ORDER BY
           [GalleryEntity::id] ASC
         ';
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

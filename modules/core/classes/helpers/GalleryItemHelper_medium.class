@@ -55,7 +55,7 @@ class GalleryItemHelper_medium {
 			 null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -128,7 +128,7 @@ class GalleryItemHelper_medium {
 			 null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -206,7 +206,7 @@ class GalleryItemHelper_medium {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
 	if ($ret->isError()) {

@@ -102,7 +102,7 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('ImageBlockCacheMap', $data);
         if ($ret->isError()) {
@@ -126,7 +126,7 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('ImageBlockCacheMap', $data);
         if ($ret->isError()) {
@@ -151,7 +151,7 @@ class ImageBlockCacheMap extends ImageBlockCacheMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('ImageBlockCacheMap', $match, $change);
         if ($ret->isError()) {

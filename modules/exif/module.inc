@@ -75,7 +75,7 @@ class ExifModule extends GalleryModule {
 	$installed = false;
 	if ($version != $this->getVersion()) {
 	    /* The store requires configuration. */
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    $ret = $storage->configureStore('exif');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), false);

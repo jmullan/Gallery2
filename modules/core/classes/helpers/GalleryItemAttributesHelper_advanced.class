@@ -287,7 +287,7 @@ class GalleryItemAttributesHelper_advanced {
 	$oldParentSequence = join('/', $oldParentSequence) . '/';
 	$newParentSequence = join('/', $newParentSequence) . '/';
 	
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 	list ($ret, $newSequenceSql) = $storage->getFunctionSql('CONCAT',
             array('?',
 		  sprintf('SUBSTRING([GalleryItemAttributesMap::parentSequence], %d)',

@@ -146,7 +146,7 @@ class GalleryCoreSearch extends GallerySearchInterface_1_0 {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
 	$data = $whereData;
 	$data[] = $gallery->getActiveUserId();

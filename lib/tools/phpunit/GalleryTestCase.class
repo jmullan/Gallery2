@@ -26,6 +26,42 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+class EntityCounterEventListener {
+
+    function EntityCounterEventListener() {
+	$this->_count = 0;
+    }
+    
+    function handleEvent($event) {
+	switch ($event->getEventName()) {
+	case 'GalleryEntity::delete':
+	    $entity = $event->getEntity();
+	    //printf("<pre>Delete: %s (%s)</pre>", $entity->getId(), get_class($entity));
+	    $this->_count--;
+	    break;
+	    
+	case 'GalleryEntity::save':
+	    $entity = $event->getEntity();
+	    if ($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+		//printf("<pre>Create: %s (%s)</pre>", $entity->getId(), get_class($entity));
+		$this->_count++;
+	    }
+	    break;
+	}
+
+	//printf("<pre>Count: %s</pre>", print_r($this->_count, 1));
+	return GalleryStatus::success();
+    }
+
+    function setCount($count) {
+	$this->_count = $count;
+    }
+
+    function getCount() {
+	return $this->_count;
+    }
+}
+
 /**
  * Gallery specific version of PHPUnit's TestCase class.  
  * @package Gallery
@@ -35,6 +71,15 @@ class GalleryTestCase extends TestCase {
 
     function GalleryTestCase($methodName) {
 	$this->TestCase($methodName);
+    }
+
+    function &getEntityCounter() {
+	static $_counter;
+	if (!isset($_counter)) {
+	    $_counter = new EntityCounterEventListener();
+	}
+
+	return $_counter;
     }
 
     function failWithStatus($ret) {
@@ -47,6 +92,9 @@ class GalleryTestCase extends TestCase {
     function setUp() {
 	global $gallery;
 
+	$counter =& GalleryTestCase::getEntityCounter();
+	$counter->setCount(0);
+	
 	parent::setUp();
 
 	/* Clear out any request vars, but preserve the session id */
@@ -69,8 +117,9 @@ class GalleryTestCase extends TestCase {
 
 	/* Start with a clean slate*/
 	$gallery->reset();
-	
-	$ret = $gallery->beginTransaction();
+
+	$storage =& $gallery->getStorage();
+	$ret = $storage->beginTransaction();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -95,8 +144,9 @@ class GalleryTestCase extends TestCase {
 	    GalleryCoreApi::releaseAllLocks(false);
 	    $this->assert(0, 'There are unreleased locks!');
 	}
-	
-	$ret = $gallery->commitTransaction();
+
+	$storage = $gallery->getStorage();
+	$ret =& $storage->commitTransaction();
 	if ($ret->isError()) {
 	    $ret = $ret->wrap(__FILE__, __LINE__);
 	    $this->fail($ret->getAsText());
@@ -107,8 +157,14 @@ class GalleryTestCase extends TestCase {
 
 	/* Restore user id */
 	$gallery->setActiveUser($this->_saveUser);
-	
+
 	parent::tearDown();
+	
+	$counter =& GalleryTestCase::getEntityCounter();
+	$this->assert($counter->getCount() == 0,
+		      sprintf('%d entities were created and not deleted <br/>' .
+			      '(did you put parent::tearDown() at the <i>end</i> of your tearDown() method?',
+			      $counter->getCount()));
     }
 
     function _getRootId() {

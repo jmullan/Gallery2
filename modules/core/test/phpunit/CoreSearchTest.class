@@ -128,14 +128,14 @@ class CoreSearchTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	parent::tearDown();
-
 	if (!empty($this->_parentAlbum)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+	
+	parent::tearDown();
     }
 
     function testFetchSearchModuleInfo() {

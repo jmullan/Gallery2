@@ -71,7 +71,7 @@ class GalleryEntityHelper_simple {
 
 	if (!empty($missing)) {
 	    /* Get our storage object */
-	    $storage = $gallery->getStorage();
+	    $storage =& $gallery->getStorage();
 	    
 	    /* Load the entities from our persistent store */
 	    list ($ret, $missing) = $storage->loadEntities($missing);

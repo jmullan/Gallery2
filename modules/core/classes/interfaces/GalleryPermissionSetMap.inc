@@ -108,7 +108,7 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
         }
     
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->addMapEntry('GalleryPermissionSetMap', $data);
         if ($ret->isError()) {
@@ -132,7 +132,7 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->removeMapEntry('GalleryPermissionSetMap', $data);
         if ($ret->isError()) {
@@ -157,7 +157,7 @@ class GalleryPermissionSetMap extends GalleryPermissionSetMap_core {
             return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
         }
 
-	$storage = $gallery->getStorage();
+	$storage =& $gallery->getStorage();
 
         $ret = $storage->updateMapEntry('GalleryPermissionSetMap', $match, $change);
         if ($ret->isError()) {

@@ -166,8 +166,6 @@ class CommentSearchTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	parent::tearDown();
-
 	if (!empty($this->_item)) {
 	    foreach ($this->_item as $item) {
 		$ret = GalleryCoreApi::deleteEntityById($item->getId());
@@ -176,6 +174,8 @@ class CommentSearchTest extends GalleryTestCase {
 		}
 	    }
 	}
+	
+	parent::tearDown();
     }
 
     function testFetchSearchModuleInfo() {
