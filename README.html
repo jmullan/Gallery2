@@ -459,7 +459,7 @@
     </p>
 
     <h2><a name="known_issues">Known Issues / Bugs</a></h2>
-    <ul>
+    <ol>
       <li>
 	<b>Upgrade Path</b> - There&rsquo;s no upgrade path from this
 	version of G2 Alpha to future versions.  You&rsquo;ll have to throw
@@ -468,17 +468,26 @@
 	closer to beta.
       </li>
       <li>
-	<b>G1 -> G2 Migration</b> - You can migrate your albums from
-	G1 to G2 (it doesn&rsquo;t affect your G1 install at all).  It will
-	migrate your permissions and comments, but it doesn&rsquo;t maintain
-	the order of photos, yet.  We also know that it seems to abort
-	after 5 minutes so if you do a large import and it suddenly
-	stops without giving you any feedback, you might want to
-	import in small chunks of albums for now.  If your G1 uses a
-	character set besides UTF-8, any non-ASCII characters in your
-	captions, description, and comments will probably be displayed
-	incorrectly.  Converting them to UTF-8 (and then HTML entities)
-	is one of the high-priority post-alpha tasks.
+	<b>G1 -> G2 Migration</b> - 
+	<ul>
+	  <li>
+	    Migration does not preserve album order currently.  Your
+	    albums may show up in a seemingly random order.
+	  </li>
+	  <li> 
+	    Migration seems to abort after 5 minutes so if you do a
+	    large import and it suddenly stops without giving you any
+	    feedback, you might want to import in small chunks of
+	    albums for now.
+	  </li>
+	  <li>
+	    If your G1 uses a character set besides UTF-8, any
+	    non-ASCII characters in your captions, description, and
+	    comments will probably be displayed incorrectly.
+	    Converting them to UTF-8 (and then HTML entities) is one
+	    of the high-priority post-alpha tasks.
+	  </li>
+	</ul>
       </li>
       <li>
 	<b>Performance</b> - G2 is not as fast as we want it to be.
@@ -490,7 +499,7 @@
 	<b> MembersList shows email addresses to everybody </b> - this is a known
         issue that we will fix in an upcoming release.
       </li>
-    </ul>
+    </ol>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
     <p>
