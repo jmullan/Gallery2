@@ -17,7 +17,7 @@ A:hover.nav {font-family: helvetica, arial, geneva, sans-serif; color: #FF0000}
 </style>
 </head>
 <?php
-require('init.php');
+require('../../init.php');
 require('TestCase.class');
 
 $testDir = 'TestCase';
