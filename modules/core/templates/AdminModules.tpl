@@ -36,6 +36,19 @@
     </p>
 
     <table class="gbDataTable">
+      {assign var="group" value=""}
+      {foreach from=$AdminModules.modules item=module}
+      {if $group != $module.group}
+      {if !empty($group)}
+      <tr>
+       <td> &nbsp; </td>
+      </tr>
+      {/if}
+      <tr>
+        <th colspan="6">
+          <h2>{$module.groupLabel}</h2>
+        </th>
+      </tr>
       <tr>
 	<th> &nbsp; </th>
 	<th> {g->text text="Module Name"} </th>
@@ -44,10 +57,8 @@
 	<th> {g->text text="Description"} </th>
 	<th> {g->text text="Actions"} </th>
       </tr>
+      {/if}
 
-      {assign var="group" value=""}
-      {foreach from=$AdminModules.modules item=module}
-      {if $group!=$module.group}<tr><td colspan="4"><h3>{$module.groupLabel}</h3></td></tr>{/if}
       {assign var="group" value=$module.group}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
@@ -80,8 +91,11 @@
 
 	<td>
 	  {if (!empty($module.action))}
-	  {foreach from=$module.action item=action}
+	  {foreach name=actions from=$module.action item=action}
           {strip}
+	  {if !$smarty.foreach.actions.first}
+	  <br/>
+          {/if}
 	  {if (empty($action.controller)) }
 	  <a href="{g->url arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$action.view`"}">
 	    {$action.text}
