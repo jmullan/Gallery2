@@ -388,7 +388,7 @@ class SessionTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
- 	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
+	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
 
 	    /* Vary only the IP, it should still work */
 	    $_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
@@ -403,7 +403,7 @@ class SessionTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
- 	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
+	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
 
 	    /* Vary only the user agent, it should still work */
 	    $_SERVER['HTTP_USER_AGENT'] = 'DIFFERENT_USER_AGENT';
@@ -418,7 +418,7 @@ class SessionTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
- 	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
+	    $this->assertEquals($session->getSessionId(), 'TESTSID', 'session id changed!');
 
 	    /* Vary both.  Our data is gone, and we have a different cookie id */
 	    $_SERVER['HTTP_USER_AGENT'] = 'DIFFERENT_USER_AGENT';
@@ -465,15 +465,17 @@ class SessionTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    GalleryUtilities::putRequestVariable('return', 'http://example.com/main.php?' .
+		GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId());
 
 	    /* Set a value we can test after regeneration */
-            $key = 'test-key';
+	    $key = 'test-key';
 	    $value = md5(date('c') . $session->getSessionId());
-            $session->put($key, $value);
+	    $session->put($key, $value);
 	    $ret = $session->save();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
+	    }
 
 	    /* Verify the value was set */
 	    $this->assertEquals($value, $session->get($key));
@@ -485,12 +487,16 @@ class SessionTest extends GalleryTestCase {
 	    $ret = $session->regenerate();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
+	    }
 
 	    /* Verify that the test value is still set, and that the session ID actually changed */
 	    $this->assertEquals($value, $session->get($key));
-	    $this->assert($sessionIdPreRegen != $session->getSessionId(), 
+	    $this->assert($sessionIdPreRegen != $session->getSessionId(),
 			    'Session ID did not change on regenerate');
+	    $this->assertEquals('http://example.com/main.php?' .
+		GalleryUtilities::prefixFormVariable($session->getKey()) . '=' . $session->getId(),
+		GalleryUtilities::getRequestVariables('return'),
+		'session id in return url not mapped to new session id');
     }
 
 

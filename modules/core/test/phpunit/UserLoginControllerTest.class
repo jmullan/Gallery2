@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -54,7 +54,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -62,20 +62,21 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	$gallery->setActiveUser($this->_saveUser);
 	$gallery->_session = $this->_saveSession;
-	
+
 	parent::tearDown();
     }
 
     function testLogin() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
+	/* from _createRandomUser: */
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
 	$mockSession = new UserLoginControllerTestSession();
 	$gallery->_session =& $mockSession;
-	    
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
 				  'status' => array(),
@@ -89,8 +90,9 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
     function testLoginInvalidUser() {
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', 'some-bogus-user');
-	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
-	
+	/* from _createRandomUser: */
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserLogin'),
@@ -103,7 +105,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][login]', 1);
 	GalleryUtilities::putRequestVariable('form[username]', $this->_user->getUserName());
 	GalleryUtilities::putRequestVariable('form[password]', 'wrong password');
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
 						      'subView' => 'core:UserLogin'),
@@ -114,7 +116,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
 				  'status' => array(),
@@ -136,11 +138,11 @@ class UserLoginControllerTestSession {
     function get($key) {
 	return isset($this->_hash[$key]) ? $this->_hash[$key] : null;
     }
-    
+
     function put($key, $value) {
 	$this->_hash[$key] = $value;
     }
-    
+
     function regenerate() {
 	$this->_regenerateWasCalled = true;
     }
