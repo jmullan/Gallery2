@@ -151,22 +151,22 @@ class ClassicLayout extends MatrixLayout {
     /**
      * @see MatrixLayout::_loadAlbumTemplate
      */
-    function _loadAlbumTemplate(&$template, $item, $properties) {
-	list ($ret, $matrixResult) = parent::_loadAlbumTemplate($template, $item, $properties);
+    function _loadAlbumTemplate(&$template, $item, $params) {
+	list ($ret, $matrixResult) = parent::_loadAlbumTemplate($template, $item, $params);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (is_array($matrixResult)) {
-	    // Return now if we are doing a redirect..
+	    /* Return now if we are doing a redirect */
 	    return array(GalleryStatus::success(), $matrixResult);
 	}
 
 	$layout =& $template->getVariableByReference('layout');
-	$layout['showSubalbums'] = $properties['showSubalbums'];
+	$layout['showSubalbums'] = $params['showSubalbums'];
 
-	if ($properties['showSubalbums']) {
+	if ($params['showSubalbums']) {
 	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
-		$properties['subalbumDepth'] > 0 ? $properties['subalbumDepth'] + 1 : null);
+		$params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

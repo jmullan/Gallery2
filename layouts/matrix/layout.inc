@@ -148,9 +148,17 @@ class MatrixLayout extends GalleryLayout {
 	$urlGenerator =& $gallery->getUrlGenerator();
 
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item);
+	    list ($ret, $params) = $this->fetchParameters($item->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
 	} else {
-	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item);
+	    list ($ret, $params) = $this->fetchParameters($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $bodyFile) = $this->_loadSingleTemplate($template, $item, $params);
 	}
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -174,15 +182,8 @@ class MatrixLayout extends GalleryLayout {
 		    }
 		}
 	    } else {
-		list ($ret, $value) = GalleryCoreApi::getPluginParameter(
-		    'layout', $this->getId(), 'photoFrame', $item->getParentId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$value = isset($value) ? $value
-		       : (isset($params['photoFrame']) ? $params['photoFrame'] : null);
-		if (!empty($value)) {
-		    $frameIds[] = $layout['photoFrame'] = $value;
+		if (!empty($params['photoFrame'])) {
+		    $frameIds[] = $layout['photoFrame'] = $params['photoFrame'];
 		}
 	    }
 	    if (!empty($frameIds)) {
@@ -206,21 +207,14 @@ class MatrixLayout extends GalleryLayout {
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
-     * @param array the layout properties
+     * @param array the layout parameters
      * @return array object GalleryStatus a status code
      *         string the HTML body
      * @access private
      */
-    function _loadAlbumTemplate(&$template, $item) {
-	global $gallery;
-
-	list ($ret, $properties) = $this->fetchParameters($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$rows = $properties['rows'];
-	$columns = $properties['columns'];
+    function _loadAlbumTemplate(&$template, $item, $params) {
+	$rows = $params['rows'];
+	$columns = $params['columns'];
 	$perPage = $rows * $columns;
 
 	/* Figure out what page we're on */
@@ -331,14 +325,14 @@ class MatrixLayout extends GalleryLayout {
 	    $jumprange[] = $totalPages;
 	}
 
-	$layout['columnSize'] = $properties['columns'];
+	$layout['columnSize'] = $params['columns'];
 	$layout['currentPage'] = $page;
 	$layout['totalPageCount'] = $totalPages;
 	$layout['navigator'] = $navigator;
 	$layout['jumprange'] = $jumprange;
-	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
-	$layout['showImageOwner'] = $properties['showImageOwner'];
-	$layout['showMicroThumbs'] = $properties['showMicroThumbs'];
+	$layout['showAlbumOwner'] = $params['showAlbumOwner'];
+	$layout['showImageOwner'] = $params['showImageOwner'];
+	$layout['showMicroThumbs'] = $params['showMicroThumbs'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
     }
@@ -349,20 +343,13 @@ class MatrixLayout extends GalleryLayout {
      *
      * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
-     * @param array the layout properties
+     * @param array the layout parameters
      * @return array object GalleryStatus a status code
      *         string the HTML body
      * @access private
      * @todo Maybe display the sizes of an image in increasing order
      */
-    function _loadSingleTemplate(&$template, $item, $properties) {
-	global $gallery;
-
-	list ($ret, $properties) = $this->fetchParameters($item->getParentId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
+    function _loadSingleTemplate(&$template, $item, $params) {
 	/*
 	 * Figure out all possible views of this item that the user can see and
 	 * get them into an acceptable format for the template engine.
@@ -459,7 +446,7 @@ class MatrixLayout extends GalleryLayout {
 	$imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
 	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'systemContent',
 			   'itemLinks', 'itemDetailFiles');
-	if (!empty($properties['showMicroThumbs'])) {
+	if (!empty($params['showMicroThumbs'])) {
 	    $dataTypes[] = 'peerThumbnails';
 	}
 	$ret = $this->loadLayoutTemplate($template, $item, $dataTypes);
@@ -508,7 +495,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['sourceImage'] = $sourceImage;
 	$layout['imageViewsIndex'] = $imageViewsIndex;
 	$layout['navigator'] = $navigator;
-	$layout['showImageOwner'] = $properties['showImageOwner'];
+	$layout['showImageOwner'] = $params['showImageOwner'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');
     }
