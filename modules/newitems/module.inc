@@ -145,12 +145,19 @@ class NewItemsModule extends GalleryModule {
 	$newTime = time() - $param['days.new'] * 86400;
 	$updatedTime = time() - $param['days.updated'] * 86400;
 
+	$newAltString = $this->translate('new');
+	$updatedAltString = $this->translate('updated');
+
 	$summaries = array();
 	foreach ($items as $item) {
 	    if ($param['days.new'] > 0 && $item->getCreationTimestamp() > $newTime) {
-		$summaries[$item->getId()] = '<img src="' . $newImage . '"/>';
+		$summaries[$item->getId()] = sprintf('<img src="%s" alt="%s"/>',
+						     $newImage,
+						     $newAltString);
 	    } else if ($param['days.updated'] > 0 && $item->getModificationTimestamp() > $updatedTime) {
-		$summaries[$item->getId()] = '<img src="' . $updatedImage . '"/>';
+		$summaries[$item->getId()] = sprintf('<img src="%s" alt="%s"/>',
+						     $updatedImage,
+						     $updatedAltString);
 	    }
 	}
 	return array(GalleryStatus::success(), $summaries);
