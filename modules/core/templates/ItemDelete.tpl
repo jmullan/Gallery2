@@ -26,7 +26,13 @@
       
       {g->description}
 	{g->text text="Choose the items you want to delete"}
+	{if ($ItemDelete.numPages > 1) }
+	  {g->text text="(page %d of %d)"
+	           arg1=$ItemDelete.page
+	           arg2=$ItemDelete.numPages}
+        {/if}
       {/g->description}
+      {g->input type="hidden" name="page"}{$ItemDelete.page}{/g->input}
       {g->input type="hidden" name="form[formname]"}DeleteItem{/g->input}
       {g->element}
         <script type="text/javascript">
@@ -69,6 +75,9 @@
 	{/g->element}
 	
       {/foreach}
+      {foreach from=$ItemDelete.selectedIds item=selectedId}
+	{g->input type="hidden" name="form[selectedIds][$selectedId]"}on{/g->input}
+      {/foreach}
     {/g->box}
 
     {g->box style="admin"}
@@ -83,6 +92,12 @@
         {g->input type="button" name="form[action][invert]" onclick="javascript:invertCheck()"}
           {g->text text="Invert"}
         {/g->input}
+	{if ($ItemDelete.page > 1)}
+	  {g->input type="submit" name="form[action][previous]"}{g->text text="Previous Page"}{/g->input}
+	{/if}
+	{if ($ItemDelete.page < $ItemDelete.numPages)}
+	  {g->input type="submit" name="form[action][next]"}{g->text text="Next Page"}{/g->input}
+	{/if}
       {/g->element}
     {/g->box}
   {else}

@@ -92,6 +92,80 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function testDeleteNextPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < DELETE_NUM_PER_PAGE + 1; $i++) {
+	    if (($i % 2) == 0) {
+		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+	    } else {
+		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    }
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('page', 3);	
+	GalleryUtilities::putRequestVariable('form[action][next]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemDelete',
+						      'itemId' => $this->_album->getId(),
+						      'page' => 2),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testDeletePreviousPageOutOfRange() {
+	global $gallery;
+
+	/* create random items */
+	$items = array();
+	for ($i = 0; $i < 5; $i++) {
+	    if (($i % 2) == 0) {
+		list($ret, $items[$i]) = $this->_createRandomAlbum($this->_album->getId());
+	    } else {
+		list($ret, $items[$i]) = $this->_createRandomDataItem($this->_album->getId());
+	    }
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	$selectedIds = array();
+	foreach ($items as $item) {
+	    $selectedIds[$item->getId()] = 1;
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form[selectedIds]', $selectedIds);
+	GalleryUtilities::putRequestVariable('page', -1);	
+	GalleryUtilities::putRequestVariable('form[action][previous]', 1);
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemDelete',
+						      'itemId' => $this->_album->getId(),
+						      'page' => 1),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+    
     /**
      * Create a random album and verify that we can delete multiple items
      */

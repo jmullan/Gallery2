@@ -27,6 +27,8 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+define('DELETE_NUM_PER_PAGE', 30);
+
 /**
  * This controller will handle the deletion of an item
  *
@@ -96,6 +98,22 @@ class ItemDeleteController extends GalleryController {
 	    $redirect['view'] = 'core:ItemAdmin';
 	    $redirect['subView'] = 'core:ItemDelete';
 	    $redirect['itemId'] = $itemId;
+	} else if (isset($form['action']['next'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    list($ret, $peerIds) =
+		    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $numPages = ceil(sizeof($peerIds) / DELETE_NUM_PER_PAGE);
+	    
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = min($page + 1, $numPages);
+	} else if (isset($form['action']['previous'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    $results['delegate']['itemId'] = $itemId;
+	    $results['delegate']['page'] = max($page - 1, 1);
 	}
 		
 	if (!empty($redirect)) {
@@ -124,8 +142,8 @@ class ItemDeleteView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-		
-	list($itemId, $selectedId) = GalleryUtilities::getRequestVariables('itemId', 'selectedId');
+
+	list($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
 	
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
@@ -150,6 +168,29 @@ class ItemDeleteView extends GalleryView {
 	$peerTypes = array();
 	$peerDescendentCounts = array();
 	if (!empty($peerIds)) {
+	    $numPages = ceil(sizeof($peerIds) / DELETE_NUM_PER_PAGE);
+	    if (empty($page)) {
+		/* determine which page we're on */
+		$page = 1;
+		for ($i = 0; $i < sizeof($peerIds); $i++) {
+		    if ($peerIds[$i] == $selectedId) {
+			$page = ceil(($i + 1) / DELETE_NUM_PER_PAGE);
+		    }
+		}
+	    }
+
+	    $start = DELETE_NUM_PER_PAGE * ($page - 1);
+	    $peerIds = array_slice($peerIds, $start, DELETE_NUM_PER_PAGE);
+	    $selectedIds = array();
+	    if (isset($form['selectedIds'])) {
+		$selectedIds = $form['selectedIds'];
+		foreach ($peerIds as $peerId) {
+		    if (isset($selectedIds[$peerId])) {
+			unset($selectedIds[$peerId]);
+		    }
+		}
+	    }
+	    
 	    /* load peers */
 	    list($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
@@ -180,7 +221,10 @@ class ItemDeleteView extends GalleryView {
 	$ItemDelete['peers'] = $peers;
 	$ItemDelete['peerTypes'] = $peerTypes;
 	$ItemDelete['peerDescendentCounts'] = $peerDescendentCounts;
-	
+	$ItemDelete['page'] = $page;
+	$ItemDelete['numPages'] = $numPages;
+	$ItemDelete['selectedIds'] = array_keys($selectedIds);
+
 	$template->setVariable('controller', 'core:ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
 	
