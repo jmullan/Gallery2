@@ -56,7 +56,7 @@ class WatermarkOption extends ItemAddOption {
 
 	$WatermarkOption = array();
 	$WatermarkOption['watermarks'] = $watermarks;
-	$WatermarkOption['currentId'] = $currentId;;
+	$WatermarkOption['currentId'] = $currentId;
 	$template->setVariable('WatermarkOption', $WatermarkOption);
 	return array(GalleryStatus::success(),
 		     'modules/watermark/templates/WatermarkOption.tpl',
