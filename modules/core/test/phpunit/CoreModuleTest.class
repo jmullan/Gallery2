@@ -259,12 +259,11 @@ class CoreModuleTest extends GalleryTestCase {
 					   'return' => 1,
 					   ));
 
-	$links[] = array('text' => $this->_module->translate('edit caption'),
+	$links[] = array('text' => $this->_module->translate('edit captions'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemEditCaptions',
-					   'itemId' => $this->_parentAlbum->getParentId(),
-					   'selectedId' => $this->_parentAlbum->getId(),
+					   'itemId' => $this->_parentAlbum->getId(),
 					   'return' => 1,
 					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
