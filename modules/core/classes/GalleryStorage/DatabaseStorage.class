@@ -1110,7 +1110,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
 					      'Error reading schema table'), null);
 	}
-
+	
+	$tableVersions = array();
 	while ($row = $recordSet->FetchRow()) {
 	    $tableVersions[$row[0]] = array($row[1], $row[2]);
 	}
