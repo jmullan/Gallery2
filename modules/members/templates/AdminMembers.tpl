@@ -4,57 +4,39 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-        {g->text text="Members Settings"}
-      </h2>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Members Settings"} </h2>
+</div>
 
-  {if !empty($status)}
-  <div id="gsStatus">
-    {if isset($status.saved)}
-      <div class="giStatus"> {g->text text="Settings saved successfully"} </div>
-    {/if}
-  </div>
-  {/if}
+{if isset($status.saved)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="Settings saved successfully"}
+</h2></div>
+{/if}
 
-  <div class="gbAdmin">
-    <p class="giDescription">
-     {g->text text="This will select who can see the members list and member profiles."}
-    </p>
+<div class="gbBlock">
+  <p class="giDescription">
+   {g->text text="This will select who can see the members list and member profiles."}
+  </p>
     
-    <table style="gbDataEntry">
-      <tr>
-	<td>
-	  <select name="{g->formVar var="form[canViewMembersModule]"}">
-	    {html_options options=$Members.memberViews selected=$form.canViewMembersModule}
-	  </select>
-	</td>
-      </tr>
-    </table>
-  </div>
+  <select name="{g->formVar var="form[canViewMembersModule]"}">
+    {html_options options=$Members.memberViews selected=$form.canViewMembersModule}
+  </select>
+</div>
   
-  <div class="gbAdmin">
-    <p class="giDescription">
-      {g->text text="This will select if email addresses are displayed in the member profiles.  Administrators will always be able to see email addresses."}
-    </p>
+<div class="gbBlock">
+  <p class="giDescription">
+    {g->text text="This will select if email addresses are displayed in the member profiles.  Administrators will always be able to see email addresses."}
+  </p>
     
-    <table style="gbDataEntry">
-      <tr>
-	<td>
-	  <select name="{g->formVar var="form[canViewEmailAddress]"}">
-	    {html_options options=$Members.emailViews selected=$form.canViewEmailAddress}
-	  </select>
-	</td>
-      </tr>
-    </table>
-  </div>
+  <select name="{g->formVar var="form[canViewEmailAddress]"}">
+    {html_options options=$Members.emailViews selected=$form.canViewEmailAddress}
+  </select>
+</div>
 
-  <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
-  </div>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
 </div>

@@ -1,0 +1,107 @@
+/** Temporary file for new CSS until all views are converted **/
+
+/* ********************************************************************************
+ * Building blocks
+ * h2, h3, p, etc        Standard html tags
+ * div.gbBlock           Sidebar or content section with style for contained lists
+ * ul.gbBreadCrumb       List of links/path elements
+ * table.gbDataTable     Table for data/form elements with styles for shading rows
+ */
+
+#gallery h2, #gallery h3, #gallery h4 {
+    margin: 0;
+    padding: 0;
+}
+
+#gallery p {
+    margin: 0.6em 0;
+    padding: 0;
+}
+
+
+.gbBlock {
+    padding: 0.8em;
+    border-width: 0 0 1px 0;
+    border-style: inherit;
+    border-color: inherit;
+    /* IE can't inherit these */
+    border-style: expression(parentElement.currentStyle.borderStyle);
+    border-color: expression(parentElement.currentStyle.borderColor);
+}
+
+.gbBlock ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.gbBlock ul ul {
+    margin: 0 0 0.5em 1.0em;
+}
+
+.gbBlock li {
+    padding: 6px 0 0 0;
+}
+
+#gallery .gbBlock h3 {
+    margin-bottom: 0.5em;
+}
+
+#gallery .gbBlock h4 {
+    margin-top: 0.5em;
+}
+
+
+ul.gbBreadCrumb {
+    margin: 0;
+    padding: 4px 8px;
+    list-style-type: none;
+}
+
+ul.gbBreadCrumb li {
+    display: inline;
+}
+
+table.gbDataTable {
+    margin-bottom: 4px;
+}
+
+table.gbDataTable th, table.gbDataTable td {
+    padding: 4px;
+}
+
+
+.giBlockToggle {
+  padding: 0 0.4em 0.1em;
+}
+
+
+/* ********************************************************************************
+ * Sections
+ * #gallery         Page container
+ * #gsSystemLinks   Top bar with breadcrumb and other links
+ * #gsSidebar       Sidebar
+ * #gsContent       Main content
+ */
+
+#gallery {
+    padding: 8px;
+}
+
+#gsSystemLinks {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+}
+
+#gsSystemLinks div {
+    float: right;
+    padding: 4px 6px;
+}
+#gsSystemLinks div span {
+    padding: 0 4px;
+}
+
+#gsSidebar {
+    border-right-width: 1px;
+}
+

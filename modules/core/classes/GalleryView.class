@@ -207,6 +207,16 @@ class GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
+	/*
+	 * XXX TEMPORARY HACK XXX
+	 * Hardcode new layout/theme CSS for core:SiteAdmin and core:UserAdmin views.
+	 */
+	if (!strcasecmp(get_class($this), 'siteadminview')
+		|| !strcasecmp(get_class($this), 'useradminview')) {
+	    $template->style('templates/layoutNew.css');
+	    $template->style("themes/$themeName/themeNew.css");
+	} else {
+
 	/* Theme style */
 	$template->style("themes/$themeName/theme.css");
 
@@ -214,6 +224,7 @@ class GalleryView {
 	if ($this->useDefaultStyle()) {
 	    $template->style('templates/layout.css');
 	}
+	} /* XXX END TEMPORARY HACK */
 
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');

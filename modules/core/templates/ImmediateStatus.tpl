@@ -6,6 +6,7 @@
  *}
 {literal}
 <script type="text/javascript">
+  // <![CDATA[
   function updateStatus(title, description, percentComplete) {
     document.getElementById('ImmediateStatus_title').innerHTML = title;
     document.getElementById('ImmediateStatus_description').innerHTML = description;
@@ -22,6 +23,7 @@
 
     document.getElementById('ImmediateStatus_progressMade').style.width = progressMade + "%"
   }
+  // ]]>
 </script>
 {/literal}
 

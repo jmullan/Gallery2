@@ -4,116 +4,85 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Gd Settings"}
-      </h2>
-    </div>
-    
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Gd Settings"} </h2>
+</div>
 
-  {if !empty($status)}
-  <div id="gsStatus">
-    {if isset($status.saved)}
-    <div class="giStatus">
-      {g->text text="Settings saved successfully"}
-    </div>
-    {/if}
-  </div>
-  {/if}
+{if isset($status.saved)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="Settings saved successfully"}
+</h2></div>
+{/if}
 
-  <div class="gbAdmin">
-    <div class="giDescription">
-      {g->text text="Gd is a graphics toolkit that can be used to process images that you upload to Gallery. The GD-library should be compiled in your PHP (--with-gd)."}
-    </div>
+<div class="gbBlock">
+  <p class="giDescription">
+    {g->text text="Gd is a graphics toolkit that can be used to process images that you upload to Gallery. The GD-library should be compiled in your PHP (--with-gd)."}
+  </p>
 
-    <div class="gbDataEntry">
-      <h3 class="giTitle">
-	{g->text text="JPEG Quality"}
-      </h3>
+  {g->text text="JPEG Quality:"}
+  <select name="{g->formVar var="form[jpegQuality]"}">
+    {html_options values=$AdminGd.jpegQualityList selected=$form.jpegQuality
+     output=$AdminGd.jpegQualityList}
+  </select>
+</div>
 
-      <select name="{g->formVar var="form[jpegQuality]"}">
-	  {html_options values=$AdminGd.jpegQualityList selected=$form.jpegQuality output=$AdminGd.jpegQualityList}
-      </select>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
+</div>
 
-  <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
-    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-  </div>
-
-  <div class="gbAdmin">
-    <div class="giTitle">
-      {g->text text="GD library version"}
-    </div>
+<div class="gbBlock">
+  <h3> {g->text text="GD library version"} </h3>
     
   {if $AdminGd.gdVersion}
-    <table class="gbDataTable">
-      <tr>
-        <th>
-          {g->text text="GD version"}
-        </th>
-        <th>
-          {g->text text="Required"}
-        </th>
-        <th>
-          {g->text text="Pass/fail"}
-        </th>
-      </tr>
-
-      <tr class="{cycle values="gbEven,gbOdd"}">
-        <td>
-          {$AdminGd.gdVersion}
-          {if $AdminGd.isGdBundled}
-            ({g->text text="bundled"})
-          {/if}
-        </td>
-        <td>
-          {$AdminGd.minGdVersion}
-        </td>
-        <td>
-          {if ($AdminGd.gdVersionTooOld)}
-          <div class="giError">
-            {g->text text="Failed"}
-          </div>
-          <div class="giError">
-          {g->text text="This GD version is too old and is not supported by this module! Please upgrade your PHP installation to include the latest GD version."}
-          </div>
-          {else}
-          <div class="giSuccess">
-            {g->text text="Passed"}
-          </div>
-          {/if}
-        </td>
-      </tr>
-    </table>
-  
+    <table class="gbDataTable"><tr>
+      <th> {g->text text="GD version"} </th>
+      <th> {g->text text="Required"} </th>
+      <th> {g->text text="Pass/fail"} </th>
+    </tr>
+    <tr class="{cycle values="gbEven,gbOdd"}">
+      <td>
+	{$AdminGd.gdVersion}
+	{if $AdminGd.isGdBundled}
+	  ({g->text text="bundled"})
+	{/if}
+      </td><td>
+	{$AdminGd.minGdVersion}
+      </td><td>
+	{if ($AdminGd.gdVersionTooOld)}
+	  <div class="giError">
+	    {g->text text="Failed"}
+	  </div>
+	  <div class="giError">
+	    {g->text text="This GD version is too old and is not supported by this module! Please upgrade your PHP installation to include the latest GD version."}
+	  </div>
+	{else}
+	  <div class="giSuccess">
+	    {g->text text="Passed"}
+	  </div>
+	{/if}
+      </td>
+    </tr></table>
   {else}
-    <div class="giDescription">
+    <p class="giDescription">
       {g->text text="You don't seem to have the GD library available on this PHP installation."}
-    </div>
+    </p>
   {/if}
-  </div>
-
-  {if $AdminGd.mimeTypes}
-  <div class="gbAdmin">
-    <div class="giTitle">
-      {g->text text="Supported MIME Types"}
-    </div>
-    
-    <div class="giDescription">
-      {g->text text="The Gd module will support files with the following MIME types:"}
-    </div>
-	
-    {foreach from=$AdminGd.mimeTypes item=mimeType}
-    <span>
-      {$mimeType}<br />
-    </span>
-    {/foreach}
-  </div>
-  {/if}
-
 </div>
+
+{if $AdminGd.mimeTypes}
+<div class="gbBlock">
+  <h3> {g->text text="Supported MIME Types"} </h3>
+    
+  <p class="giDescription">
+    {g->text text="The Gd module will support files with the following MIME types:"}
+  </p>
+  <p class="giDescription">
+  {foreach from=$AdminGd.mimeTypes item=mimeType}
+    {$mimeType}<br/>
+  {/foreach}
+  </p>
+</div>
+{/if}

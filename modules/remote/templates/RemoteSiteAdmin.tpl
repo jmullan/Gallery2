@@ -4,41 +4,27 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Remote Settings"}
-      </h2>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Remote Settings"} </h2>
+</div>
 
-  {if !empty($status)}
-  <div id="gsStatus">
-    {if isset($status.saved)}
-    <div class="giStatus">
-      {g->text text="Settings saved successfully"}
-    </div>
-    {/if}
-  </div>
-  {/if}
+{if isset($status.saved)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="Settings saved successfully"}
+</h2></div>
+{/if}
 
-  <div class="gbAdmin">
-    <ul class="gbAdminList">
-      <li>
-	<input id="showItemAdd" type="checkbox" name="{g->formVar var="form[showItemAdd]"}"
-	       {if $form.showItemAdd}checked="checked"{/if}/>
-	<label for="showItemAdd">
-	  {g->text text="Show information about Gallery Remote in \"add items\" view"}
-	</label>
-      </li>
-    </ul>
-  </div>
+<div class="gbBlock">
+  <input type="checkbox" id="cbShowItemAdd"{if $form.showItemAdd} checked="checked"{/if}
+   name="{g->formVar var="form[showItemAdd]"}"/>
+  <label for="cbShowItemAdd">
+    {g->text text="Show information about Gallery Remote in \"add items\" view"}
+  </label>
+</div>
 
-  <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}"
-     value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][reset]"}"
-     value="{g->text text="Reset"}"/>
-  </div>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>

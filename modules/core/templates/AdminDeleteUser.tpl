@@ -4,74 +4,84 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Delete a User"}
-      </h2>
-    </div>    
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Delete a User"} </h2>
+</div>
 
-  <div class="gbAdmin">
-    {if isset($AdminDeleteUser.numberOfItems) && $AdminDeleteUser.numberOfItems > 0}
-    <h2 class="giTitle">
-      {g->text text="User %s is the owner of %s items." arg1=$AdminDeleteUser.user.userName 
-	       arg2=$AdminDeleteUser.numberOfItems}
-    </h2>
-    <p class="giDescription">
-      {g->text text="Delete user <strong>%s</strong> and..." arg1=$AdminDeleteUser.user.userName}
-      <br/>
-      <input type="radio" name="{g->formVar var="form[deletionVariant]"}" value="assignNewOwner" checked="checked"/>
-      {g->text text="assign a new owner for all items of %s." arg1=$AdminDeleteUser.user.userName}
-      <br/>
-      <input type="radio" name="{g->formVar var="form[deletionVariant]"}" value="deleteItems"/>
-      {g->text text="delete all items of %s and assign a new owner for all remaining non empty albums"
-		  arg1=$AdminDeleteUser.user.userName}
-      <br/>
-      {g->text text="New owner (leaving blank means one of the Site Admins):"}
-      <br/>
-      <input id="username" class="giFormUsername" type="text" name="{g->formVar var="form[text][newOwner]"}" size="20" value="{$form.text.newOwner}"/>
-      {g->autoComplete element="username"}
-      {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"}
-      {/g->autoComplete}
+{if isset($AdminDeleteUser.numberOfItems) && $AdminDeleteUser.numberOfItems > 0}
+<div class="gbBlock">
+  <h3>
+    {g->text text="User %s is the owner of %s items." arg1=$AdminDeleteUser.user.userName
+	     arg2=$AdminDeleteUser.numberOfItems}
+  </h3>
+  <p class="giDescription">
+    {g->text text="Delete user <strong>%s</strong> and..." arg1=$AdminDeleteUser.user.userName}
 
-      <br/>
-      {if isset($form.error.text.noSuchUser)}
-      <div class="giError">
-        {g->text text="User '%s' does not exist! Cannot assign items to a nonexistent user."
-		    arg1=$form.text.newOwner}
-      </div>
-      {/if}
-      {if isset($form.error.text.newOwnerIsDeletedUser)}
-      <div class="giError">
-        {g->text text="The new owner must be a different user than the user we are deleting!"}
-      </div>
-      {/if}
-      {if isset($form.error.text.newOwnerIsGuest)}
-      <div class="giError">
-        {g->text text="The new owner cannot be a Guest / Anonymous user!"}
-      </div>
-      {/if}
-      <br/> 
-    </p>
-    {/if}
-	
-    <h2 class="giTitle">
-      {g->text text="Are you sure?"}
-    </h2>
+    <table class="gbDataTable"><tr>
+      <td>
+	<input type="radio" id="rbAssignNewOwner" checked="checked"
+	 name="{g->formVar var="form[deletionVariant]"}" value="assignNewOwner"/>
+      </td><td>
+	<label for="rbAssignNewOwner">
+	  {g->text text="Assign a new owner for all items of %s"
+		   arg1=$AdminDeleteUser.user.userName}
+	</label>
+      </td></tr><tr><td>
+	<input type="radio" id="rbDeleteItems"
+	 name="{g->formVar var="form[deletionVariant]"}" value="deleteItems"/>
+      </td><td>
+	<label for="rbDeleteItems"> {g->text
+	  text="Delete all items of %s and assign a new owner for all remaining non empty albums"
+	  arg1=$AdminDeleteUser.user.userName}
+	</label>
+      </td>
+    </tr><tr>
+      <td></td>
+      <td>
+	<p> {g->text text="New owner (leaving blank means one of the Site Admins):"} </p>
 
-    <p class="giDescription">
-      {g->text text="This will completely remove <strong>%s</strong> from Gallery.  There is no undo!"
-		arg1=$AdminDeleteUser.user.userName}
-    </p>
+	<input type="text" id="giFormUsername" size="20" autocomplete="off"
+	 name="{g->formVar var="form[text][newOwner]"}" value="{$form.text.newOwner}"/>
+	{g->autoComplete element="giFormUsername"}
+	  {g->url arg1="view=core:SimpleCallback" arg2="command=lookupUsername"
+		  arg3="prefix=__VALUE__" forJavascript="true"}
+	{/g->autoComplete}
 
-    <div class="gbBottomFlag">
-      <div class="giActionSelect">
-	<input type="hidden" name="{g->formVar var="userId"}" value="{$AdminDeleteUser.user.id}"/>
-	<input type="submit" name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
-	<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-      </div>
-    </div>
-  </div>
+	{if isset($form.error.text.noSuchUser)}
+	<div class="giError">
+	  {g->text text="User '%s' does not exist! Cannot assign items to a nonexistent user."
+		   arg1=$form.text.newOwner}
+	</div>
+	{/if}
+	{if isset($form.error.text.newOwnerIsDeletedUser)}
+	<div class="giError">
+	  {g->text text="The new owner must be a different user than the user we are deleting!"}
+	</div>
+	{/if}
+	{if isset($form.error.text.newOwnerIsGuest)}
+	<div class="giError">
+	  {g->text text="The new owner cannot be a Guest / Anonymous user!"}
+	</div>
+	{/if}
+      </td>
+    </tr></table>
+  </p>
+</div>
+{/if}
+
+<div class="gbBlock">
+  <h3> {g->text text="Are you sure?"} </h3>
+
+  <p class="giDescription">
+    {g->text text="This will completely remove <strong>%s</strong> from Gallery.  There is no undo!"
+	     arg1=$AdminDeleteUser.user.userName}
+  </p>
+</div>
+
+<div class="gbBlock gcBackground1">
+  <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminDeleteUser.user.id}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][delete]"}" value="{g->text text="Delete"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>

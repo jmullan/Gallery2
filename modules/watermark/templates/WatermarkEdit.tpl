@@ -62,98 +62,93 @@
 </script>
 
 <input type="hidden" name="{g->formVar var="itemId"}" value="{$watermark.id}"/>
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Edit A Watermark"}
-      </h2>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Edit A Watermark"} </h2>
+</div>
 
-  {if !empty($form.error)}
-  <div id="gsStatus">
-    <div class="giError">
-      {g->text text="There was a problem processing your request."}
-    </div>
-  </div>
-  {/if}
+{if !empty($form.error)}
+<div class="gbBlock"><h2 class="giError">
+  {g->text text="There was a problem processing your request."}
+</h2></div>
+{/if}
 
-  <div class="gbAdmin">
-    <h3 class="giTitle">
-      {g->text text="Watermark Name"}
-    </h3>
-    <p class="giDescription">
-      {g->text text="Give this watermark a name so that you can identify it in a list."}
-    </p>
-    <input size="40" type="text" name="{g->formVar var="form[name]"}" value="{$form.name}"/>
-   {if isset($form.error.name.missing)}
-   <div class="giError">
-     {g->text text="You must provide a name"}
-   </div>
-   {/if}
-   {if isset($form.error.name.duplicate)}
-   <div class="giError">
-     {g->text text="Name already used by another watermark"}
-   </div>
-   {/if}
-  </div>
+{if isset($status.add)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="New image added successfully"}
+</h2></div>
+{/if}
 
-  <div class="gbAdmin">
-    <h3 class="giTitle">
-      {g->text text="Placement"}
-    </h3>
-    <p class="giDescription">
-      {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
-    </p>
+<div class="gbBlock">
+  <h3> {g->text text="Watermark Name"} </h3>
 
-    <div id="background" style="width: 400px; height: 300px; background-color: #DDD; border: thin solid #9CF; margin: 5px 0 10px 0;">
+  <p class="giDescription">
+    {g->text text="Give this watermark a name so that you can identify it in a list."}
+  </p>
+
+  <input type="text" size="40" name="{g->formVar var="form[name]"}" value="{$form.name}"/>
+
+ {if isset($form.error.name.missing)}
+ <div class="giError">
+   {g->text text="You must provide a name"}
+ </div>
+ {/if}
+ {if isset($form.error.name.duplicate)}
+ <div class="giError">
+   {g->text text="Name already used by another watermark"}
+ </div>
+ {/if}
+</div>
+
+<div class="gbBlock">
+  <h3> {g->text text="Placement"} </h3>
+
+  <p class="giDescription">
+    {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
+  </p>
+
+  <div id="background" class="gcBackground1 gcBorder2"
+   style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
     <img name="floater"
      src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}"
-     width="{$watermark.width}"
-     height="{$watermark.height}" alt=""/>
-    </div>
-    <input id="xPercentage" type="hidden" name="{g->formVar var="form[xPercentage]"}"
-     value="{$form.xPercentage}"/>
-    <input id="yPercentage" type="hidden" name="{g->formVar var="form[yPercentage]"}"
-     value="{$form.yPercentage}"/>
+     width="{$watermark.width}" height="{$watermark.height}" alt=""/>
   </div>
 
-  <div class="gbAdmin">
-   <h2 class="giTitle">
-     {g->text text="Choose which versions of the image you'd like to watermark"}
-   </h2>
+  <input type="hidden" id="xPercentage"
+   name="{g->formVar var="form[xPercentage]"}" value="{$form.xPercentage}"/>
+  <input type="hidden" id="yPercentage"
+   name="{g->formVar var="form[yPercentage]"}" value="{$form.yPercentage}"/>
+</div>
 
-   {if isset($form.error.whichDerivative.missing)}
-   <div class="giError">
-     {g->text text="You must choose something to watermark!"}
-   </div>
-   {/if}
+<div class="gbBlock">
+  <h3> {g->text text="Choose which versions of the image you'd like to watermark"} </h3>
 
-   <input type="checkbox" name="{g->formVar var="form[whichDerivative][preferred]"}"
-	 {if isset($form.whichDerivative.preferred)}checked="checked"{/if}/>
-   {g->text text="Full size (won't damage the original file)"}
-   <br/>
+  {if isset($form.error.whichDerivative.missing)}
+  <p class="giError">
+    {g->text text="You must choose something to watermark!"}
+  </p>
+  {/if}
 
-   <input type="checkbox" name="{g->formVar var="form[whichDerivative][resizes]"}"
-	 {if isset($form.whichDerivative.resizes)}checked="checked"{/if}/>
-   {g->text text="Resizes"}
-   <br/>
+  <input type="checkbox"{if isset($form.whichDerivative.preferred)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][preferred]"}"/>
+  {g->text text="Full size (won't damage the original file)"}
+  <br/>
 
-   <input type="checkbox" name="{g->formVar var="form[whichDerivative][thumbnail]"}"
-	 {if isset($form.whichDerivative.thumbnail)}checked="checked"{/if}/>
-   {g->text text="Thumbnail"}
-   <br/>
-  </div>
+  <input type="checkbox"{if isset($form.whichDerivative.resizes)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][resizes]"}"/>
+  {g->text text="Resizes"}
+  <br/>
 
-  <div class="bottomFlag">
-    <div class="gbButtons">
-      <input type="submit" name="{g->formVar var="form[action][save]"}"
-       value="{g->text text="Save"}" onclick="calculatePercentages(); submit();"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}"
-       value="{g->text text="Cancel"}"/>
-    </div>
-  </div>
+  <input type="checkbox"{if isset($form.whichDerivative.thumbnail)} checked="checked"{/if}
+   name="{g->formVar var="form[whichDerivative][thumbnail]"}"/>
+  {g->text text="Thumbnail"}
+  <br/>
+</div>
+
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit" onclick="calculatePercentages(); submit();"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
 <script type="text/javascript">
@@ -163,4 +158,3 @@ moveToOriginalLocation();
 verifyBounds();
 // ]]>
 </script>
-

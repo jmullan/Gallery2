@@ -116,6 +116,17 @@ class UserAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	/* Bring in the root album information for the breadcrumb */
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -129,6 +140,7 @@ class UserAdminView extends GalleryView {
 	$UserAdmin['subViewChoices'] = $subViewChoices;
 	$UserAdmin['subViewName'] = $subViewName;
 	$UserAdmin['isSiteAdmin'] = $isSiteAdmin;
+	$UserAdmin['rootAlbum'] = $rootAlbum->getMemberData();
 
 	if (!empty($subViewName)) {
 	    list ($ret, $subView) = GalleryView::loadView($subViewName);

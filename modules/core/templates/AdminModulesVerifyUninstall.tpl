@@ -4,30 +4,25 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Confirm module uninstall"}
-      </h2>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Confirm module uninstall"} </h2>
+</div>
 
-  <div class="gbAdmin">
-    <div class="giTitle">
-      {capture name=moduleName}<b>{$AdminModulesVerifyUninstall.module.name}</b>{/capture}
-      {g->text text="Do you really want to uninstall the %s module?" arg1=$smarty.capture.moduleName}
-    </div>
-    <div class="giDescription">
-      {g->text text="This will also remove any permissions and clean up any temporary data created by this module."}
-    </div>
-  </div>
+<div class="gbBlock">
+  <h3>
+    {capture name=moduleName}<b>{$AdminModulesVerifyUninstall.module.name}</b>{/capture}
+    {g->text text="Do you really want to uninstall the %s module?" arg1=$smarty.capture.moduleName}
+  </h3>
+  <p class="giDescription">
+    {g->text text="This will also remove any permissions and clean up any temporary data created by this module."}
+  </p>
+</div>
 
-  <div class="gbBottomFlag">
-    <div class="giActionSelect">
-      <input type="hidden" name="{g->formVar var="moduleId"}" value="{$AdminModulesVerifyUninstall.module.id}">
-      <input type="submit" name="{g->formVar var="form[action][uninstall]"}" value="{g->text text="Uninstall"}"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <input type="hidden"
+   name="{g->formVar var="moduleId"}" value="{$AdminModulesVerifyUninstall.module.id}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][uninstall]"}" value="{g->text text="Uninstall"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
