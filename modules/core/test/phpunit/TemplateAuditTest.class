@@ -58,6 +58,8 @@ class TemplateAuditTest extends CodeAuditTestCase {
 	for ($i = 0; $i < sizeof($this->_expectedHeaderLines); $i++) {
 	    $this->_expectedHeaderLines[$i] = stripslashes($this->_expectedHeaderLines[$i]);
 	}
+
+	$this->_errorCount = 0;
     }
 
     /**
@@ -75,7 +77,6 @@ class TemplateAuditTest extends CodeAuditTestCase {
      * @see CodeAuditTestCase::checkFile()
      */
     function checkFile($fileName, $buffer) {
-
 	if (preg_match('/^' . $this->_headerPattern . '/', $buffer)) {
 	    return;
 	} else {
@@ -104,7 +105,11 @@ class TemplateAuditTest extends CodeAuditTestCase {
 
 	    $this->assertEquals($this->_expectedHeaderLines, $actual,
 				sprintf('[%s] Malformed template header', $truncatedFileName));
-	    $this->halt();
+	    $this->_errorCount++;
+
+	    if ($this->_errorCount > 3) {
+		$this->halt();
+	    }
 	}
     }
 }
