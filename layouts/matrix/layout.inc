@@ -42,11 +42,10 @@ class MatrixLayout extends GalleryLayout {
 	$this->setId('matrix');
 	$this->setName('Matrix');
 	$this->setDescription($gallery->i18n('Standard Gallery2 look and feel'));
-	$this->setVersion('0.8');
-	$this->setRequiredCoreApi('3', '2');
+	$this->setVersion('0.8.1');
 	$this->setL10Domain('layouts_matrix');
-	$this->setRequiredLayoutApi(array(0, 8));
-	$this->setRequiredCoreApi(array(3, 2));
+	$this->setRequiredLayoutApi(array(0, 9));
+	$this->setRequiredCoreApi(array(3, 4));
     }
 
     /**
@@ -61,7 +60,8 @@ class MatrixLayout extends GalleryLayout {
 	}
 	$params = array_merge(
 	    array('rows' => 3, 'columns' => 3, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
-		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => ''),
+		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
+		  'showMicroThumbs' => 0),
 	    $params);
 
 	$settings = array();
@@ -83,6 +83,10 @@ class MatrixLayout extends GalleryLayout {
 			    'name' => $gallery->i18n('Show album owners'),
 			    'type' => 'checkbox',
 			    'value' => $params['showAlbumOwner']);
+	$settings[] = array('key' => 'showMicroThumbs',
+			    'name' => $gallery->i18n('Show micro navigation thumbnails'),
+			    'type' => 'checkbox',
+			    'value' => $params['showMicroThumbs']);
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
@@ -143,11 +147,10 @@ class MatrixLayout extends GalleryLayout {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	list ($ret, $params) = $this->fetchParameters($item->getId());
+	list ($ret, $params) = $this->fetchParameters($item->getParentId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$params = array_merge(array('rows' => 3, 'columns' => 3), $params);
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
@@ -283,20 +286,26 @@ class MatrixLayout extends GalleryLayout {
 	/* Set up the navigator */
 	$navigator = array();
 	if ($page > 1) {
-	    $navigator['first'] = array('view' => 'core:ShowItem',
-					    'itemId' => $item->getId(),
-					    'page' => 1);
-	    $navigator['back'] = array('view' => 'core:ShowItem',
-					    'itemId' => $item->getId(),
-					    'page' => $page-1);
+	    $navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
+						     'itemId' => $item->getId(),
+						     'page' => 1);
+	    
+	    if ($page - 1 != 1) {
+		$navigator['back']['urlParams'] = array('view' => 'core:ShowItem',
+							'itemId' => $item->getId(),
+							'page' => $page-1);
+	    }
 	}
 	if ($page < $totalPages) {
-	    $navigator['next'] = array('view' => 'core:ShowItem',
-					    'itemId' => $item->getId(),
-					    'page' => $page+1);
-	    $navigator['last'] = array('view' => 'core:ShowItem',
-					    'itemId' => $item->getId(),
-					    'page' => $totalPages);
+	    if ($page + 1 != $totalPages) {
+		$navigator['next']['urlParams'] = array('view' => 'core:ShowItem',
+							'itemId' => $item->getId(),
+							'page' => $page+1);
+	    }
+	    
+	    $navigator['last']['urlParams'] = array('view' => 'core:ShowItem',
+						    'itemId' => $item->getId(),
+						    'page' => $totalPages);
 	}
 
 	/* Show a window of 11 pages in the page navigator */
@@ -329,6 +338,7 @@ class MatrixLayout extends GalleryLayout {
 	$layout['jumprange'] = $jumprange;
 	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
 	$layout['showImageOwner'] = $properties['showImageOwner'];
+	$layout['showMicroThumbs'] = $properties['showMicroThumbs'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
     }
@@ -442,10 +452,12 @@ class MatrixLayout extends GalleryLayout {
 
 	/* Don't let the index overflow the images array */
 	$imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
-
-	$ret = $this->loadLayoutTemplate($template, $item,
-	    array('owner', 'parents', 'peers',
-		  'systemLinks', 'systemContent', 'itemLinks', 'itemDetailFiles'));
+	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'systemContent',
+			   'itemLinks', 'itemDetailFiles');
+	if (!empty($properties['showMicroThumbs'])) {
+	    $dataTypes[] = 'peerThumbnails';
+	}
+	$ret = $this->loadLayoutTemplate($template, $item, $dataTypes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -454,17 +466,27 @@ class MatrixLayout extends GalleryLayout {
 	$navigator = array();
 	$itemIndex = $layout['peerItemIndex'];
 	if ($itemIndex > 0) {
-	    $navigator['first'] = array('view' => 'core:ShowItem',
-					'itemId' => $layout['peerIds'][0]);
-	    $navigator['back'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peerIds'][$itemIndex-1]);
+	    $navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
+						     'itemId' => $layout['peerIds'][0]);
+	    $navigator['first']['item'] = $layout['peers'][0];
+
+	    if ($itemIndex - 1 != 0) {
+		$navigator['back']['urlParams'] = array('view' => 'core:ShowItem',
+							'itemId' => $layout['peerIds'][$itemIndex-1]);
+		$navigator['back']['item'] = $layout['peers'][$itemIndex-1];
+	    }
 	}
 
 	if ($itemIndex < $layout['peerCount']-1) {
-	    $navigator['next'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peerIds'][$itemIndex+1]);
-	    $navigator['last'] = array('view' => 'core:ShowItem',
-				       'itemId' => $layout['peerIds'][$layout['peerCount']-1]);
+	    if ($itemIndex + 1 != $layout['peerCount'] - 1) {
+		$navigator['next']['urlParams'] = array('view' => 'core:ShowItem',
+							'itemId' => $layout['peerIds'][$itemIndex+1]);
+		$navigator['next']['item'] = $layout['peers'][$itemIndex + 1];
+	    }
+	    
+	    $navigator['last']['urlParams'] = array('view' => 'core:ShowItem',
+						    'itemId' => $layout['peerIds'][$layout['peerCount']-1]);
+	    $navigator['last']['item'] = $layout['peers'][count($layout['peers'])-1];
 	}
 
 	/* Tell Smarty about everything we've learned */
