@@ -1,5 +1,5 @@
 <p>
-<?php print _("In order to make sure you're really yourself, you'll need to upload a text file called <b>login.txt</b> to your <tt>gallery</tt> directory on your webserver (or wherever you have Gallery installed). It must contain the following randomly generated word:") ?>
+<?php print _("In order to verify your identity, you'll need to upload a text file called <b>login.txt</b> to your <tt>gallery</tt> directory on your webserver (or wherever you have Gallery installed). It must contain the following randomly generated word:") ?>
 </p>
 
 <p class="bold"><?php print $rand ?></p>

@@ -3,7 +3,7 @@
 <table width="100%" cellpadding="0" cellspacing="0">
 <tr><td valign="bottom" align="center" class="bold" style="padding-bottom: 10px;"><?php echo _('Welcome to the Gallery2<span style="color:ae0000; font-style: italic;">Alpha</span> Installer!')?>
 </td>
-<td align="center" width="167"><img src="logo.png" height="95" width="167"></td>
+<td align="center" width="167"><img src="images/logo.png" height="95" width="167"></td>
 </tr></table>
 <hr style="margin-bottom: 20px;">
 
@@ -27,12 +27,12 @@ if ($percentage != 100) { ?>
 
 <hr>
 
-<?php include($content); ?>
+<?php include(dirname(__FILE__) . '/steps/' . $content); ?>
 
 </div>
 
 <div style="text-align: center;">
 &copy;<?php echo date('Y') ?> Gallery :: <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a><br />
-<img src="motto.png" height="25" width="230" />
+<img src="images/motto.png" height="25" width="230" />
 </div>
 </center>
