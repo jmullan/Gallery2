@@ -194,6 +194,7 @@ class AdminCoreView extends GalleryView {
 		$form[$outer][$inner] = $value;
 	    }
 	    $form['formName'] = 'AdminCore';
+	    $form['uploadLocalServer']['newDir'] = '';
 	}
 
 	list ($ret, $module) = $gallery->loadModule('core');
