@@ -539,10 +539,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		} else {
 		    $affectedRows = $this->_db->Affected_Rows();
 		    if ($affectedRows == 0) {
-			return GalleryStatus::error(ERROR_OBSOLETE_DATA, __FILE__, __LINE__);
+			return GalleryStatus::error(ERROR_OBSOLETE_DATA, __FILE__, __LINE__,
+						    "$query (" . implode('|', $data) . ')');
 		    } else if ($affectedRows > 1) {
 			/* Holy shit, we just updated more than one row!  What do we do now? */
-			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+			return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__,
+					      "$query (" . implode('|', $data) . ") $affectedRows");
 		    }
 		}
 	    }
