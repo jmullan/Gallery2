@@ -67,7 +67,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	foreach (array('view' => 'everybody', 'fullSize' => '1', 'targetLocation' => $rootId,
-		       'loginRedirect' => 0, 'homeLink' => 0, 'create' => 'immediate')
+		       'loginRedirect' => 0, 'homeLink' => 0, 'create' => 'access')
 		as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
