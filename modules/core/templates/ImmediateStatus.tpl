@@ -27,33 +27,25 @@
 </script>
 {/literal}
 
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{$ImmediateStatus.pageTitle}
-      </h2>
-    </div>
-  </div>
+<div id="gsContent" class="gcBorder1">
+<div class="gbBlock gcBackground1">
+  <h2> {$ImmediateStatus.pageTitle} </h2>
+</div>
 
-  <div class="gbAdmin">
-    <h2 class="giTitle">
-      <span id="ImmediateStatus_title">{$ImmediateStatus.sectionTitle}</span>
-    </h2>
-  
-    <p class="giDescription">
-      <span id="ImmediateStatus_description">{$ImmediateStatus.sectionDescription}</span>
-    </p>
-  </div>
+<div class="gbBlock">
+  <h3>
+    <span id="ImmediateStatus_title">{$ImmediateStatus.sectionTitle}</span>
+  </h3>
 
-  <div class="gbAdmin">
-    <table class="gbStatusTable" cellspacing="0">
-      <tr>
-        <td id="ImmediateStatus_progressMade" class="giStatusProgressMade" style="width:0%">&nbsp;</td>
-        <td id="ImmediateStatus_progressToGo" class="giStatusProgressToGo" style="width:100%; border-left: none')">&nbsp;</td>
-      </tr>
-    </table>
-  </div>
+  <p class="giDescription">
+    <span id="ImmediateStatus_description">{$ImmediateStatus.sectionDescription}</span>
+  </p>
+
+  <table width="100%" cellspacing="0" cellpadding="0"><tr>
+    <td id="ImmediateStatus_progressMade" class="giStatusProgressMade" style="width:0%">&nbsp;</td>
+    <td id="ImmediateStatus_progressToGo" class="giStatusProgressToGo" style="width:100%; border-left: none')">&nbsp;</td>
+  </tr></table>
+</div>
 
 {* do not modify the following line *}
 SPLIT ON THIS LINE

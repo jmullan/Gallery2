@@ -4,10 +4,10 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbAdmin">
-  <div class="giDescription">
+<div class="gbBlock">
+  <p class="giDescription">
     {g->text text="Select the page number to use for this item's thumbnail."}
-  </div>
+  </p>
 
   <label for="page">
     {g->text text="Page"}
@@ -17,7 +17,9 @@
   </select>
 </div>
 
-<div class="gbButtons">
-  <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+<div class="gbBlock gcBackground1">
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
 </div>

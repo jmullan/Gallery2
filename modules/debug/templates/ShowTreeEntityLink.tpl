@@ -4,15 +4,13 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-    <a href="{g->url arg1="view=debug:ShowTree" arg2="entityId=$entityId"}">
-      {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId._className}
-    </a>
+<a href="{g->url arg1="view=debug:ShowTree" arg2="entityId=$entityId"}">
+  {g->text text="%d: (%s)" arg1=$entityId arg2=$ShowTree.entityTable.$entityId._className}
+</a>
 
-    {if !empty($ShowTree.isItem.$entityId)}
-    <a href="{g->url arg1="itemId=$entityId"}">
-      {g->text text="[browse]"}
-    </a>
-    {/if}
-
-  
-
+{if !empty($ShowTree.isItem.$entityId)}
+  &nbsp;
+  <a href="{g->url arg1="itemId=$entityId"}">
+    {g->text text="[browse]"}
+  </a>
+{/if}

@@ -209,23 +209,22 @@ class GalleryView {
 	}
 	/*
 	 * XXX TEMPORARY HACK XXX
-	 * Hardcode new layout/theme CSS for core:SiteAdmin, core:UserAdmin, core:ItemAdmin views.
+	 * Hardcode new layout/theme CSS for non-layout views.
 	 */
-	if (!strcasecmp(get_class($this), 'siteadminview')
-		|| !strcasecmp(get_class($this), 'useradminview')
-		|| !strcasecmp(get_class($this), 'itemadminview')) {
-	    $template->style('templates/layoutNew.css');
-	    $template->style("themes/$themeName/themeNew.css");
+	if ($this->useDefaultStyle()) {
+	    $template->style("themes/matrix/themeNew.css");
 	} else {
 
 	/* Theme style */
 	$template->style("themes/$themeName/theme.css");
+	} //HACK
 
 	/* Use default layout style if applicable */
 	if ($this->useDefaultStyle()) {
-	    $template->style('templates/layout.css');
+//HACK	    $template->style('templates/layout.css');
+	    $template->style('templates/layoutNew.css');
+	/* XXX END TEMPORARY HACK */
 	}
-	} /* XXX END TEMPORARY HACK */
 
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');

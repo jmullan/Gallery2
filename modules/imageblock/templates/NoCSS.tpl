@@ -5,5 +5,5 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {literal}<style type="text/css">
-img.giThumbImage { border:none }
+img.giThumbImage { border-style: none; }
 </style>{/literal}
