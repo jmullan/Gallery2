@@ -182,6 +182,13 @@ class ShowItemView extends GalleryView {
 		    $buf .= $path;
 		    unset($params['itemId']);
 		}
+		$len = strlen($buf);
+		if ($buf[$len-1] == '/') {
+		    $buf[$len-1] = '.';
+		    $buf .= 'html';
+		} else {
+		    $buf .= '.html';
+		}
 	    }
 	}
 
@@ -201,6 +208,10 @@ class ShowItemView extends GalleryView {
 
 	/* Treat the input as a path and get the right item id out */
 	$itemId = null;
+	if (substr($queryString, -5, 5) == '.html') {
+	    $queryString = substr($queryString, 0, strlen($queryString) - 5);
+	    $queryString .= '/';
+	}
 	$origQueryString = $queryString;
 	while ($itemId == null && !empty($queryString)) {
 	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath(urldecode($queryString));
