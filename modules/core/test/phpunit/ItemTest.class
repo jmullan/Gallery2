@@ -776,6 +776,49 @@ class ItemTest extends GalleryTestCase {
 	$this->assert(!isset($thumbTable[$this->_album->getId()]));
     }
 
+    /*
+     * Exercise a bug: if you add an unknown item and a photo to an album (album highlight
+     * automatically becomes the photo) and then move the photo to another album then the
+     * highlight source is changed to the unknown item --> ERROR_UNSUPPORTED_OPERATION
+     */
+    function testSetThumbnailDontChangeToUnknownItem() {
+	list ($ret, $unknownItem) = $this->_createRandomDataItem($this->_album->getId(),
+								 'application/unknown',
+								 array(),
+								 __FILE__,
+								 'GalleryUnknownItem');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $photoItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $thumb) = $this->_createDerivative($photoItem, $photoItem->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'itemtest-operation', 'test/image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $highlight) = $this->_createDerivative($this->_album, $thumb->getId(),
+						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+						       'itemtest-operation', 'test/image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $success) =
+	    GalleryCoreApi::setThumbnailFromItem($this->_album->getId(), $unknownItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!$success, 'should not be able to set thumbnail');
+    }
+
     function testAddItemToAlbum() {
 	global $gallery;
 
@@ -931,13 +974,13 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Switch to the anonymous user id so that this returns false */
-        list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-        if ($ret->isError()) {
+	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
-        if ($ret->isError()) {
+	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

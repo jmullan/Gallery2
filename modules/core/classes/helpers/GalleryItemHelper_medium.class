@@ -571,7 +571,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($source->getId());
 	    if ($ret->isError()) {
 		if (!empty($lockIds)) {
-		    // Ignore errors -- we're already in an error handler
+		    /* Ignore errors -- we're already in an error handler */
 		    GalleryCoreApi::releaseLocks($lockIds);
 		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -585,7 +585,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -594,13 +594,13 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		list ($ret, $derivative) = $derivative->refresh();
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
-			// Ignore errors -- we're already in an error handler
+			/* Ignore errors -- we're already in an error handler */
 			GalleryCoreApi::releaseLocks($lockIds);
 		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$success = true;
+		$derivativeOperations = $derivative->getDerivativeOperations();
 	    } else {
 		/* Create a new one */
 		list ($ret, $derivative) =
@@ -671,26 +671,6 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 			}
 			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 		    }
-
-		    /*
-		     * Validate the stored preferences to make sure that
-		     * they're supported by an active toolkit.
-		     */
-		    list ($ret, $isSupported, $outputMimeType) =
-			GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $derivativeOperations);
-		    if ($ret->isError()) {
-			if (!empty($lockIds)) {
-			    // Ignore errors -- we're already in an error handler
-			    GalleryCoreApi::releaseLocks($lockIds);
-			}
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    if ($isSupported) {
-			$success = true;
-			$derivative->setDerivativeOperations($derivativeOperations);
-			$derivative->setMimeType($outputMimeType);
-		    }
 		} else {
 		    /*
 		     * There's no parent id, which means the target album is the root, which means it doesn't
@@ -698,6 +678,28 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		     */
 		    $success = true;
 		    $derivative = null;
+		}
+	    }
+
+	    if (isset($derivativeOperations)) {
+		/*
+		 * Validate the stored preferences to make sure that
+		 * they're supported by an active toolkit.
+		 */
+		list ($ret, $isSupported, $outputMimeType) =
+		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType, $derivativeOperations);
+		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			/* Ignore errors -- we're already in an error handler */
+			GalleryCoreApi::releaseLocks($lockIds);
+		    }
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($isSupported) {
+		    $success = true;
+		    $derivative->setDerivativeOperations($derivativeOperations);
+		    $derivative->setMimeType($outputMimeType);
 		}
 	    }
 
