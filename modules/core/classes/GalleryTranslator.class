@@ -83,27 +83,35 @@ class GalleryTranslator {
 	
 	$this->_supportedLanguages['el']['GR']['description'] = 'Greek';
 	$this->_supportedLanguages['el']['GR']['charset'] = 'UTF-8';
+	$this->_defaultCountry['el'] = 'GR';
     
 	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
 	$this->_supportedLanguages['en']['US']['charset'] = 'UTF-8';
+	$this->_defaultCountry['en'] = 'US';
     
 	$this->_supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
 	$this->_supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
+	$this->_defaultCountry['pt'] = 'BR';
 	
 	$this->_supportedLanguages['zh']['TW']['description'] = 'Chinese (Traditional)';
 	$this->_supportedLanguages['zh']['TW']['charset'] = 'UTF-8';
+	$this->_defaultCountry['zh'] = 'TW';
 
 	$this->_supportedLanguages['nl']['NL']['description'] = 'Dutch';
 	$this->_supportedLanguages['nl']['NL']['charset'] = 'UTF-8';
+	$this->_defaultCountry['nl'] = 'NL';
 
 	$this->_supportedLanguages['no']['NO']['description'] = 'Norwegian';
 	$this->_supportedLanguages['no']['NO']['charset'] = 'UTF-8';
+	$this->_defaultCountry['no'] = 'NO';
 
 	$this->_supportedLanguages['pt']['BR']['description'] = 'Portuguese (BR)';
 	$this->_supportedLanguages['pt']['BR']['charset'] = 'UTF-8';
+	$this->_defaultCountry['pt'] = 'BR';
 
 	$this->_supportedLanguages['ja']['JP']['description'] = 'Japanese';
 	$this->_supportedLanguages['ja']['JP']['charset'] = 'UTF-8';
+	$this->_defaultCountry['ja'] = 'JP';
 
 	$this->_boundDomains = array();
     }
@@ -143,9 +151,9 @@ class GalleryTranslator {
 		header('Content-Type: text/html; charset=' .
 		       $this->_supportedLanguages[$language][$country]['charset']);
 	    }
-	    
+
 	    putenv("LANG=${language}_${country}");
-	    setlocale(LC_ALL, "${language}_${country}");
+	    setlocale(LC_ALL, "${language}_${country}", "${language}");
 	}
 
 	return GalleryStatus::success();
