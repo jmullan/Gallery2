@@ -51,6 +51,18 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('FILE Directive'), 'success' => true);
 	}
+
+	// Make sure that safe mode is not enabled
+	if ((bool)ini_get('safe_mode')) {
+	    $templateData['check'][] =
+		array('title' => _('Safe Mode'),
+		      'success' => false,
+		      'error' => _('Error: Your version of PHP is configured with safe mode enabled.  You must disable safe mode before Gallery will run.'));
+	    $failCount++;
+	} else {
+	    $templateData['check'][] =
+		array('title' => _('Safe Mode'), 'success' => true);
+	}
 	
 	$templateData['bodyFile'] = 'SystemChecks.html';
 	$this->setComplete($failCount == 0);
