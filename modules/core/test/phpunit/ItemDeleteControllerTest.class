@@ -87,7 +87,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 			    $results);
 		
 	/* Make sure the album is actually gone */
-	$this->_verifyMissing($album->getId());
+	$ret = $this->_verifyMissing($album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
