@@ -232,5 +232,12 @@ class SquareThumbModule extends GalleryModule {
 	}
 	return GalleryStatus::success();
     }
+
+    /**
+     * @see GalleryModule::getConfigurationView()
+     */
+    function getConfigurationView() {
+	return 'squarethumb:CantActivate';
+    }
 }
 ?>
