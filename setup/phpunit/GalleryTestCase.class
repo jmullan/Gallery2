@@ -135,24 +135,5 @@ class GalleryTestCase extends TestCase {
 
 	return GalleryStatus::success();
     }
-
-    function _becomeAdminUser() {
-	global $gallery;
-	
-	list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$ids = array_keys($results);
-	$gallery->setActiveUserId($ids[0]);
-
-	return GalleryStatus::success();
-    }
 }
 ?>
