@@ -94,6 +94,7 @@ class ItemEditItemController extends GalleryController {
 		 * It's possible to get a collision when we rename, so try that
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
+		$originalPathComponent = $item->getPathComponent();
 		if (!$isRootAlbum) {
 		    if ($item->getPathComponent() != $form['pathComponent']) {
 			$ret = $item->rename($form['pathComponent']);
@@ -112,9 +113,16 @@ class ItemEditItemController extends GalleryController {
 		    $item->setDescription($form['description']);
 		    $item->setSerialNumber($form['serialNumber']);
 	    
-
 		    $ret = $item->save();
 		    if ($ret->isError()) {
+			if ($originalPathComponent != $form['pathComponent']) {
+			    /*
+			     * Move the file back and hope that this succeeds
+			     * since we're already in an error state
+			     */
+			    $item->rename($originalPathComponent);
+			}
+			    
 			$gallery->releaseLocks($lockId);
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }

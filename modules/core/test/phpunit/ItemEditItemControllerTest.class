@@ -155,6 +155,15 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     }
 
     function testPathCollisionItem() {
+	global $gallery;
+	
+	/* Get some stats on the file before we try moving */
+	$platform = $gallery->getPlatform();
+	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -171,6 +180,21 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][pathComponent][collision]')),
 			    $results);
+
+	/* Make sure the object is still in the original path */
+	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newPath) = $this->_item[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($originalPath, $newPath);
+
+	/* Make sure that the file wasn't moved */
+	$this->assert($platform->file_exists($originalPath));
     }
 
     function testRenameRoot() {
@@ -210,6 +234,15 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
     }
 
     function testPathCollisionAlbum() {
+	global $gallery;
+	
+	/* Get some stats on the file before we try moving */
+	$platform = $gallery->getPlatform();
+	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
@@ -226,6 +259,21 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array('form[error][pathComponent][collision]')),
 			    $results);
+
+	/* Make sure the object is still in the original path */
+	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newPath) = $this->_album[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($originalPath, $newPath);
+
+	/* Make sure that the file wasn't moved */
+	$this->assert($platform->file_exists($originalPath));
     }
 
     function testInvalidItem() {
@@ -253,5 +301,80 @@ class ItemEditItemControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
     }
 
+    function testMoveItemWithInvalidSerialNumber() {
+	global $gallery;
+	
+	/* Get some stats on the file before we try moving */
+	$platform = $gallery->getPlatform();
+	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Use an invalid Serial */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+
+	/* Make sure the object is still in the original path */
+	list ($ret, $this->_item[0]) = $this->_item[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newPath) = $this->_item[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($originalPath, $newPath);
+
+	/* Make sure that the file wasn't moved */
+	$this->assert($platform->file_exists($originalPath), 'File should not have been moved');
+    }
+
+    function testMoveAlbumWithInvalidSerialNumber() {
+	global $gallery;
+	
+	/* Get some stats on the file before we try moving */
+	$platform = $gallery->getPlatform();
+	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Use an invalid Serial */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album[0]->getId());
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
+	GalleryUtilities::putRequestVariable('form[title]', 'new title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', -1);
+
+	$results = $this->handleRequest(ERROR_OBSOLETE_DATA);
+
+	/* Make sure the object is still in the original path */
+	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $newPath) = $this->_album[0]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($originalPath, $newPath);
+
+	/* Make sure that the file wasn't moved */
+	$this->assert($platform->file_exists($originalPath), 'Album should not have been moved');
+    }
 }
 ?>
