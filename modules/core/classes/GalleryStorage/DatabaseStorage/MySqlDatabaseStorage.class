@@ -155,24 +155,6 @@ class MySqlDatabaseStorage extends DatabaseStorage {
     }
 
     /**
-     * @see GalleryStorage::newEntity
-     */
-    function newEntity(&$entity) {
-	// Just in case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke)
-	if (isset($this->_db->hasGenID) && !$this->_db->hasGenID) {
-	    $this->_db->hasGenID = $setGenID = true;
-	}
-	$ret = parent::newEntity($entity);
-	if (isset($setGenID)) {
-	    $this->_db->hasGenID = false;
-	}
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	return GalleryStatus::success();
-    }
-
-    /**
      * Get database version.
      * @return string version
      */

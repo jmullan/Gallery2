@@ -647,9 +647,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
 	}
 
-	/*
-	 * Get the id of the next object from our sequence.
-	 */
+	/* In case we're embedded in an app that sets adodb hasGenID to false (xaraya/postnuke) */
+	if (isset($this->_db->hasGenID) && !$this->_db->hasGenID) {
+	    $this->_db->hasGenID = $setGenID = true;
+	}
+
+	/* Get the id of the next object from our sequence */
 	$this->_traceStart();
 	$id = $this->_db->GenId($this->_tablePrefix . DATABASE_SEQUENCE_ID);
 	$this->_traceStop();
@@ -658,6 +661,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$entity->setSerialNumber(0);
 	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
 
+	if (isset($setGenID)) {
+	    $this->_db->hasGenID = false;
+	}
 	return GalleryStatus::success();
     }
 
