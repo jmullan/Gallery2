@@ -228,7 +228,7 @@ class PrintPhotoControllerTestPlatform {
 	    $buffer[] = 'Content-Length: ' . strlen($response);
 	    $buffer[] = '';
 	    $buffer[] = $response;
-	    $this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
+	    $this->_readBuffer[$handle] = $buffer;
 	    return strlen($string);
 	} else if ($string == join("\r\n", 
 			    array('POST /EXISTING_FRAGMENT HTTP/1.0',
@@ -238,14 +238,15 @@ class PrintPhotoControllerTestPlatform {
 				  'Content-Length: ' . strlen($postData),
 				  '',
 				  $postData)) . "\r\n") {
-	    $response = '<add-cart-response request-url="/REQUEST_URL2?foo=1&#38;bar=2" redirect-url="/REDIRECT_URL2?foo=1&#38;bar=2"/>';
+	    $response = '<add-cart-response request-url="/REQUEST_URL2?foo=1&#38;bar=2" ' .
+		'redirect-url="/REDIRECT_URL2?foo=1&#38;bar=2"/>';
 	    $buffer = array();
 	    $buffer[] = 'HTTP/1.1 200 OK';
 	    $buffer[] = 'Connection: close';
 	    $buffer[] = 'Content-Length: ' . strlen($response);
 	    $buffer[] = '';
 	    $buffer[] = $response;
-	    $this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
+	    $this->_readBuffer[$handle] = $buffer;
 	    return strlen($string);
 	} else {
 	    printf("<pre> Expected: %s</pre>", print_r($expectedPost, 1));
@@ -269,6 +270,15 @@ class PrintPhotoControllerTestPlatform {
 	return (empty($this->_readBuffer[$handle]));
     }
 
+    function fgets($handle) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	return array_shift($this->_readBuffer[$handle]);
+
+    }
+
     function fread($handle, $length) {
 	if (empty($this->_readBuffer[$handle])) {
 	    return null;
@@ -278,13 +288,13 @@ class PrintPhotoControllerTestPlatform {
 	 * Return the number of bytes requested, or if that exceeds what we have available return what we have
 	 * available.
 	 */
-	if ($length >= strlen($this->_readBuffer[$handle])) {
-	    $tmp = $this->_readBuffer[$handle];
+	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
+	    $tmp = join("\n", $this->_readBuffer[$handle]);
 	    unset($this->_readBuffer[$handle]);
 	    return $tmp;
 	} else {
-	    $tmp = substr($this->_readBuffer[$handle], 0, $length);
-	    $this->_readBuffer[$handle] = substr($this->_readBuffer[$handle], $length+1);
+	    $tmp = substr(join("\n", $this->_readBuffer[$handle]), 0, $length);
+	    $this->_readBuffer[$handle] = split("\n", substr(join("\n", $this->_readBuffer[$handle]), $length+1));
 	    return $tmp;
 	}
     }

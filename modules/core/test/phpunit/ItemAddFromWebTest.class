@@ -53,12 +53,14 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	}
 
 	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new ItemAddFromWebTestPlatform($this->_savePlatform);
+	$gallery->_platform = new ItemAddFromWebTestPlatform($this);
     }
 
     function tearDown() {
 	global $gallery;
 
+	$gallery->_platform = $this->_savePlatform;
+	
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -69,8 +71,6 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform = $this->_savePlatform;
-	
 	parent::tearDown();
     }
 
@@ -79,20 +79,20 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.gif]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/test1.jpg]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/apo\'strophe.jpg]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://test/404.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.gif]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/404.jpg]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/apo\'strophe.jpg]', 1);
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
 	$this->assertEquals(3, sizeof($results[1]['addedFiles']));
-	$this->assertEquals('http://test/test1.gif', $results[1]['addedFiles'][0]['fileName']);
+	$this->assertEquals('http://www.test.com/test1.gif', $results[1]['addedFiles'][0]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][0]['id']));
-	$this->assertEquals('http://test/test1.jpg', $results[1]['addedFiles'][1]['fileName']);
+	$this->assertEquals('http://www.test.com/test1.jpg', $results[1]['addedFiles'][1]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][1]['id']));
-	$this->assertEquals('http://test/apo\'strophe.jpg', $results[1]['addedFiles'][2]['fileName']);
+	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][2]['fileName']);
 	$this->assert(isset($results[1]['addedFiles'][2]['id']));
     }
 }
@@ -103,29 +103,240 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class ItemAddFromWebTestPlatform extends GalleryPlatform {
-    function ItemAddFromWebTestPlatform($delegate) {
-	$this->_delegate = $delegate;
+class ItemAddFromWebTestPlatform  {
+    function ItemAddFromWebTestPlatform(&$testCase) {
+	$this->_testCase = $testCase;
     }
 
-    function fopen($filename, $mode, $use_include_path=0) {
-	switch($filename) {
-	case 'http://test/test1.gif':
-	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.gif', $mode, $use_include_path);
+    function tempnam($tmpDir, $base) {
+	return "/test/$base";
+    }
 
-	case 'http://test/test1.jpg':
-	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
-
-	case 'http://test/apo\'strophe.jpg':
-	    return $this->_delegate->fopen(dirname(__FILE__) . '/../data/test1.jpg', $mode, $use_include_path);
-
-	case 'http://test/404.jpg':
-	    return null;
-
-	default:
-	    return $this->_delegate->fopen($filename, $mode, $use_include_path);
+    function fsockopen($target, $port, &$errno, &$errstr, $timeout) {
+	if ($target == 'www.test.com' && $port == '80') {
+	    return 'test-resource-1';
 	}
 
+	$errno = 1;
+	$errstring = 'test failure';
+    }
+
+    function fwrite($handle, $string, $length=0) {
+	if ($handle == 'test-resource-1') {
+	    switch($string) {
+	    case "GET /test1.gif HTTP/1.0\r\n" .
+		"Host: www.test.com\r\n" .
+		"\r\n":
+	    case "GET /test1.jpg HTTP/1.0\r\n" .
+		"Host: www.test.com\r\n" .
+		"\r\n":
+	    case "GET /apo'strophe.jpg HTTP/1.0\r\n" .
+		"Host: www.test.com\r\n" .
+		"\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 200 OK';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Accept-Ranges: bytes';
+		$buffer[] = 'ETag: "122ae4-5-3fc199b0"';
+		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
+		$buffer[] = 'Content-Length: 5';
+		$buffer[] = 'Content-Type: text/html';
+		$buffer[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
+		$buffer[] = 'Client-Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Client-Peer: 209.237.226.157:80';
+		$buffer[] = 'Client-Response-Num: 1';
+		$buffer[] = '';
+		$buffer[] = 'test';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    case "GET /404.jpg HTTP/1.0\r\n" .
+		"Host: www.test.com\r\n" .
+		"\r\n":
+		$buffer = array();
+		$buffer[] = 'HTTP/1.1 404 Not Found';
+		$buffer[] = 'Connection: close';
+		$buffer[] = 'Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Accept-Ranges: bytes';
+		$buffer[] = 'ETag: "122ae4-5-3fc199b0"';
+		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
+		$buffer[] = 'Content-Length: 5';
+		$buffer[] = 'Content-Type: text/html';
+		$buffer[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
+		$buffer[] = 'Client-Date: Mon, 24 Nov 2003 05:40:03 GMT';
+		$buffer[] = 'Client-Peer: 209.237.226.157:80';
+		$buffer[] = 'Client-Response-Num: 1';
+		$buffer[] = '';
+		$buffer[] = 'test';
+		$buffer[] = '';
+		$this->_readBuffer[$handle] = $buffer;
+		return strlen($string);
+
+	    default:
+		print "Unexpected write: $string";
+	    }
+	}
+
+	if ($handle == '/test/add') {
+	    if (!isset($this->_testCase->_outputFile[$handle])) {
+		$this->_testCase->_outputFile[$handle] = '';
+	    }
+
+	    $this->_testCase->_outputFile[$handle] .= $string;
+	    return strlen($string);
+	}
+
+	return 0;
+    }
+
+    function getDirectorySeparator() {
+	return '/';
+    }
+
+    function legalizePathComponent($component) {
+	switch ($component) {
+	case 'test1.gif':
+	case 'test1.jpg':
+	    return $component;
+	    
+	case 'apo\'strophe.jpg':
+	    return 'apo_strophe.jpg';
+
+	default:
+	    print "Unexpected legalizePathComponent($component)";
+	    return 'UNEXPECTED';
+	}
+    }
+
+    function copy($fromFile, $toFile) {
+	if ($fromFile == '/test/add') {
+	    switch (basename($toFile)) {
+	    case 'test1.gif':
+	    case 'test1.jpg':
+	    case 'apo_strophe.jpg':
+		return true;
+	    }
+	}
+
+	print "unexpected copy($fromFile, $toFile)";
+	return false;
+    }
+
+    function getimagesize($filename) {
+	switch (basename($filename)) {
+	case 'test1.gif':
+	case 'test1.jpg':
+	case 'apo_strophe.jpg':
+	    return array(100, 200);
+	}
+
+	print "unexpected getimagesize($filename)";
+	return 0;
+    }
+
+    function filesize($filename) {
+	switch (basename($filename)) {
+	case 'test1.gif':
+	case 'test1.jpg':
+	case 'apo_strophe.jpg':
+	    return 5;
+	}
+
+	print "unexpected filesize($filename)";
+	return 0;
+    }
+
+    function mkdir($dirname) {
+	print "unexpected mkdir($dirname)";
+	return false;
+    }
+
+    function file_exists($filename) {
+	switch($filename) {
+	case '/test/add':
+	    return 1;
+	}
+
+	return 0;
+    }
+
+    function unlink($filename) {
+	switch($filename) {
+	case '/test/add':
+	    return 1;
+	}
+
+	print "Attempted to unlink bogus file: $filename";
+	return 0;
+    }
+    
+    function fflush($handle) {
+	switch($handle) {
+	case 'test-resource-1':
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+
+    function fgets($handle, $length) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	return array_shift($this->_readBuffer[$handle]) . "\n";
+    }
+
+    function fread($handle, $length) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	/*
+	 * Return the number of bytes requested, or if that exceeds what we have available return what we have
+	 * available.
+	 */
+	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
+	    $tmp = join("\n", $this->_readBuffer[$handle]);
+	    unset($this->_readBuffer[$handle]);
+	    return $tmp;
+	} else {
+	    $buf = join("\n", $this->_readBuffer[$handle]);
+	    $tmp = substr($buf, 0, $length);
+	    $this->_readBuffer[$handle] = split("\n", substr($buf, $length+1));
+	    return $tmp;
+	}
+    }
+
+    function feof($handle) {
+	return (empty($this->_readBuffer[$handle]));
+    }
+
+    function fclose($handle) {
+	switch($handle) {
+	case 'test-resource-1':
+	    unset($this->_readBuffer[$handle]);
+	    return true;
+
+	default:
+	    return false;
+	}
+    }
+
+    function is_uploaded_file($filename) {
+	return false;
+    }
+
+    function fopen($filename, $modes) {
+	if ($filename == '/test/add' && $modes == 'wb') {
+	    return $filename;
+	}
+
+	print "Unexpected fopen($file, $modes)";
+	return null;
     }
 }
 ?>

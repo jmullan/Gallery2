@@ -55,22 +55,11 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 		$successfullyCopied = false;
 		$url = GalleryUtilities::htmlEntityDecode($url);
-		$fin = $platform->fopen($url, 'rb');
-		if ($fin) {
-		    $fout = $platform->fopen($tmpFile, 'wb');
-		    if ($fout) {
-			while (!$platform->feof($fin)) {
-			    $buf = $platform->fread($fin, 4096);
-			    $platform->fwrite($fout, $buf);
-			}
-			$platform->fclose($fout);
-			$successfullyCopied = true;
-		    }
-		    $platform->fclose($fin);
-		}
+		list ($successfullyCopied, $response, $headers) =
+		    GalleryUtilities::fetchWebFile($url, $tmpFile);
 
 		/* Add it */
-		if ($successfullyCopied) {
+		if ($successfullyCopied && strpos($response, '404 Not Found') === false) {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
 		    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
 
@@ -81,13 +70,13 @@ class ItemAddFromWeb extends ItemAddPlugin {
 									   $base,
 									   $mimeType,
 									   $item->getId());
-		    $platform->unlink($tmpFile);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
 		    $status['addedFiles'][] = array('fileName' => $url, 'id' => $newItem->getId());
 		}
+		@$platform->unlink($tmpFile);
 	    }
 	}
 
@@ -118,9 +107,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		if (empty($baseUrlComponents['scheme']) || $baseUrlComponents['scheme'] != 'http') {
 		    $form['error']['webPage']['invalid'] = 1;
 		} else {
-		    list ($buffer, $headers, $actualUrl) =
+		    list ($buffer, $response, $headers, $actualUrl) =
 			GalleryUtilities::fetchWebPage($form['webPage']);
-		    if (!isset($buffer) || strpos($headers, '404 Not Found') !== false) {
+		    if (!isset($buffer) || strpos($response, '404 Not Found') !== false) {
 			$form['error']['webPage']['unavailable'] = 1;
 		    } else {
 			if (isset($actualUrl) && $actualUrl != $form['webPage']) {

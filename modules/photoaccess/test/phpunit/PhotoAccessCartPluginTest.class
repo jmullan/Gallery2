@@ -243,7 +243,7 @@ class PhotoAccessCartPluginTestPlatform {
 		$buffer[] = 'Content-Length: ' . strlen($response);
 		$buffer[] = '';
 		$buffer[] = $response;
-		$this->_readBuffer[$handle] = join("\n", $buffer) . "\n";
+		$this->_readBuffer[$handle] = $buffer;
 		return strlen($string);
 
 	    default:
@@ -269,6 +269,14 @@ class PhotoAccessCartPluginTestPlatform {
 	return (empty($this->_readBuffer[$handle]));
     }
 
+    function fgets($handle) {
+	if (empty($this->_readBuffer[$handle])) {
+	    return null;
+	}
+
+	return array_shift($this->_readBuffer[$handle]);
+    }
+
     function fread($handle, $length) {
 	if (empty($this->_readBuffer[$handle])) {
 	    return null;
@@ -278,13 +286,13 @@ class PhotoAccessCartPluginTestPlatform {
 	 * Return the number of bytes requested, or if that exceeds what we have available return what we have
 	 * available.
 	 */
-	if ($length >= strlen($this->_readBuffer[$handle])) {
-	    $tmp = $this->_readBuffer[$handle];
+	if ($length >= strlen(join("\n", $this->_readBuffer[$handle]))) {
+	    $tmp = join("\n", $this->_readBuffer[$handle]);
 	    unset($this->_readBuffer[$handle]);
 	    return $tmp;
 	} else {
-	    $tmp = substr($this->_readBuffer[$handle], 0, $length);
-	    $this->_readBuffer[$handle] = substr($this->_readBuffer[$handle], $length+1);
+	    $tmp = substr(join("\n", $this->_readBuffer[$handle]), 0, $length);
+	    $this->_readBuffer[$handle] = split("\n", substr(join("\n", $this->_readBuffer[$handle]), $length+1));
 	    return $tmp;
 	}
     }

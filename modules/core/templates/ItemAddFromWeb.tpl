@@ -11,9 +11,10 @@
     function toggleSelections() {ldelim}
       form = document.forms[0];
       state = form.elements['selectionToggle'].checked;
-      {foreach from=$form.webPageUrls item=url}
-      form.elements['{g->formVar var="form[webPageUrls][`$url.url`]"}'].checked = state;
-      {/foreach}
+      for (i = 1; i <= {$ItemAddFromWeb.webPageUrlCount}; i++) {ldelim}
+          cb = document.getElementById('checkbox_' + i);
+	  cb.checked = state;
+      {rdelim}
     {rdelim}
   </script>
   {/if}
@@ -100,7 +101,7 @@
     {foreach from=$form.webPageUrls item=url}
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
-	<input type="checkbox" name="{g->formVar var="form[webPageUrls][`$url.url`]"}"/>
+	<input id="checkbox_{counter}" type="checkbox" name="{g->formVar var="form[webPageUrls][`$url.url`]"}"/>
       </td>
       <td>
 	{$url.url}
