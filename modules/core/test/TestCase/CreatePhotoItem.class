@@ -23,9 +23,11 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	print("Creating new photo item\n");
 	$photo = new GalleryPhotoItem();
+	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
 	$ret = $photo->create($rootId,
-			      'itemPath_' . time(),
-			      $gallery->getActiveUserId());
+			      $imagePath,
+			      $gallery->getActiveUserId(),
+			      'itemPath_' . time());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -40,31 +42,8 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * Now read lock it so that nobody else dinks with it while we're
-	 * adding data to it.
-	 */
-	list ($ret, $lockIds[]) = $gallery->acquireReadLock($photo->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Put an ImageContainer in our PhotoItem */
-	$image = new GalleryImageContainer();
-	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.gif';
-	$ret = $image->create($photo->getId(),
-			      $imagePath,
-			      $photo->getPathComponent());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Save the image */
-	$ret = $image->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
+	/* Release our locks */
+	$ret = $gallery->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -77,8 +56,9 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Make it a derivative from the source image */
-	$thumbnail->setDerivativeSourceId($image->getId());
+	$thumbnail->setDerivativeSourceId($photo->getId());
 	$thumbnail->setDerivativeCommands("scale 200");
+	$thumbnail->setDerivativeFileExtension($photo->getFileExtension());
 	$ret = $thumbnail->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -92,15 +72,10 @@ class CreatePhotoItemTestCase extends TestCase {
 	}
 
 	/* Make it a derivative from the source image */
-	$resize->setDerivativeSourceId($image->getId());
+	$resize->setDerivativeSourceId($photo->getId());
 	$resize->setDerivativeCommands("scale 600");
+	$resize->setDerivativeFileExtension($photo->getFileExtension());
 	$ret = $resize->save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	/* Release our locks */
-	$ret = $gallery->releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

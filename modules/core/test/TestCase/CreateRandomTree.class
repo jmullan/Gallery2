@@ -88,8 +88,9 @@ class CreateRandomTreeTestCase extends TestCase {
 	    /* Create the photo */
 	    $photo = new GalleryPhotoItem();
 	    $ret = $photo->create($album->getId(),
-				  $this->_randomName(),
-				  $gallery->getActiveUserId());
+				  $this->_imagePath,
+				  $gallery->getActiveUserId(),
+				  $this->_randomName());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -100,35 +101,15 @@ class CreateRandomTreeTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    /* Read lock it */
-	    list($ret, $photoLock) = $gallery->acquireReadLock($photo->getId());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Put an image in it */
-	    $image = new GalleryImageContainer();
-	    $ret = $image->create($photo->getId(),
-				  $this->_imagePath,
-				  $this->_randomName());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    /* Save the image */
-	    $image->save();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
 	    /* Create a derivative image for the thumbnail */
 	    $thumbnail = new GalleryDerivativeImage();
 	    $ret = $thumbnail->create($photo->getId(), IMAGE_TYPE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $thumbnail->setDerivativeSourceId($image->getId());
+	    $thumbnail->setDerivativeSourceId($photo->getId());
 	    $thumbnail->setDerivativeCommands("scale 200");
+	    $thumbnail->setDerivativeFileExtension($photo->getFileExtension());
 
 	    $thumbnail->save();
 	    if ($ret->isError()) {
@@ -146,8 +127,9 @@ class CreateRandomTreeTestCase extends TestCase {
 		}
 
 		$scale = rand(300, 600);
-		$resize->setDerivativeSourceId($image->getId());
+		$resize->setDerivativeSourceId($photo->getId());
 		$resize->setDerivativeCommands("scale $scale");
+		$resize->setDerivativeFileExtension($photo->getFileExtension());
 
 		$ret = $resize->save();
 		if ($ret->isError()) {
@@ -177,12 +159,6 @@ class CreateRandomTreeTestCase extends TestCase {
 		    $host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_ADDR'];
 		}
 		$comment->setHost($host);
-	    }
-
-	    /* Release the photo lock */
-	    $ret = $gallery->releaseLocks($photoLock);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if ($this->_photoCount >= $this->_maxItems) {
