@@ -576,7 +576,7 @@ class Gallery {
 		    $date = date('Y-m-d H:i:s');
 		    $session =& $this->getSession();
 		    if (!empty($session)) {
-			list ($param, $id) = $session->getSessionDescriptor();
+			$id = $session->getId();
 		    } else {
 			$id = '<no session id>';
 		    }

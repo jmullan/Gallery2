@@ -128,8 +128,7 @@ if ($ret->isError()) {
 
 $session = $gallery->getSession();
 if (!$session->isUsingCookies()) {
-    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-    $sessionKey = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey;
+    $sessionKey = GALLERY_FORM_VARIABLE_PREFIX . $session->getKey();
 }
 
 list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();

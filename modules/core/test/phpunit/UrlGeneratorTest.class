@@ -68,8 +68,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 	// If we're not using cookies, expect there to be an additional value
 	$session = $gallery->getSession();
 	if (!$session->isUsingCookies()) {
-	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-	    $values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
+	    $values[] = GALLERY_FORM_VARIABLE_PREFIX . $session->getKey() .
+		'=' . $session->getId();
 	}
 	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
 
@@ -90,8 +90,8 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	// No matter what, expect the session id
 	$session = $gallery->getSession();
-	list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-	$values[] = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey . '=' . $sessionId;
+	$values[] = GALLERY_FORM_VARIABLE_PREFIX . $session->getKey() .
+	    '=' . $session->getId();
 	$expected = 'http://example.com/gallery2/phpunit_test.php?' . join('&amp;', $values);
 	$this->assertEquals($expected, $actual);
     }
@@ -102,6 +102,14 @@ class UrlGeneratorTest extends GalleryTestCase {
 
     function testGetCurrentUrlDir() {
 	$this->assertEquals('http://example.com/gallery2/', $this->_urlGenerator->getCurrentUrlDir());
+    }
+
+    function testGetCurrentDomain() {
+	$_SERVER['HTTP_HOST'] = 'http_host';
+	$this->assertEquals('http_host', $this->_urlGenerator->getCurrentDomain());
+	
+	$_SERVER['HTTP_X_FORWARDED_SERVER'] = 'http_x_forwarded_server';
+	$this->assertEquals('http_x_forwarded_server', $this->_urlGenerator->getCurrentDomain());
     }
 }
 

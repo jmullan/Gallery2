@@ -112,10 +112,20 @@ class GalleryUrlGenerator {
 
 	return sprintf('%s://%s%s',
 		       $protocol,
-		       isset($_SERVER['HTTP_X_FORWARDED_SERVER'])
-		       ? $_SERVER['HTTP_X_FORWARDED_SERVER']
-		       : $_SERVER['HTTP_HOST'],
+		       $this->getCurrentDomain(),
 		       $path);
+    }
+
+    /**
+     * Return the current server domain
+     * @return string the host name
+     */
+    function getCurrentDomain() {
+	if (isset($_SERVER['HTTP_X_FORWARDED_SERVER'])) {
+	    return $_SERVER['HTTP_X_FORWARDED_SERVER'];
+	} else {
+	    return $_SERVER['HTTP_HOST'];
+	}
     }
 
     /**
@@ -219,8 +229,7 @@ class GalleryUrlGenerator {
 	    
 	$session =& $gallery->getSession();
 	if ($forceSessionId || !($session->isUsingCookies())) {
-	    list ($sessionKey, $sessionId) = $session->getSessionDescriptor();
-	    $params[$sessionKey] = $sessionId;
+	    $params[$session->getKey()] = $session->getId();
 	}
 
 	/* If the url specifies a full href, then let's use that */
