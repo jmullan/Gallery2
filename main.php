@@ -382,7 +382,7 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
 	$main['validationUri'] = $urlGenerator->appendParamsToUrl($main['validationUri'],
 						array($session->getKey() => $session->getId()));
     }
-    $main['validationUri'] = urlencode($main['validationUri']);
+    $main['validationUri'] = urlencode(str_replace('&amp;', '&', $main['validationUri']));
 
     $translator =& $gallery->getTranslator();
     $main['isRightToLeft'] = $translator->isRightToLeft();
