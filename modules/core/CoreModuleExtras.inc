@@ -181,7 +181,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    $currentVersion = '0.8.17';
+	    $currentVersion = '0.9.0';
 	    break;
 
 	case '0.8':
@@ -346,6 +346,11 @@ class CoreModuleExtras {
 	case '0.8.16':
 	    /* Schema updates: GalleryPluginMap, GalleryPluginParameterMap, GalleryGroup */
 	    $currentVersion = '0.8.17';
+	    /* fall through */
+
+	case '0.8.17':
+	    /* Beta 1! */
+	    $currentVersion = '0.9.0';
 	    break;
 
 	default:
