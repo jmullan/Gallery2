@@ -200,12 +200,15 @@ class UserLoginView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    list ($ret, $data['file'], $data['l10Domain']) = $plugin->loadTemplate($template, $form);
+	    list ($ret, $data['file'], $data['l10Domain']) =
+		$plugin->loadTemplate($template, $form);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $UserLogin['plugins'][] = $data;
+	    if (isset($data['file'])) {
+		$UserLogin['plugins'][] = $data;
+	    }
 	}
 
 	$template->setVariable('UserLogin', $UserLogin);
