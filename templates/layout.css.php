@@ -107,19 +107,16 @@ form, div, h1, h2, h3, h4, h5, h6  {
 	visibility: hidden;
 }
 
+/* Hides from IE-mac \*/
+* html .#gsContents {height: 1%;}
+/* End hide from IE-mac */
+
 #gsAlbumContents, #gsAdminContents, #gsOtherContents {
     float: left;
     width: 78%;
 }
 
-/* This hack for IE prevents the content area from moving down when browser width gets too small */
-/* Hides from IE-mac \*/
-* html .#gsContents, #gsAlbumContents, #gsAdminContents, #gsOtherContents {
-    height: 1%;
-    float: normal;
-    position: absolute;
-}
-/* End hide from IE-mac */
+/* html #gsAlbumContents {overflow: auto;}*/ /* style for IE */
 
 .gbExif {
     padding: 8px 14px;
