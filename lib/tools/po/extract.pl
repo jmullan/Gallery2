@@ -32,7 +32,7 @@ use strict;
 
 my %strings;
 
-my $exts = '(php|inc|tpl)';
+my $exts = '(class|php|inc|tpl)';
 
 foreach my $moduleDir (@ARGV) {
   find(\&extract, $moduleDir);

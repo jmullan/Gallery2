@@ -103,7 +103,8 @@ class TranslatorTest extends GalleryTestCase {
 	$translator->init('es_AR');
 
 	/* Singular text data */
-	list ($ret, $results) = $translator->translate($domain, array('text' => 'Description'));
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Description'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -114,11 +115,12 @@ class TranslatorTest extends GalleryTestCase {
 	}
 
 	/* Plural text data */
-	list ($ret, $results) = $translator->translate($domain,
-						       array('one' => '%d user matches your filter',
-							     'many' => '%d users match your filter',
-							     'count' => 1,
-							     'arg1' => 1));
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 1,
+					       'arg1' => 1));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -129,11 +131,12 @@ class TranslatorTest extends GalleryTestCase {
 	}
 	
 	/* Plural text data */
-	list ($ret, $results) = $translator->translate($domain,
-						       array('one' => '%d user matches your filter',
-							     'many' => '%d users match your filter',
-							     'count' => 2,
-							     'arg1' => 2));
+	list ($ret, $results) =
+	    $translator->translateDomain($domain,
+					 array('one' => '%d user matches your filter',
+					       'many' => '%d users match your filter',
+					       'count' => 2,
+					       'arg1' => 2));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
