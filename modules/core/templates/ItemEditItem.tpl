@@ -161,8 +161,12 @@
   {/if}
 </div>
 
+{* Include our extra ItemEditOptions *}
+{foreach from=$ItemEdit.options item=option}
+  {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+{/foreach}
+
 <div class="gbButtons">
   <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
   <input type="submit" name="{g->formVar var="form[action][undo]"}" value="{g->text text="Undo"}"/>
 </div>
-
