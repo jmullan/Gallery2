@@ -203,12 +203,14 @@ class CoreModuleExtras {
 	    $currentVersion = '0.8.4';
 	    /* fall through */
 
+	case '0.8.4':
+	    $currentVersion = '0.8.5';
+	    /* fall through */
+
 	    break;
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %d', $currentVersion));
-	    break;
-
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	$platform = $gallery->getPlatform();
