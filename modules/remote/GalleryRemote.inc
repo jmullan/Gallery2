@@ -60,14 +60,14 @@ class GalleryRemoteController extends GalleryController {
 		    $status['controllerError'] = $ret->wrap(__FILE__, __LINE__);
 		}
 		break;
-                        
+
 	    case 'fetch-albums-prune':
 		$ret = $this->fetchAlbums($form, $response);
 		if ($ret->isError()) {
 		    $status['controllerError'] = $ret->wrap(__FILE__, __LINE__);
 		}
 		break;
-                    
+
 	    case 'add-item':
 		$ret = $this->addDataItem($form, $response);
 		if ($ret->isError()) {
@@ -75,22 +75,22 @@ class GalleryRemoteController extends GalleryController {
 		    $response->setProperty('status_text', sprintf("Upload failed: '%s'.", $ret->getErrorMessage()));
 		}
 		break;                  
-                    
+
 	    case 'new-album':
 		$ret = $this->newAlbum($form, $response);
 		if ($ret->isError()) {
 		    $status['controllerError'] = $ret->wrap(__FILE__, __LINE__);
 		}
 		break;                  
-                    
+
 	    case 'no-op':
-		$response->setProperty('status', $grStatusCodes['UNKNOWN_COMMAND']);
-		$response->setProperty('status_text', "Command '${form['cmd']}' unknown.");
-		break;                  
-                    
-	    default:
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'No-op successful');
+		break;
+
+	    default:
+		$response->setProperty('status', $grStatusCodes['UNKNOWN_COMMAND']);
+		$response->setProperty('status_text', "Command '${form['cmd']}' unknown.");
 		break;
 	    }
 	} else {
