@@ -66,9 +66,9 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		     */
 		    if ($mimeType == 'application/octet-stream' ||
 			    $mimeType == 'application/unknown' ||
-			    GalleryUtilities::convertMimeToExtension($mimeType) == null) {
-			$extension = GalleryUtilities::getFileExtension($file['name']);
-			$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+			    GalleryCoreApi::convertMimeToExtension($mimeType) == null) {
+			$extension = GalleryCoreApi::getFileExtension($file['name']);
+			$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 		    }
 
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],

@@ -569,7 +569,7 @@ class GalleryPlatform {
 	 * the document root.  So mangle the extension to make sure that the
 	 * webserver doesn't execute it.
 	 */
-	$tmp = GalleryUtilities::convertExtensionToMime($extension);
+	$tmp = GalleryCoreApi::convertExtensionToMime($extension);
 	if ($tmp == 'application/unknown' && !empty($extension)) {
 	    $fileBase = $fileBase . '_' . $extension;
 	    $extension = null;

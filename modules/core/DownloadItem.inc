@@ -182,7 +182,7 @@ class DownloadItemView extends GalleryView {
 	$buf .= '/' . $pseudoFileName;
 	
 	if (strpos($pseudoFileName, '.') === false) {
-	    $extension = GalleryUtilities::convertMimeToExtension($entity->getMimeType());
+	    $extension = GalleryCoreApi::convertMimeToExtension($entity->getMimeType());
 	    if (!empty($extension)) {
 		$buf .= '.' . $extension;
 	    }

@@ -175,9 +175,9 @@ class ThumbnailHelper {
 	 */
 	if ($fileMimeType == 'application/octet-stream' ||
 		$fileMimeType == 'application/unknown' ||
-		GalleryUtilities::convertMimeToExtension($fileMimeType) == null) {
+		GalleryCoreApi::convertMimeToExtension($fileMimeType) == null) {
 	    $extension = GalleryUtilities::getFileExtension($filename);
-	    $fileMimeType = GalleryUtilities::convertExtensionToMime($extension);
+	    $fileMimeType = GalleryCoreApi::convertExtensionToMime($extension);
 	}
 	if ($fileMimeType != 'image/jpeg') {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__), null);

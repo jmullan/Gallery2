@@ -448,7 +448,7 @@ class GalleryItemHelper_medium {
 	     * If the output type isn't viewable, then try to turn it into a form that *is*
 	     * viewable.
 	     */
-	    if (!GalleryUtilities::isViewableMimeType($outputMimeType)) {
+	    if (!GalleryCoreApi::isViewableMimeType($outputMimeType)) {
 		$tmpOperations = $preference['derivativeOperations'] . ';convert-to-image/jpeg';
 		list ($ret, $isSupported, $outputMimeType) =
 		    GalleryCoreApi::isSupportedOperationSequence($mimeType, $tmpOperations);

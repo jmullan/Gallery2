@@ -66,7 +66,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		$filepath = GalleryUtilities::htmlEntityDecode($filepath);
 		
 		list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
-		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+		$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 
 		list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
 								       $filename,
@@ -172,7 +172,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileKey' => $filePath,
 					  'legal' => $legal);
 			    } else {
-				$mimeType = GalleryUtilities::getMimeType($fileName);
+				$mimeType = GalleryCoreApi::getMimeType($fileName);
 				if (!isset($mimeTypeItemMap[$mimeType])) {
 				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
@@ -189,7 +189,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileName' => $fileName,
 					  'stat' => $platform->stat($filePath),
 					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-					  'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'], 'GalleryUnknownItem'),
+					  'unknown' => GalleryCoreApi::isA($mimeTypeItemMap[$mimeType]['instance'],
+									   'GalleryUnknownItem'),
 					  'fileKey' => $fileName);
 			    }
 			}
@@ -197,7 +198,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $platform->closedir($handle);
 			  
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
-		    $mimeType = GalleryUtilities::getMimeType($path);
+		    $mimeType = GalleryCoreApi::getMimeType($path);
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
 			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 			    GalleryCoreApi::newItemByMimeType($mimeType);
@@ -213,7 +214,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 			array('fileName' => $fileName,
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-			      'unknown' => GalleryUtilities::isA($mimeTypeItemMap[$mimeType]['instance'], 'GalleryUnknownItem'),
+			      'unknown' => GalleryCoreApi::isA($mimeTypeItemMap[$mimeType]['instance'],
+							       'GalleryUnknownItem'),
 			      'fileKey' => htmlentities($fileName));
 		}
 	    }

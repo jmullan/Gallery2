@@ -251,9 +251,9 @@ class GalleryRemoteController extends GalleryController {
 	 */
 	if ($mimeType == 'application/octet-stream' ||
 	    $mimeType == 'application/unknown' ||
-	    GalleryUtilities::convertMimeToExtension($mimeType) == null) {
+	    GalleryCoreApi::convertMimeToExtension($mimeType) == null) {
 	    $extension = GalleryUtilities::getFileExtension($file['name']);
-	    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
+	    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 	}
 
 	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($file['tmp_name'],

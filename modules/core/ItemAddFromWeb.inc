@@ -61,7 +61,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		/* Add it */
 		if ($successfullyCopied && strpos($response, '404 Not Found') === false) {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-		    $mimeType = GalleryUtilities::convertExtensionToMime($extension);
+		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
 
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
 									   basename($url),
@@ -200,7 +200,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				continue;
 			    }
 
-			    $mimeType = GalleryUtilities::getMimeType($urlComponents['path']);
+			    $mimeType = GalleryCoreApi::getMimeType($urlComponents['path']);
 			    if ($mimeType == 'application/unknown') {
 				/*
 				 * Try again with end of the query string -- just in case.  Some sites, like
@@ -211,7 +211,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				    continue;
 				}
 				
-				$mimeType = GalleryUtilities::getMimeType($urlComponents['query']);
+				$mimeType = GalleryCoreApi::getMimeType($urlComponents['query']);
 				if ($mimeType == 'application/unknown') {
 				    continue;
 				}

@@ -132,7 +132,7 @@ class ThumbnailSiteAdminView extends GalleryView {
 	}
 
 	function imp($a) { return implode(' ', $a); }
-	$form['mimeMap'] = array_map('imp', GalleryUtilities::getMimeTypeMap());
+	$form['mimeMap'] = array_map('imp', GalleryCoreApi::getMimeTypeMap());
 	ksort($form['mimeMap']);
 
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails();

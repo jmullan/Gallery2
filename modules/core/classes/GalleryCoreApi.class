@@ -2549,5 +2549,85 @@ class GalleryCoreApi {
 	}
 	return GalleryChildEntityHelper_simple::fetchParents($item);
     }
+
+    /**
+     * Convert a file extension to a mime type
+     *
+     * @param string a file extension
+     * @return string a mime type 
+     * @static
+     */
+    function convertExtensionToMime($extension) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/MimeHelper_simple.class');
+	}
+	return MimeHelper_simple::convertExtensionToMime($extension);
+    }
+
+    /**
+     * Convert a mime type to a file extension
+     *
+     * @param string a mime type
+     * @return string a file extension
+     * @static
+     */
+    function convertMimeToExtension($mimeType) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/MimeHelper_simple.class');
+	}
+	return MimeHelper_simple::convertMimeToExtension($mimeType);
+    }
+
+    /**
+     * Return mime types and applicable file extensions
+     *
+     * @return array (string mime type => array(string extension))
+     * @static
+     */
+    function getMimeTypeMap() {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/MimeHelper_simple.class');
+	}
+	return MimeHelper_simple::getMimeTypeMap();
+    }
+
+    /**
+     * Figure out the file's mime type
+     *
+     * Eg, "foo.jpg" returns "image/jpeg"
+     *
+     * @param string the filename
+     * @return string the mime type
+     * @static
+     */
+    function getMimeType($filename) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/MimeHelper_simple.class');
+	}
+	return MimeHelper_simple::getMimeType($filename);
+    }
+
+    /**
+     * Return true if the given mime type is viewble in a web browser
+     *
+     * @param string the mime type
+     * @return true or false
+     */
+    function isViewableMimeType($mimeType) {
+	static $loaded;
+	if (!isset($loaded)) {
+	    $loaded = true;
+	    require_once(dirname(__FILE__) . '/helpers/MimeHelper_simple.class');
+	}
+	return MimeHelper_simple::isViewableMimeType($mimeType);
+    }
 }
 ?>

@@ -89,9 +89,6 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('base', GalleryUtilities::getFileBase('base.extension'));
     }
     
-    function testGetMimeType() {
-	$this->assertEquals('image/jpeg', GalleryUtilities::getMimeType('file.jpg'));
-    }
 
     function testMaliciousBrowserInput1() {
 	GalleryUtilities::putRequestVariable('test[a]', '<a href="javascript:alert(\'hi\')">yo</a>');
@@ -177,24 +174,6 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::sanitizeInputValues($rawInput);
 	$this->assertEquals('Op&#36133;s de Administra&#34991;', $rawInput);
 	
-    }
-    
-    function testConvertExtensionToMime() {
-	$this->assertEquals('image/jpeg',
-			    GalleryUtilities::convertExtensionToMime('jpg'));
-	$this->assertEquals('image/jpeg',
-			    GalleryUtilities::convertExtensionToMime('JPG'));
-    }
-
-    function testConvertMimeToExtension() {
-	$this->assertEquals('jpg', GalleryUtilities::convertMimeToExtension('image/jpeg'));
-	$this->assertEquals('avi', GalleryUtilities::convertMimeToExtension('video/x-msvideo'));
-    }
-
-    function testGetMimeTypeMap() {
-	$mimeMap = GalleryUtilities::getMimeTypeMap();
-	$this->assertEquals(array('jpe', 'jpeg', 'jpg'), $mimeMap['image/jpeg']);
-	$this->assertEquals(array('avi'), $mimeMap['video/x-msvideo']);
     }
     
     function testMakeMarkers() {
@@ -310,11 +289,6 @@ class UtilitiesTest extends GalleryTestCase {
 	$result = GalleryUtilities::htmlEntityDecode('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)' .
 						     '&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
-    }
-
-    function testIsViewableMimeType() {
-	$this->assertEquals(true, GalleryUtilities::isViewableMimeType('image/jpeg'));
-	$this->assertEquals(false, GalleryUtilities::isViewableMimeType('image/tiff'));
     }
 
     function testFetchWebPage() {

@@ -174,7 +174,7 @@ class FfmpegToolkitHelper {
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
-			$mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
+			$mimeTypes[] = GalleryCoreApi::convertExtensionToMime($type);
 		    }
 		}
 		$success = true;
@@ -182,7 +182,7 @@ class FfmpegToolkitHelper {
 	        do {
 		    foreach (explode(' ', $regs[1]) as $type) {
 		        if (isset($relevantTypes[$type])) {
-			    $mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
+			    $mimeTypes[] = GalleryCoreApi::convertExtensionToMime($type);
 		        }
 		    }
 		    $resultLine = $results[$i++];
@@ -194,7 +194,7 @@ class FfmpegToolkitHelper {
 		    foreach (explode(',', $types) as $type) {
 			if (isset($relevantTypes[$type])) {
 			    if (preg_match('|D|', $capabilities)) {
-				$mimeTypes[] = GalleryUtilities::convertExtensionToMime($type);
+				$mimeTypes[] = GalleryCoreApi::convertExtensionToMime($type);
 			    }
 			}
 		    }
