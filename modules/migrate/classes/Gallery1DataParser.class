@@ -62,7 +62,8 @@ class Gallery1DataParser {
         $platform = $gallery->getPlatform();
 
 	if (!$platform->file_exists($fileName) || !$platform->is_readable($fileName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Missing or not readable file: $fileName"), null);
 	}
         $tmp = $platform->file($fileName);
 
