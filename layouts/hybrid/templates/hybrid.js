@@ -25,8 +25,8 @@ function app_init() {
  album_div = document.getElementById('album_content');
  album_setsize(1);
  album_title_maxht = document.getElementById('album_titlebar').offsetHeight;
- album_title_minht = album_title_maxht -
-  document.getElementById('album_details').offsetHeight;
+ album_title_minht = max(18,
+  document.getElementById('album_title').offsetHeight)+2;
  album_setsize(2);
  //Get toolbar/text height and size image content:
  toolbar_ht = document.getElementById('toolbar').offsetHeight;

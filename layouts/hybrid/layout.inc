@@ -126,26 +126,47 @@ class HybridLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Get all the owners */
+	$tmpId = array($item->getOwnerId());
+	foreach ($itemList as $tmp) {
+	    $tmpId[] = $tmp['data']['ownerId'];
+	}
+	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($tmpId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$owners = array();
+	foreach ($tmp as $owner) {
+	    $owners[$owner->getId()] = $owner->getMemberData();
+	}
+
+	/* Get the view counts */
+	$tmpId = array($item->getId());
+	foreach ($itemList as $tmp) {
+	    $tmpId[] = $tmp['id'];
+	}
+	list ($ret, $viewCounts) = GalleryCoreApi::fetchItemViewCounts($tmpId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$layout['user'] = $user->getMemberData();
 	$layout['moduleSystemLinks'] = $moduleSystemLinks;
 	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
 	$layout['moduleItemLinks'] = $moduleItemLinks;
+	$layout['owner'] = $owners[$item->getOwnerId()];
+	$layout['owners'] = $owners;
+	$layout['viewCounts'] = $viewCounts;
 //	$layout['totalChildCount'] = $totalChildCount;
 //	$layout['totalDescendentCount'] = $totalDescendentCount;
 	$layout['layoutUrl'] = GalleryUtilities::convertPathToUrl(dirname(__FILE__));
 	$layout['parents'] = $parents;
-//	if (!empty($parents)) {
-//	    $layout['parent'] = $parents[sizeof($parents)-1];
-//	} else {
-//	    $layout['parent'] = null;
-//	}
 
 	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
-//	             array('main' => 'layouts/hybrid/templates/hybrid.tpl'));
-array('body' => 'layouts/hybrid/templates/hybrid.tpl',
-      'head' => 'layouts/hybrid/templates/header.tpl',
-      'onLoad' => 'app_onload()', 'onUnload' => 'app_setcookie()'));
+		array('body' => 'layouts/hybrid/templates/hybrid.tpl',
+		      'head' => 'layouts/hybrid/templates/header.tpl',
+		'onLoad' => 'app_onload()', 'onUnload' => 'app_setcookie()'));
     }
 
     function _buildItemList(&$item) {
