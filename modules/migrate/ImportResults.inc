@@ -50,10 +50,9 @@ class ImportResultsView extends GalleryView {
 
 	$ImportResults = array();
 	$ImportResults['counts'] = $counts;
-
+	$ImportResults['status'] = $status;
 	$template->setVariable('ImportResults', $ImportResults);
 	$template->setVariable('controller', 'migrate:ImportResults');
-	$template->setVariable('status', $status);
         return array(GalleryStatus::success(), '', 'modules/migrate/templates/ImportResults.tpl');
     }
 }

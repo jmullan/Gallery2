@@ -20,7 +20,7 @@
       {/g->success}
     {/g->title}
     
-    {if sizeof($status.userImportSuccess) > 0}
+    {if sizeof($ImportResults.status.userImportSuccess) > 0}
       {foreach from=$status.userImportSuccess key=username item=junk}
 	{g->element}
 	  {g->text text="Imported %s" arg1=$username}
@@ -29,7 +29,7 @@
     {/if}
   {/g->box}
 
-  {if sizeof($status.userImportFailure) > 0}
+  {if sizeof($ImportResults.status.userImportFailure) > 0}
     {g->box style="admin"}
       {g->title}
 	{g->error}
@@ -43,7 +43,7 @@
 	{/g->error}
       {/g->title}
     
-      {foreach from=$status.userImportFailure key=username item=junk}
+      {foreach from=$ImportResults.status.userImportFailure key=username item=junk}
 	{g->element}
 	  {g->text text="Error importing %s" arg1=$username}
 	{/g->element}
