@@ -40,7 +40,7 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.7');
+	$this->setVersion('0.8');
     }
 
     /**
@@ -65,6 +65,11 @@ class CustomFieldModule extends GalleryModule {
 	GalleryCoreApi::registerFactoryImplementation(
 	    'CustomFieldInterface_1_0', 'CustomFieldHelper', 'CustomField',
 	    dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+
+	/* Register search implementation */
+	GalleryCoreApi::registerFactoryImplementation(
+	    'GallerySearchInterface_1_0', 'CustomFieldSearch', 'CustomField',
+	    dirname(__FILE__) . '/classes/CustomFieldSearch.class');
 
 	return GalleryStatus::success();
     }
