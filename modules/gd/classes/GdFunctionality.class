@@ -166,7 +166,8 @@ class GdFunctionality {
     function imageCreate($width, $height) {
 	$res = @imageCreate($width, $height);
 	if (! $res) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					      __FILE__, __LINE__),
 			 null);
 	}
 	return array(GalleryStatus::success(), $res);
@@ -191,7 +192,8 @@ class GdFunctionality {
      */
     function imageCreateTruecolor($width, $height) {
 	if (! function_exists('imageCreateTruecolor')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$res = @imageCreateTruecolor($width, $height);
 	if (! $res) {
@@ -226,10 +228,12 @@ class GdFunctionality {
     function checkResource($res, $filename, $file, $line) {
 	if (! $res) {
 	    if (! $this->isValidFile($filename)) {
-		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, $file, $line),
+		return array(GalleryStatus::error(ERROR_ERROR_TOOLKIT_FAILURE | PLATFORM_FAILURE,
+						  $file, $line),
 			     null);
 	    }
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, $file, $line),
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_FILE_TYPE,
+					      $file, $line),
 			 null);
 	}
 	return array(GalleryStatus::success(), $res);
@@ -247,7 +251,8 @@ class GdFunctionality {
      */
     function imageCreateFromGif($filename) {
 	if (! function_exists('imageCreateFromGif')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$res = @imageCreateFromGif($filename);
 	return $this->checkResource($res, $filename, __FILE__, __LINE__);
@@ -265,7 +270,7 @@ class GdFunctionality {
      */
     function imageCreateFromJpeg($filename) {
 	global $gallery;
-	$res = imageCreateFromJpeg($filename);
+	$res = @imageCreateFromJpeg($filename);
 	return $this->checkResource($res, $filename, __FILE__, __LINE__);
     }
 
@@ -340,7 +345,8 @@ class GdFunctionality {
      */
     function imageGif($res, $filename) {
 	if (! function_exists('imageGif')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imageGif($res, $filename);
 	if ($result) {
@@ -361,7 +367,8 @@ class GdFunctionality {
      */
     function imageJpeg($res, $filename, $quality) {
 	if (! function_exists('imageJpeg')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imageJpeg($res, $filename, $quality);
 	if ($result) {
@@ -382,7 +389,8 @@ class GdFunctionality {
      */
     function imagePng($res, $filename) {
 	if (! function_exists('imagePng')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imagePng($res, $filename);
 	if ($result) {
@@ -403,7 +411,8 @@ class GdFunctionality {
      */
     function imageWbmp($res, $filename) {
 	if (! function_exists('imageWbmp')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imageWbmp($res, $filename);
 	if ($result) {
@@ -423,7 +432,8 @@ class GdFunctionality {
      */
     function imageXbm($res, $filename) {
 	if (! function_exists('imageXbm')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imageXbm($res, $filename);
 	if ($result) {
@@ -444,7 +454,8 @@ class GdFunctionality {
      */
     function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
 	if (! function_exists('imageCopyResampled')) {
-	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					__FILE__, __LINE__);
 	}
 	$result = @imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH);
 	if ($result) {
@@ -534,7 +545,8 @@ class GdFunctionality {
      */
     function imageRotate($srcRes, $angle, $bgdColor) {
 	if (! function_exists('imageRotate')) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
+	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE | ERROR_UNSUPPORTED_OPERATION,
+					      __FILE__, __LINE__),
 			 null);
 	}
 	$res = @imageRotate($srcRes, $angle, $bgdColor);
