@@ -525,32 +525,32 @@ class CoreModule extends GalleryModule {
 		}
 		$links[$item->getId()][] =
 		    array('text' => $text,
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'itemId' => $item->getId()));
 	    }
 	    
 	    if ($showAddItemLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add item'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemAddChildren',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemAddChildren',
+					    'itemId' => $item->getId()));
 	    }
 
 	    if ($showAddAlbumLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add album'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemAddAlbum',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemAddAlbum',
+					    'itemId' => $item->getId()));
 	    }
 	    
 	    if ($showPermissionsLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('permissions'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemEditPermissions',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemEditPermissions',
+					    'itemId' => $item->getId()));
 	    }
 	    
 	    if ($showDeleteLink) {
@@ -561,34 +561,34 @@ class CoreModule extends GalleryModule {
 		}
 		$links[$item->getId()][] =
 		    array('text' => $text,
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemDelete',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemDelete',
+					    'itemId' => $item->getId()));
 	    }
 
 	    if ($showMoveItemLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('move item'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemMove',
-							'itemId' => $item->getParentId(),
-							'selectedId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemMove',
+					    'itemId' => $item->getParentId(),
+					    'selectedId' => $item->getId()));
 	    }
 
 	    if ($showAddHighlightLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemMakeHighlight',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemMakeHighlight',
+					    'itemId' => $item->getId()));
 	    }
 
 	    if ($showReorderItemLink) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('reorder items'),
-			  'params' => array_merge(array('view' => 'core:ItemAdmin',
-							'subView' => 'core:ItemReorder',
-							'itemId' => $item->getId())));
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemReorder',
+					    'itemId' => $item->getId()));
 	    }
 	}
 
