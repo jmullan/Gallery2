@@ -476,8 +476,9 @@ class Gallery {
      * @access public
      */
     function unlock() {
-	assert('!empty($this->_lock)');
-	$this->_lock->unlock();
+	if (!empty($this->_lock)) {
+	    $this->_lock->unlock();
+	}
     }
 
     /**
