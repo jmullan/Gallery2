@@ -35,8 +35,24 @@ class InstallCoreModuleStep extends InstallStep {
 	}
 	$gallery =& $GLOBALS['gallery'];
 
-	// We want to avoid using the cache
+	/* We want to avoid using the cache */
 	GalleryDataCache::setFileCachingEnabled(false);
+
+	/*
+	 * Delete anything in the cache, which can be left around if we're
+	 * installing on top of an older install.
+	 */
+	$platform = $gallery->getPlatform();
+	$dataBase = $gallery->getConfig('data.gallery.base');
+	$cacheDirs = array('entity', 'layout', 'module', 'derivative');
+	foreach ($cacheDirs as $dir) {
+	    $dir = sprintf('%s/cache/%s', $dataBase, $dir);
+	    if ($platform->file_exists($dir)) {
+		if (!$platform->recursiveRmDir($dir)) {
+		    return false;
+		}
+	    }
+	}
 
 	if (empty($templateData['errors'])) {
 	    /*
