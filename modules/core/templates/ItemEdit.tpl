@@ -16,13 +16,20 @@
   <input type="hidden" name="{g->formVar var="editPlugin"}" value="{$ItemEdit.editPlugin}"/>
   <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
 
-  {if !empty($status)}
+  {if !empty($status) || !empty($form.error)}
   <div id="gsStatus">
+    {if !empty($status)}
     <div class="giStatus">
       {if isset($status.editMessage)}
       {$status.editMessage}
       {/if}
     </div>
+    {/if}
+    {if !empty($form.error)}
+    <div class="giError">
+      {g->text text="There was a problem processing your request."}
+    </div>
+    {/if}
   </div>
   {/if}
 
