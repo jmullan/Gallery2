@@ -175,42 +175,60 @@ class PermissionTest extends GalleryTestCase {
 	    if ($i == 0) {
 		/* The top album has more permissions than the children */
 		$expectedUncompressed = array();
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.view');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewResizes');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewSource');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
-		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
 		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
+		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
 		
 		$expectedCompressed = array();
-		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
-		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
 		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
-		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.edit');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
 		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
+		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.edit');
 	    } else {
 		/*
 		 * The lower albums have less permissions since some weren't
 		 * passed down
 		 */
 		$expectedUncompressed = array();
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.view');
+		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewResizes');
 		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewSource');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
-		$expectedUncompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
 		$expectedUncompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 	
 		$expectedCompressed = array();
-		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
 		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.changePermissions');
+		$expectedCompressed[] = array('userId' => $userId, 'groupId' => 0, 'permission' => 'core.viewAll');
 		$expectedCompressed[] = array('userId' => 0, 'groupId' => $groupId, 'permission' => 'core.delete');
 	    }
+
+	    usort($compressedPerms, array('PermissionTest', '_sortPermissions'));
+	    usort($uncompressedPerms, array('PermissionTest', '_sortPermissions'));
 	    $this->assertEquals($expectedCompressed, $compressedPerms, "Album $i (compressed)");
 	    $this->assertEquals($expectedUncompressed, $uncompressedPerms, "Album $i (uncompressed)");
 	}
+    }
+
+    /**
+     * Sort permissions by group, user then permission name
+     * @private
+     */
+    function _sortPermissions($a, $b) {
+	foreach (array('groupId', 'userId', 'permission') as $key) {
+	    if ($a[$key] < $b[$key]) {
+		return -1;
+	    } else if ($a[$key] > $b[$key]) {
+		return 1;
+	    }
+	}
+	return 0;
     }
 
     /**
