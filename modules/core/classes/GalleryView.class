@@ -199,7 +199,7 @@ class GalleryView {
 
 	/* Get our status */
 	$statusId = GalleryUtilities::getRequestVariables('statusId');
-	if (isset($statusId)) {
+	if (!empty($statusId)) {
 	    $session =& $gallery->getSession();
 	    $status = $session->getStatus($statusId);
 	    if ($ret->isError()) {
