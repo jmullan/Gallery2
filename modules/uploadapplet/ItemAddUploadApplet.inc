@@ -50,7 +50,6 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['NoProtocolError'] = 1;
 	} else {
 	    $session =& $gallery->getSession();
-	    $urlGenerator = $gallery->getUrlGenerator();
 	    $ItemAddUploadApplet['NoProtocolError'] = 0;
 	    $ItemAddUploadApplet['cookieName'] = $session->getKey();
 	    $ItemAddUploadApplet['cookieValue'] = $session->getId();
@@ -59,6 +58,9 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['album'] = $item->getId();
 	    $ItemAddUploadApplet['defaults'] = array();
 	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
+	    
+	    $urlGenerator = $gallery->getUrlGenerator();
+	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
 	}
 	
 	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);

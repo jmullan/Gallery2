@@ -19,7 +19,7 @@
     <param name="scriptable" value="false"/>
     <param name="progressbar" value="true"/>
     <param name="boxmessage" value="{g->text text="Downloading the Gallery Remote Applet"}"/>
-    <param name="gr_url" value="{g->url href=""}"/>
+    <param name="gr_url" value="{$ItemAddUploadApplet.g2BaseUrl}"/>
     <param name="gr_cookie_name" value="{$ItemAddUploadApplet.cookieName}"/>
     <param name="gr_cookie_value" value="{$ItemAddUploadApplet.cookieValue}"/>
     <param name="gr_cookie_domain" value="{$ItemAddUploadApplet.cookieDomain}"/>
@@ -43,7 +43,7 @@
           progressbar="true"
           boxmessage="{g->text text="Downloading the Gallery Remote Applet"}"
           pluginspage="http://java.sun.com/j2se/1.4.2/download.html"
-          gr_url="{g->url href=""}"
+          gr_url="{$ItemAddUploadApplet.g2BaseUrl}"
           gr_cookie_name="{$ItemAddUploadApplet.cookieName}"
           gr_cookie_value="{$ItemAddUploadApplet.cookieValue}"
           gr_cookie_domain="{$ItemAddUploadApplet.cookieDomain}"
