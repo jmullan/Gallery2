@@ -23,8 +23,8 @@
 	      [{gallery->text text="Back to Gallery"}]
 	    </a>
 	    </center>
-	    {/gallery->highlight1}
 	    {/if}
+	    {/gallery->highlight1}
 	  </td>
 	</tr>
 
