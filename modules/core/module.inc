@@ -473,7 +473,7 @@ class CoreModule extends GalleryModule {
 
 	/* Fetch thumbnail ids */
 	list ($ret, $thumbTable) =
-	    GalleryDerivativeHelper::fetchDerivativesBySourceIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	    GalleryDerivativeHelper::fetchThumbnailsByItemIds($itemIds, DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
