@@ -671,6 +671,27 @@ class GalleryTestCase extends TestCase {
 	return GalleryStatus::success();
     }
 
+    /**
+     * Get an id that is not used for anything.
+     */
+    function _getUnusedId() {
+	static $unusedId;
+	if (!isset($unusedId)) {
+	    list ($ret, $user) = $this->_createRandomUser();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $unusedId = $user->getId();
+
+	    $ret = GalleryCoreApi::deleteEntityById($user->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $unusedId);
+    }
+
     function DeepCompare($obj1, $obj2, $context=null) {
 	if (gettype($obj1) !== gettype($obj2)) {
 	    return sprintf("[$context] $obj1 type (%s) !== $obj2 type (%s)", gettype($obj1), gettype($obj2));

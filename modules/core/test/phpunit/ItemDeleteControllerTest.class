@@ -276,9 +276,14 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
      * verify that it's a valid item to prevent information leakage)
      */
     function testDeleteBogusItem() {
+	list ($ret, $bogusId) = $this->_getUnusedId();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_getRootId());
-	GalleryUtilities::putRequestVariable('form[selectedIds]', array(5000+rand() => 1));
+	GalleryUtilities::putRequestVariable('form[selectedIds]', array($bogusId));
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	/* Perform the request and verify that we failed */
