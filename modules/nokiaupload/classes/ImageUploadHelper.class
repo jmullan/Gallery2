@@ -503,13 +503,7 @@ class ImageUploadHelper {
 
 	/* Set the album info and save it. */
 	$urlGen = $gallery->getUrlGenerator();
-	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload:Login'));
-	/* We don't want the session id in our url. */
-	$session =& $gallery->getSession();
-	$sidParam = $session->getKey();
-	$sid = $session->getId();
-	$pattern = '/&(amp;)?' . GALLERY_FORM_VARIABLE_PREFIX . $sidParam . '=' . $sid . '/';
-	$url = preg_replace($pattern, '', $url);
+	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload:Login'), false);
 
 	$title = GalleryUtilities::utf8ToUnicodeEntities($title);
 	$summary = GalleryUtilities::utf8ToUnicodeEntities($module->translate(
@@ -518,9 +512,8 @@ class ImageUploadHelper {
 	$description = GalleryUtilities::utf8ToUnicodeEntities($module->translate(
 	    'You can upload images to this album from your Image Uploader enabled mobile phone '
 	    . "(e.g. Nokia 3650 and 6600) using the phone's built-in Image Uploader. "
-	    . 'New albums will be created under this folder.'
-	    . "<br/>Web address is $url"
-	    . '<br/>Username and Password are your Gallery 2 username and password.'));
+	    . 'New albums will be created under this folder. Web address is ') . "$url\n" .
+	    $module->translate('Username and Password are your Gallery 2 username and password.'));
 
 	$album->setTitle($title);
 	$album->setSummary($summary);
