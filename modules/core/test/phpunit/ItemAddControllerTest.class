@@ -47,12 +47,6 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$path = 'modules/core/test/phpunit/ItemAddControllerTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation('ItemAddPlugin',
 							     'ItemAddControllerTestPluginSuccess',
@@ -87,7 +81,38 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+							     'ItemAddControllerTestToolkit',
+							     'ItemAddControllerTestToolkit',
+							     $path,
+							     'coreTest',
+							     null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->_markFactoryModuleForCleanup('coreTest');
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemAddControllerTestToolkit',
+							array('test/file'),
+							'extract',
+							array(),
+							'test-description');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	/* Unregister dummy toolkit */
+	$ret = GalleryCoreApi::unregisterToolkit('ItemAddControllerTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testHandleRequestContinueAdding() {
@@ -104,6 +129,11 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function testHandleRequestDoneAdding() {
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
 
@@ -113,13 +143,18 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
 						    array('fileName' => 'foo',
-							  'id' => $this->_item->getId(),
+							  'id' => $item->getId(),
 							  'warnings' => array()))),
 				  'error' => array()),
 			    $results);
     }
 
     function testHandleRequestWithOption() {
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'ItemAddOption', 'ItemAddTestOption', 'ItemAddTestOption',
 	    'modules/core/test/phpunit/ItemAddControllerTest.class', 'coreTest', null);
@@ -136,10 +171,47 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
 						    array('fileName' => 'foo',
-							  'id' => $this->_item->getId(),
+							  'id' => $item->getId(),
 							  'warnings' => array('a warning')))),
 				  'error' => array('an error')),
 			    $results);
+    }
+
+    function testHandleRequestWithExtract() {
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId(),
+								    'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddOption', 'ItemAddTestOption', 'ItemAddTestOption',
+	    'modules/core/test/phpunit/ItemAddControllerTest.class', 'coreTest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemAddConfirmation',
+					    'itemId' => $this->_album->getId()),
+			    $results['redirect'], 'redirect');
+	$this->assertEquals(array('an error', 'an error'), $results['error'], 'error');
+	$this->assertEquals(2, count($results['status']['addedFiles']), 'added 2 items');
+	$addedFiles = $results['status']['addedFiles'];
+	$this->assertEquals(array('foo', 'bar'),
+			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName']), 'files');
+	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
+	$this->assertEquals(array('a warning'), $addedFiles[1]['warnings'], 'warning 2');
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!in_array($item->getId(), $childIds), 'archive item has been deleted');
     }
 
     function testHandleRequestWithErrors() {
@@ -223,6 +295,33 @@ class ItemAddTestOption extends ItemAddOption {
 
     function isAppropriate() {
 	return array(GalleryStatus::success(), true);
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ItemAddControllerTestToolkit extends GalleryToolkit {
+
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if ($operationName != 'extract') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+	}
+
+	$platform->copy(__FILE__, $destFilename . '/foo');
+	$platform->copy(__FILE__, $destFilename . '/bar');
+
+	return array(GalleryStatus::success(), $mimeType, $context);
     }
 }
 ?>

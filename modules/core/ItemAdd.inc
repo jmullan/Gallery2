@@ -74,24 +74,40 @@ class ItemAddController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryCoreApi::releaseLocks($lockIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	if (empty($error) && isset($status['addedFiles'])) {
-	    /* Allow ItemAddOptions to process added item(s) */
 	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    foreach (array_keys($status['addedFiles']) as $key) {
-		$file =& $status['addedFiles'][$key];
+	    for ($i = 0; $i < count($status['addedFiles']); $i++) {
+		$file =& $status['addedFiles'][$i];
 		list ($ret, $addedItem) = GalleryCoreApi::loadEntitiesById($file['id']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+
+		/* Check if we should extract individual files out of an archive */
+		list ($ret, $toolkit) =
+		    GalleryCoreApi::getToolkitByOperation($addedItem->getMimeType(), 'extract');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (isset($toolkit)) {
+		    list ($ret, $addedFiles) = $this->_extractAndAddFiles($addedItem, $toolkit);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $ret = GalleryCoreApi::deleteEntityById($addedItem->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    unset($status['addedFiles'][$i--]);
+		    $status['addedFiles'] = array_merge($status['addedFiles'], $addedFiles);
+		    continue;
+		}
+
+		/* Allow ItemAddOptions to process added item(s) */
 		foreach ($optionInstances as $option) {
 		    list ($ret, $optionErrors, $optionWarnings) =
 			$option->handleRequestAfterAdd($form, $addedItem);
@@ -112,9 +128,71 @@ class ItemAddController extends GalleryController {
 	    $results['delegate']['addPlugin'] = $addPlugin;
 	}
 
+	$ret = GalleryCoreApi::releaseLocks($lockIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$results['status'] = $status;
 	$results['error'] = $error;
 	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * Extract files from an archive item and add new items to the same album.
+     * @param object GalleryDataItem archive
+     * @param object GalleryToolkit toolkit that supports extract operation
+     * @return array object GalleryStatus a status code
+     *               array of array('fileName' => '..', 'id' => ##, 'warnings' => array of string)
+     * @private
+     */
+    function _extractAndAddFiles($archiveItem, $toolkit) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$base = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'tmp_');
+	$tmpDir = $base . '.dir';
+	if (!$platform->mkdir($tmpDir)) {
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	}
+
+	list ($ret, $file) = $archiveItem->fetchPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret) = $toolkit->performOperation($archiveItem->getMimeType(), 'extract',
+						 $file, $tmpDir, array());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$list = array();
+	$dh = $platform->opendir($tmpDir);
+	while (($file = $platform->readdir($dh)) !== false) {
+	    if ($platform->is_file("$tmpDir/$file")) {
+		$list[] = "$tmpDir/$file";
+	    }
+	}
+	$platform->closedir($dh);
+
+	$addedFiles = array();
+	foreach ($list as $file) {
+	    $extension = GalleryUtilities::getFileExtension($file);
+	    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+	    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+		$file, basename($file), $archiveItem->getTitle(), $archiveItem->getSummary(),
+		$archiveItem->getDescription(), $mimeType, $archiveItem->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $addedFiles[] = array('fileName' => basename($file), 'id' => $newItem->getId(),
+				  'warnings' => array());
+	}
+
+	@$platform->recursiveRmdir($tmpDir);
+	@$platform->unlink($base);
+
+	return array(GalleryStatus::success(), $addedFiles);
     }
 }
 
