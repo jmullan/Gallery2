@@ -268,6 +268,8 @@ class ClassicLayout extends GalleryLayout {
 	 * In order to figure out where we are, we have to load the entire list
 	 * of children of my parent and then iterate through it to find our
 	 * current index.
+	 *
+	 * XXX SCALE: this doesn't scale well
 	 */
 	list ($ret, $parent) =
 	    $gallery->loadEntitiesById($item->getParentId());
