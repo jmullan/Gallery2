@@ -261,6 +261,7 @@ function image_fit(getstr) {
 }
 function image_zoom(on,noresize) { // Set full/fit size
  image_div.style.overflow = on?'auto':'hidden';
+ if (!on) image_div.scrollLeft = image_div.scrollTop = 0;
  if (image_zoomon=on) {
   document.full_size.className = 'off';
   document.fit_size.className = 'on';
