@@ -54,6 +54,10 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	if (!isset($this->_option)) {
+	    return $this->failWithStatus(
+			  GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));
+	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', $moduleName);
 	if ($ret->isError()) {
