@@ -131,8 +131,7 @@ class GallerySession {
 	    }
 	} else {
 	    $this->_isUsingCookies = false;
-	    $this->_sessionId =
-		GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    $this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
 	} 
 
 	/* If we don't have a session id at this point, create one. */
@@ -166,8 +165,8 @@ class GallerySession {
 	    if ($ret->isError()) {
 		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
 		    /*
-		     * During installation it's possible that the database isn't around yet when we
-		     * want a translator.  Just keep going.
+		     * During installation it's possible that the database isn't around yet.
+		     * Just keep going.
 		     */
 		    $sessionLifetime = 0;
 		} else {
@@ -181,8 +180,7 @@ class GallerySession {
 	    }
 
 	    $urlGenerator = $gallery->getUrlGenerator();
-	    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
-	    $this->_cookiePath = $urlComponents['path'];
+	    $this->_cookiePath = $urlGenerator->getCookiePath();
 	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
 	    
 	    /* remove port number in the domain */
@@ -190,9 +188,8 @@ class GallerySession {
 	    if ($colon) {
 		$this->_cookieDomain = substr($this->_cookieDomain, 0, $colon);
 	    }
-	    
-	    $cookie  .= '; path=' . $this->_cookiePath;
-	    $cookie .= '; domain=' . $this->_cookieDomain;
+
+	    $cookie .= '; path=' . $this->_cookiePath . '; domain=' . $this->_cookieDomain;
 
 	    /*
 	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
@@ -209,7 +206,7 @@ class GallerySession {
 		header($cookie);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 

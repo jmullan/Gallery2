@@ -194,14 +194,35 @@ class GalleryUrlGenerator {
 	 */
 	if ($forceG2Base && !empty($this->_relativeG2Path)) {
 	    $relativePath = $this->_relativeG2Path;
-	    while (strncmp($relativePath, "../", 3) == 0) {
-		$url = dirname($url) . "/";
+	    while (strncmp($relativePath, '../', 3) == 0) {
+		$url = dirname($url) . '/';
 		$relativePath = substr($relativePath, 3);
 	    }
 	    $url .= $relativePath;
 	}
 
 	return $url;
+    }
+
+    /**
+     * Get cookie path that will encompass G2 (and CMS app if embedded)
+     *
+     * @return string path
+     */
+    function getCookiePath() {
+	$urlComponents = parse_url($this->getCurrentUrlDir());
+	$path = $urlComponents['path'];
+	if (!empty($this->_relativeG2Path)) {
+	    $relativePath = $this->_relativeG2Path;
+	    while (strncmp($relativePath, '../', 3) == 0) {
+		$path = dirname($path);
+		$relativePath = substr($relativePath, 3);
+	    }
+	}
+	if ($path{strlen($path)-1} != '/') {
+	    $path .= '/';
+	}
+	return $path;
     }
 
     /**
