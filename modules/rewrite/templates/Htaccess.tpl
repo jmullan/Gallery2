@@ -21,7 +21,7 @@
 
     RewriteRule ^v/(.*).html       {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
     RewriteRule ^v/(.*)            {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
-    RewriteRule ^d/([0-9]+).*?     {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:DownloadItem&{$Htaccess.g2Prefix}itemId=$1 [QSA]
+    RewriteRule ^d/([0-9]+).*      {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:DownloadItem&{$Htaccess.g2Prefix}itemId=$1 [QSA]
 </IfModule>
 
 # END Url Rewrite section
