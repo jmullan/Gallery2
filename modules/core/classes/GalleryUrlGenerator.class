@@ -335,6 +335,11 @@ class GalleryUrlGenerator {
 		$params[$session->getKey()] = $session->getId();
 	    }
 	}
+	// Force direct-g2 url for core:DownloadItem view, even if embedded:
+	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
+		&& !isset($params['href'])) {
+	    $params['href'] = 'main.php';
+	}
 
 	/* If the url specifies a full href, then let's use that */
 	if (isset($params['href'])) {
