@@ -75,12 +75,18 @@ class TileLayout extends GalleryLayout {
 	    }
 	}
 
-	$layout = array();
-	$layout['title'] = $item->getTitle();
-	if (empty($layout['title'])) {
-	    $layout['title'] = $item->getPathComponent();
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$layout['item'] = $item->getMemberData();
+
+	$ret = $this->loadLayoutTemplate($template, $item,
+	    array('parents', 'systemLinks', 'systemContentFiles', 'itemLinks'),
+	    $childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$layout =& $template->getVariableByReference('layout');
 
 	list ($ret, $params) = $this->fetchParameters($item->getId());
 	if ($ret->isError()) {
@@ -117,16 +123,15 @@ class TileLayout extends GalleryLayout {
 	$layout['params'] = $params;
 	$layout['map'] = $map;
 
-	list ($ret, $itemList, $imageWidths, $imageHeights) = $this->_buildItemList($item);
+	list ($ret, $imageWidths, $imageHeights) =
+	    $this->_buildItemList($childIds, $layout['children']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	foreach ($itemList as $it) {
-	    $itemMap[$it['id']] = $it;
+	foreach ($layout['children'] as $child) {
+	    $itemMap[$child['id']] = $child;
 	}
 
-	$layout['itemList'] = $itemList;
-	$layout['count'] = count($itemList);
 	$layout['itemMap'] = $itemMap;
 	$layout['imageWidths'] = implode(',', $imageWidths);
 	$layout['imageHeights'] = implode(',', $imageHeights);
@@ -152,161 +157,107 @@ class TileLayout extends GalleryLayout {
 	    }
 	}
 
-	/* Get system links */
-	list ($ret, $moduleSystemLinks) = $this->_getModuleSystemLinks();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	/* Get system content */
-	list ($ret, $moduleSystemContentFiles) = $this->_loadModuleSystemContent($template);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
- 
-	/* Get item links and flatten out the modules */
-	$moduleItemLinks = array();
-	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	foreach ($tmp as $tmpId => $moduleLinks) {
-	    foreach ($moduleLinks as $module => $links) {
-		$moduleItemLinks = array_merge($moduleItemLinks, $links);
-	    }
-	}
-	usort($moduleItemLinks, array($this, '_sortItemLinks'));
-
-	/* Load the parents */
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	for ($i = 0; $i < sizeof($parents); $i++) {
-	    $parents[$i] = $parents[$i]->getMemberData();
-	}
-
-	/* Get the active user */
-	$user = $gallery->getActiveUser();
-
-	$layout['moduleSystemLinks'] = $moduleSystemLinks;
-	$layout['moduleSystemContentFiles'] = $moduleSystemContentFiles;
-	$layout['moduleItemLinks'] = $moduleItemLinks;
-	$layout['parents'] = $parents;
-	$layout['user'] = $user->getMemberData();
-
-	$template->setVariable('layout', $layout);
 	return array(GalleryStatus::success(),
 		array('head' => 'layouts/tile/templates/header.tpl',
 		      'body' => 'layouts/tile/templates/tile.tpl'));
     }
 
-    function _buildItemList(&$item) {
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$itemList = array();
-	$childItems = array();
-	$imageWidths = array();
-	$imageHeights = array();
+    function _buildItemList($childIds, &$children) {
+	$imageWidths = $imageHeights = $childItems = array();
 	if (!empty($childIds)) {
 	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $childItems) = GalleryCoreApi::loadEntitiesById($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $preferredFullImages) =
 		GalleryCoreApi::fetchPreferredsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $resizedImages) =
 		GalleryCoreApi::fetchResizesByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    list ($ret, $thumbnails) =
 		GalleryCoreApi::fetchThumbnailsByItemIds($childIds);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
+	$i = 0;
 	foreach ($childItems as $child) {
 	    $childId = $child->getId();
-	    $newItem = array('id' => $childId,
-			     'data' => $child->getMemberData(),
-			     'isContainer' => $child->getCanContainChildren());
 	    if (isset($thumbnails[$childId])) {
-		$newItem['thumb'] = $thumbnails[$childId]->getMemberData();
+		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
+		    list ($ret, $thumbnails[$childId]) =
+			GalleryCoreApi::rebuildDerivativeCache($thumbnails[$childId]->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
 	    }
 
-	    if (GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline()) {
-		list ($ret, $permissions) =
-		    GalleryCoreApi::getPermissions($childId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		$images = array();
-		if (isset($permissions['core.viewSource'])) {
-		    // Full size; check for preferred copy
-		    if (isset($preferredFullImages[$childId])) {
-			$images[] = $preferredFullImages[$childId];
-		    } else {
-			$images[] = $child;
-		    }
-		}
-		if (isset($permissions['core.viewResizes']) &&
-			isset($resizedImages[$childId])) {
-		    foreach ($resizedImages[$childId] as $resize) {
-			$images[] = $resize;
-		    }
-		}
-		if (isset($thumbnails[$childId])) {
-		    $thumbnail = $thumbnails[$childId];
-		    if (!$thumbnail->getWidth()) {
-			list ($ret, $thumbnail) = GalleryCoreApi::rebuildDerivativeCache($thumbnail->getId());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    }
-		    $images[] = $thumbnail;
-		}
-
-		if (!empty($images)) {
-		    $image = $images[0];
-
-		    // Rebuild derivative if needed so width/height known..
-		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
-			if (!($image->getWidth() && $image->getHeight())) {
-			    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($image->getId());
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			    }
-			}
-		    }
-		    $image = $image->getMemberData();
-		    $newItem['image'] = $image;
-		    $newItem['imageIndex'] = count($imageWidths);
-		    if (GalleryUtilities::isA($child, 'GalleryPhotoItem') && $image['width'] > 0 && $image['height'] > 0) {
-			// Display in <img>
-			$imageWidths[] = $image['width'];
-			$imageHeights[] = $image['height'];
-		    } else {
-			// Item must render itself
-			$newItem['renderItem'] = 1;
-			$imageWidths[] = $imageHeights[] = -1;
-		    }
-		}
+	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline())) {
+		continue;
 	    }
 
-	    $itemList[] = $newItem;
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $images = array();
+	    if (isset($permissions['core.viewSource'])) {
+		// Full size; check for preferred copy
+		if (isset($preferredFullImages[$childId])) {
+		    $images[] = $preferredFullImages[$childId];
+		} else {
+		    $images[] = $child;
+		}
+	    }
+	    if (isset($permissions['core.viewResizes']) && isset($resizedImages[$childId])) {
+		foreach ($resizedImages[$childId] as $resize) {
+		    $images[] = $resize;
+		}
+	    }
+	    if (isset($thumbnails[$childId])) {
+		$images[] = $thumbnails[$childId];
+	    }
+
+	    if (!empty($images)) {
+		$image = $images[0];
+
+		// Rebuild derivative if needed so width/height known..
+		if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')
+			&& !($image->getWidth() && $image->getHeight())) {
+		    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+		$image = $image->getMemberData();
+		$children[$i]['image'] = $image;
+		$children[$i]['imageIndex'] = count($imageWidths);
+		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem')
+			&& $image['width'] > 0 && $image['height'] > 0) {
+		    // Display in <img>
+		    $imageWidths[] = $image['width'];
+		    $imageHeights[] = $image['height'];
+		} else {
+		    // Item must render itself
+		    $children[$i]['renderItem'] = 1;
+		    $imageWidths[] = $imageHeights[] = -1;
+		}
+	    }
+	    $i++;
 	}
-	return array(GalleryStatus::success(), $itemList, $imageWidths, $imageHeights);
+	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
     }
 
     /**
@@ -383,9 +334,5 @@ class TileLayout extends GalleryLayout {
 	}
 
 	return array(GalleryStatus::success(), $error, $status);
-    }
-
-    function _sortItemLinks($a, $b) {
-	return strcmp($a['text'], $b['text']);
     }
 }

@@ -4,14 +4,16 @@
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
-{include file="gallery:layouts/tile/templates/sidebar.tpl"}
+<div id="gsContents">
+{include file="gallery:templates/sidebar.tpl"}
 
+<div id="gsAlbumContents">
 <noscript><p class="giError">
   {g->text text="Warning: This site requires javascript."}
 </p></noscript>
 
 <div style="position:absolute;visibility:hidden;left:0px">
-{foreach from=$layout.itemList key=i item=it}
+{foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     {if isset($it.renderItem)}
       <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
@@ -21,7 +23,7 @@
           arg2="itemId=`$it.image.id`"
           arg3="serialNumber=`$it.image.serialNumber`"}"></a>
     {/if}
-    <span id="title_{$it.imageIndex}">{$it.data.title|markup}</span>
+    <span id="title_{$it.imageIndex}">{$it.title|markup}</span>
   {/if}
 {/foreach}
 </div>
@@ -31,7 +33,7 @@
   <span id="image_view"></span>
 </div>
 
-<div class="giTitle">{$layout.title|markup}</div>
+<div class="giTitle">{$layout.item.title|default:$layout.item.pathComponent|markup}</div>
 
 {if isset($layout.params.bgSerialNumber)}
 <table id="tile" style="background-image:url({g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.params.backgroundId`" arg3="serialNumber=`$layout.params.bgSerialNumber`"})" cellspacing="0">
@@ -43,7 +45,7 @@
   {if $id>0}
     {assign var="it" value=$layout.itemMap[$id]}
     <a href="" onclick="image_show({$it.imageIndex});return false">
-      {g->image item=$it.data image=$it.thumb class=thumb}
+      {g->image item=$it image=$it.thumbnail class=thumb}
     </a>
   {else}
     <div class="empty"></div>
@@ -56,5 +58,7 @@
 {else}
   {g->text text="The layout has not been configured."}
 {/if}
+</div>
+</div>
 
 <script type="text/javascript">app_init();</script>
