@@ -293,8 +293,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$this->setDescription($entity->getDescription());
 	$this->setKeywords($entity->getKeywords());
 	$this->setSummary($entity->getSummary());
-	$this->setTitle($entity->gettitle());
-
+	$this->setTitle($entity->getTitle());
+	$this->setOriginationTimestamp($entity->getOriginationTimestamp());
+	
 	return GalleryStatus::success();
     }
 
