@@ -58,6 +58,7 @@ foreach my $manifest (keys %sections) {
     next if ($file =~ /MANIFEST$/);
 
     open(my $fd, "<$file");
+    binmode($fd);
     my $data = join('', <$fd>);
     my $data_crlf;
     close($fd);
