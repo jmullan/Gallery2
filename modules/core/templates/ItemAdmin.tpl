@@ -42,11 +42,11 @@
 	{/g->title}
 
 	{g->listing}
-	  {foreach from=$ItemAdmin.subViewChoices item=choice}
+	  {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
 	    {g->item}
 	      {g->title}
-		{g->link url_view='core:ItemAdmin' url_subView=$choice.view url_itemId=$ItemAdmin.item.id}
-		  {$choice.name}
+		{g->link params=$choiceParams}
+		  {$choiceName}
 		{/g->link}
 	      {/g->title}
 	    {/g->item}

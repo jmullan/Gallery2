@@ -780,15 +780,22 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
-	if ($item->getId() != $rootId) {
-	    if ($isAlbum) {
-		$text = $this->translate('Delete Album');
-	    } else {
-		$text = $this->translate('Delete Item');
-	    }
-	    if (isset($permissions['core.delete'])) {
-		$views[] = array('name' => $text,
+	if (isset($permissions['core.delete'])) {
+	    if ($item->getId() != $rootId) {
+		if ($isAlbum) {
+		    $deleteText = $this->translate('Delete Album');
+		    $moveText = $this->translate('Move Album');
+		} else {
+		    $deleteText = $this->translate('Delete Item');
+		    $moveText = $this->translate('Move Item');
+		}
+		$views[] = array('name' => $deleteText,
 				 'view' => 'core:ItemDelete');
+
+		$views[] = array('name' => $moveText,
+				 'view' => 'core:ItemMove',
+				 'itemId' => $parentId,
+				 'selectedId' => $item->getId());
 	    }
 	}
 	

@@ -80,7 +80,7 @@ class ItemAdminView extends GalleryView {
 	}
 
 	/* Get a list of all the admin views for each module */
-	$subViewChoices = array();
+	$subViewChoiceData = array();
 	foreach ($moduleStatus as $moduleName => $moduleStatus) {
 	    if (empty($moduleStatus['active'])) {
 		continue;
@@ -97,13 +97,32 @@ class ItemAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
-	    $subViewChoices = array_merge($subViewChoices, $moduleViews);
+	    $subViewChoiceData = array_merge($subViewChoiceData, $moduleViews);
+	}
+
+	/* Turn sub view choices into url params */
+	$subViewChoices = array();
+	foreach ($subViewChoiceData as $params) {
+	    /* Extract the view name */
+	    $name = $params['name'];
+	    unset($params['name']);
+
+	    /* Move the view -> subView and set ItemAdmin as the view */
+	    $params['subView'] = $params['view'];
+	    $params['view'] = 'core:ItemAdmin';
+
+	    /* Set the item id if necessary */
+	    if (!isset($params['itemId'])) {
+		$params['itemId'] = $item->getId();
+	    }
+	    
+	    $subViewChoices[$name] = $params;
 	}
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName) && !empty($subViewChoices)) {
-	    $subViewName = $subViewChoices[0]['view'];
+	    $subViewName = 'core:ItemEditItem';
 	}
 
 	$ItemAdmin = array();

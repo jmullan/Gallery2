@@ -56,7 +56,6 @@ class ItemMoveController extends GalleryController {
 	    if (!empty($form['destination'])) {
 		/* Check if we can add albums or items here */
 		$newParentId = $form['destination'];
-		GalleryUtilities::putRequestVariable('form.destination', $newParentId);
 		list ($ret, $permissions) = GalleryItemHelper::getPermissions($newParentId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -90,7 +89,6 @@ class ItemMoveController extends GalleryController {
 	    
 	    if (empty($error) && !empty($form['selectedIds'])) {
 		$selectedIds = array_keys($form['selectedIds']);
-		GalleryUtilities::putRequestVariable('form.selectedIds', $selectedIds);
 		
 		/* Load the source items */
 		list ($ret, $selectedItems) = $gallery->loadEntitiesById($selectedIds);
