@@ -1,0 +1,279 @@
+<?php
+/*
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2002 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+
+/**
+ * A GalleryNucleus for comments.
+ *
+ * GalleryComments are basically just structured text objects.
+ *
+ * @gallery metainfo 1.0
+ *
+ * @version $Id$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+class GalleryComment extends GalleryNucleus {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * Name of the commenter
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var $_name
+     */
+    var $_name;
+
+    /**
+     * Email address of the commenter
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var $_emailAddress
+     */
+    var $_emailAddress;
+
+    /**
+     * Hostname of the commenter
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_STRING
+     * @gallery flag STORAGE_MODIFIER_MEDIUM
+     *
+     * @var $_hostname
+     */
+    var $_hostname;
+
+    /**
+     * Text of the comment
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_TEXT
+     *
+     * @var $_comment
+     */
+    var $_comment;
+
+    /**
+     * Date of the comment
+     *
+     * @gallery persistent
+     * @gallery flag STORAGE_TYPE_TIMESTAMP
+     *
+     * @var $_date
+     */
+    var $_date;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Constructor
+     *
+     * Create a new blank instance, and register any members that need to
+     * persist in our storage.
+     *
+     * @access public
+     */
+    function CommentContainer() {
+	$this->DataContainer();
+    }
+
+    /**
+     * Create this item in our persistent store
+     *
+     * @param object GalleryItem the owner of this comment 
+     * @return object GalleryStatus a status code
+     */
+    function create(&$parent) {
+	assert('isset($parent)');
+	$this->setParentId($parent->getId());
+
+	$ret = parent::create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$comments =& $parent->getCommentIds();
+	$comments->push($this->getId());
+
+	return GalleryStatus::success();
+    }
+
+    /* BEGIN: Accessor Block.  DO NOT MODIFY! */
+    
+    /**
+     * Return the meta class information about this class
+     *
+     * @return array member => array(type, class)
+     */
+    function getMetaInfo() {
+        $meta = parent::getMetaInfo();
+        $meta['members']['comment'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_TEXT);
+        $meta['members']['hostname'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_MEDIUM);
+        $meta['members']['date'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_TIMESTAMP);
+        $meta['members']['emailAddress'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_MEDIUM);
+        $meta['members']['name'] = array(
+            'class' => 'GalleryComment',
+            'type' => STORAGE_TYPE_STRING |
+                      STORAGE_MODIFIER_MEDIUM);
+        $meta['version'] = array('major' => 1, 'minor' => 0);
+    
+        return $meta;
+    }
+    
+    /**
+     * Set the value of comment
+     * 
+     * @param string the new value for comment
+     * @access public
+     */
+    function setComment($value) {
+        assert('isset($value)');
+        $this->_comment = $value;
+        $this->setModifiedFlag('comment', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of comment
+     * 
+     * @access public
+     * @return string the current value of comment
+     */
+    function getComment() {
+        return $this->_comment;
+    }
+    
+    /**
+     * Set the value of date
+     * 
+     * @param int the new value for date
+     * @access public
+     */
+    function setDate($value) {
+        assert('isset($value)');
+        $value = (int)$value;
+        $this->_date = $value;
+        $this->setModifiedFlag('date', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of date
+     * 
+     * @access public
+     * @return int the current value of date
+     */
+    function getDate() {
+        return $this->_date;
+    }
+    
+    /**
+     * Set the value of emailAddress
+     * 
+     * @param string the new value for emailAddress
+     * @access public
+     */
+    function setEmailAddress($value) {
+        assert('isset($value)');
+        $this->_emailAddress = $value;
+        $this->setModifiedFlag('emailAddress', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of emailAddress
+     * 
+     * @access public
+     * @return string the current value of emailAddress
+     */
+    function getEmailAddress() {
+        return $this->_emailAddress;
+    }
+    
+    /**
+     * Set the value of hostname
+     * 
+     * @param string the new value for hostname
+     * @access public
+     */
+    function setHostname($value) {
+        assert('isset($value)');
+        $this->_hostname = $value;
+        $this->setModifiedFlag('hostname', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of hostname
+     * 
+     * @access public
+     * @return string the current value of hostname
+     */
+    function getHostname() {
+        return $this->_hostname;
+    }
+    
+    /**
+     * Set the value of name
+     * 
+     * @param string the new value for name
+     * @access public
+     */
+    function setName($value) {
+        assert('isset($value)');
+        $this->_name = $value;
+        $this->setModifiedFlag('name', MEMBER_MODIFIED);
+    }
+    
+    /**
+     * Get the value of name
+     * 
+     * @access public
+     * @return string the current value of name
+     */
+    function getName() {
+        return $this->_name;
+    }
+    
+    
+    /* END: Accessor Block.  DO NOT MODIFY! */
+}
+?>
