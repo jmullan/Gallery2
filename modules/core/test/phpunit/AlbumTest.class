@@ -44,6 +44,7 @@ class AlbumTest extends GalleryTestCase {
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -60,6 +61,7 @@ class AlbumTest extends GalleryTestCase {
 		      array('type' => 'int', 'description' => 'test')),
 		'test-description', '');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -71,6 +73,7 @@ class AlbumTest extends GalleryTestCase {
 	    list ($ret, $this->_save[$key]) =
 		GalleryCoreApi::getPluginParameter('module', 'core', $key);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -83,7 +86,7 @@ class AlbumTest extends GalleryTestCase {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
 	    /* Ignore errors so that we do our best to restore the original values */
 	}
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -462,13 +465,13 @@ class AlbumTest extends GalleryTestCase {
 	}
 	$derivative->setMimeType('test/file');
 	$derivative->setDerivativeSourceId($this->_parentAlbum->getId());
-	$derivative->setDerivativeOperations('bogus|1,2');
+	$derivative->setDerivativeOperations('thumbnail|150');
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $child) = $this->_createRandomDataItem($subAlbum->getId());
+	list ($ret, $child) = $this->_createRandomDataItem($subAlbum->getId(), 'test/file');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -479,7 +482,7 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* Result: success */
-	$this->assertEquals(true, $success);
+	$this->assertEquals(true, $success, 'guarantee');
 
 	/* Reload the thumbnail and examine it */
 	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(array($subAlbum->getId()));
@@ -488,7 +491,7 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	/* The album's derivative is sourced to the child */
-	$this->assert(!empty($thumbTable));
+	$this->assert(!empty($thumbTable), 'thumb');
 	if (!empty($thumbTable)) {
 	    $thumb = $thumbTable[$subAlbum->getId()];
 	    $this->assertEquals($derivative->getId(), $thumb->getId());
@@ -660,7 +663,7 @@ class AlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Create a sub album.  It should pick up the defaults */
 	list ($ret, $child2) = $this->_createRandomAlbum($album->getId());
 	if ($ret->isError()) {

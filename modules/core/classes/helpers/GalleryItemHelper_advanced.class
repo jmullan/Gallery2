@@ -354,19 +354,25 @@ class GalleryItemHelper_advanced {
 	    list ($ret, $thumbnailSource) =
 		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Derivative source is missing.. pick a new one */
+		    $highlightHasLeftTheAlbum = true;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		list ($ret, $highlightItem) =
+		    GalleryCoreApi::loadEntitiesById($thumbnailSource->getParentId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-	    list ($ret, $highlightItem) =
-		GalleryCoreApi::loadEntitiesById($thumbnailSource->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if ($highlightItem->getParentId() != $albumId) {
-		/* The highlight is no longer in this album */
-		$gallery->debug('Thumbnail is no longer in the album');
-		$highlightHasLeftTheAlbum = true;
+		if ($highlightItem->getParentId() != $albumId
+			&& $highlightItem->getId() != $albumId) {
+		    /* The highlight is no longer in this album */
+		    $gallery->debug('Thumbnail is no longer in the album');
+		    $highlightHasLeftTheAlbum = true;
+		}
 	    }
 	}
 
@@ -581,10 +587,10 @@ class GalleryItemHelper_advanced {
 	     * (2 db queries: search current directly granted permissions, update)
 	     */
 	    if (!empty($newPermissions)) {
-	        /*
-	         * addUserPermission checks the existing vs. new permissions for us
-	         * and updates/creates the direct user permissions
-	         */
+		/*
+		 * addUserPermission checks the existing vs. new permissions for us
+		 * and updates/creates the direct user permissions
+		 */
 		$ret = GalleryCoreApi::addUserPermission($item->getId(),
 					$newOwner->getId(), $newPermissions, false);
 		if ($ret->isError()) {

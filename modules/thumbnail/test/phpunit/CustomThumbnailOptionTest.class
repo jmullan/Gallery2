@@ -292,6 +292,39 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->assertEquals(array(), $thumbnails, 'no highlight');
     }
+
+    /* Test that guaranteeAlbumHasThumbnail won't remove a custom thumbnail */
+    function testGuarantee() {
+	/* Add custom thumbnail to album.. */
+	$form = array('name' => array(1 => 'test.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+
+	$result = $this->_handleRequestAfterEdit($form, $this->_album);
+	$this->assertEquals(array(array(), array()), $result);
+
+	/* Call GalleryCoreApi::guaranteeAlbumHasThumbnail */
+	list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($success, 'guarantee');
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
+
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_album->getId()), array_keys($thumbnails), 'highlight');
+	$thumbnail = array_shift($thumbnails);
+	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
+    }
 }
 
 /**
