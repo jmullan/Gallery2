@@ -24,7 +24,7 @@
               {$layout.item.title|markup}
             </h1>
             <p class="giDescription">
-              {$layout.item.summary|markup}
+              {$layout.item.description|markup}
             </p>
           </td>
           <td>
