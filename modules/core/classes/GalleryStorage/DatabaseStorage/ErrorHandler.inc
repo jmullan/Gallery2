@@ -10,9 +10,12 @@
  */
 
 /**
- * This will let ADODB know which error handler function we want to use
+ * This will let ADODB know which error handler function we want to use.
+ * (if G2 is embedded in a CMS also using adodb it may be defined already)
  */
-define('ADODB_ERROR_HANDLER','ErrorHandler');
+if (!defined('ADODB_ERROR_HANDLER')) {
+    define('ADODB_ERROR_HANDLER', 'ErrorHandler');
+}
 
 /**
  * Default Error Handler for ADODB
