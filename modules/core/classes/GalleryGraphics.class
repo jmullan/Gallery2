@@ -81,12 +81,12 @@ class GalleryGraphics {
     var $_supportedFunctions = 0;
 
     /**
-     * The file types supported by this toolkit
+     * The file extensions supported by this toolkit
      *
-     * @var array $_supportedFileTypes
+     * @var array $_supportedFileExtensions
      * @access private
      */
-    var $_supportedFileTypes = array();
+    var $_supportedFileExtensions = array();
 
     /**
      * The expected status from executed sub-jobs
@@ -118,9 +118,9 @@ class GalleryGraphics {
     function GalleryGraphics($config) {
 	assert('!empty($config)');
 
-	if (!empty($config['fileTypes'])) {
-	    foreach ($config['fileTypes'] as $type) {
-		$this->_supportedFileTypes[$type] = 1;
+	if (!empty($config['fileExtensions'])) {
+	    foreach ($config['fileExtensions'] as $extension) {
+		$this->_supportedFileExtensions[$extension] = 1;
 	    }
 	}
 
@@ -138,7 +138,7 @@ class GalleryGraphics {
     }
     
     /**
-     * Get the list of supported file types
+     * Get the list of supported file extensions
      *
      * Get the list of supported file types that this toolkit can
      * support.
@@ -146,19 +146,19 @@ class GalleryGraphics {
      * @access public
      * @return array lowercase file tags tags (eg "jpg", "gif")
      */
-    function getSupportedFileTypes() {
-	return array_keys($this->_supportedFileTypes);
+    function getSupportedFileExtensions() {
+	return array_keys($this->_supportedFileExtensions);
     }
 
     /**
-     * Is this file type supported?
+     * Is this file extension supported?
      *
      * @access public
      * @param string a file tag (eg "jpg", "Jpg", "JPG", "JPEG")
      * @return bool true if the tag given is supported 
      */
-    function isSupportedFiletype($tag) {
-	return isset($this->_supportedFileTypes[strtolower($tag)]);
+    function isSupportedFileExtension($extension) {
+	return isset($this->_supportedFileExtensions[strtolower($extension)]);
     }
 
     /**

@@ -86,6 +86,19 @@ class GalleryDerivative_core extends GalleryChildEntity {
      */
     var $_derivativeSize;
 
+    /**
+     * The type of data file
+     *
+     * @g2 <member>
+     * @g2   <member-name>derivativeFileExtension</member-name>
+     * @g2   <member-type>STRING</member-type>
+     * @g2 </member>
+     *
+     * @var string $_derivativeFileExtension
+     * @access private
+     */
+    var $_derivativeFileExtension;
+
     /*
      * ****************************************
      *                 Methods
@@ -176,11 +189,18 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($platform->file_exists($filename)) {
-	    return $platform->filesize($filename);
-	} else {
-	    return -1;
+	list($ret, $path) = $this->getPath();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), false);
 	}
+
+	if ($platform->file_exists($path)) {
+	    $size = $platform->filesize($path);
+	} else {
+	    $size = -1;
+	}
+
+	return array(GalleryStatus::success(), $size);
     }
 
     /**
