@@ -159,6 +159,15 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 				  'status' => array('moved' => array('count' => 1)),
 				  'error' => array()),
 			    $results);
+
+	/* Verify parent sequence */
+	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($this->_album[2]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(array($this->_getRootId(), $this->_album[0]->getId()),
+			    $parentSequence);
     }
 
     /**
