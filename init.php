@@ -46,32 +46,47 @@ function GalleryInit() {
 
     /* Gallery paths */
     $gallery =& $GLOBALS['gallery'];
+
+    $platform = $gallery->getPlatform();
+    $slash = $platform->getDirectorySeparator();
+    
     $gallery->setConfig('code.gallery.base', $galleryBase);
-    $gallery->setConfig('code.gallery.layouts', $galleryBase . 'layouts/');
-    $gallery->setConfig('code.gallery.themes', $galleryBase . 'themes/');
-    $gallery->setConfig('code.gallery.modules', $galleryBase . 'modules/');
-    $gallery->setConfig('code.gallery.lib', $galleryBase . 'lib/');
-    $gallery->setConfig('code.gallery.setup', $galleryBase . 'setup/');
+    $gallery->setConfig('code.gallery.layouts',
+			$galleryBase . 'layouts' . $slash);
+    $gallery->setConfig('code.gallery.themes',
+			$galleryBase . 'themes' . $slash);
+    $gallery->setConfig('code.gallery.modules',
+			$galleryBase . 'modules' . $slash);
+    $gallery->setConfig('code.gallery.lib',
+			$galleryBase . 'lib' . $slash);
+    $gallery->setConfig('code.gallery.setup',
+			$galleryBase . 'setup' . $slash);
 
     /* Smarty paths */
-    $gallery->setConfig('code.smarty.base', $galleryBase . 'lib/smarty/');
+    $gallery->setConfig('code.smarty.base',
+			$galleryBase . 'lib' . $slash . 'smarty' . $slash);
 
     /* Load our local configuration */
-    require_once(dirname(__FILE__) . '/config.php');
+    require_once(dirname(__FILE__) . $slash . 'config.php');
 
     /* Sanitize the data path */
     $dataBase = $gallery->getConfig('data.gallery.base');
-    if ($dataBase{strlen($dataBase)-1} != '/') {
-	$dataBase .= '/';
+    if ($dataBase{strlen($dataBase)-1} != $slash) {
+	$dataBase .= $slash;
 	$gallery->setConfig('data.gallery.base', $dataBase);
     }
 
     /* Set our various data paths */
-    $gallery->setConfig('data.gallery.albums', $dataBase . 'albums/');
-    $gallery->setConfig('data.gallery.cache', $dataBase . 'cache/');
-    $gallery->setConfig('data.gallery.tmp', $dataBase . 'tmp/');
-    $gallery->setConfig('data.smarty.base', $dataBase . 'smarty/');
-    $gallery->setConfig('data.smarty.templates_c', $dataBase . 'smarty/templates_c/');
+    $gallery->setConfig('data.gallery.albums',
+			$dataBase . 'albums' . $slash);
+    $gallery->setConfig('data.gallery.cache',
+			$dataBase . 'cache'. $slash);
+    $gallery->setConfig('data.gallery.tmp',
+			$dataBase . 'tmp' . $slash);
+    $gallery->setConfig('data.smarty.base',
+			$dataBase . 'smarty' . $slash);
+    $gallery->setConfig('data.smarty.templates_c',
+			$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
 
     /* Check for the existance of various functions that we care about */
     foreach (array('dgettext', 'dngettext')
