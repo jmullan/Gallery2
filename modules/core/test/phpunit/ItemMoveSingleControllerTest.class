@@ -42,20 +42,40 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	
 	parent::setUp();
 
+	/* Register a dummy toolkit */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+		'ItemMoveSingleTestToolkit', 'ItemMoveSingleTestToolkit', __FILE__);
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveSingleTestToolkit',
+		array('image/test'), 'thumbnail',
+		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveSingleTestToolkit',
+		array('image/test'), 'scale',
+		array(array('type' => 'int', 'description' => 'foo')), 'test-description');
+
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 400);
 	
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_setDerivativePreferences($this->_destinationAlbum->getId(), 200, 400, 600);
 	
 	/* Create a data item */
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_rootAlbum->getId());
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
+		$this->_rootAlbum->getId(), 'image/test', array('width' => 1000));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -64,7 +84,13 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	
+
+	/* Unregister */
+	$ret = GalleryCoreApi::unregisterToolkit('ItemMoveSingleTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -78,11 +104,78 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	parent::tearDown();
     }
 
+    function _setDerivativePreferences() {
+	$args = func_get_args();
+	$itemId = array_shift($args);
+	$thumbSize = array_shift($args);
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($itemId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addDerivativePreference(0, $itemId,
+		   DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|' . $thumbSize);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach ($args as $i => $resizeSize) {
+	    $ret = GalleryCoreApi::addDerivativePreference($i+1, $itemId,
+			DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|' . $resizeSize);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function _getDerivativeSizes($itemIds) {
+	if (!is_array($itemIds)) {
+	    $itemIds = array($itemIds);
+	}
+	$data = array();
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach ($thumbnails as $id => $deriv) {
+	    $data[$id][] = array('type' => $deriv->getDerivativeType(),
+				 'op' => $deriv->getDerivativeOperations());
+	}
+	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds($itemIds);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	foreach ($resizes as $id => $derivs) {
+	    foreach ($derivs as $deriv) {
+		$data[$id][] = array('type' => $deriv->getDerivativeType(),
+				     'op' => $deriv->getDerivativeOperations());
+	    }
+	}
+	return count($data)==1 ? array_shift($data) : $data;
+    }
+
     /**
      * Test moving an item
      */
     function testMoveItem() {
 	global $gallery;
+
+	/* Create derivatives according to prefs of original album */
+	$ret = GalleryCoreApi::addExistingItemToAlbum($this->_item, $this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify derivatives were created ok */
+	$sizes = $this->_getDerivativeSizes($this->_item->getId());
+	$this->assertEquals(array(
+	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'thumbnail|150'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400')),
+	    $sizes, 'Initial derivative sizes');
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
@@ -104,6 +197,14 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_destinationAlbum->getId()),
 			    $parentSequence);
+
+	/* Verify derivatives were recreated with preferences of new parent album */
+	$sizes = $this->_getDerivativeSizes($this->_item->getId());
+	$this->assertEquals(array(
+	    array('type' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'op' => 'thumbnail|200'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|400'),
+	    array('type' => DERIVATIVE_TYPE_IMAGE_RESIZE, 'op' => 'scale|600')),
+	    $sizes, 'Derivative sizes after move');
     }
 
     /**
@@ -199,4 +300,11 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
     }
 }
+
+/**
+ * Dummy test toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemMoveSingleTestToolkit extends GalleryToolkit { }
 ?>
