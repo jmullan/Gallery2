@@ -209,6 +209,22 @@ class CoreModuleExtras {
 
 	    break;
 	case '0.8.5':
+	    /*
+	     * Copy the information from viewedSinceTimestamp to originationTimestamp
+	     * as both default to time()
+	     */
+	    $storage =& $gallery->getStorage();
+	    $query = '
+                  UPDATE
+                    [GalleryItem]
+                  SET
+                    [::originationTimestamp] = [::viewedSinceTimestamp]
+                ';
+	    $ret = $storage->execute($query, array());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    $currentVersion = '0.8.6';
 	    /* fall through */
 
