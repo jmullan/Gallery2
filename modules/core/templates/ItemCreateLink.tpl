@@ -17,9 +17,9 @@
   <div id="gsStatus">
     <div class="giStatus">
       {g->text one="Successfully linked %d item"
-               many="Successfully linked %d items" 
-               count=$status.linked.count
-               arg1=$status.linked.count}
+	       many="Successfully linked %d items"
+	       count=$status.linked.count
+	       arg1=$status.linked.count}
     </div>
   </div>
   {/if}
@@ -29,7 +29,7 @@
     <h2 class="giTitle">
       {g->text text="Source"}
     </h2>
-      
+
     <p class="giDescription">
       {g->text text="Choose the items you want to link"}
       {if ($ItemCreateLink.numPages > 1) }
@@ -38,39 +38,42 @@
 	       arg2=$ItemCreateLink.numPages}
       {/if}
     </p>
-    
+
     <table>
       {foreach from=$ItemCreateLink.peers item=peer}
       {assign var="peerItemId" value=$peer.id}
       <tr>
-        <td width="60">
-          {if isset($peer.thumbnail)}
-          <div class="giThumbImage">
+	<td width="60">
+	  {if isset($peer.thumbnail)}
+	  <div class="giThumbImage">
 	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.id`"}">
 	      {g->image item=$peer image=$peer.thumbnail maxSize=50}
 	    </a>
-          </div>		    
-          {else}
-          &nbsp;
-          {/if} 
-        </td>
-        <td> 
-          <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}"
-          {if $peer.selected}checked="checked"{/if}
-          />
-        </td> 
-        <td> 
-          {$peer.title|default:$peer.pathComponent}
-        </td>
+	  </div>
+	  {else}
+	  &nbsp;
+	  {/if}
+	</td>
+	<td>
+	  <input type="checkbox" name="{g->formVar var="form[selectedIds][$peerItemId]"}"
+	   id="item_{$peerItemId}" {if $peer.selected}checked="checked"{/if}/>
+	</td>
+	<td>
+	  <label for="item_{$peerItemId}">
+	    {$peer.title|default:$peer.pathComponent}
+	  </label>
+	</td>
       </tr>
     {/foreach}
     </table>
 
     {if ($ItemCreateLink.page > 1)}
-    <input type="submit" name="{g->formVar var="form[action][previous]"}" value="{g->text text="Previous Page"}"/>
+    <input type="submit" name="{g->formVar var="form[action][previous]"}"
+     value="{g->text text="Previous Page"}"/>
     {/if}
     {if ($ItemCreateLink.page < $ItemCreateLink.numPages)}
-    <input type="submit" name="{g->formVar var="form[action][next]"}" value="{g->text text="Next Page"}"/>
+    <input type="submit" name="{g->formVar var="form[action][next]"}"
+     value="{g->text text="Next Page"}"/>
     {/if}
   </div>
 
@@ -78,11 +81,11 @@
     <h2 class="giTitle">
       {g->text text="Destination"}
     </h2>
-      
+
     <p class="giDescription">
       {g->text text="Choose a new album for the link"}
     </p>
-      
+
     <select name="{g->formVar var="form[destination]"}">
       {foreach from=$ItemCreateLink.albumTree item=album}
       <option value="{$album.data.id}">
@@ -98,16 +101,19 @@
     </div>
     {/if}
   </div>
-    
+
   <div class="gbButtons">
     <input type="hidden" name="{g->formVar var="page"}" value="{$ItemCreateLink.page}"/>
-    <input type="hidden" name="{g->formVar var="form[numPerPage]"}" value="{$ItemCreateLink.numPerPage}"/>
+    <input type="hidden" name="{g->formVar var="form[numPerPage]"}"
+     value="{$ItemCreateLink.numPerPage}"/>
     {foreach from=$ItemCreateLink.selectedIds item=selectedId}
     <input type="hidden" name="{g->formVar var="form[selectedIds][$selectedId]"}" value="on"/>
     {/foreach}
-    <input type="submit" name="{g->formVar var="form[action][link]"}" value="{g->text text="Link"}"/>
+    <input type="submit" name="{g->formVar var="form[action][link]"}"
+     value="{g->text text="Link"}"/>
     {if $ItemCreateLink.canCancel}
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+      <input type="submit" name="{g->formVar var="form[action][cancel]"}"
+       value="{g->text text="Cancel"}"/>
     {/if}
   </div>
   {else}
