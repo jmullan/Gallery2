@@ -1,0 +1,151 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package UserAlbum
+ * @version $Revision$ $Date$
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * A helper class for user albums
+ *
+ * @package UserAlbum
+ * @subpackage Classes
+ */
+class UserAlbumHelper {
+
+    /**
+     * Create a new user album
+     *
+     * @param GalleryUser new user
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function createUserAlbum(&$user) {
+	list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	// Create album..
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	// Set owner..
+	$album->setOwnerId($user->getId());
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$albumId = $album->getId();
+
+	// Set permissions..
+	$ret = GalleryCoreApi::removeItemPermissions($albumId);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$viewPermissions = $module['fullSize'] ? array('core.viewAll')
+					       : array('core.view', 'core.viewResizes');
+	switch ($module['view']) {
+	case 'everybody':
+	    $groupId = $core['id.everybodyGroup'];
+	    break;
+	case 'allusers':
+	    $groupId = $core['id.allUserGroup'];
+	    break;
+	}
+	if (isset($groupId)) {
+	    foreach ($viewPermissions as $permission) {
+		$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Return the id of a user's first album
+     *
+     * @param int user id
+     * @return array object GalleryStatus a status code
+     *               int album id or null if no albums
+     * @static
+     */
+    function fetchUserAlbumId($userId) {
+	global $gallery;
+
+	$query = 'SELECT [GalleryAlbumItem::id]
+		  FROM [GalleryAlbumItem], [GalleryItem], [GalleryEntity]
+		  WHERE [GalleryAlbumItem::id] = [GalleryItem::id]
+		  AND [GalleryAlbumItem::id] = [GalleryEntity::id] AND [GalleryItem::ownerId] = ?
+		  ORDER BY [GalleryEntity::creationTimestamp]';
+
+	list ($ret, $searchResults) =
+	    $gallery->search($query, array($userId), array('limit' => array('count' => 1)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($result = $searchResults->nextResult()) {
+	    $albumId = (int)$result[0];
+	} else {
+	    $albumId = null;
+	}
+
+	return array(GalleryStatus::success(), $albumId);
+    }
+}
+?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -73,6 +73,18 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'loginRedirect', '1');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '1');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $this->_allUserGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
@@ -114,6 +126,7 @@ class UserAlbumTest extends GalleryTestCase {
     }
 
     function testUserAlbum() {
+	global $gallery;
 
 	// Create new user..
 	list ($ret, $user) = $this->_createRandomUser();
@@ -153,12 +166,67 @@ class UserAlbumTest extends GalleryTestCase {
 	    array('userId' => 0, 'groupId' => $this->_allUserGroupId,
 		  'permission' => 'core.viewSource'),
 	    $permissions), 'no view source for all users');
+
+	// Create a subalbum..
+        list ($ret, $subalbum) =
+	    $this->_createRandomAlbum($this->_albumId, array('ownerId' => $user->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Verify login redirect..
+	$event = GalleryCoreApi::newEvent('Gallery::Login');
+	$event->setEntity($user);
+	list ($ret, $result) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(array('view' => 'core:ShowItem', 'itemId' => $this->_albumId)),
+			    $result, 'login redirect');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'loginRedirect', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Verify no login redirect..
+	$event = GalleryCoreApi::newEvent('Gallery::Login');
+	$event->setEntity($user);
+	list ($ret, $result) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $result, 'no login redirect');
+
+	// Verify system link..
+	$gallery->setActiveUser($user);
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $links) = $module->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(array('text' => $module->translate('Your Album'),
+					'params' => array('view' => 'core:ShowItem',
+							  'itemId' => $this->_albumId))),
+			    $links, 'system link');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Verify no system link..
+	list ($ret, $links) = $module->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $links, 'no system link');
     }
 
     function testUserAlbumDeleteTarget() {
-	// Enable event (normally disabled for unit tests)
-	$this->_registerTestEventListener('GalleryEntity::delete', new UserAlbumModule());
-
 	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
