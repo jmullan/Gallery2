@@ -60,36 +60,42 @@ class ItemEditItemController extends GalleryController {
 	    $redirect['itemId'] = $itemId;
 	    
 	} else if (isset($form['action']['save'])) {
+	    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+		    
+	    $isRootAlbum = $item->getId() == $rootAlbumId;
+
 	    /*
 	     * Validate the input data.
 	     */
 	    $platform = $gallery->getPlatform();
-	    if (empty($form['pathComponent'])) {
-		$error[] = 'form.error.pathComponent.missing';
-	    } else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
-		$error[] = 'form.error.pathComponent.invalid';
-	    } else {
+	    if (!$isRootAlbum) {
+		if (empty($form['pathComponent'])) {
+		    $error[] = 'form.error.pathComponent.missing';
+		} else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+		    $error[] = 'form.error.pathComponent.invalid';
+		}
+	    }
+	    
+	    if (empty($error)) {
 		list ($ret, $lockId) = $gallery->acquireWriteLock($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		
-		list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		    
 		/*
 		 * It's possible to get a collision when we rename, so try that
 		 * first.  If there's no collision then make the rest of the changes.
 		 */
-		if ($item->getPathComponent() != $form['pathComponent']) {
-		    list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    
-		    if ($item->getId() != $rootAlbumId) {
+		if (!$isRootAlbum) {
+		    if ($item->getPathComponent() != $form['pathComponent']) {
 			$ret = $item->rename($form['pathComponent']);
 			if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
