@@ -245,6 +245,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get item links and flatten out the modules */
+	$moduleItemLinks = array();
 	list ($ret, $tmp) =
 	    $this->_getModuleItemLinks(array_merge(array($item), $childItems));
 	if ($ret->isError()) {
@@ -484,6 +485,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 
 	/* Get item links and flatten out the modules */
+	$moduleItemLinks = array();
 	list ($ret, $tmp) = $this->_getModuleItemLinks($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
