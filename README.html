@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content= "text/html; charset=us-ascii" />
-      <title>README: Gallery 2 Alpha 2 (Grand Theft Photo)</title>
+      <title>README: Gallery 2 Alpha 3 (Farva)</title>
       <style type="text/css">
 	<!--
 	html {
@@ -96,8 +96,8 @@
   <body>
     <img src="images/g2Logo.png" alt="Gallery 2.0 Alpha" />
     <p>
-      Welcome to Gallery 2.0 (G2). This is the second
-      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Grand Theft Photo&rdquo;</b>.
+      Welcome to Gallery 2.0 (G2). This is the third
+      &ldquo;Alpha&rdquo; release of G2, code named <b>&ldquo;Farva&rdquo;</b>.
       Please read through this document carefully before installing G2
       and before asking for help.  We have taken care to try to answer
       as many of your questions here as possible.
@@ -124,12 +124,13 @@
     
     <h2><a name="quick_start">Quick Start</a></h2>
     <p>
-      If you&rsquo;re impatient like me, you just want to get going.  The
-      odds are that your system is mostly all set to handle G2 so just
-      skip right to the <a href="install/" target="_guided">installer</a> and start
-      clicking.  It should walk you through everything you need to get
-      going and you can come back here and read more if you hit a
-      snag.  Enjoy.
+      If you&rsquo;re impatient like me, you just want to get going.
+      The odds are that your system is mostly all set to handle G2 so
+      just skip right to the <a href="install/"
+      target="_guided">installer</a> and start clicking.  It should
+      walk you through everything you need to get going.  <b>But</b>
+      if you hit a snag, please come back here and read more before
+      asking questions!  Enjoy.
     </p>
 
     <h2><a name="what_is_gallery">What is Gallery?</a></h2>
@@ -152,7 +153,7 @@
       contain both known and unknown bugs, and will be missing some
       intended features.  We release it early so that you can see what
       is coming and give us feedback that will help us improve the
-      final release.
+      final release.  
     </p>
     
     <h2><a name="Alpha_requirements">G2 Alpha requirements</a></h2>
@@ -161,24 +162,30 @@
 	Web server that can run PHP (Apache 1, Apache 2, IIS, Zeus, etc)
       </li>
       <li>
-	PHP version 4.1.0 or more recent (including PHP 5).  <b>Note:</b> <i>safe_mode</i> must be disabled!
+	PHP version 4.1.0 or more recent (including PHP 5).
+	<br/>
+	<b>Note:</b> <i>safe_mode</i> must be disabled!
       </li>
       <li>
 	One of the following databases: MySQL 3.x, MySQL 4.x, or PostgreSQL 7.x
       </li>
       <li>
-	One of the following graphics toolkits: NetPBM 9.x, ImageMagick 5.x, GD 2.x
+	One of the following graphics toolkits: NetPBM 9.x, ImageMagick 5.x, GD 2.x (or else you get no thumbnails)
       </li>
     </ul>
 
     <h2><a name="when_to_use">When to use G2 Alpha</a></h2>
     <p>
-      You should install G2 Alpha to try it out.  You could install it next to
-      your production version of Gallery 1.x in a hidden directory.  You could
-      install it on a development server.  We want you to try it, test it, break
-      it, and tell us all about it.  Get your friends and colleagues to poke
-      around.  However, please be prepared to delete your G2 Alpha installation
-      and all of the data at any time and start over from scratch.
+      You should install G2 Alpha to try it out.  You could install it
+      next to your production version of Gallery 1.x in a hidden
+      directory.  You could install it on a development server.  We
+      want you to try it, test it, break it, and tell us all about it.
+      Get your friends and colleagues to poke around.  However, please
+      be prepared to delete your G2 Alpha installation and all of the
+      data at any time and start over from scratch.  You can use the
+      migration module to import a few of your G1 albums into G2 for
+      test purposes (this shouldn't affect your G1 installation at
+      all).
     </p>
       
     <h2><a name="when_not_to_use">When not to use G2 Alpha</a></h2>
@@ -218,7 +225,9 @@
       in modules that can be enabled separately for maximum control.
     </p>
     <p>
-      Highlights of what&rsquo;s changed in Gallery 2 Alpha 3 (Codename TBD) 
+      <h3>
+	Highlight of changes in Gallery 2 Alpha 3 (Farva) 
+      </h3>
     </p>
     <ol>
       <li>
@@ -234,12 +243,93 @@
       </li>
 
       <li>
-	<b> Manifest Support </b> - All modules now come with a
+	<b> Module Manifests </b> - All modules now come with a
 	manifest file, and the installer checks to make sure that
 	you've got a complete set of files on the server.  
       </li>
 
-<!-- From Alpha 2:
+      <li>
+	<b> Auto Completion </b> - the Site Admin user and groups
+	pages, and the permissions pages now perform appropriate
+	completion for you.  Just type a few characters of the
+	username you're searching for and it'll give you up to 10
+	possible matches.  Tested on Firefox, but not extensively
+	tested on IE yet.
+      </li>
+
+      <li>
+	<b> New version of IE7 </b> - We're experimenting with <a
+	href="http://dean.edwards.name/IE7/" target="_blank">IE7</a>,
+	a compatibility layer in Javascript reduces some of the
+	incompatibilities between IE6 and other browsers.  The older
+	version caused weird problems with images getting overlayed
+	with a red X, or IE6 crashing.
+      </li>
+
+      <li>
+	<b> Migration improvements </b> -
+	<ul>
+	  <li>
+	    We now properly migrate item owners
+	  </li>
+	  <li>
+	    G1 summary and description fields are now transposed on
+	    import so that the G1 "summary" (which was shown inside
+	    the album itself) is now the G2 "description" and vice
+	    versa.
+	  </li>
+	</ul>
+      </li>
+      
+      <li>
+	<b> CMS Integration </b> - Although this is not yet readily
+	visible, a great deal of work has been done on getting G2
+	ready to integrate into external content management systems.
+	We've successfully done partial integrations with Xaraya and
+	Drupal, with more on the way.
+      </li>
+
+      <li>
+	<b> Square Thumbnails </b> - We fixed a noticeable bug where
+	the first time you viewed a square thumbnail it might appear
+	distorted (this was mentioned in the "known bugs" list of the
+	alpha-2 release)
+      </li>
+
+      <li>
+	<b> Zip Cart Plugin </b> - You can now download the contents
+	of your cart as a zip file.
+      </li>
+
+      <li>
+	<b> User Albums </b> - You can use the new User Albums module
+	to automatically create a new album for a user whenever you
+	create a new user.
+      </li>
+
+      <li>
+	<b> Installer </b> - Many minor tweaks including adding more
+	install checks to make sure that your system is ok.
+      </li>
+
+      <li>
+	<b> Members </b> - The members module now has privacy settings
+	so that you can prevent the unauthorized from seeing your list
+	of members, and/or their email addresses.
+      </li>
+
+      <li>
+	<b> Bug fixes </b> - Many bugs closed!
+      </li>
+    </ol>
+
+    <p>
+      <h3>
+	Highlight of changes in Gallery 2 Alpha 2 (Grand Theft Photo)
+      </h3>
+    </p>
+
+    <ol>
       <li>
 	<b> User Interface </b> - Many small and large user interface
 	improvements.  Made the XHTML more standards compliant and
@@ -311,7 +401,6 @@
       <li> 
 	<b> Bugs </b> - More than 31 bugs closed since alpha 1.
       </li> 
-End Alpha-2 -->
     </ol>
 
     <h2><a name="prerequisites">G2 Alpha Installation Prerequisites</a></h2>
@@ -428,6 +517,8 @@ End Alpha-2 -->
       install directory</a>.  G2 will walk you through the process of
       validating that your system is properly configured and will set
       everything up for you.
+    </p>
+    <p>
       <em><strong>Note</strong> - the installer requires that you have cookies
       enabled in your browser!</em>
     </p>
@@ -530,7 +621,7 @@ End Alpha-2 -->
 	photo to your album.  If all goes well, you should see the new photos in your <a href="main.php?g2_view=core:ShowItem&amp;g2_itemId=8" target="_guided">new album!</a>.  Congratulations!
       </li>
       <li>
-	<b> Migrate G1 albums </b> - you can easily import albums from
+	<b> Import G1 albums </b> - you can easily import albums from
 	G1.  It won&rsquo;t cause any harm to your G1 (or at least,
 	it&rsquo;s not supposed to).  Just go to the <a
 	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=migrate:SelectGallery"
@@ -667,10 +758,6 @@ End Alpha-2 -->
 	will be continually optimizing during the Alpha and Beta
 	cycles.
       </li>
-      <li>
-	<b> MembersList shows email addresses to everybody </b> - this
-	is a known issue that we will fix in an upcoming release.
-      </li>
     </ol>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
@@ -790,15 +877,15 @@ End Alpha-2 -->
 
     <a href="http://gallery.sourceforge.net"><img style="border: 0px"
 	src="images/gallery.gif"
-	alt="Gallery 2.0 alpha-2 (Grand Theft Photo)"
+	alt="Gallery 2.0 alpha-3 (Farva)"
 	height="15"  
 	width="80"/></a>
 
-    <a href="modules/core/test/data/scream.mp3"
+    <a href="modules/core/test/data/Farva2.mp3"
       onclick="window.open(this.href); return false;"
       onkeypress="window.open(this.href); return false;"><img style="border: 0px"
-	src="images/scream.png"
-	alt="Gallery 2.0 alpha-2 (Grand Theft Photo)"
+	src="images/badge-farva.png"
+	alt="Gallery 2.0 alpha-3 (Farva)"
 	height="15"
 	width="80"/></a>
     <hr />
