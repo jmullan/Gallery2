@@ -67,11 +67,15 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['a'] = 123;
 	$params['b'] = 'bBbB';
 	$params['c'] = serialize(array(1, 2, 3));
+	$params['d'] = array('<', 2);
 	$actual = $this->_urlGenerator->generateUrl($params);
 
-	foreach ($params as $key => $value) {
-	    $values[] = GalleryUtilities::prefixFormVariable($key) . '=' . htmlentities($value);
-	}
+	$values[] = GalleryUtilities::prefixFormVariable('a') . '=' . htmlentities('123');
+	$values[] = GalleryUtilities::prefixFormVariable('b') . '=' . htmlentities('bBbB');
+	$values[] = GalleryUtilities::prefixFormVariable('c') . '=' .
+	    htmlentities(serialize(array(1, 2, 3)));
+	$values[] = GalleryUtilities::prefixFormVariable('d[0]') . '=' . htmlentities('<');
+	$values[] = GalleryUtilities::prefixFormVariable('d[1]') . '=' . htmlentities('2');
 
 	/* If we're not using cookies, expect there to be an additional value */
 	$session =& $gallery->getSession();
