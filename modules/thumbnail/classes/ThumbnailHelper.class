@@ -201,9 +201,9 @@ class ThumbnailHelper {
 	if ($fileMimeType == 'application/octet-stream' ||
 		$fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
 	    $extension = GalleryUtilities::getFileExtension($filename);
-	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	    list ($ret, $fileMimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	    if ($ret->isError()) {
-		$mimeType = 'application/unknown';
+		$fileMimeType = 'application/unknown';
 	    }
 	}
 	if ($fileMimeType != 'image/jpeg') {
@@ -227,7 +227,7 @@ class ThumbnailHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (isset($mimeType)) {
-	    $item->setitemMimeTypes($mimeType);
+	    $item->setItemMimeTypes($mimeType);
 	}
 	if (isset($parentId)) {
 	    $item->setParentId($parentId);
