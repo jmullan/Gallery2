@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -27,7 +27,7 @@ class SystemChecksStep extends InstallStep {
 
     /*
      * Returns the exact bytes value from a php.ini setting
-     * 
+     *
      * Copied from PHP.net's manual entry for ini_get()
      */
     function _getBytes($val) {
@@ -51,7 +51,7 @@ class SystemChecksStep extends InstallStep {
 	$failCount = 0;
 
 	$suggestedHtaccess = array();
-	
+
 	// assert compatible version of PHP
 	if (!function_exists('version_compare') || version_compare(phpversion(), '4.1.0') < 0) {
 	    $templateData['check'][] =
@@ -112,7 +112,7 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('exec() allowed'), 'success' => true);
 	}
-	
+
 	// Warning when set_time_limit() is disabled
 	if (in_array('set_time_limit', split(',\s*', ini_get('disable_functions')))) {
 	    $timeLimit = ini_get('max_execution_time');
@@ -125,7 +125,7 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => _('set_time_limit() allowed'), 'success' => true);
 	}
-	
+
 	// Warning if memory_limit is set and is too low
 	$memoryLimit = ini_get('memory_limit');
 	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
@@ -134,7 +134,7 @@ class SystemChecksStep extends InstallStep {
 	    $templateData['check'][] =
 		array('title' => $title,
 		      'warning' => true,
-		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should rise this limit to at least <b>%sMb</b> for proper Gallery operation.'), $memoryLimit, $minimumMemoryLimit),
+		      'notice' => sprintf(_('Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</b> parameter in php.ini). You should raise this limit to at least <b>%sMb</b> for proper Gallery operation.'), $memoryLimit, $minimumMemoryLimit),
 		);
 	    $suggestedHtaccess[] = sprintf('php_value memory_limit %sM', $minimumMemoryLimit);
 	} else {
@@ -233,7 +233,7 @@ class SystemChecksStep extends InstallStep {
 
     function CheckManifest() {
 	$base = realpath(dirname(__FILE__) . '/../..') . '/';
-	
+
 	require_once($base . 'modules/core/classes/GalleryUtilities.class');
 	$manifest = GalleryUtilities::readManifest();
 	if (empty($manifest)) {
@@ -246,7 +246,7 @@ class SystemChecksStep extends InstallStep {
 	    if ($file == 'MANIFEST') {
 		continue;
 	    }
-	    
+
 	    $path = $base . $file;
 	    if (!file_exists($path)) {
 		$missing[] = $file;
