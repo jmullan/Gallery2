@@ -24,7 +24,7 @@
         <!-- TODO: Figure out how to get icons in here in a modular way -->
         <ul>
           {foreach from=$SiteAdmin.subViewGroups item=group}
-          <li {*TEMP:*}style="text-decoration:underline"> {$group.0.groupLabel} 
+          <li {*TEMP:*}> {$group.0.groupLabel} 
 	    <ul>
 	      {foreach from=$group item=choice}
 	      {if ($SiteAdmin.subViewName == $choice.view)}
