@@ -166,20 +166,13 @@ class GalleryUrlGenerator {
 
 	$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 	$domain = $this->getCurrentDomain();
-	$port = $_SERVER['SERVER_PORT'];
-	// Omit port if default for protocol or if HTTP_HOST already contains the port:
-	if ($port == $defaultPort[$protocol] || strpos($domain, ':') !== false) {
-	    $port = '';
-	} else if (!empty($port)) {
-	    $port = ':' . $port;
-	}
 	if (empty($path)) {
 	    $path = '/';
 	} else if ($path{0} != '/') {
 	    $path = '/' . $path;
 	}
 
-	return sprintf('%s://%s%s%s', $protocol, $domain, $port, $path);
+	return sprintf('%s://%s%s', $protocol, $domain, $path);
     }
 
     /**
