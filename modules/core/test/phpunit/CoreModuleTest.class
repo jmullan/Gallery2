@@ -90,6 +90,8 @@ class CoreModuleTest extends GalleryTestCase {
 				'view' => 'core:AdminUsers'),
 			  array('name' => $this->_module->translate('Groups'),
 				'view' => 'core:AdminGroups'),
+			  array('name' => $this->_module->translate('Maintenance'),
+				'view' => 'core:AdminMaintenance'),
 			  );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret->isError()) {
@@ -110,27 +112,28 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array(
-				  array('name' => $this->_module->translate(array(
-								'text' => 'Edit %s',
-								'arg1' => $this->_module->translate('Album'))),
-					'view' => 'core:ItemEdit'),
-				  array('name' => $this->_module->translate(array(
-								'text' => 'Delete %s',
-								'arg1' => $this->_module->translate('Album'))),
-					'view' => 'core:ItemDeleteSingle'),
-				  array('name' => $this->_module->translate(array(
-								'text' => 'Move %s',
-								'arg1' => $this->_module->translate('Album'))),
-					'view' => 'core:ItemMoveSingle'),
-				  array('name' => $this->_module->translate('Edit Permissions'),
-					'view' => 'core:ItemPermissions'),
-				  array('name' => $this->_module->translate('Add Items'),
-					'view' => 'core:ItemAdd'),
-				  array('name' => $this->_module->translate('Add Sub-Album'),
-					'view' => 'core:ItemAddAlbum'),
-				  ),
-			    $content);
+	$this->assertEquals(
+	    array(
+		array('name' => $this->_module->translate(
+			  array('text' => 'Edit %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemEdit'),
+		array('name' => $this->_module->translate(
+			  array('text' => 'Delete %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemDeleteSingle'),
+		array('name' => $this->_module->translate(
+			  array('text' => 'Move %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemMoveSingle'),
+		array('name' => $this->_module->translate('Edit Permissions'),
+		      'view' => 'core:ItemPermissions'),
+		array('name' => $this->_module->translate('Add Items'),
+		      'view' => 'core:ItemAdd'),
+		array('name' => $this->_module->translate('Add Sub-Album'),
+		      'view' => 'core:ItemAddAlbum')
+		),
+	    $content);
     }
 
     function testGetConfigurationView() {
@@ -203,51 +206,54 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$links[] = array('text' => $this->_module->translate('add items'),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemAdd',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
-	$links[] = array('text' => $this->_module->translate(array('text' => 'edit %s',
-								   'arg1' => $this->_module->translate('album'))),
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemAdd',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'edit %s',
+				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemEdit',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemEdit',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
 	$links[] = array('text' => $this->_module->translate('add sub-album'),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemAddAlbum',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemAddAlbum',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
 	$links[] = array('text' => $this->_module->translate('edit permissions'),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemPermissions',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
-	$links[] = array('text' => $this->_module->translate(array('text' => 'delete %s',
-								   'arg1' => $this->_module->translate('album'))),
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemPermissions',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'delete %s',
+				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemDelete',
-					   'itemId' => $this->_parentAlbum->getParentId(),
-					   'selectedId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
-	$links[] = array('text' => $this->_module->translate(array('text' => 'move %s',
-								   'arg1' => $this->_module->translate('album'))),
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemDelete',
+			     'itemId' => $this->_parentAlbum->getParentId(),
+			     'selectedId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'move %s',
+				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'subView' => 'core:ItemMove',
-					   'itemId' => $this->_parentAlbum->getParentId(),
-					   'selectedId' => $this->_parentAlbum->getId(),
-					   'return' => 1,
-					   ));
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemMove',
+			     'itemId' => $this->_parentAlbum->getParentId(),
+			     'selectedId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
 
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }
