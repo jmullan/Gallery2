@@ -95,6 +95,8 @@ class CreateRandomTreeTestCase extends TestCase {
 	    $this->_photoCount++;
 	    $gallery->debug("<h4>$this->_photoCount, $this->_maxItems</h4>");
 	    
+	    $gallery->guaranteeTimeLimit(10);
+	
 	    /* Create the photo */
 	    list ($ret, $photo) = $gallery->newEntity('GalleryPhotoItem');
 	    if ($ret->isError()) {
@@ -163,6 +165,9 @@ class CreateRandomTreeTestCase extends TestCase {
 		/* Create 0-3 comments */
 		$rand4 = rand(0, 3);
 		for ($j = 0; $j < $rand4; $j++) {
+
+		    $gallery->guaranteeTimeLimit(10);
+	
 		    list ($ret, $comment) = $gallery->newEntity('GalleryComment');
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
