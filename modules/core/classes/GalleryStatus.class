@@ -33,13 +33,11 @@
 
 /**
  * The operation was a success
- *
  */
 define('GALLERY_SUCCESS', 0x00000000);
 
 /**
  * The operation had errors
- *
  */
 define('GALLERY_ERROR', 0x00000001);
 
@@ -47,154 +45,135 @@ define('GALLERY_ERROR', 0x00000001);
  * A name collision happened in the filesystem or database as a result of this
  * operation.  A common cause for this is attempting to use an existing filename
  * when moving an item from one location to another.
- *
  */
 define('ERROR_COLLISION', 0x00000002);
 
 /**
  * The object you're trying to access is no longer available.  Perhaps it was
  * deleted.  You shouldn't get this when an object has simply moved.
- *
  */
 define('ERROR_MISSING_OBJECT', 0x00000004);
 
 /**
  * The lock you're trying to acquire is currently in use and was not released
  * within the timeout period you specified.
- *
  */
 define('ERROR_LOCK_IN_USE', 0x00000008);
 
 /**
  * One of the parameters passed to this function is bad.
- *
  */
 define('ERROR_BAD_PARAMETER', 0x00000010);
 
 /**
  * Missing a value necessary to continue
- *
  */
 define('ERROR_MISSING_VALUE', 0x00000020);
 
 /**
  * An unspecified storage error occurred
- *
  */
 define('ERROR_STORAGE_FAILURE', 0x00000040);
 
 /**
  * A storage operation was attempted with an invalid storage connection
- *
  */
 define('ERROR_STORAGE_CONNECTION', 0x00000080);
 
 /**
  * You attempted to modify an object using an in-memory version that
  * is out of date with the version that's in the storage
- *
  */
 define('ERROR_OBSOLETE_DATA', 0x00000200);
 
 /**
  * You attempted an operation which requires a lock.
- *
  */
 define('ERROR_LOCK_REQUIRED', 0x00000400);
 
 /**
  * We tried a file operation on an unsupported file type
- *
  */
 define('ERROR_UNSUPPORTED_FILE_TYPE', 0x00000800);
 
 /**
  * You attempted an illegal operation on a deleted object
- *
  */
 define('ERROR_DELETED_OBJECT', 0x00001000);
 
 /**
  * You attempted an operation which had a bad path component
- *
  */
 define('ERROR_BAD_PATH', 0x00002000);
 
 /**
  * You attempted an operation which had a bad data type
- *
  */
 define('ERROR_BAD_DATA_TYPE', 0x00004000);
 
 /**
  * You attempted to add a child to a GalleryItem which can't have children
- *
  */
 define('ERROR_ILLEGAL_CHILD', 0x00008000);
 
 /**
  * An unspecified error occured while completing a toolkit command.
- *
  */
 define('ERROR_TOOLKIT_FAILURE', 0x00010000);
 
 /**
  * We experienced a platform specific error (perhaps filesystem related)
- *
  */
 define('ERROR_PLATFORM_FAILURE', 0x00020000);
 
 /**
  * You did an operation on a derivative that is broken
- *
  */
 define('ERROR_BROKEN_DERIVATIVE', 0x00040000);
 
 /**
  * We tried an unsupported operation
- *
  */
 define('ERROR_UNSUPPORTED_OPERATION', 0x00080000);
 
 /**
  * We were unable to get a lock in the time allotted
- *
  */
 define('ERROR_LOCK_TIMEOUT', 0x00100000);
 
 /**
- * Something went wrong when loading or activating a module
- *
+ * Something went wrong when loading or activating a plugin
  */
-define('ERROR_BAD_MODULE', 0x00200000);
+define('ERROR_BAD_PLUGIN', 0x00200000);
 
 /**
  * The module you tried to use requires configuration 
- *
  */
 define('ERROR_CONFIGURATION_REQUIRED', 0x00400000);
 
 /**
  * You don't have permission to complete the given action
- *
  */
 define('ERROR_PERMISSION_DENIED', 0x00800000);
 
 /**
  * You don't have enough space for the operation required
- *
  */
 define('ERROR_OUT_OF_SPACE', 0x01000000);
 
 /**
+ * The plugin exists, but the version on disk doesn't match the
+ * version in the database.
+ */
+define('ERROR_PLUGIN_VERSION_MISMATCH', 0x02000000);
+
+/**
  * The operation you attempted is unimplemented
- *
  */
 define('ERROR_UNIMPLEMENTED', 0x40000000);
 
 /**
  * An unknown error occurred
- *
  */
 define('ERROR_UNKNOWN', 0x80000000);
 

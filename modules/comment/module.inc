@@ -40,7 +40,7 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.8');
+	$this->setVersion('0.81');
 	$this->setGroup('data', $gallery->i18n('Extra Data'));
     }
 

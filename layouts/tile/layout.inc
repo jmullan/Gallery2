@@ -35,7 +35,7 @@
 class TileLayout extends GalleryLayout {
 
     /**
-     * @see GalleryLayout::init()
+     * Constructor
      */
     function init() {
 	global $gallery;
@@ -45,10 +45,6 @@ class TileLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
 	$this->setVersion('0.3');
 	$this->setL10Domain('layouts_tile');
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	return GalleryStatus::success();
     }

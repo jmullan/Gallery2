@@ -54,7 +54,9 @@ class AdminModulesController extends GalleryController {
 	if (!empty($moduleId) && !empty($action)) {
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		if (!($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    list ($ret, $isActive) = $module->isActive();
@@ -65,6 +67,8 @@ class AdminModulesController extends GalleryController {
 	    switch($action) {
 		
 	    case 'install':
+	    case 'upgrade':
+	    case 'downgrade':
 		$ret = $module->installOrUpgrade();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -185,64 +189,83 @@ class AdminModulesView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		/* We show all plugins so that we can get the ones that need upgrading */
+		if ($ret->getErrorCode() != (GALLERY_ERROR | ERROR_PLUGIN_VERSION_MISMATCH)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    $entry = array();
 	    $entry['name'] = $module->getName();
 	    $entry['l10Domain'] = 'modules_' . $moduleId;
 	    $entry['action'] = array();
-	    if ($moduleId != 'core') {
-		if (empty($status['active'])) {
-		    list ($ret, $version) = $module->getModuleParameter('version');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
+	    if (empty($status['active'])) {
+		list ($ret, $version) = $module->getModuleParameter('version');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$entry['state'] = 'inactive';
 
-		    /*
-		     * If the database versions doesn't match the module
-		     * version, we need to get the user to install the module.
-		     */
-		    if ($version != $module->getVersion()) {
+		/*
+		 * If the database versions doesn't match the module
+		 * version, we need to get the user to install the module.
+		 */
+		if ($version != $module->getVersion()) {
+		    if (empty($version)) {
 			$entry['action'][] = array('text' => $coreModule->translate('install'),
 						   'controller' => 'core:AdminModules',
 						   'moduleId' => $module->getId(),
 						   'action' => 'install');
 		    } else {
-			/*
-			 * The versions match, but the module can still demand
-			 * to be configured before being activated.
-			 */
-			list ($ret, $needsConfig) = $module->needsConfiguration();
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-
-			if ($needsConfig) {
-			    $configView = $module->getConfigurationView();
-			    $entry['action'][] = array('text' => $coreModule->translate('configure'),
-						       'view' => $configView);
-			} else {
-			    $entry['action'][] = array('text' => $coreModule->translate('activate'),
+			if (version_compare($version, $module->getVersion(), '<=')) {
+			    $entry['action'][] = array('text' => $coreModule->translate('upgrade'),
 						       'controller' => 'core:AdminModules',
-						       'moduleId' => $moduleId,
-						       'action' => 'activate');
+						       'moduleId' => $module->getId(),
+						       'action' => 'upgrade');
+			} else {
+			    $entry['action'][] = array('text' => $coreModule->translate('downgrade'),
+						       'controller' => 'core:AdminModules',
+						       'moduleId' => $module->getId(),
+						       'action' => 'downgrade');
 			}
-			$entry['action'][] = array('text' => $coreModule->translate('uninstall'),
+		    }
+		    $entry['state'] = 'upgrade';
+		} else {
+		    /*
+		     * The versions match, but the module can still demand
+		     * to be configured before being activated.
+		     */
+		    list ($ret, $needsConfig) = $module->needsConfiguration();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if ($needsConfig) {
+			$configView = $module->getConfigurationView();
+			$entry['action'][] = array('text' => $coreModule->translate('configure'),
+						   'view' => $configView);
+		    } else {
+			$entry['action'][] = array('text' => $coreModule->translate('activate'),
 						   'controller' => 'core:AdminModules',
 						   'moduleId' => $moduleId,
-						   'action' => 'uninstall');
+						   'action' => 'activate');
 		    }
-		} else {
-		    $entry['action'][] = array('text' => $coreModule->translate('deactivate'),
+		    $entry['action'][] = array('text' => $coreModule->translate('uninstall'),
 					       'controller' => 'core:AdminModules',
 					       'moduleId' => $moduleId,
-					       'action' => 'deactivate');
+					       'action' => 'uninstall');
 		}
+	    } else {
+		$entry['state'] = 'active';
+		$entry['action'][] = array('text' => $coreModule->translate('deactivate'),
+					   'controller' => 'core:AdminModules',
+					   'moduleId' => $moduleId,
+					   'action' => 'deactivate');
 	    }
-	    
+
 	    $entry['description'] = $module->getDescription();
 	    $entry['version'] = $module->getVersion();
+	    $entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
 	    $group = $module->getGroup();
 	    $entry = array_merge($entry, empty($group) ?
 		array('group' => 'other', 'groupLabel' => $module->translate('Other')) : $group);

@@ -132,14 +132,13 @@ class GalleryCoreApi {
      *
      * @param string the plugin type (eg, module, layout, etc)
      * @param string the plugin id
-     * @param string whether or not to initialize the plugin
      * @return array object GalleryStatus a status code
      *               object the plugin
      * @static
      */
-    function loadPlugin($pluginType, $pluginId, $initialize=true) {
+    function loadPlugin($pluginType, $pluginId) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $initialize);
+	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId);
     }
 
     /**

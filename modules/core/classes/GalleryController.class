@@ -133,7 +133,7 @@ class GalleryController {
 	}
 
 	/* If the module is not active, only let site admins use the config controller */
-	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module, false);
+	list ($ret, $plugin) = GalleryCoreApi::loadPlugin('module', $module);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

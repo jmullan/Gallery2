@@ -37,7 +37,7 @@ class InstallOtherModulesStep extends InstallStep {
 	GalleryDataCache::setFileCachingEnabled(false);
 
 	if (empty($templateData['errors'])) {
-	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module');
+	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to get the module list');
 		$templateData['stackTrace'] = $ret->getAsHtml();

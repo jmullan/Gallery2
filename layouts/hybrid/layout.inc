@@ -35,9 +35,9 @@
 class HybridLayout extends GalleryLayout {
 
     /**
-     * @see GalleryLayout::init()
+     * Constructor
      */
-    function init() {
+    function HybridLayout() {
 	global $gallery;
 
 	$this->setId('hybrid');
@@ -45,10 +45,6 @@ class HybridLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
 	$this->setVersion('0.8');
 	$this->setL10Domain('layouts_hybrid');
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	return GalleryStatus::success();
     }

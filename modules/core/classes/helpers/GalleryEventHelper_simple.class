@@ -98,6 +98,9 @@ class GalleryEventHelper_simple {
 		if (!empty($status['active'])) {
 		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret->isError()) {
+			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			    continue;
+			}
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 

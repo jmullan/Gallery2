@@ -65,6 +65,9 @@ class SiteAdminView extends GalleryView {
 	    /* Get the selected module's admin view */
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 

@@ -64,7 +64,39 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'install not called');
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
+    }
+
+    function testUpgrade() {
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('action', 'upgrade');
+	$this->_testModule->_isActive = false;
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array('available' => 'AdminModules Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
+    }
+
+    function testDowngrade() {
+	GalleryUtilities::putRequestVariable('moduleId', 'AdminModulesControllerTest');
+	GalleryUtilities::putRequestVariable('action', 'downgrade');
+	$this->_testModule->_isActive = false;
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array('available' => 'AdminModules Controller Test'),
+				  'error' => array()),
+			    $results);
+
+	$this->assert($this->_testModule->wasCalled('installOrUpgrade'), 'installOrUpgrade not called');
     }
 
     /**

@@ -88,6 +88,12 @@
 
       <input type="text" size="40" name="{g->formVar var="form[jheadPath]"}" value="{$form.jheadPath}"/>
 
+      {if isset($form.error.jheadPath.badPath)}
+      <div class="giError">
+	{g->text text="The path you entered isn't a valid path."}
+      </div>
+      {/if}
+
       {if isset($form.error.jheadPath.missing)}
       <div class="giWarning">
 	{g->text text="You should enter a path to the optional jhead binary"}

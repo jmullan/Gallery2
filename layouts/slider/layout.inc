@@ -36,9 +36,9 @@
 class SliderLayout extends GalleryLayout {
 
     /**
-     * @see GalleryLayout::init()
+     * Constructor
      */
-    function init() {
+    function SliderLayout() {
 	global $gallery;
 
 	$this->setId('slider');
@@ -46,10 +46,6 @@ class SliderLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
 	$this->setVersion('0.8');
 	$this->setL10Domain('layouts_slider');
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	return GalleryStatus::success();
     }

@@ -34,9 +34,9 @@
 class MatrixLayout extends GalleryLayout {
 
     /**
-     * @see GalleryLayout::init()
+     * Constructor
      */
-    function init() {
+    function MatrixLayout() {
 	global $gallery;
 	
 	$this->setId('matrix');
@@ -44,10 +44,6 @@ class MatrixLayout extends GalleryLayout {
 	$this->setDescription($gallery->i18n('Classic Gallery2 look and feel'));
 	$this->setVersion('0.8');
 	$this->setL10Domain('layouts_matrix');
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	return GalleryStatus::success();
     }

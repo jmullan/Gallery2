@@ -37,8 +37,10 @@
 
     <table class="gbDataTable">
       <tr>
+	<th> &nbsp; </th>
 	<th> {g->text text="Module Name"} </th>
 	<th> {g->text text="Version"} </th>
+	<th> {g->text text="Installed"} </th>
 	<th> {g->text text="Description"} </th>
 	<th> {g->text text="Actions"} </th>
       </tr>
@@ -49,11 +51,27 @@
       {assign var="group" value=$module.group}
       <tr class="{cycle values="gbEven,gbOdd"}">
 	<td>
+          {if $module.state == 'active'}
+	  <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13">
+	  {/if}
+          {if $module.state == 'inactive'}
+	  <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13">
+	  {/if}
+          {if $module.state == 'upgrade'}
+	  <img src="{g->url href="modules/core/data/module-upgrade.gif"}" width="13" height="13">
+	  {/if}
+        </td>
+
+	<td>
 	  {$module.name}
 	</td>
 
 	<td align="center">
 	  {$module.version}
+	</td>
+
+	<td align="center">
+	  {$module.installedVersion}
 	</td>
 
 	<td>
@@ -63,6 +81,7 @@
 	<td>
 	  {if (!empty($module.action))}
 	  {foreach from=$module.action item=action}
+          {strip}
 	  {if (empty($action.controller)) }
 	  <a href="{g->url arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$action.view`"}">
 	    {$action.text}
@@ -72,6 +91,7 @@
 	    {$action.text}
 	  </a>
 	  {/if}
+          {/strip}
           {/foreach}
 	  {else}
 	  &nbsp;

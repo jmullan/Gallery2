@@ -48,7 +48,7 @@ class InitializeGalleryTestCase extends TestCase {
 	$gallery =& $GLOBALS['gallery'];
 
 	/* Reinstall the core */
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', false);
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

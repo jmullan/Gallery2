@@ -92,6 +92,9 @@ class NavigationView extends GalleryView {
 	    
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -138,6 +141,9 @@ class NavigationView extends GalleryView {
 	    
             list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
             if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    

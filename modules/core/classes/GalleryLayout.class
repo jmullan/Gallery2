@@ -86,15 +86,6 @@ class GalleryLayout {
      */
 
     /**
-     * Initialize this layout
-     *
-     * @return object GalleryStatus a status code
-     */
-    function init() {
-	return GalleryStatus::success();
-    }
-
-    /**
      * Return whether the layout uses simple or advanced settings.
      * To support simple settings the layout needs to implement getSettings and validateSettings.
      * To support advanced settings the layout must implement loadSettingsTemplate and
@@ -264,6 +255,9 @@ class GalleryLayout {
 	    
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -310,6 +304,9 @@ class GalleryLayout {
 	    
             list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
             if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
                 return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
@@ -361,6 +358,9 @@ class GalleryLayout {
 	    
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -411,6 +411,9 @@ class GalleryLayout {
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -454,6 +457,9 @@ class GalleryLayout {
 
 	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		    continue;
+		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 

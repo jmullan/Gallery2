@@ -199,8 +199,16 @@ class AdminNetPbmView extends GalleryView {
 		    NetPbmToolkitHelper::testBinaries($form['path'],
 						      array('pnmtojpeg' => $form['pnmtojpeg']));
 
-		foreach ($tests as $test) {
-		    $failCount += !$test['success'];
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$form['error']['path']['badPath'] = 1;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    foreach ($tests as $test) {
+			$failCount += !$test['success'];
+		    }
 		}
 	    }
 	    if (empty($form['jheadPath'])) {
@@ -208,8 +216,16 @@ class AdminNetPbmView extends GalleryView {
 	    } else {
 		list ($ret, $jheadTests, $jheadMimeTypes) =
 		    NetPbmToolkitHelper::testJhead($form['jheadPath']);
-		foreach ($jheadTests as $test) {
-		    $tests[] = $test;
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
+			$form['error']['jheadPath']['badPath'] = 1;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    foreach ($jheadTests as $test) {
+			$tests[] = $test;
+		    }
 		}
 	    }
 	}
