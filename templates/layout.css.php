@@ -93,6 +93,7 @@ form, div, h1, h2, h3, h4, h5, h6  {
 #gsSystemLinks ul li {
 	display: inline;
 	margin: 0 0 0 10px;
+	background-image: none;
 }
 
 #gsContents {
@@ -143,6 +144,7 @@ table.gbDataTable th {
 
 .gbCartInfo li {
     margin: 0 0 0 -20px;
+    background-image: none;
 }
 
 table.gbDataTable td {
@@ -193,6 +195,7 @@ ul.gbAdminList {
 ul.gbAdminList li {
     margin: 0;
     padding: 1px 0;
+    background-image: none;
 }
 
 ul.gbAdminList li label { }
@@ -214,6 +217,7 @@ ul.gbAdminList li label { }
 	margin: 0;
 	padding: 0 0 0 8px;
 	float: left;
+	background-image: none;
 }
 
 .gbTabBar span {
@@ -243,6 +247,7 @@ ul.gbAdminList li label { }
 /*	icons for admin menu	*/
 .gbMenu li {
 	padding: 6px 0 0 0;
+	background-image: none;
 }
 
 .gbMenu ul, .gbMenu ol {
@@ -274,10 +279,12 @@ ul.gbAdminList li label { }
 .gbBreadCrumb li {
 	display: inline;
 	padding: 0 0 0 14px;
+	background-image: none;
 }
 
 .gbBreadCrumb li.giBreadCrumbFirst {
 	padding: 0;
+	background-image: none;
 }
 
 /*      inside gsAlbumContents or gsAdmiinContents */
@@ -474,6 +481,7 @@ input[type=submit] {
 .giInfo li {
     margin: 0;
     padding: 0;
+    background-image: none;
 }
 
 /*      horizontal link styles page navigations */
@@ -488,6 +496,7 @@ input[type=submit] {
 .giHorizontalLinks li, .giHorizontalLinksLeft li {
 	display: inline;
 	padding: 0 4px;
+	background-image: none;
  }
  
 .giHorizontalLinksLeft {
@@ -498,6 +507,7 @@ input[type=submit] {
 .gbExif .giHorizontalLinks, .gbExif li, .gbComment .giHorizontalLinks, .gbComment li {
     margin: 4px 0;
     padding: 0 2px 0 0;
+    background-image: none;
 }
 
 
@@ -585,4 +595,5 @@ discused the options of generating a table-based border (ie_test) and alistapart
     margin: 0;
     padding: 0 8px 0 0;
     display: inline;
+    background-image: none;
 }
