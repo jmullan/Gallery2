@@ -89,7 +89,7 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckFile() {
     	global $gallery;
-    	$platform = $gallery->getPlatform();
+    	$platform =& $gallery->getPlatform();
     	$platform->init();
     	
     	/* Make sure we pass if it's all good to write. */
@@ -120,7 +120,7 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckFileNoPrefix() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	$platform->init();
 	
 	/* Dont use prefix urls */
@@ -140,7 +140,7 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testCheckBadFile() {
     	global $gallery;
-    	$platform = $gallery->getPlatform();
+    	$platform =& $gallery->getPlatform();
     	$platform->init();
     	
     	/* Make sure we fail if it's not writable. */
@@ -170,7 +170,7 @@ class RewriteHelperTest extends GalleryTestCase {
     
     function testWriteBadFile() {
     	global $gallery;
-    	$platform = $gallery->getPlatform();
+    	$platform =& $gallery->getPlatform();
     	$platform->init();
     	
     	/* Make sure we fail if it's not writable. */
@@ -314,3 +314,5 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	return fclose($handle);
     }
 }
+
+?>

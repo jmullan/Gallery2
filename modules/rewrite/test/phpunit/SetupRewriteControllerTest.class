@@ -41,7 +41,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	
 	foreach (array('galleryLocation' => '',
 		    'usePrefixes' => 'true')
@@ -79,7 +79,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     
     function testWriteFile() {
     	global $gallery;
-    	$platform = $gallery->getPlatform();
+    	$platform =& $gallery->getPlatform();
 	GalleryUtilities::putRequestVariable('form[action][write]', 1);
 	
 	list ($ret, $expected) = RewriteHelper::getTemplate();
@@ -100,7 +100,7 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
     
     function testWriteBadFile() {
     	global $gallery;
-    	$platform = $gallery->getPlatform();
+    	$platform =& $gallery->getPlatform();
     	$platform->setIsWriteable(false);
     	
 	GalleryUtilities::putRequestVariable('form[action][write]', 1);
@@ -224,3 +224,5 @@ class SetupRewriteControllerTestPlatform extends GalleryPlatform{
 	return fclose($handle);
     }
 }
+
+?>

@@ -200,7 +200,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      */
     function _generateCache() {
     	global $gallery;
-    	$urlGenerator = $gallery->getUrlGenerator();
+    	$urlGenerator =& $gallery->getUrlGenerator();
     	
 	list ($ret, $this->_cache['usePrefixes']) =
 		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');

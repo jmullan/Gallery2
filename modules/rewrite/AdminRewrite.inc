@@ -41,7 +41,7 @@ class AdminRewriteController extends GalleryController {
      */
     function handleRequest(&$form) {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
@@ -127,7 +127,7 @@ class AdminRewriteView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
     	global $gallery;
-    	$urlGenerator = $gallery->getUrlGenerator();
+    	$urlGenerator =& $gallery->getUrlGenerator();
     	$AdminRewrite = array();
 	
 	/* Settings */

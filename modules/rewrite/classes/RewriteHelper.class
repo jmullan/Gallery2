@@ -58,7 +58,7 @@ class RewriteHelper {
      */
     function getTemplate() {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$Htaccess = array();
 	$Htaccess['usePrefixes'] = '';
@@ -113,7 +113,7 @@ class RewriteHelper {
      */
     function checkFile() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 
 	list ($ret, $file) = RewriteHelper::getHtaccessPath();
 	if ($ret->isError()) {
@@ -159,7 +159,7 @@ class RewriteHelper {
      */
     function writeFile() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
+	$platform =& $gallery->getPlatform();
 	
 	list ($ret, $file) = RewriteHelper::getHtaccessPath();
 	if ($ret->isError()) {
@@ -226,7 +226,7 @@ class RewriteHelper {
      */
     function checkModRewrite() {
 	global $gallery;
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$result = array();
     	
     	/*
@@ -246,7 +246,7 @@ class RewriteHelper {
 	
 	$fetch = $urlGenerator->generateUrl(
 	array('href' => 'modules/rewrite/test/mod_rewrite/' .
-		$target . '/Rewrite.php'));
+		$target . '/Rewrite.txt'));
 	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {
