@@ -64,12 +64,10 @@ class CommentModule extends GalleryModule {
 	/* XXX: Permission check "can the user add a comment to this item?" */
 	$gallery->debug("XXX: Comment.getItemLinks should be checking perms");
 
-	$urlParams = array('view' => 'comment:AddComment',
-			   'itemId' => $item->getId());
-	$templateAdapter = $gallery->getTemplateAdapter();
 	return array(GalleryStatus::success(),
 		     array(array('text' => $gallery->translate('add comment'),
-				 'url' => $templateAdapter->url($urlParams))));
+				 'params' => array('view' => 'comment:AddComment',
+						   'itemId' => $item->getId()))));
     }
 
     /**

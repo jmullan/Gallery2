@@ -54,6 +54,8 @@ class GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$templateAdapter = $gallery->getTemplateAdapter();
+
 	$itemLinks = array();
 	foreach ($moduleStatus as $moduleName => $status) {
 	    if (empty($status['active'])) {
@@ -69,6 +71,11 @@ class GalleryLayout {
 		$module->getItemLinks($item, $urlParams);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    for ($i = 0; $i < sizeof($itemLinks[$moduleName]); $i++) {
+		$itemLinks[$moduleName][$i]['url'] =
+		    $templateAdapter->url($itemLinks[$moduleName][$i]['params']);
 	    }
 	}
 
