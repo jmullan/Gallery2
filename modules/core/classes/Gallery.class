@@ -594,7 +594,7 @@ class Gallery {
      * @return array object GalleryPlatform the Gallery platform object
      */
     function getPlatform() {
-	if (empty($this->_platform)) {
+	if (!isset($this->_platform)) {
 
 	    /* Load the factory class */
 	    require_once(dirname(__FILE__) . '/GalleryPlatformFactory.class');
