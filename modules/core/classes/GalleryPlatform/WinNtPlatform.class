@@ -40,6 +40,26 @@ require_once(dirname(__FILE__) . '/../GalleryPlatform.class');
 class WinNtPlatform extends GalleryPlatform {
 
     /**
+     * @see GalleryPlatform::rename()
+     */
+    function rename($oldname, $newname) {
+	$success = parent::rename($oldname, $newname);
+	if (!$success) {
+	    /*
+	     * Windows gets upset if the new file already exists.  If that's
+	     * the case, remove the new file and try renaming again.  If *that*
+	     * fails, then give up.
+	     */
+	    if ($this->file_exists($newname)) {
+		@$this->unlink($newname);
+		$success = parent::rename($oldname, $newname);
+	    }
+	}
+
+	return $success;
+    }
+	
+    /**
      * @see GalleryPlatform::exec()
      */
     function exec($cmdArray, $returnErrorOutput=false) {
