@@ -258,7 +258,7 @@ class ConfirmImportController extends GalleryController {
 			     *   +[title] => Test Album One
 			     *   +[description] => No description
 			     *   +[summary] =>
-			     *    [nextname] => aaa
+			     *   -[nextname] => aaa
 			     *    [bgcolor] =>
 			     *    [textcolor] =>
 			     *    [linkcolor] =>
@@ -266,8 +266,8 @@ class ConfirmImportController extends GalleryController {
 			     *    [border] => 1
 			     *    [bordercolor] => black
 			     *    [returnto] => yes
-			     *    [thumb_size] => 150
-			     *    [resize_size] => 400
+			     *   +[thumb_size] => 150
+			     *   +[resize_size] => 400
 			     *   +[rows] => 5
 			     *   +[cols] => 5
 			     *    [fit_to_window] => no
@@ -285,13 +285,13 @@ class ConfirmImportController extends GalleryController {
 			     *   +[clicks_date] => 1056014708
 			     *    [display_clicks] => yes
 			     *    [public_comments] => yes
-			     *    [serial_number] => 8
+			     *   -[serial_number] => 8
 			     *    [extra_fields] => Array
 			     *        ( [0] => Description
 			     *        )
-			     *    [cached_photo_count] => 2
-			     *    [photos_separate] => 1
-			     *    [name] => album01
+			     *   -[cached_photo_count] => 2
+			     *   -[photos_separate] => 1
+			     *   +[name] => album01
 			     *    [owner] => 1054014347u1233740678
 			     *    [last_mod_time] => 1056015246
 			     */
@@ -318,7 +318,35 @@ class ConfirmImportController extends GalleryController {
 			    if ($ret->isError()) {
 				return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 			    }
+
 			    
+			    /* Delete existing derivative preferences */
+			    $ret = GalleryDerivativePreferencesMap::removeMapEntry(array('itemId' => $newAlbumInstanceId));
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    
+			    /* Add the thumbnail size back in */
+			    $ret = GalleryDerivativePreferencesMap::addMapEntry(
+										array('order' => 0,
+										      'itemId' => $newAlbumInstanceId,
+										      'derivativeType' => DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+										      'derivativeOperations' => 'thumbnail|' . $album['thumb_size']));
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    
+
+			    $ret = GalleryDerivativePreferencesMap::addMapEntry(
+										array('order' => $i,
+										      'itemId' => $newAlbumInstanceId,
+										      'derivativeType' => DERIVATIVE_TYPE_IMAGE_RESIZE,
+										      'derivativeOperations' => 'scale|' . $album['resize_size']));
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			   
+
 			    list ($ret, $layout) = GalleryItemHelper::fetchLayout($newAlbumInstance);
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
