@@ -29,14 +29,15 @@ div { margin: 0; padding: 0; }
 
 #gsSidebar {
 	position: absolute;
+	left: 8px;
 	float: left;
 	clear: none;
 	width: 156px;
 }
 
 #gsContents {
-		width: auto;
-		margin: 0 0 0 0;
+	width: auto;
+	margin: 0 0 0 0;
 }
 
 #gsContents:after {
@@ -119,10 +120,7 @@ div { margin: 0; padding: 0; }
 * html .Menu { height: 1%; }
 /* End hide from IE-mac */
 
-/*
-		spacers neeed for expanding layouts -   we should be able to delete this soon :)
-
-*/
+/* spacers neeed for expanding layouts -   we should be able to delete this soon :) */
 .guSpacer, .gpSpacer, .gsSpacer, .gbSpacer, .giSpacer { clear: both; }
 
 /*	  #gsHeader	   */
@@ -140,8 +138,9 @@ div { margin: 0; padding: 0; }
 }
 
 #gsFooter { 
+	position: absolute;
 	clear: both;
-	margin: 0 0 0 156px;
+	left: 160px;
 }
 
 /*	  #gsAlbumContents		*/
@@ -156,7 +155,6 @@ div { margin: 0; padding: 0; }
 
 .gbItemAlbum:after {
 	content: "."; 
-	display: block; 
 	height: 0; 
 	clear: both; 
 	visibility: hidden;
@@ -170,7 +168,6 @@ div { margin: 0; padding: 0; }
 #gsAlbumContents .gbItemImage,
 #gsAlbumContents .gbItemMovie,
 #gsAlbumContents .gbItemOther {
-	float: left;
 /*	IE max-width >> http://www.svendtofte.com/code/max_width_in_ie/ */
 	min-height: 216px;
 	height: expression(this.scrollHeight < 216? '216px' : 'auto' );
@@ -199,9 +196,8 @@ div { margin: 0; padding: 0; }
 * html .gbTopFlag, * html .gbBottomFlag { height: 1%; }
 /* End hide from IE-mac */
 
-#gsAlbumContents .giHorizontalLinks { 
-	float: right;
-}
+#gsAlbumContents .giHorizontalLinks { float: right; }
+
 #gsAlbumContents .giHorizontalLinks li { 
 	display: inline;
 	list-style-type: none;
