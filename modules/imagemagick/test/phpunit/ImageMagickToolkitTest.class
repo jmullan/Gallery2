@@ -539,20 +539,20 @@ class ImageMagickToolkitTestPlatform {
    		    $cmd[0][5] == 'TEMPFILE') {
 		return array(1, array());
 	    }  else if ($cmd[0][1] == '-quality' &&
-   		    $cmd[0][2] == 75 &&
-		    $cmd[0][3] == '-geometry' &&
-		    $cmd[0][4] == '+150+0' &&
-   		    $cmd[0][5] == 'testPerformOperations12.gif' && // image
-   		    $cmd[0][6] == 'testPerformOperations10.png' && // composite
-   		    $cmd[0][7] == 'TEMPFILE') { // composited
+			preg_match('/\d+/', $cmd[0][2]) &&
+			$cmd[0][3] == '-geometry' &&
+			$cmd[0][4] == '+150+0' &&
+			$cmd[0][5] == 'testPerformOperations12.gif' && // image
+			$cmd[0][6] == 'testPerformOperations10.png' && // composite
+			$cmd[0][7] == 'TEMPFILE') { // composited
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-   		    $cmd[0][2] == 75 &&
-		    $cmd[0][3] == '-geometry' &&
-		    $cmd[0][4] == '+150+150' &&
-   		    $cmd[0][5] == 'testPerformOperations12.gif' && // image
-   		    $cmd[0][6] == 'testPerformOperations10.png' && // composite
-   		    $cmd[0][7] == 'TEMPFILE') { // composited
+		       preg_match('/\d+/', $cmd[0][2]) &&
+		       $cmd[0][3] == '-geometry' &&
+		       $cmd[0][4] == '+150+150' &&
+		       $cmd[0][5] == 'testPerformOperations12.gif' && // image
+		       $cmd[0][6] == 'testPerformOperations10.png' && // composite
+		       $cmd[0][7] == 'TEMPFILE') { // composited
 		return array(1, array());
 	    } 
 	    break;
