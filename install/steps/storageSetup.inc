@@ -30,7 +30,7 @@ Storage directory set successfully.
 
 <h1>Storage Setup</h1>
 
-<p> <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver, so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. If you access your site via FTP, you might not have this option.") ?> </p>
+<p> <?php print _("Gallery needs to store data in a directory on your server. It will use this directory to store your images as well as other important data. For security, we suggest that you place this directory <b>outside</b> the path to your webserver (document root), so that it cannot be accessed directly via the web. This is necessary if you wish to have your images accessible only via Gallery<b>*</b>. Note that the default path provided below is inside the webserver area. Update with a secure location, such as a path under your user home directory, if possible. If you access your site via FTP, you might not have this option.") ?> </p>
 
 <p> <?php print _("The directory also needs to be writable to by Gallery. For help with permissions, see <b>FutureLinkToSomewhere</b>?.") ?> </p>
 
