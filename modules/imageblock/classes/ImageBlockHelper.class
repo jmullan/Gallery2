@@ -371,8 +371,10 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ? OR [GalleryItemAttributesMap::itemId] = ?';
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentAlbum->getId());
 
-	    /* We don't care about ERROR_MISSING_OBJECT if it's a top-level album */
-	    if ($ret->isError() & ERROR_MISSING_OBJECT) {
+	    /* We don't care about ERROR_MISSING_OBJECT because it's generated if 
+	     * the album is at the top-level
+	     */
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $data[] = (empty($sequence) ? '/' : implode('/', $sequence)) . (empty($sequence) ? '' : '/') . 
