@@ -73,7 +73,13 @@
       <tr>
         <td width="60">
           {if isset($peer.thumbnail)}
-          {g->image item=$peer image=$peer.thumbnail maxSize=50}
+          <div class="giThumbImage">
+            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.id`"}">
+              {g->image item=$peer image=$peer.thumbnail maxSize=50}
+            </a>
+          </div>		    
+          {else}
+          &nbsp;
           {/if}
         </td>
         <td>
