@@ -28,7 +28,7 @@ class CreateConfigFileStep extends InstallStep {
     function loadTemplateData(&$templateData) {
 	global $gallery;
 	
-	$configFilePath = realpath(dirname(__FILE__) . '/../../config.php');
+	$configFilePath = dirname(__FILE__) . '/../../config.php';
 	if (file_exists($configFilePath) && !is_writable($configFilePath)) {
 	    $templateData['error'] = _('Unable to write to the <b>config.php</b> configuration file in your <tt>gallery</tt> directory.  Please change its permissions.');
 	    $this->setInError(true);
