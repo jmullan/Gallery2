@@ -195,12 +195,11 @@ class GalleryEmbed {
      */
     function logout() {
 	require_once(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
-	$hasSession = !empty($_COOKIE[SESSION_ID_PARAMETER]);
-	if (!$hasSession) {
+	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
+	if (empty($hasSession)) {
 	    require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class');
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
-	}
-	if ($hasSession) {
+	} else {
 	    $ret = GalleryInitFirstPass();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

@@ -1393,5 +1393,20 @@ class GalleryUtilities {
 	GalleryUtilities::sanitizeInputValues($value);
 	return $value;
     }
+
+    /**
+     * Return a sanitized version of the given variable from the _COOKIE superglobal.
+     * @param string the key in the _COOKIE superglobal
+     * @return string the value
+     */
+    function getCookieVar($key) {
+	if (!isset($_COOKIE[$key])) {
+	    return null;
+	}
+
+	$value = $_COOKIE[$key];
+	GalleryUtilities::sanitizeInputValues($value);
+	return $value;
+    }
 }
 ?>

@@ -848,6 +848,21 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals('&lt;script&gt;bar&lt;/script&gt;',
 			    GalleryUtilities::getServerVar('foo'));
     }
+
+    function testGetCookieVar() {
+	/* Normal */
+	$_COOKIE['foo'] = 'foo';
+	$this->assertEquals('foo', GalleryUtilities::getCookieVar('foo'));
+
+	/* Missing */
+	unset($_COOKIE['foo']);
+	$this->assertEquals(null, GalleryUtilities::getCookieVar('foo'));
+
+	/* Malicious value */
+	$_COOKIE['foo'] = '<script>bar</script>';
+	$this->assertEquals('&lt;script&gt;bar&lt;/script&gt;',
+			    GalleryUtilities::getCookieVar('foo'));
+    }
 }
 
 /**

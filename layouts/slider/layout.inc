@@ -120,7 +120,8 @@ class SliderLayout extends GalleryLayout {
 			/* Set cookie to popup image just once */
 			$cook = 'G2_slider_' . $item->getId();
 			setcookie($cook, '-2' .
-			    (isset($_COOKIE[$cook]) ? strstr($_COOKIE[$cook], ';') : ';'),
+			    (GalleryUtilities::getCookieVar($cook) ? 
+				    strstr(GalleryUtilities::getCookieVar($cook), ';') : ';'),
 			    0, $cookiePath);
 		    }
 		    break;
