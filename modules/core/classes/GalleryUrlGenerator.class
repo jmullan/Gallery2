@@ -84,29 +84,6 @@ class GalleryUrlGenerator {
      */
 
     /**
-     * Return the complete current URL
-     *
-     * @return string the current URL
-     * @static
-     */
-    function getCurrentUrl() {
-	if (!isset($this->_currentUrl)) {
-	    if (!empty($_SERVER['REQUEST_URI'])) {
-		$path = $_SERVER['REQUEST_URI'];
-	    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
-		$path = $_SERVER['SCRIPT_NAME'];
-		if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
-		    $path .= $_SERVER['PATH_INFO'];
-		}
-	    }
-
-	    $this->_currentUrl = GalleryUrlGenerator::makeUrl($path);
-	}
-
-	return $this->_currentUrl;
-    }
-
-    /**
      * Return the current server domain
      * @return string the host name
      * @static
@@ -195,9 +172,16 @@ class GalleryUrlGenerator {
      * @static
      */
     function getGalleryId() {
-	$url = GalleryUrlGenerator::getCurrentUrl();
+	$urlGenerator = new GalleryUrlGenerator();
+	$url = $urlGenerator->getCurrentUrl();
 	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}', '$1', $url);
     }
+
+    /*
+     * ****************************************
+     *              Object Methods
+     * ****************************************
+     */
 
     /**
      * Initializer.  Configure the url generator with all the data it needs.
@@ -242,6 +226,28 @@ class GalleryUrlGenerator {
 	if (!$deprecated) {
 	    $this->_viewPrefixRegistry['reverse'][$viewName] = $prefix;
 	}
+    }
+
+    /**
+     * Return the complete current URL
+     *
+     * @return string the current URL
+     */
+    function getCurrentUrl() {
+	if (!isset($this->_currentUrl)) {
+	    if (!empty($_SERVER['REQUEST_URI'])) {
+		$path = $_SERVER['REQUEST_URI'];
+	    } else if (!empty($_SERVER['SCRIPT_NAME'])) {
+		$path = $_SERVER['SCRIPT_NAME'];
+		if (!empty($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != $path) {
+		    $path .= $_SERVER['PATH_INFO'];
+		}
+	    }
+
+	    $this->_currentUrl = GalleryUrlGenerator::makeUrl($path);
+	}
+
+	return $this->_currentUrl;
     }
 
     /**
