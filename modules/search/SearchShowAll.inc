@@ -81,6 +81,14 @@ class SearchShowAllView extends GalleryView {
 		$form['error']['searchCriteria']['missing'] = 1;
 	    } else {
 
+		/* If we click next/previous, make sure we don't change search criteria */
+		if (!empty($form['lastSearchCriteria']) &&
+		    $form['lastSearchCriteria'] != $form['searchCriteria'] &&
+		    (isset($form['action']['nextPage']) ||
+		     isset($form['action']['previousPage']))) {
+		    $form['searchCriteria'] = $form['lastSearchCriteria'];
+		}
+
 		$form['searchCriteria'] =
 		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
 		    

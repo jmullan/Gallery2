@@ -39,6 +39,7 @@
       </div>
 
       <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}"/>
+      <input type="hidden" name="{g->formVar var="form[lastSearchCriteria]"}" value="{$form.searchCriteria}"/>
 
       {if isset($form.error.searchCriteria.missing)}
       <div class="giError">
@@ -83,12 +84,6 @@
 
     <div class="gbAdmin">
       <div class="giTitle">
-        {if ($SearchShowAll.results.count > 0)}
-        {g->text text="(Results %d - %d)"
-                 arg1=$SearchShowAll.results.start
-                 arg2=$SearchShowAll.results.end}
-        {/if}
-
         {if ($SearchShowAll.results.count > 0)}
         {if ($form.page > 1)}
         <input type="submit" name="{g->formVar var="form[action][previousPage]"}" value="{g->text text="&laquo; Back"}"/>
