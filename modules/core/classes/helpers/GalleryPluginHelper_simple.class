@@ -45,7 +45,7 @@ class GalleryPluginHelper_simple {
      */
     function setPluginInstance($pluginType, $pluginId, &$instance) {
 	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
-					 $instance);
+					 $instance, true);
     }
 
     /**
