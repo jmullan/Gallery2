@@ -66,7 +66,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+	$this->assertEquals(array('return' => true,
+				  'redirect' => array('view' => 'core:ItemAdmin',
 						      'itemId' => $album->getParentId()),
 				  'status' => array(),
 				  'error' => array()),

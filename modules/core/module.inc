@@ -567,6 +567,7 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $text,
 			  'params' => array('view' => 'core:ItemAdmin',
+					    'return' => true,
 					    'subView' => 'core:ItemDelete',
 					    'itemId' => $item->getId()));
 	    }
@@ -584,6 +585,7 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core:ItemAdmin',
+					    'return' => true,
 					    'subView' => 'core:ItemMakeHighlight',
 					    'itemId' => $item->getId()));
 	    }

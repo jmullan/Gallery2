@@ -68,6 +68,7 @@ class ItemMakeHighlightController extends GalleryController {
 	}
 
 	if (!empty($redirect)) {
+	    $results['return'] = true;
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:ItemAdmin';

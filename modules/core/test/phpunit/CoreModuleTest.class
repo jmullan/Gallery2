@@ -195,6 +195,7 @@ class CoreModuleTest extends GalleryTestCase {
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemDelete',
+					   'return' => true,
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$links[] = array('text' => $this->_module->translate('move item'),
