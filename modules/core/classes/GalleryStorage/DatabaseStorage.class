@@ -993,10 +993,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
-     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     * Delete all not-so-fresh locks.
      *
-     * @param array the lock ids
-     * @param int the new "fresh until" timestamp
      * @return object GalleryStatus a status code
      * @static
      */
