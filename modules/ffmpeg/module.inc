@@ -126,21 +126,31 @@ class FfmpegModule extends GalleryModule {
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
-	/* Start with system paths.  Tack on a trailing slash if necessary. */
+	/*
+	 * Start with system paths.  Tack on a trailing slash if necessary,
+	 * then tack on other likely paths, based on our OS.
+	 */
 	$paths = array();
-	foreach (explode(':', getenv('PATH')) as $path) {
-	    $path = trim($path);
-	    if ($path{strlen($path)-1} != $slash) {
-		$path .= $slash;
-	    }
-	    $paths[] = $path . 'ffmpeg';
-	}
-	
-	/* Tack on other likely paths, based on our OS */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    $paths[] = 'C:\Program Files\ffmpeg';
-	    $paths[] = 'C:\apps\ffmpeg';
+	    foreach (explode(';', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'ffmpeg.exe';
+	    }
+	    
+	    $paths[] = 'C:\apps\ffmpeg\ffmpeg.exe';
+	    $paths[] = 'C:\ffmpeg\ffmpeg.exe';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    foreach (explode(':', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path . 'ffmpeg';
+	    }
+	    
 	    $paths[] = '/usr/bin/ffmpeg';
 	    $paths[] = '/usr/local/bin/ffmpeg';
 	    $paths[] = '/bin/ffmpeg';

@@ -172,10 +172,19 @@ class AdminNetPbmControllerTestPlatform {
     function file_exists($path) {
 	switch ($path) {
 	case '/validPath/':
+	case '/validPath/giftopnm':
+	case '/validPath/ppmtogif':
+	case '/validPath/jpegtopnm':
+	case '/validPath/ppmtojpeg':
+	case '/validPath/pnmtojpeg':
+	case '/validPath/pngtopnm':
+	case '/validPath/pnmtopng':
+	case '/validPath/tifftopnm':
+	case '/validPath/pnmtotiff':
 	case '/validPathBadBinaries/':
 	    return true;
 	}
-	
+
 	return false;
     }
 

@@ -370,10 +370,28 @@ class NetPbmToolkitTestPlatform {
 
     function file_exists($path) {
 	switch($path) {
-	case $this->_netPbmPath:
+	case '/validPath/giftopnm':
+	case '/validPath/jpegtopnm':
+	case '/validPath/pngtopnm':
+	case '/validPath/pnmtopng':
+	case '/validPath/pnmtotiff':
+	case '/validPath/ppmtogif':
+	case '/validPath/ppmtojpeg':
+	case '/validPath/tifftopnm':
 	case '/validPath/':
+	case $this->_netPbmPath . 'giftopnm':
+	case $this->_netPbmPath . 'jpegtopnm':
+	case $this->_netPbmPath . 'pngtopnm':
+	case $this->_netPbmPath . 'pnmtopng':
+	case $this->_netPbmPath . 'pnmtotiff':
+	case $this->_netPbmPath . 'ppmtogif':
+	case $this->_netPbmPath . 'ppmtojpeg':
+	case $this->_netPbmPath . 'tifftopnm':
+	case $this->_netPbmPath:
 	    return true;
 	}
+
+	return false;
     }
     
     function is_dir($path) {

@@ -59,7 +59,6 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	parent::tearDown();
 
 	$gallery->_platform = $this->_platform;
 	
@@ -74,6 +73,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	
+	parent::tearDown();
     }
 
     function testSaveGoodPath() {
@@ -191,10 +192,12 @@ class AdminImageMagickControllerTestPlatform {
 	$slash = $this->getDirectorySeparator();
 	switch ($path) {
 	case "${slash}validPath${slash}":
+	case "${slash}validPath${slash}identify":
+	case "${slash}validPath${slash}convert":
 	case "${slash}validPathBadBinaries${slash}":
 	    return true;
 	}
-	
+
 	return false;
     }
 

@@ -190,7 +190,15 @@ class NetPbmToolkitHelper {
 	/* Disqualify mime types if the binaries aren't working */
 	foreach (array_keys($binaries) as $binary) {
 	    $fullPath = $netPbmPath . $binary;
-	    list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
+	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+		$fullPath .= '.exe';
+	    }
+	    if ($platform->file_exists($fullPath)) {
+		list ($success, $results) = $platform->exec(array(array($fullPath, '--version')));
+	    } else {
+		$success = false;
+		$results = array('File does not exist');
+	    }
 
 	    if (!$success) {
 		foreach ($binaries[$binary] as $mimeType) {

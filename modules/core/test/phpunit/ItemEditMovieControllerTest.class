@@ -40,6 +40,9 @@ class ItemEditMovieControllerTest extends GalleryControllerTestCase {
 
 	parent::setUp();
 
+	$this->_platform = $gallery->getPlatform();
+	$gallery->_platform = new ItemEditMovieControllerTestPlatform($this->_platform);
+	
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -55,6 +58,8 @@ class ItemEditMovieControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	global $gallery;
 
+	$gallery->_platform = $this->_platform;
+	
 	$ret = $gallery->deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -138,4 +143,65 @@ class ItemEditMovieControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 }
+
+class ItemEditMovieControllerTestPlatform {
+
+    function ItemEditMovieControllerTestPlatform($originalPlatform) {
+	$this->_platform = $originalPlatform;
+    }
+
+    function file_exists($path) {
+	return $this->_platform->file_exists($path);
+    }
+
+    function legalizePathComponent($pathComponent) {
+	return $this->_platform->legalizePathComponent($pathComponent);
+    }
+
+    function mkdir($path) {
+	return $this->_platform->mkdir($path);
+    }
+
+    function is_uploaded_file($path) {
+	return $this->_platform->is_uploaded_file($path);
+    }
+
+    function copy($from, $to) {
+	return $this->_platform->copy($from, $to);
+    }
+
+    function filesize($path) {
+	return $this->_platform->filesize($path);
+    }
+
+    function exec($args) {
+	/*
+	 * Check for: (this is a Windows example, but we have to account for Unix also)
+	 * [0] => C:\apps\ffmpeg\ffmpeg.exe
+	 * [1] => -i
+	 * [2] => c:/Program Files/Apache Group/Apache2/htdocs/gallerydata\albums\albumtest22617/test-4224_dat
+	 * [3] => -vstats
+	 */
+	if (sizeof($args[0]) == 4 &&
+	    preg_match('/ffmpeg/', $args[0][0]) &&
+	    $args[0][1] == '-i' &&
+	    $this->_platform->file_exists($args[0][2]) &&
+	    $args[0][3] == '-vstats') {
+
+	    $results[] = sprintf('Input #0, avi, from \'%s\':', $args[0][2]);
+	    $results[] = 'Duration: 00:00:04.0, bitrate: 329 kb/s';
+	    $results[] = 'Stream #0.0: Video: mjpeg, 160x120, 15.00 fps';
+	    $results[] = 'Stream #0.1: Audio: pcm_u8, 8000 Hz, mono, 64 kb/s';
+	    return array(1, $results);
+	} else {
+	    printf("<pre>%s</pre>", print_r($args, 1));
+	    return array(0, null);
+	}
+    }
+
+    function getDirectorySeparator() {
+	return $this->_platform->getDirectorySeparator();
+    }
+}
+
 ?>

@@ -221,22 +221,32 @@ class ImageMagickModule extends GalleryModule {
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
-	/* Start with system paths.  Tack on a trailing slash if necessary. */
+	/*
+	 * Start with system paths.  Tack on a trailing slash if necessary,
+	 * then tack on other likely paths, based on our OS
+	 */
 	$paths = array();
-	foreach (explode(':', getenv('PATH')) as $path) {
-	    $path = trim($path);
-	    if ($path{strlen($path)-1} != $slash) {
-		$path .= $slash;
-	    }
-	    $paths[] = $path;
-	}
-	
-	/* Tack on other likely paths, based on our OS */
 	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    foreach (explode(';', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path;
+	    }
+	    
 	    $paths[] = 'C:\Program Files\ImageMagick\\';
 	    $paths[] = 'C:\apps\ImageMagick\\';
 	    $paths[] = 'C:\ImageMagick\\';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
+	    foreach (explode(':', getenv('PATH')) as $path) {
+		$path = trim($path);
+		if ($path{strlen($path)-1} != $slash) {
+		    $path .= $slash;
+		}
+		$paths[] = $path;
+	    }
+	    
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';
 	    $paths[] = '/bin/';
@@ -254,7 +264,7 @@ class ImageMagickModule extends GalleryModule {
 		/* This path failed.  Continue with the next one */
 		continue;
 	    }
-	    
+
 	    $failCount = 0;
 	    foreach ($testResults as $testResult) {
 		/* All tests should work, else this path is not a valid one */

@@ -153,8 +153,8 @@ class ImageMagickToolkitHelper {
 	$successCount = 0;
 	foreach ($tests as $test) {
 	    $command = array($imageMagickPath . 'identify', $dataPath . $test['file']);
-	
 	    list ($success, $results) = $platform->exec(array($command));
+	    
 	    $successCount += $success;
 	    if ($success) {
 		foreach ($results as $resultLine) {
@@ -222,8 +222,19 @@ class ImageMagickToolkitHelper {
 	foreach ($binaries as $binary) {
 	    switch ($binary) {
 	    case 'identify':
-	        $command = array($imageMagickPath . 'identify', $dataPath . 'test.gif');
-		list ($success, $results) = $platform->exec(array($command));
+	        $fullPath = $imageMagickPath . 'identify';
+	        if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+		    $fullPath .= '.exe';
+		}
+
+	        if ($platform->file_exists($fullPath)) {
+		    $command = array($fullPath, $dataPath . 'test.gif');
+		    list ($success, $results) = $platform->exec(array($command));
+		} else {
+		    $success = false;
+		    $results = array('File does not exist');
+		}
+	    
 		if (!$success) {
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
@@ -244,6 +255,10 @@ class ImageMagickToolkitHelper {
 	    case 'convert':
 		/* We will try to scale a gif using the 'convert' binary */
 
+	        $fullPath = $imageMagickPath . 'convert';
+	        if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+		    $fullPath .= '.exe';
+		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
 		$tmpFilename = tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
@@ -252,12 +267,19 @@ class ImageMagickToolkitHelper {
 						      "Could not create tmp file in '$tmpDir'"),
 				 null);
 		}
-		$command = array($imageMagickPath . 'convert',
-				 '-scale', '200x200',
-				 $dataPath . 'test.gif',
-				 $tmpFilename
-				);
-		list ($success, $results) = $platform->exec(array($command));
+
+		if ($platform->file_exists($fullPath)) {
+		    $command = array($fullPath,
+				     '-scale', '200x200',
+				     $dataPath . 'test.gif',
+				     $tmpFilename
+				     );
+		    list ($success, $results) = $platform->exec(array($command));
+		} else {
+		    $success = false;
+		    $results = array('File does not exist');
+		}
+
 		if (!$success) {
 		    $testArray[] = array('name' => 'convert',
 					 'success' => false,

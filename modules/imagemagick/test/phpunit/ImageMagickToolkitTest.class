@@ -471,6 +471,8 @@ class ImageMagickToolkitTestPlatform {
     function file_exists($path) {
 	switch($path) {
 	case '/validPath/':
+	case '/validPath/convert':
+	case '/validPath/identify':
 	    return true;
 	}
     }
