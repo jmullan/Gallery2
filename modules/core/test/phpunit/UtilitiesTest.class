@@ -153,6 +153,13 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
+    function testGetFormVariables4() {
+	$_POST[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['entities'] = '<b> bold </b> <script> foo </script>';
+
+	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+			    GalleryUtilities::getFormVariables('utilitiestest'));
+    }
+
     function testGetRequestVariables() {
 	GalleryUtilities::putRequestVariable('utilitiestest[x]', 'blah');
 	$this->assertEquals('blah', GalleryUtilities::getRequestVariables('utilitiestest[x]'));
