@@ -182,9 +182,17 @@ class GalleryMembersHelper {
     
     function daysSinceCreation ($userId) {
         global $gallery;
+
+	$storage =& $gallery->getStorage();
+	list ($ret, $now) =
+	    $storage->getFunctionSql('UNIX_TIMESTAMP', array('NOW()'));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
         $query = '
         SELECT
-          (TO_DAYS(CURRENT_DATE()) - TO_DAYS(FROM_UNIXTIME([GalleryEntity::creationTimestamp])))
+          ROUND((' . $now . ' - [GalleryEntity::creationTimestamp]) / 86400)
         FROM
           [GalleryEntity]
         WHERE
