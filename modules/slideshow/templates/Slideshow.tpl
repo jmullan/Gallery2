@@ -8,12 +8,18 @@
 {$it.data.title|markup}</div>
 <div id="summary_{$i}" style="visibility:hidden;position:absolute">
 {$it.data.summary|markup}</div>
+<div id="date_{$i}" style="visibility:hidden;position:absolute">
+{if isset($it.exif.DateTime)}
+{$it.exif.DateTime.title}: {$it.exif.DateTime.value}
+{else}
+{g->text text="Date: "}{g->date timestamp=$it.data.modificationTimestamp}
+{/if}</div>
 <div id="description_{$i}" style="visibility:hidden;position:absolute">
 {$it.data.description|markup}</div>
 {/foreach}
 <script language="JavaScript" type="text/JavaScript">
-var image = new Image(), timer, showText = 0;
-var stopLink, textLink, textBanner, titleText, summaryText, descriptionText;
+var image = new Image(), timer, showText = 0, stopLink, textLink;
+var textBanner, titleText, summaryText, dateText, descriptionText;
 var index = {$SlideShow.start}, count = {$SlideShow.count};
 var is_cached = new Array(count), item_ids = new Array(count);
 {foreach from=$SlideShow.itemList key=i item=it}
@@ -39,6 +45,7 @@ function goto_next_photo() {
 function show_text() {
   titleText.innerHTML = document.getElementById('title_'+index).innerHTML;
   summaryText.innerHTML = document.getElementById('summary_'+index).innerHTML;
+  dateText.innerHTML = document.getElementById('date_'+index).innerHTML;
   descriptionText.innerHTML =
     document.getElementById('description_'+index).innerHTML;
 }
@@ -78,7 +85,10 @@ function text_onoff() {
     {g->banner}
       {g->title}<span id="title"></span>{/g->title}
       {g->description}<span id="summary"></span>{/g->description}
-      {g->element}<span id="description"></span>{/g->element}
+      {g->infoset}
+        {g->item}{g->title}<span id="date"></span>{/g->title}{/g->item}
+        {g->item}{g->title}<span id="description"></span>{/g->title}{/g->item}
+      {/g->infoset}
     {/g->banner}
     </div>{/g->element}
   {/g->pagebox}
@@ -89,6 +99,7 @@ function text_onoff() {
   textBanner = document.getElementById('textBanner');
   titleText = document.getElementById('title');
   summaryText = document.getElementById('summary');
+  dateText = document.getElementById('date');
   descriptionText = document.getElementById('description');
   document.images.slide.onload = slide_view_start;
   document.images.slide.onerror = goto_next_photo;

@@ -94,8 +94,21 @@ class SlideshowView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    // If an Exif extractor is available try to get capture dates..
+	    list ($ret, $exifExtractor) =
+		GalleryFactory::newInstance('ExifInterface_1_0');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $exif = array();
+	    if (isset($exifExtractor)) {
+		list ($ret, $exif) = $exifExtractor->getMetaData($childIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
 	}
-	if (empty($startId)) {
+	if (!isset($startId)) {
 	    $start = 0;
 	}
 	foreach ($childItems as $child) {
@@ -143,7 +156,9 @@ class SlideshowView extends GalleryView {
 		    $itemList[] = array(
 			'id' => $childId,
 			'data' => $child->getMemberData(),
-			'source' => $image->getMemberData());
+			'source' => $image->getMemberData(),
+			'exif' => isset($exif[$childId])
+				  ? $exif[$childId] : array());
 		}
 	    }
 	}
