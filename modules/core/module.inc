@@ -673,6 +673,12 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$parentId = $item->getParentId();
+	list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -702,7 +708,7 @@ class CoreModule extends GalleryModule {
 				     'view' => 'core:ItemCreateResizes');
 		}
 	    }
-	    if ($item->getParentId() != $rootId) {
+	    if (!empty($parentId) && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
 				 'view' => 'core:ItemMakeHighlight');
 	    }
