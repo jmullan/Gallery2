@@ -569,7 +569,7 @@ class GalleryUtilities {
      *
      */
     
-    function entity_truncate($string, $length = 80, $etc = '...', $breakWords = false) {
+    function entityTruncate($string, $length = 80, $etc = '...', $breakWords = false) {
 	if ($length == 0) {
 	    return '';
 	}
@@ -578,7 +578,7 @@ class GalleryUtilities {
 	    if (!$breakWords) {
 		$string = preg_replace('/\s+?(\S+)?$/', '', substr($string, 0, $length+1));
 	    }
-	    return GalleryUtilities::entity_substr($string, 0, $length) . $etc;
+	    return GalleryUtilities::entitySubstr($string, 0, $length) . $etc;
 	} else {
 	    return $string;
 	}
@@ -593,7 +593,7 @@ class GalleryUtilities {
      * @return string
      */
 
-    function entity_substr($string, $start, $length="") {
+    function entitySubstr($string, $start, $length="") {
 	$stringLength = strlen($string);
 	if ($stringLength < $start) {
 	    return FALSE;

@@ -41,6 +41,6 @@
  * @return string
  */
 function smarty_modifier_entitytruncate($string, $length = 80, $etc = '...', $breakWords = false) {
-    return GalleryUtilities::entity_truncate($string, $length, $etc, $breakWords);
+    return GalleryUtilities::entityTruncate($string, $length, $etc, $breakWords);
 }
 ?>
