@@ -220,7 +220,7 @@ class ImageBlockModule extends GalleryModule {
 	    $data['item'] = $item->getMemberData();
 	    $data['owner'] = $owner->getMemberData();
 	    if (isset($thumbnail[$id])) {
-		$data['thumb'] = $thumb->getMemberData();
+		$data['thumb'] = $thumbnail[$id]->getMemberData();
 		$blocks[] = $data;
 	    }
 	}
