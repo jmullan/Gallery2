@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,44 +21,38 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Selfregistration
+ * @package SelfRegistration
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
 /**
  * The self-registration module
  *
- * @package Selfregistration
+ * @package SelfRegistration
  */
-class SelfregistrationModule extends GalleryModule {
+class RegisterModule extends GalleryModule {
 
-    function SelfregistrationModule() {
+    function RegisterModule() {
 	global $gallery;
-	
-	$this->setId('selfregistration');
-	$this->setName('Selfregistration');
-	$this->setVersion('1.0');
-	$this->setDescription($gallery->i18n('Selfregistration Module'));
+
+	$this->setId('register');
+	$this->setName('Registration');
+	$this->setDescription($gallery->i18n('New User Registration'));
+	$this->setVersion('0.5');
+	$this->setGroup('gallery', $gallery->i18n('Gallery'));
     }
 
     /**
-     * @see GalleryModule::init();
+     * @see GalleryModule::performFactoryRegistrations();
      */
-    function init() {
-	global $gallery;
-	
+    function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
-	
-	$ret = parent::init();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
 
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryPendingUser',
 						      'GalleryPendingUser',
 						      $classDir . 'GalleryPendingUser.class');
-	 
+
 	return GalleryStatus::success();
     }
 
@@ -67,91 +61,72 @@ class SelfregistrationModule extends GalleryModule {
      */
     function install() {
 	global $gallery;
-	
+
 	list ($ret, $version) = $this->getModuleParameter('version');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), false);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$installed = false;
 	if ($version != $this->getVersion()) {
-
 	    /* The store requires configuration. */
-	    $storage = $gallery->getStorage();
-	    $ret = $storage->configureStore('selfregistration');
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->configureStore('register');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
-	    if (empty($version)) {
-		/*
-		 * This is an initial install. Make sure that we have some
-		 * reasonable defaults.
-		 */
-		foreach (array( 'emailconfirmation' => 'true',
-							'subject' => $this->translate('Account activation'),
-							'from' => 'webmaster@' . $_SERVER['SERVER_NAME'] )
+
+	    foreach (array( 'emailconfirmation' => 'true',
+			    'subject' => $this->translate('Account activation'),
+			    'from' => 'webmaster@' . $_SERVER['SERVER_NAME'],
+			    'version' => $this->getVersion() )
 			 as $key => $value) {
-
-		    $ret = $this->setModuleParameter($key, $value);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), false);
-		    }
+		$ret = $this->setModuleParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		$installed = true;
-	    }
-
-	    $ret = $this->setModuleParameter('version', $this->getVersion());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), false);
 	    }
 	}
-	
-	return array(GalleryStatus::success(), $installed);
+
+	return GalleryStatus::success();
     }
 
     /**
      * @see GalleryModule::canBeAutoInstalled
      */
     function canBeAutoInstalled() {
-	return true;
+	/* Could auto install but not everyone wants to offer self registration */
+	return false;
     }
-	
+
     /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
 	/* We don't require any special configuration */
-	
 	return array(GalleryStatus::success(), true);
     }
-	
+
 
     /**
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks() {
-    	global $gallery;
-		$links = array();
-		    	
-    	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    list ($ret, $anonymousUserId) = $module->getModuleParameter('id.anonymousUser');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    
-	    // only anonymous users will see the register-link
-	    if ($gallery->getActiveUserId() == $anonymousUserId) {
-			$links[] = array('text' => $this->translate('Register'),
-				 'params' => array(
-				 	'view' => 'core:UserAdmin',
-				 	'subview' => 'selfregistration:UserSelfregistration')
-				 	);
-	    }
+	global $gallery;
+	$links = array();
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	// Only anonymous users will see the register link
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $links[] = array('text' => $this->translate('Register'),
+			     'params' => array('view' => 'core:UserAdmin',
+					       'subview' => 'register:UserSelfRegistration')
+			    );
+	}
 
 	return array(GalleryStatus::success(), $links);
     }
@@ -160,44 +135,31 @@ class SelfregistrationModule extends GalleryModule {
      * @see GalleryModule::getUserAdminViews();
      */
     function getUserAdminViews($user) {
-		global $gallery;
-	
-		$views = array();
+	global $gallery;
+	$views = array();
 
-    	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    
-	    list ($ret, $anonymousUserId) = $module->getModuleParameter('id.anonymousUser');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    
-	    // only anonymous users will see the register-link
-	    if ($gallery->getActiveUserId() == $anonymousUserId) {
-		    $views[] = array('name' => $this->translate('Register'),
-				     'view' => 'selfregistration:UserSelfregistration');
-		}
-		
-		return array(GalleryStatus::success(), $views);
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-    /**
-     * @see GalleryModule::getSiteAdminViews
-     */
 
-    function getSiteAdminViews() {
-	return array(GalleryStatus::success(),
-		     array(array('name' => $this->translate('Selfregistration'),
-				 'view' => 'selfregistration:AdminSelfregistration')));
+	// Only anonymous users will see the register link
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $views[] = array('name' => $this->translate('Register'),
+			     'view' => 'register:UserSelfRegistration');
+	}
+
+	return array(GalleryStatus::success(), $views);
     }
 
     /**
-     * @see GalleryModule::getConfigurationView
+     * @see GalleryModule::getSiteAdminViews
      */
-    function getConfigurationView() {
-	return array(GalleryStatus::success(), 'selfregistration:AdminSelfregistration');
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Registration'),
+				 'view' => 'register:AdminSelfRegistration')));
     }
 }
 ?>

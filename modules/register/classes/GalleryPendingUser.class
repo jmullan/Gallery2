@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Slefregistration
+ * @package SelfRegistration
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
@@ -30,11 +30,6 @@
  */
 require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
 
-/**
- * Load required classes
- */
-require_once(dirname(__FILE__). '/../../core/classes/GallerySmarty.class');
- 
 /**
  * Representation of a single pending self-registered user
  * (not yet a valid GalleryUser)
@@ -52,7 +47,7 @@ require_once(dirname(__FILE__). '/../../core/classes/GallerySmarty.class');
  * @g2 </schema>
  * @g2 <requires-id/>
  *
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage Classes
  */
 class GalleryPendingUser_core extends GalleryEntity {
@@ -99,7 +94,7 @@ class GalleryPendingUser_core extends GalleryEntity {
      * @g2 <member>
      * @g2   <member-name>hashedPassword</member-name>
      * @g2   <member-type>STRING</member-type>
-     * @g2   <member-size>SMALL</member-size>
+     * @g2   <member-size>MEDIUM</member-size>
      * @g2 </member>
      *
      * @var string $_hashedPassword
@@ -163,18 +158,15 @@ class GalleryPendingUser_core extends GalleryEntity {
 	list($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
-
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
-	
-	
+
 	// then check for a collision in the real user table
 	$query = '
         SELECT
@@ -189,24 +181,21 @@ class GalleryPendingUser_core extends GalleryEntity {
 	list($ret, $results) =
 	    $gallery->search($query, array($userName),
 			     array('limit' => array('count' => 1)));
-
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
-	
-	
+
 	// okay, we don't have any collisions, so go on
 	$ret = parent::create();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$this->setUserName($userName);
 	return GalleryStatus::success();
     }
@@ -229,146 +218,6 @@ class GalleryPendingUser_core extends GalleryEntity {
     function changePassword($newPassword) {
 	$this->setHashedPassword(md5($newPassword));
     }
-
-    /**
-     * Save the changes to this GalleryUser
-     *
-     * @access public
-     * @return object GalleryStatus a status code
-     */
-    function save() {
-	global $gallery;
-
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $newlyCreated = 1;
-	} else {
-	    $newlyCreated = 0;
-	}
-
-	$ret = parent::save();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Delete this GalleryPendingUser
-     *
-     * @access public
-     * @return object GalleryStatus a status code
-     */
-    function delete() {
-	global $gallery;
-
-	$ret = parent::delete();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	return GalleryStatus::success();
-    }
-
-	/**
-	 * Send an email with a confirmation link
-	 *
-	 * @access public
-	 * @return object GalleryStatus a status code
-	 */
-	function sendConfirmationEMail() {
-		global $gallery;
-		
-		$generator =& $gallery->getUrlGenerator();
-		$confirmationUrl = $generator->generateUrl(
-				array(
-					'view' => 'core:UserAdmin',
-					'subview' => 'selfregistration:ConfirmRegistration',
-					'username' => $this->getUserName(),
-					'controller' => 'selfregistration:ConfirmRegistration',
-					));
-		/* it seems that spaces in the username are not translated to %20, so do it here */
-		/* otherwise mail clients will certainly put a line break there */
-		$confirmationUrl = str_replace(" ", "%20", $confirmationUrl);
-		
-		$baseUrl = $generator->generateUrl();
-				
-		$smarty = new GallerySmarty();
-		
-		/* Compiled templates go here */
-	    $smarty->compile_dir = $gallery->getConfig('data.smarty.templates_c');
-
-	    /* Don't let Smarty change the error reporting level */
-	    $smarty->error_reporting = error_reporting();
-	    
-		$smarty->assign('name', $this->getFullName());
-		$smarty->assign('username', $this->getUserName());
-		$smarty->assign('confirmationUrl', $confirmationUrl);
-		$smarty->assign('baseUrl', $baseUrl);
-		
-		
-		list($ret, $sEmailText) = $smarty->fetch(dirname(__FILE__).'/../templates/SmartyConfirmationEMail.tpl');
-		if ($ret->isError()) {
-	    	return $ret->wrap(__FILE__, __LINE__);
-		}
-		
-		$subject = 'Account activation';
-		$from = 'info@localhost';
-		
-		/* check if sending emails is disabled */
-		list($ret, $reallySend) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', 'reallysend');
-		if ($ret->isError()) {
-	    	return $ret->wrap(__FILE__, __LINE__);
-		}
-		
-		if ($reallySend=='true')
-			$succ = mail($this->getEmail(), $subject, $sEmailText, "From: $from");
-		else 
-			$succ = true;
-		if (!$succ)
-			return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__, 'Could not send confirmation mail to '. $this->getEmail());
-			
-		return GalleryStatus::success();
-	}
-	
-	function createGalleryUser() {
-		list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if (!isset($user)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
-				 null);
-		}
-		
-		$ret = $user->create($this->getUserName());
-	    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-		/* copy all values to the new "real" user */
-	    $user->setEmail($this->getEmail());
-	    $user->setFullName($this->getFullName());
-	    $user->setLanguage($this->getLanguage());
-	    $user->setHashedPassword($this->getHashedPassword());
-	
-	    $ret = $user->save();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-		
-		/* notify gallery event system */
-		$eventName = "GalleryPendingUser::createGalleryUser";
-		$event = GalleryCoreApi::newEvent($eventName);
-		$event->setEntity($this);
-		$ret = GalleryCoreApi::postEvent($event);
-		if ($ret->isError()) {
-		    return  $ret->wrap(__FILE__, __LINE__);
-		}
-		return GalleryStatus::success();
-	}
-
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryPendingUser.inc');

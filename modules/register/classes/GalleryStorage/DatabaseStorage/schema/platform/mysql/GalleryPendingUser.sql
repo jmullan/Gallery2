@@ -31,7 +31,7 @@
     DB_COLUMN_PREFIXhashedPassword
       varchar(
       
-          32
+          128
         
       )
     
@@ -53,11 +53,11 @@
     
     , 
   
-    UNIQUE KEY (DB_COLUMN_PREFIXuserName)
+      PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
-  
-    INDEX (DB_COLUMN_PREFIXid)
+      ,
+    
+      UNIQUE KEY (DB_COLUMN_PREFIXuserName)
     
 
     ) TYPE=DB_TABLE_TYPE;

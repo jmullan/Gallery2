@@ -1,126 +1,111 @@
+{*
+ * If you want to customize this file, do not edit it directly.
+ * Instead, copy it to UserSelfRegistration.tpl.local and edit that version instead.
+ * Gallery will look for that file first and use it if it exists
+ * and when you upgrade, your changes will not get overwritten.
+ *}
 <div id="gsAdminContents">
-	<div class="gbTopFlag">
-  	<div class="gbTitle">
-			<div class="giTitle">
-				{g->text text="Register As New User"}
-			</div> 
-		</div>
-    <div class="spacer">
-      &nbsp;
+  <div class="gbTopFlag">
+    <div class="gbTitle">
+      <h2 class="giTitle">
+	{g->text text="Register As New User"}
+      </h2> 
     </div>
-	</div>
+  </div>
 
   <div class="gbAdmin">
-		<div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Username"}
+    <div class="gbDataEntry">
+      <h3> {g->text text="Username"} </h3>
+      <div class="giSubtitle">
+	{g->text text="required"}
       </div>
-		<div class="giSubtitle">
-			{g->text text="required"}
+      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
     </div>
-		<input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
-  </div>
 
     {if isset($form.error.userName.missing)}
       <div class="giError">
-				{g->text text="You must enter a username"}
+	{g->text text="You must enter a username"}
       </div>
     {/if}
-    
     {if isset($form.error.userName.exists)}
       <div class="giError">
-				{g->text text="Username '%s' already exists" arg1=$form.userName}
+	{g->text text="Username '%s' already exists" arg1=$form.userName}
       </div>
     {/if}
 
     <div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Full Name"}
-      </div>
-      
-	{if true} {* added by S.E., 17.06.04 *}
+      <h3> {g->text text="Full Name"} </h3>
       <div class="giSubtitle">
-				{g->text text="required"}
+	{g->text text="required"}
       </div>
-    {/if}
-			<input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
+      <input size="32" type="text" name="{g->formVar var="form[fullName]"}" value="{$form.fullName}"/>
     </div>
     
-    {if isset($form.error.fullName.missing)} {* added by S.E., 17.06.04 *}
+    {if isset($form.error.fullName.missing)}
       <div class="giError">
-				{g->text text="You must enter your full name"}
+	{g->text text="You must enter your full name"}
       </div>
     {/if}
 
-
     <div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Email Address"}
-      </div>
+      <h3> {g->text text="Email Address"} </h3>
       <div class="giSubtitle">
-				{g->text text="required"}
+	{g->text text="required"}
       </div>
-			<input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
+      <input size="32" type="text" name="{g->formVar var="form[email]"}" value="{$form.email}"/>
     </div>
-	  
+
     {if isset($form.error.email.missing)}
       <div class="giError">
-				{g->text text="You must enter an email address"}
+	{g->text text="You must enter an email address"}
       </div>
     {/if}
 
     {if false} {* added by S.E., 17.06.04 *}
     <div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Language"}
-      </div>
-			<select name="g->formVar var="form[language]"}">
-				{html_options options=$AdminCreateUser.languageList selected=$form.language}
-			</select>	
+      <h3> {g->text text="Language"} </h3>
+      <select name="g->formVar var="form[language]"}">
+	{html_options options=$AdminCreateUser.languageList selected=$form.language}
+      </select>	
     </div>
-	{/if}
-	
+    {/if}
+
     <div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Password"}
-      </div>
+      <h3> {g->text text="Password"} </h3>
       <div class="giSubtitle">
-				{g->text text="required"}
+	{g->text text="required"}
       </div>
-			<input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
+      <input size="32" type="password" name="{g->formVar var="form[password1]"}"/>
     </div>
 
     {if isset($form.error.password1.missing)}
       <div class="giError">
-				{g->text text="You must enter a password"}
+	{g->text text="You must enter a password"}
       </div>
     {/if}
 
     <div class="gbDataEntry">
-      <div class="giTitle">
-				{g->text text="Verify Password"}
-      </div>
+      <h3> {g->text text="Verify Password"} </h3>
       <div class="giSubtitle">
-				{g->text text="required"}
+	{g->text text="required"}
       </div>
-			<input size="32" type="password" name="{g->formVar var="form[password2]"}"/>
+      <input size="32" type="password" name="{g->formVar var="form[password2]"}"/>
     </div>
 
     {if isset($form.error.password2.missing)}
       <div class="giError">
-					{g->text text="You must enter the password a second time"}
+	{g->text text="You must enter the password a second time"}
       </div>
     {/if}
-    
     {if isset($form.error.password2.mismatch)}
       <div class="giError">
-					{g->text text="The passwords you entered did not match"}
+	{g->text text="The passwords you entered did not match"}
       </div>
     {/if}
-
   </div>
-	<div class="gbButtons">
-			<input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Register"}"/>
-			<input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
-	</div>	
+
+  <div class="gbButtons">
+    <input type="submit" name="{g->formVar var="form[action][create]"}" value="{g->text text="Register"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  </div>	
 </div>

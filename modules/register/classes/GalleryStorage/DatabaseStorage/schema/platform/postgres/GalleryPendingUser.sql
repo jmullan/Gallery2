@@ -31,7 +31,7 @@
     DB_COLUMN_PREFIXhashedPassword
       VARCHAR(
       
-          32
+          128
         
       )
     
@@ -54,16 +54,13 @@
     );
 
   
-    CREATE INDEX PendingUser_id 
-    ON DB_TABLE_PREFIXPendingUser
-    (DB_COLUMN_PREFIXid);
-
-  
+    ALTER TABLE DB_TABLE_PREFIXPendingUser
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
+    
     CREATE UNIQUE INDEX PendingUser_userName 
     ON DB_TABLE_PREFIXPendingUser
     (DB_COLUMN_PREFIXuserName);
-
-  
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

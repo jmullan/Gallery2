@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 /**
  * @version $Revision$ $Date$
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
@@ -30,11 +30,11 @@
 /**
  * This controller will handle the success-confirmation for the selfregistration of an user
  *
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  *
  */
-class SelfregistrationSuccessController extends GalleryController {
+class SelfRegistrationSuccessController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -42,8 +42,8 @@ class SelfregistrationSuccessController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 	$results = array();
-    $results['delegate']['view'] = 'core:UserAdmin';
-    $results['delegate']['subView'] = 'selfregistration:SelfregistrationSuccess';
+	$results['delegate']['view'] = 'core:UserAdmin';
+	$results['delegate']['subView'] = 'register:SelfRegistrationSuccess';
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -52,10 +52,10 @@ class SelfregistrationSuccessController extends GalleryController {
 /**
  * This view will show a confirmation for the user
  *
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  */
-class SelfregistrationSuccessView extends GalleryView {
+class SelfRegistrationSuccessView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -65,9 +65,9 @@ class SelfregistrationSuccessView extends GalleryView {
 	
 	$selfregistration = array('email' => 'e@mail.de');
 	$template->setVariable('selfregistration', $selfregistration);
-	$template->setVariable('controller', 'selfregistration:SelfregistrationSuccess');
+	$template->setVariable('controller', 'register:SelfRegistrationSuccess');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/selfregistration/templates/SelfregistrationSuccess.tpl'));
+		     array('body' => 'modules/register/templates/SelfRegistrationSuccess.tpl'));
     }
 }
 ?>

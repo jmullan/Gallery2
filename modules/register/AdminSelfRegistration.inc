@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,15 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Gallery
+ * @package SelfRegistration
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
 /**
- * Required classes
- */
-
-/**
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  */
-class AdminSelfregistrationController extends GalleryController {
+class AdminSelfRegistrationController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -41,7 +37,6 @@ class AdminSelfregistrationController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-	
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -53,19 +48,20 @@ class AdminSelfregistrationController extends GalleryController {
 
 	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
 		if (isset($form[$key])) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'selfregistration', $key, trim($form[$key]));
+		    $ret = GalleryCoreApi::setPluginParameter(
+					   'module', 'register', $key, trim($form[$key]));
 		    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-		    	}
-			}
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
 	    }
 
 	    $redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'selfregistration:AdminSelfregistration';
-		$status['saved'] = 1;
+	    $redirect['subView'] = 'register:AdminSelfRegistration';
+	    $status['saved'] = 1;
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'selfregistration:AdminSelfregistration';
+	    $redirect['subView'] = 'register:AdminSelfRegistration';
 	}
 
 	if (!empty($redirect)) {
@@ -73,7 +69,7 @@ class AdminSelfregistrationController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'selfregistration:AdminSelfregistration';
+	    $results['delegate']['subView'] = 'register:AdminSelfRegistration';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -83,10 +79,10 @@ class AdminSelfregistrationController extends GalleryController {
 }
 
 /**
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  */
-class AdminSelfregistrationView extends GalleryView {
+class AdminSelfRegistrationView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -94,31 +90,33 @@ class AdminSelfregistrationView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'selfregistration');
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
 	if ($ret->isError()) 
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	
+
 	/* Load our default values if we didn't just come from this form. */
-	if ($form['formName'] != 'AdminSelfregistration') {
+	if ($form['formName'] != 'AdminSelfRegistration') {
 	    foreach (array('emailconfirmation', 'subject', 'from', 'reallysend') as $key) {
 		list ($ret, $form[$key]) =
-		    GalleryCoreApi::getPluginParameter('module', 'selfregistration', $key);
+		    GalleryCoreApi::getPluginParameter('module', 'register', $key);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	    $form['formName'] = 'AdminSelfregistration';
+	    $form['formName'] = 'AdminSelfRegistration';
 	}
 	
 	$selfregistration = array();
-	$selfregistration['emailConfirmationList'] = array('true' => $module->translate('Use confirmation emails'),
-				 'false' => $module->translate('Accept without confirmation'));
-	$selfregistration['reallySendList'] = array('true' => $module->translate('Yes'), 'false' => $module->translate('No'));
-	$template->setVariable('Selfregistration', $selfregistration);
-	$template->setVariable('controller', 'selfregistration:AdminSelfregistration');
-	
+	$selfregistration['emailConfirmationList'] = array(
+	    'true' => $module->translate('Use confirmation emails'),
+	    'false' => $module->translate('Accept without confirmation') );
+	$selfregistration['reallySendList'] = array(
+	    'true' => $module->translate('Yes'), 'false' => $module->translate('No') );
+	$template->setVariable('SelfRegistration', $selfregistration);
+	$template->setVariable('controller', 'register:AdminSelfRegistration');
+
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/selfregistration/templates/AdminSelfregistration.tpl'));
+		     array('body' => 'modules/register/templates/AdminSelfRegistration.tpl'));
     }
 }
 ?>

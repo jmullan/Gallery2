@@ -20,7 +20,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
- * @package Comment
+ * @package SelfRegistration
  * @subpackage ClassInterfaces
  * @version $Revision$ $Date$
  * @author Bharat Mediratta <bharat@menalto.com>
@@ -37,7 +37,7 @@
  * them in the core class.  If you want to change the format of this
  * file, then you should edit the XSL template.
  *
- * @package Comment
+ * @package SelfRegistration
  * @subpackage Classes
  */
 class GalleryPendingUser extends GalleryPendingUser_core {
@@ -50,34 +50,34 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['userName'] = array(
-            'class' => 'GalleryPendingUser',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['userName'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['fullName'] = array(
-            'class' => 'GalleryPendingUser',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['fullName'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['hashedPassword'] = array(
-            'class' => 'GalleryPendingUser',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['hashedPassword'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['email'] = array(
-            'class' => 'GalleryPendingUser',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['email'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['language'] = array(
-            'class' => 'GalleryPendingUser',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['language'] = array(
+	    'class' => 'GalleryPendingUser',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -86,7 +86,7 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_userName)) {
  	    $data['userName'] = null;
@@ -118,7 +118,7 @@ class GalleryPendingUser extends GalleryPendingUser_core {
 	    $data['language'] = $this->_language;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -129,7 +129,18 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryPendingUser';
+	return 'GalleryPendingUser';
+    }
+
+    /** 
+     * Return the path to the PHP file for this class, relative to the gallery2 dir
+     * 
+     * @return string path
+     */ 
+    function getClassFile() { 
+        return 'modules/' .  
+            basename(dirname(dirname(dirname(__FILE__)))) .  
+            '/classes/GalleryPendingUser.class'; 
     }
 
     
@@ -141,11 +152,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
     function getuserName() {
  	
 
-        if (!isset($this->_userName)) {
-            return null;
-        }
+	if (!isset($this->_userName)) {
+	    return null;
+	}
 
-        return $this->_userName;
+	return $this->_userName;
     }
 
     /**
@@ -154,24 +165,23 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setuserName($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_userName) ? $this->_userName : null;
 
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_userName = $value;
-            $this->setModifiedFlag('userName', MEMBER_MODIFIED);
-        }
+	    $this->_userName = $value;
+	    $this->setModifiedFlag('userName', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -182,11 +192,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
     function getfullName() {
  	
 
-        if (!isset($this->_fullName)) {
-            return null;
-        }
+	if (!isset($this->_fullName)) {
+	    return null;
+	}
 
-        return $this->_fullName;
+	return $this->_fullName;
     }
 
     /**
@@ -195,24 +205,23 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setfullName($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_fullName) ? $this->_fullName : null;
 
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_fullName = $value;
-            $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
-        }
+	    $this->_fullName = $value;
+	    $this->setModifiedFlag('fullName', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -223,11 +232,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
     function gethashedPassword() {
  	
 
-        if (!isset($this->_hashedPassword)) {
-            return null;
-        }
+	if (!isset($this->_hashedPassword)) {
+	    return null;
+	}
 
-        return $this->_hashedPassword;
+	return $this->_hashedPassword;
     }
 
     /**
@@ -236,24 +245,23 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function sethashedPassword($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_hashedPassword) ? $this->_hashedPassword : null;
 
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_hashedPassword = $value;
-            $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
-        }
+	    $this->_hashedPassword = $value;
+	    $this->setModifiedFlag('hashedPassword', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -264,11 +272,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
     function getemail() {
  	
 
-        if (!isset($this->_email)) {
-            return null;
-        }
+	if (!isset($this->_email)) {
+	    return null;
+	}
 
-        return $this->_email;
+	return $this->_email;
     }
 
     /**
@@ -277,24 +285,23 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setemail($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_email) ? $this->_email : null;
 
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_email = $value;
-            $this->setModifiedFlag('email', MEMBER_MODIFIED);
-        }
+	    $this->_email = $value;
+	    $this->setModifiedFlag('email', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -305,11 +312,11 @@ class GalleryPendingUser extends GalleryPendingUser_core {
     function getlanguage() {
  	
 
-        if (!isset($this->_language)) {
-            return null;
-        }
+	if (!isset($this->_language)) {
+	    return null;
+	}
 
-        return $this->_language;
+	return $this->_language;
     }
 
     /**
@@ -318,24 +325,23 @@ class GalleryPendingUser extends GalleryPendingUser_core {
      * @param STRING the value
      */
     function setlanguage($value) {
-
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_language) ? $this->_language : null;
 
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_language = $value;
-            $this->setModifiedFlag('language', MEMBER_MODIFIED);
-        }
+	    $this->_language = $value;
+	    $this->setModifiedFlag('language', MEMBER_MODIFIED);
+	}
     }
   
 }

@@ -3,7 +3,7 @@
  * $RCSfile$
  *
  * Gallery - a web based photo album viewer and editor
- * Copyright (C) 2000-2003 Bharat Mediratta
+ * Copyright (C) 2000-2004 Bharat Mediratta
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,15 @@
 
 /**
  * @version $Revision$ $Date$
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
 
 /**
-  * Include necessary files
-  */
-require_once(dirname(__FILE__).'/classes/helpers/GalleryPendingUserHelper_medium.class');
-
-
-/**
  * This controller will handle the confirmation-link that is sent in the confirmation email
  *
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage UserInterface
  *
  */
@@ -46,53 +40,35 @@ class ConfirmRegistrationController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-		global $gallery;
-		$results = array();
-		$results['redirect'] = array();
-		$results['status'] = array();
-		$results['error'] = array();
-		
-	   	/* turn the pending user into a real user */		
-	   	$username = GalleryUtilities::getRequestVariables('username');
-	   	
-		list($ret, $user) = GalleryPendingUserHelper_medium::fetchPendingUserByUsername($username);
-    	if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-		    	$results['error'][] = 'form[error][unknownUser]';
-		    } else {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-    	} else {
-			/* we have found the requested user */
-			
-			/* create the real user */
-	    	$ret = $user->createGalleryUser();
-	    	if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-	    	}
-	
-			/* delete the temporary PendingUser */
-			list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($user->getId()));
-	    	if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-	    	}
-			
-			$ret = $user->delete();
-			if ($ret->isError()) {
-		    	return $ret->wrap(__FILE__, __LINE__);
-			}
-			
-			$ret = GalleryCoreApi::releaseLocks($lock);
-			if ($ret->isError()) {
-		    	return $ret->wrap(__FILE__, __LINE__);
-			}
-			
-    	}				
-		
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'selfregistration:ConfirmRegistration';
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
+	global $gallery;
+	$results = array();
+	$results['redirect'] = array();
+	$results['status'] = array();
+	$results['error'] = array();
 
-		return array(GalleryStatus::success(), $results);
+   	/* turn the pending user into a real user */		
+	$username = GalleryUtilities::getRequestVariables('username');
+
+	list($ret, $user) = GalleryPendingUserHelper::fetchPendingUserByUsername($username);
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    	$results['error'][] = 'form[error][unknownUser]';
+	    } else {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    /* we have found the requested user */
+	    $ret = GalleryPendingUserHelper::createGalleryUser($user);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}				
+
+	$results['delegate']['view'] = 'core:UserAdmin';
+	$results['delegate']['subView'] = 'register:ConfirmRegistration';
+
+	return array(GalleryStatus::success(), $results);
     }
 }
 
@@ -109,11 +85,11 @@ class ConfirmRegistrationView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
-	$template->setVariable('controller', 'selfregistration:ConfirmRegistration');
+
+	$template->setVariable('controller', 'register:ConfirmRegistration');
 
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/selfregistration/templates/ConfirmRegistration.tpl'));
+		     array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));
     }
 }
 ?>

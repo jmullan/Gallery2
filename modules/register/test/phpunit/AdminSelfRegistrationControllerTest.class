@@ -21,7 +21,7 @@
  */
 /**
  * @version $Revision$ $Date$
- * @package Selfregistration
+ * @package SelfRegistration
  * @subpackage PHPUnit
  * @author Sebastian Eichner <mailsp@sebastian-eichner.de>
  */
@@ -30,25 +30,24 @@
 /**
  * Tests the controller for administration of the selfregistration module 
  *
- * @package Panorama
+ * @package SelfRegistration
  * @subpackage PHPUnit
  */
-class AdminSelfregistrationControllerTest extends GalleryControllerTestCase {
+class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
-	var $paramNames;
-	
-    function AdminSelfregistrationControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'selfregistration:AdminSelfregistration');
+    var $paramNames;
+
+    function AdminSelfRegistrationControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'register:AdminSelfRegistration');
 
 	$this->paramNames = array('emailconfirmation', 'subject', 'from', 'reallysend');
-    
     }
 
     function setUp() {
 	parent::setUp();
 
 	foreach ( $this->paramNames as $key) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', $key);
+	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -56,20 +55,20 @@ class AdminSelfregistrationControllerTest extends GalleryControllerTestCase {
 	    $params[$key] = (string) $value;
 	}
 	$this->_params =& $params;
-
     }
 
     function tearDown() {
 	foreach ($this->paramNames as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'selfregistration', $key, $this->_params[$key]);
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	parent::tearDown();
     }
 
-    function testAdminSelfregistrationControllerSave() {
+    function testAdminSelfRegistrationControllerSave() {
 
 	GalleryUtilities::putRequestVariable('form[emailconfirmation]', 'true');
 	GalleryUtilities::putRequestVariable('form[from]', 'tester@nobody.org');
@@ -77,33 +76,27 @@ class AdminSelfregistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('return' => 1,
-						'redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'selfregistration:AdminSelfregistration'),
-				  'status' => array('saved' => 1),
-				  'error' => array()),
-			    $results);
+	$this->assertEquals(
+		array(	'return' => 1,
+			'redirect' => array('view' => 'core:SiteAdmin',
+					    'subView' => 'register:AdminSelfRegistration'),
+			'status' => array('saved' => 1),
+			'error' => array()),
+		$results);
     
-    GalleryDataCache::reset();
+	GalleryDataCache::reset();
 
 	$valueMap = array('emailconfirmation'=>'true',
 		'from' => 'tester@nobody.org',
 		'subject' => 'Testmail',
-		);
+	);
 	foreach ($valueMap as $key => $expectedValue) {
-	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'selfregistration', $key);
+	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
 	}
-    
-    
     }
-    
-    
-
-
-
 }
 ?>

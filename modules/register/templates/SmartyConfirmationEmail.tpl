@@ -10,4 +10,4 @@ In case somebody else abused your email address for this registration
 please ignore this email. In this case the registration does not become valid
 and you will not receive any further emails.
 
-Thanks you!
+Thank you!
