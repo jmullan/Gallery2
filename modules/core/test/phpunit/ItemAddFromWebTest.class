@@ -149,6 +149,21 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$this->assert(isset($form['webPageUrls']['http://www.test.com/test1.gif']));
 	$this->assertEquals('test1.gif', $item->getPathComponent());
     }
+
+    /*
+     * Test how the controller reacts when the Add Urls button was pushed with no items selected. 
+     */
+    function testAddEmptyListFromWebPage() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][addFromWebPage]', 1);
+	GalleryUtilities::putRequestVariable('form[webPageUrls]', null);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(), $results[0]);
+    }
 }
 
 /**

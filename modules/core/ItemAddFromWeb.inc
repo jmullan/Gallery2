@@ -46,8 +46,8 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromWebPage']) && isset($form['webPageUrls'])
-                && !empty($form['webPageUrls'])) {
+	} else if (isset($form['action']['addFromWebPage'])) {
+            if (isset($form['webPageUrls']) && is_array($form['webPageUrls'])) {
 	    $platform = $gallery->getPlatform();
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
@@ -107,8 +107,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 						    'warnings' => $warnings);
 		}
 		@$platform->unlink($tmpFile);
-	    }
-	}
+	    } /* end foreach */
+            } /* end if no items selected to add */
+        }
 
 	return array(GalleryStatus::success(), $error, $status);
     }
@@ -293,6 +294,11 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		}
 	    }
 	}
+
+        if (isset($form['action']['addFromWebPage']) && (!isset($form['webPageUrls'])
+                || !is_array($form['webPageUrls']) || !count($form['webPageUrls']))) {
+            $form['error']['emptylist'] = 1;
+        }
 
 	if (!isset($form['set'])) {
 	    $form['set'] = array('title' => 1, 'summary' => 0, 'description' => 0);

@@ -53,6 +53,12 @@
       {g->text text="The web page you specified is unavailable"}
     </div>
     {/if}
+
+    {if isset($form.error.emptylist)}
+    <div class="giError">
+      {g->text text="No items were added since no items were selected"}
+    </div>
+    {/if}
   </div>
     
   {if !empty($ItemAddFromWeb.recentPaths)}
