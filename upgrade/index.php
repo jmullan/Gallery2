@@ -151,10 +151,10 @@ if ($currentStep->processRequest()) {
     $templateData = array();
 
     /* Round percentage to the nearest 5 */
-    $templateData['percentComplete'] =		  
-	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
+    $stepsComplete = $stepNumber - ($currentStep->isComplete() ? 0 : 1);
+    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
 
     /* Fetch our page into a variable */
     ob_start();
@@ -171,8 +171,12 @@ if ($currentStep->processRequest()) {
  * Add the session id to our url, if necessary
  */
 function addSessionIdToUrls($html) {
+    /*
+     * SID is empty if we have a session cookie.
+     * If session.use_trans_sid is on then it will add the session id.
+     */
     $sid = SID;
-    if (!empty($sid)) {
+    if (!empty($sid) && !ini_get('session.use_trans_sid')) {
 	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&' . $sid . '"', $html);
     }
     return $html;
