@@ -76,9 +76,22 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	/* By default we keep the same output type */
 	$outputMimeType = $mimeType;
-	
+
 	switch($operationName) {
 	case 'thumbnail':
+	    /* Don't enlarge images for a thumbnail */
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if ($width <= $parameters[0] && $height <= $parameters[0]) {
+		$transform = null;
+		$outputMimeType = $mimeType;
+		break;
+	    } else {
+		/* fall through to scale */
+	    }
+	    
 	case 'scale':
 	    $transform = array($this->_pnmCmd('pnmscale'),
 			       '--quiet',
