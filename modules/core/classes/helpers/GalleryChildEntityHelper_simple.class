@@ -51,6 +51,10 @@ class GalleryChildEntityHelper_simple {
     function fetchChildItemIds($item, $offset=null, $count=null) {
 	global $gallery;
 
+	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
 	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
