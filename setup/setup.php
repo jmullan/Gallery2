@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+/* Turn on displaying errors, if possible */
+@ini_set('display_errors', 1);
+
 ob_start();
 
 if (phpversion() < '4.0.4') {
