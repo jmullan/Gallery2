@@ -147,7 +147,7 @@ class SearchScanView extends GalleryView {
 		$form['searchCriteria'] =
 		    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']);
 		
-		if ($form['formName'] == 'SearchShowAll') {
+		if (isset($form['useDefaultSettings']) || $form['formName'] == 'SearchShowAll') {
 		    foreach ($searchInstances as $id => $instance) {
 			$form['options'][$id] = $modules[$id]['options'];
 		    }
