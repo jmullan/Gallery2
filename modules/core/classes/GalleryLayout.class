@@ -319,4 +319,24 @@ class GalleryLayout {
 
 	return array(GalleryStatus::success(), $itemDetails);
     }
+
+    /**
+     * Study items very closely
+     *
+     * Learn whatever we think we'll need.  By performing operations on the
+     * entire set of items, we potentially save time when it comes to
+     * processing each item individually. 
+     *
+     * @param array GalleryItems
+     * @return object GalleryStatus a status code
+     */
+    function _studyItems($items) {
+	global $gallery;
+
+	/* Study all permissions */
+	$ret = GalleryItemHelper::studyPermissions($items, $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
 }

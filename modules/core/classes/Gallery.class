@@ -91,14 +91,6 @@ class Gallery {
     var $_debugBuffer;
 
     /**
-     * A cache of entities and searches that we've loaded
-     *
-     * @var array $_storageCache;
-     * @access private;
-     */
-    var $_storageCache;
-
-    /**
      * A registry of event listeners
      *
      * @var array $_eventListeners;
@@ -215,7 +207,6 @@ class Gallery {
 	$this->_modules = array();
 	$this->_locks = array();
 	$this->_storage = null;
-	$this->_storageCache['loadEntitiesById'] = array();
     }
 
     /**
@@ -261,9 +252,10 @@ class Gallery {
 	}
 
 	/* Check for cache hits on single entity lookups */
+	$cacheKey = "Gallery::loadEntitiesById($id)";
 	if (!is_array($id)) {
-	    if (isset($this->_storageCache['loadEntitiesById'][$id])) {
-		$entities = $this->_storageCache['loadEntitiesById'][$id];
+	    if (GalleryDataCache::containsKey($cacheKey)) {
+		$entities = GalleryDataCache::get($cacheKey);
 	    }
 	}
 
@@ -284,7 +276,7 @@ class Gallery {
 	    }
 
 	    if (!is_array($id)) {
-		$this->_storageCache['loadEntitiesById'][$id] = $entities;
+		GalleryDataCache::put($cacheKey, $entities);
 	    }
 	}
 	GalleryProfiler::stop('Gallery::loadEntitiesById');

@@ -16,12 +16,14 @@
 		</tr>
 		<tr>	
 		  <td>
-		    {foreach from=$moduleItemLinks item=module}
-		    {foreach from=$module item=links}
-		    {foreach from=$links item=link}
+		    {foreach from=$moduleItemLinks item=itemLinks key=loopId}
+		    {if ($loopId == $item.id)}
+		    {foreach from=$itemLinks item=module}
+		    {foreach from=$module item=link}
 		    <a href="{$link.url}">[{$link.text}]</a>
 		    {/foreach}
 		    {/foreach}
+		    {/if}
 		    {/foreach}
 		  </td>
 		  <td align="right">

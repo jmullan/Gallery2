@@ -124,6 +124,33 @@ class GalleryItemHelper {
     }
 
     /**
+     * Study the permissions for all items (for the given user)
+     *
+     * @param array GalleryItem ids
+     * @param int a user id
+     * @return object GalleryStatus a status code
+     */
+    function studyPermissions($itemIds, $userId) {
+	list ($ret, $groupIds) = GalleryUserGroupMap::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $permissionsTable) =
+	    GalleryPermissionMap::fetchPermissionsForItems($itemIds,
+							   array($userId),
+							   $groupIds);
+
+	/* Cache the permissions */
+	foreach ($permissionsTable as $itemId => $permissions) {
+	    $cacheKey = "GalleryItemHelper::getPermissions($itemId,$userId)";
+	    GalleryDataCache::put($cacheKey, $permissions);
+	}
+	    
+	return GalleryStatus::success();
+    }
+
+    /**
      * Assert that the given user has one of the specific permissions for the
      * target item
      *
@@ -137,12 +164,20 @@ class GalleryItemHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $permissions) =
-	    GalleryPermissionMap::fetchPermissionsForItem($itemId,
-							  array($userId),
-							  $groupIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	$cacheKey = "GalleryItemHelper::getPermissions($itemId,$userId)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $permissions = GalleryDataCache::get($cacheKey);
+	} else {
+	    list ($ret, $permissionsTable) =
+		GalleryPermissionMap::fetchPermissionsForItems(array($itemId),
+							       array($userId),
+							       $groupIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $permissions = $permissionsTable[$itemId];
+	    GalleryDataCache::put($cacheKey, $permissions);
 	}
 
 	return array(GalleryStatus::success(), $permissions);

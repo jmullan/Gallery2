@@ -19,3 +19,16 @@
       <br>
       {/if}
     </a>
+    {foreach from=$moduleItemLinks item=itemLinks key=loopId}
+    {if ($loopId == $child.id)}
+    <br>
+    {gallerySelect onChange="if (this.value) javascript:location.href=this.value"}
+    <option value=""> {galleryText text="<< Action >>"}
+    {foreach from=$itemLinks item=module}
+    {foreach from=$module item=link}
+    <option value="{$link.url}"> {$link.text}
+    {/foreach}
+    {/foreach}
+    {/gallerySelect}
+    {/if}
+    {/foreach}

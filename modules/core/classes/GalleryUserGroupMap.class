@@ -181,7 +181,7 @@ class GalleryUserGroupMap_core {
 	while ($result = $searchResults->nextResult()) {
 	    $data[$result[0]] = $result[1];
 	}
-	return array($ret, $data);
+	return array(GalleryStatus::success(), $data);
     }
 
     /**
@@ -199,26 +199,34 @@ class GalleryUserGroupMap_core {
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
 
-	list ($ret, $searchResults) = 
-	    $gallery->search(array('select' => '[GalleryUserGroupMap::groupId], ' .
-				               '[GalleryGroup::groupName]',
-				   'where' => ('[GalleryUserGroupMap::userId] = ? ' .
-					       'AND [GalleryUserGroupMap::groupId] = ' .
-					       '    [GalleryGroup::id]'),
-				   'order-by' => '[GalleryGroup::groupName]',
-				   'limit' => array('count' => $count,
-						    'offset' => $offset)),
-			     array($userId));
+	$cacheKey = "GalleryUserGroupMap::fetchGroupsForUser($userId,$count,$offset)";
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $data = GalleryDataCache::get($cacheKey);
+	} else {
+	    list ($ret, $searchResults) = 
+		$gallery->search(array('select' => '[GalleryUserGroupMap::groupId], ' .
+				       '[GalleryGroup::groupName]',
+				       'where' => ('[GalleryUserGroupMap::userId] = ? ' .
+						   'AND [GalleryUserGroupMap::groupId] = ' .
+						   '    [GalleryGroup::id]'),
+				       'order-by' => '[GalleryGroup::groupName]',
+				       'limit' => array('count' => $count,
+							'offset' => $offset)),
+				 array($userId));
 	
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    $data = array();
+	    while ($result = $searchResults->nextResult()) {
+		$data[] = $result[0];
+	    }
+	    
+	    GalleryDataCache::put($cacheKey, $data);
 	}
-
-	$data = array();
-	while ($result = $searchResults->nextResult()) {
-	    $data[] = $result[0];
-	}
-	return array($ret, $data);
+	
+	return array(GalleryStatus::success(), $data);
     }
     
 

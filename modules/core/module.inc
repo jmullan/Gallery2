@@ -50,6 +50,7 @@ class CoreModule extends GalleryModule {
 	/* Load all the core Gallery classes */
 	require_once($classDir . 'Gallery.class');
 	require_once($classDir . 'GalleryController.class');
+	require_once($classDir . 'GalleryDataCache.class');
 	require_once($classDir . 'GalleryDerivativeHelper.class');
 	require_once($classDir . 'GalleryDerivativePreferencesMap.class');
 	require_once($classDir . 'GalleryEvent.class');
@@ -355,12 +356,13 @@ class CoreModule extends GalleryModule {
 	}
 
 	$links = array();
-	$showEditLink = false;
-	$showAddItemLink = false;
-	$showAddAlbumLink = false;
-	$showDeleteLink = false;
-	$showPermissionsLink = false;
 	foreach ($items as $item) {
+	    $showEditLink = false;
+	    $showAddItemLink = false;
+	    $showAddAlbumLink = false;
+	    $showDeleteLink = false;
+	    $showPermissionsLink = false;
+	    
 	    list ($ret, $itemPermissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
 						  $gallery->getActiveUserId());
@@ -374,6 +376,7 @@ class CoreModule extends GalleryModule {
 		$showAddItemLink = $item->canContainChildren();
 		$showAddAlbumLink = $item->canContainChildren();
 		$showPermissionsLink = true;
+
 	    } else {
 		if (array_intersect($adminPermissions, $itemPermissions)) {
 		    $showEditLink = true;

@@ -67,12 +67,12 @@ class ItemEditPermissionsController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-	    }
 
-	    /* Figure out where to redirect upon success */
-	    $redirectParams['view'] = 'core:ItemAdmin';
-	    $redirectParams['subView'] = 'core:ItemEditPermissions';
-	    $redirectParams['itemId'] = $itemId;
+		/* Figure out where to redirect upon success */
+		$redirectParams['view'] = 'core:ItemAdmin';
+		$redirectParams['subView'] = 'core:ItemEditPermissions';
+		$redirectParams['itemId'] = $itemId;
+	    }
 	} else if (isset($form['action']['addUserPermission'])) {
 
 	    /* Handle create user permission actions */
@@ -117,9 +117,13 @@ class ItemEditPermissionsController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
+
+		    /* Figure out where to redirect upon success */
+		    $redirectParams['view'] = 'core:ItemAdmin';
+		    $redirectParams['subView'] = 'core:ItemEditPermissions';
+		    $redirectParams['itemId'] = $itemId;
 		}
 	    }
-	    
 	} else if (isset($form['action']['addGroupPermission'])) {
 
 	    /* Handle create group permission actions */
@@ -164,6 +168,50 @@ class ItemEditPermissionsController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
+
+		    /* Figure out where to redirect upon success */
+		    $redirectParams['view'] = 'core:ItemAdmin';
+		    $redirectParams['subView'] = 'core:ItemEditPermissions';
+		    $redirectParams['itemId'] = $itemId;
+		}
+	    }
+	} else if (isset($form['action']['changeOwner'])) {
+	    if (empty($form['owner']['ownerName'])) {
+		GalleryUtilities::putRequestVariable('form.error.owner.missingUser', 1);
+	    } else {
+		/* Validate the user */
+		list ($ret, $user) =
+		    GalleryUserHelper::fetchUserByUserName($form['owner']['ownerName']);
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+			GalleryUtilities::putRequestVariable('form.error.owner.invalidUser', 1);
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		if (!empty($user)) {
+		    list ($ret, $lockId) = $gallery->acquireWriteLock($item->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $item->refresh();
+		    $item->setOwnerId($user->getId());
+		    $ret = $item->save();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		
+		    $ret = $gallery->releaseLocks($lockId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    /* Figure out where to redirect upon success */
+		    $redirectParams['view'] = 'core:ItemAdmin';
+		    $redirectParams['subView'] = 'core:ItemEditPermissions';
+		    $redirectParams['itemId'] = $itemId;
 		}
 	    }
 	}
@@ -213,6 +261,7 @@ class ItemEditPermissionsView extends GalleryView {
 	    /* First time around, load the form with item data */
 	    $form['user']['userName'] = '';
 	    $form['group']['groupName'] = '';
+	    $form['owner']['ownerName'] = '';
 	}
 
 	/* Get all available permissions */
@@ -286,11 +335,31 @@ class ItemEditPermissionsView extends GalleryView {
 			  'deleteable' => $deleteable);
 	    }
 	}
+
+	/* Figure out the owner */
+	list ($ret, $owner) = $gallery->loadEntitiesById($item->getOwnerId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $isAdmin) =
+	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if ($isAdmin) {
+	    $canChangeOwner = true;
+	} else {
+	    $canChangeOwner = false;
+	}
 	
 	/* Render the HTML body */
 	$this->_initTemplate(dirname(__FILE__) . '/templates');
 	$this->_setTemplateVariable('form', $form);
 	$this->_setTemplateVariable('item', $item->getMemberData());
+	$this->_setTemplateVariable('owner', $owner->getMemberData());
+	$this->_setTemplateVariable('canChangeOwner', $canChangeOwner);
 	$this->_setTemplateVariable('userPermissions', $userPermissions);
 	$this->_setTemplateVariable('groupPermissions', $groupPermissions);
 	$this->_setTemplateVariable('allPermissions', $allPermissions);

@@ -109,14 +109,22 @@ class ClassicLayout extends GalleryLayout {
 
 	if (!empty($childIds)) {
 	    /* Load the children */
-	    list ($ret, $childEntities) = $gallery->loadEntitiesById($childIds);
+	    list ($ret, $childItems) = $gallery->loadEntitiesById($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    /*
+	     * Study all the entities that we're going to work with.  This
+	     * gives us a chance to perform any database operations in the
+	     * aggregate to save us having to do them individually for each
+	     * entity later on.
+	     */
+	    $this->_studyItems(array_merge(array($item->getId()), $childIds));
+
 	    /* Get item summaries */
 	    list ($ret, $moduleChildSummaries) =
-		$this->_getModuleItemSummaries($childEntities, $urlParams);
+		$this->_getModuleItemSummaries($childItems, $urlParams);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -130,7 +138,7 @@ class ClassicLayout extends GalleryLayout {
 
             /* Create a table of child id -> child data */
 	    $childTable = array();
-	    foreach ($childEntities as $child) {
+	    foreach ($childItems as $child) {
 		$childId = $child->getId();
 		$childTable[$childId] = $child->getMemberData();
 
@@ -195,7 +203,11 @@ class ClassicLayout extends GalleryLayout {
 	}
 
 	/* Get item links */
-	list ($ret, $moduleItemLinks) = $this->_getModuleItemLinks($item, $urlParams);
+	list ($ret, $moduleItemLinks) =
+	    $this->_getModuleItemLinks(array_merge(array($item), $childItems),
+				       $urlParams);
+	    
+
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

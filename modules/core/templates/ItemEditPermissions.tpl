@@ -25,6 +25,67 @@
 	<tr>
 	  <td>
 	    {galleryBigFont}
+	    {galleryText text="Owner"}
+	    {/galleryBigFont}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {if empty($owner.fullName)}
+	    {galleryText text="This item is owned by user: %s"
+	                 arg1=$owner.userName}
+	    {else}
+	    {galleryText text="This item is owned by user: %s (%s)"
+	                 arg1=$owner.userName
+	                 arg2=$owner.fullName}
+	    {/if}
+	  </td>
+	</tr>
+
+	<!-- {if $canChangeOwner} -->
+	<tr>
+	  <td>
+	    {galleryText text="Change album owner to:"}
+	    {galleryInput type="text" name="form.owner.ownerName"}
+	    {$form.owner.ownerName}
+	    {/galleryInput}
+	    {galleryInput type="submit" name="form.action.changeOwner"}
+	    {galleryText text="Change"}
+	    {/galleryInput}
+	  </td>
+	</tr>
+
+	<!-- {if !empty($form.error.owner.missingUser)} -->
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="You must enter a user name"}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+
+	<!-- {if !empty($form.error.owner.invalidUser)} -->
+	<tr>
+	  <td>
+	    {galleryErrorFontColor}
+	    {galleryText text="The user name you entered is invalid"}
+	    {/galleryErrorFontColor}
+	  </td>
+	</tr>
+	<!-- {/if} -->
+	<!-- {/if} {* canChangeOwner *}-->
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryBigFont}
 	    {galleryText text="Group Permissions"}
 	    {/galleryBigFont}
 	  </td>

@@ -278,31 +278,33 @@ class GalleryPermissionMap_core {
     }
 
     /**
-     * Return a list of permissions for the given item id
+     * Return a list of permissions for the given items
      *
-     * @param int the id of the item
+     * @param array int GalleryItem ids
      * @param array a set of user ids
      * @param array a set of group ids
      * @return array object GalleryStatus a status code
-     *               array permission strings
+     *               array (id => array(permission strings), ...)
      */
-    function fetchPermissionsForItem($itemId, $userIds, $groupIds) {
+    function fetchPermissionsForItems($itemIds, $userIds, $groupIds) {
 	global $gallery;
 
-	if (empty($itemId)) {
+	if (!is_array($itemIds) || empty($itemIds)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__), null);
 	}
-	
+
+	$itemIdMarkers = GalleryUtilities::makeMarkers($itemIds);
 	$userIdMarkers = GalleryUtilities::makeMarkers($userIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
 
 	list($ret, $searchResults) =
-	    $gallery->search(array('select' => 'DISTINCT([GalleryPermissionMap::permission])',
-				   'where' => ('[GalleryPermissionMap::itemId] = ? ' .
+	    $gallery->search(array('select' => ('DISTINCT([GalleryPermissionMap::permission]), ' .
+						'[GalleryPermissionMap::itemId]'),
+				   'where' => ('[GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ') ' .
 					       ' AND ([GalleryPermissionMap::userId] IN (' . $userIdMarkers . ') ' .
 					       ' OR [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))')),
-			     array_merge(array($itemId), $userIds, $groupIds));
+			     array_merge($itemIds, $userIds, $groupIds));
 
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -310,11 +312,11 @@ class GalleryPermissionMap_core {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = $result[0];
+	    $data[$result[1]][] = $result[0];
 	}
 	return array($ret, $data);
     }
-
+    
     /**
      * Copy a set of permissions from one id to another
      *
