@@ -310,4 +310,33 @@ class GalleryLockHelper_medium {
 	    return GalleryStatus::success();
 	}
     }
+
+    /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function refreshLocks($freshUntil) {
+	global $gallery;
+
+	/* Get all active lock ids */
+	$locks =& GalleryLockHelper_simple::_getLocks();
+	$lockIds = array();
+	foreach ($locks as $lock) {
+	    $lockIds = array_merge($lockIds, $lock->getAllIds());
+	}
+	$lockIds = array_unique($lockIds);
+
+	if (!empty($lockIds)) {
+	    $storage = $gallery->getStorage();
+	    $ret = $storage->refreshLocks($lockIds, $freshUntil);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
 }

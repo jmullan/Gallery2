@@ -1891,6 +1891,19 @@ class GalleryCoreApi {
     }
 
     /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function refreshLocks($freshUntil) {
+	GalleryCoreApi::apiMethodUsed('refreshLocks', 'GalleryLockHelper_medium');
+	require_once(dirname(__FILE__) . '/helpers/GalleryLockHelper_medium.class');
+	return GalleryLockHelper_medium::refreshLocks($freshUntil);
+    }
+
+    /**
      * Get the set of lock ids
      *
      * @return object array of lock ids

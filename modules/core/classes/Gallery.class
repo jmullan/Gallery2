@@ -549,28 +549,32 @@ class Gallery {
     }
 
     /**
-     * Set the maximum amount of time we should contine to work
-     *
-     * @param int a time interval in seconds
-     */
-    function setTimeLimit($limit) {
-	set_time_limit($limit);
-	$this->_timeLimit = time() + $limit;
-    }
-
-    /**
      * Guarantee that we have at least this many more seconds to work
      *
      * After this function completes, we will be guaranteed to have at least
-     * this much more time to work.
+     * this much more time to work. 
      *
-     * @param int a time interval in seconds
+     * @param int a time interval in seconds, must be greater than 0
      */
     function guaranteeTimeLimit($limit) {
+	if ($limit <= 0) {
+	    $limit = 30;
+	}
+	
 	$now = time();
 	if (empty($this->_timeLimit) || ($this->_timeLimit - $now < $limit)) {
 	    $this->debug("[$now] can't guarantee $limit -- extending!");
-	    $this->setTimeLimit(max($limit, 30));
+
+	    // Make sure that we have at least a minimum of 30 seconds
+	    $this->_timeLimit = max($now + $limit, 30);
+	    set_time_limit($this->_timeLimit - $now);
+
+	    /*
+	     * Then make sure our locks stick around.  Even though this returns a status code, we really don't
+	     * want to make guaranteeTimeLimit() return a status code since we want to keep it lightweight.
+	     * So swallow the return code and don't sweat it for now.
+	     */
+	    $ret = GalleryCoreApi::refreshLocks($this->_timeLimit);
 	}
     }
 

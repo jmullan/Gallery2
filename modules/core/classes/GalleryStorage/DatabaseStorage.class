@@ -787,16 +787,24 @@ class DatabaseStorage extends GalleryStorage {
 
 		/* Wait a second and try again */
 		sleep(1);
+
+		/* Expire any bogus locks */
+		$ret = $this->_expireLocks();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 	    
 	/* Put in a read lock for every entity id */
 	$lockIdCol = $this->_translateColumnName('lockId');
 	$readEntityIdCol = $this->_translateColumnName('readEntityId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$freshUntil = time() + 30;
 	foreach ($entityIds as $entityId) {
-	    $query = 'INSERT INTO ' . $lockTable .
-		    '(' . $lockIdCol . ', ' . $readEntityIdCol . ') VALUES (?, ?)';
-	    $data = array($lockId, $entityId);
+	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
+			     $lockTable, $lockIdCol, $readEntityIdCol, $freshUntilCol);
+	    $data = array($lockId, $entityId, $freshUntil);
 	    $this->_traceStart();
 	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
@@ -907,6 +915,12 @@ class DatabaseStorage extends GalleryStorage {
 
 		/* Wait a second and try again */
 		sleep(1);
+
+		/* Expire any bogus locks */
+		$ret = $this->_expireLocks();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 	}
 
@@ -915,11 +929,12 @@ class DatabaseStorage extends GalleryStorage {
 	 */
 	$lockIdCol = $this->_translateColumnName('lockId');
 	$writeEntityIdCol = $this->_translateColumnName('writeEntityId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$freshUntil = time() + 30;
 	foreach ($entityIds as $entityId) {
-	    $query = 'INSERT INTO ' . $lockTable .
-		    '(' . $lockIdCol . ', ' . $writeEntityIdCol .
-		    ') VALUES (?, ?)';
-	    $data = array($lockId, $entityId);
+	    $query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)',
+			     $lockTable, $lockIdCol, $writeEntityIdCol, $freshUntilCol);
+	    $data = array($lockId, $entityId, $freshUntil);
 	    $this->_traceStart();
 	    $recordSet = $db->execute($query, $data);
 	    $this->_traceStop();
@@ -955,6 +970,59 @@ class DatabaseStorage extends GalleryStorage {
     }
 
     /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param array the lock ids
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function refreshLocks($lockIds, $freshUntil) {
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$lockIdMarkers = GalleryUtilities::makeMarkers(sizeof($lockIds));
+	$query = sprintf('UPDATE %s SET %s = ? WHERE %s in (%s)',
+			 $lockTable, $freshUntilCol, $lockIdCol, $lockIdMarkers);
+
+	$this->_traceStart();
+	$data = array_merge($freshUntil, $lockIds);
+	$recordSet = $this->_db->Execute($query, $data);
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Refresh all the locks that we hold so that they aren't accidentally considered expired
+     *
+     * @param array the lock ids
+     * @param int the new "fresh until" timestamp
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function _expireLocks() {
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$query = sprintf('DELETE FROM %s WHERE %s < ?',
+			 $lockTable, $freshUntilCol);
+
+	$this->_traceStart();
+	$recordSet = $this->_db->Execute($query, array(time()));
+	$this->_traceStop();
+	
+	if (!$recordSet) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
+    }
+
+    /**
      * Internal function to release a lock by id.  Outsiders should use
      * releaseLock()
      *
@@ -963,7 +1031,12 @@ class DatabaseStorage extends GalleryStorage {
      * @return object GalleryStatus a status code
      */
     function releaseLock($lock) {
-	return $this->_releaseLockById($lock->getAllIds());
+	$ret = $this->_releaseLockById($lock->getAllIds());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -1540,7 +1613,6 @@ class DatabaseStorage extends GalleryStorage {
 
 	return GalleryStatus::success();
     }
-
     
     /**
      * Begin a new transaction, if the storage layer supports them.
@@ -1606,6 +1678,7 @@ class DatabaseStorage extends GalleryStorage {
 	
 	return GalleryStatus::success();
     }
+    
     /**
      * Database specific string replacements in our SQL files.
      *
@@ -1832,6 +1905,12 @@ class DatabaseStorage extends GalleryStorage {
 	    /* Wait a second and try again */
 	    sleep(1);
 
+	    /* Expire any bogus locks */
+	    $ret = $this->_expireLocks();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    if (time() > $cutoffTime) {
 		$this->_releaseLockById($lockId);
 		return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);

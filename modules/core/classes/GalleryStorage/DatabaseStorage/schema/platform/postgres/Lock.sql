@@ -16,6 +16,10 @@
       INTEGER
     
       ,
+    DB_COLUMN_PREFIXfreshUntil
+      INTEGER
+    
+      ,
     DB_COLUMN_PREFIXrequest
       INTEGER
     
