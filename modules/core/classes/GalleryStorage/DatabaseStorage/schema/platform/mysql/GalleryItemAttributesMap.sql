@@ -31,10 +31,6 @@
     
     , 
   
-    INDEX (DB_COLUMN_PREFIXitemId)
-    
-      ,
-    
     INDEX (DB_COLUMN_PREFIXparentSequence)
     
 

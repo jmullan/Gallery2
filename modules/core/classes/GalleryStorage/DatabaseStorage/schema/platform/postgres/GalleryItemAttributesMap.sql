@@ -28,11 +28,6 @@
     );
 
   
-    CREATE INDEX ItemAttributesMap_itemId 
-    ON DB_TABLE_PREFIXItemAttributesMap
-    (DB_COLUMN_PREFIXitemId);
-
-  
     CREATE INDEX ItemAttributesMap_parentSequence 
     ON DB_TABLE_PREFIXItemAttributesMap
     (DB_COLUMN_PREFIXparentSequence);
