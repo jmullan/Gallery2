@@ -519,6 +519,91 @@ class GalleryEmbed {
     }
 
     /**
+     * Perform a search across all available searchable modules.
+     *
+     * @param string search criteria
+     * @param int (optional) max number of results to return from each module, defaults to 3
+     * @return array object GalleryStatus a status object
+     *               array of {module_id} => results array plus 'name' key with module name
+     * @see GallerySearchInterface_1_0::search for contents of results arrays
+     * @static
+     */
+    function searchScan($searchString, $resultsPerModule=3) {
+	$searchInstances = $searchResults = array();
+	$ids = GalleryCoreApi::getAllFactoryImplementationIds('GallerySearchInterface_1_0');
+	foreach ($ids as $id => $className) {
+	    list ($ret, $searchInstances[$id]) =
+		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', $className);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	foreach ($searchInstances as $id => $instance) {
+	    list ($ret, $searchInfo) = $instance->getSearchModuleInfo();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $options = array();
+	    foreach ($searchInfo['options'] as $option => $info) {
+		if ($info['enabled']) {
+		    $options[$option] = true;
+		}
+	    }
+	    list ($ret, $searchResults[$id]) =
+		$instance->search($options,
+				  SearchUtilities::sanitizeSearchCriteria($searchString),
+				  0, $resultsPerModule);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $searchResults[$id]['name'] = $searchInfo['name'];
+	}
+	return array(GalleryStatus::success(), $searchResults);
+    }
+
+    /**
+     * Search specific module.
+     *
+     * @param string search criteria
+     * @param string id of module to search
+     * @param int start index
+     * @param int number of results to retrieve
+     * @return array object GalleryStatus a status object
+     *               results array plus 'name' key with module name
+     * @see GallerySearchInterface_1_0::search for contents of results array
+     * @static
+     */
+    function search($searchString, $moduleId, $offset, $count) {
+	list ($ret, $searchInstance) =
+	    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $moduleId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($searchInstance)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	list ($ret, $searchInfo) = $searchInstance->getSearchModuleInfo();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$options = array();
+	foreach ($searchInfo['options'] as $option => $info) {
+	    if ($info['enabled']) {
+		$options[$option] = true;
+	    }
+	}
+	list ($ret, $searchResults) =
+	    $searchInstance->search($options,
+				    SearchUtilities::sanitizeSearchCriteria($searchString),
+				    $offset, $count);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$searchResults['name'] = $searchInfo['name'];
+	return array(GalleryStatus::success(), $searchResults);
+    }
+
+    /**
      * Return the SystemContent block for a specific module
      *
      * @param string module id
