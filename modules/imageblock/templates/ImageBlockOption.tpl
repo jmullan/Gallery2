@@ -10,13 +10,14 @@
   </h2>
 
   <div class="gbDataEntry">
-    <input id="ImageBlockOption_isDisabled" type="checkbox" name="{g->formVar var="form[ImageBlockOption][isDisabled]"}"
-	   {if $form.ImageBlockOption.isDisabled}checked="checked"{/if}/>
-    <label for="ImageBlockOption_isDisabled">
+    <input id="ImageBlockOption_setDisabled" type="checkbox" name="{g->formVar var="form[ImageBlockOption][setDisabled]"}"
+	   {if $form.ImageBlockOption.setDisabled}checked="checked"{/if}/>
+    <label for="ImageBlockOption_setDisabled">
       {g->text text="Prevent this album from being displayed in the Image Block"}
     </label>
-    <input id="ImageBlockOption_isRecursive" type="checkbox" name="{g->formVar var="form[ImageBlockOption][isRecursive]"}" checked="checked"/>
-    <label for="ImageBlockOption_isRecursive">
+    <br/>
+    <input id="ImageBlockOption_setRecursive" type="checkbox" name="{g->formVar var="form[ImageBlockOption][setRecursive]"}" checked="checked"/>
+    <label for="ImageBlockOption_setRecursive">
       {g->text text="Apply to sub-albums"}
     </label>
   </div>

@@ -112,8 +112,8 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 
     function testImageBlockOption() {
 	/* Enable the Option */
-	$form['ImageBlockOption']['isRecursive'] = 'off';
-	$form['ImageBlockOption']['isDisabled'] = 'on';
+	$form['ImageBlockOption']['setRecursive'] = 'off';
+	$form['ImageBlockOption']['setDisabled'] = 'on';
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
@@ -133,8 +133,8 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	/*
 	 * Disable the Option
 	 */
-	$form['ImageBlockOption']['isRecursive'] = 'off';
-	$form['ImageBlockOption']['isDisabled'] = 'off';
+	$form['ImageBlockOption']['setRecursive'] = 'off';
+	$form['ImageBlockOption']['setDisabled'] = 'off';
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
@@ -156,8 +156,8 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	/*
 	 * Enable the Option recursively
 	 */
-	$form['ImageBlockOption']['isRecursive'] = 'on';
-	$form['ImageBlockOption']['isDisabled'] = 'on';
+	$form['ImageBlockOption']['setRecursive'] = 'on';
+	$form['ImageBlockOption']['setDisabled'] = 'on';
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);
@@ -177,8 +177,8 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	/*
 	 * Disable the Option recursively
 	 */
-	$form['ImageBlockOption']['isRecursive'] = 'on';
-	$form['ImageBlockOption']['isDisabled'] = 'off';
+	$form['ImageBlockOption']['setRecursive'] = 'on';
+	$form['ImageBlockOption']['setDisabled'] = 'off';
 
 	$result = $this->_handleRequestAfterEdit($form, $this->_topAlbum);
 	$this->assertEquals(array(array(), array()), $result);

@@ -40,25 +40,35 @@ class ImageBlockOption extends ItemEditOption {
 
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 
-	if (empty($form['ImageBlockOption']['isDisabled']) ||
-		$form['ImageBlockOption']['isDisabled'] == 'off') {
-	    $isDisabled = false;
+	if (empty($form['ImageBlockOption']['setDisabled']) ||
+		$form['ImageBlockOption']['setDisabled'] == 'off') {
+	    $setDisabled = false;
 	} else {
-	    $isDisabled = true;
+	    $setDisabled = true;
 	}
 
-	if (empty($form['ImageBlockOption']['isRecursive']) ||
-		$form['ImageBlockOption']['isRecursive'] == 'on') {
-	    $isRecursive = true;
+	/*
+	 *  We default to 'on' in the template, but checking empty() isn't valid
+	 *  because 'off' doesn't necessarily send a value.
+	 */
+	if (isset($form['ImageBlockOption']['setRecursive']) &&
+		$form['ImageBlockOption']['setRecursive'] == 'on') {
+	    $setRecursive = true;
 	} else {
-	    $isRecursive = false;
+	    $setRecursive = false;
 	}
 
-	$ret = ImageBlockHelper::setDisabledFlag($item, $isRecursive, $isDisabled);
+	list ($ret, $currentlyDisabled) = ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
+	if ($setDisabled != $currentlyDisabled) {
+	    $ret = ImageBlockHelper::setDisabledFlag($item, $setRecursive, $setDisabled);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
 	return array(GalleryStatus::success(), $error, $warning);
     }
 
@@ -67,7 +77,7 @@ class ImageBlockOption extends ItemEditOption {
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
-	list($ret, $form['ImageBlockOption']['isDisabled']) =
+	list($ret, $form['ImageBlockOption']['setDisabled']) =
 	    ImageBlockHelper::getDisabledFlag($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
