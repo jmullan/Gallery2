@@ -179,6 +179,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function testHandleRequestWithArchiveExtract() {
+	$sortAddedFilesFunc = create_function('$a, $b',
+		'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
+
 	list ($ret, $item) = GalleryTestCase::_createRandomDataItem(
 	    $this->_album->getId(), 'test/archive',
 	    array('pathComponent' => 'foo.zip', 'title' => 'foo', 'summary' => 'hoho'));
@@ -209,7 +212,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	 * Sort the added files list by filename because we can't guarantee 
 	 * the file order across platforms.
 	 */
-	usort($addedFiles, 'sortAddedFiles');
+	usort($addedFiles, $sortAddedFilesFunc);
 
 	$this->assertEquals(array('bar.ext', 'foo.ext'),
 			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName']), 'files');

@@ -40,6 +40,8 @@ class ItemAddFromServer extends ItemAddPlugin {
      */
     function handleRequest($form, &$item) {
 	global $gallery;
+	$this->_platform =& $gallery->getPlatform();
+	$this->_dirSep = $this->_platform->getDirectorySeparator();
 
 	$status = array();
 	$error = array();
@@ -47,61 +49,231 @@ class ItemAddFromServer extends ItemAddPlugin {
 	if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
 	} else if (isset($form['action']['addFromLocalServer'])
-		   && !empty($form['localServerFiles'])) {
+		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {
 	    /* Add the selected items */
 	    $dir = trim($form['localServerPath']);
 
-	    $platform = $gallery->getPlatform();
-	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
-		$filename = $fileKey;
+	    $textFields = array(
+			    'title' => (isset($form['set']['title'])) ? 1 : 0,
+			    'description' => (isset($form['set']['description'])) ? 1 : 0,
+			    'summary' => (isset($form['set']['summary'])) ? 1 : 0,
+		    );
+		    
 
-		$selected = (isset($form['localServerFiles'][$fileKey]['selected']));
-		$useSymlink = (isset($form['localServerFiles'][$fileKey]['useSymlink']));
+	    if (!empty($form['localServerFiles'])) {
+		foreach ($form['localServerFiles'] as $fileKey => $unused) {
 
-		if ($selected) {
-		    // Build up the file path with the right style of directory separator
-		    $slash = $platform->getDirectorySeparator();
-		    $filepath = $dir;
-		    if ($filepath[strlen($filepath)-1] != $slash) {
-			$filepath .= $slash;
+		    $useSymLink = 
+			(isset($form['localServerFiles'][$fileKey]['useSymlink'])) ? 1 : 0;
+
+		    $file = array('fileName' => $fileKey, 'useSymLink' => $useSymLink);
+
+		    if (isset($form['localServerFiles'][$fileKey]['selected'])) {
+			$ret = $this->addItem($item->getId(), $dir, $file, 
+				$textFields, $status, $error);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), $error, $status);
+			}
 		    }
-
-		    // Unescape any special chars in the file name and path
-		    $filename = urldecode(GalleryUtilities::htmlEntityDecode($filename));
-		    $filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
-		    $filepath .= $filename;
-
-		    list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
-		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
-		    GalleryUtilities::sanitizeInputValues($base);
-
-		    $title = (isset($form['set']['title']) && $form['set']['title']) ? $base : '';
-		    $summary = (isset($form['set']['summary'])
-			     && $form['set']['summary']) ? $base : '';
-		    $description = (isset($form['set']['description'])
-				 && $form['set']['description']) ? $base : '';
-
-		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
-									   $filename,
-									   $title,
-									   $summary,
-									   $description,
-									   $mimeType,
-									   $item->getId(),
-									   $useSymlink);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-
-		    $status['addedFiles'][] = array('fileName' => $filename,
-						    'id' => $newItem->getId(),
-						    'warnings' => array());
 		}
 	    }
+
+	    if (!empty($form['localServerDirectories'])) {
+		foreach ($form['localServerDirectories'] as $directory => $unused) {
+		    
+		    /* Skip current or parent directory entries */
+		    if ($directory == "." || $directory == "..") {
+			continue;
+		    }
+		    
+		    $useSymLink = 
+			    (isset($form['localServerDirectories'][$directory]['useSymlink'])) ? 1 : 0;
+
+		    $newDir = array('dirName' => $directory, 'useSymLink' => $useSymLink);
+
+		    if (isset($form['localServerDirectories'][$directory]['selected'])) {
+			$ret = $this->addDirectory($item->getId(), $newDir, 
+				$textFields, $status, $error);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), $error, $status);
+			}
+		    }
+		}
+	    }
+
 	}
 
 	return array(GalleryStatus::success(), $error, $status);
     }
+
+    function addItem($parentId, $dir, $file, $textFields, &$status, &$error) {
+	global $gallery;
+
+	$filename = $file['fileName'];
+
+	$useSymlink = $file['useSymLink'];
+
+	// Build up the file path with the right style of directory separator
+	$filepath = $dir;
+	if ($filepath[strlen($filepath)-1] != $this->_dirSep) {
+	    $filepath .= $this->_dirSep;
+	}
+
+	// Unescape any special chars in the file name and path
+	$filename = urldecode(GalleryUtilities::htmlEntityDecode($filename));
+	$filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
+	$filepath .= $filename;
+
+	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
+	$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+	GalleryUtilities::sanitizeInputValues($base);
+
+	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$title = ($textFields['title']) ? $base : '';
+	$summary = ($textFields['summary']) ? $base : '';
+	$description = ($textFields['description']) ? $base : '';
+
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($filepath,
+							       $filename,
+							       $title,
+							       $summary,
+							       $description,
+							       $mimeType,
+							       $parentId,
+							       $useSymlink);
+
+	/* 
+	 * Release the lockIds before checking $ret from addItemToAlbum
+	 * and possibly returning 
+	 */
+	GalleryCoreApi::releaseLocks($lockIds);
+
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$status['addedFiles'][] = array('fileName' => $filename,
+					'id' => $newItem->getId(),
+					'warnings' => array());
+
+	return GalleryStatus::success();
+    }
+
+    function addDirectory($parentId, $directory, $textFields, &$status, &$error) {
+	global $gallery;
+
+	// Unescape any special chars in the file path
+	$path = urldecode(GalleryUtilities::htmlEntityDecode($directory['dirName']));
+
+	// Get directory name
+	$dirName = basename($path);
+ 
+	/* Make sure we have permission to edit this item */
+	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addAlbumItem');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+ 
+       list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
+        if ($ret->isError()) {
+           return $ret->wrap(__FILE__, __LINE__);
+        }
+  
+
+	// Create new Album
+	$dirTitle = ($textFields['title']) ? $dirName : null;
+	$dirSummary = ($textFields['summary']) ? $dirName : null;
+	$dirDescription = ($textFields['description']) ? $dirName : null;
+	list ($ret, $instance) =
+               GalleryCoreApi::createAlbum($parentId, $dirName, $dirTitle, 
+			$dirSummary, $dirDescription, "");
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_COLLISION) {
+		$error[] = 'form[error][pathComponent][collision]';
+		// HACKHACK - This should cause the upload to abort
+		return GalleryStatus::success();
+	    } else {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	if (!isset($instance)) {
+	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	}
+
+        if (empty($error)) {
+	    $ret = GalleryCoreApi::addUserPermission($instance->getId(), $instance->getOwnerId(),
+		    'core.all', false);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Prepare our status message */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $status['editMessage'] = $module->translate('Album created successfully.');
+	}
+	GalleryCoreApi::releaseLocks($lockIds);
+
+	$newId = $instance->getId();
+
+	list ($ret, $localServerDirs) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (empty($localServerDirs)) {
+	    $localServerDirList = array();
+	} else {
+	    $localServerDirList = split(',', $localServerDirs);
+	}
+
+        // Look into the directory, add anything we find
+        $handle = $this->_platform->opendir($path);
+
+	while (false !== ($fileName = $this->_platform->readdir($handle))) {
+	    $gallery->guaranteeTimeLimit(5);
+
+	    if ($fileName == '.' || $fileName == '..') {
+		continue;
+	    } else {
+		$filePath = $path . $this->_dirSep . $fileName;
+	    }
+	    if ($this->_platform->is_readable($filePath)) {
+		if ($this->_platform->is_dir($filePath)) {
+
+		    $filePath = $this->_platform->realpath($filePath);
+		    $legal = GalleryUtilities::isPathInList($filePath, $localServerDirList);
+
+		    if ($legal) {
+			$newDir = array('dirName' => $filePath, 
+				'useSymLink' => $directory['useSymLink']);
+			$ret = $this->addDirectory($newId, $newDir, $textFields, $status, $error);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		} else {
+		    $newFile = array('fileName' => $fileName, 'useSymLink' => $directory['useSymLink']);
+		    $ret = $this->addItem($newId, $path, $newFile, $textFields, $status, $error);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	}
+	$this->_platform->closedir($handle);
+
+	return GalleryStatus::success();
+    }
+
 
     /**
      * @see ItemAdd:loadTemplate

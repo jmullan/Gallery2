@@ -12,7 +12,7 @@
   var knownTypeCheckboxIds = new Array(
   {assign var="first" value="1"}
   {foreach name=fileIndex from=$form.localServerFiles item=file}
-  {if ($file.type == 'file' && !$file.unknown)}
+  {if (($file.type == 'file' || $file.type == 'directory') && !isset($file.unknown))}
   {if !$first},{/if}
   "{$smarty.foreach.fileIndex.iteration}"
   {assign var="first" value="0"}
@@ -35,7 +35,9 @@
   function toggleSymlinkEnabled(a) {
     var cbSymlink = document.getElementById('symlink_' + a );
     var cbSelected = document.getElementById('cb_' + a );
-    cbSymlink.disabled = !cbSelected.checked;
+    if (cbSymlink) { 
+      cbSymlink.disabled = !cbSelected.checked; 
+    }
   }
 
   function invertSymlinkSelection() {
@@ -88,21 +90,27 @@
   
     <input type="text" size="80" name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
   
-    {if isset($form.error.localServerPath.missing)}
+    {if isset($form.error.pathComponent.missing)}
     <div class="giError">
       {g->text text="You must enter a directory."}
     </div>
     {/if}
   
-    {if isset($form.error.localServerPath.invalid)}
+    {if isset($form.error.pathComponent.invalid)}
     <div class="giError">
       {g->text text="The directory you entered is invalid.  Make sure that the directory is readable by all users."}
     </div>
     {/if}
   
-    {if isset($form.error.localServerPath.illegal)}
+    {if isset($form.error.pathComponent.illegal)}
     <div class="giError">
       {g->text text="The directory you entered is illegal.  It must be a sub directory of one of the directories listed below."}
+    </div>
+    {/if}
+
+    {if isset($form.error.pathComponent.collision)}
+    <div class="giError">
+      {g->text text="An item with the same name already exists."}
     </div>
     {/if}
   </div>
@@ -186,7 +194,7 @@
       {if $ItemAddFromServer.showSymlink}
         <th>
           {g->text text="Use Symlink"}
-        </th>
+	</th>
       {/if}
     </tr>
   
@@ -215,12 +223,16 @@
       </td>
 	{if $ItemAddFromServer.showSymlink}
 	  <td align="center">
-            <input type="checkbox" disabled="true" id="symlink_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerFiles][$key][useSymlink]"}"/>
+	    <input type="checkbox" disabled="true" id="symlink_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerFiles][$key][useSymlink]"}"/>
 	  </td>
 	{/if}
       {else}
       <td>
-        &nbsp;
+	<input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}"
+	{if $ItemAddFromServer.showSymlink}
+		onClick="javascript:toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
+	{/if}
+		name="{g->formVar var="form[localServerDirectories][$key][selected]"}"/>
       </td>
 
       <td>
@@ -248,8 +260,8 @@
       </td>
       {if $ItemAddFromServer.showSymlink}
         <td>
-          &nbsp;
-        </td>
+	    <input type="checkbox" disabled="true" id="symlink_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerDirectories][$key][useSymlink]"}"/>
+	</td>
       {/if}
       {/if}
     </tr>
