@@ -4,8 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbBottomFlag">
-  <div class="giActionSelect">
+<div class="gbAdmin">
+  <h2 class="giTitle">
     <a href="{$redirectUrl}">{g->text text="Continue..."}</a>
-  </div>
+  </he>
 </div>

@@ -1169,7 +1169,7 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    $ret = $immediateView->renderStatusMessage(
-		$module->translate('Import complete'), '', 100);
+		$module->translate('Import complete'), '', 1);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

@@ -108,8 +108,10 @@ class GalleryImmediateStatusView extends GalleryView {
      * This is a one-shot, and might be able to reuse the class's template,
      * but for safety and simplicity, it gets its own barebones template for
      * no-frills rendering.
-     * 
-     * @param string a string to print
+     *
+     * @param string a short string to print (status group)
+     * @param string a long string to print (status line item)
+     * @param float a percentage between 0 and 1 where 1 == status complete.
      * @return object GalleryStatus a status code
      */
     function renderStatusMessage($title, $description, $percentComplete) {
