@@ -56,8 +56,7 @@ class ItemEditPhotoController extends GalleryController {
 	}
 
 	/* Check to see if we have a preferred source */
-	list ($ret, $preferredTable) = GalleryDerivativeHelper::fetchPreferredsByItemIds(
-            array($item->getId()));
+	list ($ret, $preferredTable) = GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -115,12 +114,28 @@ class ItemEditPhotoController extends GalleryController {
 	     * If we have a command, then apply it to the correct object.
 	     */
 	    if (!empty($operation)) {
-		/*
-		 * If we don't have a preferred and we're preserving, then create
-		 * one
-		 */
+		if ($item->isLinked()) {
+		    $isLinked = true;
+		    $isLinkedTo = false;
+		} else {
+		    list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($itemId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    $isLinked = false;
+		    $isLinkedTo = !empty($linkedIds);
+		}
+
+		/* Force us to preserve original if we're a link */
+		$preserveOriginal = empty($form['preserveOriginal']);
+		if (!$preserveOriginal && ($isLinked || $isLinkedTo)) {
+		    $preserveOriginal = true;
+		}
+
+		/* If we don't have a preferred and we're preserving, then create one */
 		$lockIds = array();
-		if (empty($preferred) && empty($form['preserveOriginal'])) {
+		if (empty($preferred) && !$preserveOriginal) {
 
 		    /*
 		     * We have no preferred photo, and we're not preserving the
@@ -192,7 +207,8 @@ class ItemEditPhotoController extends GalleryController {
 		} else {
 		    /* If we have no preferred, then create one */
 		    if (empty($preferred)) {
-			list ($ret, $preferred) = GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
+			list ($ret, $preferred) =
+			    GalleryFactory::newInstance('GalleryEntity', 'GalleryDerivativeImage');
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -653,42 +669,46 @@ class ItemEditPhotoView extends GalleryView {
 	switch($mode) {
 	case 'editPhoto':
 	    if ($item->isLinked()) {
-		/* We can't rotate or scale links */
-		$ItemEditPhoto['editPhoto']['can']['rotate'] = false;
-		$ItemEditPhoto['editPhoto']['can']['scale'] = false;
 		$ItemEditPhoto['editPhoto']['isLinked'] = true;
+		$ItemEditPhoto['editPhoto']['isLinkedTo'] = false;
 	    } else {
-		$ItemEditPhoto['editPhoto']['isLinked'] = false;
-		
-		/* Check to see if we have a preferred source */
-		list ($ret, $results) =
-		    GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+		list ($ret, $linkedIds) = GalleryItemHelper::fetchEntitiesLinkedTo($itemId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		if (empty($results)) {
-		    $ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
-		} else {
-		    $ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
 		}
 
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
-		
-		/* Figure out what options we can provide */
-		list ($ret, $toolkit) =
-		    GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		$ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
+		$ItemEditPhoto['editPhoto']['isLinkedTo'] = !empty($linkedIds);
+		$ItemEditPhoto['editPhoto']['isLinked'] = false;
 	    }
+	    
+	    /* Check to see if we have a preferred source */
+	    list ($ret, $results) =
+		GalleryDerivativeHelper::fetchPreferredsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+		
+	    if (empty($results)) {
+		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = false;
+	    } else {
+		$ItemEditPhoto['editPhoto']['hasPreferredSource'] = true;
+	    }
+
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'rotate');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editPhoto']['can']['rotate'] = isset($toolkit);
+		
+	    /* Figure out what options we can provide */
+	    list ($ret, $toolkit) =
+		GalleryToolkitHelper::getToolkitByOperation($item->getMimeType(), 'scale');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ItemEditPhoto['editPhoto']['can']['scale'] = isset($toolkit);
 	    break;
 		
 	case 'editSizes':

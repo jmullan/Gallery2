@@ -104,20 +104,14 @@
 	    {/g->input}
 	  {/g->element}
 	{else}
-	  {if $ItemEditPhoto.editPhoto.isLinked}
-	    {g->element style="emphasized"}
-	      {g->text text="This photo is a link.  You cannot rotate linked photos, you must modify the source image."}
-	    {/g->element}
-	  {else}
-	    {g->element style="emphasized"}
-	      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
-	      {if $ItemEditPhoto.isAdmin} 
-		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-		  {g->text text="site admin"}
-		{/g->link}
-	      {/if}
-	    {/g->element}
-	  {/if}
+	  {g->element style="emphasized"}
+	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot rotate it."}
+	    {if $ItemEditPhoto.isAdmin} 
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+		{g->text text="site admin"}
+	      {/g->link}
+	    {/if}
+	  {/g->element}
 	{/if}
       {/g->box}
 
@@ -139,20 +133,14 @@
 	    {/g->input}
 	  {/g->element}
 	{else}
-	  {if $ItemEditPhoto.editPhoto.isLinked}
-	    {g->element style="emphasized"}
-	      {g->text text="This photo is a link.  You cannot scale linked photos, you must modify the source image."}
-	    {/g->element}
-	  {else}
-	    {g->element style="emphasized"}
-	      {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
-	      {if $ItemEditPhoto.isAdmin} 
-		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
-		  {g->text text="site admin"}
-		{/g->link}
-	      {/if}
-	    {/g->element}
-	  {/if}
+	  {g->element style="emphasized"}
+	    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot scale it."}
+	    {if $ItemEditPhoto.isAdmin} 
+	      {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+		{g->text text="site admin"}
+	      {/g->link}
+	    {/if}
+	  {/g->element}
 	{/if}
 
 	{if !empty($form.error.scale.size.missing)}
@@ -179,9 +167,21 @@
 	      {g->text text="Gallery does not modify your original photo when rotating and scaling. Instead, it duplicates your photo and works with copies.  This requires a little extra disk space but prevents your original from getting damaged.  Disabling this option will cause any actions (rotating, scaling, etc) to modify the original."}
 	    {/g->description}
 
-	    {g->element}
-	      {g->input type="checkbox" name="form[preserveOriginal]"}{$form.preserveOriginal}{/g->input} {g->text text="Preserve Original Photo"}
-	    {/g->element}
+	    {if $ItemEditPhoto.editPhoto.isLinked}
+	      {g->element style="emphasized"}
+		{g->text text="This is a link to another photo, so you cannot change the original"}
+	      {/g->element}
+	    {else}
+	      {if $ItemEditPhoto.editPhoto.isLinkedTo}
+		{g->element style="emphasized"}
+		  {g->text text="There are links to this photo, so you cannot change the original"}
+		{/g->element}
+	      {else}
+		{g->element}
+		  {g->input type="checkbox" name="form[preserveOriginal]"}{$form.preserveOriginal}{/g->input} {g->text text="Preserve Original Photo"}
+		{/g->element}
+	      {/if}
+	    {/if}
 	  {else}
 	    {g->title}
 	      {g->text text="Modified Photo"}
