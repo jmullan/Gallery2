@@ -112,13 +112,11 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGetFormVariables2() {
-	global $HTTP_POST_FILES;
-
 	$tmp_name = 'c:/apache/tmp\\php195.tmp';
 	if (get_magic_quotes_gpc()) {
 	    $tmp_name = addslashes($tmp_name);
 	}
-	$HTTP_POST_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest'] =
+	$_FILES[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest'] =
 	    array('fileupload' => array('name' => 'DSCF0001.JPG',
 					'type' => 'image/pjpeg',
 					'tmp_name' => $tmp_name,
@@ -139,8 +137,7 @@ class UtilitiesTest extends GalleryTestCase {
      * putRequestVariable -- make sure that the new value overwrites the old.
      */
     function testGetFormVariables3() {
-	global $HTTP_POST_VARS;
-	$HTTP_POST_VARS[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['list']['filter'] = 'x';
+	$_POST[GALLERY_FORM_VARIABLE_PREFIX . 'utilitiestest']['list']['filter'] = 'x';
 	GalleryUtilities::putRequestVariable('utilitiestest[list][filter]', 'y');
 
 	$this->assertEquals(array('list' => array('filter' => 'y')),

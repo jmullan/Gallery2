@@ -231,10 +231,9 @@ class PlatformTest extends GalleryTestCase {
      */
     function testFsockopen() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 	$platform = $gallery->getPlatform();
-	$fd = $platform->fsockopen($HTTP_SERVER_VARS['SERVER_NAME'],
-				   $HTTP_SERVER_VARS['SERVER_PORT'],
+	$fd = $platform->fsockopen($_SERVER['SERVER_NAME'],
+				   $_SERVER['SERVER_PORT'],
 				   $errno, $errstr, 30);
 	$this->assert("File descriptor should not be null", isset($fd));
     }
@@ -244,14 +243,13 @@ class PlatformTest extends GalleryTestCase {
      */
     function testFsockopenBadHost() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 	$platform = $gallery->getPlatform();
 
 	/* We know this is going to bomb so unset PHPunit's error handler */
 	restore_error_handler();
 	
 	$fd = @$platform->fsockopen('www.BOGUSBOGUSBOGUS.com',
-				    $HTTP_SERVER_VARS['SERVER_PORT'],
+				    $_SERVER['SERVER_PORT'],
 				    $errno, $errstr, 30);
 	$this->assert("File descriptor should be null", !isset($fd));
     }

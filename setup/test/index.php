@@ -62,7 +62,6 @@ function main() {
 function GalleryTestHarness() {
     global $gallery;
     global $tests;
-    global $HTTP_GET_VARS;
 
     /*
      * Pretend to be the admin
@@ -141,16 +140,16 @@ function GalleryTestHarness() {
     $gallery->clearDebugBuffer();
 
     $results = array();
-    if (!empty($HTTP_GET_VARS['testName']) &&
-	!empty($HTTP_GET_VARS['moduleId'])) {
+    if (!empty($_GET['testName']) &&
+	!empty($_GET['moduleId'])) {
     
-	$testName = $HTTP_GET_VARS['testName'];
-	$moduleId = $HTTP_GET_VARS['moduleId'];
+	$testName = $_GET['testName'];
+	$moduleId = $_GET['moduleId'];
     
 	$iterations = 1;
 	$disableDebug = false;
-	if (!empty($HTTP_GET_VARS['iterations'])) {
-	    $iterations = $HTTP_GET_VARS['iterations'];
+	if (!empty($_GET['iterations'])) {
+	    $iterations = $_GET['iterations'];
 	    $disableDebug = true;
 	}
 

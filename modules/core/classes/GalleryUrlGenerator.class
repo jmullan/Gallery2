@@ -96,13 +96,12 @@ class GalleryUrlGenerator {
      * @return string the current URL
      */
     function getCurrentUrl() {
-	global $HTTP_SERVER_VARS;
-	if (!empty($HTTP_SERVER_VARS['REQUEST_URI'])) {
-	    return $HTTP_SERVER_VARS['REQUEST_URI'];
+	if (!empty($_SERVER['REQUEST_URI'])) {
+	    return $_SERVER['REQUEST_URI'];
 	}
 	    
-	if (!empty($HTTP_SERVER_VARS['SCRIPT_NAME'])) {
-	    return $HTTP_SERVER_VARS['SCRIPT_NAME'];
+	if (!empty($_SERVER['SCRIPT_NAME'])) {
+	    return $_SERVER['SCRIPT_NAME'];
 	}
     }
 

@@ -158,9 +158,6 @@ class GallerySession_core {
      */
     function init() {
 	global $gallery;
-	global $HTTP_COOKIE_VARS;
-	global $HTTP_GET_VARS;
-	global $HTTP_POST_VARS;
 
 	// Inactivity timeout for user sessions
 	list ($ret, $this->_sessionIdParameter) =
@@ -171,13 +168,13 @@ class GallerySession_core {
 
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
-	if (!empty($HTTP_COOKIE_VARS[$this->_sessionIdParameter])) {
+	if (!empty($_COOKIE[$this->_sessionIdParameter])) {
 
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
 	     */
-	    $this->_sessionId = $HTTP_COOKIE_VARS[$this->_sessionIdParameter];
+	    $this->_sessionId = $_COOKIE[$this->_sessionIdParameter];
 	    $this->_isUsingCookies = true;
 	} else {
 	    $this->_isUsingCookies = false;

@@ -41,17 +41,16 @@ class UrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $HTTP_SERVER_VARS;
-	$this->_save = $HTTP_SERVER_VARS['REQUEST_URI'];
+	$this->_save = $_SERVER['REQUEST_URI'];
 
-	$HTTP_SERVER_VARS['REQUEST_URI'] = 'http://example.com/gallery2/phpunit_test.php?foo=bar';
+	$_SERVER['REQUEST_URI'] = 'http://example.com/gallery2/phpunit_test.php?foo=bar';
 
 	$this->_urlGenerator = new GalleryUrlGenerator('phpunit_test.php');
 	parent::setUp();
     }
 
     function tearDown() {
-	$HTTP_SERVER_VARS['REQUEST_URI'] = $this->_save;
+	$_SERVER['REQUEST_URI'] = $this->_save;
 	
 	parent::tearDown();
     }

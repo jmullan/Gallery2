@@ -5,8 +5,6 @@ require_once('GalleryTestCase.class');
 require_once('GalleryControllerTestCase.class');
 
 function GalleryMain(&$testSuite, $filter) {
-    global $HTTP_GET_VARS;
-    
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
@@ -112,8 +110,8 @@ function GalleryMain(&$testSuite, $filter) {
     return GalleryStatus::success();
 }
 
-if (isset($HTTP_GET_VARS['filter'])) {
-    $filter = $HTTP_GET_VARS['filter'];
+if (isset($_GET['filter'])) {
+    $filter = $_GET['filter'];
 } else {
     $filter = null;
 }

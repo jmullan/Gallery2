@@ -182,7 +182,6 @@ class GalleryTranslator {
      */
     function init($languageCode=null) {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	if (empty($languageCode)) {
 	    $languageCode = $this->getLanguageCodeFromRequest();
@@ -227,14 +226,12 @@ class GalleryTranslator {
      * @return a language code in the <language>_<COUNTRY> format, eg: en_US
      */
     function getLanguageCodeFromRequest() {
-	global $HTTP_SERVER_VARS;
-
 	/* Get our language data */
 	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
 	
 	/* Take the first thing the browser accepts that we can use */
-	if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
-	    foreach (explode(',', $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])
+	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	    foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'])
 		     as $code) {
 
 		if (preg_match('/[-_]/', $code)) {

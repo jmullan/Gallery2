@@ -63,7 +63,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function testAddComment() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -93,14 +92,13 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	    $this->assertEquals('this is a comment', $comments[0]->getComment());
 	    $this->assertEquals('this is a subject', $comments[0]->getSubject());
 	    $this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
-	    $this->assertEquals($HTTP_SERVER_VARS['REMOTE_ADDR'], $comments[0]->getHost());
+	    $this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
 	    $this->assert($comments[0]->getDate() >= $this->_startTime && $comments[0]->getDate() <= time());
 	}
     }
 
     function testPreviewComment() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -171,7 +169,6 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function testAddMaliciousComment() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
@@ -207,7 +204,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('this is a subject with &lt;javascript&gt;evilness&lt;/javascript&gt; in it.',
 			    $comments[0]->getSubject());
 	$this->assertEquals($gallery->getActiveUserId(), $comments[0]->getCommenterId());
-	$this->assertEquals($HTTP_SERVER_VARS['REMOTE_ADDR'], $comments[0]->getHost());
+	$this->assertEquals($_SERVER['REMOTE_ADDR'], $comments[0]->getHost());
 	$this->assert($comments[0]->getDate() >= $this->_startTime && $comments[0]->getDate() <= time());
     }
 

@@ -4,7 +4,7 @@
 
 When you think you have resolved this problem, you can click this button to try again:
 <form method="POST">
-<?php foreach ($HTTP_POST_VARS as $key => $value) { ?>
+<?php foreach ($_POST as $key => $value) { ?>
     <input type="hidden" name="<?php echo $key ?>" value="<?php echo $value ?>">
 <?php } ?>
     <input type="submit" name="submit" value="Try again">

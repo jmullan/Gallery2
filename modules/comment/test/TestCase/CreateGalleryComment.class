@@ -54,9 +54,9 @@ class CreateGalleryCommentTestCase extends TestCase {
 			     '?" Another reader has found the story at the Tel'.
 			     'egraph.');
 	$comment->setDate(time());
-	$host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_HOST'];
+	$host = $_SERVER['REMOTE_HOST'];
 	if (empty($host)) {
-	    $host = $GLOBALS['HTTP_SERVER_VARS']['REMOTE_ADDR'];
+	    $host = $_SERVER['REMOTE_ADDR'];
 	}
 	$comment->setHost($host);
 

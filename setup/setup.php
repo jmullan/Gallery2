@@ -131,7 +131,7 @@ message('success');
  *************************************************************/
 function error($messageName, $messageData=null) {
     global $message, $gallery;
-    global $HTTP_POST_VARS;
+    global $_POST;
 
     $message = $messageData;
     $message['output'] = ob_get_contents();
@@ -141,8 +141,8 @@ function error($messageName, $messageData=null) {
 	$message['debug'] = $gallery->getDebugBuffer();
     }
     
-    if (!empty($HTTP_POST_VARS['g2_password'])) {
-	$message['password'] = $HTTP_POST_VARS['g2_password'];
+    if (!empty($_POST['g2_password'])) {
+	$message['password'] = $_POST['g2_password'];
     }
 
     include(dirname(__FILE__) . '/messages/errorHeader.php');
@@ -152,15 +152,14 @@ function error($messageName, $messageData=null) {
 
 function message($messageName, $messageData=null) {
     global $message, $gallery;
-    global $HTTP_POST_VARS;
 
     $message = $messageData;
     $message['output'] = ob_get_contents();
     ob_end_clean();
 
     $message['debug'] = $gallery->getDebugBuffer();
-    if (!empty($HTTP_POST_VARS['g2_password'])) {
-	$message['password'] = $HTTP_POST_VARS['g2_password'];
+    if (!empty($_POST['g2_password'])) {
+	$message['password'] = $_POST['g2_password'];
     }
 
     include(dirname(__FILE__) . '/messages/messageHeader.php');
@@ -177,14 +176,13 @@ function CheckSetupPassword() {
 
 function CheckPasswordIsCorrect() {
     global $gallery;
-    global $HTTP_POST_VARS;
 
-    if (empty($HTTP_POST_VARS['g2_password'])) {
+    if (empty($_POST['g2_password'])) {
 	return false;
     }
     
     return !strcmp($gallery->getConfig('setup.password'),
-		   $HTTP_POST_VARS['g2_password']);
+		   $_POST['g2_password']);
 }
 
 function CheckConfigFileExists() {

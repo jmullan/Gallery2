@@ -40,29 +40,24 @@ class TranslatorTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $HTTP_SERVER_VARS;
-	
 	parent::setUp();
-	if (isset($HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'])) {
-	    $this->_acceptLanguageSave = $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'];
+	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	    $this->_acceptLanguageSave = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 	}
     }
 
     function tearDown() {
-	global $HTTP_SERVER_VARS;
-
 	if (isset($this->_acceptLanguageSave)) {
-	    $HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
+	    $_SERVER['HTTP_ACCEPT_LANGUAGE'] = $this->_acceptLanguageSave;
 	}
 	parent::tearDown();
     }
 
     function testGetLanguageCodeFromRequest() {
 	global $gallery;
-	global $HTTP_SERVER_VARS;
 
 	/* Init with a null language code and a valid accept language */
-	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'de';
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
 	$translator = new GalleryTranslator();
 	$translator->init();
 	if (function_exists('dgettext')) {
@@ -73,7 +68,7 @@ class TranslatorTest extends GalleryTestCase {
 	}
 
 	/* Init with a null language code and a valid accept language/country */
-	$HTTP_SERVER_VARS['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'pt_BR';
 	$translator = new GalleryTranslator();
 	$translator->init();
 	if (function_exists('dgettext')) {

@@ -134,17 +134,13 @@ class GalleryUtilities {
      * @static
      */
     function getFormVariables($key) {
-	global $HTTP_POST_VARS;
-	global $HTTP_POST_FILES;
-	global $HTTP_GET_VARS;
-
 	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 	$form = array();
-	if (isset($HTTP_POST_VARS[$key])) {
-	    $form = $HTTP_POST_VARS[$key];
+	if (isset($_POST[$key])) {
+	    $form = $_POST[$key];
 	}
 	
-	if (isset($HTTP_POST_FILES[$key])) {
+	if (isset($_FILES[$key])) {
 	    /*
 	     * Later on during our sanitization process we're going to call
 	     * stripslashes on our file name.  But it may legitimately have
@@ -152,7 +148,7 @@ class GalleryUtilities {
 	     * are escaped at this time.  There's gotta be a better way to
 	     * handle this.
 	     */
-	    $postForm = $HTTP_POST_FILES[$key];
+	    $postForm = $_FILES[$key];
 	    if (get_magic_quotes_gpc()) {
 		if (isset($postForm['tmp_name'])) {
 		    GalleryUtilities::recursiveAddSlashes($postForm['tmp_name']);
@@ -161,8 +157,8 @@ class GalleryUtilities {
 	    $form = GalleryUtilities::array_merge_replace($form, $postForm);
 	}
 	
-	if (isset($HTTP_GET_VARS[$key])) {
-	    $form = GalleryUtilities::array_merge_replace($form, $HTTP_GET_VARS[$key]);
+	if (isset($_GET[$key])) {
+	    $form = GalleryUtilities::array_merge_replace($form, $_GET[$key]);
 	}
 
 	/* Perform any necessary transformations on our values */
@@ -232,15 +228,11 @@ class GalleryUtilities {
      * @static
      */
     function removeFormVariables($key) {
-	global $HTTP_POST_VARS;
-	global $HTTP_POST_FILES;
-	global $HTTP_GET_VARS;
-	
 	/* Remove all matching GET and POST variables */
 	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
-	unset($HTTP_POST_VARS[$key]);
-	unset($HTTP_POST_FILES[$key]);
-	unset($HTTP_GET_VARS[$key]);
+	unset($_POST[$key]);
+	unset($_FILES[$key]);
+	unset($_GET[$key]);
     }
     
 
@@ -279,15 +271,13 @@ class GalleryUtilities {
      * @static
      */
     function putRequestVariable($key, $value) {
-	global $HTTP_GET_VARS;
-
 	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 
 	/* Simulate the damage caused by magic_quotes */
 	GalleryUtilities::unsanitizeInputValues($value);
 
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
-	GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $HTTP_GET_VARS);
+	GalleryUtilities::_internalPutRequestVariable($keyPath, $value, $_GET);
     }
 
     /**
@@ -319,9 +309,6 @@ class GalleryUtilities {
      * @static
      */
     function hasRequestVariable($key) {
-	global $HTTP_GET_VARS;
-	global $HTTP_POST_VARS;
-	
 	$value = GalleryUtilities::_getRequestVariable(GALLERY_FORM_VARIABLE_PREFIX . $key);
 	return !empty($value);
     }
@@ -334,13 +321,10 @@ class GalleryUtilities {
      * @static
      */
     function removeRequestVariable($key) {
-	global $HTTP_POST_VARS;
-	global $HTTP_GET_VARS;
-
 	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
-	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $HTTP_GET_VARS);
-	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $HTTP_POST_VARS);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_GET);
+	GalleryUtilities::_internalRemoveRequestVariable($keyPath, $_POST);
     }
 
     /**
@@ -876,15 +860,12 @@ class GalleryUtilities {
      * @static
      */
     function _getRequestVariable($key) {
-	global $HTTP_POST_VARS;
-	global $HTTP_GET_VARS;
-	
 	$keyPath = preg_split('/[\[\]]/', $key, -1, PREG_SPLIT_NO_EMPTY);
-	$result = GalleryUtilities::_internalGetRequestVariable($keyPath, $HTTP_GET_VARS);
+	$result = GalleryUtilities::_internalGetRequestVariable($keyPath, $_GET);
 	if (isset($result)) {
 	    return $result;
 	}
-	return GalleryUtilities::_internalGetRequestVariable($keyPath, $HTTP_POST_VARS);
+	return GalleryUtilities::_internalGetRequestVariable($keyPath, $_POST);
     }
 
     /**
@@ -956,8 +937,7 @@ class GalleryUtilities {
      * @return string the remote host address
      */
     function getRemoteHostAddress() {
-	global $HTTP_SERVER_VARS;
-	return $HTTP_SERVER_VARS['REMOTE_ADDR'];
+	return $_SERVER['REMOTE_ADDR'];
     }
 
     function isViewableMimeType($mimeType) {
