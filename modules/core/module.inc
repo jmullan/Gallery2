@@ -518,9 +518,9 @@ class CoreModule extends GalleryModule {
 						'itemId' => $item->getId()));
 		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		    $links[$item->getId()][] =
-			array('text' => $this->translate('edit image'),
+			array('text' => $this->translate('edit photo'),
 			      'params' => array('view' => 'core:ItemAdmin',
-						'subView' => 'core:ItemEditImage',
+						'subView' => 'core:ItemEditPhoto',
 						'itemId' => $item->getId()));
 		} else if ($isAlbum) {
 		    $links[$item->getId()][] =
@@ -769,24 +769,11 @@ class CoreModule extends GalleryModule {
 		    $views[] = array('name' => $this->translate('Movie Settings'),
 				     'view' => 'core:ItemEditMovie');
 		} else if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		    $views[] = array('name' => $this->translate('Image Settings'),
-				     'view' => 'core:ItemEditImage');
+		    $views[] = array('name' => $this->translate('Photo Settings'),
+				     'view' => 'core:ItemEditPhoto');
 		}
 	    }
 
-	    /* Show thumbnail/resize view */
-	    if (GalleryUtilities::isA($item, 'GalleryDataItem')) {
-		list ($ret, $operations) = GalleryToolkitHelper::getOperations($item->getMimeType());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		
-		if (!empty($operations)) {
-		    $views[] = array('name' => $this->translate('Thumbnail/Resizes'),
-				     'view' => 'core:ItemCreateResizes');
-		}
-	    }
-	    
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
 				 'view' => 'core:ItemMakeHighlight');

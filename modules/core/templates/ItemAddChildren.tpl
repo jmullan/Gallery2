@@ -13,7 +13,13 @@
 
   {g->tabbedbox}
     {g->tabset}
-      {if $ItemAddChildren.mode != 'fromBrowser'}
+      {if $ItemAddChildren.mode == 'fromBrowser'}
+	{g->item selected="true"}
+	  {g->title}
+	    {g->text text="From Web Browser"}
+	  {/g->title}
+	{/g->item}
+      {else}
 	{g->item}
 	  {g->title}
 	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromBrowser"}
@@ -21,15 +27,15 @@
 	    {/g->link}
 	  {/g->title}
 	{/g->item}
-      {else}
-	{g->item selected="true"}
-	  {g->title}
-	    {g->text text="From Web Browser"}
-	  {/g->title}
-	{/g->item}
       {/if}
 
-      {if $ItemAddChildren.mode != 'fromLocalServer'}
+      {if $ItemAddChildren.mode == 'fromLocalServer'}
+	{g->item selected="true"}
+	  {g->title}
+	    {g->text text="From Local Server"}
+	  {/g->title}
+	{/g->item}
+      {else}
 	{g->item}
 	  {g->title}
 	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromLocalServer"}
@@ -37,26 +43,20 @@
 	    {/g->link}
 	  {/g->title}
 	{/g->item}
-      {else}
-	{g->item selected="true"}
-	  {g->title}
-	    {g->text text="From Local Server"}
-	  {/g->title}
-	{/g->item}
       {/if}
 
-      {if $ItemAddChildren.mode != 'fromWebPage'}
+      {if $ItemAddChildren.mode == 'fromWebPage'}
+	{g->item selected="true"}
+	  {g->title}
+	    {g->text text="From Web Page"}
+	  {/g->title}
+	{/g->item}
+      {else}
 	{g->item}
 	  {g->title}
 	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromWebPage"}
 	      {g->text text="From Web Page"}
 	    {/g->link}
-	  {/g->title}
-	{/g->item}
-      {else}
-	{g->item selected="true"}
-	  {g->title}
-	    {g->text text="From Web Page"}
 	  {/g->title}
 	{/g->item}
       {/if}

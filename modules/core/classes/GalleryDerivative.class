@@ -239,7 +239,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * @param string the command
      * @return object GalleryStatus a status code
      */
-    function mergeOperation($newOperation, $newArgs) {
+    function mergeOperation($newOperation, $newArgs, $headMerge=false) {
 	global $gallery;
 
 	/* Load the source */
@@ -248,7 +248,11 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$mimeType = $source->getMimeType();
+	if (GalleryUtilities::isA($source, "GalleryDerivative")) {
+	    $mimeType = $source->getDerivativeMimeType();
+	} else {
+	    $mimeType = $source->getMimeType();
+	}
 	$operationString = $this->getDerivativeOperations();
 
 	if (empty($operationString)) {
@@ -272,7 +276,10 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    }
 
 	    if (!$mergeComplete) {
-		$mergedOperations = join(';', $operations) . ';' . $newOperation . '|' . join(',', $newArgs);
+		if ($headMerge) {
+		    $mergedOperations = $newOperation . '|' . join(',', $newArgs) . ';' . join(';', $operations);
+		} else {
+		    $mergedOperations = join(';', $operations) . ';' . $newOperation . '|' . join(',', $newArgs);		}
 	    } else {
 		$mergedOperations = join(';', $newOperations);
 	    }

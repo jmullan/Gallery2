@@ -239,6 +239,94 @@ class GalleryDerivativeHelper {
     }
 
     /**
+     * Remove the given operations from any derivatives that depend on the given ids.  Use case: we've done
+     * the "rotate" option on a data item but that data item has a derivative which is being generated using
+     * the "crop" operation.  After the rotate, the crop parameters are no longer valid, so we remove it.
+     *
+     * @param array ids the source ids
+     * @param array operation the operations to remove
+     * @return object GalleryStatus a status code
+     */
+    function pruneDerivativeOperations($ids, $operations) {
+	global $gallery;
+	$idMarkers = GalleryUtilities::makeMarkers($ids);
+
+	$query = '
+        SELECT
+          [GalleryDerivative::id]
+        FROM
+          [GalleryDerivative]
+        WHERE
+          [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+        ';
+
+	list ($ret, $searchResults) = $gallery->search($query, $ids);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get all derivative ids */
+	$derivativeIds = array();
+	while ($result = $searchResults->nextResult()) {
+	    $derivativeIds[] = $result[0];
+	}
+
+	if (!empty($derivativeIds)) {
+	    /* Turn ids into objects */
+	    list ($ret, $derivatives) = $gallery->loadEntitiesById($derivativeIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $changed = array();
+	    $changedIds = array();
+	    foreach ($derivatives as $derivative) {
+		$newOperations = array();
+		foreach (explode(';', $derivative->getDerivativeOperations()) as $derivativeOperation) {
+		    list ($op, $args) = explode('|', $derivativeOperation);
+		    if (!in_array($op, $operations)) {
+			$newOperations[] = $derivativeOperation;
+		    }
+		}
+		
+		$derivative->setDerivativeOperations(join(';', $newOperations));
+		if ($derivative->isModified()) {
+		    $changed[] = $derivative;
+		    $changedIds[] = $derivative->getId();
+		}
+	    }
+
+	    /* Recurse */
+	    $ret = GalleryDerivativeHelper::pruneDerivativeOperations($derivativeIds, $operations);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (sizeof($changed) > 0) {
+		/* Save any derivatives that changed */
+		list ($ret, $lockIds) = $gallery->acquireWriteLock($changedIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		for ($i = 0; $i < sizeof($changed); $i++) {
+		    $ret = $changed[$i]->save();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    
+		$ret = $gallery->releaseLocks($lockIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Expire all derivatives that depend on the source ids specified
      *
      * @param array source ids

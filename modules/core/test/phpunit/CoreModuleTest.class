@@ -172,6 +172,12 @@ class CoreModuleTest extends GalleryTestCase {
 					   'subView' => 'core:ItemAddChildren',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
+	$links[] = array('text' => $this->_module->translate('edit album'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemEditAlbum',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   ));
 	$links[] = array('text' => $this->_module->translate('add sub-album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',

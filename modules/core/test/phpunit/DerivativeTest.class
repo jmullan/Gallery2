@@ -302,6 +302,47 @@ class DerivativeTest extends GalleryTestCase {
 			    $ids);
 	
     }
+
+    function testPruneDerivativeOperations() {
+	global $gallery;
+	
+	/*
+	 * Create a derivative with a operation that we want to prune.  Parent it to an item that will get
+	 * deleted so that tearDown will get rid of it for us.
+	 */
+	list ($ret, $derivative) =
+	    $this->_createDerivative($this->_child[0]->getId(),
+				     DERIVATIVE_TYPE_IMAGE_RESIZE,
+				     'filler|1,2,3;deleteme|1;filler|1');
+
+	list($ret, $lockId) = $gallery->acquireWriteLock($derivative->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$derivative->setDerivativeSourceId($this->_derivative[0][0]->getId());
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryDerivativeHelper::pruneDerivativeOperations(array($this->_child[0]->getId()), array('deleteme'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $derivative) = $derivative->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('filler|1,2,3;filler|1', $derivative->getDerivativeOperations());
+    }
 }
 
 /**
