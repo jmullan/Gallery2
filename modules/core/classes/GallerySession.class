@@ -215,8 +215,8 @@ class GallerySession_core {
 	}
 
 	$urlGenerator = $gallery->getUrlGenerator();
-	$path = $urlGenerator->getCurrentUrlDir();
-	$cookie  .= '; path=' . $path;
+	$urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
+	$cookie  .= '; path=' . $urlComponents['path'];
 
 	/*
 	 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
