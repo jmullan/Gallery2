@@ -839,7 +839,7 @@ class GalleryPermissionHelper_advanced {
 
 	$storage =& $gallery->getStorage();
 	list ($ret, $andNotPermission) = $storage->getFunctionSql('BITAND',
-	    array('[GalleryPermissionMap::permission]', '~?'));
+	    array('[GalleryPermissionMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -853,7 +853,7 @@ class GalleryPermissionHelper_advanced {
            [GalleryPermissionMap::permission] != ?
         ';
 	$data = array();
-	$data[] = $storage->convertIntToBits($removeBits);
+	$data[] = $storage->convertIntToBits(0x7FFFFFFF - $removeBits);
 	$data[] = $storage->convertIntToBits($allBits);
 
 	list ($results, $searchResults) = $gallery->search($query, $data);
