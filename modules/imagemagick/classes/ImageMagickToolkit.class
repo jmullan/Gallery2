@@ -83,6 +83,8 @@ class ImageMagickToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
+	static $convertOps = array('thumbnail', 'scale', 'resize', 'rotate',
+				   'crop', 'convert-to-image/jpeg', 'select-page');
 
 	/* Check context for any operations that have been queued up.. */
 	if (isset($context['imagemagick.transform'])) {
@@ -94,29 +96,43 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $transform = array();
 	    $outputMimeType = $mimeType;
 	}
-	switch($operationName) {
-	case 'thumbnail':
-	    $cmd = 'convert';
-	    /* Don't enlarge images for a thumbnail */
+	if (isset($context['width'])) {
+	    $width = $context['width'];
+	    $height = $context['height'];
+	}
+
+	/* Use context look-ahead to see if we can queue up parameters to use later.. */
+	$queueIt = in_array($operationName, $convertOps)
+	    && isset($context['next.toolkit']) && $context['next.toolkit'] == $this
+	    && in_array($context['next.operation'], $convertOps);
+
+	if (!isset($width) &&
+		($queueIt || in_array($operationName, array('thumbnail', 'crop', 'composite')))) {
 	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
+	}
+
+	switch($operationName) {
+	case 'thumbnail':
+	    $cmd = 'convert';
+	    /* Strip metadata to make derivative files smaller.. */
+	    list ($ret, $removeMetaDataSwitch) =
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!empty($removeMetaDataSwitch)) {
+		$transform = array_merge($transform, explode('|', $removeMetaDataSwitch));
+	    }
+	    /* Don't enlarge images for a thumbnail */
 	    if ($width > $parameters[0] || $height > $parameters[0]) {
-		/* Strip metadata to make derivative files smaller.. */
-		list ($ret, $removeMetaDataSwitch) =
-		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-		if (empty($removeMetaDataSwitch)) {
-		    $removeMetaDataSwitch = array();
-		} else {
-		    $removeMetaDataSwitch = split('\|', $removeMetaDataSwitch);
-		}
-		$transform = array_merge($transform, $removeMetaDataSwitch, array(
+		$transform = array_merge($transform, array(
 					'-size', $parameters[0] . 'x' . $parameters[0],
 					'-geometry', $parameters[0] . 'x' . $parameters[0]));
+		list ($width, $height) =
+		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
 	    }
 	    break;
 
@@ -125,6 +141,10 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $transform = array_merge($transform,
 			       array('-size', $parameters[0] . 'x' . $parameters[0],
 				     '-geometry', $parameters[0] . 'x' . $parameters[0]));
+	    if (isset($width)) {
+		list ($width, $height) =
+		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
+	    }
 	    break;
 
 	case 'resize':
@@ -132,28 +152,33 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $transform = array_merge($transform,
 			       array('-size', $parameters[0] . 'x' . $parameters[1],
 				     '-geometry', $parameters[0] . 'x' . $parameters[1]));
+	    if (isset($width)) {
+		list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
+					 $width, $height, $parameters[0], $parameters[1]);
+	    }
 	    break;
 
 	case 'rotate':
 	    $cmd = 'convert';
 	    $transform = array_merge($transform, array('-rotate', (string)$parameters[0]));
+	    if (isset($width) && ($parameters[0] == 90 || $parameters[0] == -90)) {
+		$tmp = $width;
+		$width = $height;
+		$height = $tmp;
+	    }
 	    break;
 
 	case 'crop':
 	    /* source dimensions are required to convert from percentages to pixels  */
-	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
 	    $pixelX = round($parameters[0] / 100 * $width);
 	    $pixelY = round($parameters[1] / 100 * $height);
-	    $pixelWidth = round($parameters[2] / 100 * $width);
-	    $pixelHeight = round($parameters[3] / 100 * $height);
+	    $width = round($parameters[2] / 100 * $width);
+	    $height = round($parameters[3] / 100 * $height);
 
 	    $cmd = 'convert';
 	    $transform = array_merge($transform,
 			       array('-crop', sprintf('%sx%s+%s+%s',
-					      $pixelWidth, $pixelHeight, $pixelX, $pixelY)));
+					      $width, $height, $pixelX, $pixelY)));
 	    break;
 
 	case 'convert-to-image/jpeg':
@@ -182,11 +207,6 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $compositeAlignmentType = $parameters[4];
 	    $compositeAlignX = $parameters[5];
 	    $compositeAlignY = $parameters[6];
-
-	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensions($mimeType, $sourceFilename);
-	    if ($ret->isError()) {
-	        return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
 
 	    switch ($compositeAlignmentType) {
 	    case 'top-left': // Top - Left
@@ -245,14 +265,14 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 
 	    // Convert from percentages to pixels
-	    $compositeAlignX = (int)($compositeAlignX / 100 * $sourceWidth);
-	    $compositeAlignY = (int)($compositeAlignY / 100 * $sourceHeight);
+	    $compositeAlignX = (int)($compositeAlignX / 100 * $width);
+	    $compositeAlignY = (int)($compositeAlignY / 100 * $height);
 
 	    // Clip to our bounding box
 	    $compositeAlignX = max(0, $compositeAlignX);
-	    $compositeAlignX = min($compositeAlignX, $sourceWidth - $compositeWidth);
+	    $compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
 	    $compositeAlignY = max(0, $compositeAlignY);
-	    $compositeAlignY = min($compositeAlignY, $sourceHeight - $compositeHeight);
+	    $compositeAlignY = min($compositeAlignY, $height - $compositeHeight);
 
 	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $transform = array('-geometry', '+' . $compositeAlignX . '+' . $compositeAlignY,
@@ -264,12 +284,12 @@ class ImageMagickToolkit extends GalleryToolkit {
 					      "$operationName $mimeType"), null, null);
 	}
 
-	/* Use context look-ahead to see if we can queue up these parameters
-	 * to include in a later operation..
-	 */
-	if ($cmd == 'convert' && isset($context['next.toolkit']) && $context['next.toolkit'] == $this
-		&& in_array($context['next.operation'], array('thumbnail', 'scale', 'resize',
-				     'rotate', 'crop', 'convert-to-image/jpeg', 'select-page'))) {
+	if (isset($width)) {
+	    $context['width'] = $width;
+	    $context['height'] = $height;
+	}
+
+	if ($queueIt) {
 	    $context['imagemagick.transform'] = $transform;
 	    $context['imagemagick.mime'] = $outputMimeType;
 

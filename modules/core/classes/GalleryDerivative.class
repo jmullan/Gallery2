@@ -308,9 +308,14 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$context = array();
+	if (GalleryUtilities::isA($source, 'GalleryPhotoItem')) {
+	    $context['width'] = $source->getWidth();
+	    $context['height'] = $source->getHeight();
+	}
+
 	/* Now apply our derivative commands to create the cache file */
 	$mimeType = $source->getMimeType();
-	$context = array();
 	for ($i = 0; $i < count($operations); $i++) {
 	    if (strpos($operations[$i], '|') === false) {
 		list($operationName, $operationArgs) = array($operations[$i], null);

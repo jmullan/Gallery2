@@ -68,6 +68,10 @@ class GalleryToolkit {
      *
      * Perform the wanted operation on sourceFilename and write the results in
      * destFilename.
+     * Note: Rules for 'width' and 'height' keys in $context..
+     *   If w/h are present in context and toolkit performs an operation that
+     *   changes the w/h then it must update the context with the new values.
+     *   (This is optional if the context previously had no w/h values)
      *
      * @access public
      * @param string a mime type

@@ -319,6 +319,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    $context['next.toolkit'] = null;
 	    $context['next.operation'] = null;
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => 329, 'height' => 250,
 				      'imagemagick.transform' => array('-crop', '329x250+158+113'),
 				      'imagemagick.mime' => 'image/png'),
 				$context, 'context after crop ' . $this->_envName());
@@ -337,7 +338,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		array('-size', '150x150', '-geometry', '150x150',
 		      'output[640x480].png', 'output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
-	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null),
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => 150, 'height' => 113),
 				$context, 'context at end ' . $this->_envName());
 
 	    unset($this->_files['output.png']);
@@ -352,39 +354,59 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	foreach ($this->_environments as $environment) {
 	    $this->_setEnvironment($environment);
-	    $context = array('next.toolkit' => $this->_toolkit, 'next.operation' => 'thumbnail');
+	    $context = array('next.toolkit' => $this->_toolkit, 'next.operation' => 'rotate',
+			     'width' => 640, 'height' => 480);
 
 	    list ($ret, $outputMimeType, $context) =
 		$this->_toolkit->performOperation('image/png', 'crop',
-						  'test[640x480].png', 'output[640x480].png',
-						  array('24.667', '23.5', '51.375', '28'),
+						  'test.png', 'output.png',
+						  array('24.667', '23.5', '21.375', '28'),
 						  $context);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
-	    $context['next.toolkit'] = null;
-	    $context['next.operation'] = null;
-	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
-				      'imagemagick.transform' => array('-crop', '329x134+158+113'),
+	    $this->assertEquals(array('next.toolkit' => $this->_toolkit, 'next.operation' => 'rotate',
+				      'width' => 137, 'height' => 134,
+				      'imagemagick.transform' => array('-crop', '137x134+158+113'),
 				      'imagemagick.mime' => 'image/png'),
 				$context, 'context after crop ' . $this->_envName());
+	    $context['next.operation'] = 'thumbnail';
+
+	    list ($ret, $outputMimeType, $context) =
+		$this->_toolkit->performOperation('image/png', 'rotate',
+						  'output.png', 'output.png',
+						  array('90'), $context);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $context['next.toolkit'] = null;
+	    $context['next.operation'] = null;
+	    $this->assertEquals(array(), $this->_files, 'still no exec ' . $this->_envName());
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => 134, 'height' => 137,
+				      'imagemagick.transform' =>
+					    array('-crop', '137x134+158+113', '-rotate', '90'),
+				      'imagemagick.mime' => 'image/png'),
+				$context, 'context after rotate ' . $this->_envName());
 
 	    list ($ret, $outputMimeType, $context) =
 		$this->_toolkit->performOperation('image/png', 'thumbnail',
-						  'output[640x480].png', 'output.png',
+						  'output.png', 'output.png',
 						  array('150'), $context);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $this->assertEquals(array_merge(
-		array('-quality', '75', '-crop', '329x134+158+113'),
+		array('-quality', '75', '-crop', '137x134+158+113', '-rotate', '90'),
 		$environment['removeMetaDataSwitch'],
-		array('output[640x480].png', 'output.png')),
+		array('output.png', 'output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
-	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null),
+	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
+				      'width' => 134, 'height' => 137),
 				$context, 'context at end ' . $this->_envName());
 
 	    unset($this->_files['output.png']);
