@@ -66,7 +66,7 @@
 	  {gallery->text text="Title"}
 	{/gallery->title}
 	{gallery->description}
-	  {gallery->text text="The title of this item.  Do not use HTML."}
+	  {gallery->text text="The title of this item."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->input type="text" size="40" name="form.title"}{$form.title}{/gallery->input}
@@ -78,7 +78,7 @@
 	  {gallery->text text="Summary"}
 	{/gallery->title}
 	{gallery->description}
-	  {gallery->text text="The summary of this item.  Do not use HTML."}
+	  {gallery->text text="The summary of this item."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->input type="text" size="40" name="form.summary"}{$form.summary}{/gallery->input}
@@ -90,7 +90,7 @@
 	  {gallery->text text="Keywords"}
 	{/gallery->title}
 	{gallery->description}
-	  {gallery->text text="Keywords are not visible, but are searchable. Do not use HTML."}
+	  {gallery->text text="Keywords are not visible, but are searchable."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->textarea rows="2" cols="60" name="form.keywords"}{$form.keywords}{/gallery->textarea}
@@ -102,7 +102,7 @@
 	  {gallery->text text="Description"}
 	{/gallery->title}
 	{gallery->description}
-	  {gallery->text text="This is the long description of the item.  HTML is ok."}
+	  {gallery->text text="This is the long description of the item."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->textarea rows="4" cols="60" name="form.description"}{$form.description}{/gallery->textarea}

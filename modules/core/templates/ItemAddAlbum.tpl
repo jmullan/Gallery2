@@ -50,7 +50,7 @@
 	{/gallery->title}
 
 	{gallery->description}
-	  {gallery->text text="This is the album title.  Do not use HTML."}
+	  {gallery->text text="This is the album title."}
 	{/gallery->description}
 
 	{gallery->body}
@@ -64,7 +64,7 @@
 	{/gallery->title}
 
 	{gallery->description}
-	  {gallery->text text="This is the album summary.  Do not use HTML"}
+	  {gallery->text text="This is the album summary."}
 	{/gallery->description}
 
 	{gallery->body}
@@ -78,7 +78,7 @@
 	{/gallery->title}
 
 	{gallery->description}
-	  {gallery->text text="Keywords are not visible, but are searchable. Do not use HTML."}
+	  {gallery->text text="Keywords are not visible, but are searchable."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->textarea rows=2 cols=60 name="form.keywords"}{$form.keywords}{/gallery->textarea}
@@ -91,7 +91,7 @@
 	{/gallery->title}
 
 	{gallery->description}
-	  {gallery->text text="This is the long description of the album.  HTML is ok."}
+	  {gallery->text text="This is the long description of the album."}
 	{/gallery->description}
 	{gallery->body}
 	  {gallery->textarea rows=4 cols=60 name="form.description"}{$form.description}{/gallery->textarea}

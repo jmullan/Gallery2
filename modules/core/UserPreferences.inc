@@ -121,7 +121,7 @@ class UserPreferencesController extends GalleryController {
 	}
 
 	if (!empty($redirect)) {
-	    $results['return'] = 'true';
+	    $results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:UserAdmin';

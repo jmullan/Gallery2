@@ -79,14 +79,15 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testMaliciousBrowserInput1() {
 	GalleryUtilities::putRequestVariable('test_a', '<a href="javascript:alert(\'hi\')">yo</a>');
-	$this->assertEquals('<a href=":alert(\'hi\')">yo</a>', GalleryUtilities::getRequestVariables('test_a'));
+	$this->assertEquals('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;',
+			    GalleryUtilities::getRequestVariables('test_a'));
     }
 
     function testArrayInput() {
 	GalleryUtilities::putRequestVariable('test_a', array('goodvalue' => 'foo bar',
 							     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
 	$this->assertEquals(array('goodvalue' => 'foo bar',
-				  'badvalue' => '<a href=":alert(\'hi\')">yo</a>'),
+				  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
 			    GalleryUtilities::getRequestVariables('test_a'));
     }
     
@@ -125,8 +126,8 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testSanitizeInputValue() {
 	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
-	$this->assertEquals('blah test test  <b> foo </b> ',
-			    GalleryUtilities::sanitizeInputValue($rawInput));
+	GalleryUtilities::sanitizeInputValues($rawInput);
+	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
 	
     }
     

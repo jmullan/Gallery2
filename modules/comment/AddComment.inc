@@ -55,14 +55,14 @@ class AddCommentController extends GalleryController {
 	$error = array();
 	if (isset($form['action']['add'])) {
 	    
-	    if (empty($form['subject'])) {
-		$error[] = 'form.error.comment.missing';
-	    }
-	    
 	    if (empty($form['comment'])) {
 		$error[] = 'form.error.subject.missing';
 	    }
 
+	    if (empty($form['subject'])) {
+		$error[] = 'form.error.comment.missing';
+	    }
+	    
 	    if (empty($error)) {
 		/* Add the comment */
 		list ($ret, $comment) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');

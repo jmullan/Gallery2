@@ -100,7 +100,7 @@ class TranslatorTest extends GalleryTestCase {
 	$domain = 'modules_core';
 
 	$translator = new GalleryTranslator();
-	$translator->init('de_DE');
+	$translator->init('es_AR');
 
 	/* Singular text data */
 	list ($ret, $results) = $translator->translate($domain, array('text' => 'Description'));
@@ -108,39 +108,39 @@ class TranslatorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($gallery->getConfig('function.exists.dgettext')) {
-	    $this->assertEquals('Beschreibung', $results);
+	    $this->assertEquals('Descripci&oacute;n', $results);
 	} else {
 	    $this->assertEquals('Description', $results);
 	}
 
 	/* Plural text data */
 	list ($ret, $results) = $translator->translate($domain,
-						       array('one' => 'There is %d user in the system.',
-							     'many' => 'There are %d total users in the system.',
+						       array('one' => '%d user matches your filter',
+							     'many' => '%d users match your filter',
 							     'count' => 1,
 							     'arg1' => 1));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($gallery->getConfig('function.exists.dngettext')) {
-	    $this->assertEquals('Es existiert 1 Benutzer im System.', $results);
+	    $this->assertEquals('1 usuario coincide con su filtro', $results);
 	} else {
-	    $this->assertEquals('There is 1 user in the system.', $results);
+	    $this->assertEquals('1 user matches your filter', $results);
 	}
 	
 	/* Plural text data */
 	list ($ret, $results) = $translator->translate($domain,
-						       array('one' => 'There is %d user in the system.',
-							     'many' => 'There are %d total users in the system.',
+						       array('one' => '%d user matches your filter',
+							     'many' => '%d users match your filter',
 							     'count' => 2,
 							     'arg1' => 2));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	if ($gallery->getConfig('function.exists.dngettext')) {
-	    $this->assertEquals('Es existieren 2 Benutzer im System.', $results);
+	    $this->assertEquals('2 usuarios coinciden con su filtro', $results);
 	} else {
-	    $this->assertEquals('There are 2 total users in the system.', $results);
+	    $this->assertEquals('2 usarios coinciden con su filtro', $results);
 	}
     }
 }

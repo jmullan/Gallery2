@@ -306,16 +306,7 @@ class GalleryUtilities {
 	$key = strtr(GALLERY_FORM_VARIABLE_PREFIX . $key, '.', '_');
 
 	/* Simulate the damage caused by magic_quotes */
-	if (get_magic_quotes_gpc()) {
-	    if (is_array($value)) {
-		/* XXX: this only handles arrays 1 level deep */
-		foreach ($value as $subKey => $subValue) {
-		    $value[$subKey] = addslashes($subValue);
-		}
-	    } else {
-		$value = addslashes($value);
-	    }
-	}
+	GalleryUtilities::unsanitizeInputValues($value);
 	$HTTP_GET_VARS[$key] = $value;
     }
 
@@ -762,22 +753,42 @@ class GalleryUtilities {
      * 1.  Convert UTF-8 values to Unicode entities
      * 2.  Sanitize any input values to remove dangerous values
      */
-    function sanitizeInputValues(&$values) {
-	foreach (array_keys($values) as $key) {
-	    if (is_array($values[$key])) {
-		GalleryUtilities::sanitizeInputValues($values[$key]);
-	    } else {
-		/* Convert UTF-8 to Unicode entities */
-		$values[$key] = GalleryUtilities::utf8ToUnicodeEntities($values[$key]);
+    function sanitizeInputValues(&$value) {
+	if (is_array($value)) {
+	    foreach (array_keys($value) as $key) {
+		GalleryUtilities::sanitizeInputValues($value[$key]);
+	    } 
+	} else {
+	    /* Convert UTF-8 to Unicode entities */
+	    $value = GalleryUtilities::utf8ToUnicodeEntities($value);
 
-		/* Undo the damage caused by magic_quotes */
-		if (get_magic_quotes_gpc()) {
-		    $values[$key] = stripslashes($values[$key]);
-		}
-
-		/* Sanitize dangerous html entities */
-		$values[$key] = htmlentities($values[$key]);
+	    /* Undo the damage caused by magic_quotes */
+	    if (get_magic_quotes_gpc()) {
+		$value = stripslashes($value);
 	    }
+
+	    /* Sanitize dangerous html entities */
+	    $value = htmlentities($value, ENT_QUOTES);
+	}
+    }
+
+    /**
+     * Undo the preprocessing done in sanitizeInputValues (useful when we
+     * put values back into the request)
+     */
+    function unsanitizeInputValues(&$value) {
+	if (is_array($value)) {
+	    foreach (array_keys($value) as $key) {
+		GalleryUtilities::unsanitizeInputValues($value[$key]);
+	    }
+	} else {
+	    /* Redo the damage caused by magic_quotes */
+	    if (get_magic_quotes_gpc()) {
+		$value = addslashes($value);
+	    }
+	    
+	    /* Sanitize dangerous html entities */
+	    $value = html_entity_decode($value, ENT_QUOTES);
 	}
     }
 
