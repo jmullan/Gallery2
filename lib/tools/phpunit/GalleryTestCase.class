@@ -96,8 +96,26 @@ class GalleryTestCase extends TestCase {
 	
 	parent::setUp();
 
-	/* Clear out any request vars, but preserve the session id */
-	$this->_saveVars = array($_GET, $_POST, $_FILES, $_SERVER, $_ENV);
+	switch (strtolower(get_class($gallery->getPlatform()))) {
+	case 'unixplatform':
+	case 'winntplatform':
+	    break;
+
+	default:
+	    $this->assert(false, 'Unknown platform in GalleryTestCase::setUp -- did you ' .
+			  ' change the platform before calling parent::setUp in your test case?');
+	}
+
+	/* Save useful vars so that tests don't have to worry about overwriting them */
+	$this->_saveVars[] = $_GET;
+	$this->_saveVars[] = $_POST;
+	$this->_saveVars[] = $_FILES;
+	$this->_saveVars[] = $_SERVER;
+	$this->_saveVars[] = $_ENV;
+	$this->_saveVars[] = $gallery->getPlatform();
+	$this->_saveVars[] = $gallery->getActiveUser();
+	$this->_saveVars[] = $gallery->_config;
+    
 	$_GET = array();
 	$_POST = array();
 	$_FILES = array();
@@ -114,7 +132,9 @@ class GalleryTestCase extends TestCase {
 	$gallery->guaranteeTimeLimit(30);
 
 	/* Start with a clean slate*/
-	$gallery->reset();
+	GalleryDataCache::reset();
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	$eventListeners = array();
 
 	$storage =& $gallery->getStorage();
 	$ret = $storage->beginTransaction();
@@ -126,10 +146,6 @@ class GalleryTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	/* Save our user id */
-	$this->_saveUser = $gallery->getActiveUser();
-	$this->_saveConfig = $gallery->_config;
 
 	$gallery->clearDebugBuffer();
     }
@@ -151,12 +167,15 @@ class GalleryTestCase extends TestCase {
 	    $this->fail($ret->getAsText());
 	}
 
-	/* Restore form vars */
-	list ($_GET, $_POST, $_FILES, $_SERVER, $_ENV) = $this->_saveVars;
-
-	/* Restore user id */
-	$gallery->setActiveUser($this->_saveUser);
-	$gallery->_config = $this->_saveConfig;
+	/* Restore saved vars */
+	$_GET = array_shift($this->_saveVars);
+	$_POST = array_shift($this->_saveVars);
+	$_FILES = array_shift($this->_saveVars);
+	$_SERVER = array_shift($this->_saveVars);
+	$_ENV = array_shift($this->_saveVars);
+	$gallery->setPlatform(array_shift($this->_saveVars));
+	$gallery->setActiveUser(array_shift($this->_saveVars));
+	$gallery->_config = array_shift($this->_saveVars);
 
 	parent::tearDown();
 

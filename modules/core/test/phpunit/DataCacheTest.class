@@ -42,12 +42,10 @@ class DataCacheTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	$this->_savePlatform = $gallery->getPlatform();
     }
 
     function tearDown() {
 	global $gallery;
-	$gallery->setPlatform($this->_savePlatform);
 	parent::tearDown();
     }
 

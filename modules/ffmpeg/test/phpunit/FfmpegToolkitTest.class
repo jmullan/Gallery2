@@ -52,8 +52,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 	
-	/* Save the platform */
-	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new FfmpegToolkitTestPlatform();
 	$ret = $gallery->_platform->init();
 	if ($ret->isError()) {
@@ -71,9 +69,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	/* Restore the platform */
-	$gallery->_platform = $this->_savePlatform;
-
 	parent::tearDown();
     }
 

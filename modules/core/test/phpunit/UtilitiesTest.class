@@ -41,15 +41,12 @@ class UtilitiesTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	$this->_savePlatform = $gallery->getPlatform();
-	$this->_saveConfig = $gallery->_config;
 
 	$gallery->_platform = new UtilitiesTestPlatform($this);
     }
 
     function tearDown() {
 	parent::tearDown();
-	$gallery->_config = $this->_saveConfig;
     }
 
     function testGetFileNameComponents() {

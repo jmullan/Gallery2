@@ -55,15 +55,12 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_platform = $gallery->getPlatform();
-	$gallery->_platform = new AdminImageMagickControllerTestPlatform($this->_platform);
+	$gallery->_platform = new AdminImageMagickControllerTestPlatform($gallery->getPlatform());
     }
 
     function tearDown() {
 	global $gallery;
 
-	$gallery->_platform = $this->_platform;
-	
 	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $this->_saveParameters['path']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();

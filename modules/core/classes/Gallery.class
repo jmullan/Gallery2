@@ -87,14 +87,6 @@ class Gallery {
     var $_debugBuffer;
 
     /**
-     * A registry of event listeners
-     *
-     * @var array $_eventListeners;
-     * @access private
-     */
-    var $_eventListeners;
-
-    /**
      * An instance of the GalleryPlatform class
      *
      * @var object GalleryPlatform $_platform
@@ -170,21 +162,10 @@ class Gallery {
      *
      */
     function Gallery() {
-	$this->reset();
 	$this->_activeUser = null;
 	    
 	/* Set up a shutdown function to release any hanging locks. */
 	register_shutdown_function(array(&$this, '_shutdown'));
-    }
-
-    /**
-     * Reset persistent information
-     *
-     * This should only be called by test cases.
-     */
-    function reset() {
-	$this->_eventListeners = array();
-	GalleryDataCache::reset();
     }
 
     /**

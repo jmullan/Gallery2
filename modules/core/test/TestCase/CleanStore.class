@@ -28,11 +28,11 @@ class CleanStoreTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/*
-	 * Reset the Gallery instance.  This will basically make Gallery
-	 * unusable until InitializeGallery is called.
-	 */
-	$gallery->reset();
+	/* Reset our caches */
+	GalleryDataCache::reset();
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEventHelper_simple.class');
+	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
+	$eventListeners = array();
 	
 	return GalleryStatus::success();
     }

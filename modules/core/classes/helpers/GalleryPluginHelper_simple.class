@@ -223,7 +223,7 @@ class GalleryPluginHelper_simple {
      */
     function fetchPluginStatus($pluginType) {
 	global $gallery;
-	
+
 	$cacheKey = "GalleryPluginHelper::fetchPluginStatus($pluginType)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    list ($ret, $plugins) = GalleryPluginHelper_simple::fetchPluginList($pluginType);
@@ -245,7 +245,7 @@ class GalleryPluginHelper_simple {
 		$pluginFile = 'layout.inc';
 		break;
 	    }
-		
+	    
 	    if ($dir = $platform->opendir($pluginsDir)) {
 		while ($pluginId = $platform->readdir($dir)) {
 		    if ($pluginId{0} == '.') {

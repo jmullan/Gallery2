@@ -216,6 +216,7 @@ class GalleryLayout {
      */
     function deactivate() {
 	global $gallery;
+
 	$ret = GalleryCoreApi::deactivatePlugin('layout', $this->getId());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

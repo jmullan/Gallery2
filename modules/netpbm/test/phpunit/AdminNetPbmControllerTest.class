@@ -58,15 +58,12 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	    }
 	}
 
-	$this->_platform = $gallery->getPlatform();
-	$gallery->_platform = new AdminNetPbmControllerTestPlatform($this->_platform);
+	$gallery->_platform = new AdminNetPbmControllerTestPlatform($gallery->getPlatform());
     }
 
     function tearDown() {
 	global $gallery;
 	parent::tearDown();
-
-	$gallery->_platform = $this->_platform;
 
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);

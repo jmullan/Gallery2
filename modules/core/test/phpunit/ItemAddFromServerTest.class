@@ -52,8 +52,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new ItemAddFromServerTestPlatform($this->_savePlatform);
+	$gallery->_platform = new ItemAddFromServerTestPlatform($gallery->getPlatform());
     }
 
     function tearDown() {
@@ -69,8 +68,6 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->_platform = $this->_savePlatform;
-	
 	parent::tearDown();
     }
 

@@ -53,8 +53,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	parent::setUp();
 	
 	/* Save the platform */
-	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new NetPbmToolkitTestPlatform($this->_savePlatform);
+	$gallery->_platform = new NetPbmToolkitTestPlatform($gallery->getPlatform());
 	$ret = $gallery->_platform->init();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -90,9 +89,6 @@ class NetPbmToolkitTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	/* Restore the platform */
-	$gallery->_platform = $this->_savePlatform;
-
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
 	    if ($ret->isError()) {

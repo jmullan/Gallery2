@@ -61,15 +61,12 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new ItemAddFromWebTestPlatform($this);
     }
 
     function tearDown() {
 	global $gallery;
 
-	$gallery->_platform = $this->_savePlatform;
-	
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -287,6 +284,11 @@ class ItemAddFromWebTestPlatform  {
 	    return 1;
 	}
 
+	// Pass lock requests
+	if (preg_match("|\blocks\b|", $filename)) {
+	    return unlink($filename);
+	}
+	
 	print "Attempted to unlink bogus file: $filename";
 	return 0;
     }

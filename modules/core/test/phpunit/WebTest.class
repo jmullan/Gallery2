@@ -44,7 +44,6 @@ class WebTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	$this->_savePlatform = $gallery->getPlatform();
 	$this->_saveConfig = $gallery->_config;
 
 	$gallery->_platform = new WebTestPlatform($this);
@@ -55,7 +54,6 @@ class WebTest extends GalleryTestCase {
      */
     function tearDown() {
 	parent::tearDown();
-	$gallery->_platform = $this->_savePlatform;
 	$gallery->_config = $this->_saveConfig;
     }
 

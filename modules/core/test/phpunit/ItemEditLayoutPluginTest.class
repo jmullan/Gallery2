@@ -65,8 +65,7 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-        $this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new AdminLayoutsTestPlatform();
+	$gallery->_platform = new ItemEditLayoutTestPlatform();
 
 	$this->_preferred = null;
 
@@ -77,15 +76,12 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
     function tearDown() {
 	global $gallery;
 
-	/* Restore the platform */
-	$gallery->_platform = $this->_savePlatform;
+	parent::tearDown();
 	
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
-	parent::tearDown();
     }
 
     function testUndo() {
@@ -275,7 +271,21 @@ class ItemEditLayoutTestPlatform {
 	}
     }
 
+    function fopen($filename, $modes) {
+	// Pass lock requests
+	if (preg_match("|\blocks\b|", $filename)) {
+	    return fopen($filename, $modes);
+	}
+	
+	print "Unexpected fopen($filename, $modes)";
+	return null;
+    }
+
     function closedir($path) {
+    }
+
+    function realpath($path) {
+	return realpath($path);
     }
 
     function file_exists($path) {

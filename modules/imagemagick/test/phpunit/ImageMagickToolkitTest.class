@@ -52,9 +52,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 	
-	/* Save the platform */
-	$this->_savePlatform = $gallery->getPlatform();
-	$gallery->_platform = new ImageMagickToolkitTestPlatform($this->_savePlatform);
+	$gallery->_platform = new ImageMagickToolkitTestPlatform($gallery->getPlatform());
 
 	$this->_save = array();
 	foreach (array('path', 'jpegQuality') as $key) {
@@ -84,9 +82,6 @@ class ImageMagickToolkitTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	
-	/* Restore the platform */
-	$gallery->_platform = $this->_savePlatform;
-
 	foreach ($this->_save as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
 	    if ($ret->isError()) {
