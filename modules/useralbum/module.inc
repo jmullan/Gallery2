@@ -30,17 +30,17 @@
  *
  * @package UserAlbum
  */
-class UserAlbumModule extends GalleryModule {
+class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 
     function UserAlbumModule() {
 	global $gallery;
 	$this->setId('useralbum');
 	$this->setName('User Albums');
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -96,8 +96,7 @@ class UserAlbumModule extends GalleryModule {
      * Event handler for GalleryEntity::save event
      * Create new top level album with appropriate permissions when a GalleryUser is created
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	switch ($event->getEventName()) {
@@ -108,23 +107,23 @@ class UserAlbumModule extends GalleryModule {
 
 		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		// Create top level album..
 		list ($ret, $album) = GalleryCoreApi::createAlbum(
 		    $module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		// Set owner..
@@ -132,7 +131,7 @@ class UserAlbumModule extends GalleryModule {
 		$ret = $album->save();
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$albumId = $album->getId();
 
@@ -140,17 +139,17 @@ class UserAlbumModule extends GalleryModule {
 		$ret = GalleryCoreApi::removeItemPermissions($albumId);
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
 		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		$viewPermissions = $module['fullSize'] ? array('core.viewAll')
@@ -169,21 +168,21 @@ class UserAlbumModule extends GalleryModule {
 			$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
 			if ($ret->isError()) {
 			    GalleryCoreApi::releaseLocks($lockId);
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    }
 		}
 
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    break;
 
 	case 'GalleryEntity::delete':
-	    /* 
-             * Reset the targetAlbum to root if the target is ever deleted, 
+	    /*
+             * Reset the targetAlbum to root if the target is ever deleted,
 	     * to prevent errors when adding new users
              */
 	    $param = $event->getEntity();
@@ -195,24 +194,25 @@ class UserAlbumModule extends GalleryModule {
 
 	    list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-    
+
 	    if ($param->getId() == $module['targetLocation']) {
 		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'targetLocation', $core['id.rootAlbum']);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum',
+							  'targetLocation', $core['id.rootAlbum']);
                 if ($ret->isError()) {
                     return array($ret->wrap(__FILE__, __LINE__), null);
                 }
 	    }
 	    break;
-			
+
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

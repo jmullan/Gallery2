@@ -44,9 +44,8 @@ class PanoramaModule extends GalleryModule {
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews|' .
 			    'getItemLinks');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -87,7 +86,7 @@ class PanoramaModule extends GalleryModule {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 

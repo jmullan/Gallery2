@@ -41,7 +41,7 @@ class RearrangeModule extends GalleryModule {
 	$this->setVersion('0.5.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 

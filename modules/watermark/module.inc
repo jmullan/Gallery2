@@ -32,7 +32,7 @@
  *
  * @package Watermark
  */
-class WatermarkModule extends GalleryModule {
+class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
     function WatermarkModule() {
 	global $gallery;
@@ -40,11 +40,11 @@ class WatermarkModule extends GalleryModule {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|registerEventListeners|' .
 			    'getSiteAdminViews|getUserAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -128,8 +128,7 @@ class WatermarkModule extends GalleryModule {
      * Handler for GalleryEntity::delete event.  Get rid of any watermarks
      * for users that are deleted.
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	if ($event->getEventName() == 'GalleryEntity::delete') {
@@ -139,18 +138,18 @@ class WatermarkModule extends GalleryModule {
 		list ($ret, $watermarkIds) =
 		    WatermarkHelper::fetchWatermarkIdsByOwnerId($entity->getId());
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		foreach ($watermarkIds as $id) {
 		    list ($ret) = WatermarkHelper::deleteWatermarkImageById($id, true);
 		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

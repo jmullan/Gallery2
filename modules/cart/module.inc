@@ -30,7 +30,7 @@
  *
  * @package Cart
  */
-class CartModule extends GalleryModule {
+class CartModule extends GalleryModule /* and GalleryEventListener */ {
 
     function CartModule() {
 	global $gallery;
@@ -38,10 +38,10 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName('Cart');
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.8.4');
+	$this->setVersion('0.8.5');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks|loadSystemContent|registerEventListeners');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -129,8 +129,7 @@ class CartModule extends GalleryModule {
      * Event handler for GalleryEntity::delete event.
      * Remove deleted item from all carts.
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	$entity = $event->getEntity();
@@ -138,10 +137,10 @@ class CartModule extends GalleryModule {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CartHelper.class');
 	    $ret = CartHelper::removeIdFromAllCarts($entity->getId());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

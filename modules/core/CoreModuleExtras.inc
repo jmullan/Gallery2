@@ -166,7 +166,7 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    $currentVersion = '0.8.6';
+	    $currentVersion = '0.8.7';
 	    break;
 
 	case '0.8':
@@ -222,7 +222,6 @@ class CoreModuleExtras {
 	    $currentVersion = '0.8.5';
 	    /* fall through */
 
-	    break;
 	case '0.8.5':
 	    /*
 	     * Copy the information from viewedSinceTimestamp to originationTimestamp
@@ -241,6 +240,10 @@ class CoreModuleExtras {
 	    }
 
 	    $currentVersion = '0.8.6';
+	    /* fall through */
+
+	case '0.8.6':
+	    $currentVersion = '0.8.7';
 	    /* fall through */
 
 	    break;

@@ -65,8 +65,8 @@ class GalleryUserGroupHelper_medium {
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => null));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => null));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -96,8 +96,8 @@ class GalleryUserGroupHelper_medium {
 	GalleryDataCache::remove("GalleryUserGroupHelper::isUserInGroup($userId,$groupId)");
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => null));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => null));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -126,8 +126,8 @@ class GalleryUserGroupHelper_medium {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => null));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => null));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -165,8 +165,8 @@ class GalleryUserGroupHelper_medium {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	    $event->setEntity(array('userId' => array_keys($userData), 'itemId' => null));
-	    $ret = GalleryCoreApi::postEvent($event);
+	    $event->setData(array('userId' => array_keys($userData), 'itemId' => null));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

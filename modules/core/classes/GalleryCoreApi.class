@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 11);
+	return array(1, 0);
     }
 
     /**
@@ -1921,7 +1921,8 @@ class GalleryCoreApi {
      * Deliver an event to anybody listening
      *
      * @param object a GalleryEvent
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array data returned from listeners, if any
      * @static
      */
     function postEvent($event) {

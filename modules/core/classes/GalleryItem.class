@@ -295,7 +295,7 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	$this->setSummary($entity->getSummary());
 	$this->setTitle($entity->getTitle());
 	$this->setOriginationTimestamp($entity->getOriginationTimestamp());
-	
+
 	return GalleryStatus::success();
     }
 
@@ -363,8 +363,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	if ($this->getParentId()) {
 	    $event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	    $event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
-	    $ret = GalleryCoreApi::postEvent($event);
+	    $event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
+	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -388,9 +388,9 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => null, 'itemId' => empty($parentId) ? $this->getParentId()
+	$event->setData(array('userId' => null, 'itemId' => empty($parentId) ? $this->getParentId()
 							   : array($parentId, $this->getParentId())));
-	$ret = GalleryCoreApi::postEvent($event);
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -444,8 +444,8 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	    if ($this->getParentId()) {
 		$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-		$event->setEntity(array('userId' => null, 'itemId' => $this->getParentId()));
-		$ret = GalleryCoreApi::postEvent($event);
+		$event->setData(array('userId' => null, 'itemId' => $this->getParentId()));
+		list ($ret) = GalleryCoreApi::postEvent($event);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}

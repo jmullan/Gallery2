@@ -40,9 +40,8 @@ class ImageFrameModule extends GalleryModule {
 	$this->setVersion('0.8.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -30,7 +30,7 @@
  *
  * @package ThumbPage
  */
-class ThumbPageModule extends GalleryModule {
+class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 
     function ThumbPageModule() {
 	global $gallery;
@@ -38,12 +38,11 @@ class ThumbPageModule extends GalleryModule {
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|registerEventListeners');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -191,8 +190,7 @@ class ThumbPageModule extends GalleryModule {
     /**
      * Handler for Gallery::DeactivatePlugin event.
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	/*
@@ -204,21 +202,21 @@ class ThumbPageModule extends GalleryModule {
 		$data['pluginType'] == 'module' && $data['pluginId'] != 'thumbpage') {
 	    list ($ret, $isActive) = $this->isActive();
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($isActive) {
 		list ($ret, $redirect) = $this->deactivate();
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		// Reactivate may fail if toolkit support no longer found..
 		list ($ret, $redirect) = $this->activate();
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

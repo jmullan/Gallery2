@@ -46,7 +46,7 @@ define('IMAGE_BLOCK_VIEWED', 3);
  * @package ImageBlock
  * @subpackage Classes
  */
-class ImageBlockHelper {
+class ImageBlockHelper /* extends GalleryEventListener */ {
 
     /**
      * Fetch item data for use in image block
@@ -277,8 +277,7 @@ class ImageBlockHelper {
     /**
      * Event handler for Gallery::ViewableTreeChange, GalleryEntity::save, and GalleryEntity::delete
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	switch ($event->getEventName()) {
@@ -292,12 +291,12 @@ class ImageBlockHelper {
 	    if (!empty($param['userId'])) {
 		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    } else {
 		$ret = ImageBlockCacheMap::removeAllMapEntries();
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    break;
@@ -316,7 +315,7 @@ class ImageBlockHelper {
 	    if (ImageBlockHelper::getDisabledFlag($entity->getId())) {
 		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $entity->getId()));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    break;
@@ -340,18 +339,18 @@ class ImageBlockHelper {
 
 	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($parentId);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (!empty($disabledFlag)) {
 		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
 	    break;
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 
     /**

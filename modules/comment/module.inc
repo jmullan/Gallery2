@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -36,7 +36,7 @@ class CommentModule extends GalleryModule {
 
     function CommentModule() {
 	global $gallery;
-	
+
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
@@ -44,7 +44,7 @@ class CommentModule extends GalleryModule {
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('performFactoryRegistrations|getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -53,7 +53,7 @@ class CommentModule extends GalleryModule {
      */
     function performFactoryRegistrations() {
 	$classDir = dirname(__FILE__) . '/classes/';
-	
+
 	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
 						      'GalleryComment',
 						      'GalleryComment',
@@ -71,7 +71,7 @@ class CommentModule extends GalleryModule {
      */
     function upgrade($currentVersion) {
 	global $gallery;
-	
+
 	if (!isset($currentVersion)) {
 	    /* Initial install.  Register our permissions */
 	    $permissions[] = array('add', $gallery->i18n('[comment] Add comments'), 0, array());
@@ -91,7 +91,7 @@ class CommentModule extends GalleryModule {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -101,7 +101,7 @@ class CommentModule extends GalleryModule {
     function isRecommendedDuringInstall() {
 	return true;
     }
-	
+
     /**
      * @see GalleryModule::autoConfigure
      */
@@ -109,7 +109,7 @@ class CommentModule extends GalleryModule {
 	/* We don't require any special configuration */
 	return array(GalleryStatus::success(), true);
     }
-	
+
     /**
      * @see GalleryModule::getItemLinks()
      */
@@ -132,7 +132,7 @@ class CommentModule extends GalleryModule {
 		    array('text' => $this->translate('add comment'),
 			  'params' => $params);
 	    }
-	    
+
 	    if (isset($permissions['comment.view'])) {
 		$params['view'] = 'core:ItemAdmin';
 		$params['subView'] = 'comment:ShowComments';
@@ -195,11 +195,11 @@ class CommentModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (!isset($permissions['comment.view'])) {
 	    return array(GalleryStatus::success(), null);
 	}
-	
+
 	/* XXX: parameterize this */
 	$viewMax = 3;
 
@@ -219,11 +219,11 @@ class CommentModule extends GalleryModule {
 	$commenters = array();
 	if (isset($counts[$item->getId()])) {
 	    $totalComments = $counts[$item->getId()];
-	    
+
 	    for ($i = 0; $i < sizeof($comments); $i++) {
 		/* Get the commenter ids */
 		$commenters[$comments[$i]->getCommenterId()] = 1;
-			
+
 		/* Extract the member data */
 		$comments[$i] = $comments[$i]->getMemberData();
 	    }
@@ -247,7 +247,7 @@ class CommentModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	foreach (array('delete' => 'comment.delete',
 		       'edit' => 'comment.edit',
 		       'view' => 'comment.view')
@@ -265,7 +265,7 @@ class CommentModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), 'modules/comment/templates/CommentItemDetails.tpl');
     }
-    
+
     /**
      * @see GalleryModule::getItemAdminViews();
      */
@@ -287,7 +287,7 @@ class CommentModule extends GalleryModule {
 	        $views[] = array('name' => $this->translate('View Comments'),
 				 'view' => 'comment:ShowComments');
 	}
-	
+
 	return array(GalleryStatus::success(), $views);
     }
 }

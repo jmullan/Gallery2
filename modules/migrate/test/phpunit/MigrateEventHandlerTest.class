@@ -123,14 +123,14 @@ class MigrateEventHandlerTest extends GalleryControllerTestCase {
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
 	$event->setEntity($g1MapHandlerItem);
-	$ret = MigrateModule::handleEvent($event);
+	list ($ret) = MigrateModule::handleEvent($event);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
 	$event->setEntity($g1MapHandlerAlbum);
-	$ret = MigrateModule::handleEvent($event);
+	list ($ret) = MigrateModule::handleEvent($event);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -48,8 +48,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -103,8 +103,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -212,8 +212,8 @@ class GalleryPermissionHelper_advanced {
 	}
 
 	$event = GalleryCoreApi::newEvent('Gallery::ViewableTreeChange');
-	$event->setEntity(array('userId' => $userId, 'itemId' => $itemId));
-	$ret = GalleryCoreApi::postEvent($event);
+	$event->setData(array('userId' => $userId, 'itemId' => $itemId));
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -83,7 +83,8 @@ class GalleryEventHelper_simple {
      * Deliver an event to anybody listening
      *
      * @param object a GalleryEvent
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array data returned from listeners, if any
      * @static
      */
     function postEvent($event) {
@@ -91,7 +92,7 @@ class GalleryEventHelper_simple {
 	if (!isset($allListenersRegistered)) {
 	    list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    foreach ($moduleStatus as $moduleId => $status) {
@@ -103,9 +104,9 @@ class GalleryEventHelper_simple {
 			    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 				continue;
 			    }
-			    return $ret->wrap(__FILE__, __LINE__);
+			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			
+
 			$module->registerEventListeners();
 		    }
 		}
@@ -116,16 +117,20 @@ class GalleryEventHelper_simple {
 
 	$eventListeners =& GalleryEventHelper_simple::_getEventListeners();
 
+	$result = array();
 	if (!empty($eventListeners[$event->getEventName()])) {
 	    $listeners = $eventListeners[$event->getEventName()];
-	    for ($i = 0; $i < sizeof($listeners); $i++) {
-		$ret = $listeners[$i]->handleEvent($event);
+	    for ($i = 0; $i < count($listeners); $i++) {
+		list ($ret, $data) = $listeners[$i]->handleEvent($event);
 		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (isset($data)) {
+		    $result[] = $data;
 		}
 	    }
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $result);
     }
 }

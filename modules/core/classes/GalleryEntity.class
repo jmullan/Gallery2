@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -90,7 +90,7 @@ class GalleryEntity_core extends GalleryPersistent {
      * @g2 </member>
      */
     var $_isLinkable;
-    
+
     /**
      * The id of the target entity this entity is linked to
      *
@@ -158,7 +158,7 @@ class GalleryEntity_core extends GalleryPersistent {
      * @access private
      */
     var $_entityType;
-    
+
     /*
      * ****************************************
      *                 Methods
@@ -189,10 +189,10 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	/* By default, entities are not linkable */
 	$this->setIsLinkable(false);
-	
+
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Create a new linked version of this item into a new album
      *
@@ -203,7 +203,7 @@ class GalleryEntity_core extends GalleryPersistent {
      */
     function createLink($entity) {
 	global $gallery;
-	
+
 	if (get_class($this) != get_class($entity)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -232,7 +232,7 @@ class GalleryEntity_core extends GalleryPersistent {
     /**
      * Save the changes to this GalleryEntity
      *
-     * Save the changes to this GalleryEntity.  
+     * Save the changes to this GalleryEntity.
      *
      * @access public
      * @return object GalleryStatus a status code
@@ -257,7 +257,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	    $event = GalleryCoreApi::newEvent("GalleryEntity::save");
 	    $event->setEntity($this);
-	    $ret = GalleryCoreApi::postEvent($event);
+	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -265,7 +265,6 @@ class GalleryEntity_core extends GalleryPersistent {
 	    $storage =& $gallery->getStorage();
 
 	    $changedEntityType = ($this->getModifiedFlag('entityType') != MEMBER_UNMODIFIED);
-	    
 
 	    $ret = $storage->saveEntity($this);
 	    if ($ret->isError()) {
@@ -288,7 +287,7 @@ class GalleryEntity_core extends GalleryPersistent {
 					    $this, array($this->getClassFile()));
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -335,7 +334,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	$event = GalleryCoreApi::newEvent('GalleryEntity::delete');
 	$event->setEntity($this);
-	$ret = GalleryCoreApi::postEvent($event);
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -358,7 +357,7 @@ class GalleryEntity_core extends GalleryPersistent {
 
 	GalleryDataCache::remove(sprintf('GalleryEntityHelper::loadEntitiesById(%s)', $this->getId()));
 	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->getId()));
-	
+
 	return GalleryStatus::success();
     }
 
@@ -378,7 +377,7 @@ class GalleryEntity_core extends GalleryPersistent {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -412,9 +411,9 @@ class GalleryEntity_core extends GalleryPersistent {
 
     /**
      * Return the name of this type of item.
-     * 
+     *
      * Subclasses must override this to provide their own type names.
-     * 
+     *
      * @param boolean if the name is to be translated using the current language
      * @return array string to be used by itself ("Photo")
      *               string to be used in context ("photo")

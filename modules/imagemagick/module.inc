@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,16 +37,15 @@ class ImageMagickModule extends GalleryModule {
 
     function ImageMagickModule() {
 	global $gallery;
-	
+
 	$this->setId('imagemagick');
 	$this->setName('ImageMagick');
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
 	$this->setVersion('0.8.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -78,7 +77,7 @@ class ImageMagickModule extends GalleryModule {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -86,10 +85,8 @@ class ImageMagickModule extends GalleryModule {
      * @see GalleryModule::activate
      */
     function activate() {
-	global $gallery;
-
 	/* Load any classes we require */
-	require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
 	list ($ret, $results) =
@@ -127,13 +124,13 @@ class ImageMagickModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	
+
 	/* Save some platform specific ImageMagick parameters */
 	$ret = ImageMagickToolkitHelper::savePlatformParameters();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -146,8 +143,6 @@ class ImageMagickModule extends GalleryModule {
      * @see GalleryModule::deactivate
      */
     function deactivate() {
-	global $gallery;
-
 	/*
 	 * Unregister all of our properties and operations.  Do this before the parent deactivates so that any
 	 * event handlers triggered by the deactivation will see the world as it will be after the
@@ -157,24 +152,22 @@ class ImageMagickModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-	global $gallery;
-
 	/*
 	 * This module requires all fields to be filled out before it can be
-	 * activated. 
+	 * activated.
 	 */
 	foreach (array('path', 'jpegQuality') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
@@ -202,7 +195,7 @@ class ImageMagickModule extends GalleryModule {
      */
     function autoConfigure() {
 	global $gallery;
-	
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
@@ -229,7 +222,7 @@ class ImageMagickModule extends GalleryModule {
 		}
 		$paths[] = $path;
 	    }
-	    
+
 	    /*
 	     * Double-quoting the paths removes any ambiguity about the
 	     * double-slashes being escaped or not
@@ -246,7 +239,7 @@ class ImageMagickModule extends GalleryModule {
 		}
 		$paths[] = $path;
 	    }
-	    
+
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';
 	    $paths[] = '/bin/';
@@ -256,7 +249,7 @@ class ImageMagickModule extends GalleryModule {
 	}
 
 	/* Load any classes we require */
-	require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {

@@ -32,7 +32,7 @@
  * @subpackage Helpers
  * @abstract
  */
-class GalleryItemHelper_medium {
+class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
     /**
      * Return the ids of all items that match the given type and have the
@@ -825,18 +825,17 @@ class GalleryItemHelper_medium {
      * Handler for Gallery::ViewableTreeChange event.
      * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
      *
-     * @param object GalleryEvent the event
-     * @return object GalleryStatus a status code
+     * @see GalleryEventListener::handleEvent
      */
     function handleEvent($event) {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
-	    $param = $event->getEntity();
+	    $param = $event->getData();
 	    $ret = $this->invalidateDescendentCountCaches($param['userId'], $param['itemId']);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

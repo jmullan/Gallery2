@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,7 +32,7 @@
  * @subpackage Helpers
  */
 class GalleryPluginHelper_medium {
-    
+
     /**
      * Activate the given plugin
      *
@@ -72,7 +72,7 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 					       'id' => '_all'));
-	
+
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
 	return GalleryStatus::success();
@@ -108,11 +108,11 @@ class GalleryPluginHelper_medium {
 
 	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
 	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
-	$ret = GalleryCoreApi::postEvent($event);
+	list ($ret) = GalleryCoreApi::postEvent($event);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -134,7 +134,7 @@ class GalleryPluginHelper_medium {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginMap.class');
 	$ret = GalleryPluginMap::removeMapEntry(array('pluginType' => $pluginType,
 						      'pluginId' => $pluginId));
@@ -168,13 +168,13 @@ class GalleryPluginHelper_medium {
 	    $pluginsDir = dirname(__FILE__) . '/../../../../modules/';
 	    $pluginFile = 'module.inc';
 	    break;
-	    
+
 	case 'layout':
 	    $pluginsDir = dirname(__FILE__) . '/../../../../layouts/';
 	    $pluginFile = 'layout.inc';
 	    break;
 	}
-	
+
 	$platform = $gallery->getPlatform();
 	if ($dir = $platform->opendir($pluginsDir)) {
 	    while (($file = $platform->readdir($dir)) != false) {
@@ -182,14 +182,14 @@ class GalleryPluginHelper_medium {
 		if (preg_match('/^(\.|CVS)/', $file)) {
 		    continue;
 		}
-		
+
 		if ($platform->is_file($path . '/' . $pluginFile)) {
 		    $pluginIds[] = $file;
 		}
 	    }
 	    $platform->closedir($dir);
 	}
-	
+
 	return array(GalleryStatus::success(), $pluginIds);
     }
 
@@ -202,7 +202,7 @@ class GalleryPluginHelper_medium {
      */
     function removeParametersForItemId($itemId) {
 	global $gallery;
-	
+
 	if (empty($itemId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -236,7 +236,7 @@ class GalleryPluginHelper_medium {
      */
     function removeParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
 	global $gallery;
-	
+
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
@@ -261,7 +261,7 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'itemId' => $itemId,
 					       'id' => $pluginId));
-	
+
 	return GalleryStatus::success();
     }
 
@@ -314,7 +314,7 @@ class GalleryPluginHelper_medium {
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-	
+
 	/*
 	 * Figure out if this is an insert or an update.  It's an insert if
 	 * we don't have an existing parameter by that name.  Otherwise, it's
@@ -414,7 +414,7 @@ class GalleryPluginHelper_medium {
 	if ($itemId == null) {
 	    $itemId = 0;
 	}
-	
+
 	require_once(dirname(__FILE__) . '/../GalleryPluginParameterMap.class');
 	$ret = GalleryPluginParameterMap::updateMapEntry(
 	    array('pluginType' => $pluginType,

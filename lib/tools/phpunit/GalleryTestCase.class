@@ -34,7 +34,7 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class EntityCounterEventListener {
+class EntityCounterEventListener /* extends GalleryEventListener */ {
 
     function EntityCounterEventListener() {
 	$this->_count = 0;
@@ -57,7 +57,7 @@ class EntityCounterEventListener {
 	    break;
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), null);
     }
 
     function getRecentEntityId($className) {
@@ -82,7 +82,7 @@ class EntityCounterEventListener {
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class TestEventListener {
+class TestEventListener /* extends GalleryEventListener */ {
 
     function TestEventListener() {
 	$this->_eventListeners = array();
@@ -103,14 +103,18 @@ class TestEventListener {
     }
 
     function handleEvent($event) {
+	$result = array();
 	$list = $this->_eventListeners[$event->getEventName()];
 	for ($i = 0; $i < count($list); $i++) {
-	    $ret = $list[$i]->handleEvent($event);
+	    list ($ret, $data) = $list[$i]->handleEvent($event);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (isset($data)) {
+		$result[] = $data;
 	    }
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $result);
     }
 }
 

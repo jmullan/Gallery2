@@ -37,10 +37,10 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName('ImageBlock');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.8.3');
+	$this->setVersion('0.8.4');
 	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent|performFactoryRegistrations');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
@@ -68,8 +68,6 @@ class ImageBlockModule extends GalleryModule {
      * @see GalleryModule::upgrade()
      */
     function upgrade($currentVersion) {
-	global $gallery;
-
 	if (!isset($currentVersion)) {
 	    foreach (array('blocks' => 'randomImage',
 			   'show' => 'title|date|views' )
@@ -139,7 +137,7 @@ class ImageBlockModule extends GalleryModule {
 	$blocks = array();
 	if (isset($param['randomImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Random Image') : '',
+				    $heading ? $this->translate('Random Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_RANDOM, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -147,7 +145,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['recentImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Newest Image') : '',
+				    $heading ? $this->translate('Newest Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_RECENT, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -155,7 +153,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['viewedImage'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Most Viewed Image') : '',
+				    $heading ? $this->translate('Most Viewed Image') : '',
 				    'GalleryPhotoItem', IMAGE_BLOCK_VIEWED, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -163,7 +161,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['randomAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Random Album') : '',
+				    $heading ? $this->translate('Random Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_RANDOM, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -171,7 +169,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['recentAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Newest Album') : '',
+				    $heading ? $this->translate('Newest Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_RECENT, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -179,7 +177,7 @@ class ImageBlockModule extends GalleryModule {
 	}
 	if (isset($param['viewedAlbum'])) {
 	    $ret = $this->_addBlock($blocks,
-				    $heading ? $gallery->i18n('Most Viewed Album') : '',
+				    $heading ? $this->translate('Most Viewed Album') : '',
 				    'GalleryAlbumItem', IMAGE_BLOCK_VIEWED, $parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

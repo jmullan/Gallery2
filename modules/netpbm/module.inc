@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -36,16 +36,15 @@ class NetPbmModule extends GalleryModule {
 
     function NetPbmModule() {
 	global $gallery;
-	
+
 	$this->setId('netpbm');
 	$this->setName('NetPBM');
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
 	$this->setVersion('0.8.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -77,10 +76,10 @@ class NetPbmModule extends GalleryModule {
 		}
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
-	
+
     /**
      * @see GalleryModule::isRecommendedDuringInstall
      */
@@ -93,7 +92,7 @@ class NetPbmModule extends GalleryModule {
      */
     function autoConfigure() {
 	global $gallery;
-	
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
@@ -120,9 +119,9 @@ class NetPbmModule extends GalleryModule {
 		}
 		$paths[] = $path;
 	    }
-	    
+
             /*
-	     * Double-quoting the paths removes any ambiguity about the 
+	     * Double-quoting the paths removes any ambiguity about the
 	     * double-slashes being escaped or not
 	     */
 	    $paths[] = "C:\\Program Files\\netpbm\\";
@@ -138,7 +137,7 @@ class NetPbmModule extends GalleryModule {
 		}
 		$paths[] = $path;
 	    }
-	    
+
 	    $paths[] = '/usr/bin/';
 	    $paths[] = '/usr/local/bin/';
 	    $paths[] = '/usr/local/netpbm/bin/';
@@ -159,7 +158,7 @@ class NetPbmModule extends GalleryModule {
 		if (!$platform->isRestrictedByOpenBasedir($path) && !$platform->file_exists($path)) {
 		    continue;
 		}
-		
+
 		list ($ret, $testResults) =
 		    NetPbmToolkitHelper::testBinaries($path, array('pnmtojpeg' => $pnmtojpeg));
 		if ($ret->isError()) {
@@ -192,7 +191,7 @@ class NetPbmModule extends GalleryModule {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), false);
 			}
-			
+
 			$ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', 'pnmtojpeg', $pnmtojpeg);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), false);
@@ -232,13 +231,11 @@ class NetPbmModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $success);
     }
-    
+
     /**
      * @see GalleryModule::activate()
      */
     function activate() {
-	global $gallery;
-	
 	/* Load any classes we require */
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
 
@@ -278,7 +275,7 @@ class NetPbmModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	
+
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -286,13 +283,11 @@ class NetPbmModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::deactivate()
      */
     function deactivate() {
-	global $gallery;
-
 	/*
 	 * Unregister all of our properties and operations.  Do this before the parent deactivates so that any
 	 * event handlers triggered by the deactivation will see the world as it will be after the
@@ -310,16 +305,14 @@ class NetPbmModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::needsConfiguration()
      */
     function needsConfiguration() {
-	global $gallery;
-
 	/*
 	 * This module requires all fields to be filled out before it can be
-	 * activated. 
+	 * activated.
 	 */
 	foreach (array('path', 'jpegQuality', 'pnmtojpeg') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
@@ -334,7 +327,7 @@ class NetPbmModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews()
      */

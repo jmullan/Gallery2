@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -36,16 +36,15 @@ class FfmpegModule extends GalleryModule {
 
     function FfmpegModule() {
 	global $gallery;
-	
+
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
 	$this->setVersion('0.8.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
-	
     }
 
     /**
@@ -72,7 +71,7 @@ class FfmpegModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -82,13 +81,13 @@ class FfmpegModule extends GalleryModule {
     function isRecommendedDuringInstall() {
 	return true;
     }
-	
+
     /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
 	global $gallery;
-	
+
 	list ($ret, $needsConfiguration) = $this->needsConfiguration();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), false);
@@ -115,7 +114,7 @@ class FfmpegModule extends GalleryModule {
 		}
 		$paths[] = $path . 'ffmpeg.exe';
 	    }
-	    
+
 	    $paths[] = 'C:\apps\ffmpeg\ffmpeg.exe';
 	    $paths[] = 'C:\ffmpeg\ffmpeg.exe';
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
@@ -126,7 +125,7 @@ class FfmpegModule extends GalleryModule {
 		}
 		$paths[] = $path . 'ffmpeg';
 	    }
-	    
+
 	    $paths[] = '/usr/bin/ffmpeg';
 	    $paths[] = '/usr/local/bin/ffmpeg';
 	    $paths[] = '/bin/ffmpeg';
@@ -135,7 +134,7 @@ class FfmpegModule extends GalleryModule {
 	}
 
 	/* Load any classes we require */
-	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
 
 	/* Now try each path in turn to see which ones work */
 	foreach ($paths as $path) {
@@ -144,7 +143,7 @@ class FfmpegModule extends GalleryModule {
 		/* Something went wrong with this path -- try the next path */
 		continue;
 	    }
-	    
+
 	    $failCount = 0;
 	    foreach ($testResults as $testResult) {
 		/* At least one test should work, else this path is not a valid one */
@@ -152,7 +151,7 @@ class FfmpegModule extends GalleryModule {
 		    $failCount++;
 		}
 	    }
-			
+
 	    if ($failCount == 0) {
 		/* We have a winner */
 		$ret = GalleryCoreApi::setPluginParameter('module', 'ffmpeg', 'path', $path);
@@ -166,15 +165,13 @@ class FfmpegModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), false);
     }
-	
+
     /**
      * @see GalleryModule::activate()
      */
     function activate() {
-	global $gallery;
-	
 	/* Load any classes we require */
-	require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
 
 	/* Find out what operations and properties we have available to us */
 	list ($ret, $results) =
@@ -211,7 +208,7 @@ class FfmpegModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	
+
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -219,13 +216,11 @@ class FfmpegModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::deactivate()
      */
     function deactivate() {
-	global $gallery;
-
 	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -239,16 +234,14 @@ class FfmpegModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $redirect);
     }
-	
+
     /**
      * @see GalleryModule::needsConfiguration()
      */
     function needsConfiguration() {
-	global $gallery;
-
 	/*
 	 * This module requires all fields to be filled out before it can be
-	 * activated. 
+	 * activated.
 	 */
 	foreach (array('path') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
@@ -263,7 +256,7 @@ class FfmpegModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews()
      */

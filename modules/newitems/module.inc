@@ -43,7 +43,7 @@ class NewItemsModule extends GalleryModule {
 	$this->setVersion('0.2.1');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('performFactoryRegistrations|getSiteAdminViews|getItemSummaries');
-	$this->setRequiredCoreApi(array(0, 8));
+	$this->setRequiredCoreApi(array(1, 0));
 	$this->setRequiredModuleApi(array(0, 8));
     }
 
