@@ -74,6 +74,7 @@ class ImageMagickToolkit extends GalleryToolkit {
      * @see GalleryToolkit::performOperation()
      */
     function performOperation($mimeType, $operationName, $sourceFilename, $destFilename, $parameters) {
+	global $gallery;
 
 	$outputMimeType = $mimeType;
 	switch($operationName) {
@@ -117,9 +118,17 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
 	}
 
-	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if ($outputMimeType == $mimeType && $transform == null && $sourceFilename != $destFilename) {
+	    /* Just copy the source to the destination */
+	    $platform = $gallery->getPlatform();
+	    if (!$platform->copy($sourceFilename, $destFilename)) {
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__), null);
+	    }
+	} else {
+	    $ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $outputMimeType);
@@ -230,6 +239,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $command[] = '-quality';
 	    $command[] = $jpegQuality;
 	    break;
+
+	case 'image/tiff':
+	    /* TIFF can be multi-scened; make sure ImageMagick grabs the first scene */
+	    $sourceFilename = $sourceFilename . '[0]';
+	    break;
 	}
 
 	/* Do the conversion */
@@ -252,7 +266,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 					    "Can't convert to unknown mime type: $outputMimeType");
 	    }
 	}
-	
+
 	list($success, $output) = $platform->exec(array($command));
 
 	if (!$success) {
