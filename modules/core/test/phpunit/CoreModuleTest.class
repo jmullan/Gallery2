@@ -149,6 +149,15 @@ class CoreModuleTest extends GalleryTestCase {
     }
 
     function testLoadSystemContent() {
+	list ($ret, $save) = $this->_module->getModuleParameter('language.selector');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setModuleParameter('language.selector', 'none');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$template = new CoreModuleMockTemplate();
 	list ($ret, $file) = $this->_module->loadSystemContent($template);
 	if ($ret->isError()) {
@@ -156,6 +165,11 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(null, $file);
+
+	$ret = $this->_module->setModuleParameter('language.selector', $save);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function testGetItemLinks() {
