@@ -471,6 +471,12 @@ class GalleryStatus {
 	    }
 	} else {
 	    foreach ($this->_stackTrace as $traceEntry) {
+		if (empty($traceEntry['file'])) {
+		    $traceEntry['file'] = '???';
+		}
+		if (empty($traceEntry['line'])) {
+		    $traceEntry['line'] = '???';
+		}
 		$trace[] = array('file' => str_replace($base, '', $traceEntry['file']),
 				 'line' => $traceEntry['line'],
 				 'class' => empty($traceEntry['class']) ? null : $traceEntry['class'],
