@@ -110,7 +110,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	
 	/* Verify the user has the permission  */
-	list($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.addDataItem');
+	list($ret, $hasPermission) =
+	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.addDataItem');
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -124,7 +125,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $user->getId));		
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $user->getId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $user->getId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
@@ -137,7 +138,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->assert(false, 'The user could not be deleted.');
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryDataCache::reset();
@@ -155,7 +156,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	   	$this->assert(false, 'An item was deleted that still should exist.');
 	    } else {
 		GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-		GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+		GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -163,13 +164,14 @@ class UserAndGroupTest extends GalleryTestCase {
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $siteAdminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $siteAdminGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($groupIds[$siteAdminGroupId]), 'The new ownerId of the item is wrong.');
@@ -178,7 +180,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(count($groupIds) == 0, 'There are still some group maps.');
@@ -194,23 +196,26 @@ class UserAndGroupTest extends GalleryTestCase {
 	$itemIdMarkers = GalleryUtilities::makeMarkers(sizeof($checkItemIds));
 	$query = '
         SELECT
-          [GalleryPermissionMap::itemId]
+          [GalleryAccessSubscriberMap::itemId]
         FROM
-          [GalleryPermissionMap]
+          [GalleryAccessMap],[GalleryAccessSubscriberMap]
         WHERE
-          [GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ')
+          [GalleryAccessSubscriberMap::itemId] IN (' . $itemIdMarkers . ')
           AND
-         [GalleryPermissionMap::userId] = ? 
+          [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
+          AND
+         [GalleryAccessMap::userId] = ? 
         ';
 	$data = $checkItemIds;
 	$data[] = $userId;
 	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
-	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($searchResults->resultCount() == 0, 'Not all permissions of the deleted user were removed');
-	GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
+	$this->assert($searchResults->resultCount() == 0,
+		      'Not all permissions of the deleted user were removed');
+	GalleryAccessMap::removeMapEntry(array('userId' => $userId));
 	/* Make sure there are no mappings left (garbage) */
     }
 
@@ -331,8 +336,9 @@ class UserAndGroupTest extends GalleryTestCase {
 	$remainingItems[] = $this->_album;
 	
 	/* Without permissions, the user can't add items */
-	$ret = GalleryCoreApi::addUserPermission($this->_album->getId(), $user1->getId(),
-								   array('core.addDataItem','core.addAlbumItem'), false);
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_album->getId(), $user1->getId(),
+	    array('core.addDataItem','core.addAlbumItem'), false);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -350,11 +356,11 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	/*
 	 * Add a test subalbum with the old user as the owner and delete permissions 
-	 * subAlbumWithDeletePermission					| with delete permission -> deleted
-	 *		|- subSubItemWithDeletePermission		| with delete permission -> deleted
-	 *		|- subSubAlbumWithDeletePermission		| with delete permission -> deleted
-	 *			|- subSubSubItemWithDeletePermission| with delete permission -> deleted
-	 * subItemWithDeletePermission					| with delete permission -> deleted
+	 * subAlbumWithDeletePermission				| with delete permission -> deleted
+	 *	|- subSubItemWithDeletePermission		| with delete permission -> deleted
+	 *	|- subSubAlbumWithDeletePermission		| with delete permission -> deleted
+	 *		|- subSubSubItemWithDeletePermission	| with delete permission -> deleted
+	 * subItemWithDeletePermission				| with delete permission -> deleted
 	 */
 	list ($ret, $subAlbumWithDeletePermission) =
 				$this->_createRandomAlbum($albumWithDeletePermission->getId());
@@ -386,7 +392,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$deletedItems[] = $subSubAlbumWithDeletePermission;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission;
 	list ($ret, $subSubSubItemWithDeletePermission) =
-				$this->_createRandomDataItem($subSubAlbumWithDeletePermission->getId());
+	    $this->_createRandomDataItem($subSubAlbumWithDeletePermission->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -396,11 +402,11 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	/*
 	 * Now add another subalbum tree, this time with some items without delete permission
-	 * subAlbumWithDeletePermission2				| with delete permission 
-	 *    |- subSubAlbumWithoutDeletePermission2			| no delete permission
-	 *			|- subSubSubItemWithDeletePermission2	| with delete permission -> deleted
-	 *	  |- subSubAlbumWithDeletePermission2			| with delete permission
-	 *			|- subSubSubItemWithoutDeletePermission2| no delete permission
+	 * subAlbumWithDeletePermission2			| with delete permission 
+	 *    |- subSubAlbumWithoutDeletePermission2		| no delete permission
+	 *		|- subSubSubItemWithDeletePermission2	| with delete permission -> deleted
+	 *	  |- subSubAlbumWithDeletePermission2		| with delete permission
+	 *		|- subSubSubItemWithoutDeletePermission2| no delete permission
 	 */	
 	list ($ret, $subAlbumWithDeletePermission2) =
 				$this->_createRandomAlbum($albumWithDeletePermission->getId());
@@ -424,9 +430,12 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	$remainingItems[] = $subSubAlbumWithDeletePermission2;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission2;
-	/* A subSubSubItem with delete permission (but is in a subSubalbum without delete permission) */
+	/*
+	 * A subSubSubItem with delete permission (but is in a subSubalbum
+	 * without delete permission)
+	 */
 	list ($ret, $subSubSubItemWithDeletePermission2) =
-				$this->_createRandomDataItem($subSubAlbumWithoutDeletePermission2->getId());
+	    $this->_createRandomDataItem($subSubAlbumWithoutDeletePermission2->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -434,7 +443,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$deletePermissionItems[] = $subSubSubItemWithDeletePermission2;
 	/* A subSubItem without delete permission */
 	list ($ret, $subSubSubItemWithoutDeletePermission2) =
-				$this->_createRandomDataItem($subSubAlbumWithDeletePermission2->getId());
+	    $this->_createRandomDataItem($subSubAlbumWithDeletePermission2->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -443,9 +452,9 @@ class UserAndGroupTest extends GalleryTestCase {
 	/*
 	 * Add another subalbum tree, with some items of another user in it
 	 * Also check for a new thumbnail here
-	 * subAlbumWithDeletePermission3				| with delete permission 
-	 *	  |- subSubItemWithDeletePermission			| with delete permission -> deleted
-	 *	  |- subSubItemWithDeletePermissionDifferentOwner3	| with delete permission
+	 * subAlbumWithDeletePermission3			  | with delete permission 
+	 *	|- subSubItemWithDeletePermission		  | with delete permission -> deleted
+	 *	|- subSubItemWithDeletePermissionDifferentOwner3  | with delete permission
 	 */
 	list ($ret, $subAlbumWithDeletePermission3) =
 				$this->_createRandomAlbum($albumWithDeletePermission->getId());
@@ -455,7 +464,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	$remainingItems[] = $subAlbumWithDeletePermission3;
 	$deletePermissionItems[] = $subAlbumWithDeletePermission3;
 	list ($ret, $subSubItemWithDeletePermission3) =
-				$this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
+	    $this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -464,7 +473,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	/* Now change the activeUser to the other user */ 
 	$gallery->setActiveUser($user2);
 	list ($ret, $subSubItemWithDeletePermissionDifferentOwner3) =
-				$this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
+	    $this->_createRandomDataItem($subAlbumWithDeletePermission3->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -526,7 +535,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	    /* Verify the owner is still user1 */
 	    if ($item->getId() != $this->_album->getId()
 		    && $item->getId() != $subSubItemWithDeletePermissionDifferentOwner3->getId()) { 
-		$this->assert($item->getOwnerId() == $user1->getId(), 'The ownerId for an item was changed');
+		$this->assert($item->getOwnerId() == $user1->getId(),
+			      'The ownerId for an item was changed');
 	    }
 	}
 	/*
@@ -579,7 +589,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Nobody matches our unique tag
+	/* Nobody matches our unique tag */
 	$this->assertEquals(0, $count);
 	
 	list ($ret, $user) = $this->_createRandomUser($unique);
@@ -594,10 +604,10 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// We now have one user that matches the description
+	/* We now have one user that matches the description */
 	$this->assertEquals(1, $count);
 
-	// Clean up
+	/* Clean up */
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -703,8 +713,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 
 	/* fetchUserCount should return 1 */
-	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst,
-                                                                  $group->getId());
+	list ($ret, $countAfter) =
+	    GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst, $group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -778,11 +788,7 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	/* fetchUsersForGroup should return one user */
 	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup(
-					$group->getId(),
-					null,
-					null,
-					$strSearch . $uniqueFirst
-			      );
+	    $group->getId(), null, null, $strSearch . $uniqueFirst);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
