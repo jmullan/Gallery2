@@ -275,13 +275,15 @@ class GalleryItemHelper_medium {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($toolkits as $toolkit) {
-		list ($ret, $originationTimestamp) =
+		if (isset($toolkit)) {
+		    list ($ret, $originationTimestamp) =
 			$toolkit->getProperty($item->getMimeType(), 'originationTimestamp', $path);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
-		    return array(GalleryStatus::success(), $originationTimestamp[0]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    if (is_array($originationTimestamp) && !empty($originationTimestamp[0])) {
+			return array(GalleryStatus::success(), $originationTimestamp[0]);
+		    }
 		}
 	    }
 	}
