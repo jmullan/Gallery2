@@ -33,10 +33,10 @@
           <td>
             <ul class="giInfo">
               <li>
-                {capture name=creationTimestamp}
-                {g->date timestamp=$layout.item.creationTimestamp}
+                {capture name=originationTimestamp}
+                {g->date timestamp=$layout.item.originationTimestamp}
                 {/capture}
-                {g->text text="Date: %s" arg1=$smarty.capture.creationTimestamp}
+                {g->text text="Date: %s" arg1=$smarty.capture.originationTimestamp}
               </li>
     
               <li>
@@ -125,11 +125,7 @@
 
           <ul class="giInfo">
             <li>
-              {if !empty($layout.useCaptureDate) && isset($child.captureTimestamp)}
-              {capture name=childTimestamp}{g->date timestamp=$child.captureTimestamp}{/capture}
-              {else}
-              {capture name=childTimestamp}{g->date timestamp=$child.creationTimestamp}{/capture}
-              {/if}
+              {capture name=childTimestamp}{g->date timestamp=$child.originationTimestamp}{/capture}
               {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
             </li>
             

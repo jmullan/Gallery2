@@ -29,11 +29,7 @@
           <td>
             <ul class="giInfo">
               <li>
-                {if !empty($layout.useCaptureDate) && isset($layout.captureTimestamp)}
-                {capture name=itemTimestamp}{g->date timestamp=$layout.captureTimestamp}{/capture}
-                {else}
-                {capture name=itemTimestamp}{g->date timestamp=$layout.item.creationTimestamp}{/capture}
-                {/if}
+                {capture name=itemTimestamp}{g->date timestamp=$layout.item.originationTimestamp}{/capture}
                 {g->text text="Date: %s" arg1=$smarty.capture.itemTimestamp}
               </li>
         

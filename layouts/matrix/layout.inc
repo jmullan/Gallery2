@@ -58,7 +58,7 @@ class MatrixLayout extends GalleryLayout {
 	}
 	$params = array_merge(
 	    array('rows' => 3, 'columns' => 3, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
-		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'useCaptureDate' => 0),
+		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => ''),
 	    $params);
 
 	$settings = array();
@@ -80,10 +80,6 @@ class MatrixLayout extends GalleryLayout {
 			    'name' => $gallery->i18n('Show album owners'),
 			    'type' => 'checkbox',
 			    'value' => $params['showAlbumOwner']);
-	$settings[] = array('key' => 'useCaptureDate',
-			    'name' => $gallery->i18n('Use capture date (needs an active exif module)'),
-			    'type' => 'checkbox',
-			    'value' => $params['useCaptureDate']);
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0');
@@ -148,7 +144,7 @@ class MatrixLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$params = array_merge(array('useCaptureDate' => 1, 'rows' => 3, 'columns' => 3), $params);
+	$params = array_merge(array('rows' => 3, 'columns' => 3), $params);
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $bodyFile) = $this->_loadAlbumTemplate($template, $item, $params);
@@ -270,32 +266,6 @@ class MatrixLayout extends GalleryLayout {
 	    return array(GalleryStatus::success(), $results);
 	}
 
-	if ($properties['useCaptureDate']) {
-	    /* Load the EXIF data */
-	    list ($ret, $exifExtractor) = GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $exif = array();
-	    if (isset($exifExtractor)) {
-		$ids = array_merge(array($item->getId()), $childIds);
-		list ($ret, $exif) = $exifExtractor->getMetaData($ids);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-
-	    foreach (array_keys($layout['children']) as $i) {
-		$id = $layout['children'][$i]['id'];
-		if (isset($exif[$id]['DateTime'])) {
-		    /* convert the cryptic EXIF date format to a standard timeStamp format */
-		    $tmpStr = $exif[$id]['DateTime']['value'];
-		    $tmpStr[4] = $tmpStr[7] = '/';
-		    $layout['children'][$i]['captureTimestamp'] = strtotime($tmpStr);
-		}
-	    }
-	}
-
 	/* Set up the navigator */
 	$navigator = array();
 	if ($page > 1) {
@@ -345,7 +315,6 @@ class MatrixLayout extends GalleryLayout {
 	$layout['jumprange'] = $jumprange;
 	$layout['showAlbumOwner'] = $properties['showAlbumOwner'];
 	$layout['showImageOwner'] = $properties['showImageOwner'];
-	$layout['useCaptureDate'] = $properties['useCaptureDate'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/albumBody.tpl');
     }
@@ -487,27 +456,6 @@ class MatrixLayout extends GalleryLayout {
 				       'itemId' => $layout['peerIds'][$layout['peerCount']-1]);
 	}
 
-	/* Load the EXIF data */
-	if ($properties['useCaptureDate']) {
-	    list ($ret, $exifExtractor) = GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $exif = array();
-	    if (isset($exifExtractor)) {
-		list ($ret, $exif) = $exifExtractor->getMetaData($item->getId());
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	    if (isset($exif[$item->getId()]['DateTime'])) {
-		/* convert the cryptic EXIF date format to a standard timeStamp format */
-		$tmpStr = $exif[$item->getId()]['DateTime']['value'];
-		$tmpStr[4] = $tmpStr[7] = '/';
-		$layout['captureTimestamp'] = strtotime($tmpStr);
-	    }
-	}
-
 	/* Tell Smarty about everything we've learned */
 	$layout['can'] = $can;
 	if (isset($sourceImageViewIndex)) {
@@ -520,7 +468,6 @@ class MatrixLayout extends GalleryLayout {
 	$layout['imageViewsIndex'] = $imageViewsIndex;
 	$layout['navigator'] = $navigator;
 	$layout['showImageOwner'] = $properties['showImageOwner'];
-	$layout['useCaptureDate'] = $properties['useCaptureDate'];
 
 	return array(GalleryStatus::success(), 'layouts/matrix/templates/singleBody.tpl');
     }
