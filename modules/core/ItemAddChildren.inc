@@ -119,6 +119,40 @@ class ItemAddChildrenController extends GalleryController {
 
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* Delegate back to the same view */
+	} else if (isset($form['action']['addFilesFromLocalServer'])) {
+	    /* Delegate back to the same view */
+	    $dir = $form['localServerPath'];
+	    foreach ($form['localServerFiles'] as $fileKey => $unused) {
+		$basename = base64_decode($fileKey);
+		$filename = $dir . '/' . $basename;
+		    
+		$extension = GalleryUtilities::getFileExtension($filename);
+		$mimeType = GalleryUtilities::convertExtensionToMime($extension);
+
+		list ($ret, $newItem) = GalleryItemHelper::addItemToAlbum($filename,
+									  $basename,
+									  $basename,
+									  $basename,
+									  $basename,
+									  $mimeType,
+									  $item->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if ($albumNeedsThumbnail) {
+		    $ret = GalleryItemHelper::setThumbnailFromItem($item->getId(), $newItem->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    $albumNeedsThumbnail = false;
+		}
+	    }
+
+	    /* Figure out where to redirect upon success */
+	    $redirectParams['view'] = 'core:ItemAdmin';
+	    $redirectParams['subView'] = 'core:ItemAddChildren';
+	    $redirectParams['itemId'] = $itemId;
 	}
 
 	$ret = $gallery->releaseLocks($lockIds);
@@ -194,7 +228,7 @@ class ItemAddChildrenView extends GalleryView {
 	} else {
 	    $localServerDirList = split(',', $localServerDirs);
 	}
-	
+
 	/*
 	 * If the mode is empty get it from the session.  If it's empty there,
 	 * default to uploading from the browser.  Either way, save the user's
@@ -253,7 +287,8 @@ class ItemAddChildrenView extends GalleryView {
 			    $form['localServerFiles'][] = array('dirName' => $path,
 								'fileName' => $fileName,
 								'stat' => $platform->stat($filePath),
-								'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+								'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+								'fileKey' => base64_encode($fileName));
 			}
 		    }
 		    closedir($handle);
@@ -267,10 +302,13 @@ class ItemAddChildrenView extends GalleryView {
 			}
 		    }
 
-		    $form['localServerFiles'][] = array('dirName' => dirname($path),
-							'fileName' => basename($path),
+		    $dirName = dirname($path);
+		    $fileName = basename($path);
+		    $form['localServerFiles'][] = array('dirName' => $dirName,
+							'fileName' => $fileName,
 							'stat' => $platform->stat($path),
-							'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+							'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName(),
+							'fileKey' => htmlentities($fileName));
 		}
 	    }
 	}

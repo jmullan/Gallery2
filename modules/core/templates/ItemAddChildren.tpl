@@ -1,4 +1,24 @@
-    {gallery->form controller="$controller" enctype="multipart/form-data"}
+    {if !empty($form.localServerFiles)}
+    <script type="text/javascript" language="javascript">
+      function toggleSelections() {ldelim}
+          form = document.forms[0];
+          state = form.elements['{gallery->elementName name="selectionToggle"}'].checked;
+          {foreach from=$form.localServerFiles item=file}
+          form.elements['{gallery->elementName name="form.localServerFiles.`$file.fileKey`"}'].checked = state;
+          {/foreach}
+      {rdelim}
+    </script>
+    {/if}
+
+    {if $mode == 'fromLocalServer'}
+    <script type="text/javascript" language="javascript">
+      function selectPath(path) {ldelim}
+          document.forms[0].elements['{gallery->elementName name="form.localServerPath"}'].value = path;
+      {rdelim}
+    </script>
+    {/if}
+
+    {gallery->form controller="$controller" enctype="multipart/form-data" method="get"}
     {gallery->input type="hidden" name="form.formName"}ItemAddChildren{/gallery->input}
     {gallery->input type="hidden" name="itemId"}{$item.id}{/gallery->input}
     <table border="0" cellspacing="0" cellpadding="0">
@@ -156,6 +176,7 @@
 	  </td>
 	</tr>
 
+	<!-- {if empty($form.localServerFiles)} -->
 	<tr>
 	  <td>
 	    {gallery->input type=text size=80 name="form.localServerPath"}{$form.localServerPath}{/gallery->input}
@@ -190,10 +211,23 @@
 	    {/if}
 	    {foreach from=$localServerDirList item=dir}
 	    <br>
-	    {$dir}
+	    <a href="javascript:selectPath('{$dir}')">{$dir}</a>
 	    {/foreach}
 	  </td>
 	</tr>
+	<!-- {else} -->
+
+	<tr>
+	  <td>
+	    <b>Directory:</b> {$form.localServerPath}
+	    <a href="{gallery->url view="core:ItemAdmin" subView="core:ItemAddChildren" itemId=$item.id form_localServerPath=$form.localServerPath form_formName="ItemAddChildren"}">
+	      [{gallery->text text="change"}]
+	    {gallery->input type="hidden" name="form.localServerPath"}{$form.localServerPath}{/gallery->input}
+	    </a>
+	  </td>
+	</tr>
+
+	<!-- {/if} -->
 
 	<tr>
 	  <td>
@@ -205,29 +239,60 @@
 	<!-- {if !empty($form.localServerFiles)} -->
 	<tr>
 	  <td>
-	    <table>
-	      {foreach from=$form.localServerFiles item=file}
+	    <table width="100%" border="1">
 		<tr>
+		  <th>
+		    {gallery->input name="selectionToggle" type="checkbox" onChange="javascript:toggleSelections()"}{/gallery->input}
+		  </th>
+		  <th>
+		    {gallery->text text="File name"}
+		  </th>
+		  <th>
+		    {gallery->text text="Type"}
+		  </th>
+		  <th>
+		    {gallery->text text="Size"}
+		  </th>
+		</tr>
+
+		<!-- {foreach from=$form.localServerFiles item=file} -->
+		<tr>
+		  <td align="center">
+		    {gallery->input type="checkbox" name="form.localServerFiles.`$file.fileKey`"}
+		    {/gallery->input}
+		  </td>
 		  <td>
 		    {$file.fileName}
-		    {gallery->text one="(type: %s, size: %d byte)"
-		                   many="(type: %s, size: %d bytes)"
+		  </td>
+		  <td>
+		    {$file.itemType}
+		  </td>
+		  <td>
+		    {gallery->text one="%d byte"
+		                   many="%d bytes"
 		                   count=$file.stat.size
-		                   arg1=$file.itemType
-		                   arg2=$file.stat.size}
+		                   arg1=$file.stat.size}
 		  </td>
 		</tr>
-	      {/foreach}
+		<!-- {/foreach} -->
 	    </table>
 	  </td>
 	</tr>
-	<!-- {/if} -->
+
+	<tr>
+	  <td>
+	    {gallery->input type="submit" name="form.action.addFilesFromLocalServer"}{gallery->text text="Add Files"}{/gallery->input}
+	  </td>
+	</tr>
+	<!-- {else} -->
 
 	<tr>
 	  <td>
 	    {gallery->input type="submit" name="form.action.findFilesFromLocalServer"}{gallery->text text="Find Files"}{/gallery->input}
 	  </td>
 	</tr>
+
+	<!-- {/if} -->
 
 	<!-- {/if} -->
 
