@@ -84,6 +84,11 @@
       {g->text text="Give this watermark a name so that you can identify it in a list."}
     </p>
     <input size="40" type="text" name="{g->formVar var="form[name]"}" value="{$form.name}"/>
+   {if isset($form.error.name.missing)}
+   <div class="giError">
+     {g->text text="You must provide a name"}
+   </div>
+   {/if}
   </div>
 
   <div class="gbAdmin">
