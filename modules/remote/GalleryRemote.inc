@@ -276,8 +276,26 @@ class GalleryRemoteController extends GalleryController {
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
 	$file = GalleryUtilities::getFile('userfile');
-	$parentId = $form['set_albumName'];	  // TODO: Eliminate this throwback to G1  
-	    
+	
+	if (!empty($form['set_albumId'])) {
+	    list ($ret, $parentItem) = GalleryCoreApi::loadEntitiesById($form['set_albumId']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $parentId = $parentItem->getId();
+	    unset($parentItem);
+	} else if (!empty($form['set_albumPath']) {
+	    list ($ret, $parentId) = GalleryCoreApi::fetchItemIdByPath(urldecode($form['set_albumName']));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else if (!empty($form['set_albumName'])) {
+	    /* todo: delete this G1/early G2 throwback */
+	    $parentId = $form['set_albumName'];
+	} else {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);;
+	}
+
 	/* Make sure we have permission do edit this item */
 	$ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.addDataItem');
 	if ($ret->isError()) {
@@ -357,6 +375,11 @@ class GalleryRemoteController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	/* Use a suitable default for the album name if none is given */
+	if (!isset($form['newAlbumName']) || '' == $form['newAlbumName']) {
+	    $form['newAlbumName'] = 'album';
+	}
+	
 	/* Create the album */
 	list ($ret, $album) = GalleryCoreApi::createAlbum($itemId, $form['newAlbumName'],
 							     $form['newAlbumTitle'], null,
