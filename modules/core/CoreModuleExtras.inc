@@ -79,11 +79,6 @@ class CoreModuleExtras {
 	}
 
 	switch ($currentVersion) {
-        default:
-	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					sprintf('Unknown module version %d', $currentVersion));
-	    break;
-	    
 	case '0':
 	    /*
 	     * Initial install.  Make sure all our module parameters are set
@@ -175,7 +170,7 @@ class CoreModuleExtras {
 	case '0.8':
 	    $currentVersion = '0.8.1';
 	    /* fall through */
-	    
+
 	case '0.8.1':
 	    $currentVersion = '0.8.2';
 	    /* fall through */
@@ -202,7 +197,7 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-		
+
 	    $ret = $storage->execute($query, array('_callbacks', 'callbacks'));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -220,6 +215,13 @@ class CoreModuleExtras {
 	case '0.8.3':
 	    $currentVersion = '0.8.4';
 	    /* fall through */
+
+	    break;
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %d', $currentVersion));
+	    break;
+
 	}
 
 	$platform = $gallery->getPlatform();
