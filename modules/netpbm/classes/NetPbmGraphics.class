@@ -282,9 +282,9 @@ class NetPbmGraphics extends GalleryGraphics {
 					__FILE__, __LINE__);
 	}
 
-	$fileType = GalleryUtilities::getFileTag($sourceFilename);
+	$fileExtension = GalleryUtilities::getFileExtension($sourceFilename);
 	list($ret, $convertFromPnmCmd) =
-		$this->_convertFromPnmCmd($tmpFilename, $fileType);
+		$this->_convertFromPnmCmd($tmpFilename, $fileExtension);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -321,8 +321,8 @@ class NetPbmGraphics extends GalleryGraphics {
      */
     function _convertToPnmCmd($filename) {
 
-	$fileType = GalleryUtilities::getFileTag($filename);
-	switch($fileType) {
+	$fileExtension = GalleryUtilities::getFileExtension($filename);
+	switch($fileExtension) {
 	case 'png':
 	    $cmd = $this->_pnmCmd('pngtopnm');
 	    break;
@@ -354,9 +354,9 @@ class NetPbmGraphics extends GalleryGraphics {
      * @return array object GalleryStatus a status code,
      *               array 1 or more string commands
      */
-    function _convertFromPnmCmd($filename, $fileType) {
+    function _convertFromPnmCmd($filename, $fileExtension) {
 
-	switch($fileType) {
+	switch($fileExtension) {
 	case 'png':
 	    $cmd = array($this->_pnmCmd('pnmtopng'),
 			 '>',
