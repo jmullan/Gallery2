@@ -110,8 +110,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	
 	/* Verify the user has the permission  */
-	list($ret, $hasPermission) =
-	    GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.addDataItem');
+	list($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($this->_getRootId(), 'core.addDataItem');
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -125,7 +124,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId());
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $user->getId));		
-	    GalleryAccessMap::removeMapEntry(array('userId' => $user->getId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $user->getId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($item);
@@ -138,7 +137,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    $this->assert(false, 'The user could not be deleted.');
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	GalleryDataCache::reset();
@@ -156,7 +155,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	   	$this->assert(false, 'An item was deleted that still should exist.');
 	    } else {
 		GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-		GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+		GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -164,14 +163,13 @@ class UserAndGroupTest extends GalleryTestCase {
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($item->getOwnerId());
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $siteAdminGroupId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	list ($ret, $siteAdminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(isset($groupIds[$siteAdminGroupId]), 'The new ownerId of the item is wrong.');
@@ -180,7 +178,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	list($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    GalleryUserGroupMap::removeMapEntry(array('userId' => $userId));
-	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert(count($groupIds) == 0, 'There are still some group maps.');
@@ -196,26 +194,23 @@ class UserAndGroupTest extends GalleryTestCase {
 	$itemIdMarkers = GalleryUtilities::makeMarkers(sizeof($checkItemIds));
 	$query = '
         SELECT
-          [GalleryAccessSubscriberMap::itemId]
+          [GalleryPermissionMap::itemId]
         FROM
-          [GalleryAccessMap],[GalleryAccessSubscriberMap]
+          [GalleryPermissionMap]
         WHERE
-          [GalleryAccessSubscriberMap::itemId] IN (' . $itemIdMarkers . ')
+          [GalleryPermissionMap::itemId] IN (' . $itemIdMarkers . ')
           AND
-          [GalleryAccessSubscriberMap::accessListId] = [GalleryAccessMap::accessListId]
-          AND
-         [GalleryAccessMap::userId] = ? 
+         [GalleryPermissionMap::userId] = ? 
         ';
 	$data = $checkItemIds;
 	$data[] = $userId;
 	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
-	    GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	    GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert($searchResults->resultCount() == 0,
-		      'Not all permissions of the deleted user were removed');
-	GalleryAccessMap::removeMapEntry(array('userId' => $userId));
+	$this->assert($searchResults->resultCount() == 0, 'Not all permissions of the deleted user were removed');
+	GalleryPermissionMap::removeMapEntry(array('userId' => $userId));
 	/* Make sure there are no mappings left (garbage) */
     }
 
@@ -430,10 +425,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 	$remainingItems[] = $subSubAlbumWithDeletePermission2;
 	$deletePermissionItems[] = $subSubAlbumWithDeletePermission2;
-	/*
-	 * A subSubSubItem with delete permission (but is in a subSubalbum
-	 * without delete permission)
-	 */
+	/* A subSubSubItem with delete permission (but is in a subSubalbum without delete permission) */
 	list ($ret, $subSubSubItemWithDeletePermission2) =
 	    $this->_createRandomDataItem($subSubAlbumWithoutDeletePermission2->getId());
 	if ($ret->isError()) {
@@ -535,8 +527,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    /* Verify the owner is still user1 */
 	    if ($item->getId() != $this->_album->getId()
 		    && $item->getId() != $subSubItemWithDeletePermissionDifferentOwner3->getId()) { 
-		$this->assert($item->getOwnerId() == $user1->getId(),
-			      'The ownerId for an item was changed');
+		$this->assert($item->getOwnerId() == $user1->getId(), 'The ownerId for an item was changed');
 	    }
 	}
 	/*
@@ -589,7 +580,7 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Nobody matches our unique tag */
+	// Nobody matches our unique tag
 	$this->assertEquals(0, $count);
 	
 	list ($ret, $user) = $this->_createRandomUser($unique);
@@ -604,10 +595,10 @@ class UserAndGroupTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* We now have one user that matches the description */
+	// We now have one user that matches the description
 	$this->assertEquals(1, $count);
 
-	/* Clean up */
+	// Clean up
 	$ret = $this->_deleteAndVerifyEntity($user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -713,8 +704,8 @@ class UserAndGroupTest extends GalleryTestCase {
 	}
 
 	/* fetchUserCount should return 1 */
-	list ($ret, $countAfter) =
-	    GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst, $group->getId());
+	list ($ret, $countAfter) = GalleryCoreApi::fetchUserCount($strSearch . $uniqueFirst,
+                                                                  $group->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -788,7 +779,11 @@ class UserAndGroupTest extends GalleryTestCase {
 
 	/* fetchUsersForGroup should return one user */
 	list ($ret, $users) = GalleryCoreApi::fetchUsersForGroup(
-	    $group->getId(), null, null, $strSearch . $uniqueFirst);
+					$group->getId(),
+					null,
+					null,
+					$strSearch . $uniqueFirst
+			      );
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
