@@ -128,7 +128,7 @@ class GalleryTemplate {
 	global $gallery;
 
 	/* Themes use Smarty, but don't have a component type/base */
-	if ($this->_componentType) {
+	if (isset($this->_componentType)) {
 	    /*
 	     * We're all sharing one Smarty object so make sure that we set our
 	     * translation base right before we render.
