@@ -32,10 +32,10 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class LanguageTest extends GalleryTestCase {
+class LanguageTest extends GalleryControllerTestCase {
 
     function LanguageTest($methodName) {
-	$this->GalleryTestCase($methodName);
+	$this->GalleryControllerTestCase($methodName, 'core:ChangeLanguage');
     }
 
     function setUp() {
@@ -91,6 +91,23 @@ class LanguageTest extends GalleryTestCase {
 	}
 	$this->assertEquals('sess_language', $language, 'session language');
     }
-}
 
+    function testChangeLanguageController() {
+	global $gallery;
+	GalleryUtilities::putRequestVariable('language', 'test_language');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:ShowItem'),  
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $language) = $gallery->getActiveLanguageCode();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test_language', $language, 'language');
+    }
+}
 ?>

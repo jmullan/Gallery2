@@ -57,8 +57,6 @@
 <div class="sidebit">
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-  {if ($moduleId != 'core')}
     {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
-  {/if}
   {/foreach}
 </div>

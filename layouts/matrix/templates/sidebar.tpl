@@ -66,7 +66,7 @@
 
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleId item=moduleFile}
-  {if ($moduleId != 'core' && $moduleId != 'search')}
+  {if ($moduleId != 'search')}
   {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}
   {/foreach}

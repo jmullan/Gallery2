@@ -90,7 +90,7 @@
     </h3>
 
     <p class="giDescription">
-      {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences."}
+      {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector if activated below."}
     </p>
 
     {if $AdminCore.translationsSupported}
@@ -103,6 +103,17 @@
 	<td>
 	  <select name="{g->formVar var="form[default][language]"}">
 	    {html_options options=$AdminCore.languageList selected=$form.default.language}
+	  </select>
+	</td>
+      </tr>
+      <tr>
+	<td>
+	  {g->text text="Language selector in sidebar"}
+	</td>
+
+	<td>
+	  <select name="{g->formVar var="form[language][selector]"}">
+	    {html_options options=$AdminCore.languageSelectorList selected=$form.language.selector}
 	  </select>
 	</td>
       </tr>

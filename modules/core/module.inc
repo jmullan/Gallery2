@@ -370,40 +370,83 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getSystemLinks
      */
     function getSystemLinks() {
-        global $gallery;
-	
-        list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	global $gallery;
+
+	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-        $links = array();
-        list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	$links = array();
+	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-        if ($isAdmin) {
-            $links[] = array('text' => $this->translate('Site Admin'),
-                             'params' => array('view' => 'core:SiteAdmin'));
+
+	if ($isAdmin) {
+	    $links[] = array('text' => $this->translate('Site Admin'),
+			     'params' => array('view' => 'core:SiteAdmin'));
 	}
-	
-        if ($gallery->getActiveUserId() == $anonymousUserId) {
-            $links[] = array('text' => $this->translate('Login'),
-                             'params' => array('return' => 'true',
+
+	if ($gallery->getActiveUserId() == $anonymousUserId) {
+	    $links[] = array('text' => $this->translate('Login'),
+			     'params' => array('return' => 'true',
 					       'view' => 'core:UserAdmin',
 					       'subView' => 'core:UserLogin'));
 	} else {
-            $links[] = array('text' => $this->translate('Your Account'),
-                             'params' => array('return' => 'true',
+	    $links[] = array('text' => $this->translate('Your Account'),
+			     'params' => array('return' => 'true',
 					       'view' => 'core:UserAdmin',
 					       'subView' => 'core:UserPreferences'));
-            $links[] = array('text' => $this->translate('Logout'),
-                             'params' => array('return' => 'true',
+	    $links[] = array('text' => $this->translate('Logout'),
+			     'params' => array('return' => 'true',
 					       'controller' => 'core:Logout'));
 	}
-	
+
         return array(GalleryStatus::success(), $links);
+    }
+
+    /**
+     * @see GalleryModule::loadSystemContent
+     */
+    function loadSystemContent(&$template) {
+	global $gallery;
+	$content = null;
+
+	list ($ret, $languageSelector) =
+	    $this->getModuleParameter('language.selector');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $anonymousUserId) =
+	    $this->getModuleParameter('id.anonymousUser');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($languageSelector == 'all' || ($languageSelector == 'guest'
+			&& $gallery->getActiveUserId() == $anonymousUserId)) {
+	    /* Set up our language selection list */
+	    $languageList = array();
+	    $translator =& $gallery->getTranslator();
+	    $supportedLanguages = $translator->getSupportedLanguages();
+	    foreach ($supportedLanguages as $language => $countryList) {
+		foreach ($countryList as $country => $languageData) {
+		    $languageList[$language . '_' . $country] = $languageData['description'];
+		}
+	    }
+
+	    list ($ret, $language) = $gallery->getActiveLanguageCode();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $template->setVariable('LanguageSystemContent',
+		array('list' => $languageList, 'language' => $language));
+	    $content = 'modules/core/templates/LanguageSelector.tpl';
+	}
+
+	return array(GalleryStatus::success(), $content);
     }
 
     /**
