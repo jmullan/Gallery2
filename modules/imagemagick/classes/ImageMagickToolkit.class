@@ -117,6 +117,12 @@ class ImageMagickToolkit extends GalleryToolkit {
 	switch($operationName) {
 	case 'thumbnail':
 	    $cmd = 'convert';
+	    /* Don't enlarge images for a thumbnail */
+	    if ($width > $parameters[0] || $height > $parameters[0]) {
+		$this->_addResizeParam($transform, $parameters[0]);
+		list ($width, $height) =
+		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
+	    }
 	    /* Strip metadata to make derivative files smaller.. */
 	    list ($ret, $removeMetaDataSwitch) =
 		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'removeMetaDataSwitch');
@@ -126,19 +132,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    if (!empty($removeMetaDataSwitch)) {
 		$transform = array_merge($transform, explode('|', $removeMetaDataSwitch));
 	    }
-	    /* Don't enlarge images for a thumbnail */
-	    if ($width > $parameters[0] || $height > $parameters[0]) {
-		$transform = array_merge($transform, array(
-					'-geometry', $parameters[0] . 'x' . $parameters[0]));
-		list ($width, $height) =
-		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
-	    }
 	    break;
 
 	case 'scale':
 	    $cmd = 'convert';
-	    $transform = array_merge($transform,
-			       array('-geometry', $parameters[0] . 'x' . $parameters[0]));
+	    $this->_addResizeParam($transform, $parameters[0]);
 	    if (isset($width)) {
 		list ($width, $height) =
 		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
@@ -147,8 +145,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	case 'resize':
 	    $cmd = 'convert';
-	    $transform = array_merge($transform,
-			       array('-geometry', $parameters[0] . 'x' . $parameters[1]));
+	    $this->_addResizeParam($transform, $parameters[0], $parameters[1]);
 	    if (isset($width)) {
 		list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
 					 $width, $height, $parameters[0], $parameters[1]);
@@ -157,6 +154,9 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	case 'rotate':
 	    $cmd = 'convert';
+	    if (is_int($i = array_search('-size', $transform))) {
+		array_splice($transform, $i, 2);
+	    }
 	    $transform = array_merge($transform, array('-rotate', (string)$parameters[0]));
 	    if (isset($width) && ($parameters[0] == 90 || $parameters[0] == -90)) {
 		$tmp = $width;
@@ -173,6 +173,9 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $height = round($parameters[3] / 100 * $height);
 
 	    $cmd = 'convert';
+	    if (is_int($i = array_search('-size', $transform))) {
+		array_splice($transform, $i, 2);
+	    }
 	    $transform = array_merge($transform,
 			       array('-crop', sprintf('%sx%s+%s+%s',
 					      $width, $height, $pixelX, $pixelY)));
@@ -519,6 +522,22 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	return $imageMagickPath . $cmd;
+    }
+
+    /**
+     * Add parameters for resizing image.
+     * -size produces faster results when only resizing; incorrect results when
+     * combined with other operations like -crop
+     *
+     * @access private
+     * @param array parameters
+     * @param int target size
+     */
+    function _addResizeParam(&$transform, $w, $h=null) {
+	$size = isset($h) ? ($w . 'x' . $h) : ($w . 'x' . $w);
+	$transform = array_merge($transform, empty($transform)
+			  ? array('-size', $size, '-geometry', $size)
+			  : array('-geometry', $size));
     }
 }
 ?>

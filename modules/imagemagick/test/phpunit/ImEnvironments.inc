@@ -37,7 +37,7 @@
  */
 $_commonOperations = array(
 	'thumbnail' => array(
-		'convert' => array('+profile', '*', '-size', '%width%x%height%', '-geometry', '%width%x%height%', '%src%', '%dst%'),
+		'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%', '+profile', '*', '%src%', '%dst%'),
 	),
 	'scale' => array(
 		'convert' => array('-size', '%width%x%height%', '-geometry', '%width%x%height%', '%src%', '%dst%'),

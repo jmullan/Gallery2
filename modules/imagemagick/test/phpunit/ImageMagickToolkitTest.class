@@ -333,10 +333,9 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals(array_merge(
-		array('-quality', '75', '-crop', '329x250+158+113'),
+		array('-quality', '75', '-crop', '329x250+158+113', '-geometry', '150x150'),
 		$environment['removeMetaDataSwitch'],
-		array('-size', '150x150', '-geometry', '150x150',
-		      'output[640x480].png', 'output.png')),
+		array('output[640x480].png', 'output.png')),
 		$this->_files['output.png']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 150, 'height' => 114),
@@ -448,9 +447,9 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals(array_merge(
-		array('-quality', '75'),
+		array('-quality', '75', '-size', '150x150', '-geometry', '150x150'),
 		$environment['removeMetaDataSwitch'],
-		array('-size', '150x150', '-geometry', '150x150', 'TEMPFILE[0]', 'output.jpg')),
+		array('TEMPFILE[0]', 'output.jpg')),
 		$this->_files['output.jpg']['operation']['convert'], 'output ' . $this->_envName());
 	    $this->assertEquals(array('next.toolkit' => null, 'next.operation' => null,
 				      'width' => 116, 'height' => 150),
