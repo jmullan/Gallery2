@@ -48,18 +48,15 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret;
 	}
 
-	$group->addUser($user1->getId());
-	$group->addUser($user2->getId());
-	$user1->addToGroup($group->getId());
-	$user2->addToGroup($group->getId());
+	$group->addUser($user1);
+	$group->addUser($user2);
 
 	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
-	$user1->removeFromGroup($group->getId());
-	$group->removeUser($user1->getId());
+	$user1->removeFromGroup($group);
 
 	$ret = GalleryNucleus::saveMany(array(&$group, &$user1, &$user2));
 	if ($ret->isError()) {
