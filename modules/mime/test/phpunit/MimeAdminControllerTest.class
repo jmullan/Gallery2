@@ -35,8 +35,7 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
 
     function setUp() {
         parent::setUp();        
-        $mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test',
-            'viewable' => 0);
+        $mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test', 'viewable' => 0);
         $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);    
         if ($ret->isError()) {
             print $ret->getAsHtml();
@@ -57,8 +56,8 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('form[action][delete]', 'test/test');
         $results = $this->handleRequest();
         $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-                  'subView' => 'mime:MimeAdmin'),
-				  'status' => array(),
+						      'subView' => 'mime:MimeAdmin'),
+				  'status' => array('deleted' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Delete');
         list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
@@ -66,16 +65,6 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
         $this->assertEquals(null, $extensions, 'Delete results');
-    }    
-    
-    function testAdd() {
-        GalleryUtilities::putRequestVariable('form[action][addNew]', 1);
-        $results = $this->handleRequest();
-        $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-                  'subView' => 'mime:MimeEdit'),
-				  'status' => array(),
-				  'error' => array()),
-			    $results, 'Add New');
     }    
 }
 

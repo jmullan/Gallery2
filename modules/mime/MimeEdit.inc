@@ -36,51 +36,73 @@ class MimeEditController extends GalleryController {
      */
     function handleRequest($form) {
         global $gallery;
-    
+
         $ret = GalleryCoreApi::assertUserIsSiteAdministrator();
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-        $subView = isset($form['action']['apply']) ? 'mime:MimeEdit' : 'mime:MimeAdmin';
         $error = array();
-        
+	$status = array();
+
         if (isset($form['action']['save']) || isset($form['action']['apply'])) {
             if (empty($form['mimeType'])) {
                 $error[] = 'form[error][mimeType][missing]';
-            } else {
-                $allEmpty = true;
-                foreach ($form['extension'] as $ext) {
-                    if (!empty($ext)) {
-                        $allEmpty = false;
-                        $mimeTypeMap[] = array('extension' => $ext, 'mimeType' => $form['mimeType'],
-                            'viewable' => (int) isset($form['viewable']));
-                    }
-                }
-                if ($allEmpty) {
-                    $error[] = 'form[error][ext][missing]';
-                } else {
-                    $ret = GalleryCoreApi::removeMimeType(array('mimeType' => $form['mimeType']));
-                    if ($ret->isError()) {
-                        return array($ret->wrap(__FILE__, __LINE__), null);
-                    }
-                    foreach ($mimeTypeMap as $mimeType) {
-                        $ret = GalleryMimeTypeMap::addMapEntry($mimeType);    
-                        if ($ret->isError()) {
-                            return array($ret->wrap(__FILE__, __LINE__), null);
-                        }
-                    }
-                }
             }
+
+	    $allEmpty = true;
+	    foreach ($form['extensions'] as $ext) {
+		if (!empty($ext)) {
+		    $allEmpty = false;
+		    $mimeTypeMap[] = array(
+			'extension' => $ext, 'mimeType' => $form['mimeType'],
+			'viewable' => (int) isset($form['viewable']));
+		    
+		    list ($ret, $existingMimeType) = GalleryCoreApi::convertExtensionToMime($ext);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    if ($existingMimeType != $form['mimeType'] &&
+			    $existingMimeType != 'application/unknown') {
+			$error[] = 'form[error][extensions][inuse][' . $ext . ']';
+		    }
+		}
+	    }
+	    
+	    if ($allEmpty) {
+		$error[] = 'form[error][extensions][missing]';
+	    }
+
+	    if (empty($error)) {
+		$ret = GalleryCoreApi::removeMimeType(array('mimeType' => $form['mimeType']));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($mimeTypeMap as $mimeType) {
+		    $ret = GalleryMimeTypeMap::addMapEntry($mimeType);    
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		$status['saved'] = true;
+	    }
         }
 
         if (empty($error)) {
-            $results['redirect'] = array('view' => 'core:SiteAdmin', 'subView' => $subView);
+	    if (isset($form['action']['apply'])) {
+		$results['redirect'] = array('view' => 'core:SiteAdmin',
+					     'subView' => 'mime:MimeEdit',
+					     'mimeType' => $form['mimeType']);
+	    } else {
+		$results['redirect'] = array('view' => 'core:SiteAdmin',
+					     'subView' => 'mime:MimeAdmin');
+	    }
         } else {
             $results['delegate'] = array('view' => 'core:SiteAdmin', 'subView' => 'mime:MimeEdit');
         }
-        $results['status'] = array('mimeType' => $form['mimeType']);
+	$results['status'] = $status;
         $results['error'] = $error;
-    
+
         return array(GalleryStatus::success(), $results);
     }
 }
@@ -96,23 +118,48 @@ class MimeEditView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
         global $gallery;
-	    $form['formName'] = 'MimeEdit';
-        
-    	$status = $template->getVariable('status');
-        $mimeType = $status['mimeType'];
-        list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
 
-        $MimeEdit['mimeType'] = $mimeType;
-        $MimeEdit['extensions'] = $extensions;
-        list ($ret, $MimeEdit['viewable']) = GalleryCoreApi::isViewableMimeType($mimeType);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	$mimeType = GalleryUtilities::getRequestVariables('mimeType');
+
+	if ($form['formName'] != 'MimeEdit') {
+	    $form['formName'] = 'MimeEdit';
+	    $form['mimeType'] = $mimeType;
+	    
+	    if ($mimeType) {
+		list ($ret, $form['extensions']) =
+		    GalleryCoreApi::convertMimeToExtensions($mimeType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		list ($ret, $form['viewable']) = GalleryCoreApi::isViewableMimeType($mimeType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		$form['viewable'] = false;
+		$form['extensions'] = array();
+	    }
+	} else {
+	    /*
+	     * Force our checkbox to be false on empty (since browsers don't send a value
+	     * if the checkbox is not checked.
+	     */
+	    if (empty($form['viewable'])) {
+		$form['viewable'] = false;
+	    }
+
+	    /* Prune empty extension boxes */
+	    $tmp = array();
+	    foreach ($form['extensions'] as $extension) {
+		if (!empty($extension)) {
+		    $tmp[] = $extension;
+		}
+	    }
+	    $form['extensions'] = $tmp;
+	}
+	    
         $template->setVariable('controller', 'mime:MimeEdit');
-        $template->setVariable('MimeEdit', $MimeEdit);
         return array(GalleryStatus::success(),
              array('body' => 'modules/mime/templates/MimeEdit.tpl'));
     }
