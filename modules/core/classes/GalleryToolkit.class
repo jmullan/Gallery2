@@ -84,6 +84,88 @@ class GalleryToolkit {
     }
 
     /**
+     * Apply the transform operation to the set of target operations.  The transform operation will typically
+     * have happened upstream from the target operations, so we have to adjust the target operations to take
+     * it into account.  For example, if the target operations include a crop operation and upstream we rotate|90
+     * it, then you'd want to rotate the crop's parameters accordingly.
+     *
+     * @param string transformOperation the upstream transform
+     * @param string targetOperations the current set of operations
+     * @param boolean true if we should apply the transform in reverse
+     * @return array boolean success or failure
+     *               string the new set of operations
+     */
+    function applyTransform($transformOperation, $targetOperations, $reverse=false) {
+	$transformedOperations = $targetOperations;
+	
+	/* Right now, only the rotate operation will cause issues */
+	if (!strncmp($transformOperation, 'rotate', 6)) {
+	    /* And it will only cause issues to the crop operation */
+	    if (strstr($targetOperations, 'crop|') !== false) {
+		$rotationAmount = substr($transformOperation, 7);
+		if ($reverse) {
+		    switch ($rotationAmount) {
+		    case '90':
+			$rotationAmount = '270';
+			break;
+
+		    case '-90':
+		    case '270':
+			$rotationAmount = '90';
+			break;
+		    }
+		}
+		
+		$newOperations = array();
+		foreach (split(';', $targetOperations) as $operation) {
+		    if (!strncmp($operation, 'crop', 4)) {
+			list ($x, $y, $width, $height) = split(',', substr($operation, 5));
+
+			switch ($rotationAmount) {
+			case '90':
+			    $newX = round((float)100.0 - (float)$y - (float)$height, 3);
+			    $newY = $x;
+			    $newWidth = $height;
+			    $newHeight = $width;
+			    break;
+			    
+			case '-90':
+			case '270':
+			    $newX = $y;
+			    $newY = round((float)100.0 - (float)$x - (float)$width, 3);
+			    $newWidth = $height;
+			    $newHeight = $width;
+			    break;
+
+			case '180':
+			    $newX = round((float)100.0 - (float)$x - (float)$width, 3);
+			    $newY = round((float)100.0 - (float)$y - (float)$height, 3);
+			    $newWidth = $width;
+			    $newHeight = $height;
+			    break;
+
+			default:
+			    /* What do we do now?  Do nothing. */
+			    $newX = $x;
+			    $newY = $y;
+			    $newWidth = $width;
+			    $newHeight = $height;
+			}
+			
+			$newOperations[] = sprintf('crop|%s,%s,%s,%s', $newX, $newY, $newWidth, $newHeight);
+		    } else {
+			$newOperations[] = $operation;
+		    }
+		}
+		$transformedOperations = join(';', $newOperations);
+	    }
+	}
+
+	return array(true, $transformedOperations);
+    }
+	
+
+    /**
      * Merge two operations together in an intelligent way.  The end result of
      * the merge should be a new operation and arguments that would result if
      * you applied the operations in sequence.  For example, if the operations

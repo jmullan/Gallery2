@@ -57,88 +57,98 @@ class GalleryDerivativeHelper_advanced {
     }
 
     /**
-     * Remove the given operations from any derivatives that depend on the given ids.  Use case: we've done
-     * the "rotate" option on a data item but that data item has a derivative which is being generated using
-     * the "crop" operation.  After the rotate, the crop parameters are no longer valid, so we remove it.
+     * Use the given operation as a transform for each derivative that depends on the target derivative.  This
+     * gives the dependent derivatives a chance to perform any necessary transformations required to adapt to
+     * an upstream derivative operation change.  For example, if you have a preferred which has a dependent
+     * thumbnail which has a crop operation in it, then you "rotate|90" the preferred you'd call
+     * adjustDependentDerivatives on the thumbnail with the "rotate|90" operation so that we can rotate the
+     * crop coordinates appropriately.
      *
-     * @param array ids the source ids
-     * @param array operation the operations to remove
+     * @param array id the target derivative
+     * @param string the operation that was performed on the target derivative
+     * @param boolean true if we should apply the transform in reverse
      * @return object GalleryStatus a status code
      * @static
      */
-    function pruneDerivativeOperations($ids, $operations) {
+    function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	global $gallery;
-	$idMarkers = GalleryUtilities::makeMarkers($ids);
 
-	$query = '
-        SELECT
-          [GalleryDerivative::id]
-        FROM
-          [GalleryDerivative]
-        WHERE
-          [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
-        ';
+	$ids = array($id => 1);
+	$lastCount = 0;
 
-	list ($ret, $searchResults) = $gallery->search($query, $ids);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	/* Discover the entire derivative dependency tree */
+	while (sizeof($ids) > $lastCount) {
+	    $lastCount = sizeof($ids);
+	    $idMarkers = GalleryUtilities::makeMarkers(sizeof($ids));
+	    $query = '
+            SELECT
+              [GalleryDerivative::id]
+            FROM
+              [GalleryDerivative]
+            WHERE
+              [GalleryDerivative::derivativeSourceId] IN (' . $idMarkers . ')
+            ';
 
-	/* Get all derivative ids */
-	$derivativeIds = array();
-	while ($result = $searchResults->nextResult()) {
-	    $derivativeIds[] = $result[0];
-	}
-
-	if (!empty($derivativeIds)) {
-	    /* Turn ids into objects */
-	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($derivativeIds);
+	    list ($ret, $searchResults) = $gallery->search($query, array_keys($ids));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    /* Get all derivative ids */
+	    while ($result = $searchResults->nextResult()) {
+		$ids[$result[0]] = 1;
+	    }
+	}
+	unset($ids[$id]);
+	$ids = array_keys($ids);
+
+	/* Now $ids contains all the derivative ids that depend on the target $id */
+	if (!empty($ids)) {
+	    list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($ids);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    /* Turn ids into objects */
+	    list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($ids);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Get all toolkits */
+	    $toolkitIds = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
+	    $toolkits = array();
+	    foreach (array_keys($toolkitIds) as $toolkitId) {
+		list ($ret, $toolkits[$toolkitId]) =
+		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* Apply the transform as necessary */
 	    $changed = array();
 	    $changedIds = array();
 	    foreach ($derivatives as $derivative) {
-		$newOperations = array();
-		foreach (explode(';', $derivative->getDerivativeOperations()) as $derivativeOperation) {
-		    list ($op) = explode('|', $derivativeOperation);
-		    if (!in_array($op, $operations)) {
-			$newOperations[] = $derivativeOperation;
+		foreach ($toolkits as $toolkitId => $toolkit) {
+		    $currentOperations = $derivative->getDerivativeOperations();
+		    list ($success, $newOperations) =
+			$toolkit->applyTransform($operation, $currentOperations, $reverse);
+		    if ($success) {
+			/* It might not have changed, but setting it here won't hurt */
+			$derivative->setDerivativeOperations($newOperations);
+			$ret = $derivative->save();
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+			break;
 		    }
 		}
-		
-		$derivative->setDerivativeOperations(join(';', $newOperations));
-		if ($derivative->isModified()) {
-		    $changed[] = $derivative;
-		    $changedIds[] = $derivative->getId();
-		}
 	    }
-
-	    /* Recurse */
-	    $ret = GalleryCoreApi::pruneDerivativeOperations($derivativeIds, $operations);
+	    
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if (sizeof($changed) > 0) {
-		/* Save any derivatives that changed */
-		list ($ret, $lockIds) = GalleryCoreApi::acquireWriteLock($changedIds);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		for ($i = 0; $i < sizeof($changed); $i++) {
-		    $ret = $changed[$i]->save();
-		    if ($ret->isError()) {
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
-		}
-	    
-		$ret = GalleryCoreApi::releaseLocks($lockIds);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
 	    }
 	}
 
@@ -410,7 +420,7 @@ class GalleryDerivativeHelper_advanced {
 		}
 
 		if (!$success) {
-		    /* No merge was possible so add the new operation to the end */
+		    /* No merge was possible so add the new operation to the head or tail */
 		    if ($highPriority) {
 			array_unshift($operations1, $operations2[$i]);
 		    } else {

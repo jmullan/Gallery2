@@ -818,18 +818,22 @@ class GalleryCoreApi {
     }
 
     /**
-     * Remove the given operations from any derivatives that depend on the given ids.  Use case: we've done
-     * the "rotate" option on a data item but that data item has a derivative which is being generated using
-     * the "crop" operation.  After the rotate, the crop parameters are no longer valid, so we remove it.
+     * Use the given operation as a transform for each derivative that depends on the target derivative.  This
+     * gives the dependent derivatives a chance to perform any necessary transformations required to adapt to
+     * an upstream derivative operation change.  For example, if you have a preferred which has a dependent
+     * thumbnail which has a crop operation in it, then you "rotate|90" the preferred you'd call
+     * adjustDependentDerivatives on the thumbnail with the "rotate|90" operation so that we can rotate the
+     * crop coordinates appropriately.
      *
-     * @param array ids the source ids
-     * @param array operation the operations to remove
+     * @param array id the target derivative
+     * @param string the operation that was performed on the target derivative
+     * @param boolean true if we should apply the transform in reverse
      * @return object GalleryStatus a status code
      * @static
      */
-    function pruneDerivativeOperations($ids, $operations) {
+    function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::pruneDerivativeOperations($ids, $operations);
+	return GalleryDerivativeHelper_advanced::adjustDependentDerivatives($id, $operation, $reverse);
     }
 
     /**

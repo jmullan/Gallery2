@@ -107,7 +107,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_derivative[1]) =
 	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -147,6 +147,12 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+
+	/* Reparent the thumbnail cause we're going to want to check it later */
+	$ret = GalleryCoreApi::remapSourceIds($this->_derivative[0]->getId(), $this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
@@ -177,8 +183,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->assertEquals($originalSerial, $this->_item->getSerialNumber());
+
+	/* Verify that the thumbnail's crop is the same */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|10,10,30,40;scale|200', $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testScaleReplaceOriginal() {
@@ -188,6 +200,12 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[scale][size]', 270);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
+	
+	/* Reparent the thumbnail cause we're going to want to check it later */
+	$ret = GalleryCoreApi::remapSourceIds($this->_derivative[0]->getId(), $this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	
 	/* Delete the preferred */
 	$ret = GalleryCoreApi::deleteEntityById($this->_derivative[0]->getId());
@@ -221,6 +239,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	$newSize = $this->_item->getSize();
 	$this->assert($originalSize != $newSize, 'Item size should have changed');
+
+	/* Verify that the thumbnail's crop is the same */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|10,10,30,40;scale|200', $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testScale() {
@@ -252,7 +277,6 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][scale]', 1);
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item->getSerialNumber());
-	
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
@@ -292,6 +316,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('rotate|180', $this->_derivative[0]->getDerivativeOperations());
+
+	/* Verify that the thumbnail's crop was adjusted */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|50,10,40,30;scale|200', $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testRotateCounterClockwise() {
@@ -308,6 +339,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	/* Verify that the derivative is now gone (90 + -90 == 0) */
 	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
 	$this->assert($ret->getErrorCode() & ERROR_MISSING_OBJECT);
+
+	/* Verify that the thumbnail's crop was adjusted */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|10,60,40,30;scale|200', $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testRotateFlip() {
@@ -327,6 +365,13 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('rotate|-90', $this->_derivative[0]->getDerivativeOperations());
+
+	/* Verify that the thumbnail's crop was adjusted */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|60,50,30,40;scale|200', $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testRevertToOriginal() {
@@ -353,6 +398,14 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	    $this->assert($this->_item->getId(), $this->_derivative[$i]->getDerivativeSourceId());
 	}
+
+	/* Verify that the thumbnail's crop was adjusted */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|10,60,40,30;scale|200', $this->_derivative[1]->getDerivativeOperations());
+	
     }
 
     function testScaleWithInvalidSerialNumber() {

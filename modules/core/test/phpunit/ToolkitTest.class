@@ -369,6 +369,30 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals(0, $derivative->getWidth());
 	$this->assertEquals(0, $derivative->getHeight());
     }
+
+    function testApplyTransform() {
+	$toolkit = new GalleryToolkit();
+
+	/* Rotate transform of cropped operation results in rotated coordinates*/
+	list ($success, $result) = $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50');
+	$this->assert($success);
+	$this->assertEquals('rotate|90;crop|35,15,50,40', $result, 'test 1');
+
+	/* Rotate transform of nothing returns nothing */
+	list ($success, $result) = $toolkit->applyTransform('rotate|90', '');
+	$this->assert($success);
+	$this->assertEquals('', $result, 'test 2');
+
+	/* Empty transform of cropped opreation returns original values */
+	list ($success, $result) = $toolkit->applyTransform('', 'rotate|90;crop|15,15,40,50');
+	$this->assert($success);
+	$this->assertEquals('rotate|90;crop|15,15,40,50', $result, 'test 3');
+
+	/* Reverse rotate transform of cropped operation results in rotated coordinates*/
+	list ($success, $result) = $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50', true);
+	$this->assert($success);
+	$this->assertEquals('rotate|90;crop|15,45,50,40', $result, 'test 4');
+    }
 }
 
 /**

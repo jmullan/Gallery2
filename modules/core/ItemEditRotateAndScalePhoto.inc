@@ -72,6 +72,16 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	    $args = array(180);
 	} else if (isset($form['action']['revertToOriginal'])) {
 	    if (!empty($preferred)) {
+		/* Let our change ripple down the derivative tree, if necessary */
+		foreach (split(';', $preferred->getDerivativeOperations()) as $tmpOperation) {
+		    $ret = GalleryCoreApi::adjustDependentDerivatives($preferred->getId(),
+								      $tmpOperation,
+								      true);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+
 		$ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -159,6 +169,13 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
+		/* Let our change ripple down the derivative tree, if necessary */
+		$ret = GalleryCoreApi::adjustDependentDerivatives($item->getId(),
+                    sprintf('%s|%s', $operation, join(',', $args)));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
 		$gallery->debug('checking is modified');
 		/* Save the item, if it's modified */
 		if ($item->isModified()) {
@@ -234,6 +251,12 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		}
 		$preferred->setDerivativeOperations($operations);
 
+		/* Let our change ripple down the derivative tree, if necessary */
+		$ret = GalleryCoreApi::adjustDependentDerivatives($preferred->getId(), $operationString);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
 		/*
 		 * Perform a final check -- if the new derivative is exactly
 		 * the same as the original then delete it.
@@ -262,20 +285,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		}
-	    }
-
-	    /*
-	     * It's possible that the operation we did will cause damage to derivatives down
-	     * the tree, (eg, when we rotate a source that has a cropped derivative -- the
-	     * cropping rules will no longer apply and can be broken such that the toolkit
-	     * will fail to be able to generate the image).  So remove the crop operation from
-	     * any derived images in that case.
-	     */
-	    if ($operation == 'rotate') {
-		$ret = GalleryCoreApi::pruneDerivativeOperations(array($item->getId()), array('crop'));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
 

@@ -395,17 +395,17 @@ class DerivativeTest extends GalleryTestCase {
 	
     }
 
-    function testPruneDerivativeOperations() {
+    function testAdjustDependentDerivatives() {
 	global $gallery;
 	
 	/*
-	 * Create a derivative with a operation that we want to prune.  Parent it to an item that will get
+	 * Create a derivative with a operation that we want to adjust.  Parent it to an item that will get
 	 * deleted so that tearDown will get rid of it for us.
 	 */
 	list ($ret, $derivative) =
 	    $this->_createDerivative($this->_child[0], $this->_child[0]->getId(),
 				     DERIVATIVE_TYPE_IMAGE_RESIZE,
-				     'filler|1,2,3;deleteme|1;filler|1');
+				     'filler|1,2,3;crop|20,30,41,16;filler|1');
 
 	list($ret, $lockId) = GalleryCoreApi::acquireWriteLock($derivative->getId());
 	if ($ret->isError()) {
@@ -423,7 +423,7 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::pruneDerivativeOperations(array($this->_child[0]->getId()), array('deleteme'));
+	$ret = GalleryCoreApi::adjustDependentDerivatives($this->_derivative[0][0]->getId(), 'rotate|90');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -433,7 +433,8 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('filler|1,2,3;filler|1', $derivative->getDerivativeOperations());
+	$this->assertEquals('filler|1,2,3;crop|54,20,16,41;filler|1',
+			    $derivative->getDerivativeOperations());
     }
 
     function testMergeDerivativeOperations() {
@@ -523,7 +524,7 @@ class DerivativeTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals($linkPreferred, $source);
-    }    
+    }
 }
 
 /**
