@@ -139,7 +139,7 @@ class UserAlbumHelper {
 		  FROM [GalleryAlbumItem], [GalleryItem], [GalleryEntity]
 		  WHERE [GalleryAlbumItem::id] = [GalleryItem::id]
 		  AND [GalleryAlbumItem::id] = [GalleryEntity::id] AND [GalleryItem::ownerId] = ?
-		  ORDER BY [GalleryEntity::creationTimestamp]';
+		  ORDER BY [GalleryEntity::creationTimestamp] ASC, [GalleryEntity::id] ASC';
 
 	list ($ret, $searchResults) =
 	    $gallery->search($query, array($userId), array('limit' => array('count' => 1)));
