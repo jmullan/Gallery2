@@ -158,7 +158,6 @@ function lookup_tag($tag) {
 		case "8298": $tag = "Copyright";break;						//text string up to 999 bytes long
 		case "8649": $tag = "PhotoshopSettings";break;				//??	
 		case "8825": $tag = "GPSInfoOffset";break;
-		case "9286": $tag = "UserCommentOld";break;					//??
 		case "8769": $tag = "ExifOffset";break;						//positive integer
 		
 			//used by Exif SubIFD "Image Tags"
@@ -210,6 +209,7 @@ function lookup_tag($tag) {
 		case "a402": $tag = "ExposureMode";break;					//values 0-2
 		case "a403": $tag = "WhiteBalance";break;					//values 0 or 1
 		case "a404": $tag = "DigitalZoomRatio";break;				//positive rational number
+		case "a405": $tag = "FocalLengthIn35mmFilm";break;			// G2-addition
 		case "a406": $tag = "SceneCaptureMode";break;				//values 0-3
 		case "a407": $tag = "GainControl";break;					//values 0-4
 		case "a408": $tag = "Contrast";break;						//values 0-2
@@ -338,7 +338,7 @@ function formatData($type,$tag,$intel,$data) {
 		} else if($tag=="829d") { //FNumber
 			$data="f ".$data;
 		} else if($tag=="9204") { //ExposureBiasValue
-			$data=$data." EV";
+			$data= sprintf("%.2f", $data) . " EV";
 		} else if($tag=="9205" || $tag=="9202") { //ApertureValue and MaxApertureValue
 			//ApertureValue is given in the APEX Mode. Many thanks to Matthieu Froment for this code
 			//The formula is : Aperture = 2*log2(FNumber) <=> FNumber = e((Aperture.ln(2))/2)
@@ -346,7 +346,7 @@ function formatData($type,$tag,$intel,$data) {
 			$data = round($data, 1);//Focal is given with a precision of 1 digit.
 			$data="f ".$data; 
 		} else if($tag=="920a") { //FocalLength
-			$data=$data." mm";
+			$data = sprintf("%.2f", $data) . " mm";
 		} else if($tag=="9201") { //ShutterSpeedValue
 			// The ShutterSpeedValue is given in the APEX mode. Many thanks to Matthieu Froment for this code
 			// The formula is : Shutter = - log2(exposureTime) (Appendix C of EXIF spec.)
@@ -360,12 +360,14 @@ function formatData($type,$tag,$intel,$data) {
 			ConvertToFraction($data, $n, $d); 
 			if ($n>=1 && $d==1) $data = $n." sec"; //To avoid exposure times style 3/1 sec.
 			else $data = $n."/".$d." sec";
-		} 
+		} else if($tag=="a20e" || $tag=="a20f") { //FocalPlaneXResolution and FocalPlaneYResolution
+			$data= sprintf("%.2f", $data);
+		}
 		
 	} else if($type=="USHORT" || $type=="SSHORT" || $type=="ULONG" || $type=="SLONG" || $type=="FLOAT" || $type=="DOUBLE") {
 		$data = bin2hex($data);
+		if($type=="USHORT" || $type=="SSHORT") $data = substr($data,0,4);
 		if($intel==1) $data = intel2Moto($data);
-		if($intel==0 && ($type=="USHORT" || $type=="SSHORT")) $data = substr($data,0,4);
 		$data=hexdec($data);
 		
 		if($type=="SSHORT" && $data>32767) $data = $data - 65536;	//this makes the number signed instead of unsigned
@@ -373,20 +375,20 @@ function formatData($type,$tag,$intel,$data) {
 		
 		if($tag=="0112") { //Orientation
 			if($data==1) $data = "Normal (O deg)";
-			if($data==2) $data = "Mirrored";
-			if($data==3) $data = "Upsidedown";
-			if($data==4) $data = "Upsidedown Mirrored";
-			if($data==5) $data = "90 deg CW Mirrored";
-			if($data==6) $data = "90 deg CCW";
-			if($data==7) $data = "90 deg CCW Mirrored";
-			if($data==8) $data = "90 deg CW";
+			else if($data==2) $data = "Mirrored";
+			else if($data==3) $data = "Upsidedown";
+			else if($data==4) $data = "Upsidedown Mirrored";
+			else if($data==5) $data = "90 deg CW Mirrored";
+			else if($data==6) $data = "90 deg CCW";
+			else if($data==7) $data = "90 deg CCW Mirrored";
+			else if($data==8) $data = "90 deg CW";
 		} else if($tag=="0128" || $tag=="a210" || $tag=="0128") {  //ResolutionUnit and FocalPlaneResolutionUnit and ThumbnailResolutionUnit
 			if($data==1) $data = "No Unit";
-			if($data==2) $data = "Inch";
-			if($data==3) $data = "Centimeter";
+			else if($data==2) $data = "Inch";
+			else if($data==3) $data = "Centimeter";
 		} else if($tag=="0213") { //YCbCrPositioning
 			if($data==1) $data = "Center of Pixel Array";
-			if($data==2) $data = "Datum Point";
+			else if($data==2) $data = "Datum Point";
 		} else if($tag=="8822") { //ExposureProgram
 			if($data==1) $data = "Manual";
 			else if($data==2) $data = "Program";
@@ -456,12 +458,12 @@ function formatData($type,$tag,$intel,$data) {
 			else $data = "Unknown: ".$data;
 		} else if($tag=="a217") { //SensingMethod
 			if($data==1) $data = "Not defined";
-			if($data==2) $data = "One Chip Color Area Sensor";
-			if($data==3) $data = "Two Chip Color Area Sensor";
-			if($data==4) $data = "Three Chip Color Area Sensor";
-			if($data==5) $data = "Color Sequential Area Sensor";
-			if($data==7) $data = "Trilinear Sensor";
-			if($data==8) $data = "Color Sequential Linear Sensor";
+			else if($data==2) $data = "One Chip Color Area Sensor";
+			else if($data==3) $data = "Two Chip Color Area Sensor";
+			else if($data==4) $data = "Three Chip Color Area Sensor";
+			else if($data==5) $data = "Color Sequential Area Sensor";
+			else if($data==7) $data = "Trilinear Sensor";
+			else if($data==8) $data = "Color Sequential Linear Sensor";
 			else $data = "Unknown: ".$data;
 		} else if($tag=="0106") { //PhotometricInterpretation
 			if($data==1) $data = "Monochrome";
@@ -495,6 +497,10 @@ function formatData($type,$tag,$intel,$data) {
 			$data	= str_replace("06","B",$data);
 			$data	= str_replace("00","",$data);
 		}
+		if($tag=="9286") {	//UserComment
+			$data = preg_replace('/\0$/', '', $data);
+		}
+
 	} else {
 		$data = bin2hex($data);
 		if($intel==1) $data = intel2Moto($data);
@@ -514,7 +520,7 @@ function read_entry(&$result,$in,$seek,$intel,$ifd_name,$globalOffset) {
 	$tag = bin2hex(fread( $in, 2 ));
 	if($intel==1) $tag = intel2Moto($tag);
 	$tag_name = lookup_tag($tag);
-	
+
 	//2 byte datatype
 	$type = bin2hex(fread( $in, 2 ));
 	if($intel==1) $type = intel2Moto($type);
