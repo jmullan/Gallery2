@@ -178,6 +178,12 @@ class ImageBlockModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
+	if (isset($param['specificItem'])) {
+	    $ret = $this->_addBlock($blocks, '', 'SpecificItem', '', $parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 
 	$show = array();
 	foreach (explode('|', $params['show']) as $key) {
@@ -195,9 +201,25 @@ class ImageBlockModule extends GalleryModule {
     }
 
     function _addBlock(&$blocks, $title, $itemType, $order, $parentId=null) {
-	list ($ret, $data) = ImageBlockHelper::fetchViewableData($itemType, $order, $parentId);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if ($itemType != 'SpecificItem' || !isset($parentId)) {
+
+	    list ($ret, $data) = ImageBlockHelper::fetchViewableData($itemType, $order, $parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	} else {
+	    // Image Block for a specific item..
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $data = array('id' => $item->getId(),
+			  'creationTimestamp' => $item->getCreationTimestamp());
+	    list ($ret, $data['viewCount']) = GalleryCoreApi::fetchItemViewCount($parentId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	if (isset($data)) {
