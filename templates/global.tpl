@@ -44,6 +44,7 @@
 	<a href="http://gallery.sourceforge.net"><img
 	  src="{g->url href="images/gallery.gif"}"
 	  alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
+	  title="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  style="border: none" width="80" height="15"/></a>
       </div>
     </div>
