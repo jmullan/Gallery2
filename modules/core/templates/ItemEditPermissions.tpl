@@ -110,14 +110,17 @@
 		    {$entry.permission.description}
 		  </td>
 		  <td align="left">
-		    {if $entry.deleteable}
-		    <a href="{galleryUrl controller=$controller
-		                         itemId=$item.id
-		                         form_action_delete=1
-		                         form_group_id=$entry.group.id
-		                         form_permission_id=$entry.permission.id}">
-		      [{galleryText text="delete"}]
-		    </a>
+		    {if ! empty($entry.deleteList) }
+		    {gallerySelect name="form.group.delete" size="1"}
+		    {foreach from=$entry.deleteList item=deleteEntry}
+		    <option value="{$entry.group.id},{$deleteEntry.id}"> 
+		      {galleryText text="Remove %s" arg1=$deleteEntry.description}
+		    </option>
+		    {/foreach}
+		    {/gallerySelect}
+		    {galleryInput type="submit" name="form.action.deleteGroupPermission"}
+		    {galleryText text="Go"}
+		    {/galleryInput}
 		    {else}
 		    &nbsp;
 		    {/if}
@@ -210,14 +213,17 @@
 		    {$entry.permission.description}
 		  </td>
 		  <td align="left">
-		    {if $entry.deleteable}
-		    <a href="{galleryUrl controller=$controller
-		                         itemId=$item.id
-		                         form_action_delete=1
-		                         form_user_id=$entry.user.id
-		                         form_permission_id=$entry.permission.id}">
-		      [{galleryText text="delete"}]
-		    </a>
+		    {if ! empty($entry.deleteList) }
+		    {gallerySelect name="form.user.delete" size="1"}
+		    {foreach from=$entry.deleteList item=deleteEntry}
+		    <option value="{$entry.user.id},{$deleteEntry.id}"> 
+		      {galleryText text="Remove %s" arg1=$deleteEntry.description}
+		    </option>
+		    {/foreach}
+		    {/gallerySelect}
+		    {galleryInput type="submit" name="form.action.deleteUserPermission"}
+		    {galleryText text="Go"}
+		    {/galleryInput}
 		    {else}
 		    &nbsp;
 		    {/if}
