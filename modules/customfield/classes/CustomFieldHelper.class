@@ -110,8 +110,8 @@ class CustomFieldHelper {
      * @static
      */
     function deleteField($field, $exceptType=null) {
+	require_once(dirname(__FILE__) . '/CustomFieldMap.class');
 	global $gallery;
-	$storage = $gallery->getStorage();
 
 	switch ($exceptType) {
 
@@ -130,15 +130,14 @@ class CustomFieldHelper {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    $query = 'DELETE FROM [CustomFieldMap] WHERE [CustomFieldMap::field] = ?
-						     AND [CustomFieldMap::itemId] IN (';
 	    for ($rec = true; $rec;) {
 		$idList = array();
 		for ($i = 0; $i < 300 && $rec = $searchResults->nextResult(); $i++) {
 		    $idList[] = $rec[0];
 		}
 		if (!empty($idList)) {
-		    $ret = $storage->execute($query . implode(',', $idList) . ')', array($field));
+		    $ret = CustomFieldMap::removeMapEntry( array('field' => $field,
+								 'itemId' => $idList) );
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -147,7 +146,6 @@ class CustomFieldHelper {
 	    break;
 
 	default:
-	    require_once(dirname(__FILE__) . '/CustomFieldMap.class');
 	    $ret = CustomFieldMap::removeMapEntry(array('field' => $field));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
