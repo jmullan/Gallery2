@@ -155,16 +155,18 @@ class GdToolkitTest extends GalleryTestCase {
 		}
 		
 		if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
-		    list ($ret, $mimeType) =
+		    $context = array('width' => 300, 'height' => 200);
+		    list ($ret, $mimeType, $context) =
 			$this->_toolkit->performOperation($mimeType, 'rotate',
 							  '300x200.ext',
 							  '/valid/rotated.ext',
-							  array(90));
+							  array(90), $context);
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/rotated.ext'),
 					array('x' => '200', 'y' => '300', 'mimeType' => $mimeType));
+		    $this->assertEquals(array('width' => 200, 'height' => 300), $context, 'context');
 		}
 		
 		if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {

@@ -61,9 +61,9 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Return the current set gdFunctionality.
-     * 
+     *
      * Default is GdFunctionality.class if no other is set.
-     * 
+     *
      * @return object implementation of GdFunctionality
      * @access private
      */
@@ -78,10 +78,10 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Set a different GdFunctionality object to be used by this Toolkit
-     * 
+     *
      * This is useful on our phpunit tests, which will make this Toolkit
      * use a pseudo-gd-implementation that simulates different PHP versions.
-     * 
+     *
      * @return nothing
      */
     function setGdFunctionality(&$obj) {
@@ -91,7 +91,7 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Do we have a working version of imageCreateTrueColor()?
-     * 
+     *
      * @return array object GalleryStatus
      *	       boolean true if this function should work
      * @access private
@@ -142,13 +142,13 @@ class GdToolkit extends GalleryToolkit {
 				    $mimeType, $operationName, $sourceFilename,
 				    $destFilename, join('|', $parameters)));
 	}
-	
+
 	$outputMimeType = $mimeType;
 	list($ret, $sourceRes) = $this->_getImageResource($mimeType, $sourceFilename);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	
+
 	switch($operationName) {
 	case 'thumbnail':
 	case 'scale':
@@ -180,8 +180,12 @@ class GdToolkit extends GalleryToolkit {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
+	    if (isset($context['width'])) {
+		$context['width'] = $destWidth;
+		$context['height'] = $destHeight;
+	    }
 	    break;
-	    
+
 	case 'resize':
 	    /*
 	     * $parameters[0]: target width
@@ -192,6 +196,10 @@ class GdToolkit extends GalleryToolkit {
 						    $parameters[1]);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (isset($context['width'])) {
+		$context['width'] = $parameters[0];
+		$context['height'] = $parameters[1];
 	    }
 	    break;
 
@@ -204,6 +212,11 @@ class GdToolkit extends GalleryToolkit {
 	    list ($ret, $destRes) = $gd->imageRotate($sourceRes, $degrees, 0);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (isset($context['width']) && ($degrees == 90 || $degrees == -90)) {
+		$tmp = $context['width'];
+		$context['width'] = $context['height'];
+		$context['height'] = $tmp;
 	    }
 	    break;
 
@@ -234,6 +247,10 @@ class GdToolkit extends GalleryToolkit {
 				  $pixelX, $pixelY, $pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (isset($context['width'])) {
+		$context['width'] = $pixelWidth;
+		$context['height'] = $pixelHeight;
 	    }
 	    break;
 
@@ -276,42 +293,42 @@ class GdToolkit extends GalleryToolkit {
 		$compositeAlignX = 50;
 		$compositeAlignY = 0;
 		break;
-		
+
 	    case 'top-right':
 		$compositeAlignX = 100;
 		$compositeAlignY = 0;
 		break;
-		
+
 	    case 'left':
 		$compositeAlignX = 0;
 		$compositeAlignY = 50;
 		break;
-		
+
 	    case 'center':
 		$compositeAlignX = 50;
 		$compositeAlignY = 50;
 		break;
-		
+
 	    case 'right':
 		$compositeAlignX = 100;
 		$compositeAlignY = 50;
 		break;
-		
+
 	    case 'bottom-left':
 		$compositeAlignX = 0;
 		$compositeAlignY = 100;
 		break;
-		
+
 	    case 'bottom':
 		$compositeAlignX = 50;
 		$compositeAlignY = 100;
 		break;
-		
+
 	    case 'bottom-right':
 		$compositeAlignX = 100;
 		$compositeAlignY = 100;
 		break;
-		
+
 	    case 'manual':
 		// Use the alignments we received
 		break;
@@ -338,7 +355,7 @@ class GdToolkit extends GalleryToolkit {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    
+
 	    $destRes = $sourceRes;
 	    $ret = $gd->imageCopyMerge($destRes, $overlayRes,
 				       $compositeAlignX, $compositeAlignY,
@@ -350,7 +367,7 @@ class GdToolkit extends GalleryToolkit {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    break;
-	    
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      "$operationName $mimeType"), null, null);
@@ -366,7 +383,7 @@ class GdToolkit extends GalleryToolkit {
     /**
      * Return a GD image resource for the given filename so we can
      * perform other operations on it.
-     * 
+     *
      * @param string the mime-type of the image
      * @param string the path to the file to read
      * @return array object GalleryStatus a status code
@@ -375,7 +392,7 @@ class GdToolkit extends GalleryToolkit {
      */
     function _getImageResource($mimeType, $filename) {
 	$gd =& $this->_getGdFunctionality();
-	
+
 	$res = null;
 	switch ($mimeType) {
 	case 'image/gif':
@@ -408,11 +425,11 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Create a truecolor GD resource with the specified sizes.
-     * 
+     *
      * On GD >= 2.0.1 there is a function to do this directly.
      * On earlier versions, we need to create a temporary JPEG image and
      * create the image from that.
-     * 
+     *
      * @return array object GalleryStatus
      *	       resource the GD resource
      * @access private
@@ -454,7 +471,7 @@ class GdToolkit extends GalleryToolkit {
 
     /**
      * Save a GD resource to a file with a certain mime-type
-     * 
+     *
      * @param string the mime-type of the image
      * @param string the path to the file to read
      * @return object GalleryStatus a status code
@@ -492,10 +509,10 @@ class GdToolkit extends GalleryToolkit {
 	}
 	return GalleryStatus::success();
     }
-    
+
     /**
      * Resizes an open GD-resource to the specified size.
-     * 
+     *
      * @param resource the source GD-resource
      * @param int the destination width
      * @param int the destination height
@@ -505,7 +522,7 @@ class GdToolkit extends GalleryToolkit {
      */
     function _resizeImageResource($sourceRes, $destWidth, $destHeight) {
 	$gd =& $this->_getGdFunctionality();
-	
+
 	list ($ret, $sourceWidth) = $gd->imageSX($sourceRes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -547,18 +564,18 @@ class GdToolkit extends GalleryToolkit {
 	    (($results[0] > 1) && ($results[1] > 1))) {
 	    return array(GalleryStatus::success(), $results[0], $results[1]);
 	}
-	
+
 	list($success, $res) = $this->_getImageResource($mimeType, $filename);
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
 	}
-	
+
 	return $this->_getImageDimensionsForResource($res);
     }
 
     /**
      * Get the image dimentions for an already opened GD resource.
-     * 
+     *
      * @return array object GalleryStatus
      *	       int width
      *	       int height
@@ -580,13 +597,13 @@ class GdToolkit extends GalleryToolkit {
 	return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__),
 		     null, null);
     }
-    
+
     /**
      * Copy and resize part of an image with resampling or resizing.
-     * 
-     * We will use GD's "resample" functionality and fallback to "resize" 
+     *
+     * We will use GD's "resample" functionality and fallback to "resize"
      * if "resample" is not available.
-     * 
+     *
      * @return object GalleryStatus
      * @access private
      */
@@ -603,6 +620,5 @@ class GdToolkit extends GalleryToolkit {
 	}
 	return GalleryStatus::success();
     }
-
 }
 ?>
