@@ -1,6 +1,6 @@
 {*
  * If you want to customize this file, do not edit it directly.
- * Instead, copy it to SiteAdmin.tpl.local and edit that version instead.
+ * Instead, copy it to WatermarkSiteAdmin.tpl.local and edit that version instead.
  * Gallery will look for that file first and use it if it exists
  * and when you upgrade, your changes will not get overwritten.
  *}
@@ -46,10 +46,20 @@
        </td>
 
         <td>
-          <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
-                           arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
-            {g->text text="delete"}
-          </a>
+	  <ul class="giHorizontalLinks">
+            <li> 
+	      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=watermark:WatermarkSiteAdminEdit" 
+                               arg3="itemId=`$item.id`"}">
+                {g->text text="edit"}
+              </a>
+            </li>
+	    <li>
+              <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
+                               arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
+                {g->text text="delete"}
+              </a>
+            </li>
+          </ul>
         </td>
       </tr>
       {/foreach}

@@ -29,7 +29,7 @@
  * @package Watermark
  * @subpackage UserInterface
  */
-class UserWatermarkEditController extends GalleryController {
+class WatermarkSiteAdminEditController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -96,15 +96,15 @@ class UserWatermarkEditController extends GalleryController {
 		}
 
 		$status['saved'] = 1;
-		$results['redirect']['view'] = 'core:UserAdmin';
-		$results['redirect']['subView'] = 'watermark:UserWatermarks';
+		$results['redirect']['view'] = 'core:SiteAdmin';
+		$results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	    } else {
-		$results['delegate']['view'] = 'core:UserAdmin';
-		$results['delegate']['subView'] = 'watermark:UserWatermarkEdit';
+		$results['delegate']['view'] = 'core:SiteAdmin';
+		$results['delegate']['subView'] = 'watermark:WatermarkSiteAdminEdit';
 	    }
 	} else if (isset($form['action']['cancel'])) {
-	    $results['redirect']['view'] = 'core:UserAdmin';
-	    $results['redirect']['subView'] = 'watermark:UserWatermarks';
+	    $results['redirect']['view'] = 'core:SiteAdmin';
+	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	}
 
 	$results['status'] = $status;
@@ -117,7 +117,7 @@ class UserWatermarkEditController extends GalleryController {
  * @package Watermark
  * @subpackage UserInterface
  */
-class UserWatermarkEditView extends GalleryView {
+class WatermarkSiteAdminEditView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -137,8 +137,8 @@ class UserWatermarkEditView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	if ($form['formName'] != 'UserWatermarkEdit') {
-	    $form['formName'] = 'UserWatermarkEdit';
+	if ($form['formName'] != 'WatermarkSiteAdminEdit') {
+	    $form['formName'] = 'WatermarkSiteAdminEdit';
 
 	    $form['name'] = $watermark->getName();
 	    $form['xPercentage'] = $watermark->getXPercentage();
@@ -148,12 +148,12 @@ class UserWatermarkEditView extends GalleryView {
 	    $form['whichDerivative']['resizes'] = $watermark->getApplyToResizes() ? 1 : null;
 	}
 
-	$UserWatermarkEdit = array();
-	$UserWatermarkEdit['watermark'] = $watermark->getMemberData();
-	$template->setVariable('UserWatermarkEdit', $UserWatermarkEdit);
-	$template->setVariable('controller', 'watermark:UserWatermarkEdit');
+	$WatermarkSiteAdminEdit = array();
+	$WatermarkSiteAdminEdit['watermark'] = $watermark->getMemberData();
+	$template->setVariable('WatermarkSiteAdminEdit', $WatermarkSiteAdminEdit);
+	$template->setVariable('controller', 'watermark:WatermarkSiteAdminEdit');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/watermark/templates/UserWatermarkEdit.tpl'));
+		     array('body' => 'modules/watermark/templates/WatermarkSiteAdminEdit.tpl'));
     }
 }
 ?>

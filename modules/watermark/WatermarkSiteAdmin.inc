@@ -93,8 +93,13 @@ class WatermarkSiteAdminController extends GalleryController {
 	    }
 
 	    $status['add'] = 1;
+	    $results['redirect']['view'] = 'core:SiteAdmin';
+	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdminEdit';
+	    $results['redirect']['itemId'] = $item->getId();
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
+	    $results['delegate']['view'] = 'core:SiteAdmin';
+	    $results['delegate']['subView'] = 'watermark:WatermarkSiteAdmin';
 	} else if (isset($form['action']['delete']) &&
 		   isset($form['delete']['itemId'])) {
 
@@ -117,10 +122,10 @@ class WatermarkSiteAdminController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $status['delete'] = 1;
+	    $results['redirect']['view'] = 'core:SiteAdmin';
+	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	}
 
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -181,7 +186,7 @@ class WatermarkSiteAdminView extends GalleryView {
 	$template->setVariable('controller', 'watermark:WatermarkSiteAdmin');
 	$template->setVariable('WatermarkSiteAdmin', $WatermarkSiteAdmin);
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/watermark/templates/SiteAdmin.tpl'));
+		     array('body' => 'modules/watermark/templates/WatermarkSiteAdmin.tpl'));
     }
 }
 ?>
