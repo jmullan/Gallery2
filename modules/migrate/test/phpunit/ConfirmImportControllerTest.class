@@ -67,13 +67,50 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	}
 	
 	$this->_temporaryAlbumId = $this->_temporaryAlbum->getId();
+
+	$userName = 'phpunitfoo001';
+	/*
+	 * Go ahead and create the user instance
+	 */
+	list ($ret, $user) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Verify that the user was created successfully */
+	if (!isset($user)) {
+	    return $this->failWithStatus(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			 null);
+	}
+	
+	$ret = $user->create($userName);
+	if ($ret->isError()) {
+	    /* ERROR_COLLISION is when you try to create something that
+	     * already exists.  If this test user already exists, we're happy.
+	     */
+	    if (!($ret->getErrorCode() & ERROR_COLLISION)) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
     }
 
     function tearDown() {
         global $gallery;
 
-	/* Clean up our test user */
+	/* Clean up our test users */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunit_foobar');
+	if ($ret->isSuccess()) {
+	    $ret = GalleryCoreApi::deleteEntityById($user->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunitfoo001');
 	if ($ret->isSuccess()) {
 	    $ret = GalleryCoreApi::deleteEntityById($user->getId());
 	    if ($ret->isError()) {
@@ -175,32 +212,32 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* Get the allegedly successfully imported album */
 	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Get the layout associated with this album */
 	list ($ret, $layout) = GalleryCoreApi::fetchLayout($testAlbum);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $settings) = $layout->getSettings($testAlbumId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Get specific values from the layout */
 	list ($ret, $rows) = $layout->getParameter('rows',$testAlbumId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	list ($ret, $cols) = $layout->getParameter('cols',$testAlbumId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Count the clicks for this item */
 	list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($testAlbumId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/*
@@ -211,13 +248,13 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 */
 	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Load the thumb and resized image sizes for later comparison */
 	list ($ret, $derivativePreferences) = GalleryCoreApi::fetchDerivativePreferencesForItem(array($testAlbumId));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 
@@ -282,7 +319,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $testOwner->getId(),                   // owner
 				  1082614775,                            // album creation
 				  1056015077,                            // clicks counted since
-				  9,                                     // count of clicks
+				  11,                                    // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -361,7 +398,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* Get the allegedly successfully imported albumItem */
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[0]);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array($testItem->getTitle(),                 // title
 				  $testItem->getSummary(),               // summary
@@ -386,79 +423,94 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     }
 
     /* $album['perms']
-     * PERMSArray
-     * (    [canRead] => Array (
-     *          [1054014347_1233740678] => 1
-     *      )
-     *      [canViewFullImages] => Array (
-     *          [1082614545_1013204231] => 1
-     *          [1082614671_1351342387] => 1
-     *      )
-     *      [canViewComments] => Array (
-     *          [1082614713_490966281] => 1
-     *          [1057837115_2072132305] => 1
-     *          [1054014347_1233740678] => 1
-     *      )
-     *      [canAddComments] => Array (
-     *          [1082614671_1351342387] => 1
-     *          [1082614713_490966281] => 1
-     *      )
-     *      [canChangeText] => Array (
-     *          [1057837115_2072132305] => 1
-     *      )
-     *      [canAddTo] => Array (
-     *          [1057837154_228147420] => 1
-     *      )
-     *      [canWrite] => Array (
-     *          [1082614545_1013204231] => 1
-     *      )
-     *      [canDeleteFrom] => Array (
-     *          [1082614671_1351342387] => 1
-     *      )
-     *      [canCreateSubAlbum] => Array (
-     *          [1082614713_490966281] => 1
-     *      )
+     *
+     * Album Perms
+     * Array(
+     *     [canRead] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canViewFullImages] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canViewComments] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canAddComments] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canChangeText] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canAddTo] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canWrite] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canDeleteFrom] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     *     [canCreateSubAlbum] => Array(
+     *         [1082614545_1013204231] => 1
+     *     )
+     * )
+     * Array(
+     *     [1082614545_1013204231] => Array(
+     *         [0] => canRead
+     *         [1] => canViewFullImages
+     *         [2] => canViewComments
+     *         [3] => canAddComments
+     *         [4] => canChangeText
+     *         [5] => canAddTo
+     *         [6] => canWrite
+     *         [7] => canDeleteFrom
+     *         [8] => canCreateSubAlbum
+     *     )
      * )
      *
-     * Here's what that looks like per user
-     * (   [1054014347_1233740678] => Array (
-     *         [0] => canRead
-     *         [1] => canViewComments
-     *     )
-     *     [1082614545_1013204231] => Array (
-     *         [0] => canViewFullImages
-     *         [1] => canWrite
-     *     )
-     *     [1082614671_1351342387] => Array (
-     *         [0] => canViewFullImages
-     *         [1] => canAddComments
-     *         [2] => canDeleteFrom
-     *     )
-     *     [1082614713_490966281] => Array (
-     *         [0] => canViewComments
-     *         [1] => canAddComments
-     *         [2] => canCreateSubAlbum
-     *     )
-     *     [1057837115_2072132305] => Array (
-     *         [0] => canViewComments
-     *         [1] => canChangeText
-     *     )
-     *     [1057837154_228147420] => Array (
-     *         [0] => canAddTo
-     *     )
-     * )
-    */
+     * owner => core.all,comment.all
+     *
+     * canRead => core.view,core.viewResizes
+     * canViewFullImages => core.viewSource
+     * canViewComments => comment.view,comment.search
+     * canAddComments => comment.add
+     * canChangeText => core.edit
+     * canAddTo => core.addDataItem
+     * canWrite => core.edit
+     * canDeleteFrom => core.delete
+     * canCreateSubAlbum => core.addAlbumItem
+     *
+     */
+    
     function testImportAlbumPermissions() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
-        GalleryUtilities::putRequestVariable('form[sourceAlbums][album04]', 1);
+
+
+	list ($ret, $album) = Gallery1DataParser::loadAlbumFields(dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash . 'album05' . $slash);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/*
+	print "<pre>Album Perms\n";
+	print_r($album['perms']);	
+	
+	foreach($album['perms'] as $tmpperm => $tmpusers) {
+	    foreach (array_keys($tmpusers) as $tmpuser) {
+		$tmpuserperm[$tmpuser][]=$tmpperm;
+	    }
+	}
+	print_r($tmpuserperm);
+	print "</pre>";
+	*/
+	GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('form[sourceAlbums][album05]', 1);
         GalleryUtilities::putRequestVariable('form[action][import]', 1);
 	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
 
         $results = $this->handleRequest();
-	$this->assertEquals(array('album04'),
+	$this->assertEquals(array('album05'),
 			    array_keys($results['status']['albumImportSuccess']));
 	$this->assertEquals(array('view' => 'core:SiteAdmin',
 				  'subView' => 'migrate:ImportResults'),
@@ -467,30 +519,64 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
 	$this->assertEquals(array(), $results['status']['userImportSuccess']);
 	$this->assertEquals(array(), $results['status']['albumImportFailure']);
-	$testAlbumId = $results['status']['albumImportSuccess']['album04'];
-
+	$testAlbumId = $results['status']['albumImportSuccess']['album05'];
 	/* Get the allegedly successfully imported album */
 	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	/*
 	 * This is the user that we expect to be associated with this album.
 	 * It really shouldn't be the admin, but the test data needs to be
 	 * changed to fix it, so we will change it later - probably to
 	 * phpunit_foobar, or whatever we are loading in the other unit test
 	 */
+
 	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
 	$this->assertEquals(array($testAlbum->getownerId()              // owner
 				  ),
 			    array($testOwner->getId()                   // owner
 				  )
 			    );
+	$testPerms = array();
+	$testPermsResult = array();
+	$testPerms['admin'] = array('core.all' => true,
+				    'comment.all' => true
+				    );
+	$testPerms['phpunitfoo001'] = array('core.view' => true,
+					    'core.viewResizes' => true,
+					    'core.viewSource' => true,
+					    'comment.view' => true,
+					    'comment.search' => true,
+					    'comment.add' => true,
+					    'core.edit' => true,
+					    'core.addDataItem' => true,
+					    'core.edit' => true,
+					    'core.delete' => true,
+					    'core.addAlbumItem' => true
+					    );
+	foreach ($testPerms as $testUserName => $permsToTest){
+	    list($ret, $testUserInstance) = GalleryCoreApi::fetchUserByUsername($testUserName);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    foreach ($permsToTest as $permToTest => $expected) {
+		/* User has component of composite permission */
+		list ($ret, $testPermsResult[$testUserName][$permToTest]) =
+			GalleryCoreApi::hasPermission($testAlbum->getId(),
+						      array($testUserInstance->getId()),
+						      array(),
+						      $permToTest);
+		if ($ret->isError()) {
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
+		
+	    }
+	}
+	$this->assertEquals($testPerms,$testPermsResult);	
     }
 
     

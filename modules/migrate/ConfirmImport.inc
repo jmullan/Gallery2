@@ -55,6 +55,8 @@ class ConfirmImportController extends GalleryController {
 			'albumImportSuccess'=>array()
 			);
 	$finishedAlbums = array();
+	$albumPosition = array();
+
 	/* The other option is "cancel", I believe */
 	if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core:SiteAdmin';
@@ -74,7 +76,7 @@ class ConfirmImportController extends GalleryController {
 	    }
 
 	    /* if no users were selected, create an empty array to avoid later
-	     *php warnings
+	     * php warnings
 	     */
 	    if (!isset($form['migrateUser'])) {
 		$form['migrateUser']=array();
@@ -201,7 +203,7 @@ class ConfirmImportController extends GalleryController {
 	    */
 	    while ($albumfields && $i<count($form['sourceAlbums'])^2) {
 		$album = array_shift($albumfields);
-		
+
 		/* if the album's parent is not in the list of sourcealbums,
 		 * load it into the targeted G2 top album as set in
 		 * $destinationAlbumID
@@ -219,6 +221,8 @@ class ConfirmImportController extends GalleryController {
 		    $albumfields[$album['name']] = $album;
 		}
 		if ($targetAlbumID) {
+		    if (isset($albumPosition[$album['name']])) {
+		    }
 		    list($ret, $parent) = GalleryCoreApi::loadEntitiesById($targetAlbumID);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
@@ -321,7 +325,25 @@ class ConfirmImportController extends GalleryController {
 				    if ($owner) {
 					$newAlbumInstance->setownerId($owner->getId());
 				    }
+				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+									     $owner->getId(),
+									     'core.all',
+									     true
+									     );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+									     $owner->getId(),
+									     'comment.all',
+									     true
+									     );
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				    
 				}
+
 				
 				// $newAlbumInstance->settheme
 				$newAlbumInstance->setcreationTimestamp($album['last_mod_time']);
@@ -331,18 +353,7 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
-				/*
-				print "<pre>Album Perms\n";
-				print_r($album['perms']);	
-				
-				foreach($album['perms'] as $tmpperm => $tmpusers) {
-				    foreach (array_keys($tmpusers) as $tmpuser) {
-					$tmpuserperm[$tmpuser][]=$tmpperm;
-				    }
-				}
-				print_r($tmpuserperm);
-				print "</pre>";
-				*/
+
 				/* Click counts must be set after the item is first saved */
 				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
 				if ($ret->isError()) {
@@ -435,12 +446,13 @@ class ConfirmImportController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 			$albumNeedsThumbnail = empty($thumbnailTable) ? true : false;
-			
+
 			foreach($photos as $j => $importAlbumItem) {
 			    if (isset($importAlbumItem->isAlbumName) && $importAlbumItem->isAlbumName) {
 				if ($importAlbumItem->highlight == 1) {
 				    $albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 				}
+				$albumPosition[$importAlbumItem->isAlbumName] = $j;
 			    } else {
 				$dir = $albumsPath . $album['name'] . $slash;
 				$filename = $importAlbumItem->image->name . '.' . $importAlbumItem->image->type;
@@ -604,7 +616,89 @@ class ConfirmImportController extends GalleryController {
 				    }
 				    $albumNeedsThumbnail = FALSE;
 				}
-				
+								/* owner => core.all,comment.all
+				 *
+				 * canRead => core.view,core.viewResizes
+				 * canViewFullImages => core.viewSource
+				 * canViewComments =>
+				 * comment.view,comment.search
+				 * canAddComments => comment.add
+				 * canChangeText => core.edit
+				 * canAddTo => core.addDataItem
+				 * canWrite => core.edit
+				 * canDeleteFrom => core.delete
+				 * canCreateSubAlbum => core.addAlbumItem
+				 *
+				 */
+
+				$permissionTranslation = array('canRead' => array('core.view',
+										  'core.viewResizes'
+										  ),
+							       'canViewFullImages' => array('core.viewSource'),
+							       'canViewComments' => array('comment.view',
+											'comment.search'),
+							       'canAddComments' => array('comment.add'),
+							       'canChangeText' => array('core.edit'),
+							       'canAddTo' => array('core.addDataItem'),
+							       'canWrite' => array('core.edit'),
+							       'canDeleteFrom' => array('core.delete'),
+							       'canCreateSubAlbum' => array('core.addAlbumItem')
+							       );
+
+				if (isset($album['perms'])) {
+				    foreach($album['perms'] as $tmpperm => $tmpusers) {
+					foreach($permissionTranslation[$tmpperm] as $tmpTranslatedPerm) {
+					    foreach(array_keys($tmpusers) as $tmpuser) {
+						switch ($tmpuser) {
+						case 'everybody':
+						    /*
+						    $allUsersGroupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('All Users'));
+						    list($ret, $allUsersGroup) = GalleryCoreApi::fetchGroupByGroupName($allUsersGroupName);
+						    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+							return array($ret->wrap(__FILE__, __LINE__), null);
+						    }
+						    if ($allUsersGroup) {
+							$ret = GalleryCoreApi::addGroupPermission($newAlbumInstance->getId(),
+												     $allUsersGroup->getId(),
+												     $perm,
+												     TRUE
+												     );
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+						    }
+						    */
+						    break;
+						case 'Logged In':
+						    break;
+						default:		    
+						    $validPermUID = Gallery1DataParser::isValidUid($albumsPath,$tmpuser);
+						    if ($validPermUID) {
+							list($ret, $permsUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $tmpuser);
+							if ($ret->isError()) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							$permUsername = $permsUserFields['username'];
+							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername($permUsername);
+							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+							    return array($ret->wrap(__FILE__, __LINE__), null);
+							}
+							if ($permUser) {
+							    $ret = GalleryCoreApi::addUserPermission($newAlbumInstance->getId(),
+												     $permUser->getId(),
+												     $tmpTranslatedPerm,
+												     true
+												 );
+							    if ($ret->isError()) {
+								return array($ret->wrap(__FILE__, __LINE__), null);
+							    }
+							}
+						    }
+						}
+					    }
+					}
+				    }
+				}
 			    }
 			}
 		    }		    		    
@@ -699,7 +793,7 @@ class ConfirmImportView extends GalleryView {
 	$platform = $gallery->getPlatform();
 	$illegalAlbumNames = array();
 	$existingAlbums = array();
-	$albumsValidOwner = array();
+	$albumValidOwner = array();
 	$urlDecoded = array();
 	$titles = array();
 	if (!isset($form['sourceAlbums'])) {
