@@ -20,44 +20,46 @@
   {/g->box}
 
   {* List of peer items *}
-  {g->box style="sidebar"}
-    {g->title}
-      {$layout.parent.title|default:$layout.parent.pathComponent}
-    {/g->title}
-    {g->subtitle}
-      {g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}
-    {/g->subtitle}
+  {if $layout.show.peerSidebarBox}
+    {g->box style="sidebar"}
+      {g->title}
+	{$layout.parent.title|default:$layout.parent.pathComponent}
+      {/g->title}
+      {g->subtitle}
+	{g->text one="(%d item)" many="(%d items)" count=$layout.totalPeerCount arg1=$layout.totalPeerCount}
+      {/g->subtitle}
 
-    {g->listing}
-      {foreach from=$layout.peers item=peer}
-	{assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
-	{if ($peer.index - $lastIndex > 1)}
-	  {g->item}
-	    {g->title}
-	      ...
-	    {/g->title}
-	  {/g->item}
-	{/if}
+      {g->listing}
+	{foreach from=$layout.peers item=peer}
+	  {assign var="title" value=$peer.peer.title|default:$peer.peer.pathComponent}
+	  {if ($peer.index - $lastIndex > 1)}
+	    {g->item}
+	      {g->title}
+		...
+	      {/g->title}
+	    {/g->item}
+	  {/if}
 
-	{if ($peer.peer.id == $layout.item.id)}
-	  {g->item selected="true"}
-	    {g->title}
-	      {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-	    {/g->title}
-	  {/g->item}
-	{else}
-	  {g->item}
-	    {g->title}
-	      {g->link url_view="core:ShowItem" url_itemId=$peer.peer.id}
+	  {if ($peer.peer.id == $layout.item.id)}
+	    {g->item selected="true"}
+	      {g->title}
 		{g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
-	      {/g->link}
-	    {/g->title}
-	  {/g->item}
-	{/if}
-	{assign var="lastIndex" value=$peer.index}
-      {/foreach}
-    {/g->listing}
-  {/g->box}
+	      {/g->title}
+	    {/g->item}
+	  {else}
+	    {g->item}
+	      {g->title}
+		{g->link url_view="core:ShowItem" url_itemId=$peer.peer.id}
+		  {g->text text="%d. %s" arg1=$peer.index arg2=$title|truncate:14}
+		{/g->link}
+	      {/g->title}
+	    {/g->item}
+	  {/if}
+	  {assign var="lastIndex" value=$peer.index}
+	{/foreach}
+      {/g->listing}
+    {/g->box}
+  {/if}
 
   {* Extra modules system content *}
   {foreach from=$layout.moduleSystemContentFiles key=moduleName item=moduleFile}

@@ -305,6 +305,15 @@ class MatrixLayout extends GalleryLayout {
 	    $c += $width;
 	}
 
+	list ($ret, $rootAlbumId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$show = array();
+	$show['peerSidebarBox'] = ($item->getId() != $rootAlbumId);
+
+	$layout['show'] = $show;
 	$layout['user'] = $user->getMemberData();
 	$layout['owners'] = $owners;
 	$layout['owner'] = $owners[$item->getOwnerId()];
@@ -510,6 +519,10 @@ class MatrixLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$show = array();
+	$show['peerSidebarBox'] = 1;
+
+	$layout['show'] = $show;
 	$layout['user'] = $user->getMemberData();
 	$layout['owner'] = $owner->getMemberData();
 	$layout['moduleItemLinks'] = $moduleItemLinks;
