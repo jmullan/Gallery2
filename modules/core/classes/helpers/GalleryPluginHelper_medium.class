@@ -418,5 +418,19 @@ class GalleryPluginHelper_medium {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Set a given plugin instance in the plugin cache
+     *
+     * This should only be used by unit tests that want to force a specific
+     * dummy plugin to exist, temporarily.
+     *
+     * @param object Plugin a plugin instance
+     * @static
+     */
+    function setPluginInstance($pluginType, $pluginId, &$instance) {
+	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
+					 $instance, true);
+    }
 }
 ?>

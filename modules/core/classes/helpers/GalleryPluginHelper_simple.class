@@ -34,21 +34,6 @@
 class GalleryPluginHelper_simple {
     
     /**
-     * Set a given plugin instance in the plugin cache
-     *
-     * The core module can't be loaded from inside Gallery with the
-     * loadModule() call for chicken-and-egg reasons, so we have to be able to
-     * set it here.
-     *
-     * @param object Plugin a plugin instance
-     * @static
-     */
-    function setPluginInstance($pluginType, $pluginId, &$instance) {
-	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
-					 $instance, true);
-    }
-
-    /**
      * Load and initialize the given plugin
      *
      * @param string the plugin type (eg, module, layout, etc)
