@@ -27,7 +27,7 @@
 	    <?php print _('The directory you entered does not exist'); ?>
 	    <?php endif; ?>
 	    <?php if (isset($templateData['error']['inaccessible_dir'])): ?>
-	    <?php print _('The directory you entered is not accessible'); ?>
+	    <?php print _('The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.'); ?>
 	    <?php endif; ?>
 	    <?php if (isset($templateData['error']['readonly_dir'])): ?>
 	    <?php print _('The directory you entered is read only'); ?>
@@ -37,7 +37,24 @@
 	<?php endif; ?>
       </table>
     </form>
-
+	    
+    <?php if (isset($templateData['error']['missing_dir'])): ?>
+    <p>
+      <?php print _('In some web hosting environments, the paths that you see in the shell or via FTP are not the same paths that PHP sees.  In order to find out the real path to your data directory, you can try creating a PHP script called <b>dir.php</b> containing the following code in it and put it into your data directory.') ?>
+    </p>
+    <div class="example">
+      <pre> &lt;?php print system("pwd"); ?&gt; </pre>
+    </div>
+    <p>
+      <?php print sprintf(_('then figure out the URL to dir.php and open it in your web browser (eg, %s).  This will tell you the exact path to enter here.'), '<b>http://your.server.com/g2data/dir.php</b>'); ?>
+    </p>
+    <p>
+      <?php print _('<b>Note</b>: This requires that your data directory is web accessible, which we don\'t recommend because it circumvents our image firewall.  Once you figure out the path this way, we recommend that you move your data directory outside of your web accessible area and then update the path here accordingly.'); ?>
+    </p>
+    <p>
+      <?php print _('<b>Note</b>: Don\'t forget to delete dir.php when you\'re done!'); ?>
+    </p>
+    <?php else: ?>
     <p>
       <?php print _("Your webserver needs to be able to write to this directory. Permission systems vary from host to host. You can set a very relaxed set of permissions on this directory to get Gallery working, but if you're concerned about security you should consult your system adminstrator to figure out how to make this as secure as possible. To get it working, you can follow these examples.") ?> 
       <br/>
@@ -71,6 +88,7 @@
 	<a href="javascript:document.storage_form.submit()"><?php print _('Save') ?></a>
       </span>
     </div>
+    <?php endif; ?>
     
     <hr/>
 
