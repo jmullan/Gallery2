@@ -1,0 +1,28 @@
+body { margin:0px; padding:0px; overflow:hidden }
+img { border:0px }
+img.off { position:absolute; visibility:hidden; left:0px }
+img.hthumb { display:inline; margin:0px 2px }
+img.vthumb { display:block; margin:2px 0px }
+div#image {
+  position:absolute; right:0px; left:0px; top:0px; bottom:20px;
+  overflow:hidden; text-align:center; background-color:#ddd;
+}
+div#thumbs {
+  position:absolute; left:0px; bottom:0px; width:100%;
+  overflow:scroll; white-space:nowrap;
+  border-top:1px solid black; background-color:#ddd;
+}
+div#thumbs img { vertical-align:middle }
+div#titlebar {
+  position:absolute; left:0px; width:100%; bottom:0px; height:19px;
+  overflow:hidden; text-align:center;
+  border-top:1px solid black; background-color:#bbb;
+}
+div#tools_left { float:left }
+div#tools_left img.on { margin-right:1px }
+div#tools_right { float:right }
+div#tools_right img.on { margin-left:1px }
+div#options {
+  position:absolute; left:0px; bottom:0px; z-index:1;
+  padding:1px 0px 1px 2px; border:2px ridge #666; background-color:#eee;
+}
