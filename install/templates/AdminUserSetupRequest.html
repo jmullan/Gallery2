@@ -21,7 +21,7 @@
 	  <td>
 	    <input name="passwordA" type="password" value="<?php print $templateData['passwordA']?>" />
 	  </td>
-	</tr>
+	</trp
 	<?php if (isset($templateData['error']['passwordA_missing'])): ?>
 	<tr>
 	  <td colspan="2" class="error">
@@ -37,22 +37,18 @@
 	    <input name="passwordB" type="password" value="<?php print $templateData['passwordB']?>" />
 	  </td>
 	</tr>
-	<?php if (isset($templateData['error']['passwordB_missing'])): ?>
-	<tr>
-	  <td colspan="2" class="error">
-	    <?php print _('Missing password!  Please enter the same password twice'); ?>
-	  </td>
-	</tr>
-	<?php endif; ?>
-	<?php if (isset($templateData['error']['password_mismatch'])): ?>
-	  <td colspan="2" class="error">
-	    <?php print _('The passwords you entered do not match!  Please try again.'); ?>
-	  </td>
-	<?php endif; ?>
-	<tr>
-	  <td colspan="2">&nbsp;</td>
-	</tr>
       </table>
+      <?php if (isset($templateData['error']['passwordB_missing'])): ?>
+      <p class="error">
+	<?php print _('Missing password!  Please enter the same password twice'); ?>
+      </p>
+      <?php endif; ?>
+
+      <?php if (isset($templateData['error']['password_mismatch'])): ?>
+      <p class="error">
+	<?php print _('The passwords you entered do not match!  Please try again.'); ?>
+      </p>
+      <?php endif; ?>
     </form>
 
     <p><span class="error">*</span> <?php print _("For the Alpha version, the default username ('admin') cannot be modified in the installer. You can change the name later on via the user administration page in your Gallery.") ?></p>
