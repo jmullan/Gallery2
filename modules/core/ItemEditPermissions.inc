@@ -37,10 +37,6 @@ class ItemEditPermissionsController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	print "<pre>";
-	print_r($form);
-	print "</pre>";
-
 	if (isset($form['action']['deleteGroupPermission'])) {
 	    /* Handle delete group perm actions */
 	    list ($groupId, $permissionId) = split(',', $form['group']['delete']);
