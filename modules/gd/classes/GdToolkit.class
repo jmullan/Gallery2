@@ -357,11 +357,11 @@ class GdToolkit extends GalleryToolkit {
 	    }
 
 	    $destRes = $sourceRes;
-	    $ret = $gd->imageCopyMerge($destRes, $overlayRes,
+	    /* Don't use imageCopyMerge here, as it will loose alpha-transparency */
+	    $ret = $gd->imageCopy($destRes, $overlayRes,
 				       $compositeAlignX, $compositeAlignY,
 				       0, 0,
-				       $compositeWidth, $compositeHeight,
-				       99
+				       $compositeWidth, $compositeHeight
 				      );
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);

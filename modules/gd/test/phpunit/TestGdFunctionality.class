@@ -83,6 +83,7 @@ class TestGdFunctionality {
 	    'trueColor' => false,
 	);
 	if (isset($filename)) {
+	    $this->_resources[$name]['filename'] = $filename;
 	    if (preg_match('/(\d+)x(\d+)\./i', $filename, $matches)) {
 		$this->_resources[$name]['x'] = (int) $matches[1];
 		$this->_resources[$name]['y'] = (int) $matches[2];
@@ -117,6 +118,10 @@ class TestGdFunctionality {
 	    'y' => $this->getResourceData($res, 'y'),
 	    'mimeType' => $mimeType,
 	);
+	$other = $this->getResourceData($res, 'other');
+	if (is_array($other)) {
+	    $this->_outputFiles[$filename] = array_merge($this->_outputFiles[$filename], $other);
+	}
     }
     function getOutputFileData($filename) {
 	if (! isset($this->_outputFiles[$filename])) {
@@ -406,6 +411,8 @@ class TestGdFunctionality {
 	if (! $this->isValidResource($srcRes) || ! $this->isValidResource($dstRes)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
+	
+	$this->setResourceData($dstRes, 'other', array('copy' => array($this->getResourceData($srcRes, 'filename'), $dstX, $dstY, $srcX, $srcY, $srcW, $srcH)));
 	return GalleryStatus::success();
     }
 

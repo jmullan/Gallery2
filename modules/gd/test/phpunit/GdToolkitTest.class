@@ -46,6 +46,8 @@ class GdToolkitTest extends GalleryTestCase {
      */
     var $_gdEnvironments;
     var $_toolkit;
+
+    var $_oldBase;
     
     function GdToolkitTest($methodName) {
 	$this->GalleryTestCase($methodName);
@@ -78,6 +80,10 @@ class GdToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+
+	/* Watermarks are relative to data.gallery.base */
+	$this->_oldBase = $gallery->getConfig('data.gallery.base');
+	$gallery->setConfig('data.gallery.base', '/valid/');
 	
 	/* Get a toolkit to work with */
 	$this->_toolkit = new GdToolkit();
@@ -96,6 +102,8 @@ class GdToolkitTest extends GalleryTestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
+
+	$gallery->setConfig('data.gallery.base', $this->_oldBase);
 
 	parent::tearDown();
     }
@@ -150,7 +158,9 @@ class GdToolkitTest extends GalleryTestCase {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/cropped.ext'),
-					array('x' => '154', 'y' => '156', 'mimeType' => $mimeType),
+					array('x' => '154', 'y' => '156', 'mimeType' => $mimeType,
+					      'copy' => array('300x300.ext', 0, 0, 74, 71, 154, 156),
+					),
 					'crop dimensions mismatch');
 		}
 		
@@ -165,8 +175,9 @@ class GdToolkitTest extends GalleryTestCase {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/rotated.ext'),
-					array('x' => '200', 'y' => '300', 'mimeType' => $mimeType));
-		    $this->assertEquals(array('width' => 200, 'height' => 300), $context, 'context');
+					array('x' => '200', 'y' => '300', 'mimeType' => $mimeType),
+					'rotate');
+		    $this->assertEquals(array('width' => 200, 'height' => 300), $context, 'rotate-context');
 		}
 		
 		if (GdToolkitHelper::isOperationSupported('convert-to-image/jpeg', $gd)) {
@@ -179,7 +190,8 @@ class GdToolkitTest extends GalleryTestCase {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/converted.jpeg'),
-					array('x' => '400', 'y' => '400', 'mimeType' => 'image/jpeg'));
+					array('x' => '400', 'y' => '400', 'mimeType' => 'image/jpeg'),
+					'convert-to-image/jpeg');
 		}
 
 		if (GdToolkitHelper::isOperationSupported('composite', $gd)) {
@@ -196,6 +208,11 @@ class GdToolkitTest extends GalleryTestCase {
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
+		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/composited.ext'),
+					array('x' => '300', 'y' => '300', 'mimeType' => 'image/jpeg',
+					      'copy' => array('/valid/50x50.ext', '250', '0', '0', '0', '50', '50')
+					),
+					'composite #1 ' . $mimeType);
 		
 		    /* Test another composite with out of range params that should
 		     * get corrected
