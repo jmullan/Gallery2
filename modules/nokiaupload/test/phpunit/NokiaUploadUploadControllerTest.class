@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -52,11 +52,6 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-//	$ret = GalleryCoreApi::removeItemPermissions($this->_subAlbum->getId());
-//	if ($ret->isError()) {
-//	    print $ret->getAsHtml();
-//	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-//	}
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -131,7 +126,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
     function testUploadController() {
 	global $gallery;
 
-	// Login our test user
+	/* Login our test user */
 	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
 	GalleryUtilities::putRequestVariable('Password', $this->_password, false);
 	$results = ImageUploadHelper::doLogin();
@@ -148,48 +143,53 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	    return $this->assert(false, 'expected test user to not have addAlbum access in root');
 	}
 
-	// Missing file
+	/* Missing file */
 	GalleryUtilities::putRequestVariable('Filename', 'uploadTest.jpg', false);
 	GalleryUtilities::putRequestVariable('MimeType', 'image/jpeg', false);
 	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
-				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
+						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'missing parameter');
 
-	// Empty file
+	/* Empty file */
 	$_FILES['ImageData'] = array('size' => 0, 'tmp_name' => '');
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
-				  'status' => array('success' => NOKIAUPLOAD_ERR_TOOBIG),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_TOOBIG,
+						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'file size');
 
-	// Bad parent
+	/* Bad parent */
 	$_FILES['ImageData'] = array('size' => 1966,
-		'tmp_name' => dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
+            'tmp_name' => dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
 	GalleryUtilities::putRequestVariable('DirId', 'badId', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
-		 'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN, 'spaceleft' => 10000000),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
+						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'bad parent');
 
-	// No permission
+	/* No permission */
 	GalleryUtilities::putRequestVariable('DirId', $this->_subAlbum->getId(), false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
-		 'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN, 'spaceleft' => 10000000),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
+						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'permission');
 
-	// Valid request
+	/* Valid request */
 	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
 	GalleryUtilities::putRequestVariable('Desc', 'this is the description', false);
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
-		 'status' => array('success' => NOKIAUPLOAD_ERR_NOERR, 'spaceleft' => 10000000),
+				  'status' => array('success' => NOKIAUPLOAD_ERR_NOERR,
+						    'spaceleft' => 10000000),
 				  'error' => array()),
 			    $results, 'valid request');
 

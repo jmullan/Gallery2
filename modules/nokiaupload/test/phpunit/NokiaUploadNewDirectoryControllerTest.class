@@ -67,7 +67,6 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	if (!$this->_user->isCorrectPassword($this->_password)) {
 	    return $this->assert(false, "test user wasn't created with expected password");
 	}
-	$this->_saveUser = $gallery->getActiveUser();
 
 	list ($ret, $tmp) = GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
 	if ($ret->isError()) {
@@ -92,7 +91,6 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	$gallery->setActiveUser($this->_saveUser);
 	foreach ($this->_params as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'nokiaupload', $key, $value);
 	    if ($ret->isError()) {
