@@ -55,11 +55,38 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    $params[$key] = (string) $value;
 	}
 	$this->_params =& $params;
+
+	// Create a pending user..
+	list ($ret, $pendingUser) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPendingUser');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $pendingUser->create('testuser_' . rand(1000, 1000000));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $pendingUser->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_pendingUser =& $pendingUser;
     }
 
     function tearDown() {
 	foreach ($this->paramNames as $key) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	if (isset($this->_pendingUser)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId());
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -97,6 +124,74 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	    }
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
 	}
+    }
+
+    function testAdminSelfRegistrationControllerActivate() {
+
+	GalleryUtilities::putRequestVariable('form[userId]', $this->_pendingUser->getId());
+	GalleryUtilities::putRequestVariable('form[action][activate]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+		array(	'return' => 1,
+			'redirect' => array('view' => 'core:SiteAdmin',
+					    'subView' => 'register:AdminSelfRegistration'),
+			'status' => array('activated' => $this->_pendingUser->getUserName()),
+			'error' => array()),
+		$results);
+
+	$ret = $this->_verifyMissing($this->_pendingUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_pendingUser = null;
+    }
+
+    function testAdminSelfRegistrationControllerDelete() {
+
+	GalleryUtilities::putRequestVariable('form[userId]', $this->_pendingUser->getId());
+	GalleryUtilities::putRequestVariable('form[action][delete]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(
+		array(	'return' => 1,
+			'redirect' => array('view' => 'core:SiteAdmin',
+					    'subView' => 'register:AdminSelfRegistration'),
+			'status' => array('deleted' => $this->_pendingUser->getUserName()),
+			'error' => array()),
+		$results);
+
+	$ret = $this->_verifyMissing($this->_pendingUser->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_pendingUser = null;
+    }
+
+    function testHelperMethods() {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../classes/GalleryPendingUserHelper.class');
+	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($count > 0, 'User count');
+	list ($ret, $count) = GalleryPendingUserHelper::fetchUserCount('testuser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($count > 0, 'User count with filter');
+
+	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($data), 'User data');
+
+	list ($ret, $data) = GalleryPendingUserHelper::fetchUserData(3, 0, 'testuser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($data), 'User data with filter');
     }
 }
 ?>

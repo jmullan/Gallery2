@@ -56,17 +56,44 @@ class AdminSelfRegistrationController extends GalleryController {
 		}
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'register:AdminSelfRegistration';
 	    $status['saved'] = 1;
-	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'register:AdminSelfRegistration';
-	}
+	} else if (isset($form['action']['activate'])) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
+	    list ($ret, $pendingUser) = GalleryCoreApi::loadEntitiesById($form['userId']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $userName = $pendingUser->getUserName();
+	    $ret = GalleryPendingUserHelper::createGalleryUser($pendingUser);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['activated'] = $userName;
+	} else if (isset($form['action']['delete'])) {
+	    list ($ret, $pendingUser) = GalleryCoreApi::loadEntitiesById($form['userId']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $userName = $pendingUser->getUserName();
+	    list($ret, $lock) = GalleryCoreApi::acquireWriteLock(array($pendingUser->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = $pendingUser->delete();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lock);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $status['deleted'] = $userName;
+	} /* else $form['action']['cancel'] */
 
-	if (!empty($redirect)) {
+	if (empty($error)) {
 	    $results['return'] = 1;
-	    $results['redirect'] = $redirect;
+	    $results['redirect'] = array('view' => 'core:SiteAdmin',
+					 'subView' => 'register:AdminSelfRegistration');
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
 	    $results['delegate']['subView'] = 'register:AdminSelfRegistration';
@@ -88,6 +115,7 @@ class AdminSelfRegistrationView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryPendingUserHelper.class');
 	global $gallery;
 
 	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'register');
@@ -105,7 +133,32 @@ class AdminSelfRegistrationView extends GalleryView {
 	    }
 	    $form['formName'] = 'AdminSelfRegistration';
 	}
-	
+
+	if (!isset($form['list']['page']) || $form['list']['page'] < 1) {
+	    $form['list']['page'] = 1;
+	}
+
+	list ($ret, $form['list']['count']) = GalleryPendingUserHelper::fetchUserCount();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if ($form['list']['count'] > 0) {
+
+	    $form['list']['pageSize'] = min($form['list']['count'], 10);
+	    $form['list']['maxPages'] = ceil($form['list']['count'] / $form['list']['pageSize']);
+	    if ($form['list']['page'] > $form['list']['maxPages']) {
+		$form['list']['page'] = $form['list']['maxPages'];
+	    }
+	    $form['list']['nextPage'] = min($form['list']['page']+1, $form['list']['maxPages']);
+	    $form['list']['backPage'] = max(1, $form['list']['page']-1);
+
+	    list ($ret, $form['list']['userNames']) = GalleryPendingUserHelper::fetchUserData(
+		$form['list']['pageSize'], ($form['list']['page'] - 1) * $form['list']['pageSize']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
 	$selfregistration = array();
 	$selfregistration['emailConfirmationList'] = array(
 	    'true' => $module->translate('Use confirmation emails'),

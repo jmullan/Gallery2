@@ -46,14 +46,8 @@ class GalleryPendingUserHelper {
     function fetchPendingUserByUserName($userName) {
 	global $gallery;
 
-        $query = '
-        SELECT
-          [GalleryPendingUser::id]
-        FROM
-          [GalleryPendingUser]
-        WHERE
-          [GalleryPendingUser::userName] = ?
-        ';
+        $query = 'SELECT [GalleryPendingUser::id] FROM [GalleryPendingUser]
+		  WHERE [GalleryPendingUser::userName] = ?';
 	list ($ret, $searchResults) = $gallery->search($query, array($userName));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -71,6 +65,75 @@ class GalleryPendingUserHelper {
 
 	    return array(GalleryStatus::success(), $user);
 	}
+    }
+
+    /**
+     * Return the total number of pending users
+     *
+     * @param string an optional substring to match against the username
+     * @return array object GalleryStatus a status code
+     *               int number of pending users
+     * @static
+     */
+    function fetchUserCount($substring=null) {
+	global $gallery;
+	$data = array();
+	$query = 'SELECT COUNT([GalleryPendingUser::id]) FROM [GalleryPendingUser]';
+	if (!empty($substring)) {
+	    $query .= ' WHERE [GalleryPendingUser::userName] LIKE ?';
+	    $data[] = "%$substring%";
+	}
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = $searchResults->nextResult();
+	return array(GalleryStatus::success(), (int)$result[0]);
+    }
+
+    /**
+     * Return a map of user ids and data
+     *
+     * You can specify how many usernames to list, and where the windows is in
+     * the list of all users.
+     *
+     * @param int [optional] the number of usernames desired
+     * @param int [optional] the start of the range
+     * @param string [optional] a substring to match
+     * @return array object GalleryStatus a status code
+     *               array (id => array('userName'=>name, 'fullName'=>name, 'email'=>email), ...)
+     * @static
+     */
+    function fetchUserData($count=null, $offset=null, $substring=null) {
+	global $gallery;
+	$data = array();
+	$query = 'SELECT [GalleryPendingUser::id], [GalleryPendingUser::userName],
+		  [GalleryPendingUser::fullName], [GalleryPendingUser::email]
+		  FROM [GalleryPendingUser]';
+
+	if (!empty($substring)) {
+	    $query .= ' WHERE [GalleryPendingUser::userName] LIKE ?';
+	    $data[] = "%$substring%";
+	}
+
+	$query .= ' ORDER BY [GalleryPendingUser::userName] ASC';
+
+	list ($ret, $searchResults) = $gallery->search($query, $data,
+	     array('limit' => array('count' => $count, 'offset' => $offset)));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[$result[0]] = array('userName' => $result[1],
+				      'fullName' => $result[2],
+				      'email' => $result[3]);
+	}
+
+	return array(GalleryStatus::success(), $data);
     }
 
     /**

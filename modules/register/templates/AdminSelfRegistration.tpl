@@ -12,13 +12,19 @@
       </h2>
     </div>
   </div>
-  
-  {if isset($status.saved)}
-    <div id="gsStatus">
-      <div class="giStatus">
-	{g->text text="Settings saved successfully"}
-      </div>
-    </div>
+
+  {if !empty($status)}
+  <div id="gsStatus">
+    {if isset($status.saved)}
+      <div class="giStatus"> {g->text text="Settings saved successfully"} </div>
+    {/if}
+    {if isset($status.activated)}
+      <div class="giStatus"> {g->text text="Activated user %s" arg1=$status.activated} </div>
+    {/if}
+    {if isset($status.deleted)}
+      <div class="giStatus"> {g->text text="Deleted user %s" arg1=$status.deleted} </div>
+    {/if}
+  </div>
   {/if}
 
   <div class="gbAdmin">
@@ -81,12 +87,70 @@
 	</td>
       </tr>
     </table>
+  </div>
 
   <div class="gbButtons">
-    <span>
-      <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-      <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
-    </span>
-   </div>
+    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
   </div>
+
+  {if $form.list.count>0}
+  <div class="gbAdmin">
+    <h3> {g->text text="Pending Registrations"} </h3>
+
+    <table class="gbDataTable">
+      {if ($form.list.maxPages > 1)}
+      <tr><th colspan="2">
+	<table><tr>
+	  <th align="left">
+	    <input type="hidden" name="{g->formVar var="form[list][page]"}" value="{$form.list.page}"/>
+	    <input type="hidden" name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
+
+	    {if ($form.list.page > 1)}
+	    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration" arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
+	    &nbsp;
+	    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration" arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
+	    {/if}
+	  </th>
+	  <th align="center">
+	    {g->text text="Viewing page %d of %d" arg1=$form.list.page arg2=$form.list.maxPages}
+	  </th>
+	  <th align="right">
+	    {if ($form.list.page < $form.list.maxPages)}
+	    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration" arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
+	    &nbsp;
+	    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration" arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
+	    {/if}
+	  </th>
+	</tr></table>
+      </th></tr>
+      {/if}
+
+      <tr>
+	<th> {g->text text="Username"} </th>
+	<th> {g->text text="Full Name"} </th>
+	<th> {g->text text="Email"} </th>
+	<th> {g->text text="Action"} </th>
+      </tr>
+
+      {foreach from=$form.list.userNames key=userId item=user}
+      <tr class="{cycle values="gbEven,gbOdd"}">
+	<td> {$user.userName} </td>
+	<td> {$user.fullName} </td>
+	<td> {$user.email} </td>
+	<td>
+	  <div class="giHorizontalLinks">
+	    <span>
+	      <a href="{g->url arg1="controller=register:AdminSelfRegistration" arg2="form[action][activate]=1" arg3="form[userId]=$userId"}">{g->text text="activate"}</a>
+	    </span>
+	    <span>
+	      <a href="{g->url arg1="controller=register:AdminSelfRegistration" arg2="form[action][delete]=1" arg3="form[userId]=$userId"}">{g->text text="delete"}</a>
+	    </span>
+	  </div>
+	</td>
+      </tr>
+      {/foreach}
+    </table>
+  </div>
+  {/if}
 </div>
