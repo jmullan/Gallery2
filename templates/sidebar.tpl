@@ -11,9 +11,11 @@
   {* System links in sidebar? *}
   {if (!empty($layout.show.systemLinks) && !empty($layout.systemLinks))}
   <div class="gbMenu">
+    {if $layout.show.sidebarGreeting}
     <h3 class="giTitle">
       {g->text text="Welcome, %s" arg1=$layout.user.fullName|default:$layout.user.userName}
     </h3>
+    {/if}
     <ul>
       {foreach from=$layout.systemLinks item=link}
 	<li> <a href="{$link.url}">{$link.text}</a> </li>

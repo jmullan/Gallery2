@@ -7,9 +7,11 @@
  *}
 <div id="gsSystemLinks">
   <ul>
+  {if $layout.show.sidebarGreeting}
   <li>
     {g->text text="Welcome, %s" arg1=$layout.user.fullName|default:$layout.user.userName}
   </li>
+  {/if}
   {foreach from=$layout.systemLinks item=item}
   <li>
     <a href="{g->url params=$item.params}">{$item.text}</a>

@@ -509,6 +509,7 @@ class GalleryLayout {
 	    $layout['children'][] = $child->getMemberData();
 	}
 	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
+				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
 				'sidebarActions' => true,
 				'sidebarPeers' => isset($load['peers']));
 
