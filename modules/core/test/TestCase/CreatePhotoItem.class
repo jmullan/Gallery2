@@ -85,7 +85,6 @@ class CreatePhotoItemTestCase extends TestCase {
 	 * this case, but included for completeness (since this is example
 	 * code).
 	 */
-	print "<h1>When we delete old nuclei we have to break all connections including derivative linkages</h1>";
 	$ret = $gallery->deleteNucleusById($photo->getThumbnailId());
 	if ($ret->isError()) {
 	    /*
@@ -121,7 +120,10 @@ class CreatePhotoItemTestCase extends TestCase {
 	    print "Cache is not current\n";
 
 	    /* Rebuild the cache */
-	    $thumbnail->rebuildCache();
+	    $ret = $thumbnail->rebuildCache();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
 	}
 
 	return GalleryStatus::success();
