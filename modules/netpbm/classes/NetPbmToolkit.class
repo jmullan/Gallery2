@@ -427,7 +427,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	 * before, possibly, returning an error
 	 */
 	$this->_deleteTempFiles($context);
-	if ($ret->isError()) {
+	if (isset($ret) && $ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
