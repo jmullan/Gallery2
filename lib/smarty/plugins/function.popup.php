@@ -17,7 +17,7 @@ function smarty_function_popup($params, &$smarty)
         return false;
     }
 
-    if (empty($trigger)) { $trigger = "onMouseOver"; }
+    if (empty($trigger)) { $trigger = "onmouseover"; }
 
     $retval = $trigger . '="return overlib(\''.preg_replace(array("!'!","![\r\n]!"),array("\'",'\r'),$text).'\'';
     if ($sticky) { $retval .= ",STICKY"; }
@@ -67,7 +67,7 @@ function smarty_function_popup($params, &$smarty)
     if (isset($delay)) { $retval .= ",DELAY,$delay"; }
     if (!empty($hauto)) { $retval .= ",HAUTO"; }
     if (!empty($vauto)) { $retval .= ",VAUTO"; }
-    $retval .= ');" onMouseOut="nd();"';
+    $retval .= ');" onmouseout="nd();"';
 	
 	return $retval;
 }

@@ -33,10 +33,12 @@
  * @link http://www.phpinsider.com/
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
- * @version 2.5.0-RC1
+ * @version 2.5.0
  * @copyright 2001,2002 ispi of Lincoln, Inc.
  * @package Smarty
  */
+
+/* $Id$ */
 
 class Smarty_Compiler extends Smarty {
 
@@ -327,7 +329,7 @@ class Smarty_Compiler extends Smarty {
                     $template_compiled = $postfilter[0]($template_compiled, $this);
                     $this->_plugins['postfilter'][$filter_name][3] = true;
                 } else {
-                    $this->_trigger_plugin_error("Smarty plugin error: postfilter '$filter_name' is not implemented");
+                    $this->_trigger_fatal_error("Smarty plugin error: postfilter '$filter_name' is not implemented");
                 }
             }
         }
@@ -386,11 +388,11 @@ class Smarty_Compiler extends Smarty {
 		
         /* If the tag name is a variable or object, we process it. */
         if (preg_match('!^' . $this->_obj_call_regexp . '|' . $this->_var_regexp . '$!', $tag_command)) {
-            $return = $this->_parse_var_props($tag_command . $tag_modifier, $this->_parse_attrs($tag_args));
+            $_return = $this->_parse_var_props($tag_command . $tag_modifier, $this->_parse_attrs($tag_args));
 			if(isset($_tag_attrs['assign'])) {
-				return "<?php \$this->assign('" . $this->_dequote($_tag_attrs['assign']) . "', $return ); ?>\n";  
+				return "<?php \$this->assign('" . $this->_dequote($_tag_attrs['assign']) . "', $_return ); ?>\n";  
 			} else {
-            	return "<?php echo $return; ?>\n";
+            	return "<?php echo $_return; ?>\n";
 			}
 		}
 		
@@ -1384,7 +1386,9 @@ class Smarty_Compiler extends Smarty {
                             $token = 'false';
 						} else if ($token == 'null') {
                             $token = 'null';
-						} else if (!preg_match('!^' . $this->_obj_call_regexp . '|' . $this->_var_regexp . '(?:' . $this->_mod_regexp . ')?$!', $token)) {
+						} else if (preg_match('!^-?[0-9]+$!', $token)) {
+                            /* treat integer literally */
+						} else if (!preg_match('!^' . $this->_obj_call_regexp . '|' . $this->_var_regexp . '(?:' . $this->_mod_regexp . ')*$!', $token)) {
                         	/* treat as a string, double-quote it escaping quotes */
                             $token = '"'.addslashes($token).'"';
 						}
@@ -1480,19 +1484,19 @@ class Smarty_Compiler extends Smarty {
     function _expand_quoted_text($var_expr)
     {
 		// if contains unescaped $, expand it
-		if(preg_match_all('%(?<!\\\\)\$(?:\`' . $this->_dvar_guts_regexp . '\`|\w+)%', $var_expr, $_match)) {
+		if(preg_match_all('%(?:\`(?<!\\\\)\$' . $this->_dvar_guts_regexp . '\`)|(?:(?<!\\\\)\$\w+(\[[a-zA-Z0-9]+\])*)%', $var_expr, $_match)) {
 			$_match = $_match[0];
 			rsort($_match);
 			reset($_match);
 			foreach($_match as $_var) {
                 $var_expr = str_replace ($_var, '".' . $this->_parse_var(str_replace('`','',$_var)) . '."', $var_expr);
 			}
-            $_return = preg_replace('!\.""|""\.!', '', $var_expr);
+            $_return = preg_replace('%\.""|(?<!\\\\)""\.%', '', $var_expr);
 		} else {
 			$_return = $var_expr;
 		}
-		// replace double quoted string with single quotes
-		$_return = preg_replace('!"([^\$\']+)"!',"'\\1'",$_return);
+		// replace double quoted literal string with single quotes
+		$_return = preg_replace('!^"([\s\w]+)"$!',"'\\1'",$_return);
 		return $_return;
 	}
 	
@@ -1643,37 +1647,45 @@ class Smarty_Compiler extends Smarty {
 	 */
     function _parse_modifiers(&$output, $modifier_string)
     {
-        preg_match_all('!\|(@?\w+)((?>:(?:'. $this->_qstr_regexp . '|[^|]+))*)!', '|' . $modifier_string, $match);
-        list(, $modifiers, $modifier_arg_strings) = $match;
+        preg_match_all('!\|(@?\w+)((?>:(?:'. $this->_qstr_regexp . '|[^|]+))*)!', '|' . $modifier_string, $_match);
+        list(, $_modifiers, $modifier_arg_strings) = $_match;
 
-        for ($i = 0, $for_max = count($modifiers); $i < $for_max; $i++) {
-            $modifier_name = $modifiers[$i];
+        for ($_i = 0, $_for_max = count($_modifiers); $_i < $_for_max; $_i++) {
+            $_modifier_name = $_modifiers[$_i];
 			
-			if($modifier_name == 'smarty') {
+			if($_modifier_name == 'smarty') {
 				// skip smarty modifier
 				continue;
 			}
 			
-            preg_match_all('!:(' . $this->_qstr_regexp . '|[^:]+)!', $modifier_arg_strings[$i], $match);
-            $modifier_args = $match[1];
+            preg_match_all('!:(' . $this->_qstr_regexp . '|[^:]+)!', $modifier_arg_strings[$_i], $_match);
+            $_modifier_args = $_match[1];
 
-            if ($modifier_name{0} == '@') {
-                $map_array = 'false';
-                $modifier_name = substr($modifier_name, 1);
+            if ($_modifier_name{0} == '@') {
+                $_map_array = 'false';
+                $_modifier_name = substr($_modifier_name, 1);
             } else {
-                $map_array = 'true';
+                $_map_array = 'true';
             }
 			
-            $this->_add_plugin('modifier', $modifier_name);
+            $this->_add_plugin('modifier', $_modifier_name);
+            $this->_parse_vars_props($_modifier_args);
 
-            $this->_parse_vars_props($modifier_args);
-
-            if (count($modifier_args) > 0)
-                $modifier_args = ', '.implode(', ', $modifier_args);
+			if($_modifier_name == 'default') {
+				// supress notifications of default modifier vars and args
+				if($output{0} == '$') {
+					$output = '@' . $output;
+				}
+				if(isset($_modifier_args[0]) && $_modifier_args[0]{0} == '$') {
+					$_modifier_args[0] = '@' . $_modifier_args[0];
+				}
+			}
+            if (count($_modifier_args) > 0)
+                $_modifier_args = ', '.implode(', ', $_modifier_args);
             else
-                $modifier_args = '';
+                $_modifier_args = '';
 
-            $output = "\$this->_run_mod_handler('$modifier_name', $map_array, $output$modifier_args)";
+            $output = "\$this->_run_mod_handler('$_modifier_name', $_map_array, $output$_modifier_args)";
         }
     }
 
@@ -1788,7 +1800,7 @@ class Smarty_Compiler extends Smarty {
                 break;
 
             default:
-                $this->_syntax_error('$smarty.' . $ref . ' is an unknown reference', E_USER_ERROR, __FILE__, __LINE__);
+                $this->_syntax_error('$smarty.' . $_ref . ' is an unknown reference', E_USER_ERROR, __FILE__, __LINE__);
                 break;
         }
 

@@ -5,13 +5,13 @@
  * -------------------------------------------------------------
  * File:       function.html_checkboxes.php
  * Type:       function
- * Name:       html_checkboxes	
+ * Name:       html_checkboxes
  * Version:    1.0
  * Date:       24.Feb.2003
  * Purpose:    Prints out a list of checkbox input types
  * Input:      name       (optional) - string default "checkbox"
  *             values     (required) - array
- *             checkboxes (optional) - associative array
+ *             options    (optional) - associative array
  *             checked    (optional) - array default not set
  *             separator  (optional) - ie <br> or &nbsp;
  *             output     (optional) - without this one the buttons don't have names
@@ -24,41 +24,84 @@
  */
 function smarty_function_html_checkboxes($params, &$smarty)
 {
-    require_once $smarty->_get_plugin_filepath('shared','escape_special_chars');
+   require_once $smarty->_get_plugin_filepath('shared','escape_special_chars');
 
-    extract($params);
+   $name = 'checkbox';
+   $values = null;
+   $options = null;
+   $selected = null;
+   $separator = '';
+   $output = null;
 
-    $_html_result = '';
-	if(!isset($name)){
-	$name = 'checkbox';
-	}
-    settype($checked, 'array');
-    if (isset($checkboxes)) {
-        settype($checkboxes, 'array');
-        foreach ($checkboxes as $_key => $_val) {
-			$_html_result .= smarty_function_html_checkboxes_output($name, $_key, $_val, $checked, $separator);
-        }
-    } else {
-        settype($output, 'array');
-        settype($values, 'array');
-        for ($_i = 0, $_for_max = count($output); $_i < $_for_max; $_i++) {
-			$_html_result .= smarty_function_html_checkboxes_output($name, $values[$_i], $output[$_i], $checked, $separator);
-        }
-    }
+   $extra = '';
 
-    return $_html_result;
+   foreach($params as $_key => $_val) {
+      switch($_key) {
+      case 'name':
+      case 'separator':
+         $$_key = $_val;
+         break;
+
+      case 'options':
+         $$_key = (array)$_val;
+         break;
+
+      case 'values':
+      case 'output':
+         $$_key = array_values((array)$_val);
+	 break;
+
+      case 'checked':
+      case 'selected':
+         $selected = array_values((array)$_val);
+         break;
+
+      case 'checkboxes':
+         $smarty->trigger_error('html_checkboxes: the use of the "checkboxes" attribute is deprecated, use "options" instead', E_USER_WARNING);
+         $options = (array)$_val;
+         break;
+
+      default:
+         $extra .= ' '.$_key.'="'.smarty_function_escape_special_chars((string)$_val).'"';
+         break;
+      }
+   }
+
+   if (!isset($options) && !isset($values))
+      return ''; /* raise error here? */
+
+   settype($selected, 'array');
+   $_html_result = '';
+
+   if (is_array($options)) {
+
+      foreach ($options as $_key=>$_val)
+         $_html_result .= smarty_function_html_checkboxes_output($name, $_key, $_val, $selected, $extra, $separator);
+
+
+   } else {
+      foreach ($values as $_i=>$_key) {
+         $_val = isset($output[$_i]) ? $output[$_i] : '';
+         $_html_result .= smarty_function_html_checkboxes_output($name, $_key, $_val, $selected, $extra, $separator);
+      }
+
+   }
+
+   return $_html_result;
+
 }
 
-function smarty_function_html_checkboxes_output($name, $value, $output, $checked, $separator) {
-	$_output = '<input type="checkbox" name="' . smarty_function_escape_special_chars($name) . '[]' .'" value="' . smarty_function_escape_special_chars($value) . '"';
-	
-    if (in_array($value, $checked)) {
-       	$_output .= " checked=\"checked\"";
-	}
-    $_output .= '>' . $output . $separator . "\n";
+function smarty_function_html_checkboxes_output($name, $value, $output, $selected, $extra, $separator) {
+   $_output = '<input type="checkbox" name="'
+      . smarty_function_escape_special_chars($name) . '[]" value="'
+      . smarty_function_escape_special_chars($value) . '"';
 
-	return $_output;	
+   if (in_array($value, $selected)) {
+      $_output .= ' checked="checked"';
+   }
+   $_output .= $extra . ' />' . $output . $separator . "\n";
+
+   return $_output;
 }
-
 
 ?>

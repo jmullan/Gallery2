@@ -39,8 +39,10 @@
  * @author Monte Ohrt <monte@ispi.net>
  * @author Andrei Zmievski <andrei@php.net>
  * @package Smarty
- * @version 2.5.0-RC1
+ * @version 2.5.0
  */
+
+/* $Id$ */
 
 /**
  * set SMARTY_DIR to absolute path to Smarty library files.
@@ -460,7 +462,7 @@ class Smarty
      *
      * @var string
      */
-    var $_version              = '2.5.0-RC1';
+    var $_version              = '2.5.0';
 
     /**
      * current template inclusion depth
@@ -912,18 +914,16 @@ class Smarty
         if (!isset($compile_id))
             $compile_id = $this->compile_id;
 
-        if (isset($cache_id))
-            $auto_id = (isset($compile_id)) ? $compile_id . '|' . $cache_id : $cache_id;
-        elseif(isset($compile_id))
-            $auto_id = $compile_id;
-        else
-            $auto_id = null;
+	if (!isset($tpl_file))
+	    $compile_id = null;
+
+	$_auto_id = $this->_get_auto_id($cache_id, $compile_id);
 
         if (!empty($this->cache_handler_func)) {
-            $funcname = $this->cache_handler_func;
-            return $funcname('clear', $this, $dummy, $tpl_file, $cache_id, $compile_id);
+            $_funcname = $this->cache_handler_func;
+            return $_funcname('clear', $this, $dummy, $tpl_file, $cache_id, $compile_id);
         } else {
-            return $this->_rm_auto($this->cache_dir, $tpl_file, $auto_id, $exp_time);
+            return $this->_rm_auto($this->cache_dir, $tpl_file, $_auto_id, $exp_time);
         }
         
     }
@@ -1059,12 +1059,12 @@ class Smarty
     /**
      * executes & returns or displays the template results
      *
-     * @param string $_smarty_tpl_file
-     * @param string $_smarty_cache_id
-     * @param string $_smarty_compile_id
-     * @param boolean $_smarty_display
-     */    
-    function fetch($_smarty_tpl_file, $_smarty_cache_id = null, $_smarty_compile_id = null, $_smarty_display = false)
+     * @param string $tpl_file
+     * @param string $cache_id
+     * @param string $compile_id
+     * @param boolean $display
+     */
+    function fetch($tpl_file, $cache_id = null, $compile_id = null, $display = false)
     {
         $_smarty_old_error_level = $this->debugging ? error_reporting() : error_reporting(error_reporting() & ~E_NOTICE);
 
@@ -1083,16 +1083,16 @@ class Smarty
             // capture time for debugging info
             $debug_start_time = $this->_get_microtime();
             $this->_smarty_debug_info[] = array('type'      => 'template',
-                                                'filename'  => $_smarty_tpl_file,
+                                                'filename'  => $tpl_file,
                                                 'depth'     => 0);
             $included_tpls_idx = count($this->_smarty_debug_info) - 1;
         }
 
-        if (!isset($_smarty_compile_id)) {
-            $_smarty_compile_id = $this->compile_id;
+        if (!isset($compile_id)) {
+            $compile_id = $this->compile_id;
         }
 
-        $this->_compile_id = $_smarty_compile_id;
+        $this->_compile_id = $compile_id;
         $this->_inclusion_depth = 0;
 
         if ($this->caching) {
@@ -1101,12 +1101,12 @@ class Smarty
                 $_cache_info = $this->_cache_info;
                 $this->_cache_info = array();
             }
-            if ($this->_read_cache_file($_smarty_tpl_file, $_smarty_cache_id, $_smarty_compile_id, $_smarty_results)) {
+            if ($this->_read_cache_file($tpl_file, $cache_id, $compile_id, $_smarty_results)) {
                 if (@count($this->_cache_info['insert_tags'])) {
                     $this->_load_plugins($this->_cache_info['insert_tags']);
                     $_smarty_results = $this->_process_cached_inserts($_smarty_results);
                 }
-                if ($_smarty_display) {
+                if ($display) {
                     if ($this->debugging)
                     {
                         // capture time for debugging info
@@ -1134,7 +1134,7 @@ class Smarty
                     return $_smarty_results;
                 }
             } else {
-                $this->_cache_info['template'][] = $_smarty_tpl_file;
+                $this->_cache_info['template'][] = $tpl_file;
                 if ($this->cache_modified_check) {
                     header("Last-Modified: ".gmdate('D, d M Y H:i:s', time()).' GMT');
                 }
@@ -1149,18 +1149,18 @@ class Smarty
             $this->_autoload_filters();
         }
 
-        $_smarty_compile_path = $this->_get_compile_path($_smarty_tpl_file);
+        $_smarty_compile_path = $this->_get_compile_path($tpl_file);
 
         // if we just need to display the results, don't perform output
         // buffering - for speed
-        if ($_smarty_display && !$this->caching && count($this->_plugins['outputfilter']) == 0) {
-            if ($this->_process_template($_smarty_tpl_file, $_smarty_compile_path))
+        if ($display && !$this->caching && count($this->_plugins['outputfilter']) == 0) {
+            if ($this->_process_template($tpl_file, $_smarty_compile_path))
             {
                 include($_smarty_compile_path);
             }
         } else {
             ob_start();
-            if ($this->_process_template($_smarty_tpl_file, $_smarty_compile_path))
+            if ($this->_process_template($tpl_file, $_smarty_compile_path))
             {
                 include($_smarty_compile_path);
             }
@@ -1173,11 +1173,11 @@ class Smarty
         }
 
         if ($this->caching) {
-            $this->_write_cache_file($_smarty_tpl_file, $_smarty_cache_id, $_smarty_compile_id, $_smarty_results);
+            $this->_write_cache_file($tpl_file, $cache_id, $compile_id, $_smarty_results);
             $_smarty_results = $this->_process_cached_inserts($_smarty_results);
         }
 
-        if ($_smarty_display) {
+        if ($display) {
             if (isset($_smarty_results)) { echo $_smarty_results; }
             if ($this->debugging) {
                 // capture time for debugging info
@@ -1302,13 +1302,9 @@ class Smarty
             $_compile_config = true;
         } else {
             include($_compile_file);
-            if(!empty($_config_vars)) {
-                $_compile_config = true;
-            } else {
-                $_compile_config = false;                    
-            }
+			$_compile_config = empty($_config_vars);
         }
-
+		
         if($_compile_config) {
             if(!is_object($this->_conf_obj)) {
                 require_once SMARTY_DIR . $this->config_class . '.class.php';
@@ -1736,6 +1732,7 @@ class Smarty
         $smarty_compiler->_plugins          = &$this->_plugins;
         $smarty_compiler->_tpl_vars         = &$this->_tpl_vars;
         $smarty_compiler->default_modifiers = $this->default_modifiers;
+        $smarty_compiler->compile_id        = $this->_compile_id;
 
         if ($smarty_compiler->_compile_file($tpl_file, $template_source, $template_compiled)) {
             return true;
@@ -2147,11 +2144,12 @@ class Smarty
             } else {
                 // remove matching file names
                 $handle = opendir($auto_base);
-                while ($filename = readdir($handle)) {
+		$res = true;
+                while (false !== ($filename = readdir($handle))) {
                     if($filename == '.' || $filename == '..') {
                         continue;    
                     } elseif (substr($auto_base . DIR_SEP . $filename,0,strlen($tname)) == $tname) {
-                        $this->_unlink($auto_base . DIR_SEP . $filename, $exp_time);
+                        $res &= (bool)$this->_unlink($auto_base . DIR_SEP . $filename, $exp_time);
                     }
                 }
             }
@@ -2173,7 +2171,7 @@ class Smarty
 
        if($handle = @opendir($dirname)) {
 
-            while (null != ($entry = readdir($handle))) {
+            while (false !== ($entry = readdir($handle))) {
                 if ($entry != '.' && $entry != '..') {
                     if (@is_dir($dirname . DIR_SEP . $entry)) {
                         $this->_rmdir($dirname . DIR_SEP . $entry, $level + 1, $exp_time);
@@ -2284,19 +2282,13 @@ class Smarty
 
         if (!empty($this->cache_handler_func)) {
             // use cache_handler function
-            $funcname = $this->cache_handler_func;
-            return $funcname('write', $this, $results, $tpl_file, $cache_id, $compile_id);
+            $_funcname = $this->cache_handler_func;
+            return $_funcname('write', $this, $results, $tpl_file, $cache_id, $compile_id);
         } else {
             // use local cache file
-            if (isset($cache_id))
-                $auto_id = (isset($compile_id)) ? $compile_id . '|' . $cache_id : $cache_id;
-            elseif(isset($compile_id))
-                $auto_id = $compile_id;
-            else
-                $auto_id = null;
-
-            $cache_file = $this->_get_auto_filename($this->cache_dir, $tpl_file, $auto_id);
-            $this->_write_file($cache_file, $results, true);
+            $_auto_id = $this->_get_auto_id($cache_id, $compile_id);
+            $_cache_file = $this->_get_auto_filename($this->cache_dir, $tpl_file, $_auto_id);
+            $this->_write_file($_cache_file, $results, true);
             return true;
         }
     }
@@ -2326,19 +2318,13 @@ class Smarty
 
         if (!empty($this->cache_handler_func)) {
             // use cache_handler function
-            $funcname = $this->cache_handler_func;
-            $funcname('read', $this, $results, $tpl_file, $cache_id, $compile_id);
+            $_funcname = $this->cache_handler_func;
+            $_funcname('read', $this, $results, $tpl_file, $cache_id, $compile_id);
         } else {
             // use local cache file
-            if (isset($cache_id))
-                $auto_id = (isset($compile_id)) ? $compile_id . '|' . $cache_id : $cache_id;
-            elseif(isset($compile_id))
-                $auto_id = $compile_id;
-            else
-                $auto_id = null;
-
-            $cache_file = $this->_get_auto_filename($this->cache_dir, $tpl_file, $auto_id);
-            $results = $this->_read_file($cache_file);
+            $_auto_id = $this->_get_auto_id($cache_id, $compile_id);
+            $_cache_file = $this->_get_auto_filename($this->cache_dir, $tpl_file, $_auto_id);
+            $results = $this->_read_file($_cache_file);
         }
 
         if (empty($results)) {
@@ -2389,7 +2375,22 @@ class Smarty
 
         return true;
     }
-    
+
+    /**
+     * returns an auto_id for auto-file-functions
+     *
+     * @param string $cache_id
+     * @param string $compile_id
+     */
+    function _get_auto_id($cache_id=null, $compile_id=null) {
+	if (isset($cache_id))
+	    return (isset($compile_id)) ? $cache_id . '|' . $compile_id  : $cache_id;
+	elseif(isset($compile_id))
+	    return $compile_id;
+	else
+	    return null;
+    }
+
     /**
      * get filepath of requested plugin
      *
