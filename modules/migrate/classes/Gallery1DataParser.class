@@ -286,8 +286,8 @@ class Gallery1DataParser {
 	}
 	$uids = array();
 	foreach ($userDB->userMap as $username => $uid) {
-	    if (Gallery1DataParser::isValidUid($uid)
-		&& !Gallery1DataParser::isValidUid($username)
+	    if (Gallery1DataParser::isValidUid($path,$uid)
+		&& !Gallery1DataParser::isValidUid($path,$username)
 		&& !eregi('nobody|everybody|loggedin', $username)) {
 		$uids[$uid] = $username;
 	    }
@@ -296,19 +296,63 @@ class Gallery1DataParser {
     }
     
     /**
-     * Load user uids from path
+     * Validate user id string from gallery v1.x.x
      *
      * @param string Uid to be tested
      * @return boolean True or False
      */
-    function isValidUid($uid) {
+    function isValidUidString($uid) {
 	if (ereg('^[0-9]{9,}_[0-9]+$', $uid)) {
 	    return TRUE;
 	} else {
 	    return FALSE;
 	}
     }
-    
+
+    /**
+     * Validate user id from gallery v1.x.x
+     *
+     * @param string Uid to be tested
+     * @return boolean True or False
+     */
+    function isValidUid($path, $uid) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	if (Gallery1DataParser::isValidUidString($uid)) {
+	    list ($ret, $fields) = Gallery1DataParser::getUserFieldsByUid($path, $uid);
+	    if ($ret->isSuccess()) {
+		return TRUE;
+	    }
+	}
+	return FALSE;
+    }
+
+    /**
+     * Load user metadata given a path and uid
+     *
+     * @param string Path to album directory
+     * @param string Username to import
+     * @return array object GalleryStatus a status code,
+     *               array User metadata
+     */
+    function getUserFieldsByUid($path, $uid) {
+        global $gallery;
+        $platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	$fields = array();
+	if (Gallery1DataParser::isValidUidString($uid)) {
+	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach ($user as $key => $value){
+		$fields[$key] = $value;
+	    }
+	}
+	return array(GalleryStatus::success(), $fields);
+    }
     /**
      * Load user metadata given a path and username
      *
@@ -331,33 +375,11 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $fields);
     }
-    /**
-     * Load user metadata given a path and username
-     *
-     * @param string Path to album directory
-     * @param string Username to import
-     * @return array object GalleryStatus a status code,
-     *               array User metadata
-     */
-    function getUserFieldsByUid($path, $uid) {
-        global $gallery;
-        $platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
 
-	$fields = array();
-	if (Gallery1DataParser::isValidUid($uid)) {
-	    list ($ret, $user) = Gallery1DataParser::loadFile($path . '.users' . $slash . $uid);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($user as $key => $value){
-		$fields[$key] = $value;
-	    }
-	}
-	return array(GalleryStatus::success(), $fields);
-    }
 }
 
+
+    
 /* Define these classes so that unserialize can use them */
 /**
  * A stub class into which various G1 objects can be unserialized.

@@ -330,7 +330,7 @@ class ConfirmImportController extends GalleryController {
 			    // $newAlbumInstance->setorderDirection
 
 			    // Set album owner
-			    $validUID = Gallery1DataParser::isValidUid($album['owner']);
+			    $validUID = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 			    if ($validUID) {
 				list($ret, $albumUserFields) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
 				if ($ret->isError()) {
@@ -713,7 +713,7 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$album['name']] = $existingAlbumId;
 	    }
-	    $validUid = Gallery1DataParser::isValidUid($album['owner']);
+	    $validUid = Gallery1DataParser::isValidUid($albumsPath,$album['owner']);
 	    if ($validUid){
 		list($ret, $testUser) = Gallery1DataParser::getUserFieldsByUid($albumsPath, $album['owner']);
 		if ($ret->isError()) {
