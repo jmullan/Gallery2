@@ -159,7 +159,7 @@ class GalleryPlatform {
 	    $gallery->debug("is_file($filename)");
 	}
 	
-	return is_file($filename);
+	return @is_file($filename);
     }
 
     /**
