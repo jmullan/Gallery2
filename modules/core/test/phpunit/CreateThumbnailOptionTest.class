@@ -52,12 +52,12 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	/* Register a dummy toolkit */
 	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-						      'CreateThumbnailOptionToolkit',
-						      'CreateThumbnailOptionToolkit',
+						      'CreateThumbnailOptionTestToolkit',
+						      'CreateThumbnailOptionTestToolkit',
 						      __FILE__);
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('CreateThumbnailOptionToolkit',
+	$ret = GalleryCoreApi::registerToolkitOperation('CreateThumbnailOptionTestToolkit',
 							array('test/file'),
 							'thumbnail',
 							array(array('type' => 'int', 'description' => 'test')),
@@ -69,6 +69,15 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::unregisterToolkit('CreateThumbnailOptionTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
     }
 
     function testCreateThumbnail() {
@@ -103,7 +112,7 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 /**
  * Required by our test toolkit
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Dummy test toolkit
@@ -111,7 +120,7 @@ require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
  * @package GalleryCore
  * @subpackage PHPUnit
  */
-class CreateThumbnailOptionToolkit extends GalleryToolkit {
+class CreateThumbnailOptionTestToolkit extends GalleryToolkit {
     /**
      * @see GalleryToolkit::performOperation()
      * Dummy operation

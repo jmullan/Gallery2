@@ -84,6 +84,15 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	}
     }
 
+    function tearDown() {
+	$ret = GalleryCoreApi::unregisterToolkit('CustomThumbnailOptionTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
     function testAddBadMime() {
 	$form = array('name' => array(1 => 'test.gif'),
 		      'type' => array(1 => 'image/gif'),
