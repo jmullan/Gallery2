@@ -102,7 +102,7 @@
 
           <h2 class="giTitle">
             {if $child.canContainChildren}
-            {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent}
+            {g->text text="Album: %s" arg1=$child.title|default:$child.pathComponent|markup}
             {else}
             {$child.title|default:$child.pathComponent|markup}
             {/if}
