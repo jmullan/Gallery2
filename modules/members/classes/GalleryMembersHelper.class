@@ -66,7 +66,7 @@ class GalleryMembersHelper {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
 			 null);
 	}
-        list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
+	list ($ret, $permissionBits) = GalleryCoreApi::convertPermissionIdsToBits('core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -80,7 +80,7 @@ class GalleryMembersHelper {
 	$groupIds = array_keys($groupIds);
 	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
 	list ($ret, $andPermission) =
-            $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
+	    $storage->getFunctionSql('BITAND', array('[GalleryPermissionMap::permission]', '?'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -135,7 +135,7 @@ class GalleryMembersHelper {
 	    $items = array();
 	}
 
-        return array(GalleryStatus::success(), $items);
+	return array(GalleryStatus::success(), $items);
     }
 
     /**
@@ -148,18 +148,18 @@ class GalleryMembersHelper {
      * @static
      */
     function canViewMembersModule($userId) {
-        global $gallery;
-        list ($ret, $viewSelectedGroupId) =
-            GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
+	global $gallery;
+	list ($ret, $viewSelectedGroupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        return array(GalleryStatus::success(), $result);
+	list ($ret, $result) = GalleryCoreApi::isUserInGroup($userId, $viewSelectedGroupId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -172,36 +172,36 @@ class GalleryMembersHelper {
      * @static
      */
     function canViewProfileEmail($userId) {
-        global $gallery;
-        $result = false;
-        /* Can the user view email addresses in the member profile? */
+	global $gallery;
+	$result = false;
+	/* Can the user view email addresses in the member profile? */
 	list ($ret, $resultOne) =
-            GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
+	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	list ($ret, $groupId) =
-            GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* is the current user an admin */
 	list ($ret, $resultTwo) = GalleryCoreApi::isUserInGroup($userId, $groupId);
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/*
 	 * User can see member email in the profile if they are an admin,
 	 * or if the module setting says they are allowed to.
 	 */
-        if ($resultOne || $resultTwo) {
-            $result = true;
-        }
+	if ($resultOne || $resultTwo) {
+	    $result = true;
+	}
 
-        return array(GalleryStatus::success(), $result);
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -212,47 +212,18 @@ class GalleryMembersHelper {
      *                int daysSinceCreation number in days)
      * @static
      */
-    function daysSinceCreation ($userId){
-        global $gallery;
-
-	$storage =& $gallery->getStorage();
-
-	/* Receive the proper syntax based on user's DB */
-	list ($ret, $now) =
-	    $storage->getFunctionSql('UNIX_TIMESTAMP', array('NOW()'));
+    function daysSinceCreation($userId){
+	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        $query = '
-        SELECT
-          [GalleryEntity::creationTimestamp],
-	' . $now . '
-        FROM
-          [GalleryEntity]
-        WHERE
-          [GalleryEntity::id] = ?
-        ';
-
-	$data[] = $userId;
-    	list ($ret, $searchResults) = $gallery->search($query, $data);
-    	if ($ret->isError()) {
-    	    return array($ret->wrap(__FILE__, __LINE__), null);
-    	}
-
-	$result = $searchResults->nextResult();
-
-	/* We only want the date, set the time on both timestamps to midnight */
-	$fixedNow = mktime(0, 0, 0, date("n", (int)$result[1]), date("j", (int)$result[1]), date("Y", (int)$result[1]));
-	$fixedCreation =
-	    mktime(0, 0, 0, date("n", (int)$result[0]), date("j", (int)$result[0]), date("Y", (int)$result[0]));
-
 	/* The difference in the creationTimestamp and Now, divided by the number of seconds
 	 * in a day gives us a result in days
 	 */
-	$return = ($fixedNow - $fixedCreation) / (24 * 60 * 60);
+	$age = (int) ((time() - $user->getCreationTimestamp()) / (24 * 60 * 60));
 
-        return array(GalleryStatus::success(), (int)$return);
+	return array(GalleryStatus::success(), $age);
     }
 }
 ?>
