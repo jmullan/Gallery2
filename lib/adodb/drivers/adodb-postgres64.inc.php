@@ -1,6 +1,6 @@
 <?php
 /*
- V3.60 16 June 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
+ V3.92 22 Sep 2003  (c) 2000-2003 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,7 +22,7 @@ function adodb_addslashes($s)
 {
 	$len = strlen($s);
 	if ($len == 0) return "''";
-	if (substr($s,0,1) == "'" && substr(s,$len-1) == "'") return $s; // already quoted
+	if (strncmp($s,"'",1) === 0 && substr(s,$len-1) == "'") return $s; // already quoted
 	
 	return "'".addslashes($s)."'";
 }
@@ -34,24 +34,17 @@ class ADODB_postgres64 extends ADOConnection{
 	var $_resultid = false;
   	var $concat_operator='||';
 	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
-	var $metaTablesSQL = "select tablename from pg_tables where tablename not like 'pg\_%' order by 1";
+    var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%' union 
+        select viewname,'V' from pg_views where viewname not like 'pg\_%'";
 	//"select tablename from pg_tables where tablename not like 'pg_%' order by 1";
 	var $isoDates = true; // accepts dates in ISO format
 	var $sysDate = "CURRENT_DATE";
 	var $sysTimeStamp = "CURRENT_TIMESTAMP";
 	var $blobEncodeType = 'C';
-/*
-# show tables and views suggestion
-"SELECT c.relname AS tablename FROM pg_class c 
-	WHERE (c.relhasrules AND (EXISTS (
-		SELECT r.rulename FROM pg_rewrite r WHERE r.ev_class = c.oid AND bpchar(r.ev_type) = '1'
-		))) OR (c.relkind = 'v') AND c.relname NOT LIKE 'pg_%' 
-UNION 
-SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
-*/
 	var $metaColumnsSQL = "SELECT a.attname,t.typname,a.attlen,a.atttypmod,a.attnotnull,a.atthasdef,a.attnum 
 		FROM pg_class c, pg_attribute a,pg_type t 
-		WHERE relkind = 'r' AND c.relname='%s' AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
+		WHERE relkind = 'r' AND (c.relname='%s' or c.relname = lower('%s')) and a.attname not like '....%%'
+AND a.attnum > 0 AND a.atttypid = t.oid AND a.attrelid = c.oid ORDER BY a.attnum";
 	// get primary key etc -- from Freek Dijkstra
 	var $metaKeySQL = "SELECT ic.relname AS index_name, a.attname AS column_name,i.indisunique AS unique_key, i.indisprimary AS primary_key FROM pg_class bc, pg_class ic, pg_index i, pg_attribute a WHERE bc.oid = i.indrelid AND ic.oid = i.indexrelid AND (i.indkey[0] = a.attnum OR i.indkey[1] = a.attnum OR i.indkey[2] = a.attnum OR i.indkey[3] = a.attnum OR i.indkey[4] = a.attnum OR i.indkey[5] = a.attnum OR i.indkey[6] = a.attnum OR i.indkey[7] = a.attnum) AND a.attrelid = bc.oid AND bc.relname = '%s'";
 	
@@ -68,7 +61,8 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	var $_genSeqSQL = "CREATE SEQUENCE %s START %s";
 	var $_dropSeqSQL = "DROP SEQUENCE %s";
 	var $metaDefaultsSQL = "SELECT d.adnum as num, d.adsrc as def from pg_attrdef d, pg_class c where d.adrelid=c.oid and c.relname='%s' order by d.adnum";
-	
+	var $upperCase = 'upper';
+	var $substr = "substr";
 	
 	// The last (fmtTimeStamp is not entirely correct: 
 	// PostgreSQL also has support for time zones, 
@@ -85,9 +79,17 @@ SELECT tablename FROM pg_tables WHERE tablename NOT LIKE 'pg_%' ORDER BY 1"
 	
 	function ServerInfo()
 	{
+		if (isset($this->version)) return $this->version;
+		
 		$arr['description'] = $this->GetOne("select version()");
 		$arr['version'] = ADOConnection::_findvers($arr['description']);
+		$this->version = $arr;
 		return $arr;
+	}
+
+	function IfNull( $field, $ifNull ) 
+	{
+		return " NULLIF($field, $ifNull) "; // if PGSQL
 	}
 	
 	// get the last id - never tested
@@ -152,6 +154,24 @@ a different OID if a database must be reloaded. */
 		$this->transCnt -= 1;
 		return @pg_Exec($this->_connectionID, "rollback");
 	}
+	
+	function &MetaTables($ttype=false,$showSchema=false,$mask=false) 
+	{	
+		if ($mask) {
+			$save = $this->metaTablesSQL;
+			$mask = $this->qstr(strtolower($mask));
+			$this->metaTablesSQL = "
+select tablename,'T' from pg_tables where tablename like $mask union 
+select viewname,'V' from pg_views where viewname like $mask";
+		}
+		$ret =& ADOConnection::MetaTables($ttype,$showSchema);
+		
+		if ($mask) {
+			$this->metaTablesSQL = $save;
+		}
+		return $ret;
+	}
+	
 	/*
 	// if magic quotes disabled, use pg_escape_string()
 	function qstr($s,$magic_quotes=false)
@@ -282,15 +302,15 @@ a different OID if a database must be reloaded. */
 	{ 
 		if (strlen($blob) > 24) return $blob;
 		
-		@pg_exec("begin"); 
-		$fd = @pg_lo_open($blob,"r");
+		@pg_exec($this->_connectionID,"begin"); 
+		$fd = @pg_lo_open($this->_connectionID,$blob,"r");
 		if ($fd === false) {
-			@pg_exec("commit");
+			@pg_exec($this->_connectionID,"commit");
 			return $blob;
 		}
 		$realblob = @pg_loreadall($fd); 
 		@pg_loclose($fd); 
-		@pg_exec("commit"); 
+		@pg_exec($this->_connectionID,"commit"); 
 		return $realblob;
 	} 
 	
@@ -329,13 +349,14 @@ a different OID if a database must be reloaded. */
 	{
 	global $ADODB_FETCH_MODE;
 	
-		if (strncmp(PHP_OS,"WIN",3) === 0) $table = strtolower($table);
+		//if (strncmp(PHP_OS,'WIN',3) === 0);
+		$table = strtolower($table);
 	
 		if (!empty($this->metaColumnsSQL)) { 
 			$save = $ADODB_FETCH_MODE;
 			$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
 			if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-			$rs = $this->Execute(sprintf($this->metaColumnsSQL,($table)));
+			$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table,$table));
 			if (isset($savem)) $this->SetFetchMode($savem);
 			$ADODB_FETCH_MODE = $save;
 			
@@ -417,7 +438,8 @@ a different OID if a database must be reloaded. */
 					}
 				}
 				
-				$retarr[strtoupper($fld->name)] = $fld;	
+				if ($ADODB_FETCH_MODE == ADODB_FETCH_NUM) $retarr[] = $fld;	
+				else $retarr[strtoupper($fld->name)] = $fld;
 				
 				$rs->MoveNext();
 			}
@@ -474,11 +496,57 @@ a different OID if a database must be reloaded. */
 	// returns queryID or false
 	function _query($sql,$inputarr)
 	{
-		$rez = pg_Exec($this->_connectionID,$sql);
+		if (is_array($sql)) {
+			if (!$sql[1]) {
+			
+				$sqltxt = $sql[0];
+				$plan = $sql[1] = 'P'.md5($sqltxt);
+				$params = '';
+				foreach($inputarr as $v) {
+					if ($params) $params .= ',';
+					if (is_string($v)) {
+						$params .= 'VARCHAR';
+					} else if (is_integer($v)) {
+						$params .= 'INTEGER';
+					} else {
+						$params .= "REAL";
+					}
+				}
+				$sqlarr = explode('?',$sqltxt);
+				$sqltxt = '';
+				$i = 1;
+				foreach($sqlarr as $v) {
+					$sqltxt .= $v.'$'.$i;
+					$i++;
+				}
+				$s = "PREPARE $plan ($params) AS ".substr($sqltxt,0,strlen($sqltxt)-2);		
+				adodb_pr($s);
+				pg_exec($this->_connectionID,$s);
+				echo $this->ErrorMsg();
+			} else {
+				$plan = $sql[1];
+			}
+			$params = '';
+			foreach($inputarr as $v) {
+				if ($params) $params .= ',';
+				if (is_string($v)) {
+					if (strncmp($v,"'",1) !== 0) $params .= $this->qstr($v.'TEST');
+				} else {
+					$params .= $v;
+				}
+			}
+			
+			if ($params) $sql = "EXECUTE $plan ($params)";
+			else $sql = "EXECUTE $plan";
+			
+			adodb_pr(">>>>>".$sql);
+			pg_exec($this->_connectionID,$s);
+		}
+		$rez = pg_exec($this->_connectionID,$sql);
 		//print_r($rez);
 		// check if no data returned, then no need to create real recordset
 		if ($rez && pg_numfields($rez) <= 0) {
-			if ($this->_resultid) pg_freeresult($this->_resultid);
+			if (is_resource($this->_resultid)) pg_freeresult($this->_resultid);
 			$this->_resultid = $rez;
 			return true;
 		}
@@ -685,6 +753,7 @@ class ADORecordSet_postgres64 extends ADORecordSet{
 			$len = $fieldobj->max_length;
 		}
 		switch (strtoupper($t)) {
+				case 'MONEY': // stupid, postgres expects money to be a string
 				case 'INTERVAL':
 				case 'CHAR':
 				case 'CHARACTER':
