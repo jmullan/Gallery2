@@ -98,8 +98,8 @@ class AdminCreateUserController extends GalleryController {
 
 		    /* Request a redirect to the confirmation screen */
 		    $redirectParams['view'] = 'core:SiteAdmin';
-		    $redirectParams['subView'] = 'core:AdminCreateUserConfirmation';
-		    $redirectParams['userName'] = $form['userName'];
+		    $redirectParams['subView'] = 'core:AdminUsers';
+		    $redirectParams['form.status.createdUser'] = $form['userName'];
 		}
 	    } else {
 		foreach (array('userName', 'email', 'password1', 'password2') as $key) {

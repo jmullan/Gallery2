@@ -60,8 +60,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminCreateUserConfirmation',
-				    'userName' => $userName),
+				    'subView' => 'core:AdminUsers',
+				    'form.status.createdUser' => $userName),
 			      $results,
 			      'Failed to create user');
 
@@ -124,8 +124,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertRedirect(array('view' => 'core:SiteAdmin',
-				    'subView' => 'core:AdminCreateUserConfirmation',
-				    'userName' => $userName),
+				    'subView' => 'core:AdminUsers',
+				    'form.status.createdUser' => $userName),
 			      $results);
 
 
