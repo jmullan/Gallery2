@@ -327,7 +327,7 @@ class CoreModule extends GalleryModule {
 		/* Activate the Matrix layout */
 		list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', 'matrix');
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
 		$ret = $layout->activate();
