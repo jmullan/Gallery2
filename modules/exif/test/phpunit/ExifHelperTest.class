@@ -142,7 +142,9 @@ class ExifHelperTest extends GalleryTestCase {
      */
     function testPostProcessKeys() {
 	$this->assertEquals(
-            "1/400 sec", ExifHelper::postProcessValue("ShutterSpeedValue", "25/10000 sec"));
+            '1/400 sec', ExifHelper::postProcessValue('ShutterSpeedValue', '25/10000 sec'));
+	$this->assertEquals(
+            'f/2.8', ExifHelper::postProcessValue('ApertureValue', 'f 2.8'));
     }
 }
 

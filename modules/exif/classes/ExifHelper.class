@@ -204,6 +204,14 @@ class ExifHelper {
 		    $value = sprintf('1/%d sec', $results[1] / $results[0]);
 		}
 	    }
+	    break;
+
+	case 'ApertureValue':
+	    /* Convert "f 2.8" to "f/2.8" */
+	    $results = sscanf($value, 'f %s');
+	    if (count($results) == 1) {
+		$value = 'f/' . $results[0];
+	    }
 	}
 
 	return $value;
