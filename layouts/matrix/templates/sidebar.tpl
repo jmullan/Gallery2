@@ -24,7 +24,8 @@
 
   {* Search form, if module's activated *}
   {if isset($layout.moduleSystemContentFiles.search)}
-	{include file="gallery:modules/search/templates/SearchSystemContent.tpl"} 
+	{assign var=moduleFile value=$layout.moduleSystemContentFiles.search}
+	{include file="gallery:$moduleFile" l10Domain="modules_search"} 
   {/if}
 
   {* Album actions, if there are any *}
