@@ -47,7 +47,7 @@ class GalleryTestCase extends TestCase {
 	parent::setUp();
 
 	/* Clear out any request vars */
-	$this->_saveRequestVars = array($_GET, $_POST, $_FILES);
+	$this->_saveVars = array($_GET, $_POST, $_FILES, $_SERVER, $_ENV);
 	$_GET = array();
 	$_POST = array();
 	$_FILES = array();
@@ -94,7 +94,7 @@ class GalleryTestCase extends TestCase {
 	}
 
 	/* Restore form vars */
-	list ($_GET, $_POST, $_FILES) = $this->_saveRequestVars;
+	list ($_GET, $_POST, $_FILES, $_SERVER, $_ENV) = $this->_saveVars;
 
 	/* Restore user id */
 	$gallery->setActiveUserId($this->_saveUserId);
@@ -183,10 +183,15 @@ class GalleryTestCase extends TestCase {
      * @access private
      */
     function _createRandomDataItem($parentId, $mimeType='application/unknown',
-				   $fields=array(), $inputFile=__FILE__) {
+				   $fields=array(), $inputFile=__FILE__,
+				   $itemClass=null) {
 	global $gallery;
 
-	list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
+	if (isset($itemClass)) {
+	    list ($ret, $item) = GalleryCoreApi::newFactoryInstanceById('GalleryEntity', $itemClass);
+	} else {
+	    list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
+	}
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
