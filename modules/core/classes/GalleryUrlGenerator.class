@@ -257,6 +257,8 @@ class GalleryUrlGenerator {
 	     * but not have the session id in the url yet.  Detect that case and add the url here.
 	     */
 	    if (!($session->isUsingCookies())) {
+		$sessionKey = $session->getKey();
+		$sessionId = $session->getId();
 		if (empty($_SERVER['QUERY_STRING']) || strpos($_SERVER['QUERY_STRING'], $sessionKey) === false) {
 		    $params['return'] .= $this->buildQueryString(array($sessionKey => $sessionId));
 		}
