@@ -12,20 +12,14 @@
 
 */
 
-/*	GALLERY
-	Category 1: Gallery		
-	declare Gallery Module Borders, etc
-*/
+/*      Standard CSS definitions */
 
-#gallery { }
-
-/*      basic html defs for the stand-alone install	 */
 body {
 	font-family: "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 	font-size: 62.5%;
 }
 
-/*      Font-size using ems
+/*      font-size using ems
 	assumes browser is set to Medium Size or 16px
 
 	62.5% = 10px
@@ -39,6 +33,14 @@ body {
 	BEWARE OF NESTED EMS!!!
 */
 
+/*	GALLERY
+	Category 1: Gallery		
+	declare Gallery Module Borders, etc
+*/
+
+#gallery { }
+
+
 /*      SECTIONS
 	Category 2: section definitions
 	declare section styles		   
@@ -46,7 +48,7 @@ body {
 
 #gsHeader { 
 	display: block; 
-	width: 90%;
+	width: auto;
 }
 
 
@@ -58,8 +60,6 @@ body {
 }
 
 #gsSidebar, #gsAdminSidebar {
-/*	position: absolute;
-	left: 8px; */
 	float: left;
 	width: 156px;
 	border-top: 1px solid #ccc;
@@ -68,11 +68,12 @@ body {
 
 #gsContents {
         width: auto;
-	min-width: 776px;           
+	min-width: 962px;           
         /* IE Dynamic Expression to set the width */
-        width:expression(document.body.clientWidth < 810 ? "776px" : "100%" );
+        width:expression(document.body.clientWidth < 962 ? "962px" : "100%" );
 	margin: 0;
 	padding: 0;
+	overflow: hidden;
 }
 
 #gsContents:after {
@@ -97,16 +98,6 @@ body {
 }
 
 #gsAlbumContents .gbExif { }
-
-#gsAlbumContents .giHorizontalLinks { float: right; }
-
-#gsAlbumContents .giHorizontalLinks li { 
-	display: inline;
-	list-style-type: none;
-	padding: 0 5px;
- }
-#gsAlbumContents .giHorizontalLinks a { text-decoration: none; }
-
 
 #gsComments { border-top: 1px solid #ccc; }
 
@@ -263,23 +254,53 @@ body {
 #gsHeader .gbBreadCrumb span + span:before { content: '\00BB \ '; }
 .gbBreadCrumb li + li:before { content: '\00BB \ '; }
 
+/* inside gsAlbumContents or gsAdmiinContents */
 
-/*      #gsAlbumContents	*/
-#gsAlbumContents .gbTopFlag,
-#gsAdminContents .gbTopFlag  {
+.gbTopFlag, .gbBottomFlag {
 	background-color: #eee;
+	margin: 0;
 	padding: 0;
 }
 
-#gbThumbMatrix {  }
+.gbTopFlag:after, .gbBottomFlag:after {
+	content: "."; 
+	display: block;
+	height: 0; 
+	clear: both; 
+        visibility: hidden;
+}
 
-.gbTitleBanner {
+/* Hides from IE-mac \*/
+* html .gbTopFlag { height: 1%; }
+* html .gbBottomFlag { height: 1%; }
+/* End hide from IE-mac */
+
+.gbNavBar {
+        background-color: #e7e7e7;
+        margin: 0;
+        padding: 0 16px;
+}
+
+.gbNavBar:after {
+	content: "."; 
+	display: block;
+	height: 0; 
+	clear: both; 
+        visibility: hidden;
+}
+
+/* Hides from IE-mac \*/
+* html .gbNavBar { height: 2em; }
+/* End hide from IE-mac */
+
+
+table.gbTitleBanner {
 	width: 100%;
 	margin: 0;
 	padding: 0;
 }
 
-.gbTitleBanner tr td {
+table.gbTitleBanner tr td {
         width: 33%;      
 	vertical-align: top;
 }
@@ -290,44 +311,23 @@ body {
         padding: 14px;
 }
 
-#gsAlbumContents .gbItemAlbum,
-#gsAlbumContents .gbItemImage, 
-#gsAlbumContents .gbItemMovie, 
-#gsAlbumContents .gbItemOther {
+#gbThumbMatrix {  }
+
+td.gbItemAlbum,
+td.gbItemImage, 
+td.gbItemMovie, 
+td.gbItemOther {
         vertical-align: top;
 	background-color: #fff;
         padding: 14px;
 }
 
-#gsAlbumContents .gbItemAlbum {
+td.gbItemAlbum {
 	background-color: #eee;        
 }
 
-
-#gsAlbumContents .gbExif {
+.gbExif {
 	margin: 8px;
-}
-
-#gsAlbumContents .gbBottomFlag {
-	background-color: #eee;
-}
-
-.gbBottomFlag:after {
-	content: "."; 
-	display: block; 
-	height: 0; 
-	clear: both; 
-	visibility: hidden;
-}
-
-/* Hides from IE-mac \*/
-* html .gbBottomFlag { height: 1%; }
-/* End hide from IE-mac */
-
-
-#gsAlbumContents .giHorizontalLinks {
-	font-size: 0.9em;
-	padding: 8px;
 }
 
 .gsSingleImage {
@@ -465,9 +465,20 @@ body {
         padding: 0;
 }
 
-span.giDate { }
-span.giOwner { }
-span.giCount { }
+/*      horizontal link styles page navigations */
+.giHorizontalLinks {
+        float: right;
+	font-size: 0.9em;
+	padding: 2px 8px;
+}
+
+.giHorizontalLinks li { 
+	display: inline;
+	list-style-type: none;
+	padding: 0 4px;
+ }
+ 
+.giHorizontalLinks a { text-decoration: none; }
 
 /*  thumbnails */
 .giThumbImage, .giThumbMovie, .giThumbOther {
@@ -550,7 +561,7 @@ discused the options of generating a table-based border (ie_test) and alistapart
 
 .gbBottomFlag .giHorizontalLinks {
 	font-size: 0.9em;
-	padding: 4px;
+	padding: 0 4px;
 }
 
 /*	  .gbDataEntry */

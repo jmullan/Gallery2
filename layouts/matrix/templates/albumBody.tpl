@@ -19,8 +19,7 @@
   {include file="gallery:layouts/matrix/templates/sidebar.tpl"}
 
   <div id="gsAlbumContents">
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
-
+    
     <div class="gbTopFlag">
       <table class="gbTitleBanner">
         <tr>
@@ -60,7 +59,11 @@
         </tr>
       </table>
     </div>
-
+    
+    <div class="gbNavBar">
+      {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+    </div>
+    
     {if (sizeof($layout.children) > 0)}
     {assign var="childrenInColumnCount" value=0}
     <table id="gbThumbMatrix">
@@ -163,8 +166,10 @@
     {/if}
 
     <div class="gbBottomFlag">
-      <div class="giHorizontalLinks">
-        <ul>
+      <div class="gbNavBar">
+          {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+      </div>
+        <ul class="giHorizontalLinks">
           <li>{g->text text="Page:"}</li>
           {assign var="lastPage" value=0}
           {foreach name=jumprange from=$layout.jumprange item=page}
@@ -177,7 +182,7 @@
             {/if}
           </li>
           {/if}
-
+  
           {if ($layout.currentPage == $page)}
           <li>
             {$page}
@@ -190,7 +195,6 @@
           {assign var="lastPage" value=$page}
           {/foreach}
         </ul>
-      </div>
     </div>
   </div>
 </div>
