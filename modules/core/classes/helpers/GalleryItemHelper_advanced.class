@@ -228,10 +228,6 @@ class GalleryItemHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	if ($searchResults->resultCount() == 0) {
-	    return null;
-	}
-
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $data[$result[0]] = $result[1];
