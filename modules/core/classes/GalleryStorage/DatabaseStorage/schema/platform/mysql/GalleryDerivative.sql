@@ -23,8 +23,6 @@
         
       )
     
-    NOT NULL
-  
       ,
     DB_COLUMN_PREFIXderivativeOrder
       int(11)
@@ -59,8 +57,6 @@
         
       )
     
-    NOT NULL
-  
     , 
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)

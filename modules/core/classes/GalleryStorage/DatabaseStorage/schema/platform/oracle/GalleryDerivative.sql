@@ -21,8 +21,6 @@
        255 
       )
     
-    NOT NULL
-  
       ,
     DB_COLUMN_PREFIXderivativeOrder
       INTEGER
@@ -53,8 +51,6 @@
        255 
       )
     
-    NOT NULL
-  
     );
 
   

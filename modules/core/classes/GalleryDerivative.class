@@ -73,13 +73,13 @@ class GalleryDerivative_core extends GalleryChildEntity {
     var $_derivativeSourceId;
 
     /**
-     * A sequence of operations used to derive this data from the original
+     * A sequence of operations used to derive this data from the original.
+     * Can be empty, because the derivative can have only a postfilter.
      *
      * @g2 <member>
      * @g2   <member-name>derivativeOperations</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>LARGE</member-size>
-     * @g2   <required/>
      * @g2 </member>
      *
      * @var int $_derivativeOperations
@@ -145,11 +145,12 @@ class GalleryDerivative_core extends GalleryChildEntity {
      * operations like watermarking that change the derivative in a way that we don't
      * want to propagate.
      *
+     * Can be empty, because the derivative can have only a regular derivative operations.
+     *
      * @g2 <member>
      * @g2   <member-name>postFilterOperations</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>LARGE</member-size>
-     * @g2   <required/>
      * @g2 </member>
      *
      * @var int $_postFilterOperations
