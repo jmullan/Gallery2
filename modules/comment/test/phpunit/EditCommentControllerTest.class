@@ -1,0 +1,209 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * EditComment controller tests
+ */
+class EditCommentControllerTest extends GalleryControllerTestCase {
+
+    function EditCommentControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'comment:EditComment');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create two random items */
+	for ($i = 0; $i < 2; $i++) {
+	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($rootId);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Create a comment in it that we can delete */
+	    list ($ret, $this->_comment[$i]) = GalleryFactory::newInstance('GalleryEntity', 'GalleryComment');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    $this->assert(isset($this->_comment[$i]), 'Missing comment instance');
+	    $this->_comment[$i]->create($this->_item[$i]->getId());
+	    $this->_comment[$i]->setCommenterId($gallery->getActiveUserId());
+	    $this->_comment[$i]->setHost('127.0.0.1');
+	    $this->_comment[$i]->setComment('this is a test comment');
+	    $this->_comment[$i]->setDate(time());
+	    $ret = $this->_comment[$i]->save();
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	list ($ret, $this->_anonymousUserId) = $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_anonymousUser) = $gallery->loadEntitiesById($this->_anonymousUserId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	
+	$ret = $gallery->deleteEntityById($this->_item[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testEditComment() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('x' => 'y'), $results);
+
+	/* Grab the comment and verify it */
+	GalleryDataCache::reset();
+
+	list ($ret, $comment) = $this->_comment[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($comment->getHost(), 'hosty.host.host');
+	$this->assertEquals($comment->getDate(), strtotime('6-Jun-2003 12:01:02'));
+	$this->assertEquals($comment->getCommenterId(), (int)$this->_anonymousUserId);
+	$this->assertEquals($comment->getComment(), 'This is a new comment');
+    }
+
+    function testMissingCommenterName() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form.commenterName', '');
+	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'comment:EditComment'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.missingCommenterName'));
+    }
+    
+    function testInvalidCommenterName() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form.commenterName', 'some-illegal-user-name');
+	GalleryUtilities::putRequestVariable('form.date', '6-Jun-2003 12:01:02');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'comment:EditComment'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.invalidCommenterName'));
+    }
+    
+    function testMissingDate() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form.date', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'comment:EditComment'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.missingDate'));
+    }
+
+    function testInvalidDate() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+	GalleryUtilities::putRequestVariable('form.host', 'hosty.host.host');
+	GalleryUtilities::putRequestVariable('form.comment', 'This is a new comment');
+	GalleryUtilities::putRequestVariable('form.commenterName', $this->_anonymousUser->getUserName());
+	GalleryUtilities::putRequestVariable('form.date', 'bogo-date');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'comment:EditComment'), $results);
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.invalidDate'));
+    }
+
+    /**
+     * Use a bogus comment id
+     */
+    function testMaliciousEditComment1() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', 123123123);
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest(ERROR_MISSING_OBJECT);
+    }
+
+    /**
+     * Use mismatched item id and comment id
+     */
+    function testMaliciousEditComment2() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_item[0]->getId());
+	GalleryUtilities::putRequestVariable('commentId', $this->_comment[1]->getId());
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+	GalleryUtilities::putRequestVariable('return.x', 'y');
+
+	$results = $this->handleRequest(ERROR_BAD_PARAMETER);
+    }
+}
+?>
