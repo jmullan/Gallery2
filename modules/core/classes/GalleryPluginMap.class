@@ -301,7 +301,8 @@ class GalleryPluginMap_core {
 		}
 		
 		if (!class_exists($pluginClass)) {
-		    return array(GalleryStatus::error(ERROR_BAD_MODULE, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_BAD_MODULE, __FILE__, __LINE__,
+						      "Class $pluginClass does not exist"), null);
 		}
 	    }
 
