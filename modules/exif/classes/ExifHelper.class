@@ -125,6 +125,11 @@ class ExifHelper {
 	global $gallery;
 	require_once(dirname(__FILE__) . '/../lib/exifer/exif.inc');
 
+	$platform = $gallery->getPlatform();
+	if (! $platform->file_exists($path)) {
+	    $rawExifData = null;
+	    return;
+	}
 	$rawExifData = read_exif_data_raw($path, false);
 	if ($gallery->getDebug()) {
 	    // Capture old-school print_r() to support older PHP
