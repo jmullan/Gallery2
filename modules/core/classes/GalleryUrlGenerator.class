@@ -75,7 +75,7 @@ class GalleryUrlGenerator {
 	}
 	    
 	foreach ($params as $key => $value) {
-	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
+	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=" . urlencode($value);
 	}
 	    
 	$url = $this->_baseUrl;
