@@ -49,7 +49,7 @@
 	    {foreach from=$moduleInfo.options key=optionId item=optionInfo}
 	      {g->row}
 		{g->column}
-		  {capture name=checkboxName}form.options.{$moduleId}.{$optionId}{/capture}
+		  {capture name=checkboxName}form[options][{$moduleId}][{$optionId}]{/capture}
 		  {g->input type="checkbox" name=$smarty.capture.checkboxName}
 		    {if isset($form.options.$moduleId.$optionId)}1{/if}
 		  {/g->input}
