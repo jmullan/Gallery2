@@ -46,12 +46,13 @@ body {
 	width: auto;
 }
 
-
 #gsFooter {
 	font-size: 0.9em;
 	color: #bbb;
 	margin: 0;
 	padding: 8px;
+	width: 97%;
+	border-top: 1px solid #ccc;
 }
 
 #gsSidebar, #gsAdminSidebar {
@@ -67,6 +68,8 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+#gsContents form { margin: 0; padding 0; }
 
 #gsContents:after {
 	content: "."; 
@@ -138,10 +141,10 @@ table.gbDataTable td {
 table.gbDataTable img { border: none; }
 
 #gsComments {
-        clear: both;
-        border-top: 1px solid #ccc;
-        border-bottom: 1px solid #ccc;
-        padding: 8px 14px;
+    clear: both;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    padding: 8px 14px;
 }
 
 #gsSearchContents { }
@@ -311,6 +314,8 @@ table.gbDataTable img { border: none; }
 	padding: 0;
 }
 
+.gbTopFlag input, .gbBottomFlag input { margin: 3px 14px; padding: 0;}
+
 .gbTopFlag:after, .gbBottomFlag:after {
 	content: "."; 
 	display: block;
@@ -330,7 +335,10 @@ table.gbDataTable img { border: none; }
     padding: 0 14px;
 }
 
-.gbNavBar .gbAdmin { float: right; padding: 3px; }
+.gbNavBar .gbAdmin { 
+    float: right; 
+    padding: 3px;
+}
 
 .gbNavBar:after {
 	content: "."; 
@@ -424,7 +432,7 @@ td.gbItemAlbum { background-color: #eee; }
 	padding: 0;
 }
 
-#gsSearchContents .gbItemImage img { border: 0px; }
+#gsSearchContents .gbItemImage img, #gsSearchContents .gbItemAlbum img { border: 0px; }
 
 /*	  #gsAdminContents	*/
 
@@ -465,7 +473,7 @@ td.gbItemAlbum { background-color: #eee; }
 
 #gsStatus .giWarning { color: #dd7; }
 
-#gsStatus .giEmpty { font-weight: bold; margin: 0 0 400px 0; }
+#gsStatus .giEmpty { font-weight: bold; margin: 0 0 100px 0; }
 
 /*      Status inside a gsStatus section */
 
@@ -654,7 +662,7 @@ discused the options of generating a table-based border (ie_test) and alistapart
 #SearchSystemContent input { font-size: 1.0em; }
 
 #gsSearchContents .gbAdmin {
-    margin: 12px;
+    margin: 14px;
     border-bottom: 1px solid #ddd;
 }
 
@@ -668,6 +676,10 @@ discused the options of generating a table-based border (ie_test) and alistapart
     padding: 0 8px 0 0;
     display: inline;
 }       
+
+#gsSearchContents .giTitle { margin: 0 14px; padding: 0; }
+
+
 
 #gsSearchContents .giSearchHighlight { 
     font-weight: bold;

@@ -138,6 +138,9 @@
     	</table>
       </div>
 
+    </form>
+    
+    {/if}
     <div class="gbBottomFlag">
       <div class="gbNavBar">
         <div class="gbAdmin">
@@ -146,8 +149,5 @@
       </div>
     </div>
     
-    </form>
-    
-    {/if}
   </div>
 </div>

@@ -5,18 +5,15 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <div id="gsHeader">
-  <!-- add a header here -->
+  {include file="gallery:layouts/matrix/templates/banner.tpl"}
 </div>
 
 <ul class="gbBreadCrumb">
   <li class="giBreadCrumbFirst">
-    <a href="{g->url}">
-      {g->text text="Gallery"}
-    </a>
+    <a href="{g->url}">{g->text text="Gallery"}</a>
   </li>
-
   <li>
-    {g->text text="Search"}
+    {g->text text="Search Results Summary"}
   </li>
 </ul>
 
@@ -25,139 +22,144 @@
 
   <div id="gsAlbumContents">
     <form action="{g->url}" method="post">
-      <div>
       {g->hiddenFormVars}
       <input type="hidden" name="{g->formVar var="controller"}" value="{$SearchScan.controller}" />
       <input type="hidden" name="{g->formVar var="form[formName]"}" value="SearchScan" />
-       </div> 
+
       <script type="text/javascript">
-      // <![CDATA[
-      function setCheck(val) {ldelim}
-	var frm = document.forms[0];
-	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
-	{foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	  frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=val;
-	{/foreach}
-	{/foreach}
-      {rdelim}
-    
-      function invertCheck() {ldelim}
-	var frm = document.forms[0];
-	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
-	{foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	  frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=!(frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked)
-	{/foreach}
-	{/foreach}
-      {rdelim}
-      // ]]>
+        // <![CDATA[
+        function setCheck(val) {ldelim}
+    	  var frm = document.forms[0];
+    	  {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+    	    {foreach from=$moduleInfo.options key=optionId item=optionInfo}
+    	  frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=val;
+    	    {/foreach}
+    	  {/foreach}
+        {rdelim}
+        
+        function invertCheck() {ldelim}
+    	  var frm = document.forms[0];
+    	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+    	{foreach from=$moduleInfo.options key=optionId item=optionInfo}
+    	  frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked=!(frm.elements['g2_form[options][{$moduleId}][{$optionId}]'].checked)
+    	{/foreach}
+    	{/foreach}
+          {rdelim}
+          // ]]>
       </script>
     
       <div id="gsSearchContents">
+      
 	    <div class="gbTopFlag">
 		   <div class="gbTitleBanner">
 	          <h1 class="gbTitle">
-	          {g->text text="Search the Gallery"}
+	          {g->text text="Gallery Search Results Summary for "}
+	         '{$form.searchCriteria}'
 	          </h1>
 	       </div>
 	    </div>
 
-	<div class="gbAdmin">
-	  <div class="gbDataEntry">
-	  <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
-	  <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
-
-	  {if isset($form.error.searchCriteria.missing)}
-	  <p class="giError">
-	    {g->text text="You must enter some text to search for!"}
-	  </p>
-	  {/if}
-	  </div>
-	{foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
-	  {foreach from=$moduleInfo.options key=optionId item=optionInfo}
-	  {capture name=checkboxName}{g->formVar var="form[options][$moduleId][$optionId]"}{/capture}
-	  <input id="{$moduleId}.{$optionId}" type="checkbox" name="{$smarty.capture.checkboxName}" {if isset($form.options.$moduleId.$optionId)}checked="checked"{/if} />
-	  <label for="{$moduleId}.{$optionId}">
-	  {$optionInfo.description}
-	  </label>
-	  {/foreach}
-	{/foreach}
+    	<div class="gbAdmin">
+    	
+    	  <div class="gbDataEntry">
+    	    <input type="text" size="50" name="{g->formVar var="form[searchCriteria]"}" value="{$form.searchCriteria}" onfocus="this.style.background='#fff';" onblur="this.style.background='#eee';"/>
+    	    <input type="submit" name="{g->formVar var="form[action][search]"}" value="{g->text text="Search"}" class="button"/>
+    
+    	    {if isset($form.error.searchCriteria.missing)}
+    	    <p class="giError">
+    	      {g->text text="You must enter some text to search for!"}
+    	    </p>
+    	    {/if}
+    	  </div>
+    	  
+          {foreach from=$SearchScan.modules key=moduleId item=moduleInfo}
+        	{foreach from=$moduleInfo.options key=optionId item=optionInfo}
+        	{capture name=checkboxName}{g->formVar var="form[options][$moduleId][$optionId]"}{/capture}
+        	<input id="{$moduleId}.{$optionId}" type="checkbox" name="{$smarty.capture.checkboxName}" {if isset($form.options.$moduleId.$optionId)}checked="checked"{/if} />
+        	<label for="{$moduleId}.{$optionId}">
+        	{$optionInfo.description}
+        	</label>
+        	{/foreach}
+          {/foreach}
+          
           <ul class="giSearchCheck">
             <li><a href="javascript:setCheck(1)">{g->text text="Check All"}</a> </li> 
             <li><a href="javascript:setCheck(0)">{g->text text="Uncheck All"}</a> </li> 
             <li><a href="javascript:invertCheck(0)">{g->text text="Invert"}</a></li>
           </ul>
-	</div>
+          
+        </div>  
+          
+          {assign var="resultCount" value="0"}
+          {if !empty($SearchScan.searchResults)}
+    
+    	  {foreach from=$SearchScan.searchResults key=moduleId item=results}
+    	  {assign var="resultCount" value=$resultCount+$results.count}
+    
+    	  <div class="giTitle">
+    	    <p>
+    	    {$SearchScan.modules.$moduleId.name}
+    	    {if ($results.count > 0)}
+    	    {g->text text="Results %d - %d"
+    	    arg1=$results.start
+    	    arg2=$results.end}
+    	    {/if}
 
-	{assign var="resultCount" value="0"}
-	{if !empty($SearchScan.searchResults)}
-	<div class="gbAdmin">
-	  <h2 class="giTitle">
-	  {g->text text="Search Results"}
-	  </h2>
+    	    {if ($results.count > $results.end)}
+    	    {assign var="moduleId" value=$moduleId} &nbsp; 
+    	    <input type="submit" name="{g->formVar var="form[action][showAll][$moduleId]"}" value="{g->text text="Show all %d" arg1=$results.count}" class="button"/>
+    	    {/if}
+    	    </p>
+    	  </div>
 
-	  {foreach from=$SearchScan.searchResults key=moduleId item=results}
-	  {assign var="resultCount" value=$resultCount+$results.count}
-	  <div class="gbDataEntry">
-	    <div class="giTitle">
-	      {$SearchScan.modules.$moduleId.name}
-	      {if ($results.count > 0)}
-	      {g->text text="(Results %d - %d)"
-	      arg1=$results.start
-	      arg2=$results.end}
-	      {/if}
-	      {if ($results.count > $results.end)}
-	      {assign var="moduleId" value=$moduleId} &nbsp; 
-	      <input type="submit" name="{g->formVar var="form[action][showAll][$moduleId]"}" value="{g->text text="Show all %d" arg1=$results.count}" class="button"/>
-	      {/if}
-	    </div>
-
-	    {assign var="searchCriteria" value=$form.searchCriteria} 
+	    {assign var="searchCriteria" value=$form.searchCriteria}
 	    {if (sizeof($results.results) > 0)}
-	    <table>
+	    <table id="gbThumbMatrix">
 	      <tr>
-
-	      {foreach from=$results.results item=result} 
-	      {assign var=itemId value=$result.itemId} 
-	      <td class="gbItemImage" style="width: 10%">
-		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
-		{if isset($SearchScan.thumbnails.$itemId)}
-		<div class="gbItemImage">
-		    {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
-		</div>
-		{else}
-		{g->text text="No thumbnail"}
-		{/if}
-		</a>
-		  <ul class="giInfo">
-		    {foreach from=$result.fields item=field}
-		  {if isset($field.value)}
-		  <li>
-		  {$field.key}:
-		  {$field.value|default:"&nbsp;"|ireplace:$searchCriteria:"<span class=\"searchHighlight\">\\1</span>"|markup}
-		  </li>
-		  {/if}
-		{/foreach}
-		</ul>
-	      </td>
+    	      {foreach from=$results.results item=result}
+    	      {assign var=itemId value=$result.itemId}
+    	      <td class="{if $SearchScan.items.$itemId.canContainChildren}gbItemAlbum{else}gbItemImage{/if}" style="width: 10%">
+        		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
+        		{if isset($SearchScan.thumbnails.$itemId)}
+        		<div class="gbItemImage">
+        		    {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId}
+        		</div>
+        		{else}
+        		{g->text text="No thumbnail"}
+        		{/if}
+        		</a>
+    		    <ul class="giInfo">
+    		      {foreach from=$result.fields item=field}
+    		        {if isset($field.value)}
+    		      <li>
+    		        {$field.key}:
+    		        {$field.value|default:"&nbsp;"|ireplace:$searchCriteria:"<span class=\"searchHighlight\">\\1</span>"|markup}
+    		      </li>
+    		        {/if}
+    		      {/foreach}
+    		    </ul>
+	          </td>
 	      {/foreach}
-
 	      </tr>
 	    </table>
 	    {else}
-	    {g->text text="No results"}
+        <div id="gsStatus">
+          <div class="giEmpty">
+              <p>
+              {g->text text="No results found for"} '{$form.searchCriteria}'
+              </p>
+          </div>
+        </div>
 	    {/if}
-	  </div>
 	  {/foreach}
-
-	</div>
 	{/if}
-
-	{if $resultCount>0 && $SearchScan.slideshowAvailable}
-	<div class="gbAdmin">
-	  <input type="submit" name="{g->formVar var="form[action][slideshow]"}" value="{g->text text="View these results in a slideshow"}" class="button"/>
-	</div>
-	{/if}
-      </div>
+	
+        <div class="gbBottomFlag">
+            {if $resultCount>0 && $SearchScan.slideshowAvailable}
+            <input type="submit" name="{g->formVar var="form[action][slideshow]"}" value="{g->text text="View these results in a slideshow"}" class="button"/>
+            {/if}
+        </div>
+      </div>  
     </form>
   </div>
 </div>
