@@ -20,6 +20,7 @@ GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
+my $failcount = 0;
 
 my $curdir = cwd();
 my $basedir = cwd();
@@ -28,10 +29,11 @@ $basedir =~ s{(/.*)/(lib|docs|layouts|modules|setup|templates)/.*?$}{$1};
 find(\&locatePoDir, $basedir);
 
 foreach my $poDir (keys(%PO_DIRS)) {
-
   print STDERR "BUILDING IN >> $poDir <<\n";
   chdir $poDir;
-  system("$MAKE install clean 2>&1") and die;
+  system("$MAKE install clean 2>&1")
+    and print "FAIL: $poDir"
+      and $failcount++;
 }
 
 if ($OPTS{'MAKE_BINARY'}) {
@@ -41,6 +43,11 @@ if ($OPTS{'MAKE_BINARY'}) {
   find(\&locateMoFile, $basedir);
   chdir $basedir;
   system("cvs admin -kb " . join(" ", keys(%MO_FILES)));
+}
+
+print "$failcount failures\n";
+if ($failcount > 0) {
+  exit 1;
 }
 
 sub out {
