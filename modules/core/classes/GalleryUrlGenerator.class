@@ -286,11 +286,11 @@ class GalleryUrlGenerator {
 	    $url = $params['href'];
 	    unset($params['href']);
 
-	    /* Prepend our current URL dir to all relative urls */
+	    /* Prepend G2 base dir to all relative urls */
 	    $components = parse_url($url);
 	    if (!isset($components['host']) && (isset($components['path']) && $components['path'][0] != '/')) {
 		/* It's a relative URL */
-		$url = $this->getCurrentUrlDir() . $url;
+		$url = $this->getCurrentUrlDir(true) . $url;
 	    }
 	} else {
 	    /* Else start with our regular URL */
