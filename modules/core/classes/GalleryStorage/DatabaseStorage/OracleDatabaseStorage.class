@@ -165,5 +165,16 @@ class OracleDatabaseStorage extends DatabaseStorage {
 
 	return GalleryStatus::success();
     }
+
+    /**
+     * Get database version.
+     * @return string version
+     */
+    function getVersion() {
+	if (function_exists('oci_server_version')) {
+	    return oci_server_version();
+	}
+	return ociserverversion();
+    }
 }
 ?>

@@ -210,5 +210,15 @@ class PostgreSqlDatabaseStorage extends DatabaseStorage {
 	return array(GalleryStatus::success(), $sql);
     }
 
+    /**
+     * Get database version.
+     * @return string version
+     */
+    function getVersion() {
+	if (function_exists('pg_version')) {
+	    return implode(' ', pg_version());
+	}
+	return null;
+    }
 }
 ?>
