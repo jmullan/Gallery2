@@ -1709,9 +1709,11 @@ class DatabaseStorage extends GalleryStorage {
      * @return string HTML
      */
     function getProfilingHtml() {
+	$this->_traceStart();
 	 $perf =& NewPerfMonitor($this->_db);
 	 $buf = $perf->SuspiciousSQL();    
 	 $buf .= $perf->ExpensiveSQL();
+	$this->_traceStop();
 	 return $buf;
     }
 
