@@ -260,9 +260,18 @@
     </h3>
     <ol id="next-list">
       <li>
+	<b> Module Uninstall </b> - ..
+      </li>
+
+      <li>
 	<b> Random Highlight </b> - New module allows albums to
 	periodically change highlight, selecting randomly from
 	the album's items.
+      </li>
+
+      <li>
+	<b> WebCam </b> - New module creates items that
+	periodically refresh the image from an external URL.
       </li>
 
       <li>
@@ -276,15 +285,41 @@
       </li>
 
       <li>
-	<b> Toolkit Performance </b> - The ImageMagick and NetPBM
-	toolkits have been optimized to make fewer calls to external
-	binaries when used for multiple operations.  For example,
-	cropping and resizing to make a thumbnail now requires
-	only a single call to "convert" with ImageMagick.
+	<b> Graphics Toolkits </b> -
+	<ul>
+	  <li>
+	    The ImageMagick and NetPBM toolkits have been optimized
+	    to make fewer calls to external binaries when used for
+	    multiple operations.  For example, cropping and resizing
+	    to make a thumbnail now requires only a single call to
+	    "convert" with ImageMagick.
+	  </li>
+	  <li>
+	    We now preserve extra operations (like crop settings) on
+	    thumbnails when moving an item between albums or
+	    rebuilding thumbnails.
+	  </li>
+	  <li>
+	    Added ability to set toolkit priority.  This means you
+	    can activate multiple toolkits to support more mime types
+	    but still select which toolkit is used in cases where
+	    multiple toolkits support the same type.
+	  </li>
+	</ul>
       </li>
 
       <li>
-	<b> Module Uninstall </b> - ..
+	<b> Sort Order </b> - "Default sort order" and "Manual sort
+	order" are now separate choices, allowing albums to properly
+	inherit the site default for sort order; Ascending/descending
+	is disabled for these choices.
+      </li>
+
+      <li>
+	<b> SMTP Authentication </b> - We now support sending email
+	via a SMTP server that requires user authentication.  Any
+	module that sends email (like the registration module) can
+	take advantage of this support.
       </li>
     </ol>
 
