@@ -213,6 +213,27 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][text][userName][missing]')),
 			    $results);
     }
+
+    function testAddDuplicateUser() {
+	$ret = GalleryCoreApi::addUserToGroup($this->_user->getId(), $this->_group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryDataCache::reset();
+
+	GalleryUtilities::putRequestVariable('groupId', $this->_group->getId());
+	GalleryUtilities::putRequestVariable('form[action][add]', 1);
+	GalleryUtilities::putRequestVariable('form[text][userName]', $this->_user->getUserName());
+
+	$results = $this->handleRequest();
+
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminEditGroupUsers'),
+				  'status' => array(),
+				  'error' => array('form[error][text][userName][alreadyInGroup]')),
+			    $results);
+    }
     
     function _createGroup($groupType=GROUP_NORMAL) {
 	global $gallery;

@@ -164,6 +164,12 @@
       {g->text text="User '%s' does not exist." arg1=$form.text.userName}
     </div>
     {/if}
+
+    {if isset($form.error.text.userName.alreadyInGroup)}
+    <div class="giError">
+      {g->text text="This user already is in this group."}
+    </div>
+    {/if}
   </div>
 
   <div class="gbBottomFlag">

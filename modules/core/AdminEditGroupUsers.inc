@@ -108,23 +108,33 @@ class AdminEditGroupUsersController extends GalleryController {
 		} else {
 		    list ($ret, $user) =
 			GalleryCoreApi::fetchUserByUsername($form['text']['userName']);
-
 		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 			$error[] = 'form[error][text][userName][invalid]';
 		    } else if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
-			$ret = GalleryCoreApi::addUserToGroup($user->getId(), $groupId);
+			/* Is the user already in the group? */
+			list ($ret, $inGroup) = GalleryCoreApi::isUserInGroup($user->getId(), $groupId);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-		    
-			/* Redirect back to the same view */
-			$redirect['view'] = 'core:SiteAdmin';
-			$redirect['subView'] = 'core:AdminEditGroupUsers';
-			$redirect['groupId'] = $group->getId();
-			$status['addedUser'] = $user->getUsername();
+			if ($inGroup) {
+			    $error[] = 'form[error][text][userName][alreadyInGroup]';
+			}
 		    }
+		}
+
+		if (empty($error)) {
+		    $ret = GalleryCoreApi::addUserToGroup($user->getId(), $groupId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    /* Redirect back to the same view */
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminEditGroupUsers';
+		    $redirect['groupId'] = $group->getId();
+		    $status['addedUser'] = $user->getUsername();
 		}
 	    }
 	}
