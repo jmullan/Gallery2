@@ -87,14 +87,26 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'ItemEditPhotoThumbnailTestItem',
+						      'ItemEditPhotoThumbnailTestItem',
+						      __FILE__,
+						      array());
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
+								 'test/file',
+								 array('width' => 640, 'height' => 480),
+								 __FILE__,
+								 'ItemEditPhotoThumbnailTestItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[0]) =
 	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED,
+				     'rotate|90',
+				     'test/file',
+				     array('width' => 640, 'height' => 480));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -105,17 +117,12 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_derivative[2]) =
-	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function tearDown() {
 	global $gallery;
+
+	GalleryCoreApi::unregisterFactoryImplementation('GalleryEntity', 'ItemEditPhotoThumbnailTestItem');
 
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
@@ -152,15 +159,65 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('crop|50,50,200,200;scale|200', $this->_derivative[1]->getDerivativeOperations());
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('crop|7.813,10.417,31.25,41.667;scale|200',
+			    $this->_derivative[1]->getDerivativeOperations());
     }
 
+    function testEditThumbnail2() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
+	GalleryUtilities::putRequestVariable('form[crop][x]', '0');
+	GalleryUtilities::putRequestVariable('form[crop][y]', '0');
+	GalleryUtilities::putRequestVariable('form[crop][width]', '640');
+	GalleryUtilities::putRequestVariable('form[crop][height]', '480');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Thumbnail cropped successfully')),
+			    $results);
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('crop|0,0,100,100;scale|200',
+			    $this->_derivative[1]->getDerivativeOperations());
+    }
 }
 
 /**
  * Required by our test toolkit
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUnknownItem.class');
+
+class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
+    function setWidth($width) {
+	$this->_width = $width;
+    }
+    
+    function getWidth() {
+	return $this->_width;
+    }
+    
+    function setHeight($height) {
+	$this->_height = $height;
+    }
+    
+    function getHeight() {
+	return $this->_height;
+    }
+}
+
+/**
+ * Required by our test toolkit
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Test toolkitk

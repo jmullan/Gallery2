@@ -92,14 +92,14 @@ class ImageMagickToolkitHelper {
 	$operations['rotate']['mimeTypes'] = $mimeTypes;
 	
 	/* Crop */
-	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('left edge'));
-	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('top edge'));
-	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('width'));
-	$operations['crop']['params'][] = array('type' => 'int',
-						'description' => $gallery->i18n('height'));
+	$operations['crop']['params'][] = array('type' => 'float',
+						'description' => $gallery->i18n('left edge %'));
+	$operations['crop']['params'][] = array('type' => 'float',
+						'description' => $gallery->i18n('top edge %'));
+	$operations['crop']['params'][] = array('type' => 'float',
+						'description' => $gallery->i18n('width %'));
+	$operations['crop']['params'][] = array('type' => 'float',
+						'description' => $gallery->i18n('height %'));
 	$operations['crop']['description'] = $gallery->i18n('Crop the image'); 
 	$operations['crop']['mimeTypes'] = $mimeTypes;
 

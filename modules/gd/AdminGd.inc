@@ -120,7 +120,7 @@ class AdminGdView extends GalleryView {
 	}
 	$minGdVersion = GdToolkitHelper::minGdVersion();
 	
-	$mimeTypes = '';
+	$mimeTypes = array();
 	if ($isGdVersionSupported) {
 	    list($ret, $mimeTypes) = GdToolkitHelper::discoverMimeTypes();
 	    if ($ret->isError()) {

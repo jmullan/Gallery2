@@ -108,8 +108,8 @@ class GdToolkitTest extends GalleryTestCase {
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    $this->_toolkit->setGdFunctionality($this->_gdFunctionality);
 	    $gd =& $this->_gdFunctionality;
-	    
-	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $gd);
+
+	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $gd);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -145,12 +145,13 @@ class GdToolkitTest extends GalleryTestCase {
 			$this->_toolkit->performOperation($mimeType, 'crop',
 							  '300x300.ext',
 							  '/valid/cropped.ext',
-							  array(1, 2, 3, 4));
+							  array('24.667', '23.5', '51.375', '52'));
 		    if ($ret->isError()) {
 			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		    }
 		    $this->assertEquals($this->_gdFunctionality->getOutputFileData('/valid/cropped.ext'),
-					array('x' => '3', 'y' => '4', 'mimeType' => $mimeType));
+					array('x' => '154', 'y' => '156', 'mimeType' => $mimeType),
+					'crop dimensions mismatch');
 		}
 		
 		if (GdToolkitHelper::isOperationSupported('rotate', $gd)) {
@@ -231,7 +232,7 @@ class GdToolkitTest extends GalleryTestCase {
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    $this->_toolkit->setGdFunctionality($this->_gdFunctionality);
 	    
-	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $this->_gdFunctionality);
+	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -255,10 +256,10 @@ class GdToolkitTest extends GalleryTestCase {
 
     function testMergeOperations() {
 	list ($success, $operation, $args) =
-	    $this->_toolkit->mergeOperations('crop', array(1, 2), 'crop', array(3, 4));
+	    $this->_toolkit->mergeOperations('crop', array(1, 2, 3, 4), 'crop', array(3, 4, 5, 6));
 	$this->assert($success);
 	$this->assertEquals('crop', $operation);
-	$this->assertEquals(array(3, 4), $args);
+	$this->assertEquals(array(3, 4, 5, 6), $args);
 
 	list ($success, $operation, $args) =
 	    $this->_toolkit->mergeOperations('resize', array(1, 2), 'resize', array(3, 4));
@@ -349,7 +350,7 @@ class GdToolkitTest extends GalleryTestCase {
 	     */
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    
-	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $this->_gdFunctionality);
+	    list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $this->_gdFunctionality);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -429,14 +430,14 @@ class GdToolkitTest extends GalleryTestCase {
 	    if (GdToolkitHelper::isOperationSupported('crop', $this->_gdFunctionality)) {
 		$expectedOperations['crop'] = array(
 		    'params' => array(
-			array('type' => 'int',
-			      'description' => 'left edge'),
-			array('type' => 'int',
-			      'description' => 'top edge'),
-			array('type' => 'int',
-			      'description' => 'width'),
-			array('type' => 'int',
-			      'description' => 'height')
+			array('type' => 'float',
+			      'description' => 'left edge %'),
+			array('type' => 'float',
+			      'description' => 'top edge %'),
+			array('type' => 'float',
+			      'description' => 'width %'),
+			array('type' => 'float',
+			      'description' => 'height %')
 			),
 		    'description' => 'Crop the image',
 		    'mimeTypes' => $environment['mimeTypes'],
@@ -466,8 +467,8 @@ class GdToolkitTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals($expectedOperations, $results['operations'],
-				'Environment ' . $environment['name']);
-	    
+				'(operations) Environment ' . $environment['name']);
+
 	    $this->assertEquals(array(
 		'dimensions' => array(
 		    'type' => 'int,int',
@@ -480,5 +481,4 @@ class GdToolkitTest extends GalleryTestCase {
     }
 
 }
-
 ?>

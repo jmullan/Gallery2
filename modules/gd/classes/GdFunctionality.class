@@ -48,7 +48,7 @@ class GdFunctionality {
      * @return array object GalleryStatus
      *	       string phpinfo output
      */
-    function phpinfo($section = '') {
+    function phpinfo($section=null) {
 	ob_start();
 	phpinfo($section);
 	$phpinfo = ob_get_contents();

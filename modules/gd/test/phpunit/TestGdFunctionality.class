@@ -74,7 +74,7 @@ class TestGdFunctionality {
      * From a filename like '200x300.gif' set the sizes x=200 y=300
      *
      */
-    function getNewResource($filename = '') {
+    function getNewResource($filename=null) {
 	$this->_resourceCounter++;
 	$name = 'res #' . $this->_resourceCounter;
 	$this->_resources[$name] = array(
@@ -82,7 +82,7 @@ class TestGdFunctionality {
 	    'y' => 0,
 	    'trueColor' => false,
 	);
-	if ($filename != '') {
+	if (isset($filename)) {
 	    if (preg_match('/(\d+)x(\d+)\./i', $filename, $matches)) {
 		$this->_resources[$name]['x'] = (int) $matches[1];
 		$this->_resources[$name]['y'] = (int) $matches[2];
@@ -139,7 +139,7 @@ class TestGdFunctionality {
      * happen.
      */
 
-    function phpinfo($section = '') {
+    function phpinfo($section=null) {
 	if ($section != '8') {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), null);
 	}

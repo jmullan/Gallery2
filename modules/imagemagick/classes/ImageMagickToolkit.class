@@ -110,9 +110,18 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'crop':
+	    /* source dimensions are required to convert from percentages to pixels  */
+	    list ($ret, $width, $height) = $this->_getImageDimensions($mimeType, $sourceFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $pixelX = round($parameters[0] / 100 * $width);
+	    $pixelY = round($parameters[1] / 100 * $height);
+	    $pixelWidth = round($parameters[2] / 100 * $width);
+	    $pixelHeight = round($parameters[3] / 100 * $height);
+
 	    $cmd = 'convert';
-	    $transform = array('-crop', $parameters[2] . 'x' . $parameters[3] .
-			       '+' . $parameters[0] . '+' . $parameters[1]);
+	    $transform = array('-crop', sprintf('%sx%s+%s+%s', $pixelWidth, $pixelHeight, $pixelX, $pixelY));
 	    break;
 
 	case 'convert-to-image/jpeg':

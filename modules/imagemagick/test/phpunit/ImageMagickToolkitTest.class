@@ -133,7 +133,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->performOperation('image/png', 'crop',
 					      'testPerformOperations8.png',
 					      'testPerformOperations9.png',
-					      array(1, 2, 3, 4));
+					      array('24.667', '23.5', '51.375', '52'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -206,10 +206,10 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
     function testMergeOperations() {
 	list ($success, $operation, $args) =
-	    $this->_toolkit->mergeOperations('crop', array(1, 2), 'crop', array(3, 4));
+	    $this->_toolkit->mergeOperations('crop', array(1, 2, 3, 4), 'crop', array(3, 4, 5, 6));
 	$this->assert($success);
 	$this->assertEquals('crop', $operation);
-	$this->assertEquals(array(3, 4), $args);
+	$this->assertEquals(array(3, 4, 5, 6), $args);
 
 	list ($success, $operation, $args) =
 	    $this->_toolkit->mergeOperations('resize', array(1, 2), 'resize', array(3, 4));
@@ -272,7 +272,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	$this->assertEquals(null, $args);
 
 	list ($success, $operation, $args) =
-	    $this->_toolkit->mergeOperations('crop', array(1, 2), 'thumbnail', array(3, 4));
+	    $this->_toolkit->mergeOperations('crop', array(1, 2, 3, 4), 'thumbnail', array(3, 4));
 	$this->assert(!$success);
     }
 
@@ -374,14 +374,14 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 									 'image/bmp',
 									 'application/pdf')),
 				  'crop' => array('params' =>
-						  array(array('type' => 'int',
-							      'description' => 'left edge'),
-							array('type' => 'int',
-							      'description' => 'top edge'),
-							array('type' => 'int',
-							      'description' => 'width'),
-							array('type' => 'int',
-							      'description' => 'height')),
+						  array(array('type' => 'float',
+							      'description' => 'left edge %'),
+							array('type' => 'float',
+							      'description' => 'top edge %'),
+							array('type' => 'float',
+							      'description' => 'width %'),
+							array('type' => 'float',
+							      'description' => 'height %')),
 						  'description' => 'Crop the image',
 						  'mimeTypes' => array('image/gif',
 								       'image/jpeg',
@@ -508,6 +508,10 @@ class ImageMagickToolkitTestPlatform {
 		    $lines[] = 'testPerformOperations4.jpg GIF x100x200+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01';
 		    break;
 
+		case 'testPerformOperations8.png':
+		    $lines[] = 'testPerformOperations8.png PNG 640x480+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
+		    break;
+		    
 		case 'testPerformOperations10.png':
 		    $lines[] = 'testPerformOperations10.png PNG 200x200+0+0 DirectClass 8-bit 730.0 0.000u 0:01';
 		    break;
@@ -588,7 +592,7 @@ class ImageMagickToolkitTestPlatform {
 	    } else if ($cmd[0][1] == '-quality' &&
 		       $cmd[0][2] == 75 &&
 		       $cmd[0][3] == '-crop' &&
-		       $cmd[0][4] == '3x4+1+2' &&
+		       $cmd[0][4] == '329x250+158+113' &&
 		       $cmd[0][5] == 'testPerformOperations8.png') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-rotate' &&

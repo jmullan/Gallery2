@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/NetPbmToolkitHelper.class');
-require_once(dirname(__FILE__) . '/../../classes/NetPbmToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/netpbm/classes/NetPbmToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/netpbm/classes/NetPbmToolkit.class');
 
 /**
  * Test NetPbmToolkit functionality
@@ -141,7 +141,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    $this->_toolkit->performOperation('image/png', 'crop',
 					      'testPerformOperations8.png',
 					      'testPerformOperations9.png',
-					      array(1, 2, 3, 4));
+					      array('24.667', '23.5', '51.375', '52'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -228,10 +228,10 @@ class NetPbmToolkitTest extends GalleryTestCase {
 
     function testMergeOperations() {
 	list ($success, $operation, $args) =
-	    $this->_toolkit->mergeOperations('crop', array(1, 2), 'crop', array(3, 4));
+	    $this->_toolkit->mergeOperations('crop', array(1, 2, 3, 4), 'crop', array(3, 4, 5, 6));
 	$this->assert($success);
 	$this->assertEquals('crop', $operation);
-	$this->assertEquals(array(3, 4), $args);
+	$this->assertEquals(array(3, 4, 5, 6), $args);
 
 	list ($success, $operation, $args) =
 	    $this->_toolkit->mergeOperations('resize', array(1, 2), 'resize', array(3, 4));
@@ -294,7 +294,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	$this->assertEquals(null, $args);
 
 	list ($success, $operation, $args) =
-	    $this->_toolkit->mergeOperations('crop', array(1, 2), 'thumbnail', array(3, 4));
+	    $this->_toolkit->mergeOperations('crop', array(1, 2, 3, 4), 'thumbnail', array(3, 4));
 	$this->assert(!$success);
     }
 
@@ -351,14 +351,14 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									 'image/tiff',
 									 'image/bmp')),
 				  'crop' => array('params' =>
-						  array(array('type' => 'int',
-							      'description' => 'left edge'),
-							array('type' => 'int',
-							      'description' => 'top edge'),
-							array('type' => 'int',
-							      'description' => 'width'),
-							array('type' => 'int',
-							      'description' => 'height')),
+						  array(array('type' => 'float',
+							      'description' => 'left edge %'),
+							array('type' => 'float',
+							      'description' => 'top edge %'),
+							array('type' => 'float',
+							      'description' => 'width %'),
+							array('type' => 'float',
+							      'description' => 'height %')),
 						  'description' => 'Crop the image',
 						  'mimeTypes' => array('image/gif',
 								       'image/jpeg',
@@ -535,7 +535,7 @@ class NetPbmToolkitTestPlatform {
 
 	if (serialize($cmd) ==
 	    serialize(array(array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
-			    array($this->_netPbmPath . 'pnmcut', 1, 2, 3, 4),
+			    array($this->_netPbmPath . 'pnmcut', (float)49, (float)71, (float)103, (float)156),
 			    array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
@@ -606,7 +606,7 @@ class NetPbmToolkitTestPlatform {
 	    }
 	}
 
-	print_r($cmd);
+	var_dump($cmd);
 	return array(0, array('unprepared for exec()'), array());
     }
 

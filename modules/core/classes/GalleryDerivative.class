@@ -289,7 +289,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	     *
 	     * Source Image A (640x480):
 	     * --> Preferred A1: rotate|90
-	     *     --> Derivative A2: crop|259,49,336,252;thumbnail|150
+	     *     --> Derivative A2: crop|25.9,49,33.6,25.2;thumbnail|150
 	     *         --> Derivative A3: thumbnail|75
 	     *             --> Derivative A4: thumbnail|300
 	     *
@@ -298,9 +298,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	     * TARGET         SOURCE        OPERATONS
 	     * ---------------------------------------
 	     * Preferred A1:  Source A      rotate|90
-	     * Derivative A2: Preferred A1  crop|259,49,336,252;thumbnail|150
-	     * Derivative A3: Preferred A1  crop|259,49,336,252;thumbnail|75
-	     * Derivative A4: Preferred A1  crop|259,49,336,252;thumbnail|300
+	     * Derivative A2: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|150
+	     * Derivative A3: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|75
+	     * Derivative A4: Preferred A1  crop|25.9,49,33.6,25.2;thumbnail|300
 	     */
 	    if ($source->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
 		$sources = array($source, $this);

@@ -104,7 +104,7 @@ class GdModule extends GalleryModule {
 	}
 
 	foreach ($results['operations'] as $operation => $info) {
-	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';
+	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : null;
 	    $ret = GalleryCoreApi::registerToolkitOperation('Gd',
 							    $info['mimeTypes'],
 							    $operation,

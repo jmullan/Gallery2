@@ -52,9 +52,15 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-		
+
 	    if (!empty($thumbnails)) {
 		$thumbnail = $thumbnails[$item->getId()];
+
+		/* Get our source */
+		list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
 		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());
 		if ($ret->isError()) {
@@ -66,10 +72,17 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
-		$cropX = !empty($form['crop']['x']) ? $form['crop']['x'] : 0;
-		$cropY = !empty($form['crop']['y']) ? $form['crop']['y'] : 0;
-		$cropWidth = !empty($form['crop']['width']) ? $form['crop']['width'] : $item->getWidth();
-		$cropHeight = !empty($form['crop']['height']) ? $form['crop']['height'] : $item->getHeight();
+		if (empty($form['crop']['width'])) {
+		    $cropX = 0;
+		    $cropY = 0;
+		    $cropWidth = 100;
+		    $cropHeight = 100;
+		} else {
+		    $cropX = round(100 * $form['crop']['x'] / $source->getWidth(), 3);
+		    $cropY = round(100 * $form['crop']['y'] / $source->getHeight(), 3);
+		    $cropWidth = round(100 * $form['crop']['width'] / $source->getWidth(), 3);
+		    $cropHeight = round(100 * $form['crop']['height'] / $source->getHeight(), 3);
+		}
 
 		// TODO: Remove the crop if it's the same dimensions as the original
 		list ($ret, $operations) =
@@ -134,63 +147,31 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 		       $matches)) {
 	    $targetThumbnailSize = $matches[1];
 	}
-	    
-	if (preg_match('/crop\|(\d+),(\d+),(\d+),(\d+)/',
+
+	if (preg_match('/crop\|([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)/',
 		       $thumbnail->getDerivativeOperations(),
 		       $matches)) {
-	    $crop['left'] = $matches[1];
-	    $crop['top'] = $matches[2];
-	    $crop['width'] = $matches[3];
-	    $crop['height'] = $matches[4];
+	    $crop['leftPercent'] = $matches[1];
+	    $crop['topPercent'] = $matches[2];
+	    $crop['widthPercent'] = $matches[3];
+	    $crop['heightPercent'] = $matches[4];
 	}
-	    
+
+	/*
+	 * The source may be quite large.  However, it's the only input image that we can really display at
+	 * this point because the resized derivatives though they may be smaller, can have different
+	 * derivative commands from the source.
+	 */
 	list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
-	/*
-	 * Try to find a derivative that is close to 600x450 pixels that we can use.  Failing that, use
-	 * the original image.
-	 */
-	list ($ret, $derivativeTable) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($item->getId()),
-							array(DERIVATIVE_TYPE_IMAGE_RESIZE));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
-	$selected = array();
-	if (!empty($derivativeTable[$item->getId()])) {
-	    $lowestDelta = null;
-	    $targetPixels = 600 * 450;
-	    foreach ($derivativeTable[$item->getId()] as $derivative) {
-		list ($width, $height) = array($derivative->getWidth(), $derivative->getHeight());
-		if (empty($width)) {
-		    /* Perhaps this derivative hasn't been calculated yet .. try calculating it */
-		    list ($ret, $derivative) =
-			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($derivative->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		    list ($width, $height) = array($derivative->getWidth(), $derivative->getHeight());
-		    if (empty($width)) {
-			/* We have no idea .. skip it */
-			continue;
-		    }
-		}
-		$delta = abs($targetPixels - ($width * $height));
-
-		if ($lowestDelta == null || $delta < $lowestDelta) {
-		    $selected = $derivative->getId();
-		    $lowestDelta = $delta;
-		}
-	    }
-	}
-
-	if (empty($selected)) {
-	    $selected = $source->getId();
-	}
+	/* Convert crop percentages into real pixels */
+	$crop['left'] = round($crop['leftPercent'] * $source->getWidth() / 100);
+	$crop['top'] = round($crop['topPercent'] * $source->getHeight() / 100);
+	$crop['width'] = round($crop['widthPercent'] * $source->getWidth() / 100);
+	$crop['height'] = round($crop['heightPercent'] * $source->getHeight() / 100);
 
 	/*
 	 * It's possible that the source was created before we had an appropriate image toolkit, so its
@@ -239,7 +220,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	     * logging out the user.
 	     */
 	    $urlGenerator = $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $selected), true);
+	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $source->getId()), true);
 	    
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';

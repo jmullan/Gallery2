@@ -43,14 +43,14 @@ class GdToolkitHelper {
      *	       'properties' => ...)
      * @static
      */
-    function getOperationsAndProperties($gd = '') {
+    function getOperationsAndProperties($gd=null) {
 	global $gallery;
 
-	if ($gd == '') {
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
 
-	list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported('', $gd);
+	list ($ret, $isSupported) = GdToolkitHelper::isGdVersionSupported(null, $gd);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -113,14 +113,14 @@ class GdToolkitHelper {
 	
 	if (GdToolkitHelper::isOperationSupported('crop', $gd)) {
 	    /* Crop */
-	    $operations['crop']['params'][] = array('type' => 'int',
-						    'description' => $gallery->i18n('left edge'));
-	    $operations['crop']['params'][] = array('type' => 'int',
-						    'description' => $gallery->i18n('top edge'));
-	    $operations['crop']['params'][] = array('type' => 'int',
-						    'description' => $gallery->i18n('width'));
-	    $operations['crop']['params'][] = array('type' => 'int',
-						    'description' => $gallery->i18n('height'));
+	    $operations['crop']['params'][] = array('type' => 'float',
+						    'description' => $gallery->i18n('left edge %'));
+	    $operations['crop']['params'][] = array('type' => 'float',
+						    'description' => $gallery->i18n('top edge %'));
+	    $operations['crop']['params'][] = array('type' => 'float',
+						    'description' => $gallery->i18n('width %'));
+	    $operations['crop']['params'][] = array('type' => 'float',
+						    'description' => $gallery->i18n('height %'));
 	    $operations['crop']['description'] = $gallery->i18n('Crop the image'); 
 	    $operations['crop']['mimeTypes'] = $mimeTypes;
 	}
@@ -164,8 +164,8 @@ class GdToolkitHelper {
      * @return true/false
      * @static
      */
-    function isOperationSupported($operation, $gd = '') {
-	if ($gd == '') {
+    function isOperationSupported($operation, $gd=null) {
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
 	switch ($operation) {
@@ -215,14 +215,15 @@ class GdToolkitHelper {
      *                Prefixed with '>' if PHP says "or higher"
      * @static
      */
-    function discoverGdVersion($gd = '') {
-	if ($gd == '') {
+    function discoverGdVersion($gd=null) {
+	/*
+	 * Caching this result breaks our unit tests, which checks against a variety of
+	 * dummy GdFunctionality instances.
+	 */
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
-	static $gd_version = null;
-	if ($gd_version !== null) {
-	    return array(GalleryStatus::success(), $gd_version);
-	}
+	
 	if ($gd->functionExists('gd_info')) {
 	    list ($ret, $gdInfo) = $gd->gd_info();
 	    if ($ret->isError()) {
@@ -238,14 +239,15 @@ class GdToolkitHelper {
 	    $matcher = '/\bgd\s+version\b[^\d\n\r]+?([\d\.]+)(\s+or\s+higher)?/i';
 	}
 	if (preg_match($matcher, $matchString, $matches)) {
-	    $gd_version = $matches[1];
+	    $gdVersion = $matches[1];
 	} else {
-	    $gd_version = 0;
+	    $gdVersion = 0;
 	}
 	if (isset($matches[2])) {
-	    $gd_version = sprintf('>%s', $gd_version);
+	    $gdVersion = sprintf('>%s', $gdVersion);
 	}
-	return array(GalleryStatus::success(), $gd_version);
+
+	return array(GalleryStatus::success(), $gdVersion);
     }
 
     /**
@@ -258,10 +260,10 @@ class GdToolkitHelper {
      *	       boolean true if supported, false otherwise
      * @static
      */
-    function isGdVersionSupported($gdVersion = '', $gd = '') {
-	if ($gdVersion == '') {
+    function isGdVersionSupported($gdVersion=null, $gd=null) {
+	if (!isset($gdVersion)) {
 	    /* Find out current GD version */
-	    if ($gd == '') {
+	    if (!isset($gd)) {
 		$gd =& GdToolkitHelper::getGdFunctionality();
 	    }
 	    list ($ret, $gdVersion) = GdToolkitHelper::discoverGdVersion($gd);
@@ -286,8 +288,8 @@ class GdToolkitHelper {
      * @return array object GalleryStatus
      *	       boolean true if it is the bundled library, false otherwise
      */
-    function isBundled($gd = '') {
-	if ($gd == '') {
+    function isBundled($gd=null) {
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
 	if ($gd->functionExists('imageLayerEffect')
@@ -304,11 +306,11 @@ class GdToolkitHelper {
      *	       array supported mime-types
      * @static
      */
-    function discoverMimeTypes($gd = '') {
-	if ($gd == '') {
+    function discoverMimeTypes($gd=null) {
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
-	if (! $gd->functionExists('imageTypes')) {
+	if (!$gd->functionExists('imageTypes')) {
 	    return array(GalleryStatus::success(), array());
 	}
 
@@ -353,8 +355,8 @@ class GdToolkitHelper {
      * @return boolean
      * @static
      */
-    function hasImageCreateTrueColor($gd) {
-	if ($gd == '') {
+    function hasImageCreateTrueColor($gd=null) {
+	if (!isset($gd)) {
 	    $gd =& GdToolkitHelper::getGdFunctionality();
 	}
 	list ($ret, $gdVersion) = GdToolkitHelper::discoverGdVersion($gd);

@@ -208,20 +208,29 @@ class GdToolkit extends GalleryToolkit {
 
 	case 'crop':
 	    /*
-	     * $parameters[0]: left edge
-	     * $parameters[1]: top edge
-	     * $parameters[2]: width
-	     * $parameters[3]: height
+	     * $parameters[0]: left edge %
+	     * $parameters[1]: top edge %
+	     * $parameters[2]: width %
+	     * $parameters[3]: height %
 	     */
-	    list($ret, $destRes) = $this->_getTrueColorImageRes($parameters[2], $parameters[3]);
+
+	    /* source dimensions are required to convert from percentages to pixels  */
+	    list ($ret, $width, $height) = $this->_getImageDimensionsForResource($sourceRes);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $pixelX = round($parameters[0] / 100 * $width);
+	    $pixelY = round($parameters[1] / 100 * $height);
+	    $pixelWidth = round($parameters[2] / 100 * $width);
+	    $pixelHeight = round($parameters[3] / 100 * $height);
+
+	    list($ret, $destRes) = $this->_getTrueColorImageRes($pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
-		       0, 0,				  // dst x,y
-		       $parameters[0], $parameters[1],    // src x,y
-		       $parameters[2], $parameters[3]
-		       );
+				  0, 0,				          // dst x,y
+				  $pixelX, $pixelY, $pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
