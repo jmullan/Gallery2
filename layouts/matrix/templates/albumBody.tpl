@@ -192,7 +192,9 @@
         {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
       </div>
       <ul class="giHorizontalLinks">
-        <li>{g->text text="Page:"}</li>
+        {if !empty($layout.jumprange)}
+	<li>{g->text text="Page:"}</li>
+	{/if}
         {assign var="lastPage" value=0}
         {foreach name=jumprange from=$layout.jumprange item=page}
         {if ($page - $lastPage >= 2)}
