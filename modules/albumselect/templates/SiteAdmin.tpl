@@ -54,7 +54,7 @@
     <p class="giDescription">
       {g->text text="The album select can be too wide for the sidebar so you may wish to place it elsewhere.  Create a local template (see instructions at the top of layouts/matrix/templates/albumBody.tpl or any *.tpl file) and add a block like this:"}
     </p>
-    <pre>
+    <pre style="font-size:125%">
 	{literal}{* Show AlbumSelect if available *}
 	{if isset($AlbumSelectSystemContent)}
 	  {include file="gallery:`$AlbumSelectSystemContent.template`"}
@@ -63,7 +63,7 @@
     <p class="giDescription">
       {g->text text="You may also include any HTML required for placing the block, like this:"}
     </p>
-    <pre>
+    <pre style="font-size:125%">
 	{literal}{* Show AlbumSelect if available *}
 	{if isset($AlbumSelectSystemContent)}
 	  &lt;tr&gt;&lt;td colspan=2&gt;
