@@ -521,6 +521,7 @@ class MatrixTheme extends GalleryTheme {
 	     $subTitleOnSeparateRow = true;
 	     
 	 case 'admin':
+	 case 'debug':
 	 case 'comment':
 	     $class = 'box_' . $context['params']['style'];
 	     break;
@@ -547,19 +548,17 @@ class MatrixTheme extends GalleryTheme {
 	}
 
 	foreach ($element_array as $element) {
-	    if (isset($element['params']['style'])) {
-		switch($element['params']['style']) {
-		case 'emphasized':
-		    $style = $class . '_element_' . $element['params']['style'];
-		    break;
-		    
-		default:
-		    $style = $class . '_element';
-		    break;
-		}
+	    switch($element['params']['style']) {
+	    case 'emphasized':
+		$elementClass = $class . '_element_' . $element['params']['style'];
+		break;
+		
+	    default:
+		$elementClass = $class . '_element';
+		break;
 	    }
 	    
-	    $buf .= '<tr> <td class="' . $style . '"> ' . $element['content'] . '</td> </tr>';
+	    $buf .= '<tr> <td class="' . $elementClass . '"> ' . $element['content'] . '</td> </tr>';
 	}
 
 	if (!empty($footer['content'])) {
@@ -589,6 +588,7 @@ class MatrixTheme extends GalleryTheme {
 	 foreach ($element_array as $element) {
 	     switch($element['name']) {
 	     case 'success':
+	     case 'error':
 		 $class = 'pagebox_element_' . $element['name'];
 		 break;
 
