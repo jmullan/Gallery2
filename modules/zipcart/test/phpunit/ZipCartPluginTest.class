@@ -124,6 +124,11 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$ret = GalleryCoreApi::unregisterToolkit('ZipCartToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	parent::tearDown();
     }
 
