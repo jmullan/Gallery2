@@ -176,14 +176,14 @@ class GalleryTheme {
 	if (isset($name)) {
 	    $result .= ' name="' . $name . '"';
 	}
-	$result .= '">';
-	$result .= "\n";
+	$result .= ">\n";
 	foreach ($params as $key => $value) {
 	    $result .= '<input type="hidden" ' .
 		'name="' . GALLERY_FORM_VARIABLE_PREFIX . $key . '" ' .
 		'value="' . $value . '">';
 	    $result .= "\n";
 	}
+	
 	$result .= $content;
 	$result .= "\n";
 	$result .= '</form>';
