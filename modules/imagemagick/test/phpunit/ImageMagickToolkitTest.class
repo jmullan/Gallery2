@@ -74,11 +74,14 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	$gallery->_platform =& new ImageMagickToolkitTestPlatform($gallery->getPlatform(), $this->_files);
+	$gallery->_platform =& new ImageMagickToolkitTestPlatform($gallery->getPlatform(),
+								  $this->_files);
 
 	$this->_save = array();
-	foreach (array('path', 'jpegQuality', 'compositeCmd', 'binary', 'removeMetaDataSwitch') as $key) {
-	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
+	foreach (array('path', 'jpegQuality', 'compositeCmd', 'binary', 'removeMetaDataSwitch')
+		 as $key) {
+	    list ($ret, $this->_save[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $ret->wrap(__FILE__, __LINE__);
@@ -123,7 +126,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	$environment['path'] = '/' . $environment['name'] . $environment['version'] . '/';
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $environment['path']);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick',
+						  'path', $environment['path']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -176,7 +180,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 	} else if  ($mimeType == 'image/gif') {
 	    foreach (array_keys($expected) as $key) {
-	        if (is_int($i = array_search('%src%', $expected[$key]))) {
+		if (is_int($i = array_search('%src%', $expected[$key]))) {
 		    $expected[$key][$i] = '-deconstruct';
 		}
 		array_unshift($expected[$key], '-coalesce', '%src%');
@@ -246,8 +250,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    $ret = $this->_testOperation('image/png', 'crop',
 					 'test[640x480].png', 'output.png',
 					 array('24.667', '23.5', '51.375', '52'),
-					 array('width' => '329', 'height' => '250', 'x' => '158', 'y' => '113')
-				    );
+					 array('width' => '329', 'height' => '250',
+					       'x' => '158', 'y' => '113'));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -275,7 +279,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 					       'image/gif', /* mimeType */
 					       5, 5, /* image width, height */
 					       'top-right', /* alignment type */
-					       0, 0),  /* image alignment x, y (overridden by 'top-right') */
+					       0, 0),  /* image alignment (unused w/ 'top-right') */
 					 array('image' => $dataDir . 'image.gif',
 					       'width' => '50',
 					       'height' => '50',
@@ -421,7 +425,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    }
 
 	    $this->assertEquals(array(), $this->_files, 'no exec yet ' . $this->_envName());
-	    $this->assertEquals(array('next.toolkit' => $this->_toolkit, 'next.operation' => 'rotate',
+	    $this->assertEquals(array('next.toolkit' => $this->_toolkit,
+				      'next.operation' => 'rotate',
 				      'width' => 137, 'height' => 134,
 				      'imagemagick.transform' => array('-crop', '137x134+158+113'),
 				      'imagemagick.mime' => 'image/png'),
@@ -535,7 +540,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	    list ($ret, $results) =
 		$this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
-	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED, 'bad op ' . $this->_envName());
+	    $this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED,
+			  'bad op ' . $this->_envName());
 	}
     }
 
@@ -615,7 +621,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	foreach ($this->_environments as $environment) {
 	    $this->_setEnvironment($environment);
 
-	    list ($ret, $results) = ImageMagickToolkitHelper::discoverMimeTypes($this->_currentEnvironment['path']);
+	    list ($ret, $results) =
+		ImageMagickToolkitHelper::discoverMimeTypes($this->_currentEnvironment['path']);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -645,148 +652,135 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 			'outputMimeType' => $mimeType);
 		}
 	    }
-	    $wantToPage = array('image/tiff', 'application/pdf', 'application/postscript');
+	    $wantToPage = array('image/tiff', 'application/pdf',
+				'application/postscript', 'application/photoshop');
 	    $canPage = array_intersect($wantToPage, $environment['mimeTypes']);
 	    $qualityMimeTypes = array_intersect(array('image/jpeg', 'image/png'),
 						$environment['mimeTypes']);
 
 	    $this->assertEquals(array_merge($canConvert, array(
 		'scale' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'target width'
-				),
-				array(
-					'type' => 'int',
-					'description' => '(optional) target height, defaults to same as width'
-				)
-			),
-			'description' => 'Scale the image to the target size, maintain aspect ratio',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'target width'),
+			array(
+			    'type' => 'int',
+			    'description' => '(optional) target height, defaults to same as width')
+		    ),
+		    'description' => 'Scale the image to the target size, maintain aspect ratio',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'thumbnail' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'target width'
-				),
-				array(
-					'type' => 'int',
-					'description' => '(optional) target height, defaults to same as width'
-				)
-			),
-			'description' => 'Scale the image to the target size, maintain aspect ratio',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'target width'),
+			array(
+			    'type' => 'int',
+			    'description' => '(optional) target height, defaults to same as width')
+		    ),
+		    'description' => 'Scale the image to the target size, maintain aspect ratio',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'resize' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'target width'
-				),
-				array(
-					'type' => 'int',
-					'description' => 'target height'
-				)
-			),
-			'description' => 'Resize the image to the target dimensions',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'target width'),
+			array(
+			    'type' => 'int',
+			    'description' => 'target height')
+		    ),
+		    'description' => 'Resize the image to the target dimensions',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'rotate' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'rotation degrees'
-				)
-			),
-			'description' => 'Rotate the image',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'rotation degrees')
+		    ),
+		    'description' => 'Rotate the image',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'crop' => array(
-			'params' => array(
-				array(
-					'type' => 'float',
-					'description' => 'left edge %'
-				),
-				array(
-					'type' => 'float',
-					'description' => 'top edge %'
-				),
-				array(
-					'type' => 'float',
-					'description' => 'width %'
-				),
-				array(
-					'type' => 'float',
-					'description' => 'height %'
-				)
-			),
-			'description' => 'Crop the image',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'float',
+			    'description' => 'left edge %'),
+			array(
+			    'type' => 'float',
+			    'description' => 'top edge %'),
+			array(
+			    'type' => 'float',
+			    'description' => 'width %'),
+			array(
+			    'type' => 'float',
+			    'description' => 'height %')
+		    ),
+		    'description' => 'Crop the image',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'composite' => array(
-			'params' => array(
-				array(
-					'type' => 'string',
-					'description' => 'overlay path'
-				),
-				array(
-					'type' => 'string',
-					'description' => 'overlay mime type'),
-				array(
-					'type' => 'int',
-					'description' => 'overlay width'),
-				array(
-					'type' => 'int',
-					'description' => 'overlay height'),
-				array(
-					'type' => 'string',
-				        'description' => 'alignment type'),
-				array(
-					'type' => 'int',
-					'description' => 'alignment x %'),
-				array(
-					'type' => 'int',
-					'description' => 'alignment y %'),
-			),
-			'description' => 'Overlay source image with a second one',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'params' => array(
+			array(
+			    'type' => 'string',
+			    'description' => 'overlay path'),
+			array(
+			    'type' => 'string',
+			    'description' => 'overlay mime type'),
+			array(
+			    'type' => 'int',
+			    'description' => 'overlay width'),
+			array(
+			    'type' => 'int',
+			    'description' => 'overlay height'),
+			array(
+			    'type' => 'string',
+			    'description' => 'alignment type'),
+			array(
+			    'type' => 'int',
+			    'description' => 'alignment x %'),
+			array(
+			    'type' => 'int',
+			    'description' => 'alignment y %'),
+		    ),
+		    'description' => 'Overlay source image with a second one',
+		    'mimeTypes' => $environment['mimeTypes'],
 		),
 		'select-page' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'page number',
-				),
-			),
-			'description' => 'Select a single page from a multi-page file',
-			'mimeTypes' => $canPage,
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'page number'),
+		    ),
+		    'description' => 'Select a single page from a multi-page file',
+		    'mimeTypes' => $canPage,
 		),
 		'compress' => array(
-			'params' => array(
-				array(
-					'type' => 'int',
-					'description' => 'target size in kb',
-				)
-			),
-			'description' => 'Reduce image quality to reach target file size',
-			'mimeTypes' => $qualityMimeTypes
+		    'params' => array(
+			array(
+			    'type' => 'int',
+			    'description' => 'target size in kb')
+		    ),
+		    'description' => 'Reduce image quality to reach target file size',
+		    'mimeTypes' => $qualityMimeTypes
 		),
-	    )), $results['operations']);
+	    )), $results['operations'], $this->_envName());
 
 	    $this->assertEquals(array(
 		'dimensions' => array(
-			'type' => 'int,int',
-			'description' => 'Get the width and height of the image',
-			'mimeTypes' => $environment['mimeTypes'],
+		    'type' => 'int,int',
+		    'description' => 'Get the width and height of the image',
+		    'mimeTypes' => $environment['mimeTypes']
 		),
 		'page-count' => array(
-			'type' => 'int',
-			'description' => 'Get the number of pages',
-			'mimeTypes' => $canPage,
+		    'type' => 'int',
+		    'description' => 'Get the number of pages',
+		    'mimeTypes' => $canPage
 		),
-	    ), $results['properties']);
+	    ), $results['properties'], $this->_envName());
 	}
     }
 
@@ -794,7 +788,8 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	foreach ($this->_environments as $environment) {
 	    $this->_setEnvironment($environment);
 
-	    list ($ret, $results) = ImageMagickToolkitHelper::testBinaries($this->_currentEnvironment['path']);
+	    list ($ret, $results) =
+		ImageMagickToolkitHelper::testBinaries($this->_currentEnvironment['path']);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -836,7 +831,8 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function exec($cmd) {
-	list ($ret, $imageMagickPath) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+	list ($ret, $imageMagickPath) =
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -864,8 +860,10 @@ class ImageMagickToolkitTestPlatform {
 	    }
 	    $status = true;
 	} else if (($binary == 'convert' && in_array('convert', $this->_environment['binaries']))
-		   || ($binary == 'composite' && in_array('composite', $this->_environment['binaries']))
-		   || ($binary == 'combine' && in_array('combine', $this->_environment['binaries'])) ) {
+		   || ($binary == 'composite' && in_array('composite',
+							  $this->_environment['binaries']))
+		   || ($binary == 'combine' && in_array('combine',
+							$this->_environment['binaries'])) ) {
 	    $params = array_slice($firstCmd, 0);
 	    $src = basename($firstCmd[count($firstCmd) - 2]);
 	    $dst = basename($firstCmd[count($firstCmd) - 1]);
@@ -1024,7 +1022,8 @@ class ImageMagickToolkitTestPlatform {
     function getimagesize($path) {
 	$basename = basename($path);
 	if (preg_match('#\[(\d+)x(\d+)\]#', $basename, $matches)) {
-	    return array($matches[1], $matches[2], 1, sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
+	    return array($matches[1], $matches[2], 1,
+			 sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
 	}
 	/*echo $this->_environment['path'] . ": getimagesize($path)<br>\n"; */
 	return false;
@@ -1046,5 +1045,4 @@ class ImageMagickToolkitTestPlatform {
 	return '/tmp';
     }
 }
-
 ?>
