@@ -183,13 +183,13 @@ function album_itemlinksonoff() {
    imgs[i].className = album_itemlinkson ? 'vis' : 'hid';
  ui_sethtml('lnk_link', album_itemlinkson?'hide item links':'show item links');
 }
-//Class sidebar :: div sidebar(sidebar_min)
+//Class sidebar :: div sidebar
 var sidebar_on=1; // Sidebar is visible
 var sidebar_wd; // Sidebar width (when visible)
 function sidebar_getwidth() { return sidebar_on?sidebar_wd:0; }
 function sidebar_onoff() {
- document.sidebar_max.className = sidebar_on?'on':'off';
- document.sidebar_min.className = sidebar_on?'off':'on';
+ document.getElementById('sidebar_max').className = sidebar_on?'on':'off';
+ document.getElementById('sidebar_min').className = sidebar_on?'off':'on';
  ui_vis('sidebar', (sidebar_on = sidebar_on?0:1), 1);
  album_setsize(1);
 }
@@ -219,7 +219,7 @@ function image_show(i) {
  image_index = i;
  if (data_iw[i] < 0) {
   ui_sethtml('image_view', '<iframe name="view" style="width:100%;height:100%" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
-  document.fit_size.className = document.full_size.className = 'off';
+  document.getElementById('fit_size').className = document.getElementById('full_size').className = 'off';
  } else {
   var s = image_fit(1);
   ui_sethtml('image_view', '<img name="view" src="' + document.getElementById('img_'+i).href
@@ -250,8 +250,8 @@ function image_fit(getstr) {
   else { image_zoom(1); return; }
  }
  document.getElementById('image_view').style.paddingTop = Math.floor((ah-h)/2)+'px';
- document.fit_size.className = 'off';
- document.full_size.className = a?'on':'off';
+ document.getElementById('fit_size').className = 'off';
+ document.getElementById('full_size').className = a?'on':'off';
  if (getstr) {
   return 'width="' + w + '" height="' + h + '"';
  } else {
@@ -263,8 +263,8 @@ function image_zoom(on,noresize) { // Set full/fit size
  image_div.style.overflow = on?'auto':'hidden';
  if (!on) image_div.scrollLeft = image_div.scrollTop = 0;
  if (image_zoomon=on) {
-  document.full_size.className = 'off';
-  document.fit_size.className = 'on';
+  document.getElementById('full_size').className = 'off';
+  document.getElementById('fit_size').className = 'on';
   var h = app_wh - toolbar_getheight() - data_ih[image_index];
   document.getElementById('image_view').style.paddingTop =
    max(Math.floor(h/2),0) + 'px';
@@ -293,10 +293,10 @@ function toolbar_vis(on) {
 }
 function toolbar_setbuttons() {
  var i = slide_nextindex(), j = slide_previndex();
- document.next_img.className = i>=0?'on':'off';
- document.next_off.className = i<0?'on':'off';
- document.prev_img.className = j>=0?'on':'off';
- document.prev_off.className = j<0?'on':'off';
+ document.getElementById('next_img').className = i>=0?'on':'off';
+ document.getElementById('next_off').className = i<0?'on':'off';
+ document.getElementById('prev_img').className = j>=0?'on':'off';
+ document.getElementById('prev_off').className = j<0?'on':'off';
 }
 //Class text :: div text
 var text_on=0; // Text is visible
@@ -307,8 +307,8 @@ function text_fill() {
 }
 function text_onoff() {
  if ((text_on = text_on?0:1) && data_count>0) text_fill();
- document.text_on.className = text_on?'off':'on';
- document.text_off.className = text_on?'on':'off';
+ document.getElementById('text_on').className = text_on?'off':'on';
+ document.getElementById('text_off').className = text_on?'on':'off';
  document.getElementById('toolbar').style.paddingBottom =
   (text_on?text_ht:0)+'px';
  image_setsize();
@@ -391,13 +391,13 @@ function slide_setdelay(d) {
  if (slide_on) { slide_reset(); slide_go(); }
 }
 function slide_setbutton() {
- document.slide_poz.className = slide_on?'on':'off';
- document.slide_fwd.className = (!slide_on&&slide_order>0)?'on':'off';
- document.slide__fwd.className = (slide_order>0)?'on':'off';
- document.slide_rev.className = (!slide_on&&slide_order<0)?'on':'off';
- document.slide__rev.className = (slide_order<0)?'on':'off';
- document.slide_rand.className = (!slide_on&&!slide_order)?'on':'off';
- document.slide__rand.className = (!slide_order)?'on':'off';
+ document.getElementById('slide_poz').className = slide_on?'on':'off';
+ document.getElementById('slide_fwd').className = (!slide_on&&slide_order>0)?'on':'off';
+ document.getElementById('slide__fwd').className = (slide_order>0)?'on':'off';
+ document.getElementById('slide_rev').className = (!slide_on&&slide_order<0)?'on':'off';
+ document.getElementById('slide__rev').className = (slide_order<0)?'on':'off';
+ document.getElementById('slide_rand').className = (!slide_on&&!slide_order)?'on':'off';
+ document.getElementById('slide__rand').className = (!slide_order)?'on':'off';
 }
 //Class popup :: div popup,popup_titlebar
 var popup_on=0; // Popup is visible
