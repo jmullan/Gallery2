@@ -39,7 +39,7 @@ class ExifDescriptionOption extends ItemAddOption {
      * @see ItemAddOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item) {
-	return array(GalleryStatus::success(), 'modules/exif/templates/Empty.tpl', 'modules_exif');
+	return array(GalleryStatus::success(), null, null);
     }
 
     /**
