@@ -81,7 +81,7 @@ class CustomThumbnailOption extends ItemEditOption {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 
 	$error = array();
-	$warning = array('WARNING!  foobar!');
+	$warning = array();
 	if (!empty($form['tmp_name'][1])) {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock(array($item->getId()));
 	    if ($ret->isError()) {
