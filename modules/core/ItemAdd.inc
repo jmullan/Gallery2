@@ -226,6 +226,7 @@ class ItemAddPlugin {
      * @param the item
      * @return array object GalleryStatus a status code
      *               string the path to a template file to include
+     *               string localization domain for the template file
      */
     function loadTemplate(&$template, &$form, $item) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
