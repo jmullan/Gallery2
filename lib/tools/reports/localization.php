@@ -23,8 +23,10 @@
 /*
  * Authors: Jens Tkotz, Bharat Mediratta
  */
-
+require_once(dirname(__FILE__) . '/../security.inc');
 $poFiles = findPoFiles("../../..");
+
+ini_set('magic_quotes_runtime', false);
 $reportData = parsePoFiles($poFiles);
 require(dirname(__FILE__) . '/localization/main.inc');
 exit;
@@ -202,7 +204,11 @@ function parsePoFiles($poFiles) {
 	}
 
 	$total = $translated + $untranslated;
-	$percentDone = ($translated - $fuzzy) / $total * 100;
+	if (empty($total)) {
+	    $percentDone = 0;
+	} else {
+	    $percentDone = ($translated - $fuzzy) / $total * 100;
+	}
 	$poData[$locale]['plugins'][$plugin] = array('translated' => $translated,
 						     'untranslated' => $untranslated,
 						     'total' => $total,
@@ -236,7 +242,11 @@ function parsePoFiles($poFiles) {
 	uasort($poData[$locale]['plugins'], 'sortByPercentDone');
 
 	/* Figure out total percentage */
-	$poData[$locale]['percentDone'] = $pluginTotal / $overallTotal * 100;
+	if (empty($overallTotal)) {
+	    $poData[$locale]['percentDone'] = 0;
+	} else {
+	    $poData[$locale]['percentDone'] = $pluginTotal / $overallTotal * 100;
+	}
     }
 
     /* Sort locales by overall total */
