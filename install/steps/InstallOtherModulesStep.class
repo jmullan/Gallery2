@@ -59,7 +59,9 @@ class InstallOtherModulesStep extends InstallStep {
 	    foreach (array_keys($modules) as $moduleId) {
 		$moduleInstalled[$moduleId] = !empty($moduleList[$moduleId]['version']);
 		$module =& $modules[$moduleId];
-		if (isset($_REQUEST['activate']) && isset($_REQUEST['module'][$moduleId])) {
+		if (isset($_REQUEST['activate']) &&
+		      isset($_REQUEST['module'][$moduleId]) &&
+		      !$moduleInstalled[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
