@@ -86,7 +86,7 @@ class FfmpegToolkit extends GalleryToolkit {
 	global $gallery;
 
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
-	$tmpFilename = tempnam($tmpDir, 'fmpg_');
+	$tmpFilename = $platform->tempnam($tmpDir, 'fmpg_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);

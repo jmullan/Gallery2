@@ -132,7 +132,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	    break;
 	    
 	case 'crop':
-	    $transform = array($this->_pnmCmd('pnmtojpeg'),
+	    $transform = array($this->_pnmCmd('pnmcut'),
 			       $parameters[0], $parameters[1],
 			       $parameters[2], $parameters[3]);
 	    break;
@@ -148,7 +148,8 @@ class NetPbmToolkit extends GalleryToolkit {
 			 null);
 	}
 
-	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename, $destFilename, $outputMimeType);
+	$ret = $this->_transformImage($mimeType, $transform, $sourceFilename,
+				      $destFilename, $outputMimeType);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -254,9 +255,11 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$platform = $gallery->getPlatform();
+	
 	/* Get a temp file name and figure out our convert-from-pnm command */
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
-	$tmpFilename = tempnam($tmpDir, 'npbm_');
+	$tmpFilename = $platform->tempnam($tmpDir, 'npbm_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
 	    return GalleryStatus::error(ERROR_BAD_PATH,
@@ -266,6 +269,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	list($ret, $convertFromPnmCmd) = $this->_convertFromPnmCmd($outputMimeType, $tmpFilename);
 	if ($ret->isError()) {
 	    @$platform->unlink($tmpFilename);
+
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -284,7 +288,6 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$platform = $gallery->getPlatform();
 	$success = $platform->rename($tmpFilename, $destFilename);
 	if (!$success) {
 	    @$platform->unlink($tmpFilename);
@@ -375,7 +378,7 @@ class NetPbmToolkit extends GalleryToolkit {
 
 	case 'image/gif':
 	    $cmd = array(array($this->_pnmCmd('ppmquant'),
-			       '256'),
+			       256),
 			 array($this->_pnmCmd('ppmtogif'),
 			       '>',
 			       $filename));
@@ -405,6 +408,7 @@ class NetPbmToolkit extends GalleryToolkit {
 	
 	$cmdArray = $this->_extractCommands($cmdArray);
 	$platform = $gallery->getPlatform();
+
 	list ($success, $results) = $platform->exec($cmdArray);
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE,

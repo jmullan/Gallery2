@@ -96,6 +96,20 @@ class GalleryPlatform {
     }
 
     /**
+     * Create a file with a unique file name
+     * @param string target dir
+     * @param string file prefix
+     */
+    function tempnam($dir, $prefix) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("tempnam($dir, $prefix)");
+	}
+
+	return tempnam($dir, $prefix);
+    }
+
+    /**
      * Does the given file exist?
      *
      * @param string full filesystem path to a file

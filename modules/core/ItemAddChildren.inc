@@ -149,7 +149,7 @@ class ItemAddChildrenController extends GalleryController {
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
-		$tmpFile = tempnam($tmpDir, 'add');
+		$tmpFile = $platform->tempnam($tmpDir, 'add');
 
 		$successfullyCopied = false;
 		$fin = $platform->fopen($url, 'rb');

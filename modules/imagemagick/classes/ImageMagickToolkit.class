@@ -208,7 +208,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 
 	/* Get a temp file name and figure out our convert-from-pnm command */
 	$tmpDir = $gallery->getConfig('data.gallery.tmp');
-	$tmpFilename = tempnam($tmpDir, 'imgk_');
+	$platform = $gallery->getPlatform();
+	$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 	if (empty($tmpFilename)) {
 	    /* This can happen if the $tmpDir path is bad */
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
@@ -231,8 +232,6 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    break;
 	}
 
-	$platform = $gallery->getPlatform();
-	
 	/* Do the conversion */
 	if (isset($args)) {
 	    $command = array_merge($command, $args);

@@ -260,7 +260,7 @@ class ImageMagickToolkitHelper {
 		    $fullPath .= '.exe';
 		}
 		$tmpDir = $gallery->getConfig('data.gallery.tmp');
-		$tmpFilename = tempnam($tmpDir, 'imgk_');
+		$tmpFilename = $platform->tempnam($tmpDir, 'imgk_');
 		if (empty($tmpFilename)) {
 		    /* This can happen if the $tmpDir path is bad */
 		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,

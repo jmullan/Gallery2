@@ -484,6 +484,10 @@ class ImageMagickToolkitTestPlatform {
 	}
     }
 
+    function tempnam($dir, $prefix) {
+	return 'TEMPFILE';
+    }
+
     function unlink($path) {
 	// we don't create any files, so no need to unlink any
     }

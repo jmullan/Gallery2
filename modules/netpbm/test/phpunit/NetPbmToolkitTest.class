@@ -76,6 +76,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
     }
 
     function testPerformOperations() {
+
 	list ($ret, $mimeType) =
 	    $this->_toolkit->performOperation('image/gif', 'thumbnail',
 					      'testPerformOperations1.gif',
@@ -318,6 +319,7 @@ class NetPbmToolkitTestPlatform {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'));
 	}
 
+	/** Operation 1: Resize a GIF */
 	if (serialize($cmd) ==
 	    serialize(array(array($this->_netPbmPath . 'giftopnm', '--quiet', 'testPerformOperations1.gif'),
 			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
@@ -326,31 +328,81 @@ class NetPbmToolkitTestPlatform {
 	}
 
 	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'giftopnm', '--quiet', 'testPerformOperations1.gif'),
+			    array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 100, 100),
+			    array($this->_netPbmPath . 'ppmquant', 256),
+			    array($this->_netPbmPath . 'ppmtogif', '>', 'TEMPFILE')))) {
+	    return array(1, array());
+	}
+
+	/** Operation 2: Resize a JPG */
+	if (serialize($cmd) ==
 	    serialize(array(array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
 			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 
 	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'));
 	}
-	
-	switch($cmd[0][0]) {
-	case '/validPath/giftopnm':
-	case '/validPath/ppmtogif':
-	case '/validPath/jpegtopnm':
-	case '/validPath/ppmtojpeg':
-	case '/validPath/pngtopnm':
-	case '/validPath/pnmtopng':
-	case '/validPath/tifftopnm':
-	case '/validPath/pnmtotiff':
-	case $this->_netPbmPath . 'giftopnm':
-	case $this->_netPbmPath . 'ppmtogif':
-	case $this->_netPbmPath . 'jpegtopnm':
-	case $this->_netPbmPath . 'ppmtojpeg':
-	case $this->_netPbmPath . 'pnmtojpeg':
-	case $this->_netPbmPath . 'pngtopnm':
-	case $this->_netPbmPath . 'pnmtopng':
-	case $this->_netPbmPath . 'tifftopnm':
-	case $this->_netPbmPath . 'pnmtotiff':
+
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
+			    array($this->_netPbmPath . 'pnmscale', '--quiet', '-xysize', 100, 100),
+			    array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
 	    return array(1, array());
+	}
+
+	/** Operation 3: Rotate a TIFF */
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
+			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+
+	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'));
+	}
+
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
+			    array($this->_netPbmPath . 'pnmflip', '-cw'),
+			    array($this->_netPbmPath . 'pnmtotiff', '>', 'TEMPFILE')))) {
+	    return array(1, array());
+	}
+
+	/** Operation 4: Crop a PNG */
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+			    array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+
+	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'));
+	}
+
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+			    array($this->_netPbmPath . 'pnmcut', 1, 2, 3, 4),
+			    array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
+	    return array(1, array());
+	}
+
+
+	/* Test binaries */
+	if (sizeof($cmd) == 1 && $cmd[0][1] == '--version') {
+	    switch($cmd[0][0]) {
+	    case '/validPath/giftopnm':
+	    case '/validPath/ppmtogif':
+	    case '/validPath/jpegtopnm':
+	    case '/validPath/ppmtojpeg':
+	    case '/validPath/pngtopnm':
+	    case '/validPath/pnmtopng':
+	    case '/validPath/tifftopnm':
+	    case '/validPath/pnmtotiff':
+	    case $this->_netPbmPath . 'giftopnm':
+	    case $this->_netPbmPath . 'ppmtogif':
+	    case $this->_netPbmPath . 'jpegtopnm':
+	    case $this->_netPbmPath . 'ppmtojpeg':
+	    case $this->_netPbmPath . 'pnmtojpeg':
+	    case $this->_netPbmPath . 'pngtopnm':
+	    case $this->_netPbmPath . 'pnmtopng':
+	    case $this->_netPbmPath . 'tifftopnm':
+	    case $this->_netPbmPath . 'pnmtotiff':
+		return array(1, array());
+	    }
 	}
 	
 	return array(0, 'unprepared for exec()');
@@ -358,6 +410,10 @@ class NetPbmToolkitTestPlatform {
 
     function rename($oldName, $newName) {
 	return 1;
+    }
+
+    function tempnam($dir, $prefix) {
+	return 'TEMPFILE';
     }
 
     function isRestrictedByOpenBasedir($path) {
