@@ -40,6 +40,19 @@ $gallery = new GalleryStub();
 /* Load config.php */
 if (file_exists(dirname(__FILE__) . '/../config.php')) {
     include(dirname(__FILE__) . '/../config.php');
+} else {
+    include(dirname(__FILE__) . '/messages/messageHeader.inc');
+    include(dirname(__FILE__) . '/messages/missingConfig.inc');
+    include(dirname(__FILE__) . '/messages/messageFooter.inc');
+    exit;
+}
+
+$setupPassword = $gallery->getConfig('setup.password');
+if (empty($setupPassword)) {
+    include(dirname(__FILE__) . '/messages/messageHeader.inc');
+    include(dirname(__FILE__) . '/messages/missingPassword.inc');
+    include(dirname(__FILE__) . '/messages/messageFooter.inc');
+    exit;
 }
 
 if (passwordProvided()) {
@@ -54,7 +67,7 @@ if (passwordProvided()) {
 } else if (!isset($_COOKIE['g2Setup'])) {
     askForPassword();
     exit;
-} else if ($_COOKIE['g2Setup'] == md5($gallery->getConfig('setup.password'))) {
+} else if ($_COOKIE['g2Setup'] == md5($setupPassword)) {
     unset($gallery);
     return;
 } else {
