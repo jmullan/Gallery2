@@ -117,12 +117,20 @@ class ShowItemView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $layout) = GalleryCoreApi::fetchLayout($item);
+	list ($ret, $layoutId) = GalleryCoreApi::fetchLayoutId($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($layout)) {
+	$validLayout = true;
+	list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+	if ($ret->isError()) {
+	    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+		$validLayout = false;
+	    }
+	}
+
+	if ($validLayout) {
 	    /* Let the layout load the template and get its body file */
 	    list ($ret, $results) = $layout->loadTemplate($template, $item);
 	    if ($ret->isError()) {

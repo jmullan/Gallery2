@@ -35,6 +35,49 @@
 class GalleryItemHelper_simple {
 
     /**
+     * Return the correct layoutId for this item.  Data items don't have layouts, so
+     * we try to get it from the parent album.  Failing that, we get it from the
+     * site wide defaults. 
+     *
+     * @param object GalleryItem instance
+     * @return array object GalleryStatus a status code
+     *               string a layout id
+     * @static
+     */
+    function fetchLayoutId($item) {
+	global $gallery;
+
+	/* Find the right layout for this item */
+	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    $layoutId = $item->getLayout();
+	} else {
+	    list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $layoutId = $parent->getLayout();
+	}
+
+	if (empty($layoutId)) {
+	    list ($ret, $layoutId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	/* No default?  We're screwed */
+	if (empty($layoutId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $layoutId);
+    }
+
+    /**
+     * OBSOLETE!  This should get deleted in the next major GalleryCoreApi revision.
+     *
      * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
      * we fall back on the default.  And if that can't be loaded, then we return
      * null.

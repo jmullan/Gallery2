@@ -56,7 +56,15 @@ class AdminLayoutsController extends GalleryController {
 	if (!empty($layoutId) && !empty($form['action'])) {
 	    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH &&
+		    isset($form['action']['upgrade'])) {
+		    list ($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 	    }
 
 	    list ($ret, $isActive) = $layout->isActive();
@@ -272,9 +280,9 @@ class AdminLayoutsView extends GalleryView {
 	 * version check, then reload the layout status when we're done to pick
 	 * up any changes we trigger.
 	 */
-	foreach ($layouts as $layoutId => $status) {
+	foreach ($layouts as $id => $status) {
 	    if (!empty($status['active'])) {
-		list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
+		list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $id);
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

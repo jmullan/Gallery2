@@ -54,7 +54,8 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(3, 3);
+	/* TODO: on the next major version change, delete GalleryCoreApi::fetchLayout() */
+	return array(3, 4);
     }
 
     /**
@@ -1191,12 +1192,12 @@ class GalleryCoreApi {
      *
      * @param object GalleryItem
      * @return array object GalleryStatus a status code
-     *               object GalleryLayout a layout instance
+     *               string a layout plugi
      * @static
      */
-    function fetchLayout($item) {
+    function fetchLayoutId($item) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchLayout($item);
+	return GalleryItemHelper_simple::fetchLayoutId($item);
     }
 
     /**
@@ -2352,6 +2353,24 @@ class GalleryCoreApi {
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
+    }
+
+
+    /**
+     * OBSOLETE!  This should get deleted in the next major GalleryCoreApi revision.
+     *
+     * Return the correct layout for this item.  If the appropriate layout cannot be loaded,
+     * we fall back on the default.  And if that can't be loaded, then we return
+     * null.
+     *
+     * @param object GalleryItem
+     * @return array object GalleryStatus a status code
+     *               object GalleryLayout a layout instance
+     * @static
+     */
+    function fetchLayout($item) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
+	return GalleryItemHelper_simple::fetchLayout($item);
     }
 
     /**

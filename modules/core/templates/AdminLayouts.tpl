@@ -159,7 +159,7 @@
           <td {if ($layoutId == $AdminLayouts.defaultLayoutId)}style="font-weight: bold"{/if}>
             {if ($layoutId == $AdminLayouts.defaultLayoutId)}
             {g->text text="(default)"}
-            {else}
+            {/if}
 	    {if (!empty($layout.action))}
 	    {foreach name=actions from=$layout.action item=action}
 	    {strip}
@@ -173,7 +173,6 @@
 	    {/foreach}
 	    {else}
 	    &nbsp;
-	    {/if}
 	    {/if}
 	  </td>
         </tr>

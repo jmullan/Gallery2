@@ -262,8 +262,8 @@ class GalleryPlugin {
      *               mixed value
      */
     function getParameter($parameterName, $itemId=0) {
-	list ($ret, $value) = GalleryCoreApi::getPluginParameter($this->getPluginType(), $this->getId(),
-								 $parameterName, $itemId);
+	list ($ret, $value) = GalleryCoreApi::getPluginParameter(
+            $this->getPluginType(), $this->getId(), $parameterName, $itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -280,8 +280,8 @@ class GalleryPlugin {
      * @return object GalleryStatus a status code
      */
     function setParameter($parameterName, $parameterValue, $itemId=0) {
-	$ret = GalleryCoreApi::setPluginParameter($this->getPluginType(), $this->getId(),
-						  $parameterName, $parameterValue, $itemId);
+	$ret = GalleryCoreApi::setPluginParameter(
+            $this->getPluginType(), $this->getId(), $parameterName, $parameterValue, $itemId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -308,33 +308,31 @@ class GalleryPlugin {
 
     /**
      * Fetch all plugin specific parameters for the given item.  The results will contain
-     * a mixture of global parameters and item specific parameters, where the item specific
-     * ones override the global ones.
+     * a mixture of global parameters and item specific parameters, where the
+     * item specific ones ones override the global ones.
      *
      * @param int optional itemId
      * @return array object GalleryStatus a status code
      *               array parameters in key => value form
      */
     function fetchParameters($itemId=null) {
-	/* Fetch global params */
-	list ($ret, $params) =
-	    GalleryCoreApi::fetchAllPluginParameters($this->getPluginType(), $this->getId(), null);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	$order = array(null);
+	if ($itemId) {
+	    $order[] = $itemId;
 	}
 
-	/* Then fetch item params (if applicable) */
-	if (isset($itemId)) {
-	    list ($ret, $local) =
-		GalleryCoreApi::fetchAllPluginParameters($this->getPluginType(), $this->getId(), $itemId);
+	$results = array();
+	/* TODO: we should do this in one database query, ordered by id. */
+	foreach ($order as $id) {
+	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+                $this->getPluginType(), $this->getId(), $id);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-
-	    $params = array_merge($params, $local);
+	    $results = array_merge($results, $params);
 	}
 
-	return array(GalleryStatus::success(), $params);
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
