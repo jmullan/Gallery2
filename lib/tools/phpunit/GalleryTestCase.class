@@ -229,8 +229,8 @@ class GalleryTestCase extends TestCase {
 	    $this->assert(0, 'There are unreleased locks!');
 	}
 
-	$storage = $gallery->getStorage();
-	$ret =& $storage->commitTransaction();
+	$storage =& $gallery->getStorage();
+	$ret = $storage->commitTransaction();
 	if ($ret->isError()) {
 	    $ret = $ret->wrap(__FILE__, __LINE__);
 	    $this->fail($ret->getAsText());
