@@ -108,6 +108,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      *
      * @param array an associative array of the entry data
      * @return object GalleryStatus a status code
+     * @static
      */
     function addMapEntry($data) {
         global $gallery;
@@ -132,6 +133,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      *
      * @param array an associative array of the entry data to match and remove
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeMapEntry($data) {
         global $gallery;
@@ -156,6 +158,7 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @param array the entry to match
      * @param array the values to change
      * @return object GalleryStatus a status code
+     * @static
      */
     function updateMapEntry($match, $change) {
 	global $gallery;

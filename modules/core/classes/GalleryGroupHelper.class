@@ -49,6 +49,7 @@ class GalleryGroupHelper {
      * @param string [optional] a substring to match 
      * @return array object GalleryStatus a status code
      *               array (groupname, groupname, ...)
+     * @static
      */
     function fetchGroupnames($count=null, $offset=null, $substring=null) {
 	global $gallery;
@@ -99,6 +100,7 @@ class GalleryGroupHelper {
      * the list of all groups.
      *
      * @param string the substring to match
+     * @static
      */
     function fetchGroupCount($substring=null) {
 	global $gallery;
@@ -138,6 +140,7 @@ class GalleryGroupHelper {
      * @param string the groupname
      * @return array object GalleryStatus a status code
      *               object GalleryGroup a group
+     * @static
      */
     function fetchGroupByGroupName($groupName=null) {
 	global $gallery;

@@ -96,6 +96,7 @@ class GalleryLayout {
      *                                                 'params' => ...,
      *                                                 'url' => ...)),
      *                     ...)
+     * @access private
      */
     function _getModuleSystemLinks($urlParams) {
 	global $gallery;
@@ -151,6 +152,7 @@ class GalleryLayout {
      * @return array object GalleryStatus a status code
      *               array('moduleName' => array('text' => ...),
      *                     ...)
+     * @access private
      */
     function _getModuleSystemContent($urlParams) {
 	global $gallery;
@@ -201,6 +203,7 @@ class GalleryLayout {
      *                                            array('text' => ...,
      *                                                  'params' => ...,
      *                                                  'url' => ...))),
+     * @access private
      */
     function _getModuleItemLinks($items, $urlParams) {
 	global $gallery;
@@ -259,6 +262,7 @@ class GalleryLayout {
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *               array ('itemId' => array('moduleName' => html, ...))
+     * @access private
      */
     function _getModuleItemSummaries($items, $urlParams) {
 	global $gallery;
@@ -311,6 +315,7 @@ class GalleryLayout {
      *              parent view -- the module can augment or override these.
      * @return array object GalleryStatus a status code
      *               array ('itemId' => array('moduleName' => html, ...))
+     * @access private
      */
     function _getModuleItemDetails($item, $urlParams) {
 	global $gallery;
@@ -359,6 +364,7 @@ class GalleryLayout {
      *
      * @param array GalleryItems
      * @return object GalleryStatus a status code
+     * @access private
      */
     function _studyItems($items) {
 	global $gallery;

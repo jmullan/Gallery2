@@ -70,6 +70,7 @@ class GalleryPermissionMap_core {
      * @param int the id of the GalleryGroup
      * @param array userid => permission
      * @return object GalleryStatus a status code
+     * @static
      */
     function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionMap::_addPermission($itemId, $userId, 0, $permission, $applyToChildren);
@@ -86,6 +87,7 @@ class GalleryPermissionMap_core {
      * @param int the id of the GalleryGroup
      * @param array userid => permission
      * @return object GalleryStatus a status code
+     * @static
      */
     function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionMap::_addPermission($itemId, 0, $groupId, $permission, $applyToChildren);
@@ -105,6 +107,7 @@ class GalleryPermissionMap_core {
      * @param int the permission id
      * @return object GalleryStatus a status code
      * @access private
+     * @static
      */
     function _addPermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
 	global $gallery;
@@ -185,6 +188,7 @@ class GalleryPermissionMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionMap::_removePermission($itemId, $userId, 0, $permission, $applyToChildren);
@@ -200,6 +204,7 @@ class GalleryPermissionMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
 	$ret = GalleryPermissionMap::_removePermission($itemId, 0, $groupId, $permission, $applyToChildren);
@@ -219,6 +224,7 @@ class GalleryPermissionMap_core {
      * @param int the permission id
      * @return object GalleryStatus a status code
      * @access private
+     * @static
      */
     function _removePermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
 	global $gallery;
@@ -303,6 +309,7 @@ class GalleryPermissionMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeItemPermissions($itemId) {
 	global $gallery;
@@ -330,6 +337,7 @@ class GalleryPermissionMap_core {
      *               array array('userId' => ...,
      *                           'groupId' => ...,
      *                           'permission' => ...)
+     * @static
      */
     function fetchAllPermissionsForItem($itemId, $compress=false) {
 	global $gallery;
@@ -382,6 +390,7 @@ class GalleryPermissionMap_core {
      * @param int a user id
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
+     * @static
      */
     function fetchPermissionsForItems($itemIds, $userId) {
 	global $gallery;
@@ -446,6 +455,7 @@ class GalleryPermissionMap_core {
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      * @access private
+     * @static
      */
     function _fetchPermissionBitsForItem($itemId, $userId, $groupId) {
 	global $gallery;
@@ -490,6 +500,7 @@ class GalleryPermissionMap_core {
      * @param int the id of the target item
      * @param int the id of the source item
      * @return object GalleryStatus a status code
+     * @static
      */
     function copyPermissions($itemId, $fromId) {
 	global $gallery;
@@ -541,6 +552,7 @@ class GalleryPermissionMap_core {
      * @param array string target permissions
      * @return array object GalleryStatus a status code
      *               boolean true if yes
+     * @static
      */
     function hasPermission($itemId, $userIds, $groupIds, $permission) {
 	global $gallery;

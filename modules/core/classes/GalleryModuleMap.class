@@ -56,6 +56,7 @@ class GalleryModuleMap_core {
      *
      * @param string the module name
      * @return object GalleryStatus a status code
+     * @static
      */
     function activate($moduleName) {
 	global $gallery;
@@ -91,6 +92,7 @@ class GalleryModuleMap_core {
      *
      * @param string the module name
      * @return object GalleryStatus a status code
+     * @static
      */
     function deactivate($moduleName) {
 	if (empty($moduleName)) {
@@ -112,6 +114,7 @@ class GalleryModuleMap_core {
      *
      * @param string the module name
      * @return object GalleryStatus a status code
+     * @static
      */
     function remove($moduleName) {
 	if (empty($moduleName)) {
@@ -132,6 +135,7 @@ class GalleryModuleMap_core {
      *
      * @return array GalleryStatus a status code
      *               array an array of (moduleName => (active, version))
+     * @static
      */
     function fetchModuleList() {
 	global $gallery;

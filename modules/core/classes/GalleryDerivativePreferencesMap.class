@@ -73,6 +73,7 @@ class GalleryDerivativePreferencesMap_core {
      * @param int the source id
      * @param int the target id
      * @return object GalleryStatus a status code
+     * @static
      */
     function copyPreferences($sourceId, $targetId) {
 	list ($ret, $preferences) =
@@ -99,6 +100,7 @@ class GalleryDerivativePreferencesMap_core {
      * @param int the target id
      * @return array object GalleryStatus a status code
      *               array (derivativeType => ..., derivativeCommands => ...)
+     * @static
      */
     function fetchPreferencesForItem($targetId) {
 	global $gallery;

@@ -67,6 +67,7 @@ class GalleryModuleParameterMap_core {
      * @param string the name of the parameter
      * @param string the value of the parameter
      * @return object GalleryStatus a status code
+     * @static
      */
     function addParameter($moduleName, $parameterName, $parameterValue) {
 	if (empty($moduleName) || empty($parameterName)) {
@@ -92,6 +93,7 @@ class GalleryModuleParameterMap_core {
      * @param string the name of the parameter
      * @param string the value of the parameter
      * @return object GalleryStatus a status code
+     * @static
      */
     function updateParameter($moduleName, $parameterName, $parameterValue) {
 	if (empty($moduleName) || empty($parameterName)) {
@@ -116,6 +118,7 @@ class GalleryModuleParameterMap_core {
      * @param string the name of the module
      * @return array object GalleryStatus a status code
      *               array (parameterName => parameterValue)
+     * @static
      */
     function fetchAllParameters($moduleName) {
 	global $gallery;
@@ -154,6 +157,7 @@ class GalleryModuleParameterMap_core {
      * @param string the name of the module
      * @param string the name of the parameter
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeParameter($moduleName, $parameterName) {
 	if (empty($moduleName) || empty($parameterName)) {

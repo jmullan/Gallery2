@@ -273,6 +273,12 @@ class GalleryStatus {
      * ****************************************
      */
 
+    /**
+     * Constructor
+     * @param errorCode an error code
+     * @param fileName the path to the file where the error occurred
+     * @param lineNumber the line number in the file where the error occurred
+     */
     function GalleryStatus($errorCode, $fileName=null, $lineNumber=null) {
 	$this->_errorCode = $errorCode;
 	$this->_fileName = array($fileName);
@@ -283,6 +289,7 @@ class GalleryStatus {
      * Return an error status
      *
      * @return object GalleryStatus an error status
+     * @static
      */
     function error($errorCode, $fileName, $lineNumber) {
 	$status = new GalleryStatus(ERROR | $errorCode, $fileName, $lineNumber);
@@ -296,6 +303,7 @@ class GalleryStatus {
      * Return a success status
      *
      * @return object GalleryStatus a successful status
+     * @static
      */
     function success() {
 
@@ -421,6 +429,7 @@ class GalleryStatus {
      * Internal function turn error code and stack trace into text
      *
      * @return string
+     * @access private
      */
     function _getAsArray() {
 	global $gallery;

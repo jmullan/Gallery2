@@ -59,6 +59,7 @@ class GalleryUtilities {
      *
      * @param string the filename
      * @return array the file base name, the file extension
+     * @static
      */
     function getFileNameComponents($filename) {
 
@@ -86,6 +87,7 @@ class GalleryUtilities {
      *
      * @param string the filename
      * @return array the file extension
+     * @static
      */
     function getFileExtension($filename) {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -99,6 +101,7 @@ class GalleryUtilities {
      *
      * @param string the filename
      * @return array the file base
+     * @static
      */
     function getFileBase($filename) {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -112,6 +115,7 @@ class GalleryUtilities {
      *
      * @param string the filename
      * @return string the mime type
+     * @static
      */
     function getMimeType($filename) {
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -125,6 +129,7 @@ class GalleryUtilities {
      *
      * @param string a prefix
      * @return array key value pairs
+     * @static
      */
     function getFormVariables($prefix) {
 	global $gallery;
@@ -209,6 +214,7 @@ class GalleryUtilities {
      *
      * @param mixed a single key or many keys
      * @return mixed a single value or many values
+     * @static
      */
     function getRequestVariables() {
 	global $gallery;
@@ -253,6 +259,7 @@ class GalleryUtilities {
      *
      * @param string an input value 
      * @return string the sanitized version 
+     * @static
      */
     function sanitizeInputValue($value) {
 	
@@ -291,6 +298,7 @@ class GalleryUtilities {
      * 
      * @param string the key
      * @param string the value
+     * @static
      */
     function putRequestVariable($key, $value) {
 	global $HTTP_GET_VARS;
@@ -309,6 +317,8 @@ class GalleryUtilities {
      * Return a singleton copy of a map of file extensions to mime types
      *
      * @return array
+     * @access private
+     * @static
      */
     function _getExtensionToMimeMap() {
 	return $extensionMap;
@@ -319,6 +329,7 @@ class GalleryUtilities {
      *
      * @param string a file extension
      * @return string a mime type 
+     * @static
      */
     function convertExtensionToMime($extension) {
 	static $extensionMap;
@@ -482,6 +493,7 @@ class GalleryUtilities {
      *
      * @param int the number of markers to return
      * @access private
+     * @static
      */
     function makeMarkers($count) {
 
@@ -504,6 +516,7 @@ class GalleryUtilities {
      *
      * @param string path to a file in the gallery directory tree
      * @return string a relative url
+     * @static
      */
     function convertPathToRelativeUrl($path) {
 	global $gallery;
@@ -536,6 +549,7 @@ class GalleryUtilities {
      *
      * @param string a local filename
      * @return object GalleryStatus a status code
+     * @static
      */
     function requireOnce($filename) {
 	global $gallery;
@@ -560,6 +574,7 @@ class GalleryUtilities {
      * @param int width
      * @param int height
      * @return array(width, height)
+     * @static
      */
     function shrinkDimensionsToFit($target, $width, $height) {
 	if ($width > $target || $height > $target) {
@@ -578,6 +593,7 @@ class GalleryUtilities {
      * @param int width
      * @param int height
      * @return array(width, height)
+     * @static
      */
     function scaleDimensionsToFit($target, $width, $height) {
 

@@ -57,6 +57,7 @@ class GalleryUserGroupMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function addUserToGroup($userId, $groupId) {
 	global $gallery;
@@ -82,6 +83,7 @@ class GalleryUserGroupMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeUserFromGroup($userId, $groupId) {
 	global $gallery;
@@ -106,6 +108,7 @@ class GalleryUserGroupMap_core {
      *
      * @param int the id of the GalleryUser
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeUser($userId) {
 	global $gallery;
@@ -129,6 +132,7 @@ class GalleryUserGroupMap_core {
      *
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeGroup($groupId) {
 	global $gallery;
@@ -158,6 +162,7 @@ class GalleryUserGroupMap_core {
      * @param int the start of the range
      * @return array object GalleryStatus a status code
      *               array user id => user name
+     * @static
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null) {
 	global $gallery;
@@ -203,6 +208,7 @@ class GalleryUserGroupMap_core {
      * @param int the start of the range
      * @return array object GalleryStatus a status code
      *               array group id => group name
+     * @static
      */
     function fetchGroupsForUser($userId, $count=null, $offset=null) {
 	global $gallery;
@@ -251,6 +257,7 @@ class GalleryUserGroupMap_core {
      * @param int the id of the user
      * @return array object GalleryStatus a status code
      *               bool true if yes
+     * @static
      */
     function isUserInSiteAdminGroup($userId) {
 	global $gallery;
@@ -274,6 +281,7 @@ class GalleryUserGroupMap_core {
      * @param int the id of the user
      * @return array object GalleryStatus a status code
      *               bool true if yes
+     * @static
      */
     function isUserInGroup($userId, $groupId) {
 	global $gallery;

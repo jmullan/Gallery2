@@ -42,6 +42,7 @@ class GalleryFactory {
      *
      * @return array
      * @access private
+     * @static
      */
     function &_getFactoryData() {
 	static $registry = array();
@@ -57,6 +58,7 @@ class GalleryFactory {
      * @param string the file name (eg. '.../classes/NetPbmGraphics.class')
      * @param array optional hints that can be used to locate this
      *              implementation (eg. array('image/jpeg', 'image/gif'))
+     * @static
      */
     function registerImplementation($classType, $className, $id, $fileName, $hints=array()) {
 	$registry =& GalleryFactory::_getFactoryData();
@@ -73,6 +75,7 @@ class GalleryFactory {
      *
      * @param string the class type (eg. 'GalleryGraphics')
      * @param string the class name (eg. 'NetPbmGraphics')
+     * @static
      */
     function newInstance($classType, $className) {
 	global $gallery;
@@ -119,6 +122,7 @@ class GalleryFactory {
      * @param string the class name (eg. 'image/jpeg')
      * @return array object GalleryStatus a status code,
      *               object an instance
+     * @static
      */
     function newInstanceByHint($classType, $hint) {
 	$registry =& GalleryFactory::_getFactoryData();
@@ -150,6 +154,7 @@ class GalleryFactory {
      * @param string the class name (eg. 'NetPBM')
      * @return array object GalleryStatus a status code,
      *               object an instance
+     * @static
      */
     function newInstanceById($classType, $id) {
 	$registry =& GalleryFactory::_getFactoryData();
@@ -172,6 +177,7 @@ class GalleryFactory {
      * Return the ids of all the available implementations for a class
      *
      * @return array (id => className)
+     * @static
      */
     function getAllImplementationIds($classType) {
 	$registry =& GalleryFactory::_getFactoryData();
@@ -186,6 +192,7 @@ class GalleryFactory {
      * Return all the available hints for a class
      *
      * @return array (id => className)
+     * @static
      */
     function getAllImplementationHints($classType) {
 	$registry =& GalleryFactory::_getFactoryData();

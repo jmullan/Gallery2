@@ -64,6 +64,7 @@ class GalleryDerivativeHelper {
      * @param array GalleryItem ids
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @static
      */
     function fetchThumbnailsByItemIds($ids) {
 	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
@@ -88,6 +89,7 @@ class GalleryDerivativeHelper {
      * @param array GalleryItem ids
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
+     * @static
      */
     function fetchPreferredsByItemIds($ids) {
 	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
@@ -113,6 +115,7 @@ class GalleryDerivativeHelper {
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => array(GalleryDerivativeImage, ...)
      *                     ...)
+     * @static
      */
     function fetchResizesByItemIds($ids) {
 	list ($ret, $results) = GalleryDerivativeHelper::_loadDerivatives(
@@ -132,6 +135,7 @@ class GalleryDerivativeHelper {
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @access private
+     * @static
      */
     function fetchDerivativesByItemIds($ids, $types=null) {
 	list ($ret, $results) =
@@ -151,6 +155,7 @@ class GalleryDerivativeHelper {
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @access private
+     * @static
      */
     function fetchDerivativesBySourceIds($ids, $types=null) {
 	list ($ret, $results) =
@@ -171,6 +176,7 @@ class GalleryDerivativeHelper {
      * @return array object GalleryStatus a status code 
      *               array(GalleryItem id => GalleryDerivativeImage, ...)
      * @access private
+     * @static
      */
     function _loadDerivatives($itemIds, $sourceIds, $types=null) {
 	global $gallery;
@@ -257,6 +263,7 @@ class GalleryDerivativeHelper {
      *
      * @param array source ids
      * @return object GalleryStatus a status code
+     * @static
      */
     function expireDerivativeTreeBySourceIds($ids) {
 	global $gallery;
@@ -314,6 +321,7 @@ class GalleryDerivativeHelper {
      * @param string the original source id
      * @param string the new source id
      * @return object GalleryStatus a status code
+     * @static
      */
     function remapSourceIds($originalSourceId, $newSourceId) {
 	global $gallery;

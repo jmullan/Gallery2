@@ -61,6 +61,7 @@ class GalleryProfiler {
      *
      * @return object GalleryProfiler
      * @access private
+     * @static
      */
     function &_singleton() {
 	static $galleryProfiler;
@@ -81,6 +82,7 @@ class GalleryProfiler {
      *
      * @param string the function/method name
      * @param array the optional microtime() to use as the start of this function/method
+     * @static
      */
     function start($key, $start=null) {
 	global $gallery;
@@ -113,6 +115,7 @@ class GalleryProfiler {
      * Stop profiling a function/method
      *
      * @param string the function/method name
+     * @static
      */
     function stop($key) {
 	global $gallery;
@@ -144,6 +147,7 @@ class GalleryProfiler {
      *               'total' => ...,
      *               'average' => ...,
      *               'count' => ...)
+     * @static
      */
     function getProfile() {
 	/* Delegate to the singleton */
@@ -265,6 +269,7 @@ class GalleryProfiler {
      * @param array('total' => ###)
      * @param array('total' => ###)
      * @return -1, 0, or 1
+     * @static
      */
     function sortByInternalTotal($cmpA, $cmpB) {
 	if ($cmpA['internal']['total'] == $cmpB['internal']['total']) {
@@ -284,6 +289,7 @@ class GalleryProfiler {
      * @param cmpA array('eventTime' => "0.### ####")
      * @param cmpB array('eventTime' => "0.### ####")
      * @return -1, 0, or 1
+     * @static
      */
     function sortByEventTime($cmpA, $cmpB) {
 

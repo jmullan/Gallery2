@@ -66,6 +66,7 @@ class GalleryDataCache {
      *
      * @return object GalleryDataCache
      * @access private
+     * @static
      */
     function &_singleton() {
 	static $galleryDataCache;
@@ -83,6 +84,7 @@ class GalleryDataCache {
      *
      * @param string the key
      * @param mixed the data
+     * @static
      */
     function put($key, $data) {
 	    
@@ -100,6 +102,7 @@ class GalleryDataCache {
      *
      * @param string the key
      * @return mixed the cached data
+     * @static
      */
     function get($key) {
 	global $gallery;
@@ -118,6 +121,7 @@ class GalleryDataCache {
      *
      * @param string the function/method name
      * @return boolean true if the cache contains the key given
+     * @static
      */
     function containsKey($key) {
 	global $gallery;
@@ -133,6 +137,8 @@ class GalleryDataCache {
 
     /**
      * Empty the cache
+     *
+     * @static
      */
     function reset() {
 	/* Delegate to the singleton */

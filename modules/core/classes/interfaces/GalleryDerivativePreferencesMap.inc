@@ -64,6 +64,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
      *
      * @param array an associative array of the entry data
      * @return object GalleryStatus a status code
+     * @static
      */
     function addMapEntry($data) {
         global $gallery;
@@ -100,6 +101,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
      *
      * @param array an associative array of the entry data to match and remove
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeMapEntry($data) {
         global $gallery;
@@ -124,6 +126,7 @@ class GalleryDerivativePreferencesMap extends GalleryDerivativePreferencesMap_co
      * @param array the entry to match
      * @param array the values to change
      * @return object GalleryStatus a status code
+     * @static
      */
     function updateMapEntry($match, $change) {
 	global $gallery;

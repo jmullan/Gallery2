@@ -59,6 +59,7 @@ class GalleryItemHelper {
      * @param int user id
      * @return array object GalleryStatus a status code
      *               int a count
+     * @static
      */
     function getChildCounts($itemIds, $userId) {
 	global $gallery;
@@ -129,6 +130,7 @@ class GalleryItemHelper {
      * @param int user id
      * @return array object GalleryStatus a status code
      *               int a count
+     * @static
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
 	global $gallery;
@@ -193,6 +195,7 @@ class GalleryItemHelper {
      * @param array GalleryItem ids
      * @param int a user id
      * @return object GalleryStatus a status code
+     * @static
      */
     function studyPermissions($itemIds, $userId) {
 
@@ -213,6 +216,7 @@ class GalleryItemHelper {
      *
      * @return array object GalleryStatus a status code
      *               boolean true if yes
+     * @static
      */
     function getPermissions($itemId, $userId) {
 

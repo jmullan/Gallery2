@@ -98,6 +98,7 @@ class GalleryPermissionSetMap_core {
      * @param int flags (of the GALLERY_PERMISSION_XXX variety)
      * @param array ids of other permissions that compose this one
      * @return object GalleryStatus a status code
+     * @static
      */
     function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
 	global $gallery;
@@ -162,6 +163,7 @@ class GalleryPermissionSetMap_core {
      * @param int flags
      * @return array object GalleryStatus a status code
      *               array (id => description, id => description, ...)
+     * @static
      */
     function getPermissionIds($flags=0) {
 	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
@@ -184,6 +186,7 @@ class GalleryPermissionSetMap_core {
      *
      * @return array object GalleryStatus a status code
      *               integer bits
+     * @static
      */
     function convertIdsToBits($permissionIds) {
 	global $gallery;
@@ -216,6 +219,7 @@ class GalleryPermissionSetMap_core {
      * @param boolean should we compress the permission list?
      * @return array object GalleryStatus a status code
      *               array (bits, bits, bits)
+     * @static
      */
     function convertBitsToIds($permissionBits, $compress=false) {
 	global $gallery;
@@ -295,6 +299,7 @@ class GalleryPermissionSetMap_core {
      *
      * @return array object GalleryStatus a status code
      *               array(array('id' => ..., 'description' => ...), ...)
+     * @static
      */
     function getSubPermissions($permissionId) {
 	list ($ret, $bits) =
@@ -317,6 +322,8 @@ class GalleryPermissionSetMap_core {
      *
      * @return array object GalleryStatus a status code
      *               int location of a bit (1, 2, 3, etc)
+     * @static
+     * @access private
      */
     function _newPermissionBit() {
 	list ($ret, $allPermissions) = GalleryPermissionSetMap::_fetchAllPermissions();
@@ -371,6 +378,7 @@ class GalleryPermissionSetMap_core {
      *                                            'flags' => ...)
      *                      ...)
      * @access private
+     * @static
      */
     function _fetchAllPermissions() {
 	global $gallery;
@@ -437,6 +445,8 @@ class GalleryPermissionSetMap_core {
      *
      * @param array the specific permission data
      * @return object GalleryStatus a status code
+     * @static
+     * @access private
      */
     function _setPermission($data) {
 	$cacheKey = 'GalleryPermissionSetMap::_allPermissions';
