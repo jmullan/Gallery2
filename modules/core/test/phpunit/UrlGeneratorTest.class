@@ -49,6 +49,12 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	global $gallery;
 	$this->_savedSession = $gallery->_session;
+
+	list ($ret, $this->_saveParam) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$this->_urlGenerator->init('phpunit_test.php');
@@ -57,6 +63,12 @@ class UrlGeneratorTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 	$gallery->_session = $this->_savedSession;
+
+	$ret = GalleryCoreApi::setPluginParameter(
+            'module', 'core', 'misc.useShortUrls', $this->_saveParam);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	parent::tearDown();
     }
@@ -364,11 +376,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $saveParam) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.useShortUrls');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.useShortUrls', 'false');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -436,12 +443,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($itemShort, $this->_urlGenerator->generateUrl($itemParams),
 			    'cgi short url, item');
 
-	/* Cleanup.. */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
-						  'misc.useShortUrls', $saveParam);
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testParseCurrentUrl() {
