@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div class="gbAdmin">
+<div class="gbBlock">
   {if !empty($ItemAddUploadApplet.NoProtocolError)}
   <div class="giError">
     {g->text text="The upload applet relies on a G2 module that is not currently enabled.  Please ask an administrator to enable the 'remote' module."}

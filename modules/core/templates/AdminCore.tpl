@@ -11,7 +11,7 @@
 {if !empty($status)}
 <div class="gbBlock"><h2 class="giSuccess">
   {if isset($status.saved)}
-    {g->text text="Settings saved successfully"}
+    {g->text text="Settings saved successfully"} <br/>
   {/if}
   {if isset($status.addedDir)}
     {g->text text="Added local upload directory successfully"}

@@ -12,24 +12,24 @@
  * varies from platform to platform and on Firefox it turns ~ into %7E
  * which breaks our cookie paths.
  *}
-<div id="gsAdminContents">
-  <div class="gbTopFlag">
-    <div class="gbTitle">
-      <h2 class="giTitle">
-	{g->text text="Rearrange Album"}
-      </h2>
-    </div>
-  </div>
+<div class="gbBlock gcBackground1">
+  <h2> {g->text text="Rearrange Album"} </h2>
+</div>
 
-  {if isset($RearrangeItems.automaticOrderMessage)}
-  <div class="gbAdmin">
-    <p class="giDescription">
-      {g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ItemAdmin.item.id`"}">{g->text text="[change]"}</a>
-    </p>
-  </div>
-  {else}
+{if isset($RearrangeItems.automaticOrderMessage)}
+<div class="gbBlock">
+  <p class="giDescription">
+    {g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
+    <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit"
+     arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ItemAdmin.item.id`"}">
+      {g->text text="change"}
+    </a>
+  </p>
+</div>
+{else}
+
 <script type="text/javascript">
+// <![CDATA[
 var sel = -1, list = new Array();
 var html = new Array();
 {foreach from=$RearrangeItems.children key=idx item=child}
@@ -73,83 +73,71 @@ function doclick(idx) {
     sel = -1;
   }
 }
+// ]]>
 {/literal}</script>
 
-  {if !empty($status)}
-  <div id="gsStatus">
-    {if isset($status.saved)}
-    <div class="giStatus">
-      {g->text text="Order saved successfully"}
-    </div>
-    {/if}
-  </div>
+{if isset($status.saved)}
+<div class="gbBlock"><h2 class="giSuccess">
+  {g->text text="Order saved successfully"}
+</h2></div>
+{/if}
+
+<div class="gbBlock">
+  <p class="giDescription">
+    {g->text text="Change the order of the items in this album."}
+  </p>
+
+  {if $RearrangeItems.columns > 0}
+    <table class="rearrangeTable">
+  {else}
+    <div class="rearrangeTable">
   {/if}
 
-  <div class="gbAdmin">
-    <p class="giDescription">
-      {g->text text="Change the order of the items in this album."}
-    </p>
-
+  {assign var="row" value=0}
+  {assign var="column" value=0}
+  {foreach name=childList from=$RearrangeItems.children key=idx item=child}
     {if $RearrangeItems.columns > 0}
-    <table class="gbDataEntry">
+      {if $column == 0} <tr> {/if}
+      <td>
     {else}
-    <div class="gbDataEntry">
+      <div class="riFloat"
+	   style="width:{$RearrangeItems.maxWidth}px;height:{$RearrangeItems.maxHeight}px">
     {/if}
 
-    {assign var="row" value=0}
-    {assign var="column" value=0}
-    {foreach from=$RearrangeItems.children key=idx item=child}
-      {if $RearrangeItems.columns > 0}
-	{if $column == 0} <tr> {/if}
-	<td>
-      {else}
-	<div class="riFloat"
-	     style="width:{$RearrangeItems.maxWidth}px;height:{$RearrangeItems.maxHeight}px">
-      {/if}
+    <a href="#" id="item_{$idx}" onclick="doclick({$idx});return false">
+      {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl"
+	       child=$child l10Domain="modules_rearrange"}
+    </a>
 
-      {strip}
-      {if isset($child.thumbnail)}
-	<a href="#" id="item_{$idx}" onclick="doclick({$idx});return false">
-          {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl"
-                   child=$child l10Domain="modules_rearrange"}
-	</a>
-      {else}
-	<a id="item_{$idx}" onclick="doclick({$idx});return false">
-          {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl"
-                   child=$child l10Domain="modules_rearrange"}
-	</a>
-      {/if}
-      {/strip}
-
-      {if $RearrangeItems.columns > 0}
-	</td>
-	{assign var="column" value=$column+1}
-	{if $column == $RearrangeItems.columns}
-	  </tr>
-	  {assign var="column" value=0}
-	  {assign var="row" value=$row+1}
-	  {if $row == $RearrangeItems.rows}
-	    <tr><td colspan="{$RearrangeItems.columns}"><hr/></td></tr>
-	    {assign var="row" value=0}
-	  {/if}
+    {if $RearrangeItems.columns > 0}
+      </td>
+      {assign var="column" value=$column+1}
+      {if $column == $RearrangeItems.columns || $smarty.foreach.childList.last}
+	</tr>
+	{assign var="column" value=0}
+	{assign var="row" value=$row+1}
+	{if $row == $RearrangeItems.rows}
+	  <tr><td colspan="{$RearrangeItems.columns}"><hr/></td></tr>
+	  {assign var="row" value=0}
 	{/if}
-      {else}
-	</div>
       {/if}
-    {/foreach}
-
-    {if $RearrangeItems.columns > 0}
-    </table>
     {else}
-    </div>
+      </div>
     {/if}
-  </div>
+  {/foreach}
 
-  <div class="gbButtons">
-    <input type="hidden" id="riList" name="{g->formVar var="form[list]"}" value=""/>
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"
-           onclick="save()"/>
-    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
-  </div>
+  {if $RearrangeItems.columns > 0}
+    </table>
+  {else}
+    </div>
   {/if}
 </div>
+
+<div class="gbBlock gcBackground1">
+  <input type="hidden" id="riList" name="{g->formVar var="form[list]"}" value=""/>
+  <input type="submit" class="inputTypeSubmit" onclick="save()"
+   name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+  <input type="submit" class="inputTypeSubmit"
+   name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+</div>
+{/if}
