@@ -214,6 +214,7 @@ class NetPbmGraphics extends GalleryGraphics {
 	list($ret, $convertFromPnmCmd) =
 		$this->_convertFromPnmCmd($mimeType, $tmpFilename);
 	if ($ret->isError()) {
+	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -223,12 +224,13 @@ class NetPbmGraphics extends GalleryGraphics {
 				   $command,
 				   $convertFromPnmCmd));
 	if ($ret->isError()) {
+	    @$platform->unlink($tmpFilename);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$platform = $gallery->getPlatform();
-
 	$success = $platform->rename($tmpFilename, $destFilename);
+	@$platform->unlink($tmpFilename);
 	if (!$success) {
 	    $gallery->debug("Failed renaming $tmpFilename -> $destFilename");
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE,
