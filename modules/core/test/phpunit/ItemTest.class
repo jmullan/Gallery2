@@ -185,6 +185,7 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	sort($ids);
 	$this->assertEquals(array($this->_childItems[1]->getId(),
 				  $this->_childItems[2]->getId()),
 			    $ids);
