@@ -56,7 +56,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Create a new album and image, set thumbnail and highlight
+	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -121,12 +121,12 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$photo->setTitle("Test Item");
+	$photo->setTitle('Test Item');
 	$ret = $photo->save();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	// add thumbnail
+	/* add thumbnail */
 	list ($ret, $thumbId) = $this->_addDerivative($photo, $photo,
 	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
 	if ($ret->isError()) {
@@ -152,7 +152,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$derivative->setMimeType($src->getMimeType());
 	$derivative->setDerivativeOperations('testoperation|0');
 	if ($size) {
-	    // Set scaled size:
+	    /* Set scaled size: */
 	    $w = $src->getWidth();
 	    $h = $src->getHeight();
 	    if ($w <= $size && $h <= $size &&
@@ -167,7 +167,7 @@ class ImageBlockTest extends GalleryTestCase {
 		$derivative->setWidth((int)($size*$w/$h));
 	    }
 	} else {
-	    // Set rotated size (swap wd/ht):
+	    /* Set rotated size (swap wd/ht): */
 	    $derivative->setWidth($src->getHeight());
 	    $derivative->setHeight($src->getWidth());
 	}
@@ -213,7 +213,7 @@ class ImageBlockTest extends GalleryTestCase {
     function testImageBlock() {
 	$ret = $this->_module->setParameter('blocks', '');
 	if ($ret->isError()) {
-	    $this->assert(false, "Set blocks parameter");
+	    $this->assert(false, 'Set blocks parameter');
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -227,7 +227,7 @@ class ImageBlockTest extends GalleryTestCase {
 
 	$ret = $this->_module->setParameter('blocks', 'randomImage');
 	if ($ret->isError()) {
-	    $this->assert(false, "Set blocks parameter");
+	    $this->assert(false, 'Set blocks parameter');
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -243,7 +243,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$ret = $this->_module->setParameter('blocks', 'randomImage|recentImage|viewedImage|' .
 					    'viewedAlbum|recentAlbum|randomAlbum');
 	if ($ret->isError()) {
-	    $this->assert(false, "Set blocks parameter");
+	    $this->assert(false, 'Set blocks parameter');
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -264,8 +264,8 @@ class ImageBlockTest extends GalleryTestCase {
 		$gotPhoto = 1;
 	    }
 	}
-	$this->assertEquals(1, $gotAlbum, "Test album not in 'newest album' block");
-	$this->assertEquals(1, $gotPhoto, "Test photo not in 'newest photo' block");
+	$this->assertEquals(1, $gotAlbum, 'Test album not in "newest album" block');
+	$this->assertEquals(1, $gotPhoto, 'Test photo not in "newest photo" block');
     }
 
     function testExternalImageBlock() {
@@ -287,7 +287,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
 	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
 
-	// Select only from subtree..
+	/* Select only from subtree.. */
 	GalleryUtilities::putRequestVariable('blocks', 'recentImage|viewedAlbum');
 	GalleryUtilities::putRequestVariable('show', 'title');
 	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
@@ -303,7 +303,7 @@ class ImageBlockTest extends GalleryTestCase {
 	$this->assertEquals($this->_photo->getId(),
 	    $template->data['ImageBlockSystemContent']['blocks'][0]['id'], 'Photo id');
 
-	// Select specific item..
+	/* Select specific item.. */
 	GalleryUtilities::putRequestVariable('blocks', 'specificItem');
 	GalleryUtilities::putRequestVariable('show', 'title|views');
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());

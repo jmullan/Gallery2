@@ -1,0 +1,106 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageBlock
+ * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ */
+/**
+ * Test Image Block functionality
+ *
+ * @package ImageBlock
+ * @subpackage PHPUnit
+ */
+class ImageBlockHandlerTest extends GalleryTestCase {
+
+    function ImageBlockHandlerTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * Create an album for testing
+     */
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockHelper.class');
+
+	/* Enable event (normally disabled for unit tests) */
+	$this->_registerTestEventListener('GalleryEntity::save', new ImageBlockHelper());
+	$this->_registerTestEventListener('GalleryEntity::delete', new ImageBlockHelper());
+
+	list ($ret, $this->_handlerAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+    	$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $this->_handlerAlbum->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Delete the album that was used for testing
+     */
+    function tearDown() {
+    	$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $this->_handlerAlbum->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_handlerAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testImageBlockDisabledMapHandler() {
+	list ($ret, $this->_handlerItem) = $this->_createRandomDataItem($this->_handlerAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$handlerItemId = $this->_handlerItem->getId();
+
+	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($disabledFlag, 'Add eventHandler failed');
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_handlerItem->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($handlerItemId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$disabledFlag, 'Delete eventHandler failed');
+    }
+}

@@ -37,12 +37,22 @@ class ImageBlockModule extends GalleryModule {
 	$this->setId('imageblock');
 	$this->setName('ImageBlock');
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.8.3');
 	$this->setGroup('blocks', $this->translate('Blocks'));
-	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews|loadSystemContent|performFactoryRegistrations');
 	$this->setRequiredCoreApi(array(0, 8));
 	$this->setRequiredModuleApi(array(0, 8));
 	
+    }
+
+    /**
+     * @see GalleryModule::performFactoryRegistrations()
+     */
+    function performFactoryRegistrations() {
+        GalleryCoreApi::registerFactoryImplementation('ItemEditAlbumOption',
+                                                      'ImageBlockOption',
+                                                      'ImageBlockOption',
+                                                      dirname(__FILE__) . '/ImageBlockOption.inc');
     }
 
     /**
@@ -51,6 +61,8 @@ class ImageBlockModule extends GalleryModule {
     function registerEventListeners() {
 	require_once(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
 	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', new ImageBlockHelper());
+	GalleryCoreApi::registerEventListener('GalleryEntity::save', new ImageBlockHelper(), true);
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new ImageBlockHelper(), true);
     }
 
     /**
@@ -208,7 +220,7 @@ class ImageBlockModule extends GalleryModule {
 	    }
 
 	} else {
-	    // Image Block for a specific item..
+	    /* Image Block for a specific item.. */
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);

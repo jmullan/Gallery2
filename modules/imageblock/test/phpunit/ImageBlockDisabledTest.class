@@ -1,0 +1,289 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageBlock 
+ * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ */
+/**
+ * ImageBlockOption tests
+ * @package ImageBlock
+ * @subpackage PHPUnit
+ */
+class ImageBlockDisabledTest extends GalleryTestCase {
+
+    function ImageBlockDisabledTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * Create an album for testing
+     */
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
+
+	/* Register a dummy toolkit and operation */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+	    'ImageBlockToolkit', 'ImageBlockToolkit', __FILE__);
+	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
+	    array('image/gif'), 'testoperation',
+	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'imageblock');
+        if ($ret->isError() || !isset($this->_module)) {
+            print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}   
+
+	list ($ret, $this->_topAlbum, $this->_topItems) =
+	    $this->_createSubAlbumWithItems($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_subAlbum, $this->_subItems) =
+	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
+	if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }   
+
+        /* Set the ImageBlockDisabled flag */
+	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, true);
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	list ($ret, $this->_blocks) = $this->_module->getParameter('blocks');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_itemId) = $this->_module->getParameter('itemId');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $this->_module->setParameter('itemId', $this->_topAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('blocks', 'randomImage');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
+     * Delete the album that was used for testing
+     */
+    function tearDown() {
+	$ret = $this->_module->setParameter('blocks', $this->_blocks);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::removePluginParameter($this->_module->getPluginType(),
+                                                     $this->_module->getId(), 'itemId');
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_topAlbum->getId());
+        if ($ret->isError()) {
+	    print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        /* Unset the ImageBlockDisabled flag */
+	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	/* Unregister dummy toolkit */
+	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function _createSubAlbumWithItems($parentId) {
+	/* Create a new album and image, set thumbnail and highlight */
+	list ($ret, $album) = $this->_createRandomAlbum($parentId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$imagePath = dirname(__FILE__) . '/../../../core/test/data/test1.gif';
+	list ($ret, $photo, $thumbId) = $this->_addPhoto($album->getId(), $imagePath);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $tmpId) = $this->_addDerivative($album, $photo, DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$items = array();
+	$items[] = $photo->getId();
+	return array(GalleryStatus::success(), $album, $items);
+    }
+
+    function _addPhoto($parentId, $imagePath) {
+	list ($ret, $photo) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$ret = $photo->create($parentId, $imagePath,
+			      GalleryCoreApi::getMimeType($imagePath),
+			      'testitem_' . time() . substr($imagePath, -4));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$photo->setTitle('Test Item');
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	/* add thumbnail */
+	list ($ret, $thumbId) = $this->_addDerivative($photo, $photo,
+	    DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 150);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $photo, $thumbId);
+    }
+
+    function _addDerivative(&$item, &$src, $derivativeType, $size) {
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!isset($derivative)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	}
+	$ret = $derivative->create($item->getId(), $derivativeType);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$derivative->setDerivativeSourceId($src->getId());
+	$derivative->setMimeType($src->getMimeType());
+	$derivative->setDerivativeOperations('testoperation|0');
+	if ($size) {
+	    /* Set scaled size: */
+	    $w = $src->getWidth();
+	    $h = $src->getHeight();
+	    if ($w <= $size && $h <= $size && $derivativeType == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		$derivative->setWidth($w);
+		$derivative->setHeight($h);
+	    } else if ($w >= $h) {
+		$derivative->setWidth($size);
+		$derivative->setHeight((int)($size*$h/$w));
+	    } else {
+		$derivative->setHeight($size);
+		$derivative->setWidth((int)($size*$w/$h));
+	    }
+	} else {
+	    /* Set rotated size (swap wd/ht): */
+	    $derivative->setWidth($src->getHeight());
+	    $derivative->setHeight($src->getWidth());
+	}
+	$ret = $derivative->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $derivative->getId());
+    }
+
+    function assertBlock($block) {
+	$this->assert(isset($block['id']), 'Missing id');
+	$this->assert(isset($block['creationTimestamp']), 'Missing creationTimestamp');
+	$this->assert(isset($block['viewCount']), 'Missing viewCount');
+	$this->assert(isset($block['title']), 'Missing title');
+	$this->assert(isset($block['item']), 'Missing item');
+	$this->assert(isset($block['thumb']), 'Missing thumb');
+    }
+
+    function testImageBlockDisabledNoItemsReturned() {
+	$template = new DummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(count($tpl) == 0, 'A template should not have been returned');
+	$this->assert(!isset($template->data['ImageBlockSystemContent']['blocks']), 'Block should not exist');
+    }
+
+    function testImageBlockDisabledOneItemReturned() {
+	/* Unset the ImageBlockDisabled flag on the subAlbum */
+	$ret = ImageBlockHelper::setDisabledFlag($this->_subAlbum, true, false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+        $template = new DummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}   
+	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(1 == count($template->data['ImageBlockSystemContent']['blocks']), 'One block');
+	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+    }
+
+}
+?>

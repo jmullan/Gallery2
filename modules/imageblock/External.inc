@@ -39,7 +39,7 @@ class ExternalView extends GalleryView {
 	$SlideShow = array();
 	$startId = null;
 
-	// Force UrlGenerator to not add session id into urls..
+	/* Force UrlGenerator to not add session id into urls.. */
 	$session =& $gallery->getSession();
 	$session->_isUsingCookies = true;
 

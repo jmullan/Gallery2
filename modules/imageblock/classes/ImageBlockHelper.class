@@ -65,44 +65,29 @@ class ImageBlockHelper {
 	$typeMap = array('GalleryPhotoItem' => 1, 'GalleryAlbumItem' => 2);
 
 	/* Prepare the query */
-	$select = '[ImageBlockCacheMap::itemId], [ImageBlockCacheMap::itemTimestamp]';
-	$from = '[ImageBlockCacheMap]';
-	$where ='[ImageBlockCacheMap::userId] = ?  AND [ImageBlockCacheMap::itemType] = ?';
-	switch ($order) {
-	case IMAGE_BLOCK_RANDOM:
-	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    break;
-	case IMAGE_BLOCK_RECENT:
-	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
-	    break;
-	case IMAGE_BLOCK_VIEWED:
-	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
-	    break;  // More below..
-	default:
-	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
-	}
-
-	if ($order == IMAGE_BLOCK_VIEWED || isset($parentId)) {
-	    $select .= ', [GalleryItemAttributesMap::viewCount]';
-	    $from .= ', [GalleryItemAttributesMap]';
-	    $where .= ' AND [ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
-	}
-	if (isset($parentId)) {
-	    $where .= ' AND [GalleryItemAttributesMap::parentSequence] LIKE ?';
-	}
-
-	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array(1,
-			      "SELECT $select FROM $from WHERE $where ORDER BY $orderBy"));
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$select[] = '[ImageBlockCacheMap::itemId]';
+	$select[] = '[ImageBlockCacheMap::itemTimestamp]';
+	$from[] = '[ImageBlockCacheMap]';
+	$join = '[ImageBlockDisabledMap] ON [ImageBlockCacheMap::itemId]=[ImageBlockDisabledMap::itemId]';
+	$where[] = '[ImageBlockCacheMap::userId] = ?';
+	$where[] = '[ImageBlockCacheMap::itemType] = ?';
+	$where[] = '[ImageBlockDisabledMap::itemId] IS NULL';
 	$data[] = $gallery->getActiveUserId();
 	$data[] = $typeMap[$itemType];
 
+	list ($ret, $orderBy) = ImageBlockHelper::_buildOrderBy($order);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($order == IMAGE_BLOCK_VIEWED || isset($parentId)) {
+	    $select[] = '[GalleryItemAttributesMap::viewCount]';
+	    $from[] = '[GalleryItemAttributesMap]';
+	    $where[] = '[ImageBlockCacheMap::itemId] = [GalleryItemAttributesMap::itemId]';
+	}
+
 	if (isset($parentId)) {
+	    $where[] = '[GalleryItemAttributesMap::parentSequence] LIKE ?';
 	    list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($parentId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -110,14 +95,28 @@ class ImageBlockHelper {
 	    $data[] = implode('/', $sequence) . (empty($sequence) ? '' : '/') . $parentId . '/%';
 	}
 
+	/* Build the query */
+	$query = 'SELECT ' . implode(', ', $select) .
+		 ' FROM ' . implode(', ', $from) .
+		 ' LEFT JOIN ' . $join .
+		 ' WHERE ' . implode(' AND ', $where) .
+		 ' ORDER BY ' . $orderBy;
+
+	list ($ret, $query) = $storage->getFunctionSql('LIMIT', array(1, $query));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	list ($ret, $result) = ImageBlockHelper::_runQuery($query, $data);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
 	list ($ret, $isCached) = ImageBlockHelper::_isCached($gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
 	if (!$isCached) {
 	    $ret = ImageBlockHelper::cacheViewableTree();
 	    if ($ret->isError()) {
@@ -137,6 +136,38 @@ class ImageBlockHelper {
 	}
 
 	return array(GalleryStatus::success(), $result);
+    }
+
+    /**
+     * Build the 'ORDER BY' section of the fetchViewableData query
+     *
+     * @param int the order type (use defined constant from above)
+     * @return array GalleryStatus a status code
+     *               string containing SQL ORDER BY statement
+     * @static
+     */
+    function _buildOrderBy($order) {
+	global $gallery;
+	$orderBy = null;
+
+	switch ($order) {
+	case IMAGE_BLOCK_RANDOM:
+	    $storage =& $gallery->getStorage();
+	    list ($ret, $orderBy) = $storage->getFunctionSql('RAND', array());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    break;
+	case IMAGE_BLOCK_RECENT:
+	    $orderBy = '[ImageBlockCacheMap::itemTimestamp] DESC';
+	    break;
+	case IMAGE_BLOCK_VIEWED:
+	    $orderBy = '[GalleryItemAttributesMap::viewCount] DESC';
+	    break;
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $orderBy);
     }
 
     /** @static @private */
@@ -161,7 +192,7 @@ class ImageBlockHelper {
     function _isCached($userId) {
 	global $gallery;
 	list ($ret, $searchResults) = $gallery->search(
-	    'SELECT COUNT(*) FROM [ImageBlockCacheMap] WHERE [ImageBlockCacheMap::userId]=?',
+	    'SELECT COUNT(*) FROM [ImageBlockCacheMap] WHERE [ImageBlockCacheMap::userId] = ?',
 	    array($userId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -244,16 +275,19 @@ class ImageBlockHelper {
     }
 
     /**
-     * Event handler for Gallery::ViewableTreeChange event
-     * Invalidate image block cache for specified user, or entire cache if no user
-     * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
+     * Event handler for Gallery::ViewableTreeChange, GalleryEntity::save, and GalleryEntity::delete
      *
      * @param object GalleryEvent the event
      * @return object GalleryStatus a status code
      */
     function handleEvent($event) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockCacheMap.class');
-	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
+	switch ($event->getEventName()) {
+	case 'Gallery::ViewableTreeChange':
+	    /*
+	     * Invalidate image block cache for specified user, or entire cache if no user
+	     * Event sends array('userId'=>id or array of ids or null, 'itemId'=>id or array of ids or null)
+	     */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockCacheMap.class');
 	    $param = $event->getEntity();
 	    if (!empty($param['userId'])) {
 		$ret = ImageBlockCacheMap::removeMapEntry(array('userId' => $param['userId']));
@@ -266,8 +300,156 @@ class ImageBlockHelper {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	    break;
+
+	case 'GalleryEntity::delete':
+	    /*
+	     * Determines if the item being deleted is listed in the ImageBlockDisabledMap and remove it
+	     */
+	    $entity = $event->getEntity();
+
+	    if (!GalleryUtilities::isA($entity, 'GalleryItem')) {
+		break;
+	    }
+
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	    if (ImageBlockHelper::getDisabledFlag($entity->getId())) {
+		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $entity->getId()));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    break;
+
+	case 'GalleryEntity::save':
+	    /*
+	     * Determines if the item being added has a parent that is listed in the
+	     * ImageBlockDisabledMap and if so, adds it to the map
+	     */
+	    $entity = $event->getEntity();
+
+	    if (!$entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+		break;
+	    } else if (!GalleryUtilities::isA($entity, 'GalleryDataItem') &&
+		       !GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+		break;
+	    }
+
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	    $parentId = $entity->getParentId();
+
+	    list ($ret, $disabledFlag) = ImageBlockHelper::getDisabledFlag($parentId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (!empty($disabledFlag)) {
+		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    break;
 	}
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Set the disabled flag on all album items.
+     *
+     * @param object GalleryAlbumItem AlbumItem which is to be flagged
+     * @param string Flag to be set to album items
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function setDisabledFlag($parentAlbum, $recursive, $disabled) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+
+	if ($recursive) {
+	    list($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parentAlbum);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if (!empty($childIds)) {
+		list($ret, $childEntities) = GalleryCoreApi::loadEntitiesById($childIds);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		/*
+		 * TODO: use [GalleryItemAttributeMap::parentSequence] to get a list of *all* the
+		 * descendents of any given item.  As long as you're doing that, you can probably
+		 * craft a single SQL statement to mark all the descendents in a single query.
+		 */
+		foreach ($childEntities as $childEntity) {
+		    if (GalleryUtilities::isA($childEntity, 'GalleryAlbumItem')) {
+			$ret = ImageBlockHelper::setDisabledFlag($childEntity, $recursive, $disabled);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+
+			/* Remove the item from the children array because it's handled by setDisabledFlag */
+			unset($childIds[array_search($childEntity->getId(), $childIds)]);
+		    }
+		}
+	    }
+	} else {
+	    /* Use fetchChildDataItems so that we don't have to worry about albums */
+	    list($ret, $childIds) = GalleryCoreApi::fetchChildDataItemIds($parentAlbum);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Append the parent to the list, so it gets set as well. */
+	$childIds[] = $parentAlbum->getId();
+
+	foreach ($childIds as $itemId) {
+	    if ($disabled) {
+		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $itemId));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else {
+		$ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $itemId));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get the disabled flag on all album items.
+     *
+     * @param object GalleryAlbumItem AlbumItem which contains the flag to be retrieved
+     * @return bool Flag on all album items
+     * @static
+     */
+    function getDisabledFlag($itemId) {
+	global $gallery;
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ImageBlockDisabledMap.class');
+	$query = '
+		SELECT
+		    [ImageBlockDisabledMap::itemId]
+		FROM
+		    [ImageBlockDisabledMap]
+		WHERE
+		    [ImageBlockDisabledMap::itemId] = ?
+		  ';
+	list ($ret, $searchResults) = $gallery->search($query, array($itemId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$result = false;
+	if ($rec = $searchResults->nextResult()) {
+	    $result = (bool)$rec[0];
+	}
+	return array(GalleryStatus::success(), $result);
     }
 }
 ?>
