@@ -1,0 +1,132 @@
+<?php
+
+class CreatePhotoItemTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create a new PhotoItem in the root album and save it";
+    }
+
+    function testStart() {
+	global $gallery;
+	$rootId = $gallery->getRootAlbumId();
+
+	/* Lock the root */
+	$ret = $gallery->lockLocal($rootId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Load the root */
+	list($ret, $root) = $gallery->loadNucleusById($rootId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	print("Creating new photo item\n");
+	$photo = new PhotoItem();
+	$ret = $photo->create($root,
+			      'itemPath',
+			      $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	/* Save the root */
+	$ret = $root->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Release our lock on the root */
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Put an ImageContainer in our PhotoItem */
+	$image = new ImageContainer();
+	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
+	$ret = $image->createFromFile($photo, $imagePath);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/*
+	 * Delete this PhotoItem's old source container.  Not applicable in
+	 * this case, but included for completeness (since this is example
+	 * code).
+	 */
+	$ret = $gallery->deleteNucleusById($photo->getSourceId());
+	if ($ret->isError()) {
+	    /*
+	     * Probably want to warn the user at this point, but not
+	     * necessarily fail.
+	     */
+	}
+
+	/* Set the ImageContainer as the source for this PhotoItem */
+	$photo->setSourceId($image->getId());
+
+	/* Create a thumbnail */
+	$thumbnail = new ImageContainer();
+	$ret = $thumbnail->createDerivative($photo);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/* Make it a derivative from the source image */
+	$ret = $thumbnail->deriveFrom($image, "scale 200");
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/*
+	 * Delete this PhotoItem's old thumbnail.  Not applicable in
+	 * this case, but included for completeness (since this is example
+	 * code).
+	 */
+	print "<h1>When we delete old nuclei we have to break all connections including derivative linkages</h1>";
+	$ret = $gallery->deleteNucleusById($photo->getThumbnailId());
+	if ($ret->isError()) {
+	    /*
+	     * Probably want to warn the user at this point, but not
+	     * necessarily fail.
+	     */
+	}
+	$photo->setThumbnailId($thumbnail->getId());
+	
+
+	/* Set other basic details for our PhotoItem */
+	$photo->setTitle('PhotoItem Title');
+	$photo->setDescription('This is the description of my PhotoItem');
+
+	/* Save everything */
+	$ret = $gallery->saveMany(array(&$photo, &$image, &$thumbnail));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	/*
+	 * Check to see if the thumbnail's cache is current.
+	 * It shouldn't be, since we haven't built it yet.
+	 */
+	list ($ret, $bool) = $thumbnail->isCacheCurrent();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	if ($bool) {
+	    print "Cache is current\n";
+	} else {
+	    print "Cache is not current\n";
+
+	    /* Rebuild the cache */
+	    $thumbnail->rebuildCache();
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>
+</pre>
