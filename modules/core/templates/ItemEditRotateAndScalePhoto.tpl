@@ -89,7 +89,7 @@
   <b>
     {g->text text="This is a link to another photo, so you cannot change the original"}
   </b>
-  {else if $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
+  {elseif $ItemEditRotateAndScalePhoto.editPhoto.isLinkedTo}
   <b>
     {g->text text="There are links to this photo, so you cannot change the original"}
   </b>
