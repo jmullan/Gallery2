@@ -12,7 +12,7 @@
       </h2>
     </div>
   </div>
-  
+
   {if !empty($status)}
   <div id="gsStatus">
     {if isset($status.saved)}
@@ -36,7 +36,9 @@
   </div>
 
   <div class="gbButtons">
-    <input type="submit" name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-    <input type="submit" name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+    <input type="submit" name="{g->formVar var="form[action][save]"}"
+     value="{g->text text="Save"}"/>
+    <input type="submit" name="{g->formVar var="form[action][reset]"}"
+     value="{g->text text="Reset"}"/>
   </div>
 </div>
