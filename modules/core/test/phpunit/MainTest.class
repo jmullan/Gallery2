@@ -42,7 +42,7 @@ class MainTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	$this->_saveSession = $GLOBALS['gallery']->_session;
+	$this->_saveGallery = $GLOBALS['gallery'];
 
 	if (!defined('G2_EMBED')) {
 	    define('G2_EMBED', 1);
@@ -60,8 +60,7 @@ class MainTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-	$gallery->_session = $this->_saveSession;
+	$GLOBALS['gallery'] = $this->_saveGallery;
 
 	parent::tearDown();
     }
