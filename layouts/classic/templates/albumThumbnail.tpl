@@ -18,6 +18,7 @@
       <i>{galleryText text="No thumbnail"}</i>
       {/if}
     </a>
+    {/galleryHeavyFrame}
     {foreach from=$moduleItemLinks item=itemLinks key=loopId}
     {if ($loopId == $child.id)}
     <br>
@@ -31,4 +32,3 @@
     {/gallerySelect}
     {/if}
     {/foreach}
-    {/galleryHeavyFrame}
