@@ -229,7 +229,7 @@ class DownloadItemView extends GalleryView {
         } else if (GalleryUtilities::isA($entity, 'GalleryDerivative')) {
 	    list ($ret, $sourceEntity) = GalleryCoreApi::loadEntitiesById($entity->getParentId());
 	    if ($ret->isError()) {
-		return 'unknown';
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (GalleryUtilities::isA($sourceEntity, 'GalleryFileSystemEntity')) {
@@ -241,7 +241,7 @@ class DownloadItemView extends GalleryView {
 		}
 	    }
         } else {
-	    return 'unknown';
+	    return array(GalleryStatus::success(), 'unknown');
 	}
 	
 	return array(GalleryStatus::success(), $pseudoFileName);
