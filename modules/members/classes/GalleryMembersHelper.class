@@ -252,7 +252,7 @@ class GalleryMembersHelper {
 	 */
         $todayStamp = strtotime(date("F j, Y", time()));
 	$creationStamp = strtotime(date("F j, Y", $user->getCreationTimestamp()));
-	$age = ($todayStamp - $creationStamp) / (24 * 60 * 60);
+	$age = (int)round(($todayStamp - $creationStamp) / (24 * 60 * 60));
 
 	return array(GalleryStatus::success(), $age);
     }
