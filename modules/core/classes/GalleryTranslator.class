@@ -63,7 +63,15 @@ class GalleryTranslator {
      * @var array $_defaultCountry
      * @access private
      */
-    var $_defaultCountry;    
+    var $_defaultCountry;
+
+    /**
+     * The active character set.
+     *
+     * @var string $_activeCharset
+     * @access private
+     */
+    var $_activeCharset;
 
     /*
      * ****************************************
@@ -87,10 +95,9 @@ class GalleryTranslator {
     
 	$this->_supportedLanguages['en']['US']['description'] = 'English (US)';
 	$this->_supportedLanguages['en']['US']['charset'] = 'UTF-8';
-	$this->_defaultCountry['en'] = 'US';
-    
 	$this->_supportedLanguages['en']['GB']['description'] = 'English (UK)';
 	$this->_supportedLanguages['en']['GB']['charset'] = 'UTF-8';
+	$this->_defaultCountry['en'] = 'US';
     
 	$this->_supportedLanguages['es']['AR']['description'] = 'Spanish (AR)';
 	$this->_supportedLanguages['es']['AR']['charset'] = 'UTF-8';
@@ -162,12 +169,17 @@ class GalleryTranslator {
 	if ($gallery->getConfig('function.exists.dgettext')) {
 	    
 	    /* Set the appropriate charset in our HTTP header */
+	    $this->_activeCharset = $this->_supportedLanguages[$language][$country]['charset'];
 	    if (!headers_sent()) {
-		header('Content-Type: text/html; charset=' .
-		       $this->_supportedLanguages[$language][$country]['charset']);
+		header('Content-Type: text/html; charset=' . $this->_activeCharset);
 	    }
 
+	    /*
+	     * Some systems only require LANG, others (like Mandrake) seem to require
+	     * LANGUAGE also.
+	     */
 	    putenv("LANG=${language}_${country}");
+	    putenv("LANGUAGE=${language}_${country}");
 
 	    // XXX: we'd like to say:
 	    //    setlocale(LC_ALL, "${language}_${country}", "${language}");
@@ -207,7 +219,7 @@ class GalleryTranslator {
 			$country = $this->_defaultCountry[$language];
 		    }
 		}
-			
+
 		if (isset($this->_supportedLanguages[$language][$country])) {
 		    break;
 		} else {
@@ -268,14 +280,11 @@ class GalleryTranslator {
 		if ($gallery->getDebug()) {
 		    $gallery->debug("Binding text domain: $domain -> $basePath");
 		}
-		$result = bindtextdomain($domain, $basePath);
-		if ($result != $basePath) {
-		    if ($gallery->getDebug()) {
-			$gallery->debug("Got [$result] binding $basePath");
-		    }
-		    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
-				 null);
-		}
+		bindtextdomain($domain, $basePath);
+		textdomain($domain);
+		if ($gallery->getConfig('function.exists.bind_textdomain_codeset')) {
+		    bind_textdomain_codeset($domain, $this->_activeCharset);
+		} 
 		$this->_boundDomains[$domain] = $basePath;
 	    }
 
