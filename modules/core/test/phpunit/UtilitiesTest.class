@@ -245,7 +245,7 @@ class UtilitiesTest extends GalleryTestCase {
 
 	// Simulate embedded (request uri doesn't reference g2 install dir)
 	$urlGenerator = new GalleryUrlGenerator();
-	$urlGenerator->init('phpunit_test.php?test=on', '../gallery2/');
+	$urlGenerator->init('phpunit_test.php?test=on', null, '../gallery2/');
 	$gallery->setUrlGenerator($urlGenerator);
 	$_SERVER['REQUEST_URI'] = '/testcms/phpunit_test.php?test=on&foo=bar';
 

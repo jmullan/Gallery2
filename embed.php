@@ -43,6 +43,7 @@ class GalleryEmbed {
      *
      * @param array (optional--required before calling handleRequest) (
      *   'embedUri' => URI to access G2 via CMS application (example: index.php?module=gallery2)
+     *   'embedPath' => url path to embedUri (example: '/', or '/cms/') 
      *   'relativeG2Path' => relative path from CMS (dir with embedUri) to G2 base dir
      *   'loginRedirect' => URI for redirect to CMS login view (example: /cms/index.php)
      *   'embedSessionString' => (optional) To support cookieless browsing, pass in key=value for

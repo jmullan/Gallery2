@@ -187,18 +187,29 @@ class GalleryUrlGenerator {
      * Initializer.  Configure the url generator with all the data it needs.
      *
      * @param string the base URL
+     * @param string (optional) when embedded, this is the path from document root to baseFile
      * @param string (optional) when embedded, relative path between G2 request urls and G2 basedir
      * @param string (optional) when embedded in CMS app that supports cookieless browsing,
      *                          key=value string for CMS session key and id
      */
-    function init($baseFile, $relativeG2Path=null, $embedSessionString=null) {
+    function init($baseFile, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
 	$this->_baseFile = $baseFile;
 	$this->_relativeG2Path = $relativeG2Path;
 	$this->_embedSessionString = $embedSessionString;
+	$this->_embedPath = $embedPath;
 
 	if (!empty($this->_relativeG2Path) &&
 		$this->_relativeG2Path{strlen($this->_relativeG2Path)-1} != '/') {
 	    $this->_relativeG2Path .= '/';
+	}
+
+	if (!empty($this->_embedPath)) {
+	    if ($this->_embedPath{strlen($this->_embedPath)-1} != '/') {
+	        $this->_embedPath .= '/';
+	    }
+	    if ($this->_embedPath{0} != '/') {
+	        $this->_embedPath = '/'.$this->_embedPath;
+	    }
 	}
     }
 
@@ -239,21 +250,30 @@ class GalleryUrlGenerator {
 	    return $this->_currentUrlDir[$forceG2Base];
 	}
 
-	$url = $this->getCurrentUrl();
+	/* Force currentUrlDir if embedPath is set */
+	if (!empty($this->_embedPath)) {
+	    /*
+	     * Set the currentUrlDir without parsing the REQUEST_URI. Goal: Decouple generated urls
+	     * from current REQUEST_URI in embedded mode.
+	     */
+	    $url = GalleryUrlGenerator::makeUrl($this->_embedPath);
+	} else {
+	    $url = $this->getCurrentUrl();
 
-	/*
-	 * Remove the base file and any query string or path info after it:
-	 *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
-	 * Extract everything up to but not including main.php:
-	 *    http://example.com/gallery2/
-	 *
-	 * TODO: now that short urls are gone, do we need to do anything
-	 *       other than look at the path component of the url?
-	 */
-	if (($i = strpos($url, $this->_baseFile)) !== false) {
-	    $url = substr($url, 0, $i);
+	    /*
+	     * Remove the base file and any query string or path info after it:
+	     *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
+	     * Extract everything up to but not including main.php:
+	     *    http://example.com/gallery2/
+	     *
+	     * TODO: now that short urls are gone, do we need to do anything
+	     *       other than look at the path component of the url?
+	     */
+	    if (($i = strpos($url, $this->_baseFile)) !== false) {
+	        $url = substr($url, 0, $i);
+	    }
 	}
-
+    
 	/*
 	 * If requested, apply relativeG2Path setting to get G2 base url, eg:
 	 *    http://example.com/cms/index.php?module=g2&g2_view=...
