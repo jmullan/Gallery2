@@ -129,8 +129,17 @@ class AdminMaintenanceView extends GalleryView {
 	    }
 	    
 	    $AdminMaintenance['tasks'][$taskId] = $task->getInfo();
-	    $AdminMaintenance['tasks'][$taskId] =
-		array_merge($AdminMaintenance['tasks'][$taskId],  $info);
+	    if (isset($info)) {
+		$AdminMaintenance['tasks'][$taskId]['runId'] = $info['runId'];
+		$AdminMaintenance['tasks'][$taskId]['timestamp'] = $info['timestamp'];
+		$AdminMaintenance['tasks'][$taskId]['success'] = $info['success'];
+		$AdminMaintenance['tasks'][$taskId]['details'] = $info['details'];
+	    } else {
+		$AdminMaintenance['tasks'][$taskId]['runId'] = null;
+		$AdminMaintenance['tasks'][$taskId]['timestamp'] = null;
+		$AdminMaintenance['tasks'][$taskId]['success'] = null;
+		$AdminMaintenance['tasks'][$taskId]['details'] = null;
+	    }
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
