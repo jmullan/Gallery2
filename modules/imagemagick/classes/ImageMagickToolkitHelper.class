@@ -116,24 +116,21 @@ class ImageMagickToolkitHelper {
 	global $gallery;
 
 	if (empty($imageMagickPath)) {
-	    list ($ret, $imageMagickPath) =
-		$gallery->getModuleParameter('imagemagick', 'path');
+	    list ($ret, $imageMagickPath) = $gallery->getModuleParameter('imagemagick', 'path');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    if (empty($imageMagickPath)) {
-		return array(GalleryStatus::error(ERROR_MISSING_VALUE,
-						  __FILE__, __LINE__),
-			     null);
+		return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__), null);
 	    }
 	}
 
 	$command = array($imageMagickPath . 'identify',
-			 dirname(__FILE__) . '/../test/images/test.gif',
-			 dirname(__FILE__) . '/../test/images/test.jpg',
-			 dirname(__FILE__) . '/../test/images/test.png',
-			 dirname(__FILE__) . '/../test/images/test.tif',
+			 dirname(__FILE__) . '/../test/data/test.gif',
+			 dirname(__FILE__) . '/../test/data/test.jpg',
+			 dirname(__FILE__) . '/../test/data/test.png',
+			 dirname(__FILE__) . '/../test/data/test.tif',
 			);
 
 	$platform = $gallery->getPlatform();
@@ -144,6 +141,7 @@ class ImageMagickToolkitHelper {
 			 null);
 	}
 
+	$mimeTypes = array();
 	foreach ($results as $resultLine) {
 	    if (ereg('(GIF.*PseudoClass|PseudoClass.*GIF)', $resultLine)) {
 		$mimeTypes[] = 'image/gif';
@@ -207,11 +205,10 @@ class ImageMagickToolkitHelper {
 	    switch ($binary) {
 	    case 'identify':
 		$command = array($imageMagickPath . 'identify',
-				 dirname(__FILE__) . '/../test/images/test.gif'
+				 dirname(__FILE__) . '/../test/data/test.gif'
 				);
 		list ($success, $results) = $platform->exec(array($command));
 		if (!$success) {
-		    @$platform->unlink($tmpFilename);
 		    $testArray[] = array('name' => 'identify',
 					 'success' => false,
 					 'message' => array_merge($module->translate('Problem executing binary:'),
@@ -242,7 +239,7 @@ class ImageMagickToolkitHelper {
 		}
 		$command = array($imageMagickPath . 'convert',
 				 '-scale', '200x200',
-				 dirname(__FILE__) . '/../test/images/test.gif',
+				 dirname(__FILE__) . '/../test/data/test.gif',
 				 $tmpFilename
 				);
 		list ($success, $results) = $platform->exec(array($command));
@@ -276,9 +273,7 @@ class ImageMagickToolkitHelper {
 	    }
 	}
 
-	return array(GalleryStatus::success(),
-		     $testArray
-		     );
+	return array(GalleryStatus::success(), $testArray);
     }
 }
 ?>

@@ -58,7 +58,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 		return array($ret->wrap(__FILE__, __LINE__),
 			     null);
 	    }
-	    $results = array($width, $height);
+	    $results = array((int)$width, (int)$height);
 	    break;
 
 	default:
@@ -152,17 +152,16 @@ class ImageMagickToolkit extends GalleryToolkit {
 	global $gallery;
 
 	/*
-	 * Run it through PHP first, it's faster and more portable.  Suppress
-	 * output, though, since this may run afoul of open_basedir.  If it
-	 * does, then it'll return false and we can use ImageMagick.
+	 * Run it through PHP first, it's faster and more portable.  If it runs
+	 * afoul of open_basedir it'll return false and we can try ImageMagick.
 	 */
-	$ret = @getimagesize($filename);
-	if (($ret != false) &&
-	    (($ret[0] > 1) && ($ret[1] > 1))) {
-	    return array(GalleryStatus::success(), $ret[0], $ret[1]);
+	$platform = $gallery->getPlatform();
+	$results = $platform->getimagesize($filename);
+	if (($results != false) &&
+	    (($results[0] > 1) && ($results[1] > 1))) {
+	    return array(GalleryStatus::success(), $results[0], $results[1]);
 	}
 
-	$platform = $gallery->getPlatform();
 	list($success, $output) = $platform->exec(array(array($this->_imageMagickCmd('identify'), $filename)));
 	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_TOOLKIT_FAILURE, __FILE__, __LINE__), 0, 0);
