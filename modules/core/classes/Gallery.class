@@ -277,7 +277,7 @@ class Gallery {
      * @return object GalleryStatus a status code
      */
     function initSession() {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySession.class');
 	if (empty($this->_session)) {
 	    $this->_session = new GallerySession();
 	    $ret = $this->_session->init();
