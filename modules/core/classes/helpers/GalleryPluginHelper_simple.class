@@ -219,7 +219,7 @@ class GalleryPluginHelper_simple {
      * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
-     *                                               'installed' => true/false)
+     *                                               'available' => true/false)
      * @static
      */
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
@@ -264,7 +264,7 @@ class GalleryPluginHelper_simple {
 			
 			$path = $pluginsDir . $pluginId . '/' . $pluginFile;
 			if ($platform->file_exists($path)) {
-			    $plugins[$pluginId]['installed'] = 1;
+			    $plugins[$pluginId]['available'] = 1;
 			}
 		    }
 		    $platform->closedir($dir);
@@ -272,7 +272,7 @@ class GalleryPluginHelper_simple {
 
 		/* Find and remove plugins that are active, but not installed */
 		foreach ($plugins as $pluginId => $pluginStatus) {
-		    if (!isset($pluginStatus['installed'])) {
+		    if (!isset($pluginStatus['available'])) {
 			$gallery->debug("Plugin $pluginId no longer installed");
 			unset($plugins[$pluginId]);
 		    }
@@ -280,7 +280,7 @@ class GalleryPluginHelper_simple {
 
 		if ($pluginType == 'module') {
 		    /* Force the core module's status */
-		    $plugins['core'] = array('active' => 1, 'installed' => 1);
+		    $plugins['core'] = array('active' => 1, 'available' => 1);
 		}
 
 		GalleryDataCache::putToDisk(array('type' => $pluginType,

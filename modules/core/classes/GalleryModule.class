@@ -147,6 +147,33 @@ class GalleryModule {
     }
 
     /**
+     * Remove this module's plugin parameters and all of its database tables.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function uninstall() {
+	global $gallery;
+
+	/* Find and remove all module permissions */
+	$ret = GalleryCoreApi::unregisterModulePermissions($this->getId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Remove this plugin */
+	GalleryCoreApi::removePlugin('module', $this->getId());
+
+	/* Remove all tables */
+	$storage =& $gallery->getStorage();
+	$ret = $storage->unconfigureStore($this->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	    
+	return GalleryStatus::success();
+    }
+
+    /**
      * Activate this module
      *
      * @return array object GalleryStatus a status code

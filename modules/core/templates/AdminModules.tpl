@@ -62,15 +62,17 @@
 
 	<td>
 	  {if (!empty($module.action))}
-	  {if (empty($module.action.controller)) }
-	  <a href="{g->url arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$module.action.view`"}">
-	    {$module.action.text}
+	  {foreach from=$module.action item=action}
+	  {if (empty($action.controller)) }
+	  <a href="{g->url arg1="return=true" arg2="view=core:SiteAdmin" arg3="subView=`$action.view`"}">
+	    {$action.text}
 	  </a>
 	  {else}
-	  <a href="{g->url arg1="controller=`$module.action.controller`" arg2="moduleId=`$module.action.moduleId`" arg3="action=`$module.action.action`"}">
-	    {$module.action.text}
+	  <a href="{g->url arg1="controller=`$action.controller`" arg2="moduleId=`$action.moduleId`" arg3="action=`$action.action`"}">
+	    {$action.text}
 	  </a>
 	  {/if}
+          {/foreach}
 	  {else}
 	  &nbsp;
 	  {/if}

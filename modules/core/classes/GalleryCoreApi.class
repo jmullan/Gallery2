@@ -193,7 +193,7 @@ class GalleryCoreApi {
      * @param bool true if we want to ignore the cache?
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
-     *                                               'installed' => true/false)
+     *                                               'available' => true/false)
      * @static
      */
     function fetchPluginStatus($pluginType, $ignoreCache=false) {
@@ -237,19 +237,7 @@ class GalleryCoreApi {
      */
     function removePlugin($pluginType, $pluginId) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
-	return GalleryPluginHelper_medium::remove($pluginType, $pluginId);
-    }
-
-    /**
-     * Get rid of the specified plugin.
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @static
-     */
-    function unloadPlugin($pluginType, $pluginId) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/helpers/GalleryPluginHelper_medium.class');
-	return GalleryPluginHelper_medium::unloadPlugin($pluginType, $pluginId);
+	return GalleryPluginHelper_medium::removePlugin($pluginType, $pluginId);
     }
 
     /**

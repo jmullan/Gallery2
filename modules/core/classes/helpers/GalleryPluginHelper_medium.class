@@ -104,7 +104,6 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 					       'id' => '_all'));
-	
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
 	$event = GalleryCoreApi::newEvent("Gallery::DeactivatePlugin");
@@ -125,35 +124,32 @@ class GalleryPluginHelper_medium {
      * @return object GalleryStatus a status code
      * @static
      */
-    function remove($pluginType, $pluginId) {
+    function removePlugin($pluginType, $pluginId) {
 	if (empty($pluginId) || empty($pluginType)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/../GalleryPluginMap.class');
+	/* Remove all plugin parameters */
+	$ret = GalleryPluginHelper_medium::removeAllParameters($pluginType, $pluginId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPluginMap.class');
 	$ret = GalleryPluginMap::removeMapEntry(array('pluginType' => $pluginType,
 						      'pluginId' => $pluginId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
-    }
+	/* Flush the cache */
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginStatus($pluginType)");
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
+					       'id' => '_all'));
+	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
-    /**
-     * Get rid of the specified plugin.
-     *
-     * TODO: This is incomplete, since if the plugin has already been initialized
-     *       then it may have registered implementations with the factory or otherwise
-     *       left tendrils of itself in memory.
-     *
-     * @param string the plugin type
-     * @param string the plugin id
-     * @static
-     */
-    function unloadPlugin($pluginType, $pluginId) {
-	$cacheKey = "GalleryPluginHelper::loadPlugin($pluginType, $pluginId)";
-	GalleryDataCache::remove($cacheKey);
+	return GalleryStatus::success();
     }
 
     /**
@@ -293,7 +289,9 @@ class GalleryPluginHelper_medium {
 	GalleryDataCache::removeByPattern("GalleryPluginHelper::fetchAllParameters\($pluginType, $pluginId, ");
 	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
 					       'id' => $pluginId));
-
+	GalleryDataCache::removeFromDisk(array('type' => $pluginType,
+					       'itemId' => 0,
+					       'id' => $pluginId));
 	return GalleryStatus::success();
     }
 

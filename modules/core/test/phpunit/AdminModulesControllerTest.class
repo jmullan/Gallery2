@@ -60,7 +60,7 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'core:AdminModules'),
-				  'status' => array('installed' => 'AdminModulesControllerTest'),
+				  'status' => array('available' => 'AdminModulesControllerTest'),
 				  'error' => array()),
 			    $results);
 

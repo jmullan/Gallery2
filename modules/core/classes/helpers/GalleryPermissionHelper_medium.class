@@ -93,9 +93,13 @@ class GalleryPermissionHelper_medium {
 	$permTable = array();
 	while ($result = $searchResults->nextResult()) {
 	    $bits = $storage->convertBitsToInt($result[1]);
-	    list ($ret, $permissions) = GalleryCoreApi::convertPermissionBitsToIds($bits);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+	    if (!empty($bits)) {
+		list ($ret, $permissions) = GalleryCoreApi::convertPermissionBitsToIds($bits);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else {
+		$permissions = array();
 	    }
 
 	    foreach ($permissions as $permission) {
@@ -122,7 +126,7 @@ class GalleryPermissionHelper_medium {
 	global $gallery;
 
 	if (empty($permissionBits)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::success(), array());
 	}
 
 	$cacheKey = "GalleryPermissionHelper::convertBitsToIds($permissionBits, $compress)";

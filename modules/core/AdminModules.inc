@@ -72,11 +72,10 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['installed'] = $module->getName();
+		$status['available'] = $module->getName();
 		break;
 		
 	    case 'activate':
-
 		/* Can't activate if we're already active! */
 		if (!$isActive) {
 		    list ($ret, $needsConfiguration) = $module->needsConfiguration();
@@ -103,7 +102,6 @@ class AdminModulesController extends GalleryController {
 		break;
 		
 	    case 'deactivate':
-
 		/* Can't deactivate if we're not active! */
 		if ($isActive) {
 		    list ($ret, $redirect) = $module->deactivate();
@@ -116,6 +114,25 @@ class AdminModulesController extends GalleryController {
 		    }
 		    $status['deactivated'] = $module->getName();
 		}
+		break;
+
+	    case 'uninstall':
+		if ($isActive) {
+		    list ($ret, $redirect) = $module->deactivate();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		    
+		$ret = $module->uninstall();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (empty($redirect)) {
+		    $redirect['view'] = 'core:SiteAdmin';
+		    $redirect['subView'] = 'core:AdminModules';
+		}
+		$status['uninstalled'] = $module->getName();
 		break;
 
 	    default:
@@ -182,6 +199,7 @@ class AdminModulesView extends GalleryView {
 	    $entry = array();
 	    $entry['name'] = $module->getName();
 	    $entry['l10Domain'] = 'modules_' . $moduleId;
+	    $entry['action'] = array();
 	    if ($moduleId != 'core') {
 		if (empty($status['active'])) {
 		    list ($ret, $version) = $module->getModuleParameter('version');
@@ -194,12 +212,11 @@ class AdminModulesView extends GalleryView {
 		     * version, we need to get the user to install the module.
 		     */
 		    if ($version != $module->getVersion()) {
-			$entry['action'] = array('text' => $coreModule->translate('install'),
-						 'controller' => 'core:AdminModules',
-						 'moduleId' => $module->getId(),
-						 'action' => 'install');
+			$entry['action'][] = array('text' => $coreModule->translate('install'),
+						   'controller' => 'core:AdminModules',
+						   'moduleId' => $module->getId(),
+						   'action' => 'install');
 		    } else {
-
 			/*
 			 * The versions match, but the module can still demand
 			 * to be configured before being activated.
@@ -211,20 +228,24 @@ class AdminModulesView extends GalleryView {
 
 			if ($needsConfig) {
 			    $configView = $module->getConfigurationView();
-			    $entry['action'] = array('text' => $coreModule->translate('configure'),
-						     'view' => $configView);
+			    $entry['action'][] = array('text' => $coreModule->translate('configure'),
+						       'view' => $configView);
 			} else {
-			    $entry['action'] = array('text' => $coreModule->translate('activate'),
-						     'controller' => 'core:AdminModules',
-						     'moduleId' => $moduleId,
-						     'action' => 'activate');
+			    $entry['action'][] = array('text' => $coreModule->translate('activate'),
+						       'controller' => 'core:AdminModules',
+						       'moduleId' => $moduleId,
+						       'action' => 'activate');
 			}
+			$entry['action'][] = array('text' => $coreModule->translate('uninstall'),
+						   'controller' => 'core:AdminModules',
+						   'moduleId' => $moduleId,
+						   'action' => 'uninstall');
 		    }
 		} else {
-		    $entry['action'] = array('text' => $coreModule->translate('deactivate'),
-					     'controller' => 'core:AdminModules',
-					     'moduleId' => $moduleId,
-					     'action' => 'deactivate');
+		    $entry['action'][] = array('text' => $coreModule->translate('deactivate'),
+					       'controller' => 'core:AdminModules',
+					       'moduleId' => $moduleId,
+					       'action' => 'deactivate');
 		}
 	    }
 	    
@@ -236,7 +257,7 @@ class AdminModulesView extends GalleryView {
 	    $modules[] = $entry;
 	}
 
-	usort($modules, 'AdminModules_moduleSort');
+	usort($modules, array($this, 'moduleSort'));
 	$AdminModules['modules'] = $modules;
 
 	/* Render the HTML body */
@@ -246,32 +267,32 @@ class AdminModulesView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminModules.tpl'));
     }
-}
 
-function AdminModules_moduleSort($a, $b) {
-    static $groupOrder;
-    if (!isset($groupOrder)) {
-      // gallery first, toolkits second, other last
-      $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
-    }
-    $ag = $a['group'];
-    $bg = $b['group'];
-    if ($ag != $bg) {
-	$ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
-	$bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
-	if ($ao != $bo) {
-	    return ($ao > $bo) ? 1 : -1;
+    function moduleSort($a, $b) {
+	static $groupOrder;
+	if (!isset($groupOrder)) {
+	    // gallery first, toolkits second, other last
+	    $groupOrder = array('gallery' => 1, 'toolkits' => 2, '' => 3, 'other' => 4);
 	}
-	$ag = isset($a['groupLabel']) ? $a['groupLabel'] : $ag;
-	$bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
-	return ($ag > $bg) ? 1 : -1;
-    } else {
-	$an = $a['name'];
-	$bn = $b['name'];
-	if ($an == $bn) {
-	    return 0;
+	$ag = $a['group'];
+	$bg = $b['group'];
+	if ($ag != $bg) {
+	    $ao = isset($groupOrder[$ag]) ? $groupOrder[$ag] : $groupOrder[''];
+	    $bo = isset($groupOrder[$bg]) ? $groupOrder[$bg] : $groupOrder[''];
+	    if ($ao != $bo) {
+		return ($ao > $bo) ? 1 : -1;
+	    }
+	    $ag = isset($a['groupLabel']) ? $a['groupLabel'] : $ag;
+	    $bg = isset($b['groupLabel']) ? $b['groupLabel'] : $bg;
+	    return ($ag > $bg) ? 1 : -1;
 	} else {
-	    return ($an > $bn) ? 1 : -1;
+	    $an = $a['name'];
+	    $bn = $b['name'];
+	    if ($an == $bn) {
+		return 0;
+	    } else {
+		return ($an > $bn) ? 1 : -1;
+	    }
 	}
     }
 }

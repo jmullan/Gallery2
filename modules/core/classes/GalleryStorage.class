@@ -339,6 +339,24 @@ class GalleryStorage {
     }
     
     /**
+     * Uninstall the database schema for the given module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function unconfigureStore($moduleId) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+	
+	return $this->_impl->unconfigureStore($moduleId);
+    }
+    
+    /**
      * Clean out and reset the persistent store for this strategy.
      *
      * @return object GalleryStatus a status code

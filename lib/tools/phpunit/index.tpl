@@ -155,7 +155,7 @@
             <?php print !empty($moduleStatus['active']) ? "active" : "not active" ?>
           </td>
           <td width="100">
-            <?php print !empty($moduleStatus['installed']) ? "installed" : "not installed" ?>
+            <?php print !empty($moduleStatus['available']) ? "installed" : "not available" ?>
           </td>
         </tr>
         <?php endforeach; ?> 

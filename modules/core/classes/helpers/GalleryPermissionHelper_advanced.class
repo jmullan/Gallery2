@@ -384,7 +384,7 @@ class GalleryPermissionHelper_advanced {
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $permissions = $storage->convertBitsToInt($result[2]);
-	    require_once(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
 	    list ($ret, $permissions) =
 		GalleryPermissionHelper_medium::convertBitsToIds($permissions, $compress);
 	    if ($ret->isError()) {
@@ -580,7 +580,7 @@ class GalleryPermissionHelper_advanced {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	require_once(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
 	list ($ret, $permissionTable) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -601,7 +601,8 @@ class GalleryPermissionHelper_advanced {
 	} else if ($flags & GALLERY_PERMISSION_COMPOSITE) {
 	    if (empty($composites)) {
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					    "Permission $permissionId is marked as a composite, but didn't specify any composites!");
+					    "Permission $permissionId is marked as a composite, " .
+					    "but didn't specify any composites!");
 	    }
 
 	    /* Convert our composites to their associated values */
@@ -626,6 +627,9 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Clear the cache */
+	GalleryDataCache::remove('GalleryPermissionHelper::allPermissions');
+
 	return GalleryStatus::success();
     }
 
@@ -639,7 +643,6 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function getPermissionIds($flags=0) {
-	require_once(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -671,6 +674,7 @@ class GalleryPermissionHelper_advanced {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_medium.class');
 	list ($ret, $ids) = GalleryPermissionHelper_medium::convertBitsToIds($bits);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -686,12 +690,30 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function unregisterModulePermissions($moduleId) {
-
 	if (empty($moduleId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
+
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
+	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	
-	require_once(dirname(__FILE__) . '/../GalleryPermissionSetMap.class');
+	$ids = array();
+	foreach ($allPermissions as $key => $info) {
+	    if ($info['module'] == $moduleId) {
+		$ids[] = $key;
+	    }
+	}
+
+	$ret = GalleryPermissionHelper_advanced::_removePermissionsFromAllItems($ids);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Remove the permission from the permission set */
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPermissionSetMap.class');
 	$ret = GalleryPermissionSetMap::removeMapEntry(array('module' => $moduleId));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -771,6 +793,51 @@ class GalleryPermissionHelper_advanced {
 
 	require_once(dirname(__FILE__) . '/../GalleryPermissionSetMap.class');
 	$ret = GalleryPermissionSetMap::addMapEntry($data);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Remove the given permissions from all items.  Useful when we remove a
+     * permission from the system.
+     *
+     * @param array permission ids
+     * @return object GalleryStatus a status code
+     */
+    function _removePermissionsFromAllItems($permissionIds) {
+	global $gallery;
+	
+	list ($ret, $removeBits) = GalleryCoreApi::convertPermissionIdsToBits($permissionIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $allBits) = GalleryCoreApi::convertPermissionIdsToBits('core.all');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$storage =& $gallery->getStorage();
+	list ($ret, $andPermission) = $storage->getFunctionSql('BITAND',
+            array('[GalleryPermissionMap::permission]', '~?'));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$query = '
+        UPDATE
+          [GalleryPermissionMap]
+        SET
+          [GalleryPermissionMap::permission] = ' . $andPermission . '
+        WHERE
+           [GalleryPermissionMap::permission] != ?
+        ';
+	$data = array($removeBits, $allBits);
+
+	list ($results, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

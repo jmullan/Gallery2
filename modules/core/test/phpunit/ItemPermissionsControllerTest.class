@@ -163,6 +163,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	$count = 0;
 	list ($ret, $permissions) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	foreach ($permissions as $permission) {
 	    if ($permission['groupId'] == $this->_group->getId()) {
 		$this->assertEquals(array('userId' => 0,
@@ -199,6 +202,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	$count = 0;
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	    foreach ($permissions as $permission) {
 		if ($permission['groupId'] == $this->_group->getId()) {
 		    $this->assertEquals(array('userId' => 0,
@@ -317,6 +323,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 
 	/* Fetch all permissions and compare the ones we care about */
 	list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	foreach ($permissions as $permission) {
 	    if ($permission['groupId'] == $this->_group->getId()) {
 		$this->assert(false, 'invalid group permission found');
@@ -357,6 +366,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) =
 		GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	    foreach ($permissions as $permission) {
 		if ($permission['groupId'] == $this->_group->getId()) {
 		    $this->assert(false, 'invalid group permission found: ' . serialize($permission));
@@ -388,6 +400,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	$count = 0;
 	list ($ret, $permissions) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	foreach ($permissions as $permission) {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assertEquals(array('userId' => $this->_user->getId(),
@@ -424,6 +439,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	$count = 0;
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) = GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	    foreach ($permissions as $permission) {
 		if ($permission['userId'] == $this->_user->getId()) {
 		    $this->assertEquals(array('userId' => $this->_user->getId(),
@@ -543,6 +561,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	/* Fetch all permissions and compare the ones we care about */
 	list ($ret, $permissions) =
 	    GalleryCoreApi::fetchAllPermissionsForItem($this->_albumParent->getId(), false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	foreach ($permissions as $permission) {
 	    if ($permission['userId'] == $this->_user->getId()) {
 		$this->assert(false, 'invalid user permission found');
@@ -583,6 +604,9 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	foreach (array($this->_albumParent, $this->_albumChild) as $album) {
 	    list ($ret, $permissions) =
 		GalleryCoreApi::fetchAllPermissionsForItem($album->getId(), false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	    foreach ($permissions as $permission) {
 		if ($permission['userId'] == $this->_user->getId()) {
 		    $this->assert(false, 'invalid user permission found: ' . serialize($permission));

@@ -942,30 +942,24 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	return GalleryStatus::success();
     }
 
-    /**
-     * Install or update the database schema for the given module
-     *
-     * Note that the database connection must not be attached to a specific
-     * database for this to work.
-     *
-     * @return object GalleryStatus a status code
+    /*
+     * Load up the table creation and alteration SQL files for the given module
+     * @access private
      */
-    function configureStore($moduleId) {
+    function _getModuleSql($moduleId) {
 	global $gallery;
 	
-	if (empty($this->_db)) {
-	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
-	}
-	
-	/*
-	 * Find the SQL files for this platform
-	 */
+	$platform = $gallery->getPlatform();
 	$sqlDir = dirname(__FILE__) . '/../../../../modules/' . $moduleId .
 	    '/classes/GalleryStorage/DatabaseStorage/schema/platform/' .
 	    $this->getType();
-	$platform = $gallery->getPlatform();
 
-	$sqlFiles = array();
+	if (!$platform->file_exists($sqlDir)) {
+	    return array(GalleryStatus::success(), array(), array());
+	}
+
+	$tableAlter = array();
+	$tableDefinition = array();
 	if ($dir = $platform->opendir($sqlDir)) {
 	    while (($file = $platform->readdir($dir)) !== false) {
 		/*
@@ -986,9 +980,29 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 	    $platform->closedir($dir);
 	} else {
-	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
+	return array(GalleryStatus::success(), $tableDefinition, $tableAlter);
+    }
+
+    /**
+     * Install or update the database schema for the given module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStore($moduleId) {
+	global $gallery;
+	
+	if (empty($this->_db)) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+	
+	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	/* Get the metabase info about this database */
 	$this->_traceStart();
 	$metatables = $this->_db->MetaTables();
@@ -1081,6 +1095,75 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		    }
 		}
 	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Uninstall the database schema for the given module
+     *
+     * @return object GalleryStatus a status code
+     */
+    function unconfigureStore($moduleId) {
+	global $gallery;
+	
+	if (empty($this->_db)) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+	
+	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	/* Get the metabase info about this database */
+	$this->_traceStart();
+	$metatables = $this->_db->MetaTables();
+	$this->_traceStop();
+
+	/*
+	 * Some databases (notably MySQL on Win32) don't support mixed case
+	 * table names.  So, when we get the meta table list back, it's lower
+	 * case.  Force all metatable listings to lower case and then expect
+	 * them to be lowercase so that we're consistent.
+	 */
+	for ($i = 0; $i < sizeof($metatables); $i++) {
+	    $metatables[$i] = strtolower($metatables[$i]);
+	}
+
+	/*
+	 * Now take care of the rest of the tables.  If the table doesn't
+	 * exist, apply the current table definition.  If it already exists,
+	 * check to see if there is an upgrade available for the given table
+	 * version.  If so, apply it.
+	 */
+	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
+	$schemaColumnName = $this->_translateColumnName('name');
+	foreach ($tableDefinition as $rawTableName => $sqlFile) {
+	    // Don't drop the schema table, it's part of the core.
+	    if ($rawTableName == 'Schema') {
+		continue;
+	    }
+
+	    $this->_traceStart();
+	    list ($tableName, $unused, $tableNameInSchema) = $this->_translateTableName($rawTableName);
+	    if (in_array(strtolower($tableName), $metatables)) {
+		/* Drop the table and yank it from the schema table */
+		$dropQuery = sprintf('DROP TABLE %s', $tableName);
+		$recordSet = $this->_db->Execute($dropQuery);
+		if (empty($recordSet)) {
+		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+		}
+	    } 
+
+	    $cleanQuery = sprintf('DELETE FROM %s where %s=?',
+				  $schemaTableName, $schemaColumnName);
+	    $recordSet = $this->_db->Execute($cleanQuery, array($tableNameInSchema));
+	    if (empty($recordSet)) {
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
+	    $this->_traceStop();
 	}
 
 	return GalleryStatus::success();
@@ -1200,7 +1283,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	    foreach (array_keys($tableVersions) as $rawTableName) {
 		list ($tableName, $unused) = $this->_translateTableName($rawTableName);
-		$query = 'DROP TABLE ' . $tableName;
+		$query = sprintf('DROP TABLE %s', $tableName);
 		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query);
 		$this->_traceStop();
@@ -1431,10 +1514,17 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
-     * Translate a potentially unsafe table name into a safe one
+     * Translate a potentially unsafe table name into a safe one by adding
+     * a prefix or suffix to avoid conflicting with a reserved word.
+     *
+     * eg:
+     * Comment   => array(g2_Comment, null, Comment)
+     * Comment=1 => array(g2_Comment, C0, Comment)
      *
      * @param string the name of a table
-     * @return string a safe table name
+     * @return array string a safe table name
+     *               an alias for this table
+     *               the unsafe, but translated, table name
      * @access private
      */
     function _translateTableName($tableName) {
@@ -1475,7 +1565,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $alias = null;
 	}
 
-	return array($this->_tablePrefix . $tableName, $alias);
+	return array($this->_tablePrefix . $tableName, $alias, $tableName);
     }
 
     /**

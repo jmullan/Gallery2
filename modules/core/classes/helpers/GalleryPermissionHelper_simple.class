@@ -42,13 +42,13 @@ class GalleryPermissionHelper_simple {
      */
     function convertIdsToBits($permissionIds) {
 	global $gallery;
+	if (!is_array($permissionIds)) {
+	    $permissionIds = array($permissionIds);
+	}
+
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!is_array($permissionIds)) {
-	    $permissionIds = array($permissionIds);
 	}
 
 	$results = 0;
@@ -65,7 +65,7 @@ class GalleryPermissionHelper_simple {
     }
 
     /**
-     * Return a list of permissions for the given item id
+     * Return a list of all available permissions 
      *
      * @return array object GalleryStatus a status code
      *               array ('permission' => array('module' => ...,
@@ -74,7 +74,6 @@ class GalleryPermissionHelper_simple {
      *                                            'bits' => ...,
      *                                            'flags' => ...)
      *                      ...)
-     * @access private
      * @static
      */
     function _fetchAllPermissions() {

@@ -573,9 +573,11 @@ class GalleryItemHelper_advanced {
 	foreach ($items as $item) {
 	    /* find all permissions we have to add */
 	    $newPermissions = array();
-	    foreach (array_keys($oldUserPermissions[$item->getId()]) as $permission) {
-		if(!isset($newUserPermissions[$item->getId()][$permission])) {
-		    $newPermissions[] = $permission;
+	    if (!empty($oldUserPermissions)) {
+		foreach (array_keys($oldUserPermissions[$item->getId()]) as $permission) {
+		    if(!isset($newUserPermissions[$item->getId()][$permission])) {
+			$newPermissions[] = $permission;
+		    }
 		}
 	    }
 	    /*
