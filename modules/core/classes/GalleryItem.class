@@ -641,6 +641,16 @@ class GalleryItem_core extends GalleryFileSystemEntity {
     function itemTypeName() {
 	assert(false);
     }
+
+    /**
+     * Does this item type support linking?  Subclasses should override this method and
+     * return true if they support linking
+     *
+     * @return true if yes
+     */
+    function isLinkable() {
+	return false;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryItem.inc');

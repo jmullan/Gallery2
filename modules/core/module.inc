@@ -532,6 +532,27 @@ class CoreModule extends GalleryModule {
 		}
 	    }
 
+	    if ($item->isLinkable()) {
+		if ($isAlbum) {
+		    list ($ret, $canWrite) = GalleryPermissionMap::hasPermissionInAnyAlbum('core.addDataItem');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    list ($ret, $canWrite) = GalleryPermissionMap::hasPermissionInAnyAlbum('core.addAlbumItem');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		if ($canWrite) {
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('create link'),
+			      'params' => array('view' => 'core:ItemAdmin',
+						'subView' => 'core:ItemCreateLink',
+						'itemId' => $item->getId()));
+		}
+	    }
 
 	    if ($isAlbum && isset($permissions['core.addAlbumItem'])) {
 		$links[$item->getId()][] =

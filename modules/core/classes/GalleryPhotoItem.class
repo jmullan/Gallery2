@@ -220,6 +220,13 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    return null;
 	}
     }
+
+    /**
+     * @see GalleryItem::isLinkable
+     */
+    function isLinkable() {
+	return true;
+    }
 }
 
 include(dirname(__FILE__) . '/interfaces/GalleryPhotoItem.inc');
