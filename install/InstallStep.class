@@ -29,6 +29,10 @@ class InstallStep {
 	return $this->_isComplete;
     }
 
+    function isRedoable() {
+	return false;
+    }
+
     function setComplete($complete) {
 	$this->_isComplete = $complete;
     }

@@ -64,17 +64,20 @@
 	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	<div class="go">
-	  <span class="goToNext">
-	    <a href="index.php?step=<?php echo $stepNumber?>&doOver=1">
-	      <?php print _('Redo this step'); ?>
-	    </a>
-	  </span>
 	  <?php $nextStep = $stepNumber + 1 ?>
-	  <span class="goToNextL">
+	  <span class="goToNext">
 	    <a href="index.php?step=<?php echo $nextStep?>">
 	      <?php printf(_('Go to Step %d&raquo;'), $nextStep); ?>
 	    </a>
 	  </span>
+
+	  <?php if ($currentStep->isRedoable()): ?>
+	  <span class="goToNextL">
+	    <a href="index.php?step=<?php echo $stepNumber?>&doOver=1">
+	      <?php print _('Redo this step'); ?>
+	    </a>
+	  </span>
+	  <?php endif; ?>
 	</div>
 	<?php endif; ?>
       </div>

@@ -59,5 +59,9 @@ class AdminUserSetupStep extends InstallStep {
 	    $templateData['bodyFile'] = 'AdminUserSetupRequest.html';
 	}
     }
+
+    function isRedoable() {
+	return true;
+    }
 }
 ?>

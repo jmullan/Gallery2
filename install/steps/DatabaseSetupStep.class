@@ -170,5 +170,9 @@ class DatabaseSetupStep extends InstallStep {
 	unset($this->_debugContents);
 	return $contents;
     }
+
+    function isRedoable() {
+	return true;
+    }
 }
 ?>
