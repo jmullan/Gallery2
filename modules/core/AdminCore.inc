@@ -55,31 +55,9 @@ class AdminCoreController extends GalleryController {
 
 	$error = array();
 	$status = array();
+	$canSave = false;
 	if (isset($form['action']['save'])) {
-	    foreach (array('permissions.directory',
-			   'permissions.file',
-			   'exec.expectedStatus',
-			   'default.orderBy',
-			   'default.orderDirection',
-			   'default.layout',
-			   'default.theme',
-			   'default.language',
-			   'language.selector',
-			   'session.lifetime',
-			   'session.inactivityTimeout',
-			   'misc.useShortUrls',
-			   'misc.markup') as $key) {
-		list ($outer, $inner) = split('\.', $key);
-		if (isset($form[$outer][$inner])) {
-		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
-	    }
-	    $status['saved'] = 1;
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminCore';
+	    $canSave = true;
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $path = $form['uploadLocalServer']['newDir'];
 
@@ -109,6 +87,7 @@ class AdminCoreController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		$canSave = true;
 		$status['addedDir'] = 1;
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminCore';
@@ -138,6 +117,33 @@ class AdminCoreController extends GalleryController {
 	    } else {
 		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
 	    }
+	}
+
+	if ($canSave) {
+	    foreach (array('permissions.directory',
+			   'permissions.file',
+			   'exec.expectedStatus',
+			   'default.orderBy',
+			   'default.orderDirection',
+			   'default.layout',
+			   'default.theme',
+			   'default.language',
+			   'language.selector',
+			   'session.lifetime',
+			   'session.inactivityTimeout',
+			   'misc.useShortUrls',
+			   'misc.markup') as $key) {
+		list ($outer, $inner) = split('\.', $key);
+		if (isset($form[$outer][$inner])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $form[$outer][$inner]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	    $status['saved'] = 1;
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminCore';
 	}
 
 	if (!empty($redirect)) {
