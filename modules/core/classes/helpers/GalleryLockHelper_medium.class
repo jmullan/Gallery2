@@ -314,9 +314,34 @@ class GalleryLockHelper_medium {
     function deleteLockFile($id) {
 	global $gallery;
 
-	$lockFile = GalleryLockHelper_medium::_getLockFile($id);
+	/*
+	 * Release the lock before we delete the lock file.  This is tricky --
+	 * we may have locked this entity along with other ones.  Surgically
+	 * extract this entity id from the lock, but leave the lock around even
+	 * if its empty since it's going to get released later on by whoever
+	 * acquired it.  If we don't close the file before we try to delete it,
+	 * Windows will cry.
+	 */
+	$locks =& GalleryLockHelper_simple::_getLocks();
 	$platform = $gallery->getPlatform();
-	@$platform->unlink($lockFile);
+	foreach (array_keys($locks) as $lockId) {
+	    for ($i = 0; $i < sizeof($locks[$lockId]['ids']); $i++) {
+		if ($locks[$lockId]['ids'][$i] == $id) {
+		    $platform->fclose($locks[$lockId]['fds'][$i]);
+		    array_splice($locks[$lockId]['ids'], $i, 1);
+		    array_splice($locks[$lockId]['fds'], $i, 1);
+		    break;
+		}
+	    }
+	}
+
+	/* Now it's safe to delete the lock file */
+	$lockFile = GalleryLockHelper_medium::_getLockFile($id);
+	if (!@$platform->unlink($lockFile)) {
+	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
