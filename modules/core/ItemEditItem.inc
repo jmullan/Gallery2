@@ -61,17 +61,10 @@ class ItemEditItem extends ItemEditPlugin {
 	     */
 	    $platform = $gallery->getPlatform();
 	    
-	    if (!empty($form['title'])) {
-		$form['title'] = trim($form['title']);
-	    }
-	    if (!empty($form['summary'])) {
-		$form['summary'] = trim($form['summary']);
-	    }
-	    if (!empty($form['keywords'])) {
-		$form['keywords'] = trim($form['keywords']);
-	    }
-	    if (!empty($form['description'])) {
-		$form['description'] = trim($form['description']);
+	    foreach(array('title','summary','keywords','description') as $key) {
+		if (!empty($form[$key])) {
+		    $form[$key] = trim($form[$key]);
+	        }
 	    }
 
 	    if (!$isRootAlbum) {
