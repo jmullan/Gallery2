@@ -56,6 +56,24 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->_platform = new ImageMagickToolkitTestPlatform($this->_savePlatform);
 
+	$this->_save = array();
+	foreach (array('path', 'jpegQuality') as $key) {
+	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Reset to the defaults -- tearDown will undo this */
+	foreach (array('jpegQuality' => 75) as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
 	/* Get a toolkit to work with */
 	$this->_toolkit = new ImageMagickToolkit();
     }
@@ -68,6 +86,13 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	
 	/* Restore the platform */
 	$gallery->_platform = $this->_savePlatform;
+
+	foreach ($this->_save as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
 
 	parent::tearDown();
     }
@@ -512,7 +537,7 @@ class ImageMagickToolkitTestPlatform {
 		       $cmd[0][3] == 'testPerformOperations1.gif') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-		       preg_match('/\d+/', $cmd[0][2]) &&
+		       $cmd[0][2] == 75 &&
 		       $cmd[0][3] == '-scale' &&
 		       $cmd[0][4] == '100x100' &&
 		       $cmd[0][5] == 'testPerformOperations4.jpg') {
@@ -522,7 +547,7 @@ class ImageMagickToolkitTestPlatform {
 		       $cmd[0][3] == 'testPerformOperations6.tiff[0]') {
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-		       preg_match('/\d+/', $cmd[0][2]) &&
+		       $cmd[0][2] == 75 &&
 		       $cmd[0][3] == '-crop' &&
 		       $cmd[0][4] == '3x4+1+2' &&
 		       $cmd[0][5] == 'testPerformOperations8.png') {
@@ -539,7 +564,7 @@ class ImageMagickToolkitTestPlatform {
    		    $cmd[0][5] == 'TEMPFILE') {
 		return array(1, array());
 	    }  else if ($cmd[0][1] == '-quality' &&
-			preg_match('/\d+/', $cmd[0][2]) &&
+			$cmd[0][2] == 75 &&
 			$cmd[0][3] == '-geometry' &&
 			$cmd[0][4] == '+150+0' &&
 			$cmd[0][5] == 'testPerformOperations12.gif' && // image
@@ -547,7 +572,7 @@ class ImageMagickToolkitTestPlatform {
 			$cmd[0][7] == 'TEMPFILE') { // composited
 		return array(1, array());
 	    } else if ($cmd[0][1] == '-quality' &&
-		       preg_match('/\d+/', $cmd[0][2]) &&
+		       $cmd[0][2] == 75 &&
 		       $cmd[0][3] == '-geometry' &&
 		       $cmd[0][4] == '+150+150' &&
 		       $cmd[0][5] == 'testPerformOperations12.gif' && // image
