@@ -2,9 +2,6 @@
 include('../security.inc');
 require_once('../../../init.php');
 require_once('TestCase.class');
-require_once('TestCase/ActivateModule.class');
-require_once('TestCase/InstallModule.class');
-require_once('TestCase/DeactivateModule.class');
 $tests = array();
 
 $ret = main();
@@ -25,14 +22,14 @@ function main() {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    GalleryDataCache::setFileCachingEnabled(false);    
+    GalleryDataCache::setFileCachingEnabled(false);
 
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
     global $gallery;
-    
+
     /* Configure our url Generator for the test harness */
     $urlGenerator = new GalleryUrlGenerator;
     $urlGenerator->init('../../main.php');
@@ -70,22 +67,10 @@ function GalleryTestHarness() {
 
     foreach ($moduleIds as $moduleId) {
 	$testDir = $modulesDir . $moduleId . '/test/TestCase';
-
-	/* Add our implicit tests */
-	foreach (array('ActivateModule', 'DeactivateModule', 'InstallModule') as $implicitTestName) {
-	    $className = $implicitTestName . 'TestCase';
-	    $testCase = new $className($moduleId);
-	    $test = array('moduleId' => $moduleId,
-			  'testName' => $implicitTestName,
-			  'class' => $testCase,
-			  'description' => $testCase->getDescription());
-	    $tests[$moduleId][$implicitTestName] = $test;
-	}
-
 	$files = array();
 	if ($platform->file_exists($testDir) &&
-	        $platform->is_dir($testDir) &&
-	        $dir = $platform->opendir($testDir)) {
+		$platform->is_dir($testDir) &&
+		$dir = $platform->opendir($testDir)) {
 	    while (($file = $platform->readdir($dir)) != false) {
 		if (preg_match('/.class$/', $file)) {
 		    $files[] = $file;
@@ -131,10 +116,10 @@ function GalleryTestHarness() {
     $results = array();
     if (!empty($_GET['testName']) &&
 	!empty($_GET['moduleId'])) {
-    
+
 	$testName = $_GET['testName'];
 	$moduleId = $_GET['moduleId'];
-    
+
 	$iterations = 1;
 	$disableDebug = false;
 	if (!empty($_GET['iterations'])) {
@@ -148,7 +133,7 @@ function GalleryTestHarness() {
 	    $debug = $gallery->getDebug();
 	    $gallery->setDebug(false);
 	}
-	
+
 	$results = $results + runTest($moduleId, $testName, $iterations);
 	if ($disableDebug) {
 	    $gallery->setDebug($debug);
@@ -165,7 +150,7 @@ function GalleryTestHarness() {
     }
 
     /* Get the Smarty instance. */
-    require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTemplate.class');    
+    require_once(dirname(__FILE__) . '/../../../modules/core/classes/GalleryTemplate.class');
     $template = new GalleryTemplate(dirname(__FILE__) . '/templates');
     $template->setVariable('tests', $tests);
     $template->setVariable('results', $results);
@@ -180,7 +165,7 @@ function GalleryTestHarness() {
     if (isset($rollup['error'])) {
 	return $rollup['error']['object']->wrap(__FILE__, __LINE__);
     }
-    
+
     return GalleryStatus::success();
 }
 
@@ -231,7 +216,7 @@ function runTest($moduleId, $testName, $iterations) {
     $result['timing'] = $timing;
     $result['debug'] = $gallery->getDebugBuffer();
     $gallery->clearDebugBuffer();
-    
+
     $result['output'] = ob_get_contents();
     ob_end_clean();
 
