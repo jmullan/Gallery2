@@ -96,6 +96,22 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 				  'status' => array('mime_duplicate' => 1),
 				  'error' => array()),
 			    $results, 'Add core mime type');
+
+	GalleryUtilities::removeFormVariables('form');
+	GalleryUtilities::putRequestVariable('form[action][add]', '1');
+	GalleryUtilities::putRequestVariable('form[mimeType]', 'test/fakemime');
+	GalleryUtilities::putRequestVariable('form[image]', 'new');
+	GalleryUtilities::putRequestVariable('form[name][1]', 'test.gif');
+	GalleryUtilities::putRequestVariable('form[type][1]', 'image/gif');
+	GalleryUtilities::putRequestVariable('form[tmp_name][1]',
+	    dirname(__FILE__) . '/../../../core/test/data/test1.gif');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+				  'status' => array('imagemime_error' => 1),
+				  'error' => array()),
+			    $results, 'Add non-jpeg image');
     }
 
     function testThumbnailSiteAdminControllerAddDelete() {

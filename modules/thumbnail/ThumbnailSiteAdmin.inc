@@ -48,15 +48,10 @@ class ThumbnailSiteAdminController extends GalleryController {
 	    if (empty($form['mimeType'])) {
 		return array(GalleryStatus::success(), $this->_exitStatus('mime_error'));
 	    }
-	    list ($ret, $tList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	    list ($ret, $mimeMap) = ThumbnailHelper::fetchToolkitSupport();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $cList) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $mimeMap = array_merge_recursive($tList, $cList);
 	    if (isset($mimeMap[$form['mimeType']])) {
 		return array(GalleryStatus::success(), $this->_exitStatus('mime_duplicate'));
 	    }
@@ -66,20 +61,25 @@ class ThumbnailSiteAdminController extends GalleryController {
 	    if (empty($form['tmp_name'][1])) {
 		return array(GalleryStatus::success(), $this->_exitStatus('file_error'));
 	    }
-	    $this->_addItem($form['mimeType'], $form['name'][1], $form['tmp_name'][1], $form['type'][1]);
-	    if ($ret->isError()) {
+	    list ($ret) = ThumbnailHelper::addItem(
+		$form['mimeType'], $form['name'][1], $form['tmp_name'][1], $form['type'][1]);
+	    if ($ret->isError() && ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE)) {
+		$status = 'imagemime_error';
+	    } else if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    } else {
+		$status = 'add';
 	    }
-	    $status = 'add';
 	} else if (isset($form['action']['add'])) { /* $form['image']=='old' */
-	    $ret = $this->_updateItem($form['oldimage'], $form['mimeType'], true);
+	    $ret = ThumbnailHelper::updateItem($form['oldimage'], $form['mimeType'], true);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $status = 'addMime';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
 	    if (isset($form['delete']['mimeType'])) {
-		$ret = $this->_updateItem($form['delete']['itemId'], $form['delete']['mimeType'], false);
+		$ret = ThumbnailHelper::updateItem(
+		    $form['delete']['itemId'], $form['delete']['mimeType'], false);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -113,104 +113,6 @@ class ThumbnailSiteAdminController extends GalleryController {
 	$results['error'] = array();
 	return $results;
    }
-
-    function _addItem($mimeType, $filename, $tmpfile, $fileMimeType) {
-	global $gallery;
-	/*
-	 * If we don't get useful data from the form or its a type we don't
-	 * recognize, take a swing at it using the file name.
-	 */
-	if ($fileMimeType == 'application/octet-stream' ||
-	        $fileMimeType == 'application/unknown' ||
-	        GalleryUtilities::convertMimeToExtension($fileMimeType) == null) {
-	    $extension = GalleryUtilities::getFileExtension($filename);
-	    $fileMimeType = GalleryUtilities::convertExtensionToMime($extension);
-	}
-
-	list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'ThumbnailImage');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (!isset($item)) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
-	}
-
-	$ret = $item->create($tmpfile, $fileMimeType, $filename);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$item->setitemMimeTypes($mimeType);
-	$ret = $item->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $adminGroupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = GalleryCoreApi::addGroupPermission($item->getId(), $adminGroupId, 'core.viewSource');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
-				array($mimeType), 'convert-to-image/jpeg', array(),
-				$gallery->i18n('Convert to a JPEG'), 'image/jpeg');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	return GalleryStatus::success();
-    }
-
-    function _updateItem($itemId, $mimeType, $isAdd=true) {
-	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$mimeTypes = $item->getItemMimeTypesList();
-	if ($isAdd) {
-	    $mimeTypes[] = $mimeType;
-	    $item->setItemMimeTypesList($mimeTypes);
-	} else {
-	    $newList = array();
-	    foreach ($mimeTypes as $mime) {
-		if ($mime != $mimeType) {
-		    $newList[] = $mime;
-		}
-	    }
-	    $item->setItemMimeTypesList($newList);
-	}
-	$ret = $item->save();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ret = GalleryCoreApi::releaseLocks($lockId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($isAdd) {
-	    global $gallery;
-	    $ret = GalleryCoreApi::registerToolkitOperation('Thumbnail',
-				   array($mimeType), 'convert-to-image/jpeg', array(),
-				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	} else {
-	    $ret = GalleryCoreApi::unregisterToolkitOperation('Thumbnail',
-				   'convert-to-image/jpeg', array($mimeType));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-	return GalleryStatus::success();
-    }
 }
 
 /**
@@ -229,7 +131,8 @@ class ThumbnailSiteAdminView extends GalleryView {
 	    $form['formName'] = 'ThumbnailSiteAdmin';
 	}
 
-	$form['mimeMap'] = GalleryUtilities::getMimeTypeMap();
+	function imp($a) { return implode(' ', $a); }
+	$form['mimeMap'] = array_map('imp', GalleryUtilities::getMimeTypeMap());
 	ksort($form['mimeMap']);
 
 	list ($ret, $list) = ThumbnailHelper::fetchThumbnails();
@@ -244,40 +147,17 @@ class ThumbnailSiteAdminView extends GalleryView {
 	    }
 	    foreach ($thumbs as $thumb) {
 		$data = $thumb->getMemberData();
-		$data['itemMimeTypesList'] = array();
-		foreach ($thumb->getItemMimeTypesList() as $mime) {
-		    if (isset($form['mimeMap'][$mime])) {
-			$data['itemMimeTypesList'][] = array($mime,
-			    $mime . ' (' . implode(' ', $form['mimeMap'][$mime]) . ')');
-		    } else {
-			$data['itemMimeTypesList'][] = array($mime, $mime);
-		    }
-		}
+		$data['itemMimeTypesList'] = $thumb->getItemMimeTypesList();
 		$form['list'][] = $data;
 	    }
 	}
 
-	$form['badMime'] = array();
-	list ($ret, $tList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	list ($ret, $toolkitMime, $form['badMime']) = ThumbnailHelper::fetchToolkitSupport(false);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $cList) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	foreach (array_merge_recursive($tList, $cList) as $mime => $toolkits) {
-	    foreach ($toolkits as $id) {
-		if (!isset($op[$id]) || !in_array($mime, $op[$id])) {
-		    $op[$id][] = $mime;
-		}
-	    }
-	    if (in_array('Thumbnail', $toolkits) && count($toolkits) > 1) {
-		$form['badMime'][] = $mime;
-	    }
-	}
-	unset($op['Thumbnail']);
-	$form['operationSupport'] = $op;
+	unset($toolkitMime['Thumbnail']);
+	$form['operationSupport'] = $toolkitMime;
 
 	/* Set the form's encoding type since we're uploading binary files */
 	if ($template->hasVariable('SiteAdmin')) {

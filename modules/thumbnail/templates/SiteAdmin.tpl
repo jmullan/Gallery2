@@ -36,6 +36,9 @@
     {if isset($status.file_error)}
       <div class="giError">{g->text text="Missing image file"}</div>
     {/if}
+    {if isset($status.imagemime_error)}
+      <div class="giError">{g->text text="Thumbnail image must be a JPEG"}</div>
+    {/if}
   </div>
   {/if}
   {if isset($form.badMime)}
@@ -66,13 +69,13 @@
             <table cellspacing="0">
             {foreach from=$item.itemMimeTypesList item=mime}
               <tr class="{cycle values="gbEven,gbOdd"}">
-              <td>{$mime.1}</td>
-              <td><a href="{g->url arg1="controller=thumbnail:ThumbnailSiteAdmin" arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`" arg4="form[delete][mimeType]=`$mime.0`"}">{g->text text="delete"}</a></td>
+              <td>{$mime}{if isset($form.mimeMap[$mime])} ({$form.mimeMap[$mime]}){/if}</td>
+              <td><a href="{g->url arg1="controller=thumbnail:ThumbnailSiteAdmin" arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`" arg4="form[delete][mimeType]=`$mime`"}">{g->text text="delete"}</a></td>
               </tr>
             {/foreach}
             </table>
           {else}
-            {$item.itemMimeTypesList.0.1}
+            {$item.itemMimeTypesList.0}
           {/if}
           </td>
           <td> {$item.fileName} </td>
@@ -88,7 +91,9 @@
       {/foreach}
       {foreach from=$form.operationSupport key=module item=mimeTypes}
       <tr><td>
-        {foreach from=$mimeTypes item=mime}{$mime}<br/>{/foreach}
+        {foreach from=$mimeTypes item=mime}
+          {$mime}{if isset($form.mimeMap[$mime])} ({$form.mimeMap[$mime]}){/if}<br/>
+        {/foreach}
       </td><td colspan="3">
         {g->text text="Thumbnail support provided by module:"} {$module}
       </td></tr>
@@ -107,15 +112,14 @@
      onchange="this.form['{g->formVar var="form[mimeType]"}'].value=this.value;this.selectedIndex=0;this.blur()">
     <option value="">{g->text text="&laquo; Choose type or enter above &raquo;"}</option>
     {foreach from=$form.mimeMap key=mime item=extlist}
-      <option value="{$mime}">{$mime}
-        ({foreach from=$extlist item=item} {$item} {/foreach})</option>
+      <option value="{$mime}">{$mime} ({$extlist})</option>
     {/foreach}
     </select><br/>
 
     <table><tr><td style="padding-left:10px">
       <input type="{if !empty($form.list)}radio{else}hidden{/if}"
              name="{g->formVar var="form[image]"}" value="new">
-      {g->text text="New image file:"}
+      {g->text text="New jpeg file:"}
     </td><td>
       <input type="file" name="{g->formVar var="form[1]"}" size="45">
     </td></tr>

@@ -40,7 +40,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.2');
+	$this->setVersion('1.0');
     }
 
     /**
@@ -110,7 +110,7 @@ class ThumbnailModule extends GalleryModule {
     function canBeAutoInstalled() {
 	return true;
     }
-	
+
     /**
      * @see GalleryModule::autoConfigure
      */
@@ -142,6 +142,30 @@ class ThumbnailModule extends GalleryModule {
 				   $gallery->i18n('Convert to a JPEG'), 'image/jpeg');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Set some defaults if not already supported */
+	list ($ret, $toolkitMime) = ThumbnailHelper::fetchToolkitSupport();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$itemId = null;
+	foreach (array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic')
+		 as $audioMime) {
+	    if (!isset($toolkitMime[$audioMime])) {
+		if (!isset($itemId)) {
+		    list ($ret, $itemId) = ThumbnailHelper::addItem($audioMime, 'G2audio.jpg',
+			dirname(__FILE__) . '/images/G2audio.jpg', 'image/jpeg');
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		} else {
+		    $ret = ThumbnailHelper::updateItem($itemId, $audioMime);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
 	    }
 	}
 
