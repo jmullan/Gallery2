@@ -65,12 +65,27 @@ class CoreModuleExtras {
 	    }
 	}
 
+	/**
+	 * README: How to update the block below.
+	 *
+	 * If you add a new feature to the core module and revise the version,
+	 * you should do the following.  Supposing the current version is 1.0.1
+	 * and you're adding 1.0.2:
+	 *
+	 *  1.  Go to the end of the switch and edit the '1.0.0' block and make
+	 *      sure that it does not have a 'break' statement.  You'll want it
+	 *      to fall through to the new block that you're about to add.
+	 *  2.  Add a new block at the end of the switch statement for '1.0.1'
+	 *      and add all the changes necessary to go from 1.0.1 to 1.0.2.
+	 *      When you're done, set $currentVersion = '1.0.2' and break;
+	 *  3.  Update the '0' block to make any appropriate changes for initial
+	 *      installs.  Merge them in with the existing install code as
+	 *      appropriate.  At the end of the block, set $currentVersion =
+	 *      '1.0.2' and break;
+	 */
 	switch ($currentVersion) {
 	case '0':
-	    /*
-	     * Initial install.  Make sure all our module parameters are set
-	     * (initial install or upgrade)
-	     */
+	    /* Initial install.  Make sure all our module parameters are set. */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
@@ -151,8 +166,8 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    $currentVersion = '0.8.4';
-	    /* fall through */
+	    $currentVersion = '0.8.6';
+	    break;
 
 	case '0.8':
 	    $currentVersion = '0.8.1';
