@@ -162,6 +162,9 @@ class GalleryGroup extends GalleryNucleus {
      * @return string the current value of name
      */
     function getName() {
+        if (!isset($this->_name)) {
+            return null;
+        }
         return $this->_name;
     }
     
