@@ -82,6 +82,11 @@ class MarkupTest extends GalleryTestCase {
 	$this->assertEquals('<i>italic</i>', $results);
     }
 
+    function testMalformedCode() {
+	$results = $this->_bbcode->parse('[b][i]foo[/b][/i]');
+	$this->assertEquals('<b><i>foo</i></b>[/i]', $results);
+    }
+
     function testList() {
 	$results = $this->_bbcode->parse('[list][*]one[*]two[*]three[/list]');
 	$this->assertEquals("<ul><li>one</li>\n<li>two</li>\n<li>three</li>\n</ul>", $results);
