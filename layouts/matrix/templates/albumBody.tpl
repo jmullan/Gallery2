@@ -40,7 +40,7 @@
     {g->box style="canvas"}
       
       {g->element}
-	{g->table}
+	{g->table style="canvas"}
 	  {foreach from=$layout.childRows item=childRow}
 	    {g->row}
 	      {foreach from=$childRow item=child}
@@ -128,6 +128,12 @@
 		  {/strip}
 		{/g->column}
 	      {/foreach}
+	    {/g->row}
+	  {foreachelse}
+	    {g->row}
+	      {g->column align="center"}
+		{g->text text="This album is empty"}
+	      {/g->column}
 	    {/g->row}
 	  {/foreach}
 	{/g->table}

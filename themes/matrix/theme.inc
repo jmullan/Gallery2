@@ -310,6 +310,7 @@ class MatrixTheme extends GalleryTheme {
      */
      function table($context, $row_array) {
 	 switch($context['params']['style']) {
+	 case 'canvas':
 	 case 'admin_listing':
 	 case 'admin_widgets':
 	     $table_class = 'table_' . $context['params']['style'];

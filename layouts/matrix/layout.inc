@@ -293,6 +293,7 @@ class MatrixLayout extends GalleryLayout {
 	/* Assemble the children into rows of columns */
 	$r = 0;
 	$c = 0;
+	$childRows = array();
 	foreach ($children as $child) {
 	    $width = $child['canContainChildren'] ? $properties['columns'] : 1;
 
