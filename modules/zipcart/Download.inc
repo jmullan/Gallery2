@@ -70,7 +70,7 @@ class DownloadView extends GalleryView {
 		/* Poor IE6 doesn't know multipart.. just send zip */
 		header('Content-Disposition: inline; filename="G2cart.zip"');
 		if ($size > 0) {
-		    header("Content-Length", $size);
+		    header("Content-Length: $size");
 		}
 	    }
 
