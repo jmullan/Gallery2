@@ -2,6 +2,7 @@
   {g->banner}
     {g->title}
       {g->text text="Migrate"}
+
     {/g->title}
     {g->description}
       {g->text text="THIS MODULE IS NOT COMPLETE.  USE IT AT YOUR OWN RISK."}
@@ -22,6 +23,8 @@
       {/g->title}
 
       {g->element}
+	{g->text text="Enter the path to the directory containing your albums and the albumdb.dat file."}
+	{g->text text="For instance: /path/to/albums/"}
 	{g->input type="text" size="60" name="form[albumsPath]"}{$form.albumsPath}{/g->input}
       {/g->element}
     {/g->box}
