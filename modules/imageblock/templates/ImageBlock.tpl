@@ -18,7 +18,7 @@
 
 	{if isset($ImageBlockSystemContent.show.title) && isset($block.item.title)}
 	<span class="giDescription">
-	  {$block.item.title}
+	  {$block.item.title|markup}
 	</span>
 	{/if}
 
