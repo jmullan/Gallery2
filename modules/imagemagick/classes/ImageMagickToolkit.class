@@ -208,53 +208,53 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    $compositeAlignY = $parameters[6];
 
 	    switch ($compositeAlignmentType) {
-	    case 'top-left': // Top - Left
+	    case 'top-left': /* Top - Left */
 	        $compositeAlignX = 0;
 	        $compositeAlignY = 0;
 	        break;
 
-	    case 'top': // Top
+	    case 'top': /* Top */
 	        $compositeAlignX = 50;
 	        $compositeAlignY = 0;
 	        break;
 
-	    case 'top-right': // Top - Right
+	    case 'top-right': /* Top - Right */
 	        $compositeAlignX = 100;
 	        $compositeAlignY = 0;
 	        break;
 
-	    case 'left': // Left
+	    case 'left': /* Left */
 	        $compositeAlignX = 0;
 	        $compositeAlignY = 50;
 	        break;
 
-	    case 'center': // Center
+	    case 'center': /* Center */
 	        $compositeAlignX = 50;
 	        $compositeAlignY = 50;
 	        break;
 
-	    case 'right': // Right
+	    case 'right': /* Right */
 	        $compositeAlignX = 100;
 	        $compositeAlignY = 50;
 	        break;
 
-	    case 'bottom-left': // Bottom - Left
+	    case 'bottom-left': /* Bottom - Left */
 	        $compositeAlignX = 0;
 	        $compositeAlignY = 100;
 	        break;
 
-	    case 'bottom': // Bottom
+	    case 'bottom': /* Bottom */
 	        $compositeAlignX = 50;
 	        $compositeAlignY = 100;
 	        break;
 
-	    case 'bottom-right': // Bottom Right
+	    case 'bottom-right': /* Bottom Right */
 	        $compositeAlignX = 100;
 	        $compositeAlignY = 100;
 	        break;
 
-	    case 'manual': // Manual placement
-		// Use the alignments we received
+	    case 'manual': /* Manual placement */
+		/* Use the alignments we received */
 		break;
 
 	    default:
@@ -263,11 +263,11 @@ class ImageMagickToolkit extends GalleryToolkit {
 			     null, null);
 	    }
 
-	    // Convert from percentages to pixels
+	    /* Convert from percentages to pixels */
 	    $compositeAlignX = (int)($compositeAlignX / 100 * $width);
 	    $compositeAlignY = (int)($compositeAlignY / 100 * $height);
 
-	    // Clip to our bounding box
+	    /* Clip to our bounding box */
 	    $compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
 	    $compositeAlignX = max(0, $compositeAlignX);
 	    $compositeAlignY = min($compositeAlignY, $height - $compositeHeight);
@@ -281,7 +281,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'compress':
 	    $targetSize = $parameters[0];
 	    $platform = $gallery->getPlatform();
-	    $fileSize = $platform->filesize($sourceFilename) >> 10; //Size in KB
+	    $fileSize = $platform->filesize($sourceFilename) >> 10; /* Size in KB */
 	    if ($fileSize <= $targetSize) {
 		break;
 	    }
@@ -463,16 +463,28 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	switch ($outputMimeType) {
-	case 'image/png'  :
 	case 'image/jpeg' :
 	    $command[] = '-quality';
 	    $command[] = $jpegQuality;
+	    break;
+
+	case 'image/png':
+	    /*
+	     * ImageMagick uses (quality/10) as the compression level and
+	     * (quality%10) as a filter type.  For now, use adaptive filtering
+	     * (5) since it's their default filter (default is normally 75)
+	     * but preserve the compression level.
+	     *
+	     * ref: http://www.imagemagick.org/www/ImageMagick.html
+	     */
+	    $command[] = '-quality';
+	    $command[] = (int)($jpegQuality / 10) * 10 + 5;
 	    break;
 	}
 
 	switch ($mimeType) {
 	case 'image/gif':
-	    // In case it's an animated gif..
+	    /* In case it's an animated gif.. */
 	    if ($cmd == 'convert') {
 		$command[] = '-coalesce';
 		$command[] = '%s';

@@ -266,16 +266,16 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    // Test a basic composite operation (top right corner)
+	    /* Test a basic composite operation (top right corner) */
 	    $dataDir = $gallery->getConfig('data.gallery.base');
 	    $ret = $this->_testOperation('image/png', 'composite',
-					 'test.png',   // composite
-					 'output.png', // composited
-					 array('image.gif', // image
-					       'image/gif', // mimeType
-					       5, 5, // image width, height
-					       'top-right', // alignment type
-					       0, 0),  // image alignment x, y (overridden by 'top-right')
+					 'test.png',   /* composite */
+					 'output.png', /* composited */
+					 array('image.gif', /* image */
+					       'image/gif', /* mimeType */
+					       5, 5, /* image width, height */
+					       'top-right', /* alignment type */
+					       0, 0),  /* image alignment x, y (overridden by 'top-right') */
 					 array('image' => $dataDir . 'image.gif',
 					       'width' => '50',
 					       'height' => '50',
@@ -285,15 +285,15 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    // Test another composite with out of range params that should get corrected
+	    /* Test another composite with out of range params that should get corrected */
 	    $ret = $this->_testOperation('image/png', 'composite',
-					 'test.png',   // composite
-					 'output.png', // composited
-					 array('image.gif', // image
-					       'image/gif', // mimeType
-					       50, 50, // image width, height
-					       'manual', // alignment type
-					       151, 151), // image alignment x, y
+					 'test.png',   /* composite */
+					 'output.png', /* composited */
+					 array('image.gif', /* image */
+					       'image/gif', /* mimeType */
+					       50, 50, /* image width, height */
+					       'manual', /* alignment type */
+					       151, 151), /* image alignment x, y */
 					 array('image' => $dataDir . 'image.gif',
 					       'width' => '50',
 					       'height' => '50',
@@ -303,7 +303,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    // Test compress
+	    /* Test compress */
 	    $this->_files['compressMe.jpg']['size'] = 250 << 10;
 	    $gallery->_platform->_counter = 2;
 	    $ret = $this->_testOperation('image/jpeg', 'compress',
@@ -321,10 +321,36 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 						  array('BOGUS'));
 
 	    $this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION, 'bad op');
+
 	}
     }
 
-    // Ensure multiple "convert" operations in sequence only makes one exec call..
+    function testPngQuality() {
+	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', 94);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	foreach ($this->_environments as $environment) {
+	    $this->_setEnvironment($environment);
+
+	    /*
+	     * Make sure that PNG quality uses only the compression, not the filter
+	     * so our quality level (94) becomes compression (9) and filter (4).  We
+	     * change that in the toolkit to compression (9) and filter (5) for a result
+	     * of 95.  When we implement PNG quality correctly, we should change this back.
+	     */
+	    $ret = $this->_testOperation('image/png', 'rotate',
+					 'qualityTestIn.png', 'qualityTestOut.png',
+					 array(90), array('angle' => 90), 95);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    /* Ensure multiple "convert" operations in sequence only makes one exec call.. */
     function testOperationSequence() {
 	global $gallery;
 	$gallery->_platform->_copyOk = true;
@@ -372,8 +398,10 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
     }
 
-    // Ensure queued operations that affect image size are taken into account
-    // for subsequent operations..
+    /**
+     * Ensure queued operations that affect image size are taken into account
+     * for subsequent operations..
+     */
     function testOperationSequenceSizeChange() {
 	global $gallery;
 	$gallery->_platform->_copyOk = true;
@@ -439,7 +467,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	}
     }
 
-    // Ensure queued operations handle change of mime type correctly
+    /* Ensure queued operations handle change of mime type correctly */
     function testOperationSequenceMimeChange() {
 	global $gallery;
 	$gallery->_platform->_copyOk = true;
@@ -842,11 +870,11 @@ class ImageMagickToolkitTestPlatform {
 	    $src = basename($firstCmd[count($firstCmd) - 2]);
 	    $dst = basename($firstCmd[count($firstCmd) - 1]);
 	    if (preg_match('#(.*):(.*)$#', $dst, $matches)) {
-		// Format 'jpeg:filename.jpg'
+		/* Format 'jpeg:filename.jpg' */
 		$dst = $matches[2];
 	    }
 	    if ($src == 'testProfile.jpg') {
-		// ImageMagickToolkitHelper is testing our removeMetaDataSwitch
+		/* ImageMagickToolkitHelper is testing our removeMetaDataSwitch */
 		$params = array_slice($firstCmd, 0, count($firstCmd) - 2);
 		if ($this->_environment['removeMetaDataSwitch'] == $params) {
 		    $this->_files[$dst] = array('size' => 50000);
@@ -856,7 +884,8 @@ class ImageMagickToolkitTestPlatform {
 		$output = array();
 		$status = true;
 	    } else {
-		/* Remember how we converted from $src to $dst, so we can compare it later
+		/*
+		 * Remember how we converted from $src to $dst, so we can compare it later
 		 * with what we really wanted
 		 */
 		$this->_files[$dst] = array('operation' => array($binary => $params));
@@ -899,7 +928,7 @@ class ImageMagickToolkitTestPlatform {
     }
 
     function isRestrictedByOpenBasedir($path) {
-	//echo $this->_environment['path'] . ": isRestrictedByOpenBasedir($path)<br>\n";
+	/* echo $this->_environment['path'] . ": isRestrictedByOpenBasedir($path)<br>\n"; */
 	return false;
     }
 
@@ -918,7 +947,7 @@ class ImageMagickToolkitTestPlatform {
 		return true;
 	    }
 	}
-	//echo $this->_environment['path'] . ": file_exists($path)<br>\n";
+	/*echo $this->_environment['path'] . ": file_exists($path)<br>\n"; */
 	return false;
     }
 
@@ -926,7 +955,7 @@ class ImageMagickToolkitTestPlatform {
 	if ($path == $this->_environment['path']) {
 	    return true;
 	}
-	// echo $this->_environment['path'] . ": is_dir($path)<br>\n";
+	/* echo $this->_environment['path'] . ": is_dir($path)<br>\n"; */
 	return false;
     }
 
@@ -978,7 +1007,7 @@ class ImageMagickToolkitTestPlatform {
 
     function tempnam($dir, $prefix) {
 	$fileName = $dir . $prefix . md5(rand());
-	//echo $this->_environment['path'] . ": tempnam($dir, $prefix) = $fileName<br>\n";
+	/*echo $this->_environment['path'] . ": tempnam($dir, $prefix) = $fileName<br>\n"; */
 	return $fileName;
     }
 
@@ -997,7 +1026,7 @@ class ImageMagickToolkitTestPlatform {
 	if (preg_match('#\[(\d+)x(\d+)\]#', $basename, $matches)) {
 	    return array($matches[1], $matches[2], 1, sprintf('height="%d" width="%d"', $matches[1], $matches[2]));
 	}
-	//echo $this->_environment['path'] . ": getimagesize($path)<br>\n";
+	/*echo $this->_environment['path'] . ": getimagesize($path)<br>\n"; */
 	return false;
     }
 
