@@ -56,6 +56,20 @@ class HybridLayout extends GalleryLayout {
     function loadTemplate(&$template, $item) {
 	global $gallery;
 	$detail = GalleryUtilities::getRequestVariables('detail');
+	$renderId = GalleryUtilities::getRequestVariables('renderId');
+
+	if (!$item->getCanContainChildren() && !empty($renderId)) {
+	    /* Render this item */
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout = array('item' => $item->getMemberData(),
+			    'image' => $image->getMemberData());
+	    $template->setVariable('layout', $layout);
+	    return array(GalleryStatus::success(),
+	                 array('main' => 'layouts/hybrid/templates/render.tpl'));
+	}
 
 	if (!$item->getCanContainChildren() && !$detail) {
 	    /* Load parent with initial view of this item  */
@@ -292,7 +306,7 @@ class HybridLayout extends GalleryLayout {
 		$newItem['moduleItemLinks'] = $moduleItemLinks;
 	    }
 
-	    if (is_a($child, 'GalleryDataItem') && $child->canBeViewedInline()) {
+	    if (GalleryUtilities::isA($child, 'GalleryDataItem') && $child->canBeViewedInline()) {
 		list ($ret, $permissions) =
 		    GalleryCoreApi::getPermissions($childId);
 		if ($ret->isError()) {
@@ -322,7 +336,7 @@ class HybridLayout extends GalleryLayout {
 		    $image = $images[0];
 
 		    // Rebuild derivative if needed so width/height known..
-		    if (is_a($image, 'GalleryDerivativeImage')) {
+		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
 			list ($ret, $image) =
 			    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
 				    $image->getId());
@@ -331,11 +345,17 @@ class HybridLayout extends GalleryLayout {
 			}
 		    }
 		    $image = $image->getMemberData();
-		    if ($image['width'] > 0 && $image['height'] > 0) {
-			$newItem['image'] = $image;
-			$newItem['imageIndex'] = count($imageWidths);
+		    $newItem['image'] = $image;
+		    $newItem['imageIndex'] = count($imageWidths);
+		    if (get_class($child) == 'galleryphotoitem' &&
+			    $image['width'] > 0 && $image['height'] > 0) {
+			// Display in <img>
 			$imageWidths[] = $image['width'];
 			$imageHeights[] = $image['height'];
+		    } else {
+			// Item must render itself
+			$newItem['renderItem'] = 1;
+			$imageWidths[] = $imageHeights[] = -1;
 		    }
 		}
 	    }

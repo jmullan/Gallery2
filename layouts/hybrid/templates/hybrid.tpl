@@ -27,9 +27,14 @@
  {if ($i is even)}<tr>{/if}
  <td class="i">
   {if isset($it.image)}
-    {g->link id="img_`$it.imageIndex`" arg1="view=core:DownloadItem"
-        arg2="itemId=`$it.image.id`"
-        arg3="serialNumber=`$it.image.serialNumber`"}{/g->link}
+    {if isset($it.renderItem)}
+      {g->link id="img_`$it.imageIndex`" arg1="view=core:ShowItem"
+          arg2="itemId=`$it.id`" arg3="renderId=`$it.image.id`"}{/g->link}
+    {else}
+      {g->link id="img_`$it.imageIndex`" arg1="view=core:DownloadItem"
+          arg2="itemId=`$it.image.id`"
+          arg3="serialNumber=`$it.image.serialNumber`"}{/g->link}
+    {/if}
     {g->link id="info_`$it.imageIndex`" arg1="view=core:ShowItem"
         arg2="itemId=`$it.id`" arg3="detail=1"}{/g->link}
     <a href="" onclick="image_show({$it.imageIndex});return false">

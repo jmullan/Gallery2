@@ -50,6 +50,8 @@ function app_init() {
   document.getElementById('tools_right').style.width = '76px';
   document.getElementById('tools_right').style.paddingRight = '8px';
  }
+ window.image_loaded = image_loaded;
+ window.image_vis = image_vis;
  var i = app_getcookie();
  if (i < -1 && data_view >= 0) image_show(data_view);
 }
@@ -203,14 +205,20 @@ function image_vis(on) {
  toolbar_vis(image_on=on);
  album_div.style.overflow = image_on?'hidden':'auto'; //For firefox
  if (!on) image_div.scrollTop = image_div.scrollLeft = 0; //For firefox
+ if (!on && !document.view) ui_sethtml('image_view', '');
 }
 function image_show(i) {
  if (!image_on) image_vis(1);
  slide_reset();
  image_index = i;
- var s = image_fit(1);
- ui_sethtml('image_view', '<img src="' + document.getElementById('img_'+i).href
-  + '" ' + s + ' name="view" onload="image_loaded()">');
+ if (data_iw[i] < 0) {
+  ui_sethtml('image_view', '<iframe name="view" style="width:100%;height:100%" frameborder="0" src="'+document.getElementById('img_'+i).href+'"></iframe>');
+  document.fit_size.className = document.full_size.className = 'off';
+ } else {
+  var s = image_fit(1);
+  ui_sethtml('image_view', '<img name="view" src="' + document.getElementById('img_'+i).href
+   + '" ' + s + ' onload="image_loaded()">');
+ }
  ui_sethtml('title', document.getElementById('title_'+image_index).innerHTML);
  text_fill();
  toolbar_setbuttons();
@@ -221,6 +229,7 @@ function image_loaded() {
  slide_go(1,i);
 }
 function image_fit(getstr) {
+ if (!getstr && !document.view) return;
  var w = data_iw[image_index], h = data_ih[image_index];
  var aw = app_ww, ah = app_wh - toolbar_getheight(), a=0;
  if (w > aw || h > ah) {
