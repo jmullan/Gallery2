@@ -331,8 +331,7 @@ class DatabaseStorage extends GalleryStorage {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    $idCol = $this->_prefixColumnName('id');
-
+	    $idCol = $this->_translateColumnName('id');
 
 	    /* Build up our query */
 	    $columns = array();
@@ -342,10 +341,10 @@ class DatabaseStorage extends GalleryStorage {
 	    $callbacks = array();
 	    $markers = GalleryUtilities::makeMarkers(sizeof($targetIds));
 	    foreach ($memberInfo['members'] as $columnName => $columnInfo) {
-		$tableName = $this->_prefixTableName($columnInfo['class']);
+		list ($tableName, $unused) = $this->_translateTableName($columnInfo['class']);
 		$types[] = $columnInfo['type'];
 		$callbacks[] = 'set' . ucFirst($columnName);
-		$columns[$tableName . '.' . $this->_prefixColumnName($columnName)] = 1;
+		$columns[$tableName . '.' . $this->_translateColumnName($columnName)] = 1;
 		$tables[$tableName] = 1;
 	    }
 	    $tables = array_keys($tables);
@@ -353,14 +352,12 @@ class DatabaseStorage extends GalleryStorage {
 	    
 	    for ($i = 0; $i < sizeof($tables); $i++) {
 		if ($i == 0) {
-		    $where[] = $tables[$i] . '.' . $idCol .
-			' IN (' . $markers . ')';
+		    $where[] = $tables[$i] . '.' . $idCol . ' IN (' . $markers . ')';
 		} else {
-		    $where[] = $tables[$i] . '.' . $idCol . '=' .
-			$tables[0] . '.' . $idCol;
+		    $where[] = $tables[$i] . '.' . $idCol . '=' . $tables[0] . '.' . $idCol;
 		}
 	    }
-	    
+
 	    $query = 'SELECT ';
 	    $query .= join(', ', $columns);
 	    $query .= ' FROM ';
@@ -451,7 +448,7 @@ class DatabaseStorage extends GalleryStorage {
 	foreach ($memberInfo['members'] as $memberName => $memberData) {
 	    $type = $memberData['type'];
 	    $class = $memberData['class'];
-	    $tableName = $this->_prefixTableName($class);
+	    list ($tableName, $unused) = $this->_translateTableName($class);
 
 	    /* If the member is modified, record the new value in our table */
 	    if ($entity->getModifiedFlag($memberName) & MEMBER_MODIFIED) {
@@ -468,7 +465,7 @@ class DatabaseStorage extends GalleryStorage {
 		    $value = $this->_db->DBTimeStamp($value);
 		}
 
-		$columnName = $this->_prefixColumnName($memberName);
+		$columnName = $this->_translateColumnName($memberName);
 		$dataTable[$tableName][$columnName] = $value;
 	    } else {
 		/*
@@ -487,7 +484,7 @@ class DatabaseStorage extends GalleryStorage {
 		$getFunc = 'get' . $memberName;
 		$value = $entity->$getFunc();
 
-		$id['column'] = $this->_prefixColumnName($memberName);
+		$id['column'] = $this->_translateColumnName($memberName);
 		$id['value'] = $value;
 	    }
 	}
@@ -528,7 +525,7 @@ class DatabaseStorage extends GalleryStorage {
 	     * number to make sure that we're not hitting a concurrency issue.
 	     */
 	    $serialNumberClass = $memberInfo['members']['serialNumber']['class'];
-	    $serialNumberTable = $this->_prefixTableName($serialNumberClass);
+	    list ($serialNumberTable, $unused) = $this->_translateTableName($serialNumberClass);
 
 	    $queryList = array();
 	    foreach ($dataTable as $tableName => $columnChanges) {
@@ -548,7 +545,7 @@ class DatabaseStorage extends GalleryStorage {
 
 		    if (!strcmp($tableName, $serialNumberTable)) {
 			$query .= ' AND ' .
-				$this->_prefixColumnName('serialNumber') .
+				$this->_translateColumnName('serialNumber') .
 				'=?';
 			$data[] = $originalSerialNumber;
 			array_unshift($queryList, array($query, $data));
@@ -624,11 +621,12 @@ class DatabaseStorage extends GalleryStorage {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$idCol = $this->_prefixColumnName('id');
+	$idCol = $this->_translateColumnName('id');
 
 	$tables = array();
 	foreach ($memberInfo['members'] as $columnName => $columnInfo) {
-	    $tables[$this->_prefixTableName($columnInfo['class'])] = 1;
+	    list ($tableName, $unused) = $this->_translateTableName($columnInfo['class']);
+	    $tables[$tableName] = 1;
 	}
 
 	/*
@@ -690,9 +688,9 @@ class DatabaseStorage extends GalleryStorage {
 	 * Check the serial number to see if the current entity is up to
 	 * date
 	 */
-	$tableName = $this->_prefixTableName('GalleryEntity');
-	$serialNumberCol = $this->_prefixColumnName('serialNumber');
-	$idCol = $this->_prefixColumnName('id');
+	list ($tableName, $unused) = $this->_translateTableName('GalleryEntity');
+	$serialNumberCol = $this->_translateColumnName('serialNumber');
+	$idCol = $this->_translateColumnName('id');
 	$query = 'SELECT ' . $serialNumberCol .
 		' FROM ' . $tableName .
 		' WHERE ' . $idCol . '=?';
@@ -730,7 +728,6 @@ class DatabaseStorage extends GalleryStorage {
      *               object a GalleryLock instance
      */
     function acquireReadLock($entityIds, $timeout) {
-
 	/* It's ok to pass in a single id */
 	if (!is_array($entityIds)) {
 	    $entityIds = array($entityIds);
@@ -746,7 +743,7 @@ class DatabaseStorage extends GalleryStorage {
 	$cutoffTime = time() + $timeout;
 
 	/* Get the true name of the lock table */
-	$lockTable = $this->_prefixTableName('Lock');
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 
 	/*
 	 * Algorithm:
@@ -765,7 +762,7 @@ class DatabaseStorage extends GalleryStorage {
 	     * Check to see if any of the ids that we care about are write
 	     * locked.
 	     */
-	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	    $writeEntityIdCol = $this->_translateColumnName('writeEntityId');
 	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
 	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
 		    'WHERE ' . $writeEntityIdCol . ' IN (' . $markers . ') ';
@@ -798,8 +795,8 @@ class DatabaseStorage extends GalleryStorage {
 	}
 	    
 	/* Put in a read lock for every entity id */
-	$lockIdCol = $this->_prefixColumnName('lockId');
-	$readEntityIdCol = $this->_prefixColumnName('readEntityId');
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$readEntityIdCol = $this->_translateColumnName('readEntityId');
 	foreach ($entityIds as $entityId) {
 	    $query = 'INSERT INTO ' . $lockTable .
 		    '(' . $lockIdCol . ', ' . $readEntityIdCol . ') VALUES (?, ?)';
@@ -814,7 +811,7 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/* Drop the lock request, now that we've got the write locks */
-	$requestCol = $this->_prefixColumnName('request');
+	$requestCol = $this->_translateColumnName('request');
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
@@ -863,7 +860,7 @@ class DatabaseStorage extends GalleryStorage {
 	$cutoffTime = time() + $timeout;
 
 	/* Get the true name of the lock table */
-	$lockTable = $this->_prefixTableName('Lock');
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 
 	/*
 	 * Algorithm:
@@ -881,8 +878,8 @@ class DatabaseStorage extends GalleryStorage {
 	    /*
 	     * Check to see if any of the ids that we care about are locked.
 	     */
-	    $readEntityIdCol = $this->_prefixColumnName('readEntityId');
-	    $writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	    $readEntityIdCol = $this->_translateColumnName('readEntityId');
+	    $writeEntityIdCol = $this->_translateColumnName('writeEntityId');
 	    $markers = GalleryUtilities::makeMarkers(sizeof($entityIds));
 	    $query = 'SELECT COUNT(*) FROM ' . $lockTable . ' ' .
 		    'WHERE ' . $readEntityIdCol . ' IN (' . $markers . ') ' .
@@ -919,8 +916,8 @@ class DatabaseStorage extends GalleryStorage {
 	/*
 	 * We are approved to acquire our write locks.
 	 */
-	$lockIdCol = $this->_prefixColumnName('lockId');
-	$writeEntityIdCol = $this->_prefixColumnName('writeEntityId');
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$writeEntityIdCol = $this->_translateColumnName('writeEntityId');
 	foreach ($entityIds as $entityId) {
 	    $query = 'INSERT INTO ' . $lockTable .
 		    '(' . $lockIdCol . ', ' . $writeEntityIdCol .
@@ -936,7 +933,7 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/* Drop the lock request, now that we've got the write locks */
-	$requestCol = $this->_prefixColumnName('request');
+	$requestCol = $this->_translateColumnName('request');
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . '=? AND ' . $requestCol . '=1';
 	$data = array($lockId);
@@ -991,9 +988,9 @@ class DatabaseStorage extends GalleryStorage {
 	}
 	
 	/* Get the true name of the lock table */
-	$lockTable = $this->_prefixTableName('Lock');
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 
-	$lockIdCol = $this->_prefixColumnName('lockId');
+	$lockIdCol = $this->_translateColumnName('lockId');
 	$markers = GalleryUtilities::makeMarkers(sizeof($lockIds));
 	$query = 'DELETE FROM ' . $lockTable . ' ' .
 		'WHERE ' . $lockIdCol . ' IN (' . $markers . ')';
@@ -1027,20 +1024,29 @@ class DatabaseStorage extends GalleryStorage {
 	    return array(GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__), null);
 	}
 
-	/* Change '[Class::member]' to 'table.column' */
-	while (ereg('\[([[:alnum:]]*)::([[:alnum:]]*)\]', $query, $regs)) {
+	/* Change '[Class::member]' to 'table.column' or 'alias.column' */
+	while (ereg('\[([[:alnum:]=]*)::([[:alnum:]]*)\]', $query, $regs)) {
 	    $class = $regs[1];
 	    $member = $regs[2];
-	    $table = $this->_prefixTableName($class);
-	    $column = $this->_prefixColumnName($member);
-	    $query = str_replace("[${class}::${member}]", "$table.$column", $query);
+	    list ($table, $alias) = $this->_translateTableName($class);
+
+	    $column = $this->_translateColumnName($member);
+	    if ($alias == null) {
+		$query = str_replace("[${class}::${member}]", "$table.$column", $query);
+	    } else {
+		$query = str_replace("[${class}::${member}]", "$alias.$column", $query);
+	    }
 	}
 
 	/* Change '[Class]' to 'table' */
-	while (ereg('\[([[:alnum:]]*)\]', $query, $regs)) {
+	while (ereg('\[([[:alnum:]=]*)\]', $query, $regs)) {
 	    $class = $regs[1];
-	    $table = $this->_prefixTableName($class);
-	    $query = str_replace("[${class}]", "$table", $query);
+	    list ($table, $alias) = $this->_translateTableName($class);
+	    if ($alias == null) {
+		$query = str_replace("[${class}]", "$table", $query);
+	    } else {
+		$query = str_replace("[${class}]", "$table as $alias", $query);
+	    }
 	}
 
 	/* Run it with the right limits and return the results */
@@ -1086,11 +1092,11 @@ class DatabaseStorage extends GalleryStorage {
     function addMapEntry($mapName, $entry) {
 
 	$mapInfo = $this->_describeMapMembers($mapName);
-	$tableName = $this->_prefixTableName($mapName);
+	list ($tableName, $unused) = $this->_translateTableName($mapName);
 	$data = array();
 	$columns = array();
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
-	    $columns[] = $this->_prefixColumnName($memberName);
+	    $columns[] = $this->_translateColumnName($memberName);
 	    $value = $entry[$memberName];
 
 	    if ($memberType & STORAGE_TYPE_BIT) {
@@ -1131,12 +1137,12 @@ class DatabaseStorage extends GalleryStorage {
 	global $gallery;
 
 	$mapInfo = $this->_describeMapMembers($mapName);
-	$tableName = $this->_prefixTableName($mapName);
+	list ($tableName, $unused) = $this->_translateTableName($mapName);
 	$data = array();
 	$where = array();
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($entry[$memberName])) {
-		$where[] = $this->_prefixColumnName($memberName) . '=?';
+		$where[] = $this->_translateColumnName($memberName) . '=?';
 		$data[] = $entry[$memberName];
 	    }
 	}
@@ -1169,11 +1175,11 @@ class DatabaseStorage extends GalleryStorage {
     function updateMapEntry($mapName, $match, $change) {
 
 	$mapInfo = $this->_describeMapMembers($mapName);
-	$tableName = $this->_prefixTableName($mapName);
+	list ($tableName, $unused) = $this->_translateTableName($mapName);
 	$data = array();
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($match[$memberName])) {
-		$where[] = $this->_prefixColumnName($memberName) . '=?';
+		$where[] = $this->_translateColumnName($memberName) . '=?';
 
 		$value = $match[$memberName];
 		if ($memberType & STORAGE_TYPE_BIT) {
@@ -1184,7 +1190,7 @@ class DatabaseStorage extends GalleryStorage {
 	    }
 
 	    if (isset($change[$memberName])) {
-		$set[] = $this->_prefixColumnName($memberName) . '=?';
+		$set[] = $this->_translateColumnName($memberName) . '=?';
 
 		$value = $change[$memberName];
 		if ($memberType & STORAGE_TYPE_BIT) {
@@ -1279,7 +1285,8 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/* Do the schema table first */
-	if (!in_array(strtolower($this->_prefixTableName('Schema')), $metatables)) {
+	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
+	if (!in_array(strtolower($schemaTableName), $metatables)) {
 	    $ret = $this->_executeSqlFile($tableDefinition['Schema']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -1310,12 +1317,13 @@ class DatabaseStorage extends GalleryStorage {
 	 * check to see if there is an upgrade available for the given table
 	 * version.  If so, apply it.
 	 */
-	foreach ($tableDefinition as $tableName => $sqlFile) {
-	    if ($tableName == 'Schema') {
+	foreach ($tableDefinition as $rawTableName => $sqlFile) {
+	    if ($rawTableName == 'Schema') {
 		continue;
 	    }
-	    
-	    if (!in_array(strtolower($this->_prefixTableName($tableName)), $metatables)) {
+
+	    list ($tableName, $unused) = $this->_translateTableName($rawTableName);
+	    if (!in_array(strtolower($tableName), $metatables)) {
 		$ret = $this->_executeSqlFile($sqlFile);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -1323,20 +1331,20 @@ class DatabaseStorage extends GalleryStorage {
 	    } else {
 		while (1) {
 		    /* The table exists -- see if we have an upgrade for it */
-		    if (empty($tableVersions[$tableName])) {
+		    if (empty($tableVersions[$rawTableName])) {
 			/*
 			 * We've found a SQL file that matches a table in the
 			 * database, but has no matching version info in the
 			 * schema table.  How can this be?  Leave it alone.
 			 */
-			$gallery->debug("Table $tableName: missing entry in Schema table");
+			$gallery->debug("Table $rawTableName: missing entry in Schema table");
 			break;
 		    }
 
 		    /* If we locate an appropriate upgrade, apply it. */
-		    list ($major,  $minor) = $tableVersions[$tableName];
-		    if (!empty($tableAlter[$tableName][$major][$minor])) {
-			$sqlFile = $tableAlter[$tableName][$major][$minor];
+		    list ($major,  $minor) = $tableVersions[$rawTableName];
+		    if (!empty($tableAlter[$rawTableName][$major][$minor])) {
+			$sqlFile = $tableAlter[$rawTableName][$major][$minor];
 			$ret = $this->_executeSqlFile($sqlFile);
 			if ($ret->isError()) {
 			    return $ret->wrap(__FILE__, __LINE__);
@@ -1369,12 +1377,13 @@ class DatabaseStorage extends GalleryStorage {
 	
 	$GLOBALS['ADODB_FETCH_MODE'] = ADODB_FETCH_NUM;
 	$this->_traceStart();
+	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	$recordSet = $this->_db->Execute('SELECT ' .
-					 $this->_prefixColumnName('name') . ', ' .
-					 $this->_prefixColumnName('major') . ', ' .
-					 $this->_prefixColumnName('minor') .
+					 $this->_translateColumnName('name') . ', ' .
+					 $this->_translateColumnName('major') . ', ' .
+					 $this->_translateColumnName('minor') .
 					 ' FROM ' .
-					 $this->_prefixTableName('Schema'));
+					 $schemaTableName);
 	$this->_traceStop();
 	
 	if (empty($recordSet)) {
@@ -1459,15 +1468,17 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	/* If the schema table exists then delete all the tables it lists */
-	if (in_array(strtolower($this->_prefixTableName('Schema')), $metatables)) {
+	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
+	if (in_array(strtolower($schemaTableName), $metatables)) {
 	    /* Load all table versions */
 	    list ($ret, $tableVersions) = $this->_loadTableVersions();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    foreach (array_keys($tableVersions) as $tableName) {
-		$query = 'DROP TABLE ' . $this->_prefixTableName($tableName);
+	    foreach (array_keys($tableVersions) as $rawTableName) {
+		list ($tableName, $unused) = $this->_translateTableName($rawTableName);
+		$query = 'DROP TABLE ' . $tableName;
 		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query);
 		$this->_traceStop();
@@ -1591,9 +1602,9 @@ class DatabaseStorage extends GalleryStorage {
 	}
 
 	if (!empty($checkIds)) {
-	    $idCol = $this->_prefixColumnName('id');
-	    $entityTypeCol = $this->_prefixColumnName('entityType');
-	    $table = $this->_prefixTableName('GalleryEntity');
+	    $idCol = $this->_translateColumnName('id');
+	    $entityTypeCol = $this->_translateColumnName('entityType');
+	    list ($table, $unused) = $this->_translateTableName('GalleryEntity');
 	    $markers = GalleryUtilities::makeMarkers(sizeof($checkIds));
 	    $query = 'SELECT ' . $idCol . ', ' . $entityTypeCol .
 		    ' FROM ' . $table .
@@ -1639,7 +1650,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return string a safe column name
      * @access private
      */
-    function _prefixColumnName($columnName) {
+    function _translateColumnName($columnName) {
 	return $this->_columnPrefix . $columnName;
     }
 
@@ -1650,7 +1661,7 @@ class DatabaseStorage extends GalleryStorage {
      * @return string a safe table name
      * @access private
      */
-    function _prefixTableName($tableName) {
+    function _translateTableName($tableName) {
 
 	/*
 	 * Remove the the ubiquitous "Gallery" prefix, since it's not part of
@@ -1661,8 +1672,28 @@ class DatabaseStorage extends GalleryStorage {
 	 * automatically generate the schema name (and get it wrong).
 	 */
 	$tableName = str_replace('Gallery', '', $tableName);
-	
-	return $this->_tablePrefix . $tableName;
+
+	/*
+	 * Deal with aliases, which will be in the form of "table=1", "table=2",
+	 * etc.  Translate "1" into "A", "2" into "B", etc.
+	 */
+	$split = split('=', $tableName);
+	$alias = '';
+	if (sizeof($split) > 1) {
+	    list ($tableName, $number) = $split;
+	    for ($i = 0; $i < strlen($tableName); $i++) {
+		$chr = $tableName[$i];
+		if ($chr >= 'A' && $chr <= 'Z') {
+		    $alias .= $chr;
+		}
+	    }
+	    $alias = strtolower($alias) . ($number - 1);
+	} else {
+	    $tableName = $split[0];
+	    $alias = null;
+	}
+
+	return array($this->_tablePrefix . $tableName, $alias);
     }
 
     /**
@@ -1675,7 +1706,7 @@ class DatabaseStorage extends GalleryStorage {
      */
     function _getLockClearance($cutoffTime) {
 	/* Get the true name of the lock table */
-	$lockTable = $this->_prefixTableName('Lock');
+	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 	
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
@@ -1689,8 +1720,8 @@ class DatabaseStorage extends GalleryStorage {
 	$this->_traceStop();
 
 	/* Put in a lock request */
-	$lockIdCol = $this->_prefixColumnName('lockId');
-	$requestCol = $this->_prefixColumnName('request');
+	$lockIdCol = $this->_translateColumnName('lockId');
+	$requestCol = $this->_translateColumnName('request');
 	$query = 'INSERT INTO ' . $lockTable .
 		'(' . $lockIdCol . ', ' . $requestCol .
 		') VALUES (?, 1)';
