@@ -20,11 +20,12 @@ if ($ret->isError()) {
 }
 
 function main() {
-
     $ret = GalleryInitFirstPass();
     if ($ret->isError()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
+
+    GalleryDataCache::setFileCachingEnabled(false);    
 
     $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
