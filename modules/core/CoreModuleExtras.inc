@@ -57,36 +57,47 @@ class CoreModuleExtras {
 	     * TODO: Get rid of this when we get to the final release.  It's
 	     * only useful in the alpha -> beta transition.
 	     */
-	    list ($ret, $paramValue) = $this->getModuleParameter('permissions.directory');
+	    list ($ret, $paramValue) = $module->getModuleParameter('permissions.directory');
 	    if (isset($paramValue)) {
 		$currentVersion = '0.8';
 	    }
 	}
 
-	if (!isset($currentVersion)) {
-	    /* This is an initial install. Make sure that we have some reasonable defaults for the core. */
-	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
-	    foreach (array('permissions.directory' => '0755',
-			   'permissions.file' => '0644',
-			   'uploadLocalServer.dirs' => '',
-			   'exec.expectedStatus' => '0',
-			   'default.orderBy' => 'orderWeight',
-			   'default.orderDirection' => '1',
-			   'default.layout' => 'matrix',
-			   'default.theme' => 'matrix',
-			   'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
-			   'language.selector' => 'none',
-			   'session.lifetime' => 25 * 365 * 86400, /* 25 years */
-			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
-			   'misc.markup' => 'bbcode',
-			   'misc.useShortUrls' => 'false',
-			   ) as $key => $value) {
+	if (isset($currentVersion)) {
+	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	}
+	if (!isset($param)) {
+	    $param = array();
+	}
+
+	/* Make sure all our module parameters are set (initial install or upgrade) */
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
+	foreach (array('permissions.directory' => '0755',
+		       'permissions.file' => '0644',
+		       'uploadLocalServer.dirs' => '',
+		       'exec.expectedStatus' => '0',
+		       'default.orderBy' => 'orderWeight',
+		       'default.orderDirection' => '1',
+		       'default.layout' => 'matrix',
+		       'default.theme' => 'matrix',
+		       'default.language' => GalleryTranslator::getLanguageCodeFromRequest(),
+		       'language.selector' => 'none',
+		       'session.lifetime' => 25 * 365 * 86400, /* 25 years */
+		       'session.inactivityTimeout' => 14 * 86400, /* two weeks */
+		       'misc.markup' => 'bbcode',
+		       'misc.useShortUrls' => 'false',
+		       'misc.login' => 'both',
+		       ) as $key => $value) {
+	    if (!isset($param[$key])) {
 		$ret = $module->setModuleParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
 
+	if (!isset($currentVersion)) {
+	    /* This is an initial install */
 	    /*
 	     * We're going to need a translator in order to run the install
 	     * functions below.  At this point in the install process, we

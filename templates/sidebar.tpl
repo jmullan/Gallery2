@@ -42,8 +42,8 @@
   {/if}
 
   {* Core System content *}
-  {if isset($layout.systemContent.core.core)}
-  {assign var=moduleFile value=$layout.systemContent.core.core}
+  {if isset($layout.systemContent.core.login)}
+  {assign var=moduleFile value=$layout.systemContent.core.login}
   {include file="gallery:$moduleFile" l10Domain="modules_core"} 
   {/if}
 
@@ -102,7 +102,7 @@
   {* Extra modules system content *}
   {foreach from=$layout.systemContent key=moduleId item=moduleContent}
   {foreach from=$moduleContent key=moduleContentKey item=moduleFile}
-  {if ($moduleId != 'search' || $moduleContentKey != 'searchBox') && ($moduleId != 'core' || $moduleContentKey != 'core')}
+  {if ($moduleId != 'search' || $moduleContentKey != 'searchBox') && ($moduleId != 'core' || $moduleContentKey != 'login')}
     {include file="gallery:$moduleFile" l10Domain="modules_$moduleId"}
   {/if}
   {/foreach}

@@ -37,8 +37,8 @@ class CoreModule extends GalleryModule {
 
 	$this->setId('core');
 	$this->setName('Core');
-	$this->setGalleryVersion('2.0-alpha-3');
-	$this->setVersion('0.8.1');
+	$this->setGalleryVersion('2.0-alpha-4');
+	$this->setVersion('0.8.2');
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $gallery->i18n('Gallery'));
 	$this->setCallbacks('registerEventListeners|performFactoryRegistrations|' .
@@ -391,7 +391,7 @@ class CoreModule extends GalleryModule {
     function getSystemLinks() {
 	global $gallery;
 
-	list ($ret, $anonymousUserId) = $this->getModuleParameter('id.anonymousUser');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -409,11 +409,13 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (GalleryCapabilities::can('login')) {
-	    if ($gallery->getActiveUserId() == $anonymousUserId) {
-		$links[] = array('text' => $this->translate('Login'),
-				 'params' => array('view' => 'core:UserAdmin',
-						   'subView' => 'core:UserLogin',
-						   'return' => 1));
+	    if ($gallery->getActiveUserId() == $param['id.anonymousUser']) {
+		if ($param['misc.login'] != 'form') {
+		    $links[] = array('text' => $this->translate('Login'),
+				     'params' => array('view' => 'core:UserAdmin',
+						       'subView' => 'core:UserLogin',
+						       'return' => 1));
+		}
 	    } else {
 		$links[] = array('text' => $this->translate('Your Account'),
 				 'params' => array('view' => 'core:UserAdmin',
@@ -425,7 +427,7 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 
-        return array(GalleryStatus::success(), $links);
+	return array(GalleryStatus::success(), $links);
     }
 
     /**
@@ -435,25 +437,22 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 	$content = array();
 
-	list ($ret, $anonymousUserId) =
-	    $this->getModuleParameter('id.anonymousUser');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Need a login form? */
-	if (GalleryCapabilities::can('login') && $gallery->getActiveUserId() == $anonymousUserId) {
-	    $content['core'] = 'modules/core/templates/LoginSystemContent.tpl';
+	$anonymousUserId = $param['id.anonymousUser'];
+	if ($gallery->getActiveUserId() == $anonymousUserId
+		&& GalleryCapabilities::can('login') && $param['misc.login'] != 'link') {
+	    $content['login'] = 'modules/core/templates/LoginSystemContent.tpl';
 	}
 
 	/* Get the language selector */
-	list ($ret, $languageSelector) =
-	    $this->getModuleParameter('language.selector');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	$languageSelector = $param['language.selector'];
 	if ($languageSelector == 'all' || ($languageSelector == 'guest'
-			&& $gallery->getActiveUserId() == $anonymousUserId)) {
+		&& $gallery->getActiveUserId() == $anonymousUserId)) {
 	    /* Set up our language selection list */
 	    $languageList = array();
 	    $translator =& $gallery->getTranslator();
@@ -654,8 +653,8 @@ class CoreModule extends GalleryModule {
     /**
      * @see GalleryModule::install
      *
-     * We pushed all this code into its own file since we need it very rarely so it doesn't make sense to load
-     * it every single time.
+     * We pushed all this code into its own file since we need it very rarely so it doesn't
+     * make sense to load it every single time.
      */
     function upgrade($currentVersion) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/CoreModuleExtras.inc');

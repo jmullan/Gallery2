@@ -90,7 +90,7 @@
 	<td>
 	  {g->text text="New directories"}
 	</td>
-	
+
 	<td>
 	  <select name="{g->formVar var="form[permissions][directory]"}">
 	      {html_options values=$AdminCore.permissionsDirectoryList selected=$form.permissions.directory output=$AdminCore.permissionsDirectoryList}
@@ -102,7 +102,7 @@
 	<td>
 	  {g->text text="New files"}
 	</td>
-	
+
 	<td>
 	  <select name="{g->formVar var="form[permissions][file]"}">
 	      {html_options values=$AdminCore.permissionsFileList selected=$form.permissions.file output=$AdminCore.permissionsFileList}
@@ -123,7 +123,7 @@
 
     <table class="gbDataTable">
       <tr>
-	<th> 
+	<th>
 	  {g->text text="Path"}
 	</th>
 	<th>
@@ -191,29 +191,37 @@
     <h3 class="giTitle">
       {g->text text="Session Settings"}
     </h3>
-    
-    <p class="giDescription">
-      {g->text text="Specify the lifetime of the session here."}
-    </p>
 
     <table class="gbDataTable">
       <tr>
 	<td>
-	  {g->text text="Lifetime"}
+	  {g->text text="Login Method"}
 	</td>
-	
+
+	<td>
+	  <select name="{g->formVar var="form[misc][login]"}">
+	      {html_options options=$AdminCore.loginMethod selected=$form.misc.login}
+	  </select>
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  {g->text text="Session Lifetime"}
+	</td>
+
 	<td>
 	  <select name="{g->formVar var="form[session][lifetime]"}">
 	      {html_options options=$AdminCore.sessionTimeList selected=$form.session.lifetime}
 	  </select>
 	</td>
       </tr>
-      
+
       <tr>
 	<td>
 	  {g->text text="Inactivity Timeout"}
 	</td>
-	
+
 	<td>
 	  <select name="{g->formVar var="form[session][inactivityTimeout]"}">
 	      {html_options options=$AdminCore.sessionTimeList selected=$form.session.inactivityTimeout}
@@ -227,7 +235,7 @@
     <h3 class="giTitle">
       {g->text text="URL Style"}
     </h3>
-    
+
     <p class="giDescription">
       {strip}
       {capture name="apache2link"}
@@ -249,7 +257,7 @@
 	<td>
 	  {g->text text="Use short URLs?"}
 	</td>
-	
+
 	<td>
 	  <select name="{g->formVar var="form[misc][useShortUrls]"}">
 	      {html_options options=$AdminCore.useShortUrlsList selected=$form.misc.useShortUrls}
@@ -263,7 +271,7 @@
     <h3 class="giTitle">
       {g->text text="Embedded Markup"}
     </h3>
-    
+
     <p class="giDescription">
       {g->text text="What kind of markup should we allow in user-entered fields?  For security reasons we do not recommend that you allow raw HTML.  BBCode is a special kind of markup that is secure and allows for simple text formatting like bold, italics, lists, images and urls."}
     </p>
@@ -273,7 +281,7 @@
 	<td>
 	  {g->text text="Markup"}
 	</td>
-	
+
 	<td>
 	  <select name="{g->formVar var="form[misc][markup]"}">
 	      {html_options options=$AdminCore.embeddedMarkupList selected=$form.misc.markup}
@@ -287,7 +295,7 @@
     <h3 class="giTitle">
       {g->text text="Email"}
     </h3>
-    
+
     <p class="giDescription">
       {g->text text="By default Gallery uses PHP's built in mail function to send email which requires no configuration.  To use a smtp/mail server that requires authentication fill in the values below."}
     </p>

@@ -132,7 +132,7 @@ class AdminCoreController extends GalleryController {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup',
+			   'misc.markup', 'misc.login',
 			   'smtp.host', 'smtp.from', 'smtp.username') as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
@@ -196,7 +196,7 @@ class AdminCoreView extends GalleryView {
 			   'session.lifetime',
 			   'session.inactivityTimeout',
 			   'misc.useShortUrls',
-			   'misc.markup',
+			   'misc.markup', 'misc.login',
 			   'smtp.host', 'smtp.from',
 			   'smtp.username', 'smtp.password') as $key) {
 
@@ -292,6 +292,10 @@ class AdminCoreView extends GalleryView {
 	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
 
 	/* Miscellaneous lists */
+	$loginMethod = array('link' => $module->translate('Link to Login Page'),
+			     'form' => $module->translate('Form on Sidebar'),
+			     'both' => $module->translate('Both'));
+
 	$useShortUrlsList = array('true' => $module->translate('yes'),
 				  'false' => $module->translate('no'));
 
@@ -312,6 +316,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
 	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
+	$AdminCore['loginMethod'] = $loginMethod;
 	$AdminCore['useShortUrlsList'] = $useShortUrlsList;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['shortUrlTestItemId'] = $rootId;
