@@ -27,7 +27,7 @@ my @files = ();
 map(s{$basedir/}{}, @files);
 
 # Keep everything at the basedir, modules, layouts.  Ditch the rest
-@files = grep(m{^(modules/.*|layouts/.*|[^/]*)$}, @files);
+@files = grep(m{^(setup/.*|modules/.*|layouts/.*|[^/]*)$}, @files);
 
 # Keep .class, .inc, .php files
 @files = grep(m{\.(class|inc|php)$}, @files);
