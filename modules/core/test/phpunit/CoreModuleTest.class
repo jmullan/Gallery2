@@ -113,7 +113,7 @@ class CoreModuleTest extends GalleryTestCase {
 					'view' => 'core:ItemEditPermissions'),
 				  array('name' => $this->_module->translate('Add Items'),
 					'view' => 'core:ItemAddChildren'),
-				  array('name' => $this->_module->translate('Add Album'),
+				  array('name' => $this->_module->translate('Add Sub-Album'),
 					'view' => 'core:ItemAddAlbum')
 				  ),
 			    $content);
@@ -168,18 +168,13 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$links[] = array('text' => $this->_module->translate('edit album'),
-			 'params' => array(
-					   'view' => 'core:ItemAdmin',
-					   'itemId' => $this->_parentAlbum->getId(),
-					   ));
 	$links[] = array('text' => $this->_module->translate('add item'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAddChildren',
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('add album'),
+	$links[] = array('text' => $this->_module->translate('add sub-album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemAddAlbum',
@@ -194,16 +189,29 @@ class CoreModuleTest extends GalleryTestCase {
 	$links[] = array('text' => $this->_module->translate('delete album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
+					   'return' => 1,
 					   'subView' => 'core:ItemDelete',
-					   'return' => true,
 					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
-	$links[] = array('text' => $this->_module->translate('move item'),
+	$links[] = array('text' => $this->_module->translate('edit general'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemEditItem',
+					   'itemId' => $this->_parentAlbum->getId(),
+					   ));
+	$links[] = array('text' => $this->_module->translate('move album'),
 			 'params' => array(
 					   'view' => 'core:ItemAdmin',
 					   'subView' => 'core:ItemMove',
 					   'itemId' => $this->_parentAlbum->getParentId(),
 					   'selectedId' => $this->_parentAlbum->getId(),
+					   ));
+	$links[] = array('text' => $this->_module->translate('make highlight'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'return' => 1,
+					   'subView' => 'core:ItemMakeHighlight',
+					   'itemId' => $this->_parentAlbum->getId(),
 					   ));
 	$links[] = array('text' => $this->_module->translate('reorder items'),
 			 'params' => array(

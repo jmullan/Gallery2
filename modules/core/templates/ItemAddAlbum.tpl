@@ -1,7 +1,7 @@
 {g->pagebox}
   {g->banner}
     {g->title}
-      {g->text text="Add Album"}
+      {g->text text="Add Sub-Album"}
     {/g->title}
   {/g->banner}
 

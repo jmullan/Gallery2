@@ -458,7 +458,7 @@ class DatabaseStorage extends GalleryStorage {
 		$value = $entity->$getFunc();
 
 		/* Convert empty values to null */
-		if (empty($value)) {
+		if (!is_numeric($value) && empty($value)) {
 		    $value = null;
 		}
 
@@ -574,6 +574,8 @@ class DatabaseStorage extends GalleryStorage {
 		} else {
 		    $affectedRows = $this->_db->Affected_Rows();
 		    if ($affectedRows == 0) {
+			printf("<pre>%s</pre>", print_r($query, 1));
+			printf("<pre>%s</pre>", print_r($data, 1));
 			return GalleryStatus::error(ERROR_OBSOLETE_DATA, __FILE__, __LINE__);
 		    } else if ($affectedRows > 1) {
 			/*

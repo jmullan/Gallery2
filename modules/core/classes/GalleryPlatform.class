@@ -240,10 +240,9 @@ class GalleryPlatform {
     }
 
     /**
-     * Open a file or URL
+     * Return a file as an array
      *
      * @param string a file path or URL
-     * @param string a file mode
      * @param int if this is set to 1, search the include path also
      * @return resource a file descriptor
      * @access public
@@ -255,6 +254,22 @@ class GalleryPlatform {
 	}
 	
 	return file($filename, $use_include_path);
+    }
+    
+    /**
+     * Output a file
+     *
+     * @param string a file path or URL
+     * @param int if this is set to 1, search the include path also
+     * @return resource a file descriptor
+     * @access public
+     */
+    function readfile($filename, $use_include_path=false) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("readfile($filename, $use_include_path)");
+	}
+	return readfile($filename, $use_include_path);
     }
     
     /**

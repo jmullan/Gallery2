@@ -1,0 +1,157 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * This controller will handle the editing of an image
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class ItemEditAnimationController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	/* Make sure we have permission do edit this item */
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$status = array();
+	$error = array();
+
+	/* Figure out which command we're taking */
+	if (isset($form['action']['save'])) {
+
+	    if (isset($form['width']) && $form['width'] < 0) {
+		$error[] = 'form.error.width.invalid';
+	    } else {
+		$form['width'] = (int)$form['width'];
+	    }
+
+	    if (isset($form['height']) && $form['height'] < 0) {
+		$error[] = 'form.error.height.invalid';
+	    } else {
+		$form['height'] = (int)$form['height'];
+	    }
+
+	    if (empty($error)) {
+		list ($ret, $lock) = $gallery->acquireWriteLock($item->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $item) = $item->refresh();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$item->setWidth($form['width']);
+		$item->setHeight($form['height']);
+		$ret = $item->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$gallery->releaseLocks($lock);
+
+		/* Figure out where to redirect upon success */
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'core:ItemEditAnimation';
+		$redirect['itemId'] = $itemId;
+		$status['saved'] = 1;
+	    }
+	}
+
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'core:ItemEditAnimation';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view will show options to edit an image
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ */
+class ItemEditAnimationView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	/* Make sure we have permission do edit this item */
+	$ret = GalleryUserHelper::assertHasItemPermission($itemId, 'core.edit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	if ($form['formName'] != 'ItemEditAnimation') {
+	    /* First time around, load the form with item data */
+	    $form['width'] = $item->getWidth();
+	    $form['height'] = $item->getHeight();
+	    $form['formName'] = 'ItemEditAnimation';
+	}
+
+	$ItemEditAnimation = array();
+							     
+	$template->setVariable('ItemEditAnimation', $ItemEditAnimation);
+	$template->setVariable('controller', 'core:ItemEditAnimation');
+	return array(GalleryStatus::success(), '', 'modules/core/templates/ItemEditAnimation.tpl');
+    }
+}
+?>

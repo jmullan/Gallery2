@@ -197,7 +197,8 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	case 'HTML':
 	    $urlGenerator = $gallery->getUrlGenerator();
 	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
-						    'itemId' => $this->getId()));
+						    'itemId' => $this->getId(),
+						    'serialNumber' => $this->getSerialNumber()));
 
 	    list ($width, $height) = array($this->getWidth(), $this->getHeight());
 

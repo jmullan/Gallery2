@@ -1,0 +1,141 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditAnimation controller tests
+ */
+class ItemEditAnimationControllerTest extends GalleryControllerTestCase {
+
+    function ItemEditAnimationControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditAnimation');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'application/x-director');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testChangeSize() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.width', 123);
+	GalleryUtilities::putRequestVariable('form.height', 456);
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAnimation',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that the preferred is gone */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(123, $this->_item->getWidth());
+	$this->assertEquals(456, $this->_item->getHeight());
+    }
+
+    function testChangeSizeMissingValues() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.width', '');
+	GalleryUtilities::putRequestVariable('form.height', '');
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAnimation',
+						      'itemId' => $this->_item->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	/* Verify that the preferred is gone */
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(0, $this->_item->getWidth());
+	$this->assertEquals(0, $this->_item->getHeight());
+    }
+    
+    function testChangeSizeInvalidValues() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
+	GalleryUtilities::putRequestVariable('form.width', -123);
+	GalleryUtilities::putRequestVariable('form.height', -456);
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditAnimation'),
+				  'status' => array(),
+				  'error' => array('form.error.width.invalid',
+						   'form.error.height.invalid')),
+			    $results);
+    }
+}
+?>
