@@ -643,6 +643,7 @@ class GalleryPermissionHelper_advanced {
      * @static
      */
     function getPermissionIds($flags=0) {
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryPermissionHelper_simple.class');
 	list ($ret, $allPermissions) = GalleryPermissionHelper_simple::_fetchAllPermissions();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
