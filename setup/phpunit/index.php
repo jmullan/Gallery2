@@ -156,12 +156,12 @@ print "</pre>";
     <form>
     <?php if (isset($sessionKey)) { ?>
     <input type="hidden" name="<?php echo $sessionKey?>" value="<?php echo $sessionId ?>">
-    <? } ?>
+    <?php } ?>
     <h2>Filtering</h2>
     Enter a filter string in the box below to restrict testing to classes containing 
     that text in their name.
     <br>
-    Filter: <input type="text" name="filter" value="<?php echo $filter?>">
+    Filter: <input type="text" name="filter" value="<?php echo $filter ?>">
     </form>
     
     <?php
