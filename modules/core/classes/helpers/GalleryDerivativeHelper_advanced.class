@@ -139,7 +139,7 @@ class GalleryDerivativeHelper_advanced {
 	    /* Get all toolkits */
 	    list ($ret, $toolkitIds) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $toolkits = array();
@@ -147,7 +147,7 @@ class GalleryDerivativeHelper_advanced {
 		list ($ret, $toolkits[$toolkitId]) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
