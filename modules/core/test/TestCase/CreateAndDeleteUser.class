@@ -1,0 +1,61 @@
+<?php
+
+class CreateAndDeleteUserTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create and delete a user";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	/* Create the user */
+	$gallery->debug('Create a new user');
+	$user = new GalleryUser();
+	$ret = $user->create('joe blow');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$user->setFullName('Joe Blow');
+	
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Check what groups the user is in */
+	$gallery->debug('See what groups the user is in');
+	$this->_dumpGroups($user->getId());
+
+	/* Make the user an admin */
+	$gallery->debug('Add the user to the admin group');
+	$groupId = $gallery->getConfig('core.id.adminGroup');
+	$ret = GalleryUserGroupMap::addUserToGroup($user->getId(), $groupId);
+	
+	/* Check groups again */
+	$gallery->debug('Check groups again');
+	$this->_dumpGroups($user->getId());
+
+	/* Delete the user -- the lazy way. */
+	$gallery->debug('Delete the user');
+	$ret = $gallery->deleteEntityById($user->getId());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Make sure that the user is not in the map anymore */
+	$gallery->debug('Make sure the user is not in any groups');
+	$this->_dumpGroups($user->getId());
+
+	return GalleryStatus::success();
+    }
+
+    function _dumpGroups($userId) {
+	list ($ret, $groupIds) = 
+	    GalleryUserGroupMap::getGroupsForUser($userId);
+	print_r($groupIds);
+    }
+}
+
+?>
+
