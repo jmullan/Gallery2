@@ -16,6 +16,9 @@
       {if isset($status.savedLayout)}
 	{g->text text="Successfully saved layout settings"}
       {/if}
+      {if isset($status.restoredLayout)}
+	{g->text text="Restored layout settings"}
+      {/if}
     {/g->success}
   {/if}
 
@@ -149,15 +152,16 @@
 	    {/g->element}
 	  {/if}
 	{/g->box}
+
+	{g->box style="admin"}
+	  {g->element}
+	    {g->input type="hidden" name="layoutId"}{$AdminLayouts.layoutId}{/g->input}
+	    {g->input type="hidden" name="mode"}editLayout{/g->input}
+	    {g->input type="submit" name="form.action.saveLayout"}{g->text text="Save"}{/g->input}
+	    {g->input type="submit" name="form.action.undoLayout"}{g->text text="Undo"}{/g->input}
+	  {/g->element}
+	{/g->box}
       {/if}
     {/g->element}
-    {g->box}
-      {g->element}
-	{g->input type="hidden" name="layoutId"}{$AdminLayouts.layoutId}{/g->input}
-	{g->input type="hidden" name="mode"}editLayout{/g->input}
-	{g->input type="submit" name="form.action.saveLayout"}{g->text text="Save"}{/g->input}
-	{g->input type="submit" name="form.action.undoLayout"}{g->text text="Undo"}{/g->input}
-      {/g->element}
-    {/g->box}
   {/g->tabbedbox}
 {/g->pagebox}

@@ -100,6 +100,8 @@ class ItemAdminView extends GalleryView {
 	    $subViewChoiceData = array_merge($subViewChoiceData, $moduleViews);
 	}
 
+	usort($subViewChoiceData, array($this, 'sortByName'));
+
 	/* Turn sub view choices into url params */
 	$subViewChoices = array();
 	foreach ($subViewChoiceData as $params) {
@@ -172,6 +174,10 @@ class ItemAdminView extends GalleryView {
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAdminHead.tpl',
 		     'modules/core/templates/ItemAdmin.tpl');
+    }
+
+    function sortByName($a, $b) {
+	return strcmp($a['name'], $b['name']);
     }
 }
 ?>

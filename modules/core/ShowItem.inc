@@ -89,31 +89,7 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	/* Find the right layout for this item */
-	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
-	    $layoutName = $item->getLayout();
-	} else {
-	    list ($ret, $parent) = $gallery->loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-
-	    $layoutName = $parent->getLayout();
-	}
-	if (empty($layoutName)) {
-	    list ($ret, $layoutName) =
-		$gallery->getModuleParameter('core', 'default.layout');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	}
-
-	/* Load the correct layout */
-	if (empty($layoutName)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
-	}
-
-	list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutName);
+	list ($ret, $layout) = GalleryItemHelper::fetchLayout($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}

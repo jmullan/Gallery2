@@ -68,7 +68,7 @@ class AdminLayoutsController extends GalleryController {
 
 	    list ($ret, $layout) = GalleryPluginMap::loadPlugin('layout', $layoutId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 
@@ -112,7 +112,7 @@ class AdminLayoutsController extends GalleryController {
 	    /* Get all the possible settings */
 	    list ($ret, $settings) = $layout->getSettings(null);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Validate the settings */
@@ -141,6 +141,13 @@ class AdminLayoutsController extends GalleryController {
 		}
 		GalleryUtilities::putRequestVariable('form.errorMessage', $errorMessage);
 	    }
+	} else if (isset($form['action']['undoLayout'])) {
+	    /* Redirect back to ourselves to reset the form */
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminLayouts';
+	    $redirect['mode'] = 'editLayout';
+	    $redirect['layoutId'] = $layoutId;
+	    $status['restoredLayout'] = $layout->getName();
 	}
 
 	if (!empty($redirect)) {

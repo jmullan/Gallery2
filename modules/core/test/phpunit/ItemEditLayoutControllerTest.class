@@ -1,0 +1,268 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditLayout controller tests
+ */
+class ItemEditLayoutControllerTest extends GalleryControllerTestCase {
+
+    function ItemEditLayoutControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemEditLayout');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	/* Create a random album */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assign our test layout */
+	list ($ret, $lockId) = $gallery->acquireWriteLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_album->setLayout('ItemEditLayoutControllerTest');
+	$ret = $this->_album->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $gallery->releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+        $this->_savePlatform = $gallery->getPlatform();
+	$gallery->_platform = new AdminLayoutsTestPlatform();
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	/* Restore the platform */
+	$gallery->_platform = $this->_savePlatform;
+	
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    function testUndo() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.action.undo', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditLayout',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array('restored' => 1),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSave() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.key.rows', 3);
+	GalleryUtilities::putRequestVariable('form.key.columns', 4);
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditLayout',
+						      'itemId' => $this->_album->getId()),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	// Verify
+	$this->assertEquals(array('rows' => 3, 'columns' => 4),
+			    ItemEditLayoutControllerTestLayout::getMap());
+    }
+
+    function testInvalidSave() {
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+	GalleryUtilities::putRequestVariable('form.key.rows', '3x');
+	GalleryUtilities::putRequestVariable('form.key.columns', 4);
+	GalleryUtilities::putRequestVariable('form.action.save', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEditLayout'),
+				  'status' => array(),
+				  'error' => array('form.error.key.rows.invalid')),
+			    $results);
+
+	/* Verify that we have a detailed error message */
+	$this->assert(GalleryUtilities::hasRequestVariable('form.errorMessage'));
+
+	$errorMessage = GalleryUtilities::getRequestVariables('form.errorMessage');
+	$this->assertEquals('You must enter a number greater than 0', $errorMessage['rows']);
+    }
+}
+
+
+class ItemEditLayoutControllerTestLayout {
+
+    /**
+     * @see GalleryLayout::getSettings()
+     */
+    function getSettings($itemId=0) {
+	global $gallery;
+
+	$settings = array();
+	$settings[] = array('key' => 'rows',
+			    'name' => 'Rows per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(4));
+	$settings[] = array('key' => 'columns',
+			    'name' => 'Columns per album page',
+			    'type' => 'text-field',
+			    'type-params' => array('size' => 2),
+			    'values' => array(3));
+	return array(GalleryStatus::success(), $settings);
+    }
+
+    /**
+     * @see GalleryLayout::validateSettings
+     */
+    function validateSettings($settings) {
+	$error = array();
+	if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
+	    $error['rows'] = $this->translate('You must enter a number greater than 0');
+	}
+	
+	if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
+	    $error['columns'] = $this->translate('You must enter a number greater than 0');
+	}
+
+	return $error;
+    }
+
+    function translate($text) {
+	return $text;
+    }
+
+    function setParameter($key, $value) {
+	$map =& $this->getMap();
+	$map[$key] = $value;
+	return GalleryStatus::success();
+    }
+
+    function &getMap() {
+	static $map;
+	if (!isset($map)) {
+	    $map = array();
+	}
+	return $map;
+    }
+
+    function init() {
+	return GalleryStatus::success();
+    }
+
+    function getName() {
+	return 'ItemEditLayoutControllerTest';
+    }
+}
+
+class ItemEditLayoutTestPlatform {
+
+    function opendir($path) {
+	global $gallery;
+	if ($path == $gallery->getConfig('code.gallery.layouts')) {
+	    return 'TEST_VALID_RESOURCE';
+	} else {
+	    return null;
+	}
+    }
+
+    function readdir($path) {
+	static $paths;
+	if (!isset($paths)) {
+	    $paths = array('.',
+			   '..',
+			   'ItemEditLayoutControllerTest');
+	}
+
+	if ($path == 'TEST_VALID_RESOURCE') {
+	    if (empty($paths)) {
+		$paths = null;
+		return null;
+	    } else {
+		return array_shift($paths);
+	    }
+	}
+    }
+
+    function closedir($path) {
+    }
+
+    function file_exists($path) {
+	global $gallery;
+	
+	$base = $gallery->getConfig('code.gallery.layouts');
+	switch($path) {
+	case $base . 'ItemEditLayoutController/layout.inc':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+
+    function is_dir($path) {
+	global $gallery;
+	
+	$base = $gallery->getConfig('code.gallery.layouts');
+	switch($path) {
+	case $base . 'ItemEditLayoutControllerTest':
+	    return 1;
+
+	default:
+	    return 0;
+	}
+    }
+}
+
+?>

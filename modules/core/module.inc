@@ -618,6 +618,14 @@ class CoreModule extends GalleryModule {
 					    'subView' => 'core:ItemReorder',
 					    'itemId' => $item->getId()));
 	    }
+
+	    if ($isAlbum && isset($permissions['core.edit'])) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('edit layout'),
+			  'params' => array('view' => 'core:ItemAdmin',
+					    'subView' => 'core:ItemEditLayout',
+					    'itemId' => $item->getId()));
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
@@ -760,6 +768,9 @@ class CoreModule extends GalleryModule {
 	    if ($isAlbum) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
 				 'view' => 'core:ItemEditAlbum');
+
+	        $views[] = array('name' => $this->translate('Layout Settings'),
+				 'view' => 'core:ItemEditLayout');
 
 		if ($childCount > 1) {
 		    $views[] = array('name' => $this->translate('Reorder Items'),

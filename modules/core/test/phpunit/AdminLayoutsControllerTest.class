@@ -135,6 +135,23 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testUndoLayout() {
+	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId2');
+	GalleryUtilities::putRequestVariable('form.key.rows', '2');
+	GalleryUtilities::putRequestVariable('form.key.columns', '4');
+	GalleryUtilities::putRequestVariable('form.action.undoLayout', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminLayouts',
+						      'mode' => 'editLayout',
+						      'layoutId' => 'testLayoutId2'),
+				  'status' => array('restoredLayout' => 'Test Layout 2'),
+				  'error' => array()),
+			    $results);
+    }
+
     function testSaveLayoutWithValidationErrors() {
 	GalleryUtilities::putRequestVariable('layoutId', 'testLayoutId1');
 	GalleryUtilities::putRequestVariable('form.key.rows', '2');
