@@ -71,14 +71,14 @@
   
     <input type="submit" name="{g->formVar var="form[action][findFilesFromWebPage]"}" value="{g->text text="Find Files"}" class="button"/>
     {else} {* {if empty($form.webPageUrls)} *}
-    <b>
+    <strong>
       {g->text text="URL: %s" arg1=$form.webPage}
       <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[webPage]=`$form.webPage`" arg5="form[formName]=ItemAddFromWeb" arg6="addPlugin=ItemAddFromWeb"}">{g->text text="change"}</a>
-    </b>
+    </strong>
   
     <input type="hidden" name="{g->formVar var="form[webPage]"}" value="{$form.webPage}"/>
   
-    <br /
+    <br />
   
     {g->text one="%d url found" 
              many="%d urls found" 

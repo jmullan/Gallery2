@@ -5,12 +5,12 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <form action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
-  <p>
+  <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="itemId"}" value="{$ItemAdmin.item.id}"/>
-  </p>
+  </div>
 
   <ul class="gbBreadCrumb">
     {foreach name="parent" from=$ItemAdmin.parents item=parent}

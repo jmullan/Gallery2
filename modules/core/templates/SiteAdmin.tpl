@@ -5,11 +5,11 @@
  * and when you upgrade, your changes will not get overwritten.
  *}
 <form action="{g->url}" enctype="{$SiteAdmin.enctype|default:"application/x-www-form-urlencoded"}" method="post">
-  <p>
+  <div>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}" />
-  </p>
+  </div>
 
   <ul class="gbBreadCrumb">
     <li class="giBreadCrumbFirst">
