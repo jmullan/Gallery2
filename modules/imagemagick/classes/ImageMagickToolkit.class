@@ -129,7 +129,6 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    /* Don't enlarge images for a thumbnail */
 	    if ($width > $parameters[0] || $height > $parameters[0]) {
 		$transform = array_merge($transform, array(
-					'-size', $parameters[0] . 'x' . $parameters[0],
 					'-geometry', $parameters[0] . 'x' . $parameters[0]));
 		list ($width, $height) =
 		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
@@ -139,8 +138,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'scale':
 	    $cmd = 'convert';
 	    $transform = array_merge($transform,
-			       array('-size', $parameters[0] . 'x' . $parameters[0],
-				     '-geometry', $parameters[0] . 'x' . $parameters[0]));
+			       array('-geometry', $parameters[0] . 'x' . $parameters[0]));
 	    if (isset($width)) {
 		list ($width, $height) =
 		    GalleryUtilities::scaleDimensionsToFit($width, $height, $parameters[0]);
@@ -150,8 +148,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	case 'resize':
 	    $cmd = 'convert';
 	    $transform = array_merge($transform,
-			       array('-size', $parameters[0] . 'x' . $parameters[1],
-				     '-geometry', $parameters[0] . 'x' . $parameters[1]));
+			       array('-geometry', $parameters[0] . 'x' . $parameters[1]));
 	    if (isset($width)) {
 		list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
 					 $width, $height, $parameters[0], $parameters[1]);
