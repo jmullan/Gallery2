@@ -110,6 +110,9 @@ class GalleryUrlGenerator {
 	    $path = $_SERVER['REQUEST_URI'];
 	} else if (!empty($_SERVER['SCRIPT_NAME'])) {
 	    $path = $_SERVER['SCRIPT_NAME'];
+	    if (!empty($_SERVER['PATH_INFO'])) {
+		$path .= $_SERVER['PATH_INFO'];
+	    }
 	}
 
 	return $this->makeUrl($path);
@@ -204,7 +207,8 @@ class GalleryUrlGenerator {
     /**
      * Parse our current url since it may be in our compressed format
      *
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               string redirect url or null
      */
     function parseCurrentUrl() {
 	$url = $this->getCurrentUrl();
