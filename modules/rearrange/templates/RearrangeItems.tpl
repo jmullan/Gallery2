@@ -4,6 +4,14 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+{*
+ * Precalculate the HTML that will go inside every cell in the
+ * table so that we can render it twice (once in the Javascript,
+ * once in the HTML itself.  We do this to avoid using the innerHTML
+ * element when we swap the cells because the behavior of innerHTML
+ * varies from platform to platform and on Firefox it turns ~ into %7E
+ * which breaks our cookie paths.
+ *}
 <div id="gsAdminContents">
   <div class="gbTopFlag">
     <div class="gbTitle">
@@ -23,6 +31,10 @@
   {else}
 <script type="text/javascript">
 var sel = -1, list = new Array();
+var html = new Array();
+{foreach from=$RearrangeItems.children key=idx item=child}
+  html[{$idx}] = '{include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl" child=$child}';
+{/foreach}
 for (var i = 0; i < {$RearrangeItems.count}; i++) {literal} {
   list[i] = i;
 }
@@ -45,14 +57,14 @@ function doclick(idx) {
     a.parentNode.style.backgroundColor = 'white';
     if (idx != sel) {
       var dir = (sel < idx) ? 1 : -1, tt, ti, i, b;
-      tt = a.innerHTML;
       ti = list[sel];
+      tt = html[sel];
       for (i = sel; i != idx; a = b, i += dir) {
         b = document.getElementById('item_' + (i+dir));
-        a.innerHTML = b.innerHTML;
+        a.innerHTML = html[i] = html[i+dir];
         list[i] = list[i+dir];
       }
-      a.innerHTML = tt;
+      a.innerHTML = html[i] = tt;
       list[idx] = ti;
     }
     sel = -1;
@@ -92,19 +104,19 @@ function doclick(idx) {
 	     style="width:{$RearrangeItems.maxWidth}px;height:{$RearrangeItems.maxHeight}px">
       {/if}
 
-      {if $child.canContainChildren}
-	{assign var="riClass" value=riAlbum}
-      {else}
-	{assign var="riClass" value=riItem}
-      {/if}
+      {strip}
       {if isset($child.thumbnail)}
 	<a href="#" id="item_{$idx}" onclick="doclick({$idx});return false">
-	{g->image item=$child image=$child.thumbnail maxSize=100 class=$riClass}</a>
+          {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl"
+                   child=$child l10Domain="modules_rearrange"}
+	</a>
       {else}
 	<a id="item_{$idx}" onclick="doclick({$idx});return false">
-	  <div class="{$riClass}">{$child.title|default:$child.pathComponent|markup}</div>
+          {include file="gallery:modules/rearrange/templates/RearrangeItemsCell.tpl"
+                   child=$child l10Domain="modules_rearrange"}
 	</a>
       {/if}
+      {/strip}
 
       {if $RearrangeItems.columns > 0}
 	</td>
