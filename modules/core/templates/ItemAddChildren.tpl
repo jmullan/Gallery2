@@ -22,7 +22,7 @@
       {else}
 	{g->item}
 	  {g->title}
-	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromBrowser"}
+	    {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=fromBrowser"}
 	      {g->text text="From Web Browser"}
 	    {/g->link}
 	  {/g->title}
@@ -38,7 +38,7 @@
       {else}
 	{g->item}
 	  {g->title}
-	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromLocalServer"}
+	    {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=fromLocalServer"}
 	      {g->text text="From Local Server"}
 	    {/g->link}
 	  {/g->title}
@@ -54,7 +54,7 @@
       {else}
 	{g->item}
 	  {g->title}
-	    {g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_mode="fromWebPage"}
+	    {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="mode=fromWebPage"}
 	      {g->text text="From Web Page"}
 	    {/g->link}
 	  {/g->title}
@@ -133,7 +133,7 @@
 	    {g->element}
 	      {g->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
 	      {if $ItemAddChildren.isAdmin} 
-		{g->link url_view="core:SiteAdmin" url_subView="core:AdminCore"}
+		{g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}
 		  {g->text text="site admin"}
 		{/g->link}
 	      {/if}
@@ -142,7 +142,7 @@
 	    {if empty($form.localServerFiles)}
 	      {g->element}
 		{g->text text="Server Path"}
-		{g->input type=text size=80 name="form[localServerPath]"}{$form.localServerPath}{/g->input}
+		{g->input type="text" size="80" name="form[localServerPath]"}{$form.localServerPath}{/g->input}
 	      {/g->element}
 
 	      {if isset($form.error.localServerPath.missing)}
@@ -166,7 +166,7 @@
 	      {g->element}
 		{g->text text="Legal Directories"}
 		{if $ItemAddChildren.isAdmin}
-		  {g->link url_view="core:SiteAdmin" url_subView="core:AdminCore"}
+		  {g->link arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}
 		    {g->text text="modify"}
 		  {/g->link}
 		{/if}
@@ -186,7 +186,7 @@
 	    {else} {* {if empty($form.localServerFiles)} *}
 	      {g->element style="emphasized"}
 		{g->text text="Directory: %s" arg1=$form.localServerPath}
-		{g->link url_view="core:ItemAdmin" url_subView="core:ItemAddChildren" url_itemId=$ItemAdmin.item.id url_form_localServerPath=$form.localServerPath url_form_formName="ItemAddChildren"}
+		{g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddChildren"}
 		  {g->text text="change"}
 		{/g->link}
 		{g->input type="hidden" name="form[localServerPath]"}{$form.localServerPath}{/g->input}
@@ -235,10 +235,78 @@
       {/if}
       
       {if $ItemAddChildren.mode == 'fromWebPage'}
-	{g->box}
-	  {g->title}
-	    {g->text text="Not implemented yet"}
-	  {/g->title}
+	{g->box style="admin"}
+	  {g->description}
+	    {g->text text="Import files into Gallery from another website.  Enter a URL below to a web page anywhere on the net and Gallery will allow you to upload any media files that it finds on that page.  Note that if you're entering a URL to a directory, you should end the URL with a trailing slash (eg, http://example.com/directory/). "}
+	  {/g->description}
+
+	  {if empty($form.webPageUrls)}
+	    {g->element}
+	      {g->text text="URL"}
+	      {g->input type="text" size="80" name="form[webPage]"}{$form.webPage}{/g->input}
+	    {/g->element}
+	    
+	    {if isset($form.error.webPage.missing)}
+	      {g->error}
+		{g->text text="You must enter a URL to a web page"}
+	      {/g->error}
+	    {/if}
+	    
+	    {if isset($form.error.webPage.invalid)}
+	      {g->error}
+		{g->text text="The URL entered must begin with http://"}
+	      {/g->error}
+	    {/if}
+	    
+	    {g->element}
+	      {g->input type="submit" name="form[action][findFilesFromWebPage]"}
+		{g->text text="Find Files"}
+	      {/g->input}
+	    {/g->element}
+	  {else} {* {if empty($form.webPageUrls)} *}
+	    {g->element style="emphasized"}
+	      {g->text text="URL: %s" arg1=$form.webPage}
+	      {g->link arg1="view=core:ItemAdmin" arg2="subView=core:ItemAddChildren" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[webPage]=`$form.webPage`" arg5="form[formName]=ItemAddChildren"}
+		{g->text text="change"}
+	      {/g->link}
+	      {g->input type="hidden" name="form[webPage]"}{$form.webPage}{/g->input}
+	    {/g->element}
+	    {g->element}
+	      {g->text one="%d url found" 
+	               many="%d urls found" 
+                       count=$ItemAddChildren.webPageUrlCount 
+         	       arg1=$ItemAddChildren.webPageUrlCount}
+	    {/g->element}
+
+	    {g->table style="admin_listing" evenodd="true"}
+	      {g->row}
+		{g->column header="true"}
+		  {g->input name="selectionToggle" type="checkbox" onChange="javascript:toggleSelections()"}{/g->input}
+		{/g->column}
+		{g->column header="true"}
+		  {g->text text="URL"}
+		{/g->column}
+		{g->column header="true"}
+		  {g->text text="Type"}
+		{/g->column}
+	      {/g->row}
+
+	      {foreach from=$form.webPageUrls item=url}
+		{g->row}
+		  {g->column}
+		    {g->input type="checkbox" name="form[webPageUrl][$url]"}{/g->input}
+		  {/g->column}
+		  {g->column}
+		    {$url.url}
+		  {/g->column}
+		  {g->column}
+		    {$url.itemType}
+		  {/g->column}
+		{/g->row}
+	      {/foreach}
+	    {/g->table}
+	    {g->input type="submit" name="form[action][addFromWebPage]"}{g->text text="Add URLs"}{/g->input}
+	  {/if} {* {if !empty($form.webPageUrls)} *}
 	{/g->box}
       {/if}
     {/g->element}

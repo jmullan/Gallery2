@@ -32,7 +32,6 @@
  *
  * @package GalleryCore
  * @subpackage UserInterface
- * @todo Add support for other ways of adding images (from server, from http...)
  */
 class ItemAddChildrenController extends GalleryController {
 
@@ -173,6 +172,8 @@ class ItemAddChildrenController extends GalleryController {
 	    $redirect['view'] = 'core:ItemAdmin';
 	    $redirect['subView'] = 'core:ItemAddChildrenConfirmation';
 	    $redirect['itemId'] = $itemId;
+	} else if (isset($form['action']['findFilesFromWebPage'])) {
+	    /* Delegate back to the same view */
 	}
 
 	$ret = $gallery->releaseLocks($lockIds);
@@ -234,6 +235,7 @@ class ItemAddChildrenView extends GalleryView {
 	    /* First time around, load the form with item data */
 	    $form['uploadBoxCount'] = 4;
 	    $form['localServerPath'] = '';
+	    $form['webPage'] = '';
 	    $form['formName'] = 'ItemAddChildren';
 	}
 
@@ -329,15 +331,113 @@ class ItemAddChildrenView extends GalleryView {
 		}
 		$localServerFileCount = sizeof($form['localServerFiles']);
 	    }
+	} else if (isset($form['action']['findFilesFromWebPage'])) {
+	    /*
+	     * If we're uploading from a web page, get a file list now.
+	     * Download the web page into a temporary file and then parse it
+	     */
+	    if (empty($form['webPage'])) {
+		$form['error']['webPage']['missing'] = 1;
+	    } else {
+		$baseUrlComponents = parse_url($form['webPage']);
+		if ($baseUrlComponents['scheme'] != 'http') {
+		    $form['error']['webPage']['invalid'] = 1;
+		} else {
+		    $fd = $platform->fopen($form['webPage'], 'r');
+
+		    /* Read the web page into a buffer */
+		    $buffer = '';
+		    do {
+			$chunk = fread($fd, 4096);
+			if (strlen($chunk) == 0) {
+			    break;
+			}
+
+			$buffer .= $chunk;
+		    } while (true);
+		    fclose($fd);
+
+		    /*
+		     * Parse the buffer.  We match:
+		     *  href="foo bar"    href='foo bar'   href=foo
+		     *  src="foo bar"     src='foo bar'    src=foo
+		     */
+		    /* Parse the buffer */
+		    preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"]*))/i', $buffer, $matches);
+
+		    /* Validate the URLs as best we can */
+		    $webPageUrlList = array();
+		    $isSupported = array();
+		    $seenBefore = array();
+		    foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
+			if (isset($seenBefore[$url])) {
+			    continue;
+			} else {
+			    $seenBefore[$url] = 1;
+			}
+
+			/*
+			 * Some sites (slashdot) have images that start with //
+			 * and this confuses Gallery.  Prepend the base scheme.
+			 */
+			if (!strncmp($url, '//', 2)) {
+			    $url = $baseUrlComponents['scheme'] . ':' . $url;
+			}
+			
+			$urlComponents = parse_url($url);
+			if (empty($urlComponents['scheme'])) {
+			    $urlComponents['scheme'] = $baseUrlComponents['scheme'];
+			}
+
+			if (empty($urlComponents['path'])) {
+			    continue;
+			}
+
+			$mimeType = GalleryUtilities::getMimeType($urlComponents['path']);
+			if ($mimeType == 'application/unknown') {
+			    continue;
+			}
+			if (!isset($mimeTypeItemMap[$mimeType])) {
+			    list ($ret, $mimeTypeItemMap[$mimeType]) = GalleryItemHelper::newItemByMimeType($mimeType);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			}
+
+			if (empty($urlComponents['host'])) {
+			    $urlComponents['host'] = $baseUrlComponents['host'];
+			}
+
+			$tmp = $urlComponents['scheme'] . '://' . $urlComponents['host'];
+			if (!empty($urlComponents['path'])) {
+			    if ($urlComponents['path'][0] != '/' && $tmp[strlen($tmp)-1] != '/') {
+				$tmp .= '/';
+			    }
+			    $tmp .= $urlComponents['path'];
+			}
+
+			if (!empty($urlComponents['query'])) {
+			    $tmp .= '?' . $urlComponents['query'];
+			}
+
+			$form['webPageUrls'][] =
+			    array('url' => $tmp,
+				  'itemType' => $mimeTypeItemMap[$mimeType]->itemTypeName());
+		    }
+		    $webPageUrlCount = sizeof($form['webPageUrls']);
+		}
+	    }
 	}
 
 	$ItemAddChildren = array();
-
 	$ItemAddChildren['mode'] = $mode;
 	$ItemAddChildren['isAdmin'] = $isAdmin;
 	$ItemAddChildren['localServerDirList'] = $localServerDirList;
 	if (isset($localServerFileCount)) {
 	    $ItemAddChildren['localServerFileCount'] = $localServerFileCount;
+	}
+	if (isset($webPageUrlCount)) {
+	    $ItemAddChildren['webPageUrlCount'] = $webPageUrlCount;
 	}
 	
 	$template->setVariable('ItemAddChildren', $ItemAddChildren);
