@@ -42,7 +42,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	$gallery->_platform = new AdminLayoutsTestPlatform();
+	$gallery->_platform = new AdminLayoutsTestPlatform($gallery->_platform);
 
 	/*
 	 * Clear the cached layout status list, because we specifically want to
@@ -219,13 +219,9 @@ class TestLayoutId1Layout extends GalleryLayout {
 	return $error;
     }
 
-    /**
-     * @see GalleryLayout::init
-     */
-    function init() {
+    function TestLayoutId1Layout() {
 	$this->setId('testLayoutId1');
 	$this->setName('Test Layout 1');
-	return GalleryStatus::success();
     }
 }
 
@@ -251,13 +247,9 @@ class TestLayoutId2Layout extends GalleryLayout {
 	return GalleryStatus::success();
     }
 
-    /**
-     * @see GalleryLayout::init
-     */
-    function init() {
+    function TestLayoutId2Layout() {
 	$this->setId('testLayoutId2');
 	$this->setName('Test Layout 2');
-	return GalleryStatus::success();
     }
     
     /**
@@ -295,6 +287,10 @@ class TestLayoutId2Layout extends GalleryLayout {
  * @subpackage PHPUnit
  */
 class AdminLayoutsTestPlatform {
+
+    function AdminLayoutsTestPlatform($platform) {
+	$this->_platform = $platform;
+    }
 
     function opendir($path) {
 	global $gallery;
@@ -344,6 +340,9 @@ class AdminLayoutsTestPlatform {
 	    return 1;
 
 	default:
+	    if (preg_match('/smarty.templates_c/', $path)) {
+		return file_exists($path);
+	    }
 	    return 0;
 	}
     }
@@ -361,12 +360,27 @@ class AdminLayoutsTestPlatform {
 	    return 1;
 
 	default:
+	    if (preg_match('/smarty.templates_c/', $path)) {
+		return is_dir($path);
+	    }
 	    return 0;
 	}
     }
 
     // In case GalleryStatus::getAsHtml gets called..
     function realpath($path) {
-	return realpath($path);
+	return $this->_platform->realpath($path);
+    }
+
+    function mkdir($path, $stringPerms='755') {
+	return $this->_platform->mkdir($path, $stringPerms);
+    }
+
+    function is_writeable($filename) {
+	return $this->_platform->is_writeable($filename);
+    }
+
+    function stat($filename) {
+	return $this->_platform->stat($filename);
     }
 }
