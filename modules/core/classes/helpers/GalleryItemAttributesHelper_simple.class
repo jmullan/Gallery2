@@ -44,9 +44,10 @@ class GalleryItemAttributesHelper_simple {
      * @static
      */
     function incrementViewCount($itemId, $step=1) {
+	require_once(dirname(__FILE__) . '/../GalleryStorage/DatabaseSqlFragment.class');
 	$func = '= [GalleryItemAttributesMap::viewCount] + ?';
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
-							array('viewCount' => array($func, $step)));
+		array('viewCount' => new DatabaseSqlFragment($func, $step)));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

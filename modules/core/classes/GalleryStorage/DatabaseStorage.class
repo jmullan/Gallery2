@@ -912,39 +912,47 @@ class DatabaseStorage extends GalleryStorage {
 
 	foreach ($mapInfo['members'] as $memberName => $memberType) {
 	    if (isset($match[$memberName])) {
-		if (is_array($match[$memberName])) {
-		    $queryFragment = ' ' . $this->_translateQuery($match[$memberName][0]);
-		    $value = $match[$memberName][1];
+		if (GalleryUtilities::isA($match[$memberName], 'DatabaseSqlFragment')) {
+		    $where[] = $this->_translateColumnName($memberName) . ' ' .
+				$this->_translateQuery($match[$memberName]->getFragment());
+		    foreach ($match[$memberName]->getValues() as $value) {
+			$wheredata[] = $value;
+		    }
+		} else if (is_array($match[$memberName])) {
+		    $qs = array();
+		    foreach ($match[$memberName] as $value) {
+			$qs[] = '?';
+			if ($memberType & STORAGE_TYPE_BIT) {
+			    $value = $this->convertIntToBits($value);
+			}
+			$wheredata[] = $value;
+		    }
+		    $where[] = $this->_translateColumnName($memberName) . ' IN (' . implode(',', $qs) . ')';
 		} else {
-		    $queryFragment = '=?';
+		    $where[] = $this->_translateColumnName($memberName) . '=?';
 		    $value = $match[$memberName];
+		    if ($memberType & STORAGE_TYPE_BIT) {
+			$value = $this->convertIntToBits($value);
+		    }
+		    $wheredata[] = $value;
 		}
-
-		$where[] = $this->_translateColumnName($memberName) . $queryFragment;
-
-		if ($memberType & STORAGE_TYPE_BIT) {
-		    $value = $this->convertIntToBits($value);
-		}
-
-		$wheredata[] = $value;
 	    }
 
 	    if (isset($change[$memberName])) {
-		if (is_array($change[$memberName])) {
-		    $queryFragment = ' ' . $this->_translateQuery($change[$memberName][0]);
-		    $value = $change[$memberName][1];
+		if (GalleryUtilities::isA($change[$memberName], 'DatabaseSqlFragment')) {
+		    $set[] = $this->_translateColumnName($memberName) . ' ' .
+				$this->_translateQuery($change[$memberName]->getFragment());
+		    foreach ($change[$memberName]->getValues() as $value) {
+			$setdata[] = $value;
+		    }
 		} else {
-		    $queryFragment = '=?';
+		    $set[] = $this->_translateColumnName($memberName) . '=?';
 		    $value = $change[$memberName];
+		    if ($memberType & STORAGE_TYPE_BIT) {
+			$value = $this->convertIntToBits($value);
+		    }
+		    $setdata[] = $value;
 		}
-		
-		$set[] = $this->_translateColumnName($memberName) . $queryFragment;
-
-		if ($memberType & STORAGE_TYPE_BIT) {
-		    $value = $this->convertIntToBits($value);
-		}
-		
-		$setdata[] = $value;
 	    }
 	}
 
