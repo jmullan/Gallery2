@@ -123,7 +123,7 @@
   <div>
     {g->image name="watermark_original" 
 	  item=$ItemEditWatermark.item
-          image=$ItemEditWatermark.preferred|default:$ItemEditWatermark.item
+          image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item
 	  maxSize=400}
     <img name="watermark_floater" src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}" width="{$ItemEditWatermark.watermarks[form.watermarkId].width}" height="{$ItemEditWatermark.watermarks[form.watermarkId].height}"/>
   </div>

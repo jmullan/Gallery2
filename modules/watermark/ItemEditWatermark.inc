@@ -217,22 +217,30 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    }
 	}
 
-	/* Check to see if we have a preferred source */
-	list ($ret, $preferredTable) =
-	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+
+	/* Grab the smallest derivative that's greater than 400px on a side */
+	list ($ret, $derivatives) =
+	    GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	$preferred = null;
-	if (!empty($preferredTable[$item->getId()])) {
-	    $preferred = $preferredTable[$item->getId()];
+	$smallestSize = null;
+	$displayDerivative = null;
+	if (isset($derivatives[$item->getId()])) {
+	    foreach ($derivatives[$item->getId()] as $derivative) {
+		if ($derivative->getWidth() >= 400 || $derivative->getHeight() >= 400) {
+		    if (!isset($smallestSize) || $derivative->getDerivativeSize() < $smallestSize) {
+			$displayDerivative = $derivative;
+			$smallestSize = $derivative->getDerivativeSize();
+		    }
+		}
+	    }
 	}
-
+		 
 	$ItemEditWatermark = array();
 	$ItemEditWatermark['watermarks'] = $watermarks;
 	$ItemEditWatermark['item'] = $item->getMemberData();
-	$ItemEditWatermark['preferred'] = isset($preferred) ? $preferred->getMemberData() : null;
+	$ItemEditWatermark['derivative'] = isset($displayDerivative) ? $displayDerivative->getMemberData() : null;
 
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
 	$template->setVariable('controller', 'core:ItemEditWatermark');
