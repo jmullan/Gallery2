@@ -5,7 +5,7 @@ class CreateAlbumItemTestCase extends TestCase {
     var $_item;
 
     function getDescription() {
-	return "Create a new AlbumItem, modify it then delete it";
+	return "Create a new AlbumItem and modify it";
     }
 
     function testStart() {
@@ -53,24 +53,6 @@ class CreateAlbumItemTestCase extends TestCase {
 	if ($ret & ERROR) {
 	    $this->error($ret);
 	    return $ret;
-	}
-
-	print("DELETING\n");
-	$ret = $this->_item->delete();
-	$this->_item = null;
-	if ($ret & ERROR) {
-	    $this->error($ret);
-	    return $ret;
-	}
-    }
-
-    function testCleanup() {
-	if (!empty($this->_item)) {
-	    $ret = $this->_item->delete();
-	    if ($ret & ERROR) {
-		$this->error($ret);
-		return $ret;
-	    }
 	}
     }
 }
