@@ -50,14 +50,14 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['layout'] = array(
-            'class' => 'GalleryAlbumItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['layout'] = array(
+	    'class' => 'GalleryAlbumItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -66,7 +66,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_layout)) {
  	    $data['layout'] = null;
@@ -74,7 +74,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
 	    $data['layout'] = $this->_layout;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -85,7 +85,7 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryAlbumItem';
+	return 'GalleryAlbumItem';
     }
 
     /** 
@@ -108,11 +108,11 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
     function getlayout() {
  	
 
-        if (!isset($this->_layout)) {
-            return null;
-        }
+	if (!isset($this->_layout)) {
+	    return null;
+	}
 
-        return $this->_layout;
+	return $this->_layout;
     }
 
     /**
@@ -121,23 +121,23 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function setlayout($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_layout) ? $this->_layout : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_layout = $value;
-            $this->setModifiedFlag('layout', MEMBER_MODIFIED);
-        }
+	    $this->_layout = $value;
+	    $this->setModifiedFlag('layout', MEMBER_MODIFIED);
+	}
     }
   
 }

@@ -52,7 +52,7 @@ class GalleryUnknownItem extends GalleryUnknownItem_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryUnknownItem';
+	return 'GalleryUnknownItem';
     }
 
     /** 

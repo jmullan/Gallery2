@@ -50,59 +50,59 @@ class GalleryItem extends GalleryItem_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['canContainChildren'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_BOOLEAN
-        );
+	$meta['members']['canContainChildren'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_BOOLEAN
+	);
     
-        $meta['members']['description'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_TEXT
-        );
+	$meta['members']['description'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_TEXT
+	);
     
-        $meta['members']['keywords'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['keywords'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['orderBy'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['orderBy'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['orderDirection'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['orderDirection'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['ownerId'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['ownerId'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['summary'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['summary'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['theme'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['theme'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['title'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['title'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['viewedSinceTimestamp'] = array(
-            'class' => 'GalleryItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['viewedSinceTimestamp'] = array(
+	    'class' => 'GalleryItem',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -111,7 +111,7 @@ class GalleryItem extends GalleryItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_canContainChildren)) {
  	    $data['canContainChildren'] = null;
@@ -173,7 +173,7 @@ class GalleryItem extends GalleryItem_core {
 	    $data['viewedSinceTimestamp'] = $this->_viewedSinceTimestamp;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -184,7 +184,7 @@ class GalleryItem extends GalleryItem_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryItem';
+	return 'GalleryItem';
     }
 
     /** 
@@ -207,11 +207,11 @@ class GalleryItem extends GalleryItem_core {
     function getcanContainChildren() {
  	
 
-        if (!isset($this->_canContainChildren)) {
-            return null;
-        }
+	if (!isset($this->_canContainChildren)) {
+	    return null;
+	}
 
-        return $this->_canContainChildren;
+	return $this->_canContainChildren;
     }
 
     /**
@@ -220,26 +220,26 @@ class GalleryItem extends GalleryItem_core {
      * @param BOOLEAN the value
      */
     function setcanContainChildren($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_canContainChildren) ? $this->_canContainChildren : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Set the incoming value to be a 1 or 0 */
-	$value = empty($value) ? 0 : 1;
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_canContainChildren = $value;
-            $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
-        }
+	    $this->_canContainChildren = $value;
+	    $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -250,11 +250,11 @@ class GalleryItem extends GalleryItem_core {
     function getdescription() {
  	
 
-        if (!isset($this->_description)) {
-            return null;
-        }
+	if (!isset($this->_description)) {
+	    return null;
+	}
 
-        return $this->_description;
+	return $this->_description;
     }
 
     /**
@@ -263,23 +263,23 @@ class GalleryItem extends GalleryItem_core {
      * @param TEXT the value
      */
     function setdescription($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_description) ? $this->_description : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_description = $value;
-            $this->setModifiedFlag('description', MEMBER_MODIFIED);
-        }
+	    $this->_description = $value;
+	    $this->setModifiedFlag('description', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -290,11 +290,11 @@ class GalleryItem extends GalleryItem_core {
     function getkeywords() {
  	
 
-        if (!isset($this->_keywords)) {
-            return null;
-        }
+	if (!isset($this->_keywords)) {
+	    return null;
+	}
 
-        return $this->_keywords;
+	return $this->_keywords;
     }
 
     /**
@@ -303,23 +303,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setkeywords($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_keywords) ? $this->_keywords : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_keywords = $value;
-            $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
-        }
+	    $this->_keywords = $value;
+	    $this->setModifiedFlag('keywords', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -330,11 +330,11 @@ class GalleryItem extends GalleryItem_core {
     function getorderBy() {
  	
 
-        if (!isset($this->_orderBy)) {
-            return null;
-        }
+	if (!isset($this->_orderBy)) {
+	    return null;
+	}
 
-        return $this->_orderBy;
+	return $this->_orderBy;
     }
 
     /**
@@ -343,23 +343,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setorderBy($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_orderBy) ? $this->_orderBy : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_orderBy = $value;
-            $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
-        }
+	    $this->_orderBy = $value;
+	    $this->setModifiedFlag('orderBy', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -370,11 +370,11 @@ class GalleryItem extends GalleryItem_core {
     function getorderDirection() {
  	
 
-        if (!isset($this->_orderDirection)) {
-            return null;
-        }
+	if (!isset($this->_orderDirection)) {
+	    return null;
+	}
 
-        return $this->_orderDirection;
+	return $this->_orderDirection;
     }
 
     /**
@@ -383,23 +383,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setorderDirection($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_orderDirection) ? $this->_orderDirection : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_orderDirection = $value;
-            $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
-        }
+	    $this->_orderDirection = $value;
+	    $this->setModifiedFlag('orderDirection', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -410,11 +410,11 @@ class GalleryItem extends GalleryItem_core {
     function getownerId() {
  	
 
-        if (!isset($this->_ownerId)) {
-            return null;
-        }
+	if (!isset($this->_ownerId)) {
+	    return null;
+	}
 
-        return $this->_ownerId;
+	return $this->_ownerId;
     }
 
     /**
@@ -423,28 +423,28 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setownerId($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_ownerId) ? $this->_ownerId : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_ownerId = $value;
-            $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
-        }
+	    $this->_ownerId = $value;
+	    $this->setModifiedFlag('ownerId', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -455,11 +455,11 @@ class GalleryItem extends GalleryItem_core {
     function getsummary() {
  	
 
-        if (!isset($this->_summary)) {
-            return null;
-        }
+	if (!isset($this->_summary)) {
+	    return null;
+	}
 
-        return $this->_summary;
+	return $this->_summary;
     }
 
     /**
@@ -468,23 +468,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setsummary($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_summary) ? $this->_summary : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_summary = $value;
-            $this->setModifiedFlag('summary', MEMBER_MODIFIED);
-        }
+	    $this->_summary = $value;
+	    $this->setModifiedFlag('summary', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -495,11 +495,11 @@ class GalleryItem extends GalleryItem_core {
     function gettheme() {
  	
 
-        if (!isset($this->_theme)) {
-            return null;
-        }
+	if (!isset($this->_theme)) {
+	    return null;
+	}
 
-        return $this->_theme;
+	return $this->_theme;
     }
 
     /**
@@ -508,23 +508,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function settheme($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_theme) ? $this->_theme : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_theme = $value;
-            $this->setModifiedFlag('theme', MEMBER_MODIFIED);
-        }
+	    $this->_theme = $value;
+	    $this->setModifiedFlag('theme', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -535,11 +535,11 @@ class GalleryItem extends GalleryItem_core {
     function gettitle() {
  	
 
-        if (!isset($this->_title)) {
-            return null;
-        }
+	if (!isset($this->_title)) {
+	    return null;
+	}
 
-        return $this->_title;
+	return $this->_title;
     }
 
     /**
@@ -548,23 +548,23 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function settitle($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_title) ? $this->_title : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_title = $value;
-            $this->setModifiedFlag('title', MEMBER_MODIFIED);
-        }
+	    $this->_title = $value;
+	    $this->setModifiedFlag('title', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -575,11 +575,11 @@ class GalleryItem extends GalleryItem_core {
     function getviewedSinceTimestamp() {
  	
 
-        if (!isset($this->_viewedSinceTimestamp)) {
-            return null;
-        }
+	if (!isset($this->_viewedSinceTimestamp)) {
+	    return null;
+	}
 
-        return $this->_viewedSinceTimestamp;
+	return $this->_viewedSinceTimestamp;
     }
 
     /**
@@ -588,28 +588,28 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setviewedSinceTimestamp($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_viewedSinceTimestamp) ? $this->_viewedSinceTimestamp : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_viewedSinceTimestamp = $value;
-            $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
-        }
+	    $this->_viewedSinceTimestamp = $value;
+	    $this->setModifiedFlag('viewedSinceTimestamp', MEMBER_MODIFIED);
+	}
     }
   
 }

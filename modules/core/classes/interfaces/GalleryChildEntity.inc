@@ -50,14 +50,14 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['parentId'] = array(
-            'class' => 'GalleryChildEntity',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['parentId'] = array(
+	    'class' => 'GalleryChildEntity',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -66,7 +66,7 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_parentId)) {
  	    $data['parentId'] = null;
@@ -74,7 +74,7 @@ class GalleryChildEntity extends GalleryChildEntity_core {
 	    $data['parentId'] = $this->_parentId;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -85,7 +85,7 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryChildEntity';
+	return 'GalleryChildEntity';
     }
 
     /** 
@@ -108,11 +108,11 @@ class GalleryChildEntity extends GalleryChildEntity_core {
     function getparentId() {
  	
 
-        if (!isset($this->_parentId)) {
-            return null;
-        }
+	if (!isset($this->_parentId)) {
+	    return null;
+	}
 
-        return $this->_parentId;
+	return $this->_parentId;
     }
 
     /**
@@ -121,28 +121,28 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @param INTEGER the value
      */
     function setparentId($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_parentId) ? $this->_parentId : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_parentId = $value;
-            $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
-        }
+	    $this->_parentId = $value;
+	    $this->setModifiedFlag('parentId', MEMBER_MODIFIED);
+	}
     }
   
 }

@@ -50,14 +50,14 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['pathComponent'] = array(
-            'class' => 'GalleryFileSystemEntity',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['pathComponent'] = array(
+	    'class' => 'GalleryFileSystemEntity',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -66,7 +66,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_pathComponent)) {
  	    $data['pathComponent'] = null;
@@ -74,7 +74,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
 	    $data['pathComponent'] = $this->_pathComponent;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -85,7 +85,7 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryFileSystemEntity';
+	return 'GalleryFileSystemEntity';
     }
 
     /** 
@@ -108,11 +108,11 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
     function getpathComponent() {
  	
 
-        if (!isset($this->_pathComponent)) {
-            return null;
-        }
+	if (!isset($this->_pathComponent)) {
+	    return null;
+	}
 
-        return $this->_pathComponent;
+	return $this->_pathComponent;
     }
 
     /**
@@ -121,23 +121,23 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @param STRING the value
      */
     function setpathComponent($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_pathComponent) ? $this->_pathComponent : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_pathComponent = $value;
-            $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
-        }
+	    $this->_pathComponent = $value;
+	    $this->setModifiedFlag('pathComponent', MEMBER_MODIFIED);
+	}
     }
   
 }

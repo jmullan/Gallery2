@@ -50,19 +50,19 @@ class GalleryGroup extends GalleryGroup_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['groupType'] = array(
-            'class' => 'GalleryGroup',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['groupType'] = array(
+	    'class' => 'GalleryGroup',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['groupName'] = array(
-            'class' => 'GalleryGroup',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['groupName'] = array(
+	    'class' => 'GalleryGroup',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -71,7 +71,7 @@ class GalleryGroup extends GalleryGroup_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (!isset($this->_groupType)) {
  	    $data['groupType'] = null;
@@ -85,7 +85,7 @@ class GalleryGroup extends GalleryGroup_core {
 	    $data['groupName'] = $this->_groupName;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -96,7 +96,7 @@ class GalleryGroup extends GalleryGroup_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryGroup';
+	return 'GalleryGroup';
     }
 
     /** 
@@ -119,11 +119,11 @@ class GalleryGroup extends GalleryGroup_core {
     function getgroupType() {
  	
 
-        if (!isset($this->_groupType)) {
-            return null;
-        }
+	if (!isset($this->_groupType)) {
+	    return null;
+	}
 
-        return $this->_groupType;
+	return $this->_groupType;
     }
 
     /**
@@ -132,28 +132,28 @@ class GalleryGroup extends GalleryGroup_core {
      * @param INTEGER the value
      */
     function setgroupType($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_groupType) ? $this->_groupType : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_groupType = $value;
-            $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
-        }
+	    $this->_groupType = $value;
+	    $this->setModifiedFlag('groupType', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -164,11 +164,11 @@ class GalleryGroup extends GalleryGroup_core {
     function getgroupName() {
  	
 
-        if (!isset($this->_groupName)) {
-            return null;
-        }
+	if (!isset($this->_groupName)) {
+	    return null;
+	}
 
-        return $this->_groupName;
+	return $this->_groupName;
     }
 
     /**
@@ -177,23 +177,23 @@ class GalleryGroup extends GalleryGroup_core {
      * @param STRING the value
      */
     function setgroupName($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_groupName) ? $this->_groupName : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_groupName = $value;
-            $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
-        }
+	    $this->_groupName = $value;
+	    $this->setModifiedFlag('groupName', MEMBER_MODIFIED);
+	}
     }
   
 }

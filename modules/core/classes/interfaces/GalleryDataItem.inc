@@ -50,19 +50,19 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['mimeType'] = array(
-            'class' => 'GalleryDataItem',
-            'type' => STORAGE_TYPE_STRING
-        );
+	$meta['members']['mimeType'] = array(
+	    'class' => 'GalleryDataItem',
+	    'type' => STORAGE_TYPE_STRING
+	);
     
-        $meta['members']['size'] = array(
-            'class' => 'GalleryDataItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['size'] = array(
+	    'class' => 'GalleryDataItem',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -71,7 +71,7 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (isset($this->_linkedEntity)) {
 	    if (!isset($this->_linkedEntity->_mimeType)) {
@@ -97,7 +97,7 @@ class GalleryDataItem extends GalleryDataItem_core {
 	    $data['size'] = $this->_size;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -108,7 +108,7 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryDataItem';
+	return 'GalleryDataItem';
     }
 
     /** 
@@ -136,11 +136,11 @@ class GalleryDataItem extends GalleryDataItem_core {
 	}
 	
 
-        if (!isset($this->_mimeType)) {
-            return null;
-        }
+	if (!isset($this->_mimeType)) {
+	    return null;
+	}
 
-        return $this->_mimeType;
+	return $this->_mimeType;
     }
 
     /**
@@ -149,23 +149,23 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_mimeType) ? $this->_mimeType : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a != $b) {
+	if ($a != $b) {
       
-            $this->_mimeType = $value;
-            $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
-        }
+	    $this->_mimeType = $value;
+	    $this->setModifiedFlag('mimeType', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -181,11 +181,11 @@ class GalleryDataItem extends GalleryDataItem_core {
 	}
 	
 
-        if (!isset($this->_size)) {
-            return null;
-        }
+	if (!isset($this->_size)) {
+	    return null;
+	}
 
-        return $this->_size;
+	return $this->_size;
     }
 
     /**
@@ -194,28 +194,28 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param INTEGER the value
      */
     function setsize($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_size) ? $this->_size : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_size = $value;
-            $this->setModifiedFlag('size', MEMBER_MODIFIED);
-        }
+	    $this->_size = $value;
+	    $this->setModifiedFlag('size', MEMBER_MODIFIED);
+	}
     }
   
 }

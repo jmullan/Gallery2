@@ -38,64 +38,82 @@ class EntityTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_entity) =
+	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_entity->create();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_entity->save();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::deleteEntityById($this->_entity->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
     function testDoLoad() {
 	// Ensure GalleryEntity::onLoad() is called whether entity is
 	// loaded from database or disk cache..
 
-	GalleryDataCache::setFileCachingEnabled(true);
-
-	// Create entity..
-	list ($ret, $entity) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'EntityTestEntity');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = $entity->create();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	// Save entity..
-	$ret = $entity->save();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	// Load the entity back and verify it
+	GalleryDataCache::setFileCachingEnabled(true);
 	GalleryDataCache::reset();
-	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $entity->getId()));
+	GalleryDataCache::removeFromDisk(array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 
-	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class');
-	$this->assertEquals($entity, $newEntity, 'Entity check');
+	$this->assertEquals($this->_entity, $newEntity, 'Entity check');
 	$this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for database load');
 
 	if (GalleryDataCache::isFileCachingEnabled()) {
 	    // Load back from disk cache and verify it
 	    GalleryDataCache::reset();
 	    $data = GalleryDataCache::getFromDisk(
-				      array('type' => 'entity', 'itemId' => $entity->getId()));
+				      array('type' => 'entity', 'itemId' => $this->_entity->getId()));
 	    $this->assert(!empty($data), 'Entity data should be in disk cache');
 
-	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($entity->getId());
+	    list ($ret, $newEntity) = GalleryCoreApi::loadEntitiesById($this->_entity->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    $this->assertEquals('entitytestentity', strtolower(get_class($newEntity)), 'Entity class 2');
-	    $this->assertEquals($entity, $newEntity, 'Entity check 2');
+	    $this->assertEquals($this->_entity, $newEntity, 'Entity check 2');
 	    $this->assert($newEntity->_wasOnLoadCalled(), 'onLoad not called for disk cache load');
 	}
+    }
 
-	// Delete the entity..
-	$ret = GalleryCoreApi::deleteEntityById($entity->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
+    function testSetSameValueDifferentType() {
+	// Ensure modified flag is not set if we assign a value that once casted
+	// to the right type is the same as the old value..
+
+	$oldValue = $this->_entity->getModificationTimestamp();
+	$newValue = (string)$oldValue;
+
+	$this->_entity->setModificationTimestamp($newValue);
+	$this->assert(!$this->_entity->isModified(), 'is not modified');
     }
 }
 

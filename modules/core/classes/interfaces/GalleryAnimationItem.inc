@@ -50,19 +50,19 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return array member => array(type, class)
      */
     function getPersistentMemberInfo() {
-        $meta = parent::getPersistentMemberInfo();
+	$meta = parent::getPersistentMemberInfo();
     
-        $meta['members']['width'] = array(
-            'class' => 'GalleryAnimationItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['width'] = array(
+	    'class' => 'GalleryAnimationItem',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        $meta['members']['height'] = array(
-            'class' => 'GalleryAnimationItem',
-            'type' => STORAGE_TYPE_INTEGER
-        );
+	$meta['members']['height'] = array(
+	    'class' => 'GalleryAnimationItem',
+	    'type' => STORAGE_TYPE_INTEGER
+	);
     
-        return $meta;
+	return $meta;
     }
 
     /**
@@ -71,7 +71,7 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return array memberName => memberValue
      */
     function getMemberData() {
-        $data = parent::getMemberData();
+	$data = parent::getMemberData();
     
 	if (isset($this->_linkedEntity)) {
 	    if (!isset($this->_linkedEntity->_width)) {
@@ -97,7 +97,7 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	    $data['height'] = $this->_height;
 	}
 	
-        return $data;
+	return $data;
     }
   
 
@@ -108,7 +108,7 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @return string class name
      */
     function getClassName() {
-        return 'GalleryAnimationItem';
+	return 'GalleryAnimationItem';
     }
 
     /** 
@@ -136,11 +136,11 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	}
 	
 
-        if (!isset($this->_width)) {
-            return null;
-        }
+	if (!isset($this->_width)) {
+	    return null;
+	}
 
-        return $this->_width;
+	return $this->_width;
     }
 
     /**
@@ -149,28 +149,28 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_width) ? $this->_width : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_width = $value;
-            $this->setModifiedFlag('width', MEMBER_MODIFIED);
-        }
+	    $this->_width = $value;
+	    $this->setModifiedFlag('width', MEMBER_MODIFIED);
+	}
     }
   
     /**
@@ -186,11 +186,11 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
 	}
 	
 
-        if (!isset($this->_height)) {
-            return null;
-        }
+	if (!isset($this->_height)) {
+	    return null;
+	}
 
-        return $this->_height;
+	return $this->_height;
     }
 
     /**
@@ -199,28 +199,28 @@ class GalleryAnimationItem extends GalleryAnimationItem_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-        /* 
-         * Convert unset values to null, to avoid generating warnings.
-         */
+    
+	/* Type cast the incoming value to be an integer */
+	if ($value != null) {
+	    $value = (int)$value;
+	}
+      
+	/* 
+	 * Convert unset values to null, to avoid generating warnings.
+	 */
 	$a = isset($value) ? $value : null;
 	$b = isset($this->_height) ? $this->_height : null;
 
+	/* 
+	 * Only take action if the value actually changes, but take care not to 
+	 * generate warnings for unset values.
+	 */
     
-        /* Type case the incoming value to be an integer */
-        if ($value != null) {
-            $value = (int)$value;
-        }
+	if ($a !== $b) {
       
-        /* 
-         * Only take action if the value actually changes, but take care not to 
-         * generate warnings for unset values.
-         */
-    
-        if ($a !== $b) {
-      
-            $this->_height = $value;
-            $this->setModifiedFlag('height', MEMBER_MODIFIED);
-        }
+	    $this->_height = $value;
+	    $this->setModifiedFlag('height', MEMBER_MODIFIED);
+	}
     }
   
 }
