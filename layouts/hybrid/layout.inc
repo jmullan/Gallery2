@@ -80,6 +80,29 @@ class HybridLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $layout['moduleItemDetailFiles'] = $moduleItemDetailFiles;
+	    /* Get thumbnail */
+	    list ($ret, $thumbnail) =
+		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!empty($thumbnail)) {
+		$layout['thumb'] = $thumbnail[$item->getId()]->getMemberData();
+	    }
+	    /* Get view count */
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCounts(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!empty($viewCount)) {
+		$layout['viewCount'] = $viewCount[$item->getId()];
+	    }
+	    /* Get owner */
+	    list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getOwnerId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout['owner'] = $tmp->getMemberData();
 	    $template->setVariable('layout', $layout);
 	    return array(GalleryStatus::success(),
 	                 array('main' => 'layouts/hybrid/templates/detail.tpl'));
