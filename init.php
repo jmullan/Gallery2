@@ -156,7 +156,21 @@ function GalleryInitSecondPass() {
 
     list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
     if ($ret->isError()) {
-	return $ret->wrap(__FILE__, __LINE__);
+	if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+	    /* Missing user -- be anonymous */
+	    list ($ret, $activeUserId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    list ($ret, $activeUser) = GalleryCoreApi::loadEntitiesById($activeUserId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	} else {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
     }
     
     $gallery->setActiveUser($activeUser);
