@@ -27,6 +27,15 @@
  */
 
 /**
+ * We need these classes around so that when the code actually tries to add
+ * a photo to an album and create a derivative, the factory won't try to go off
+ * and load these classes (which lightens the load on our dummy toolkit)
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhotoItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryAlbumItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDerivativeImage.class');
+
+/**
  * ItemAddFromWeb plugin test
  * @package GalleryCore
  * @subpackage PHPUnit
