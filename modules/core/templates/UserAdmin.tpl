@@ -1,5 +1,6 @@
 <form action="{g->url}" method="post">
   <p>
+    {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
   </p>
