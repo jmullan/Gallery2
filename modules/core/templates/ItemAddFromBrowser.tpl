@@ -70,9 +70,7 @@
 
 {* Include our extra ItemAddOptions *}
 {foreach from=$ItemAdd.options item=option}
-  {if isset($option.file)}
-    {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
-  {/if}
+  {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
 {/foreach}
 
 <div class="gbBottomFlag">

@@ -323,13 +323,15 @@ class ItemAddView extends GalleryView {
 	foreach ($optionInstances as $option) {
 	    list ($ret, $entry['file'], $entry['l10Domain']) =
 		$option->loadTemplate($template, $form, $item);
-	    $ItemAdd['options'][] = $entry;
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    if (!empty($entry['file'])) {
+		$ItemAdd['options'][] = $entry;
+	    }
 	}
 
- 	/* Make sure that we've got some toolkits */
+	/* Make sure that we've got some toolkits */
 	list ($ret, $operations) = GalleryCoreApi::getToolkitOperations('image/jpeg');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

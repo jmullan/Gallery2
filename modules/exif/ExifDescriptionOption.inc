@@ -36,13 +36,6 @@
 class ExifDescriptionOption extends ItemAddOption {
 
     /**
-     * @see ItemAddOption::loadTemplate
-     */
-    function loadTemplate(&$template, &$form, $item) {
-	return array(GalleryStatus::success(), null, null);
-    }
-
-    /**
      * @see ItemAddOption::isAppropriate
      */
     function isAppropriate() {
