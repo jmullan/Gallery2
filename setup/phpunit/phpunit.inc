@@ -320,7 +320,7 @@ class TestCase extends Assert /* implements Test */ {
   }
 
   function runBare() {
-    $this->setup();
+    $this->setUp();
     $this->runTest();
     $this->tearDown();
   }
