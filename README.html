@@ -92,10 +92,30 @@
 	}
 	.fineprint {
 	        font-size: .8em;
-                color: #ccc;
+	        color: #ccc;
+	}
+	.toggle {
+	        padding-left: .3em;
+	        padding-right: 0.3em;
+	        border: solid #a6caf0 1px;
+	        background: #eee;
 	}
 	//-->
       </style>
+      <script type="text/javascript">
+	<!--
+	function toggle(objId, togId) {
+	  var o = document.getElementById(objId), t = document.getElementById(togId);
+	  if (o.style.display == 'none') {
+	    o.style.display = 'block';
+	    t.innerHTML = '-';
+	  } else {
+	    o.style.display = 'none';
+	    t.innerHTML = '+';
+	  }
+	}
+	//-->
+      </script>
   </head>
   
   <body>
@@ -232,10 +252,48 @@
       for you to personalize your G2 install. All the cool bells and whistles are 
       in modules that can be enabled separately for maximum control.
     </p>
+
+    <h3>
+      Highlight of changes in Gallery 2 (upcoming release)
+      <span id="next-toggle" class="toggle"
+       onclick="toggle('next-list', 'next-toggle')"> - </span>
+    </h3>
+    <ol id="next-list">
+      <li>
+	<b> Random Highlight </b> - New module allows albums to
+	periodically change highlight, selecting randomly from
+	the album's items.
+      </li>
+
+      <li>
+	<b> Thumbnail Page </b> - New module gives more control
+	over thumbnails for movies and documents.  For multipage
+	documents (like PDF/Postscript) or images (like multiscene
+	TIFF) you can pick the page number for the thumbnail (Note:
+	PDF/Postscript require both ImageMagick and Ghostscript).
+	When used in conjunction with the Ffmpeg module you can
+	pick a time offset for generating thumbnails for movies.  
+      </li>
+
+      <li>
+	<b> Toolkit Performance </b> - The ImageMagick and NetPBM
+	toolkits have been optimized to make fewer calls to external
+	binaries when used for multiple operations.  For example,
+	cropping and resizing to make a thumbnail now requires
+	only a single call to "convert" with ImageMagick.
+      </li>
+
+      <li>
+	<b> Module Uninstall </b> - ..
+      </li>
+    </ol>
+
     <h3>
       Highlight of changes in Gallery 2 Alpha 3 (Farva) 
+      <span id="alpha3-toggle" class="toggle"
+       onclick="toggle('alpha3-list', 'alpha3-toggle')"> + </span>
     </h3>
-    <ol>
+    <ol id="alpha3-list" style="display:none">
       <li>
 	<b> Watermark Support </b> - We now support image
 	watermarking.  You can add a watermark to the thumbnail,
@@ -335,9 +393,10 @@
 
     <h3>
       Highlight of changes in Gallery 2 Alpha 2 (Grand Theft Photo)
+      <span id="alpha2-toggle" class="toggle"
+       onclick="toggle('alpha2-list', 'alpha2-toggle')"> + </span>
     </h3>
-
-    <ol>
+    <ol id="alpha2-list" style="display:none">
       <li>
 	<b> User Interface </b> - Many small and large user interface
 	improvements.  Made the XHTML more standards compliant and
