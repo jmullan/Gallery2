@@ -958,6 +958,7 @@ class Gallery {
 	     * open_basedir and safe_mode
 	     */
 	    $this->_smarty->use_sub_dirs = false;
+	    $this->_smarty->short_template_c_names = true;
 
 	    if ($this->getDebug()) {
 		$this->_smarty->debugging = true;
