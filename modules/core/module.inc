@@ -130,6 +130,11 @@ class CoreModule extends GalleryModule {
 						      'GalleryDerivative',
 						      $classDir . 'GalleryDerivative.class');
 	
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'GalleryDerivativeImage',
+						      'GalleryDerivativeImage',
+						      $classDir . 'GalleryDerivativeImage.class');
+	
 	GalleryCoreApi::registerFactoryImplementation('GalleryDerivative',
 						      'GalleryDerivativeImage',
 						      'GalleryDerivativeImage',
