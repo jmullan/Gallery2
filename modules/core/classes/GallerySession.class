@@ -150,7 +150,7 @@ class GallerySession {
 	}
 
 	if (!isset($_COOKIE[$this->_sessionIdParameter]) ||
-	    $_COOKIE[$this->_sessionIdParameter] != $this->_sessionIdParameter) {
+	        $_COOKIE[$this->_sessionIdParameter] != $this->_sessionIdParameter) {
 	    /*
 	     * Send back a cookie.
 	     *
@@ -203,7 +203,6 @@ class GallerySession {
     function save() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-
 	$dieRoll = rand(1, 100);
 	
 	/* Only bother saving if we've been modified at all */
@@ -228,7 +227,7 @@ class GallerySession {
 		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    sprintf('Can\'t write to session file (%s)',
 						    $this->_sessionId));
-	    }
+		}
 	} else {
 	    /*
 	     * 5% of the time touch the session file so that it doesn't get expired.
@@ -362,8 +361,10 @@ class GallerySession {
      * @param string the value
      */
     function put($key, $value) {
-	$this->_sessionData[$key] = $value;
-	$this->_isSessionDataModified = true;
+	if (!isset($this->_sessionData[$key]) || $this->_sessionData[$key] !== $value) {
+	    $this->_sessionData[$key] = $value;
+	    $this->_isSessionDataModified = true;
+	}
     }
 
     /**
