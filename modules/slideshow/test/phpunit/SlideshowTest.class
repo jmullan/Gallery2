@@ -1,0 +1,148 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Slideshow
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test Slideshow functionality
+ *
+ * @package Slideshow
+ * @subpackage PHPUnit
+ *
+ */
+class SlideshowTest extends GalleryTestCase {
+
+    function SlideshowTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     *
+     */
+    function setUp() {
+	parent::setUp();
+	global $gallery;
+
+	// Create a new subalbum and give AllUser group only core.view
+	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	list ($ret, $allUsersId) =
+	    $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	$ret = GalleryPermissionMap::removeMapEntry(
+	    array('itemId' => $album->getId(), 'groupId' => $allUsersId));
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	$ret = GalleryPermissionMap::addGroupPermission(
+	    $album->getId(), $allUsersId, 'core.view');
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+
+	// Add some photos
+	list ($ret, $lockId) = $gallery->acquireReadLock($album->getId());
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	$prefix = dirname(__FILE__).'/../../../core/test/data/test';
+	for ($i=1; $i<=4; $i++) {
+	    $ret = $this->_addPhoto($album->getId(), "$prefix$i.gif", $i,
+				    $allUsersId, 'core.viewAll');
+	    if ($ret->isError())
+		$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	}
+	$ret = $gallery->releaseLocks($lockId);
+
+	// Switch to anonymous user (parent::teardown will switch back)
+	list ($ret, $guestId) =
+	    $gallery->getModuleParameter('core', 'id.anonymousUser');
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+	$gallery->setActiveUserId($guestId);
+
+	$this->_album = $album;
+    }
+
+    function _addPhoto($parentId, $imagePath, $idx, $gid, $perm) {
+	list ($ret, $photo) =
+	    GalleryFactory::newInstance('GalleryEntity', 'GalleryPhotoItem');
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	$ret = $photo->create($parentId, $imagePath,
+			      GalleryUtilities::getMimeType($imagePath),
+			      'testitem_' . time() . '.gif');
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	$photo->setTitle("Item #$idx");
+	$photo->setSummary("Summary $idx");
+	$photo->setDescription("Description $idx");
+	$ret = $photo->save();
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	// set permission
+	$ret = GalleryPermissionMap::addGroupPermission(
+			  $photo->getId(), $gid, $perm);
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	// add thumbnail
+	list ($ret, $tool, $outmime) =
+	    GalleryToolkitHelper::getToolkitByOperation(
+				  $photo->getMimeType(), 'thumbnail');
+	if($ret->isError()||!isset($tool))return($ret->wrap(__FILE__,__LINE__));
+	list ($ret, $thumb) = GalleryFactory::newInstance(
+				  'GalleryEntity', 'GalleryDerivativeImage');
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	$ret = $thumb->create($photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	$thumb->setDerivativeSourceId($photo->getId());
+	$thumb->setDerivativeOperations('thumbnail|150');
+	$thumb->setDerivativeMimeType($outmime);
+	$ret = $thumb->save();
+	if($ret->isError())return($ret->wrap(__FILE__,__LINE__));
+	return GalleryStatus::success();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	global $gallery;
+	$ret = $gallery->deleteEntityById($this->_album->getId());
+	if($ret->isError())$this->failWithStatus($ret->wrap(__FILE__,__LINE__));
+
+	parent::tearDown();
+    }
+
+    function testSlideshow() {
+	global $gallery;
+	list ($ret, $module) = $gallery->loadModule('slideshow');
+	$this->assert(!$ret->isError()&&!empty($module), 'Load module');
+	$this->assertEquals('1.0', $module->getVersion(), 'Module version');
+	list ($ret, $view) = GalleryView::loadView('slideshow:Slideshow');
+	$this->assert(!$ret->isError()&&!empty($view), 'Load view');
+	list ($ret, $slideData) = $view->buildSlideshow($this->_album);
+	$this->assert(!$ret->isError()&&isset($slideData)&&count($slideData)==4,
+		      'Generate slideshow data');
+	// Want a test album with all combinations of these item sizes:
+	// full+thumb, full+resize+thumb, full+resizes+thumb, full+resize, full
+	// with these view permissions:
+	// none, view, view+viewResize, view+viewSource, viewAll
+	// ..assert which items should be in slideshow(and which size)
+    }
+
+}
+
+?>
