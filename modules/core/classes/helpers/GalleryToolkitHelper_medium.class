@@ -679,7 +679,8 @@ class GalleryToolkitHelper_medium {
 		if (isset($toolkit)) {
 		    $toolkit->estimateDimensions($derivative, $source);
 		} else {
-		    // Fall back on the best-guess behaviour
+		    /* Fall back on the best-guess behaviour */
+		    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 		    GalleryToolkit::estimateDimensions($derivative, $source);
 		}
 	    }
