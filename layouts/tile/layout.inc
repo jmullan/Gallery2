@@ -133,6 +133,8 @@ class TileLayout extends GalleryLayout {
 	    $itemMap[$child['id']] = $child;
 	}
 
+	$layout['show']['parents'] = true;
+	$layout['show']['systemLinks'] = true;
 	$layout['itemMap'] = $itemMap;
 	$layout['imageWidths'] = implode(',', $imageWidths);
 	$layout['imageHeights'] = implode(',', $imageHeights);
