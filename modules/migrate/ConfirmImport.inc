@@ -809,6 +809,9 @@ class ConfirmImportController extends GalleryController {
 						if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 						    return array($ret->wrap(__FILE__, __LINE__), null);
 						}
+						if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+						    $commenterId = $guestUserId;
+						}
 					    }
 					    $commenterId = $commentG2User->getId();
 					} else {
