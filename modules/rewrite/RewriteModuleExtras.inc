@@ -44,7 +44,7 @@ class RewriteModuleExtras {
 		}
 	    }
 	    
-	    $currentVersion = '0.8.0';
+	    $currentVersion = '0.8.1';
 	    break;
 
 	case '0.0.1':
@@ -168,6 +168,9 @@ class RewriteModuleExtras {
 
 	case '0.1.10':
 	    $currentVersion = '0.8.0';
+
+	case '0.8.0':
+	    $currentVersion = '0.8.1';
 	    break;
 	    
 	default:

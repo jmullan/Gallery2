@@ -147,9 +147,9 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 	
 	if (empty($this->_cache)) {
-	    $error = $this->_generateCache();
-	    
-	    if ($error) {
+	    list ($ret, $this->_cache['usePrefixes']) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
+	    if ($ret->isError()) {
 		$this->_error = true;
 		return parent::generateUrl($params, $forceSessionId);
 	    }
@@ -163,8 +163,6 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	
 	if (strpos($url, '/' . $this->_baseFile . '/' . $prefix) !== false) {
 	    $url = str_replace('/' . $this->_baseFile . '/' . $prefix, '/', $url);
-	    $url = $this->makeUrl($this->_cache['rewriteBase']) .
-		    substr($url, strlen($this->getCurrentUrlDir()));
 	} else if (strpos($url, '/' . $this->_baseFile . '/') !== false) {
 	    /*
 	     * Fall back to basic URL for all other prefixes than core:ShowItem,
@@ -189,30 +187,6 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		unset($this->_viewPrefixRegistry['reverse'][$view]);
 	    }
 	    $this->registerViewPrefix($prefix, $view);
-	}
-    }
-    
-    /**
-     * Creates cache from database values.
-     *
-     * @return bool true on error
-     * @access private
-     */
-    function _generateCache() {
-    	global $gallery;
-    	$urlGenerator =& $gallery->getUrlGenerator();
-    	
-	list ($ret, $this->_cache['usePrefixes']) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'usePrefixes');
-	if ($ret->isError()) {
-	    $this->_error = true;
-	    return parent::generateUrl($params, $forceSessionId);
-	}
-	
-	$this->_cache['rewriteBase'] = '/' . substr($urlGenerator->getCurrentUrlDir(),
-		strlen($urlGenerator->makeUrl('/')));
-	if ($this->_cache['rewriteBase'] == '//') {
-	    $this->_cache['rewriteBase'] = '/';
 	}
     }
 }
