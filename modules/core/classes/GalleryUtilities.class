@@ -112,9 +112,19 @@ class GalleryUtilities {
 	return $base;
     }
 
-    function getFile($key) {
+    /**
+     * Return data about file attached to request
+     *
+     * @param string a key
+     * @param boolean (optional) false to omit gallery variable prefix (not recommended)
+     * @return array file data
+     * @static
+     */
+    function getFile($key, $prefix=true) {
 	$file = array();
-	$key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	if ($prefix) {
+	    $key = GALLERY_FORM_VARIABLE_PREFIX . $key;
+	}
 	if (isset($_FILES[$key])) {
 	    /*
 	     * Later on during our sanitization process we're going to call

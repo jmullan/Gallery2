@@ -379,6 +379,21 @@ class UtilitiesTest extends GalleryTestCase {
 				  'error' => 0,
 				  'size' => $platform->filesize(__FILE__)),
 			    $file);
+
+        $_FILES['testfile'] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$file = GalleryUtilities::getFile('testfile', false);
+	$this->assertEquals(array('name' => 'testfile.txt',
+				  'type' => 'text/plain',
+				  'tmp_name' => __FILE__,
+				  'error' => 0,
+				  'size' => $platform->filesize(__FILE__)),
+			    $file);
     }
 
     function testGetHttpDate() {
