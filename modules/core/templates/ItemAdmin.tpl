@@ -1,4 +1,4 @@
-<form action="{g->url}" nctype="{$ItemAdmin.enctype}" method="post">
+<form action="{g->url}" enctype="{$ItemAdmin.enctype}" method="post">
   <p>
     {g->hiddenFormVars}
     <input type="hidden" name="{g->formVar var="controller"}" value="{$controller}"/>
