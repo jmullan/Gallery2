@@ -37,12 +37,19 @@ class ItemEditPermissionsController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if (isset($form['applyToSubItems'])) {
+	    $applyToChildren = true;
+	} else {
+	    $applyToChildren = false;
+	}
+
 	if (isset($form['action']['deleteGroupPermission'])) {
 	    /* Handle delete group perm actions */
 	    list ($groupId, $permissionId) = split(',', $form['group']['delete']);
 	    $ret = GalleryPermissionMap::removeGroupPermission($itemId,
 							       $groupId,
-							       $permissionId);
+							       $permissionId,
+							       $applyToChildren);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -63,7 +70,8 @@ class ItemEditPermissionsController extends GalleryController {
 	    list ($userId, $permissionId) = split(',', $form['user']['delete']);
 	    $ret = GalleryPermissionMap::removeUserPermission($itemId,
 							      $userId,
-							      $permissionId);
+							      $permissionId,
+							      $applyToChildren);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -115,7 +123,8 @@ class ItemEditPermissionsController extends GalleryController {
 
 		    $ret = GalleryPermissionMap::addUserPermission($itemId,
 								   $user->getId(),
-								   $permission);
+								   $permission,
+								   $applyToChildren);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -170,7 +179,8 @@ class ItemEditPermissionsController extends GalleryController {
 		    if (!$hasIt) {
 			$ret = GalleryPermissionMap::addGroupPermission($itemId,
 									$group->getId(),
-									$permission);
+									$permission,
+									$applyToChildren);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}

@@ -71,8 +71,8 @@ class GalleryPermissionMap_core {
      * @param array userid => permission
      * @return object GalleryStatus a status code
      */
-    function addUserPermission($itemId, $userId, $permission) {
-	$ret = GalleryPermissionMap::_addPermission($itemId, $userId, 0, $permission);
+    function addUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
+	$ret = GalleryPermissionMap::_addPermission($itemId, $userId, 0, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -87,8 +87,8 @@ class GalleryPermissionMap_core {
      * @param array userid => permission
      * @return object GalleryStatus a status code
      */
-    function addGroupPermission($itemId, $groupId, $permission) {
-	$ret = GalleryPermissionMap::_addPermission($itemId, 0, $groupId, $permission);
+    function addGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
+	$ret = GalleryPermissionMap::_addPermission($itemId, 0, $groupId, $permission, $applyToChildren);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -106,7 +106,7 @@ class GalleryPermissionMap_core {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _addPermission($itemId, $userId, $groupId, $permission) {
+    function _addPermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
 	global $gallery;
 	if (empty($itemId) || !isset($userId) || !isset($groupId) || empty($permission)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -154,6 +154,28 @@ class GalleryPermissionMap_core {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
+	/*
+	 * Apply to all my children, if necessary.
+	 */
+	if ($applyToChildren) {
+	    $gallery->guaranteeTimeLimit(5);
+	    list ($ret, $childIds) = 
+		GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($childIds as $childId) {
+		$ret = GalleryPermissionMap::_addPermission($childId,
+							    $userId,
+							    $groupId,
+							    $permission,
+							    $applyToChildren);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
 	
 	return GalleryStatus::success();
     }
@@ -164,8 +186,8 @@ class GalleryPermissionMap_core {
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
      */
-    function removeUserPermission($itemId, $userId, $permission) {
-	$ret = GalleryPermissionMap::_removePermission($itemId, $userId, 0, $permission);
+    function removeUserPermission($itemId, $userId, $permission, $applyToChildren=false) {
+	$ret = GalleryPermissionMap::_removePermission($itemId, $userId, 0, $permission, $applyToChildren);
 	
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -179,8 +201,8 @@ class GalleryPermissionMap_core {
      * @param int the id of the GalleryGroup
      * @return object GalleryStatus a status code
      */
-    function removeGroupPermission($itemId, $groupId, $permission) {
-	$ret = GalleryPermissionMap::_removePermission($itemId, 0, $groupId, $permission);
+    function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
+	$ret = GalleryPermissionMap::_removePermission($itemId, 0, $groupId, $permission, $applyToChildren);
 	
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -198,7 +220,7 @@ class GalleryPermissionMap_core {
      * @return object GalleryStatus a status code
      * @access private
      */
-    function _removePermission($itemId, $userId, $groupId, $permission) {
+    function _removePermission($itemId, $userId, $groupId, $permission, $applyToChildren) {
 	global $gallery;
 	if (empty($itemId) || !isset($userId) || !isset($groupId) || empty($permission)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
@@ -220,7 +242,15 @@ class GalleryPermissionMap_core {
 
 	if (!isset($currentBitsTable[$itemId])) {
 	    $gallery->debug("Tried to remove a non-existant permission!");
-	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	    return GalleryStatus::success();
+	    
+	    /*
+	     * If we fail with an error here, then applyToChildren permission
+	     * deletes will fail because we don't know if the permission exists
+	     * before we try to remove it.
+	     * 
+	     * return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+	     */
 	}
 
 	$currentBits = $currentBitsTable[$itemId];
@@ -241,6 +271,28 @@ class GalleryPermissionMap_core {
 						     
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * Apply to all my children, if necessary.
+	 */
+	if ($applyToChildren) {
+	    $gallery->guaranteeTimeLimit(5);
+	    list ($ret, $childIds) = 
+		GalleryItemHelper::fetchChildItemIdsWithPermission($itemId, 'core.changePermissions');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($childIds as $childId) {
+		$ret = GalleryPermissionMap::_removePermission($childId,
+							       $userId,
+							       $groupId,
+							       $permission,
+							       $applyToChildren);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 	}
 	
 	return GalleryStatus::success();

@@ -86,6 +86,33 @@
 	<tr>
 	  <td>
 	    {galleryBigFontSize}
+	    {galleryText text="Apply changes"}
+	    {/galleryBigFontSize}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryText text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many of sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible."}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryInput type="checkbox" name="form.applyToSubItems"}{/galleryInput}
+	    <b>{galleryText text="Apply to sub-items"}</b>
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    &nbsp;
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+	    {galleryBigFontSize}
 	    {galleryText text="Group Permissions"}
 	    {/galleryBigFontSize}
 	  </td>

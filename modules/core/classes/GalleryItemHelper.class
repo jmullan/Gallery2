@@ -119,6 +119,75 @@ class GalleryItemHelper {
     }
 
     /**
+     * Return the ids of all the child items of the given item that have the
+     * matching permission.  Useful for, example, for finding all the children
+     * where we (the active user) has the 'core.changePermissions' permission
+     * bit set.  This allows us to cascade permission updates.
+     *
+     * @access public
+     * @param array item ids
+     * @param int user id
+     * @return array object GalleryStatus a status code
+     *               int a count
+     */
+    function fetchChildItemIdsWithPermission($itemId, $permissionId) {
+	global $gallery;
+
+	if (empty($itemId) || empty($permissionId)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			 null);
+	}
+
+	$storage = $gallery->getStorage();
+	list ($ret, $permissionBits) = GalleryPermissionSetMap::convertIdsToBits($permissionId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$query = '
+        SELECT
+          DISTINCT([GalleryChildEntity::id])
+        FROM
+          [GalleryChildEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+        WHERE
+          [GalleryChildEntity::parentId] = ?
+          AND
+          [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
+          AND
+          [GalleryItem::id] = [GalleryChildEntity::id]
+          AND
+          ([GalleryPermissionMap::userId] = ?
+           OR
+           ([GalleryUserGroupMap::userId] = ?
+            AND
+            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          AND
+          [GalleryPermissionMap::permission] & ? > ?
+        GROUP BY
+          [GalleryChildEntity::id]
+        ';
+	$data = array();
+	$data[] = $itemId;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $storage->convertIntToBits($permissionBits);
+	$data[] = $storage->convertIntToBits(0);
+
+	list ($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$data = array();
+	while ($result = $searchResults->nextResult()) {
+	    $data[] = $result[0];
+	}
+
+	return array(GalleryStatus::success(), $data);
+    }
+    
+
+    /**
      * Study the permissions for all items (for the given user)
      *
      * @param array GalleryItem ids

@@ -200,7 +200,8 @@ class GalleryPermissionSetMap_core {
 	foreach ($permissionIds as $id) {
 	    if (!isset($allPermissions[$id])) {
 		$gallery->debug("Unknown permission id: $id");
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__));
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+			     null);
 	    }
 	    $results |= $allPermissions[$id]['bits'];
 	}

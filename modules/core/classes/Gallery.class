@@ -272,6 +272,8 @@ class Gallery {
      * @return object GalleryStatus a status code 
      */
     function deleteEntityById($id) {
+	GalleryProfiler::start('Gallery::deleteEntityById');
+	
 	if (empty($id)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER,
 					      __FILE__, __LINE__),
@@ -315,6 +317,7 @@ class Gallery {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	GalleryProfiler::stop('Gallery::deleteEntityById');
 	return GalleryStatus::success();
     }
 
