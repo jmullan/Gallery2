@@ -85,14 +85,11 @@ class DownloadItemView extends GalleryView {
 		header('Content-type: ' . $data['mimeType']);
 		header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
 		$stats = $platform->stat($data['derivativePath']);
-		
 		if ($stats[7] > 0) {
 		    header('Content-length: ' . $stats[7]);
 		}
-		
-		$platform = $gallery->getPlatform();
 		header('Last-Modified: ' . GalleryUtilities::getHttpDate($stats[9]));
-		
+
 		/*
 		 * Don't use readfile() because it buffers the entire file in memory
 		 * Profiling shows that this approach is as efficient as fpassthru()
