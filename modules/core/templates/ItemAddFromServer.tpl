@@ -275,7 +275,9 @@ onclick="document.location='{g->url arg1="view=core:ItemAdmin" arg2="subView=cor
 {if isset($showOptions)}
   {* Include our extra ItemAddOptions *}
   {foreach from=$ItemAdd.options item=option}
-    {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+    {if isset($option.file)}
+      {include file="gallery:`$option.file`" l10Domain=$option.l10Domain}
+    {/if}
   {/foreach}
 {/if}
   
