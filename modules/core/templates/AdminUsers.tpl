@@ -60,24 +60,24 @@
 
 	  <tr>
 	    <td align="center">
-	      {gallerySelect name="form.userList.username" size=$form['userList']['pageSize']}
-	      {html_options options=$form['userList']['usernames'] output=$form['userList']['usernames']}
+	      {gallerySelect name="form.list.username" size=$form['list']['pageSize']}
+	      {html_options values=$form['list']['usernames'] output=$form['list']['usernames']}
 	      {/gallerySelect}
-	      {if (!empty($form.userList.filter))}
+	      {if (!empty($form.list.filter))}
 	      <br>
 	      {galleryText one="%d user matches your filter"
 			   many="%d users match your filter"
-			   count=$form.userList.count
-			   arg1=$form.userList.count}
+			   count=$form.list.count
+			   arg1=$form.list.count}
 	      {/if}
-	      {if ($form.userList.maxPages > 1)}
+	      {if ($form.list.maxPages > 1)}
 	      <br>
 	      {galleryText text="Viewing page %d of %d"
-		arg1=$form.userList.page
-		arg2=$form.userList.maxPages}
+		arg1=$form.list.page
+		arg2=$form.list.maxPages}
 	      {/if}
-	      {galleryInput type="hidden" name="form.userList.page"}{$form.userList.page}{/galleryInput}
-	      {galleryInput type="hidden" name="form.userList.maxPages"}{$form.userList.maxPages}{/galleryInput}
+	      {galleryInput type="hidden" name="form.list.page"}{$form.list.page}{/galleryInput}
+	      {galleryInput type="hidden" name="form.list.maxPages"}{$form.list.maxPages}{/galleryInput}
 	    </td>
 	  </tr>
 
@@ -89,11 +89,11 @@
 	  </tr>
 	  <tr>
 	    <td align="center">
-	      {if ($form.userList.page > 1)}
+	      {if ($form.list.page > 1)}
 	      {galleryInput type="submit" name="form.action.firstPage"}{galleryText text="|< First"}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.backPage"}{galleryText text="<< Back"}{/galleryInput}
 	      {/if}
-	      {if ($form.userList.page < $form.userList.maxPages)}
+	      {if ($form.list.page < $form.list.maxPages)}
 	      {galleryInput type="submit" name="form.action.nextPage"}{galleryText text="Next >>"}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.lastPage"}{galleryText text="Last >|"}{/galleryInput}
 	      {/if}
@@ -103,7 +103,7 @@
 	    <td align="center">
 	      {galleryInput type="submit" name="form.action.filterClear"}{galleryText text="Clear"}{/galleryInput}
 	      {galleryInput type="submit" name="form.action.filterBySubstring"}{galleryText text="Filter:"}{/galleryInput}
-	      {galleryInput type="text" name="form.userList.filter"}{$form.userList.filter}{/galleryInput}
+	      {galleryInput type="text" name="form.list.filter"}{$form.list.filter}{/galleryInput}
 	    </td>
 	  </tr>
 	</table>

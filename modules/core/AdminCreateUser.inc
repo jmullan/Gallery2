@@ -31,16 +31,21 @@ class AdminCreateUserController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$urlParams = array();
+	$results = array();
+	$redirectParams = array();
 	$form = GalleryUtilities::getFormVariables('form');
-	/*
-	 * If all the right fields are in place then go ahead and
-	 * create the user.
-	 */
-	if (!empty($form['action']['cancel'])) {
-	    $urlParams['view'] = 'core:SiteAdmin';
-	    $urlParams['subView'] = 'core:AdminUsers';
-	} else if (!empty($form['action']['create'])) {
+
+	if (isset($form['action']['cancel'])) {
+
+	    /* Go back to the AdminUsers view */
+	    $results['view'] = 'core:SiteAdmin';
+	    GalleryUtilities::putRequestVariable('subView', 'core:AdminUsers');
+	    
+	} else if (isset($form['action']['create'])) {
+	    /*
+	     * If all the right fields are in place then go ahead and
+	     * create the user.
+	     */
 	    if (!empty($form['username']) &&
 	        !empty($form['email']) &&
 	        !empty($form['password1']) &&
@@ -73,20 +78,21 @@ class AdminCreateUserController extends GalleryController {
 		    }
 
 		    /* Request a redirect to the confirmation screen */
-		    $urlParams['view'] = 'core:SiteAdmin';
-		    $urlParams['subView'] = 'core:AdminCreateUserConfirmation';
-		    $urlParams['username'] = $form['username'];
+		    $redirectParams['view'] = 'core:SiteAdmin';
+		    $redirectParams['subView'] = 'core:AdminCreateUserConfirmation';
+		    $redirectParams['username'] = $form['username'];
 		}
 	    }
 	}
-	
-	$results = array();
-	if (empty($urlParams)) {
-	    $results['view'] = 'core:SiteAdmin';
-	    GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateUser');
-	} else {
+
+	if (!empty($redirectParams)) {
 	    $templateAdapter = $gallery->getTemplateAdapter();
-	    $results['redirect'] = $templateAdapter->url($urlParams);
+	    $results['redirect'] = $templateAdapter->url($redirectParams);
+	} else {
+	    if (empty($results['view'])) {
+		$results['view'] = 'core:SiteAdmin';
+		GalleryUtilities::putRequestVariable('subView', 'core:AdminCreateUser');
+	    }
 	}
 
 	return array(GalleryStatus::success(), $results);
