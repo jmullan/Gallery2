@@ -84,7 +84,8 @@ class ShowCommentsView extends GalleryView {
 	}
 
 	foreach (array('delete' => 'comment.delete',
-		       'edit' => 'comment.edit')
+		       'edit' => 'comment.edit',
+		       'view' => 'comment.view')
 		 as $canFlag => $permission) {
 	    $can[$canFlag] = isset($permissions[$permission]);
 	}

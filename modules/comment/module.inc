@@ -204,13 +204,23 @@ class CommentModule extends GalleryModule {
 		    array('text' => $this->translate('add comment'),
 			  'params' => $params);
 	    }
+	    
+	    if (isset($permissions['comment.view'])) {
+		$params['return'] = 'true';
+		$params['view'] = 'core:ItemAdmin';
+		$params['subView'] = 'comment:ShowComments';
+		$params['itemId'] = $item->getId();
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('view comment'),
+			  'params' => $params);
+	    }
 	}
 
 	return array(GalleryStatus::success(), $links);
     }
 
     /**
-     * @see GalleryModule::loadItemSummaries()
+     * @see GalleryModule::getItemSummaries()
      */
     function getItemSummaries($items) {
 	global $gallery;
@@ -238,9 +248,7 @@ class CommentModule extends GalleryModule {
 	    if (isset($permissions['comment.view'])) {
 		if (!empty($commentCounts[$item->getId()])) {
 		    $summaries[$item->getId()] =
-			$this->translate(array('one' => '%d comment',
-					       'many' => '%d comments',
-					       'count' => $commentCounts[$item->getId()],
+			$this->translate(array('text' => 'Comments: %d',
 					       'arg1' => $commentCounts[$item->getId()]));
 		}
 	    }
@@ -313,7 +321,8 @@ class CommentModule extends GalleryModule {
 	}
 	
 	foreach (array('delete' => 'comment.delete',
-		       'edit' => 'comment.edit')
+		       'edit' => 'comment.edit',
+		       'view' => 'comment.view')
 		 as $canFlag => $permission) {
 	    $can[$canFlag] = isset($permissions[$permission]);
 	}
@@ -356,7 +365,8 @@ class CommentModule extends GalleryModule {
 	}
 
 	if (isset($permissions['comment.edit']) ||
-	    isset($permissions['comment.delete'])) {
+	    isset($permissions['comment.delete']) ||
+	    isset($permissions['comment.view'])) {
 	        $views[] = array('name' => $this->translate('View Comments'),
 				 'view' => 'comment:ShowComments');
 	}

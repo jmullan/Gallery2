@@ -148,6 +148,13 @@
                        arg1=$layout.viewCounts[$child.id]}
             </li>
             {/if}
+
+            {foreach from=$child.moduleSummaries item=module}
+            <li>
+              {$module}
+            </li>
+            {/foreach}
+
           </ul>
         </td>
         {/foreach}

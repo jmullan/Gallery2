@@ -77,9 +77,19 @@ class EditCommentController extends GalleryController {
 	    if (empty($form['date'])) {
 		$error[] = 'form[error][date][missing]';
 	    } else {
-		$longDate = strtotime($form['date']);
+	    	/*
+		 * Verify that the date is at least 2 characters long.
+		 * This is to get around an apparent bug in strtotime
+		 * which seems to read single characters as valid dates 
+		 * (with the exception of 'j')
+		 */
+	    	if (strlen($form['date']) < 2) {
+	    	    $longDate = -1;
+		} else {
+		    $longDate = strtotime($form['date']);
+		}
 		if ($longDate == -1) {
-		    $error[] = 'form[error][invalidDate]';
+		    $error[] = 'form[error][date][invalid]';
 		}
 	    }
 
@@ -122,6 +132,46 @@ class EditCommentController extends GalleryController {
 		$redirect['subView'] = 'comment:CommentChangeConfirmation';
 		$redirect['itemId'] = (int)$itemId;
 	    }
+	} else if (isset($form['action']['preview'])) {
+	    /* Verify the input parameters */
+	    if (empty($form['commenterName'])) {
+		$error[] = 'form[error][commenterName][missing]';
+	    } else {
+		list ($ret, $commenter) = GalleryCoreApi::fetchUserByUsername($form['commenterName']);
+		if ($ret->isError()) {
+		    $error[] = 'form[error][commenterName][invalid]';
+		}
+	    }
+
+	    $longDate = null;
+	    if (empty($form['date'])) {
+		$error[] = 'form[error][date][missing]';
+	    } else {
+	    	/*
+		 * Verify that the date is at least 2 characters long.
+		 * This is to get around an apparent bug in strtotime
+		 * which seems to read single characters as valid dates 
+		 * (with the exception of 'j')
+		 */
+	    	if (strlen($form['date']) < 2) {
+	    	    $longDate = -1;
+		} else {
+		    $longDate = strtotime($form['date']);
+		}
+		if ($longDate == -1) {
+		    $error[] = 'form[error][date][invalid]';
+		}
+	    }
+
+	    if (empty($form['subject'])) {
+		$error[] = 'form[error][subject][missing]';
+	    }
+
+	    if (empty($form['comment'])) {
+		$error[] = 'form[error][comment][missing]';
+	    }
+
+	    /* Fall through back to the current view */
 	} else if (isset($form['action']['cancel'])) {
 	    /* Where to go on a cancel?  Go to item admin.*/
 	    $redirect['view'] = 'core:ItemAdmin';

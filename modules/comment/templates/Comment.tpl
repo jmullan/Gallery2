@@ -8,7 +8,7 @@
   <h3 class="giTitle">
     {$comment.subject|markup}
   </h3>
-  {if isset($can.edit) || isset($can.delete)}
+  {if isset($can.edit) || isset($can.delete) || (isset($can.view) && isset($truncate))}
 
   <ul class="giHorizontalLinks">
     {if $can.edit}
@@ -23,6 +23,14 @@
     <li>
       <a href="{g->url arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:DeleteComment" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}">
         {g->text text="delete"}
+      </a>
+    </li>
+    {/if}
+
+    {if $can.view && isset($truncate)}
+    <li>
+      <a href="{g->url arg1="return=true" arg2="view=core:ItemAdmin" arg3="subView=comment:ShowComments" arg4="itemId=`$item.id`" arg5="commentId=`$comment.id`"}">
+        {g->text text="full"}
       </a>
     </li>
     {/if}
