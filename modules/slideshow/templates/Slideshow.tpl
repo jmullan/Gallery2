@@ -41,7 +41,6 @@ for (i=count-1; i > 0; i--) {
   k = random_order[i];
   random_order[i] = random_order[j];
   random_order[j] = k;
-alert(random_order[i]);
 }
 function move_index(by) {
   if (iDir==0/*random*/) {
