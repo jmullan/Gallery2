@@ -161,6 +161,7 @@ class UserWatermarksView extends GalleryView {
 	foreach ($watermarks as $id => $watermark) {
 	    /* Exclude site-wide watermarks (and, in the case of admins -- other people's) */
 	    if ($watermark->getOwnerId() != $gallery->getActiveUserId()) {
+		unset($watermarks[$id]);
 		continue;
 	    }
 	    
