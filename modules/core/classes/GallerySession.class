@@ -154,7 +154,15 @@ class GallerySession {
 	    list ($ret, $sessionLifetime) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		    /*
+		     * During installation it's possible that the database isn't around yet when we
+		     * want a translator.  Just keep going.
+		     */
+		    $sessionLifetime = 0;
+		} else {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 
 	    if ($sessionLifetime > 0) {
