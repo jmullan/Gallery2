@@ -107,6 +107,9 @@ class ShowItemView extends GalleryView {
 	    $ShowItem['item'] = $item->getMemberData();
 	    $ShowItem['layoutL10Domain'] = $layout->getL10Domain();
 	    $ShowItem['layoutBodyFile'] = $results['body'];
+	    if (isset($results['head'])) {
+		$ShowItem['layoutHeadFile'] = $results['head'];
+	    }
 	    $template->setVariable('ShowItem', $ShowItem);
 	    
 	    return array(GalleryStatus::success(),
