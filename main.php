@@ -93,7 +93,6 @@ function GalleryMain($startTime) {
 	/* Redirect, if so instructed */
 	if (!empty($results['redirect'])) {
 	    header("Location: $results[redirect]");
-	    header("HTTP/1.0 302 Found");
 	    print "DEBUG! Redirect to: <a href=\"$results[redirect]\">$results[redirect]</a>";
 	    return GalleryStatus::success();
 	}
@@ -113,7 +112,6 @@ function GalleryMain($startTime) {
     if ($ret->isError()) {
 	if ($ret->getErrorCode() & ERROR_BAD_PARAMETER) {
 	    list ($ret, $view) = GalleryView::loadView('core:SecurityViolation');
-
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

@@ -109,7 +109,7 @@ class GalleryPermissionMap_core {
      */
     function getItemAdminPermissions() {
 	$registry =& GalleryPermissionMap::_getPermissionRegistry();
-	return array_keys($registry['itemAdmin']);
+	return $registry['itemAdmin'];
     }
 
     /**
@@ -270,9 +270,9 @@ class GalleryPermissionMap_core {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[] = array('userId' => $result[0],
-			    'groupId' => $result[1],
-			    'permission' => $result[2]);
+	    $data[] = array('permission' => $result[2],
+			    'userId' => $result[0],
+			    'groupId' => $result[1]);
 	}
 	return array($ret, $data);
     }
@@ -284,7 +284,7 @@ class GalleryPermissionMap_core {
      * @param array a set of user ids
      * @param array a set of group ids
      * @return array object GalleryStatus a status code
-     *               array (id => array(permission strings), ...)
+     *               array (id => array(array(permission.id => 1, ...), ...)
      */
     function fetchPermissionsForItems($itemIds, $userIds, $groupIds) {
 	global $gallery;
@@ -312,7 +312,7 @@ class GalleryPermissionMap_core {
 
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
-	    $data[$result[1]][] = $result[0];
+	    $data[$result[1]][$result[0]] = 1;
 	}
 	return array($ret, $data);
     }

@@ -60,14 +60,17 @@ class ShowCommentsView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get its thumbnail */
-	list ($ret, $thumbnailTable) = 
-	    GalleryDerivativeHelper::loadDerivatives($item->getId(),
-						     DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	/* Find its thumbnail */
+	list ($ret, $thumbnailTable) =
+		GalleryDerivativeHelper::fetchThumbnailsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$thumbnail = $thumbnailTable[$itemId][0];
+	if (empty($thumbnailTable)) {
+	    $thumbnailData = null;
+	} else {
+	    $thumbnail = $thumbnailTable[$item->getId()];
+	}
 
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), null, ORDER_ASCENDING);
@@ -104,9 +107,31 @@ class ShowCommentsView extends GalleryView {
 	
 	$return = GalleryUtilities::getFormVariables('return.');
 
+	list ($ret, $permissions) =
+	    GalleryItemHelper::getPermissions($item->getId(),
+					      $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (isset($permissions['core.all']) ||
+	        isset($permissions['comment.all'])) {
+	    $can['all'] = true;
+	} else {
+	    $can['all'] = false;
+	    foreach (array('add' => 'comment.add',
+			   'delete' => 'comment.delete',
+			   'edit' => 'comment.edit',
+			   'viewIps' => 'comment.viewIps')
+		     as $canFlag => $permission) {
+		$can[$canFlag] = isset($permissions[$permission]);
+	    }
+	}
+
 	$this->_setTemplateVariable('comments', $commentData);
+	$this->_setTemplateVariable('can', $can);
 	$this->_setTemplateVariable('return', $return);
-	$this->_setTemplateVariable('itemId', $item->getId());
+	$this->_setTemplateVariable('item', $item->getMemberData());
 	$html = $this->_renderTemplate('comment', 'ShowComments.tpl');
 	
 	return array(GalleryStatus::success(), $html);

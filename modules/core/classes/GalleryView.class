@@ -131,7 +131,7 @@ class GalleryView {
 
 	$viewClassName = $class . 'View';
 	if (!class_exists($viewClassName)) {
-	    $gallery->debug("Class $viewClassName not defined in ${moduleName}:$viewName");
+	    $gallery->debug("Class $viewClassName not defined in $viewName");
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	

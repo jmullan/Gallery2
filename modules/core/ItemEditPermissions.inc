@@ -39,11 +39,6 @@ class ItemEditPermissionsController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $item) = $gallery->loadEntitiesById($itemId);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	if (isset($form['action']['delete'])) {
 	    /* Handle delete actions */ 
 	    if (isset($form['permission']['id']) &&
@@ -57,6 +52,12 @@ class ItemEditPermissionsController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    list ($ret, $group) = $gallery->loadEntitiesById($form['group']['id']);
+		    if ($ret->isSuccess()) {
+			$redirectParams['form.group.groupName'] = $group->getGroupName();
+		    }
+		    $redirectParams['form.group.permission'] = $form['permission']['id'];
 		}
 		
 		if (isset($form['user']['id'])) {
@@ -66,6 +67,12 @@ class ItemEditPermissionsController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+
+		    list ($ret, $user) = $gallery->loadEntitiesById($form['user']['id']);
+		    if ($ret->isSuccess()) {
+			$redirectParams['form.user.userName'] = $user->getUserName();
+		    }
+		    $redirectParams['form.user.permission'] = $form['permission']['id'];
 		}
 
 		/* Figure out where to redirect upon success */
@@ -122,6 +129,7 @@ class ItemEditPermissionsController extends GalleryController {
 		    $redirectParams['view'] = 'core:ItemAdmin';
 		    $redirectParams['subView'] = 'core:ItemEditPermissions';
 		    $redirectParams['itemId'] = $itemId;
+		    $redirectParams['form.user.userName'] = $user->getUserName();
 		}
 	    }
 	} else if (isset($form['action']['addGroupPermission'])) {
@@ -173,6 +181,7 @@ class ItemEditPermissionsController extends GalleryController {
 		    $redirectParams['view'] = 'core:ItemAdmin';
 		    $redirectParams['subView'] = 'core:ItemEditPermissions';
 		    $redirectParams['itemId'] = $itemId;
+		    $redirectParams['form.group.groupName'] = $group->getGroupName();
 		}
 	    }
 	} else if (isset($form['action']['changeOwner'])) {
@@ -258,9 +267,19 @@ class ItemEditPermissionsView extends GalleryView {
 	if ($formName == 'ItemEditPermissions') {
 	    /* Complain if we have any invalid data */
 	} else {
-	    /* First time around, load the form with item data */
-	    $form['user']['userName'] = '';
-	    $form['group']['groupName'] = '';
+	    /*
+	     * First time around, load the form with item data.  Note that
+	     * userName and groupName can be passed in to this form so don't
+	     * initialize them unless they don't exist.
+	     */
+	    if (empty($form['user']['userName'])) {
+		$form['user']['userName'] = '';
+	    }
+	    
+	    if (empty($form['group']['groupName'])) {
+		$form['group']['groupName'] = '';
+	    }
+	    
 	    $form['owner']['ownerName'] = '';
 	}
 

@@ -48,6 +48,14 @@ class GalleryModule {
     var $_description;
 
     /**
+     * The Smarty instance
+     *
+     * @var int $_smarty
+     * @access private
+     */
+    var $_smarty;
+    
+    /**
      * The version of this module
      * 
      * @var string _version
@@ -328,5 +336,49 @@ class GalleryModule {
 	return $this->_version;
     }
 
+    /**
+     * Initialize the template
+     *
+     * @param string parent directory of the "templates" dir
+     * @return object GalleryStatus a status code
+     */
+    function _initTemplate($templateDir) {
+	global $gallery;
+	
+	list ($ret, $this->_smarty) = $gallery->getSmarty();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_smarty->template_dir = $templateDir;
+    }
+
+    /**
+     * Assign a template key/value pair
+     *
+     * @param string the key
+     * @param mixed the value
+     */
+    function _setTemplateVariable($key, $value) {
+	$this->_smarty->assign($key, $value);
+    }
+
+    /**
+     * Render the properly localized template
+     *
+     * @param string the template name
+     * @return string the HTML content
+     */
+    function _renderTemplate($moduleName, $templateName) {
+	global $gallery;
+
+	/* Set the translation base in the template adapter */
+	$templateAdapter =& $gallery->getTemplateAdapter();
+	$templateAdapter->setTranslationBase('modules_' . $moduleName,
+	    $gallery->getConfig('code.gallery.modules') . $moduleName);
+
+	/* Render the template */
+	return $this->_smarty->fetch($templateName);
+    }
 }
 ?>

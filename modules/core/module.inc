@@ -340,16 +340,6 @@ class CoreModule extends GalleryModule {
 	 */
 	$adminPermissions = GalleryPermissionMap::getItemAdminPermissions();
 
-	/*
-	 * If we're a site admin, then we always have edit permission.  Else,
-	 * figure out what groups we're in and use that to make the determination.
-	 */
-	list ($ret, $isSiteAdmin) =
-	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -363,14 +353,14 @@ class CoreModule extends GalleryModule {
 	    $showDeleteLink = false;
 	    $showPermissionsLink = false;
 	    
-	    list ($ret, $itemPermissions) =
+	    list ($ret, $permissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
 						  $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	
-	    if ($isSiteAdmin || array_intersect(array('core.all'), $itemPermissions)) {
+	    if (isset($permissions['core.all'])) {
 		$showEditLink = true;
 		$showDeleteLink = $item->getId() != $rootId;
 		$showAddItemLink = $item->canContainChildren();
@@ -378,25 +368,26 @@ class CoreModule extends GalleryModule {
 		$showPermissionsLink = true;
 
 	    } else {
-		if (array_intersect($adminPermissions, $itemPermissions)) {
+		if (array_intersect(array_keys($adminPermissions),
+				    array_keys($permissions))) {
 		    $showEditLink = true;
 		}
 
 		if ($item->canContainChildren()) {
-		    if (array_intersect(array('core.addItem'), $itemPermissions)) {
+		    if (isset($permissions['core.addItem'])) {
 			$showAddItemLink = true;
 		    }
 		    
-		    if (array_intersect(array('core.addAlbum'), $itemPermissions)) {
+		    if (isset($permissions['core.addAlbum'])) {
 			$showAddAlbumLink = true;
 		    }
 		}
 
-		if (array_intersect(array('core.delete'), $itemPermissions)) {
+		if (isset($permissions['core.delete'])) {
 		    $showDeleteLink = $item->getId() != $rootId;
 		}
 
-		if (array_intersect(array('core.changePermissions'), $itemPermissions)) {
+		if (isset($permissions['core.changePermissions'])) {
 		    $showPermissionsLink = true;
 		}
 	    }
@@ -519,12 +510,14 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (array_intersect(array('core.all', 'core.changeText'), $permissions)) {
+	if (isset($permissions['core.all']) ||
+	    isset($permissions['core.changeText'])) {
 	        $views[] = array('name' => $this->translate('General Settings'),
 				 'view' => 'core:ItemEditGeneral');
 	}
 
-	if (array_intersect(array('core.all', 'core.changeProperties'), $permissions)) {
+	if (isset($permissions['core.all']) ||
+	    isset($permissions['core.changeProperties'])) {
 	    if (is_subclass_of($item, 'GalleryAlbumItem') ||
 		    get_class($item) == strtolower('GalleryAlbumItem')) {
 	        $views[] = array('name' => $this->translate('Album Settings'),
@@ -550,25 +543,29 @@ class CoreModule extends GalleryModule {
 	}
 
 	if ($item->getId() != $rootId) {
-	    if (array_intersect(array('core.all', 'core.delete'), $permissions)) {
+	    if (isset($permissions['core.all']) ||
+		isset($permissions['core.delete'])) {
 		$views[] = array('name' => $this->translate('Delete Item'),
 				 'view' => 'core:ItemDelete');
 	    }
 	}
 	
-	if (array_intersect(array('core.all', 'core.changePermissions'), $permissions)) {
+	if (isset($permissions['core.all']) ||
+	    isset($permissions['core.changePermissions'])) {
 	    $views[] = array('name' => $this->translate('Permissions'),
 			     'view' => 'core:ItemEditPermissions');
 	}
 	
-	if (array_intersect(array('core.all', 'core.addItem'), $permissions)) {
+	if (isset($permissions['core.all']) ||
+	    isset($permissions['core.addItem'])) {
 	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Items'),
 				 'view' => 'core:ItemAddChildren');
 	    }
 	}
 	
-	if (array_intersect(array('core.all', 'core.addAlbumItem'), $permissions)) {
+	if (isset($permissions['core.all']) ||
+	    isset($permissions['core.addAlbumItem'])) {
 	    if ($item->canContainChildren()) {
 	        $views[] = array('name' => $this->translate('Add Album'),
 				 'view' => 'core:ItemAddAlbum');

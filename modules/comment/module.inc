@@ -144,12 +144,16 @@ class CommentModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 
-	    list ($ret, $itemPermissions) =
+	    list ($ret, $permissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
 						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	    if (array_intersect(array('core.all', 'comment.all', 'comment.add'),
-				$itemPermissions)) {
+	    if (isset($permissions['core.all']) ||
+		isset($permissions['comment.all']) ||
+		isset($permissions['comment.add'])) {
 		$params['view'] = 'comment:AddComment';
 		$params['itemId'] = $item->getId();
 		$links[$item->getId()][] =
@@ -177,9 +181,6 @@ class CommentModule extends GalleryModule {
 	    $items = array($items);
 	}
 
-	/* XXX: Permission check "can the user add a comment to this item?" */
-	$gallery->debug("XXX: Comment.getItemSummary should be checking perms");
-
 	$ids = array();
 	foreach ($items as $item) {
 	    $ids[] = $item->getId();
@@ -193,12 +194,24 @@ class CommentModule extends GalleryModule {
 	$summaries = array();
 	foreach ($items as $item) {
 	    $message = array();
-	    if (!empty($commentCounts[$item->getId()])) {
-		$message['one'] = '%d comment';
-		$message['many'] = '%d comments';
-		$message['count'] = $commentCounts[$item->getId()];
-		$message['arg1'] = $commentCounts[$item->getId()];
-		$summaries[$item->getId()] = $this->translate($message);
+
+	    list ($ret, $permissions) =
+		GalleryItemHelper::getPermissions($item->getId(),
+						  $gallery->getActiveUserId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($permissions['core.all']) ||
+		isset($permissions['comment.all']) ||
+		isset($permissions['comment.view'])) {
+		if (!empty($commentCounts[$item->getId()])) {
+		    $message['one'] = '%d comment';
+		    $message['many'] = '%d comments';
+		    $message['count'] = $commentCounts[$item->getId()];
+		    $message['arg1'] = $commentCounts[$item->getId()];
+		    $summaries[$item->getId()] = $this->translate($message);
+		}
 	    }
 	}
 
@@ -217,9 +230,19 @@ class CommentModule extends GalleryModule {
     function getItemDetails($item, $returnUrlParams) {
 	global $gallery;
 
-	/* XXX: Permission check "can the user add a comment to this item?" */
-	$gallery->debug("XXX: Comment.getItemDetails should be checking perms");
-
+	list ($ret, $permissions) =
+	    GalleryItemHelper::getPermissions($item->getId(),
+					      $gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!isset($permissions['core.all']) &&
+	        !isset($permissions['comment.all']) &&
+	        !isset($permissions['comment.view'])) {
+	    return array(GalleryStatus::success(), null);
+	}
+	
 	/* XXX: parameterize this */
 	$viewMax = 3;
 
@@ -235,16 +258,12 @@ class CommentModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$results = null;
+	$html = null;
 	if (!empty($counts[$item->getId()])) {
 	    $totalComments = $counts[$item->getId()];
 
 	    /* Render the comments */
-	    list ($ret, $smarty) = $gallery->getSmarty();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $smarty->template_dir = dirname(__FILE__) . '/templates';
+	    $this->_initTemplate(dirname(__FILE__) . '/templates');
 
 	    $users = array();
 	    $commentData = array();
@@ -267,13 +286,13 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    /* Render the comments */
-	    $smarty->assign('comments', $commentData);
-	    $smarty->assign('itemId', $item->getId());
-	    $smarty->assign('totalComments', $totalComments);
-	    $results = $smarty->fetch('ItemDetails.tpl');
+	    $this->_setTemplateVariable('comments', $commentData);
+	    $this->_setTemplateVariable('item', $item->getMemberData());
+	    $this->_setTemplateVariable('totalComments', $totalComments);
+	    $html = $this->_renderTemplate('comment', 'ItemDetails.tpl');
 	}
 
-	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $html);
     }
     
     /**

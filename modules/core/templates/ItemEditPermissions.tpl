@@ -138,7 +138,7 @@
 	    {/galleryInput}
 
 	    {gallerySelect name="form.group.permission" size="1"}
-	    {html_options options=$allPermissions}
+	    {html_options options=$allPermissions selected=$form.group.permission}
 	    {/gallerySelect}
 
 	    {galleryInput type="submit" name="form.action.addGroupPermission"}
@@ -238,7 +238,7 @@
 	    {/galleryInput}
 
 	    {gallerySelect name="form.user.permission" size="1"}
-	    {html_options options=$allPermissions}
+	    {html_options options=$allPermissions selected=$form.user.permission}
 	    {/gallerySelect}
 
 	    {galleryInput type="submit" name="form.action.addUserPermission"}

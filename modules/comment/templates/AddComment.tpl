@@ -1,10 +1,10 @@
-  {galleryForm controller=$controller}
-  {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
-	
-  <!-- Embed the hidden return fields -->
-  {foreach from=$return key=key item=value}
-  {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
-  {/foreach}
+      {galleryForm controller=$controller}
+      {galleryInput type="hidden" name="itemId"}{$item.id}{/galleryInput}
+      
+      <!-- Embed the hidden return fields -->
+      {foreach from=$return key=key item=value}
+      {galleryInput type="hidden" name=$key|string_format:"return.%s"}{$value}{/galleryInput}
+      {/foreach}
 
     <center>
       {if !empty($thumbnail)}

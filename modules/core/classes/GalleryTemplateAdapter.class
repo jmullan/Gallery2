@@ -92,7 +92,13 @@ class GalleryTemplateAdapter {
 	foreach ($params as $key => $value) {
 	    $args[] = GALLERY_FORM_VARIABLE_PREFIX . "$key=$value";
 	}
-	return $baseUrl . '?' . join('&', $args);
+
+	$url = $baseUrl;
+	if (isset($args)) {
+	    $url .= '?' . join('&', $args);
+	}
+
+	return $url;
     }
 
     /**

@@ -7,7 +7,7 @@
 	{galleryText text="Recent comments"}
 	{/galleryBigFont}
 	{gallerySmallFont}
-	<a href="{galleryUrl view="comment:ShowComments" itemId=$itemId}">
+	<a href="{galleryUrl view="comment:ShowComments" itemId=$item.id}">
 	  {galleryText text="(view all %d comments)" arg1=$totalComments}
 	</a>
 	{/gallerySmallFont}
