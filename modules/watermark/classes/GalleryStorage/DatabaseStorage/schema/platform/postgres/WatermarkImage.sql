@@ -87,10 +87,6 @@
     ALTER TABLE DB_TABLE_PREFIXWatermarkImage
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXWatermarkImage_84326 
-    ON DB_TABLE_PREFIXWatermarkImage
-    (DB_COLUMN_PREFIXname);
-    
     CREATE UNIQUE INDEX DB_TABLE_PREFIXWatermarkImage_99259 
     ON DB_TABLE_PREFIXWatermarkImage
     (DB_COLUMN_PREFIXfileName);
@@ -103,7 +99,7 @@
       ) VALUES (
       'WatermarkImage',
       1,
-      0
+      1
       );
 
   

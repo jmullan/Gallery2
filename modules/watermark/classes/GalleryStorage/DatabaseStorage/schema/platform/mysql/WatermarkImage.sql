@@ -87,10 +87,6 @@
     
       ,
     
-      UNIQUE KEY (DB_COLUMN_PREFIXname)
-    
-      ,
-    
       UNIQUE KEY (DB_COLUMN_PREFIXfileName)
     
 
@@ -103,7 +99,7 @@
       ) VALUES (
       'WatermarkImage',
       1,
-      0
+      1
       );
 
   

@@ -37,7 +37,7 @@ require_once(dirname(__FILE__) . '/../../core/classes/GalleryEntity.class');
  * @g2 <parent-class-name>GalleryEntity</parent-class-name>
  * @g2 <schema>
  * @g2   <schema-major>1</schema-major>
- * @g2   <schema-minor>0</schema-minor>
+ * @g2   <schema-minor>1</schema-minor>
  * @g2 </schema>
  * @g2 <requires-id/>
  *
@@ -98,7 +98,6 @@ class WatermarkImage_core extends GalleryEntity {
      * @g2   <member-name>name</member-name>
      * @g2   <member-type>STRING</member-type>
      * @g2   <member-size>MEDIUM</member-size>
-     * @g2   <unique/>
      * @g2   <required/>
      * @g2 </member>
      *
@@ -237,9 +236,13 @@ class WatermarkImage_core extends GalleryEntity {
      * @return object GalleryStatus a status code
      */
     function create($inputFileName, $mimeType, $targetName=null) {
-	require_once(dirname(__FILE__) . '/WatermarkHelper.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/WatermarkHelper.class');
 	global $gallery;
 	$platform = $gallery->getPlatform();
+	$dir = $this->getWatermarkDir();
+	if (empty($targetName)) {
+	    $targetName = basename($inputFileName);
+	}
 
 	/* Validate the input file */
 	if (empty($inputFileName)) {
@@ -249,30 +252,29 @@ class WatermarkImage_core extends GalleryEntity {
 	    return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__);
 	}
 
-	if (empty($targetName)) {
-	    $targetName = basename($inputFileName);
-	}
-
 	/*
 	 * Neutralize the file extension to avoid receiving an executable file
 	 * (like a .php or .pl cgi script)
 	 */
-	$targetName = str_replace('.', '_', $targetName);
+	$targetFilename = str_replace('.', '_', $targetName);
+
+	/* Uniquify filename */
+	while ($platform->file_exists($dir . $targetFilename)) {
+	    $targetFilename = '_' . $targetFilename;
+	}
 
 	list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$nameMap = array();
+	foreach ($watermarks as $watermark) {
+	    $nameMap[$watermark->getName()] = true;
+	}
 
 	/* Uniquify name */
-	while (true) {
-	    foreach ($watermarks as $watermark) {
-		if ($watermark->getFilename() == $targetName) {
-		    $targetName = "_$targetName";
-		    continue 2; // repeat this foreach loop
-		}
-	    }
-	    break; // no conflicts -- we're done
+	while (isset($nameMap[$targetName])) {
+	    $targetName = '_' . $targetName;
 	}
 
 	$ret = parent::create();
@@ -281,7 +283,7 @@ class WatermarkImage_core extends GalleryEntity {
 	}
 
 	$this->setName($targetName);
-	$this->setFileName($targetName);
+	$this->setFileName($targetFilename);
 	$this->setMimeType($mimeType);
 	$this->setWidth(0);
 	$this->setHeight(0);
@@ -292,8 +294,6 @@ class WatermarkImage_core extends GalleryEntity {
 	$this->setApplyToThumbnail(true);
 	$this->setOwnerId($gallery->getActiveUserId());
 
-	$platform = $gallery->getPlatform();
-	$dir = $this->getWatermarkDir();
 	if (!$platform->file_exists($dir)) {
 	    if (!$platform->mkdir($dir)) {
 		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
@@ -303,7 +303,7 @@ class WatermarkImage_core extends GalleryEntity {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 
-	$newFileName = $this->getWatermarkDir() . $targetName;
+	$newFileName = $dir . $targetFilename;
 	if (!$platform->copy($inputFileName, $newFileName)) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
 	}

@@ -340,8 +340,20 @@ class WatermarkHelper {
 		$error[] = 'form[error][whichDerivative][missing]';
 	    }
 
-	    // Clip our percentages
 	    if (empty($error)) {
+		list ($ret, $watermarks) = WatermarkHelper::fetchWatermarks();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($watermarks as $watermark) {
+		    if ($watermark->getName() == $form['name'] && $watermark->getId() != $itemId) {
+			$error[] = 'form[error][name][duplicate]';
+		    }
+		}
+	    }
+
+	    if (empty($error)) {
+		// Clip our percentages
 		$form['xPercentage'] = empty($form['xPercentage']) ? 0 : $form['xPercentage'];
 		$form['yPercentage'] = empty($form['yPercentage']) ? 0 : $form['yPercentage'];
 		$form['xPercentage'] = max(0, $form['xPercentage']);

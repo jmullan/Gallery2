@@ -65,6 +65,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function _createWatermark() {
+	global $gallery;
+
 	$watermark = new WatermarkImage();
 	$ret = $watermark->create(__FILE__, 'test/file', 'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
@@ -76,7 +78,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$ret = GalleryCoreApi::addUserPermission($watermark->getId(), $this->_user->getId(), 'core.all');
+	$ret = GalleryCoreApi::addUserPermission($watermark->getId(),
+						 $gallery->getActiveUserId(), 'core.all');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -77,8 +77,6 @@
     ALTER TABLE DB_TABLE_PREFIXWatermarkImage
       ADD PRIMARY KEY (DB_COLUMN_PREFIXid)
   
-      ADD UNIQUE (DB_COLUMN_PREFIXname)
-  
       ADD UNIQUE (DB_COLUMN_PREFIXfileName)
   ;
   
@@ -90,7 +88,7 @@
       ) VALUES (
       'WatermarkImage',
       1,
-      0
+      1
       );
 
   

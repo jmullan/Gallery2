@@ -89,6 +89,11 @@
      {g->text text="You must provide a name"}
    </div>
    {/if}
+   {if isset($form.error.name.duplicate)}
+   <div class="giError">
+     {g->text text="Name already used by another watermark"}
+   </div>
+   {/if}
   </div>
 
   <div class="gbAdmin">
