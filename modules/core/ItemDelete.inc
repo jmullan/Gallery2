@@ -146,7 +146,7 @@ class ItemDeleteView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	list($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
+	list ($itemId, $selectedId, $page) = GalleryUtilities::getRequestVariables('itemId', 'selectedId', 'page');
 	
 	if ($form['formName'] != 'ItemDelete') {
 	    if ($selectedId) {
@@ -157,12 +157,12 @@ class ItemDeleteView extends GalleryView {
 	    $form['numPerPage'] = 15;
 	}
 	
-	list($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
-	list($ret, $peerIds) =
+	list ($ret, $peerIds) =
 	    GalleryCoreApi::fetchChildItemIdsWithPermission($itemId, 'core.delete');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -197,7 +197,7 @@ class ItemDeleteView extends GalleryView {
 	    }
 	    
 	    /* load peers */
-	    list($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
+	    list ($ret, $peerItems) = GalleryCoreApi::loadEntitiesById($peerIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -223,6 +223,9 @@ class ItemDeleteView extends GalleryView {
 		    $thumbnail = $thumbnails[$peerItem->getId()];
 		    list ($ret, $thumbnail) =
 			GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumbnail->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    $peers[$peerItem->getId()]['thumbnail'] = $thumbnail->getMemberData();
 		}
 	    }
