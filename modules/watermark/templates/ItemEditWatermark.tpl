@@ -19,6 +19,20 @@
   </p>
 </div>
 
+{if empty($ItemEditWatermark.watermarks)}
+<div class="gbAdmin">
+  <h2 class="giTitle">
+    {g->text text="You have no watermarks"}
+  </h2>
+
+  <p class="giDescription">
+    {g->text text="You must first upload some watermark images so that you can apply them to your image."}
+    <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=watermark:UserWatermarks"}">
+      {g->text text="Upload some watermarks now."}
+    </a>
+  </p>
+</div>
+{else}
 <div class="gbAdmin">
   <h2 class="giTitle">
     {g->text text="Step 1.  Choose which watermark you want to use"}
@@ -156,8 +170,8 @@
   </div>
 </div>
 
-<input id="xPercent" type="hidden" name="{g->formVar var="form[xpercent]"}" value="{$form.xpercent}"/>
-<input id="yPercent" type="hidden" name="{g->formVar var="form[ypercent]"}" value="{$form.ypercent}"/>
+<input id="xPercent" type="hidden" name="{g->formVar var="form[xPercent]"}" value="{$form.xPercent}"/>
+<input id="yPercent" type="hidden" name="{g->formVar var="form[yPercent]"}" value="{$form.yPercent}"/>
 
 <script type="text/javascript">
 <!--
@@ -168,3 +182,4 @@ dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
 moveToOriginalLocation()
 -->
 </script>
+{/if}

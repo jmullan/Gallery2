@@ -306,55 +306,60 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	$watermarks = array();
 	$watermarkIds = array_keys($tmp);
-	list ($ret, $watermarks) = GalleryCoreApi::loadEntitiesById($watermarkIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
+	if (!empty($watermarkIds)) {
+	    list ($ret, $watermarks) = GalleryCoreApi::loadEntitiesById($watermarkIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 
-	for ($i = 0; $i < sizeof($watermarks); $i++) {
-	    $watermarks[$i] = $watermarks[$i]->getMemberData();
+	    for ($i = 0; $i < sizeof($watermarks); $i++) {
+		$watermarks[$i] = $watermarks[$i]->getMemberData();
+	    }
 	}
 
 	if ($form['formName'] != 'ItemEditWatermark') {
 	    /* First time around, reset the form */
 	    $form['formName'] = 'ItemEditWatermark';
 
-	    /* Get the current watermark from any of the derivatives */
-	    list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
-	    if (isset($derivatives[$item->getId()])) {
-		foreach ($derivatives[$item->getId()] as $derivative) {
-		    $ops = $derivative->getPostFilterOperations();
-		    if (preg_match('{composite\|watermark/([^;]*)}', $ops, $matches)) {
-			switch ($derivative->getDerivativeType()) {
-			case DERIVATIVE_TYPE_IMAGE_PREFERRED:
-			    $form['whichDerivative']['preferred'] = 1;
-			    break;
+	    if (!empty($watermarks)) {
+		/* Get the current watermark from any of the derivatives */
+		list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
+		if (isset($derivatives[$item->getId()])) {
+		    foreach ($derivatives[$item->getId()] as $derivative) {
+			$ops = $derivative->getPostFilterOperations();
+			if (preg_match('{composite\|watermark/([^;]*)}', $ops, $matches)) {
+			    switch ($derivative->getDerivativeType()) {
+			    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+				$form['whichDerivative']['preferred'] = 1;
+				break;
 			
-			case DERIVATIVE_TYPE_IMAGE_RESIZE:
-			    $form['whichDerivative']['resize'] = 1;
-			break;
+			    case DERIVATIVE_TYPE_IMAGE_RESIZE:
+				$form['whichDerivative']['resize'] = 1;
+				break;
 			
-			case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-			    $form['whichDerivative']['thumbnail'] = 1;
-			    break;
-			}
+			    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+				$form['whichDerivative']['thumbnail'] = 1;
+				break;
+			    }
 			
-			$args = preg_split('/,/', $matches[1]);
-			$fileName = $args[0];
-			$form['xPercent'] = $args[5];
-			$form['yPercent'] = $args[6];
-			for ($i = 0; $i < sizeof($watermarks); $i++) {
-			    if ($watermarks[$i]['fileName'] == $fileName) {
-				$form['watermarkId'] = $watermarks[$i]['id'];
+			    $args = preg_split('/,/', $matches[1]);
+			    $fileName = $args[0];
+			    $form['xPercent'] = $args[5];
+			    $form['yPercent'] = $args[6];
+			    for ($i = 0; $i < sizeof($watermarks); $i++) {
+				if ($watermarks[$i]['fileName'] == $fileName) {
+				    $form['watermarkId'] = $watermarks[$i]['id'];
+				}
 			    }
 			}
 		    }
 		}
-	    }
 
-	    if (!isset($form['watermarkId'])) {
-		$form['watermarkId'] = $watermarks[0]['id'];
+		if (!isset($form['watermarkId'])) {
+		    $form['watermarkId'] = $watermarks[0]['id'];
+		}
 	    }
 	}
 
@@ -374,6 +379,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	$ItemEditWatermark['watermarks'] = $watermarks;
 	$ItemEditWatermark['item'] = $item->getMemberData();
 	$ItemEditWatermark['preferred'] = isset($preferred) ? $preferred->getMemberData() : null;
+
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
 	$template->setVariable('controller', 'core:ItemEditWatermark');
 	return array(GalleryStatus::success(), 'modules/watermark/templates/ItemEditWatermark.tpl');
