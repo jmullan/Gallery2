@@ -49,6 +49,7 @@ class UserAlbumModule extends GalleryModule {
      */
     function registerEventListeners() {
 	GalleryCoreApi::registerEventListener('GalleryEntity::save', new UserAlbumModule(), true);
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new UserAlbumModule(), true);
     }
 
     /**
@@ -99,82 +100,117 @@ class UserAlbumModule extends GalleryModule {
      * @return object GalleryStatus a status code
      */
     function handleEvent($event) {
-	$user = $event->getEntity();
-	if (GalleryUtilities::isA($user, 'GalleryUser') &&
-		$user->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+	switch ($event->getEventName()) {
+	case 'GalleryEntity::save':
+	    $user = $event->getEntity();
+	    if (GalleryUtilities::isA($user, 'GalleryUser') &&
+		    $user->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
 
-	    list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		// Create top level album..
+		list ($ret, $album) = GalleryCoreApi::createAlbum(
+		    $module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		// Set owner..
+		$album->setOwnerId($user->getId());
+		$ret = $album->save();
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$albumId = $album->getId();
+
+		// Set permissions..
+		$ret = GalleryCoreApi::removeItemPermissions($albumId);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		$ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockId);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		$viewPermissions = $module['fullSize'] ? array('core.viewAll')
+						       : array('core.view', 'core.viewResizes');
+		switch ($module['view']) {
+		case 'everybody':
+		    $groupId = $core['id.everybodyGroup'];
+		    break;
+		case 'allusers':
+		    $groupId = $core['id.allUserGroup'];
+		    break;
+		}
+
+		if (isset($groupId)) {
+		    foreach ($viewPermissions as $permission) {
+			$ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
+			if ($ret->isError()) {
+			    GalleryCoreApi::releaseLocks($lockId);
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
+	    break;
+
+	case 'GalleryEntity::delete':
+	    /* 
+             * Reset the targetAlbum to root if the target is ever deleted, 
+	     * to prevent errors when adding new users
+             */
+	    $param = $event->getEntity();
+
+	    /* We don't care unless it's an album */
+	    if (!GalleryUtilities::isA($param, 'GalleryAlbumItem')) {
+		break;
+	    }
+
 	    list ($ret, $module) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-
-	    // Create top level album..
-	    list ($ret, $album) = GalleryCoreApi::createAlbum(
-		$module['targetLocation'], $user->getUserName(), $user->getFullName(), '', '', '');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($album->getId());
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    // Set owner..
-	    $album->setOwnerId($user->getId());
-	    $ret = $album->save();
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $albumId = $album->getId();
-
-	    // Set permissions..
-	    $ret = GalleryCoreApi::removeItemPermissions($albumId);
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $ret = GalleryCoreApi::addGroupPermission($albumId, $core['id.adminGroup'], 'core.all');
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    $ret = GalleryCoreApi::addUserPermission($albumId, $user->getId(), 'core.all');
-	    if ($ret->isError()) {
-		GalleryCoreApi::releaseLocks($lockId);
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    $viewPermissions = $module['fullSize'] ? array('core.viewAll')
-						   : array('core.view', 'core.viewResizes');
-	    switch ($module['view']) {
-	    case 'everybody':
-		$groupId = $core['id.everybodyGroup'];
-		break;
-	    case 'allusers':
-		$groupId = $core['id.allUserGroup'];
-		break;
-	    }
-
-	    if (isset($groupId)) {
-		foreach ($viewPermissions as $permission) {
-		    $ret = GalleryCoreApi::addGroupPermission($albumId, $groupId, $permission);
-		    if ($ret->isError()) {
-			GalleryCoreApi::releaseLocks($lockId);
-			return $ret->wrap(__FILE__, __LINE__);
-		    }
+    
+	    if ($param->getId() == $module['targetLocation']) {
+		list ($ret, $core) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
-	    }
 
-	    $ret = GalleryCoreApi::releaseLocks($lockId);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'targetLocation', $core['id.rootAlbum']);
+                if ($ret->isError()) {
+                    return array($ret->wrap(__FILE__, __LINE__), null);
+                }
 	    }
+	    break;
+			
 	}
 	return GalleryStatus::success();
     }
