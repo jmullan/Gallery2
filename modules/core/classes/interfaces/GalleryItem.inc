@@ -209,7 +209,6 @@ class GalleryItem extends GalleryItem_core {
      * @param BOOLEAN the value
      */
     function setcanContainChildren($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -217,17 +216,15 @@ class GalleryItem extends GalleryItem_core {
 	$b = isset($this->_canContainChildren) ? $this->_canContainChildren : null;
 
     
-        /* Type case the incoming value to be a boolean */
-        if ($value != null) {
-            $value = (bool)$value;
-        }
+        /* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
       
         /* 
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
     
-        if ($a != $b) {
+        if ($a !== $b) {
       
             $this->_canContainChildren = $value;
             $this->setModifiedFlag('canContainChildren', MEMBER_MODIFIED);
@@ -255,7 +252,6 @@ class GalleryItem extends GalleryItem_core {
      * @param TEXT the value
      */
     function setdescription($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -296,7 +292,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setkeywords($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -337,7 +332,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setorderBy($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -378,7 +372,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setorderDirection($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -419,7 +412,6 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setownerId($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -465,7 +457,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function setsummary($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -506,7 +497,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function settheme($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -547,7 +537,6 @@ class GalleryItem extends GalleryItem_core {
      * @param STRING the value
      */
     function settitle($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -588,7 +577,6 @@ class GalleryItem extends GalleryItem_core {
      * @param INTEGER the value
      */
     function setviewedSinceTimestamp($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

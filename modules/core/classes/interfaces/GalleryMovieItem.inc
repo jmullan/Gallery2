@@ -155,7 +155,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -206,7 +205,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -257,7 +255,6 @@ class GalleryMovieItem extends GalleryMovieItem_core {
      * @param INTEGER the value
      */
     function setduration($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

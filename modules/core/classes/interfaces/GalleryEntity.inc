@@ -176,7 +176,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setid($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -222,7 +221,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setcreationTimestamp($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -268,7 +266,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param BOOLEAN the value
      */
     function setisLinkable($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -276,17 +273,15 @@ class GalleryEntity extends GalleryEntity_core {
 	$b = isset($this->_isLinkable) ? $this->_isLinkable : null;
 
     
-        /* Type case the incoming value to be a boolean */
-        if ($value != null) {
-            $value = (bool)$value;
-        }
+        /* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
       
         /* 
          * Only take action if the value actually changes, but take care not to 
          * generate warnings for unset values.
          */
     
-        if ($a != $b) {
+        if ($a !== $b) {
       
             $this->_isLinkable = $value;
             $this->setModifiedFlag('isLinkable', MEMBER_MODIFIED);
@@ -314,7 +309,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setlinkId($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -360,7 +354,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setmodificationTimestamp($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -406,7 +399,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param INTEGER the value
      */
     function setserialNumber($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -452,7 +444,6 @@ class GalleryEntity extends GalleryEntity_core {
      * @param STRING the value
      */
     function setentityType($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

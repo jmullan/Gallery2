@@ -232,7 +232,6 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
      * @param <xsl:value-of select="member-type"/> the value
      */
     function set<xsl:value-of select="member-name"/>($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -241,10 +240,8 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
 
     <xsl:choose>
       <xsl:when test="member-type='BOOLEAN'">
-        /* Type case the incoming value to be a boolean */
-        if ($value != null) {
-            $value = (bool)$value;
-        }
+        /* Set the incoming value to be a 1 or 0 */
+	$value = empty($value) ? 0 : 1;
       </xsl:when>
       <xsl:when test="member-type='INTEGER'">
         /* Type case the incoming value to be an integer */
@@ -259,6 +256,9 @@ class <xsl:value-of select="class-name"/> extends <xsl:value-of select="class-na
          */
     <xsl:choose>
       <xsl:when test="member-type='INTEGER'">
+        if ($a !== $b) {
+      </xsl:when>
+      <xsl:when test="member-type='BOOLEAN'">
         if ($a !== $b) {
       </xsl:when>
       <xsl:otherwise>

@@ -110,7 +110,6 @@ class GalleryChildEntity extends GalleryChildEntity_core {
      * @param INTEGER the value
      */
     function setparentId($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

@@ -138,7 +138,6 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -184,7 +183,6 @@ class GalleryDataItem extends GalleryDataItem_core {
      * @param INTEGER the value
      */
     function setsize($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

@@ -81,7 +81,7 @@ class GalleryMembersHelper {
 
 	$query = '
         SELECT
-          DISTINCT([GalleryItem::id])
+          DISTINCT([GalleryItem::id]), [GalleryEntity::creationTimestamp]
         FROM
           [GalleryItem], [GalleryEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
         WHERE

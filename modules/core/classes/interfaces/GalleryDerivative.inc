@@ -165,7 +165,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSourceId($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -211,7 +210,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setderivativeOperations($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -252,7 +250,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeOrder($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -298,7 +295,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeSize($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -344,7 +340,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param INTEGER the value
      */
     function setderivativeType($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -390,7 +385,6 @@ class GalleryDerivative extends GalleryDerivative_core {
      * @param STRING the value
      */
     function setmimeType($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

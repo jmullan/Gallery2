@@ -359,7 +359,7 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $group);
     }
     
-    function _createDerivative(&$parent, $type, $operations='test-operation|100', $mimeType='') {
+    function _createDerivative(&$parent, $type, $operations='test-operation|100', $mimeType='test/file') {
 	global $gallery;
 	$parentId = $parent->getId();
 

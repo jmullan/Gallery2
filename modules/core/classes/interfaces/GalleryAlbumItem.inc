@@ -110,7 +110,6 @@ class GalleryAlbumItem extends GalleryAlbumItem_core {
      * @param STRING the value
      */
     function setlayout($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

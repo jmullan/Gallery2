@@ -81,6 +81,10 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
+	$derivative->setDerivativeSourceId($this->_photo->getId());
+	$derivative->setDerivativeOperations('thumbnail|150');
+	$derivative->setMimeType('test/file');
+	
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);

@@ -110,7 +110,6 @@ class GalleryFileSystemEntity extends GalleryFileSystemEntity_core {
      * @param STRING the value
      */
     function setpathComponent($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

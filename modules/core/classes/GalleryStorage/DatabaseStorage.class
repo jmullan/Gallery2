@@ -525,7 +525,7 @@ class DatabaseStorage extends GalleryStorage {
 		$this->_traceStart();
 		$recordSet = $this->_db->Execute($query, $data);
 		$this->_traceStop();
-		
+
 		if (!$recordSet) {
 		    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 		}

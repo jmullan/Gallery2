@@ -17,8 +17,6 @@
         
       )
     
-    NOT NULL
-  
       ,
     DB_COLUMN_PREFIXsize
       int(11)

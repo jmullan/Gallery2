@@ -52,6 +52,7 @@ class ChildTest extends GalleryTestCase {
 	for ($i = 0; $i < 2; $i++) {
 	    list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_root->getId());
 	    if ($ret->isError()) {
+		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
@@ -59,6 +60,7 @@ class ChildTest extends GalleryTestCase {
 		list ($ret, $this->_derivative[$i][$j]) =
 		    $this->_createDerivative($this->_child[$i], DERIVATIVE_TYPE_IMAGE_RESIZE);
 		if ($ret->isError()) {
+		    print $ret->getAsHtml();
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    }

@@ -44,6 +44,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -61,6 +62,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 								    'description' => 'test')),
 							'test-description');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -71,6 +73,7 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 								    'description' => 'test')),
 							'test-description');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
@@ -84,29 +87,34 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 							'test-description',
 							'');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[0]) =
 	    $this->_createDerivative($this->_item, DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[1]) =
 	    $this->_createDerivative($this->_derivative[0], DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $this->_derivative[2]) =
 	    $this->_createDerivative($this->_derivative[0], DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }

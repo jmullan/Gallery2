@@ -121,7 +121,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @param INTEGER the value
      */
     function setwidth($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -167,7 +166,6 @@ class GalleryDerivativeImage extends GalleryDerivativeImage_core {
      * @param INTEGER the value
      */
     function setheight($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

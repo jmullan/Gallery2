@@ -233,19 +233,6 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		$preferred->setDerivativeOperations($operations);
-		
-		$ret = $preferred->save();
-		if ($ret->isError()) {
-		    GalleryCoreApi::releaseLocks($lockIds);
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		if (!empty($lockIds)) {
-		    $ret = GalleryCoreApi::releaseLocks($lockIds);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		}
 
 		/*
 		 * Perform a final check -- if the new derivative is exactly
@@ -259,6 +246,19 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		    }
 
 		    $ret = GalleryCoreApi::deleteEntityById($preferred->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		} else {
+		    $ret = $preferred->save();
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockIds);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+
+		if (!empty($lockIds)) {
+		    $ret = GalleryCoreApi::releaseLocks($lockIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }

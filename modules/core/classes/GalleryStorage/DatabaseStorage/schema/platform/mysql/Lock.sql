@@ -19,8 +19,6 @@
     DB_COLUMN_PREFIXfreshUntil
       int(11)
     
-    NOT NULL
-  
       ,
     DB_COLUMN_PREFIXrequest
       int(11)

@@ -699,10 +699,11 @@ class GalleryItemHelper_medium {
 		     * need a thumbnail so even though we didn't create one this is a success.
 		     */
 		    $success = true;
+		    $derivative = null;
 		}
 	    }
 
-	    if ($success) {
+	    if ($success && isset($derivative)) {
 		$derivative->setDerivativeSourceId($source->getId());
 	    
 		$ret = $derivative->save();

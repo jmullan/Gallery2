@@ -50,7 +50,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 3; $i++) {
@@ -67,7 +67,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 					     'GalleryPhotoItem');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    
@@ -75,17 +75,24 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    list ($ret, $derivative) =
 		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $ret = $derivative->create($this->_items[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+
+	    $derivative->setDerivativeSourceId($this->_items[$i]->getId());
+	    $derivative->setDerivativeOperations('thumbnail|150');
+	    $derivative->setMimeType('test/file');
 
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
 	    /*
@@ -100,19 +107,25 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[2]->getEntityType());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$derivative->setDerivativeSourceId($this->_items[2]->getId());
+	$derivative->setDerivativeOperations('thumbnail|150');
+	$derivative->setMimeType('test/file');
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 	$ret = $derivative->save();
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_sourceIds[2] = $derivative->getId();
@@ -136,7 +149,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	
 	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
 	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Restore session id */

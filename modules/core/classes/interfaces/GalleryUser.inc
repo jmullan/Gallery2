@@ -154,7 +154,6 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setuserName($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -195,7 +194,6 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setfullName($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -236,7 +234,6 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function sethashedPassword($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -277,7 +274,6 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setemail($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -318,7 +314,6 @@ class GalleryUser extends GalleryUser_core {
      * @param STRING the value
      */
     function setlanguage($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */

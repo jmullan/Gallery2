@@ -121,7 +121,6 @@ class GalleryGroup extends GalleryGroup_core {
      * @param INTEGER the value
      */
     function setgroupType($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
@@ -167,7 +166,6 @@ class GalleryGroup extends GalleryGroup_core {
      * @param STRING the value
      */
     function setgroupName($value) {
-
         /* 
          * Convert unset values to null, to avoid generating warnings.
          */
