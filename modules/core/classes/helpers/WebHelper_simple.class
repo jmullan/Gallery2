@@ -354,7 +354,7 @@ class WebHelper_simple {
 	$body = '';
 	while (!$platform->feof($fd)) {
 	    $body .= $platform->fread($fd, 4096);
-	    flush();
+	    $platform->fflush($fd);
 	}
 	$platform->fclose($fd);
 
