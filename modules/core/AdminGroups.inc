@@ -64,23 +64,23 @@ class AdminGroupsController extends GalleryController {
 	if (isset($form['action']['firstPage'])) {
 
 	    /* Go to the first page */
-	    $form['list']['page'] = 1;
+	    GalleryUtilities::putRequestVariable('form.list.page', 1);
 	    
 	} else if (isset($form['action']['backPage'])) {
 
 	    /* Go back a page */
-	    $form['list']['page'] = max(0, $form['list']['page']-1);
+	    GalleryUtilities::putRequestVariable('form.list.page', max(1, $form['list']['page']-1));
 	    
 	} else if (isset($form['action']['nextPage'])) {
 	    
 	    /* Go forward a page */
-	    $form['list']['page'] = min($form['list']['page']+1,
-					    $form['list']['maxPages']);
+	    GalleryUtilities::putRequestVariable('form.list.page',
+						 min($form['list']['page']+1, $form['list']['maxPages']));
 	    
 	} else if (isset($form['action']['lastPage'])) {
 
 	    /* Go to the last page */
-	    $form['list']['page'] = $form['list']['maxPages'];
+	    GalleryUtilities::putRequestVariable('form.list.page', $form['list']['maxPages']);
 	    
 	} else if (isset($form['action']['filterClear'])) {
 
@@ -159,7 +159,7 @@ class AdminGroupsController extends GalleryController {
 	    } else if ($group == null) {
 		GalleryUtilities::putRequestVariable('form.error.text.noSuchGroup', 1);
 	    } else {
-		/* Show the "delete group" view */
+		/* Show the "edit group" view */
 		$results['view'] = 'core:SiteAdmin';
 		GalleryUtilities::putRequestVariable('groupId', $group->getId());
 		GalleryUtilities::putRequestVariable('subView', 'core:AdminEditGroup');
@@ -194,14 +194,6 @@ class AdminGroupsController extends GalleryController {
 	}
 
 	if (empty($results['view'])) {
-	    /*
-	     * We're staying on the same page, so pass on our navigation
-	     * parameters.
-	     */
-	    
-	    GalleryUtilities::putRequestVariable('form.list.page',
-						 $form['list']['page']);
-
 	    $results['view'] = 'core:SiteAdmin';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminGroups');
 	}

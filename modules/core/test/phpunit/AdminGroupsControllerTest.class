@@ -1,0 +1,448 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminGroups controller tests
+ */
+class AdminGroupsControllerTest extends GalleryControllerTestCase {
+
+    function AdminGroupsControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminGroups');
+    }
+
+    function testFirstPage() {
+	GalleryUtilities::putRequestVariable('form.action.firstPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 23);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+    }
+
+    function testBackPage() {
+	/* Normal operation */
+	GalleryUtilities::putRequestVariable('form.action.backPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 5);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(4, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+
+	/* Don't go less than page 1 */
+	GalleryUtilities::putRequestVariable('form.action.backPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 0);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+
+    }
+
+    function testNextPage() {
+	/* Normal operation */
+	GalleryUtilities::putRequestVariable('form.action.nextPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 5);
+	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(6, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+
+	/* Dont exceed max pages */
+	GalleryUtilities::putRequestVariable('form.action.nextPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 17);
+	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(17, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+
+    }
+
+    function testLastPage() {
+	GalleryUtilities::putRequestVariable('form.action.lastPage', 1);
+	GalleryUtilities::putRequestVariable('form.list.page', 3);
+	GalleryUtilities::putRequestVariable('form.list.maxPages', 17);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(17, (int)GalleryUtilities::getRequestVariables('form.list.page'));
+    }
+
+    function testFilterClear() {
+	GalleryUtilities::putRequestVariable('form.action.filterClear', 1);
+	GalleryUtilities::putRequestVariable('form.list.filter', 'foo');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('', GalleryUtilities::getRequestVariables('form.list.filter'));
+    }
+    
+    function testCreate() {
+	GalleryUtilities::putRequestVariable('form.action.create', 1);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminCreateGroup', GalleryUtilities::getRequestVariables('subView'));
+    }
+
+    function testEditFromList() {
+	/* Normal operation */
+	$groupId = 35;
+	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminEditGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($groupId, (int)GalleryUtilities::getRequestVariables('groupId'));
+
+	
+	/* Failure - don't select a group */
+	GalleryUtilities::putRequestVariable('form.action.editFromList', 1);
+	GalleryUtilities::removeRequestVariable('form.list.groupId');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
+    }
+
+    function testEditUsersFromList() {
+	global $gallery;
+	
+	/* Normal operation */
+	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals((int)$groupId, (int)GalleryUtilities::getRequestVariables('groupId'));
+	
+	/* Failure - don't select a group */
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromList', 1);
+	GalleryUtilities::removeRequestVariable('form.list.groupId');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
+
+	/* Failure - select the all users group */
+	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantEditUsers'));
+	
+    }
+
+    function testDeleteFromList() {
+	global $gallery;
+
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	/* Normal operation */
+	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $group->getId());
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->_deleteGroup($group);
+
+	
+	/* Failure - don't select a group */
+	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
+	GalleryUtilities::removeRequestVariable('form.list.groupId');
+	
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.noGroupSelected'));
+
+
+	/* Failure - select the all users group */
+	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAllUsersGroup'));
+	
+
+	/* Failure - select the admin users group */
+	list ($ret, $groupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	GalleryUtilities::putRequestVariable('form.action.deleteFromList', 1);
+	GalleryUtilities::putRequestVariable('form.list.groupId', $groupId);
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.list.cantDeleteAdminGroup'));
+    }
+
+    function testEditFromText() {
+	/* Normal */
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminEditGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->_deleteGroup($group);
+
+	
+	/* Missing group name */
+	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
+	GalleryUtilities::removeRequestVariable('form.text.groupName');
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
+
+
+	/* Invalid group name */
+	GalleryUtilities::putRequestVariable('form.action.editFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+    }
+
+    function testDeleteFromText() {
+	/* Normal */
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminDeleteGroup', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->_deleteGroup($group);
+
+	
+	/* Missing group name */
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::removeRequestVariable('form.text.groupName');
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
+
+
+	/* Invalid group name */
+	GalleryUtilities::putRequestVariable('form.action.deleteFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+    }
+
+    function testEditUsersFromText() {
+	/* Normal */
+	list ($ret, $group) = $this->_createGroup();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', $group->getGroupName());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminEditGroupUsers', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($group->getId(), (int)GalleryUtilities::getRequestVariables('groupId'));
+	$this->_deleteGroup($group);
+
+	
+	/* Missing group name */
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
+	GalleryUtilities::removeRequestVariable('form.text.groupName');
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noGroupSpecified'));
+
+	/* Invalid group name */
+	GalleryUtilities::putRequestVariable('form.action.addRemoveUsersFromText', 1);
+	GalleryUtilities::putRequestVariable('form.text.groupName', 'some-invalid-group-name-'.rand());
+
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'core:SiteAdmin'), $results);
+	$this->assertEquals('core:AdminGroups', GalleryUtilities::getRequestVariables('subView'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.text.noSuchGroup'));
+    }
+
+    function _createGroup() {
+	global $gallery;
+	
+	list ($ret, $group) = GalleryFactory::newInstance('GalleryEntity', 'GalleryGroup');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!isset($group)) {
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+			 null);
+	}
+	
+	$ret = $group->create('testgroup-'.rand());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	return array(GalleryStatus::success(), $group);
+    }
+
+    function _deleteGroup($group) {
+	global $gallery;
+	$ret = $gallery->deleteEntityById($group->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+}
+?>
