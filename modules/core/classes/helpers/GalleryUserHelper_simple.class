@@ -46,6 +46,10 @@ class GalleryUserHelper_simple {
     function assertHasItemPermission($itemId, $permission) {
 	global $gallery;
 
+	if (GalleryDataCache::hasPermission($itemId, $permission)) {
+	    return GalleryStatus::success();
+	}
+
 	/* Use the active user id */
 	$userId = $gallery->getActiveUserId();
 	
@@ -78,18 +82,8 @@ class GalleryUserHelper_simple {
     function hasItemPermission($itemId, $permission) {
 	global $gallery;
 
-	// Check our session cache first
-	if ($permission == 'core.view') {
-	    $session =& $gallery->getSession();
-	    $viewableEntities = $session->get('viewableEntities');
-	    if (isset($viewableEntities[$itemId])) {
-		if (time() - $viewableEntities[$itemId] < 240) {
-		    return array(GalleryStatus::success(), true);
-		} else {
-		    unset($viewableEntities[$itemId]);
-		    $session->put('viewableEntities', $viewableEntities);
-		}
-	    }
+	if (GalleryDataCache::hasPermission($itemId, $permission)) {
+	    return array(GalleryStatus::success(), true);
 	}
 
 	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());

@@ -112,8 +112,11 @@ class DataCacheTest extends GalleryTestCase {
 	$this->assertEquals('/entity/7/2/725.inc',
 			    GalleryDataCache::getCachePath(array('type' => 'entity', 'itemId' => 725)));
 
-	$this->assertEquals('/derivative/1/2/123.inc',
+	$this->assertEquals('/derivative/1/2/123.dat',
 			    GalleryDataCache::getCachePath(array('type' => 'derivative', 'itemId' => 123)));
+
+	$this->assertEquals('/derivative/1/2/123-meta.inc',
+			    GalleryDataCache::getCachePath(array('type' => 'derivative-meta', 'itemId' => 123)));
     }
 
     function testPutToDisk() {

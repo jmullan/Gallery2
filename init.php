@@ -38,15 +38,15 @@ function GalleryInitFirstPass($params=array()) {
     /* Load all the core Gallery classes */
     $classDir = dirname(__FILE__) . '/modules/core/classes/';
     require_once($classDir . 'GalleryCoreApi.class');
-    require_once($classDir . 'GalleryConstants.class');
-    require_once($classDir . 'Gallery.class');
-    require_once($classDir . 'GalleryStatus.class');
-    require_once($classDir . 'GalleryDataCache.class');
-    require_once($classDir . 'GalleryUrlGenerator.class');
-    require_once($classDir . 'GalleryUtilities.class');
-    require_once($classDir . 'GalleryView.class');
-    require_once($classDir . 'GalleryModule.class');
-
+    GalleryCoreApi::requireOnce($classDir . 'GalleryConstants.class');
+    GalleryCoreApi::requireOnce($classDir . 'Gallery.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryStatus.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryDataCache.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryUrlGenerator.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryUtilities.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryView.class');
+    GalleryCoreApi::requireOnce($classDir . 'GalleryModule.class');
+    
     /*
      * Set up our Gallery global.  It's important to use a reference here because
      * the constructor registers a shutdown function and ties it to the instance in
@@ -58,10 +58,10 @@ function GalleryInitFirstPass($params=array()) {
     $gallery =& $GLOBALS['gallery'];
 
     if (strtolower(PHP_OS) == 'winnt') {
-	require_once($classDir . 'GalleryPlatform/WinNtPlatform.class');
+	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/WinNtPlatform.class');
 	$gallery->setPlatform(new WinNtPlatform());
     } else {
-	require_once($classDir . 'GalleryPlatform/UnixPlatform.class');
+	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/UnixPlatform.class');
 	$gallery->setPlatform(new UnixPlatform());
     }
 
@@ -104,12 +104,6 @@ function GalleryInitFirstPass($params=array()) {
 	return $ret->wrap(__FILE__, __LINE__);
     }
 
-    return GalleryStatus::success();
-}
-
-function GalleryInitSecondPass() {
-    global $gallery;
-    
     /* Initialize our session */
     $ret = $gallery->initSession();
     if ($ret->isError()) {
@@ -117,6 +111,13 @@ function GalleryInitSecondPass() {
     }
     $session =& $gallery->getSession();
 
+    return GalleryStatus::success();
+}
+
+function GalleryInitSecondPass() {
+    global $gallery;
+    
+    $session =& $gallery->getSession();
     /*
      * Set our active user id.  Check to see if we have one in our session.  If
      * not, make us the anonymous user.  If we don't have a session, this will

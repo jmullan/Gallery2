@@ -272,8 +272,8 @@ class GalleryTemplate {
 	    /*
 	     * Load and configure Smarty.
 	     */
-	    require_once(dirname(__FILE__) . '/../../../lib/smarty/Smarty.class.php');
-	    require_once(dirname(__FILE__) . '/GallerySmarty.class');
+	    GalleryCoreApi::relativeRequireOnce('lib/smarty/Smarty.class.php');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySmarty.class');
 	    $smarty = new GallerySmarty();
 
 	    /* Compiled templates go here */

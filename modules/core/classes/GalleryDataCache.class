@@ -125,7 +125,6 @@ class GalleryDataCache {
 	if ($protected) {
 	    $cache['protected'][$key] = 1;
 	} else {
-	    print "Setting timestamp for $key<br>";
 	    $cache['timestamps'][$key] = time() + microtime();
 	}
 
@@ -223,6 +222,10 @@ class GalleryDataCache {
 	}
     }
 
+    /**
+     * Is caching to disk enabled?
+     * @return bool true if it's enabled
+     */
     function &isFileCachingEnabled() {
 	static $enabled;
 	if (!isset($enabled)) {
@@ -231,11 +234,21 @@ class GalleryDataCache {
 	return $enabled;
     }
 
+    /**
+     * Turn caching to disk on or off
+     * @param bool true or false
+     */
     function setFileCachingEnabled($bool) {
 	$enabled =& GalleryDataCache::isFileCachingEnabled();
 	$enabled = $bool;
     }
 
+    /**
+     * Get the file from disk.  PathInfo is of the form that can be passed to getCachePath
+     * @see GalleryDataCache::getCachePath
+     * @param array the path info
+     * @return mixed object data
+     */
     function &getFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
 	    return;
@@ -252,6 +265,11 @@ class GalleryDataCache {
 	return null;
     }
 
+    /**
+     * Remove the cache file from disk.  PathInfo is of the form that can be passed to getCachePath
+     * @see GalleryDataCache::getCachePath
+     * @param array the path info
+     */
     function removeFromDisk($pathInfo) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
 	    return;
@@ -283,6 +301,15 @@ class GalleryDataCache {
 	}
     }
 
+    /**
+     * Put the specified data into a cache file from disk.  PathInfo is of the form that can be passed
+     * to getCachePath.
+     *
+     * @param array the path info
+     * @param mixed the object data
+     * @param array a list of classes that must be loaded in order to retrieve this data
+     * @see GalleryDataCache::getCachePath
+     */
     function putToDisk($pathInfo, &$data, $requiredClasses=array()) {
 	if (!GalleryDataCache::isFileCachingEnabled()) {
 	    return;
@@ -312,6 +339,21 @@ class GalleryDataCache {
 	}
     }
 
+    /**
+     * For a given id, return a tuple with the breakdown of the id.  The caching mechanism uses this to
+     * determine where in the cache tree to place the file.  The breakdown happens according to the digits of
+     * the id.  The first element returned is the hundreds digit, the second element is the tens digit. 
+     *
+     *  0..9     =>  0, 0
+     *  10..19   =>  0, 1
+     *  20..29   =>  0, 2
+     *   ...
+     *  100..109 =>  1, 0
+     *  110..119 =>  1, 1
+     *
+     * @param int the id
+     * @return array the tuple
+     */
     function getCacheTuple($id) {
 	$id = "$id";
 	if ($id > 100) {
@@ -323,6 +365,16 @@ class GalleryDataCache {
 	}
     }
 
+    /**
+     * Given a path info descriptor, return the path to the appropriate cache file
+     *
+     * Path info contains the following variables:
+     *  type:    entity, derivative, derivative-meta, module, layout
+     *  itemId:  the item id
+     *  id:      (module, layout only) a refinement of the type
+     *
+     * @return string the path
+     */
     function getCachePath($pathInfo) {
 	global $gallery;
 	
@@ -330,11 +382,23 @@ class GalleryDataCache {
 	$cacheFile = null;
 	switch ($pathInfo['type']) {
 	case 'entity':
-	case 'derivative':
 	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
 	    $cacheFile = sprintf('%s%s/%s/%s/%s.inc',
 				 $base, $pathInfo['type'], $first, $second, $pathInfo['itemId']);
 	    break;
+	    
+	case 'derivative':
+	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
+	    $cacheFile = sprintf('%s%s/%s/%s/%s.dat',
+				 $base, $pathInfo['type'], $first, $second, $pathInfo['itemId']);
+	    break;
+
+	case 'derivative-meta':
+	    list ($first, $second) = GalleryDataCache::getCacheTuple($pathInfo['itemId']);
+	    $cacheFile = sprintf('%sderivative/%s/%s/%s-meta.inc',
+				 $base, $first, $second, $pathInfo['itemId']);
+	    break;
+	    
 
 	case 'module':
 	case 'layout':
@@ -352,6 +416,88 @@ class GalleryDataCache {
 	}
 
 	return $cacheFile;
+    }
+
+    /**
+     * Store the given permission => ids mapping in the session cache
+     * @param mixed item ids (can be an array of ids or a single id)
+     * @param string the permission
+     */
+    function cachePermissions($ids, $permission) {
+	global $gallery;
+
+	if (!is_array($ids)) {
+	    $ids = array($ids);
+	}
+
+	$session =& $gallery->getSession();
+	if (!isset($session)) {
+	    /* No session means we've got no cache */
+	    return;
+	}
+
+	$permissions = $session->get('permissionCache');
+	
+	/*
+	 * We want to put all the permissions that we cache in this request into one entry in
+	 * the session.  However we're going to get several separate requests.  So start by
+	 * pruning down the total number of cached permission sets, then create a new set
+	 * and add all cached values to that.
+	 */
+	static $initialized;
+	if (!isset($initialized)) {
+	    if (!isset($permissions)) {
+		$permissions = array();
+	    }
+		
+	    array_unshift($permissions, array());
+	    
+	    // Trim down the cache
+	    $max = 10; 
+	    if (sizeof($permissions) > $max) {
+		array_splice($permissions, -1, sizeof($permissions) - $max);
+	    }
+	    
+	    $initialized = 1;
+	}
+
+	/* Add our new data to the head of the list */
+	foreach ($ids as $id) {
+	    $permissions[0][$permission][$id] = 1;
+	}
+	
+	$session->put('permissionCache', $permissions);
+    }
+
+    /**
+     * Look up the given permission in the cache.  Return true if the permission exists in the cache, false if
+     * it doesn't.  A return of false doesn't mean that the user doesn't have the permission -- just that it's
+     * not in the cache.
+     * @param int the item id
+     * @param string the permission
+     * @param bool true or false
+     */
+    function hasPermission($id, $permission) {
+	global $gallery;
+
+	$session =& $gallery->getSession();
+	if (!isset($session)) {
+	    return;
+	}
+
+	
+	$permissions = $session->get('permissionCache');
+	/*
+	 * Since we add all new data to the head of the list, the odds are good that we should find our
+	 * answer in the first iteration of this loop.
+	 */
+	for ($i = 0; $i < sizeof($permissions); $i++) {
+	    if (isset($permissions[$i][$permission][$id])) {
+		return true;
+	    }
+	}
+
+	return false;
     }
 }
 ?>

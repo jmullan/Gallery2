@@ -44,9 +44,9 @@ class DownloadItemView extends GalleryView {
     }
 
     /**
-     * @see GalleryView::renderImmediate
+     * @see GalleryView::renderShortcut
      */
-    function renderImmediate($status, $error) {
+    function renderShortcut() {
 	global $gallery;
 
 	/*
@@ -59,10 +59,72 @@ class DownloadItemView extends GalleryView {
 	    $headers = GetAllHeaders();
 	    if (isset($headers['If-Modified-Since'])) {
 		header('HTTP/1.x 304 Not Modified');
-		return GalleryStatus::success();
+		return array(GalleryStatus::success(), true);
 	    }
 	}
+
+	/* Figure out which item we're talking about */
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	if (empty($itemId)) {
+	    return array(GalleryStatus::success(), false);
+	}
 	
+	/* Try to load our shortcut data file */
+	$data = GalleryDataCache::getFromDisk(array('type' => 'derivative-meta',
+						    'itemId' => $itemId));
+	if (isset($data)) {
+	    /* Make sure we have permission */
+	    $ret = GalleryCoreApi::assertHasItemPermission($data['permissionItemId'],
+							   $data['permission']);
+	    if ($ret->isError()) {
+		return array(GalleryStatus::success(), false);
+	    }
+
+	    $platform =& $gallery->getPlatform();
+	    if ($platform->file_exists($data['derivativePath'])) {
+		header('Content-type: ' . $data['mimeType']);
+		header('Content-Disposition: inline; filename="' . $data['pseudoFileName'] . '"');
+		$stats = $platform->stat($data['derivativePath']);
+		
+		if ($stats[7] > 0) {
+		    header('Content-length: ' . $stats[7]);
+		}
+		
+		$platform = $gallery->getPlatform();
+		header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
+		
+		/*
+		 * Don't use readfile() because it buffers the entire file in memory
+		 * Profiling shows that this approach is as efficient as fpassthru()
+		 * but we get to call guaranteeTimeLimit which prevents it from failing on
+		 * very large files.
+		 */
+		if ($fd = $platform->fopen($data['derivativePath'], 'rb')) {
+		    while (true) {
+			$data = $platform->fread($fd, 65535);
+			if (strlen($data) == 0) {
+			    break;
+			}
+			print $data;
+			$gallery->guaranteeTimeLimit(30);
+		    }
+		    
+		    $platform->fclose($fd);
+		}
+
+		return array(GalleryStatus::success(), true);
+	    }
+	}
+
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
+     * @see GalleryView::renderImmediate
+     */
+    function renderImmediate($status, $error) {
+	global $gallery;
+
 	/* Figure out which item we're talking about */
 	$itemId = GalleryUtilities::getRequestVariables('itemId');
 	if (empty($itemId)) {
@@ -138,18 +200,25 @@ class DownloadItemView extends GalleryView {
 	$stats = $platform->stat($path);
 	header('Last-Modified: ' . gmstrftime('%a, %e %b %G %R %Z', $stats[9]));
 
-	// Don't use readfile() because it buffers the entire file in memory
+	/*
+	 * Don't use readfile() because it buffers the entire file in memory
+	 * Profiling shows that this approach is as efficient as fpassthru()
+	 * but we get to call guaranteeTimeLimit which prevents it from failing on
+	 * very large files.
+	 */
 	if ($fd = $platform->fopen($path, 'rb')) {
 	    while (true) {
-		$data = $platform->fread($fd, 65536);
+		$data = $platform->fread($fd, 65535);
 		if (strlen($data) == 0) {
 		    break;
 		}
 		print $data;
 		$gallery->guaranteeTimeLimit(30);
 	    }
+	    
 	    $platform->fclose($fd);
 	}
+
 	return GalleryStatus::success();
     }
 

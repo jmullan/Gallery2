@@ -104,6 +104,8 @@ class GalleryItemHelper_medium {
 	    $data[] = $result[0];
 	}
 
+	GalleryDataCache::cachePermissions($data, $permissionId);
+
 	return array(GalleryStatus::success(), $data);
     }
     
@@ -181,6 +183,8 @@ class GalleryItemHelper_medium {
 	    $data[] = $result[0];
 	}
 
+	GalleryDataCache::cachePermissions($data, $permissionId);
+	
 	return array(GalleryStatus::success(), $data);
     }
     
@@ -830,8 +834,8 @@ class GalleryItemHelper_medium {
      * </ul>
      *
      * If you provide just a user id, it will invalidate all cached values for that user.  If you provide just
-     * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it will only
-     * invalidate for the intersection of the user and the item ids. 
+     * an item id, it'll invalidate that id and all of its parents for all users.  If you provide both, it
+     * will only invalidate for the intersection of the user and the item ids.
      *
      * @param int a user id
      * @param int an item id

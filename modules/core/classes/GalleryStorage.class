@@ -63,21 +63,21 @@ class GalleryStorage {
 	$this->_mapInfoCache = array();
 
 	$base = dirname(__FILE__) . '/GalleryStorage/';
-	require_once($base . 'DatabaseStorage.class');
-	require_once($base . 'DatabaseSearchResults.class');
+	GalleryCoreApi::requireOnce($base . 'DatabaseStorage.class');
+	GalleryCoreApi::requireOnce($base . 'DatabaseSearchResults.class');
 
 	$config = $gallery->getConfig('storage.config');
 	switch ($config['type']) {
 	case 'postgres':
 	case 'postgres7':
-	    require_once($base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
+	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/PostgreSqlDatabaseStorage.class');
 	    $this->_impl = new PostgreSqlDatabaseStorage($config);
 	    break;
 
 	default:
 	case 'mysql':
 	case 'mysqlt':
-	    require_once($base . 'DatabaseStorage/MySqlDatabaseStorage.class');
+	    GalleryCoreApi::requireOnce($base . 'DatabaseStorage/MySqlDatabaseStorage.class');
 	    $this->_impl = new MySqlDatabaseStorage($config);
 	}
 

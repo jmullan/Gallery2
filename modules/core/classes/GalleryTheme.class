@@ -139,30 +139,20 @@ class GalleryTheme {
 	}
 
 	$platform = $gallery->getPlatform();
-	$themeDir = dirname(__FILE__) . '/../../../themes/' . $themeName . '/';
+	GalleryCoreApi::relativeRequireOnce('themes/' . $themeName . '/theme.inc');
 
-	$themeClass = $themeDir . 'theme.inc';
-	if ($platform->file_exists($themeClass)) {
-	    require_once($themeClass);
-
-	    /*
-	     * Expect the theme class name to be the same as the theme
-	     * name plus "Theme"
-	     */
-	    $themeClassName = $themeName . 'Theme';
-	    if (!class_exists($themeClassName)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Theme $themeName must have a class named '$themeClassName'"), null);
-	    }
-
-	    $theme = new $themeClassName($themeDir);
-	    if (!GalleryUtilities::isA($theme, 'GalleryTheme')) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Theme $themeName is not an instance of GalleryTheme"), null);
-	    }
-	} else {
+	/* Expect the theme class name to be the same as the theme name plus "Theme" */
+	$themeClassName = $themeName . 'Theme';
+	if (!class_exists($themeClassName)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Theme $themeName is missing theme.inc"), null);
+					      "Theme $themeName must have a class named '$themeClassName'"),
+			 null);
+	}
+	
+	$theme = new $themeClassName();
+	if (!GalleryUtilities::isA($theme, 'GalleryTheme')) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+					      "Theme $themeName is not an instance of GalleryTheme"), null);
 	}
 
 	return array(GalleryStatus::success(), $theme);

@@ -212,12 +212,11 @@ class Gallery {
 	$this->_activeUser = $user;
 
 	$session =& $this->getSession();
-	if (isset($session)) {
-	    // It's possible for the session not to exist during bootstrap time
-	    $activeUserId = $session->get('core.id.activeUser');
-	    if ($activeUserId != $user->getId()) {
-		$session->put('core.id.activeUser', $user->getId());
-	    }
+
+	// It's possible for the session not to exist during bootstrap time
+	$activeUserId = $session->get('core.id.activeUser');
+	if ($activeUserId != $user->getId()) {
+	    $session->put('core.id.activeUser', $user->getId());
 	}
     }
     
@@ -231,7 +230,12 @@ class Gallery {
      * @return int the id of the current User.
      */
     function getActiveUserId() {
-	return $this->_activeUser->getId();
+	if (isset($this->_activeUser)) {
+	    return $this->_activeUser->getId();
+	} else {
+	    $session =& $this->getSession();
+	    return $session->get('core.id.activeUser');
+	}
     }
 
     /**
@@ -361,8 +365,8 @@ class Gallery {
      */
     function &getStorage() {
 	if (!isset($this->_storage)) {
-	    require_once(dirname(__FILE__) . '/GalleryStorage.class');
-	    require_once(dirname(__FILE__) . '/GallerySearchResults.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryStorage.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GallerySearchResults.class');
 	    $this->_storage = new GalleryStorage();
 	}
 	
@@ -404,7 +408,7 @@ class Gallery {
     function initTranslator() {
 	if (empty($this->_translator)) {
 	    /* Load the translator class */
-	    require_once(dirname(__FILE__) . '/GalleryTranslator.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTranslator.class');
 	    
 	    $this->_translator = new GalleryTranslator();
 
@@ -612,7 +616,7 @@ class Gallery {
      */
     function &getTemplateAdapter() {
 	if (!isset($this->_templateAdapter)) {
-	    require_once(dirname(__FILE__) . '/GalleryTemplateAdapter.class');
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplateAdapter.class');
 	    $this->_templateAdapter = new GalleryTemplateAdapter();
 	}
 

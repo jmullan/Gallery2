@@ -67,14 +67,9 @@ if ($ret->isError()) {
 }
 
 function GalleryMain($returnHtml=false) {
-
     /* Initialize Gallery */
     require_once(dirname(__FILE__) . '/init.php');
     $ret = GalleryInitFirstPass();
-    if ($ret->isError()) {
-	return array($ret->wrap(__FILE__, __LINE__), null);
-    }
-    $ret = GalleryInitSecondPass();
     if ($ret->isError()) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
@@ -88,9 +83,6 @@ function GalleryMain($returnHtml=false) {
      */
     $gallery =& $GLOBALS['gallery'];
     
-    /* Initialize our container for template data */
-    $main = array();
-    
     /* Let our url generator process the query string */
     $urlGenerator = $gallery->getUrlGenerator();
     list ($ret, $redirectUrl) = $urlGenerator->parseCurrentUrl();
@@ -98,6 +90,34 @@ function GalleryMain($returnHtml=false) {
 	return array($ret->wrap(__FILE__, __LINE__), null);
     }
 
+    /* Figure out the target module/controller */
+    list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
+
+    if (!empty($viewName)) {
+	list ($ret, $view) = GalleryView::loadView($viewName);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $responseComplete) = $view->renderShortcut();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if ($responseComplete) {
+	    // We're done
+	    return array(GalleryStatus::success(), null);
+	}
+    }
+
+    $ret = GalleryInitSecondPass();
+    if ($ret->isError()) {
+	return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+    
+    /* Initialize our container for template data */
+    $main = array();
+    
     /* If the URL generator suggested that we redirect, then do so */
     if (!empty($redirectUrl)) {
 	if ($gallery->getDebug() == false) {
@@ -113,9 +133,6 @@ function GalleryMain($returnHtml=false) {
 	    $main['redirectUrl'] = $redirectUrl;
 	}
     }
-
-    /* Figure out the target module/controller */
-    list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
     /* Load and run the appropriate controller */
     $results = array();

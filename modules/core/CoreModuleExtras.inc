@@ -76,9 +76,7 @@ class CoreModuleExtras {
 		 */
 
 		// Load the translator class since we use it statically
-		$classDir = dirname(__FILE__) . '/classes/';
-		require_once($classDir . 'GalleryTranslator.class');
-		
+		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
 		foreach (array('permissions.directory' => '0755',
 			       'permissions.file' => '0644',
 			       'upload.localServer.dirs' => '',

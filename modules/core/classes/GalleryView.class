@@ -88,6 +88,18 @@ class GalleryView {
     }
     
     /**
+     * Try to handle this request very quickly.  This method is called very early
+     * on in the process in the case that this view has a simple cached reply that
+     * it can send back to prevent us from having to load up the entire framework.
+     *
+     * @return array object GalleryStatus a status code
+     *               boolean true if no further work is required (ie, the response is complete)
+     */
+    function renderShortcut() {
+	return array(GalleryStatus::success(), false);
+    }
+    
+    /**
      * Load the template with data from this view.
      *
      * @param object GalleryTemplate the template instance
@@ -136,9 +148,8 @@ class GalleryView {
 	/*
 	 * We bundle view and controller classes together, so we need the controller
 	 * superclass to load the view
-	 */ 
-	require_once(dirname(__FILE__) . '/GalleryController.class');
-	
+	 */
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryController.class');
 	$ret = GalleryUtilities::requireOnce($fileName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -180,7 +191,7 @@ class GalleryView {
 	}
 
 	/* Load and initialize the theme */
-	require_once(dirname(__FILE__) . '/GalleryTheme.class');
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTheme.class');
 	list ($ret, $theme) = GalleryTheme::loadTheme($themeName);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);

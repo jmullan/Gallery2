@@ -231,7 +231,7 @@ class GallerySession {
 	}
 
 	/* Perform garbage collection 1% of the time. */
-	if ($dieRoll == 1) {
+	if (true || $dieRoll == 1) {
 	    $ret = $this->_expireSessions();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -285,8 +285,6 @@ class GallerySession {
 
 	$inactiveCutoff = time() - $sessionInactivityTimeout;
 	$lifetimeCutoff = time() - $lifetime;
-
-	$inactiveCutoff = time() - 60;
 
 	$platform = $gallery->getPlatform();
 	$sessionsDir = $gallery->getConfig('data.gallery.sessions');
