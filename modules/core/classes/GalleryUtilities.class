@@ -814,11 +814,7 @@ class GalleryUtilities {
 	    }
 	    
 	    /* Sanitize dangerous html entities */
-	    if (function_exists("html_entity_decode")) {
-		$value = html_entity_decode($value, ENT_QUOTES);
-	    } else {
-		$value = GalleryUtilities::htmlEntityDecode($value);
-	    }
+	    $value = GalleryUtilities::htmlEntityDecode($value);
 	}
     }
 
@@ -829,6 +825,10 @@ class GalleryUtilities {
      * @return same string without them
      */
     function htmlEntityDecode($string) {
+	if (function_exists("html_entity_decode")) {
+	    return html_entity_decode($string, ENT_QUOTES);
+	}
+	
 	static $translation_table = null;
 	if (!isset($translation_table)) {
 	    $translation_table = get_html_translation_table(HTML_ENTITIES, ENT_QUOTES);
