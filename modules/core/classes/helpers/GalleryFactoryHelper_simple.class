@@ -145,7 +145,8 @@ class GalleryFactoryHelper_simple {
 	    require_once($fileName);
 
 	    if (!class_exists($className)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  "Missing class: $className"),
 			     null);
 	    }
 	}
