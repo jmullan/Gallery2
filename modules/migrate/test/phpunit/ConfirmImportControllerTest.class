@@ -391,6 +391,16 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    ConfirmImportController::convertHtmlToBbcode('<b>bold</b>'));
 	$this->assertEquals('[i]italic[/i]',
 			    ConfirmImportController::convertHtmlToBbcode('<i>italic</i>'));
+	$this->assertEquals('[i]italic[/i]',
+			    ConfirmImportController::convertHtmlToBbcode('<em>italic</em>'));
+	$this->assertEquals('[b]italic[/b]',
+			    ConfirmImportController::convertHtmlToBbcode('<strong>italic</strong>'));
+	$this->assertEquals("\n",
+			    ConfirmImportController::convertHtmlToBbcode('<br>'));
+	$this->assertEquals("\n",
+			    ConfirmImportController::convertHtmlToBbcode('<br/>'));
+	$this->assertEquals("\n",
+			    ConfirmImportController::convertHtmlToBbcode('<br />'));
  
 	/* Image HTML with edge cases */
 	$this->assertEquals('[img]foo.jpg[/img]',
@@ -427,11 +437,25 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    ConfirmImportController::convertHtmlToBbcode('<a href=http://google.com class=bar>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
 			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com>Google</a>'));
+	$this->assertEquals('[url=http://www.topozone.com/map.asp?z=11&amp;n=4163644&amp;e=275692&amp;s=25&amp;size=m&amp;u=1]Topo[/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
+
  
+
+       /* Mixed HTML */
+	$this->assertEquals('[url=http://google.com][i]Google[/i][/url]',
+			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com"><i>Google</i></a>'));
+	$this->assertEquals('[b][url=http://google.com]Google[/url][/b]',
+			    ConfirmImportController::convertHtmlToBbcode('<strong><a href="http://google.com">Google</a></strong>'));
+
  
 	/* Malformed HTML tags should not be turned into BBCode, but we can't stop it */
 	$this->assertEquals('[i][b]interleaved[/i][/b]', 
 			    ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
+
+       /* Non-supported HTML is stripped completely */
+	$this->assertEquals('foo',
+			    ConfirmImportController::convertHtmlToBbcode('<hr><h1 title="foo">foo</h1>'));
 
 	/*
 	 * We don't handle this correctly, yet

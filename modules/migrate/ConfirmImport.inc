@@ -551,8 +551,16 @@ class ConfirmImportController extends GalleryController {
 					$newItem->setownerId($owner->getId());
 				    }
 				}
-	
 				
+				/* delete group perm actions
+				$allPerms = array('core.view','core.viewSource','core.viewResizes');
+				foreach ($allPerms as $perm) {
+				    $ret = GalleryCoreApi::removeGroupPermission($newItem->getId(), $groupId, $permissionId, FALSE);
+				    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null);
+				    }
+				}
+				*/
 				$ret = $newItem->save();
 
 				if ($ret->isError()) {
@@ -634,10 +642,15 @@ class ConfirmImportController extends GalleryController {
 	
 	return array(GalleryStatus::success(), $results);
     }
+        $item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);
 
+        $item = preg_replace('/<strong>/i', '[b]', $item);
     /**
+        $item = preg_replace('/<\/strong>/i', '[/b]', $item);
      * Converts HTML to BBCode
+        $item = preg_replace('/<em>/i', '[i]', $item);
      *
+        $item = preg_replace('/<\/em>/i', '[/i]', $item);
      * @param string $item item to convert
      * @return string
      */
@@ -650,8 +663,9 @@ class ConfirmImportController extends GalleryController {
         $item = preg_replace('/<\/ul>/i', '[/list]', $item);
         $item = preg_replace('/<li>/i', '[*]', $item);
         $item = preg_replace('/<\/li>/i', '', $item);
-	$item = preg_replace('/<img([^>]*)?\s*src\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>/is', '[img]$2[/img]', $item);
-	$item = preg_replace('/<a([^>]*)?\s*href\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>(.*)?<\/a>/is', '[url=$2]$4[/url]', $item);
+        $item = preg_replace('/<img([^>]*)?\s*src\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>/is', '[img]$2[/img]', $item);
+        $item = preg_replace('/<a([^>]*)?\s*href\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>(.*)?<\/a>/is', '[url=$2]$4[/url]', $item);
+        $item = strip_tags($item);
         GalleryUtilities::sanitizeInputValues($item);
         return $item;
     }    
