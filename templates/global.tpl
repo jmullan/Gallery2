@@ -17,6 +17,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
+    {* This should help out users whose browsers are confused about the character set *}
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     {* We're experimenting with Dean Edward's IE7 patch:  http://dean.edwards.name/IE7 *}
     <!-- compliance patch for microsoft browsers -->
     <!--[if lt IE 7]>
