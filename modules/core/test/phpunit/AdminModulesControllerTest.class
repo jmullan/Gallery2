@@ -1,0 +1,218 @@
+<?php
+/*
+ * $RCSfile
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminModules controller tests
+ */
+class AdminModulesControllerTest extends GalleryControllerTestCase {
+
+    function AdminModulesControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminModules');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	/*
+	 * Cheat a little bit and insert our own module into the master list.
+	 * It's either this (ugh), or create a dummy module just for testing
+	 * (ugh).  This means we don't test $gallery->loadModule(), but it is
+	 * getting plenty of testing via everything else we do.
+	 */
+	
+	$this->_modules[0] = new AdminModulesTestModule('ConfigRequired', true);
+	$this->_modules[1] = new AdminModulesTestModule('ConfigNotRequired', false);
+
+	for ($i = 0; $i < sizeof($this->_modules); $i++) {
+	    $module = $this->_modules[$i];
+	    $name = $module->getName();
+	    $gallery->_modules[$name]['instance'] = $module;
+	    $gallery->_modules['_status'][$name]['installed'] = 1;
+	    $ret = $gallery->_modules[$name]['instance']->init();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	for ($i = 0; $i < sizeof($this->_modules); $i++) {
+	    unset($gallery->_modules[$this->_modules[$i]->getName()]);
+	}
+	parent::tearDown();
+    }
+
+    function testInstall() {
+	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('action', 'install');
+
+	/* Perform the request and verify that we succeeded */
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertRedirect(array('view' => 'core:SiteAdmin',
+				    'subView' => 'core:AdminModules'),
+			      $results);
+
+	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'install'),
+		      'install not called');
+    }
+
+    function testActivate() {
+	/*
+	 * Activate a module that doesn't require configuration (this should succeed)
+	 */
+	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('action', 'activate');
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertRedirect(array('view' => 'core:SiteAdmin',
+				    'subView' => 'core:AdminModules'),
+			      $results);
+
+	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'activate'),
+		      'activate not called');
+
+	/*
+	 * Activate a module that requires configuration (this should fail)
+	 */
+	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
+	GalleryUtilities::putRequestVariable('action', 'activate');
+	list ($ret, $results) = $this->_controller->handleRequest();
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER);
+	$this->assert(!AdminModulesTestModule::wasCalled('ConfigRequired', 'activate'),
+		      'activate was called');
+    }
+
+    function testDeactivate() {
+	global $gallery;
+	
+	/* Dectivate a module that is active (should succeed) */
+	$gallery->_modules['_status']['ConfigNotRequired']['active'] = 1;
+	GalleryUtilities::putRequestVariable('moduleName', 'ConfigNotRequired');
+	GalleryUtilities::putRequestVariable('action', 'deactivate');
+	list ($ret, $results) = $this->_controller->handleRequest();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertRedirect(array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminModules'), $results);
+	$this->assert(AdminModulesTestModule::wasCalled('ConfigNotRequired', 'deactivate'), 'deactivate not called');
+
+	/* Dectivate a module that is active (should succeed) */
+	$gallery->_modules['_status']['ConfigRequired']['active'] = 0;
+	GalleryUtilities::putRequestVariable('moduleName', 'ConfigRequired');
+	GalleryUtilities::putRequestVariable('action', 'deactivate');
+	list ($ret, $results) = $this->_controller->handleRequest();
+	$this->assert($ret->getErrorCode() & ERROR_BAD_PARAMETER, 'expected error did not get returned');
+	$this->assert(!AdminModulesTestModule::wasCalled('ConfigRequired', 'deactivate'), 'deactivate was called');
+    }
+}
+
+/* Test module */
+class AdminModulesTestModule extends GalleryModule {
+
+    function AdminModulesTestModule($name, $shouldNeedConfiguration) {
+	$this->setName($name);
+	$this->_shouldNeedConfiguration = $shouldNeedConfiguration;
+    }
+
+    function init() {
+	$this->_setCalled('init');
+	return GalleryStatus::success();
+    }
+    
+    function install() {
+	$ret = parent::install();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_setCalled('install');
+	return GalleryStatus::success();
+    }
+
+    function activate() {
+	/*
+	 * Don't call the parent class -- it'll try to muck with the database.
+	 *
+	$ret = parent::activate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	
+}
+	*/
+
+	$this->_setCalled('activate');
+	return GalleryStatus::success();
+    }
+
+    function deactivate() {
+	/*
+	 * Don't call the parent class -- it'll try to muck with the database.
+	 *
+	$ret = parent::deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	*/
+
+	$this->_setCalled('deactivate');
+	return GalleryStatus::success();
+    }
+
+    function _setCalled($function) {
+	$map =& $this->_getMap();
+	$map[$this->getName()][$function] = 1;
+    }
+
+    function wasCalled($name, $function) {
+	$map =& AdminModulesTestModule::_getMap();
+	return isset($map[$name][$function]);
+    }
+
+    function &_getMap() {
+	static $map;
+	return $map;
+    }
+
+    function needsConfiguration() {
+	$this->_setCalled('needsConfiguration');
+	return array(GalleryStatus::success(), $this->_shouldNeedConfiguration);
+    }
+}
+?>
