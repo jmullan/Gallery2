@@ -102,7 +102,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
      */
     function getSystemLinks() {
 	$links = array();
-	// Check if link is enabled..
+	/* Check if link is enabled.. */
 	list ($ret, $homeLink) =
 	    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'homeLink');
 	if ($ret->isError()) {
@@ -178,7 +178,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    break;
 
 	case 'Gallery::Login':
-	    // Check if redirect is enabled..
+	    /* Check if redirect is enabled.. */
 	    list ($ret, $loginRedirect) =
 		GalleryCoreApi::getPluginParameter('module', 'useralbum', 'loginRedirect');
 	    if ($ret->isError()) {
@@ -197,7 +197,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	    if (isset($albumId)) {
-		// Return a redirect to the user album..
+		/* Return a redirect to the user album.. */
 		$result = array('view' => 'core:ShowItem', 'itemId' => $albumId);
 	    }
 	    break;
