@@ -236,7 +236,6 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($forceNew || !$this->_usePersistentConnections) {
 	    $connectMethod = 'NConnect';
 	} else {
-	    print "PCON!";
 	    $connectMethod = 'PConnect';
 	}
 	$ret = $db->$connectMethod($this->_hostname,
