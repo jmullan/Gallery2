@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -56,7 +56,8 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGetFileNameComponents2() {
-	list ($base, $extension) = GalleryUtilities::getFileNameComponents('base_without_extension');
+	list ($base, $extension) =
+	    GalleryUtilities::getFileNameComponents('base_without_extension');
 	$this->assertEquals('base_without_extension', $base);
 	$this->assertEquals('', $extension);
     }
@@ -77,17 +78,19 @@ class UtilitiesTest extends GalleryTestCase {
 
 
     function testMaliciousBrowserInput1() {
-	GalleryUtilities::putRequestVariable('test[a]', '<a href="javascript:alert(\'hi\')">yo</a>');
-	$this->assertEquals('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;',
-			    GalleryUtilities::getRequestVariables('test[a]'));
+	GalleryUtilities::putRequestVariable('test[a]',
+	    '<a href="javascript:alert(\'hi\')">yo</a>');
+	$this->assertEquals(
+	    '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;',
+	    GalleryUtilities::getRequestVariables('test[a]'));
     }
 
     function testArrayInput() {
 	GalleryUtilities::putRequestVariable('test[a]', array('goodvalue' => 'foo bar',
-							     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
+	     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
 	$this->assertEquals(array('goodvalue' => 'foo bar',
-				  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
-			    GalleryUtilities::getRequestVariables('test[a]'));
+	  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
+	  GalleryUtilities::getRequestVariables('test[a]'));
     }
 
     function testGetFormVariables() {
@@ -112,13 +115,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$_FILES[GalleryUtilities::prefixFormVariable('utilitiestest')] =
 		array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
 		      'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
-		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+		      'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp',
+					  null, null),
 		      'error' => array('1' => 0, 0, 4, 4),
 		      'size' => array('1' => 1779802, 102323, 0, 0));
 
 	$this->assertEquals(array('name' => array('1' => 'DSCF0001.JPG', 'DSCF0002.GIF', null, null),
 				  'type' => array('1' => 'image/pjpeg', 'image/gif', null, null),
-				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp', '/tmp/php195.tmp', null, null),
+				  'tmp_name' => array('1' => 'c:\apache\tmp\php195.tmp',
+						      '/tmp/php195.tmp', null, null),
 				  'error' => array('1' => 0, 0, 4, 4),
 				  'size' => array('1' => 1779802, 102323, 0, 0)),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
@@ -137,10 +142,12 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testGetFormVariables4() {
-	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['entities'] = '<b> bold </b> <script> foo </script>';
+	$_POST[GalleryUtilities::prefixFormVariable('utilitiestest')]['entities'] =
+	    '<b> bold </b> <script> foo </script>';
 
-	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
-			    GalleryUtilities::getFormVariables('utilitiestest'));
+	$this->assertEquals(
+	    array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+	    GalleryUtilities::getFormVariables('utilitiestest'));
     }
 
     function testGetFormVariablesNoPrefix() {
@@ -163,8 +170,9 @@ class UtilitiesTest extends GalleryTestCase {
     function testGetFormVariablesNoPrefix2() {
 	$_POST['utilitiestest']['entities'] = '<b> bold </b> <script> foo </script>';
 
-	$this->assertEquals(array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
-			    GalleryUtilities::getFormVariables('utilitiestest', false));
+	$this->assertEquals(
+	    array('entities' => '&lt;b&gt; bold &lt;/b&gt; &lt;script&gt; foo &lt;/script&gt;'),
+	    GalleryUtilities::getFormVariables('utilitiestest', false));
     }
 
     function testGetRequestVariables() {
@@ -177,7 +185,8 @@ class UtilitiesTest extends GalleryTestCase {
     function testSanitizeInputValue1() {
 	$rawInput = '<ScRiPt foo=bar>blah</SCRIPT> test test <IFRAME> <b> foo </b> </IFRAME>';
 	GalleryUtilities::sanitizeInputValues($rawInput);
-	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; &lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
+	$this->assertEquals('&lt;ScRiPt foo=bar&gt;blah&lt;/SCRIPT&gt; test test &lt;IFRAME&gt; '
+	    . '&lt;b&gt; foo &lt;/b&gt; &lt;/IFRAME&gt;', $rawInput);
     }
 
     /* We don't convert UTF8 to entities (we used to) */
@@ -220,8 +229,9 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator->init('phpunit_test.php');
 	$gallery->setUrlGenerator($urlGenerator);
 
-	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
-			    GalleryUtilities::convertPathToUrl($file), 'test');
+	$this->assertEquals(
+	    'http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
+	    GalleryUtilities::convertPathToUrl($file), 'test');
 
 	// Simulate embedded (request uri doesn't reference g2 install dir)
 	$urlGenerator = new GalleryUrlGenerator();
@@ -229,8 +239,9 @@ class UtilitiesTest extends GalleryTestCase {
 	$gallery->setUrlGenerator($urlGenerator);
 	$_SERVER['REQUEST_URI'] = '/testcms/phpunit_test.php?test=on&foo=bar';
 
-	$this->assertEquals('http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
-			    GalleryUtilities::convertPathToUrl($file), 'embed');
+	$this->assertEquals(
+	    'http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
+	    GalleryUtilities::convertPathToUrl($file), 'embed');
 
 	// Simulate apache alias (/g2test -> this g2 dir, not under docroot)
 	$_SERVER['DOCUMENT_ROOT'] = '/g2testroot';
@@ -239,8 +250,9 @@ class UtilitiesTest extends GalleryTestCase {
 	$urlGenerator->init('phpunit_test.php');
 	$gallery->setUrlGenerator($urlGenerator);
 
-	$this->assertEquals('http://example.com/g2test/modules/core/test/phpunit/UtilitiesTest.class',
-			    GalleryUtilities::convertPathToUrl($file), 'alias');
+	$this->assertEquals(
+	    'http://example.com/g2test/modules/core/test/phpunit/UtilitiesTest.class',
+	    GalleryUtilities::convertPathToUrl($file), 'alias');
     }
 
     function testRequireOnce() {
@@ -262,8 +274,8 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(array(400, 300), $results);
 
 	// make sure ints are returned even if size param is a string
-	$results = GalleryUtilities::shrinkDimensionsToFit(150, 200, "150");
-	$this->assertEquals(array(113, 150), $results);
+	$results = GalleryUtilities::shrinkDimensionsToFit(150, 201, "150");
+	$this->assertEquals(array(112, 150), $results);
 	$this->assertEquals(150, $results[1]);
     }
 
@@ -351,25 +363,25 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testGetRemoteHostAddress() {
 	global $gallery;
-	
+
 	foreach (array('HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR') as $key) {
-            unset($_SERVER[$key]);
+	    unset($_SERVER[$key]);
 	}
-	
+
 	$ip = GalleryUtilities::getRemoteHostAddress();
 	$this->assertEquals($ip, null, 'Unavailable IP');
-	 
+
 	$_SERVER['REMOTE_ADDR'] = '111.222.333.444';
-        $ip = GalleryUtilities::getRemoteHostAddress();
-        $this->assertEquals($ip, '111.222.333.444', 'IP From REMOTE_ADDR');
+	$ip = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals($ip, '111.222.333.444', 'IP From REMOTE_ADDR');
 
-        $_SERVER['HTTP_CLIENT_IP'] = '222.333.444.555';
-        $ip = GalleryUtilities::getRemoteHostAddress();
-        $this->assertEquals($ip, '222.333.444.555', 'IP From HTTP_CLIENT_IP');
+	$_SERVER['HTTP_CLIENT_IP'] = '222.333.444.555';
+	$ip = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals($ip, '222.333.444.555', 'IP From HTTP_CLIENT_IP');
 
-        $_SERVER['HTTP_X_FORWARDED_FOR'] = '333.444.555.666';
-        $ip = GalleryUtilities::getRemoteHostAddress();
-        $this->assertEquals($ip, '333.444.555.666', 'IP From HTTP_X_FORWARDED_FOR');
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '333.444.555.666';
+	$ip = GalleryUtilities::getRemoteHostAddress();
+	$this->assertEquals($ip, '333.444.555.666', 'IP From HTTP_X_FORWARDED_FOR');
     }
 
     function testIsPathInList() {
@@ -399,72 +411,99 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testHtmlEntityDecode() {
-	$result = GalleryUtilities::htmlEntityDecode('&lt;a href=&quot;javascript:alert(&#039;hi&#039;)' .
-						     '&quot;&gt;yo&lt;/a&gt;');
+	$result = GalleryUtilities::htmlEntityDecode(
+	    '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
 
     function testEntityTruncate() {
 	/* Basic substring tests */
-	$this->assertEquals('abcdef', GalleryUtilities::entityTruncate('abcdef', 6, false, '...', false), 1);
-	$this->assertEquals('', GalleryUtilities::entityTruncate('abcdef', 0, false, '...', false), 2);
+	$this->assertEquals('abcdef',
+	    GalleryUtilities::entityTruncate('abcdef', 6, false, '...', false), 1);
+	$this->assertEquals('',
+	    GalleryUtilities::entityTruncate('abcdef', 0, false, '...', false), 2);
 
 	/* truncate to 5 entities, break up words */
-	$this->assertEquals('&amp;b...', GalleryUtilities::entityTruncate('&amp;bcdef', 5, true, '...', true), 3.1);
+	$this->assertEquals('&amp;b...',
+	    GalleryUtilities::entityTruncate('&amp;bcdef', 5, true, '...', true), 3.1);
 
 	/* truncate to 9 characters, break up words */
-	$this->assertEquals('&amp;b...', GalleryUtilities::entityTruncate('&amp;bcdef', 9, false, '...', true), 3.2);
+	$this->assertEquals('&amp;b...',
+	    GalleryUtilities::entityTruncate('&amp;bcdef', 9, false, '...', true), 3.2);
 
 	/* 9 entities with no truncation marker, break up words */
-	$this->assertEquals('&amp;bcdefghi', GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, true, '', true), 4.1);
-	
+	$this->assertEquals('&amp;bcdefghi',
+	    GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, true, '', true), 4.1);
+
 	/* 9 entities with a 4 char truncation marker, break up words */
-	$this->assertEquals('&amp;bcde....', GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, true, '....', true), 4.2);
+	$this->assertEquals('&amp;bcde....',
+	    GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, true, '....', true), 4.2);
 
 	/* 9 characters with no truncation marker, break up words */
-	$this->assertEquals('&amp;bcde', GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, false, '', true), 5.1);
-	
+	$this->assertEquals('&amp;bcde',
+	    GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, false, '', true), 5.1);
+
 	/* 9 characters with a 4 char truncation marker, break up words */
-	$this->assertEquals('&amp;....', GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, false, '....', true), 5.2);
+	$this->assertEquals('&amp;....',
+	    GalleryUtilities::entityTruncate('&amp;bcdefghij', 9, false, '....', true), 5.2);
 
 	/* 9 entities with no truncation marker, don't break words */
-	$this->assertEquals('&amp;bc', GalleryUtilities::entityTruncate('&amp;bc defghij', 9, true, '', false), 6.1);
-	$this->assertEquals('&amp;bc defgh', GalleryUtilities::entityTruncate('&amp;bc defgh', 9, true, '', false), 6.2);
-	
- 	/* 9 entities with a 4 char truncation marker, don't break words */
- 	$this->assertEquals('&amp;bc....', GalleryUtilities::entityTruncate('&amp;bc defghij', 9, true, '....', false), 6.3);
-	$this->assertEquals('&amp;bc defg', GalleryUtilities::entityTruncate('&amp;bc defg', 9, true, '....', false), 6.4);
+	$this->assertEquals('&amp;bc',
+	    GalleryUtilities::entityTruncate('&amp;bc defghij', 9, true, '', false), 6.1);
+	$this->assertEquals('&amp;bc defgh',
+	    GalleryUtilities::entityTruncate('&amp;bc defgh', 9, true, '', false), 6.2);
+
+	/* 9 entities with a 4 char truncation marker, don't break words */
+	$this->assertEquals('&amp;bc....',
+	    GalleryUtilities::entityTruncate('&amp;bc defghij', 9, true, '....', false), 6.3);
+	$this->assertEquals('&amp;bc defg',
+	    GalleryUtilities::entityTruncate('&amp;bc defg', 9, true, '....', false), 6.4);
 
 	/* 9 characters with no truncation marker, don't break words */
-	$this->assertEquals('&amp;bc', GalleryUtilities::entityTruncate('&amp;bc defghij', 9, false, '', false), 7.1);
-	$this->assertEquals('&amp;b cd', GalleryUtilities::entityTruncate('&amp;b cd efgh', 9, false, '', false), 7.2);
-	
+	$this->assertEquals('&amp;bc',
+	    GalleryUtilities::entityTruncate('&amp;bc defghij', 9, false, '', false), 7.1);
+	$this->assertEquals('&amp;b cd',
+	    GalleryUtilities::entityTruncate('&amp;b cd efgh', 9, false, '', false), 7.2);
+
 	/* 12 characters with a 4 char truncation marker, don't break words */
-	$this->assertEquals('&amp;foo....', GalleryUtilities::entityTruncate('&amp;foo barzz', 12, false, '....', false), 7.3);
-	$this->assertEquals('&amp;foo bar', GalleryUtilities::entityTruncate('&amp;foo bar', 12, false, '....', false), 7.4);
-	$this->assertEquals('&amp;fo ....', GalleryUtilities::entityTruncate('&amp;fo barrr', 12, false, '....', false), 7.5);
+	$this->assertEquals('&amp;foo....',
+	    GalleryUtilities::entityTruncate('&amp;foo barzz', 12, false, '....', false), 7.3);
+	$this->assertEquals('&amp;foo bar',
+	    GalleryUtilities::entityTruncate('&amp;foo bar', 12, false, '....', false), 7.4);
+	$this->assertEquals('&amp;fo ....',
+	    GalleryUtilities::entityTruncate('&amp;fo barrr', 12, false, '....', false), 7.5);
 
 	/* Pathological cases */
 
 	/* 3 characters, don't break words: we can only show the truncation marker */
-	$this->assertEquals('...', GalleryUtilities::entityTruncate('&amp;bcdef', 3, false, '...', false), 8.1);
+	$this->assertEquals('...',
+	    GalleryUtilities::entityTruncate('&amp;bcdef', 3, false, '...', false), 8.1);
 
 	/* 2 characters, 3 char truncation marker, don't break words: we can't show anything */
-	$this->assertEquals('', GalleryUtilities::entityTruncate('&amp;bcdef', 2, false, '...', false), 8.2);
+	$this->assertEquals('',
+	    GalleryUtilities::entityTruncate('&amp;bcdef', 2, false, '...', false), 8.2);
 
- 	/* 5 characters, don't break words, no truncation marker, we must split the word */
- 	$this->assertEquals('longw', GalleryUtilities::entityTruncate('longword', 5, false, '', false), 8.31);
- 	$this->assertEquals('long&amp;', GalleryUtilities::entityTruncate('long&amp;word', 5, true, '', true), 8.32);
- 	$this->assertEquals('long&amp;', GalleryUtilities::entityTruncate('long&amp;word', 5, true, '', false), 8.33);
- 	$this->assertEquals('long', GalleryUtilities::entityTruncate('long&amp;word', 5, false, '', true), 8.34);
- 	$this->assertEquals('long', GalleryUtilities::entityTruncate('long&amp;word', 5, false, '', false), 8.35);
+	/* 5 characters, don't break words, no truncation marker, we must split the word */
+	$this->assertEquals('longw',
+	    GalleryUtilities::entityTruncate('longword', 5, false, '', false), 8.31);
+	$this->assertEquals('long&amp;',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, true, '', true), 8.32);
+	$this->assertEquals('long&amp;',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, true, '', false), 8.33);
+	$this->assertEquals('long',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, false, '', true), 8.34);
+	$this->assertEquals('long',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, false, '', false), 8.35);
 
 	/* More of the above, but with truncation markers */
- 	$this->assertEquals('lon..', GalleryUtilities::entityTruncate('long&amp;word', 5, false, '..', true), 8.36);
- 	$this->assertEquals('lon..', GalleryUtilities::entityTruncate('long&amp;word', 5, false, '..', false), 8.37);
+	$this->assertEquals('lon..',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, false, '..', true), 8.36);
+	$this->assertEquals('lon..',
+	    GalleryUtilities::entityTruncate('long&amp;word', 5, false, '..', false), 8.37);
 
- 	/* 2 characters, ok to break words, no truncation marker, we can show the first two chars */
- 	$this->assertEquals('lo', GalleryUtilities::entityTruncate('longword', 2, false, '', true), 8.4);
+	/* 2 characters, ok to break words, no truncation marker, we can show the first two chars */
+	$this->assertEquals('lo',
+	    GalleryUtilities::entityTruncate('longword', 2, false, '', true), 8.4);
 
 	/* Test some long strings */
 
@@ -476,37 +515,56 @@ class UtilitiesTest extends GalleryTestCase {
 	$inputString = 'Lane signing &quot;baby&quot; Cali, which is dually amazing here';
 	$expectedResult = 'Lane signing &quot;baby&quot; Cali, which is...';
 	$this->assertEquals($expectedResult,
-			    GalleryUtilities::entityTruncate($inputString, 50, false, '...', false),
-			    9.1);
+	    GalleryUtilities::entityTruncate($inputString, 50, false, '...', false), 9.1);
 
 	/* Same as above, except without entities */
 	$inputString = 'Lane signing "baby" Cali, which is dually amazing here';
 	$expectedResult = 'Lane signing "baby" Cali, which is dually...';
 	$this->assertEquals($expectedResult,
-			    GalleryUtilities::entityTruncate($inputString, 50, false, '...', false), 9.2);
+	    GalleryUtilities::entityTruncate($inputString, 50, false, '...', false), 9.2);
     }
-    
+
     function testEntitySubstr() {
-	$this->assertEquals(array(6, 'abcdef'),      GalleryUtilities::entitySubstr('abcdef',  0), 1);
-	$this->assertEquals(array(3,    'def'),      GalleryUtilities::entitySubstr('abcdef',  3), 2);
-	$this->assertEquals(array(0,       ''),      GalleryUtilities::entitySubstr('abcdef',  6), 3);
-	$this->assertEquals(array(0,    false),      GalleryUtilities::entitySubstr('abcdef',  7), 4);
-	$this->assertEquals(array(6, 'abcdef'),      GalleryUtilities::entitySubstr('abcdef', -6), 5);
-	$this->assertEquals(array(2,     'ef'),      GalleryUtilities::entitySubstr('abcdef', -2), 6);
-	$this->assertEquals(array(0,       ''),      GalleryUtilities::entitySubstr('abcdef',  0, -6), 7);
-	$this->assertEquals(array(1,      'a'),      GalleryUtilities::entitySubstr('abcdef',  0, -5), 8);
-	$this->assertEquals(array(5,  'abcde'),      GalleryUtilities::entitySubstr('abcdef',  0, -1), 9);
-	$this->assertEquals(array(0,       ''),      GalleryUtilities::entitySubstr('abcdef',  0,  0), 10);
-	$this->assertEquals(array(4,   'bcde'),      GalleryUtilities::entitySubstr('abcdef', -5, -1), 11);
-	$this->assertEquals(array(3,    'cde'),      GalleryUtilities::entitySubstr('abcdef', -4, -1), 12);
-	$this->assertEquals(array(2,     'de'),      GalleryUtilities::entitySubstr('abcdef', -3, -1), 13);
-	$this->assertEquals(array(1,      'e'),      GalleryUtilities::entitySubstr('abcdef', -2, -1), 14);
-	$this->assertEquals(array(4,   'bcde'),      GalleryUtilities::entitySubstr('abcdef',  1,  4), 15);
-	$this->assertEquals(array(7, '&amp;abcdef'), GalleryUtilities::entitySubstr('&amp;abcdef', -7), 16);
-	$this->assertEquals(array(7, 'abc&amp;def'), GalleryUtilities::entitySubstr('abc&amp;def', -7), 17);
-	$this->assertEquals(array(6, 'abcdef'),      GalleryUtilities::entitySubstr('&amp;abcdef', -6), 18);
-	$this->assertEquals(array(2, 'a&amp;'),      GalleryUtilities::entitySubstr('&amp;a&amp;bcdef', 1, 2), 19);
-	$this->assertEquals(array(3, 'abc'),         GalleryUtilities::entitySubstr('&amp;abcdef', 1, 3), 20);
+	$this->assertEquals(array(6, 'abcdef'),
+	    GalleryUtilities::entitySubstr('abcdef',  0), 1);
+	$this->assertEquals(array(3, 'def'),
+	    GalleryUtilities::entitySubstr('abcdef',  3), 2);
+	$this->assertEquals(array(0, ''),
+	    GalleryUtilities::entitySubstr('abcdef',  6), 3);
+	$this->assertEquals(array(0, false),
+	    GalleryUtilities::entitySubstr('abcdef',  7), 4);
+	$this->assertEquals(array(6, 'abcdef'),
+	    GalleryUtilities::entitySubstr('abcdef', -6), 5);
+	$this->assertEquals(array(2, 'ef'),
+	    GalleryUtilities::entitySubstr('abcdef', -2), 6);
+	$this->assertEquals(array(0, ''),
+	    GalleryUtilities::entitySubstr('abcdef',  0, -6), 7);
+	$this->assertEquals(array(1, 'a'),
+	    GalleryUtilities::entitySubstr('abcdef',  0, -5), 8);
+	$this->assertEquals(array(5, 'abcde'),
+	    GalleryUtilities::entitySubstr('abcdef',  0, -1), 9);
+	$this->assertEquals(array(0, ''),
+	    GalleryUtilities::entitySubstr('abcdef',  0,  0), 10);
+	$this->assertEquals(array(4, 'bcde'),
+	    GalleryUtilities::entitySubstr('abcdef', -5, -1), 11);
+	$this->assertEquals(array(3, 'cde'),
+	    GalleryUtilities::entitySubstr('abcdef', -4, -1), 12);
+	$this->assertEquals(array(2, 'de'),
+	    GalleryUtilities::entitySubstr('abcdef', -3, -1), 13);
+	$this->assertEquals(array(1, 'e'),
+	    GalleryUtilities::entitySubstr('abcdef', -2, -1), 14);
+	$this->assertEquals(array(4, 'bcde'),
+	    GalleryUtilities::entitySubstr('abcdef',  1,  4), 15);
+	$this->assertEquals(array(7, '&amp;abcdef'),
+	    GalleryUtilities::entitySubstr('&amp;abcdef', -7), 16);
+	$this->assertEquals(array(7, 'abc&amp;def'),
+	    GalleryUtilities::entitySubstr('abc&amp;def', -7), 17);
+	$this->assertEquals(array(6, 'abcdef'),
+	    GalleryUtilities::entitySubstr('&amp;abcdef', -6), 18);
+	$this->assertEquals(array(2, 'a&amp;'),
+	    GalleryUtilities::entitySubstr('&amp;a&amp;bcdef', 1, 2), 19);
+	$this->assertEquals(array(3, 'abc'),
+	    GalleryUtilities::entitySubstr('&amp;abcdef', 1, 3), 20);
     }
 
     function testCreateAlbumTree() {
@@ -546,7 +604,7 @@ class UtilitiesTest extends GalleryTestCase {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 
-        $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
+	$_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
 	    array('name' => 'testfile.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,
@@ -561,7 +619,7 @@ class UtilitiesTest extends GalleryTestCase {
 				  'size' => $platform->filesize(__FILE__)),
 			    $file);
 
-        $_FILES['testfile'] =
+	$_FILES['testfile'] =
 	    array('name' => 'testfile.txt',
 		  'type' => 'text/plain',
 		  'tmp_name' => __FILE__,
@@ -593,42 +651,57 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     function testIsCompatibleWithApi() {
-	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 8)), 'same');
-	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 9)), 'minor bigger');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 8), array(0, 8)), 'major bigger');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 7)), 'minor smaller');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 0), array(1, 0)), 'major smaller');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 3), array(1, 2)), 'both smaller');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 2), array(2, 3)), 'both bigger');
+	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 8)),
+	    'same');
+	$this->assert( GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 9)),
+	    'minor bigger');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 8), array(0, 8)),
+	    'major bigger');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(0, 8), array(0, 7)),
+	    'minor smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 0), array(1, 0)),
+	    'major smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2, 3), array(1, 2)),
+	    'both smaller');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1, 2), array(2, 3)),
+	    'both bigger');
 	$this->assert(!GalleryUtilities::isCompatibleWithApi(1, 2), 'input error 1');
 	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(1), array(2)), 'input error 2');
 	$this->assert(!GalleryUtilities::isCompatibleWithApi(array(2), array(2)), 'input error 3');
-	$this->assert(!GalleryUtilities::isCompatibleWithApi(array('1', '2'), array('1', 2)), 'input error 4');
+	$this->assert(!GalleryUtilities::isCompatibleWithApi(array('1', '2'), array('1', 2)),
+	    'input error 4');
     }
 
     function testGetPhpIniBool() {
 	$iniVal = ini_get('define_syslog_variables');
 
 	$oldval = ini_set('define_syslog_variables', '');
-	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'Blank should be false');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    'Blank should be false');
 
 	$oldval = ini_set('define_syslog_variables', 'off');
-	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'Off should be false');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    'Off should be false');
 
 	$oldval = ini_set('define_syslog_variables', '0');
-	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), '0 should be false');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    '0 should be false');
 
 	$oldval = ini_set('define_syslog_variables', false);
-	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'false should be false');
+	$this->assert(!GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    'false should be false');
 
 	$oldval = ini_set('define_syslog_variables', 'on');
-	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'On should be true');
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    'On should be true');
 
 	$oldval = ini_set('define_syslog_variables', '1');
-	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), '1 should be true');
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    '1 should be true');
 
 	$oldval = ini_set('define_syslog_variables', true);
-	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'), 'true should be true');
+	$this->assert( GalleryUtilities::getPhpIniBool('define_syslog_variables'),
+	    'true should be true');
 
 	$oldval = ini_set('define_syslog_variables', $iniVal);
     }
@@ -637,11 +710,15 @@ class UtilitiesTest extends GalleryTestCase {
 	$data['google'][] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
 	$data['google'][] = 'Googlebot/2.1 (+http://www.googlebot.com/bot.html)';
 	$data['google'][] = 'Mediapartners-Google/2.1 (+http://www.googlebot.com/bot.html)';
-	
-	$data['yahoo'][] = 'YahooSeeker/1.0 (compatible; Mozilla 4.0; MSIE 5.5; http://help.yahoo.com/help/us/shop/merchant/)';
-	$data['yahoo'][] = 'YahooSeeker/1.0 (compatible; Mozilla 4.0; MSIE 5.5; http://search.yahoo.com/yahooseeker.html)';
-	$data['yahoo'][] = 'YahooSeeker/1.1 (compatible; Mozilla 4.0; MSIE 5.5; http://help.yahoo.com/help/us/shop/merchant/)';
-	$data['yahoo'][] = 'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)';
+
+	$data['yahoo'][] = 'YahooSeeker/1.0 (compatible; Mozilla 4.0; MSIE 5.5; '
+	    . 'http://help.yahoo.com/help/us/shop/merchant/)';
+	$data['yahoo'][] = 'YahooSeeker/1.0 (compatible; Mozilla 4.0; MSIE 5.5; '
+	    . 'http://search.yahoo.com/yahooseeker.html)';
+	$data['yahoo'][] = 'YahooSeeker/1.1 (compatible; Mozilla 4.0; MSIE 5.5; '
+	    . 'http://help.yahoo.com/help/us/shop/merchant/)';
+	$data['yahoo'][] = 'Mozilla/5.0 (compatible; Yahoo! Slurp; '
+	    . 'http://help.yahoo.com/help/us/ysearch/slurp)';
 
 	$data['askjeeves'][] = 'Mozilla/2.0 (compatible; Ask Jeeves)';
 	$data['askjeeves'][] = 'Mozilla/2.0 (compatible; Ask Jeeves/Teoma)';
@@ -649,33 +726,45 @@ class UtilitiesTest extends GalleryTestCase {
 	$data['microsoft'][] = 'msnbot/0.3 (+http://search.msn.com/msnbot.htm)';
 	$data['microsoft'][] = 'msnbot/0.11 (+http://search.msn.com/msnbot.htm)';
 
-	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) Gecko/20041001 Firefox/0.10.1';
-	$data['null'][] = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0';
-	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.7.5) Gecko/20041108 Firefox/1.0';
-	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; MSN 9.0;MSN 9.1; MSNbMSNI; MSNmen-us; MSNcIA; MPLUS)';
-	$data['null'][] = 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0';
+	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; rv:1.7.3) '
+	    . 'Gecko/20041001 Firefox/0.10.1';
+	$data['null'][] = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.7.5) '
+	    . 'Gecko/20041107 Firefox/1.0';
+	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; de-DE; rv:1.7.5) '
+	    . 'Gecko/20041108 Firefox/1.0';
+	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; '
+	    . 'SV1; MSN 9.0;MSN 9.1; MSNbMSNI; MSNmen-us; MSNcIA; MPLUS)';
+	$data['null'][] = 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X Mach-O; en-US; rv:1.7.5) '
+	    . 'Gecko/20041107 Firefox/1.0';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; MSIECrawler)';
-	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
-	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.0.3705)';
-	$data['null'][] = 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) AppleWebKit/125.5.5 (KHTML, like Gecko) Safari/125.12';
-	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0';
+	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; '
+	    . 'SV1; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; '
+	    . 'SV1; .NET CLR 1.0.3705)';
+	$data['null'][] = 'Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en) '
+	    . 'AppleWebKit/125.5.5 (KHTML, like Gecko) Safari/125.12';
+	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.7.5) '
+	    . 'Gecko/20041107 Firefox/1.0';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows 98)';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0; .NET CLR 1.1.4322)';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)';
 	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)';
-	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) Gecko/20041107 Firefox/1.0';
-	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)';
+	$data['null'][] = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.5) '
+	    . 'Gecko/20041107 Firefox/1.0';
+	$data['null'][] = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; '
+	    . 'SV1; .NET CLR 1.1.4322)';
 
 	foreach ($data as $key => $userAgents) {
 	    foreach ($userAgents as $userAgent) {
 		if ($key == 'null') {
 		    $key = null;
 		}
-		
+
 		$_SERVER['HTTP_USER_AGENT'] = $userAgent;
-		$this->assertEquals($key, GalleryUtilities::identifySearchEngine($userAgent), $userAgent);
+		$this->assertEquals($key, GalleryUtilities::identifySearchEngine($userAgent),
+				    $userAgent);
 	    }
 	}
     }
@@ -694,21 +783,21 @@ class UtilitiesTest extends GalleryTestCase {
 			    GalleryUtilities::unicodeValueToUtf8Value('xF1'),
 			    'hex');
     }
-    
+
     function testUnicodeEntitiesToUtf8() {
 	$this->assertEquals("foo \xe0\xac\x93 bar",
-            GalleryUtilities::unicodeEntitiesToUtf8('foo &#2835; bar'));
+	    GalleryUtilities::unicodeEntitiesToUtf8('foo &#2835; bar'));
 
 	$this->assertEquals("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne",
-            GalleryUtilities::unicodeEntitiesToUtf8('accentu&#233;s. &#231;&#224; donne'));
+	    GalleryUtilities::unicodeEntitiesToUtf8('accentu&#233;s. &#231;&#224; donne'));
     }
 
     function testUtf8ToUnicodeEntities() {
 	$this->assertEquals('foo &#2835; bar',
-            GalleryUtilities::utf8ToUnicodeEntities("foo \xe0\xac\x93 bar"));
+	    GalleryUtilities::utf8ToUnicodeEntities("foo \xe0\xac\x93 bar"));
 
 	$this->assertEquals('accentu&#233;s. &#231;&#224; donne',
-            GalleryUtilities::utf8ToUnicodeEntities("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne"));
+	    GalleryUtilities::utf8ToUnicodeEntities("accentu\xc3\xa9s. \xc3\xa7\xc3\xa0 donne"));
     }
 
     function testUtf8Substring() {
@@ -795,7 +884,7 @@ class UtilitiesTestPlatform {
     }
 }
 
-require_once(dirname(__FILE__) . '/../../classes/GalleryPlatform/WinNtPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
 class UtilitiesTestWinPlatform extends WinNtPlatform {
     function realpath($file) {
 	/* These are used in testIsPathInList */
