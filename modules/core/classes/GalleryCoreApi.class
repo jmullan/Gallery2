@@ -231,6 +231,22 @@ class GalleryCoreApi {
     }
 
     /**
+     * Remove all plugin entries for a given parameter and value pair
+     *
+     * @param string the type of the plugin
+     * @param string the id of the plugin
+     * @param string the name of the parameter
+     * @param mixed the value to be matched
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function removePluginParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
+	return GalleryPluginHelper_medium::removeParameterByValue($pluginType, $pluginId, $parameterName, $parameterValue);
+    }
+
+
+    /**
      * Get the status of all plugins of a given type
      *
      * @param string the plugin type (eg 'module', 'layout')

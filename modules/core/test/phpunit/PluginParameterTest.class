@@ -179,7 +179,86 @@ class PluginParameterTest extends GalleryTestCase {
 
 	$this->assertEquals(array(), $params);
     }
-    
+
+    function testRemovePluginParameterByValue() {
+	/* Set test parameters */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'unitTestModule', 'foo1', 'bar', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'unitTestModule', 'foo1', 'bar', 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'unitTestModule', 'foo2', 'baz', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'unitTestModule', 'foo3', 'bay', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that parameters were set */
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($param, 'Parameter "bar" should not be empty - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($param, 'Parameter "bar" should not be empty - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo2', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($param, 'Parameter "foo2" should not be empty - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo3', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($param, 'Parameter "bay" should not be empty - \'' . $param . '\'');
+
+	/* Remove 'bar' */
+	$ret = GalleryCoreApi::removePluginParameterByValue('module', 'unitTestModule', 'foo1', 'bar');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that 'foo1' => 'bar' is deleted and other values remain */
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($param), 'Parameter "foo1" (0) should be empty - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo1', 1);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($param), 'Parameter "foo1" (1) should be empty - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo2', 0);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert( !empty($param), 'Parameter "foo2" should be "baz" - \'' . $param . '\'');
+
+	list ($ret, $param) = GalleryCoreApi::getPluginParameter('module', 'unitTestModule', 'foo3', 'bay');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert( !empty($param), 'Parameter "foo3" should be "bay" - \'' . $param . '\'');
+    }
+
 }
 
 ?>
