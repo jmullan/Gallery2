@@ -114,9 +114,17 @@ class CreateRandomTreeTestCase extends TestCase {
 	}
 
 	while ($this->_itemCount < $this->_maxItems) {
-	    $ret = $this->_createRandomAlbum($rootId, $lockIds);
+	    $subLockIds = array();
+	    
+	    $ret = $this->_createRandomAlbum($rootId, $subLockIds);
 	    if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockIds);
+		GalleryCoreApi::releaseLocks($subLockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $ret = GalleryCoreApi::releaseLocks($subLockIds);
+	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -312,11 +320,17 @@ class CreateRandomTreeTestCase extends TestCase {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("<h3> Create $max sub-albums </h3>");
 	}
+	$subLockIds = array();
 	for ($i = 0; $i < $max; $i++) {
-	    $ret = $this->_createRandomAlbum($album->getId(), $lockIds);
+	    $ret = $this->_createRandomAlbum($album->getId(), $subLockIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($subLockIds);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	return GalleryStatus::success();
