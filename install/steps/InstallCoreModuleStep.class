@@ -1,0 +1,96 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class InstallCoreModuleStep extends InstallStep {
+    function stepName() {
+	return _('Install Gallery Core');
+    }
+
+    function loadTemplateData(&$templateData) {
+	require(dirname(__FILE__) . '/../../init.php');
+	$ret = GalleryInitFirstPass(array('debug' => 'buffered',
+					  'noDatabase' => 1));
+	if ($ret->isError()) {
+	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
+	    $templateData['stackTrace'] = $ret->getAsHtml();
+	}
+	$gallery =& $GLOBALS['gallery'];
+
+	// We want to avoid using the cache
+	GalleryDataCache::setFileCachingEnabled(false);
+	
+	if (empty($templateData['errors'])) {
+	    /*
+	     * Check to see if the database tables already exist.  If they do then
+	     * we should assume that they said that it was ok to reuse existing tables
+	     * in the Database setup step.  Which means we don't have to perform an
+	     * install now.  Use a separate storage instance to avoid possibly
+	     * interfering with the main storage instance's transaction (which causes
+	     * problems on Postgres).
+	     */
+	    $storage =& $gallery->getStorage();
+	    list ($ret, $isInstalled) = $storage->isInstalled();
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to communicate with the database');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
+
+	if (empty($templateData['errors'])) {
+	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to load the core module');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
+	
+	if (empty($templateData['errors'])) {
+	    if (!$isInstalled) {
+		$ret = $core->installOrUpgrade(true);
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _('Unable to install the core module');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+		
+		$ret = $storage->commitTransaction();
+		if ($ret->isError()) {
+		    $templateData['errors'][] = _('Unable to commit database transaction');
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		}
+	    } else {
+		$storage->rollbackTransaction(); // Ignore any errors from this
+	    }
+	}
+
+	if (empty($templateData['errors'])) {
+	    $this->setComplete(true);
+	}
+
+	if (empty($templateData['errors'])) {
+	    $templateData['bodyFile'] = 'InstallCoreModuleSuccess.html';
+	} else {
+	    $templateData['debug'] = $gallery->getDebugBuffer();
+	    $templateData['bodyFile'] = 'InstallCoreModuleError.html';
+	}
+    }
+}
+?>

@@ -1,0 +1,140 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Panorama
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Load required classes
+ */
+require_once(dirname(__FILE__) . '/../../classes/PanoramaHelper.class');
+
+/**
+ * PanoramaItemEdit controller tests
+ * Also tests PanoramaHelper::fetchViewableImages
+ * @package Panorama
+ * @subpackage PHPUnit
+ */
+class PanoramaItemEditPluginTest extends ItemEditPluginTestCase {
+
+    function PanoramaItemEditPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'panorama', 'PanoramaItemEdit');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$item->setMimeType('image/gif');
+	$ret = PanoramaHelper::assignEntityType($item, true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_item = $item;
+
+	list ($ret, $derivative) =
+	    $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = PanoramaHelper::assignEntityType($derivative, true);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_derivative = $derivative;
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	parent::tearDown();
+    }
+
+    function testPanoramaOff() {
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest($this->_item, $this->_derivative);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('GalleryPhotoItem', $item->getEntityType());
+
+	list ($ret, $item) = $this->_derivative->refresh();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('GalleryDerivativeImage', $item->getEntityType());
+    }
+
+    function testPanoramaOn() {
+
+	GalleryUtilities::putRequestVariable('form[isPanorama]', 1);
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	$results = $this->handleRequest($this->_item, $this->_derivative);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	list ($ret, $item) = $this->_item->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('PanoramaPhotoItem', $item->getEntityType());
+
+	list ($ret, $item) = $this->_derivative->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('PanoramaDerivativeImage', $item->getEntityType());
+    }
+
+    function testHelper() {
+	list ($ret, $images) = PanoramaHelper::fetchViewableImages(array($this->_item));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($images[$this->_item->getId()]), 'Missing result');
+	$this->assertEquals($this->_derivative->getId(),
+			    $images[$this->_item->getId()]->getId(), 'Id');
+    }
+}
+?>

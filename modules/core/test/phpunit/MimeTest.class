@@ -1,0 +1,83 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Mime type functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class MimeTest extends GalleryTestCase {
+
+    function MimeTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     *
+     */
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+    }
+
+    /**
+     *
+     */
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    function testGetMimeType() {
+	$this->assertEquals('image/jpeg', GalleryCoreApi::getMimeType('file.jpg'));
+    }
+    
+    function testConvertExtensionToMime() {
+	$this->assertEquals('image/jpeg',
+			    GalleryCoreApi::convertExtensionToMime('jpg'));
+	$this->assertEquals('image/jpeg',
+			    GalleryCoreApi::convertExtensionToMime('JPG'));
+    }
+
+    function testConvertMimeToExtension() {
+	$this->assertEquals('jpg', GalleryCoreApi::convertMimeToExtension('image/jpeg'));
+	$this->assertEquals('avi', GalleryCoreApi::convertMimeToExtension('video/x-msvideo'));
+    }
+
+    function testGetMimeTypeMap() {
+	$mimeMap = GalleryCoreApi::getMimeTypeMap();
+	$this->assertEquals(array('jpe', 'jpeg', 'jpg'), $mimeMap['image/jpeg']);
+	$this->assertEquals(array('avi'), $mimeMap['video/x-msvideo']);
+    }
+    
+    function testIsViewableMimeType() {
+	$this->assertEquals(true, GalleryCoreApi::isViewableMimeType('image/jpeg'));
+	$this->assertEquals(false, GalleryCoreApi::isViewableMimeType('image/tiff'));
+    }
+}
+?>

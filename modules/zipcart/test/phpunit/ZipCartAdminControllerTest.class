@@ -1,0 +1,168 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ZipCart
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * ZipCart Admin controller tests
+ * @package ZipCart
+ * @subpackage PHPUnit
+ */
+class ZipCartAdminControllerTest extends GalleryControllerTestCase {
+
+    function ZipCartAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'zipcart:Admin');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_saveParameters['path']) =
+	    GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setPlatform(new ZipCartAdminControllerTestPlatform());
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'zipcart', 'path', $this->_saveParameters['path']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSaveMissingPath() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array('form[error][path][missing]')),
+			    $results);
+    }
+
+    function testTestMissingPath() {
+	GalleryUtilities::putRequestVariable('form[action][test]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array('form[error][path][missing]')),
+			    $results);
+    }
+
+    function testSaveBadPath() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/zip');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array('form[error][path][badPath]')),
+			    $results);
+    }
+
+    function testTestBadPath() {
+	GalleryUtilities::putRequestVariable('form[action][test]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/zip');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array('form[error][path][badPath]')),
+			    $results);
+    }
+
+    function testSaveGoodPath() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/zip');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	$this->assertEquals(array(GalleryStatus::success(), '/validPath/zip'),
+			    GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path'));
+    }
+
+    function testTestGoodPath() {
+	GalleryUtilities::putRequestVariable('form[action][test]', 1);
+	GalleryUtilities::putRequestVariable('form[path]', '/validPath/zip');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'zipcart:Admin'),
+				  'status' => array(),
+				  'error' => array()),
+				  $results);
+    }
+}
+
+/**
+ * Test platform for this test
+ *
+ * @package ZipCart
+ * @subpackage PHPUnit
+ */ 
+class ZipCartAdminControllerTestPlatform {
+    function is_executable($path) {
+	switch ($path) {
+	case '/validPath/zip':
+	    return true;
+	}
+	return false;
+    }
+}
+?>

@@ -1,0 +1,96 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package ImageFrame
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test ImageFrameInterface functionality
+ *
+ * @package ImageFrame
+ * @subpackage PHPUnit
+ */
+class ImageFrameTest extends GalleryTestCase {
+
+    function ImageFrameTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+	if ($ret->isError() || !isset($module)) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $imageframe) =
+	    GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_0', 'ImageFrameImpl');
+	if ($ret->isError() || !isset($imageframe)) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_imageframe = $imageframe;
+    }
+
+
+    function testImageFrameList() {
+	list ($ret, $list) = $this->_imageframe->getImageFrameList();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($list['none']) && isset($list['dots']) && isset($list['wood']));
+    }
+
+    function testImageFrameData() {
+	list ($ret, $template, $style, $data) =
+	    $this->_imageframe->getImageFrameData(array('none', 'dots', 'wood'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('modules/imageframe/templates/ImageFrame.tpl', $template, 'Template');
+	$this->assertEquals('modules/imageframe/templates/ImageFrameStyle.tpl', $style, 'Style');
+	$this->assertEquals(3, count($data), 'Data size');
+	$this->assertEquals(array('type'=>'none'), $data['none'], 'None');
+	$this->assertEquals('style', $data['dots']['type'], 'Dots type');
+	$this->assert(preg_match('/border.*dashed.*padding/', $data['dots']['style']), 'Dots style');
+	$this->assert(count($data['wood']) > 20 && isset($data['wood']['name']), 'Wood');
+	$this->assertEquals('http', substr($data['wood']['imageTL'], 0, 4), 'Wood TL image');
+    }
+
+    function testImageFrameSample() {
+	list ($ret, $url) = $this->_imageframe->getSampleUrl();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('http', substr($url, 0, 4), 'Url protocol');
+	list ($ret, $url) = $this->_imageframe->getSampleUrl(12345);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('http', substr($url, 0, 4), 'Url2 protocol');
+	$this->assert(preg_match('/12345/', $url), 'Url2 id');
+    }
+}
+?>

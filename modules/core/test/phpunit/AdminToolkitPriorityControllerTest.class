@@ -1,0 +1,116 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * AdminToolkitPriority controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class AdminToolkitPriorityControllerTest extends GalleryControllerTestCase {
+
+    function AdminToolkitPriorityControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:AdminToolkitPriority');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkitPriority',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 30);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkitPriority2',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 27);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkitPriority');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkitPriority2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminToolkitPriority'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSave() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[priority][27]', 'TestToolkitPriority');
+	GalleryUtilities::putRequestVariable('form[priority][30]', 'TestToolkitPriority2');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('return' => 1,
+				  'redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminToolkitPriority'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(count($list) >= 2, 'count');
+	$this->assertEquals(27, $list['TestToolkitPriority'], 'TestToolkitPriority');
+	$this->assertEquals(30, $list['TestToolkitPriority2'], 'TestToolkitPriority2');
+    }
+}
+
+/**
+ * Mock toolkits
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class TestToolkitPriority { }
+class TestToolkitPriority2 { }
+?>

@@ -1,0 +1,65 @@
+    <h1><?php print _("Upgrading the Gallery Core Module") ?></h1>
+
+    <p>
+      <?php print _("The Gallery Core Module is the heart of the Gallery application.  You can upgrade most other modules using the Site Administration interface, but this module must be handled separately in order for the upgrade to go smoothly."); ?>
+    </p>
+
+    <table width="200">
+      <tr>
+	<td>
+	  <?php print _("Currently installed"); ?>
+	</td>
+	<td>
+	  <b>
+	    <?php print $templateData['installed']['core']; ?>
+	  </b>
+	</td>
+      </tr>
+
+      <tr>
+	<td>
+	  <?php print _("New version"); ?>
+	</td>
+	<td>
+	  <b>
+	    <?php print $templateData['coreVersion']; ?>
+	  </b>
+	</td>
+      </tr>
+    </table>
+
+    <p>
+      <?php print _("Before you upgrade, we <b>strongly recommend</b> that you make a backup of your database!  If you fail to make a backup and something goes wrong, there is a strong possibility that we will not be able to help you recover your data!  Refer to the following examples:"); ?>
+    </p>
+    
+    <div class="example">
+      <h3> <?php print _("MySQL"); ?> </h3>
+      <?php printf(_("mysqldump -u%s -p<i>YourPassword</i> --opt %s > %s.sql"), 
+                   $templateData['storeConfig']['username'], 
+                   $templateData['storeConfig']['database'],
+                   $templateData['storeConfig']['database']); ?>
+    </div>
+
+    <div class="example">
+      <h3> <?php print _("PostgreSQL"); ?> </h3>
+      <?php printf(_("pg_dump %s > %s.sql"), 
+                   $templateData['storeConfig']['database'],
+                   $templateData['storeConfig']['database']); ?>
+    </div>
+
+    <form name="upgrade_form" method="post">
+      <input type="hidden" name="confirm" value="1" />
+    </form>
+
+    <p>
+      <?php print _("Once the upgrade has begun, please be patient.  If you cancel or reload the page, you may interfere with the upgrade process."); ?>
+    </p>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.upgrade_form.submit()">
+	  <?php print _('Begin Upgrade') ?>
+	</a>
+      </span>
+    </div>
+

@@ -1,0 +1,27 @@
+    <h1 class="success"><?php print _("Check Security") ?></h1>
+
+    <?php if (!$templateData['secure']): ?>
+    <p>
+      <?php printf(_("We want to make sure that your Gallery is secure.  The config.php file that this installer has edited has permissions that allow other people to write to it.  This is required because the installer qualifies as an \"other person\" when it comes to Unix file permissions.  So before you finish, you should change the permissions on this file such that other users can't write to it.  Right now your config.php has modes of %s.  We suggest that you do this:"), $templateData['modes']); ?>
+    </p>
+
+    <div class="example">
+      <pre>  <?php print _("chmod 644 $templateData[configFilePath]") ?></pre>
+    </div>
+
+    <p>
+      <?php print _("If you really want to continue, you can.  But we recommend that you take an extra moment to make sure that you're safe."); ?>
+    </p>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="?step=<?php print $currentStep->getStepNumber()?>"> <?php echo _('Check Again') ?> </a>
+      </span>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($templateData['secure']): ?>
+    <p>
+      <?php print _("We've verified that your config.php is secure.") ?>
+    </p>
+    <?php endif; ?>

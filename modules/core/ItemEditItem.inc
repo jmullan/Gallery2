@@ -1,0 +1,204 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU DataItem Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * DataItem Public License for more details.
+ * 
+ * You should have received a copy of the GNU DataItem Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Plugin for editing data common to all items
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class ItemEditItem extends ItemEditPlugin {
+
+    /**
+     * @see ItemEditPlugin::handleRequest
+     */
+    function handleRequest($form, &$item, &$preferred) {
+	global $gallery;
+
+	$status = null;
+	$error = array();
+	if (isset($form['action']['undo'])) {
+
+	    /* Take no action and we'll be redirected back to the same page which will reset the form */
+	    
+	} else if (isset($form['action']['save'])) {
+	    list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    $isRootAlbum = $item->getId() == $rootAlbumId;
+
+	    /*
+	     * Validate the input data.
+	     */
+	    $platform = $gallery->getPlatform();
+	    
+	    foreach(array('title','summary','keywords','description') as $key) {
+		if (!empty($form[$key])) {
+		    $form[$key] = trim($form[$key]);
+	        }
+	    }
+
+	    if (!$isRootAlbum) {
+		if (empty($form['pathComponent'])) {
+		    $error[] = 'form[error][pathComponent][missing]';
+		} else if (!$platform->isLegalPathComponent($form['pathComponent'])) {
+		    $error[] = 'form[error][pathComponent][invalid]';
+		}
+	    }
+
+	    if ($isRootAlbum) {
+		if (empty($form['title'])) {
+		    $error[] = 'form[error][title][missingRootTitle]';
+		}
+	    }
+	    
+	    if (empty($error)) {
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($item->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		
+		/*
+		 * It's possible to get a collision when we rename, so try that
+		 * first.  If there's no collision then make the rest of the changes.
+		 */
+		$originalPathComponent = $item->getPathComponent();
+		if (isset($form['pathComponent']) && $item->getPathComponent() != $form['pathComponent']) {	
+		    if ($isRootAlbum) {
+			GalleryCoreApi::releaseLocks($lockId);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
+		    } else {
+			$ret = $item->rename($form['pathComponent']);
+			if ($ret->isError() && !($ret->getErrorCode() & ERROR_COLLISION)) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+		    }
+		}
+
+		if ($ret->isError() && $ret->getErrorCode() & ERROR_COLLISION) {
+		    $error[] = 'form[error][pathComponent][collision]';
+		} else {
+		    $item->setTitle($form['title']);
+		    $item->setSummary($form['summary']);
+		    $item->setKeywords($form['keywords']);
+		    $item->setDescription($form['description']);
+		    $item->setSerialNumber($form['serialNumber']);
+	    
+		    $ret = $item->save();
+		    if ($ret->isError()) {
+			if (isset($form['pathComponent']) && $originalPathComponent != $form['pathComponent']) {
+			    /*
+			     * Move the file back and hope that this succeeds
+			     * since we're already in an error state
+			     */
+			    $item->rename($originalPathComponent);
+			}
+			    
+			GalleryCoreApi::releaseLocks($lockId);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+
+		    /* Prepare our status message */
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		
+		    $status = $module->translate('Changes saved successfully');
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), $error, $status);
+    }
+
+    /**
+     * @see ItemEditPlugin::loadTemplate
+     */
+    function loadTemplate(&$template, &$form, $item, $thumbnail) {
+	global $gallery;
+
+	if ($form['formName'] != 'ItemEditItem') {
+	    /* First time around, load the form with item data */
+	    $form['title'] = $item->getTitle();
+	    $form['summary'] = $item->getSummary();
+	    $form['keywords'] = $item->getKeywords();
+	    $form['description'] = $item->getDescription();
+	    $form['pathComponent'] = $item->getPathComponent();
+	    $form['formName'] = 'ItemEditItem';
+	}
+
+	list ($ret, $rootAlbumId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$can = array();
+	if ($rootAlbumId != $item->getId()) {
+	    $can['changePathComponent'] = 1;
+	}
+	
+	$ItemEditItem = array();
+	$ItemEditItem['can'] = $can;
+
+	/* Render the HTML body */
+	$template->setVariable('ItemEditItem', $ItemEditItem);
+	$template->setVariable('controller', 'core:ItemEditItem');
+
+	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditItem.tpl');
+    }
+
+    /**
+     * @see ItemEditPlugin::isSupported
+     */
+    function isSupported($item, $thumbnail) {
+	return (GalleryUtilities::isA($item, 'GalleryItem'));
+    }
+
+    /**
+     * @see ItemEditPlugin::getTitle
+     */
+    function getTitle() {
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $module->translate('General Settings'));
+    }
+}
+?>

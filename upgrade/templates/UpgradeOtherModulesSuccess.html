@@ -1,0 +1,25 @@
+    <h1><?php print _("Upgrade Other Modules") ?></h1>
+
+    <?php if (isset($templateData['upgraded'])): ?>
+    <?php foreach ($templateData['upgraded'] as $moduleId => $moduleName): ?>
+    <h2 class="success">
+      <?php print _(sprintf("Upgraded the %s module successfully", "<i>$moduleName</i>")); ?>
+    </h2>
+    <?php endforeach; ?>
+    <?php endif; ?>
+
+    <div class="go">
+      <span class="goToNext">
+        <a href="index.php?step=<?php print $currentStep->getStepNumber() ?>">
+          <?php print _('Upgrade More Modules'); ?>
+        </a>
+      </span>
+      <?php $nextStep = $stepNumber + 1 ?>
+      <span class="goToNextL">
+        <a href="index.php?step=<?php print $nextStep ?>">
+          <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
+        </a>
+      </span>
+    </div>
+
+    

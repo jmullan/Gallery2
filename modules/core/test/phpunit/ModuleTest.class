@@ -1,0 +1,209 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Module functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class ModuleTest extends GalleryTestCase {
+    var $_unregistered;
+
+    function setUp() {
+	parent::setUp();
+	
+	/* Register a new module */
+	GalleryDataCache::reset();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Install it */
+	$ret = $module->install();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_rootAlbum);
+    }
+
+    function tearDown() {
+	if (empty($this->_unregistered)) {
+	    $ret = GalleryCoreApi::removePlugin('module', 'ModuleTest');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	parent::tearDown();
+    }
+
+    function testUninstall() {
+	global $gallery;
+
+	/* Remove all permissions */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_rootAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add a token permission so that we have something tangible to compare */
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $originalBits) =
+	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
+					       $gallery->getActiveUserId(),
+					       null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Assign our permission */
+	$ret = GalleryCoreApi::addUserPermission($this->_rootAlbum->getId(),
+						 $gallery->getActiveUserId(),
+						 'moduletest.one');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'ModuleTest');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Uninstall the module */
+	$ret = $module->uninstall();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Flush cached permissions */
+	GalleryDataCache::reset();
+
+	/* Verify that the item permissions are gone. */
+	list ($ret, $newBits) =
+	    $this->_fetchPermissionBitsForItem($this->_rootAlbum->getId(),
+					       $gallery->getActiveUserId(),
+					       null);
+
+	$this->assertEquals($originalBits, $newBits, 'Permission bits not restored');
+	
+	/* Verify that the permission itself is gone */
+	list ($ret, $ids) = GalleryCoreApi::getPermissionIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	foreach ($ids as $id) {
+	    $this->assert($id != 'moduletest.one', 'Permission was not removed');
+	}
+	
+	/* TODO: How do we verify that the tables are removed successfully? */
+    }
+
+    function _fetchPermissionBitsForItem($itemId) {
+	global $gallery;
+
+	$userId = $gallery->getActiveUserId();
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	
+	$query = '
+        SELECT
+          BIT_OR([GalleryPermissionMap::permission])
+        FROM
+          [GalleryPermissionMap]
+        WHERE
+          [GalleryPermissionMap::itemId] = ?
+          AND
+          ([GalleryPermissionMap::userId] = ?
+	    OR
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
+        ';
+
+	$data = array($itemId, $userId);
+	array_splice($data, sizeof($data), 0, $groupIds);
+
+	list($ret, $searchResults) = $gallery->search($query, $data);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$storage =& $gallery->getStorage();
+
+	$permTable = array();
+	$result = $searchResults->nextResult();
+	$bits = $storage->convertBitsToInt($result[0]);
+	return array(GalleryStatus::success(), $bits);
+    }
+}
+
+class ModuleTestModule extends GalleryModule {
+    function ModuleTestModule() {
+	global $gallery;
+	
+	$this->setId('moduletest');
+	$this->setName('ModuleTest Module');
+	$this->setDescription($gallery->i18n('Unit test module'));
+	$this->setVersion('0.8');
+	$this->setGroup('data', $gallery->i18n('Gallery'));
+    }
+
+    function install() {
+	global $gallery;
+	
+	$ret = GalleryCoreApi::registerPermission($this->getId(),
+            'moduletest.one', $gallery->i18n('[test] A permission')); 
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

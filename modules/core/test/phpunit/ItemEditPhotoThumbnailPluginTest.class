@@ -1,0 +1,249 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemEditPhoto controller tests
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
+
+    function ItemEditPhotoThumbnailPluginTest($methodName) {
+	$this->ItemEditPluginTestCase($methodName, 'core', 'ItemEditPhotoThumbnail');
+    }
+
+    function setUp() {
+	global $gallery;
+
+	parent::setUp();
+
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register a dummy toolkit */
+	GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
+						      'ItemEditPhotoThumbnailPluginTestToolkit',
+						      'ItemEditPhotoThumbnailPluginTestToolkit',
+						      __FILE__);
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
+							array('test/file'),
+							'scale',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
+							array('test/file'),
+							'rotate',
+							array(array('type' => 'int',
+								    'description' => 'test')),
+							'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
+							array('test/file'),
+							'resize',
+							array(array('type' => 'int',
+								    'description' => 'test'),
+							      array('type' => 'int',
+								    'description' => 'test')),
+							'test-description',
+							'');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
+						      'ItemEditPhotoThumbnailTestItem',
+						      'ItemEditPhotoThumbnailTestItem',
+						      __FILE__,
+						      array());
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
+								 'test/file',
+								 array('width' => 640, 'height' => 480),
+								 __FILE__,
+								 'ItemEditPhotoThumbnailTestItem');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_derivative[0]) =
+	    $this->_createDerivative($this->_item, $this->_item->getId(),
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED,
+				     'rotate|90',
+				     'test/file',
+				     array('width' => 640, 'height' => 480));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_derivative[1]) =
+	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	GalleryCoreApi::unregisterFactoryImplementation('GalleryEntity', 'ItemEditPhotoThumbnailTestItem');
+
+	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Unregister */
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoThumbnailPluginTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testEditThumbnail() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
+	GalleryUtilities::putRequestVariable('form[crop][x]', '50');
+	GalleryUtilities::putRequestVariable('form[crop][y]', '50');
+	GalleryUtilities::putRequestVariable('form[crop][width]', '200');
+	GalleryUtilities::putRequestVariable('form[crop][height]', '200');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Thumbnail cropped successfully')),
+			    $results);
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('crop|7.813,10.417,31.25,41.667;scale|200',
+			    $this->_derivative[1]->getDerivativeOperations());
+    }
+
+    function testEditThumbnail2() {
+	global $gallery;
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
+	GalleryUtilities::putRequestVariable('form[crop][x]', '0');
+	GalleryUtilities::putRequestVariable('form[crop][y]', '0');
+	GalleryUtilities::putRequestVariable('form[crop][width]', '640');
+	GalleryUtilities::putRequestVariable('form[crop][height]', '480');
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Thumbnail cropped successfully')),
+			    $results);
+
+	/* Get the thumbnail and verify its operations */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// The crop operation is expressed in percentages, not in pixels
+	$this->assertEquals('crop|0,0,100,100;scale|200',
+			    $this->_derivative[1]->getDerivativeOperations());
+    }
+}
+
+/**
+ * Required by our test toolkit
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryUnknownItem.class');
+
+class ItemEditPhotoThumbnailTestItem extends GalleryUnknownItem {
+    function setWidth($width) {
+	$this->_width = $width;
+    }
+
+    function getWidth() {
+	return $this->_width;
+    }
+
+    function setHeight($height) {
+	$this->_height = $height;
+    }
+
+    function getHeight() {
+	return $this->_height;
+    }
+}
+
+/**
+ * Required by our test toolkit
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkitk
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
+
+    /**
+     * @see GalleryToolkit::performOperation()
+     * Dummy operation
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	if ($sourceFilename != $destFilename) {
+	    $platform->copy($sourceFilename, $destFilename);
+	}
+
+	$fd = $platform->fopen($destFilename, 'a');
+	fwrite($fd, $operationName);
+	$platform->fclose($fd);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
+    }
+}
+?>

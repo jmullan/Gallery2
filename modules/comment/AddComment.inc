@@ -1,0 +1,189 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package Comment
+ * @subpackage UserInterface
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Add a comment to an item.
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
+class AddCommentController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest()
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$itemId = GalleryUtilities::getRequestVariables('itemId');
+
+	/* Make sure we have permission to add a comment */
+	$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'comment.add');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$redirect = array();
+	$status = array();
+	$error = array();
+	if (isset($form['action']['add'])) {
+	    
+	    if (empty($form['subject'])) {
+		$error[] = 'form[error][subject][missing]';
+	    }
+
+	    if (empty($form['comment'])) {
+		$error[] = 'form[error][comment][missing]';
+	    }
+	    
+	    if (empty($error)) {
+		/* Add the comment */
+		list ($ret, $comment) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryComment');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		if (!isset($comment)) {
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
+		}  
+
+		$ret = $comment->create($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$comment->setCommenterId($gallery->getActiveUserId());
+		$comment->setHost(GalleryUtilities::getRemoteHostAddress());
+		$comment->setSubject($form['subject']);
+		$comment->setComment($form['comment']);
+		$comment->setDate(time());
+		
+		$ret = $comment->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Send the user to a confirmation page, for now */
+		$redirect['view'] = 'core:ItemAdmin';
+		$redirect['subView'] = 'comment:CommentChangeConfirmation';
+		$redirect['itemId'] = (int)$itemId;
+		$status['added'] = 1;
+	    }
+	} else if (isset($form['action']['preview'])) {
+	    if (empty($form['subject'])) {
+		$error[] = 'form[error][subject][missing]';
+	    }
+
+	    if (empty($form['comment'])) {
+		$error[] = 'form[error][comment][missing]';
+	    }
+
+	    /* Fall through back to the current view */
+	} else if (isset($form['action']['cancel'])) {
+	    /* Where to go on a cancel?  Go to item admin.*/
+	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['itemId'] = (int)$itemId;
+	}
+
+	/* Prepare our results */
+	if (!empty($redirect)) {
+	    $results['return'] = 1;
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'core:ItemAdmin';
+	    $results['delegate']['subView'] = 'comment:AddComment';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view will show a form to add a new comment to an item
+ *
+ * @package Comment
+ * @subpackage UserInterface
+ *
+ */
+class AddCommentView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	/* Load our item */
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Make sure we have permission to add a comment */
+	$ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'comment.add');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	$user = $gallery->getActiveUser();
+
+	if ($form['formName'] != 'AddComment') {
+	    $form['formName'] = 'AddComment';
+	    $form['subject'] = '';
+	    $form['comment'] = '';
+	}
+
+	$AddComment = array();
+	$AddComment['user'] = $user->getMemberData();
+	$AddComment['host'] = GalleryUtilities::getRemoteHostAddress();
+	
+	$template->setVariable('AddComment', $AddComment);
+	$template->setVariable('controller', 'comment:AddComment');
+	
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/comment/templates/AddComment.tpl'));
+    }
+
+    /**
+     * @see GalleryView::getViewDescription()
+     */
+    function getViewDescription() {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	return array(GalleryStatus::success(), $core->translate('add comment'));
+    }
+}
+?>
