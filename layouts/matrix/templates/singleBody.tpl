@@ -112,19 +112,6 @@
 	{/foreach}
 	{/if}
 
-	{assign var="id" value=$layout.item.id}
-	{if !empty($layout.moduleItemLinks.$id)}
-	<div class="giActionSelect">
-	  <select onchange="javascript:if (this.value) location.href=this.value">
-	    <option value="">{g->text text="&laquo; actions &raquo;"}</option>
-
-	  {foreach from=$layout.moduleItemLinks.$id item=link}
-	  <option value="{$link.url}">{$link.text}</option>
-	  {/foreach}
-	</select>
-	</div>
-	{/if}
-
 	{include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
       </div>
       {include file="gallery:layouts/matrix/templates/sidebar.tpl"}

@@ -26,7 +26,7 @@
   {if (isset($layout.moduleItemLinks[$layout.item.id]))}
   <div class="gbMenu">
     <div class="giTitle">
-      {g->text text="Album Actions"}
+      {g->text text="Actions"}
     </div>
 
     <ul>
