@@ -522,6 +522,12 @@ class CoreModule extends GalleryModule {
 			      'params' => array('view' => 'core:ItemAdmin',
 						'subView' => 'core:ItemEditMovie',
 						'itemId' => $item->getId()));
+		} else if ($isAlbum) {
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('edit album'),
+			      'params' => array('view' => 'core:ItemAdmin',
+						'subView' => 'core:ItemEditAlbum',
+						'itemId' => $item->getId()));
 		}
 	    }
 
