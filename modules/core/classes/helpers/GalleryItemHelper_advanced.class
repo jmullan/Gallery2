@@ -321,5 +321,85 @@ class GalleryItemHelper_advanced {
 	
 	return array(GalleryStatus::success(), $counts);
     }
+
+    /**
+     * Make sure that the album has a thumbnail.  If it doesn't, then grab the first handy child and
+     * make it the album's thumbnail.  We're not picky.
+     *
+     * @param int the album id
+     * @return object GalleryStatus a status code
+     * @return object GalleryStatus a status code
+     *                boolean true if successful
+     * @static
+     */
+    function guaranteeAlbumHasThumbnail($albumId) {
+	global $gallery;
+	
+	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($albumId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$success = false;
+	$highlightHasLeftTheAlbum = false;
+	if (!empty($thumbnails)) {
+	    /* Make sure that the thumbnail's source item is still inside the album */
+	    $thumbnail = $thumbnails[$albumId];
+	    
+	    list ($ret, $thumbnailSource) =
+		GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $highlightItem) =
+		GalleryCoreApi::loadEntitiesById($thumbnailSource->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if ($highlightItem->getParentId() != $albumId) {
+		/* The highlight is no longer in this album */
+		$gallery->debug('Thumbnail is no longer in the album');
+		$highlightHasLeftTheAlbum = true;
+	    }
+	}
+
+	if (empty($thumbnails) || $highlightHasLeftTheAlbum) {
+	    $gallery->debug('Picking new thumbnail');
+	    list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /* Grab the first few items and try them on for size */
+	    list($ret, $childIds) =  GalleryCoreApi::fetchChildItemIds($album, 0, 5);
+	    $gallery->debug('Found childIds');
+	    $gallery->debug_r($childIds);
+	    foreach ($childIds as $childId) {
+		list ($ret, $success) = GalleryCoreApi::setThumbnailFromItem($albumId, $childId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($success) {
+		    break;
+		}
+	    }
+	} else {
+	    /* We didn't have to do anything, but the guarantee is met */
+	    $success = true;
+	}
+
+	if (!$success && $highlightHasLeftTheAlbum) {
+	    /* We couldn't find a new thumbnail, but the existing one isn't good anymore */
+	    $ret = GalleryCoreApi::deleteEntityById($thumbnail->getId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $success);
+    }
 }
 ?>

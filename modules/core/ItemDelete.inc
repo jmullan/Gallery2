@@ -81,16 +81,23 @@ class ItemDeleteController extends GalleryController {
 		    }
 		}
 		
-		/* if we're still here than all are deletable */
+		/* if we're still here then all are deletable */
 		foreach ($selectedIds as $selectedId) {
 		    $ret = GalleryCoreApi::deleteEntityById($selectedId);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    $status['deleted']['count']++;
-		    
 		}
+
+		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* What do we do if we weren't successful?  No thumbnail, I guess */
 	    }
+
 	    /* Figure out where to redirect upon success */
 	    $redirect['view'] = 'core:ItemAdmin';
 	    $redirect['subView'] = 'core:ItemDelete';

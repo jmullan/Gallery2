@@ -163,10 +163,27 @@ class GalleryDerivative_core extends GalleryChildEntity {
     function delete() {
 	global $gallery;
 
-	/*
-	 * XXX: Check the derivative relationship and expire any derivatives
-	 * that are dependent on this container.
-	 */
+	/* Find all derivatives for whom I am the source and whack them too */
+	/* TODO: just fetch the ids, instead of the entire entities */
+	list ($ret, $derivativesTable) = GalleryCoreApi::fetchDerivativesBySourceIds(array($this->getId()));
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	foreach ($derivativesTable as $itemId => $derivatives) {
+	    foreach ($derivatives as $derivative) {
+		$ret = GalleryCoreApi::deleteEntityById($derivative->getId());
+		/*
+		 * Deletes can cascade in interesting ways.  For example, deleting a derivative will get rid of
+		 * any other derivatives that are sourced to it, so it's possible that deleting children here can
+		 * lead to a MISSING_OBJECT result unless we re-run the parent/child query each time.  Easier to
+		 * just ignore the MISSING_OBJECT error since we only care that it's gone.
+		 */
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
 
 	/* Delete myself */
 	$ret = parent::delete();

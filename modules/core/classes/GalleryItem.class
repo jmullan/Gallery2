@@ -366,7 +366,13 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 
 	while ($result = $searchResults->nextResult()) {
 	    $ret = GalleryCoreApi::deleteEntityById($result[0]);
-	    if ($ret->isError()) {
+	    /*
+	     * Deletes can cascade in interesting ways.  For example, deleting a derivative will get rid of
+	     * any other derivatives that are sourced to it, so it's possible that deleting children here can
+	     * lead to a MISSING_OBJECT result unless we re-run the parent/child query each time.  Easier to
+	     * just ignore the MISSING_OBJECT error since we only care that it's gone.
+	     */
+	    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}

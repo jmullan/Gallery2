@@ -156,6 +156,17 @@ class ItemMoveController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+
+		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($itemId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		list ($ret, $success) = GalleryCoreApi::guaranteeAlbumHasThumbnail($newParentId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		/* Figure out where to redirect upon success */
 		$redirect['view'] = 'core:ItemAdmin';
 		$redirect['subView'] = 'core:ItemMove';

@@ -57,12 +57,14 @@ class GalleryEntityHelper_medium {
 	
 	list ($ret, $entity) = GalleryEntityHelper_simple::loadEntitiesById($id);
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	if (GalleryUtilities::isA($entity, 'GalleryChildEntity')) {
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLockParents($id);
 	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
@@ -70,7 +72,7 @@ class GalleryEntityHelper_medium {
 	/* If this item has links to it, make one of those links the master */
 	list ($ret, $linkedIds) = GalleryEntityHelper_medium::fetchEntitiesLinkedTo($id);
 	if ($ret->isError()) {
-	    $this->releaseLocks($lockIds);
+	    GalleryCoreApi::releaseLocks($lockIds);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
@@ -78,13 +80,17 @@ class GalleryEntityHelper_medium {
 	    /* Lock all of the linked items */
 	    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($linkedIds);
 	    if ($ret->isError()) {
-		$this->releaseLocks($lockIds);
+		GalleryCoreApi::releaseLocks($lockIds);
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /* Make the first link the master, and point the rest at it */
 	    list ($ret, $linkedEntities) = GalleryEntityHelper_simple::loadEntitiesById($linkedIds);
-
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    $ret = $linkedEntities[0]->detachLink();
 	    if ($ret->isError()) {
 		GalleryCoreApi::releaseLocks($lockIds);

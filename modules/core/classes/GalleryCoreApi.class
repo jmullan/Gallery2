@@ -1281,12 +1281,29 @@ class GalleryCoreApi {
      * @param int the album id
      * @param int the item id
      * @return object GalleryStatus a status code
+     *                boolean true if successful
      * @static
      */
     function setThumbnailFromItem($itemId, $fromItemId) {
 	GalleryCoreApi::apiMethodUsed('setThumbnailFromItem', 'GalleryItemHelper_medium');
 	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::setThumbnailFromItem($itemId, $fromItemId);
+    }
+
+    /**
+     * Make sure that the album has a thumbnail.  If it doesn't, then grab the first handy child and
+     * make it the album's thumbnail.  We're not picky.
+     *
+     * @param int the album id
+     * @return object GalleryStatus a status code
+     * @return object GalleryStatus a status code
+     *                boolean true if successful
+     * @static
+     */
+    function guaranteeAlbumHasThumbnail($itemId) {
+	GalleryCoreApi::apiMethodUsed('guaranteeAlbumHasThumbnail', 'GalleryItemHelper_advanced');
+	require_once(dirname(__FILE__) . '/helpers/GalleryItemHelper_advanced.class');
+	return GalleryItemHelper_advanced::guaranteeAlbumHasThumbnail($itemId);
     }
     
     /**
