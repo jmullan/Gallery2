@@ -87,7 +87,7 @@
 {/capture}
 {capture name="sidebarInsert_3"}
   <div class="gbMenu">
-    <div class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </div>
+    <h3 class="giTitle"> {g->text text="Slideshow&nbsp;Options"} </h3>
     <ul><li>
 	{g->text text="delay"}:
 	<select id="slide_delay" onchange="slide_setdelay(this.value)">
@@ -107,7 +107,7 @@
     </li></ul>
   </div>
   <div class="gbMenu">
-    <div class="giTitle" style="margin-top:3px"> {g->text text="Image&nbsp;Bar"} </div>
+    <h3 class="giTitle" style="margin-top:3px"> {g->text text="Image&nbsp;Bar"} </h3>
     <ul><li>
 	<a href="" onclick="options_onoff();thumbs_horizvert();return false">
 	{g->text text="Horizontal/Vertical"}</a>
@@ -115,7 +115,7 @@
   </div>
 {/capture}
 
-<div id="options" class="gbMenu" style="visibility:hidden">
+<div id="options" style="visibility:hidden">
   {include file="gallery:templates/sidebar.tpl"}
 </div>
 

@@ -96,6 +96,7 @@ class SliderLayout extends GalleryLayout {
 	}
 
 	$layout['show']['parents'] = true;
+	$layout['show']['systemLinks'] = true;
 	$layout['imageWidths'] = implode(',',$imageWidths);
 	$layout['imageHeights'] = implode(',',$imageHeights);
 	$layout['maxThumbWidth'] = $maxTW;
