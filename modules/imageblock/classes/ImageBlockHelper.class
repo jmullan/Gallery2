@@ -84,18 +84,24 @@ class ImageBlockHelper {
 	    return array(GalleryStatus::ERROR_UNIMPLEMENTED(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	
 	/* Prepare the query */
 	$query = '
 	SELECT
 	  [GalleryEntity::id], [GalleryEntity::creationTimestamp], [GalleryItemAttributesMap::viewCount]
 	FROM
-	  [GalleryEntity], [GalleryUserGroupMap], [GalleryPermissionMap], [GalleryItemAttributesMap], [GalleryChildEntity], [GalleryDerivative]
+	  [GalleryEntity], [GalleryPermissionMap], [GalleryItemAttributesMap], [GalleryChildEntity], [GalleryDerivative]
 	WHERE
 	  ([GalleryPermissionMap::userId] = ?
 	   OR
-	   ([GalleryUserGroupMap::userId] = ?
-	    AND
-	    [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+	   [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
 	  AND
 	  [GalleryPermissionMap::permission] & ? > ?
 	  AND
@@ -116,7 +122,7 @@ class ImageBlockHelper {
 	ORDER BY ' .  $orderBy . ' LIMIT 1';
 
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 	$data[] = $itemType;

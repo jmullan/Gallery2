@@ -63,7 +63,7 @@ class GalleryChildEntityHelper_simple {
 	$storage = $gallery->getStorage();
 
 	/* List of classes that we will need */
-	$classes = array('[GalleryChildEntity]', '[GalleryItem]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
+	$classes = array('[GalleryChildEntity]', '[GalleryItem]', '[GalleryPermissionMap]');
 
 	list($orderColumn, $extraWhere, $orderDirection) = GalleryChildEntityHelper_simple::_getOrderInfo($item);
 	$extraIds = 0;
@@ -88,6 +88,14 @@ class GalleryChildEntityHelper_simple {
 	    $selectExtra = '';
 	}
 
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+
 	/* Prepare the query */
 	$query = '
         SELECT
@@ -101,9 +109,7 @@ class GalleryChildEntityHelper_simple {
           AND
           ([GalleryPermissionMap::userId] = ?
            OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+          [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
           [GalleryPermissionMap::permission] & ? > ?
           AND
@@ -115,7 +121,7 @@ class GalleryChildEntityHelper_simple {
 	';
 	$data[] = $item->getId();
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 	for ($i = 0; $i < $extraIds; $i++) {
@@ -166,7 +172,7 @@ class GalleryChildEntityHelper_simple {
 	$storage = $gallery->getStorage();
 
 	/* List of classes that we will need */
-	$classes = array('[GalleryChildEntity]', '[GalleryDataItem]', '[GalleryUserGroupMap]', '[GalleryPermissionMap]');
+	$classes = array('[GalleryChildEntity]', '[GalleryDataItem]', '[GalleryPermissionMap]');
 
 	list($orderColumn, $extraWhere, $orderDirection) = GalleryChildEntityHelper_simple::_getOrderInfo($item);
 	$extraIds = 0;
@@ -191,6 +197,14 @@ class GalleryChildEntityHelper_simple {
 	    $selectExtra = '';
 	}
 
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+
 	/* Prepare the query */
 	$query = '
         SELECT
@@ -204,9 +218,7 @@ class GalleryChildEntityHelper_simple {
           AND
           ([GalleryPermissionMap::userId] = ?
            OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
           [GalleryPermissionMap::permission] & ? > ?
           AND
@@ -218,7 +230,7 @@ class GalleryChildEntityHelper_simple {
 	';
 	$data[] = $item->getId();
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 	for ($i = 0; $i < $extraIds; $i++) {

@@ -44,8 +44,7 @@ class ItemTest extends GalleryTestCase {
 	parent::setUp();
 
 	$userId = $gallery->getActiveUserId();
-	list ($ret, $groupIds) =
-	    GalleryCoreApi::fetchGroupsForUser($userId);
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

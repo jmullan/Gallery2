@@ -61,11 +61,19 @@ class GalleryItemHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	
 	$query = '
         SELECT
           DISTINCT([GalleryChildEntity::id])
         FROM
-          [GalleryChildEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+          [GalleryChildEntity], [GalleryItem], [GalleryPermissionMap]
         WHERE
           [GalleryChildEntity::parentId] = ?
           AND
@@ -75,9 +83,7 @@ class GalleryItemHelper_medium {
           AND
           ([GalleryPermissionMap::userId] = ?
            OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
           [GalleryPermissionMap::permission] & ? > ?
         GROUP BY
@@ -86,7 +92,7 @@ class GalleryItemHelper_medium {
 	$data = array();
 	$data[] = $itemId;
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 
@@ -127,11 +133,19 @@ class GalleryItemHelper_medium {
 	}
 	$storage = $gallery->getStorage();
 
+	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$groupIds = array_keys($groupIds);
+	$groupIdMarkers = GalleryUtilities::makeMarkers($groupIds);
+	
 	$query = '
         SELECT
           DISTINCT([GalleryItem::id])
         FROM
-          [GalleryEntity], [GalleryItem], [GalleryUserGroupMap], [GalleryPermissionMap]
+          [GalleryEntity], [GalleryItem], [GalleryPermissionMap]
         WHERE
           [GalleryEntity::entityType] = ?
           AND
@@ -141,16 +155,14 @@ class GalleryItemHelper_medium {
           AND
           ([GalleryPermissionMap::userId] = ?
            OR
-           ([GalleryUserGroupMap::userId] = ?
-            AND
-            [GalleryPermissionMap::groupId] = [GalleryUserGroupMap::groupId]))
+           [GalleryPermissionMap::groupId] IN (' . $groupIdMarkers . '))
           AND
           [GalleryPermissionMap::permission] & ? = ?
         ';
 	$data = array();
 	$data[] = $itemType;
 	$data[] = $gallery->getActiveUserId();
-	$data[] = $gallery->getActiveUserId();
+	array_splice($data, sizeof($data), 0, $groupIds);
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits($permissionBits);
 
