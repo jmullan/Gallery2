@@ -38,22 +38,18 @@ class RandomHighlightOption extends ItemEditOption {
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(), true);
+	return array(GalleryStatus::success(), isset($thumbnail));
     }
 
     /**
      * @see ItemEditOption::loadTemplate
      */
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
-	if (isset($thumbnail)) {
-	    $form['RandomHighlightOption']['isRandomHighlight'] =
-		$thumbnail->hasOnLoadHandler('RandomHighlight');
-	    return array(GalleryStatus::success(),
-			 'modules/randomhighlight/templates/RandomHighlightOption.tpl',
-			 'modules_randomhighlight');
-	} else {
-	    return array(GalleryStatus::success(), null, null);
-	}
+	$form['RandomHighlightOption']['isRandomHighlight'] =
+	    $thumbnail->hasOnLoadHandler('RandomHighlight');
+	return array(GalleryStatus::success(),
+		     'modules/randomhighlight/templates/RandomHighlightOption.tpl',
+		     'modules_randomhighlight');
     }
 
     /**
