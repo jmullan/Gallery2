@@ -172,11 +172,8 @@ class NetPbmToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($jheadPath)) {
-	    if (! $platform->file_exists($jheadPath)
-	        || ! $platform->is_dir($jheadPath) ) {
-	        return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
-	    }
+	if (!$platform->isRestrictedByOpenBasedir($jheadPath) && !$platform->is_dir($jheadPath)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 	$tests = array();
 	$fullPath = $jheadPath . 'jhead';
@@ -221,11 +218,8 @@ class NetPbmToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($netPbmPath)) { 
-	    if (! $platform->file_exists($netPbmPath)
-		|| ! $platform->is_dir($netPbmPath) ) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
-	    }
+	if (!$platform->isRestrictedByOpenBasedir($netPbmPath) && !$platform->is_dir($netPbmPath)) { 
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
 	/* We need to translate some strings */

@@ -226,10 +226,12 @@ class ImageMagickModule extends GalleryModule {
 		$paths[] = $path;
 	    }
 	    
-	    $paths[] = 'C:\\Program Files\\ImageMagick\\';
-	    $paths[] = 'C:\\apps\ImageMagick\\';
-	    $paths[] = 'C:\\ImageMagick\\';
-	    $paths[] = 'C:\\ImageMagick\\VisualMagick\\bin\\';
+	    /* Double-quoting the paths removes any ambiguity about the 
+	       double-slashes being escaped or not */
+	    $paths[] = "C:\\Program Files\\ImageMagick\\";
+	    $paths[] = "C:\\apps\ImageMagick\\";
+	    $paths[] = "C:\\ImageMagick\\";
+	    $paths[] = "C:\\ImageMagick\\VisualMagick\\bin\\";
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);

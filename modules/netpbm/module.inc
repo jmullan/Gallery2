@@ -117,11 +117,13 @@ class NetPbmModule extends GalleryModule {
 		$paths[] = $path;
 	    }
 	    
-	    $paths[] = 'C:\Program Files\netpbm\\';
-	    $paths[] = 'C:\apps\netpbm\\';
-	    $paths[] = 'C:\apps\jhead\\';
-	    $paths[] = 'C:\netpbm\\';
-	    $paths[] = 'C:\jhead\\';
+            /* Double-quoting the paths removes any ambiguity about the 
+               double-slashes being escaped or not */
+	    $paths[] = "C:\\Program Files\\netpbm\\";
+	    $paths[] = "C:\\apps\\netpbm\\";
+	    $paths[] = "C:\\apps\\jhead\\";
+	    $paths[] = "C:\\netpbm\\";
+	    $paths[] = "C:\\jhead\\";
 	} else if (GalleryUtilities::isA($platform, 'UnixPlatform')){
 	    foreach (explode(':', getenv('PATH')) as $path) {
 		$path = trim($path);
