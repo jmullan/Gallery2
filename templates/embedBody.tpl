@@ -18,10 +18,10 @@
        alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
        height="15"  
        width="80"/></a>
-    <a href="{g->url href="modules/core/test/data/scream.mp3"}"
+    <a href="{g->url href="modules/core/test/data/Farva2.mp3"}"
        onclick="window.open(this.href); return false;"
        onkeypress="window.open(this.href); return false;"><img style="border: 0px"
-       src="{g->url href="images/scream.png"}"
+       src="{g->url href="images/badge-farva.png"}"
        alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
        height="15"
        width="80"/></a>
