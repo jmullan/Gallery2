@@ -881,7 +881,8 @@ class Gallery {
      * Get the status of all modules
      *
      * @return array object GalleryStatus as status code
-     *                      array string module names
+     *                      array (moduleName => array('active' => true/false,
+     *                                                 'installed' => true/false)
      */
     function getModuleStatus() {
 	GalleryProfiler::start('Gallery::getModuleStatus');
