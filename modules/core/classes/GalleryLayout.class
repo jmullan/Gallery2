@@ -462,7 +462,7 @@ class GalleryLayout {
 	global $gallery;
 
 	/* Study all permissions */
-	$ret = GalleryItemHelper::studyPermissions($items);
+	$ret = GalleryItemHelper::studyPermissions($itemIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
