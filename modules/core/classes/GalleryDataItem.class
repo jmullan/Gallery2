@@ -159,6 +159,9 @@ class GalleryDataItem_core extends GalleryItem {
 	    $baseName = $targetName;
 	}
 
+	/* Make sure our base file name is legal */
+	$baseName = $platform->legalizePathComponent($baseName);
+
 	/* Don't be intimidated by the first 10 collisions */
 	$retry = 0;
 	$newFileName = $parentPath . $baseName . '.' . $extension;

@@ -394,7 +394,20 @@ class GalleryPlatform {
 	return "ABCDEFGHIJKLMNOPQRSTUVWXYZ" .
 	    "abcdefghijklmnopqrstuvwxyz" .
 	    "0123456789" .
-	    "_-.";
+	    "_.-";
+
+	/*
+	 * XXX: Keep the hyphen at the end of this string, else ereg()
+	 * functions will complain if you use this in a bracket expression.
+	 */
+    }
+
+    /**
+     * Remove any illegal characters from the path component.
+     */
+    function legalizePathComponent($component) {
+	$legal = $this->getLegalPathCharacters();
+	return ereg_replace("[^$legal]", "_", $component);
     }
     
     /**
