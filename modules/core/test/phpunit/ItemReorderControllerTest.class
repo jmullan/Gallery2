@@ -1,0 +1,352 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2003 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * ItemReorder controller tests
+ */
+class ItemReorderControllerTest extends GalleryControllerTestCase {
+
+    function ItemReorderControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'core:ItemReorder');
+    }
+
+    function setUp() {
+	global $gallery;
+	
+	parent::setUp();
+
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum(null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryPermissionMap::addUserPermission($this->_parentAlbum->getId(),
+						       $gallery->getActiveUserId(),
+						       'core.all');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	for ($i = 0; $i < 5; $i++) {
+	    list ($ret, $this->_child[$i]) = $this->_createRandomDataItem($this->_parentAlbum->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i * 1000);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+
+	$ret = $gallery->deleteEntityById($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	parent::tearDown();
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsBefore() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[1]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'before');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[4]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[3]->getId(),
+				  $this->_child[1]->getId(),
+				  $this->_child[4]->getId()),
+			    $childIds);
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsBefore2() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'before');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[3]->getId(),
+				  $this->_child[0]->getId(),
+				  $this->_child[1]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[4]->getId()),
+			    $childIds);
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsAfter() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'after');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[3]->getId(),
+				  $this->_child[1]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[4]->getId()),
+			    $childIds);
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsAfter2() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[0]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'after');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[4]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(array($this->_child[1]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[3]->getId(),
+				  $this->_child[4]->getId(),
+				  $this->_child[0]->getId()),
+			    $childIds);
+    }
+    
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsWithoutPermissions() {
+	global $gallery;
+
+	$ret = GalleryPermissionMap::removeUserPermission($this->_parentAlbum->getId(),
+							  $gallery->getActiveUserId(),
+							  'core.edit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.afterId', $this->_child[0]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsMissingSelection() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemReorder', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_parentAlbum->getId(),
+			    (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.selectedId.missing'));
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsMissingTarget() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedItemId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:ItemAdmin'), $results);
+	$this->assertEquals('core:ItemReorder', GalleryUtilities::getRequestVariables('subView'));
+	$this->assertEquals($this->_parentAlbum->getId(),
+			    (int)GalleryUtilities::getRequestVariables('itemId'));
+	$this->assert(GalleryUtilities::hasRequestVariable('form.error.targetId.missing'));
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsWithBogusId() {
+	global $gallery;
+
+	GalleryUtilities::putRequestVariable('itemId', 12345678);
+
+	$results = $this->handleRequest(ERROR_PERMISSION_DENIED);
+    }
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsForceRebalance() {
+	global $gallery;
+
+	/* Pack 'em in tight */
+	for ($i = 0; $i < 5; $i++) {
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[1]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'after');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[3]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[3]->getId(),
+				  $this->_child[1]->getId(),
+				  $this->_child[4]->getId()),
+			    $childIds);
+    }
+
+
+    /**
+     * Test moving an item
+     */
+    function testReorderItemsForceRebalance2() {
+	global $gallery;
+
+	/* Pack 'em in tight */
+	for ($i = 0; $i < 5; $i++) {
+	    $ret = GalleryItemAttributesMap::setOrderWeight($this->_child[$i]->getId(), $i);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form.selectedId', $this->_child[4]->getId());
+	GalleryUtilities::putRequestVariable('form.placement', 'before');
+	GalleryUtilities::putRequestVariable('form.targetId', $this->_child[1]->getId());
+	GalleryUtilities::putRequestVariable('form.action.reorder', 1);
+
+	$results = $this->handleRequest();
+	$this->assertRedirect(array('view' => 'core:ItemAdmin',
+				    'subView' => 'core:ItemReorder',
+				    'itemId' => $this->_parentAlbum->getId()),
+			      $results);
+
+	list ($ret, $childIds) = $this->_parentAlbum->fetchChildIds();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId(),
+				  $this->_child[4]->getId(),
+				  $this->_child[1]->getId(),
+				  $this->_child[2]->getId(),
+				  $this->_child[3]->getId()),
+			    $childIds);
+    }
+}
+?>

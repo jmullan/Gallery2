@@ -206,6 +206,14 @@ class CoreModuleTest extends GalleryTestCase {
 					   'selectedId' => $this->_parentAlbum->getId(),
 					   'return.x' => 'y'
 					   ));
+	$links[] = array('text' => $this->_module->translate('reorder items'),
+			 'params' => array(
+					   'view' => 'core:ItemAdmin',
+					   'subView' => 'core:ItemReorder',
+					   'itemId' => null,
+					   'itemId' => $this->_parentAlbum->getId(),
+					   'return.x' => 'y'
+					   ));
 	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
     }
     
