@@ -65,18 +65,15 @@ class GalleryEmbed {
     /**
      * Login the specified user in the G2 session.
      *
-     * @param int user id
+     * @param string username
      * @return object GalleryStatus a status object
      * @static
      */
-    function login($userId) {
+    function login($userName) {
 	global $gallery;
-	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
+	list ($ret, $user) = GalleryCoreApi::fetchUserByUserName($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
-	}
-	if (!GalleryUtilities::isA($user, 'GalleryUser')) {
-	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, $userId);
 	}
 	$gallery->setActiveUser($user);
 	$session =& $gallery->getSession();
