@@ -37,37 +37,38 @@
     <?php if (!empty($templateData['modules'])): ?>
     <form>
       <table class="modules">
-	<tr>
-	  <th>
-	    &nbsp;
-	  </th>
-	  <th>
-	    <?php print _("Name") ?>
-	  </th>
-	  <th>
-	    <?php print _("Version") ?>
-	  </th>
-	  <th>
-	    <?php print _("Description") ?>
-	  </th>
-	</tr>
-
-	<?php foreach ($templateData['modules'] as $id => $module): ?>
-	<?php if ($module->canBeAutoInstalled()): ?>
-	<tr>
-	  <td>
-	    <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
-	  </td>
-	  <td>
-	    <?php print $module->getName() ?>
-	  </td>
-	  <td>
-	    <?php print $module->getVersion() ?>
-	  </td>
-	  <td>
-	    <?php print $module->getDescription() ?>
-	  </td>
-	</tr>
+        <tr style="background: #ccc;">
+          <th>
+            &nbsp;
+          </th>
+          <th>
+            <?php print _("Name") ?>
+          </th>
+          <th>
+            <?php print _("Version") ?>
+          </th>
+          <th>
+            <?php print _("Description") ?>
+          </th>
+        </tr>
+        <?php $counter = 0; ?>
+        <?php foreach ($templateData['modules'] as $id => $module): ?>
+        <?php if ($module->canBeAutoInstalled()): ?>
+        <tr<?php if ($counter % 2 != 0) print ' style="background:#eee;"' ?>>
+          <td>
+            <input type=checkbox name="module[<?php print $id ?>]" selected="selected"/>
+          </td>
+          <td class="modules">
+            <?php print $module->getName() ?>
+          </td>
+          <td>
+            <?php print $module->getVersion() ?>
+          </td>
+          <td>
+            <?php print $module->getDescription() ?>
+          </td>
+        </tr>
+	<?php $counter++; ?>
 	<?php endif; ?>
 	<?php endforeach; ?>
       </table>
