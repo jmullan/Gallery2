@@ -538,6 +538,10 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $cmd = $this->_pnmCmd('tifftopnm');
 	    break;
 
+	case 'image/bmp':
+	    $cmd = $this->_pnmCmd('bmptopnm');
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
 					      __FILE__, __LINE__,
@@ -599,6 +603,14 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $cmd = array($this->_pnmCmd('pnmtotiff'),
 			 '>',
 			 $filename);
+	    break;
+
+	case 'image/bmp':
+	    $cmd = array(array($this->_pnmCmd('ppmquant'),
+			       256),
+			 array($this->_pnmCmd('ppmtobmp'),
+			       '>',
+			       $filename));
 	    break;
 
 	default:

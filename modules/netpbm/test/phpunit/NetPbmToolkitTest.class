@@ -150,6 +150,15 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	list ($ret, $mimeType) =
+	    $this->_toolkit->performOperation('image/bmp', 'rotate',
+					      'testPerformOperationsA.bmp',
+					      'testPerformOperationsB.bmp',
+					      array(180));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	// Test a basic composite operation (top right corner)
         list ($ret, $mimeType) =
             $this->_toolkit->performOperation('image/png', 'composite',
@@ -310,7 +319,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									'image/jpeg',
 									'image/pjpeg',
 									'image/png',
-									'image/tiff')
+									'image/tiff',
+									'image/bmp')
 						   ),
 				  'thumbnail' => array('params' =>
 						       array(array('type' => 'int',
@@ -320,7 +330,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									    'image/jpeg',
 									    'image/pjpeg',
 									    'image/png',
-									    'image/tiff')),
+									    'image/tiff',
+									    'image/bmp')),
 				  'resize' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'target width'),
@@ -331,7 +342,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									 'image/jpeg',
 									 'image/pjpeg',
 									 'image/png',
-									 'image/tiff')),
+									 'image/tiff',
+									 'image/bmp')),
 				  'rotate' => array('params' =>
 						    array(array('type' => 'int',
 								'description' => 'rotation degrees')),
@@ -340,7 +352,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									 'image/jpeg',
 									 'image/pjpeg',
 									 'image/png',
-									 'image/tiff')),
+									 'image/tiff',
+									 'image/bmp')),
 				  'crop' => array('params' =>
 						  array(array('type' => 'int',
 							      'description' => 'left edge'),
@@ -355,7 +368,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 								       'image/jpeg',
 								       'image/pjpeg',
 								       'image/png',
-								       'image/tiff')),
+								       'image/tiff',
+								       'image/bmp')),
 				  'composite' => array('params' =>
 						       array(array('type' => 'string',
 								   'description' => 'overlay path'),
@@ -376,7 +390,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									    'image/jpeg',
 									    'image/pjpeg',
 									    'image/png',
-									    'image/tiff'))),
+									    'image/tiff',
+									    'image/bmp'))),
 			    $results['operations']);
 	$this->assertEquals(array('dimensions' => array('type' => 'int,int',
 							'description' => 'Get the width and height of the image',
@@ -384,7 +399,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 									     'image/jpeg',
 									     'image/pjpeg',
 									     'image/png',
-									     'image/tiff'))),
+									     'image/tiff',
+									     'image/bmp'))),
 			    $results['properties']);
     }
 
@@ -403,6 +419,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 				  array('name' => 'pnmtopng', 'success' => 1, 'message' => array()),
 				  array('name' => 'tifftopnm', 'success' => 1, 'message' => array()),
 				  array('name' => 'pnmtotiff', 'success' => 1, 'message' => array()),
+				  array('name' => 'bmptopnm', 'success' => 1, 'message' => array()),
+				  array('name' => 'ppmtobmp', 'success' => 1, 'message' => array()),
 				  array('name' => 'pnmcomp', 'success' => 1, 'message' => array())),
 			    $results);
 	
@@ -410,7 +428,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 				  'image/jpeg',
 				  'image/pjpeg',
 				  'image/png',
-				  'image/tiff'),
+				  'image/tiff',
+				  'image/bmp'),
 			    $mimeTypes);
     }
 }
@@ -501,6 +520,15 @@ class NetPbmToolkitTestPlatform {
 	    return array(1, array(), array());
 	}
 
+	/** Operation 3.1: Rotate a BMP */
+	if (serialize($cmd) ==
+	    serialize(array(array($this->_netPbmPath . 'bmptopnm', '--quiet', 'testPerformOperationsA.bmp'),
+			    array($this->_netPbmPath . 'pnmflip', '-r180'),
+			    array($this->_netPbmPath . 'ppmquant', 256),
+			    array($this->_netPbmPath . 'ppmtobmp', '>', 'TEMPFILE')))) {
+	    return array(1, array(), array());
+	}
+
 	/** Operation 4: Crop a PNG */
 	if (serialize($cmd) ==
 	    serialize(array(array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
@@ -563,6 +591,8 @@ class NetPbmToolkitTestPlatform {
 	    case '/validPath/pnmtopng':
 	    case '/validPath/tifftopnm':
 	    case '/validPath/pnmtotiff':
+	    case '/validPath/bmptopnm':
+	    case '/validPath/ppmtobmp':
 	    case '/validPath/pnmcomp':
 	    case $this->_netPbmPath . 'giftopnm':
 	    case $this->_netPbmPath . 'ppmtogif':
@@ -573,6 +603,8 @@ class NetPbmToolkitTestPlatform {
 	    case $this->_netPbmPath . 'pnmtopng':
 	    case $this->_netPbmPath . 'tifftopnm':
 	    case $this->_netPbmPath . 'pnmtotiff':
+	    case $this->_netPbmPath . 'bmptopnm':
+	    case $this->_netPbmPath . 'ppmtobmp':
 	    case $this->_netPbmPath . 'pnmcomp':
 		return array(1, array(), array());
 	    }
@@ -600,21 +632,25 @@ class NetPbmToolkitTestPlatform {
 
     function file_exists($path) {
 	switch($path) {
+	case '/validPath/bmptopnm':
 	case '/validPath/giftopnm':
 	case '/validPath/jpegtopnm':
 	case '/validPath/pngtopnm':
 	case '/validPath/pnmtopng':
 	case '/validPath/pnmtotiff':
+	case '/validPath/ppmtobmp':
 	case '/validPath/ppmtogif':
 	case '/validPath/ppmtojpeg':
 	case '/validPath/tifftopnm':
 	case '/validPath/pnmcomp':
 	case '/validPath/':
+	case $this->_netPbmPath . 'bmptopnm':
 	case $this->_netPbmPath . 'giftopnm':
 	case $this->_netPbmPath . 'jpegtopnm':
 	case $this->_netPbmPath . 'pngtopnm':
 	case $this->_netPbmPath . 'pnmtopng':
 	case $this->_netPbmPath . 'pnmtotiff':
+	case $this->_netPbmPath . 'ppmtobmp':
 	case $this->_netPbmPath . 'ppmtogif':
 	case $this->_netPbmPath . 'ppmtojpeg':
 	case $this->_netPbmPath . 'tifftopnm':
