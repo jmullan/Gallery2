@@ -321,26 +321,23 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testIsPathInList() {
 	global $gallery;
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-	$dir = dirname(__FILE__);
 
-	$this->assert(GalleryUtilities::isPathInList($dir,
-						     array($dir, '/foo')), 'test 1');
-	$this->assert(GalleryUtilities::isPathInList($dir . $slash,
-						     array('/foo', $dir)), 'test 2');
-	$this->assert(GalleryUtilities::isPathInList($dir,
-						     array($dir . $slash, '/foo/')), 'test 3');
-	$this->assert(GalleryUtilities::isPathInList(__FILE__,
-						     array($dir, '/bar')), 'test 4');
-	$this->assert(!GalleryUtilities::isPathInList($dir . 'foo',
-						      array($dir, '/bar')), 'test 5');
-	$this->assert(!GalleryUtilities::isPathInList(substr($dir, 0, -2),
-						      array('/foo', $dir)), 'test 6');
-	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
-	    $this->assert(GalleryUtilities::isPathInList(strtolower(__FILE__),
-							 array('d:\\', strtoupper($dir))), 'test 7');
-	}
+	$this->assert(GalleryUtilities::isPathInList('/foo',
+						     array('/foo', '/bar')), 'test 1');
+	$this->assert(GalleryUtilities::isPathInList('/foo/',
+						     array('/bar', '/foo')), 'test 2');
+	$this->assert(GalleryUtilities::isPathInList('/foo',
+						     array('/foo/', '/bar/')), 'test 3');
+	$this->assert(GalleryUtilities::isPathInList('/foo/bar',
+						     array('/foo', '/bar')), 'test 4');
+	$this->assert(!GalleryUtilities::isPathInList('/foobar',
+						      array('/foo', '/bar')), 'test 5');
+	$this->assert(!GalleryUtilities::isPathInList('/fo',
+						      array('/foo', '/bar')), 'test 6');
+
+	$gallery->_platform = new UtilitiesTestWinPlatform();
+	$this->assert(GalleryUtilities::isPathInList('c:\foo\bar',
+						     array('d:\\', 'C:\Foo')), 'test 7');
     }
 
     function testProcessingPaths() {
@@ -453,10 +450,11 @@ class UtilitiesTestPlatform {
     function realpath($file) {
 	/* These are used in testIsPathInList */
 	switch ($file) {
+	case '/foo':
+	case '/foo/':
 	case '/foo/bar':
 	case '/foobar':
-	case '/foo':
-	case '/bar':
+	case '/fo':
 	    return $file;
 	}
 	
@@ -483,6 +481,22 @@ class UtilitiesTestPlatform {
 
     function filesize($file) {
 	return filesize($file);
+    }
+}
+
+require_once(dirname(__FILE__) . '/../../classes/GalleryPlatform/WinNtPlatform.class');
+class UtilitiesTestWinPlatform extends WinNtPlatform {
+    function realpath($file) {
+	/* These are used in testIsPathInList */
+	switch ($file) {
+	case 'c:\foo\bar':
+	    return $file;
+	}
+	return '';
+    }
+
+    function getDirectorySeparator() {
+	return '\\';
     }
 }
 ?>
