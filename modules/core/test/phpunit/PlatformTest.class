@@ -41,6 +41,8 @@ class PlatformTest extends GalleryTestCase {
 
     function setUp() {
 	global $gallery;
+	parent::setUp();
+	
 	$this->_platform = $gallery->getPlatform();
 	$this->_sourceFile = dirname(__FILE__) . '/../data/test1.gif';
 	$this->_destFile = $gallery->getConfig('data.gallery.tmp') . 'test.dat';

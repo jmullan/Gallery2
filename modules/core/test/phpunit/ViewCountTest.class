@@ -38,6 +38,8 @@ class ViewCountTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 
+	parent::setUp();
+
 	list ($ret, $this->_rootId) =
 	    $gallery->getModuleParameter('core', 'id.rootAlbum');
 	if ($ret->isError()) {

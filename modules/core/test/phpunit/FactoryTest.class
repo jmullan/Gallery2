@@ -59,6 +59,8 @@ class FactoryTest extends GalleryTestCase {
 						 'FactoryTestDummy');
 	GalleryFactory::unregisterImplementation('FactoryTest',
 						 'FactoryTestDummyIllegalPath');
+
+	parent::tearDown();
     }
 
     /**
