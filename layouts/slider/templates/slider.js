@@ -208,9 +208,6 @@ var titlebar_ht, thumbs_ht, thumbs_wd; // Height of titlebar, height/width of th
 var thumbs_horiz=1; // Thumbnail display is horizontal or vertical
 var options_on=0; // Slideshow options are visible
 function toolbar_getheight() { return titlebar_ht + (thumbs_horiz?thumbs_ht:0); }
-function toolbar_vis(on) {
- ui_vis('toolbar', on);
-}
 function toolbar_setbuttons() {
  var i = slide_nextindex(), j = slide_previndex();
  document.next_img.className = i>=0?'on':'off';
