@@ -41,7 +41,7 @@
     {/if}
   </div>
   {/if}
-  {if isset($form.badMime)}
+  {if !empty($form.badMime)}
   <div id="gsStatus">
     <div class="giError">{g->text text="Warning: Other modules provide thumbnail support for some types.  Settings below for these mime types will not be used:"}
       {foreach from=$form.badMime item=mime}{$mime} {/foreach}
