@@ -6,15 +6,28 @@
  *}
 {if !empty($form.localServerFiles)}
 <script type="text/javascript">
-  function toggleSelections() {ldelim}
-  form = document.forms[0];
-  state = form.elements['selectionToggle'].checked;
-  {foreach from=$form.localServerFiles item=file}
+  {* Generate indexes of items that we know, which will correspond to checkbox ids, below *}
+  {strip}
+  var knownTypeCheckboxIds = new Array(
+  {assign var="first" value="1"}
+  {foreach name=fileIndex from=$form.localServerFiles item=file}
   {if ($file.type == 'file' && !$file.unknown)}
-  form.elements['{g->formVar var="form[localServerFiles][`$file.fileKey`]"}'].checked = state;
+  {if !$first},{/if}
+  {$smarty.foreach.fileIndex.iteration}
+  {assign var="first" value="0"}
   {/if}
   {/foreach}
-  {rdelim}
+  );
+  {/strip}
+
+  {literal}
+  function toggleSelections() {
+    for (i = 0; i < knownTypeCheckboxIds.length; i++) {
+      var cb = document.getElementById('cb_' + knownTypeCheckboxIds[i]);
+      cb.checked = !cb.checked;
+    }
+  }
+  {/literal}
 </script>
 {/if}
 
@@ -120,19 +133,16 @@
     {/capture}
     {g->text text="Directory: %s" arg1=$smarty.capture.path}
   </strong>
-  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}">
-    {g->text text="[start over]"}
-  </a>
+  
   
   <input type="hidden" name="{g->formVar var="form[localServerPath]"}" 
 	 value="{$form.localServerPath}"/>
   
   <br />
   
-  <table class="gbDataTable" width="100%">
+  <table class="gbDataTable">
     <tr>
       <th>
-	<input name="selectionToggle" type="checkbox" onclick="javascript:toggleSelections()"/>
       </th>
 
       <th>
@@ -148,12 +158,12 @@
       </th>
     </tr>
   
-    {foreach from=$form.localServerFiles item=file}
+    {foreach name=fileIndex from=$form.localServerFiles item=file}
     {assign var=key value=$file.fileKey|urlencode}
     <tr class="{cycle values="gbEven,gbOdd"}">
       {if ($file.type == 'file')}
       <td style="text-align: center">
-	<input type="checkbox" name="{g->formVar var="form[localServerFiles][$key]"}"/>
+	<input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerFiles][$key]"}"/>
       </td>
 
       <td>
@@ -190,9 +200,19 @@
       {/if}
     </tr>
     {/foreach}
+    <tr>
+      <th>
+        <input name="selectionToggle" type="checkbox" onClick="javascript:toggleSelections()"/>
+      </th>
+      <th colspan="3">
+        {g->text text="(Un)check all known types"}
+      </th>     
+    </tr>
   </table>
   {capture name="bottomFlagHtml"}
     <input type="submit" name="{g->formVar var="form[action][addFromLocalServer]"}" value="{g->text text="Add Files"}"/>
+    <input type="submit" name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"
+onclick="document.location='{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`" arg4="form[localServerPath]=`$form.localServerPath`" arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}'"/>
   {/capture}
   {assign var="showOptions" value="true"}
   {/if} {* {if !empty($form.localServerFiles)} *}
@@ -211,5 +231,3 @@
     {$smarty.capture.bottomFlagHtml}
   </div>
 </div>
-
-  
