@@ -115,8 +115,10 @@
               {g->text text="<li>Date: %s</li>" arg1=$smarty.capture.modificationTimestamp}
             
             {if ($child.canContainChildren && $layout.showAlbumOwner) || (!$child.canContainChildren && $layout.showImageOwner)}
-              {g->text text="<li>Owner: %s</li>"
+            <li>
+              {g->text text="Owner: %s"
                        arg1=$layout.owners[$child.ownerId].fullName|default:$layout.owners[$child.ownerId].userName}
+            </li>
             {/if}
 
             {if ($child.childCount > 0) }
