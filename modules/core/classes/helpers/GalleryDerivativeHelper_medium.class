@@ -44,6 +44,10 @@ class GalleryDerivativeHelper_medium {
      * @static
      */
     function fetchThumbnailsByItemIds($ids) {
+	if (!is_array($ids)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
 	if (empty($ids)) {
 	    return array(GalleryStatus::success(), array());
 	}
@@ -74,6 +78,10 @@ class GalleryDerivativeHelper_medium {
      * @static
      */
     function fetchResizesByItemIds($ids) {
+	if (!is_array($ids)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
 	if (empty($ids)) {
 	    return array(GalleryStatus::success(), array());
 	}
@@ -95,6 +103,10 @@ class GalleryDerivativeHelper_medium {
      * @static
      */
     function fetchPreferredsByItemIds($ids) {
+	if (!is_array($ids)) {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+	
 	list ($ret, $results) = GalleryDerivativeHelper_medium::_loadDerivatives(
 	    $ids, null, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
