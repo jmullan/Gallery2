@@ -44,6 +44,8 @@ class GalleryTestCase extends TestCase {
     function setUp() {
 	global $gallery;
 
+	parent::setUp();
+
 	/* Start with a clean slate*/
 	$gallery->reset();
 	$gallery->clearDebugBuffer();
@@ -62,6 +64,8 @@ class GalleryTestCase extends TestCase {
 	    $ret = $ret->wrap(__FILE__, __LINE__);
 	    $this->fail($ret->getAsText());
 	}
+
+	parent::tearDown();
     }
 
     function _deleteAndVerifyEntity($id) {
@@ -111,6 +115,26 @@ class GalleryTestCase extends TestCase {
 
 	/* Verify it */
 	$this->assertEquals($entity, $newEntity);
+
+	return GalleryStatus::success();
+    }
+
+    function _becomeAdminUser() {
+	global $gallery;
+	
+	list ($ret, $adminGroupId) = $gallery->getModuleParameter('core', 'id.adminGroup');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $results) = GalleryUserGroupMap::fetchUsersForGroup($adminGroupId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$ids = array_keys($results);
+
+	$gallery->setActiveUserId($ids[0]);
 
 	return GalleryStatus::success();
     }
