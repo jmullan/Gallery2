@@ -331,10 +331,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	     */
 	    $entity = $event->getEntity();
 
-	    if (!$entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-		break;
-	    } else if (!GalleryUtilities::isA($entity, 'GalleryDataItem') &&
-		       !GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+	    /*
+	     * If the entity is a GalleryDataItem or GalleryAlbumItem and is
+	     * Newly Created or the parent has changed (item moved), continue
+             * processing, otherwise break out.
+	     */
+	    if ( !(($entity->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
+		    $entity->getModifiedFlag('parentId') !== MEMBER_UNMODIFIED) &&
+		    (GalleryUtilities::isA($entity, 'GalleryDataItem') ||
+		     GalleryUtilities::isA($entity, 'GalleryAlbumItem')))) {
 		break;
 	    }
 
@@ -346,8 +351,13 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (!empty($disabledFlag)) {
+	    if (!empty($disabledFlag) && GalleryUtilities::isA($entity, 'GalleryDataItem')) {
 		$ret = ImageBlockDisabledMap::addMapEntry(array('itemId' => $entity->getId()));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    } else if (!empty($disabledFlag) && GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+		$ret = ImageBlockHelper::setDisabledFlag($entity, true, true);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
