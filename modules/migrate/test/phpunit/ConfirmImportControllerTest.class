@@ -280,9 +280,9 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  NULL,                                  // keywords
 				  '[b]No description[/b]',               // description
 				  $testOwner->getId(),                   // owner
-				  1082443513,                            // album creation
+				  1082614775,                            // album creation
 				  1056015077,                            // clicks counted since
-				  8,                                     // count of clicks
+				  9,                                     // count of clicks
 				  array(array(                           // thumb and resized sizing preferences
 					      'order' => 0,
 					      'derivativeType' => 1,
@@ -385,6 +385,115 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	
     }
 
+    /* $album['perms']
+     * PERMSArray
+     * (    [canRead] => Array (
+     *          [1054014347_1233740678] => 1
+     *      )
+     *      [canViewFullImages] => Array (
+     *          [1082614545_1013204231] => 1
+     *          [1082614671_1351342387] => 1
+     *      )
+     *      [canViewComments] => Array (
+     *          [1082614713_490966281] => 1
+     *          [1057837115_2072132305] => 1
+     *          [1054014347_1233740678] => 1
+     *      )
+     *      [canAddComments] => Array (
+     *          [1082614671_1351342387] => 1
+     *          [1082614713_490966281] => 1
+     *      )
+     *      [canChangeText] => Array (
+     *          [1057837115_2072132305] => 1
+     *      )
+     *      [canAddTo] => Array (
+     *          [1057837154_228147420] => 1
+     *      )
+     *      [canWrite] => Array (
+     *          [1082614545_1013204231] => 1
+     *      )
+     *      [canDeleteFrom] => Array (
+     *          [1082614671_1351342387] => 1
+     *      )
+     *      [canCreateSubAlbum] => Array (
+     *          [1082614713_490966281] => 1
+     *      )
+     * )
+     *
+     * Here's what that looks like per user
+     * (   [1054014347_1233740678] => Array (
+     *         [0] => canRead
+     *         [1] => canViewComments
+     *     )
+     *     [1082614545_1013204231] => Array (
+     *         [0] => canViewFullImages
+     *         [1] => canWrite
+     *     )
+     *     [1082614671_1351342387] => Array (
+     *         [0] => canViewFullImages
+     *         [1] => canAddComments
+     *         [2] => canDeleteFrom
+     *     )
+     *     [1082614713_490966281] => Array (
+     *         [0] => canViewComments
+     *         [1] => canAddComments
+     *         [2] => canCreateSubAlbum
+     *     )
+     *     [1057837115_2072132305] => Array (
+     *         [0] => canViewComments
+     *         [1] => canChangeText
+     *     )
+     *     [1057837154_228147420] => Array (
+     *         [0] => canAddTo
+     *     )
+     * )
+    */
+    function testImportAlbumPermissions() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+        GalleryUtilities::putRequestVariable('albumsPath', dirname(__FILE__) . $slash . '..' . $slash . 'data' . $slash . 'albums' . $slash);
+        GalleryUtilities::putRequestVariable('form[sourceAlbums][album04]', 1);
+        GalleryUtilities::putRequestVariable('form[action][import]', 1);
+	GalleryUtilities::putRequestVariable('form[destinationAlbumID]',$this->_temporaryAlbumId);
+
+        $results = $this->handleRequest();
+	$this->assertEquals(array('album04'),
+			    array_keys($results['status']['albumImportSuccess']));
+	$this->assertEquals(array('view' => 'core:SiteAdmin',
+				  'subView' => 'migrate:ImportResults'),
+			    $results['redirect']);
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals(array(), $results['status']['userImportFailure']);
+	$this->assertEquals(array(), $results['status']['userImportSuccess']);
+	$this->assertEquals(array(), $results['status']['albumImportFailure']);
+	$testAlbumId = $results['status']['albumImportSuccess']['album04'];
+
+	/* Get the allegedly successfully imported album */
+	list($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/*
+	 * This is the user that we expect to be associated with this album.
+	 * It really shouldn't be the admin, but the test data needs to be
+	 * changed to fix it, so we will change it later - probably to
+	 * phpunit_foobar, or whatever we are loading in the other unit test
+	 */
+	list($ret, $testOwner) = GalleryCoreApi::fetchUserByUsername('admin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$this->assertEquals(array($testAlbum->getownerId()              // owner
+				  ),
+			    array($testOwner->getId()                   // owner
+				  )
+			    );
+    }
+
+    
     function testConvertHtmlToBbcode() {
 	/* Basic HTML styling with edge cases */
 	$this->assertEquals('[b]bold[/b]',

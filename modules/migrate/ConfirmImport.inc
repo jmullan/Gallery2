@@ -331,6 +331,18 @@ class ConfirmImportController extends GalleryController {
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
+				/*
+				print "<pre>Album Perms\n";
+				print_r($album['perms']);	
+				
+				foreach($album['perms'] as $tmpperm => $tmpusers) {
+				    foreach (array_keys($tmpusers) as $tmpuser) {
+					$tmpuserperm[$tmpuser][]=$tmpperm;
+				    }
+				}
+				print_r($tmpuserperm);
+				print "</pre>";
+				*/
 				/* Click counts must be set after the item is first saved */
 				$ret = GalleryCoreApi::setItemViewCount($newAlbumInstanceId, $album['clicks']);
 				if ($ret->isError()) {
@@ -555,7 +567,7 @@ class ConfirmImportController extends GalleryController {
 				    /* delete group perm actions
 				    $allPerms = array('core.view','core.viewSource','core.viewResizes');
 				    foreach ($allPerms as $perm) {
-					$ret = GalleryCoreApi::removeGroupPermission($newItem->getId(), 'All Users', $permissionId, FALSE);
+					$ret = GalleryCoreApi::removeGroupPermission($newItem->getId(), 1, $perm, FALSE);
 					if ($ret->isError()) {
 					    return array($ret->wrap(__FILE__, __LINE__), null);
 					}
