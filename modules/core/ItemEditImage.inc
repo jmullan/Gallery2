@@ -47,7 +47,7 @@ class ItemEditImageController extends GalleryController {
 	if (isset($form['action']['scale']) &&
 	        is_numeric($form['scale']['size']) &&
 	        $form['scale']['size'] > 0) {
-	    $command = "scale $form[scale][size]";
+	    $command = "scale " . $form[scale][size];
 	} else if (isset($form['action']['rotate']['clockwise'])) {
 	    $command = "rotate -90";
 	} else if (isset($form['action']['rotate']['counterClockwise'])) {
@@ -122,9 +122,9 @@ class ItemEditImageController extends GalleryController {
 		}
 		
 		/* Figure out where to redirect upon success */
-		$redirectParams['view'] = 'core:ItemAdmin';
-		$redirectParams['subView'] = 'core:ItemEditImage';
-		$redirectParams['itemId'] = $itemId;
+//		$redirectParams['view'] = 'core:ItemAdmin';
+//		$redirectParams['subView'] = 'core:ItemEditImage';
+//		$redirectParams['itemId'] = $itemId;
 	    }
 	}
 
@@ -183,6 +183,7 @@ class ItemEditImageView extends GalleryView {
 	    /* First time around, load the form with item data */
 	    $form = array();
 	    $form['scale']['size'] = '';
+	    $form['preserveOriginal'] = 1;
 	}
 
 	/* Check to see if we have a preferred source */

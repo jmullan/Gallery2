@@ -132,9 +132,11 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
     function mergeCommand($mergeCommand) {
 
 	$mergePieces = split(' ', $mergeCommand);
-	$commands = split(';', $this->getDerivativeCommands());
+	$commands = $this->getDerivativeCommands();
 	$newCommands = array();
-	foreach ($commands as $command) {
+
+	$merged = false;
+	foreach (split(';', $commands) as $command) {
 	    $pieces = split(' ', $command);
 	    if ($pieces[0] == $mergePieces[0]) {
 		switch ($pieces[0]) {
@@ -145,7 +147,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 			switch ($newRotation) {
 			case 270:
 			case -90:
-			    $newCommands[] = "rotate 90";
+			    $newCommands[] = "rotate -90";
 			    break;
 
 			case 180:
@@ -155,7 +157,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 
 			case 90:
 			case -270:
-			    $newCommands[] = "rotate -90";
+			    $newCommands[] = "rotate 90";
 			    break;
 
 			default:
@@ -163,6 +165,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 							__FILE__, __LINE__);
 			}
 		    }
+		    $merged = true;
 		    break;
 		    
 		case 'scale':
@@ -170,6 +173,7 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 		case 'crop':
 		    /* Replace the old command with the new one */
 		    $newCommands[] = $mergeCommand;
+		    $merged = true;
 		    break;
 		}
 	    } else {
@@ -177,10 +181,14 @@ class GalleryDerivativeImage_core extends GalleryDerivative {
 	    }
 	}
 
+	if (!$merged) {
+	    $newCommands[] = $mergeCommand;
+	}
+
 	if (empty($newCommands)) {
 	    $this->setDerivativeCommands(null);
 	} else {
-	    $this->setDerivativeCommands(join('; ', $newCommands));
+	    $this->setDerivativeCommands(join(';', $newCommands));
 	}
 
 	return GalleryStatus::success();
