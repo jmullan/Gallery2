@@ -284,7 +284,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	 */
 	if ($this->_isTransactional) {
 	    if (empty($this->_nonTransactionalDb)) {
-		list ($ret, $this->_nonTransactionalDb) = $this->_getConnection();
+		list ($ret, $this->_nonTransactionalDb) = $this->_getConnection(true);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -294,7 +294,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return array(GalleryStatus::success(), $this->_db);
 	}
     }
-	
+
     /**
      * Load the GalleryEntities with the ids specified
      *
@@ -794,7 +794,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		$this->_releaseLockById($lockId);
 
 		if (time() > $cutoffTime) {
-		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
+				 null);
 		}
 
 		/* Wait a second and try again */
@@ -807,7 +808,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		}
 	    }
 	}
-	    
+
 	/* Put in a read lock for every entity id */
 	$lockIdCol = $this->_translateColumnName('lockId');
 	$readEntityIdCol = $this->_translateColumnName('readEntityId');
@@ -863,7 +864,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Know when to call it quits */
 	$cutoffTime = time() + $timeout;
 
@@ -882,7 +883,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	
+
 	    /*
 	     * Check to see if any of the ids that we care about are locked.
 	     */
@@ -913,7 +914,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		$this->_releaseLockById($lockId);
 
 		if (time() > $cutoffTime) {
-		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__),
+				 null);
 		}
 
 		/* Wait a second and try again */
@@ -984,11 +986,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$data = array_merge(array($freshUntil), $lockIds);
 	$recordSet = $this->_db->Execute($query, $data);
 	$this->_traceStop();
-	
+
 	if (!$recordSet) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -1009,11 +1011,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	$this->_traceStart();
 	$recordSet = $this->_db->Execute($query, array(time()));
 	$this->_traceStop();
-	
+
 	if (!$recordSet) {
 	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
@@ -1052,7 +1054,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	/* Get the true name of the lock table */
 	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 
@@ -1213,7 +1215,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			$qs[] = '?';
 			$data[] = $value;
 		    }
-		    $where[] = $this->_translateColumnName($memberName) . ' IN (' . implode(',', $qs) . ')';
+		    $where[] = $this->_translateColumnName($memberName) . ' IN ('
+			     . implode(',', $qs) . ')';
 		} else {
 		    $where[] = $this->_translateColumnName($memberName) . '=?';
 		    $data[] = $entry[$memberName];
@@ -1294,7 +1297,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			}
 			$wheredata[] = $value;
 		    }
-		    $where[] = $this->_translateColumnName($memberName) . ' IN (' . implode(',', $qs) . ')';
+		    $where[] = $this->_translateColumnName($memberName) . ' IN ('
+			     . implode(',', $qs) . ')';
 		} else if (is_null($match[$memberName])) {
 		    $where[] = $this->_translateColumnName($memberName) . ' IS NULL';
 		} else {
@@ -1461,7 +1465,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		continue;
 	    }
 
-	    list ($tableName, $unused, $tableNameInSchema) = $this->_translateTableName($rawTableName);
+	    list ($tableName, $unused, $tableNameInSchema) =
+		$this->_translateTableName($rawTableName);
 	    if (!in_array(strtolower($tableName), $metatables)) {
 		$ret = $this->_executeSqlFile($sqlFile);
 		if ($ret->isError()) {
@@ -1554,7 +1559,8 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 
 	    $this->_traceStart();
-	    list ($tableName, $unused, $tableNameInSchema) = $this->_translateTableName($rawTableName);
+	    list ($tableName, $unused, $tableNameInSchema) =
+		$this->_translateTableName($rawTableName);
 	    if (in_array(strtolower($tableName), $metatables)) {
 		/* Drop the table and yank it from the schema table */
 		$dropQuery = sprintf('DROP TABLE %s', $tableName);
@@ -1863,9 +1869,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($recordSet) {
 		while ($row = $recordSet->FetchRow()) {
 		    if (empty($row[1])) {
-			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				     null);
 		    } else {
-			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])", $row[1], true);
+			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])",
+					      $row[1], true);
 		    }
 		}
 	    } else {
@@ -2089,7 +2097,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
     function _getLockClearance($cutoffTime) {
 	/* Get the true name of the lock table */
 	list ($lockTable, $unused) = $this->_translateTableName('Lock');
-	
+
 	/* Acquire a non-transactional connection to use for this request */
 	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
 	if ($ret->isError()) {
@@ -2115,7 +2123,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->_releaseLockById($lockId);
 	    return array(GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__), null);
 	}
-    
+
 	/* Wait till it's our turn */
 	while (true) {
 	    $query = 'SELECT ' . $lockIdCol . ' FROM ' . $lockTable . ' ' .
@@ -2144,7 +2152,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (time() > $cutoffTime) {
 		$this->_releaseLockById($lockId);
 		return array(GalleryStatus::error(ERROR_LOCK_TIMEOUT, __FILE__, __LINE__), null);
