@@ -91,16 +91,34 @@ class UnixPlatform extends GalleryPlatform {
 
 	/* Read any debug output and dump it out */
 	if ($gallery->getDebug()) {
+	    $gallery->debug("Regular Output:");
+	    if (!empty($results)) {
+		foreach ($results as $line) {
+		    $gallery->debug($line);
+		}
+	    }
+	    
+	    $gallery->debug("Error Output:");
 	    $platform = $gallery->getPlatform();
+
 	    if ($platform->file_exists($debugFile)) {
 		if ($fd = $platform->fopen($debugFile, "r")) {
+		    $lineCount = 0;
 		    while (!feof($fd)) {
 			$buf = fgets($fd, 4096);
 			$gallery->debug($buf);
+			if (!empty($buf)) {
+			    $lineCount++;
+			}
 		    }
 		    fclose($fd);
 		}
 		unlink($debugFile);
+
+		if ($lineCount == 0) {
+		    $gallery->debug("(no error output)");
+		} 
+		
 		$gallery->debug("Status: $status (expected $expected)");
 	    }
 	}
