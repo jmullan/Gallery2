@@ -126,8 +126,11 @@ class GalleryChildEntityHelper_simple {
 	    $classes[] = '[GalleryPermissionMap]';
 	}
 
-	list($orderColumn, $extraWhere, $orderDirection) =
+	list ($ret, $orderBy, $orderColumn, $extraWhere) =
 	    GalleryChildEntityHelper_simple::_getOrderInfo($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	$extraIds = 0;
 
 	if (!empty($extraWhere)) {
@@ -136,13 +139,13 @@ class GalleryChildEntityHelper_simple {
 
 	    list ($ret, $orderClasses) = $storage->extractClasses($extraWhere);
 	    if ($ret->isError()) {
-    		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $classes = array_unique(array_merge($classes, $orderClasses));
 	}
-	if (!empty($orderColumn)) {
+	if (!empty($orderBy)) {
 	    // Postgres requires the order by column to be in the select list..
-	    $orderClause = 'ORDER BY ' . $orderColumn . ' ' . $orderDirection;
+	    $orderClause = 'ORDER BY ' . $orderBy;
 	    $groupExtra = ', ' . $orderColumn;
 	    $selectExtra = ', ' . $orderColumn;
 	} else {
@@ -271,7 +274,9 @@ class GalleryChildEntityHelper_simple {
      * be included too, the calling function has to decide that (using
      * GalleryStorage::extractClasses())
      *
-     * @return array string an order clause, string a row matching condition
+     * @return array object GalleryStatus a status code
+     *               string order by clause, string select clause,
+     *               string a row matching condition
      * @access private
      * @static
      */
@@ -279,10 +284,6 @@ class GalleryChildEntityHelper_simple {
 	/*
 	 * Don't simply plug getOrderBy into the SQL clause, or we could open
 	 * the door for SQL injection.
-	 *
-	 * XXX: Eventually this should be something that a module can register
-	 * so that we can allow modules to introduce their own custom sort
-	 * orders.
 	 */
 	$orderBy = $item->getOrderBy();
 	$orderDirection = $item->getOrderDirection();
@@ -290,12 +291,12 @@ class GalleryChildEntityHelper_simple {
 	    list ($ret, $orderBy) =
 	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	    list ($ret, $orderDirection) =
 	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderDirection');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	    }
 	}
 
@@ -351,13 +352,31 @@ class GalleryChildEntityHelper_simple {
 	    break;
 
 	case 'orderWeight':
-	default:
 	    $orderColumn = '[GalleryItemAttributesMap::orderWeight]';
 	    $condition = '[GalleryItemAttributesMap::itemId] = [GalleryChildEntity::id]';
 	    $direction = '';
+	    break;
+
+	default:
+	    list ($ret, $sort) =
+		GalleryCoreApi::newFactoryInstanceById('GallerySortInterface_1_0', $orderBy);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    }
+	    if (!isset($sort)) {
+		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+						  $orderBy), null, null, null);
+	    }
+	    list ($ret, $orderClause, $orderColumn, $condition) = $sort->getSortInfo($direction);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    }
+	}
+	if (!isset($orderClause)) {
+	    $orderClause = $orderColumn . $direction;
 	}
 
-	return array($orderColumn, $condition, $direction);
+	return array(GalleryStatus::success(), $orderClause, $orderColumn, $condition);
     }
 }
 ?>

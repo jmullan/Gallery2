@@ -295,6 +295,19 @@ class AdminLayoutsView extends GalleryView {
 		'pathComponent' => $module->translate('Name'),
 		'viewCount' => $module->translate('View Count'),
 	    );
+	    foreach (GalleryCoreApi::getAllFactoryImplementationIds('GallerySortInterface_1_0')
+		    as $sortId => $className) {
+		list ($ret, $sort) =
+		    GalleryCoreApi::newFactoryInstance('GallerySortInterface_1_0', $className);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $sortName) = $sort->getSortName();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$orderByList[$sortId] = $sortName;
+	    }
 	    /* Set up our sort direction selection list */
 	    $orderDirectionList = array(
 		ORDER_ASCENDING => $module->translate('Ascending'),
