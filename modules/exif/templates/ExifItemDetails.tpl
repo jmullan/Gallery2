@@ -3,6 +3,7 @@
     {g->text text="Photo Properties"}
   {/g->title}
 
+  {if isset($ExifItemDetails.mode)}
   {g->subtitle}
     {g->linkset}
       {g->item}
@@ -29,7 +30,9 @@
       {/g->item}
     {/g->linkset}
   {/g->subtitle}
+  {/if}
 
+  {if !empty($ExifItemDetails.exifData)}
   {g->table evenodd="true"}
     {section name=outer loop=$ExifItemDetails.exifData step=2}
       {g->row}
@@ -44,4 +47,5 @@
       {/g->row}
     {/section}
   {/g->table}
+  {/if}
 {/g->box}

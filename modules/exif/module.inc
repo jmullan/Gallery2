@@ -163,6 +163,16 @@ class ExifModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	if (empty($exifData) && $filter == EXIF_SUMMARY) {
+	    list ($ret, $exifData) = ExifHelper::getExifData($path, EXIF_DETAILED);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $mode = null;
+	}
+	if (empty($exifData)) {
+	    return array(GalleryStatus::success(), null);
+	}
 
 	$ExifItemDetails = array();
 	$ExifItemDetails['exifData'] = $exifData;
