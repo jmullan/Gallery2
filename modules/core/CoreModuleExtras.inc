@@ -199,7 +199,7 @@ class CoreModuleExtras {
 	     */
 	    $query = '
 	    UPDATE
-	       GalleryPluginParameterMap]
+	       [GalleryPluginParameterMap]
 	    SET
 	       [::parameterName] = ?
 	    WHERE
