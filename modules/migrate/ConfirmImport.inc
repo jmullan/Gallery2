@@ -545,10 +545,10 @@ class ConfirmImportController extends GalleryController {
 				    list ($ret, $operations) =
 					GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
 				            sprintf('crop|%s,%s,%s,%s',
-						    array($importAlbumItem->image->thumb_x,
-							  $importAlbumItem->image->thumb_y,
-							  $importAlbumItem->image->thumb_width,
-							  $importAlbumItem->image->thumb_height)),
+						    $importAlbumItem->image->thumb_x,
+						    $importAlbumItem->image->thumb_y,
+						    $importAlbumItem->image->thumb_width,
+						    $importAlbumItem->image->thumb_height),
 					    true);
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
