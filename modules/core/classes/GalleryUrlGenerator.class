@@ -247,10 +247,11 @@ class GalleryUrlGenerator {
 		    list ($ret, $view) = GalleryView::loadView($viewName);
 		    if ($ret->isError()) {
 			/*
-			 * Swallow this error.  It's unfortunate, but almost everything that calls this function is in
-			 * the business of speaking right to the presentation layer (like the templating code) and
-			 * isn't in a position to properly provide an error.  Besides, we know that we have a working
-			 * URL anyway, so if rewriting doesn't work just fall back on that.
+			 * Swallow this error.  It's unfortunate, but almost everything that calls this
+			 * function is in the business of speaking right to the presentation layer (like
+			 * the templating code) and isn't in a position to properly provide an error.
+			 * Besides, we know that we have a working URL anyway, so if rewriting doesn't
+			 * work just fall back on that.
 			 */
 		    } else {
 			$rewritten = $view->rewriteQueryString($params);
