@@ -268,8 +268,8 @@ class ConfirmImportController extends GalleryController {
 			     *    [returnto] => yes
 			     *    [thumb_size] => 150
 			     *    [resize_size] => 400
-			     *    [rows] => 5
-			     *    [cols] => 5
+			     *   +[rows] => 5
+			     *   +[cols] => 5
 			     *    [fit_to_window] => no
 			     *    [use_fullOnly] => no
 			     *    [print_photos] => none
@@ -317,6 +317,25 @@ class ConfirmImportController extends GalleryController {
 			    $ret = GalleryItemAttributesMap::setViewCount($newAlbumInstanceId, $album['clicks']);
 			    if ($ret->isError()) {
 				return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+			    }
+			    
+			    list ($ret, $layout) = GalleryItemHelper::fetchLayout($newAlbumInstance);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    list ($ret, $settings) = $layout->getSettings($newAlbumInstanceId);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+
+			    $ret = $layout->setParameter('rows', $album['rows'], $newAlbumInstanceId);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
+			    }
+			    
+			    $ret = $layout->setParameter('columns', $album['cols'], $newAlbumInstanceId);
+			    if ($ret->isError()) {
+				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
 			}
 		    }
