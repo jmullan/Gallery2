@@ -83,7 +83,7 @@ if (isset($_SESSION['path'])) {
 }
 $_SESSION['path'] = __FILE__;
 
-// If we don't have our steps in our session, initialize them now.
+/* If we don't have our steps in our session, initialize them now. */
 if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
     $steps = unserialize($_SESSION['install_steps']);
     $galleryStub =& $_SESSION['galleryStub'];
@@ -103,7 +103,7 @@ if (empty($steps) || !is_array($steps)) {
     $galleryStub = $gallery;
     $_SESSION['galleryStub'] = $galleryStub;
     unset($gallery);
-    
+
     $steps = array();
     for ($i = 0; $i < sizeof($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
@@ -149,27 +149,29 @@ if (!$currentStep->isComplete()) {
 }
 
 if ($currentStep->processRequest()) {
-    // Load up template data from the current step
+    /* Load up template data from the current step */
     $templateData = array();
 
-    // Round percentage to the nearest 5
-    $templateData['percentComplete'] =		  
+    /* Round percentage to the nearest 5 */
+    $templateData['percentComplete'] =
 	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
 
-    // Fetch our page into a variable
+    /* Fetch our page into a variable */
     ob_start();
-    include('templates/MainPage.html');
+    include(dirname(__FILE__) . '/templates/MainPage.html');
     $html = ob_get_contents();
     ob_end_clean();
 
-    // Add session ids if we don't have cookies
+    /* Add session ids if we don't have cookies */
     $html = addSessionIdToUrls($html);
     print $html;
 }
 
-/* Add the session id to our url, if necessary */
+/**
+ * Add the session id to our url, if necessary
+ */
 function addSessionIdToUrls($html) {
     $sid = SID;
     if (!empty($sid)) {

@@ -147,27 +147,29 @@ if (!$currentStep->isComplete()) {
 }
 
 if ($currentStep->processRequest()) {
-    // Load up template data from the current step
+    /* Load up template data from the current step */
     $templateData = array();
 
-    // Round percentage to the nearest 5
+    /* Round percentage to the nearest 5 */
     $templateData['percentComplete'] =		  
 	(int)((100 * ($stepNumber / (sizeof($steps)-1))) / 5) * 5;
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
 
-    // Fetch our page into a variable
+    /* Fetch our page into a variable */
     ob_start();
-    include('templates/MainPage.html');
+    include(dirname(__FILE__) . '/templates/MainPage.html');
     $html = ob_get_contents();
     ob_end_clean();
 
-    // Add session ids if we don't have cookies
+    /* Add session ids if we don't have cookies */
     $html = addSessionIdToUrls($html);
     print $html;
 }
 
-/* Add the session id to our url, if necessary */
+/**
+ * Add the session id to our url, if necessary
+ */
 function addSessionIdToUrls($html) {
     $sid = SID;
     if (!empty($sid)) {
