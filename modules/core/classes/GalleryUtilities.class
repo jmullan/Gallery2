@@ -76,9 +76,9 @@ class GalleryUtilities {
 
 	$pos++;
 	
-	/* If it's the last char in the name, it's also bogus */
+	/* If it's the last char in the name, just return the base */
 	if ($pos >= strlen($filename)) {
-	    return null;
+	    return array(substr($filename, 0, $pos-1), '');
 	}
 
 	return array(substr($filename, 0, $pos-1), substr($filename, $pos));
