@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -28,7 +28,7 @@
 /**
  * Load required classes
  */
-require_once(dirname(__FILE__) . '/../../core/classes/GalleryToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * A version of GalleryToolkit to enforce creation of square thumbnails
@@ -96,7 +96,8 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    if ($width > $parameters[0] && $height > $parameters[0]) {
 		$cropFilename = $tmpFilename = $platform->tempnam($tmpDir, 'sqth_');
 		if (empty($tmpFilename)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
+				 null, null);
 		}
 		list ($ret, $nextToolkit) =
 		    GalleryCoreApi::getToolkitByOperation($nextMime, 'scale');
@@ -108,10 +109,12 @@ class SquareThumbToolkit extends GalleryToolkit {
 		$cropFilename = $destFilename;
 	    }
 
-	    $args = ($width > $height) ? array( 100*(1-$height/$width)/2, 0, 100*$height/$width, 100 )
-		                       : array( 0, 100*(1-$width/$height)/2, 100, 100*$width/$height );
-	    list ($ret, $mimeType, $subContext) = $toolkit->performOperation($mimeType, 'crop',
-						  $sourceFilename, $cropFilename, $args, $subContext);
+	    $args = ($width > $height)
+		  ? array( 100*(1-$height/$width)/2, 0, 100*$height/$width, 100 )
+		  : array( 0, 100*(1-$width/$height)/2, 100, 100*$width/$height );
+	    list ($ret, $mimeType, $subContext) =
+		$toolkit->performOperation($mimeType, 'crop',
+					   $sourceFilename, $cropFilename, $args, $subContext);
 	    if ($ret->isError()) {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
@@ -141,8 +144,9 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    }
 	    $subContext['next.toolkit'] = null;
 	    $subContext['next.operation'] = null;
-	    list ($ret, $mimeType, $subContext) = $toolkit->performOperation($mimeType, 'scale',
-				   $sourceFilename, $destFilename, $parameters, $subContext);
+	    list ($ret, $mimeType, $subContext) =
+		$toolkit->performOperation($mimeType, 'scale', $sourceFilename, $destFilename,
+					   $parameters, $subContext);
 	    if ($ret->isError()) {
 		if (isset($tmpFilename)) {
 		    @$platform->unlink($tmpFilename);
@@ -155,10 +159,10 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    @$platform->unlink($tmpFilename);
 	}
 
-	if (!$outputWasGenerated) {
+	if (!$outputWasGenerated && $sourceFilename != $destFilename) {
 	    /*
-	     * The image was square to begin with, and smaller than the scale size.  This means that we should
-	     * simply reuse the original.
+	     * The image was square to begin with, and smaller than the scale size.
+	     * This means that we should simply reuse the original.
 	     */
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__));
@@ -174,11 +178,12 @@ class SquareThumbToolkit extends GalleryToolkit {
      * Estimate the dimensions of a GalleryDerivativeImage from its operations and its source.
      *
      * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryDerivativeEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @param object GalleryDerivativeEntity the source
+     *                                (probably a GalleryPhotoItem or GalleryMovieItem)
      */
     function estimateDimensions(&$derivative, $source) {
 	$handled = false;
-        if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
+	if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
 	    $width = $source->getWidth();
 	    $height = $source->getHeight();
 	    if ($width && $height) {
