@@ -7,21 +7,19 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
     }
 
     function testStart() {
-	$album = new AlbumItem();
+	global $gallery;
 
 	print("Creating new album item\n");
-	$ret = $album->createRoot("createAndDelete");
+	$album = new AlbumItem();
+	$ret = $album->createRoot("createAndDelete",
+				  $gallery->getActiveUserId());
 	
 	if ($ret->isError()) {
-	    $this->error($ret);
-	    $album = null;
 	    return $ret;
 	}
 
-	global $gallery;
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
-	    $this->error($ret);
 	    return $ret;
 	}
 
@@ -45,6 +43,12 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 
+	/* Leggo of our locks */
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	return GalleryStatus::success();
     }
 }

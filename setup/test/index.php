@@ -1,3 +1,21 @@
+<head>
+<style type="text/css">
+<!--
+body {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
+th {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; font-weight: bold; background-color: #D3DCE3}
+td {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
+form {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt}
+h1 {font-family: helvetica, arial, geneva, sans-serif; font-size: 16pt; font-weight: bold}
+A:link {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: none; color: #0000ff}
+A:visited {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: none; color: #0000ff}
+A:hover {font-family: helvetica, arial, geneva, sans-serif; font-size: 10pt; text-decoration: underline; color: #FF0000}
+A:link.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
+A:visited.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
+A:hover.nav {font-family: helvetica, arial, geneva, sans-serif; color: #FF0000}
+.nav {font-family: helvetica, arial, geneva, sans-serif; color: #000000}
+//-->
+</style>
+</head>
 <?php
 require('init.php');
 require('TestCase.class');

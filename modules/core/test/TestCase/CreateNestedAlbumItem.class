@@ -7,10 +7,12 @@ class CreateNestedAlbumItemTestCase extends TestCase {
     }
 
     function testStart() {
-	$rootAlbum = new AlbumItem();
+	global $gallery;
 
 	print("Creating new root album item\n");
-	$ret = $rootAlbum->createRoot("nestedRoot");
+	$rootAlbum = new AlbumItem();
+	$ret = $rootAlbum->createRoot("nestedRoot",
+				      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -20,7 +22,6 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 
-	global $gallery;
 	$ret = $gallery->lockWorld();
 	if ($ret->isError()) {
 	    return $ret;
@@ -29,7 +30,8 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	$parent =& $rootAlbum;
 	for ($i = 0; $i < 5; $i++) {
 	    $nested[$i] = new AlbumItem();
-	    $ret = $nested[$i]->create($parent, "nested_$i");
+	    $ret = $nested[$i]->create($parent, "nested_$i",
+				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return $ret;
 	    }
@@ -42,6 +44,12 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    $parent =& $nested[$i];
 	}
 
+	/* Leggo of our locks */
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	return GalleryStatus::success();
     }
 }

@@ -9,9 +9,16 @@ class CreateGalleryCommentTestCase extends TestCase {
     function testStart() {
 	global $gallery;
 
-	$rootId = $gallery->getConfigValue('core.root.id');
-	list ($ret, $root) = GalleryNucleus::load($rootId);
-	var_dump($root->getId());
+	$rootId = $gallery->getConfigValue('core.ids.rootAlbum');
+
+	/* Lock the parent id */
+	$ret = $gallery->lockLocal($rootId);
+	if ($ret->isError()) {
+	    $this->error($ret);
+	    return $ret;
+	}
+
+	list($ret, $root) = GalleryNucleus::load($rootId);
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -22,6 +29,17 @@ class CreateGalleryCommentTestCase extends TestCase {
 	    return $ret;
 	}
 
+	/* Save the parent and release the lock on it */
+	$ret = $root->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	$ret = $gallery->lockLocal(array($root->getId(),
 					 $comment->getId()));
 	if ($ret->isError()) {
@@ -34,6 +52,11 @@ class CreateGalleryCommentTestCase extends TestCase {
 	$comment->setHostname('www.slashdot.org');
 	$comment->setName('Cmdr Taco');
 	$ret = GalleryNucleus::saveMany(array(&$root, &$comment));
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	$ret = $gallery->unlock();
 	if ($ret->isError()) {
 	    return $ret;
 	}

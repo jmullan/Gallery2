@@ -63,6 +63,12 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret;
 	}
 
+	/* Leggo of our locks */
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	return GalleryStatus::success();
     }
 }

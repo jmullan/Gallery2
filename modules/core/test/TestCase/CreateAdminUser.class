@@ -1,0 +1,25 @@
+<?php
+
+class CreateAdminUserTestCase extends TestCase {
+
+    function getDescription() {
+	return "Create the Admin user";
+    }
+
+    function testStart() {
+
+	$user = new GalleryUser();
+	$ret = $user->create();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	$user->setPassword('admin');
+	$user->setFullName('Admin');
+	$user->setIsAdmin(true);
+	
+	return $user->save();
+    }
+}
+
+?>
+</pre>

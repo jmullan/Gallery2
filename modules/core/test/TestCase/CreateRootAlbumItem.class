@@ -7,28 +7,25 @@ class CreateAlbumItemTestCase extends TestCase {
     }
 
     function testStart() {
-	$album = new AlbumItem();
+	global $gallery;
 
 	print("Creating new album item\n");
-	$ret = $album->createRoot("test");
+	$album = new AlbumItem();
+	$ret = $album->createRoot("test",
+				  $gallery->getActiveUserId());
 
 	if ($ret->isError()) {
-	    $this->error($ret);
-	    $album = null;
 	    return $ret;
 	}
 	
 	print("SAVE\n");
 	$ret = $album->save();
 	if ($ret->isError()) {
-	    $this->error($ret);
 	    return $ret;
 	}
 
-	global $gallery;
-	$ret = $gallery->lockLocal(array($album->getId()));
+	$ret = $gallery->lockLocal($album->getId());
 	if ($ret->isError()) {
-	    $this->error($ret);
 	    return $ret;
 	}
 
@@ -39,7 +36,6 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("SECOND SAVE\n");
 	$ret = $album->save();
 	if ($ret->isError()) {
-	    $this->error($ret);
 	    return $ret;
 	}
 	
@@ -49,10 +45,15 @@ class CreateAlbumItemTestCase extends TestCase {
 	print("THIRD SAVE\n");
 	$ret = $album->save();
 	if ($ret->isError()) {
-	    $this->error($ret);
 	    return $ret;
 	}
 
+	/* Leggo of our locks */
+	$ret = $gallery->unlock();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	return GalleryStatus::success();
     }
 }
