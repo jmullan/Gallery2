@@ -81,7 +81,7 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('test[a]',
 	    '<a href="javascript:alert(\'hi\')">yo</a>');
 	$this->assertEquals(
-	    '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;',
+	    '&lt;a href=&quot;javascript:alert(\'hi\')&quot;&gt;yo&lt;/a&gt;',
 	    GalleryUtilities::getRequestVariables('test[a]'));
     }
 
@@ -89,7 +89,7 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('test[a]', array('goodvalue' => 'foo bar',
 	     'badvalue' => '<a href="javascript:alert(\'hi\')">yo</a>'));
 	$this->assertEquals(array('goodvalue' => 'foo bar',
-	  'badvalue' => '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;'),
+	  'badvalue' => '&lt;a href=&quot;javascript:alert(\'hi\')&quot;&gt;yo&lt;/a&gt;'),
 	  GalleryUtilities::getRequestVariables('test[a]'));
     }
 
@@ -102,10 +102,10 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6');
 
 	$this->assertEquals(array('outer1' => array('inner1' => '1',
-						    'inner&#039;2' => array('a' => '2',
-									'b' => '3&#039;3'),
+						    'inner\'2' => array('a' => '2',
+									'b' => '3\'3'),
 						    'inner3' => array('a' => '4',
-								      'b' => '5&#039;5')),
+								      'b' => '5\'5')),
 				  'outer2' => '6'),
 			    GalleryUtilities::getFormVariables('utilitiestest'));
     }
@@ -159,10 +159,10 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::putRequestVariable('utilitiestest[outer2]', '6', false);
 
 	$this->assertEquals(array('outer1' => array('inner1' => '1',
-						    'inner&#039;2' => array('a' => '2',
-									'b' => '3&#039;3'),
+						    'inner\'2' => array('a' => '2',
+									'b' => '3\'3'),
 						    'inner3' => array('a' => '4',
-								      'b' => '5&#039;5')),
+								      'b' => '5\'5')),
 				  'outer2' => '6'),
 			    GalleryUtilities::getFormVariables('utilitiestest', false));
     }
@@ -199,13 +199,19 @@ class UtilitiesTest extends GalleryTestCase {
     /* Verify that UTF-8 values can be sanitized and unsanitized safely */
     function testSanitizeRoundTrip() {
 	foreach (array("t\xc3\xa9st" => "t\xc3\xa9st",
-		       "\x47\x32\xce\x93\xce\xb2\xc3\x80" => "G2\xce\x93\xce\xb2\xc3\x80") as
+		       "\x47\x32\xce\x93\xce\xb2\xc3\x80" => "G2\xce\x93\xce\xb2\xc3\x80",
+		       'apo\'strophe quo"tes' => 'apo\'strophe quo&quot;tes') as
 		 $raw => $cooked) {
+	    if (get_magic_quotes_gpc()) {
+		/* Simulate magic_quotes_gpc */
+		$raw = addslashes($raw);
+	    }
 	    $value = $raw;
+
 	    GalleryUtilities::sanitizeInputValues($value);
-	    $this->assertEquals($cooked, $value);
+	    $this->assertEquals($cooked, $value, 'cooked mismatch');
 	    GalleryUtilities::unsanitizeInputValues($value);
-	    $this->assertEquals($raw, $value);
+	    $this->assertEquals($raw, $value, 'raw mismatch');
 	}
     }
 
@@ -412,7 +418,7 @@ class UtilitiesTest extends GalleryTestCase {
 
     function testHtmlEntityDecode() {
 	$result = GalleryUtilities::htmlEntityDecode(
-	    '&lt;a href=&quot;javascript:alert(&#039;hi&#039;)&quot;&gt;yo&lt;/a&gt;');
+	    '&lt;a href=&quot;javascript:alert(\'hi\')&quot;&gt;yo&lt;/a&gt;');
 	$this->assertEquals('<a href="javascript:alert(\'hi\')">yo</a>', $result);
     }
 
@@ -806,12 +812,14 @@ class UtilitiesTest extends GalleryTestCase {
 		 "\xb8\xd0\xb9\xd0\x97\xd0\xb4\xd1\x80\xd0\xb0" .
 		 "\xd0\xb2\xd1\x81\xd1\x82\xd0\xb2\xd1\x83");
 	$this->assertEquals("\xd0\xa0",
-			    GalleryUtilities::utf8Substring($utf8, 0, 1));
+			    GalleryUtilities::utf8Substring($utf8, 0, 1),
+			    'standard version');
 	$this->assertEquals("\xd0\xa0",
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
 			    'php version');
 	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
-			    GalleryUtilities::utf8Substring($utf8, 0, 4));
+			    GalleryUtilities::utf8Substring($utf8, 0, 4),
+			    'standard version');
 	$this->assertEquals("\xd0\xa0\xd1\x83\xd1\x81\xd1\x81",
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
 			    'php version');
@@ -823,14 +831,25 @@ class UtilitiesTest extends GalleryTestCase {
 		 "\xd7\x9b\xd7\x95\xd7\x9b\xd7\x99\xd7\xaa \xd7\x95\xd7" .
 		 "\x96\xd7\x94 \xd7\x9c\xd7\x90 \xd7\x9e\xd7\x96\xd7\x99");
 	$this->assertEquals("\xd7\x90",
-			    GalleryUtilities::utf8Substring($utf8, 0, 1));
+			    GalleryUtilities::utf8Substring($utf8, 0, 1),
+			    'standard version');
 	$this->assertEquals("\xd7\x90",
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 1),
 			    'php version');
 	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
-			    GalleryUtilities::utf8Substring($utf8, 0, 4));
+			    GalleryUtilities::utf8Substring($utf8, 0, 4),
+			    'standard version');
 	$this->assertEquals("\xd7\x90\xd7\xa0\xd7\x99 ",
 			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 4),
+			    'php version');
+
+	/* Test some special characters */
+	$utf8 = 'apo\'strophe.jpg "quotes"';
+	$this->assertEquals('apo\'strophe.jpg "quotes"',
+			    GalleryUtilities::utf8Substring($utf8, 0, 24),
+			    'standard version');
+	$this->assertEquals('apo\'strophe.jpg "quotes"',
+			    GalleryUtilities::_phpUtf8Substring($utf8, 0, 24),
 			    'php version');
     }
 

@@ -100,7 +100,8 @@ class MarkupTest extends GalleryTestCase {
     function testHtmlSpecialChars() {
 	$results = $this->_bbcode->parse('&lt;script language=&quot;javascript&quot;' .
 					 '&gt;evil!&lt;/script&gt;');
-	$this->assertEquals('&lt;script language=&quot;javascript&quot;&gt;evil!&lt;/script&gt;', $results);
+	$this->assertEquals('&lt;script language=&quot;javascript&quot;&gt;evil!&lt;/script&gt;',
+			    $results);
     }
 
     function testLineEndings() {
@@ -126,7 +127,8 @@ class MarkupTest extends GalleryTestCase {
 
     function testUrl1() {
 	$results = $this->_bbcode->parse('[url]http://example.com/a.html[/url]');
-	$this->assertEquals('<a href="http://example.com/a.html">http://example.com/a.html</a>', $results);
+	$this->assertEquals('<a href="http://example.com/a.html">http://example.com/a.html</a>',
+			    $results);
     }
 
     function testUrl2() {
@@ -155,18 +157,21 @@ class MarkupTest extends GalleryTestCase {
     }
 
     function testJavascript() {
-	$results = $this->_bbcode->parse('[url=javascript:alert(&#039;hi&#039;)]content[/url]');
-	$this->assertEquals('[url=javascript:alert(&#039;hi&#039;)]content[/url]', $results);
+	$results = $this->_bbcode->parse('[url=javascript:alert(\'hi\')]content[/url]');
+	$this->assertEquals('[url=javascript:alert(\'hi\')]content[/url]', $results);
     }
 
     function testStrip() {
-	$results = $this->_strip->parse('[url=http://no]yes[/url] yes [b]yes[/b] <b>yes</b> &lt;foo&gt; hinzufügen');
+	$results = $this->_strip->parse('[url=http://no]yes[/url] yes [b]yes[/b] ' .
+					'<b>yes</b> &lt;foo&gt; hinzufügen');
 	$this->assertEquals('yes yes yes yes &lt;foo&gt; hinzufügen', $results);
     }
 
     function testUnicodeCharacters() {
-	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]Elemente hinzufügen[/url] Seitenverhältnis');
-	$this->assertEquals('<a href="https://example.com/secure.html">Elemente hinzufügen</a> Seitenverhältnis', $results);
+	$results = $this->_bbcode->parse('[url=https://example.com/secure.html]' .
+					 'Elemente hinzufügen[/url] Seitenverhältnis');
+	$this->assertEquals('<a href="https://example.com/secure.html">Elemente hinzufügen</a>' .
+			    ' Seitenverhältnis', $results);
     }
 
     function testNonBbcodeMarkers() {

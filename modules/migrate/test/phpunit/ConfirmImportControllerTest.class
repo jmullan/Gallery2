@@ -1524,7 +1524,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    ConfirmImportController::convertHtmlToBbcode("\xc3\xb1o\nthis"));
 
 	/* Quotes are escaped */
-	$this->assertEquals("Se\xc3\xb1or Guapo&#039;s favorite!",
+	$this->assertEquals("Se\xc3\xb1or Guapo's favorite!",
 	    ConfirmImportController::convertHtmlToBbcode("Se\xc3\xb1or Guapo\x27s favorite!"));
 
 	$this->assertEquals('[b]bold[/b]',
