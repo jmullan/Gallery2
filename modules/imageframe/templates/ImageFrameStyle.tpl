@@ -10,6 +10,7 @@ img.ImageFrame_image {ldelim} vertical-align:bottom; border:none; {rdelim}
 {if $data.type=='style'}
 img.ImageFrame_{$id} {ldelim} {$data.style} {rdelim}
 {elseif $data.type=='image'}
+table.ImageFrame_{$id} {ldelim} direction: ltr; {rdelim}
 {if !empty($data.imageTL)}table.ImageFrame_{$id} .TL {ldelim} width:{$data.widthTL}px; height:{$data.heightTL}px; background:url({$data.imageTL}) no-repeat; {rdelim}
 {/if}
 {if !empty($data.imageTTL)}table.ImageFrame_{$id} .TTL {ldelim} width:{$data.widthTTL}px; background:url({$data.imageTTL}) no-repeat; {rdelim}
