@@ -1006,7 +1006,9 @@ class GalleryCoreApi {
 
     /**
      * Get the view counts for many item ids
-     * @param int the item id
+     * @param array the item ids
+     * @return array object GalleryStatus a status code
+     *               array (itemId => viewCount, ..)
      * @static
      */
     function fetchItemViewCounts($itemIds) {
@@ -1028,7 +1030,8 @@ class GalleryCoreApi {
     /**
      * Get the order weight for a given item id
      * @param int the item id
-     * @param int the order weight
+     * @return array object GalleryStatus a status code
+     *               int the order weight
      * @static
      */
     function fetchItemOrderWeight($itemId) {
@@ -1037,9 +1040,11 @@ class GalleryCoreApi {
     }
 
     /**
-     * Get the order weight for a given item id
-     * @param int the item id
-     * @param int the order weight
+     * Get the order weight for many item ids
+     * @param array the item ids
+     * @return array object GalleryStatus a status code
+     *               array(itemId1 => orderWeight1,
+     *                     itemId2 => orderWeight2, ...)
      * @static
      */
     function fetchItemOrderWeights($itemIds) {
