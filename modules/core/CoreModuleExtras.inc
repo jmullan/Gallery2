@@ -179,6 +179,13 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+        
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
+            '/classes/helpers/GalleryMimeTypeHelper_simple.class');
+        $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    break;
 
 	case '0.8':
@@ -341,10 +348,18 @@ class CoreModuleExtras {
 
 	case '0.9.2':
 	    /* Changed the data cache format */
-
+        
 	case '0.9.3':
 	    /* CSS refactor across entire app */
 	    break;
+
+	case '0.9.4': 
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . 
+            '/classes/helpers/GalleryMimeTypeHelper_simple.class');
+        $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,

@@ -64,7 +64,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		/* Add it */
 		if ($successfullyCopied && strpos($response, '404 Not Found') === false) {
 		    list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-		    $mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+            list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null);
+            }
 
 		    /* If we can't get a mime type, try stripping off the query string */
 		    if ($mimeType == 'application/unknown') {
@@ -73,7 +76,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 			    if (!empty($tmpUrl)) {
 				$url = $tmpUrl;
 				list ($base, $extension) = GalleryUtilities::getFileNameComponents(basename($url));
-				$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+                list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+                if ($ret->isError()) {
+                    return array($ret->wrap(__FILE__, __LINE__), null);
+                }
 			    }
 			}
 		    }
@@ -231,7 +237,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				continue;
 			    }
 
-			    $mimeType = GalleryCoreApi::getMimeType($urlComponents['path']);
+				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['path']);
+			    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    }
 			    if ($mimeType == 'application/unknown') {
 				/*
 				 * Try again with end of the query string -- just in case.  Some sites, like
@@ -242,7 +251,10 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				    continue;
 				}
 
-				$mimeType = GalleryCoreApi::getMimeType($urlComponents['query']);
+				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['query']);
+			    if ($ret->isError()) {
+					return array($ret->wrap(__FILE__, __LINE__), null, null);
+			    }
 				if ($mimeType == 'application/unknown') {
 				    continue;
 				}

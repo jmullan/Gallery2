@@ -194,28 +194,32 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testCanBeViewedInlineOthers() {
-	$mimeMap = GalleryCoreApi::getMimeTypeMap();
-	$testMimeTypes = array();
-	foreach (array_keys($mimeMap) as $mimeType) {
-	    if (! preg_match('#^image/#', $mimeType)) {
-		$testMimeTypes[] = $mimeType;
-	    }
-	}
-	foreach ($testMimeTypes as $mimeType) {
-	    list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $instance->setMimeType($mimeType);
-	    if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
-		$instance->setWidth(100);
-		$instance->setHeight(100);
-	    }
-	    /* We need to be able to render what we can view inline */
-	    $html = $instance->render('HTML', array('fallback' => 'ERROR', 'class' => 'test'));
-	    $inlineOk = ($html != 'ERROR' && $html != null);
-	    $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
-	}
+        global $gallery;
+        $query = '
+            SELECT [GalleryMimeTypeMap::mimeType]
+            FROM [GalleryMimeTypeMap]
+            WHERE [GalleryMimeTypeMap::mimeType] NOT LIKE \'image/%\'
+        ';
+        list ($ret, $searchResults) = $gallery->search($query);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        while ($results = $searchResults->nextResult()) {
+            $mimeType = $results[0];
+            list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
+            if ($ret->isError()) {
+                return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            }
+            $instance->setMimeType($mimeType);
+            if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
+                $instance->setWidth(100);
+                $instance->setHeight(100);
+            }
+            /* We need to be able to render what we can view inline */
+            $html = $instance->render('HTML', array('fallback' => 'ERROR', 'class' => 'test'));
+            $inlineOk = ($html != 'ERROR' && $html != null);
+            $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
+        }
     }
 
     function testGetChildCounts() {

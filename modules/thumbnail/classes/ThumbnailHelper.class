@@ -197,11 +197,14 @@ class ThumbnailHelper {
 	 * If we don't get useful data from the form or its a type we don't
 	 * recognize, take a swing at it using the file name.
 	 */
+    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($fileMimeType);
 	if ($fileMimeType == 'application/octet-stream' ||
-		$fileMimeType == 'application/unknown' ||
-		GalleryCoreApi::convertMimeToExtension($fileMimeType) == null) {
+		$fileMimeType == 'application/unknown' || empty($mimeExtensions)) {
 	    $extension = GalleryUtilities::getFileExtension($filename);
-	    $fileMimeType = GalleryCoreApi::convertExtensionToMime($extension);
+        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+        if ($ret->isError()) {
+            $mimeType = 'application/unknown';
+        }
 	}
 	if ($fileMimeType != 'image/jpeg') {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__), null);
@@ -452,6 +455,38 @@ class ThumbnailHelper {
 	}
 
 	return GalleryStatus::success();
+    }
+    
+    /**
+     * Return mime types and applicable file extensions
+     *
+     * @return array object GalleryStatus a status code
+     *               array array string mime type, 
+     *                           array of string extensions
+     *                     boolean is viewable
+     * @static
+     */
+    function getMimeTypeMap() {
+        global $gallery;
+        
+        $query = '
+            SELECT [GalleryMimeTypeMap::mimeType],
+                [GalleryMimeTypeMap::extension]
+            FROM [GalleryMimeTypeMap]
+            ORDER BY [GalleryMimeTypeMap::mimeType]
+        ';
+        list ($ret, $searchResults) = $gallery->search($query);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        while ($result = $searchResults->nextResult()) {
+            $typeMap[$result[0]][] = $result[1];
+        }
+        
+        foreach(array_keys($typeMap) as $mimeType) {
+            $typeMap[$mimeType] = implode(' ', $typeMap[$mimeType]);
+        }
+        return array(GalleryStatus::success(), $typeMap);
     }
 }
 ?>

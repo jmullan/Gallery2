@@ -152,6 +152,7 @@ class RewriteModuleExtras {
 	    }
 
 	case '0.9.0':
+	case '0.9.1':
 	    break;
 
 	default:

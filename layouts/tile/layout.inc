@@ -43,10 +43,10 @@ class TileLayout extends GalleryLayout {
 	$this->setId('tile');
 	$this->setName('Tile');
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
-	$this->setVersion('0.3.1');
+	$this->setVersion('0.9.1');
 	$this->setL10Domain('layouts_tile');
 	$this->setRequiredLayoutApi(array(0, 8));
-	$this->setRequiredCoreApi(array(4, 0));
+	$this->setRequiredCoreApi(array(5, 0));
 
 	return GalleryStatus::success();
     }

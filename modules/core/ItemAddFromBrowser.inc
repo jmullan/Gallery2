@@ -61,11 +61,15 @@ class ItemAddFromBrowser extends ItemAddPlugin {
 		     * If we don't get useful data from that or its a type we don't
 		     * recognize, take a swing at it using the file name.
 		     */
+            list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
 		    if ($mimeType == 'application/octet-stream' ||
 			    $mimeType == 'application/unknown' ||
-			    GalleryCoreApi::convertMimeToExtension($mimeType) == null) {
+			    empty($mimeExtensions)) {
 			$extension = GalleryUtilities::getFileExtension($file['name']);
-			$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+            list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+            if ($ret->isError()) {
+                $mimeType = 'application/unknown';
+            }
 		    }
 
 		    $filename = basename($file['name']);

@@ -726,6 +726,7 @@ class GalleryPlatform {
      * Remove any illegal characters from the path component.
      */
     function legalizePathComponent($component) {
+        global $gallery;
 	$legal = $this->getLegalPathCharacters();
 
 	/* Scrub out all the illegal characters */
@@ -751,8 +752,12 @@ class GalleryPlatform {
 	 * the document root.  So mangle the extension to make sure that the
 	 * webserver doesn't execute it.
 	 */
-	$tmp = GalleryCoreApi::convertExtensionToMime($extension);
-	if ($tmp == 'application/unknown' && !empty($extension)) {
+	list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
+	if ($ret->isError() && $gallery->getDebug()) {
+	    $gallery->debug('Error: convertExtensionToMime in ' .
+            'GalleryPlatform::legalizePathComponent');
+	}
+	if (($ret->isError() || $tmp == 'application/unknown') && !empty($extension)) {
 	    $fileBase = $fileBase . '_' . $extension;
 	    $extension = null;
 	}

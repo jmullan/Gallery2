@@ -124,9 +124,10 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		    '/' . $pseudoFileName;
 
 		if (strpos($pseudoFileName, '.') === false) {
-		    $extension = GalleryCoreApi::convertMimeToExtension($entity->getMimeType());
-		    if (!empty($extension)) {
-			$url .= '.' . $extension;
+            list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions(
+                $entity->getMimeType());
+		    if (!empty($extensions)) {
+			$url .= '.' . $extensions[0];
 		    }
 		}
 

@@ -124,7 +124,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 	$filepath .= $filename;
 
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
-	$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 	GalleryUtilities::sanitizeInputValues($base);
 
 	list ($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($parentId);
@@ -359,7 +362,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileKey' => $filePath,
 					  'legal' => $legal);
 			    } else {
-				$mimeType = GalleryCoreApi::getMimeType($fileName);
+                    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
+                    if ($ret->isError()) {
+                        return array($ret->wrap(__FILE__, __LINE__), null, null);
+                    }
 				if (!isset($mimeTypeItemMap[$mimeType])) {
 				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
@@ -386,7 +392,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $platform->closedir($handle);
 
 		} else if ($platform->is_file($path) && !$platform->is_link($path)) {
-		    $mimeType = GalleryCoreApi::getMimeType($path);
+		    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($path);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+            }
 		    if (!isset($mimeTypeItemMap[$mimeType])) {
 			list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
 			    GalleryCoreApi::newItemByMimeType($mimeType);

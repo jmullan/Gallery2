@@ -795,7 +795,10 @@ class ConfirmImportController extends GalleryController {
 
 				list ($base, $extension) =
 				    GalleryUtilities::getFileNameComponents($filename);
-				$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+				list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+				if ($ret->isError()) {
+				    return array($ret->wrap(__FILE__, __LINE__), null);
+				}
 
 				$convertedCaption = $this->convertHtmlToBbcode(
 				    $importAlbumItem->caption, $sourceEncoding);

@@ -157,8 +157,11 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ret = $photo->create($parentId, $imagePath,
-			      GalleryCoreApi::getMimeType($imagePath),
+    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($imagePath);
+    if ($ret->isError()) {
+        return array($ret->wrap(__FILE__, __LINE__), null);
+    }
+	$ret = $photo->create($parentId, $imagePath, $mimeType,
 			      'testitem_' . time() . substr($imagePath, -4));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

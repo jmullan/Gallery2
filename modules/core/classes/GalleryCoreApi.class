@@ -54,7 +54,8 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(4, 1);
+	return array(5, 0);
+	//return array(4, 1);
     }
 
     /**
@@ -2192,35 +2193,26 @@ class GalleryCoreApi {
      * Convert a file extension to a mime type
      *
      * @param string a file extension
-     * @return string a mime type
+     * @return array object GalleryStatus a status code
+     *               string a mime type
      * @static
      */
     function convertExtensionToMime($extension) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MimeHelper_simple.class');
-	return MimeHelper_simple::convertExtensionToMime($extension);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	return GalleryMimeTypeHelper_simple::convertExtensionToMime($extension);
     }
 
     /**
      * Convert a mime type to a file extension
      *
      * @param string a mime type
-     * @return string a file extension
+     * @return array object GalleryStatus a status code
+     *               array of file extensions
      * @static
      */
-    function convertMimeToExtension($mimeType) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MimeHelper_simple.class');
-	return MimeHelper_simple::convertMimeToExtension($mimeType);
-    }
-
-    /**
-     * Return mime types and applicable file extensions
-     *
-     * @return array (string mime type => array(string extension))
-     * @static
-     */
-    function getMimeTypeMap() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MimeHelper_simple.class');
-	return MimeHelper_simple::getMimeTypeMap();
+    function convertMimeToExtensions($mimeType) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	return GalleryMimeTypeHelper_simple::convertMimeToExtensions($mimeType);
     }
 
     /**
@@ -2229,25 +2221,38 @@ class GalleryCoreApi {
      * Eg, "foo.jpg" returns "image/jpeg"
      *
      * @param string the filename
-     * @return string the mime type
+     * @return array object GalleryStatus a status code
+     *               string a mime type
      * @static
      */
     function getMimeType($filename) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MimeHelper_simple.class');
-	return MimeHelper_simple::getMimeType($filename);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	return GalleryMimeTypeHelper_simple::getMimeType($filename);
     }
 
     /**
      * Return true if the given mime type is viewble in a web browser
      *
      * @param string the mime type
-     * @return true or false
+     * @return array object GalleryStatus a status code
+     *               boolean 
      */
     function isViewableMimeType($mimeType) {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MimeHelper_simple.class');
-	return MimeHelper_simple::isViewableMimeType($mimeType);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+	return GalleryMimeTypeHelper_simple::isViewableMimeType($mimeType);
     }
 
+    /**
+     * Remove given mime type from the list
+     *
+     * @param associative array the mime type
+     * @return object GalleryStatus a status code
+     */
+    function removeMimeType($mimeType) {
+        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
+        return GalleryMimeTypeHelper_simple::removeMimeType($mimeType);
+    }
+    
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
      * upon completion return the http response, headers and the actual URL that we used to

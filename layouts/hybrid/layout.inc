@@ -43,10 +43,10 @@ class HybridLayout extends GalleryLayout {
 	$this->setId('hybrid');
 	$this->setName('Hybrid');
 	$this->setDescription($gallery->i18n('Combined album/image/slideshow dynamic view'));
-	$this->setVersion('0.8.2');
+	$this->setVersion('0.9.1');
 	$this->setL10Domain('layouts_hybrid');
 	$this->setRequiredLayoutApi(array(0, 8));
-	$this->setRequiredCoreApi(array(4, 0));
+	$this->setRequiredCoreApi(array(5, 0));
     }
 
     function loadTemplate(&$template, $item) {

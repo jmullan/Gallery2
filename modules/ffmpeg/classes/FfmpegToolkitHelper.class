@@ -184,7 +184,10 @@ class FfmpegToolkitHelper {
 	    if (preg_match('|Input audio/video file formats: (.*)$|', $resultLine, $regs)) {
 		foreach (explode(' ', $regs[1]) as $type) {
 		    if (isset($relevantTypes[$type])) {
-			$mime = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+            list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+            }
 			$mimeTypes[$mime] = 1;
 		    }
 		}
@@ -193,7 +196,11 @@ class FfmpegToolkitHelper {
 		do {
 		    foreach (explode(' ', $regs[1]) as $type) {
 			if (isset($relevantTypes[$type])) {
-			    $mime = GalleryCoreApi::convertExtensionToMime($relevantTypes[$type]);
+                list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
+                    $relevantTypes[$type]);
+                if ($ret->isError()) {
+                    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+                }
 			    $mimeTypes[$mime] = 1;
 			}
 		    }
@@ -212,8 +219,11 @@ class FfmpegToolkitHelper {
 		    foreach (explode(',', $types) as $type) {
 			if (isset($relevantTypes[$type])) {
 			    if (preg_match('|D|', $capabilities)) {
-				$mime = GalleryCoreApi::convertExtensionToMime(
-				    $relevantTypes[$type]);
+                    list ($ret, $mime) = GalleryCoreApi::convertExtensionToMime(
+                        $relevantTypes[$type]);
+                    if ($ret->isError()) {
+                        return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+                    }
 				$mimeTypes[$mime] = 1;
 			    }
 			}

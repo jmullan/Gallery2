@@ -48,11 +48,14 @@ class UserWatermarksController extends GalleryController {
 	     * If we don't get useful data from that or its a type we don't
 	     * recognize, take a swing at it using the file name.
 	     */
+        list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
 	    if ($mimeType == 'application/octet-stream' ||
-		    $mimeType == 'application/unknown' ||
-		    GalleryCoreApi::convertMimeToExtension($mimeType) == null) {
+		    $mimeType == 'application/unknown' || empty($mimeExtensions)) {
 		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
-		$mimeType = GalleryCoreApi::convertExtensionToMime($extension);
+        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+        if ($ret->isError()) {
+            $mimeType = 'application/unknown';
+        }
 	    }
 
 	    list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');

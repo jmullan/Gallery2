@@ -38,10 +38,10 @@ class ZipCartModule extends GalleryModule {
 	$this->setId('zipcart');
 	$this->setName('Zip Download');
 	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
-	$this->setVersion('0.8.7');
+	$this->setVersion('0.9.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(4, 0));
+	$this->setRequiredCoreApi(array(5, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 

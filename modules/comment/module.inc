@@ -40,11 +40,11 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName('Comments');
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.81.7');
+	$this->setVersion('0.9.1');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
-	$this->setRequiredCoreApi(array(4, 0));
+	$this->setRequiredCoreApi(array(5, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 

@@ -32,52 +32,82 @@
  * @package GalleryCore
  * @subpackage PHPUnit
  */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
+
 class MimeTest extends GalleryTestCase {
 
     function MimeTest($methodName) {
-	$this->GalleryTestCase($methodName);
+        $this->GalleryTestCase($methodName);
     }
 
-    /**
-     *
-     */
     function setUp() {
-	global $gallery;
-	parent::setUp();
+        parent::setUp();        
+        $mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test',
+            'viewable' => 0);
+        $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);    
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $mimeTypeMap = array('extension' => 'yyy', 'mimeType' => 'test/test',
+            'viewable' => 0);
+        $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);    
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
     }
-
-    /**
-     *
-     */
+    
     function tearDown() {
-	parent::tearDown();
+        $ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test'));    
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        parent::tearDown();
     }
-
+        
     function testGetMimeType() {
-	$this->assertEquals('image/jpeg', GalleryCoreApi::getMimeType('file.jpg'));
+        list ($ret, $mimeType) = GalleryCoreApi::getMimeType('file.xxx');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assertEquals('test/test', $mimeType);
     }
     
     function testConvertExtensionToMime() {
-	$this->assertEquals('image/jpeg',
-			    GalleryCoreApi::convertExtensionToMime('jpg'));
-	$this->assertEquals('image/jpeg',
-			    GalleryCoreApi::convertExtensionToMime('JPG'));
+        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assertEquals('test/test', $mimeType);
+        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('XXX');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assertEquals('test/test', $mimeType);
     }
 
-    function testConvertMimeToExtension() {
-	$this->assertEquals('jpg', GalleryCoreApi::convertMimeToExtension('image/jpeg'));
-	$this->assertEquals('avi', GalleryCoreApi::convertMimeToExtension('video/x-msvideo'));
+    function testConvertMimeToExtensions() {
+        list ($ret, $exts) = GalleryCoreApi::convertMimeToExtensions('test/test');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assertEquals(array('yyy', 'xxx'), $exts);
     }
 
-    function testGetMimeTypeMap() {
-	$mimeMap = GalleryCoreApi::getMimeTypeMap();
-	$this->assertEquals(array('jpe', 'jpeg', 'jpg'), $mimeMap['image/jpeg']);
-	$this->assertEquals(array('avi'), $mimeMap['video/x-msvideo']);
-    }
-    
     function testIsViewableMimeType() {
-	$this->assertEquals(true, GalleryCoreApi::isViewableMimeType('image/jpeg'));
-	$this->assertEquals(false, GalleryCoreApi::isViewableMimeType('image/tiff'));
+        list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('image/jpeg');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assert($isViewable, 'jpeg');
+        
+        list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }       
+        $this->assert(!$isViewable, 'test');
     }
 }
 ?>
