@@ -14,7 +14,7 @@
     
   </div>
 
-  {if (isset($status))}
+  {if (isset($status.deleted))}
   <div id="gsStatus">
     <div class="giStatus">
       {if ($status.deleted.count == 0)}
