@@ -101,8 +101,7 @@ if (!$session->isUsingCookies()) {
     $sessionKey = GALLERY_FORM_VARIABLE_PREFIX . $sessionKey;
 }
 
-list ($ret, $isSiteAdmin) = 
-  GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+list ($ret, $isSiteAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 if ($ret->isError()) {
     print $ret->getAsHtml();
     return;
@@ -131,7 +130,7 @@ print "</pre>";
     the Gallery code is functioning properly.  It'll help us identify
     bugs in the code when we add new features, port to new systems, or
     add support for new database back ends.  Some of these tests will
-    not pass unless you are logged in a Gallery site administrator.
+    not pass unless you are logged in as a Gallery site administrator.
     When logged on, all the tests below should pass (each line will
     have a green box that says <b>OK</b> in it).
 

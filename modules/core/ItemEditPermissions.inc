@@ -436,8 +436,7 @@ class ItemEditPermissionsView extends GalleryView {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $isAdmin) =
-	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

@@ -627,8 +627,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	$links = array();
-	list ($ret, $isAdmin) =
-	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+	list ($ret, $isAdmin) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

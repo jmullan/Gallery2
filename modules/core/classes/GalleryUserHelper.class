@@ -183,8 +183,7 @@ class GalleryUserHelper {
 	global $gallery;
 
 	/* Make sure we have adequate permissions */
-	list ($ret, $inGroup) =
-	    GalleryUserGroupMap::isUserInSiteAdminGroup($gallery->getActiveUserId());
+	list ($ret, $inGroup) = GalleryUserGroupMap::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
