@@ -58,7 +58,7 @@
     <h4 class="giTitle">
       {g->text text="Recently Used Paths"}
     </h4>
-    <ul>
+    <ul class="gbAdminList">
       {foreach from=$SelectGallery.recentPaths key=path item=count}
       {capture name="escapedPath"}{$path|replace:"\\":"\\\\"}{/capture}
       <li>

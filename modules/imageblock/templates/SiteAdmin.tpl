@@ -26,7 +26,7 @@
     <h3 class="giTitle">
       {g->text text="Image Blocks"}
     </h3>
-    <ul>
+    <ul class="gbAdminList">
       <li>
         <input id="randomImage" type="checkbox" name="{g->formVar var="form[randomImage]"}" {if $form.randomImage}checked="checked"{/if}/>
         <label for="randomImage">
@@ -74,7 +74,7 @@
     <h3 class="giTitle">
       {g->text text="Show"}
     </h3>
-    <ul>
+    <ul class="gbAdminList">
       <li>
         <input id="title" type="checkbox" name="{g->formVar var="form[title]"}" {if $form.title}checked="checked"{/if}/>
         <label for="title">
