@@ -83,10 +83,13 @@ class SlideshowView extends GalleryView {
     function buildSlideshow($item, $startId = null, $recursive = false) {
 	global $gallery;
 	if (!isset($this->init)) {
-	    $this->sizeClasses = array(array(320,240),         // 0: <320x240
-		array(640,480),  array(800,600),  // 1:--640x480  2:--800x600
-		array(1024,768), array(1280,1024) // 3:--1024x768 4:--1280x1024
-	    );                                    // 5: >1280x1024
+	    $this->sizeClasses = array(
+		array(320,320),     // 0:   <320x240
+		array(640,640),     // 1:  ..640x480
+		array(800,800),     // 2:  ..800x600
+		array(1024,1024),   // 3: ..1024x768
+		array(1280,1280),   // 4: ..1280x1024
+	    );          // 5:  >1280x1024
 	    list ($ret, $this->exifExtractor) =
 		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
 	    if ($ret->isError()) {

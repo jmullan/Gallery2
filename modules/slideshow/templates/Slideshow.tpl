@@ -193,11 +193,11 @@
 
 	{g->text text="max size: "}
 	<select onchange="new_size(this.value)">
-	  <option value="0">{g->text text="320x200"}</option>
-	  <option value="1">{g->text text="640x480"}</option>
-	  <option value="2">{g->text text="800x600"}</option>
-	  <option value="3">{g->text text="1024x768"}</option>
-	  <option value="4">{g->text text="1280x1024"}</option>
+	  <option value="0">{g->text text="320x320"}</option>
+	  <option value="1">{g->text text="640x640"}</option>
+	  <option value="2">{g->text text="800x800"}</option>
+	  <option value="3">{g->text text="1024x1024"}</option>
+	  <option value="4">{g->text text="1280x1280"}</option>
 	  <option value="5">{g->text text="no limit"}</option>
 	</select>
 	&nbsp;
