@@ -10,51 +10,58 @@ class CreateGalleryCommentTestCase extends TestCase {
 	global $gallery;
 	$rootId = $gallery->getRootAlbumId();
 
-	/* Lock the parent id */
+	/* Lock the parent, cause creating a child modifies it */
 	$ret = $gallery->lockLocal($rootId);
 	if ($ret->isError()) {
 	    $this->error($ret);
 	    return $ret;
 	}
 
-	list($ret, $root) = $gallery->loadNucleusById($rootId);
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
+	/* Create our child */
 	$comment = new GalleryComment();
-	$ret = $comment->create($root);
+	$ret = $comment->create($rootId);
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
-	/* Save the parent and release the lock on it */
-	$ret = $root->save();
+	/* Make a change */
+	$comment->setEmailAddress('bozo@slashdot.org');
+
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
+	/* Unlock the parent (don't hold it longer than necessary!) */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
 	    return $ret;
 	}
-	
-	$ret = $gallery->lockLocal(array($root->getId(),
-					 $comment->getId()));
+
+	/*
+	 * Lock the comment so that we can modify it.  Of course we could have
+	 * done this before we committed the cache the first time around, but
+	 * I'm separating it just to demonstrate how the locking works if you
+	 * modify after a create() call
+	 */
+	$ret = $gallery->lockLocal($comment->getId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
 	$comment->setComment('Weirdolet writes: "Ananova are reporting that ultra-dense, pollen sized strangelets (aka nuggets of strange quarks) travelling at 900,000 miles per hour hit the earth, violently pass through it and have done on at least two occasions already. It\'s also reported, allegedly, in the Sunday telegraph but I haven\'t found it there yet :P Coming to a particle accelerator near you soon ... ?" Another reader has found the story at the Telegraph.');
 	$comment->setDate(time());
-	$comment->setEmailAddress('bozo@slashdot.org');
 	$comment->setHostname('www.slashdot.org');
 	$comment->setName('Cmdr Taco');
-	$ret = $gallery->saveMany(array(&$root, &$comment));
+	
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
+	/* Unlock the comment */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
 	    return $ret;

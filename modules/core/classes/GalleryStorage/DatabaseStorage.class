@@ -1412,14 +1412,19 @@ class DatabaseStorage extends GalleryStorage {
 	    // If it's in the WHERE, it has to be in the target.
 	    $targetTableList[$tableName] = 1;
 
+	    $criteriaCol = $tableName . '.' . $colName;
 	    switch($compareType) {
 	    case 'EXACT':
-		$whereComponents[] = $tableName . '.' . $colName . '=?';
-		$whereData[] = $value;
+		if (empty($value) && !($value === 0)) {
+		    $whereComponents[] = $criteriaCol . ' is NULL';
+		} else {
+		    $whereComponents[] = $criteriaCol . '=?';
+		    $whereData[] = $value;
+		}
 		break;
 
 	    case 'CONTAINS':
-		$whereComponents[] = $tableName . '.' . $colName . ' LIKE ?';
+		$whereComponents[] = $criteriaCol . ' LIKE ?';
 		$whereData[] = '%' . $value . '%';
 		break;
 		

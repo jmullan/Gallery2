@@ -145,6 +145,14 @@ class Gallery {
      */
 
     /**
+     * Constructor
+     *
+     */
+    function Gallery() {
+	$this->_nucleusCache = array();
+    }
+
+    /**
      * Return the id of the GalleryItem associated with the path provided
      *
      * Return the id associated with the given path. Example path:
@@ -161,49 +169,96 @@ class Gallery {
     }
 
     /**
-     * Get the cached GalleryNucleus for the id provided
-     *
-     * Return a cached copy of the GalleryNucleus associated with this id.
-     *
-     * @access public
-     * @param int the id of the GalleryNucleus
-     */
-    function getCachedNucleus($id) {
-	assert('!empty($id)');
-
-	if (empty($this->_nucleusCache[$id])) {
-	    return null;
-	} else {
-	    return $this->_nucleusCache[$id];
-	}
-    }
-    
-    /**
      * Add the GalleryNucleus to the cache.
      *
      * @access public
-     * @param object GalleryNucleus the GalleryNucleus to cache
+     * @param object GalleryNucleus a reference to the GalleryNucleus to cache
+     * @return object GalleryStatus a status code
      */
-    function addNucleusToCache($nucleus) {
-	assert('!empty($nucleus)');
-	
+    function updateCachedNucleus(&$nucleus) {
+
+	/*
+	 * We want to make sure that we don't have parallel versions of objects
+	 * floating around and getting modified.  So do a little non OO magic
+	 * here.  Tag a special serial number onto the object in the cache so
+	 * that when we receive modifications to it later we can be sure that
+	 * the user is always working with the latest copy of the object.
+	 *
+	 * Make sure that the object we're caching is derived from the most
+	 * current version that we've got in the cache.  If it *isn't* then 
+	 * we've got multiple parallel versions of objects in memory getting
+	 * modified concurrently (which will lead to database errors later)
+	 */
 	$id = $nucleus->getId();
-	assert('!empty($id)');
-	$this->_nucleusCache[$id] = $nucleus;
+
+	if (isset($this->_nucleusCache[$id])) {
+	    $old = $this->_nucleusCache[$id];
+	    if ($old->_cacheSerial != $nucleus->_cacheSerial) {
+		return GalleryStatus::error(ERROR_OBSOLETE_DATA,
+					    __FILE__, __LINE__);
+	    }
+	} else {
+	    $nucleus->_cacheSerial = 0;
+	}
+
+	$nucleus->_cacheSerial++;
+	$this->_nucleusCache[$id] =& $nucleus;
+	return GalleryStatus::success();
     }
 
     /**
-     * Remove a nucleus from the cache
+     * Commit any cached changes to the database
      *
-     * @access public
-     * @param object GalleryNucleus the GalleryNucleus to remove
+     * @return object GalleryStatus a status code
      */
-    function removeNucleusFromCache($nucleus) {
-	assert('!empty($nucleus)');
-	
-	$id = $nucleus->getId();
-	assert('!empty($id)');
-	$this->_nucleusCache[$id] = null;
+    function commitCache() {
+	global $gallery;
+
+	$storage = $gallery->getStorage();
+	foreach (array_keys($this->_nucleusCache) as $key) {
+	    $nucleus =& $this->_nucleusCache[$key];
+
+	    if ($nucleus->testPersistentFlag(STORAGE_FLAG_MARKED_FOR_DELETION)) {
+		if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
+		    /* Created AND deleted -- ignore it */
+		}
+		$ret = $storage->deleteNucleus($nucleus);
+		if ($ret->isError()) {
+		    return $ret;
+		}
+
+		/* Remove the deleted nucleus from the cache */
+		unset($this->_nucleusCache[$key]);
+	    } else if ($nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
+		       $nucleus->isModified()) {
+		$ret = $storage->saveNucleus($nucleus);
+		if ($ret->isError()) {
+		    return $ret;
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Are there modified entries still in the cache? 
+     *
+     * @return bool true if yes
+     */
+    function isCacheUncommitted() {
+	foreach (array_keys($this->_nucleusCache) as $key) {
+	    $nucleus =& $this->_nucleusCache[$key];
+
+	    if ($nucleus->testPersistentFlag(STORAGE_FLAG_MARKED_FOR_DELETION) ||
+		    $nucleus->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED) ||
+		    $nucleus->isModified()) {
+
+		return true;
+	    }
+	}
+
+	return false;
     }
 
     /**
@@ -212,7 +267,7 @@ class Gallery {
      * Try to get this value from the cache.  If it's not in the cache, then
      * get it from the persistent store 
      *
-     * @param int the id of this object, or null to create a new one
+     * @param int the id of the GalleryNucleus to load
      * @return array object GalleryStatus a status code, object GalleryNucleus
      */
     function loadNucleusById($id) {
@@ -228,7 +283,12 @@ class Gallery {
 			 $this->_nucleusCache[$id]);
 	}
 
-	return $this->loadNucleusByIdNoCache($id);
+	list($ret, $nucleus) = $this->loadNucleusByIdNoCache($id);
+
+	/* Update the cache */
+	$this->updateCachedNucleus($nucleus);
+	
+	return array($ret, $nucleus);
     }
 
     /**
@@ -237,8 +297,9 @@ class Gallery {
      * Bypass the cache to read the object directly from the persistent store.
      * Save the object in the cache after loading.
      *
-     * @param int the id of this object, or null to create a new one
+     * @param int the id of the GalleryNucleus object
      * @return array object GalleryStatus a status code, object GalleryNucleus
+     * @access private
      */
     function loadNucleusByIdNoCache($id) {
 	if (empty($id)) {
@@ -252,9 +313,7 @@ class Gallery {
 	if ($ret->isError()) {
 	    return array($ret, null);
 	}
-
-	/* Update the cache */
-	$this->_nucleusCache[$id] = $nucleus;
+	
 	return array(GalleryStatus::success(), $nucleus);
     }
 
@@ -270,41 +329,14 @@ class Gallery {
 					__FILE__, __LINE__);
 	}
 
-	list($ret, $nucleus) = $this->_storage->loadNucleus($id);
+	list($ret, $nucleus) = $this->loadNucleusById($id);
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
-	$ret = $nucleus->delete();
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
-	$this->_nucleusCache[$id] = null;
-	
-	return GalleryStatus::success();
+	return $nucleus->delete();
     }
 
-    /**
-     * Save changes to many GalleryNucleus' at once
-     *
-     * @access public
-     * @param array 1 or more GalleryNucleus objects
-     * @return object GalleryStatus a status code
-     */
-    function saveMany($nuclei=array()) {
-
-	/* Can't use foreach because these are references */
-	for ($i = 0; $i < sizeof($nuclei); $i++) {
-	    $ret = $nuclei[$i]->save();
-	    if ($ret->isError()) {
-		return $ret;
-	    }
-	}
-
-	return GalleryStatus::success();
-    }
-    
     /**
      * Search the persistent store for the target values matching the given criteria
      *

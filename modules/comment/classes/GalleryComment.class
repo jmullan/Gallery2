@@ -117,21 +117,30 @@ class GalleryComment extends GalleryNucleus {
     /**
      * Create this item in our persistent store
      *
-     * @param object GalleryItem the owner of this comment 
+     * @param int the id of the GalleryItem parent
      * @return object GalleryStatus a status code
      */
-    function create(&$parent) {
-	assert('isset($parent)');
+    function create($parentId) {
+	global $gallery;
 
-	$ret = parent::create($parent);
+	if (empty($parentId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	$ret = parent::create($parentId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	list($ret, $parent) = $gallery->loadNucleusById($parentId);
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
 	$comments =& $parent->getCommentIds();
 	$comments->push($this->getId());
-
-	return GalleryStatus::success();
+	return $parent->save();
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */

@@ -453,6 +453,11 @@ class GalleryItem extends FileSystemNucleus {
 	    $this->_allowedPermissions->set($userId, $allowed);
 	}
 
+	$ret = $this->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	return $this->_updateParentPermissionExceptions($userId);
     }
 
@@ -481,6 +486,11 @@ class GalleryItem extends FileSystemNucleus {
 	if (!($denied && ($denied & $perm))) {
 	    $denied = ($denied | $perm);
 	    $this->_deniedPermissions->set($userId, $denied);
+	}
+
+	$ret = $this->save();
+	if ($ret->isError()) {
+	    return $ret;
 	}
 
 	return $this->_updateParentPermissionExceptions($userId);
@@ -513,6 +523,11 @@ class GalleryItem extends FileSystemNucleus {
 	    $this->_deniedPermissions->set($userId, $denied);
 	}
 
+	$ret = $this->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	return $this->_updateParentPermissionExceptions($userId);
     }
 
@@ -526,6 +541,7 @@ class GalleryItem extends FileSystemNucleus {
      * @return object GalleryStatus a status code
      */
     function _updateParentPermissionExceptions($userId) {
+	global $gallery;
 
 	list ($ret, $parent) = $this->_getParent();
 	if ($ret->isError()) {
@@ -536,6 +552,7 @@ class GalleryItem extends FileSystemNucleus {
 	$denied = $this->_deniedPermissions->get($userId);
 
 	/* If we're different in any way, then we're an exception */
+	$permissionExceptions =& $parent->getPermissionExceptions();
 	if ($allowed || $denied) {
 	    $permissionExceptions->put($this->getId(), 1);
 	} else {
@@ -592,28 +609,33 @@ class GalleryItem extends FileSystemNucleus {
      * Let the parent do its work, then add any initialization specific to this
      * class.
      *
-     * @param object GalleryNucleus the parent of this object
+     * @param int the id of the GalleryNucleus parent of this object
      * @param int the id of the parent object
      * @return object GalleryStatus a status code
      */
-    function create(&$parent, $path, $ownerId) {
+    function create($parentId, $path, $ownerId) {
 	global $gallery;
 
 	assert('!empty($ownerId)');
 
-	if (isset($parent)) {
-	    if (!$gallery->isIdLocked($parent->getId())) {
+	if (isset($parentId)) {
+	    if (!$gallery->isIdLocked($parentId)) {
 		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
 					    __FILE__, __LINE__);
 	    }
 
+	    list($ret, $parent) = $gallery->loadNucleusById($parentId);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	    
 	    if (!$parent->canContainChildren()) {
 		return GalleryStatus::error(ERROR_ILLEGAL_CHILD,
 					    __FILE__, __LINE__);
 	    }
 	}
 
-	$ret = parent::create($parent, $path);
+	$ret = parent::create($parentId, $path);
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -625,9 +647,19 @@ class GalleryItem extends FileSystemNucleus {
 	 * If a parent was specified, add this child to the end of the parent's
 	 * child list, and set our parent id appropriately.
 	 */
-	if (isset($parent)) {
+	if (isset($parentId)) {
+	    list($ret, $parent) = $gallery->loadNucleusById($parentId);
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	
 	    $childIds =& $parent->getChildIds();
 	    $childIds->push($this->getId());
+	    $ret = $parent->save();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+	    
 	    $this->setParentId($parent->getId());
 	}
 
@@ -638,19 +670,6 @@ class GalleryItem extends FileSystemNucleus {
     }
     
     /**
-     * Save the changes to this GalleryItem
-     *
-     * Do any special work for this GalleryItem before deferring to
-     * GalleryNucleus.
-     *
-     * @access public
-     * @return object GalleryStatus a status code
-     */
-    function save() {
-	return parent::save();
-    }
-
-    /**
      * Delete this GalleryNucleus
      *
      * Delete all of its children also, if it has any
@@ -660,7 +679,13 @@ class GalleryItem extends FileSystemNucleus {
      */
     function delete() {
 	global $gallery;
-	
+
+	/* Delete myself */
+	$ret = parent::delete();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	/*
 	 * Remove this item from its parent
 	 */
@@ -692,7 +717,6 @@ class GalleryItem extends FileSystemNucleus {
 		 * itself from this GalleryNucleus as part of its delete().
 		 * Then delete the child.
 		 */
-		$child->setParentId(null);
 		$ret = $child->delete();
 		if ($ret->isError()) {
 		    return $ret;
@@ -712,12 +736,6 @@ class GalleryItem extends FileSystemNucleus {
 	    if ($ret->isError()) {
 		return $ret;
 	    }
-	}
-
-	/* Delete myself */
-	$ret = parent::delete();
-	if ($ret->isError()) {
-	    return $ret;
 	}
 
 	return GalleryStatus::success();

@@ -89,38 +89,72 @@ class GalleryGroup extends GalleryNucleus {
      */
     function create() {
 
-	/* GalleryUser's have no parent */
-	$null = null;
-	return parent::create($null);
+	/* GalleryUsers have no parent */
+	return parent::create(null);
     }
 
     /**
      * Add the user to this group
      *
-     * @param object GalleryUser the user instance
+     * @param int the id of the GalleryUser
+     * @return object GalleryStatus a status code
      */
-    function addUser(&$user) {
-	assert('isset($user)');
+    function addUser($userId) {
+	global $gallery;
+	if (empty($userId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $user) = $gallery->loadNucleusById($userId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	$users =& $this->getUsers();
 	$users->set($user->getId(), 1);
 
 	$groups =& $user->getGroups();
 	$groups->set($this->getId(), 1);
+
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $this->save();
     }
 
     /**
      * Remove the user from this group
      *
-     * @param object GalleryUser the user instance
+     * @param int the id of the GalleryUser
+     * @return object GalleryStatus a status code
      */
-    function removeUser(&$user) {
-	assert('isset($user)');
+    function removeUser($userId) {
+	global $gallery;
+	if (empty($userId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $user) = $gallery->loadNucleusById($userId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
 	
 	$users =& $this->getUsers();
 	$users->remove($userId);
 
 	$groups =& $user->getGroups();
 	$groups->remove($this->getId());
+
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $this->save();
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */

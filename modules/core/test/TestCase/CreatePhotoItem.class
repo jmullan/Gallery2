@@ -16,23 +16,17 @@ class CreatePhotoItemTestCase extends TestCase {
 	    return $ret;
 	}
 
-	/* Load the root */
-	list($ret, $root) = $gallery->loadNucleusById($rootId);
-	if ($ret->isError()) {
-	    return $ret;
-	}
-
 	print("Creating new photo item\n");
 	$photo = new PhotoItem();
-	$ret = $photo->create($root,
-			      'itemPath',
+	$ret = $photo->create($rootId,
+			      'itemPath_' . time(),
 			      $gallery->getActiveUserId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
 	
-	/* Save the root */
-	$ret = $root->save();
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -46,7 +40,7 @@ class CreatePhotoItemTestCase extends TestCase {
 	/* Put an ImageContainer in our PhotoItem */
 	$image = new ImageContainer();
 	$imagePath = dirname(dirname(__FILE__)) . '/data/test1.jpg';
-	$ret = $image->createFromFile($photo, $imagePath);
+	$ret = $image->createFromFile($photo->getId(), $imagePath);
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -69,13 +63,13 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	/* Create a thumbnail */
 	$thumbnail = new ImageContainer();
-	$ret = $thumbnail->createDerivative($photo);
+	$ret = $thumbnail->createDerivative($photo->getId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
 	/* Make it a derivative from the source image */
-	$ret = $thumbnail->deriveFrom($image, "scale 200");
+	$ret = $thumbnail->deriveFrom($image->getId(), "scale 200");
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -99,8 +93,8 @@ class CreatePhotoItemTestCase extends TestCase {
 	$photo->setTitle('PhotoItem Title');
 	$photo->setDescription('This is the description of my PhotoItem');
 
-	/* Save everything */
-	$ret = $gallery->saveMany(array(&$photo, &$image, &$thumbnail));
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}

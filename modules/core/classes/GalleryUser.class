@@ -138,9 +138,8 @@ class GalleryUser extends GalleryNucleus {
      */
     function create() {
 
-	/* GalleryUser's have no parent */
-	$null = null;
-	return parent::create($null);
+	/* GalleryUsers have no parent */
+	return parent::create(null);
     }
 
     /**
@@ -160,32 +159,71 @@ class GalleryUser extends GalleryNucleus {
      */
     function changePassword($newPassword) {
 	$this->setPassword(md5($newPassword));
+	$this->save();
     }
 
     /**
      * Add this user to the group id specified.
      *
-     * @param object GalleryGroup the group instance
+     * @param int the id of the GalleryGroup
+     * @return object GalleryStatus a status code
      */
-    function addToGroup(&$group) {
+    function addToGroup($groupId) {
+	global $gallery;
+	if (empty($groupId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $group) = $gallery->loadNucleusById($groupId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	$groups =& $this->getGroups();
 	$groups->set($group->getId(), 1);
 
 	$users =& $group->getUsers();
 	$users->set($this->getId(), 1);
+
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $this->save();
     }
 
     /**
      * Add this user to the group id specified.
      *
-     * @param object GalleryGroup the group instance
+     * @param int the id of the GalleryGroup
+     * @return object GalleryStatus a status code
      */
-    function removeFromGroup($group) {
+    function removeFromGroup($groupId) {
+	global $gallery;
+	if (empty($groupId)) {
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
+					__FILE__, __LINE__);
+	}
+
+	list($ret, $group) = $gallery->loadNucleusById($groupId);
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	$groups =& $this->getGroups();
 	$groups->remove($group->getId());
 
 	$users =& $group->getUsers();
 	$users->remove($this->getId());
+
+	$ret = $group->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $this->save();
     }
 
     /* BEGIN: Accessor Block.  DO NOT MODIFY! */

@@ -36,10 +36,20 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 
+	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
 	print("DELETE\n");
 	$ret = $album->delete();
 	if ($ret->isError()) {
 	    $this->error($ret);
+	    return $ret;
+	}
+
+	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
 	    return $ret;
 	}
 

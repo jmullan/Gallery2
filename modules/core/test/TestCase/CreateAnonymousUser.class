@@ -7,6 +7,7 @@ class CreateAnonymousUserTestCase extends TestCase {
     }
 
     function testStart() {
+	global $gallery;
 
 	$user = new GalleryUser();
 	$ret = $user->create();
@@ -16,7 +17,12 @@ class CreateAnonymousUserTestCase extends TestCase {
 	$user->setFullName('Anonymous');
 	$user->setIsAdmin(false);
 	
-	return $user->save();
+	$ret = $user->save();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	return $gallery->commitCache();
     }
 }
 

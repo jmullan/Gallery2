@@ -17,7 +17,8 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 
-	$ret = $rootAlbum->save();
+	/* Commit the cache */
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -27,10 +28,10 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 	    return $ret;
 	}
 
-	$parent =& $rootAlbum;
+	$parentId = $rootAlbum->getId();
 	for ($i = 0; $i < 5; $i++) {
 	    $nested[$i] = new AlbumItem();
-	    $ret = $nested[$i]->create($parent, "nested_$i",
+	    $ret = $nested[$i]->create($parentId, "nested_$i",
 				       $gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return $ret;
@@ -41,7 +42,13 @@ class CreateNestedAlbumItemTestCase extends TestCase {
 		return $ret;
 	    }
 
-	    $parent =& $nested[$i];
+	    /* Commit the cache */
+	    $ret = $gallery->commitCache();
+	    if ($ret->isError()) {
+		return $ret;
+	    }
+
+	    $parentId = $nested[$i]->getId();
 	}
 
 	/* Leggo of our locks */

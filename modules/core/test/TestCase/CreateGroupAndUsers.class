@@ -36,7 +36,7 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	$user2->setEmail('User2@gallery.com');
 	$user2->setIsAdmin(false);
 
-	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
+	$ret = $gallery->commitCache();
 	if ($ret->isError()) {
 	    return $ret;
 	}
@@ -49,21 +49,38 @@ class CreateGroupAndUsersTestCase extends TestCase {
 	    return $ret;
 	}
 
-	$group->addUser($user1);
-	$group->addUser($user2);
-
-	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
+	print "<h2>ADD USERS TO GROUP!</h2>";
+	$ret = $group->addUser($user1->getId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
-	$user1->removeFromGroup($group);
-
-	$ret = $gallery->saveMany(array(&$group, &$user1, &$user2));
+	$ret = $group->addUser($user2->getId());
 	if ($ret->isError()) {
 	    return $ret;
 	}
 
+	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	print "<h2>REMOVE!</h2>";
+	list ($ret, $user1) = $gallery->loadNucleusById($user1->getId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	$ret = $user1->removeFromGroup($group->getId());
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
+	$ret = $gallery->commitCache();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+	
 	/* Leggo of our locks */
 	$ret = $gallery->unlock();
 	if ($ret->isError()) {
