@@ -320,7 +320,7 @@ class GalleryPermissionMap_core {
      */
     function removeItemPermissions($itemId) {
 	global $gallery;
-	if (empty($itemId)) {
+	if (empty($itemId) || !is_int($itemId)) {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER,
 					__FILE__, __LINE__);
 	}
@@ -363,6 +363,8 @@ class GalleryPermissionMap_core {
           [GalleryPermissionMap]
         WHERE
           [GalleryPermissionMap::itemId] = ?
+        ORDER BY
+          [GalleryPermissionMap::permission] ASC
         ';
 	
 	list($ret, $searchResults) = $gallery->search($query, array($itemId));
@@ -382,8 +384,8 @@ class GalleryPermissionMap_core {
 	    }
 
 	    foreach ($permissions as $permission) {
-		$data[] = array('userId' => $result[0],
-				'groupId' => $result[1],
+		$data[] = array('userId' => (int)$result[0],
+				'groupId' => (int)$result[1],
 				'permission' => $permission['id']);
 	    }
 	}
@@ -539,10 +541,10 @@ class GalleryPermissionMap_core {
 	$data = array();
 	while ($result = $searchResults->nextResult()) {
 	    $permission = $storage->convertBitsToInt($result[2]);
-	    $ret = GalleryPermissionMap::addMapEntry(array('userId' => $result[0],
-							   'groupId' => $result[1],
+	    $ret = GalleryPermissionMap::addMapEntry(array('userId' => (int)$result[0],
+							   'groupId' => (int)$result[1],
 							   'permission' => $permission,
-							   'itemId' => $itemId));
+							   'itemId' => (int)$itemId));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
