@@ -166,7 +166,8 @@ class GalleryModule {
     /**
      * Deactivate this module
      *
-     * @return object GalleryStatus a status code
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
      */
     function deactivate() {
 	$ret = GalleryCoreApi::deactivatePlugin('module', $this->getId());
@@ -174,7 +175,7 @@ class GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), array());
     }
 
     /**

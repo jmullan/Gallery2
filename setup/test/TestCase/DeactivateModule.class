@@ -29,7 +29,7 @@ class DeactivateModuleTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	
-	$ret = $module->deactivate();
+	list ($ret, $redirect) = $module->deactivate();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

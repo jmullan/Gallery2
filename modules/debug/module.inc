@@ -111,11 +111,11 @@ class DebugModule extends GalleryModule {
     function deactivate() {
 	global $gallery;
 
-	$ret = parent::deactivate();
+	list ($ret, $redirect) = parent::deactivate();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), $redirect);
     }
 	
     /**

@@ -104,12 +104,14 @@ class AdminModulesController extends GalleryController {
 
 		/* Can't deactivate if we're not active! */
 		if ($isActive) {
-		    $ret = $module->deactivate();
+		    list ($ret, $redirect) = $module->deactivate();
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
+		    if (empty($redirect)) {
+			$redirect['view'] = 'core:SiteAdmin';
+			$redirect['subView'] = 'core:AdminModules';
+		    }
 		    $status['deactivated'] = $module->getName();
 		}
 		break;

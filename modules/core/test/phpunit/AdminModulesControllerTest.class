@@ -167,7 +167,7 @@ class AdminModulesControllerTestModule {
 
     function deactivate() {
 	$this->_setCalled('deactivate');
-	return GalleryStatus::success();
+	return array(GalleryStatus::success(), array());
     }
 
     function _setCalled($function) {
