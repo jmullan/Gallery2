@@ -44,7 +44,7 @@
       {g->text text="Edit User"}
     </h3>
     
-    <input type="text" name="{g->formVar var="form[text][userName]"}" size="20" value="{$form.text.userName}"/> 
+    <input class="giFormUsername" type="text" name="{g->formVar var="form[text][userName]"}" size="20" value="{$form.text.userName}"/> 
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/> 
     <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
 

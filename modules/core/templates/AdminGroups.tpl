@@ -44,7 +44,7 @@
       {g->text text="Edit Group"}
     </h3>
 
-    <input type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
+    <input class="giFormGroupname" type="text" name="{g->formVar var="form[text][groupName]"}" size="20" value="{$form.text.groupName}"/>
     <input type="submit" name="{g->formVar var="form[action][editFromText]"}" value="{g->text text="Edit"}"/>
     <input type="submit" name="{g->formVar var="form[action][deleteFromText]"}" value="{g->text text="Delete"}"/>
     <input type="submit" name="{g->formVar var="form[action][addRemoveUsersFromText]"}" value="{g->text text="Add/Remove Users"}"/>

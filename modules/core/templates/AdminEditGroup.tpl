@@ -24,7 +24,7 @@
 	{g->text text="required"}
       </div>
 
-      <input type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
+      <input class="giFormGroupname" type="text" name="{g->formVar var="form[groupName]"}" value="{$form.groupName}"/>
       <input type="hidden" name="{g->formVar var="groupId"}" value="{$AdminEditGroup.group.id}"/>
 
       {if isset($form.error.groupName.missing)}

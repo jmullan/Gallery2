@@ -24,7 +24,7 @@
       </h3>
 
       <input type="hidden" name="{g->formVar var="userId"}" value="{$AdminEditUser.user.id}"/>
-      <input size="32" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
+      <input class="giFormUsername" size="30" type="text" name="{g->formVar var="form[userName]"}" value="{$form.userName}"/>
 
       {if isset($form.error.userName.duplicate)}
       <div class="giError">
