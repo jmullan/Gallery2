@@ -1253,7 +1253,13 @@ class Gallery {
 	    } else if (!strcmp($this->_debug, 'logged')) {
 		if ($fd = fopen($this->_debugLogFile, 'a')) {
 		    $date = date('Y-m-d H:i:s');
-		    fwrite($fd, '$date [' . session_id() . '] $msg\n');
+		    $session =& $this->getSession();
+		    if (!empty($session)) {
+			list ($param, $id) = $session->getSessionDescriptor();
+		    } else {
+			$id = "<no session id>";
+		    }
+		    fwrite($fd, "$date [" . $id . "] $msg\n");
 		    fclose($fd);
 		}
 	    } else if (!strcmp($this->_debug, 'immediate')) {
