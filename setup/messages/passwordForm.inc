@@ -11,5 +11,6 @@
     <form method="post">
     Password: 
     <input type="password" name="g2_password">
+    <script type="text/javascript">document.forms[0]['g2_password'].focus();</script>
     <input type="submit" value="Go">
     </form>
