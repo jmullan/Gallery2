@@ -318,6 +318,30 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(join("\n", $expectedHeaders) . "\n", $headers);
     }
 
+    function testFetchWebPageWithSpaces() {
+	list ($body, $headers, $actualUrl) =
+	    GalleryUtilities::fetchWebPage('http://www.test.server/testFetchWebPage With Spaces');
+
+	$expectedHeaders[] = 'HTTP/1.1 200 OK';
+	$expectedHeaders[] = 'Connection: close';
+	$expectedHeaders[] = 'Date: Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders[] = 'Accept-Ranges: bytes';
+	$expectedHeaders[] = 'ETag: "122ae4-5-3fc199b0"';
+	$expectedHeaders[] = 'Server: Apache/1.3.28 (Unix)';
+	$expectedHeaders[] = 'Content-Length: 5';
+	$expectedHeaders[] = 'Content-Type: text/html';
+	$expectedHeaders[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
+	$expectedHeaders[] = 'Client-Date: Mon, 24 Nov 2003 05:40:03 GMT';
+	$expectedHeaders[] = 'Client-Peer: 209.237.226.157:80';
+	$expectedHeaders[] = 'Client-Response-Num: 1';
+	
+	$expectedBody[] = 'test';
+
+	$this->assertEquals('http://www.test.server/testFetchWebPage%20With%20Spaces', $actualUrl);
+	$this->assertEquals(join("\n", $expectedBody) . "\n", $body);
+	$this->assertEquals(join("\n", $expectedHeaders) . "\n", $headers);
+    }
+
     function testFetchWebPageExtraHeaders() {
 	list ($body, $headers, $actualUrl) =
 	    GalleryUtilities::fetchWebPage('http://www.test.server/testFetchWebPageExtraHeaders',
@@ -519,6 +543,9 @@ class UtilitiesTestPlatform {
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
 	    case "GET /testFetchWebPage HTTP/1.0\r\n" .
+		"Host: www.test.server\r\n" .
+		"\r\n":
+	    case "GET /testFetchWebPage%20With%20Spaces HTTP/1.0\r\n" .
 		"Host: www.test.server\r\n" .
 		"\r\n":
 	    case "GET /testFetchWebPage HTTP/1.0\r\n" .

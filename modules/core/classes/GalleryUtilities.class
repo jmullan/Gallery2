@@ -996,6 +996,9 @@ class GalleryUtilities {
     function fetchWebPage($url, $extraHeaders=array(), $depth=0) {
 	global $gallery;
 
+	// Convert illegal characters
+	$url = str_replace(' ', '%20', $url);
+
 	$components = parse_url($url);
 	$port = empty($components['port']) ? 80 : $components['port'];
 	if (empty($components['path'])) {
