@@ -1,7 +1,7 @@
-Welcome to Gallery 2.0.  Currently this is in a *very* pre-alpha
-state.  I'm still working on the overall framework, and I'm taking the
-time to really do it right.  Once I'm satisfied that it's good and
-solid, I'll start to add all the various application features.
+Welcome to Gallery 2.0.  Currently this is in a pre-alpha state.  I'm
+still working on the overall framework, and I'm taking the time to
+really do it right.  Once I'm satisfied that it's good and solid, I'll
+start to add all the various application features.
 
 You should be able to install and play with a new G2 by following
 these instructions:
@@ -17,17 +17,16 @@ harness:
 
 	setup/test/index.php
 
-and run the "EmptyGallery" and then "CleanStore" tests.  You can also
-take a shortcut and run the "ReInitializeGallery" test case which does
-a whole lot of stuff and should clean and reset your Gallery, however
-be warned: that test case was written to help me do development and it
-has hardcoded configuration settings (like the locations of the
-ImageMagick binaries, etc).  Your mileage may vary.
+and run the "ReInitializeGallery" test case which does a whole lot of
+stuff and should clean and reset your Gallery, however be warned: that
+test case was written to help me do development and it has hardcoded
+configuration settings (like the locations of the ImageMagick
+binaries, etc).  Your mileage may vary.
 
 3. Create a database.  Right now we support PostgreSQL and MySQL.  
 Older versions of G2 would create your database for you, but that 
 turned out not to be portable to Postgres so we now require that
-you create the database yourself.
+you create the database yourself. 
 
 4. Copy setup/config.php-dist to gallery/config.php and edit it.
 There are instructions in the file.  It should be pretty self
@@ -93,7 +92,7 @@ setup/setup.php
 
     and browse around.
 
-11. Try adding a comment on an album or item.  
+11. Try adding a comment on an album or item.
 
 12. Browse back to gallery/main.php and you should be able to 
     see your tree and wander around it.
@@ -101,31 +100,10 @@ setup/setup.php
 13. Browse to gallery/main.php?g2_view=core:SiteAdmin and you'll
     see the Site Admin framework.  User and group management are
     functionally complete now.  Try creating and editing users and
-    groups, and try adding and removing users from groups.
+    groups, and try adding and removing users from groups.  Install,
+    activate and play with the search module.
 
+14. Browse to gallery/setup/phpunit and you'll see the unit test 
+    framework run through all of its tests.  They should all succeed.
+    Note that some of them don't clean up after themselves fully!
 
---- 
-
-11/14/2002
-
-I'm still working on getting the framework just right before I go too far
-into any one module.  Clearly there's still a lot of stuff missing.  Some
-of it is cosmetic, some of it structural.
-
-* The classic layout is pretty boring.
-
-* Navigation between Site Admin and regular mode needs work
-
-* You can't do much item editing
-
-* After rotating images, they may appear distorted the next time you see
-  them (though they should return to normal after reloading the page)
-
-* Uploading is still primitive.
-
-* Haven't yet implemented these features:
-	- rating
-	- printing
-	- slideshow
-	- workflow (notifications, moderation, etc)
-  These will all be modules and won't require changing the core code.
