@@ -52,6 +52,7 @@ class AdminEditGroupUsersController extends GalleryController {
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
+	/* Load the group */
 	list ($ret, $group) = $gallery->loadEntitiesById($form['groupId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -73,36 +74,31 @@ class AdminEditGroupUsersController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
+		    $ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(), $form['groupId']);
 		    if ($ret->isError()) {
-			if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    } else {
-			$ret = GalleryUserGroupMap::removeUserFromGroup($user->getId(),
-									$form['groupId']);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-		    
-			/* Request a redirect back to this page */
-			$redirectParams['view'] = 'core:SiteAdmin';
-			$redirectParams['subView'] = 'core:AdminEditGroupUsers';
-			$redirectParams['groupId'] = $group->getId();
-			$redirectParams['userRemoved'] = $user->getUsername();
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
+		    
+		    /* Redirect back to the same view */
+		    $redirectParams['view'] = 'core:SiteAdmin';
+		    $redirectParams['subView'] = 'core:AdminEditGroupUsers';
+		    $redirectParams['form.groupId'] = $group->getId();
+		    $redirectParams['form.status.removedUser'] = $user->getUsername();
 		}
 	    
 	    } else if (isset($form['action']['add'])) {
 
-		/* Remove the user from the group */
-		if (!empty($form['text']['userName'])) {
+		/* Add the user to the group */
+		if (empty($form['text']['userName'])) {
+		    GalleryUtilities::putRequestVariable('form.error.text.userName.missing', 1);
+		} else {
 		    list ($ret, $user) =
 			GalleryUserHelper::fetchUserByUsername($form['text']['userName']);
 
-		    if ($ret->isError()) {
-			if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
-			}
+		    if ($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+			GalleryUtilities::putRequestVariable('form.error.text.userName.invalid', 1);
+		    } else if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    } else {
 			$ret = GalleryUserGroupMap::addUserToGroup($user->getId(),
 								   $form['groupId']);
@@ -110,11 +106,11 @@ class AdminEditGroupUsersController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
 		    
-			/* Request a redirect back to this page */
+			/* Redirect back to the same view */
 			$redirectParams['view'] = 'core:SiteAdmin';
 			$redirectParams['subView'] = 'core:AdminEditGroupUsers';
-			$redirectParams['groupId'] = $group->getId();
-			$redirectParams['userAdded'] = $user->getUsername();
+			$redirectParams['form.groupId'] = $group->getId();
+			$redirectParams['form.status.addedUser'] = $user->getUsername();
 		    }
 		}
 	    }
@@ -154,14 +150,11 @@ class AdminEditGroupUsersView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	    
-	$userAdded = GalleryUtilities::getRequestVariables('userAdded');
-	$userRemoved = GalleryUtilities::getRequestVariables('userRemoved');
-	$groupId = GalleryUtilities::getRequestVariables('groupId');
 	$formName = GalleryUtilities::getRequestVariables('formName');
 	$form = GalleryUtilities::getFormVariables('form.');
 
-	if (!empty($groupId)) {
-	    $form['groupId'] = $groupId;
+	if ($formName != 'AdminEditGroupUsers' && !isset($form['groupId'])) {
+	    $form['groupId'] = GalleryUtilities::getRequestVariables('groupId');
 	}
 
 	/* Load the group */
@@ -171,52 +164,24 @@ class AdminEditGroupUsersView extends GalleryView {
 	}
 
 	/* Load the form with group data */
-	if (empty($form['groupName'])) {
-	    $form['groupName'] = $group->getGroupName();
-	}
+	$form['groupName'] = $group->getGroupName();
 
-	$form['groupType'] = $group->getGroupType();
-
-	/*
-	 * If the last form submitted wasn't our form, then we don't expect the
-	 * form data to line up (ie, this is the first time we've been on this
-	 * view
-	 */
+	/* First time on this page, initialize form fields */
 	if ($formName != 'AdminEditGroupUsers') {
 	    $form['text']['userName'] = '';
-	} else {
-
-	    /*
-	     * But if it does match, then we should audit the form data.
-	     */
-	    if (empty($form['text']['userName'])) {
-		$form['error']['text']['missingUserName'] = 1;
-	    } else {
-		list ($ret, $user) = GalleryUserHelper::fetchUserByUsername($form['text']['userName']);
-		if ($ret->isError()) {
-		    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
-			$form['error']['text']['noSuchUser'] = 1;
-		    } else {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-		}
-	    }
 	}
 
+	/* Initialize the user list */
 	list ($ret, $users) = GalleryUserGroupMap::fetchUsersForGroup($group->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$userCount = sizeof($users);
+	$form['userCount'] = sizeof($users);
 	$form['list']['users'] = $users;
 
 	/* Render the HTML body */
 	$template = $this->_getTemplate();
 	$template->setVariable('form', $form);
-	$template->setVariable('userCount', $userCount);
-	$template->setVariable('userAdded', $userAdded);
-	$template->setVariable('userRemoved', $userRemoved);
 	$template->setVariable('controller', 'core:AdminEditGroupUsers');
 	$html = $template->render('AdminEditGroupUsers.tpl');
 

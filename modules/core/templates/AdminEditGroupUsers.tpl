@@ -11,6 +11,32 @@
       </td>
     </tr>
 
+    {if isset($form.status)}
+    <tr>
+      <td colspan="2" align="center">
+	{gallery->lightFrame}
+	<table width="100%" border="0">
+	    <!-- {if isset($form.status.addedUser)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Added user '%s' to group" arg1=$form.status.addedUser}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+
+	    <!-- {if isset($form.status.removedUser)} -->
+	    <tr>
+	      <td>
+		{gallery->text text="Removed user '%s' from group" arg1=$form.status.removedUser}
+	      </td>
+	    </tr>
+	    <!-- {/if} -->
+	</table>
+	{/gallery->lightFrame}
+      </td>
+    </tr>
+    {/if}
+
     <tr>
       <td align="center">
 	{gallery->lightFrame}
@@ -28,28 +54,10 @@
 	    <td colspan="2" align="center">
 	      {gallery->text one="This group contains %d user"
 	                   many="This group contains %d users"
-	                   count=$userCount
-	                   arg1=$userCount}
+	                   count=$form.userCount
+	                   arg1=$form.userCount}
 	    </td>
 	  </tr>
-
-	  {if ($form.groupType == GROUP_SITE_ADMINS)}
-	  <tr>
-	    <td colspan="2" align="center">
-	      {gallery->warningFontColor}
-	      {gallery->text text="Note: This is the site administrator group.  Any users you add to this group will have site-wide administrative privileges"}
-	      {/gallery->warningFontColor}
-	    </td>
-	  </tr>
-	  {/if}
-
-	  {if ($form.groupType == GROUP_ALL_USERS)}
-	  <tr>
-	    <td colspan="2" align="center">
-	      {gallery->text text="This group contains all Gallery users.  You cannot add or remove users from it."}
-	    </td>
-	  </tr>
-	  {else}
 
 	  {if !empty($form.list.users)}
 	  <tr>
@@ -87,7 +95,7 @@
 	    </td>
 	  </tr>
 
-	  {if isset($form.error.text.missingUserName)}
+	  {if isset($form.error.text.userName.missing)}
 	  <tr>
 	    <td colspan="2" align="center">
 	      {gallery->errorFontColor}
@@ -97,7 +105,7 @@
 	  </tr>
 	  {/if}
 
-	  {if isset($form.error.text.noSuchUser)}
+	  {if isset($form.error.text.userName.invalid)}
 	  <tr>
 	    <td colspan="2" align="center">
 	      {gallery->errorFontColor}
@@ -107,35 +115,12 @@
 	    </td>
 	  </tr>
 	  {/if}
-	  {/if}
 
 	  <tr>
 	    <td colspan="2" align="center">
 	      {gallery->input type="submit" name="form.action.done"}{gallery->text text="Done"}{/gallery->input}
 	    </td>
 	  </tr>
-
-	  {if !empty($userAdded)}
-	  <tr>
-	    <td colspan="2" align="center">
-	      {gallery->successFontColor}
-	      {gallery->text text="Successfully added user '%s' to group."
-	                   arg1=$userAdded}
-	      {/gallery->successFontColor}
-	    </td>
-	  </tr>
-	  {/if}
-
-	  {if !empty($userRemoved)}
-	  <tr>
-	    <td colspan="2" align="center">
-	      {gallery->successFontColor}
-	      {gallery->text text="Successfully removed user '%s' from group."
-	                   arg1=$userRemoved}
-	      {/gallery->successFontColor}
-	    </td>
-	  </tr>
-	  {/if}
 
 	</table>
 	{/gallery->lightFrame}
