@@ -5,10 +5,10 @@ body {
 table, tr, td {
     margin: 0;
     padding: 0;
-    border-spacing: 0 !important;
+    border-spacing: 0;
 }
 img {
-    border-width: 0 !important;
+    border-style: none;
 }
 img.off {
     position: absolute;
@@ -18,20 +18,20 @@ img.off {
 img.hid {
     visibility: hidden;
 }
-div#gsContents {
+div#gsContent {
     position: absolute;
     top: 0;
     left: 150px;
     right: 0;
     height: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-    border-width: 0 !important;
+    margin: 0;
+    padding: 0;
+    border-style: none;
     width: auto !important;
 }
 div#album_titlebar {
     overflow: hidden;
-    border-bottom-width: 1px !important;
+    border-bottom-width: 1px;
     text-align: left;
 }
 div#album_titlebar table {
@@ -47,39 +47,38 @@ div#album_tools {
 div#album_tools img.on {
     margin-right: 1px;
 }
-div#gsAlbumContents {
+div#gsAlbumContent {
     position: absolute;
     top: 40px;
     left: 0;
     width: 100%;
     bottom: 0;
-    background-color: #ddd !important;
-    border: none !important;
+    border-style: none;
     overflow: auto;
 }
-div#gsContents table.content {
+div#gsContent table.content {
     margin: 3px 0 1px 3px;
 }
-div#gsContents table.text {
+div#gsContent table.text {
     width: 100%;
 }
-div#gsContents td.i {
+div#gsContent td.i {
   vertical-align:top;
   padding:0 5px 3px 0;
 }
-div#gsContents td.t {
+div#gsContent td.t {
   vertical-align:top;
   width:40%;
 }
-div#gsContents td.t img {
+div#gsContent td.t img {
   margin-left:1px;
 }
-div#gsContents td.t span.title {
+div#gsContent td.t span.title {
     display:block;
     margin-right:6px;
     padding:0 1px 0 2px;
 }
-div#gsContents td.t span.text {
+div#gsContent td.t span.text {
     margin-right:6px;
     padding:0 1px 0 2px;
 }
@@ -88,7 +87,7 @@ div#sidebar {
     top: 0;
     left: 0;
     height: 100%;
-    padding: 0 !important;
+    padding: 0;
     overflow: auto;
     border-right-width: 1px;
 }
@@ -106,7 +105,7 @@ div#toolbar {
     left: 0;
     width: 100%;
     bottom: 0;
-    border-top-width: 1px !important;
+    border-top-width: 1px;
 }
 div#tools_left {
     float: left;
@@ -132,7 +131,7 @@ div#text {
     bottom: 0;
     height: 99px;
     overflow: hidden;
-    border-top-width: 1px !important;
+    border-top-width: 1px;
     text-align: center;
 }
 iframe#popup {
@@ -141,14 +140,16 @@ iframe#popup {
     left: 15%;
     width: 70%;
     height: 80%;
-    border-width: 0 5px 5px !important;
+    border-width: 0 5px 5px;
+    border-style: ridge !important;
 }
 div#popup_titlebar {
     position: absolute;
     left: 15%;
     width: 70%;
     bottom: 90%;
-    border-width: 5px 5px 2px !important;
+    border-width: 5px 5px 2px;
+    border-style: ridge ridge solid !important;
 }
 div#popup_menu {
     position: absolute;
@@ -156,85 +157,52 @@ div#popup_menu {
     top: 0;
     left: 200px;
     padding: 1px 11px 3px 2px;
-    border-width: 3px !important;
+    border-width: 3px;
+    border-style: outset !important;
 }
 
-div#album_titlebar { 
-    background-color: #bbb;
-    border-bottom-style: solid !important;
-    border-bottom-color: black !important;
-}
-div#gsContents td.i {
+div#gsContent td.i {
     text-align: center;
 }
-div#gsContents td.t span.title {
-    background-color: #bbb !important;
-}
-div#sidebar { 
-    background-color: white;
-    border-right-style: solid;
-    border-right-color: black;
-}
-div#image {
-    background-color: #bbb !important;
-}
-div#toolbar {
-    background-color: #ddd;
-    border-top-style: solid !important;
-    border-top-color: black !important;
-}
-div#text {
-    background-color: #bbb !important;
-    border-top-style: solid !important;
-    border-top-color: black !important;
-}
-iframe#popup {
-    background-color: white !important;
-    border-style: ridge !important;
-    border-color: #666 !important;
-}
 div#popup_titlebar {
-    background-color: #ddd !important;
-    border-style: ridge ridge solid !important;
-    border-color: #666 !important;
     text-align: center;
 }
 div#popup_menu {
-    background-color: white !important;
     font-size: 90%;
     line-height: 1.33;
     text-align: left;
-    border-style: outset !important;
-    border-color: #999 !important;
 }
 
-#gsFooter {
+#gsHeader, #gsFooter {
     display: none;
 }
-#gsSidebar {
-    float: none !important;
-    border-right-width: 0 !important;
+.gbBlock {
+    margin: 3px 0 0 4px;
+    padding: 0 0 5px 0;
+    border-width: 0 0 1px 0;
+    border-style: inherit;
+    border-color: inherit;
+    /* IE can't inherit these */
+    border-style: expression(parentElement.currentStyle.borderStyle);
+    border-color: expression(parentElement.currentStyle.borderColor);
 }
-.gbMenu {
-    margin: 3px 0 0 4px !important;
-    padding: 0 0 5px 0 !important;
+.gbBlock ul {
+    margin: 0 0 0 4px;
+    padding: 0;
+    list-style-type: none;
 }
-.gbMenu ul, .gbMenu ol {
-    margin: 0 0 0 1px !important;
-    padding: 0 !important;
+.gbBlock li {
+    padding: 0 0 2px 0;
 }
-.gbMenu li {
-    padding: 0 0 2px 0 !important;
+.gbBlock ul ul {
+    margin: 0 0 0.25em 0.6em;
 }
-.gbMenu ul ul {
-    margin: 0 0 0.25em 0.6em !important;
+.gbBlock h3 {
+    margin: 0;
+    padding: 3px 0 5px 0;
 }
-.gbMenu h3 {
-    margin: 0 !important;
-    padding: 3px 0 5px 0 !important;
-}
-.gbMenu select {
-    font-size: 90%;
+.gbBlock select {
+    font-size: 0.9em;
 }
 #SearchSystemContent input {
     margin-top: 6px;

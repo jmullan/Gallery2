@@ -11,19 +11,20 @@
 </title>
 {g->head}
 </head>
-<body>
+<body class="gallery">
+<div id="gallery" style="padding: 0.7em">
   <table cellspacing="0"><tr>
   {if isset($layout.thumbnail)}
-    <td>{g->image item=$layout.item image=$layout.thumbnail}</td>
+    <td>{g->image item=$layout.item image=$layout.thumbnail class="giThumbnail"}</td>
   {/if}
-  <td valign="top"><br>
-    {$layout.item.title|markup}<br>
-    {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br>
+  <td valign="top" class="giDescription" style="padding: 0.7em 0 0 0.7em">
+    <strong>{$layout.item.title|markup}</strong><br/>
+    {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}<br/>
     {g->text one="Viewed: %d time" many="Viewed: %d times"
-             count=$layout.viewCount arg1=$layout.viewCount}<br>
-    {g->text text="Date: "}{g->date timestamp=$layout.item.originationTimestamp}<br>
+             count=$layout.viewCount arg1=$layout.viewCount}<br/>
+    {g->text text="Date: "}{g->date timestamp=$layout.item.originationTimestamp}<br/>
     {if isset($layout.item.keywords)}
-      {g->text text="Keywords: "}{$layout.item.keywords|markup}<br>
+      {g->text text="Keywords: "}{$layout.item.keywords|markup}<br/>
     {/if}
   </td></tr></table>
   {if !empty($layout.itemDetailFiles)}
@@ -31,4 +32,5 @@
       {include file="gallery:$detailFile" l10Domain="modules_$moduleId"}
     {/foreach}
   {/if}
+</div>
 </body></html>

@@ -12,7 +12,7 @@ if (document.all&&window.attachEvent) { // IE-Win
   window.addEventListener("unload", app_setcookie, false);
 }
 function app_getwinsize() {
- var obj = document.getElementById('gsContents').offsetParent;
+ var obj = document.getElementById('gsContent').offsetParent;
  if (obj && obj.tagName != 'BODY' && obj.tagName != 'HTML') {
   app_ww = obj.offsetWidth; app_wh = obj.offsetHeight;
   app_wx = obj.offsetLeft;  app_wy = obj.offsetTop;
@@ -31,7 +31,7 @@ function app_init() {
  app_getwinsize();
  sidebar_wd = document.getElementById('sidebar').offsetWidth;
  //Get titlebar height and size album content:
- album_div = document.getElementById('gsAlbumContents');
+ album_div = document.getElementById('gsAlbumContent');
  album_setsize(1);
  album_title_maxht = document.getElementById('album_titlebar').offsetHeight;
  album_title_minht = max(18,
@@ -150,7 +150,7 @@ function app_onkeydown() {
  if (window.event.keyCode >= 33 && window.event.keyCode <= 40)
  { app_onkeypress(window.event); window.event.returnValue = false; }
 }
-//Class album :: div gsContents(album_titlebar(album_tools),gsAlbumContents)
+//Class album :: div gsContent(album_titlebar(album_tools),gsAlbumContent)
 var album_title_minht, album_title_maxht; // Min/max height of title bar
 var album_title_borderht=app_is_ie?0:1; // Height of titlebar border
 var album_div; // album_content div
@@ -161,8 +161,8 @@ function album_gettitleht() {
 }
 function album_setsize(x) {
  if (!x || x==1) {
-  document.getElementById('gsContents').style.left = sidebar_getwidth() + 'px';
-  if (app_is_ie) document.getElementById('gsContents').style.width =
+  document.getElementById('gsContent').style.left = sidebar_getwidth() + 'px';
+  if (app_is_ie) document.getElementById('gsContent').style.width =
    (app_ww-sidebar_getwidth()) + 'px';
  }
  if (!x || x==2) {
