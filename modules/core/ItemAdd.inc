@@ -69,7 +69,12 @@ class ItemAddController extends GalleryController {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
-	list ($ret, $error, $status) = $plugin->handleRequest($form, $item);
+	list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $error, $status) = $plugin->handleRequest($form, $item, $optionInstances);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -77,18 +82,6 @@ class ItemAddController extends GalleryController {
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	foreach ($optionInstances as $option) {
-	    $ret = $option->handleRequestAfterAdd($form, $item);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 	}
 
 	if (empty($error) && isset($status['addedFiles'])) {
@@ -243,12 +236,13 @@ class ItemAddPlugin {
      * @see GalleryController::handleRequest
      *
      * @param array the form values
-     * @param the item 
+     * @param the item
+     * @param array object ItemAddOption add options to apply to each item added
      * @return array object GalleryStatus a status code
      *               array error messages
      *               array files that were added: array(array('file' => '...', 'id' => ##), ...)
      */
-    function handleRequest($form, &$item) {
+    function handleRequest($form, &$item, $options) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
