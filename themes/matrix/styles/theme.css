@@ -27,7 +27,7 @@ body {
 	2em     = 20px
 	1.5em   = 15px
 	1.3em   = 13px
-	1em	= 10px
+	1em	    = 10px
 	0.8em   = 8px
 	
 	BEWARE OF NESTED EMS!!!
@@ -85,7 +85,7 @@ body {
 * html .#gsContents { height: 1%; }
 /* End hide from IE-mac */
 
-#gsAlbumContents, #gsAdminContents {
+#gsAlbumContents, #gsAdminContents, .gsOtherContents {
         float: left;
         border-top: 1px solid #ccc;
         border-left: 1px solid #ccc;
@@ -102,26 +102,40 @@ body {
 /*      .gbDataTable	*/
 /*      count from 0 Ñ first row is even...     */
 
+.gsOtherContents table.gbDataTable { width: 97%; }
+.gsOtherContents .giActionSelect {
+	display: inline;
+	margin: 4px 0 0 2px;
+	font-size: 1.2em; 
+	background: #eee;
+}
+
+table.gbDataTable th { 
+    background: #e7e7e7; 
+    padding: 10px;
+}
+
 .gbEven { background-color: #fff; }
 .gbOdd { background-color: #eee; }
 
 .gbExif .gbEven { 
     text-align: right; 
-    border-bottom: 1px solid #eee; 
-}
-.gbExif .gbOdd { 
-    text-align: left;
-    font-weight: normal; 
+    font-weight: bold;
     border-bottom: 1px solid #eee; 
 }
 
-table.gbDataTable th { 
-    background: #eee; 
-    padding: 10px;
+.gbExif .gbOdd { 
+    text-align: left;
+    border-bottom: 1px solid #eee; 
+}
+
+.gbCartInfo li { 
+    margin: 0 0 0 -20px; 
+    list-style: none; 
 }
 
 table.gbDataTable td {
-    font-weight: bold;
+    font-weight: normal;
     padding: 4px; 
 }
 
@@ -295,7 +309,7 @@ table.gbDataTable img { border: none; }
 	display: block;
 	height: 0; 
 	clear: both; 
-        visibility: hidden;
+    visibility: hidden;
 }
 
 /* Hides from IE-mac \*/
