@@ -22,30 +22,42 @@
 
 	<tr>
 	  <td>
+	    {if $mode != 'fromBrowser'}
 	    <a href="{gallery->url view="core:ItemAdmin" 
 	                           subView="core:ItemAddChildren" 
 	                           itemId=$item.id
 	                           mode="fromBrowser"}">
+	      {/if}
 	      {gallery->text text="From Web Browser"}
+	      {if $mode != 'fromBrowser'}
 	    </a>
+	    {/if}
 	    &nbsp;
 	    /
 	    &nbsp;
+	    {if $mode != 'fromLocalServer'}
 	    <a href="{gallery->url view="core:ItemAdmin" 
                                    subView="core:ItemAddChildren" 
 	                           itemId=$item.id
                                    mode="fromLocalServer"}">
+	      {/if}
 	      {gallery->text text="From Local Server"}
+	      {if $mode != 'fromLocalServer'}
 	    </a>
+	    {/if}
 	    &nbsp;
 	    /
 	    &nbsp;
+	    {if $mode != 'fromWebPage'}
 	    <a href="{gallery->url view="core:ItemAdmin" 
                                    subView="core:ItemAddChildren" 
 	                           itemId=$item.id
 	                           mode="fromWebPage"}">
+	      {/if}
 	      {gallery->text text="From Web Page"}
+	      {if $mode != 'fromWebPage'}
 	    </a>
+	    {/if}
 	  </td>
 	</tr>
 
