@@ -112,6 +112,19 @@ the file, but you'll need to customize these values:
 	"Content-Transfer-Encoding: 8bit\n"
 		-> Replace the encoding as appropriate
 
+Then, look at the lines just below the Gallery license:
+
+	#, fuzzy
+	msgid ""
+	msgstr ""
+
+The fuzzy keyword tells you that the translation of the block
+is incomplete. But now that you've completed the required
+administrational entries, remove this line to allow the
+translation to compile later on:
+
+	#, fuzzy
+
 Next, you'll see a series of blocks like this:
 
 	#, c-format		(this is optional)
