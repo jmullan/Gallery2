@@ -294,10 +294,16 @@ class CoreModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	list ($ret, $rootId) = $gallery->getModuleParameter('core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$links = array();
 	$showEditLink = false;
 	$showAddItemLink = false;
 	$showAddAlbumLink = false;
+	$showDeleteLink = false;
 	foreach ($items as $item) {
 	    list ($ret, $itemPermissions) =
 		GalleryItemHelper::getPermissions($item->getId(),
@@ -308,6 +314,7 @@ class CoreModule extends GalleryModule {
 	
 	    if ($isSiteAdmin || array_intersect(array('core.all'), $itemPermissions)) {
 		$showEditLink = true;
+		$showDeleteLink = $item->getId() != $rootId;
 		$showAddItemLink = $item->canContainChildren();
 		$showAddAlbumLink = $item->canContainChildren();
 	    } else {
@@ -323,6 +330,10 @@ class CoreModule extends GalleryModule {
 		    if (array_intersect(array('core.addAlbum'), $itemPermissions)) {
 			$showAddAlbumLink = true;
 		    }
+		}
+
+		if (array_intersect(array('core.delete'), $itemPermissions)) {
+		    $showDeleteLink = $item->getId() != $rootId;
 		}
 	    }
 
@@ -348,6 +359,15 @@ class CoreModule extends GalleryModule {
 		    array('text' => $this->translate('add album'),
 			  'params' => array_merge(array('view' => 'core:ItemAdmin',
 							'subView' => 'core:ItemAddAlbum',
+							'itemId' => $item->getId()),
+						  $params));
+	    }
+	    
+	    if ($showDeleteLink) {
+		$links[$item->getId()][] =
+		    array('text' => $this->translate('delete item'),
+			  'params' => array_merge(array('view' => 'core:ItemAdmin',
+							'subView' => 'core:ItemDelete',
 							'itemId' => $item->getId()),
 						  $params));
 	    }
@@ -427,7 +447,7 @@ class CoreModule extends GalleryModule {
 	}
 
 	if (array_intersect(array('core.all', 'core.changeText'), $permissions)) {
-	        $views[] = array('name' => $this->translate('General'),
+	        $views[] = array('name' => $this->translate('General Settings'),
 				 'view' => 'core:ItemEditGeneral');
 	}
 
@@ -449,6 +469,11 @@ class CoreModule extends GalleryModule {
 				     'view' => 'core:ItemEditImage');
 		}
 	    }
+	}
+	
+	if (array_intersect(array('core.all', 'core.delete'), $permissions)) {
+	    $views[] = array('name' => $this->translate('Delete Item'),
+			     'view' => 'core:ItemDelete');
 	}
 	
 	if (array_intersect(array('core.all', 'core.addItem'), $permissions)) {
