@@ -291,10 +291,10 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* We should see childs 1 & 2, but not child 0 or the parent. */
-	$this->assert(!in_array($this->_parentItem->getId(), $ids), "parent");
-	$this->assert(!in_array($this->_childItems[0]->getId(), $ids), "child 0");
-	$this->assert(in_array($this->_childItems[1]->getId(), $ids), "child 1");
-	$this->assert(in_array($this->_childItems[2]->getId(), $ids), "child 2");
+	$this->assert(!in_array($this->_parentItem->getId(), $ids), 'parent');
+	$this->assert(!in_array($this->_childItems[0]->getId(), $ids), 'child 0');
+	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
+	$this->assert(in_array($this->_childItems[2]->getId(), $ids), 'child 2');
 
 	list ($ret, $ids) = GalleryItemHelper::fetchAllItemIds('GalleryAlbumItem', 'core.addDataItem');
 	if ($ret->isError()) {
@@ -302,10 +302,10 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* We should only see child 1 */
-	$this->assert(!in_array($this->_parentItem->getId(), $ids), "parent");
-	$this->assert(!in_array($this->_childItems[0]->getId(), $ids), "child 0");
-	$this->assert(in_array($this->_childItems[1]->getId(), $ids), "child 1");
-	$this->assert(!in_array($this->_childItems[2]->getId(), $ids), "child 2");
+	$this->assert(!in_array($this->_parentItem->getId(), $ids), 'parent');
+	$this->assert(!in_array($this->_childItems[0]->getId(), $ids), 'child 0');
+	$this->assert(in_array($this->_childItems[1]->getId(), $ids), 'child 1');
+	$this->assert(!in_array($this->_childItems[2]->getId(), $ids), 'child 2');
     }
 }
 
