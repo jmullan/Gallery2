@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXuserId
       INTEGER
@@ -32,6 +34,11 @@
       TEXT
     
     );
+
+  
+    CREATE INDEX Session_sessionId 
+    ON DB_TABLE_PREFIXSession
+    (DB_COLUMN_PREFIXsessionId);
 
   
     CREATE INDEX Session_creationTime 

@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       int(11)
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXviewCount
       int(11)
@@ -25,6 +27,10 @@
     
     NOT NULL
   
+    , 
+  
+      PRIMARY KEY (DB_COLUMN_PREFIXitemId)
+    
     , 
   
     INDEX (DB_COLUMN_PREFIXparentSequence)

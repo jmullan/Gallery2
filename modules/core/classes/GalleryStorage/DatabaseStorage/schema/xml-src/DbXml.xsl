@@ -60,6 +60,12 @@
           <column-name><xsl:value-of select="member-name"/></column-name>
         </key>
       </xsl:for-each>
+
+      <xsl:for-each select="map/member[primary]">
+        <key primary="true">
+          <column-name><xsl:value-of select="member-name"/></column-name>
+        </key>
+      </xsl:for-each>
     </table>
   </xsl:template>
 
@@ -101,6 +107,9 @@
           <column-size>MEDIUM</column-size>
         </xsl:if>
         <xsl:if test="required">
+          <not-null/>
+        </xsl:if>
+        <xsl:if test="primary">
           <not-null/>
         </xsl:if>
       </column>

@@ -7,6 +7,8 @@
   DB_COLUMN_PREFIXitemId
       INTEGER
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXviewCount
       INTEGER
@@ -33,6 +35,9 @@
     (DB_COLUMN_PREFIXparentSequence);
 
   
+    ALTER TABLE DB_TABLE_PREFIXItemAttributesMap
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXitemId);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

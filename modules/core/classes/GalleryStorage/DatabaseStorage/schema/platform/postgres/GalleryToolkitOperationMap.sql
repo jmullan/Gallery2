@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXparametersCrc
       VARCHAR(
@@ -40,6 +42,9 @@
     );
 
   
+    ALTER TABLE DB_TABLE_PREFIXToolkitOperationMap
+    ADD PRIMARY KEY (DB_COLUMN_PREFIXname);
+    
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

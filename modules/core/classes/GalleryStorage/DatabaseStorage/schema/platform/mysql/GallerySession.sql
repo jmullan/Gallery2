@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXuserId
       int(11)
@@ -33,6 +35,10 @@
     
     , 
   
+    INDEX (DB_COLUMN_PREFIXsessionId)
+    
+      ,
+    
     INDEX (DB_COLUMN_PREFIXcreationTime)
     
       ,

@@ -11,6 +11,8 @@
         
       )
     
+    NOT NULL
+  
       ,
     DB_COLUMN_PREFIXparametersCrc
       varchar(
@@ -36,6 +38,10 @@
           255
         
       )
+    
+    , 
+  
+      PRIMARY KEY (DB_COLUMN_PREFIXname)
     
 
     ) TYPE=DB_TABLE_TYPE;

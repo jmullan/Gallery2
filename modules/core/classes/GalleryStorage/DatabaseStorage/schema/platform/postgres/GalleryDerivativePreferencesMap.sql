@@ -26,6 +26,11 @@
     );
 
   
+    CREATE INDEX DerivativePreferencesMap_itemId 
+    ON DB_TABLE_PREFIXDerivativePreferencesMap
+    (DB_COLUMN_PREFIXitemId);
+
+  
 
     INSERT INTO DB_TABLE_PREFIXSchema (
       DB_COLUMN_PREFIXname,

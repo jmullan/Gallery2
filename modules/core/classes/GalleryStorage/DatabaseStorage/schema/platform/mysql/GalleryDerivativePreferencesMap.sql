@@ -23,6 +23,10 @@
         
       )
     
+    , 
+  
+    INDEX (DB_COLUMN_PREFIXitemId)
+    
 
     ) TYPE=DB_TABLE_TYPE;
 
