@@ -105,7 +105,8 @@ class GalleryProfiler {
 	
 	$this->_profile[] = array('type' => 'start',
 				  'marker' => $key,
-				  'eventTime' => $start);
+				  'eventTime' => $start,
+				  'sequence' => sizeof($this->_profile));
     }
 
     /**
@@ -128,7 +129,8 @@ class GalleryProfiler {
 
 	$this->_profile[] = array('type' => 'stop',
 				  'marker' => $key,
-				  'eventTime' => microtime());
+				  'eventTime' => microtime(),
+				  'sequence' => sizeof($this->_profile));
     }
 
     /**
@@ -285,22 +287,30 @@ class GalleryProfiler {
      */
     function sortByEventTime($cmpA, $cmpB) {
 
-	$cmpA = explode(' ', $cmpA['eventTime']);
-	$cmpB = explode(' ', $cmpB['eventTime']);
+	$eventTimeA = explode(' ', $cmpA['eventTime']);
+	$eventTimeB = explode(' ', $cmpB['eventTime']);
 
-	if ($cmpA[1] < $cmpB[1]) {
+	if ($eventTimeA[1] < $eventTimeB[1]) {
 	    return -1;
 	}
 
-	if ($cmpA[1] > $cmpB[1]) {
+	if ($eventTimeA[1] > $eventTimeB[1]) {
 	    return 1;
 	}
 
-	if ($cmpA[0] < $cmpB[0]) {
+	if ($eventTimeA[0] < $eventTimeB[0]) {
 	    return -1;
 	}
 	
-	if ($cmpA[0] > $cmpB[0]) {
+	if ($eventTimeA[0] > $eventTimeB[0]) {
+	    return 1;
+	}
+
+	if ($cmpA['sequence'] < $cmpB['sequence']) {
+	    return -1;
+	}
+	
+	if ($cmpA['sequence'] > $cmpB['sequence']) {
 	    return 1;
 	}
 
