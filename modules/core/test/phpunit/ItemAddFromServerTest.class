@@ -42,32 +42,28 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	parent::setUp();
 
-	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
-								   array('orderBy' => 'orderWeight'));
+	list ($ret, $this->_rootAlbum) =
+	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_rootAlbum);
 
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_symlinkAllowedPlatform = new ItemAddFromServerTestPlatform($gallery->getPlatform(), true);
-	$this->_symlinkDisallowedPlatform = new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
+	$this->_symlinkAllowedPlatform =
+	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), true);
+	$this->_symlinkDisallowedPlatform =
+	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
 
 	$gallery->_platform = $this->_symlinkAllowedPlatform;
     }
 
     function tearDown() {
-	global $gallery;
-
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -136,7 +132,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
      * immediately.
      */
     function _testAddChildrenFromLocalServer($useSymlink, $symlinkSupported=true,
-					     $setTitle=false, $setSummary=false, $setDescription=false) {
+					     $setTitle=false, $setSummary=false,
+					     $setDescription=false) {
 	global $gallery;
 
 	if ($symlinkSupported) {
@@ -164,9 +161,11 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
 	$escapedBasenames = array('test1', 'test1', 'test2', 'test3', 'apo&#039;strophe');
 	foreach ($files as $fileName) {
-	    GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . '][selected]', 1);
+	    GalleryUtilities::putRequestVariable(
+		'form[localServerFiles][' . $fileName . '][selected]', 1);
 	    if ($useSymlink) {
-		GalleryUtilities::putRequestVariable('form[localServerFiles][' . $fileName . '][useSymlink]', 1);
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerFiles][' . $fileName . '][useSymlink]', 1);
 	    }
 	}
 
@@ -208,7 +207,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $base = $escapedBasenames[$i++];
 	    $this->assertEquals($setTitle ? $base : null, $item->getTitle(), 'title');
 	    $this->assertEquals($setSummary ? $base : null, $item->getSummary(), 'summary');
-	    $this->assertEquals($setDescription ? $base : null, $item->getDescription(), 'description');
+	    $this->assertEquals($setDescription ? $base : null, $item->getDescription(),
+				'description');
 
 	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
 	    if ($ret->isError()) {
@@ -230,15 +230,14 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
      * in pathComponent, title and summary
      */
     function testAddFromServerFilenameToFields() {
-	global $gallery;
-
 	$baseDir = dirname(__FILE__) . '/../data/';
 	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 	GalleryUtilities::putRequestVariable('form[set][title]', 1);
 	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
 	// This is what the browser will send us (urlencoded):
-	GalleryUtilities::putRequestVariable('form[localServerFiles][December+-+%3C%23952%3E.jpg][selected]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerFiles][December+-+%3C%23952%3E.jpg][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
@@ -312,7 +311,5 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	return $this->_symlinkSupported;
 	#return $this->_delegate->isSymlinkSupported();
     }
-
-
 }
 ?>
