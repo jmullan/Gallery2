@@ -1,29 +1,28 @@
-Installation (simplest)
------------------------
+Installation
+------------
 
 Follow these simple instructions to get IE7 working immediately on your server:
 
-    * download either ie7.zip or ie7-full.zip
+ * download the latest IE7 ZIP file (https://sourceforge.net/project/showfiles.php?group_id=109983&package_id=119707)
 
-    * unzip the entire contents to the root of your server (keep the
-      folder names used in the zip file)
+ * extract the contents to a directory on your server (keep the folder names used in the ZIP)
 
-    * you will now have an IE7 directory in the root of your server
+ * you will now have an IE7 directory on your server
 
-    * include the IE7 style sheet in the page you wish to test:
+ * include the IE7 JavaScript library in the page you wish to test
 
-      <!-- compliance patch for microsoft browsers -->
-      <!--[if lt IE 7]>
-      <link rel="stylesheet" href="/IE7/ie7-html.css" type="text/css"/>
-      <![endif]-->
+   <!-- compliance patch for microsoft browsers -->
+   <!--[if lt IE 7]><script src="/ie7/ie7-standard-p.js" type="text/javascript"></script><![endif]-->
 
-    * make sure this also points to the same "IE7" directory
+ * make sure this also points to the same directory
 
-    * open the page in your web browser
+ * open the page in your web browser
 
-    * the page should now be IE7 enabled.
+ * the page should now be IE7 enabled.
 
-You may also extract the contents of the zip file to the root of your
-hard disk if you do not have access to a web server.
+You may extract the contents of the ZIP file to your hard disk if you do not have access to a web server.
+
 
 Enjoy ;-)
+
+Dean Edwards, 17th August 2004

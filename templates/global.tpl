@@ -19,10 +19,13 @@
   <head>
     {* This should help out users whose browsers are confused about the character set *}
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
     {* We're experimenting with Dean Edward's IE7 patch:  http://dean.edwards.name/IE7 *}
     <!-- compliance patch for microsoft browsers -->
     <!--[if lt IE 7]>
-    <link rel="stylesheet" href="lib/IE7/ie7-html.css" type="text/css"/>
+    <script src="{g->url href="lib/IE7/ie7-standard.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-css3.js"}" type="text/javascript"></script>
+    <script src="{g->url href="lib/IE7/ie7-css-strict.js"}" type="text/javascript"></script>
     <![endif]-->
 
     {* Content that G2 wants to display inside the <head> element *}
