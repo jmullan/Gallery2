@@ -47,6 +47,7 @@ class GalleryLockHelper_medium {
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
+     * @static
      */
     function acquireReadLock($ids, $timeout=10) {
 	global $gallery;
@@ -75,6 +76,7 @@ class GalleryLockHelper_medium {
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               object GalleryLock a lock
+     * @static
      */
     function acquireReadLockParents($id, $timeout=10) {
 	global $gallery;
@@ -147,6 +149,7 @@ class GalleryLockHelper_medium {
      * @access public
      * @param int an entity id
      * @return boolean true if the entity is read locked
+     * @static
      */
     function isReadLocked($id) {
 	$locks =& GalleryLockHelper_simple::_getLocks();
@@ -174,6 +177,7 @@ class GalleryLockHelper_medium {
      * @param integer how long to wait for the lock before giving up
      * @return array object GalleryStatus a status code
      *               int the lock id
+     * @static
      */
     function acquireWriteLock($ids, $timeout=10) {
 	global $gallery;
@@ -197,6 +201,7 @@ class GalleryLockHelper_medium {
      * @access public
      * @param int an entity id
      * @return boolean true if the entity is write locked
+     * @static
      */
     function isWriteLocked($id) {
 	$locks =& GalleryLockHelper_simple::_getLocks();
@@ -221,6 +226,7 @@ class GalleryLockHelper_medium {
      *
      * @param array a list of lock ids, or a single lock id
      * @return object GalleryStatus a status code
+     * @static
      */
     function releaseLocks($lockIds) {
 	global $gallery;
@@ -265,6 +271,7 @@ class GalleryLockHelper_medium {
      * @param string halt after the first failure?  default: yes
      * @return object GalleryStatus a status code
      * @access private
+     * @static
      */
     function releaseAllLocks($haltOnFailure=true) {
 	global $gallery;

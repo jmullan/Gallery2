@@ -178,6 +178,7 @@ class GalleryItemHelper_medium {
      * @param string the mime type
      * @return array object GalleryStatus a status code
      *               object GalleryItem an item
+     * @static
      */
     function newItemByMimeType($mimeType) {
 
@@ -220,6 +221,7 @@ class GalleryItemHelper_medium {
      * @param int the id of the target album
      * @return array object GalleryStatus a status code
      *               object GalleryDataItem a new item
+     * @static
      */
     function addItemToAlbum($fileName, $itemName, $title, $summary,
 			    $description, $mimeType, $albumId) {
@@ -282,6 +284,7 @@ class GalleryItemHelper_medium {
      * @param object GalleryItem the source item
      * @param int the id of the target album
      * @return object GalleryStatus a status code
+     * @static
      */
     function addExistingItemToAlbum($item, $albumId) {
 	
@@ -412,6 +415,7 @@ class GalleryItemHelper_medium {
      * @param int the album id
      * @param int the item id
      * @return object GalleryStatus a status code
+     * @static
      */
     function setThumbnailFromItem($itemId, $fromItemId) {
 	global $gallery;

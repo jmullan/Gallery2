@@ -39,6 +39,7 @@ class GalleryItemAttributesHelper_advanced {
      *
      * @param int the parent id
      * @param int the order spacing
+     * @static
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
 	global $gallery;
@@ -71,6 +72,7 @@ class GalleryItemAttributesHelper_advanced {
      * @param int the parent item id
      * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
      * @return int a weight
+     * @static
      */
     function fetchExtremeChildWeight($itemId, $direction) {
 	global $gallery;
@@ -112,6 +114,7 @@ class GalleryItemAttributesHelper_advanced {
      * @param int the item id
      * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
      * @return int a weight
+     * @static
      */
     function fetchNextWeight($itemId, $direction) {
 	global $gallery;
@@ -161,6 +164,7 @@ class GalleryItemAttributesHelper_advanced {
      * Update the view count for this item id
      * @param int the item id
      * @param int the new count
+     * @static
      */
     function setViewCount($itemId, $count) {
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
@@ -179,6 +183,7 @@ class GalleryItemAttributesHelper_advanced {
      * @param int id the item id
      * @param array the parent sequence (ids)
      * @return object GalleryStatus a status code
+     * @static
      */
     function setParentSequence($itemId, $parentSequence) {
 	if (empty($parentSequence)) {
@@ -201,6 +206,7 @@ class GalleryItemAttributesHelper_advanced {
      * Create a new set of attributes for an item
      * @param int the item id
      * @param array the sequence of parent ids
+     * @static
      */
     function createItemAttributes($itemId, $parentSequence) {
 	if (empty($parentSequence)) {
@@ -223,6 +229,7 @@ class GalleryItemAttributesHelper_advanced {
     /**
      * Remove the attributes for the given item
      * @param int the item id
+     * @static
      */
     function removeItemAttributes($itemId) {
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
@@ -238,6 +245,7 @@ class GalleryItemAttributesHelper_advanced {
      * Set the order weight for an item id
      * @param int the item id
      * @param int the new order weight
+     * @static
      */
     function setOrderWeight($itemId, $orderWeight) {
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
@@ -253,6 +261,7 @@ class GalleryItemAttributesHelper_advanced {
     /**
      * Get the view count for this item id
      * @param int the item id
+     * @static
      */
     function fetchViewCount($itemId) {
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
@@ -270,6 +279,7 @@ class GalleryItemAttributesHelper_advanced {
      * @param int id the item id
      * @param array the parent sequence (ids)
      * @return object GalleryStatus a status code
+     * @static
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
 	global $gallery;

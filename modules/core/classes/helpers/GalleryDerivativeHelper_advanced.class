@@ -64,6 +64,7 @@ class GalleryDerivativeHelper_advanced {
      * @param array ids the source ids
      * @param array operation the operations to remove
      * @return object GalleryStatus a status code
+     * @static
      */
     function pruneDerivativeOperations($ids, $operations) {
 	global $gallery;
@@ -259,6 +260,7 @@ class GalleryDerivativeHelper_advanced {
      * @param int the derivative type (eg, DERIVATIVE_TYPE_IMAGE_THUMBNAIL)
      * @param string the derivative operations (eg, 'thumbnail|200')
      * @return object GalleryStatus a status code
+     * @static
      */
     function addPreference($order, $itemId, $derivativeType, $derivativeOperations) {
 	require_once(dirname(__FILE__) . '/../GalleryDerivativePreferencesMap.class');
@@ -279,6 +281,7 @@ class GalleryDerivativeHelper_advanced {
      *
      * @param int the item id
      * @return object GalleryStatus a status code
+     * @static
      */
     function removePreferencesForItem($itemId) {
 	require_once(dirname(__FILE__) . '/../GalleryDerivativePreferencesMap.class');
@@ -335,6 +338,7 @@ class GalleryDerivativeHelper_advanced {
      *
      * @param string the command
      * @return object GalleryStatus a status code
+     * @static
      */
     function mergeOperation(&$derivative, $newOperation, $newArgs, $headMerge=false) {
 	global $gallery;
@@ -399,6 +403,7 @@ class GalleryDerivativeHelper_advanced {
      *               boolean whether the merge was complete or not
      *               array the merged operations
      * @access private
+     * @static
      */
     function _recursiveMergeOperation($mimeType, $remainingOperations,
 				      $newOperation, $newArgs) {

@@ -46,6 +46,7 @@ class CartHelper {
      *
      * @return array object GalleryStatus a status code
      *               array (itemId => count, itemId => count)
+     * @static
      */
     function fetchCartItemCounts() {
 	global $gallery;
@@ -89,6 +90,7 @@ class CartHelper {
      * 
      * @param array int item ids
      * @return object GalleryStatus a status code
+     * @static
      */
     function addItemsToCart($ids) {
 	global $gallery;
@@ -121,6 +123,7 @@ class CartHelper {
      * 
      * @param array int item ids
      * @return object GalleryStatus a status code
+     * @static
      */
     function setCartItemCounts($cartItemIds) {
 	global $gallery;

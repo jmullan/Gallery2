@@ -46,6 +46,7 @@ class GalleryChildEntityHelper_simple {
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
+     * @static
      */
     function fetchChildItemIds($item, $offset=null, $count=null) {
 	global $gallery;
@@ -148,6 +149,7 @@ class GalleryChildEntityHelper_simple {
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
+     * @static
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null) {
 	global $gallery;
@@ -250,6 +252,7 @@ class GalleryChildEntityHelper_simple {
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
+     * @static
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
 	global $gallery;
@@ -332,6 +335,7 @@ class GalleryChildEntityHelper_simple {
      * @param object GalleryItem an item
      * @return array object GalleryStatus a status code 
      *               array (array(memberName => memberValue))
+     * @static
      */
     function fetchParents($item) {
 	global $gallery;
@@ -374,6 +378,7 @@ class GalleryChildEntityHelper_simple {
      *
      * @return array string an order clause, string a row matching condition
      * @access private
+     * @static
      */
     function _getOrderInfo($item) {
 	/*

@@ -34,6 +34,7 @@ class GalleryItemAttributesHelper_medium {
     /**
      * Get the view counts for many item ids
      * @param int the item id
+     * @static
      */
     function fetchViewCounts($itemIds) {
 	global $gallery;
@@ -67,6 +68,7 @@ class GalleryItemAttributesHelper_medium {
      * Get the order weight for a given item id
      * @param int the item id
      * @param int the order weight
+     * @static
      */
     function fetchOrderWeight($itemId) {
 	list ($ret, $orderWeights) = GalleryItemAttributesHelper_medium::fetchOrderWeights(array($itemId));
@@ -87,6 +89,7 @@ class GalleryItemAttributesHelper_medium {
      * @param int the order weight
      * @return array(itemId1 => orderWeight1,
      *               itemId2 => orderWeight2, ...)
+     * @static
      */
     function fetchOrderWeights($itemIds) {
 	global $gallery;
@@ -116,6 +119,7 @@ class GalleryItemAttributesHelper_medium {
      * @param int the item id
      * @return array object GalleryStatus a status code
      *               array the parent id sequence
+     * @static
      */
     function fetchParentSequence($itemId) {
 	global $gallery;

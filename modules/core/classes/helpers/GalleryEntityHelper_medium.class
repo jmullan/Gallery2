@@ -39,6 +39,7 @@ class GalleryEntityHelper_medium {
      *
      * @param int the id of a GalleryEntity to delete
      * @return object GalleryStatus a status code 
+     * @static
      */
     function deleteEntityById($id) {
 	if (empty($id)) {
@@ -126,6 +127,7 @@ class GalleryEntityHelper_medium {
      * @param int the target entity id
      * @return array object GalleryStatus a status code
      *               array entity ids
+     * @static
      */
     function fetchEntitiesLinkedTo($targetId) {
 	global $gallery;

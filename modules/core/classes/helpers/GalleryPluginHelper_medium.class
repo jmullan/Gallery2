@@ -147,6 +147,7 @@ class GalleryPluginHelper_medium {
      * @param string the plugin type
      * @return array object GalleryStatus a status code
      *               string plugin ids
+     * @static
      */
     function getAllPluginIds($pluginType) {
 	global $gallery;
@@ -255,6 +256,7 @@ class GalleryPluginHelper_medium {
      * @param string the parameter name
      * @param string the value
      * @return object GalleryStatus a status code
+     * @static
      */
     function setParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
 	if (empty($pluginType) || empty($pluginId) || empty($parameterName)) {

@@ -41,6 +41,7 @@ class GalleryItemAttributesHelper_simple {
      * Update the view count for this item id
      * @param int the item id
      * @param int the amount to increment
+     * @static
      */
     function incrementViewCount($itemId, $step=1) {
 	$func = '= [GalleryItemAttributesMap::viewCount] + ?';

@@ -40,7 +40,8 @@ class GalleryPluginHelper_simple {
      * loadModule() call for chicken-and-egg reasons, so we have to be able to
      * set it here.
      *
-     * @param object a plugin
+     * @param object Plugin a plugin instance
+     * @static
      */
     function setPluginInstance($pluginType, $pluginId, &$instance) {
 	GalleryDataCache::putByReference("GalleryPluginHelper::loadPlugin($pluginType, $pluginId)",
@@ -55,6 +56,7 @@ class GalleryPluginHelper_simple {
      * @param string whether or not to initialize the plugin
      * @return array object GalleryStatus a status code
      *               object the plugin
+     * @static
      */
     function loadPlugin($pluginType, $pluginId, $initialize=true) {
 	global $gallery;
@@ -116,6 +118,7 @@ class GalleryPluginHelper_simple {
      * @param string optional item id
      * @return array object GalleryStatus a status code
      *               string a value
+     * @static
      */
     function getParameter($pluginType, $pluginId, $parameterName, $itemId=0) {
 
@@ -205,6 +208,7 @@ class GalleryPluginHelper_simple {
      * @return array object GalleryStatus as status code
      *                      array (moduleId => array('active' => true/false,
      *                                               'installed' => true/false)
+     * @static
      */
     function getPluginStatus($pluginType) {
 	global $gallery;

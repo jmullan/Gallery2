@@ -43,6 +43,7 @@ class GalleryFileSystemEntityHelper_medium {
      * @return array object GalleryStatus a status code
      *               boolean true if there's a collision
      * @access private
+     * @static
      */
     function checkPathCollision($pathComponent, $newParentId) {
 	global $gallery;
@@ -110,6 +111,7 @@ class GalleryFileSystemEntityHelper_medium {
      * @param int the target parent id
      * @return array object GalleryStatus a status code
      *               string the legal path component
+     * @static
      */
     function getLegalPathComponent($pathComponent, $parentId) {
 	global $gallery;
