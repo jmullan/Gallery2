@@ -177,6 +177,43 @@ class UserAndGroupTest extends GalleryTestCase {
     }
 
     /**
+     * Verify that we can fetch all users with a given substring in their username
+     */
+    function testFetchUserCountBySubstring() {
+	global $gallery;
+
+	$unique = rand(0, 65535);
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// Nobody matches our unique tag
+	$this->assertEquals(0, $count);
+	
+	list ($ret, $user) = $this->_createRandomUser($unique);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	GalleryDataCache::reset();
+
+	list ($ret, $count) = GalleryCoreApi::fetchUserCount($unique);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	// We now have one user that matches the description
+	$this->assertEquals(1, $count);
+
+	// Clean up
+	$ret = $this->_deleteAndVerifyEntity($user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    /**
      * Create user, fetch it by name, delete user
      */
     function testFetchUserByName() {
