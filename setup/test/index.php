@@ -114,7 +114,27 @@ if (sizeof($results) > 1) {
  * been configured.
  */
 $setup = $gallery->getConfig('code.gallery.setup');
-list ($ret, $smarty) = $gallery->getSmarty($setup . 'smarty/templates_c');
+$smartyDir = $setup . 'smarty';
+
+/*
+ * Make sure the compile dir exists
+ */
+if (!($platform->file_exists($smartyDir) &&
+      $platform->is_dir($smartyDir) &&
+      $platform->is_writeable($smartyDir))) {
+
+    print "You must create a temporary directory writeable by the web server<br>";
+    print "in order to use the test harness.  Here's one way to do it:<br>";
+    print "<pre>";
+    print "    cd $setup\n";
+    print "    mkdir smarty\n";
+    print "    chmod 777 smarty\n";
+    print "</pre>";
+    return;
+}
+
+list ($ret, $smarty) = $gallery->getSmarty($smartyDir);
+$smarty->compile_dir = $smartyDir;
 if ($ret->isError()) {
     $ret = $ret->wrap(__FILE__, __LINE__);
     print $ret->getAsHtml();
