@@ -16,7 +16,7 @@ class LoadAlbumItemTestCase extends TestCase {
 	global $gallery;
 
 	for ($i = 0; $i < $iterations; $i++) {
-	    list ($ret, $entity) = $gallery->loadEntityById($this->_id);
+	    list ($ret, $entity) = $gallery->loadEntitiesById($this->_id);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

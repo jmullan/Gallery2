@@ -14,9 +14,13 @@ class EmptyGalleryTestCase extends TestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	$smarty = $gallery->getSmarty();
 	foreach (array($gallery->getConfig('core.directory.albums'),
 		       $gallery->getConfig('core.directory.temp'),
-		       $gallery->getConfig('core.directory.cache')) as $dir) {
+		       $gallery->getConfig('core.directory.cache'),
+		       $gallery->getConfig('smarty.directory.data'),
+		       $smarty->compile_dir,
+		       $smarty->cache_dir) as $dir) {
 
 	    if ($platform->file_exists($dir)) {
 		$ret = $platform->recursiveRmdir($dir);

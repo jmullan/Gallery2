@@ -4,7 +4,7 @@ class CreateStoreTestCase extends TestCase {
 
     function getDescription() {
 	global $gallery;
-	$config = $gallery->getConfig('storage.config');
+	$config = $gallery->getConfig('core.storage.config');
 	return "Create a new G2 database called '$config[database]'";
     }
 

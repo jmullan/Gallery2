@@ -15,8 +15,6 @@ class CreateAlbumItemTestCase extends TestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-
-	$album->setRows(3);
 	$album->setDescription("This is a longish description with " .
 				     "+=!@#$%^&*()_-|\\\"'?/>.<,}]{[~` chars in it");
 

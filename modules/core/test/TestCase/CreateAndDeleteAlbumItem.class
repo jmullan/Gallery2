@@ -35,11 +35,8 @@ class CreateAndDeleteAlbumItemTestCase extends TestCase {
 	}
 
 	/* Change some settings */
-	$album->setBackgroundColor('red');
-	$album->setBorder(1);
-	$album->setBorderColor('blue');
-	$album->setColumns(10);
-	$album->setDisplayViewCount(true);
+	$album->setChildIntermediateSize(600);
+	$album->setChildThumbSize(200);
 
 	/* Add some properties */
 	$ret = GalleryItemPropertiesMap::addProperty($album->getId(), 'banana', 'orange');

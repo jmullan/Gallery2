@@ -19,7 +19,7 @@ class DeleteRandomAlbumTestCase extends TestCase {
 	$userId = $gallery->getActiveUserId();
 
 	/* Load the root */
-	list ($ret, $root) = $gallery->loadEntityById($rootId);
+	list ($ret, $root) = $gallery->loadEntitiesById($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -60,7 +60,7 @@ class DeleteRandomAlbumTestCase extends TestCase {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
-	    list ($ret, $album) = $gallery->loadEntityById($chosen);
+	    list ($ret, $album) = $gallery->loadEntitiesById($chosen);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

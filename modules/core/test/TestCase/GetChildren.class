@@ -17,7 +17,7 @@ class GetChildrenTestCase extends TestCase {
 	$userId = $gallery->getActiveUserId();
 
 	/* Load the root */
-	list ($ret, $root) = $gallery->loadEntityById($rootId);
+	list ($ret, $root) = $gallery->loadEntitiesById($rootId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
