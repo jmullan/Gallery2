@@ -7,7 +7,7 @@
 
     <p>
       <?php printf(_("As a convenience to you, we've prepared a <a href=\"%s\">correct version of login.txt</a> for you.  Download that and copy it into your install directory and you're all set."), 
-      '?step=' . $currentStep->getStepNumber() . '&downloadLogin=1'); ?>
+      'index.php?step=' . $currentStep->getStepNumber() . '&downloadLogin=1'); ?>
     </p>
 
     <p>
@@ -16,7 +16,7 @@
 
     <div class="go">
       <span class="GoToNextL">
-	<a href="?step=<?php print $currentStep->getStepNumber()?>">
+	<a href="index.php?step=<?php print $currentStep->getStepNumber()?>">
 	  <?php print _('Authenticate Me') ?>
 	</a>
       </span>
