@@ -65,9 +65,9 @@ class ItemEditImageController extends GalleryController {
 	        $form['scale']['size'] > 0) {
 	    $command = "scale " . $form['scale']['size'];
 	} else if (isset($form['action']['rotate']['clockwise'])) {
-	    $command = "rotate -90";
-	} else if (isset($form['action']['rotate']['counterClockwise'])) {
 	    $command = "rotate 90";
+	} else if (isset($form['action']['rotate']['counterClockwise'])) {
+	    $command = "rotate -90";
 	} else if (isset($form['action']['rotate']['flip'])) {
 	    $command = "rotate 180";
 	} else if (isset($form['action']['revertToOriginal'])) {
