@@ -219,7 +219,7 @@ class GalleryUrlGenerator {
      */
     function registerViewPrefix($prefix, $viewName, $deprecated=false) {
 	if (isset($this->_viewPrefixRegistry[$prefix])) {
-	    return GalleryStatus::error(ERROR_COLLISION, __FILE, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	$this->_viewPrefixRegistry['forward'][$prefix] = $viewName;
