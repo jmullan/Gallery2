@@ -107,7 +107,7 @@ class UserAlbumModule extends GalleryModule {
 
 	    // Create top level album..
 	    list ($ret, $album) = GalleryCoreApi::createAlbum(
-		$core['id.rootAlbum'], $user->getUserName(), $user->getFullName(), '', '', '');
+		$module['targetlocation'], $user->getUserName(), $user->getFullName(), '', '', '');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

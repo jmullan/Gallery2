@@ -61,6 +61,18 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+        list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'targetlocation', $this->_parentAlbum->_id);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	list ($ret, $this->_allUserGroupId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
@@ -79,6 +91,13 @@ class UserAlbumTest extends GalleryTestCase {
 	}
 	if (isset($this->_albumId)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_albumId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	if (isset($this->_parentAlbum)) {
+	    $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->_id);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -103,8 +122,14 @@ class UserAlbumTest extends GalleryTestCase {
 	}
 	$this->_userId = $user->getId();
 
+	// Retrieve the parent album's logical path
+	list($ret, $parentPath) = $this->_parentAlbum->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	// Verify user's album was created..
-	list ($ret, $this->_albumId) = GalleryCoreApi::fetchItemIdByPath('/' . $user->getUserName());
+	list ($ret, $this->_albumId) = GalleryCoreApi::fetchItemIdByPath($parentPath . '/' . $user->getUserName());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

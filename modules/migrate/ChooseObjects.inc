@@ -230,7 +230,7 @@ class ChooseObjectsView extends GalleryView {
         if ($ret->isError()) {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
-	$g2AlbumTree = $this->_createG2AlbumTree($albums);
+	$g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
 
 	$ChooseObjects['albumsPath'] = $albumsPath;
 	$ChooseObjects['newUsers'] = $newUsers;
@@ -289,69 +289,6 @@ class ChooseObjectsView extends GalleryView {
 	    $data = array_merge($data, $this->_createG1DepthTree($albumList,
 								 $childAlbumName, $subHierarchy,
 								 $depth + 1));
-	}
-
-	return $data;
-    }
-    
-    /**
-     * Turn a set of G2 albums into a depth tree suitable for display in a
-     * hierarchical format.
-     *
-     * @access private
-     */
-    function _createG2AlbumTree($albums) {
-	/* Index the albums by id */
-	$map = array();
-	foreach ($albums as $album) {
-	    $albumId = $album->getId();
-	    $parentId = $album->getParentId();
-	    $map[$albumId]['instance'] = $album;
-	    if (!empty($parentId)) {
-		$map[$albumId]['parent'] = $parentId;
-		$map[$parentId]['children'][] = $albumId;
-	    }
-	}
-
-	/*
-	 * Prune parents that don't exist.  This can occur if we have multiple
-	 * roots (unusual) or an album in the middle of the hierarchy that is
-	 * not viewable.
-	 */
-	foreach ($map as $id => $info) {
-	    if (isset($info['parent']) && !isset($map[$info['parent']]['instance'])) {
-		unset($map[$info['parent']]);
-	    }
-	}
-
-	/* Find root albums */
-	foreach ($map as $id => $info) {
-	    if (!isset($info['parent']) || !isset($map[$info['parent']])) {
-		$roots[] = $id;
-	    }
-	}
-
-	/* Walk the root albums */
-	$tree = array();
-	foreach ($roots as $id) {
-	    $tree = array_merge($tree, $this->_createG2DepthTree($map, $id));
-	}
-
-	return $tree;
-    }
-
-    /**
-     * Recursively walk a parent/child map and build the depth tree.
-     *
-     * @access private
-     */
-    function _createG2DepthTree(&$map, $id, $depth=0) {
-	$data = array();
-	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
-	if (isset($map[$id]['children'])) {
-	    foreach ($map[$id]['children'] as $childId) {
-		$data = array_merge($data, $this->_createG2DepthTree($map, $childId, $depth+1));
-	    }
 	}
 
 	return $data;

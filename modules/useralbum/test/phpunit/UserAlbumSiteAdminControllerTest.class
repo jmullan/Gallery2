@@ -46,6 +46,14 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	// Create random album to test assignment
+        list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+        if ($ret->isError()) {
+            print $ret->getAsHtml();
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
     }
 
     function tearDown() {
@@ -56,6 +64,13 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
+        if (isset($this->_parentAlbum)) {
+            $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->_id);
+            if ($ret->isError()) {
+                print $ret->getAsHtml();
+                return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+            }
+        }
 	parent::tearDown();
     }
 
@@ -78,6 +93,7 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	GalleryUtilities::putRequestVariable('form[view]', 'allusers');
 	GalleryUtilities::putRequestVariable('form[fullsize]', '0');
+	GalleryUtilities::putRequestVariable('form[targetlocation', $this->_getRootId());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();

@@ -43,7 +43,7 @@ class UserAlbumSiteAdminController extends GalleryController {
 
 	$status = array();
 	if (isset($form['action']['save'])) {
-	    foreach (array('view', 'fullsize') as $key) {
+	    foreach (array('view', 'fullsize','targetlocation') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $form[$key]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -76,7 +76,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 	global $gallery;
 	if ($form['formName'] != 'UserAlbumSiteAdmin') {
 	    $form['formName'] = 'UserAlbumSiteAdmin';
-	    foreach (array('view', 'fullsize') as $key) {
+	    foreach (array('view', 'fullsize', 'targetlocation') as $key) {
 		list ($ret, $form[$key]) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', $key);
 		if ($ret->isError()) {
@@ -88,13 +88,29 @@ class UserAlbumSiteAdminView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+        /* Get ids of all all albums where we can add new album items */
+        list ($ret, $albumIds) =
+            GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem', 'core.addAlbumItem');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        /* Load all the album entities */
+        list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $g2AlbumTree = GalleryUtilities::createAlbumTree($albums);
+
 	$UserAlbumSiteAdmin = array(
 	    'viewList' => array('everybody' => $module->translate('Everybody'),
 				'allusers' => $module->translate('All Users'),
 				'user' => $module->translate('User Only')),
 	    'sizeList' => array('1' => $module->translate('Yes'),
-				'0' => $module->translate('No'))
+				'0' => $module->translate('No')),
+	    'targetLocation' => $g2AlbumTree
 	);
+
 	$template->setVariable('UserAlbumSiteAdmin', $UserAlbumSiteAdmin);
 	$template->setVariable('controller', 'useralbum:UserAlbumSiteAdmin');
 	return array(GalleryStatus::success(),
