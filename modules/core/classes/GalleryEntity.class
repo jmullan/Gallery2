@@ -255,7 +255,7 @@ class GalleryEntity_core extends GalleryPersistent {
 	    /* Change the modification date */
 	    $this->setModificationTimestamp(time());
 
-	    $event = GalleryCoreApi::newEvent("GalleryEntity::save");
+	    $event = GalleryCoreApi::newEvent('GalleryEntity::save');
 	    $event->setEntity($this);
 	    list ($ret) = GalleryCoreApi::postEvent($event);
 	    if ($ret->isError()) {
@@ -263,7 +263,6 @@ class GalleryEntity_core extends GalleryPersistent {
 	    }
 
 	    $storage =& $gallery->getStorage();
-
 	    $changedEntityType = ($this->getModifiedFlag('entityType') != MEMBER_UNMODIFIED);
 
 	    $ret = $storage->saveEntity($this);
