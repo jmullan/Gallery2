@@ -179,7 +179,7 @@ class CoreModule extends GalleryModule {
 	GalleryFactory::registerImplementation('GalleryItem',
 					       'GalleryMovieItem',
 					       'GalleryMovieItem',
-					       $classDir . 'GalleryPhotoItem.class',
+					       $classDir . 'GalleryMovieItem.class',
 					       array('video/*'));
 
 	GalleryFactory::registerImplementation('GalleryItem',
@@ -483,9 +483,7 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    /* Permissions for this item */
-	    list ($ret, $permissions) =
-		GalleryItemHelper::getPermissions($item->getId(),
-						  $gallery->getActiveUserId());
+	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -526,9 +524,7 @@ class CoreModule extends GalleryModule {
 	    }
 
 	    /* Permissions for its parent */
-	    list ($ret, $parentPermissions) =
-		GalleryItemHelper::getPermissions($item->getParentId(),
-						  $gallery->getActiveUserId());
+	    list ($ret, $parentPermissions) = GalleryItemHelper::getPermissions($item->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -678,9 +674,7 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 
 	$views = array();
-	list ($ret, $permissions) =
-	    GalleryItemHelper::getPermissions($item->getId(),
-					      $gallery->getActiveUserId());
+	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

@@ -56,9 +56,10 @@ class ItemMoveController extends GalleryController {
 		/* Check if we can add albums or items here */
 		$newParentId = $form['destination'];
 		GalleryUtilities::putRequestVariable('form.destination', $newParentId);
-		list ($ret, $permissions) =
-		    GalleryItemHelper::getPermissions($newParentId,
-						      $gallery->getActiveUserId());
+		list ($ret, $permissions) = GalleryItemHelper::getPermissions($newParentId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
 		if (isset($permissions['core.addItem'])) {
 		    $canAddItem = true;
@@ -116,9 +117,10 @@ class ItemMoveController extends GalleryController {
 			continue;
 		    }
 		    $oldParentIds[] = $selectedItem->getParentId();
-		    list ($ret, $permissions) =
-			GalleryItemHelper::getPermissions($selectedId,
-							  $gallery->getActiveUserId());
+		    list ($ret, $permissions) = GalleryItemHelper::getPermissions($selectedId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		    /* Can we delete this item from here? */
 		    if (! isset($permissions['core.delete'])) {
 			$problem = true;
@@ -141,7 +143,7 @@ class ItemMoveController extends GalleryController {
 		$lockIds = array();
 		list ($ret, $lockIds[]) = $gallery->acquireReadLock($newParentId, $itemId);
 		if ($ret->isError()) {
-		    return $ret;
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		/* Write locok all the items we're moving */
@@ -243,9 +245,7 @@ class ItemMoveView extends GalleryView {
         $onlyItems = true;
         $onlyAlbums = true;
         foreach ($peerItems as $peerItem) {
-            list ($ret, $permissions) =
-                GalleryItemHelper::getPermissions($peerItem->getId(),
-                                                  $gallery->getActiveUserId());
+            list ($ret, $permissions) = GalleryItemHelper::getPermissions($peerItem->getId());
             if (! isset($permissions['core.delete'])) {
                 continue;
             }
@@ -286,9 +286,7 @@ class ItemMoveView extends GalleryView {
                 continue;
             }
             /* Check for write permission in the destination album */
-            list ($ret, $permissions) =
-                GalleryItemHelper::getPermissions($treeItem['entity']->getId(),
-                                                  $gallery->getActiveUserId());
+            list ($ret, $permissions) = GalleryItemHelper::getPermissions($treeItem['entity']->getId());
             if ($ret->isError()) {
                 return array($ret->wrap(__FILE__, __LINE__), null);
             }

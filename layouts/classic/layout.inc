@@ -99,9 +99,7 @@ class ClassicLayout extends GalleryLayout {
 
 	/* Count the total number of children */
 	/* XXX: we could combine this with the other getChildCounts() call below */
-	list ($ret, $totalChildCount) =
-	    GalleryItemHelper::getChildCounts(array($item->getId()),
-					      $gallery->getActiveUserId());
+	list ($ret, $totalChildCount) = GalleryItemHelper::getChildCounts(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -142,8 +140,7 @@ class ClassicLayout extends GalleryLayout {
 	    }
 
 	    /* Get the "grandchild" counts */
-	    list ($ret, $childCounts) =
-		GalleryItemHelper::getChildCounts($childIds, $gallery->getActiveUserId());
+	    list ($ret, $childCounts) = GalleryItemHelper::getChildCounts($childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -297,10 +294,7 @@ class ClassicLayout extends GalleryLayout {
 	 */
 	$imageViews = array();
 
-	list ($ret, $permissions) =
-	    GalleryItemHelper::getPermissions($item->getId(),
-					      $gallery->getActiveUserId());
-
+	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

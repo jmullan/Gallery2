@@ -63,7 +63,7 @@ class GalleryItemHelper {
      *               int a count
      * @static
      */
-    function getChildCounts($itemIds, $userId) {
+    function getChildCounts($itemIds) {
 	global $gallery;
 
 	if (empty($itemIds)) {
@@ -103,8 +103,8 @@ class GalleryItemHelper {
           [GalleryChildEntity::parentId]
         ';
 	$data = $itemIds;
-	$data[] = $userId;
-	$data[] = $userId;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
 	$data[] = $storage->convertIntToBits($permissionBits);
 	$data[] = $storage->convertIntToBits(0);
 
@@ -199,17 +199,16 @@ class GalleryItemHelper {
      * @return object GalleryStatus a status code
      * @static
      */
-    function studyPermissions($itemIds, $userId) {
+    function studyPermissions($itemIds) {
 
-	list ($ret, $permissionsTable) =
-	    GalleryPermissionMap::fetchPermissionsForItems($itemIds, $userId);
+	list ($ret, $permissionsTable) = GalleryPermissionMap::fetchPermissionsForItems($itemIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Cache the permissions */
 	foreach ($permissionsTable as $itemId => $permissions) {
-	    $cacheKey = "GalleryItemHelper::getPermissions($itemId,$userId)";
+	    $cacheKey = "GalleryItemHelper::getPermissions($itemId)";
 	    GalleryDataCache::put($cacheKey, $permissions);
 	}
 	    
@@ -220,17 +219,15 @@ class GalleryItemHelper {
      * Return all the permissions that the given user has for the given item.
      *
      * @return array object GalleryStatus a status code
-     *               boolean true if yes
+     *               array (perm1, perm2)
      * @static
      */
-    function getPermissions($itemId, $userId) {
-
-	$cacheKey = "GalleryItemHelper::getPermissions($itemId,$userId)";
+    function getPermissions($itemId) {
+	$cacheKey = "GalleryItemHelper::getPermissions($itemId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = GalleryDataCache::get($cacheKey);
 	} else {
-	    list ($ret, $permissionsTable) =
-		GalleryPermissionMap::fetchPermissionsForItems(array($itemId), $userId);
+	    list ($ret, $permissionsTable) = GalleryPermissionMap::fetchPermissionsForItems(array($itemId));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -266,7 +263,7 @@ class GalleryItemHelper {
 
 	if (!isset($instance)) {
 	    /* No? Try the major type only */
-	    $mimeType = substr(0, strcspn($mimeType, '/')) . '/*';
+	    $mimeType = substr($mimeType, 0, strpos($mimeType, '/')) . '/*';
 	    list ($ret, $instance) = GalleryFactory::newInstanceByHint('GalleryItem', $mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

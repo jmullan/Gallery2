@@ -178,9 +178,7 @@ class CommentModule extends GalleryTemplateModule {
 	$links = array();
 	foreach ($items as $item) {
 
-	    list ($ret, $permissions) =
-		GalleryItemHelper::getPermissions($item->getId(),
-						  $gallery->getActiveUserId());
+	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -227,9 +225,7 @@ class CommentModule extends GalleryTemplateModule {
 	foreach ($items as $item) {
 	    $message = array();
 
-	    list ($ret, $permissions) =
-		GalleryItemHelper::getPermissions($item->getId(),
-						  $gallery->getActiveUserId());
+	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -261,9 +257,7 @@ class CommentModule extends GalleryTemplateModule {
     function getItemDetails($item, $returnUrlParams) {
 	global $gallery;
 
-	list ($ret, $permissions) =
-	    GalleryItemHelper::getPermissions($item->getId(),
-					      $gallery->getActiveUserId());
+	list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -312,9 +306,7 @@ class CommentModule extends GalleryTemplateModule {
 		$commentData[] = $memberData;
 	    }
 
-	    list ($ret, $permissions) =
-		GalleryItemHelper::getPermissions($item->getId(),
-						  $gallery->getActiveUserId());
+	    list ($ret, $permissions) = GalleryItemHelper::getPermissions($item->getId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

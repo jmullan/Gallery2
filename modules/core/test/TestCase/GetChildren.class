@@ -40,8 +40,7 @@ class GetChildrenTestCase extends TestCase {
 
 	for ($i = 0; $i < $iterations; $i++) {
 	    /* Get the child count */
-	    list ($ret, $count) =
-		GalleryItemHelper::getChildCounts(array($root->getId()), $userId);
+	    list ($ret, $count) = GalleryItemHelper::getChildCounts(array($root->getId()));
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

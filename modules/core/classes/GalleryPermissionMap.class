@@ -396,12 +396,11 @@ class GalleryPermissionMap_core {
      * Return a list of permissions for the given items
      *
      * @param array int GalleryItem ids
-     * @param int a user id
      * @return array object GalleryStatus a status code
      *               array (id => array(array(permission.id => 1, ...), ...)
      * @static
      */
-    function fetchPermissionsForItems($itemIds, $userId) {
+    function fetchPermissionsForItems($itemIds) {
 	global $gallery;
 
 	if (!is_array($itemIds) || empty($itemIds)) {
@@ -429,8 +428,8 @@ class GalleryPermissionMap_core {
           [GalleryPermissionMap::itemId]
         ';
 	$data = $itemIds;
-	$data[] = $userId;
-	$data[] = $userId;
+	$data[] = $gallery->getActiveUserId();
+	$data[] = $gallery->getActiveUserId();
 
 	list($ret, $searchResults) = $gallery->search($query, $data);
 	if ($ret->isError()) {
