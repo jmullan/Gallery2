@@ -26,41 +26,61 @@
  */
 
 /**
- * Render image block for use in external pages.
+ * Generate CSS required if image frames are used with external image block.
  *
  * @package ImageBlock
  * @subpackage UserInterface
  */
-class ExternalView extends GalleryView {
+class ExternalCSSView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageBlockHelper.class');
-	global $gallery;
-	$SlideShow = array();
-	$startId = null;
-
-	/* Force UrlGenerator to not add session id into urls.. */
-	$session =& $gallery->getSession();
-	$session->_isUsingCookies = true;
-
-	$params = array();
-	foreach (array('blocks', 'show', 'itemId', 'maxSize',
-		       'linkTarget', 'itemFrame', 'albumFrame') as $key) {
-	    $tmp = GalleryUtilities::getRequestVariables($key);
-	    if (!empty($tmp)) {
-		$params[$key] = $tmp;
+	$frameIds = GalleryUtilities::getRequestVariables('frames');
+	if (!empty($frameIds)) {
+	    $frameIds = explode('|', $frameIds);
+	} else {
+	    $frameIds = array();
+	    foreach (array('albumFrame', 'itemFrame') as $key) {
+		list ($ret, $frame) =
+		    GalleryCoreApi::getPluginParameter('module', 'imageblock', $key);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (!empty($frame)) {
+		    $frameIds[] = $frame;
+		}
 	    }
 	}
 
-	list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$tpl = 'modules/imageblock/templates/NoCSS.tpl';
+	if (isset($imageframe) && !empty($frameIds)) {
+	    $ret = $imageframe->init($template, $frameIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $head = $template->getVariable('head');
+	    list ($tpl) = each($head['tpl']);
+	}
+
+	/* Force UrlGenerator to not add session id into urls.. */
+	global $gallery;
+	$session =& $gallery->getSession();
+	$session->_isUsingCookies = true;
 
 	return array(GalleryStatus::success(), array('html' => $tpl));
+    }
+
+    /**
+     * @see GalleryView::getL10Domain()
+     */
+    function getL10Domain() {
+	return 'modules_imageframe';
     }
 }
 ?>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -124,6 +124,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    $form['albumFrame'] = $param['albumFrame'];
 	    $form['itemFrame'] = $param['itemFrame'];
 	}
+	$ImageBlockSiteAdmin = array('prefix' => GALLERY_FORM_VARIABLE_PREFIX);
 
 	/* ImageFrame settings, if available */
 	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
@@ -131,18 +132,17 @@ class ImageBlockSiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if (isset($imageframe)) {
-	    list ($ret, $list) = $imageframe->getImageFrameList();
+	    list ($ret, $ImageBlockSiteAdmin['list']) = $imageframe->getImageFrameList();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl();
+	    list ($ret, $ImageBlockSiteAdmin['sampleUrl']) = $imageframe->getSampleUrl();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $template->setVariable('ImageBlockSiteAdmin',
-				   array('list' => $list, 'sampleUrl' => $sampleUrl));
 	}
 
+	$template->setVariable('ImageBlockSiteAdmin', $ImageBlockSiteAdmin);
 	$template->setVariable('controller', 'imageblock:ImageBlockSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/imageblock/templates/SiteAdmin.tpl'));

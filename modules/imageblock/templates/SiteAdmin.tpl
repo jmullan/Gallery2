@@ -145,7 +145,7 @@
       </li>
     </ul>
 
-    {if isset($ImageBlockSiteAdmin)}
+    {if isset($ImageBlockSiteAdmin.list)}
     <h3 class="giTitle">
       {g->text text="Frames"}
     </h3>
@@ -184,24 +184,43 @@
     </p>
     <table class="gbDataTable">
       <tr>
-	<td> g2_blocks </td>
+	<td> {$ImageBlockSiteAdmin.prefix}blocks&nbsp;*</td>
 	<td> {g->text text="Pipe(|) separate list chosen from: randomImage, recentImage, viewedImage, randomAlbum, recentAlbum, viewedAlbum, dailyImage, weeklyImage, monthlyImage, dailyAlbum, weeklyAlbum, monthlyAlbum, specificItem"} </td>
       </tr><tr>
-	<td> g2_show </td>
+	<td> {$ImageBlockSiteAdmin.prefix}show&nbsp;*</td>
 	<td> {g->text text="Pipe(|) separated list chosen from: title, date, views, owner, heading, fullSize; the value can also be: none"} </td>
       </tr><tr>
-	<td> g2_itemId </td>
+	<td> {$ImageBlockSiteAdmin.prefix}itemId </td>
 	<td> {g->text text="Limit the item selection to the subtree of the gallery under the album with the given id; or the id of the item to display when used with specificItem block type"} </td>
       </tr><tr>
-	<td> g2_maxSize </td>
+	<td> {$ImageBlockSiteAdmin.prefix}maxSize </td>
 	<td> {g->text text="Scale images to this maximum size"} </td>
       </tr><tr>
-	<td> g2_linkTarget </td>
+	<td> {$ImageBlockSiteAdmin.prefix}linkTarget </td>
 	<td> {g->text text="Add a link target (for example, to open links in a new browser window)"} </td>
+      {if isset($ImageBlockSiteAdmin.list)}
+      </tr><tr>
+	<td> {$ImageBlockSiteAdmin.prefix}itemFrame&nbsp;*</td>
+	<td> {g->text text="Image frame to use around images"} </td>
+      </tr><tr>
+	<td> {$ImageBlockSiteAdmin.prefix}albumFrame&nbsp;*</td>
+	<td> {g->text text="Image frame to use around albums"} </td>
+      {/if}
       </tr>
     </table>
     <p class="giDescription">
-      {g->text text="If either g2_blocks or g2_show is omitted the site default defined above is used."}
+      {g->text text="If any parameter marked with * is omitted then the site default defined above is used."}
     </p>
+    {if isset($ImageBlockSiteAdmin.list)}
+    <p class="giDescription">
+      {g->text text="Image frames require CSS to be displayed correctly. Include the following in the %s section to support image frames." arg1="&lt;head&gt;"}
+    </p>
+    <p class="giInfo">
+      &lt;?php @readfile('{g->url arg1="view=imageblock:ExternalCSS" arg2="frames=wood"}'); ?&gt;
+    </p>
+    <p class="giDescription">
+      {g->text text="Specify the frame id (or pipe separated list of ids) in the frames parameter. Omit the parameter to support the image frames configured above."}
+    </p>
+    {/if}
   </div>
 </div>
