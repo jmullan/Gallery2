@@ -566,10 +566,24 @@ class CoreModule extends GalleryModule {
 	    }
 	}
 	
-	if (isset($permissions['core.viewSource'])) {
+	if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
 	    if ($item->getIsLinkable()) {
-		$views[] = array('name' => $this->translate(array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
-				 'view' => 'core:ItemCreateLinkSingle');
+		if ($isAlbum) {
+		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addAlbumItem');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		} else {
+		    list ($ret, $count) = GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.addDataItem');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+
+		if ($count > 0) {
+		    $views[] = array('name' => $this->translate(array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
+				     'view' => 'core:ItemCreateLinkSingle');
+		}
 	    }
 	}
 	
