@@ -799,7 +799,8 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $group->create('All Users', GROUP_ALL_USERS);
+	$groupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('All Users'));
+	$ret = $group->create($groupName, GROUP_ALL_USERS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -843,7 +844,8 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $group->create('Site Admins', GROUP_SITE_ADMINS);
+	$groupName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('Site Admins'));
+	$ret = $group->create($groupName, GROUP_SITE_ADMINS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -887,11 +889,13 @@ class CoreModule extends GalleryModule {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
     
-	$ret = $user->create($this->translate('guest'));
+	$userName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('guest'));
+	$fullName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('Guest'));
+	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$user->setFullName($this->translate('Guest'));
+	$user->setFullName($fullName);
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
@@ -938,13 +942,15 @@ class CoreModule extends GalleryModule {
 	if (!isset($user)) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
 	}  
-    
-	$ret = $user->create($this->translate('admin'));
+
+	$userName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('admin'));
+	$fullName = GalleryUtilities::utf8ToUnicodeEntities($this->translate('Gallery Administrator'));
+	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$user->changePassword($gallery->getConfig('setup.password'));
-	$user->setFullName($this->translate('Gallery Administrator'));
+	$user->setFullName($fullName);
 	
 	$ret = $user->save();
 	if ($ret->isError()) {
@@ -994,8 +1000,10 @@ class CoreModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$album->setTitle($this->translate('Gallery'));
-	$album->setDescription($this->translate('This is the top of your Gallery'));
+	$title = GalleryUtilities::utf8ToUnicodeEntities($this->translate('Gallery'));
+	$description = GalleryUtilities::utf8ToUnicodeEntities($this->translate('This is the top of your Gallery'));
+	$album->setTitle($title);
+	$album->setDescription($description);
 
 	$ret = $album->save();
 	if ($ret->isError()) {
