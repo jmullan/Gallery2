@@ -111,7 +111,7 @@ class AdminUsersController extends GalleryController {
 	    /* Show the "edit user" view */
 	    $results['view'] = 'core:SiteAdmin';
 	    GalleryUtilities::putRequestVariable('subView', 'core:AdminEditUser');
-	    GalleryUtilities::putRequestVariable('userId', $form['list']['userid']);
+	    GalleryUtilities::putRequestVariable('userId', $form['list']['userId']);
 	    
 	} else if (isset($form['action']['deleteFromText'])) {
 
