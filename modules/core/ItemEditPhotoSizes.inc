@@ -110,7 +110,7 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 
 		    if (isset($toolkit)) {
 			list ($ret, $thumbnail) = 
-			    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
@@ -174,7 +174,7 @@ class ItemEditPhotoSizes extends ItemEditPlugin {
 			}
 
 			list ($ret, $derivative) = 
-			    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}

@@ -95,7 +95,8 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	if (isset($toolkit)) {
 	    /* Create a thumbnail */
-	    list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    list ($ret, $thumbnail) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -127,7 +128,8 @@ class CreatePhotoItemTestCase extends TestCase {
 
 	if (isset($toolkit)) {
 	    /* Create a resize */
-	    list ($ret, $resize) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    list ($ret, $resize) =
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

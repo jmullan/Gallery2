@@ -69,7 +69,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	}
 	$this->_item = $item;
 
-	list ($ret, $derivative) = $this->_createDerivative($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	list ($ret, $derivative) = $this->_createDerivative($item, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

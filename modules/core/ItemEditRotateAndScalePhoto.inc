@@ -189,7 +189,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		/* If we have no preferred, then create one */
 		if (empty($preferred)) {
 		    list ($ret, $preferred) =
-			GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+			GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }

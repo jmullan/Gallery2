@@ -69,23 +69,31 @@ class GalleryFactoryHelper_simple {
     }
 
     /**
-     * Create a new instance of the given type based on the hint provided
+     * Create a new instance of the given type based on the hint(s) provided
      *
      * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'image/jpeg')
+     * @param array of hints to try (in order) or string, a single hint (eg. 'image/jpeg')
      * @return array object GalleryStatus a status code,
      *               object an instance
      * @static
      */
-    function newInstanceByHint($classType, $hint) {
+    function newInstanceByHint($classType, $hints) {
 	$registry =& GalleryFactoryHelper_simple::_getFactoryData();
-	$hint = strtolower($hint);
+	if (!is_array($hints)) {
+	    $hints = array($hints);
+	}
+	$hints[] = '*';
 
-	if (empty($registry['hints'][$classType][$hint])) {
+	foreach ($hints as $hint) {
+	    $hint = strtolower($hint);
+	    if (!empty($registry['hints'][$classType][$hint])) {
+		$classNames = array_keys($registry['hints'][$classType][$hint]);
+		break;
+	    }
+	}
+	if (!isset($classNames)) {
 	    return array(GalleryStatus::success(), null);
 	}
-
-	$classNames = array_keys($registry['hints'][$classType][$hint]);
 
 	/* Right now we just use the first available hint */
 	$className = $classNames[0];

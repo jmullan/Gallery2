@@ -123,8 +123,8 @@ class ExifExtractorTest extends GalleryTestCase {
 	if ($ret->isError() || !isset($toolkit)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance(
-				   'GalleryEntity', 'GalleryDerivativeImage');
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $photo->getEntityType());
 	if ($ret->isError() || !isset($derivative)) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

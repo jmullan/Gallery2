@@ -47,7 +47,7 @@ class FactoryTest extends GalleryTestCase {
 					       'FactoryTestDummy',
 					       'FactoryTestDummyId',
 					       $path,
-					       array('dummy'));
+					       array('dummy', '*'));
 
 	GalleryCoreApi::registerFactoryImplementation('FactoryTest',
 					       'FactoryTestDummyIllegalPath',
@@ -129,6 +129,31 @@ class FactoryTest extends GalleryTestCase {
      */
     function testNewInstanceByHint() {
 	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'dummy');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert(is_object($instance));
+    }
+
+    /**
+     * Register an implementation, create instance by default hint
+     */
+    function testNewInstanceByHintDefault() {
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest', 'nomatch');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assert(is_object($instance));
+    }
+
+    /**
+     * Register an implementation, create instance by hint list
+     */
+    function testNewInstanceByHintList() {
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('FactoryTest',
+									  array('nomatch', 'dummy'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

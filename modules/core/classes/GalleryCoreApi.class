@@ -67,18 +67,18 @@ class GalleryCoreApi {
     }
 
     /**
-     * Create a new instance of the given type based on the hint provided
+     * Create a new instance of the given type based on the hint(s) provided
      *
      * @param string the class type (eg. 'GalleryGraphics')
-     * @param string the class name (eg. 'image/jpeg')
+     * @param array of hints to try (in order) or string, a single hint (eg. 'image/jpeg')
      * @return array object GalleryStatus a status code,
      *               object an instance
      * @static
      */
-    function newFactoryInstanceByHint($classType, $hint) {
+    function newFactoryInstanceByHint($classType, $hints) {
 	GalleryCoreApi::apiMethodUsed('newFactoryInstanceByHint', 'GalleryFactoryHelper_simple');
 	require_once(dirname(__FILE__) . '/helpers/GalleryFactoryHelper_simple.class');
-	return GalleryFactoryHelper_simple::newInstanceByHint($classType, $hint);
+	return GalleryFactoryHelper_simple::newInstanceByHint($classType, $hints);
     }
 
     /**

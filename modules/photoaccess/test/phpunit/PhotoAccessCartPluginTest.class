@@ -73,7 +73,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    
 	    /* Create a stub thumbnail */
 	    list ($ret, $derivative) =
-		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -98,7 +98,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
 	/* Create a least one preferred */
 	list ($ret, $derivative) =
-	    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

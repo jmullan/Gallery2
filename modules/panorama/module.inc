@@ -53,6 +53,11 @@ class PanoramaModule extends GalleryModule {
 	}
 	require_once(dirname(__FILE__) . '/classes/PanoramaPhotoItem.class');
 	require_once(dirname(__FILE__) . '/classes/PanoramaDerivativeImage.class');
+	GalleryCoreApi::registerFactoryImplementation('GalleryDerivative',
+						      'PanoramaDerivativeImage',
+						      'PanoramaDerivativeImage',
+						      dirname(__FILE__) . '/classes/GalleryDerivativeImage.class',
+						      array('PanoramaPhotoItem'));
 	GalleryCoreApi::registerFactoryImplementation('ItemEditPlugin',
 						      'PanoramaItemEdit',
 						      'PanoramaItemEdit',

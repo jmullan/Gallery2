@@ -175,7 +175,8 @@ class CreateRandomTreeTestCase extends TestCase {
 
 	    /* Create a derivative image for the thumbnail */
 	    if (isset($toolkit)) {
-		list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		list ($ret, $thumbnail) =
+		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -199,7 +200,8 @@ class CreateRandomTreeTestCase extends TestCase {
 
 		/* If this is the first image in the album, make it the highlight */
 		if ($i == 0) {
-		    list ($ret, $thumbnail) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    list ($ret, $thumbnail) =
+			GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -236,7 +238,8 @@ class CreateRandomTreeTestCase extends TestCase {
 		    $gallery->debug("<h3> Create $rand2 resizes </h3>");
 		}
 		for ($j = 0; $j < $rand2; $j++) {
-		    list ($ret, $resize) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    list ($ret, $resize) =
+			GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $item->getEntityType());
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }

@@ -180,28 +180,11 @@ class GalleryItemHelper_medium {
      */
     function newItemByMimeType($mimeType) {
 
-	/* Try the whole mime type */
-	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
+	/* Try the whole mime type first, fallback to major type only */
+	list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem',
+	    array($mimeType, substr($mimeType, 0, strpos($mimeType, '/')) . '/*'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if (!isset($instance)) {
-	    /* No? Try the major type only */
-	    $mimeType = substr($mimeType, 0, strpos($mimeType, '/')) . '/*';
-	    list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!isset($instance)) {
-		/* No? Try all types */
-		$mimeType = '*';
-		list ($ret, $instance) = GalleryCoreApi::newFactoryInstanceByHint('GalleryItem', $mimeType);
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
 	}
 
 	return array(GalleryStatus::success(), $instance);
@@ -350,7 +333,7 @@ class GalleryItemHelper_medium {
 		}
 
 		list ($ret, $derivative) =
-		    GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -505,7 +488,8 @@ class GalleryItemHelper_medium {
 		$success = true;
 	    } else {
 		/* Create a new one */
-		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'GalleryDerivativeImage');
+		list ($ret, $derivative) =
+		    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

@@ -236,7 +236,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	    /* The first item has a thumbnail and a resize, the second has a preferred */
 	    if ($i == 0) {
-		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+		list ($ret, $ignore) = $this->_createDerivative($child[$i],
 								DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 								'thumbnail|100',
 								'test/file');
@@ -244,7 +244,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 
-		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+		list ($ret, $ignore) = $this->_createDerivative($child[$i],
 								DERIVATIVE_TYPE_IMAGE_RESIZE,
 								'scale|100',
 								'test/file');
@@ -252,7 +252,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
 	    } else if ($i == 1) {
-		list ($ret, $ignore) = $this->_createDerivative($child[$i]->getId(),
+		list ($ret, $ignore) = $this->_createDerivative($child[$i],
 								DERIVATIVE_TYPE_IMAGE_PREFERRED,
 								'rotate|90',
 								'test/file');

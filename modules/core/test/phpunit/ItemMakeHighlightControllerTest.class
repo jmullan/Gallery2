@@ -73,7 +73,7 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    list ($ret, $this->_derivative[$i]) =
-		$this->_createDerivative($this->_item[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+		$this->_createDerivative($this->_item[$i], DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 					 'thumbnail|200');
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

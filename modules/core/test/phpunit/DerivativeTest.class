@@ -63,7 +63,7 @@ class DerivativeTest extends GalleryTestCase {
 	    
 	    for ($j = 0; $j < 4; $j++) {
 		list ($ret, $this->_derivative[$i][$j]) =
-		    $this->_createDerivative($this->_child[$i]->getId(), $types[$j]);
+		    $this->_createDerivative($this->_child[$i], $types[$j]);
 		if ($ret->isError()) {
 		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 		}
@@ -124,14 +124,14 @@ class DerivativeTest extends GalleryTestCase {
 
 	/* Create a derivative from our mock data item */
 	list ($ret, $this->_mockDerivative[0]) =
-	    $this->_createDerivative($this->_mockItem[0]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+	    $this->_createDerivative($this->_mockItem[0], DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Create a sub-derivative */
 	list ($ret, $this->_mockDerivative[1]) =
-	    $this->_createDerivative($this->_mockDerivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE);
+	    $this->_createDerivative($this->_mockDerivative[0], DERIVATIVE_TYPE_IMAGE_RESIZE);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -209,13 +209,13 @@ class DerivativeTest extends GalleryTestCase {
 	 * What should happen is that we should wind up with a derivative that is based off of the
 	 * larger item.
 	 */
-	list ($ret, $firstThumb) = $this->_createDerivative($this->_mockItem[0]->getId(),
+	list ($ret, $firstThumb) = $this->_createDerivative($this->_mockItem[0],
 							    DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 							    'test-operation|testRebuildThumbnailOfSmallerThumbnail-1');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $secondThumb) = $this->_createDerivative($firstThumb->getId(),
+	list ($ret, $secondThumb) = $this->_createDerivative($firstThumb,
 							    DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 							    'test-operation|testRebuildThumbnailOfSmallerThumbnail-2');
 	if ($ret->isError()) {
@@ -370,7 +370,7 @@ class DerivativeTest extends GalleryTestCase {
 	 * deleted so that tearDown will get rid of it for us.
 	 */
 	list ($ret, $derivative) =
-	    $this->_createDerivative($this->_child[0]->getId(),
+	    $this->_createDerivative($this->_child[0],
 				     DERIVATIVE_TYPE_IMAGE_RESIZE,
 				     'filler|1,2,3;deleteme|1;filler|1');
 
@@ -464,7 +464,7 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals($item, $source);
 
 	/* Linked to another item that has a preferred --> the other item's preferred */
-	list ($ret, $itemPreferred) = $this->_createDerivative($item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	list ($ret, $itemPreferred) = $this->_createDerivative($item, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -477,7 +477,7 @@ class DerivativeTest extends GalleryTestCase {
 	$this->assertEquals($itemPreferred, $source);
 
 	/* Item that has a preferred --> the preferred */
-	list ($ret, $linkPreferred) = $this->_createDerivative($link->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	list ($ret, $linkPreferred) = $this->_createDerivative($link, DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
