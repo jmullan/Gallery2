@@ -108,6 +108,7 @@ class GalleryTranslator {
      *         array array('country' => 'default language code',
      *                     'country' => 'default language code',
      *                     ...)
+     * @static
      */
     function getLanguageData() {
 	static $supportedLanguages = array();
@@ -207,30 +208,18 @@ class GalleryTranslator {
      * @return object GalleryStatus a status code
      */
     function init($languageCode=null) {
-	global $gallery;
-
 	if (empty($languageCode)) {
 	    $languageCode = $this->getLanguageCodeFromRequest();
 	}
 
-	/* Split the language code into language/country */
-	list ($language, $country) = split('_', $languageCode);
-
-	/* Get our language data */
-	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+	list ($languageCode, $data) = $this->getSupportedLanguageCode($languageCode);
 
 	/* If we're using gettext, try to bind to a language */
 	if (function_exists('dgettext')) {
-	    
-	    /* Set the appropriate charset in our HTTP header
-	     * Provide a sane default if the requested language is not
-	     * supported
+	    /*
+	     * Set the appropriate charset in our HTTP header
 	     */
-	    if (isset($supportedLanguages[$language][$country])) {
-		$this->_activeCharset = $supportedLanguages[$language][$country]['charset'];
-	    } else {
-		$this->_activeCharset = 'UTF-8';
-	    }
+	    $this->_activeCharset = $data['charset'];
 	    if (!headers_sent()) {
 		header('Content-Type: text/html; charset=' . $this->_activeCharset);
 	    }
@@ -238,17 +227,45 @@ class GalleryTranslator {
 	     * Some systems only require LANG, others (like Mandrake) seem to require
 	     * LANGUAGE also.
 	     */
-	    putenv("LANG=${language}_${country}");
-	    putenv("LANGUAGE=${language}_${country}");
+	    putenv("LANG=${languageCode}");
+	    putenv("LANGUAGE=${languageCode}");
 
 	    // XXX: we'd like to say:
 	    //    setlocale(LC_ALL, "${language}_${country}", "${language}");
 	    // but the setlocale() call doesn't accept fallbacks until PHP 4.3+
-	    
-	    setlocale(LC_ALL, "${language}_${country}");
+
+	    setlocale(LC_ALL, $languageCode);
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Find a supported locale from given string.
+     *
+     * @param string the language code hint
+     * @param boolean (optional) if false, return array(null,null) for no match instead of en_US
+     * @return array (string a language code in <language>_<COUNTRY> format,
+     *                array data about this language code (description,charset))
+     */
+    function getSupportedLanguageCode($languageCode, $fallback=true) {
+	static $supportedLanguages;
+	static $defaultCountry;
+	if (!isset($supportedLanguages)) {
+	    list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
+	}
+
+	list ($language, $country) = preg_split('/[-_]/', "${languageCode}_");
+	$country = strtoupper($country);
+	if ((empty($country) || !isset($supportedLanguages[$language][$country]))
+		&& isset($defaultCountry[$language])) {
+	    // Use default country if none specified or particular country not supported
+	    $country = $defaultCountry[$language];
+	}
+	if (isset($supportedLanguages[$language][$country])) {
+	    return array("${language}_${country}", $supportedLanguages[$language][$country]);
+	}
+	return $fallback ? array('en_US', $supportedLanguages['en']['US']) : array(null, null);
     }
 
     /**
@@ -258,47 +275,20 @@ class GalleryTranslator {
      * @return a language code in the <language>_<COUNTRY> format, eg: en_US
      */
     function getLanguageCodeFromRequest() {
-	/* Get our language data */
-	list ($supportedLanguages, $defaultCountry) = GalleryTranslator::getLanguageData();
-	
 	/* Take the first thing the browser accepts that we can use */
-	if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+	if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
 	    foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE'])
 		     as $code) {
 
-		if (preg_match('/[-_]/', $code)) {
-		    list ($language, $country) = preg_split('/[-_]/', $code);
-		    $country = strtoupper($country);
-		    if (empty($country)) {
-			/* Cases like just 'de' */
-			$country = $language;
-		    }
-		} else {
-		    /* We only received a language code -- try the default country. */
-		    $language = $code;
-		    if (isset($defaultCountry[$language])) {
-			$country = $defaultCountry[$language];
-		    } else {
-			$country = null;
-		    }
-		}
-
-		if (isset($supportedLanguages[$language][$country])) {
-		    break;
-		} else {
-		    $language = null;
-		    $country = null;
+		list ($languageCode) = $this->getSupportedLanguageCode($code, false);
+		if (isset($languageCode)) {
+		    return $languageCode;
 		}
 	    }
 	}
 
 	/* Fall back to English (US) */
-	if (empty($language)) {
-	    $language = 'en';
-	    $country = 'US';
-	}
-
-	return "${language}_${country}";
+	return 'en_US';
     }
 
     /**
@@ -440,5 +430,4 @@ class GalleryTranslator {
 	return array(GalleryStatus::success(), $localized);
     }
 }
-
 ?>

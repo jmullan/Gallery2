@@ -91,7 +91,15 @@ class TranslatorTest extends GalleryTestCase {
 	    // If we don't have gettext, who knows what the LANG will be set to!
 	    // $this->assertEquals(false, getenv('LANG'));
 	}
-	
+
+	/* Invalid accept language/country */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx_YY';
+	$this->assertEquals('en_US', $translator->getLanguageCodeFromRequest(), 'invalid locale');
+
+	/* Invalid,valid accept language */
+	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx,no';
+	$this->assertEquals('no_NO', $translator->getLanguageCodeFromRequest(), 'invalid,valid language');
+
 	/* Init with a real language code */
 	$translator = new GalleryTranslator();
 	$translator->init('no_NO');
