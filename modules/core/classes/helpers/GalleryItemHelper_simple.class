@@ -102,9 +102,7 @@ class GalleryItemHelper_simple {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	foreach ($itemIds as $itemId) {
-	    $parentIdClause[] = '[GalleryChildEntity::parentId] = ?';
-	}
+	$markers = GalleryUtilities::makeMarkers(sizeof($itemIds));
 
 	$query = '
         SELECT
@@ -112,7 +110,7 @@ class GalleryItemHelper_simple {
         FROM
           [GalleryChildEntity], [GalleryUserGroupMap], [GalleryPermissionMap]
         WHERE
-          ( ' . join(' OR ', $parentIdClause) . ' )
+          [GalleryChildEntity::parentId] IN (' . $markers . ') 
           AND
           [GalleryPermissionMap::itemId] = [GalleryChildEntity::id]
           AND
