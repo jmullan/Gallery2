@@ -259,7 +259,7 @@
 	&nbsp;
       </td>
       {if $ItemAddFromServer.showSymlink}
-        <td>
+        <td style="text-align: center">
 	    <input type="checkbox" disabled="true" id="symlink_{$smarty.foreach.fileIndex.iteration}" name="{g->formVar var="form[localServerDirectories][$key][useSymlink]"}"/>
 	</td>
       {/if}
