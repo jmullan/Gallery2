@@ -72,7 +72,7 @@ class DatabaseSetupStep extends InstallStep {
 					$this->_config['password'],
 					$this->_config['database']);
 		$this->_captureEnd();
-		if (empty($result)) {
+		if ($result === false) {
 		    $templateData['errors'][] = _('Unable to connect to database with the information provided.');
 		}
 	    }
@@ -81,7 +81,7 @@ class DatabaseSetupStep extends InstallStep {
 		$this->_captureStart();
 		$result = $db->MetaTables();
 		$this->_captureEnd();
-		if (empty($result)) {
+		if ($result === false) {
 		    $templateData['errors'][] = _('The database you specified does not exist.  Please create it.');
 		}
 
