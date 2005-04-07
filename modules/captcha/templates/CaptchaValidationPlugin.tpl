@@ -11,14 +11,14 @@
   <div>
     <img src="{g->url arg1="view=captcha:CaptchaImage"}" style="width: 100px; height: 100px;"/>
   </div>
-  <input type="text" name="{g->formVar var="form[CaptchaLoginPlugin][word]"}" size="16" value=""/>
+  <input type="text" name="{g->formVar var="form[CaptchaValidationPlugin][word]"}" size="16" value=""/>
 
-  {if isset($form.error.CaptchaLoginPlugin)}
+  {if isset($form.error.CaptchaValidationPlugin)}
   <div class="giError">
-    {if isset($form.error.CaptchaLoginPlugin.missing)}
+    {if isset($form.error.CaptchaValidationPlugin.missing)}
     {g->text text="You must enter the number appearing in the picture."}
     {/if}
-    {if isset($form.error.CaptchaLoginPlugin.invalid)}
+    {if isset($form.error.CaptchaValidationPlugin.invalid)}
     {g->text text="Incorrect number."}
     {/if}
   </div>
