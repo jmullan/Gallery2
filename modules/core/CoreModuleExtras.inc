@@ -620,12 +620,12 @@ class CoreModuleExtras {
 
 	case '0.9.8':
 	    /* Create 'plugins' and 'plugins_data' directories in g2data */
-	    foreach (array($gallery->getConfig('data.gallery.plugins'),
-			   $gallery->getConfig('data.gallery.plugins') . '/modules',
-			   $gallery->getConfig('data.gallery.plugins') . '/layouts',
-			   $gallery->getConfig('data.gallery.plugins_data'),
-			   $gallery->getConfig('data.gallery.plugins_data') . '/modules',
-			   $gallery->getConfig('data.gallery.plugins_data') . '/layouts') as $dir) {
+	    foreach (array($gallery->getConfig('data.gallery.base') . '/plugins',
+			   $gallery->getConfig('data.gallery.base') . '/plugins/modules',
+			   $gallery->getConfig('data.gallery.base') . '/plugins/layouts',
+			   $gallery->getConfig('data.gallery.base') . '/plugins_data',
+			   $gallery->getConfig('data.gallery.base') . '/plugins_data/modules',
+			   $gallery->getConfig('data.gallery.base') . '/plugins_data/layouts') as $dir) {
 		/*
 		 * The $dir has a trailing slash on it.  If it happens to exist and is a file (not
 		 * a directory) then file_exists() won't detect it because of the trailing slash.
