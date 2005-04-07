@@ -236,12 +236,13 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit',
-						      'itemId' => $expectedId),
-				  'status' => array('add' => 1),
-				  'error' => array()),
-			    $results, 'Add');
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'watermark:WatermarkSiteAdminEdit',
+				      'itemId' => $expectedId),
+		  'status' => array('add' => 1),
+		  'error' => array()),
+	    $results, 'Add');
 
 	list ($ret, $map) = $this->_fetchWatermarkMapByFilename();
 	if ($ret->isError()) {
@@ -257,7 +258,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
-	    array('postfilterOperations' => 'composite|watermark/' . $this->_expectedName . ',...'));
+	    array('postfilterOperations' =>
+		      'composite|plugins_data/modules/watermark/' . $this->_expectedName . ',...'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -1978,6 +1978,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    }
 	}
 
+	$local = array();
 	if (!empty($checkIds)) {
 	    $idCol = $this->_translateColumnName('id');
 	    $entityTypeCol = $this->_translateColumnName('entityType');
@@ -1999,6 +2000,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 			return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
 				     null);
 		    } else {
+			/*
+			 * Save a copy locally, in case the global cache is disabled
+			 * (like in the upgrader)
+			 */
+			$local[$row[0]] = $row[1];
 			GalleryDataCache::put("DatabaseStorage::_identifyEntities($row[0])",
 					      $row[1], true);
 		    }
@@ -2011,11 +2017,15 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($returnArray) {
 	    $results = array();
 	    foreach ($ids as $id) {
-		if (!GalleryDataCache::containsKey("DatabaseStorage::_identifyEntities($id)")) {
+		if (isset($local[$id])) {
+		    $results[] = $local[$id];
+		} else if (GalleryDataCache::containsKey(
+			       "DatabaseStorage::_identifyEntities($id)")) {
+		    $results[] = GalleryDataCache::get("DatabaseStorage::_identifyEntities($id)");
+		} else {
 		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
 						      "Missing object for $id"), null);
 		}
-		$results[] = GalleryDataCache::get("DatabaseStorage::_identifyEntities($id)");
 	    }
 	} else {
 	    $results = GalleryDataCache::get("DatabaseStorage::_identifyEntities($ids[0])");

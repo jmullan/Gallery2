@@ -98,7 +98,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	list ($ret, $this->_derivative) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
 	    array('postfilterOperations' =>
-		      'composite|watermark/' . $watermark->getFileName() . ',...'));
+		      'composite|plugins_data/modules/watermark/' .
+		      $watermark->getFileName() . ',...'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus(__FILE__, __LINE__);

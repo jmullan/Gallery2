@@ -285,7 +285,8 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	return $gallery->getConfig('data.gallery.base') . 'thumbnail' . $slash;
+	return $gallery->getConfig('data.gallery.plugins_data') .
+	    'modules' . $slash . 'thumbnail' . $slash;
     }
 
     /**

@@ -40,11 +40,133 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
 	$this->setRequiredModuleApi(array(0, 9));
+    }
+
+    /**
+     * @see GalleryModule::upgrade
+     */
+    function upgrade($currentVersion, $statusMonitor) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$watermarkDir =
+	    $gallery->getConfig('data.gallery.plugins_data') . 'modules/watermark' . $slash;
+
+	if (!isset($currentVersion)) {
+	    $currentVersion = '0';
+	}
+
+	switch ($currentVersion) {
+	case '0':
+	    /* Initial install */
+	    if (!$platform->is_dir($watermarkDir)) {
+		if (!@$platform->mkdir($watermarkDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to create directory: $watermarkDir");
+		}
+	    }
+	    break;
+
+	case '0.8.1':
+	case '0.8.2':
+	case '0.8.3':
+	case '0.8.4':
+	case '0.8.5':
+	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
+	case '0.8.9':
+	case '0.9.1':
+	    /* Move watermark dir from g2data/ to g2data/plugins_data */
+	    $oldDir = $gallery->getConfig('data.gallery.base') . 'watermark' . $slash;
+	    if ($platform->is_dir($oldDir)) {
+		if (!$platform->rename($oldDir, $watermarkDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to move $oldDir to $watermarkDir");
+		}
+	    } else if (!$platform->is_dir($watermarkDir)) {
+		if (!$platform->mkdir($watermarkDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to create $watermarkDir");
+		}
+	    }
+
+	    /* Update all derivatives that use watermarks */
+	    $query = "
+            SELECT
+              [GalleryDerivative::id]
+            FROM
+              [GalleryDerivative]
+            WHERE
+              [GalleryDerivative::postFilterOperations] LIKE '%composite|watermark%'
+            ";
+
+	    /* Do them 50 at a time to improve locking efficiency */
+	    while (true) {
+		list ($ret, $searchResults) =
+		    $gallery->search($query, array(), array('limit' => array('count' => 50)));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		if ($searchResults->resultCount() == 0) {
+		    /* We're done */
+		    break;
+		}
+
+		while ($result = $searchResults->nextResult()) {
+		    $ids[] = $result[0];
+		}
+
+		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($ids);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		list ($ret, $derivatives) = GalleryCoreApi::loadEntitiesById($ids);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lock);
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		foreach ($derivatives as $derivative) {
+		    $derivative->setPostFilterOperations(
+			str_replace('composite|watermark',
+				    'composite|plugins_data/modules/watermark',
+				    $derivative->getPostFilterOperations()));
+
+		    $ret = $derivative->save();
+		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($locok);
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lock);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case 'end of upgrade path':
+	    /*
+	     * Leave this bogus case at the end of the legitimate case statements so that we
+	     * always properly terminate our upgrade path with a break.
+	     */
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
+	}
+
+	return GalleryStatus::success();
     }
 
     /**

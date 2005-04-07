@@ -69,6 +69,8 @@ class CoreModuleExtras {
 	    }
 	}
 
+	$platform = $gallery->getPlatform();
+
 	/**
 	 * README: How to update the block below.
 	 *
@@ -615,6 +617,44 @@ class CoreModuleExtras {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	case '0.9.8':
+	    /* Create 'plugins' and 'plugins_data' directories in g2data */
+	    foreach (array($gallery->getConfig('data.gallery.plugins'),
+			   $gallery->getConfig('data.gallery.plugins') . '/modules',
+			   $gallery->getConfig('data.gallery.plugins') . '/layouts',
+			   $gallery->getConfig('data.gallery.plugins_data'),
+			   $gallery->getConfig('data.gallery.plugins_data') . '/modules',
+			   $gallery->getConfig('data.gallery.plugins_data') . '/layouts') as $dir) {
+		/*
+		 * The $dir has a trailing slash on it.  If it happens to exist and is a file (not
+		 * a directory) then file_exists() won't detect it because of the trailing slash.
+		 * So use realpath() instead.
+		 */
+		if ($newDir = $platform->realpath($dir)) {
+		    if ($platform->is_dir($dir)) {
+			/* No need to do anything.  Except maybe we could check permissions here. */
+		    } else {
+			/* There's a file there.  There shouldn't be.  Move it out of the way */
+			if (!@$platform->rename($newDir, "$newDir.old") ||
+			        !@$platform->mkdir($dir)) {
+			    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+							"$dir already exists; unable to replace it");
+			}
+		    }
+		} else {
+		    if (!@$platform->mkdir($dir)) {
+			return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						    "Unable to create $dir");
+		    }
+		}
+	    }
+
+	case 'end of upgrade path':
+	    /*
+	     * Leave this bogus case at the end of the legitimate case statements so that we
+	     * always properly terminate our upgrade path with a break.
+	     */
 	    break;
 	     
 	default:
@@ -622,7 +662,6 @@ class CoreModuleExtras {
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-	$platform = $gallery->getPlatform();
 	$baseDir = $gallery->getConfig('data.gallery.base');
 	$versionFile = sprintf('%s%s%s',
 			       $baseDir,

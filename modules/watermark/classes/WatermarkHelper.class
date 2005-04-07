@@ -169,8 +169,8 @@ class WatermarkHelper {
 	  [GalleryDerivative::postFilterOperations] LIKE ?
 	';
 
-	list ($ret, $searchResults) = $gallery->search(
-	    $query, array('%composite|watermark/' . $watermark->getFileName() . ',%'));
+	list ($ret, $searchResults) = $gallery->search($query,
+	    array('%composite|plugins_data/modules/watermark/' . $watermark->getFileName() . ',%'));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -337,13 +337,14 @@ class WatermarkHelper {
 		}
 
 		if (in_array($derivative->getId(), $add)) {
-		    $filter = sprintf('composite|watermark/%s,%s,%d,%d,manual,%s,%s',
-				      $watermark->getFileName(),
-				      $watermark->getMimeType(),
-				      $watermark->getWidth(),
-				      $watermark->getHeight(),
-				      number_format($xPercent, 3, '.', ''),
-				      number_format($yPercent, 3, '.', ''));
+		    $filter = sprintf(
+			'composite|plugins_data/modules/watermark/%s,%s,%d,%d,manual,%s,%s',
+			$watermark->getFileName(),
+			$watermark->getMimeType(),
+			$watermark->getWidth(),
+			$watermark->getHeight(),
+			number_format($xPercent, 3, '.', ''),
+			number_format($yPercent, 3, '.', ''));
 		    list ($ret, $newPostFilters) = GalleryCoreApi::mergeDerivativeOperations(
 			$derivative->getPostFilterOperations(), $filter);
 		    if ($ret->isError()) {

@@ -294,15 +294,6 @@ class WatermarkImage_core extends GalleryEntity {
 	$this->setApplyToThumbnail(true);
 	$this->setOwnerId($gallery->getActiveUserId());
 
-	if (!$platform->file_exists($dir)) {
-	    if (!$platform->mkdir($dir)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
-	    }
-	}
-	if (!$platform->is_dir($dir)) {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
-	}
-
 	$newFileName = $dir . $targetFilename;
 	if (!$platform->copy($inputFileName, $newFileName)) {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__);
@@ -371,7 +362,7 @@ class WatermarkImage_core extends GalleryEntity {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	return $gallery->getConfig('data.gallery.base') . 'watermark' . $slash;
+	return $gallery->getConfig('data.gallery.plugins_data') . 'modules/watermark' . $slash;
     }
 
     /**

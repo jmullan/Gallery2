@@ -40,7 +40,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -53,38 +53,75 @@ class ThumbnailModule extends GalleryModule {
     function upgrade($currentVersion) {
 	global $gallery;
 
-	if (!empty($currentVersion)) {
-	    switch ($currentVersion) {
-	    case '0.8.1':
-	    case '0.8.2':
-		/*
-		 * Assign parent to existing ThumbnailImage entities
-		 */
-		list ($ret, $rootId) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		$storage =& $gallery->getStorage();
-		$query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
-		       . $rootId . ' FROM [ThumbnailImage]';
-		$ret = $storage->execute($query);
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$thumbnailDir = $gallery->getConfig('data.gallery.plugins_data') . 'modules' .
+	    $slash . 'thumbnail' . $slash;
 
-	    case '0.8.3':
-	    case '0.8.4':
-	    case '0.8.5':
-	    case '0.8.6':
-	    case '0.8.7':
-	    case '0.8.8':
-		break;
-
-	    default:
-		return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
-					    sprintf('Unknown module version %s', $currentVersion));
+	if (!isset($currentVersion)) {
+	    $currentVersion = '0';
+	}
+	
+	switch ($currentVersion) {
+	case '0':
+	    /* Initial install */
+	    if (!$platform->is_dir($thumbnailDir)) {
+		if (!@$platform->mkdir($thumbnailDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to create directory: $thumbnailDir");
+		}
 	    }
+	    break;
+	    
+	case '0.8.1':
+	case '0.8.2':
+	    /*
+	     * Assign parent to existing ThumbnailImage entities
+	     */
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $storage =& $gallery->getStorage();
+	    $query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
+		. $rootId . ' FROM [ThumbnailImage]';
+	    $ret = $storage->execute($query);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case '0.8.3':
+	case '0.8.4':
+	case '0.8.5':
+	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
+	case '0.9.1':
+	    /* Move thumbnail dir from g2data/ to g2data/plugins_data */
+	    $oldDir = $gallery->getConfig('data.gallery.base') . 'thumbnail' . $slash;
+	    if ($platform->is_dir($oldDir)) {
+		if (!$platform->rename($oldDir, $thumbnailDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to move $oldDir to $thumbnailDir");
+		}
+	    } else if (!$platform->is_dir($thumbnailDir)) {
+		if (!$platform->mkdir($thumbnailDir)) {
+		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+						"Unable to create $thumbnailDir");
+		}
+	    }
+
+	case 'end of upgrade path':
+	    /*
+	     * Leave this bogus case at the end of the legitimate case statements so that we
+	     * always properly terminate our upgrade path with a break.
+	     */
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();

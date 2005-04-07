@@ -82,6 +82,8 @@ function GalleryInitFirstPass($params=array()) {
     $gallery->setConfig('data.smarty.base', $dataBase . 'smarty' . $slash);
     $gallery->setConfig('data.smarty.templates_c',
 	$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
+    $gallery->setConfig('data.gallery.plugins', $dataBase . 'plugins' . $slash);
+    $gallery->setConfig('data.gallery.plugins_data', $dataBase . 'plugins_data' . $slash);
 
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {

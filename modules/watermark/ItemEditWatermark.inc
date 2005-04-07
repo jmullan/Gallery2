@@ -64,17 +64,22 @@ class ItemEditWatermark extends ItemEditPlugin {
 		}
 
 		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
-		$ret = WatermarkHelper::watermarkItem($watermark, $item, $form['xPercent'], $form['yPercent'],
-		    array(DERIVATIVE_TYPE_IMAGE_PREFERRED => isset($form['whichDerivative']['preferred']),
-			  DERIVATIVE_TYPE_IMAGE_RESIZE => isset($form['whichDerivative']['resize']),
-			  DERIVATIVE_TYPE_IMAGE_THUMBNAIL => isset($form['whichDerivative']['thumbnail'])));
+		$ret = WatermarkHelper::watermarkItem(
+		    $watermark, $item, $form['xPercent'], $form['yPercent'],
+		    array(DERIVATIVE_TYPE_IMAGE_PREFERRED => isset(
+			      $form['whichDerivative']['preferred']),
+			  DERIVATIVE_TYPE_IMAGE_RESIZE => isset(
+			      $form['whichDerivative']['resize']),
+			  DERIVATIVE_TYPE_IMAGE_THUMBNAIL => isset(
+			      $form['whichDerivative']['thumbnail'])));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 		$status = $module->translate('Watermark applied successfully');
 	    }
 	} else if (isset($form['action']['remove'])) {
-	    list ($ret, $derivativeTable) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
+	    list ($ret, $derivativeTable) =
+		GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -99,9 +104,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    $newPostFilters =
-			GalleryCoreApi::removeDerivativeOperation('composite',
-								  $derivative->getPostFilterOperations());
+		    $newPostFilters = GalleryCoreApi::removeDerivativeOperation(
+			'composite', $derivative->getPostFilterOperations());
 		    $derivative->setPostFilterOperations($newPostFilters);
 
 		    if ($derivative->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED) {
@@ -128,7 +132,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 		}
 
 		if ($preferred->hasNoOperations()) {
-		    $ret = GalleryCoreApi::remapSourceIds($preferred->getId(), $preferred->getDerivativeSourceId());
+		    $ret = GalleryCoreApi::remapSourceIds(
+			$preferred->getId(), $preferred->getDerivativeSourceId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
@@ -178,11 +183,13 @@ class ItemEditWatermark extends ItemEditPlugin {
 
 	    if (!empty($watermarks)) {
 		/* Get the current watermark from any of the derivatives */
-		list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
+		list ($ret, $derivatives) =
+		    GalleryCoreApi::fetchDerivativesByItemIds(array($item->getId()));
 		if (isset($derivatives[$item->getId()])) {
 		    foreach ($derivatives[$item->getId()] as $derivative) {
 			$ops = $derivative->getPostFilterOperations();
-			if (preg_match('{composite\|watermark/([^;]*)}', $ops, $matches)) {
+			if (preg_match('{composite\|plugins_data/modules/watermark/([^;]*)}',
+				       $ops, $matches)) {
 			    switch ($derivative->getDerivativeType()) {
 			    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
 				$form['whichDerivative']['preferred'] = 1;
@@ -243,7 +250,8 @@ class ItemEditWatermark extends ItemEditPlugin {
 	$ItemEditWatermark = array();
 	$ItemEditWatermark['watermarks'] = $watermarks;
 	$ItemEditWatermark['item'] = $item->getMemberData();
-	$ItemEditWatermark['derivative'] = isset($displayDerivative) ? $displayDerivative->getMemberData() : null;
+	$ItemEditWatermark['derivative'] =
+	    isset($displayDerivative) ? $displayDerivative->getMemberData() : null;
 
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
 	$template->setVariable('controller', 'core:ItemEditWatermark');
@@ -261,7 +269,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	list ($ret, $toolkit) =
 	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'composite');
 	if ($ret->isError()) {
-	    return false; // Swallow the error for now
+	    return false; /* Swallow the error for now */
 	}
 	return isset($toolkit);
     }

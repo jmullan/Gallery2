@@ -175,7 +175,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$this->_markForCleanup($item);
 	list ($ret, $derivative) = $this->_createDerivative(
 	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, '', 'test/file',
-	    array('postfilterOperations' => 'composite|watermark/' . $watermark->getFileName() . ',...'));
+	    array('postfilterOperations' => 'composite|plugins_data/modules/watermark/' .
+		                            $watermark->getFileName() . ',...'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

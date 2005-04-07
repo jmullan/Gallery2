@@ -115,7 +115,8 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->assertEquals(sprintf('composite|watermark/%s,image/gif,62,75,manual,25.000,50.000',
+	    $this->assertEquals(sprintf('composite|plugins_data/modules/watermark/' .
+					'%s,image/gif,62,75,manual,25.000,50.000',
 					$this->_watermark->getFileName()),
 				$derivative->getPostFilterOperations(),
 				'Post filter mismatch');
@@ -142,8 +143,10 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
-	    $derivative->setPostFilterOperations(sprintf('composite|watermark/%s,image/gif,62,75,manual,25.000,50.000',
-							 $this->_watermark->getFileName()));
+	    $derivative->setPostFilterOperations(
+		sprintf('composite|plugins_data/modules/watermark/' .
+			'%s,image/gif,62,75,manual,25.000,50.000',
+			$this->_watermark->getFileName()));
 	    $ret = $derivative->save();
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -199,7 +202,8 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 			    $results);
 
 	// Verify that we now have a preferred and that it has the right postfilter
-	list ($ret, $preferredTable) = GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
+	list ($ret, $preferredTable) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -208,7 +212,8 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	if (!isset($preferred)) {
 	    $this->assert(false, 'Missing preferred');
 	} else {
-	    $this->assertEquals(sprintf('composite|watermark/%s,image/gif,62,75,manual,25.000,50.000',
+	    $this->assertEquals(sprintf('composite|plugins_data/modules/watermark/' .
+					'%s,image/gif,62,75,manual,25.000,50.000',
 					$this->_watermark->getFileName()),
 				$preferred->getPostFilterOperations(),
 				'Post filter mismatch');
@@ -232,8 +237,10 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_preferred->setDerivativeOperations(null);
-	$this->_preferred->setPostFilterOperations(sprintf('composite|watermark/%s,image/gif,62,75,manual,25.000,50.000',
-							   $this->_watermark->getFileName()));
+	$this->_preferred->setPostFilterOperations(
+	    sprintf('composite|plugins_data/modules/watermark/' .
+		    '%s,image/gif,62,75,manual,25.000,50.000',
+		    $this->_watermark->getFileName()));
 	$ret = $this->_preferred->save();
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

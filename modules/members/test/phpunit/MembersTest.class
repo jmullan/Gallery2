@@ -82,24 +82,16 @@ class MembersTest extends GalleryTestCase {
 	/* Remove our dummy user and album, return original settings */
 	$ret = array();
 
-	$ret[] = GalleryCoreApi::deleteEntityById($this->_user->getId());
-
-	$ret[] = GalleryCoreApi::deleteEntityById($this->_album->getId());
-
-	$ret[] = GalleryCoreApi::setPluginParameter('module',
-						    'members',
-						    'canViewMembersModule',
-						    $this->_originalCanViewMembersModule);
-
-	$ret[] = GalleryCoreApi::setPluginParameter('module',
-						    'members',
-						    'canViewEmailAddress',
-						    $this->_originalCanViewEmailAddress);
-
 	/*
 	 * We want to make sure all the original settings are replaced,
 	 * so we do not check for errors until they have all completed
 	 */
+	$ret[] = GalleryCoreApi::deleteEntityById($this->_user->getId());
+	$ret[] = GalleryCoreApi::deleteEntityById($this->_album->getId());
+	$ret[] = GalleryCoreApi::setPluginParameter(
+	    'module', 'members', 'canViewMembersModule', $this->_originalCanViewMembersModule);
+	$ret[] = GalleryCoreApi::setPluginParameter(
+	    'module', 'members', 'canViewEmailAddress', $this->_originalCanViewEmailAddress);
 	foreach ($ret as $return) {
 	    if ($return->isError()) {
 		print $return->getAsHtml();
