@@ -108,7 +108,7 @@ class RegisterModule extends GalleryModule {
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
 	    $links[] = array('text' => $this->translate('Register'),
 			     'params' => array('view' => 'core:UserAdmin',
-					       'subview' => 'register:UserSelfRegistration',
+					       'subView' => 'register:UserSelfRegistration',
 					       'return' => 1, )
 			    );
 	}
