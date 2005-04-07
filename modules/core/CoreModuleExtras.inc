@@ -619,7 +619,10 @@ class CoreModuleExtras {
 	    }
 
 	case '0.9.8':
-	    /* Create 'plugins' and 'plugins_data' directories in g2data */
+	    /*
+	     * Create 'plugins' and 'plugins_data' directories in g2data.  Remove trailing slash
+	     * for config paths using substr so file_exists can detect either file or dir.
+	     */
 	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1),
 			   $gallery->getConfig('data.gallery.plugins') . 'modules',
 			   $gallery->getConfig('data.gallery.plugins') . 'layouts',
