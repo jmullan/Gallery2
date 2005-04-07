@@ -371,7 +371,7 @@ class CoreModuleExtras {
             FROM
               [GalleryPermissionMap]
             ';
-	    
+
 	    $findItemIdQuery = '
             SELECT
               [GalleryPermissionMap::itemId], COUNT(*) AS C
@@ -392,7 +392,7 @@ class CoreModuleExtras {
               [GalleryPermissionMap::itemId] = ?
             ';
 
-    	    $createAclQuery = '
+	    $createAclQuery = '
             INSERT INTO
               [GalleryAccessMap] ([::accessListId], [::userId], [::groupId], [::permission])
             SELECT
@@ -476,7 +476,7 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    while ($totalPermissionItems > 0 && true) {
 		$gallery->guaranteeTimeLimit(60);
 
@@ -590,7 +590,7 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-		
+
 	    /* Removed GalleryPermisisonsMap.  Drop the table */
 	    $query = 'DROP TABLE [GalleryPermissionMap]';
 	    $ret = $storage->execute($query);
@@ -606,7 +606,7 @@ class CoreModuleExtras {
 
 	case '0.9.6':
 	    /* Added GalleryMaintenance table */
-	     
+
 	case '0.9.7':
 	    /*
 	     * Change GalleryMaintenance::details column to be a serialized array.  The old data
@@ -620,26 +620,21 @@ class CoreModuleExtras {
 
 	case '0.9.8':
 	    /* Create 'plugins' and 'plugins_data' directories in g2data */
-	    foreach (array($gallery->getConfig('data.gallery.base') . '/plugins',
-			   $gallery->getConfig('data.gallery.base') . '/plugins/modules',
-			   $gallery->getConfig('data.gallery.base') . '/plugins/layouts',
-			   $gallery->getConfig('data.gallery.base') . '/plugins_data',
-			   $gallery->getConfig('data.gallery.base') . '/plugins_data/modules',
-			   $gallery->getConfig('data.gallery.base') . '/plugins_data/layouts') as $dir) {
-		/*
-		 * The $dir has a trailing slash on it.  If it happens to exist and is a file (not
-		 * a directory) then file_exists() won't detect it because of the trailing slash.
-		 * So use realpath() instead.
-		 */
-		if ($newDir = $platform->realpath($dir)) {
+	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1),
+			   $gallery->getConfig('data.gallery.plugins') . 'modules',
+			   $gallery->getConfig('data.gallery.plugins') . 'layouts',
+			   substr($gallery->getConfig('data.gallery.plugins_data'), 0, -1),
+			   $gallery->getConfig('data.gallery.plugins_data') . 'modules',
+			   $gallery->getConfig('data.gallery.plugins_data') . 'layouts') as $dir) {
+		if ($platform->file_exists($dir)) {
 		    if ($platform->is_dir($dir)) {
 			/* No need to do anything.  Except maybe we could check permissions here. */
 		    } else {
 			/* There's a file there.  There shouldn't be.  Move it out of the way */
 			if (!@$platform->rename($newDir, "$newDir.old") ||
-			        !@$platform->mkdir($dir)) {
+				!@$platform->mkdir($dir)) {
 			    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-							"$dir already exists; unable to replace it");
+				"$dir already exists; unable to replace it");
 			}
 		    }
 		} else {
@@ -656,7 +651,7 @@ class CoreModuleExtras {
 	     * always properly terminate our upgrade path with a break.
 	     */
 	    break;
-	     
+
 	default:
 	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
 					sprintf('Unknown module version %s', $currentVersion));
