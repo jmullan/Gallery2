@@ -194,28 +194,6 @@ class GalleryView {
     function doLoadTemplate(&$template) {
 	global $gallery;
 
-	/* Get the theme name from the view */
-	list ($ret, $themeName) = $this->getThemeName();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-	/* Fallback to default theme if none specified */
-	if (empty($themeName)) {
-	    list ($ret, $themeName) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	}
-
-	/* Theme style */
-	$template->style("themes/$themeName/theme.css");
-
-	/* Use default layout style if applicable */
-	if ($this->useDefaultStyle()) {
-	    $template->style('templates/layout.css');
-	}
-
 	/* Get our form variables */
 	$form = GalleryUtilities::getFormVariables('form');
 	if (!isset($form['formName'])) {
@@ -240,6 +218,28 @@ class GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+
+	/* Get the theme name from the view */
+	list ($ret, $themeName) = $this->getThemeName();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	/* Fallback to default theme if none specified */
+	if (empty($themeName)) {
+	    list ($ret, $themeName) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	}
+
+	/* Use default layout style if applicable */
+	if ($this->useDefaultStyle()) {
+	    $template->style('templates/layout.css');
+	}
+
+	/* Theme style */
+	$template->style("themes/$themeName/theme.css");
 
 	return array(GalleryStatus::success(), $results);
     }
