@@ -206,9 +206,6 @@ class GalleryView {
 	if (!empty($statusId)) {
 	    $session =& $gallery->getSession();
 	    $status = $session->getStatus($statusId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
 	} else {
 	    $status = array();
 	}
