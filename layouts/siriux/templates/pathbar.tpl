@@ -4,6 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
+{if $layout.show.pathbar}
 <div class="breadcrumb">
   <a href="/"> {g->text text="Home"} </a>
   /
@@ -22,3 +23,4 @@
     /
   {/section}
 </div>
+{/if}
