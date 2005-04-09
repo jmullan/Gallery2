@@ -720,7 +720,7 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
     }
 
     function filesize($file) {
-	$size = GalleryUtilities::getRequestVariables('size_' . $file);
+	$size = GalleryUtilities::getRequestVariables('size_' . basename($file));
 	if ($size) {
 	    return $size;
 	}
@@ -728,7 +728,7 @@ class SetSizeOptionTestPlatform extends GalleryPlatform {
     }
 
     function getimagesize($file) {
-	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . $file);
+	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
 	if ($imagesize) {
 	    return $imagesize;
 	}
@@ -772,12 +772,13 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	switch($operationName) {
 	case 'compress':
 	    GalleryUtilities::putRequestVariable('compressPerformed', true);
-	    GalleryUtilities::putRequestVariable('size_' . $destFilename, 1000);
+	    GalleryUtilities::putRequestVariable('size_' . basename($destFilename), 1000);
 	    break;
 
 	case 'scale':
 	    GalleryUtilities::putRequestVariable('resizePerformed', true);
-	    GalleryUtilities::putRequestVariable('imagesize_' . $destFilename, array(768, 1024));
+	    GalleryUtilities::putRequestVariable(
+	        'imagesize_' . basename($destFilename), array(768, 1024));
 	    break;
 
 	default:
