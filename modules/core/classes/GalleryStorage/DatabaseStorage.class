@@ -1000,20 +1000,22 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @static
      */
     function refreshLocks($lockIds, $freshUntil) {
-	list ($lockTable, $unused) = $this->_translateTableName('Lock');
-	$lockIdCol = $this->_translateColumnName('lockId');
-	$freshUntilCol = $this->_translateColumnName('freshUntil');
-	$lockIdMarkers = GalleryUtilities::makeMarkers(sizeof($lockIds));
-	$query = sprintf('UPDATE %s SET %s = ? WHERE %s in (%s)',
-			 $lockTable, $freshUntilCol, $lockIdCol, $lockIdMarkers);
+	if (!empty($lockIds)) {
+	    list ($lockTable, $unused) = $this->_translateTableName('Lock');
+	    $lockIdCol = $this->_translateColumnName('lockId');
+	    $freshUntilCol = $this->_translateColumnName('freshUntil');
+	    $lockIdMarkers = GalleryUtilities::makeMarkers(sizeof($lockIds));
+	    $query = sprintf('UPDATE %s SET %s = ? WHERE %s in (%s)',
+			     $lockTable, $freshUntilCol, $lockIdCol, $lockIdMarkers);
 
-	$this->_traceStart();
-	$data = array_merge(array($freshUntil), $lockIds);
-	$recordSet = $this->_db->Execute($query, $data);
-	$this->_traceStop();
+	    $this->_traceStart();
+	    $data = array_merge(array($freshUntil), $lockIds);
+	    $recordSet = $this->_db->Execute($query, $data);
+	    $this->_traceStop();
 
-	if (!$recordSet) {
-	    return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    if (!$recordSet) {
+		return GalleryStatus::error(ERROR_STORAGE_FAILURE, __FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();

@@ -150,9 +150,11 @@ class DatabaseLockSystem extends GalleryLockSystem {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	$ret = $storage->refreshLocks(array_keys($this->_locks), $freshUntil);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	if (!empty($this->_locks)) {
+	    $ret = $storage->refreshLocks(array_keys($this->_locks), $freshUntil);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	return GalleryStatus::success();
