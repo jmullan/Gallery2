@@ -1001,6 +1001,12 @@ class DatabaseStorage /* implements GalleryStorage */ {
      */
     function refreshLocks($lockIds, $freshUntil) {
 	if (!empty($lockIds)) {
+	    /* Acquire a non-transactional connection to use for this request */
+	    list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    list ($lockTable, $unused) = $this->_translateTableName('Lock');
 	    $lockIdCol = $this->_translateColumnName('lockId');
 	    $freshUntilCol = $this->_translateColumnName('freshUntil');
@@ -1010,7 +1016,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 
 	    $this->_traceStart();
 	    $data = array_merge(array($freshUntil), $lockIds);
-	    $recordSet = $this->_db->Execute($query, $data);
+	    $recordSet = $db->Execute($query, $data);
 	    $this->_traceStop();
 
 	    if (!$recordSet) {
@@ -1028,13 +1034,19 @@ class DatabaseStorage /* implements GalleryStorage */ {
      * @static
      */
     function _expireLocks() {
+	/* Acquire a non-transactional connection to use for this request */
+	list ($ret, $db) = $this->_getNonTransactionalDatabaseConnection();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	    
 	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 	$freshUntilCol = $this->_translateColumnName('freshUntil');
 	$query = sprintf('DELETE FROM %s WHERE %s < ?',
 			 $lockTable, $freshUntilCol);
 
 	$this->_traceStart();
-	$recordSet = $this->_db->Execute($query, array(time()));
+	$recordSet = $db->Execute($query, array(time()));
 	$this->_traceStop();
 
 	if (!$recordSet) {
