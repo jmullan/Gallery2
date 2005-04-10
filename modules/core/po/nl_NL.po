@@ -358,6 +358,10 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "Wissen"
 
+#, fuzzy, c-format
+msgid "Completed %s task successfully."
+msgstr "Foto is succesvol geroteerd"
+
 msgid "Configuration Error: Missing Layout"
 msgstr "Configuratie Fout: Missende Opmaak"
 
@@ -415,6 +419,10 @@ msgstr "Huidige Wachtwoord"
 msgid "Database Error"
 msgstr "Database Fout"
 
+#, fuzzy
+msgid "Database optimized successfully"
+msgstr "Foto is succesvol geroteerd"
+
 msgid "Database"
 msgstr "Database"
 
@@ -457,6 +465,13 @@ msgid ""
 msgstr ""
 "Verwijder alle items van %s en wijs een nieuwe eigenaar toe aan alle "
 "overgebleven niet-lege albums"
+
+msgid "Delete database cache"
+msgstr ""
+
+#, fuzzy
+msgid "Delete template cache"
+msgstr "Verwijder item"
 
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
@@ -600,6 +615,10 @@ msgstr "Fout"
 msgid "Everybody"
 msgstr "Iedereen"
 
+#, fuzzy
+msgid "Failed"
+msgstr "Bestand"
+
 msgid "File name"
 msgstr "Bestandsnaam"
 
@@ -687,6 +706,13 @@ msgstr ""
 "sneller gaan, maar zal het uploaden langer duren."
 
 msgid ""
+"Gallery compiles template files and saves them for increased performance.  "
+"If you're experiencing problems that say <i>Smarty error</i> then you might "
+"try running this task.  Also run this if you remove a local/*.tpl file so "
+"Smarty will switch back to the default tpl file."
+msgstr ""
+
+msgid ""
 "Gallery does not modify your original photo when rotating and scaling. "
 "Instead, it duplicates your photo and works with copies.  This requires a "
 "little extra disk space but prevents your original from getting damaged.  "
@@ -713,6 +739,13 @@ msgstr ""
 "een functionaliteit te gebruiken moet u de module installeren, configureren "
 "(indien nodig) en activeren. Als u geen gebruik wilt maken van een module "
 "kunt u deze deactiveren."
+
+msgid ""
+"Gallery stores commonly used database information on disk for increased "
+"performance.  If you modify the database directly, you should run this task "
+"to clean out the cache and force Gallery to reload the information from the "
+"database."
+msgstr ""
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -809,6 +842,12 @@ msgstr ""
 "u een URL ingeeft naar een directory moet de URL eindigen met een slash "
 "(bijv, http://www.voorbeeld.com/directory/)."
 
+msgid ""
+"Improve the performance of your database.  Results will vary depending on "
+"which database you're using, but this routine maintenance will make your "
+"Gallery run faster.  Especially useful after adding or deleting many items."
+msgstr ""
+
 #, fuzzy
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the "
@@ -894,6 +933,10 @@ msgstr "Taal"
 msgid "Last Changed Date"
 msgstr "Datum van laatste verandering"
 
+#, fuzzy
+msgid "Last run"
+msgstr "laatste &raquo;"
+
 #, c-format
 msgid "Layout API Required: %s (available: %s)"
 msgstr "Opmaak API Vereist: %s (beschikbaar: %s)"
@@ -943,6 +986,9 @@ msgstr "Inloggen"
 
 msgid "Logout"
 msgstr "Uitloggen"
+
+msgid "Maintenance"
+msgstr ""
 
 msgid "Make Highlight"
 msgstr "Maak Albumafbeelding"
@@ -1060,11 +1106,17 @@ msgstr "Er waren geen items geselecteerd voor verwijdering"
 msgid "None"
 msgstr "Geen"
 
+msgid "Not run yet"
+msgstr ""
+
 msgid "Nothing added since no items were selected"
 msgstr "Geen items toegevoegd, aangezien er geen items waren geselecteerd"
 
 msgid "Operating system"
 msgstr "Besturingssysteem"
+
+msgid "Optimize database"
+msgstr ""
 
 msgid "Options"
 msgstr "Opties"
@@ -1382,6 +1434,13 @@ msgstr "Status: Niet Geïnstalleerd"
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "Status: Opwaardering Noodzakelijk (Inactief)"
 
+#, fuzzy
+msgid "Success"
+msgstr "Bron"
+
+msgid "Success/Fail"
+msgstr ""
+
 #, c-format
 msgid "Successfully activated layout %s"
 msgstr "Succesvol opmaak %s geactiveerd"
@@ -1397,6 +1456,22 @@ msgstr "Succesvol opmaak %s gedeactiveerd"
 #, c-format
 msgid "Successfully deactivated module %s"
 msgstr "Succesvol module %s gedeactiveerd"
+
+#, fuzzy, c-format
+msgid "Successfully deleted directory: %s"
+msgstr "Succesvol %d item verwijderd"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/entity"
+msgstr "Succesvol %d item verwijderd"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/layout"
+msgstr "Succesvol %d item verwijderd"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/module"
+msgstr "Succesvol %d item verwijderd"
 
 #, c-format
 msgid "Successfully installed and auto-configured module %s"
@@ -1447,11 +1522,26 @@ msgstr "Samenvatting"
 msgid "System Information"
 msgstr "Systeem Informatie"
 
+msgid "System Maintenance"
+msgstr ""
+
 msgid "Target Size (pixels)"
 msgstr "Doel grootte (in pixels)"
 
+#, fuzzy
+msgid "Task name"
+msgstr "Gebruikersnaam"
+
+#, fuzzy
+msgid "Template cache deleted successfully"
+msgstr "Album is succesvol aangemaakt."
+
 msgid "That username is already in use"
 msgstr "Gebruikersnaam '%s' bestaat al"
+
+#, fuzzy, c-format
+msgid "The %s task failed to complete successfully."
+msgstr "Miniatuur succesvol bijgesneden"
 
 msgid "The URL entered must begin with http://"
 msgstr "The opgegeven URL moet beginnen met http://"
@@ -1833,6 +1923,20 @@ msgstr "URL"
 #, c-format
 msgid "URL: %s"
 msgstr "URL: %s"
+
+#, c-format
+msgid "Unable to create directory: %s"
+msgstr ""
+
+#, c-format
+msgid "Unable to delete directory: %s"
+msgstr ""
+
+msgid "Unable to delete directory: /cache/layout"
+msgstr ""
+
+msgid "Unable to delete directory: /templates_c"
+msgstr ""
 
 msgid "Uninstall"
 msgstr "Deinstalleer"
@@ -2352,6 +2456,10 @@ msgstr "verwijderen"
 
 msgid "reorder items"
 msgstr "herschikken items"
+
+#, fuzzy
+msgid "run now"
+msgstr "onbekend"
 
 msgid "site admin"
 msgstr "Site beheer"

@@ -358,6 +358,10 @@ msgstr "Kinoformat 2,35x1"
 msgid "Clear"
 msgstr "Löschen"
 
+#, fuzzy, c-format
+msgid "Completed %s task successfully."
+msgstr "Photo erfolgreich gedreht"
+
 msgid "Configuration Error: Missing Layout"
 msgstr "Konfigurationsfehler: Es wurde kein Layout gefunden."
 
@@ -415,6 +419,10 @@ msgstr "Aktuelles Passwort"
 msgid "Database Error"
 msgstr "Datenbankfehler"
 
+#, fuzzy
+msgid "Database optimized successfully"
+msgstr "Photo erfolgreich gedreht"
+
 msgid "Database"
 msgstr "Datenbank"
 
@@ -455,6 +463,13 @@ msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty "
 "albums"
 msgstr ""
+
+msgid "Delete database cache"
+msgstr ""
+
+#, fuzzy
+msgid "Delete template cache"
+msgstr "Element löschen"
 
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
@@ -597,6 +612,10 @@ msgstr "Fehler"
 msgid "Everybody"
 msgstr "Jeder"
 
+#, fuzzy
+msgid "Failed"
+msgstr "Datei"
+
 msgid "File name"
 msgstr "Dateiname"
 
@@ -682,6 +701,13 @@ msgstr ""
 "ersten aufrufen schneller sein."
 
 msgid ""
+"Gallery compiles template files and saves them for increased performance.  "
+"If you're experiencing problems that say <i>Smarty error</i> then you might "
+"try running this task.  Also run this if you remove a local/*.tpl file so "
+"Smarty will switch back to the default tpl file."
+msgstr ""
+
+msgid ""
 "Gallery does not modify your original photo when rotating and scaling. "
 "Instead, it duplicates your photo and works with copies.  This requires a "
 "little extra disk space but prevents your original from getting damaged.  "
@@ -707,6 +733,13 @@ msgstr ""
 "deaktivieren.  Um eine Funktion also zu nutzen müssen Sie es installieren, "
 "konfigurieren und anschliessend aktivieren.  Später können Sie es nach "
 "belieben wieder deaktivieren."
+
+msgid ""
+"Gallery stores commonly used database information on disk for increased "
+"performance.  If you modify the database directly, you should run this task "
+"to clean out the cache and force Gallery to reload the information from the "
+"database."
+msgstr ""
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -806,6 +839,12 @@ msgstr ""
 "Bsp.: http://beispiel.de/verzeichnis/)."
 
 msgid ""
+"Improve the performance of your database.  Results will vary depending on "
+"which database you're using, but this routine maintenance will make your "
+"Gallery run faster.  Especially useful after adding or deleting many items."
+msgstr ""
+
+msgid ""
 "In order for Gallery to properly display this animation, it has to know the "
 "animation's width and height.  If you have installed a graphics toolkit that "
 "can handle animation types, then these values may already be set.  If not, "
@@ -874,6 +913,10 @@ msgstr "Sprache"
 msgid "Last Changed Date"
 msgstr "Datum der letzten Änderung"
 
+#, fuzzy
+msgid "Last run"
+msgstr "letztes &raquo;"
+
 #, fuzzy, c-format
 msgid "Layout API Required: %s (available: %s)"
 msgstr "Folgendes Modul API wird benötigt: %s (Verfügbar sind: %s)"
@@ -923,6 +966,9 @@ msgstr "Anmelden"
 
 msgid "Logout"
 msgstr "Abmelden"
+
+msgid "Maintenance"
+msgstr ""
 
 msgid "Make Highlight"
 msgstr "Als Titelbild auswählen"
@@ -1040,12 +1086,18 @@ msgstr "Es wurden keinen Elemente zum Löschen markiert"
 msgid "None"
 msgstr "Keiner"
 
+msgid "Not run yet"
+msgstr ""
+
 msgid "Nothing added since no items were selected"
 msgstr ""
 "Es wurde nichts hinzugef&uuml;gt, da kein Element ausgew&auml;hlt wurde"
 
 msgid "Operating system"
 msgstr "Betriebssystem"
+
+msgid "Optimize database"
+msgstr ""
 
 msgid "Options"
 msgstr "Optionen"
@@ -1366,6 +1418,13 @@ msgstr "Status: nicht installiert"
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "Status: Upgrade nötig (Inaktiv)"
 
+#, fuzzy
+msgid "Success"
+msgstr "Quelle"
+
+msgid "Success/Fail"
+msgstr ""
+
 #, c-format
 msgid "Successfully activated layout %s"
 msgstr "Das Layout %s wurde erfolgreich aktiviert"
@@ -1381,6 +1440,22 @@ msgstr "Das Layout %s wurde erfolgreich deaktiviert"
 #, c-format
 msgid "Successfully deactivated module %s"
 msgstr "Das Modul %s wurde erfolgreich deaktiviert"
+
+#, fuzzy, c-format
+msgid "Successfully deleted directory: %s"
+msgstr "Erfolgreich %d Element gelöscht."
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/entity"
+msgstr "Erfolgreich %d Element gelöscht."
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/layout"
+msgstr "Erfolgreich %d Element gelöscht."
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/module"
+msgstr "Erfolgreich %d Element gelöscht."
 
 #, c-format
 msgid "Successfully installed and auto-configured module %s"
@@ -1432,11 +1507,26 @@ msgstr "Zusammenfassung"
 msgid "System Information"
 msgstr "Systeminformationen"
 
+msgid "System Maintenance"
+msgstr ""
+
 msgid "Target Size (pixels)"
 msgstr "Zielgrösse (in Pixels)"
 
+#, fuzzy
+msgid "Task name"
+msgstr "Benutzername"
+
+#, fuzzy
+msgid "Template cache deleted successfully"
+msgstr "Das Album wurde erfolgreich erstellt."
+
 msgid "That username is already in use"
 msgstr "Dieser Benutzername existiert bereits"
+
+#, fuzzy, c-format
+msgid "The %s task failed to complete successfully."
+msgstr "Das Vorschaubild wurde erfolgreich zugeschnitten."
 
 msgid "The URL entered must begin with http://"
 msgstr "Die von Ihnen eingegebenen URLs müssen mit http:// beginnen"
@@ -1822,6 +1912,20 @@ msgstr "URL"
 #, c-format
 msgid "URL: %s"
 msgstr "URL: %s"
+
+#, c-format
+msgid "Unable to create directory: %s"
+msgstr ""
+
+#, c-format
+msgid "Unable to delete directory: %s"
+msgstr ""
+
+msgid "Unable to delete directory: /cache/layout"
+msgstr ""
+
+msgid "Unable to delete directory: /templates_c"
+msgstr ""
 
 msgid "Uninstall"
 msgstr "deinstallieren"
@@ -2341,6 +2445,10 @@ msgstr "Entfernen"
 
 msgid "reorder items"
 msgstr "Elemente umordnen"
+
+#, fuzzy
+msgid "run now"
+msgstr "Unbekannt"
 
 msgid "site admin"
 msgstr "site admin"

@@ -339,6 +339,10 @@ msgstr "CinemaScope 2.35x1"
 msgid "Clear"
 msgstr "清除"
 
+#, fuzzy, c-format
+msgid "Completed %s task successfully."
+msgstr "照片旋转成功"
+
 msgid "Configuration Error: Missing Layout"
 msgstr "设置错误：未设定界面"
 
@@ -396,6 +400,10 @@ msgstr "当前密码"
 msgid "Database Error"
 msgstr "数据库错误"
 
+#, fuzzy
+msgid "Database optimized successfully"
+msgstr "照片旋转成功"
+
 msgid "Database"
 msgstr "数据库"
 
@@ -436,6 +444,13 @@ msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty "
 "albums"
 msgstr "删除 %s 中的所有项目，并为所有存在的非空相册指定一个新所有者"
+
+msgid "Delete database cache"
+msgstr ""
+
+#, fuzzy
+msgid "Delete template cache"
+msgstr "删除项目"
 
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
@@ -571,6 +586,10 @@ msgstr "错误"
 msgid "Everybody"
 msgstr "所有人"
 
+#, fuzzy
+msgid "Failed"
+msgstr "文件"
+
 msgid "File name"
 msgstr "文件名"
 
@@ -652,6 +671,13 @@ msgstr ""
 "传耗费时间相应延长一些。"
 
 msgid ""
+"Gallery compiles template files and saves them for increased performance.  "
+"If you're experiencing problems that say <i>Smarty error</i> then you might "
+"try running this task.  Also run this if you remove a local/*.tpl file so "
+"Smarty will switch back to the default tpl file."
+msgstr ""
+
+msgid ""
 "Gallery does not modify your original photo when rotating and scaling. "
 "Instead, it duplicates your photo and works with copies.  This requires a "
 "little extra disk space but prevents your original from getting damaged.  "
@@ -672,6 +698,13 @@ msgstr ""
 "图库相关功能均来自独立的模块。您可以通过下载并安装模块来增加图库功能，或通过"
 "关闭模块来禁用不使用的功能。要使用一个功能，您必须安装，设置（如需要）并启动"
 "它。如果您不想使用一个功能，可以关闭它。"
+
+msgid ""
+"Gallery stores commonly used database information on disk for increased "
+"performance.  If you modify the database directly, you should run this task "
+"to clean out the cache and force Gallery to reload the information from the "
+"database."
+msgstr ""
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -762,6 +795,12 @@ msgstr ""
 "在该网页中找到的任意媒体类型。请注意，如果您输入的是一个网站目录，请以反斜杠"
 "作为地址结尾。（例如：http://example.com/directory/）"
 
+msgid ""
+"Improve the performance of your database.  Results will vary depending on "
+"which database you're using, but this routine maintenance will make your "
+"Gallery run faster.  Especially useful after adding or deleting many items."
+msgstr ""
+
 #, fuzzy
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the "
@@ -839,6 +878,10 @@ msgstr "语言"
 msgid "Last Changed Date"
 msgstr "最后更新日期"
 
+#, fuzzy
+msgid "Last run"
+msgstr "上一项 &raquo;"
+
 #, c-format
 msgid "Layout API Required: %s (available: %s)"
 msgstr "界面API需要: %s (%s 可用)"
@@ -888,6 +931,9 @@ msgstr "登录"
 
 msgid "Logout"
 msgstr "退出"
+
+msgid "Maintenance"
+msgstr ""
 
 msgid "Make Highlight"
 msgstr "标记为精华"
@@ -1004,11 +1050,17 @@ msgstr "未选择删除项目"
 msgid "None"
 msgstr "没有"
 
+msgid "Not run yet"
+msgstr ""
+
 msgid "Nothing added since no items were selected"
 msgstr "由于未选择项目，没有内容被添加"
 
 msgid "Operating system"
 msgstr "操作系统"
+
+msgid "Optimize database"
+msgstr ""
 
 msgid "Options"
 msgstr "选项"
@@ -1315,6 +1367,13 @@ msgstr "状态: 未安装"
 msgid "Status: Upgrade Required (Inactive)"
 msgstr "状态: 需要升级 (关闭)"
 
+#, fuzzy
+msgid "Success"
+msgstr "来源"
+
+msgid "Success/Fail"
+msgstr ""
+
 #, c-format
 msgid "Successfully activated layout %s"
 msgstr "界面 %s 开启成功"
@@ -1330,6 +1389,22 @@ msgstr "界面 %s 关闭成功"
 #, c-format
 msgid "Successfully deactivated module %s"
 msgstr "模块 %s 关闭成功"
+
+#, fuzzy, c-format
+msgid "Successfully deleted directory: %s"
+msgstr "成功删除 %d 个项目。"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/entity"
+msgstr "成功删除 %d 个项目。"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/layout"
+msgstr "成功删除 %d 个项目。"
+
+#, fuzzy
+msgid "Successfully deleted directory: /cache/module"
+msgstr "成功删除 %d 个项目。"
 
 #, c-format
 msgid "Successfully installed and auto-configured module %s"
@@ -1380,11 +1455,26 @@ msgstr "摘要"
 msgid "System Information"
 msgstr "系统信息"
 
+msgid "System Maintenance"
+msgstr ""
+
 msgid "Target Size (pixels)"
 msgstr "目标尺寸 (象素)"
 
+#, fuzzy
+msgid "Task name"
+msgstr "用户名"
+
+#, fuzzy
+msgid "Template cache deleted successfully"
+msgstr "新建相册成功"
+
 msgid "That username is already in use"
 msgstr "此用户名已存在"
+
+#, fuzzy, c-format
+msgid "The %s task failed to complete successfully."
+msgstr "缩略图裁切成功"
 
 msgid "The URL entered must begin with http://"
 msgstr "输入网址必须以 http:// 开始"
@@ -1713,6 +1803,20 @@ msgstr "网址"
 #, c-format
 msgid "URL: %s"
 msgstr "网址: %s"
+
+#, c-format
+msgid "Unable to create directory: %s"
+msgstr ""
+
+#, c-format
+msgid "Unable to delete directory: %s"
+msgstr ""
+
+msgid "Unable to delete directory: /cache/layout"
+msgstr ""
+
+msgid "Unable to delete directory: /templates_c"
+msgstr ""
 
 msgid "Uninstall"
 msgstr "卸载"
@@ -2207,6 +2311,10 @@ msgstr "删除"
 
 msgid "reorder items"
 msgstr "记录项目"
+
+#, fuzzy
+msgid "run now"
+msgstr "未知"
 
 msgid "site admin"
 msgstr "网站管理员"
