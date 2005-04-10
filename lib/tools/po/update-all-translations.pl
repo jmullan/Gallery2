@@ -13,10 +13,14 @@ use Symbol;
 
 my %OPTS;
 $OPTS{'MAKE_BINARY'} = 0;
+$OPTS{'PATTERN'} = '';
+$OPTS{'DRY_RUN'} = 0;
 chomp(my $MAKE = `(which gmake || which make) 2>/dev/null`);
 die "Missing make" unless $MAKE;
 
-GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'});
+GetOptions('make-binary!' => \$OPTS{'MAKE_BINARY'},
+	   'pattern=s' => \$OPTS{'PATTERN'},
+	   'dry-run' => \$OPTS{'DRY_RUN'});
 
 my %PO_DIRS = ();
 my %MO_FILES = ();
@@ -30,10 +34,12 @@ find(\&locatePoDir, $basedir);
 
 foreach my $poDir (keys(%PO_DIRS)) {
   print STDERR "BUILDING IN >> $poDir <<\n";
-  chdir $poDir;
-  system("$MAKE install clean 2>&1")
-    and print "FAIL: $poDir"
-      and $failcount++;
+  unless ($OPTS{'DRY_RUN'}) {
+    chdir $poDir;
+    system("$MAKE install clean 2>&1")
+      and print "FAIL: $poDir"
+	and $failcount++;
+  }
 }
 
 if ($OPTS{'MAKE_BINARY'}) {
@@ -61,6 +67,9 @@ sub locatePoDir {
   my $dir  = $File::Find::dir;
   if (basename($dir) eq 'po') {
     next if ($dir =~ m|lib/tools|);
+    if ($OPTS{'PATTERN'}) {
+      next unless $dir =~ m/$OPTS{'PATTERN'}/;
+    }
     $PO_DIRS{$dir}++;
   }
 }
