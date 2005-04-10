@@ -154,7 +154,7 @@
     <p>
       If you&rsquo;re impatient like us, you just want to get going.
       The odds are that your system is all set to handle G2 so
-      just skip right to the <a href="install/"
+      just skip right to the <a href="install/index.php"
       target="_guided">installer</a> and start clicking.  It should
       walk you through everything you need to get going.  Before
       you do that, you should really read the <a
@@ -261,8 +261,8 @@
 
     <h3>
       Highlight of changes in Gallery 2 Beta 2 (Holy Hand Grenade)
-      <span id="beta1-toggle" class="toggle"
-       onclick="toggle('beta1-list', 'beta1-toggle')"> - </span>
+      <span id="beta2-toggle" class="toggle"
+       onclick="toggle('beta2-list', 'beta2-toggle')"> - </span>
     </h3>
     <ol id="beta2-list">
       <li>
@@ -298,6 +298,12 @@
 	    Added Nico Kaiser's siriux layout.
 	  </li>
 	</ul>
+      </li>
+      <li>
+	<b> ACL </b> - ..
+      </li>
+      <li>
+	<b> Captcha </b> - ..
       </li>
     </ol>
 
@@ -843,13 +849,18 @@
     <ol>
       <li>
 	<b><a name="get_latest_code">Latest Version</a></b> -
-	There are two ways to get the code.
+	There are three ways to get the code.
 	<ul>
 	  <li>
 	    <b>Tarball</b> - You can download a prepackaged file as a
-	    tarball or a zip file from <a href=
-	      "http://sourceforge.net/projects/gallery/"
+	    tarball or a zip file from <a href="http://sourceforge.net/projects/gallery/"
 	      target="_blank">SourceForge</a>.
+	  </li>
+	  <li>
+	    <b>Nightly Snapshot</b> - You can download a tarball or zip file with
+	    a snapshot of the most recent code.  Find links to these on the
+	    <a href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Download"
+	      target="_blank">Gallery Download Page</a>.
 	  </li>
 	  <li>
 	    <b>CVS</b> - This is a better way to get the latest code,
@@ -974,7 +985,7 @@
 
     <h2><a name="installing">Installing G2 Beta</a></h2>
     <p>
-      Open up your web browser and browse to the <a href="install/" target="_guided">G2
+      Open up your web browser and browse to the <a href="install/index.php" target="_guided">G2
       install directory</a>.  G2 will walk you through the process of
       validating that your system is properly configured and will set
       everything up for you.
@@ -1093,13 +1104,6 @@
 	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=migrate:SelectGallery"
 	target="_guided">Migration Page</a> and enter the path to your
 	G1 albums directory and then follow the instructions.
-
-	<br/>
-
-        <i> Note </i> - there are <a href="#known_issues">known
-        issues</a> with the migration module.  Please read about them
-        before filing bugs!
-
       </li>
       <li>
 	<b> Plenty to do and see! </b> -
@@ -1124,7 +1128,7 @@
 	    href="main.php?g2_view=search:SearchScan&amp;g2_form[useDefaultSettings]=1"
 	    target="_guided">search your G2</a> and view the <a
 	    href="main.php?g2_view=members:MembersList"
-	    target="_guided">members list</a>.
+	    target="_guided">members list</a> if these modules are active.
 	  </li>
 
 	  <li>
@@ -1254,7 +1258,7 @@
       </li>
       <li>
 	<b>Toolkit upgrades</b> - Upgrade of graphics toolkits (ImageMagick, NetPBM, GD)
-	from alpha-4 to beta-1 via the upgrader does not properly update the database.
+	from alpha-4 via the upgrader does not properly update the database.
 	Toolkits should still work after upgrade but if you later try to activate another
 	toolkit or the Square Thumbnails module you'll see ERROR_COLLISION: CRC mismatch.
 	To resolve this visit <a
@@ -1276,7 +1280,7 @@
       </li>
 
       <li>
-	Browse to <a href="upgrade/">the upgrader</a> and follow the
+	Browse to <a href="upgrade/index.php">the upgrader</a> and follow the
 	instructions there.  Make a backup of your data when it tells
 	you to!  Should you lose your data due to a bug in the
 	upgrader, the first thing we're going to tell you to do is to
@@ -1295,7 +1299,7 @@
       href="http://www.google.com/search?q=extreme+programming">Extreme
       Programming</a> methodologies.  This means that we have a ton of unit
       tests that help us make sure that the code is behaving as it should.  If
-      you want to help us out, you can <a href="lib/tools/phpunit/"
+      you want to help us out, you can <a href="lib/tools/phpunit/index.php"
       target="_guided">try running the unit tests</a> and report back
       to us if any of them fail.  <i> Note </i> - these tests
       shouldn&rsquo;t change your G2 settings at all, but if they fail, they
@@ -1306,7 +1310,7 @@
 
     <p>
       <b> Test Harness </b> - We also have an <a
-      href="lib/tools/test/" target="_guided">older test harness</a> that
+      href="lib/tools/test/index.php" target="_guided">older test harness</a> that
       we use to do some load testing type tasks that might be fun to
       experiment with.  Try creating 1000 users or a random tree of
       5,000 photos to see what it&rsquo;s like.
@@ -1330,6 +1334,13 @@
       that you should read if you want to start hacking on G2.  It's
       an early draft and is a little bit out of date, but it's a
       start.
+    </p>
+
+    <p>
+      <b> Embedding </b> - See this <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=23957">forum topic</a>
+      for the status of the integration modules to embed G2 in various applications.
+      This <a href="docs/EMBEDDING">documentation</a> explains how to setup an integrated
+      environment or build the integration module for a new application.
     </p>
 
     <a href="http://validator.w3.org/check?uri=referer"><img
