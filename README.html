@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content= "text/html; charset=us-ascii" />
-      <title>README: Gallery 2 Beta 1 (Dark Fibre)</title>
+      <title>README: Gallery 2 Beta 2 (Holy Hand Grenade)</title>
       <style type="text/css">
 	<!--
 	html {
@@ -121,10 +121,11 @@
   </head>
 
   <body>
-    <img src="images/g2Logo.gif" alt="Gallery 2.0 Beta 1" />
+    <img src="images/g2Logo.gif" alt="Gallery 2.0 Beta 2" />
     <p>
-      Welcome to Gallery 2.0 (G2). This is the first &ldquo;Beta&rdquo; release of G2,
-      code named <b>&ldquo;Dark Fibre&rdquo;</b>.  Please read through this document carefully
+      Welcome to Gallery 2.0 (G2). This is the second
+      &ldquo;Beta&rdquo; release of G2, code named <b>&ldquo;Holy Hand
+      Grenade&rdquo;</b>.  Please read through this document carefully
       before installing G2 and before asking for help.  We have taken
       care to try to answer as many of your questions here as
       possible.  If you don't read this and have problems, we may
@@ -181,26 +182,27 @@
 
     <h2><a name="what_is_g2">What is G2 Beta?</a></h2>
     <p>
-      A Beta version or Beta release is the second official round of
-      releases of a product.  A Beta release can sometimes be
-      unstable, contains both known and unknown bugs.  Generally,
-      almost all of the features of the final product will be present.
-      We release it early so that you can see what is coming and give
-      us feedback that will help us improve the final release.
+      A Beta release is the second official round of releases of a
+      product.  A Beta release can sometimes be unstable, contains
+      both known and unknown bugs.  Generally, almost all of the
+      features of the final product will be present.  We release it
+      early so that you can see what is coming and give us feedback
+      that will help us improve the final release.
     </p>
 
     <h2><a name="Beta_requirements">G2 Beta requirements</a></h2>
     <ul>
       <li>
-	Web server that can run PHP (Apache 1, Apache 2, IIS, Zeus, etc)
+	Web server that can run <a href="http://php.net">PHP</a>
+	(<a href="http://httpd.apache.org/docs/">Apache 1</a>, <a href="http://httpd.apache.org/docs-2.0/">Apache 2</a>, <a href="http://www.microsoft.com/WindowsServer2003/iis/default.mspx">IIS, <a href="http://www.zeus.com/">Zeus</a>, etc)
       </li>
       <li>
 	PHP version 4.1.0 or more recent (including PHP 5).
 	<br/>
-	<b>Note:</b> <i>safe_mode</i> must be disabled!
+	<b>Note:</b> <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&file=viewtopic&t=2848"><i>safe_mode</i> must be disabled!</a>
       </li>
       <li>
-	One of the following databases: MySQL 3.x, MySQL 4.x, PostgreSQL 7.x, Oracle 9i or 10g
+	One of the following databases: <a href="http://mysql.com">MySQL 3.x</a>, <a href="http://mmysql.com">MySQL 4.x</a>, <a href="http://www.postgresql.org">PostgreSQL 7.x</a>, Oracle 9i or 10g
       </li>
       <li>
 	One of the following graphics toolkits: <a target="_blank"
@@ -266,13 +268,24 @@
     </h3>
     <ol id="beta2-list">
       <li>
-	<b> Fast Download </b> - Greatly improved performance for
-	publically visible images.  We bypass most of the framework and
-	render thumbnails and resizes quickly on demand.  This
-	radically reduces server load.
+	<b> Performance Improvements </b>
+	<ul>
+	  <li>
+	    Automatic fast download code for publicly visible images.
+	    We bypass most of the framework and render thumbnails and
+	    resizes quickly on demand, while still preserving the
+	    complete image firewall.  This radically reduces server
+	    load.
+	  </li>
+	  <li>
+	    Replaced the permissions table with access control lists.
+	    This change isn't visible to the end user, but results in
+	    a significant performance increase for large galleries.
+	  </li>
+	</ul>
       </li>
       <li>
-	<b> Themes/CSS</b>
+	<b> Themes/CSS </b>
 	<ul>
 	  <li>
 	    We updated the CSS across the entire app to clean it up and
@@ -300,10 +313,43 @@
 	</ul>
       </li>
       <li>
-	<b> ACL </b> - ..
+	<b> New Modules </b>
+	<ul>
+	  <li>
+	    New captcha module allows you to require that users have
+	    to prove that they're human in order to log in or register
+	    a new account.
+	  </li>
+	  <li>
+	    New mime management module allows you to control which
+	    mime types Gallery understands.
+	  </li>
+	</ul>
       </li>
       <li>
-	<b> Captcha </b> - ..
+	<b> Localization </b>
+	<ul>
+	  <li>
+	    Localized into Chinese (Simplified)
+	  </li>
+	  <li>
+	    6 localizations support 75% or more of Gallery.
+	  </li>
+	</ul>
+      </li>
+      <li>
+	<b> Embedding </b>
+	<ul>
+	  <li>
+	    Considerable progress in the API and documentation.
+	  </li>
+	  <li>
+	    Xaraya, PHP-Nuke, Tikipro, Drupal and Mambo integrations <a href="http://cvs.sourceforge.net/viewcvs.py/gallery/integration/gallery2/">available in CVS</a>.
+	  </li>
+	</ul>
+      </li>
+      <li>
+	Many, many bugs fixed.
       </li>
     </ol>
 
@@ -971,12 +1017,14 @@
 	target="_blank">ImageMagick</a> or <a href="http://php.net/gd"
 	target="_blank">GD</a>.  They&rsquo;re all equally good,
 	though some say that NetPBM has slightly better quality and
-	that ImageMagick is slightly faster than NetPBM.  GD is the
-	fastest and is compiled into PHP by default if your PHP is
-	4.3.0 or more recent, however it may not have support for all
-	image types (e.g. it might not have JPEG support). If the
-	binaries for NetPBM and ImageMagick are installed in default,
-	or standard, locations then G2 will auto-detect them during G2
+	that ImageMagick is slightly faster than NetPBM.  GD can be
+	very fast, but it will also use a lot of memory so it may
+	cause you to run into predefined server limits.  It is also
+	compiled into PHP by default if your PHP is 4.3.0 or more
+	recent, however it may not have support for all image types
+	(e.g. it might not have JPEG support). If the binaries for
+	NetPBM and ImageMagick are installed in default, or standard,
+	locations then G2 will auto-detect them during G2
 	installation.  It won&rsquo;t cause any harm to enable all of
 	these toolkits&#8212;in fact you&rsquo;ll get the widest file
 	type support if you do so.
@@ -1243,11 +1291,7 @@
 	previous alphas.  There are still some tweaks that we have
 	planned that will make it even faster.  We&rsquo;ve still
 	focused on features and reliability before performance, and
-	will be continually optimizing during the Beta cycle.  One
-	issue that we are well aware of is that G2 places a heavy load
-	on the webserver and database because of our image firewall.
-	We have a solution for this and will implement it during the
-	beta cycle.
+	will be continually optimizing during the Beta cycle.  
       </li>
       <li>
 	<b>URL Redirection</b> - Rewrite module and G1-&gt;G2 URL redirection
@@ -1255,16 +1299,6 @@
 	G1 used to be).  To use G1 redirection and short urls, remove the
 	Rewrite module code from .htaccess, deactivate Rewrite module and
 	turn on pathinfo based short urls in Site Admin / General.
-      </li>
-      <li>
-	<b>Toolkit upgrades</b> - Upgrade of graphics toolkits (ImageMagick, NetPBM, GD)
-	from alpha-4 via the upgrader does not properly update the database.
-	Toolkits should still work after upgrade but if you later try to activate another
-	toolkit or the Square Thumbnails module you'll see ERROR_COLLISION: CRC mismatch.
-	To resolve this visit <a
-	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=core:AdminModules"
-	target="_guided">Site Admin/Modules</a> and deactivate <i>all</i> of the toolkits
-	and Square Thumbnails.  Then reactivate any you wish to use.
       </li>
     </ol>
 
@@ -1350,8 +1384,8 @@
 
     <a href="http://gallery.sourceforge.net"><img
       src="images/gallery.gif"
-      alt="Gallery 2.0 beta-1 (Dark Fibre)"
-      title="Gallery 2.0 beta-1 (Dark Fibre)"
+      alt="Gallery 2.0 beta-2 (Holy Hand Grenade)"
+      title="Gallery 2.0 beta-2 (Holy Hand Grenade)"
       style="border: none" width="80" height="15"/></a>
 
     <hr />
