@@ -67,7 +67,6 @@ class AdminExifController extends GalleryController {
 			$properties[] = $property;
 			$count++;
 		    }
-		    sort($properties);
 		}
 
 		$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $properties);
@@ -95,7 +94,6 @@ class AdminExifController extends GalleryController {
 			$properties[] = $property;
 			$count++;
 		    }
-		    sort($properties);
 		}
 
 		$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $properties);
@@ -381,7 +379,8 @@ class AdminExifView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY, 'description' => $addOption & EXIF_ITEM_DESCRIPTION);
+	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY,
+				  'description' => $addOption & EXIF_ITEM_DESCRIPTION);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();
