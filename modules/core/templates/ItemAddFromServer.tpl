@@ -177,7 +177,7 @@
       {/if}
     </tr>
     {foreach name=fileIndex from=$form.localServerFiles item=file}
-      {assign var=key value=$file.fileKey|urlencode}
+      {assign var=key value=$file.fileKey|escape:"hexentity"}
       <tr class="{cycle values="gbEven,gbOdd"}">
       {if ($file.type == 'file')}
 	<td style="text-align: center">

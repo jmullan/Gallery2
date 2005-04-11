@@ -209,7 +209,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $escapedRecursiveBasenames = array('test1', 'test1', 'test2', 'test3', 'test4');
 	    rsort($escapedRecursiveBasenames);
 
-	    $dirName = urlencode($baseDir . 'localUploadDir');
+	    $dirName = $baseDir . 'localUploadDir';
 	    GalleryUtilities::putRequestVariable(
 		'form[localServerDirectories][' . $dirName . '][selected]', 1);
 	    if ($useSymlink) {
@@ -292,7 +292,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
 	// This is what the browser will send us (urlencoded):
 	GalleryUtilities::putRequestVariable(
-	    'form[localServerFiles][December+-+%3C%23952%3E.jpg][selected]', 1);
+	    'form[localServerFiles][December - <#952>.jpg][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);

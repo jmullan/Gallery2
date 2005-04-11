@@ -116,8 +116,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	/* Unescape any special chars in the file name and path */
-	$filename = urldecode(GalleryUtilities::htmlEntityDecode($filename));
-	$filepath = urldecode(GalleryUtilities::htmlEntityDecode($filepath));
+	$filename = GalleryUtilities::htmlEntityDecode($filename);
+	$filepath = GalleryUtilities::htmlEntityDecode($filepath);
 	$filepath .= $filename;
 
 	list ($base, $extension) = GalleryUtilities::getFileNameComponents($filename);
@@ -166,7 +166,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	global $gallery;
 
 	/* Unescape any special chars in the file path */
-	$path = urldecode(GalleryUtilities::htmlEntityDecode($directory['dirName']));
+	$path = GalleryUtilities::htmlEntityDecode($directory['dirName']);
 
 	/* Get directory name */
 	$dirName = basename($path);
@@ -344,6 +344,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 
 			if ($fileName == '..') {
 			    $filePath = $platform->realpath($path . $slash . '..');
+			    if (!GalleryUtilities::isPathInList($filePath,
+                                                       $localServerDirList)) {
+				continue;
+			    }
 			} else {
 			    $filePath = $path . '/' . $fileName;
 			}
