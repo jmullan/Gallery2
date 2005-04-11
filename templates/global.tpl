@@ -42,6 +42,13 @@
 	  alt="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  title="{g->text text="Gallery %s" arg1=$main.gallery.version}"
 	  style="border-style: none" width="80" height="15"/></a>
+
+        <a href="{g->url href="modules/core/data/g2b2-kaboom.wav"}"><img
+                style="border: 0px"
+                src="{g->url href="modules/core/data/g2b2-holy-hand-grenade.png"}"
+                alt="{g->text text="Gallery 2 - Beta 2: Holy Hand Grenade"}"
+                height="15"
+                width="118"/></a>
       </div>
     </div>
 
