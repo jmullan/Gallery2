@@ -74,20 +74,11 @@ class CoreModuleExtras {
 	/**
 	 * README: How to update the block below.
 	 *
-	 * If you add a new feature to the core module and revise the version,
-	 * you should do the following.  Supposing the current version is 1.0.1
-	 * and you're adding 1.0.2:
-	 *
-	 *  1.  Go to the end of the switch and edit the '1.0.0' block and make
-	 *      sure that it does not have a 'break' statement.  You'll want it
-	 *      to fall through to the new block that you're about to add.
-	 *  2.  Add a new block at the end of the switch statement for '1.0.1'
-	 *      and add all the changes necessary to upgrade from 1.0.1 to 1.0.2
-	 *      and then add a "break;" statement so that you don't fall through
-	 *      to the "default" clause.
-	 *  3.  Update the '0' block to make any appropriate changes for initial
-	 *      installs.  Merge them in with the existing install code as
-	 *      appropriate.
+	 * If you add a new feature to the core module and revise the version, you should do the
+	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2. Go to the
+	 * end of the switch and find the 'end of upgrade path' case.  Create a new case *above*
+	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
+	 * then your code.  Do *not* put in a break statement.
 	 */
 	switch ($currentVersion) {
 	case '0':
@@ -647,6 +638,9 @@ class CoreModuleExtras {
 		    }
 		}
 	    }
+
+	case '0.9.9':
+	    /* Beta 2 release! */
 
 	case 'end of upgrade path':
 	    /*
