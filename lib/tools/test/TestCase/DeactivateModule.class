@@ -1,0 +1,41 @@
+<?php
+
+class DeactivateModuleTestCase extends TestCase {
+
+    function DeactivateModuleTestCase($moduleId) {
+	$this->_moduleId = $moduleId;
+    }
+
+    function getDescription() {
+	global $gallery;
+	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
+	if ($ret->isError()) {
+	    $status = 'error';
+	} else {
+	    if (empty($moduleStatus[$this->_moduleId]['active'])) {
+		$status = 'inactive';
+	    } else {
+		$status = 'active';
+	    }
+	}
+	return "Deactivate the $this->_moduleId module (currently $status)";
+    }
+
+    function testStart() {
+	global $gallery;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $this->_moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	list ($ret, $redirect) = $module->deactivate();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+}
+
+?>

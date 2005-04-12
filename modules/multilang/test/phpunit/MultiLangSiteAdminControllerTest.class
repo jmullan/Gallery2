@@ -1,0 +1,115 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package MultiLang
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * MultiLangSiteAdmin controller tests
+ *
+ * @package MultiLang
+ * @subpackage PHPUnit
+ */
+class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
+
+    function MultiLangSiteAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'multilang:MultiLangSiteAdmin');
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	foreach (array('languages') as $key) {
+	    list ($ret, $this->_params[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'multilang', $key);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function tearDown() {
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'multilang', $key, $value);
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	parent::tearDown();
+    }
+
+    function testMultiLangSiteAdminControllerReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'multilang:MultiLangSiteAdmin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testMultiLangSiteAdminControllerSave() {
+	GalleryUtilities::putRequestVariable('form[languages][0]', 'de_DE');
+	GalleryUtilities::putRequestVariable('form[languages][1]', 'he_IL');
+	GalleryUtilities::putRequestVariable('form[languages][2]', 'zh_CN');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'multilang:MultiLangSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $languages) =
+	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('de_DE|he_IL|zh_CN', $languages, 'languages');
+    }
+
+    function testMultiLangSiteAdminControllerSaveNoLanguages() {
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+				      'subView' => 'multilang:MultiLangSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $languages) =
+	    GalleryCoreApi::getPluginParameter('module', 'multilang', 'languages');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('', $languages, 'languages');
+    }
+}
+?>

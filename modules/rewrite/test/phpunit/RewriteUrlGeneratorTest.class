@@ -1,0 +1,174 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rewrite
+ * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Test RewriteUrlGenerator functionality
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ *
+ */
+class RewriteUrlGeneratorTest extends GalleryTestCase {
+    var $_urlGenerator;
+
+    function RewriteUrlGeneratorTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+    	global $gallery;
+	$_SERVER['HTTP_HOST'] = 'example.com';
+	$_SERVER['SERVER_PORT'] = 80;
+	
+	foreach (array('galleryLocation' => 'http://example.com/gallery2/')
+		 as $param => $value) {
+	    /* Save original value */
+	    list ($ret, $this->_saveParameters[$param]) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Set test value */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	
+	$this->_urlGenerator = new RewriteUrlGenerator();
+	$this->_urlGenerator->init('phpunit_test.php');
+	$gallery->setUrlGenerator($this->_urlGenerator);
+	parent::setUp();
+    }
+    
+    function tearDown() {
+    	global $gallery;
+    	parent::tearDown();
+    	
+    	foreach ($this->_saveParameters as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+    
+    function testInit() {
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testGetCurrentUrl() {
+	$expected = 'http://example.com/gallery2/phpunit_test.php';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testGetCurrentUrlDir() {
+	$expected = 'http://example.com/gallery2/';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlDir());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+    
+    function testGetCurrentShortUrl() {
+	$urlGenerator = new RewriteUrlGenerator();
+	$urlGenerator->init('phpunit_test.php');
+	$this->assertEquals(false, $urlGenerator->_error, 'init error');
+	
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
+			    $urlGenerator->getCurrentUrl(), 'get current url');
+	$this->assertEquals(false, $urlGenerator->_error, 'call error');
+
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
+			    $urlGenerator->_currentUrl, 'get cached url');
+	$this->assertEquals(false, $urlGenerator->_error, 'call error');
+    }
+    
+    function testShortUrls() {
+	global $gallery;
+	$session =& $gallery->getSession();
+
+	/* Setup.. */
+	list ($ret, $testAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($testAlbum);
+	list ($ret, $testItem) = $this->_createRandomDataItem($testAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $testAlbumPath) = $testAlbum->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $testItemPath) = $testItem->fetchLogicalPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$tests = array();
+	// core:ShowItem on albums have the logical path
+	$tests[] = array('http://example.com/gallery2/v' . $testAlbumPath,
+			 array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId()));
+	// core:ShowItem on items have the logical path, file type and .html
+	$tests[] = array('http://example.com/gallery2/v' . $testItemPath . '.html',
+			 array('view' => 'core:ShowItem', 'itemId' => $testItem->getId()));
+	// core:ShowItem at the top level has no prefix
+	$tests[] = array('http://example.com/gallery2/phpunit_test.php',
+			 array('view' => 'core:ShowItem'));
+	// core:DownloadItem on items have the id, serial number, path component and file type
+	$tests[] = array(sprintf('http://example.com/gallery2/d/%d-%d/%s',
+				 $testItem->getId(), $testItem->getSerialNumber(),
+				 $testItem->getPathComponent()),
+			 array('view' => 'core:DownloadItem', 'itemId' => $testItem->getId()));
+
+	foreach ($tests as $test) {
+	    list ($expectedUrl, $params) = $test;
+
+	    $expectedUrlWithSessionId = GalleryUrlGenerator::appendParamsToUrl(
+		$expectedUrl,
+                array($session->getKey() => $session->getId()));
+
+	    // Session id not in the url
+	    $actualUrl = $this->_urlGenerator->generateUrl($params, false);
+	    $this->assertEquals($expectedUrl, $actualUrl, 'Without session id');
+
+	    // Session id in the url
+	    $actualUrl = $this->_urlGenerator->generateUrl($params, true);
+	    $this->assertEquals($expectedUrlWithSessionId, $actualUrl, 'With session id');
+	}
+    }
+}
+
+?>

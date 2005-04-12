@@ -1,0 +1,166 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package Rewrite
+ * @version $Revision$ $Date$
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+class RewriteModuleExtras {
+
+    /**
+     * @see GalleryModule::upgrade
+     */
+    function upgrade($module, $currentVersion) {
+	switch ($currentVersion) {
+	case null:
+	    /* Initial install */
+	    foreach (array('galleryLocation' => '')
+		     as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    break;
+
+	case '0.0.1':
+	case '0.0.2':
+	case '0.0.3':
+	    foreach (array('prefixes' => '', 'views' => '')
+		    as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case '0.0.4':
+	    $prefixMap = array();
+	    list ($ret, $views) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'views');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $views = explode('|', $views);
+
+	    list ($ret, $prefixes) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'prefixes');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $prefixes = explode('|', $prefixes);
+
+	    for ($i = 0; $i < sizeof($views); $i++) {
+		if (strlen($prefixes[$i])) {
+		    $prefixMap[$views[$i]] = $prefixes[$i];
+		}
+	    }
+
+	    foreach (array('prefixMap' => serialize($prefixMap))
+		    as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    $ret = $module->removeItemParameter('views', 0);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ret = $module->removeItemParameter('prefixes', 0);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    $currentVersion = '0.0.5';
+
+	case '0.0.5':
+	case '0.1.0':
+	case '0.1.1':
+	case '0.1.2':
+	case '0.1.3':
+	    foreach (array('usePrefixes' => 'true',
+			   'rewriteLocation' => '',
+			   'rewriteBase' => '')
+		    as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case '0.1.4':
+	case '0.1.5':
+	    foreach (array('galleryLocation' => '',
+			   'step' => 1)
+		    as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case '0.1.6':
+	case '0.1.7':
+	case '0.1.8':
+	    foreach (array('rewriteLocation', 'rewriteBase') as $key) {
+		$ret = $module->removeItemParameter($key, 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case '0.1.9':
+	case '0.1.10':
+	case '0.8.0':
+	case '0.8.1':
+	    foreach (array('prefixMap', 'usePrefixes') as $key) {
+		$ret = $module->removeItemParameter($key, 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    /*
+	     * We changed the .htaccess format so deactivate the module and make
+	     * the user reconfigure and reactivate.
+	     */
+	    list ($ret, $unused) = $module->deactivate();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case '0.9.0':
+	case '0.9.1':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
+	}
+
+    	return GalleryStatus::success();
+    }
+}
+?>

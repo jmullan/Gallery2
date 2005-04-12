@@ -1,0 +1,148 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class InstallOtherModulesStep extends InstallStep {
+    function stepName() {
+	return _('Install More Modules');
+    }
+
+    function loadTemplateData(&$templateData) {
+	/*
+	 * Disable the data cache before initializing.  If we don't do this
+	 * *first* then some data (like factory registrations) will get cached
+	 * now, and then the modules won't be able to update it later on.
+	 */
+	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
+	GalleryDataCache::setFileCachingEnabled(false);
+
+	require(dirname(__FILE__) . '/../../bootstrap.inc');
+	require(dirname(__FILE__) . '/../../init.inc');
+	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
+	if ($ret->isError()) {
+	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
+	    $templateData['stackTrace'] = $ret->getAsHtml();
+	}
+
+	/* We want to avoid using the cache */
+	$groupedModules = array();
+	$groupLabel = array();
+	$moduleInstalled = array();
+
+	if (empty($templateData['errors'])) {
+	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to get the module list');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	}
+
+	if (empty($templateData['errors'])) {
+	    foreach (array_keys($moduleList) as $moduleId) {
+		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
+		if ($ret->isError()) {
+		    $templateData['errors'][] =
+			sprintf(_('Unable to load the %s module'), $moduleId);
+		    $templateData['stackTrace'] = $ret->getAsHtml();
+		} else {
+		    $modules[$moduleId] = $modulePlugin;
+		}
+	    }
+
+	    ksort($modules);
+	    foreach (array_keys($modules) as $moduleId) {
+		$moduleInstalled[$moduleId] = !empty($moduleList[$moduleId]['version']);
+		$module =& $modules[$moduleId];
+		if (isset($_REQUEST['activate']) &&
+		      isset($_REQUEST['module'][$moduleId]) &&
+		      !$moduleInstalled[$moduleId]) {
+		    $ret = $module->installOrUpgrade();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				sprintf(_('Unable to install the %s module'), $module->getName());
+			continue;
+		    }
+		    $moduleInstalled[$moduleId] = true;
+
+		    list ($ret, $success) = $module->autoConfigure();
+		    if ($ret->isError()) {
+			$templateData['errors'][] =
+				sprintf(_('Unable to activate the %s module'), $module->getName());
+			continue;
+		    }
+
+		    if (!$success) {
+			/* This is not really an error, just a warning */
+			$templateData['needsConfiguration'][$moduleId] = $module->getName();
+			continue;
+		    }
+
+		    list ($ret, $redirect) = $module->activate();
+		    if ($ret->isSuccess()) {
+			unset($modules[$moduleId]);
+			$templateData['activated'][$moduleId] = $module->getName();
+			continue;
+		    } else {
+			$templateData['errors'][] =
+				sprintf(_('Unable to activate the %s module'), $module->getName());
+			continue;
+		    }
+		}
+
+		$group = $module->getGroup();
+		if (empty($group)) {
+		    $group = array('group' => 'others', 'groupLabel' => _('Other'));
+		}
+		$groupedModules[$group['group']][$moduleId] =& $module;
+		$groupLabel[$group['group']] = $group['groupLabel'];
+	    }
+	    ksort($groupedModules);
+	}
+
+	if (isset($_REQUEST['activate'])) {
+	    global $gallery;
+	    $storage =& $gallery->getStorage();
+	    $ret = $storage->commitTransaction();
+	    if ($ret->isError()) {
+		$templateData['errors'][] = _('Unable to commit database transaction');
+		$templateData['stackTrace'] = $ret->getAsHtml();
+	    }
+	    $templateData['bodyFile'] = 'InstallOtherModulesSuccess.html';
+	} else {
+	    $templateData['groupedModules'] =& $groupedModules;
+	    $templateData['groupLabel'] = $groupLabel;
+	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
+	    $templateData['moduleInstalled'] = $moduleInstalled;
+	}
+
+	/* This step is never truly complete */
+	$this->setComplete(false);
+    }
+
+    function isRedoable() {
+	return false;
+    }
+
+    function isOptional() {
+	return true;
+    }
+}
+?>

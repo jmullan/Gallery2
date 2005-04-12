@@ -1,0 +1,776 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @package GalleryCore
+ * @version $Revision$ $Date$
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Write lock type
+ */
+define('SESSION_ID_PARAMETER', 'GALLERYSID');
+
+/**
+ * Container for session related data
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+class GallerySession {
+
+    /*
+     * ****************************************
+     *                 Members
+     * ****************************************
+     */
+
+    /**
+     * The time this session was created
+     *
+     * @var string $_creationTime
+     * @access private
+     */
+    var $_creationTime;
+
+    /**
+     * The ID of this session
+     *
+     * @var string $_sessionId
+     * @access private
+     */
+    var $_sessionId;
+
+    /**
+     * Is it ok to rely on cookies for this session?
+     *
+     * @var bool $_isUsingCookies
+     * @access private
+     */
+    var $_isUsingCookies;
+
+    /**
+     * The session data as loaded from file
+     *
+     * @var array $_loadedSessionData;
+     * @access private
+     */
+    var $_loadedSessionData;
+
+    /**
+     * The session data
+     *
+     * @var array $_sessionData
+     * @access private
+     */
+    var $_sessionData;
+
+    /**
+     * The domain for our cookie
+     *
+     * @var string $_cookieDomain
+     * @access private
+     */
+    var $_cookieDomain;
+
+    /**
+     * The path for our cookie
+     *
+     * @var string $_cookiePath
+     * @access private
+     */
+    var $_cookiePath;
+
+    /**
+     * A set of identifying values that we can use to verify that the session is coming
+     * from the same browser as it used to (to prevent session hijacking).
+     *
+     * @var array $_remoteIdentifier
+     * @access private
+     */
+    var $_remoteIdentifier;
+
+    /*
+     * ****************************************
+     *                 Methods
+     * ****************************************
+     */
+
+    /**
+     * Either create a new session, or attach to an existing one.
+     *
+     * return object GalleryStatus a status code
+     */
+    function init() {
+	global $gallery;
+
+	/* Check to see if we have an existing session. */
+	$this->_sessionId = null;
+	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
+	    /*
+	     * If we get the id parameter as a cookie, then it also means that
+	     * cookies are functioning.
+	     */
+	    $this->_sessionId = $_COOKIE[SESSION_ID_PARAMETER];
+	    $this->_isUsingCookies = true;
+
+	    /* Allow the URL to override the cookie, in rare occasions */
+	    $sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    if (!empty($sessionId)) {
+		$this->_sessionId = $sessionId;
+	    }
+	} else {
+	    /*
+	     * Many search engine crawlers don't use cookies.  Normally this
+	     * leads to us putting the session id in the url.  But doing so
+	     * causes the search engine to do a lot of extra work to weed out
+	     * the session id, which they may not do very well.  So if we detect
+	     * that this is a search engine, pretend that they accept cookies.
+	     * Later on we won't even save the session anyway.
+	     */
+	    $searchEngineId = GalleryUtilities::identifySearchEngine();
+	    if (isset($searchEngineId)) {
+		$this->_isUsingCookies = true;
+		$this->_sessionId = sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
+	    } else {
+		$this->_isUsingCookies = false;
+		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
+	    }
+	}
+
+	/* If we don't have a session id at this point, create one. */
+	if (empty($this->_sessionId)) {
+	    $this->_sessionId = md5(microtime() . rand(1, 32767));
+	}
+
+	/*
+	 * Sanitize the session id (which may have come from user input) to
+	 * avoid possibly writing outside the session storage dir.
+	 */
+	$this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
+
+	/* Load session state */
+	$ret = $this->_loadSessionData();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$forceResendCookie = false;
+
+	/* Verify the remote address to avoid casual session hijacking */
+	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
+
+	if (!isset($this->_remoteIdentifier) ||
+	    $this->_compareIdentifiers($this->_remoteIdentifier,
+				       $currentRemoteIdentifier) == 0) {
+	    $allowFrom = $gallery->getConfig('allowSessionAccess');
+	    if (!$allowFrom || $currentRemoteIdentifier[0] != $allowFrom) {
+		if ($gallery->getDebug()) {
+		    $gallery->debug('Session hijack detected: saved vs. current below');
+		    $gallery->debug_r($this->_remoteIdentifier);
+		    $gallery->debug_r($currentRemoteIdentifier);
+		}
+
+		/*
+		 * The session was not created from this browser address, so reset
+		 * our data to prevent hijacking.
+		 */
+		$this->_remoteIdentifier = $currentRemoteIdentifier;
+		$this->_emptySessionData();
+		$this->_sessionId = md5(microtime() . rand(1, 32767));
+		$forceResendCookie = true;
+		$ret = $this->save(true);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
+		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
+		$forceResendCookie) {
+	    /*
+	     * Send back a cookie.
+	     *
+	     * TODO: Need to be able to decide for certain that the browser isn't
+	     * accepting cookies so that we can stop sending them.  We can do this
+	     * by recording how many times we've sent a cookie, and how many times
+	     * that we've received one back in return.  Leave that for later.
+	     */
+	    $cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
+
+	    list ($ret, $sessionLifetime) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+		    /*
+		     * During installation it's possible that the database isn't around yet.
+		     * Just keep going.
+		     */
+		    $sessionLifetime = 0;
+		} else {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    if ($sessionLifetime > 0) {
+		$expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
+		$cookie .= '; expires=' . $expirationDate;
+	    }
+
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $this->_cookiePath = $urlGenerator->getCookiePath();
+	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
+
+	    /* remove port number in the domain */
+	    $colon = strpos($this->_cookieDomain, ':');
+	    if ($colon) {
+		$this->_cookieDomain = substr($this->_cookieDomain, 0, $colon);
+	    }
+
+	    $cookie .= '; path=' . $this->_cookiePath;
+
+	    /* Only add a "domain=" part if we have a fqdn */
+	    if (strpos($this->_cookieDomain, '.')) {
+		$cookie .= '; domain=.' . $this->_cookieDomain;
+	    }
+
+	    /*
+	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
+	     * with this in it from being visible to JavaScript, which mitigates
+	     * XSS attacks.
+	     */
+	    $cookie .= '; HttpOnly=1';
+
+	    /*
+	     * Init may be called multiple times (from unit tests) but don't send the headers more
+	     * than once.
+	     */
+	    if (!headers_sent()) {
+		header($cookie);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Save any session changes to the store
+     *
+     * @return object GalleryStatus a status code
+     */
+    function save() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dieRoll = rand(1, 100);
+
+	/* Only bother saving if we've been modified at all */
+	$serialized = serialize(array($this->_creationTime,
+				      $this->_remoteIdentifier,
+				      $this->_sessionData));
+	if ($serialized != $this->_loadedSessionData) {
+	    $sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+	    $platform->atomicWrite($sessionFile, $serialized);
+	} else {
+	    /*
+	     * 5% of the time touch the session file so that it doesn't get expired.
+	     * We can't count on the atime being set, since you can disable that on
+	     * some operating systems to get performance gains
+	     */
+	    if ($dieRoll <= 5) {
+		$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+		$platform->touch($sessionFile);
+	    }
+	}
+
+	/* Perform garbage collection 1% of the time. */
+	if ($dieRoll == 1) {
+	    $ret = $this->_expireSessions();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Clean and reinitialize a session
+     *
+     * @return object GalleryStatus a status code
+     */
+    function reset() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+	if ($platform->file_exists($sessionFile)) {
+	    $platform->unlink($sessionFile);
+	}
+
+	/*
+	 * Unset the cookie and any request variables so that
+	 * we'll regenerate a new id in init()
+	 */
+	unset($_REQUEST[SESSION_ID_PARAMETER]);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+
+	$ret = $this->init();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Regenerate the session ID to prevent a session fixation attack
+     * by a hostile website
+     *
+     * @return object GalleryStatus a status code
+     */
+    function regenerate() {
+	/* Store the current session data */
+	$localSessionData = $this->_sessionData;
+	$localLoadedSessionData = $this->_loadedSessionData;
+
+	/* Reset the session data to create a new session id */
+	$this->reset();
+
+	/* Restore the stored session data */
+	$this->_sessionData = $localSessionData;
+	$this->_loadedSessionData = $localLoadedSessionData;
+
+	/* Replace old session id with new one in any return or navigation urls */
+	$key = GalleryUtilities::prefixFormVariable($this->getKey()) . '=';
+	$match = '/' . $key . '[a-fA-F0-9]+/';
+	$replace = $key . $this->getId();
+
+	if (GalleryUtilities::hasRequestVariable('return')) {
+	    GalleryUtilities::putRequestVariable('return',
+		preg_replace($match, $replace,
+			     GalleryUtilities::getRequestVariables('return')));
+	}
+
+	if ($this->exists('core.navigation')) {
+	    $navigation = $this->get('core.navigation');
+	    foreach (array_keys($navigation) as $navId) {
+		if (isset($navigation[$navId]['data']['returnUrl'])) {
+		    $navigation[$navId]['data']['returnUrl'] =
+			preg_replace($match, $replace, $navigation[$navId]['data']['returnUrl']);
+		}
+	    }
+	    $this->put('core.navigation', $navigation);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get rid of any sessions that have not been accessed within our
+     * inactivity timeout or have exceeded the max lifetime.
+     *
+     * @return object GalleryStatus a status code.
+     * @access private
+     */
+    function _expireSessions() {
+	global $gallery;
+
+	list ($ret, $sessionInactivityTimeout) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.inactivityTimeout');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	list ($ret, $lifetime) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$inactiveCutoff = time() - $sessionInactivityTimeout;
+	$lifetimeCutoff = time() - $lifetime;
+
+	$platform = $gallery->getPlatform();
+	$sessionsDir = $gallery->getConfig('data.gallery.sessions');
+	$dir = $platform->opendir($sessionsDir, 'r');
+	if (!$dir) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					"Can't access session dir");
+	}
+
+	while (($filename = $platform->readdir($dir)) !== false) {
+	    if ($filename == '.' || $filename == '..') {
+		continue;
+	    }
+
+	    $path = $sessionsDir . $filename;
+	    $statData = $platform->stat($path);
+	    if ($statData['mtime'] < $inactiveCutoff ||
+		    $statData['ctime'] < $lifetimeCutoff) {
+		$platform->unlink($path);
+	    }
+	}
+	$platform->closedir($dir);
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Te session id parameter used URLS and the cookie
+     * @return array string
+     */
+    function getKey() {
+	return SESSION_ID_PARAMETER;
+    }
+
+    /**
+     * The session id
+     * @return string an id (like "A124DFE7A90")
+     */
+    function getId() {
+	return $this->_sessionId;
+    }
+
+    /**
+     * The domain used by our cookie
+     * @return string a domain (like "www.example.com")
+     */
+    function getCookieDomain() {
+	return $this->_cookieDomain;
+    }
+
+    /**
+     * The path used by our cookie
+     * @return string a server path (like /gallery2)
+     */
+    function getCookiePath() {
+	return $this->_cookiePath;
+    }
+
+    /**
+     * Is this transaction known to be using cookies?
+     *
+     * @return bool true if yes
+     */
+    function isUsingCookies() {
+	return $this->_isUsingCookies;
+    }
+
+    /**
+     * Get a value from the session data
+     *
+     * @param string the key
+     * @return string the value or null if it doesn't exist
+     */
+    function get($key) {
+	if (isset($this->_sessionData[$key])) {
+	    return $this->_sessionData[$key];
+	}
+
+	return null;
+    }
+
+    /**
+     * Store a value in the session
+     *
+     * @param string the key
+     * @param string the value
+     */
+    function put($key, $value) {
+	$this->_sessionData[$key] = $value;
+    }
+
+    /**
+     * Remove a value from the session
+     *
+     * @param string the key
+     */
+    function remove($key) {
+	unset($this->_sessionData[$key]);
+    }
+
+    /**
+     * Check to see if a value exists in the session
+     *
+     * @param string the key
+     */
+    function exists($key) {
+	return isset($this->_sessionData[$key]);
+    }
+
+    /**
+     * Load the session data
+     *
+     * @returns object GalleryStatus a status code
+     * @access private
+     */
+    function _loadSessionData() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	$sessionFile = $gallery->getConfig('data.gallery.sessions') . $this->_sessionId;
+
+	$valid = false;
+	if ($platform->file_exists($sessionFile)) {
+	    $serialized = '';
+	    $fd = $platform->fopen($sessionFile, 'rb');
+	    if ($fd) {
+		while (!$platform->feof($fd)) {
+		    $serialized .= $platform->fread($fd, 4096);
+		}
+		$platform->fclose($fd);
+	    }
+
+	    if ($serialized) {
+		$data = unserialize($serialized);
+		if (sizeof($data) == 3) {
+		    list ($this->_creationTime,
+			  $this->_remoteIdentifier,
+			  $this->_sessionData) = $data;
+		    $this->_loadedSessionData = $serialized;
+		}
+		$valid = true;
+	    }
+	}
+
+	if (!$valid) {
+	    /* No session file */
+	    $this->_emptySessionData();
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Get rid of all session data
+     *
+     * @access private
+     */
+    function _emptySessionData() {
+	$this->_sessionData = array();
+	$this->_loadedSessionData = array();
+	$this->_creationTime = time();
+	$this->_remoteIdentifier = $this->_getRemoteIdentifier();
+    }
+
+    /**
+     * Return a value that we can use to identify the client.  We can't tie it
+     * to the IP address because that changes too frequently (dialup users,
+     * users behind proxies) so we have to be creative.  Changing this algorithm
+     * will cause all existing sessions to be discarded.
+     *
+     * @return array
+     * @access private
+     */
+    function _getRemoteIdentifier() {
+	$httpUserAgent = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	return array(GalleryUtilities::getRemoteHostAddress(),
+		     isset($httpUserAgent) ? md5($httpUserAgent) : null);
+    }
+
+    /**
+     * Compare two arrays and return a score consisting of 1 point for every
+     * matching element in the arrays.
+     * Example input:
+     *   $a = array(0, 'x', 2);
+     *   $b = array(0, 'y', 2);
+     * Example output:
+     *   2
+     * (indexes 0 and 2 match.  index 1 does not)
+     *
+     * @return int a score
+     */
+    function _compareIdentifiers($a, $b) {
+	$score = 0;
+	if (is_array($a) && is_array($b)) {
+	    for ($i = 0; $i < sizeof($a); $i++) {
+		if (sizeof($b) > $i) {
+		    if ($a[$i] == $b[$i]) {
+			$score++;
+		    }
+		}
+	    }
+	}
+	return $score;
+    }
+
+    /**
+     * Store a status message
+     *
+     * @param array status data
+     * @return string the status id
+     */
+    function putStatus($statusData) {
+	$tod = gettimeofday();
+	/*
+	 * Prefix the status id with a character so that it doesn't wind up being
+	 * entirely numeric because PHP will renumber numeric keys in associative
+	 * arrays when you run it through functions like array_splice()
+	 */
+	$statusId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
+
+	$status =& $this->get('core.status');
+	if (!isset($status)) {
+	    $status = array();
+	}
+
+	$status[$statusId] = $statusData;
+
+	/* Prune extra status messages */
+	$maxStatusMessages = 5;
+	if (sizeof($status) > $maxStatusMessages) {
+	    $status = array_splice($status, -$maxStatusMessages);
+	}
+	$this->put('core.status', $status);
+
+	return $statusId;
+    }
+
+    /**
+     * Get a status message
+     *
+     * @param string the status id
+     * @return array the status message
+     */
+    function getStatus($statusId, $remove=true) {
+	$status = $this->get('core.status');
+	$statusData = null;
+	if (isset($status) && isset($status[$statusId])) {
+	    $statusData = $status[$statusId];
+	    if ($remove) {
+		unset($status[$statusId]);
+		$this->put('core.status', $status);
+	    }
+	}
+
+	return $statusData;
+    }
+
+    /**
+     * Return the session id
+     *
+     * @return string the session id
+     */
+    function getSessionId() {
+	return $this->_sessionId;
+    }
+
+    /**
+     * Start new navigation
+     *
+     * @param array data for this new navigation:
+     *              array(  'returnName' => ...
+     *                      'returnUrl' => ...
+     *                    [ 'returnNavId' => ... ]
+     *                   )
+     * @return string the navigation id
+     */
+    function addToNavigation($navigationData) {
+	$tod = gettimeofday();
+	$navId = 'x' . substr(md5($tod['usec'] + rand(1, 1000)), 0, 8);
+
+	$navigation =& $this->get('core.navigation');
+	if (!isset($navigation)) {
+	    $navigation = array();
+	}
+	$navigation[$navId] = array();
+	$navigation[$navId]['data'] = $navigationData;
+	$navigation[$navId]['nextIds'] = array();
+
+	/* Tell our predecessor that he's got a new successor */
+	if (isset($navigationData['returnNavId'])) {
+	    $returnNavId = $navigationData['returnNavId'];
+	    $navigation[$returnNavId]['nextIds'][$navId] = true;
+	}
+
+	/* Prune oldest navigation branches */
+	$maxNavBranches = 10;
+	if (sizeof($navigation) > $maxNavBranches) {
+	    $navigation = array_splice($navigation, -$maxNavBranches);
+	}
+
+	$this->put('core.navigation', $navigation);
+
+	return $navId;
+    }
+
+    /**
+     * Get data for a specific navigation id
+     *
+     * @param string the navigation id
+     * @return array the navigation data
+     */
+    function getNavigation($navId) {
+	$navigation = $this->get('core.navigation');
+	$navigationData = array();
+	if ($navigation != null && isset($navigation[$navId])) {
+	    $navigationData[] = $navigation[$navId]['data'];
+	    /* Add data from our predecessors, if available */
+	    while (isset($navigation[$navId]['data']['returnNavId'])
+			&& isset($navigation[$navigation[$navId]['data']['returnNavId']]['data'])) {
+		$navId = $navigation[$navId]['data']['returnNavId'];
+		$navigationData[] = $navigation[$navId]['data'];
+	    }
+	}
+
+	return $navigationData;
+    }
+
+    /**
+     * Jump back from one navigation point to one of its predecessors
+     *
+     * @param string the source navigation id
+     * @param string the destination navigation id. If empty, go back to root.
+     */
+    function jumpNavigation($fromNavId, $destNavId = '') {
+	global $gallery;
+	$gallery->debug("navigation: Jumping back from $fromNavId to $destNavId");
+
+	$navigation = $this->get('core.navigation');
+	$currentId = $fromNavId;
+	/* Iterate back to root, deleting everything, until we reach
+	 * destNavId or an navId that has other successors
+	 */
+	while (true) {
+	    $gallery->debug("navigation: deleting $currentId");
+	    $returnNavId = null;
+	    if (isset($navigation[$currentId]['data']['returnNavId'])) {
+		$returnNavId = $navigation[$currentId]['data']['returnNavId'];
+	    }
+	    unset($navigation[$currentId]);
+	    if ($returnNavId == null) {
+		break;
+	    }
+	    unset($navigation[$returnNavId]['nextIds'][$currentId]);
+	    if (count($navigation[$returnNavId]['nextIds']) > 0) {
+		break;
+	    }
+	    if ($returnNavId == $destNavId) {
+		break;
+	    }
+	    $currentId = $returnNavId;
+	}
+	$this->put('core.navigation', $navigation);
+    }
+}
+
+?>

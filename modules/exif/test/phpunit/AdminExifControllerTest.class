@@ -1,0 +1,425 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Exif
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * AdminExif controller tests
+ * @package Exif
+ * @subpackage PHPUnit
+ */
+class AdminExifControllerTest extends GalleryControllerTestCase {
+
+    function AdminExifControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'exif:AdminExif');
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
+	list ($ret, $this->_save['summary']) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_save['detailed']) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_save['addOption']) =
+	    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifHelper::setDefaultProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	global $gallery;
+	parent::tearDown();
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $this->_save['summary']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, $this->_save['detailed']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif',
+						  'addOption', $this->_save['addOption']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testSaveAvailableToSummary() {
+	GalleryUtilities::putRequestVariable('form[available][0]', 'SubjectLocation');
+	GalleryUtilities::putRequestVariable('form[available][1]', 'Sharpness');
+	GalleryUtilities::putRequestVariable('form[action][availableToSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('added' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're there */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array('SubjectLocation', $properties));
+	$this->assert(in_array('Sharpness', $properties));
+    }
+
+    function testRemoveFromSummary() {
+	GalleryUtilities::putRequestVariable('form[summary][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[summary][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[action][removeFromSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('removed' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're gone */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!in_array('Make', $properties));
+	$this->assert(!in_array('ISO', $properties));
+    }
+
+    function testRemoveFromSummaryMissing() {
+	GalleryUtilities::putRequestVariable('form[action][removeFromSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
+    }
+
+    function testMoveUpSummary() {
+	GalleryUtilities::putRequestVariable('form[summary][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[summary][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[summary][2]', 'DateTime');
+	GalleryUtilities::putRequestVariable('form[action][moveUpSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('movedUp' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the new positions */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('Make', $properties[0]);
+	$this->assertEquals('ISO', $properties[7]);
+	$this->assertEquals('DateTime', $properties[10]);
+    }
+
+    function testMoveUpSummaryMissing() {
+	GalleryUtilities::putRequestVariable('form[action][moveUpSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
+    }
+
+    function testMoveDownSummary() {
+	GalleryUtilities::putRequestVariable('form[summary][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[summary][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[summary][2]', 'DateTime');
+	GalleryUtilities::putRequestVariable('form[action][moveDownSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('movedDown' => array('summary' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the new positions */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('Make', $properties[1]);
+	$this->assertEquals('ISO', $properties[9]);
+	$this->assert('DateTime', $properties[11]);
+    }
+
+    function testMoveDownSummaryMissing() {
+	GalleryUtilities::putRequestVariable('form[action][moveDownSummary]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][summary][missing]')),
+			    $results);
+    }
+
+    function testResetSummary() {
+	/* Remove all properties */
+	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][resetSummary]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('restored' => array('summary' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're all back again */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_SUMMARY);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(12, sizeof($properties));
+	$this->assertEquals('Make', $properties[0]);
+	$this->assertEquals('ISO', $properties[8]);
+    }
+
+    function testSaveAvailableToDetailed() {
+	GalleryUtilities::putRequestVariable('form[available][0]', 'SubjectLocation');
+	GalleryUtilities::putRequestVariable('form[available][1]', 'FocusMode');
+	GalleryUtilities::putRequestVariable('form[action][availableToDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('added' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're there */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(in_array('SubjectLocation', $properties));
+	$this->assert(in_array('Sharpness', $properties));
+    }
+
+    function testRemoveFromDetailed() {
+	GalleryUtilities::putRequestVariable('form[detailed][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[detailed][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[action][removeFromDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('removed' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're gone */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert(!in_array('Make', $properties));
+	$this->assert(!in_array('ISO', $properties));
+    }
+
+    function testRemoveFromDetailedMissing() {
+	GalleryUtilities::putRequestVariable('form[action][removeFromDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
+    }
+
+    function testMoveUpDetailed() {
+	GalleryUtilities::putRequestVariable('form[detailed][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[detailed][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[detailed][2]', 'SubjectDistance');
+	GalleryUtilities::putRequestVariable('form[action][moveUpDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('movedUp' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the new positions */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('Make', $properties[0]);
+	$this->assertEquals('ISO', $properties[7]);
+	$this->assertEquals('SubjectDistance', $properties[25]);
+    }
+
+    function testMoveUpDetailedMissing() {
+	GalleryUtilities::putRequestVariable('form[action][moveUpDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
+    }
+
+    function testMoveDownDetailed() {
+	GalleryUtilities::putRequestVariable('form[detailed][0]', 'Make');
+	GalleryUtilities::putRequestVariable('form[detailed][1]', 'ISO');
+	GalleryUtilities::putRequestVariable('form[detailed][2]', 'SubjectDistance');
+	GalleryUtilities::putRequestVariable('form[action][moveDownDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('movedDown' => array('detailed' => 2)),
+				  'error' => array()),
+			    $results);
+
+	/* Verify the new positions */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('Make', $properties[1]);
+	$this->assertEquals('ISO', $properties[9]);
+	$this->assertEquals('SubjectDistance', $properties[26]);
+    }
+
+    function testMoveDownDetailedMissing() {
+	GalleryUtilities::putRequestVariable('form[action][moveDownDetailed]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array(),
+				  'error' => array('form[error][detailed][missing]')),
+			    $results);
+    }
+
+    function testResetDetailed() {
+	/* Remove all properties */
+	$ret = ExifPropertiesMap::setProperties(EXIF_DETAILED, array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][resetDetailed]', 1);
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('restored' => array('detailed' => 1)),
+				  'error' => array()),
+			    $results);
+
+	/* Make sure they're all back again */
+	list ($ret, $properties) = ExifPropertiesMap::getProperties(EXIF_DETAILED);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Spot check */
+	$this->assertEquals(27, sizeof($properties));
+	$this->assertEquals('Make', $properties[0]);
+	$this->assertEquals('ISO', $properties[8]);
+	$this->assertEquals('SubjectDistance', $properties[26]);
+    }
+
+    function testSaveAddOption() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[item][description]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'exif:AdminExif'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $addOption) = GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(EXIF_ITEM_DESCRIPTION, (int)$addOption);
+    }
+}
+?>

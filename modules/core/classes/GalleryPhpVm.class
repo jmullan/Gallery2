@@ -1,0 +1,43 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * An abstraction layer over PHP.  For now, this serves as a way to allow our test classes to
+ * interpose themselves between the code and the PHP VM so that we can simulate different VMs.
+ * For example, this lets us return arbitrary values for calls like function_exists().  Every call
+ * here is a straight pass-through.  New functions can be added at any time.
+ *
+ * @package GalleryCore
+ * @abstract
+ * @access public
+ */
+class GalleryPhpVm {
+    function function_exists($functionName) {
+	return function_exists($functionName);
+    }
+}
+?>

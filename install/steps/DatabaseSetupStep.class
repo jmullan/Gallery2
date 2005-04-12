@@ -1,0 +1,191 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+class DatabaseSetupStep extends InstallStep {
+    function stepName() {
+	return _('Database Setup');
+    }
+
+    function loadTemplateData(&$templateData) {
+	global $galleryStub;
+
+	if (empty($this->_config)) {
+	    $this->_config = $galleryStub->getConfig('storage.config');
+	    if (empty($this->_config)) {
+		$this->_config = array();
+		$this->_config['type'] = 'mysql';
+		$this->_config['hostname'] = 'localhost';
+		$this->_config['username'] = 'root';
+		$this->_config['password'] = '';
+		$this->_config['database'] = 'gallery2';
+		$this->_config['tablePrefix'] = 'g2_';
+		$this->_config['columnPrefix'] = 'g_';
+	    }
+	}
+
+	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$this->_config[$key] = $this->sanitize($_POST[$key]);
+	    }
+	}
+
+	switch ($this->_config['type']) {
+	    case 'mysql':
+	    case 'mysqlt':
+		if (!function_exists('mysql_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			'You must have the MySQL PHP module installed';
+		}
+		break;
+	    case 'postgres7':
+	    case 'postgres':
+		if (!function_exists('pg_connect')) {
+		    $templateData['error']['phpDbMissing'] =
+			'You must have the PostgreSQL PHP module installed';
+		}
+		break;
+	    case 'oci8po':
+		if (!function_exists('OCIPLogon')) {
+		    $templateData['error']['phpDbMissing'] =
+			'You must have the Oracle OCI8 PHP module installed';
+		}
+		break;
+	}
+
+	if (!empty($_POST['action']) && $_POST['action'] == 'save') {
+	    if (empty($this->_config['columnPrefix'])) {
+		$templateData['error']['columnPrefix'] =
+		    sprintf(_('You must specify a column prefix (we recommend %s)'), 'g_');
+	    }
+
+	    if (empty($this->_config['tablePrefix'])) {
+		$templateData['error']['tablePrefix'] =
+		    sprintf(_('You must specify a table prefix (we recommend %s)'), 'g2_');
+	    }
+
+	    if (empty($templateData['errors']) && empty($templateData['error'])) {
+		// Load up ADOdb
+		require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
+
+		$this->_captureStart();
+		$db =& ADONewConnection($this->_config['type']);
+		$db->debug = true;
+		$this->_captureEnd();
+
+		if (empty($db)) {
+		    $templateData['errors'][] = sprintf(
+			_('Unable to create a database connection of type %s'),
+			$this->_config['type']);
+		}
+
+		if (empty($templateData['errors'])) {
+		    $this->_captureStart();
+		    $result = $db->NConnect($this->_config['hostname'],
+					    $this->_config['username'],
+					    $this->_config['password'],
+					    $this->_config['database']);
+		    $this->_captureEnd();
+		    if ($result === false) {
+			$templateData['errors'][] =
+			    _('Unable to connect to database with the information provided.');
+		    }
+		}
+	    }
+
+	    if (empty($templateData['errors']) && empty($templateData['error'])) {
+		$this->_captureStart();
+		$result = $db->MetaTables();
+		$this->_captureEnd();
+		if ($result === false) {
+		    $templateData['errors'][] =
+			_('The database you specified does not exist.  Please create it.');
+		}
+
+		if (empty($_POST['confirmReuseTables'])) {
+		    if (in_array($this->_config['tablePrefix'] . 'Schema', $result) ||
+			in_array($this->_config['tablePrefix'] . 'schema', $result)) {
+			$templateData['warnings'][] = _('Gallery tables already exist in this database!  If you want to use the existing tables, you must confirm that below.  Otherwise, you must specify a new database, or a different table prefix in order to continue.');
+			$templateData['showConfirm'] = 1;
+			$confirmRequired = 1;
+		    }
+		}
+	    }
+
+	    $templateData['databaseErrors'] = $this->_getCaptured();
+
+	    if (empty($templateData['errors']) && empty($templateData['error']) &&
+		(empty($confirmRequired) || !empty($_POST['confirmReuseTables']))) {
+		$this->setComplete(true);
+	    }
+	}
+
+	if ($this->isComplete()) {
+	    $galleryStub->setConfig('storage.config', $this->_config);
+	    $templateData['bodyFile'] = 'DatabaseSetupSuccess.html';
+	} else {
+	    foreach (array('type', 'hostname', 'username',
+			   'password', 'database', 'tablePrefix', 'columnPrefix') as $key) {
+		$templateData['config'] = $this->_config;
+	    }
+
+	    foreach (array('mysql'  => _('MySQL (all versions)'),
+			   'mysqlt' => _('MySQL with Transactions (v3.23.34a and newer)'),
+			   'postgres7' => _('PostgreSQL v7.x'),
+			   'postgres' => _('PostgreSQL v6.x (not well tested)'),
+			   'oci8po' => _('Oracle (9i and newer)'))
+		     as $key => $value) {
+		$templateData['dbList'][$key] = $value;
+	    }
+	    $templateData['dbSelected'][$this->_config['type']] = 1;
+
+	    $templateData['bodyFile'] = 'DatabaseSetupRequest.html';
+	}
+    }
+
+    function _captureStart() {
+	ob_start();
+    }
+
+    function _captureEnd() {
+	if (!isset($this->_debugContents)) {
+	    $this->_debugContents = '';
+	}
+	$this->_debugContents .= ob_get_contents();
+	ob_end_clean();
+    }
+
+    function _getCaptured() {
+	if (empty($this->_debugContents)) {
+	    return "";
+	}
+
+	$contents = $this->_debugContents;
+	unset($this->_debugContents);
+	return $contents;
+    }
+
+    function isRedoable() {
+	return true;
+    }
+}
+?>

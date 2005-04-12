@@ -1,0 +1,314 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test CoreModule functionality
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CoreModuleTest extends GalleryTestCase {
+    var $_module;
+
+    function ModuleTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addUserPermission($this->_parentAlbum->getId(),
+						       $gallery->getActiveUserId(),
+						       'core.all');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function tearDown() {
+	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testGetSiteAdminViews() {
+	list ($ret, $content) = $this->_module->getSiteAdminViews();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$expected = array(
+			  array('name' => $this->_module->translate('General'),
+				'view' => 'core:AdminCore'),
+			  array('name' => $this->_module->translate('Modules'),
+				'view' => 'core:AdminModules'),
+			  array('name' => $this->_module->translate('Layouts and Themes'),
+				'view' => 'core:AdminLayouts',
+				'group' => 'display',
+				'groupLabel' => $this->_module->translate('Display')),
+			  array('name' => $this->_module->translate('Users'),
+				'view' => 'core:AdminUsers'),
+			  array('name' => $this->_module->translate('Groups'),
+				'view' => 'core:AdminGroups'),
+			  array('name' => $this->_module->translate('Maintenance'),
+				'view' => 'core:AdminMaintenance'),
+			  );
+	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (!empty($list)) {
+	    $expected[] = array('name' => $this->_module->translate('Toolkit Priority'),
+				'view' => 'core:AdminToolkitPriority',
+				'group' => 'toolkits',
+				'groupLabel' => $this->_module->translate('Graphics Toolkits'));
+	}
+	$this->assertEquals($expected, $content);
+    }
+
+    function testGetItemAdminViews() {
+	list ($ret, $content) = $this->_module->getItemAdminViews($this->_parentAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(
+	    array(
+		array('name' => $this->_module->translate(
+			  array('text' => 'Edit %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemEdit'),
+		array('name' => $this->_module->translate(
+			  array('text' => 'Delete %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemDeleteSingle'),
+		array('name' => $this->_module->translate(
+			  array('text' => 'Move %s',
+				'arg1' => $this->_module->translate('Album'))),
+		      'view' => 'core:ItemMoveSingle'),
+		array('name' => $this->_module->translate('Edit Permissions'),
+		      'view' => 'core:ItemPermissions'),
+		array('name' => $this->_module->translate('Add Items'),
+		      'view' => 'core:ItemAdd'),
+		array('name' => $this->_module->translate('Add Sub-Album'),
+		      'view' => 'core:ItemAddAlbum')
+		),
+	    $content);
+    }
+
+    function testGetConfigurationView() {
+	$content = $this->_module->getConfigurationView();
+	$this->assertEquals(null, $content);
+    }
+
+    function testGetSystemLinks() {
+        list ($ret, $content) = $this->_module->getSystemLinks();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+        $this->assertEquals(array(
+                                  array('text' => $this->_module->translate('Site Admin'),
+                                        'params' => array('view' => 'core:SiteAdmin',
+							  'return' => 1)),
+                                  array('text' => $this->_module->translate('Your Account'),
+                                        'params' => array('view' => 'core:UserAdmin',
+							  'subView' => 'core:UserPreferences',
+							  'return' => 1)),
+                                  array('text' => $this->_module->translate('Logout'),
+                                        'params' => array('controller' => 'core:Logout',
+							  'return' => 1))
+                                  ),
+                            $content);
+    }
+
+    function testLoadSystemContent() {
+	list ($ret, $save) = $this->_module->getParameter('language.selector');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Without a language selector */
+	$template = new CoreModuleMockTemplate();
+	$ret = $this->_module->setParameter('language.selector', 'none');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $content) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($content['languageSelector']));
+
+	/* With a language selector */
+	$template = new CoreModuleMockTemplate();
+	$ret = $this->_module->setParameter('language.selector', 'all');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $content) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!empty($content['languageSelector']));
+
+	$ret = $this->_module->setParameter('language.selector', $save);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+
+    function testGetItemLinks() {
+	list ($ret, $content) = $this->_module->getItemLinks(array($this->_parentAlbum));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$links[] = array('text' => $this->_module->translate('add items'),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemAdd',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'edit %s',
+				   'arg1' => $this->_module->translate('album'))),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemEdit',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate('add sub-album'),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemAddAlbum',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate('edit permissions'),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemPermissions',
+			     'itemId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'delete %s',
+				   'arg1' => $this->_module->translate('album'))),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemDelete',
+			     'itemId' => $this->_parentAlbum->getParentId(),
+			     'selectedId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+	$links[] = array('text' => $this->_module->translate(
+			     array('text' => 'move %s',
+				   'arg1' => $this->_module->translate('album'))),
+			 'params' => array(
+			     'view' => 'core:ItemAdmin',
+			     'subView' => 'core:ItemMove',
+			     'itemId' => $this->_parentAlbum->getParentId(),
+			     'selectedId' => $this->_parentAlbum->getId(),
+			     'return' => 1,
+			     ));
+
+	$this->assertEquals(array($this->_parentAlbum->getId() => $links), $content);
+    }
+
+    function testGetItemSummaries() {
+	list ($ret, $content) = $this->_module->getItemSummaries(array($this->_parentAlbum));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array(), $content);
+    }
+
+    function testGetItemDetails() {
+	$template = new CoreModuleMockTemplate();
+	list ($ret, $content) = $this->_module->loadItemDetails($template, $this->_parentAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $content);
+    }
+
+    function testSetModuleParameter() {
+	$key = 'test-key';
+	$value = rand();
+
+	$ret = $this->_module->setParameter($key, $value);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $newValue) = $this->_module->getParameter($key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Clean up */
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', $key);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($value, (int)$newValue);
+    }
+}
+
+/**
+ * Mock template class
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class CoreModuleMockTemplate {
+    function setVariable() {
+    }
+}
+?>
