@@ -102,19 +102,6 @@ class SystemChecksStep extends UpgradeStep {
 		array('title' => _('Safe Mode'), 'success' => true);
 	}
 
-	/* Make sure session.auto_start is OFF during the upgrader */
-	if (GalleryUtilities::getPhpIniBool('session.auto_start')) {
-	    $templateData['check'][] =
-		array('title' => _('Session auto-start disabled'),
-		      'error' => true,
-		      'notice' => _('Error: Your PHP is configured to auto-start sessions (session.auto_start = 1 in php.ini). Please turn that feature off before continuing with the upgrader.'));
-	    $suggestedHtaccess[] = 'php_value session.auto_start 0';
-	    $failCount++;
-	} else {
-	    $templateData['check'][] =
-		array('title' => _('Session Auto-Start disabled'), 'success' => true);
-	}
-
 	/* Warning when exec() is disabled */
 	if (in_array('exec', split(',\s*', ini_get('disable_functions')))) {
 	    $templateData['check'][] =

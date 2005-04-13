@@ -97,7 +97,7 @@ if (!isset($_SESSION['galleryId'])) {
 /* If we don't have our steps in our session, initialize them now. */
 if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
     $steps = unserialize($_SESSION['install_steps']);
-    $galleryStub =& $_SESSION['galleryStub'];
+    $galleryStub = unserialize($_SESSION['galleryStub']);
 }
 
 if (empty($steps) || !is_array($steps)) {
@@ -112,7 +112,7 @@ if (empty($steps) || !is_array($steps)) {
 
     /* Get rid of $gallery so that we can call init.php later on and get a real $gallery */
     $galleryStub = $gallery;
-    $_SESSION['galleryStub'] =& $galleryStub;
+    $_SESSION['galleryStub'] = serialize($galleryStub);
     unset($gallery);
 
     $steps = array();
@@ -201,4 +201,7 @@ function addSessionIdToUrls($html) {
  * it will try to instantiate the classes before they've been defined
  */
 $_SESSION['install_steps'] = serialize($steps);
+if (isset($galleryStub)) {
+    $_SESSION['galleryStub'] = serialize($galleryStub);
+}
 ?>
