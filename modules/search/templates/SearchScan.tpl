@@ -7,7 +7,7 @@
 <div id="gsSystemLinks" class="gcBorder1">
   <ul class="gbBreadCrumb">
     <li class="firstChild">
-      <a href="{g->url}">{g->text text="Gallery"}</a>
+      <a href="{g->url}">{$SearchScan.rootAlbum.title}</a>
     </li>
     <li>
       {g->text text="Search Results Summary"}

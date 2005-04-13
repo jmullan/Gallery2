@@ -7,7 +7,7 @@
 <div id="gsSystemLinks" class="gcBorder1">
   <ul class="gbBreadCrumb">
     <li class="firstChild">
-      <a href="{g->url}">{g->text text="Gallery"}</a>
+      <a href="{g->url}">{$SearchShowAll.rootAlbum.title}</a>
     </li>
     <li>
       {g->text text="Search Results"}
@@ -139,7 +139,7 @@
 		<ul class="giInfo">
 		  {foreach from=$result.fields item=field}
 		  <li>
-		    {$field.key}
+		    {$field.key}:
 		    {$field.value|default:"&nbsp;"|ireplace:$form.searchCriteria:"<span class=\"giSearchHighlight\">\\1</span>"|markup}
 		  </li>
 		  {/foreach}

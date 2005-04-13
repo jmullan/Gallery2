@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/SearchUtilities.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/SearchUtilities.class');
 
 /**
  * @package Search
@@ -116,13 +116,15 @@ class SearchShowAllView extends GalleryView {
 		$moduleId = $form['moduleId'];
 		require_once(dirname(__FILE__) . '/classes/GallerySearchInterface_1_0.class');
 		list ($ret, $searchInstance) =
-		    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0', $form['moduleId']);
+		    GalleryCoreApi::newFactoryInstanceById('GallerySearchInterface_1_0',
+							   $form['moduleId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
 		if (!isset($searchInstance)) {
-		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+		    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__),
+				 null);
 		}
 
 		list ($ret, $moduleInfo) = $searchInstance->getSearchModuleInfo();
@@ -133,9 +135,9 @@ class SearchShowAllView extends GalleryView {
 		if (isset($form['options'][$moduleId])) {
 		    list ($ret, $results) =
 			$searchInstance->search($form['options'][$moduleId],
-						SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
-						($form['page']-1) * $pageSize,
-						$pageSize);
+			    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
+			    ($form['page']-1) * $pageSize,
+			    $pageSize);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -164,7 +166,8 @@ class SearchShowAllView extends GalleryView {
 		    }
 
 		    /* Fetch thumbnails */
-		    list ($ret, $thumbnailList) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
+		    list ($ret, $thumbnailList) =
+			GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -177,16 +180,26 @@ class SearchShowAllView extends GalleryView {
 	    $form['searchCriteria'] = '';
 	}
 
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Render the HTML body */
-	$SearchShowAll = array();
-	$SearchShowAll['maxPages'] = $maxPages;
-	$SearchShowAll['moduleInfo'] = $moduleInfo;
-	$SearchShowAll['moduleId'] = $moduleId;
-	$SearchShowAll['results'] = $results;
-	$SearchShowAll['thumbnails'] = $thumbnails;
-	$SearchShowAll['items'] = $items;
-	$SearchShowAll['controller'] = 'search:SearchShowAll';
-	$template->setVariable('SearchShowAll', $SearchShowAll);
+	$template->setVariable('SearchShowAll', array(
+	    'controller' => 'search:SearchShowAll',
+	    'maxPages' => $maxPages,
+	    'moduleInfo' => $moduleInfo,
+	    'moduleId' => $moduleId,
+	    'results' => $results,
+	    'thumbnails' => $thumbnails,
+	    'items' => $items,
+	    'rootAlbum' => $rootAlbum->getMemberData()));
 
 	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
 	if ($ret->isError()) {

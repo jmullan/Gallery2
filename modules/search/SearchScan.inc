@@ -29,7 +29,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/SearchUtilities.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/SearchUtilities.class');
 
 /**
  * @package Search
@@ -75,7 +75,7 @@ class SearchScanController extends GalleryController {
 		if (isset($form['options'][$id])) {
 		    list ($ret, $resultSet) =
 			$instance->search($form['options'][$id],
-					  SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']));
+			    SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']));
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -170,9 +170,8 @@ class SearchScanView extends GalleryView {
 		    if (isset($form['options'][$id])) {
 			list ($ret, $searchResults[$id]) =
 			    $instance->search($form['options'][$id],
-					      SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
-					      0,
-					      $scanSize);
+				SearchUtilities::sanitizeSearchCriteria($form['searchCriteria']),
+				0, $scanSize);
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
@@ -225,18 +224,27 @@ class SearchScanView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	$slideshowAvailable = !empty($ids);
 
+	list ($ret, $rootAlbumId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	/* Render the HTML body */
-	$SearchScan = array();
-	$SearchScan['modules'] = $modules;
-	$SearchScan['searchResults'] = $searchResults;
-	$SearchScan['thumbnails'] = $thumbnails;
-	$SearchScan['items'] = $items;
-	$SearchScan['controller'] = 'search:SearchScan';
-	$SearchScan['slideshowAvailable'] = $slideshowAvailable;
-	$template->setVariable('SearchScan', $SearchScan);
+	$template->setVariable('SearchScan', array(
+	    'controller' => 'search:SearchScan',
+	    'modules' => $modules,
+	    'searchResults' => $searchResults,
+	    'thumbnails' => $thumbnails,
+	    'items' => $items,
+	    'slideshowAvailable' => $slideshowAvailable,
+	    'rootAlbum' => $rootAlbum->getMemberData()));
 
 	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
 	if ($ret->isError()) {
