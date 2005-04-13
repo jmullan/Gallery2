@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -49,14 +49,14 @@ class CaptchaConfigAdminController extends GalleryController {
 	return array(GalleryStatus::success(), $results);
     }
 }
-	
+
 
 /**
  * Show the user which required GD functions are missing.  They can't install the module, and
  * there's nothing we can do about it.
  */
 class CaptchaConfigAdminView extends GalleryView {
-	
+
     /**
      * @see GalleryView::loadTemplate
      */
@@ -69,10 +69,10 @@ class CaptchaConfigAdminView extends GalleryView {
 
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CaptchaHelper.class');
-	$gdReport = CaptchaHelper::testRequiredGdFunctions(new GalleryPhpVm());	
+	$gdReport = CaptchaHelper::testRequiredGdFunctions(new GalleryPhpVm());
 
 	$CaptchaConfigAdmin = array();
-	$CaptchaConfigAdmin['gdReport'] = $gdReport; 
+	$CaptchaConfigAdmin['gdReport'] = $gdReport;
 	$template->setVariable('CaptchaConfigAdmin', $CaptchaConfigAdmin);
 	$template->setVariable('controller', 'captcha:CaptchaConfigAdmin');
 	return array(GalleryStatus::success(),

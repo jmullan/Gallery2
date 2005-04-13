@@ -155,10 +155,7 @@ class GdModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-	/*
-	 * This module requires all fields to be filled out before it can be
-	 * activated.
-	 */
+	/* This module requires all fields to be filled out before it can be activated. */
 	list ($ret, $value) = $this->getParameter('jpegQuality');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -177,7 +174,7 @@ class GdModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (! $isSupported) {
+	if (!$isSupported) {
 	    return array(GalleryStatus::success(), true);
 	}
 

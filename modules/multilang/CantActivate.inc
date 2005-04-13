@@ -39,16 +39,16 @@ class CantActivateController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-        /* Figure out where to redirect upon success */
-        $results['redirect']['view'] = 'core:SiteAdmin';
-        $results['redirect']['subView'] = 'core:AdminModules';
-        $results['status'] = array();
-        $results['error'] = array();
+	/* Figure out where to redirect upon success */
+	$results['redirect']['view'] = 'core:SiteAdmin';
+	$results['redirect']['subView'] = 'core:AdminModules';
+	$results['status'] = array();
+	$results['error'] = array();
 
 	return array(GalleryStatus::success(), $results);
     }
 }
- 
+
 /**
  * This view will complain about missing gettext
  *

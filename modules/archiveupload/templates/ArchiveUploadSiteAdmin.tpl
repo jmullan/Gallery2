@@ -50,8 +50,13 @@
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
+  {if $form.isConfigure}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  {else}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+  {/if}
 </div>
 
 {if !empty($ArchiveUploadSiteAdmin.tests)}

@@ -29,7 +29,7 @@
  * @package ZipCart
  * @subpackage UserInterface
  */
-class AdminController extends GalleryController {
+class ZipCartAdminController extends GalleryController {
 
     /**
      * @see GalleryController::handleRequest
@@ -77,19 +77,37 @@ class AdminController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'zipcart');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $isActive) = $module->isActive();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'zipcart:Admin';
-	    $status['saved'] = 1;
+	    if ($isActive) {
+		$redirect['subView'] = 'zipcart:ZipCartAdmin';
+		$status['saved'] = 1;
+	    } else {
+		$redirect['subView'] = 'core:AdminModules';
+		$status['configured'] = 'zipcart';
+	    }
+	} else if (isset($form['action']['reset'])) {
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'zipcart:ZipCartAdmin';
 	} else if (isset($form['action']['cancel'])) {
 	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'zipcart:Admin';
+	    $redirect['subView'] = 'core:AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'zipcart:Admin';
+	    $results['delegate']['subView'] = 'zipcart:ZipCartAdmin';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -102,7 +120,7 @@ class AdminController extends GalleryController {
  * @package ZipCart
  * @subpackage UserInterface
  */
-class AdminView extends GalleryView {
+class ZipCartAdminView extends GalleryView {
 
     /**
      * @see GalleryView::loadTemplate
@@ -110,8 +128,8 @@ class AdminView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	if ($form['formName'] != 'AdminZipCart') {
-	    $form['formName'] = 'AdminZipCart';
+	if ($form['formName'] != 'ZipCartAdmin') {
+	    $form['formName'] = 'ZipCartAdmin';
 	    list ($ret, $form['path']) =
 		    GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path');
 	    if ($ret->isError()) {
@@ -123,19 +141,28 @@ class AdminView extends GalleryView {
 	    $form['test'] = empty($form['error']);
 	}
 
-	$Admin = array();
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'zipcart');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$ZipCartAdmin = array('isConfigure' => !$isActive);
 	if (isset($form['error']['path']['badZip']) > 0) {
-	    $Admin['debugSnippet'] = GalleryUtilities::getRequestVariables('debugSnippet');
+	    $ZipCartAdmin['debugSnippet'] = GalleryUtilities::getRequestVariables('debugSnippet');
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
 	    $template->javascript($jsUrl);
 	}
 
-	$template->setVariable('Admin', $Admin);
-	$template->setVariable('controller', 'zipcart:Admin');
+	$template->setVariable('ZipCartAdmin', $ZipCartAdmin);
+	$template->setVariable('controller', 'zipcart:ZipCartAdmin');
 	return array(GalleryStatus::success(),
-		     array('body' => 'modules/zipcart/templates/Admin.tpl'));
+		     array('body' => 'modules/zipcart/templates/ZipCartAdmin.tpl'));
     }
 }
 ?>

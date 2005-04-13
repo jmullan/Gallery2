@@ -158,14 +158,14 @@ class ZipCartModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Zip Download'),
-				 'view' => 'zipcart:Admin')));
+				 'view' => 'zipcart:ZipCartAdmin')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'zipcart:Admin';
+	return 'zipcart:ZipCartAdmin';
     }
 }
 ?>

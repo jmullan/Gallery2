@@ -65,7 +65,7 @@ class CaptchaModule extends GalleryModule {
      */
     function isRecommendedDuringInstall() {
 	return true;
-    } 
+    }
 
     /**
      * @see GalleryModule::upgrade()
@@ -84,14 +84,14 @@ class CaptchaModule extends GalleryModule {
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
      * @see GalleryModule::autoConfigure()
      */
     function autoConfigure() {
-	/* We need to perform a test before activating */  	
+	/* We need to perform a test before activating */
 	return array(GalleryStatus::success(), true);
     }
 
@@ -102,14 +102,14 @@ class CaptchaModule extends GalleryModule {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CaptchaHelper.class');
 	$gdReport = CaptchaHelper::testRequiredGdFunctions(new GalleryPhpVm());
-	    
+
 	if (count($gdReport['fail']) > 0) {
 	    return array(GalleryStatus::success(), true);
 	} else {
 	    return array(GalleryStatus::success(), false);
 	}
     }
-	 
+
     /**
      * @see GalleryModule::activate()
      */
@@ -136,7 +136,7 @@ class CaptchaModule extends GalleryModule {
 		     array(array('name' => $this->translate('Captcha'),
 				 'view' => 'captcha:CaptchaSiteAdmin')));
     }
-    
+
     /**
      * @see GalleryModule::getConfigurationView()
      */

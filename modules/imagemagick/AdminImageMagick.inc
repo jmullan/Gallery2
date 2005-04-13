@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -63,7 +63,7 @@ class AdminImageMagickController extends GalleryController {
 			$form['path'] .= $slash;
 		    }
 		}
-	    
+
 		list ($ret, $testResults) = ImageMagickToolkitHelper::testBinaries($form['path']);
 		if ($ret->isError()) {
 		    if ($ret->getErrorCode() & ERROR_BAD_PATH) {
@@ -85,7 +85,7 @@ class AdminImageMagickController extends GalleryController {
 		    }
 		}
 	    }
-	    
+
 	    if (empty($error)) {
 		$ret = GalleryCoreApi::setPluginParameter(
 		    'module', 'imagemagick', 'path', $form['path']);
@@ -105,13 +105,30 @@ class AdminImageMagickController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $isActive) = $module->isActive();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
 		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'imagemagick:AdminImageMagick';
-		$status['saved'] = 1;
+		if ($isActive) {
+		    $redirect['subView'] = 'imagemagick:AdminImageMagick';
+		    $status['saved'] = 1;
+		} else {
+		    $redirect['subView'] = 'core:AdminModules';
+		    $status['configured'] = 'imagemagick';
+		}
 	    }
-	} else if (isset($form['action']['cancel'])) {
+	} else if (isset($form['action']['reset'])) {
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'imagemagick:AdminImageMagick';
+	} else if (isset($form['action']['cancel'])) {
+	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['subView'] = 'core:AdminModules';
 	}
 
 	if (!empty($redirect)) {
@@ -193,7 +210,7 @@ class AdminImageMagickView extends GalleryView {
 			    $success = false;
 			    $failCount++;
 			}
-		        $tests[] = $testResult;
+			$tests[] = $testResult;
 		    }
 		    if ($success) {
 			list($ret, $mimeTypes) =
@@ -214,6 +231,15 @@ class AdminImageMagickView extends GalleryView {
 	    }
 	}
 
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imagemagick');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$AdminImageMagick = array();
 	$AdminImageMagick['tests'] = $tests;
 	$AdminImageMagick['version'] = $version;
@@ -221,6 +247,7 @@ class AdminImageMagickView extends GalleryView {
 	$AdminImageMagick['jpegQualityList'] = $jpegQualityList;
 	$AdminImageMagick['debugSnippet'] = $debugSnippet;
 	$AdminImageMagick['failCount'] = $failCount;
+	$AdminImageMagick['isConfigure'] = !$isActive;
 
 	if ($failCount > 0) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
@@ -230,7 +257,7 @@ class AdminImageMagickView extends GalleryView {
 
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
 	$template->setVariable('controller', 'imagemagick:AdminImageMagick');
-	
+
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));
     }

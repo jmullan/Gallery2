@@ -29,8 +29,13 @@
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
+  {if $AdminGd.isConfigure}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  {else}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+  {/if}
 </div>
 
 <div class="gbBlock">

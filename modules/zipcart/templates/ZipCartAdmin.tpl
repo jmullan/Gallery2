@@ -48,16 +48,16 @@
 <div class="gbBlock">
   <h3>
     {g->text text="Debug output"}
-    <span id="Admin_trace-toggle"
+    <span id="ZipCartAdmin_trace-toggle"
      class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px"
-     onclick="BlockToggle('Admin_debugSnippet', 'Admin_trace-toggle')">+</span>
+     onclick="BlockToggle('ZipCartAdmin_debugSnippet', 'ZipCartAdmin_trace-toggle')">+</span>
   </h3>
   <p class="giDescription">
     {g->text text="We gathered this debug output while testing your zip installation.  If you read through this carefully you may discover the reason why it failed our tests."}
   </p>
-  <pre id="Admin_debugSnippet" class="gcBackground1 gcBorder2"
+  <pre id="ZipCartAdmin_debugSnippet" class="gcBackground1 gcBorder2"
    style="display: none; border-width: 1px; border-style: dotted; padding: 4px">
-    {$Admin.debugSnippet}
+    {$ZipCartAdmin.debugSnippet}
   </pre>
 </div>
 {/if}
@@ -67,6 +67,11 @@
    name="{g->formVar var="form[action][save]"}" value="{g->text text="Save Settings"}"/>
   <input type="submit" class="inputTypeSubmit"
    name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Settings"}"/>
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Reset"}"/>
+  {if $ZipCartAdmin.isConfigure}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
+  {else}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset"}"/>
+  {/if}
 </div>

@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -54,7 +54,6 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	global $gallery;
 	parent::tearDown();
 
 	foreach (array('path') as $param) {
@@ -68,8 +67,6 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveGoodPath() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/ffmpeg');
@@ -81,7 +78,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	/* Verify the settings went in properly */
 	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
@@ -91,8 +88,6 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveIncompletePath() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/incompletePath/');
@@ -104,7 +99,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	/* Verify the settings went in properly */
 	list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
@@ -113,13 +108,9 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('/incompletePath/ffmpeg', $path);
     }
 
-    function testCancel() {
-	global $gallery;
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-
-	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'ffmpeg:AdminFfmpeg'),
@@ -127,10 +118,19 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-    
-    function testSaveTestErrorPath() {
-	global $gallery;
 
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testSaveTestErrorPath() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/validPathBadBinary/ffmpeg');
@@ -145,8 +145,6 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
     }
 
     function testSaveBadPath() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/ffmpeg');
@@ -159,10 +157,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
     }
-    
-    function testNotExecutablePath() {
-	global $gallery;
 
+    function testNotExecutablePath() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '/notExecutablePath/ffmpeg');
@@ -175,10 +171,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][path][notExecutable]')),
 			    $results);
     }
-    
-    function testSaveMissingPath() {
-	global $gallery;
 
+    function testSaveMissingPath() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '');
@@ -198,7 +192,7 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
  *
  * @package Ffmpeg
  * @subpackage PHPUnit
- */ 
+ */
 class AdminFfmpegControllerTestPlatform {
     function getDirectorySeparator() {
 	return '/';
@@ -213,7 +207,7 @@ class AdminFfmpegControllerTestPlatform {
 	case '/incompletePath/ffmpeg':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -224,7 +218,7 @@ class AdminFfmpegControllerTestPlatform {
 	case '/incompletePath/':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -236,7 +230,7 @@ class AdminFfmpegControllerTestPlatform {
 	case '/incompletePath/ffmpeg':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -247,7 +241,7 @@ class AdminFfmpegControllerTestPlatform {
 	case '/incompletePath/ffmpeg':
 	    return true;
 	}
-	
+
 	return false;
     }
 

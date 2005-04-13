@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -42,18 +42,18 @@ class SetupRewriteController extends GalleryController {
     function handleRequest(&$form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$status = array();
 	$error = array();
 
 	if (isset($form['action']['write'])) {
 	    /* Write Gallery .htaccess file */
-	    
+
 	    list($ret, $err) = RewriteHelper::writeFile();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -70,19 +70,19 @@ class SetupRewriteController extends GalleryController {
 	    $redirect['subView'] = 'rewrite:SetupRewrite';
 	} else if (isset($form['action']['done'])) {
 	    list ($ret, $galleryLocation) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (empty($galleryLocation)) {
 	        $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'galleryLocation',
-			$form['galleryLocation']);
+							  $form['galleryLocation']);
 	        if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-		
+
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminModules';
 	} else if (isset($form['action']['save'])) {
@@ -91,12 +91,12 @@ class SetupRewriteController extends GalleryController {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'rewrite:SetupRewrite';
 	    $status['saved'] = 1;
 	}
-	
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
@@ -123,32 +123,34 @@ class SetupRewriteView extends GalleryView {
     	global $gallery;
     	$urlGenerator =& $gallery->getUrlGenerator();
 	$SetupRewrite = array();
-	$module = new RewriteModule();
 
-	
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'rewrite');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	if ($form['formName'] != 'SetupRewrite') {
 	    $form['formName'] = 'SetupRewrite';
 
 	    list ($ret, $form['galleryLocation']) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'galleryLocation');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if (empty($form['galleryLocation'])) {
 		$form['galleryLocation'] = $urlGenerator->getCurrentUrlDir();
 	    }
 
 	    $SetupRewrite['modes'] = array('true' => $module->translate('yes'),
 					   'false' => $module->translate('no'));
-
 	}
 
 	list ($ret, $htaccessCode) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$SetupRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
 	$SetupRewrite['customLine'] = 'RewriteBase /' .
 		substr($urlGenerator->getCurrentUrlDir(), strlen($urlGenerator->makeUrl('/'))) .
@@ -159,7 +161,7 @@ class SetupRewriteView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $SetupRewrite['htaccessContent']) = RewriteHelper::getTemplate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

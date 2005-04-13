@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -68,14 +68,14 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '/validPath/unzip');
 
-	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('redirect' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	/* Verify the settings went in properly */
 	list ($ret, $unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
@@ -89,14 +89,14 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '/incompletePath/');
 
-	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('redirect' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	/* Verify the settings went in properly */
 	list ($ret, $unzipPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'archiveupload', 'unzipPath');
@@ -106,26 +106,37 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('/incompletePath/unzip', $unzipPath);
     }
 
-    function testCancel() {
-	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
-	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('redirect' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
     }
-    
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
     function testSaveTestErrorPath() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '/validPathBadBinary/unzip');
 
-	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('delegate' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][exec]')),
 				  $results);
@@ -135,36 +146,36 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '/invalidPath/unzip');
 
-	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('delegate' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][badPath]')),
 			    $results);
     }
-    
+
     function testNotExecutablePath() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '/notExecutablePath/unzip');
 
-	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('delegate' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][notExecutable]')),
 			    $results);
     }
-    
+
     function testSaveMissingPath() {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[unzipPath]', '');
 
-	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+	$this->assertEquals(array('delegate' => array(
+					'view' => 'core:SiteAdmin',
+					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][missing]')),
 			    $results);
@@ -176,7 +187,7 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
  *
  * @package ArchiveUpload
  * @subpackage PHPUnit
- */ 
+ */
 class ArchiveUploadSiteAdminControllerTestPlatform {
     function getDirectorySeparator() {
 	return '/';
@@ -191,7 +202,7 @@ class ArchiveUploadSiteAdminControllerTestPlatform {
 	case '/incompletePath/unzip':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -202,7 +213,7 @@ class ArchiveUploadSiteAdminControllerTestPlatform {
 	case '/incompletePath/':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -214,7 +225,7 @@ class ArchiveUploadSiteAdminControllerTestPlatform {
 	case '/incompletePath/unzip':
 	    return true;
 	}
-	
+
 	return false;
     }
 
@@ -225,12 +236,12 @@ class ArchiveUploadSiteAdminControllerTestPlatform {
 	case '/incompletePath/unzip':
 	    return true;
 	}
-	
+
 	return false;
     }
 
     function unlink($args) {
-	// do nothing
+	/* do nothing */
     }
 
     function isRestrictedByOpenBaseDir($path) {

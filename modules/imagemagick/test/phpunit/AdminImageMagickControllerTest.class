@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,7 +47,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $this->_saveParameters['jpegQuality']) =
 	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
 	if ($ret->isError()) {
@@ -59,26 +59,25 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	global $gallery;
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path',
+						  $this->_saveParameters['path']);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path', $this->_saveParameters['path']);
+	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality',
+						  $this->_saveParameters['jpegQuality']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality', $this->_saveParameters['jpegQuality']);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
+
 	parent::tearDown();
     }
 
     function testSaveGoodPath() {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
@@ -95,21 +94,17 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
-	
+
 	/* Verify the settings went in properly */
 	$this->assertEquals(array(GalleryStatus::success(), "${slash}validPath${slash}"),
 			    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path'));
 	$this->assertEquals(array(GalleryStatus::success(), '12'),
-			    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality'));
+	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality'));
     }
 
-    function testCancel() {
-	global $gallery;
+    function testReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
-	/* Use valid inputs */
-	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
-
-	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'imagemagick:AdminImageMagick'),
@@ -117,10 +112,20 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
-    
+
+    function testCancel() {
+	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminModules'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+
     function testSaveTestErrorPath() {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
 
@@ -140,10 +145,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
     function testSaveBadPath() {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	
+
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', "${slash}invalidPath${slash}");
@@ -160,10 +164,9 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
     function testSaveMissingPath() {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
-	
+
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[path]', '');
@@ -184,7 +187,7 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
  *
  * @package ImageMagick
  * @subpackage PHPUnit
- */ 
+ */
 class AdminImageMagickControllerTestPlatform {
 
     var $_emulation;
@@ -196,7 +199,7 @@ class AdminImageMagickControllerTestPlatform {
     function setEmulation($what) {
 	$this->_emulation = $what;
     }
-    
+
     function file_exists($path) {
 	$slash = $this->getDirectorySeparator();
 	switch ($path) {
@@ -219,12 +222,12 @@ class AdminImageMagickControllerTestPlatform {
 	case "${slash}validPathBadBinaries${slash}":
 	    return true;
 	}
-	
+
 	return false;
     }
 
     function unlink($args) {
-	// do nothing
+	/* do nothing */
     }
 
     function tempnam($dir, $prefix) {
@@ -241,14 +244,14 @@ class AdminImageMagickControllerTestPlatform {
 
     function exec($args) {
 	/*
-	 * We're going to test all of this in detail in the ImageMagickToolkitTest, so for now let's just aim
-	 * for success.
+	 * We're going to test all of this in detail in the ImageMagickToolkitTest,
+	 * so for now let's just aim for success.
 	 */
 	$slash = $this->getDirectorySeparator();
 	switch ($args[0][0]) {
 	case "${slash}validPath${slash}identify":
 	    return array(1, array("test.gif GIF 50x50+0+0 PseudoClass 8c 8-bit 232.0 0.000u 0:01"));
-	    
+
 	case "${slash}validPath${slash}convert":
 	    return array(1, array());
 
@@ -269,11 +272,11 @@ class AdminImageMagickControllerTestPlatform {
     }
 
     function chdir($path) {
-        return true;
+	return true;
     }
 
     function getcwd() {
-        return '/tmp';
+	return '/tmp';
     }
 }
 ?>

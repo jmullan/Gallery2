@@ -234,12 +234,5 @@ class ExifModule extends GalleryModule {
 		     array(array('name' => $this->translate('EXIF Parser'),
 				 'view' => 'exif:AdminExif')));
     }
-
-    /**
-     * @see GalleryModule::getConfigurationView()
-     */
-    function getConfigurationView() {
-	return 'exif:AdminExif';
-    }
 }
 ?>

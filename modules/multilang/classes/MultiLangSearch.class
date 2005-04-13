@@ -138,13 +138,13 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	  [MultiLangItemMap], [GalleryAccessSubscriberMap]
 	WHERE
 	  [MultiLangItemMap::itemId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [MultiLangItemMap::language] = ?
 	  AND
 	  (' . $searchString . ')
-        ', $aclMarkers);
+	', $aclMarkers);
 
 	$query = sprintf('
 	SELECT
@@ -156,8 +156,8 @@ class MultiLangSearch extends GallerySearchInterface_1_0 {
 	  [MultiLangItemMap], [GalleryAccessSubscriberMap]
 	WHERE
 	  [MultiLangItemMap::itemId] = [GalleryAccessSubscriberMap::itemId]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [MultiLangItemMap::language] = ?
 	  AND

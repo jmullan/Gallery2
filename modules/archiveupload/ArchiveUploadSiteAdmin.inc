@@ -42,8 +42,6 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$view = array('view' => 'core:SiteAdmin',
-		      'subView' => 'archiveupload:ArchiveUploadSiteAdmin');
 	$status = $error = array();
 	if (isset($form['action']['save']) || isset($form['action']['test'])) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ArchiveUploadHelper.class');
@@ -79,15 +77,35 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$results['redirect'] = $view;
-		$status['saved'] = 1;
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		list ($ret, $isActive) = $module->isActive();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($isActive) {
+		    $redirectSubview = 'archiveupload:ArchiveUploadSiteAdmin';
+		    $status['saved'] = 1;
+		} else {
+		    $redirectSubview = 'core:AdminModules';
+		    $status['configured'] = 'archiveupload';
+		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
-	    $results['redirect'] = $view;
+	    $redirectSubview = 'core:AdminModules';
+	} else if (isset($form['action']['reset'])) {
+	    $redirectSubview = 'archiveupload:ArchiveUploadSiteAdmin';
 	}
 
-	if (empty($results)) {
-	    $results['delegate'] = $view;
+	if (!empty($redirectSubview)) {
+	    $results['redirect'] = array('view' => 'core:SiteAdmin',
+					 'subView' => $redirectSubview);
+	} else {
+	    $results['delegate'] = array('view' => 'core:SiteAdmin',
+					 'subView' => 'archiveupload:ArchiveUploadSiteAdmin');
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -116,6 +134,16 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 		}
 	    }
 	}
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'archiveupload');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $isActive) = $module->isActive();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$form['isConfigure'] = !$isActive;
 
 	if (isset($form['action']['test'])) {
 	    if (empty($form['error']['unzipPath'])) {

@@ -17,6 +17,9 @@
       {g->text text="Successfully installed module %s" arg1=$status.installed}
     {/if}
   {/if}
+  {if isset($status.configured)}
+    {g->text text="Successfully configured module %s" arg1=$status.configured}
+  {/if}
   {if isset($status.upgraded)}
     {g->text text="Successfully upgraded module %s" arg1=$status.upgraded}
   {/if}
