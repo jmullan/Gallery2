@@ -43,10 +43,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
 
-	$groupedModules = array();
-	$groupLabel = array();
-	$moduleInstalledStatus = array();
-	$installedVersion = array();
+	$groupedModules = $groupLabel = array();
+	$moduleInstalledStatus = $moduleIsUpgradeable = $installedVersion = array();
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -155,16 +153,24 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	} else {
 	    $templateData['groupedModules'] =& $groupedModules;
 	    $templateData['groupLabel'] = $groupLabel;
-	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	    $templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
 	    $templateData['currentVersion'] = $currentVersion;
+	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	}
+	$templateData['anyUpgradeable'] = false;
 	if (!empty($templateData['errors'])) {
 	    $templateData['debug'] = $gallery->getDebugBuffer();
+	} else if (!empty($moduleIsUpgradeable)) {
+	    foreach ($moduleIsUpgradeable as $tmp) {
+		if ($tmp) {
+		    $templateData['anyUpgradeable'] = true;
+		    break;
+		}
+	    }
+	    if (!$templateData['anyUpgradeable']) {
+		$this->setComplete(true);
+	    }
 	}
-
-	/* This step is never truly complete */
-	$this->setComplete(false);
     }
 
     function isRedoable() {
