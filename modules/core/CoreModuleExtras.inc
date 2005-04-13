@@ -642,6 +642,9 @@ class CoreModuleExtras {
 	case '0.9.9':
 	    /* Beta 2 release! */
 
+	case '0.9.10':
+	    /* Added BuildDerivativesTask */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1050,6 +1053,7 @@ class CoreModuleExtras {
 	$regs[] = array('MaintenanceTask', 'OptimizeDatabaseTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'BuildDerivativesTask', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its

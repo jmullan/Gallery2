@@ -1,0 +1,106 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
+
+/**
+ * This is a MaintenanceTask that will ensure the data files for all derivatives
+ * (thumbnails, etc) have been built.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class BuildDerivativesTask extends MaintenanceTask {
+
+    /**
+     * @see MaintenanceTask::getInfo()
+     */
+    function getInfo() {
+	global $gallery;
+
+	return array('l10Domain' => 'modules_core',
+		     'title' => $gallery->i18n('Build All Thumbnails/Resizes'),
+		     'description' => $gallery->i18n(
+	    'Ensure data files for all derivatives (thumbnails, etc) have been built.'));
+    }
+
+    /**
+     * @see MaintenanceTask::run()
+     */
+    function run(&$immediateView) {
+	global $gallery;
+
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$message = $module->translate('Processing..');
+
+	$ret = $immediateView->doLoadImmediateTemplate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$ret = $immediateView->renderHeader(
+	    $module->translate('Build All Thumbnails/Resizes'), $message, '');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $results) = $gallery->search('
+	  SELECT [DerivativeImage::id] FROM [DerivativeImage]
+	  ORDER BY [DerivativeImage::id]
+	');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$i = 0;
+	$total = $results->resultCount();
+	while ($result = $results->nextResult()) {
+	    list ($ret) = GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($result[0]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    if (++$i % 5 == 0 || $i == $total) {
+		$ret = $immediateView->renderStatusMessage($message, '', $i / $total);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+	    }
+	}
+
+	return array(GalleryStatus::success(), true,
+		     array($module->translate(array('text' => 'Checked %d items',
+						    'arg1' => $total))));
+    }
+}
+?>

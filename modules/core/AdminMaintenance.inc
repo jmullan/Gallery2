@@ -61,8 +61,13 @@ class AdminMaintenanceController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    list ($ret, $immediateView) = $this->getImmediateStatusView();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    if (isset($tasks[$taskId])) {
-		list ($ret, $success, $details) = $tasks[$taskId]->run();
+		list ($ret, $success, $details) = $tasks[$taskId]->run($immediateView);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -80,6 +85,9 @@ class AdminMaintenanceController extends GalleryController {
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
+	    if (isset($immediateView->_template)) {  /* check if $immediateView was used */
+		$results['sendLateRedirect'] = $immediateView;
+	    }
 	} else {
 	    $results['delegate']['view'] = 'core:SiteAdmin';
 	    $results['delegate']['subView'] = 'core:AdminMaintenance';
@@ -89,6 +97,13 @@ class AdminMaintenanceController extends GalleryController {
 	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
+    }
+
+    /**
+     * @see GalleryController::canUseImmediateView
+     */
+    function canUseImmediateView() {
+	return true;
     }
 }
 
@@ -127,7 +142,7 @@ class AdminMaintenanceView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $AdminMaintenance['tasks'][$taskId] = $task->getInfo();
 	    if (isset($info)) {
 		$AdminMaintenance['tasks'][$taskId]['runId'] = $info['runId'];
@@ -166,12 +181,13 @@ class MaintenanceTask {
 
     /**
      * Execute the task
+     * @param object GalleryImmediateStatusView to show task progress
      * @return array object GalleryStatus a status code
      *               boolean success or failure
      *               array string output text
      */
-    function run() {
-	return GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__);
+    function run(&$immediateView) {
+	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 }
 ?>

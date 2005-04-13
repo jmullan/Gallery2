@@ -35,43 +35,48 @@
     {cycle values="gbEven,gbOdd" assign="rowClass"}
     <tr class="{$rowClass}">
       <td>
-        <span id="task-{$taskId}-toggle"
-              class="giBlockToggle gcBackground1 gcBorder2"
-              style="border-width: 1px"
-              onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle')">+</span>
+	<span id="task-{$taskId}-toggle"
+	      class="giBlockToggle gcBackground1 gcBorder2"
+	      style="border-width: 1px"
+	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">+</span>
 	{g->text text=$info.title}
-      </td>
-      <td>
-        {if isset($info.timestamp)}
-	{g->date format="%X %x" timestamp=$info.timestamp}
-        {else}
-          {g->text text="Not run yet"}
-        {/if}
-      </td>
-      <td>
-        {if isset($info.success)}
-        {if $info.success}
-        <div class="giSuccess">
-          {g->text text="Success"}
-        </div>
-        {else}
-        <div class="giError">
-          {g->text text="Failed"}
-        </div>
-        {/if}
-        {else}
-          {g->text text="Not run yet"}
-        {/if}
-      </td>
-      <td>
-        <a href="{g->url arg1="controller=core:AdminMaintenance" arg2="form[action][runTask]=1" arg3="taskId=`$taskId`"}">{g->text text="run now"}</a>
+      </td><td>
+	{if isset($info.timestamp)}
+	  {g->date format="%X %x" timestamp=$info.timestamp}
+	{else}
+	  {g->text text="Not run yet"}
+	{/if}
+      </td><td>
+	{if isset($info.success)}
+	  {if $info.success}
+	  <div class="giSuccess">
+	    {g->text text="Success"}
+	  </div>
+	  {else}
+	  <div class="giError">
+	    {g->text text="Failed"}
+	  </div>
+	  {/if}
+	{else}
+	  {g->text text="Not run yet"}
+	{/if}
+      </td><td>
+	<a href="{g->url arg1="controller=core:AdminMaintenance" arg2="form[action][runTask]=1"
+	 arg3="taskId=`$taskId`"}">{g->text text="run now"}</a>
       </td>
     </tr>
-    <tr class="{$rowClass}">
-      <td colspan="4" style="width: 100%">
-        <span id="task-{$taskId}-description" style="display: none">
-          {g->text text=$info.description}
-        </span>
+    <tr class="{$rowClass}" id="task-{$taskId}-description"
+     {if !isset($status.run) || $status.run.taskId != $taskId}style="display: none"{/if}>
+      <td colspan="4">
+	{g->text text=$info.description}
+	{if !empty($info.details)}
+	  <p class="giDescription"> {g->text text="Last Run Details:"} </p>
+	  <p class="giInfo">
+	  {foreach from=$info.details item=text}
+	    {$text} <br/>
+	  {/foreach}
+	  </p>
+	{/if}
       </td>
     </tr>
     {/foreach}
