@@ -175,17 +175,9 @@ class UserLoginView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	if ($form['formName'] == 'UserLogin') {
-	    if (empty($form['username'])) {
-		$form['error']['username']['missing'] = 1;
-	    }
-
-	    if (empty($form['password'])) {
-		$form['error']['password']['missing'] = 1;
-	    }
-	} else {
-	    $form['username'] = '';
+	if ($form['formName'] != 'UserLogin') {
 	    $form['formName'] = 'UserLogin';
+	    $form['username'] = '';
 	}
 
 	$UserLogin = array();
