@@ -114,19 +114,16 @@
 <div class="gbBlock">
   <h3> {g->text text="Step 2.  Place the watermark on your image."} </h3>
 
-  {strip}
-  <div>
-    {g->image name="watermark_original"
+  <div id="watermark_div">
+    {g->image id="watermark_original" maxSize=400 style="display: block"
 	      item=$ItemEditWatermark.item
-	      image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item
-	      maxSize=400}
-    <img name="watermark_floater"
-     src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}"
-     width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
-     height="{$ItemEditWatermark.watermarks[$form.watermarkId].height}"
-     alt="{g->text text="watermark"}"/>
+	      image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
   </div>
-  {/strip}
+  <img name="watermark_floater"
+   src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}"
+   width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
+   height="{$ItemEditWatermark.watermarks[$form.watermarkId].height}"
+   alt="{g->text text="watermark"}" style="position: absolute"/>
 </div>
 
 <div class="gbBlock">
@@ -166,13 +163,26 @@
 <input type="hidden" id="yPercent"
  name="{g->formVar var="form[yPercent]"}" value="{$form.yPercent}"/>
 
-<script type="text/javascript">
+<script type="text/javascript">{literal}
 // <![CDATA[
+function watermarkInit() {
+  dd.elements.watermark_floater.moveTo(dd.elements.watermark_original.x,
+				       dd.elements.watermark_original.y);
+  dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
+  chooseWatermark(document.getElementById("watermarkList").value);
+}
+if (window.attachEvent) { /* IE - dragdrop over div not img*/
+  var img = document.getElementById("watermark_original"),
+      div = document.getElementById("watermark_div");
+  img.id = "unused";
+  div.id = "watermark_original";
+}
 SET_DHTML("watermark_original"+NO_DRAG, "watermark_floater");
-dd.elements.watermark_floater.moveTo(dd.elements.watermark_original.x,
-				     dd.elements.watermark_original.y);
-dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
-chooseWatermark(document.getElementById("watermarkList").value);
+if (window.attachEvent) { /* IE */
+  window.attachEvent("onload", watermarkInit);
+} else {
+  watermarkInit();
+}
 // ]]>
-</script>
+{/literal}</script>
 {/if}
