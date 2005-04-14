@@ -57,6 +57,22 @@ class ItemAddFromServer extends ItemAddPlugin {
 			    'summary' => (isset($form['set']['summary'])) ? 1 : 0,
 		    );
 
+	    list ($ret, $localServerDirs) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (empty($localServerDirs)) {
+		$localServerDirList = array();
+	    } else {
+		$localServerDirList = split(',', $localServerDirs);
+	    }
+
+	    if (!GalleryUtilities::isPathInList($dir, $localServerDirList)) {
+	    echo "Path: $dir<br/>";
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
+			     null, null);
+	    }
 
 	    if (!empty($form['localServerFiles'])) {
 		foreach ($form['localServerFiles'] as $fileKey => $unused) {
@@ -79,6 +95,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 		foreach ($form['localServerDirectories'] as $directory => $unused) {
 		    /* Skip current or parent directory entries */
 		    if ($directory == "." || $directory == "..") {
+			continue;
+		    }
+
+		    if (!GalleryUtilities::isPathInList($this->_platform->realpath($directory), $localServerDirList)) {
 			continue;
 		    }
 

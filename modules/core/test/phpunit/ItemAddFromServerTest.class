@@ -59,10 +59,42 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->_symlinkDisallowedPlatform =
 	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
 
+	list ($ret, $localServerDirs) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret;
+	}
+
+	if (!empty($localServerDirs)) {
+	    $this->_localServerDirList = join(',', $localServerDirs);
+	} else {
+	    $this->_localServerDirList = '';
+	}
+
+	$ret =
+	    GalleryCoreApi::setPluginParameter('module', 'core',
+					       'uploadLocalServer.dirs', 
+					       dirname(dirname(__FILE__)));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret;
+	}
+
+
 	$gallery->_platform = $this->_symlinkAllowedPlatform;
     }
 
     function tearDown() {
+	$ret =
+            GalleryCoreApi::setPluginParameter('module', 'core',
+                                               'uploadLocalServer.dirs',
+                                               $this->_localServerDirList);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret;
+	}
+
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -123,11 +155,19 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
     }
 
     function testAddChildrenFromLocalServerRecursiveUsingSymlinkWithSymlinkSupported() {
-    return $this->_testAddChildrenFromLocalServer(true, true, false, true);
+	return $this->_testAddChildrenFromLocalServer(true, true, false, true);
     }
 
     function testAddChildrenFromLocalServerRecursiveUsingSymlinkWithSymlinkNotSupported() {
-    return $this->_testAddChildrenFromLocalServer(true, false, false, true);
+	return $this->_testAddChildrenFromLocalServer(true, false, false, true);
+    }
+
+    function testInvalidLocalServerPath() {
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', '/');
+	GalleryUtilities::putRequestVariable(
+	    'form[localServerFiles][ItemAddFromServerTest.foo][selected]', 1);
+	$this->handleRequest($this->_rootAlbum, ERROR_BAD_PARAMETER);
     }
 
     /**
@@ -212,9 +252,13 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $dirName = $baseDir . 'localUploadDir';
 	    GalleryUtilities::putRequestVariable(
 		'form[localServerDirectories][' . $dirName . '][selected]', 1);
+	    GalleryUtilities::putRequestVariable(
+		'form[localServerDirectories][/][selected]', 1);
 	    if ($useSymlink) {
 		GalleryUtilities::putRequestVariable(
 		    'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
+		GalleryUtilities::putRequestVariable(
+		    'form[localServerDirectories][/][useSymlink]', 1);
 	    }
 	}
 
