@@ -169,8 +169,6 @@ class GalleryTemplateAdapter {
      * @return string a URL
      */
     function date($params, &$smarty) {
-	global $gallery;
-
 	if (empty($params['format'])) {
 	    $params['format'] = '%x';
 	}
@@ -217,13 +215,11 @@ class GalleryTemplateAdapter {
     /**
      * Delegate to the appropriate item class to render an image.
      *
-     * @param array containing item, image, id, name, fallback
+     * @param array containing item, image, maxSize, fallback, and any img attributes
      * @param object Smarty the smarty instance
      * @return string HTML content
      */
     function image($params, &$smarty) {
-	global $gallery;
-
 	/* Ask the entity to render itself in HTML */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($params['item']['id']);
 	if ($ret->isError()) {
@@ -237,56 +233,18 @@ class GalleryTemplateAdapter {
 	    return '[Render error: missing entity]';
 	}
 
-	if (!isset($params['maxSize'])) {
-	    $params['maxSize'] = null;
-	}
-
-	if (!isset($params['class'])) {
-	    $params['class'] = null;
-	}
-
-	if (!isset($params['id'])) {
-	    $params['id'] = null;
-	}
-
-	if (!isset($params['name'])) {
-	    $params['name'] = null;
-	}
-
-	if (!isset($params['imgmap'])) {
-	    $params['imgmap'] = null;
-	}
-
-	if (!isset($params['fallback'])) {
-	    $params['fallback'] = null;
-	}
+	unset($params['item']);
+	unset($params['image']);
+	$fallback = isset($params['fallback']) ? $params['fallback'] : null;
+	unset($params['fallback']);
 
 	if ($entity->getId() == $item->getId()) {
-	    $html = $item->render('HTML', array('class' => $params['class'],
-						'id' => $params['id'],
-						'name' => $params['name'],
-						'maxSize' => $params['maxSize'],
-						'fallback' => $params['fallback'],
-						'imgmap' => $params['imgmap']));
+	    $html = $item->render('HTML', $params);
 	} else {
-	    $html = $entity->render('HTML', $item,
-				    array('class' => $params['class'],
-					  'id' => $params['id'],
-					  'name' => $params['name'],
-					  'maxSize' => $params['maxSize'],
-					  'fallback' => $params['fallback'],
-					  'imgmap' => $params['imgmap']));
+	    $html = $entity->render('HTML', $item, $params);
 	}
 
-	if (empty($html)) {
-	    /*
-	     * TODO: We should let the {g->image} tag provide some kind of fallback in case
-	     * the image can't be rendered.
-	     */
-	    return $params['fallback'];
-	}
-
-	return $html;
+	return !empty($html) ? $html : $fallback;
     }
 
     /**
@@ -433,7 +391,7 @@ class GalleryTemplateAdapter {
 		? GalleryTemplateAdapter::_safeCssName($linkArray['subView']) : '';
 	return $linkId;
     }
-    
+
     /**
      * This removes unsafe characters from a string so they can be used as a class
      * name or id in html and be addressed via css
@@ -443,7 +401,7 @@ class GalleryTemplateAdapter {
      *
      * @private
      * @param string the input string
-     * @return string 
+     * @return string
      */
     function _safeCssName($string) {
 	$string = ereg_replace("[^A-Za-z0-9_]", "_", $string);
