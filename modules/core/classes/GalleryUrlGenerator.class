@@ -205,10 +205,10 @@ class GalleryUrlGenerator {
 
 	if (!empty($this->_embedPath)) {
 	    if ($this->_embedPath{strlen($this->_embedPath)-1} != '/') {
-	        $this->_embedPath .= '/';
+		$this->_embedPath .= '/';
 	    }
 	    if ($this->_embedPath{0} != '/') {
-	        $this->_embedPath = '/'.$this->_embedPath;
+		$this->_embedPath = '/'.$this->_embedPath;
 	    }
 	}
     }
@@ -270,10 +270,10 @@ class GalleryUrlGenerator {
 	     *       other than look at the path component of the url?
 	     */
 	    if (($i = strpos($url, $this->_baseFile)) !== false) {
-	        $url = substr($url, 0, $i);
+		$url = substr($url, 0, $i);
 	    }
 	}
-    
+
 	/*
 	 * If requested, apply relativeG2Path setting to get G2 base url, eg:
 	 *    http://example.com/cms/index.php?module=g2&g2_view=...
@@ -483,7 +483,7 @@ class GalleryUrlGenerator {
 
     /**
      * Build array of query parameters for array of keys/values (possibly nested)
-     * @private 
+     * @private
      */
     function _buildQueryParameters(&$args, $urlVariables, $prefix='') {
 	foreach ($urlVariables as $key => $value) {
@@ -579,7 +579,8 @@ class GalleryUrlGenerator {
 		    $viewDescription = '';
 		}
 	    }
-	    $params['returnName'] = $viewDescription;
+	    /* urlencode name in case it has utf-8 chars which htmlentities below may distort */
+	    $params['returnName'] = urlencode($viewDescription);
 	    $params['return'] =
 		urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
 	    $params['navId'] = $this->_navId;
