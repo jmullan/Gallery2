@@ -53,6 +53,14 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	}
 
 	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskImmediate',
+	    'AdminMaintenanceControllerTestTaskImmediate', $path, 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'MaintenanceTask', 'AdminMaintenanceControllerTestTaskFail',
 	    'AdminMaintenanceControllerTestTaskFail', $path, 'coreTest', null);
 	if ($ret->isError()) {
@@ -60,6 +68,9 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
+
+	$this->_controller->setImmediateStatusView(
+	    new AdminMaintenanceControllerTestImmediateStatusView());
     }
 
     function tearDown() {
@@ -99,7 +110,37 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
+	$this->assert($info['runId'] > 0);
+	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
+	$this->assert($info['success']);
+	$this->assertEquals(array('success details'), $info['details']);
+    }
+
+    function testRunTaskImmediateStatus() {
+	GalleryUtilities::putRequestVariable('form[action][runTask]', 1);
+	GalleryUtilities::putRequestVariable('taskId',
+					     'AdminMaintenanceControllerTestTaskImmediate');
+	$immediateStatus = new AdminMaintenanceControllerTestImmediateStatusView();
+	$immediateStatus->_l10Domain = $immediateStatus->_template = 'test';
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminMaintenance'),
+				  'sendLateRedirect' => $immediateStatus,
+				  'status' => array(
+				      'run' => array(
+					  'taskId' => 'AdminMaintenanceControllerTestTaskImmediate',
+					  'success' => true)),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $info) =
+	    MaintenanceHelper_simple::fetchLastRun('AdminMaintenanceControllerTestTaskImmediate');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$this->assert($info['runId'] > 0);
 	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
 	$this->assert($info['success']);
@@ -125,7 +166,7 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assert($info['runId'] > 0);
 	$this->assert($info['timestamp'] > time() - 2);  /* assert that it's recent */
 	$this->assert(!$info['success']);
@@ -139,8 +180,32 @@ class AdminMaintenanceControllerTestTaskSuccess extends MaintenanceTask {
 		     'description' => 'AdminMaintenanceControllerTestTaskSuccess description',
 		     'l10Domain' => 'modules_core');
     }
-    
+
     function run() {
+	return array(GalleryStatus::success(), true, array('success details'));
+    }
+}
+
+class AdminMaintenanceControllerTestTaskImmediate extends MaintenanceTask {
+    function getInfo() {
+	return array('title' => 'AdminMaintenanceControllerTestTaskImmediate title',
+		     'description' => 'AdminMaintenanceControllerTestTaskImmediate description',
+		     'l10Domain' => 'modules_core');
+    }
+
+    function run(&$immediateStatusView) {
+	$ret = $immediateStatusView->doLoadImmediateTemplate();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$ret = $immediateStatusView->renderHeader('test', 'test', 'test');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+	$ret = $immediateStatusView->renderStatusMessage('test', 'test', 50);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 	return array(GalleryStatus::success(), true, array('success details'));
     }
 }
@@ -151,9 +216,37 @@ class AdminMaintenanceControllerTestTaskFail extends MaintenanceTask {
 		     'description' => 'AdminMaintenanceControllerTestTaskFail description',
 		     'l10Domain' => 'modules_core');
     }
-    
+
     function run() {
 	return array(GalleryStatus::success(), false, array('fail details'));
+    }
+}
+
+class AdminMaintenanceControllerTestImmediateStatusView extends GalleryView {
+    function doLoadImmediateTemplate() {
+	$this->_l10Domain = 'test';
+	$this->_template = 'test';
+	return GalleryStatus::success();
+    }
+
+    function renderHeader() {
+	return GalleryStatus::success();
+    }
+
+    function renderStatusMessage($statusMessage) {
+	return GalleryStatus::success();
+    }
+
+    function renderRedirect($redirectUrl) {
+	return GalleryStatus::success();
+    }
+
+    function renderFooter() {
+	return GalleryStatus::success();
+    }
+
+    function setMain($main) {
+	return GalleryStatus::success();
     }
 }
 ?>
