@@ -208,7 +208,9 @@ class ConfirmImportController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$userName = Gallery1DataParser::convertString($fields['username'], $sourceEncoding);
-
+		if (empty($totalUsersToImport)) {
+		    $totalUsersToImport == 1;
+		}
 		$ret = $immediateView->renderStatusMessage(
 		    $module->translate('Importing Users'), $userName,
 		    $numberOfUsersImported / $totalUsersToImport);
@@ -326,6 +328,9 @@ class ConfirmImportController extends GalleryController {
 		list ($ret, $photos) =
 		    Gallery1DataParser::getPhotos($albumsPath . $sourceAlbumName);
 		$totalItemsToImport += count($photos);
+	    }
+	    if (empty($totalItemsToImport)) {
+		$totalItemsToImport = 1;
 	    }
 	    $i=0;
 	    /* First initialize the $albumfields array to avoid php warnings */
