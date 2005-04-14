@@ -382,17 +382,30 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
     }
     $main['markupType'] = $markup;
 
-    /* Calculate a URI that we can use for the validation link */
-    $main['validationUri'] = $urlGenerator->getCurrentUrl();
-    $session =& $gallery->getSession();
-    if ($session->isUsingCookies()) {
-	$main['validationUri'] = $urlGenerator->appendParamsToUrl($main['validationUri'],
-						array($session->getKey() => $session->getId()));
-    }
-    $main['validationUri'] = urlencode(str_replace('&amp;', '&', $main['validationUri']));
-
     $translator =& $gallery->getTranslator();
     $main['isRightToLeft'] = $translator->isRightToLeft();
+
+    if ($gallery->getConfig('allowSessionAccess')) {
+	/* Calculate a URI that we can use for the validation link */
+	$main['validationUri'] = $urlGenerator->getCurrentUrl();
+	$session =& $gallery->getSession();
+	if ($session->isUsingCookies()) {
+	    $main['validationUri'] = $urlGenerator->appendParamsToUrl(
+		$main['validationUri'], array($session->getKey() => $session->getId()));
+	}
+	$main['validationUri'] = urlencode(str_replace('&amp;', '&', $main['validationUri']));
+	$main['validationUri'] =
+	    sprintf('http://validator.w3.org/check?uri=%s&amp;ss=1', $main['validationUri']);
+    } else {
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$main['validationUri'] = sprintf(
+	    'javascript:alert(\'%s\');',
+	    $core->translate('Validation disabled until you set allowSessionAccess in config.php'));
+    }
 
     if (!isset($version)) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/module.inc');
