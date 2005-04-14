@@ -209,7 +209,7 @@ class ConfirmImportController extends GalleryController {
 		}
 		$userName = Gallery1DataParser::convertString($fields['username'], $sourceEncoding);
 		if (empty($totalUsersToImport)) {
-		    $totalUsersToImport == 1;
+		    $totalUsersToImport = 1;
 		}
 		$ret = $immediateView->renderStatusMessage(
 		    $module->translate('Importing Users'), $userName,
