@@ -41,8 +41,8 @@
   <p class="giTitle">{$layout.item.title|markup}</p>
 </div>
 
-{if isset($layout.params.bgSerialNumber)}
 <div class="gbBlock">
+{if isset($layout.params.bgSerialNumber)}
   <table id="tile" style="background-image:url({g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.params.backgroundId`" arg3="serialNumber=`$layout.params.bgSerialNumber`"})" cellspacing="0">
   {section name=row loop=$layout.map}
    <tr>
@@ -67,8 +67,8 @@
   <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditLayout" arg4="itemId=`$layout.item.id`"}">
     {g->text text="configured."}
   </a>
-</div>
 {/if}
+</div>
 </td></tr></table>
 
 <script type="text/javascript">app_init();</script>
