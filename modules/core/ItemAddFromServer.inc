@@ -69,7 +69,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    }
 
 	    if (!GalleryUtilities::isPathInList($dir, $localServerDirList)) {
-	    echo "Path: $dir<br/>";
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), 
 			     null, null);
 	    }
