@@ -52,6 +52,9 @@ class ItemCreateLinkController extends GalleryController {
 	    if (empty($form['destination'])) {
 		$error[] = 'form[error][destination][empty]';
 	    }
+        if (empty($form['selectedIds'])) {
+            $error[] = 'form[error][sources][empty]';
+        }
 
 	    if (empty($error)) {
 		$destinationId = $form['destination'];

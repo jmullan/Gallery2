@@ -31,7 +31,31 @@
 	       arg2=$ItemCreateLink.numPages}
     {/if}
   </p>
+  
+  {if !empty($form.error.sources.empty)}
+  <div class="giError">
+    <h2>{g->text text="No sources chosen"}</h2>
+  </div>
+  {/if}
 
+  <script type="text/javascript">
+    // <![CDATA[
+    function setCheck(val) {ldelim}
+      var frm = document.forms[0];
+      {foreach from=$ItemCreateLink.peers item=peer}
+	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked = val;
+      {/foreach}
+    {rdelim}
+    function invertCheck(val) {ldelim}
+      var frm = document.forms[0];
+      {foreach from=$ItemCreateLink.peers item=peer}
+	frm.elements['g2_form[selectedIds][{$peer.id}]'].checked =
+	    !frm.elements['g2_form[selectedIds][{$peer.id}]'].checked;
+      {/foreach}
+    {rdelim}
+    // ]]>
+  </script>
+  
   <table>
     <colgroup width="60"/>
     {foreach from=$ItemCreateLink.peers item=peer}
@@ -55,6 +79,13 @@
     </tr>
     {/foreach}
   </table>
+
+  <input type="button" class="inputTypeButton" onclick="javascript:setCheck(1)"
+   name="{g->formVar var="form[action][checkall]"}" value="{g->text text="Check All"}"/>
+  <input type="button" class="inputTypeButton" onclick="javascript:setCheck(0)"
+   name="{g->formVar var="form[action][checknone]"}" value="{g->text text="Check None"}"/>
+  <input type="button" class="inputTypeButton" onclick="javascript:invertCheck()"
+   name="{g->formVar var="form[action][invert]"}" value="{g->text text="Invert"}"/>
 
   {if ($ItemCreateLink.page > 1)}
     <input type="submit" class="inputTypeSubmit"
@@ -86,7 +117,7 @@
   <div class="giError">
     {g->text text="No destination chosen"}
   </div>
-  {/if}
+  {/if}  
 </div>
 
 <div class="gbBlock gcBackground1">
