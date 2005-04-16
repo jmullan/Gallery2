@@ -291,5 +291,26 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
     }
+    
+    /*
+     * Bug 1165669: Create link with no selection
+     */
+    function testLinkNoSelection() {
+        list ($ret, $childAlbum) = $this->_createRandomAlbum($this->_album->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+        GalleryUtilities::putRequestVariable('itemId', $childAlbum->getId());
+        GalleryUtilities::putRequestVariable('form[action][link]', 1);
+        GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
+
+        $results = $this->handleRequest();
+        $results = $this->handleRequest();
+        $this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
+            'subView' => 'core:ItemCreateLink'),
+            'status' => array(),
+            'error' => array('form[error][sources][empty]')), $results);
+    }
 }
 ?>
