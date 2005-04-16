@@ -167,7 +167,7 @@ class GalleryPendingUserHelper {
 	$confirmationUrl = str_replace('&amp;', '&', str_replace(' ', '%20', $confirmationUrl));
 	$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
 
-	$ret = GalleryPendingUserHelper::_sendEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 		'modules/register/templates/ConfirmationEmail.tpl',
 		array(
 		    'name' => $pendingUser->getFullName(),
@@ -222,7 +222,7 @@ class GalleryPendingUserHelper {
 	}
 
 	if (!empty($toList)) {
-	    $ret = GalleryPendingUserHelper::_sendEmail(
+	    $ret = GalleryCoreApi::sendTemplatedEmail(
 		    'modules/register/templates/AdminEmail.tpl',
 		    array('name' => $pendingUser->getFullName(),
 			  'username' => $pendingUser->getUserName(),
@@ -233,41 +233,6 @@ class GalleryPendingUserHelper {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	}
-
-	return GalleryStatus::success();
-    }
-
-    /**
-     * Send an email.
-     *
-     * @param string template file
-     * @param array data to pass to smarty template
-     * @param string from address
-     * @param string to address(es) (comma separated)
-     * @param string email subject
-     * @return object GalleryStatus a status code
-     * @access private
-     * @static
-     */
-    function _sendEmail($file, $data, $from, $to, $subject) {
-	global $gallery;
-	GalleryCoreApi::requireOnce(dirname(__FILE__). '/../../core/classes/GalleryTemplate.class');
-	$template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
-
-	foreach ($data as $key => $value) {
-	    $template->setVariable($key, $value);
-	}
-	list($ret, $sEmailText) = $template->fetch('gallery:' . $file);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
-
-	$platform = $gallery->getPlatform();
-	$success = $platform->mail($to, $subject, $sEmailText, "From: $from");
-	if (!$success) {
-	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
-		'Could not send mail to ' . $to);
 	}
 
 	return GalleryStatus::success();

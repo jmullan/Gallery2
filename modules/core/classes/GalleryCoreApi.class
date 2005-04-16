@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 1);
+	return array(5, 2);
     }
 
     /**
@@ -183,7 +183,8 @@ class GalleryCoreApi {
      */
     function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch);
+	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, 
+						      $ignoreVersionMismatch);
     }
 
     /**
@@ -354,7 +355,8 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      * @static
      */
-    function setPluginParameter($pluginType, $pluginId, $parameterName, $parameterValue, $itemId=0) {
+    function setPluginParameter($pluginType, $pluginId, $parameterName, 
+				$parameterValue, $itemId=0) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
 							$parameterName, $parameterValue, $itemId);
@@ -662,7 +664,8 @@ class GalleryCoreApi {
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeGroupPermission($itemId, $groupId,
-								       $permission, $applyToChildren);
+								       $permission, 
+								       $applyToChildren);
     }
 
     /**
@@ -736,7 +739,8 @@ class GalleryCoreApi {
     function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::registerPermission($module, $permissionId,
-								    $description, $flags, $composites);
+								    $description, $flags, 
+								    $composites);
     }
 
     /**
@@ -900,15 +904,16 @@ class GalleryCoreApi {
      *
      * @param string the first set of operations
      * @param string the second set of operations
-     * @param boolean true if the second set should be added at the beginning of the first set, if it
-     *                     can't be merged.
+     * @param boolean true if the second set should be added at the beginning of the first set,
+     *                     if it can't be merged.
      * @return array object GalleryStatus a status code
      *               the merged operation set
      * @static
      */
     function mergeDerivativeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, $highPriority);
+	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, 
+								 $highPriority);
     }
 
     /**
@@ -968,7 +973,8 @@ class GalleryCoreApi {
      */
     function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::adjustDependentDerivatives($id, $operation, $reverse);
+	return GalleryDerivativeHelper_advanced::adjustDependentDerivatives($id, $operation, 
+									    $reverse);
     }
 
     /**
@@ -1168,7 +1174,8 @@ class GalleryCoreApi {
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
-	return GalleryItemAttributesHelper_advanced::rebalanceChildOrderWeights($parentItemId, $spacing);
+	return GalleryItemAttributesHelper_advanced::rebalanceChildOrderWeights($parentItemId,
+										$spacing);
     }
 
     /**
@@ -1219,7 +1226,8 @@ class GalleryCoreApi {
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
-	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence, $newParentSequence);
+	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence, 
+									  $newParentSequence);
     }
 
     /**
@@ -1323,7 +1331,8 @@ class GalleryCoreApi {
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildItemIdsWithPermission($itemId, $permissionId);
+	return GalleryChildEntityHelper_simple::fetchChildItemIdsWithPermission($itemId, 
+										$permissionId);
     }
 
     /**
@@ -1341,7 +1350,8 @@ class GalleryCoreApi {
      */
     function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchLinkableChildItemIdsWithPermission($itemId, $permissionId);
+	return GalleryChildEntityHelper_simple::fetchLinkableChildItemIdsWithPermission($itemId, 
+										    $permissionId);
     }
 
     /**
@@ -1429,7 +1439,8 @@ class GalleryCoreApi {
 			    $description, $mimeType, $albumId, $symlink=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
-							$description, $mimeType, $albumId, $symlink);
+							$description, $mimeType, $albumId, 
+							$symlink);
     }
 
     /**
@@ -1603,7 +1614,8 @@ class GalleryCoreApi {
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null, $substring=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserGroupHelper_medium.class');
-	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, $offset, $substring);
+	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, 
+								 $offset, $substring);
     }
 
     /**
@@ -1650,7 +1662,8 @@ class GalleryCoreApi {
      */
     function checkPathCollision($pathComponent, $newParentId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
-	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent, $newParentId);
+	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent, 
+									$newParentId);
     }
 
     /**
@@ -1665,7 +1678,8 @@ class GalleryCoreApi {
      */
     function getLegalPathComponent($pathComponent, $parentId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
-	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent, $parentId);
+	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent, 
+									   $parentId);
     }
 
     /**
@@ -1683,7 +1697,8 @@ class GalleryCoreApi {
      */
     function fetchChildIdByPathComponent($parentId, $pathComponent) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_simple.class');
-	return GalleryFileSystemEntityHelper_simple::fetchChildIdByPathComponent($parentId, $pathComponent);
+	return GalleryFileSystemEntityHelper_simple::fetchChildIdByPathComponent($parentId, 
+										 $pathComponent);
     }
 
     /**
@@ -1709,9 +1724,10 @@ class GalleryCoreApi {
 				      $parameterTypesArray, $description,
 				      $outputMimeType='', $priority=5) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes, $operationName,
-							      $parameterTypesArray, $description,
-							      $outputMimeType, $priority);
+	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes, 
+							      $operationName, $parameterTypesArray,
+							      $description, $outputMimeType, 
+							      $priority);
     }
 
     /**
@@ -1725,7 +1741,8 @@ class GalleryCoreApi {
      */
     function unregisterToolkitOperation($toolkitId, $operationName, $mimeTypes=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName, $mimeTypes);
+	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName, 
+								$mimeTypes);
     }
 
     /**
@@ -1862,7 +1879,9 @@ class GalleryCoreApi {
      */
     function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail);
+	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence($mimeType, 
+										   $operations,
+										   $forThumbnail);
     }
 
     /**
@@ -1942,7 +1961,8 @@ class GalleryCoreApi {
      */
     function registerEventListener($eventName, &$listener, $disableForUnitTests=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEventHelper_simple.class');
-	return GalleryEventHelper_simple::registerEventListener($eventName, $listener, $disableForUnitTests);
+	return GalleryEventHelper_simple::registerEventListener($eventName, $listener,
+								$disableForUnitTests);
     }
 
     /**
@@ -2209,7 +2229,8 @@ class GalleryCoreApi {
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildItemIdsIgnorePermissions($item, $offset, $count);
+	return GalleryChildEntityHelper_simple::fetchChildItemIdsIgnorePermissions($item, $offset,
+										   $count);
     }
 
     /**
@@ -2361,5 +2382,22 @@ class GalleryCoreApi {
  	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
 	}
     }
+
+    /**
+     * Send an email using a smarty template for the message body
+     *
+     * @param string template file
+     * @param array data to pass to smarty template
+     * @param string from address (null allowed)
+     * @param string to address(es) (comma separated)
+     * @param string email subject
+     * @return object GalleryStatus a status code
+     * @static  
+     */
+    function sendTemplatedEmail($file, $data, $from, $to, $subject) {
+        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
+	return MailHelper_simple::sendTemplatedEmail($file, $data, $from, $to, $subject);
+    } 
+
 }
 ?>

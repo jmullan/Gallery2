@@ -1,0 +1,318 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage UserInterface
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRecoverPasswordMap.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
+
+/**
+ * This controller will handle the recovery of passwords that have
+ * been lost or forgotten by the user.
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+ 
+class UserRecoverPasswordController extends GalleryController {
+
+    /**         
+     * ValidationPlugin instances to use when handling this request.  Only used by
+     * test code.
+     *              
+     * @var array (pluginId => object ValidationPlugin) $_pluginInstances
+     * @private     
+     */             
+    var $_pluginInstances;
+                    
+    /**                 
+     * Tests can use this method to hardwire a specific set of plugin instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *              
+     * @param array (pluginId => ValidationPlugin, ...)
+     */             
+    function setPluginInstances($pluginInstances) {
+        $this->_pluginInstances = $pluginInstances;
+    }                   
+                        
+     /**         
+     * GalleryPhpVm instance to use when handling this request.  Only used by
+     * test code.
+     *              
+     * @var object GalleryPhpVm $_phpVm
+     * @private     
+     */             
+    var $_phpVm;
+                    
+     /**                 
+     * Tests can use this method to hardwire a specific GalleryPhpVm instance to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *              
+     * @param object GalleryPhpVm
+     */             
+    function setPhpVm($phpVm) {
+        $this->_phpVm = $phpVm;
+    }                   
+
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$status = array();
+	$results = array();
+	$error = array();
+
+	if (isset($this->_phpVm)) {
+	    $phpVm = $this->_phpVm;
+	} else {
+	    $phpVm = new GalleryPhpVm();
+	}
+
+	if (isset($form['action']['recover'])) {
+	    if (empty($form['userName'])) {
+		$error[] = 'form[error][userName][missing]';
+	    }
+
+	    /* If no errors have been detected, let the validation plugins do their work */
+	    if (empty($error)) {
+		if (isset($this->_pluginInstances)) {
+		    $pluginInstances = $this->_pluginInstances;
+		} else {
+		    /* Get all the validation plugins */
+		    list ($ret, $pluginInstances) =
+			GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    foreach (array_keys($pluginInstances) as $pluginId) {
+			list ($ret, $pluginInstances[$pluginId]) =
+			    GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+		    }
+		}
+		    
+		/* Let each plugin do its verification */
+		foreach ($pluginInstances as $pluginId => $plugin) {
+		    list ($ret, $pluginErrors, $continue) = $plugin->performValidation($form);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $error = array_merge($error, $pluginErrors);
+
+		    if (!$continue) {
+			break;
+		    }
+		}
+	    }
+
+	    /*
+	     * Still no errors?  Check the DB for a previous request and then 
+	     * update, reject or add based on the results.
+	     */
+	    if (empty($error)) {
+		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if (isset($user) && $user->getEmail() != '') {
+		    /* Generate a unique auth string based on userName, time of request and IP */
+		    $authString = $phpVm->md5($user->getUserName() . time() . 
+				      GalleryUtilities::getRemoteHostAddress());
+
+		    /* Generate the request expiration: Now + 7 Days */
+		     $requestExpires = mktime(date('G'), date('i'), date('s'), 
+					      date('m'), date('d')+7, date('Y'));
+
+		    /*
+		     * Check the database to see if a previous request.
+		     * If a request exists, check the timestamp to see if a new
+		     * request can be generated, or if they will be denied
+		     * because the window is too small.
+		     */
+		    if ($lastRequest = UserRecoverPasswordHelper_simple::getRequestExpires(
+			    $user->getUserName(), null)) {
+			if (!empty($lastRequest) && ($lastRequest + (20*60)) > time()) {
+			    /* 
+			     * This request was made less than 20 minutes ago
+			     * refuse the request to prevent spam / abuse
+			     */
+			    $error[] = 'form[error][request][tooSoon]';
+			}
+			$ret = GalleryRecoverPasswordMap::updateMapEntry(
+				array('userName' => $user->getUserName()), 
+				      array('authString' => $authString, 
+					    'requestExpires' => $requestExpires));
+		    } else {
+			/* 
+			 * Add the map entry before sending email to the user -
+			 * we don't want to send them mail if the data never gets into the DB
+			 */
+			$ret = GalleryRecoverPasswordMap::addMapEntry(
+				    array('userName' => $form['userName'],
+					  'authString' => $authString,
+					  'requestExpires' => $requestExpires));
+			if ($ret->isError()) {
+			    return array($ret, null);
+			}			
+		    }
+		} else if (isset($user) && $user->getEmail() == '')  {
+		    /* Username is valid, but the user has no email address */
+		    $error[] = 'form[error][email][missing]';
+		} else if ($user === null) {
+		    /* Invalid userName */
+		    $error[] = 'form[error][userName][invalid]';
+		}
+		
+		if (empty($error)) {
+		    /* Set the recovered info flag */
+		    $status['requestSent'] = 1;
+
+		    /* Generate baseUrl and recoverUrl for the email template */
+		    $generator =& $gallery->getUrlGenerator();
+		    $baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
+		    $recoverUrl = str_replace('&amp;', '&', $generator->generateUrl(
+			 array('view' => 'core:UserAdmin',
+			       'subView' => 'core:UserRecoverPasswordConfirm',
+			       'userName' => $user->getUserName(),
+			       'authString' => $authString )));
+
+		    /* email template data */
+		    $tplData = array('name' => $user->getfullName(),
+				     'baseUrl' => $baseUrl,
+				     'ip' => GalleryUtilities::getRemoteHostAddress(),
+				     'date' => date('r'),
+				     'userName' => $user->getUserName(),
+				     'recoverUrl' => $recoverUrl,
+				    );
+
+		    /* Load core for translation */
+		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    /* Send the user email based on our confirmation template */
+		    $ret = GalleryCoreApi::sendTemplatedEmail(
+			    'modules/core/templates/UserRecoverPasswordEmail.tpl',
+			    $tplData, '', $user->getEmail(), 
+			    $module->translate('Password Recovery'));
+		    if ($ret->isError()) {
+			return array($ret, null);
+		    }		    
+		}
+	    }
+	} else if (isset($form['action']['cancel'])) {
+	    $results['return'] = 1;
+	} 
+	
+	if (empty($error)) {
+	    $results['redirect']['view'] = 'core:UserAdmin';
+	    $results['redirect']['subView'] = 'core:UserRecoverPassword';
+	} else {
+	    $results['delegate']['view'] = 'core:UserAdmin';
+	    $results['delegate']['subView'] = 'core:UserRecoverPassword';
+	}
+	
+	$results['status'] = $status;
+	$results['error'] = $error;
+
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * This view prompts for login information
+ *
+ * @package GalleryCore
+ * @subpackage UserInterface
+ *
+ */
+class UserRecoverPasswordView extends GalleryView {
+
+    /**
+     * @see GalleryView::loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+
+	if ($form['formName'] == 'UserRecoverPassword') {
+	    if (empty($form['userName'])) {
+		$form['error']['userName']['missing'] = 1;
+	    }
+	} else {
+	    $form['userName'] = '';
+	    $form['formName'] = 'UserRecoverPassword';
+	}
+
+	$UserRecoverPassword = array();
+
+	/* Get all the login plugins */
+	list ($ret, $allPluginIds) =
+	    GalleryCoreApi::getAllFactoryImplementationIds('ValidationPlugin');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Let each plugin load its template data */
+	$UserRecoverPassword['plugins'] = array();
+	foreach (array_keys($allPluginIds) as $pluginId) {
+	    list ($ret, $plugin) =
+		GalleryCoreApi::newFactoryInstanceById('ValidationPlugin', $pluginId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    list ($ret, $data['file'], $data['l10Domain']) =
+		$plugin->loadTemplate($template, $form, 'HIGH');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($data['file'])) {
+		$UserRecoverPassword['plugins'][] = $data;
+	    }
+	}
+
+	$template->setVariable('UserRecoverPassword', $UserRecoverPassword);
+	$template->setVariable('controller', 'core:UserRecoverPassword');
+	return array(GalleryStatus::success(),
+		     array('body' => 'modules/core/templates/UserRecoverPassword.tpl'));
+    }
+}
+?>

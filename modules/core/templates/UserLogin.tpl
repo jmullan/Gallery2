@@ -9,6 +9,12 @@
 </div>
 
 <div class="gbBlock">
+  {if isset($status.passwordRecovered)}
+  <div class="gbBlock"><h2 class="giSuccess">
+    {g->text text="Your password has been recovered, please login."}
+  </h2></div>
+  {/if}
+
   <h4> {g->text text="Username"} </h4>
 
   <input type="text" id="giFormUsername" size="16"
@@ -44,6 +50,13 @@
 {foreach from=$UserLogin.plugins item=plugin}
   {include file="gallery:`$plugin.file`" l10Domain=$plugin.l10Domain}
 {/foreach}
+
+<div class="gbBlock">
+  {capture name="recoverUrl"}
+  {g->url arg1="view=core:UserAdmin" arg2="subView=core:UserRecoverPassword"}
+  {/capture}
+  {g->text text="Lost or forgotten passwords can be retrieved using the <a href=\"%s\">recover password</a> page" arg1=$smarty.capture.recoverUrl}
+</div>
 
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit"

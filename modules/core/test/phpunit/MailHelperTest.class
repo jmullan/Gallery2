@@ -1,0 +1,208 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptopgraphite@users.sf.net>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
+
+/**
+ * Test mail functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class MailHelperTest extends GalleryTestCase {
+
+    function MailHelperTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+
+	list ($ret, $this->_smtpFrom) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->templateFile = 'modules/core/test/data/MailHelperTest.tpl';
+    }
+
+    function tearDown() {
+
+	if (empty($this->_smtpFrom)) {
+	    $ret = GalleryCoreapi::removePluginParameter('module', 'core', 'smtp.from');
+	} else {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						      'smtp.from', $this->_smtpFrom);
+	}
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	parent::tearDown();
+    }
+
+    function testSendTemplatedEmail() {
+	global $gallery;
+        
+        $platform = $gallery->getPlatform();
+        $gallery->_platform = new MailHelperDummyPlatform($platform);
+
+        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', ''); 
+        if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$emailData = array(
+	    'to' => 'mailhelpertest@test.com',
+	    'subject' => 'MailHelperTest subject',
+	    'body' => 'MailHelperTest test string',
+	    'headers' => '');
+
+	/* Test that the from header is empty */
+	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
+						     $emailData, null, 
+						     $emailData['to'], $emailData['subject']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'Blank From');
+
+	/* Set the from address and update the test data */
+	$from = 'mailhelpertest@test.com';
+	$emailData['headers'] = "From: $from\r\n";
+
+	/* Test that the from header is retrieved from function input */
+	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
+						     $emailData, $from, 
+						     $emailData['to'], $emailData['subject']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'Function From');
+
+	/* Test that the from header is retrieved from the core.smtp.from field */
+        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', $from);
+        if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+
+	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
+						     $emailData, null, 
+						     $emailData['to'], $emailData['subject']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 'smtp.from');
+
+	/* Set the from address and update the test data */
+	$from = 'mailhelpertest2@test.com';
+	$emailData['headers'] = "From: $from\r\n";
+
+	/* Test that the from header is preferred from the function over the core.smtp.from field */
+	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
+						     $emailData, $from, 
+						     $emailData['to'], $emailData['subject']);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 
+			    'function over smtp.from');
+    }
+}
+
+/**     
+ * Dummy GalleryPlatform for MailHelperTest
+ *          
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class MailHelperDummyPlatform {
+    function MailHelperDummyPlatform($platform) {
+        $this->_platform = $platform;
+    }
+
+    function mail($to, $subject, $body, $headers=null) {
+	$this->_mailData = array('to' => $to,
+				 'subject' => $subject,
+				 'body' => $body,
+				 'headers' => $headers);
+	return true;
+    }
+
+    function getMailData() {
+	return $this->_mailData;
+    }
+
+    function realpath($file) {
+        return $this->_platform->realpath($file);
+    }
+
+    function getDirectorySeparator() {
+        return $this->_platform->getDirectorySeparator();
+    }
+
+    function file_exists($filename) {
+        return $this->_platform->file_exists($filename);
+    }
+
+    function is_dir($filename) {
+        return $this->_platform->is_dir($filename);
+    }
+
+    function is_writeable($filename) {
+        return $this->_platform->is_writeable($filename);
+    }
+
+    function stat($filename) {
+        return $this->_platform->stat($filename);
+    }
+
+    function mkdir($path) {
+        return $this->_platform->mkdir($path);
+    }
+
+    function fopen($filename, $mode, $use_include_path=0) {
+        return $this->_platform->fopen($filename, $mode, $use_include_path);
+    }
+
+    function recursiveRmdir($dirname) {
+        return $this->_platform->recursiveRmdir($dirname);
+    }
+
+    function fclose($handle) {
+        return $this->_platform->fclose($handle);
+    }
+
+    function flock($handle, $operation, &$wouldblock) {
+        return $this->_platform->flock($handle, $operation, $wouldblock);
+    }
+}
+?>

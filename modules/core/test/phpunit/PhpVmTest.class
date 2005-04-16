@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -22,38 +22,45 @@
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
  */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 
 /**
- * An abstraction layer over PHP.  For now, this serves as a way to allow our test classes to
- * interpose themselves between the code and the PHP VM so that we can simulate different VMs.
- * For example, this lets us return arbitrary values for calls like function_exists().  Every call
- * here is a straight pass-through.  New functions can be added at any time.
+ * UserRecoverPassword controller tests
  *
  * @package GalleryCore
- * @abstract
- * @access public
+ * @subpackage PHPUnit
  */
-class GalleryPhpVm {
-    /**
-     * Return true if the given function has been defined.
-     *
-     * @param string function name
-     * @return bool
-     */
-    function function_exists($functionName) {
-	return function_exists($functionName);
+class PhpVmTest extends GalleryTestCase {
+
+    function PhpVmTest($methodName) {
+	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * Return the 32-byte md5 hash of the given string
-     *
-     * @param string string to be hashed
-     * @return string hashed string value
-     */
-    function md5($string) {
-	return md5($string);
+    function setUp() {
+	parent::setUp();
+
+	$this->phpVm = new GalleryPhpVm();
+    }
+
+    function tearDown() {
+	unset($this->phpVm);
+
+	parent::tearDown();
+    }
+
+    function testMd5() {
+	$this->assertEquals(md5('foobar'), $this->phpVm->md5('foobar'), 
+			    'PhpVm MD5 output doesn\'t match PHP output');
+    }
+
+    function testFunctionExists() {
+	$this->assertEquals(function_exists('testFunctionExists'), 
+			    $this->phpVm->function_exists('testFunctionExists'),
+			    'PhpVm function_exists output doesn\'t match PHP output');
     }
 }
 ?>

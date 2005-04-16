@@ -645,6 +645,9 @@ class CoreModuleExtras {
 	case '0.9.10':
 	    /* Added BuildDerivativesTask */
 
+	case '0.9.11':
+	    /* Added GalleryRecoverPasswordMap */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
