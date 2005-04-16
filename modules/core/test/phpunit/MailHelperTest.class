@@ -87,9 +87,8 @@ class MailHelperTest extends GalleryTestCase {
 	    'headers' => '');
 
 	/* Test that the from header is empty */
-	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
-						     $emailData, null, 
-						     $emailData['to'], $emailData['subject']);
+	$ret = MailHelper_simple::sendTemplatedEmail(
+	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -100,9 +99,8 @@ class MailHelperTest extends GalleryTestCase {
 	$emailData['headers'] = "From: $from\r\n";
 
 	/* Test that the from header is retrieved from function input */
-	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
-						     $emailData, $from, 
-						     $emailData['to'], $emailData['subject']);
+	$ret = MailHelper_simple::sendTemplatedEmail(
+	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -114,9 +112,8 @@ class MailHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
-	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
-						     $emailData, null, 
-						     $emailData['to'], $emailData['subject']);
+	$ret = MailHelper_simple::sendTemplatedEmail(
+	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -127,9 +124,8 @@ class MailHelperTest extends GalleryTestCase {
 	$emailData['headers'] = "From: $from\r\n";
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */
-	$ret = MailHelper_simple::sendTemplatedEmail($this->templateFile, 
-						     $emailData, $from, 
-						     $emailData['to'], $emailData['subject']);
+	$ret = MailHelper_simple::sendTemplatedEmail(
+	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -150,15 +146,17 @@ class MailHelperDummyPlatform {
     }
 
     function mail($to, $subject, $body, $headers=null) {
-	$this->_mailData = array('to' => $to,
-				 'subject' => $subject,
-				 'body' => $body,
-				 'headers' => $headers);
+	GalleryUtilities::putRequestVariable(
+	    'maildata',
+	    array('to' => $to,
+		  'subject' => $subject,
+		  'body' => $body,
+		  'headers' => $headers));
 	return true;
     }
 
     function getMailData() {
-	return $this->_mailData;
+	return GalleryUtilities::getRequestVariables('maildata');
     }
 
     function realpath($file) {
