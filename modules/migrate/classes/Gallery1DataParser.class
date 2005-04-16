@@ -410,45 +410,6 @@ class Gallery1DataParser {
 	}
 	return array(GalleryStatus::success(), $fields);
     }
-    /**
-     * Convert user data from one character set into UTF-8
-     *
-     * @param string data to convert
-     * @return string converted data
-     *
-     */
-    
-    function convertString($string, $sourceEncoding) {
-	global $gallery;	
-
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
-
-	static $charset;
-	if (!isset($charset)) {
-	    include(dirname(__FILE__) . $slash . 'charsets.inc');
-	}
-
-	if (!strcmp($sourceEncoding,'UTF-8')) {
-	    return $string;
-	}
-	if (function_exists('iconv')) {
-	    return iconv($sourceEncoding, 'UTF-8', $string);
-	} else if (function_exists('mb_convert_encoding')) {
-	    return mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
-	} else if (function_exists('recode_string')) {
-	    return recode_string($sourceEncoding . '..UTF-8', $string);
-	} else if ((phpversion() >= '3.0.0') && isset($charset[$sourceEncoding])) {
-	    return preg_replace('/([\x80-\xFF])/se',
-				'$charset[$sourceEncoding][ord(\'$1\')]',
-				$string);
-	} else if (!strcmp($sourceEncoding,'ISO-8859-1') && (phpversion() >= '3.0.0')) {
-	    return preg_replace('/([\x80-\xFF])/e',
-				'chr(192 | ord(\'$1\') >> 6) . chr(128 | ord(\'$1\') & 63)',
-				$string);
-	}
-	return $string;
-    }
 }
 
     

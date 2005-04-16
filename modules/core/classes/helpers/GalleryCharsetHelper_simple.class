@@ -1,0 +1,78 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * A collection of useful charset related utilities
+ *
+ * @package GalleryCore
+ * @subpackage Classes
+ */
+
+class GalleryCharsetHelper_simple {
+    /**
+     * Convert the string from the source encoding to UTF8
+     *
+     * @param string the input string
+     * @param string the source encoding (eg, 'ISO-8859-1')
+     * @return string the result
+     */
+    function convertToUtf8($string, $sourceEncoding) {
+	global $gallery;	
+
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+
+	if (!strcmp($sourceEncoding, 'UTF-8')) {
+	    return $string;
+	}
+
+	$phpVm = $gallery->getPhpVm();
+	if ($phpVm->function_exists('iconv')) {
+	    return $phpVm->iconv($sourceEncoding, 'UTF-8', $string);
+	} else if ($phpVm->function_exists('mb_convert_encoding')) {
+	    return $phpVm->mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
+	} else if ($phpVm->function_exists('recode_string')) {
+	    return $phpVm->recode_string($sourceEncoding . '..UTF-8', $string);
+	} else {
+	    GalleryCoreApi::relativeRequireOnce(
+		'modules/core/classes/helpers/GalleryCharsetHelper_medium.class');
+	    $charset =& GalleryCharsetHelper_medium::getCharsetTable($sourceEncoding);
+	    if (isset($charset)) {
+		return preg_replace('/([\x80-\xFF])/se',
+				    '$charset[ord(\'$1\')]',
+				    $string);
+	    } else if (!strcmp($sourceEncoding, 'ISO-8859-1')) {
+		return preg_replace('/([\x80-\xFF])/e',
+				    'chr(192 | ord(\'$1\') >> 6) . chr(128 | ord(\'$1\') & 63)',
+				    $string);
+	    }
+	}
+	return $string;
+    }
+}
+?>
+

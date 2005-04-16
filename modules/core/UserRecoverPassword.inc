@@ -28,9 +28,9 @@
  */
 
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugin.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryRecoverPasswordMap.class');
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
+GalleryCoreApi::relativeRequireOnce(
+    'modules/core/classes/helpers/UserRecoverPasswordHelper_simple.class');
 
 /**
  * This controller will handle the recovery of passwords that have
@@ -42,7 +42,6 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/UserRecoverPas
  */
  
 class UserRecoverPasswordController extends GalleryController {
-
     /**         
      * ValidationPlugin instances to use when handling this request.  Only used by
      * test code.
@@ -63,26 +62,6 @@ class UserRecoverPasswordController extends GalleryController {
         $this->_pluginInstances = $pluginInstances;
     }                   
                         
-     /**         
-     * GalleryPhpVm instance to use when handling this request.  Only used by
-     * test code.
-     *              
-     * @var object GalleryPhpVm $_phpVm
-     * @private     
-     */             
-    var $_phpVm;
-                    
-     /**                 
-     * Tests can use this method to hardwire a specific GalleryPhpVm instance to use.
-     * This avoids situations where some of the option instances will do unpredictable
-     * things and derail the tests.
-     *              
-     * @param object GalleryPhpVm
-     */             
-    function setPhpVm($phpVm) {
-        $this->_phpVm = $phpVm;
-    }                   
-
     /**
      * @see GalleryController::handleRequest
      */
@@ -93,12 +72,7 @@ class UserRecoverPasswordController extends GalleryController {
 	$results = array();
 	$error = array();
 
-	if (isset($this->_phpVm)) {
-	    $phpVm = $this->_phpVm;
-	} else {
-	    $phpVm = new GalleryPhpVm();
-	}
-
+	$phpVm = $gallery->getPhpVm();
 	if (isset($form['action']['recover'])) {
 	    if (empty($form['userName'])) {
 		$error[] = 'form[error][userName][missing]';
@@ -153,7 +127,7 @@ class UserRecoverPasswordController extends GalleryController {
 		if (isset($user) && $user->getEmail() != '') {
 		    /* Generate a unique auth string based on userName, time of request and IP */
 		    $authString = $phpVm->md5($user->getUserName() . time() . 
-				      GalleryUtilities::getRemoteHostAddress());
+					      GalleryUtilities::getRemoteHostAddress());
 
 		    /* Generate the request expiration: Now + 7 Days */
 		     $requestExpires = mktime(date('G'), date('i'), date('s'), 

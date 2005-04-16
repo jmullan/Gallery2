@@ -39,10 +39,10 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName('Captcha');
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(5, 1));
+	$this->setRequiredCoreApi(array(5, 3));
 	$this->setRequiredModuleApi(array(0, 9));
     }
 
@@ -77,6 +77,9 @@ class CaptchaModule extends GalleryModule {
 	case '':
 	case '0.9.0':
 	    /* Captcha changed from LoginPlugin to ValidationPlugin to add registration support */
+
+	case '0.9.1':
+	    /* Updated GalleryCoreApi requirement to 5.3 to use Gallery::getPhpVm() */
 	    break;
 
 	default:
@@ -99,9 +102,8 @@ class CaptchaModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration()
      */
     function needsConfiguration() {
-	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/CaptchaHelper.class');
-	$gdReport = CaptchaHelper::testRequiredGdFunctions(new GalleryPhpVm());
+	$gdReport = CaptchaHelper::testRequiredGdFunctions();
 
 	if (count($gdReport['fail']) > 0) {
 	    return array(GalleryStatus::success(), true);

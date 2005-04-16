@@ -181,6 +181,16 @@ class Gallery {
      */
     var $_timeLimit;
 
+    /**
+     * A facade in front of the PHP virtual machine.  We use this as an abstraction layer to let
+     * us interpose mock objects between our code and the VM for testing purposes.  When we're not
+     * in a test environment, this is always an instance of GalleryPhpVm
+     *
+     * @var object GalleryPhpVm
+     * @access private
+     */
+    var $_phpVm = null;
+
     /*
      * ****************************************
      *                 Methods
@@ -800,6 +810,18 @@ class Gallery {
 	    return true;
 	}
 	return false;
+    }
+
+    /**
+     * Return our PHP virtual machine abstraction
+     * @return object GalleryPhpVm
+     */
+    function getPhpVm() {
+	if (!isset($this->_phpVm)) {
+	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
+	    $this->_phpVm = new GalleryPhpVm();
+	}
+	return $this->_phpVm;
     }
 }
 ?>

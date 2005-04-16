@@ -29,7 +29,8 @@
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
 
 /**
- * UserRecoverPassword controller tests
+ * Test the GalleryPhpVm.  These are passthrough functions so all we do is perform a smoke test to
+ * make sure that the basic arguments are getting passed through correctly.
  *
  * @package GalleryCore
  * @subpackage PHPUnit
@@ -42,25 +43,42 @@ class PhpVmTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-
-	$this->phpVm = new GalleryPhpVm();
-    }
-
-    function tearDown() {
-	unset($this->phpVm);
-
-	parent::tearDown();
+	$this->_phpVm = new GalleryPhpVm();
     }
 
     function testMd5() {
-	$this->assertEquals(md5('foobar'), $this->phpVm->md5('foobar'), 
+	$this->assertEquals(md5('foobar'), $this->_phpVm->md5('foobar'), 
 			    'PhpVm MD5 output doesn\'t match PHP output');
     }
 
     function testFunctionExists() {
 	$this->assertEquals(function_exists('testFunctionExists'), 
-			    $this->phpVm->function_exists('testFunctionExists'),
+			    $this->_phpVm->function_exists('testFunctionExists'),
 			    'PhpVm function_exists output doesn\'t match PHP output');
+    }
+
+    function testIconv() {
+	if (function_exists('iconv')) {
+	    $this->assertEquals(
+		iconv('ISO-8859-1', 'UTF8', 'foo bar'),
+		$this->_phpVm->iconv('ISO-8859-1', 'UTF8', 'foo bar'));
+	}
+    }
+
+    function testMbConvertEncoding() {
+	if (function_exists('mb_convert_encoding')) {
+	    $this->assertEquals(
+		mb_convert_encoding('foo bar', 'ISO-8859-1', 'UTF8'),
+		$this->_phpVm->mb_convert_encoding('foo bar', 'ISO-8859-1', 'UTF8'));
+	}
+    }
+
+    function testRecodeString() {
+	if (function_exists('recode_string')) {
+	    $this->assertEquals(
+		recode_string('ISO-8859-1..UTF8', 'foo bar'),
+		$this->_phpVm->recode_string('ISO-8859-1..UTF8', 'foo bar'));
+	}
     }
 }
 ?>

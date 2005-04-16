@@ -30,10 +30,12 @@ class CaptchaHelper {
     /**
      * Verify the existence of the GD functions that we require to draw a captcha.
      *
-     * @param optional PhpVm instance (provided by test classes)
      * @return array ('fail' => array(func, func, ...), 'success' => array(func, func, ...))
      */
-    function testRequiredGdFunctions($phpVm) {
+    function testRequiredGdFunctions() {
+	global $gallery;
+	$phpVm = $gallery->getPhpVm();
+	
 	$gdFunctions = array();
 	$gdFunctions[] = 'ImageCreateFromJPEG';
 	$gdFunctions[] = 'ImageColorAllocate';

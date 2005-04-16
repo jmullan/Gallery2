@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 2);
+	return array(5, 3);
     }
 
     /**
@@ -2349,6 +2349,19 @@ class GalleryCoreApi {
     function postToWebPage($url, $postDataArray, $extraHeaders=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/WebHelper_simple.class');
 	return WebHelper_simple::postToWebPage($url, $postDataArray, $extraHeaders);
+    }
+
+    /**
+     * Convert the string from the source encoding to UTF8
+     *
+     * @param string the input string
+     * @param string the source encoding (eg, 'ISO-8859-1')
+     * @return string the result
+     */
+    function convertToUtf8($inputString, $sourceEncoding) {
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
+	return GalleryCharsetHelper_simple::convertToUtf8($inputString, $sourceEncoding);
     }
 
     /**

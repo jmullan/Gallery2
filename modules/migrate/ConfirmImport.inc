@@ -207,7 +207,7 @@ class ConfirmImportController extends GalleryController {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		$userName = Gallery1DataParser::convertString($fields['username'], $sourceEncoding);
+		$userName = GalleryCoreApi::convertToUtf8($fields['username'], $sourceEncoding);
 		if (empty($totalUsersToImport)) {
 		    $totalUsersToImport = 1;
 		}
@@ -255,13 +255,14 @@ class ConfirmImportController extends GalleryController {
 		     */
 		    $user->setEmail($fields['email']);
 		    $user->setHashedPassword($fields['password']);
-		    $fullName = Gallery1DataParser::convertString(trim($fields['fullname']), $sourceEncoding);
+		    $fullName = GalleryCoreApi::convertToUtf8(
+			trim($fields['fullname']), $sourceEncoding);
 		    $fullName = (!empty($fullName)) ? $fullName : $userName;
 		    $user->setFullName($fullName);
 		    
 		    /*
-		     * $fields['canCreateAlbums'] if they have that perm, give them "core.addAlbumItem"
-		     * permission on the root album
+		     * $fields['canCreateAlbums'] if they have that perm, give them
+		     * "core.addAlbumItem" permission on the root album
 		     */
 		    /* Save this user to the database */
 		    $ret = $user->save();
@@ -515,7 +516,7 @@ class ConfirmImportController extends GalleryController {
 					}
 					list($ret, $owner) =
 					    GalleryCoreApi::fetchUserByUsername(
-						Gallery1DataParser::convertString(
+						GalleryCoreApi::convertToUtf8(
 						    $albumUserFields['username'], $sourceEncoding));
 					if ($ret->isError()) {
 					    if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
@@ -584,7 +585,9 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($albumUserFields['username'], $sourceEncoding));
+				    list($ret, $owner) = GalleryCoreApi::fetchUserByUsername(
+					GalleryCoreApi::convertToUtf8(
+					    $albumUserFields['username'], $sourceEncoding));
 				    if ($ret->isError()) {
 					if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
 					    $owner = $gallery->getActiveUser();
@@ -643,7 +646,10 @@ class ConfirmImportController extends GalleryController {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
 							$permUsername = $permsUserFields['username'];
-							list($ret, $permUser) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($permUsername, $sourceEncoding));
+							list($ret, $permUser) =
+							    GalleryCoreApi::fetchUserByUsername(
+								GalleryCoreApi::convertToUtf8(
+								    $permUsername, $sourceEncoding));
 							if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 							    return array($ret->wrap(__FILE__, __LINE__), null);
 							}
@@ -856,9 +862,8 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 
-				$newItem->setKeywords(Gallery1DataParser::convertString(
+				$newItem->setKeywords(GalleryCoreApi::convertToUtf8(
 				    $importAlbumItem->keywords, $sourceEncoding));
-
 
 				if (isset($importAlbumItem->uploadDate)){
 				    $newItem->setCreationTimestamp($importAlbumItem->uploadDate);
@@ -988,7 +993,9 @@ class ConfirmImportController extends GalleryController {
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
-				    list($ret, $itemOwner) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($albumItemUserFields['username'], $sourceEncoding));
+				    list($ret, $itemOwner) = GalleryCoreApi::fetchUserByUsername(
+					GalleryCoreApi::convertToUtf8(
+					    $albumItemUserFields['username'], $sourceEncoding));
 				    if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 					return array($ret->wrap(__FILE__, __LINE__), null);
 				    }
@@ -1038,7 +1045,11 @@ class ConfirmImportController extends GalleryController {
 						if ($ret->isError()) {
 						    return array($ret->wrap(__FILE__, __LINE__), null);
 						}
-						list($ret, $commentG2User) = GalleryCoreApi::fetchUserByUsername(Gallery1DataParser::convertString($commentG1User['username'], $sourceEncoding));
+						list($ret, $commentG2User) =
+						    GalleryCoreApi::fetchUserByUsername(
+							GalleryCoreApi::convertToUtf8(
+							    $commentG1User['username'],
+							    $sourceEncoding));
 						if ($ret->isError()) {
 						    if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 							return array($ret->wrap(__FILE__, __LINE__), null);
@@ -1234,7 +1245,7 @@ class ConfirmImportController extends GalleryController {
      * @return string
      */
     function convertHtmlToBbcode($item, $sourceEncoding='UTF-8') {
-	$item = Gallery1DataParser::convertString($item, $sourceEncoding);
+	$item = GalleryCoreApi::convertToUtf8($item, $sourceEncoding);
 	$item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);
 	$item = preg_replace('/<strong>/i', '[b]', $item);
 	$item = preg_replace('/<\/strong>/i', '[/b]', $item);
@@ -1345,8 +1356,8 @@ class ConfirmImportView extends GalleryView {
 	    } else {
 		$existingAlbums[$encodedName] = $existingAlbumId;
 	    }
-	    $titles[$encodedName] = Gallery1DataParser::convertString($album['title'],
-								      $form['sourceEncoding']);
+	    $titles[$encodedName] =
+		GalleryCoreApi::convertToUtf8($album['title'], $form['sourceEncoding']);
 
 	    if (!$platform->isLegalPathComponent($album['name'])){
 		$illegalAlbumNames[$encodedName] = $platform->legalizePathComponent($album['name']);
@@ -1364,8 +1375,7 @@ class ConfirmImportView extends GalleryView {
 		$albumOwnerUserName[$encodedName] = $testUser['username'];
 		$albumOwnerUid[$encodedName] = $album['owner'];
 		list($ret, $owner) = GalleryCoreApi::fetchUserByUsername(
-					 Gallery1DataParser::convertString($testUser['username'],
-									   $form['sourceEncoding']));
+		    GalleryCoreApi::convertToUtf8($testUser['username'], $form['sourceEncoding']));
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

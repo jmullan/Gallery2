@@ -47,6 +47,41 @@ class GalleryPhpVm {
     }
 
     /**
+     * iconv -- Convert string to requested character encoding
+     *
+     * @param string source character set
+     * @param string target character set
+     * @param string data
+     * @return string result
+     */
+    function iconv($inCharset, $outCharset, $string) {
+	return iconv($inCharset, $outCharset, $string);
+    }
+
+    /**
+     * mb_convert_encoding -- Convert character encoding
+     *
+     * @param string data
+     * @param string target character set
+     * @param string source character set
+     * @return string result
+     */
+    function mb_convert_encoding($string, $outCharset, $inCharset) {
+	return mb_convert_encoding($string, $outCharset, $inCharset);
+    }
+
+    /**
+     * recode_string -- Recode a string according to a recode request
+     *
+     * @param string source..target character set
+     * @param string data
+     * @return string result
+     */
+    function recode_string($request, $string) {
+	return recode_string($request, $string);
+    }
+
+    /**
      * Return the 32-byte md5 hash of the given string
      *
      * @param string string to be hashed
