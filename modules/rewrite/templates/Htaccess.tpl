@@ -7,21 +7,28 @@
 # BEGIN Url Rewrite section
 # (Automatically generated.  Do not edit this section)
 <IfModule mod_rewrite.c>
+{if $Htaccess.needOptions == 'true'}
     Options +FollowSymlinks
+{/if}
     RewriteEngine On
 
-    RewriteBase {$Htaccess.galleryDirectory}
-
+    RewriteBase {$Htaccess.directory}
+    
     # Only redirect to Gallery base file if there's no such file already, and
-    # make sure gallery_remote2.php gets generates a 404 in order to be compatible
+    # make sure gallery_remote2.php generates a 404 in order to be compatible
     # with Gallery Remote.
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !gallery\_remote2\.php
+    
+{foreach from=$Htaccess.rules item=rule}
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-f
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !-d
+    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !gallery\_remote2\.php
+{if strpos($rule.queryString, 'view=core:DownloadItem') !== false}
+    RewriteRule ^{$rule.urlPattern}$   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [QSA,L]
+{else}
+    RewriteRule ^{$rule.urlPattern}$   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [QSA,L]
+{/if}
 
-    RewriteRule ^v/(.*).html       {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
-    RewriteRule ^v/(.*)            {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:ShowItem&{$Htaccess.g2Prefix}path=/$1 [QSA]
-    RewriteRule ^d/([0-9]+).*      {$Htaccess.galleryDirectory}{$Htaccess.baseFile}?{$Htaccess.g2Prefix}view=core:DownloadItem&{$Htaccess.g2Prefix}itemId=$1 [QSA]
+{/foreach}
 </IfModule>
 
 # END Url Rewrite section

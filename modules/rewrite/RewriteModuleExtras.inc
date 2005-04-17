@@ -34,7 +34,10 @@ class RewriteModuleExtras {
 	switch ($currentVersion) {
 	case null:
 	    /* Initial install */
-	    foreach (array('galleryLocation' => '')
+	    foreach (array('galleryLocation' => '',
+			   'needOptions' => '',
+			   'embeddedLocation' => '',
+			   'embeddedHtaccess' => '')
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret->isError()) {
@@ -153,6 +156,24 @@ class RewriteModuleExtras {
 
 	case '0.9.0':
 	case '0.9.1':
+	case '0.9.2':
+	    /* Reset Gallery location, needs to be reconfigured. */
+	    foreach (array('galleryLocation' => '',
+			   'needOptions' => '',
+			   'embeddedLocation' => '',
+			   'embeddedHtaccess' => '')
+		     as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
+	    list ($ret, $code) = $module->autoConfigure();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
 	    break;
 
 	default:

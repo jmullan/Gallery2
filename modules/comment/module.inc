@@ -296,5 +296,26 @@ class CommentModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), $views);
     }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+    	$rules = array();
+    	
+	$rule = array();
+	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:AddComment');
+	$rule['pattern'] = 'c/add/%itemId%.html';
+	$rule['comment'] = $this->translate('Add Comment');
+	$rules[] = $rule;
+	
+	$rule = array();
+	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:ShowComments');
+	$rule['pattern'] = 'c/view/%itemId%.html';
+	$rule['comment'] = $this->translate('View Comments');
+	$rules[] = $rule;
+	
+	return $rules;
+    }
 }
 ?>

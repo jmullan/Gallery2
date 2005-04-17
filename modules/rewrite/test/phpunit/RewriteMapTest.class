@@ -1,0 +1,109 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Rewrite
+ * @subpackage PHPUnit
+ * @author Douglas Cau <douglas@cau.se>
+ */
+
+/**
+ * Test RewriteUrlGenerator functionality
+ *
+ * @package Rewrite
+ * @subpackage PHPUnit
+ *
+ */
+class RewriteMapTest extends GalleryTestCase {
+
+    function RewriteMapTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+    	global $gallery;
+    	parent::setUp();
+	
+	/* Save original activeRules */
+	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    function tearDown() {
+    	global $gallery;
+    	parent::tearDown();
+	
+	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
+    function testActiveRules() {
+	$activeRules = array('rewrite' => array(
+		array('pattern' => 'v/%path%',
+		      'match' => 'core:ShowItem'),
+		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+		      'match' => 'core:DownloadItem'),
+		array('pattern' => '%path%')));
+	
+	$ret = RewriteMap::setActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->assertEquals($activeRules, $savedRules);
+    }
+    
+    function testShortUrls() {
+	$activeRules = array('rewrite' => array(
+		array('pattern' => 'v/%path%',
+		      'match' => 'core:ShowItem'),
+		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+		      'match' => 'core:DownloadItem'),
+		array('pattern' => '%path%')));
+	$expected = array(
+		'core:ShowItem' => 'v/%path%',
+		'core:DownloadItem' => 'd/%itemId%-%serialNumber%/%fileName%');
+	
+	$ret = RewriteMap::setActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $shortUrls) = RewriteMap::getShortUrls();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$this->assertEquals($expected, $shortUrls);
+    }
+}
+
+?>

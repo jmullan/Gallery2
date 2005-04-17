@@ -478,6 +478,27 @@ class GalleryModule extends GalleryPlugin {
     function getOnLoadHandlerIds() {
 	return array();
     }
+    
+    /**
+     * Returns a set of short URL rules. Array structure:
+     *
+     * $rule['match']       An array of view => viewName, subView => subViewName to match
+     *                      when generating the short URLs.
+     * $rule['pattern']     Proposed short URL style (ie 'v/%path%').
+     * $rule['keywords']    Pattern keywords should have the same name as its coresponding
+     *                      url parameter key. This is an array of additional keywords
+     *                      defined keyword => array(pattern => regex, ignored => 1). If ignored
+     *			    is set, the this keyword wont be appended to the queryString.
+     * $rule['queryString'] Additional queryString parameters to append.
+     * $rule['locked']      If this is set, the user may not change the pattern.
+     * $rule['comment']     This should be a localized comment.
+     * return array($rule, ...);
+     *
+     * @return array of short URL rules.
+     */
+    function getRewriteRules() {
+	return array();
+    }
 
     /* Getters and setters below */
 

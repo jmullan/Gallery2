@@ -43,27 +43,6 @@ class RewriteHelperTest extends GalleryTestCase {
     	global $gallery;
 	parent::setUp();
 	
-	$rewriteLocation = '/phpunit/var/www/localhost/htdocs/gallery2';
-	$rewriteBase = '/gallery2/';
-	
-	foreach (array('galleryLocation' => 'http://example.com/gallery2/')
-		 as $param => $value) {
-	    /* Save original value */
-	    list ($ret, $this->_saveParameters[$param]) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    /* Set our test value */
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 	$this->_platform = new RewriteHelperTestPlatform();
@@ -75,14 +54,6 @@ class RewriteHelperTest extends GalleryTestCase {
     function tearDown() {
     	global $gallery;
 	parent::tearDown();
-
-    	foreach ($this->_saveParameters as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
     }
     
     function testCheckFile() {
@@ -97,7 +68,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code);
 	
 	/* Make sure we're ok if there's already a Gallery section. */
-	list ($ret, $expected) = RewriteHelper::getTemplate();
+	list ($ret, $expected) = RewriteHelper::getTemplate(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -113,17 +84,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(REWRITE_STATUS_OK, $code, 'existing gallery section');
+	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code, 'existing gallery section');
     }
     
     function testCheckFileNoPrefix() {
 	global $gallery;
-	
-	/* Dont use prefix urls */
-	$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'usePrefixes', 'false');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 	
     	/* Make sure we pass if it's all good to write. */
 	list ($ret, $code) = RewriteHelper::checkFile();
@@ -171,7 +136,7 @@ class RewriteHelperTest extends GalleryTestCase {
     	/* Make sure we fail if it's not writable. */
     	$this->_platform->setIsWriteable(false);
 	$gallery->setPlatform($this->_platform);
-	list ($ret, $code) = RewriteHelper::writeFile();
+	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -180,7 +145,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	/* Make sure we fail if it's not readable */
     	$this->_platform->setIsReadable(false);
 	$gallery->setPlatform($this->_platform);
-	list ($ret, $code) = RewriteHelper::writeFile();
+	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -189,7 +154,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	/* Make sure we fail if it's there's no file */
     	$this->_platform->setFileExists(false);
 	$gallery->setPlatform($this->_platform);
-	list ($ret, $code) = RewriteHelper::writeFile();
+	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -197,24 +162,67 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(null, $this->_platform->_fileContent, 'file content');
     }
     
-    function testGetPrefixMap() {
-    	$prefixMap = array(
-    		'core:ShowItem' => 'test_show',
-    		'core:DownloadItem' => 'test_download');
-	$ret = GalleryCoreApi::setPluginParameter(
-		'module', 'rewrite', 'prefixMap', serialize($prefixMap));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$this->assertEquals(array(GalleryStatus::success(), $prefixMap),
-			    RewriteHelper::getPrefixMap());
-    }
-    
     function testGetHtaccessPath() {
 	$this->assertEquals(array(GalleryStatus::success(),
 			dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess'),
 		RewriteHelper::getHtaccessPath());
+    }
+    
+    function testParseActiveRules() {
+	$activeRules = array('rewrite' => array(
+		array('pattern' => 'v/%path%',
+		      'match' => 'core:ShowItem'),
+		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+		      'match' => 'core:DownloadItem'),
+		array('pattern' => '%path%')));
+	$expected = array(
+		array('urlPattern' => 'v/',
+		      'queryString' => 'g2_view=core:ShowItem'),
+		array('urlPattern' => 'd/([0-9]+)-([0-9]+)/([^\/]+)',
+		      'queryString' => 'g2_view=core:DownloadItem&g2_itemId=$1&g2_serialNumber=$2'),
+		array('urlPattern' => 'v/(.+)',
+		      'queryString' => 'g2_view=core:ShowItem&g2_path=$1'),
+		array('urlPattern' => '(.+)',
+		      'queryString' => 'g2_view=rewrite:FileNotFound&g2_path=$1'));
+
+	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
+	$this->assertEquals($expected, $result, 'rules');
+    }
+    
+    function testParseActiveRulesBadKeyword() {
+	$activeRules = array('rewrite' => array(
+		array('pattern' => 'v/%badKeyword%',
+		      'match' => 'core:ShowItem')));
+
+	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'status code');
+	$this->assertEquals(null, $result, 'rules');
+    }
+    
+    function testParseActiveRulesNoKeyword() {
+	$activeRules = array('rewrite' => array(
+		array('pattern' => 'v/',
+		      'match' => 'core:ShowItem')));
+	$expected = array(
+		array('urlPattern' => 'v/',
+		      'queryString' => 'g2_view=core:ShowItem'));
+
+	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
+	$this->assertEquals($expected, $result, 'rules');
     }
 }
 
@@ -292,7 +300,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	    return '.htaccess';
 	}
 	
-	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
+	return parent::file($file, $mode, $useIncludePath, $zcontext);
     }
     
     function fwrite($handle, $string, $length=null) {
