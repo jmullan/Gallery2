@@ -322,8 +322,8 @@ class ImageMagickToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath)
-		&& !$platform->is_dir($imageMagickPath)) {
+	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath) &&
+	        !@$platform->is_dir($imageMagickPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 
