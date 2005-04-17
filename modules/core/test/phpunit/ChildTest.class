@@ -177,5 +177,103 @@ class ChildTest extends GalleryTestCase {
 		  $child[0]->getId()),
 	    $childIds);
     }
+    
+    function testDescendentItemIds() {
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $itemIds = array($this->_child[0]->getId(), $this->_child[1]->getId());
+        foreach ($items as $item) {
+            $itemIds[] = $item->getId();
+        }
+        
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        sort($childIds);
+        $this->assertEquals($itemIds, $childIds, 'descendents');
+    }
+    
+    function testDescendentItemIdsNoItem() {
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_child[0]);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array(), $childIds, 'empty descendents');
+    }
+    
+    function testDescendentItemIdsInadequatePermissions() {
+        global $gallery;
+        
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        /* Create a user that we can delete */
+        list ($ret, $user) = $this->_createRandomUser();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->_markForCleanup($user);
+        $gallery->setActiveUser($user);
+        
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, null, 
+            null, 'core.edit');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array(), $childIds, 'inadequate permissions');
+     }
+    
+    function testDescendentItemIdsNoPermissions() {
+        global $gallery;
+        
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[0]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        list ($ret, $items[]) = $this->_createRandomDataItem($this->_child[1]->getId());
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        /* Create a user that we can delete */
+        list ($ret, $user) = $this->_createRandomUser();
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        
+        $this->_markForCleanup($user);
+        $gallery->setActiveUser($user);
+
+        /* the goal here is to test for the permissions that "everyone" doesn't have */
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, 
+            null, null, 'core.all');
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array(), $childIds, 'no permissions');
+     }
 }
 ?>

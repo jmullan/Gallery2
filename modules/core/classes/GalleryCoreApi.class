@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 3);
+	return array(5, 4);
     }
 
     /**
@@ -2162,6 +2162,24 @@ class GalleryCoreApi {
 	return GalleryEntityHelper_medium::removeOnLoadHandlers($handlerIds);
     }
 
+    /**
+     * Return the ids of the descendents of this entity that are visible to the given user.
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     * @param string what permission is required for the item
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     * @static
+     */
+    function fetchDescendentItemIds($item, $offset=null, $count=null, $permission='core.view') {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
+	return GalleryChildEntityHelper_simple::fetchDescendentItemIds($item, $offset, $count, $permission);
+    }
+    
     /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection

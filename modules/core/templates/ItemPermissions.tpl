@@ -45,6 +45,12 @@
     <input type="hidden" name="{g->formVar var="form[serialNumber]"}" value="{$form.serialNumber}"/>
     <input type="submit" class="inputTypeSubmit"
      name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
+    <p class="giDescription">
+    <input type="checkbox" checked="checked"
+      name="{g->formVar var="form[applyOwnerToSubItems]"}" 
+      value="{g->text text="Apply new owner to sub-items"}"/>
+      {g->text text="Apply new owner to sub-items"}
+    </p>
 
     {if !empty($form.error.owner.missingUser)}
     <div class="giError">

@@ -112,6 +112,40 @@ class ItemPermissionsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_user->getId(), $this->_albumParent->getOwnerId());
     }
 
+    function testChangeOwnerCascade() {
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());
+	GalleryUtilities::putRequestVariable('form[action][changeOwner]', 'on');
+	GalleryUtilities::putRequestVariable('form[owner][ownerName]', $this->_user->getUserName());
+	GalleryUtilities::putRequestVariable('form[applyOwnerToSubItems]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[serialNumber]', $this->_albumParent->getSerialNumber());
+	
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemPermissions',
+						      'itemId' => $this->_albumParent->getId()),
+				  'status' => array('changedOwner' => 1),
+				  'error' => array()),
+			    $results);
+
+	GalleryDataCache::reset();
+
+	list ($ret, $this->_albumParent) = $this->_albumParent->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($this->_user->getId(), $this->_albumParent->getOwnerId());
+	list ($ret, $this->_albumChild) = $this->_albumChild->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($this->_user->getId(), $this->_albumChild->getOwnerId());
+    }
+
     function testChangeOwnerMissingUser() {
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_albumParent->getId());

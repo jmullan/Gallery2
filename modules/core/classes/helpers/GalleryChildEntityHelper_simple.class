@@ -368,6 +368,89 @@ class GalleryChildEntityHelper_simple {
 	return array(GalleryStatus::success(), $parents);
     }
 
+    /**
+     * Return the ids of the descendents of this entity that are visible to the given user.
+     *
+     * @param object GalleryItem an item
+     * @param int where to start
+     * @param int how many to return
+     * @param string what permission is required for the item
+     *
+     * @access public
+     * @return array object GalleryStatus a status code
+     *               array integer ids
+     * @static
+     */
+    function fetchDescendentItemIds($item, $offset, $count, $requiredPermission) {
+        global $gallery;
+        $storage =& $gallery->getStorage();
+
+        if (!GalleryUtilities::isA($item, 'GalleryItem')) {
+            return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+        }
+
+        list ($ret, $sequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $sequence = join('/', $sequence);
+        $sequence .= '/' . $item->getId() . '/%';
+
+        if ($requiredPermission) {
+            list ($ret, $aclIds) =
+                GalleryCoreApi::fetchAccessListIds($requiredPermission, $gallery->getActiveUserId());
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null);
+            }
+            $aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
+
+            if (empty($aclIds)) {
+                return array(GalleryStatus::success(), array());
+            }
+        }
+
+        $data[] = $sequence;
+        /* Prepare the query */
+        if ($requiredPermission) {
+            $query = '
+            SELECT
+              [GalleryItemAttributesMap::itemId]
+            FROM
+              [GalleryItemAttributesMap], [GalleryAccessSubscriberMap]
+            WHERE
+              [GalleryItemAttributesMap::parentSequence] LIKE ?
+             AND
+             [GalleryAccessSubscriberMap::itemId] = [GalleryItemAttributesMap::itemId]
+             AND
+             [GalleryAccessSubscriberMap::accessListId] IN (' . $aclMarkers . ')
+            ';
+            $data = array_merge($data, $aclIds);
+        } else {
+            $query = '
+            SELECT
+              [GalleryItemAttributesMap::itemId]
+            FROM
+              [GalleryItemAttributesMap]
+            WHERE
+              [GalleryItemAttributesMap::parentSequence] LIKE ?
+            ';
+        }
+
+        $options = array();
+        $options['limit'] = array('count' => $count, 'offset' => $offset);
+
+        list ($ret, $searchResults) = $gallery->search($query, $data, $options);
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+
+        $ids = array();
+        while ($result = $searchResults->nextResult()) {
+            $ids[] = (int)$result[0];
+        }
+
+        return array(GalleryStatus::success(), $ids);
+    }
 
     /**
      * If we want to sort, which storage info we need?
