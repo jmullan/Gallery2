@@ -207,11 +207,25 @@ class ItemEditPhoto extends ItemEditPlugin {
 			    return array($ret->wrap(__FILE__, __LINE__), null, null);
 			}
 
-			$derivative->setMimeType($outputMimeType);
+			$operations = 'scale|' . $form['resizes'][$i]['width'] . ',' .
+			    $form['resizes'][$i]['height'];
+
+			list ($ret, $newOperations, $newOutputMimeType) =
+			    GalleryCoreApi::makeSupportedViewableOperationSequence(
+				$outputMimeType, $operations);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+
+			if ($newOperations && $newOutputMimeType) {
+			    $derivative->setMimeType($newOutputMimeType);
+			    $derivative->setDerivativeOperations($newOperations);
+			} else {
+			    $derivative->setMimeType($outputMimeType);
+			    $derivative->setDerivativeOperations($operations);
+			}
+			
 			$derivative->setDerivativeSourceId($source->getId());
-			$derivative->setDerivativeOperations(
-			     'scale|' . $form['resizes'][$i]['width']
-				. ',' . $form['resizes'][$i]['height']);
 			if (isset($postFilter)) {
 			    $derivative->setPostFilterOperations($postFilter);
 			}
