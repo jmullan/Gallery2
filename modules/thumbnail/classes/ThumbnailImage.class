@@ -190,7 +190,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    $targetName = "_$targetName";
 	}
 
-	// Default parent is root album:
+	/* Default parent is root album: */
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -310,20 +310,24 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    if (isset($params['maxSize'])) {
 		list ($width, $height) =
 		    GalleryUtilities::shrinkDimensionsToFit($width, $height, $params['maxSize']);
+		unset($params['maxSize']);
 	    }
 
 	    $sizeStr = ($width > 0 && $height > 0)
 		? sprintf(' width="%s" height="%s"', $width, $height) : '';
+	    if (!isset($params['alt'])) {
+		$params['alt'] = $this->getFileName();
+	    }
 
-	    return sprintf('<img %s src="%s"%s alt="%s"/>',
-			   $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			   $src,
-			   $sizeStr,
-			   $this->getFileName());
+	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
+	    foreach ($params as $attr => $value) {
+		$html .= " $attr=\"$value\"";
+	    }
+	    return $html . '/>';
 
-        default:
-            return null;
-        }
+	default:
+	    return null;
+	}
     }
 }
 
