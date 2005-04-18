@@ -44,7 +44,17 @@ class GalleryImmediateStatusView extends GalleryView {
      */
     var $_main;
 
+    /**
+     * The starting time for this job.
+     */
     var $_startTime;
+
+    /**
+     * Reset any timing statistics we've gathered so far.
+     */
+    function resetTimingStats() {
+	$this->_startTime = time();
+    }
 
     /**
      * This is the class that prepares the global template for display
@@ -140,7 +150,7 @@ class GalleryImmediateStatusView extends GalleryView {
 	 * where the first 50% goes really quickly and the second 50% goes really slowly; the
 	 * estimate will be wildly inaccurate at the transition.
 	 */
-	if ($percentComplete < 1 && time() > $this->_startTime) {
+	if ($percentComplete > 0 && $percentComplete < 1 && time() > $this->_startTime) {
 	    $elapsed = (int)(time() - $this->_startTime);
 	    $timeRemaining = ($elapsed / $percentComplete) - $elapsed;
 	    $timeRemaining = $this->_coreModule->translate(
