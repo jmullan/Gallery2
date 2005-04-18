@@ -7,7 +7,7 @@
 {literal}
 <script type="text/javascript">
   // <![CDATA[
-  function updateStatus(title, description, percentComplete) {
+  function updateStatus(title, description, percentComplete, timeRemaining) {
     document.getElementById('ImmediateStatus_title').innerHTML = title;
     document.getElementById('ImmediateStatus_description').innerHTML = description;
 
@@ -22,6 +22,7 @@
     }
 
     document.getElementById('ImmediateStatus_progressMade').style.width = progressMade + "%"
+    document.getElementById('ImmediateStatus_timeRemaining').innerHTML = timeRemaining;
   }
   // ]]>
 </script>
@@ -41,10 +42,16 @@
     <span id="ImmediateStatus_description">{$ImmediateStatus.sectionDescription}</span>
   </p>
 
-  <table width="100%" cellspacing="0" cellpadding="0"><tr>
-    <td id="ImmediateStatus_progressMade" class="giStatusProgressMade" style="width:0%">&nbsp;</td>
-    <td id="ImmediateStatus_progressToGo" class="giStatusProgressToGo" style="width:100%; border-left: none')">&nbsp;</td>
-  </tr></table>
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td id="ImmediateStatus_progressMade" class="giStatusProgressMade" style="width:0%">&nbsp;</td>
+      <td id="ImmediateStatus_progressToGo" class="giStatusProgressToGo" style="width:100%; border-left: none')">&nbsp;</td>
+    </tr>
+  </table>
+
+  <p class="giDescription">
+    <span id="ImmediateStatus_timeRemaining">&nbsp;</span>
+  </p>
 </div>
 
 {* do not modify the following line *}

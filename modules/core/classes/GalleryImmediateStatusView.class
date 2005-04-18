@@ -44,6 +44,8 @@ class GalleryImmediateStatusView extends GalleryView {
      */
     var $_main;
 
+    var $_startTime;
+
     /**
      * This is the class that prepares the global template for display
      * and loads all non-action-specific data into it.  It is basically
@@ -101,6 +103,11 @@ class GalleryImmediateStatusView extends GalleryView {
 	$pieces = split('SPLIT ON THIS LINE', $html);
 	print $pieces[0];
 	flush();
+
+	if (empty($this->_startTime)) {
+	    $this->_startTime = time();
+	}
+	
 	return GalleryStatus::success();
     }
 
@@ -115,12 +122,42 @@ class GalleryImmediateStatusView extends GalleryView {
      * @return object GalleryStatus a status code
      */
     function renderStatusMessage($title, $description, $percentComplete) {
+	if (empty($this->_startTime)) {
+	    $this->_startTime = time();
+	}
+
+	if (!isset($this->_coreModule)) {
+	    list ($ret, $this->_coreModule) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/*
+	 * Calculate the time remaining
+	 *
+	 * TODO: Use a weighted measurement to provide a balanced estimate.  Consider the case
+	 * where the first 50% goes really quickly and the second 50% goes really slowly; the
+	 * estimate will be wildly inaccurate at the transition.
+	 */
+	if ($percentComplete < 1 && time() > $this->_startTime) {
+	    $elapsed = (int)(time() - $this->_startTime);
+	    $timeRemaining = ($elapsed / $percentComplete) - $elapsed;
+	    $timeRemaining = $this->_coreModule->translate(
+		array('text' => 'Estimated time remaining: %d:%02d',
+		      'arg1' => (int)($timeRemaining / 60),
+		      'arg2' => $timeRemaining % 60));
+	} else {
+	    $timeRemaining = '';
+	}
+	
 	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	$statusTemplate->setVariable('l10Domain', 'modules_core');
 	$statusTemplate->setVariable('ImmediateStatusMessage',
 				     array('sectionTitle' => $title,
 					   'sectionDescription' => $description,
-					   'percentComplete' => $percentComplete));
+					   'percentComplete' => $percentComplete,
+					   'timeRemaining' => $timeRemaining));
 	$ret = $statusTemplate->display('modules/core/templates/ImmediateStatusMessage.tpl');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
