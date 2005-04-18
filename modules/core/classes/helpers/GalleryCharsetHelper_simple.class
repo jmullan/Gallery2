@@ -51,9 +51,16 @@ class GalleryCharsetHelper_simple {
 	}
 
 	$phpVm = $gallery->getPhpVm();
+
+	/* Iconv can return false, so try it first.  If it fails, continue */
 	if ($phpVm->function_exists('iconv')) {
-	    return $phpVm->iconv($sourceEncoding, 'UTF-8', $string);
-	} else if ($phpVm->function_exists('mb_convert_encoding')) {
+	    $result = $phpVm->iconv($sourceEncoding, 'UTF-8', $string);
+	    if ($result) {
+		return $result;
+	    }
+	}
+	
+	if ($phpVm->function_exists('mb_convert_encoding')) {
 	    return $phpVm->mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
 	} else if ($phpVm->function_exists('recode_string')) {
 	    return $phpVm->recode_string($sourceEncoding . '..UTF-8', $string);

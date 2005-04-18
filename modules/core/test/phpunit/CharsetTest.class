@@ -88,6 +88,70 @@ class CharsetTest extends GalleryTestCase {
 	$targetString = chr(195) . chr(181);
 	$this->assertEquals($targetString, $outputString);
     }
+
+    /* Iconv fails, so we use mb_convert_encoding instead */
+    function testConvertIconvFallback1() {
+	global $gallery;
+
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('iconv', true);
+	$phpVm->setFunctionExists('mb_convert_encoding', true);
+	$phpVm->setFunctionExists('recode_string', false);
+	$phpVm->setReturn('iconv', array('ISO-8859-1', 'UTF-8', 'foo'), false);
+	$phpVm->setReturn('mb_convert_encoding', array('foo', 'UTF-8', 'ISO-8859-1'), 'success');
+	$gallery->_phpVm = $phpVm;
+
+	$this->assertEquals('success', GalleryCoreApi::convertToUtf8('foo', 'ISO-8859-1'));
+    }
+
+    /* Iconv fails, so we use recode_string instead */
+    function testConvertIconvFallback2() {
+	global $gallery;
+
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('iconv', true);
+	$phpVm->setFunctionExists('mb_convert_encoding', false);
+	$phpVm->setFunctionExists('recode_string', true);
+	$phpVm->setReturn('iconv', array('ISO-8859-1', 'UTF-8', 'foo'), false);
+	$phpVm->setReturn('recode_string', array('ISO-8859-1..UTF-8', 'foo'), 'success');
+	$gallery->_phpVm = $phpVm;
+
+	$this->assertEquals('success', GalleryCoreApi::convertToUtf8('foo', 'ISO-8859-1'));
+    }
+
+    /* Iconv fails, so we use PHP instead */
+    function testConvertIconvFallback3() {
+	global $gallery;
+
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('iconv', true);
+	$phpVm->setFunctionExists('mb_convert_encoding', false);
+	$phpVm->setFunctionExists('recode_string', false);
+	$phpVm->setReturn('iconv', array('ISO-8859-1', 'UTF-8', 'foo'), false);
+	$gallery->_phpVm = $phpVm;
+
+	$inputString = chr(245);
+	$sourceEncoding = 'ISO-8859-1';
+	$outputString = GalleryCoreApi::convertToUtf8($inputString, $sourceEncoding);
+	$targetString = chr(195) . chr(181);
+	$this->assertEquals($targetString, $outputString);
+    }
+
+    /* Unknown source encoding; pure php punts and returns original string */
+    function testConvertPurePhpUnknownSourceEncoding() {
+	global $gallery;
+
+	$phpVm = new CharsetTestPhpVm();
+	$phpVm->setFunctionExists('iconv', false);
+	$phpVm->setFunctionExists('mb_convert_encoding', false);
+	$phpVm->setFunctionExists('recode_string', false);
+	$gallery->_phpVm = $phpVm;
+
+	$inputString = chr(245);
+	$sourceEncoding = 'ISO-BOGO-9000';
+	$outputString = GalleryCoreApi::convertToUtf8($inputString, $sourceEncoding);
+	$this->assertEquals($inputString, $outputString);
+    }
 }
 
 class CharsetTestPhpVm {
