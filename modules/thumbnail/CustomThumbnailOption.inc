@@ -50,7 +50,7 @@ class CustomThumbnailOption extends ItemEditOption {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailHelper.class');
 
-	// is this item already using a custom thumbnail..
+	/* Is this item already using a custom thumbnail.. */
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($item->getId());
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
