@@ -1879,9 +1879,8 @@ class GalleryCoreApi {
      */
     function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence($mimeType, 
-										   $operations,
-										   $forThumbnail);
+	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence(
+	    $mimeType, $operations, $forThumbnail);
     }
 
     /**
