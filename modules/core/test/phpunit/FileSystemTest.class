@@ -235,6 +235,50 @@ class FileSystemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    /*
+     * Test the platform->rename($old,$newpath) call of FileSystemEntity::move.
+     * The call should have legal platformspecific slashes.
+     *
+     * It tests not the functionality of FileSystemEntity::move, it only tests if
+     * FileSystemEntity::move uses valid paths (no incorrect slashes) in its call to the platform
+     * specific "rename($oldname, $newname)" function.
+     */
+    function testMoveRenameCall() {
+	global $gallery;
+	/* Use a windows alike mock platfrom */
+	$originalPlatform = $gallery->getPlatform();
+	$gallery->_platform = new FileSystemTestPlatformForRename('\\');
+	/* Acquire the write locks */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock(array($this->_albums[0]->getId(),
+								      $this->_albums[1]->getId(),
+								      $this->_albums[2]->getId()));
+	if ($ret->isError()) {
+	    $gallery->_platform = $originalPlatform;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Execute the move command, success expected*/
+	$ret = $this->_albums[2]->move($this->_albums[0]->getId());
+	if ($ret->isError()) {
+	    $gallery->_platform = $originalPlatform;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Now change the mock platform to a unix alike system */
+	$gallery->_platform = new FileSystemTestPlatformForRename('/');
+	/* And move again album 1 (back, but all virtual move command), success expected */
+	$ret = $this->_albums[2]->move($this->_albums[1]->getId());
+	if ($ret->isError()) {
+	    $gallery->_platform = $originalPlatform;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$gallery->_platform = $originalPlatform;
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->_platform = $originalPlatform;
+    }
 }
 
 /**
@@ -253,4 +297,70 @@ class FileSystemTestPlatform {
     }
 }
 
+
+/**
+ * Mock platform for the rename method
+ *
+ * Implements all methods used by FileSystemEntity::move()
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class FileSystemTestPlatformForRename extends GalleryPlatform {
+    function FileSystemTestPlatformForRename($separator) {
+	$this->_separator = $separator;
+    }
+
+    function getDirectorySeparator() {
+	return $this->_separator;
+    }
+
+    /**
+     * Rename a file/dir
+     *
+     * Override rename method for the testMoveRenamePaths
+     * It won't rename the item actually, just check if the paths contain no invalid slashs
+     */
+    function rename($oldname, $newname) {
+	global $gallery;
+	if ($gallery->getDebug()) {
+	    $gallery->debug("rename($oldname, $newname)");
+	}
+	/*
+	 * Check if there are some platform specific slash problems in the paths
+	 * The platform should be forced to have a '\' separator and thus, no '/'
+	 * should be found in the paths.
+	 */
+	/*
+	 * Strip off the g2data path part of the $oldname and $newname, because they are platform
+	 * specific and correct anyway.
+	 */
+	$oldname = substr($oldname,
+			  strlen($gallery->getConfig('data.gallery.albums')));
+	$newname = substr($newname,
+			  strlen($gallery->getConfig('data.gallery.albums')));
+	/* We had a case where FileSystemEntity::move produced a rename(a,b) path b, which had a
+	 * separator too much and this additional seapartor wasn't even platform specific, but
+	 * just '/'. The consequence: ->move() didn't work on windows xp.
+	 * What we do here is: Force a windows xp separator '\' and check if no '/' separator is
+	 * found in the paths. nested ifs are not necessary, but more readable.
+	 * And we don't accept // or \\ in our paths. Most probably this won't be an issue, but
+	 * it's good to create exactly the paths that we actually indend to create.
+	 */
+	if ($this->_separator == '\\') {
+	    if (strrchr($oldname, '/') || strrchr($newname, '/')
+		    || strpos($oldname, '\\\\') || strpos($newname, '\\\\')) {
+		return false;
+	    }
+	}  else if ($this->_separator == '/') {
+	    if (strrchr($oldname, '\\') || strrchr($newname, '\\')
+		    || strpos($oldname, '//') || strpos($newname, '//')) {
+		return false;
+	    }
+	}
+
+	/* Now pretend the rename command was successful */
+	return true;
+    }
+}
 ?>

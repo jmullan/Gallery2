@@ -258,7 +258,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	}
 
 	if (!$this->isLinked()) {
-	    $newPath = $newParentPath . '/' . $newPathComponent;
+	    $newPath = $newParentPath . $newPathComponent;
 	    $platform = $gallery->getPlatform();
 	    if (!$platform->rename($currentPath, $newPath)) {
 		return GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__,
