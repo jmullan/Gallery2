@@ -61,7 +61,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	$message = $module->translate('Processing..');
+	$message = $module->translate('Processing...');
 
 	$ret = $immediateView->doLoadImmediateTemplate();
 	if ($ret->isError()) {
@@ -74,10 +74,9 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	list ($ret, $results) = $gallery->search('
-	  SELECT [DerivativeImage::id] FROM [DerivativeImage]
-	  ORDER BY [DerivativeImage::id]
-	');
+	list ($ret, $results) =
+	    $gallery->search('SELECT [DerivativeImage::id] FROM [DerivativeImage] ' .
+			     'ORDER BY [DerivativeImage::id]');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -89,8 +88,10 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-
+	    
 	    if (++$i % 5 == 0 || $i == $total) {
+		$message = $module->translate(
+		    array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));
 		$ret = $immediateView->renderStatusMessage($message, '', $i / $total);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
