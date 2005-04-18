@@ -177,6 +177,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			    $path .= '.html';
 			}
 			$path = str_replace(' ', '+', $path);
+			$path = str_replace('#', '%23', $path);
 			
 			$url = str_replace('%' . $arg . '%', substr($path, 1), $url);
 			unset($params['itemId']);
