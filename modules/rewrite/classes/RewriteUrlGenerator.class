@@ -176,6 +176,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
 			    $path .= '.html';
 			}
+			$path = str_replace(' ', '+', $path);
 			
 			$url = str_replace('%' . $arg . '%', substr($path, 1), $url);
 			unset($params['itemId']);

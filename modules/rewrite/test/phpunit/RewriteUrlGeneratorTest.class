@@ -147,7 +147,10 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($testAlbum);
-	list ($ret, $testItem) = $this->_createRandomDataItem($testAlbum->getId());
+	list ($ret, $testItem) = $this->_createRandomDataItem(
+	    $testAlbum->getId(),
+	    'application/unknown',
+	    array('pathComponent' => 'foo bar.dat'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -161,6 +164,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$testItemPath = str_replace(' ', '+', $testItemPath);
 
 	$tests = array();
 	/* core:ShowItem on albums have the logical path */
