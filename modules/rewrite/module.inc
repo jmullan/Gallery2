@@ -159,10 +159,10 @@ class RewriteModule extends GalleryModule {
 	}
 	
 	$defaultRules = array('rewrite' => array(
-		array('pattern' => 'v/%path%',
-		      'match' => 'core:ShowItem'),
-		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core:DownloadItem')));
+				  array('pattern' => 'v/%path%',
+					'match' => 'core:ShowItem'),
+				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
+					'match' => 'core:DownloadItem')));
 	
 	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($defaultRules);
 	if ($ret->isError()) {
@@ -216,9 +216,9 @@ class RewriteModule extends GalleryModule {
 	$rule['match'] = array('view' => 'core:ShowItem');
 	$rule['pattern'] = 'v/%path%';
 	$rule['keywords'] = array(
-		'path' => array(
-			'pattern' => '(.+)',
-			'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
+	    'path' => array(
+		'pattern' => '(.+)',
+		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
 	
 	$rule = array();
@@ -226,13 +226,13 @@ class RewriteModule extends GalleryModule {
 	$rule['match'] = array('view' => 'core:DownloadItem');
 	$rule['pattern'] = 'd/%itemId%-%serialNumber%/%fileName%';
 	$rule['keywords'] = array(
-		'serialNumber' => array(
-			'pattern' => '([0-9]+)',
-			'help' => $this->translate('Item version to download (original/sized/thumb)')),
-		'fileName' => array(
-			'pattern' => '([^\/]+)',
-			'help' => $this->translate('Item file name (eg, image.jpg)'),
-			'ignore' => 1));
+	    'serialNumber' => array(
+		'pattern' => '([0-9]+)',
+		'help' => $this->translate('Item version to download (original/sized/thumb)')),
+	    'fileName' => array(
+		'pattern' => '([^\/]+)',
+		'help' => $this->translate('Item file name (eg, image.jpg)'),
+		'ignore' => 1));
 	$rules[] = $rule;
 	
 	$rule = array();
@@ -240,8 +240,8 @@ class RewriteModule extends GalleryModule {
 	$rule['pattern'] = '%path%';
 	$rule['queryString'] = array('view' => 'rewrite:FileNotFound');
 	$rule['keywords'] = array(
-		'path' => array(
-			'pattern' => '(.+)'));
+	    'path' => array(
+		'pattern' => '(.+)'));
 	$rule['locked'] = 1;
 	$rules[] = $rule;
 	
