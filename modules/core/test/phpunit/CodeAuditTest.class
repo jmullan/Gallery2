@@ -203,11 +203,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 1850) {
+	    if ($this->_longLineCount > 1709) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
 	    }
-	    if ($this->_longLineCount < 1750) {
+	    if ($this->_longLineCount < 1609) {
 		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
 			      ' lines longer than 100 characters; update the failure' .
 			      ' thresholds in this unit test.');
