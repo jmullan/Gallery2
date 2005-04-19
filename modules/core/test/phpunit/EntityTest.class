@@ -220,7 +220,7 @@ class EntityTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$event = $listener->getEvent();
 	$newEntity = $event->getEntity();
 	$this->assertEquals($entity->getId(), $newEntity->getId());
@@ -277,6 +277,8 @@ class EntityTestOnLoadHandler {
     }
 }
 
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEventListener.class');
 
 /**
  * Dummy event listener
