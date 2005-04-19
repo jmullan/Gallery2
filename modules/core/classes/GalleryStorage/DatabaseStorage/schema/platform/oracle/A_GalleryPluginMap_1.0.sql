@@ -6,12 +6,16 @@
        32 
       )
     
+    NOT NULL
+  
         ,
       DB_COLUMN_PREFIXpluginId
       VARCHAR2(
        32 
       )
     
+    NOT NULL
+  
     )
   
       ;

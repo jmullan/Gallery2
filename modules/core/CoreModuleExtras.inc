@@ -276,6 +276,7 @@ class CoreModuleExtras {
 	    }
 
 	    foreach ($layouts as $layoutId => $layoutStatus) {
+		$gallery->guaranteeTimeLimit(30);
 		if (!empty($layoutStatus['active'])) {
 		    list($ret, $layout) = GalleryCoreApi::loadPlugin('layout', $layoutId);
 		    if ($ret->isError() &&
@@ -304,6 +305,7 @@ class CoreModuleExtras {
 	    /* Added Entity::onLoadHandlers; default all values to null, so nothing to do */
 
 	case '0.8.15':
+	    $gallery->guaranteeTimeLimit(30);
 	    /* Removed GalleryItemPropertiesMap.. drop the table */
 	    $query = 'DROP TABLE [GalleryItemPropertiesMap]';
 	    $ret = $storage->execute($query);
@@ -338,6 +340,7 @@ class CoreModuleExtras {
 	    /* CSS refactor across entire app */
 
 	case '0.9.4':
+	    $gallery->guaranteeTimeLimit(30);
 	    GalleryCoreApi::requireOnce(
 		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
 	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
@@ -346,6 +349,7 @@ class CoreModuleExtras {
 	    }
 
 	case '0.9.5':
+	    $gallery->guaranteeTimeLimit(30);
 	    $ret = CoreModuleExtras::_createAccessListCompacterLock($module);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -582,7 +586,7 @@ class CoreModuleExtras {
 		}
 	    }
 
-	    /* Removed GalleryPermisisonsMap.  Drop the table */
+	    /* Removed GalleryPermissionsMap.  Drop the table */
 	    $query = 'DROP TABLE [GalleryPermissionMap]';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
@@ -603,6 +607,7 @@ class CoreModuleExtras {
 	     * Change GalleryMaintenance::details column to be a serialized array.  The old data
 	     * is transient so just delete it. Added FlushTemplatesTask, FlushDatabaseCacheTask
 	     */
+	    $gallery->guaranteeTimeLimit(30);
 	    GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMaintenanceMap.class');
 	    $ret = GalleryMaintenanceMap::removeAllMapEntries();
 	    if ($ret->isError()) {
@@ -614,6 +619,7 @@ class CoreModuleExtras {
 	     * Create 'plugins' and 'plugins_data' directories in g2data.  Remove trailing slash
 	     * for config paths using substr so file_exists can detect either file or dir.
 	     */
+	    $gallery->guaranteeTimeLimit(30);
 	    foreach (array(substr($gallery->getConfig('data.gallery.plugins'), 0, -1),
 			   $gallery->getConfig('data.gallery.plugins') . 'modules',
 			   $gallery->getConfig('data.gallery.plugins') . 'layouts',
@@ -1003,7 +1009,7 @@ class CoreModuleExtras {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
 	$lock = new GalleryEntity();
 	$lock->create();
-	$ret = $lock->save();
+	$ret = $lock->save(false);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

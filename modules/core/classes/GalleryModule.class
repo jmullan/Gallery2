@@ -139,6 +139,11 @@ class GalleryModule extends GalleryPlugin {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    $ret = $storage->configureStoreCleanup($this->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    /*
 	     * If the module is active, then give it the chance to re-register
 	     * its factory registrations, since they may have been updated with

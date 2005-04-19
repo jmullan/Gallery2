@@ -1425,10 +1425,11 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    $this->getType();
 
 	if (!$platform->file_exists($sqlDir)) {
-	    return array(GalleryStatus::success(), array(), array());
+	    return array(GalleryStatus::success(), array(), array(), array());
 	}
 
 	$tableAlter = array();
+	$tableDelete = array();
 	$tableDefinition = array();
 	if ($dir = $platform->opendir($sqlDir)) {
 	    while (($file = $platform->readdir($dir)) !== false) {
@@ -1437,24 +1438,30 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 *   "Foo.sql" -- the definition for table "Foo"
 		 *   "A_Foo_1.0.sql" -- an alteration to upgrade the 1.0 version of
 		 *                      table "Foo" to the current version
+		 *   "D_Foo_1.0.sql" -- delete table Foo.sql if it's currently at
+		 *                      version 1.0
 		 *
 		 * We need to parse these file names and group them together
 		 * such that once we figure out what version of the Foo table
 		 * we have in the database we can figure out which file to
 		 * apply to install/update it.
 		 */
-		if (preg_match('/^A_(.*)_(\d+).(\d+).sql$/', $file, $matches)) {
-		    $tableAlter[$matches[1]][$matches[2]][$matches[3]] = $sqlDir . '/' . $file;
+		if (preg_match('/^(R|A)_(.*)_(\d+).(\d+).sql$/', $file, $matches)) {
+		    if ($matches[1] == 'R') {
+			$tableDelete[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
+		    } else {
+			$tableAlter[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
+		    }
 		} else if (preg_match('/^(.*).sql$/', $file, $matches)) {
 		    $tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
 		}
 	    }
 	    $platform->closedir($dir);
 	} else {
-	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null, null);
 	}
 
-	return array(GalleryStatus::success(), $tableDefinition, $tableAlter);
+	return array(GalleryStatus::success(), $tableDefinition, $tableAlter, $tableDelete);
     }
 
     /**
@@ -1474,7 +1481,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
+	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1580,6 +1587,83 @@ class DatabaseStorage /* implements GalleryStorage */ {
     }
 
     /**
+     * Perform any cleanup necessary after installing or upgrading the given module.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStoreCleanup($moduleId) {
+	global $gallery;
+
+	if (empty($this->_db)) {
+	    return GalleryStatus::error(ERROR_STORAGE_CONNECTION, __FILE__, __LINE__);
+	}
+
+	$ret = $this->_guaranteeTransaction();
+	if ($ret->isError()) {
+	    return $ret;
+	}
+
+	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Get the metabase info about this database */
+	$this->_traceStart();
+	$metatables = $this->_db->MetaTables();
+	$this->_traceStop();
+
+	/*
+	 * Some databases (notably MySQL on Win32) don't support mixed case
+	 * table names.  So, when we get the meta table list back, it's lower
+	 * case.  Force all metatable listings to lower case and then expect
+	 * them to be lowercase so that we're consistent.
+	 */
+	for ($i = 0; $i < sizeof($metatables); $i++) {
+	    $metatables[$i] = strtolower($metatables[$i]);
+	}
+
+	/* Load all table versions */
+	list ($ret, $tableVersions) = $this->_loadTableVersions();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	/* Now locate any existing tables that should be deleted and drop them. */
+	foreach (array_keys($tableDelete) as $rawTableName) {
+	    if ($rawTableName == 'Schema') {
+		continue;
+	    }
+
+	    list ($tableName, $unused, $tableNameInSchema) =
+		$this->_translateTableName($rawTableName);
+	    if (in_array(strtolower($tableName), $metatables)) {
+		/* The table exists -- see if we should delete it */
+		if (empty($tableVersions[$tableNameInSchema])) {
+		    /*
+		     * We've found a SQL file that matches a table in the
+		     * database, but has no matching version info in the
+		     * schema table.  How can this be?  Leave it alone.
+		     */
+		    if ($gallery->getDebug()) {
+			$gallery->debug("Table $rawTableName: missing entry in Schema table");
+		    }
+		} else {
+		    list ($major,  $minor) = $tableVersions[$tableNameInSchema];
+		    if (!empty($tableDelete[$rawTableName][$major][$minor])) {
+			$ret = $this->_executeSqlFile($tableDelete[$rawTableName][$major][$minor]);
+			if ($ret->isError()) {
+			    return $ret->wrap(__FILE__, __LINE__);
+			}
+		    }
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
      * Uninstall the database schema for the given module
      *
      * @return object GalleryStatus a status code
@@ -1596,7 +1680,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    return $ret;
 	}
 
-	list ($ret, $tableDefinition, $tableAlter) = $this->_getModuleSql($moduleId);
+	list ($ret, $tableDefinition, $tableAlter, $tableDelete) = $this->_getModuleSql($moduleId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -1625,7 +1709,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	list ($schemaTableName, $unused) = $this->_translateTableName('Schema');
 	$schemaColumnName = $this->_translateColumnName('name');
 	foreach ($tableDefinition as $rawTableName => $sqlFile) {
-	    // Don't drop the schema table, it's part of the core.
+	    /* Don't drop the schema table, it's part of the core. */
 	    if ($rawTableName == 'Schema') {
 		continue;
 	    }

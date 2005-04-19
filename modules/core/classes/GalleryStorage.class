@@ -339,6 +339,24 @@ class GalleryStorage {
     }
 
     /**
+     * Perform any cleanup necessary after installing or upgrading the given module.
+     *
+     * @return object GalleryStatus a status code
+     */
+    function configureStoreCleanup($moduleId) {
+	if (!$this->_isInitialized) {
+	    $ret = $this->_impl->init();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    } else {
+		$this->_isInitialized = true;
+	    }
+	}
+
+	return $this->_impl->configureStoreCleanup($moduleId);
+    }
+
+    /**
      * Uninstall the database schema for the given module
      *
      * @return object GalleryStatus a status code
