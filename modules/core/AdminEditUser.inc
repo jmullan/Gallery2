@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -40,8 +40,6 @@ class AdminEditUserController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -58,8 +56,7 @@ class AdminEditUserController extends GalleryController {
 	}
 
 	/*
-	 * We treat anonymous users differently, so see if we're editing the
-	 * anonymous user.
+	 * We treat anonymous users differently, so see if we're editing the anonymous user.
 	 */
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
@@ -73,14 +70,14 @@ class AdminEditUserController extends GalleryController {
 	    /* Redirect back to the AdminUsers view */
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminUsers';
-	    
+
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminEditUser';
 	    $redirect['userId'] = $userId;
-	    
+
 	} else if (isset($form['action']['save'])) {
 
 	    /*
@@ -102,18 +99,18 @@ class AdminEditUserController extends GalleryController {
 		    $error[] = 'form[error][userName][duplicate]';
 		}
 	    }
-	    
+
 	    /* full name is optional for everybody */
 
 	    /* language is optional for everybody */
 
 	    /* email is suggested, but optional for administrator edits */
-            if (!empty($form['email'])) {
-                $form['email'] = trim($form['email']);
-                if (!GalleryUtilities::isValidEmailString($form['email'])) {
-                    $error[] = 'form[error][email][invalid]';
-                }
-            }
+	    if (!empty($form['email'])) {
+		$form['email'] = trim($form['email']);
+		if (!GalleryUtilities::isValidEmailString($form['email'])) {
+		    $error[] = 'form[error][email][invalid]';
+		}
+	    }
 
 	    if (!$isAnonymous) {
 		if ($form['password1'] != $form['password2']) {
@@ -122,8 +119,7 @@ class AdminEditUserController extends GalleryController {
 	    }
 
 	    /*
-	     * If all the right fields are in place then go ahead and modify
-	     * the user.
+	     * If all the right fields are in place then go ahead and modify the user.
 	     */
 	    if (empty($error)) {
 		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($user->getId());
@@ -171,7 +167,6 @@ class AdminEditUserController extends GalleryController {
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -191,12 +186,12 @@ class AdminEditUserView extends GalleryView {
      */
     function loadTemplate(&$template, &$form) {
 	global $gallery;
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
 	$userId = GalleryUtilities::getRequestVariables('userId');
 	list ($ret, $user) = GalleryCoreApi::loadEntitiesById($userId);
 	if ($ret->isError()) {
@@ -228,7 +223,7 @@ class AdminEditUserView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $languageList = array();
 	    $languageList[''] = $module->translate('<none>');
 	    $translator =& $gallery->getTranslator();
