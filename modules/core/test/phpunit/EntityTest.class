@@ -195,6 +195,36 @@ class EntityTest extends GalleryTestCase {
 	$entity->setIsLinkable(true);
 	$this->assert($entity->isModified(), 'is modified');
     }
+
+    function testSaveWithoutEvent() {
+	$listener = new EntityTestEventListener($this);
+	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
+
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEntity.class');
+	$entity = new GalleryEntity();
+	$entity->create();
+	$ret = $entity->save(false);
+	$this->_markForCleanup($entity);
+	$this->assertEquals(null, $listener->getEvent());
+
+	/*
+	 * The GalleryTestCase event counter listener is going to be confused because it will see
+	 * the GalleryEntity::delete when we clean up our entity, but not the GalleryEntity::save
+	 * when we create it.  It will detect the mismatch and think that we deleted one entity
+	 * too many and fail the test.  So generate our own event to keep the books straight.
+	 */
+	$event = GalleryCoreApi::newEvent('GalleryEntity::save');
+	$entity->setPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$event->setEntity($entity);
+	list ($ret, $result) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$event = $listener->getEvent();
+	$newEntity = $event->getEntity();
+	$this->assertEquals($entity->getId(), $newEntity->getId());
+    }
 }
 
 /**
@@ -244,6 +274,26 @@ class EntityTestOnLoadHandler {
     function onLoad(&$entity) {
 	$entity->setLinkedEntity('onLoadHandler was called');
 	return GalleryStatus::success();
+    }
+}
+
+
+/**
+ * Dummy event listener
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class EntityTestEventListener extends GalleryEventListener {
+    var $_event;
+
+    function handleEvent($event) {
+	$this->_event = $event;
+	$data = $event->getData();
+	return array(GalleryStatus::success(), 'dummy');
+    }
+
+    function getEvent() {
+	return $this->_event;
     }
 }
 ?>

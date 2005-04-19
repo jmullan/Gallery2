@@ -247,10 +247,11 @@ class GalleryEntity_core extends GalleryPersistent {
      *
      * Save the changes to this GalleryEntity.
      *
-     * @access public
+     * @param bool post a save event; only disable this during core upgrades
      * @return object GalleryStatus a status code
+     * @access public
      */
-    function save() {
+    function save($postEvent=true) {
 	global $gallery;
 
 	/*
@@ -277,11 +278,13 @@ class GalleryEntity_core extends GalleryPersistent {
 	    /* Change the modification date */
 	    $this->setModificationTimestamp(time());
 
-	    $event = GalleryCoreApi::newEvent('GalleryEntity::save');
-	    $event->setEntity($this);
-	    list ($ret) = GalleryCoreApi::postEvent($event);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    if ($postEvent) {
+		$event = GalleryCoreApi::newEvent('GalleryEntity::save');
+		$event->setEntity($this);
+		list ($ret) = GalleryCoreApi::postEvent($event);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 
 	    $storage =& $gallery->getStorage();
