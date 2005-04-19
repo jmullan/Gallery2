@@ -44,7 +44,13 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
     function getImageFrameList() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe');
+
+	/*
+	 * Load the plugin even if it's deactivated since we only need it for translation, and
+	 * it's possible that this is getting called during the core upgrade, when we won't be
+	 * able to properly deal with deactivated plugins.
+	 */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'imageframe', true);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
