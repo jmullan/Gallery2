@@ -41,7 +41,7 @@ class GalleryCharsetHelper_simple {
      * @return string the result
      */
     function convertToUtf8($string, $sourceEncoding) {
-	global $gallery;	
+	global $gallery;
 
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
@@ -59,7 +59,7 @@ class GalleryCharsetHelper_simple {
 		return $result;
 	    }
 	}
-	
+
 	if ($phpVm->function_exists('mb_convert_encoding')) {
 	    return $phpVm->mb_convert_encoding($string, 'UTF-8', $sourceEncoding);
 	} else if ($phpVm->function_exists('recode_string')) {
@@ -82,4 +82,3 @@ class GalleryCharsetHelper_simple {
     }
 }
 ?>
-
