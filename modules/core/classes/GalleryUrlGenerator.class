@@ -583,7 +583,9 @@ class GalleryUrlGenerator {
 	    $params['returnName'] = urlencode($viewDescription);
 	    $params['return'] =
 		urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
-	    $params['navId'] = $this->_navId;
+	    if (!empty($this->_navId)) {
+		$params['navId'] = $this->_navId;
+	    }
 	}
 	if ((empty($currentView) || $currentView == $targetView || ! empty($params['controller']))
 		&& !empty($this->_navId)) {
