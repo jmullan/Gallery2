@@ -60,10 +60,7 @@ class NavigationView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$user = $gallery->getActiveUser();
-
 	$Navigation = array();
-	$Navigation['user'] = $user->getMemberData();
 	$Navigation['l10Domain'] = 'modules_core';
 	$Navigation['sidebar'] = 'modules/core/templates/NavigationSidebar.tpl';
 	$Navigation['systemContent'] = $systemContent;
@@ -84,8 +81,6 @@ class NavigationView extends GalleryView {
      * @access private
      */
     function _loadSystemContent(&$template) {
-	global $gallery;
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
@@ -131,15 +126,11 @@ class NavigationView extends GalleryView {
      * @access private
      */
     function _getModuleSystemLinks() {
-	global $gallery;
-
 	/* Load the module list */
 	list ($ret, $moduleStatus) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	$urlGenerator =& $gallery->getUrlGenerator();
 
 	$links = array();
 	foreach ($moduleStatus as $moduleId => $status) {

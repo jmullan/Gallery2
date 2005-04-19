@@ -20,7 +20,7 @@
 
 <div class="gbBlock">
   <h4> {g->text text="Posted by"} </h4>
-  {g->text text="%s (%s)" arg1=$AddComment.user.fullName arg2=$AddComment.host}
+  {g->text text="%s (%s)" arg1=$user.fullName arg2=$AddComment.host}
 
   <h4>
     {g->text text="Subject"}

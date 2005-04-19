@@ -32,9 +32,9 @@
       <li>
 	{g->text text="Your Account"}
       </li>
-      {if ($UserAdmin.show.userInPathbar)}
+      {if !$user.isGuest}
       <li>
-	{$UserAdmin.user.fullName|default:$UserAdmin.user.userName}
+	{$user.fullName|default:$user.userName}
       </li>
       {/if}
     </ul>

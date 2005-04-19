@@ -28,7 +28,7 @@
  */
 
 /**
- * This view will present the available options to administrate a user
+ * This view will present the available options to administer a user
  *
  * @package GalleryCore
  * @subpackage UserInterface
@@ -81,12 +81,6 @@ class UserAdminView extends GalleryView {
 	    }
 	}
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$show['userInPathbar'] = ($user->getId() != $anonymousUserId);
-
 	/* If we have a specific sub view, load it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if ($subViewName == 'core:UserAdmin') {
@@ -135,8 +129,6 @@ class UserAdminView extends GalleryView {
 	/* Set up my view parameters */
 	$UserAdmin['moduleSystemLinks'] = $moduleSystemLinks;
 	$UserAdmin['navigationLinks'] = $navigationLinks;
-	$UserAdmin['user'] = $user->getMemberData();
-	$UserAdmin['show'] = $show;
 	$UserAdmin['subViewChoices'] = $subViewChoices;
 	$UserAdmin['subViewName'] = $subViewName;
 	$UserAdmin['isSiteAdmin'] = $isSiteAdmin;

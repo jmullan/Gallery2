@@ -12,7 +12,7 @@
   <div class="gbBlock">
     {if $layout.show.sidebarGreeting}
     <h3>
-      {g->text text="Welcome, %s" arg1=$layout.user.fullName|default:$layout.user.userName}
+      {g->text text="Welcome, %s" arg1=$user.fullName|default:$user.userName}
     </h3>
     {/if}
     <ul>

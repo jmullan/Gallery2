@@ -18,7 +18,7 @@
   <div>
     <h4> {g->text text="Username"} </h4>
     <p class="giDescription">
-      {$UserAdmin.user.userName}
+      {$user.userName}
     </p>
   </div>
 

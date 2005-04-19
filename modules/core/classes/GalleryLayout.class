@@ -138,8 +138,6 @@ class GalleryLayout extends GalleryPlugin {
      *               array redirect info for error page (empty for success)
      */
     function activate() {
-	global $gallery;
-
 	list ($ret, $redirect) = parent::activate();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -238,7 +236,7 @@ class GalleryLayout extends GalleryPlugin {
 	if (!empty($ids)) {
 	    /* Reset albums to default layout */
 	    list ($ret, $defaultLayout) =
-	        GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+		GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -337,7 +335,6 @@ class GalleryLayout extends GalleryPlugin {
      * Load commonly used data into layout template
      * Always loaded:
      *   item      item data
-     *   user      active user data
      *   children  array of child item data
      *   show      flags for standard sidebar
      * Available keys to include in $dataToLoad parameter:
@@ -498,11 +495,9 @@ class GalleryLayout extends GalleryPlugin {
 
 	/*
 	 * --------------------------------------------------------------------------------------
-	 * Always load 'item', 'user', 'children' and 'show'
+	 * Always load 'item', 'children' and 'show'
 	 */
 	$layout['item'] = $item->getMemberData();
-	$user = $gallery->getActiveUser();
-	$layout['user'] = $user->getMemberData();
 	$layout['children'] = array();
 	foreach ($childItems as $child) {
 	    $layout['children'][] = $child->getMemberData();

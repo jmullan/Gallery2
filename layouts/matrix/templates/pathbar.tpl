@@ -9,7 +9,7 @@
   <div>
     {if $layout.show.sidebarGreeting}
     <span style="font-weight: normal">
-      {g->text text="Welcome, %s" arg1=$layout.user.fullName|default:$layout.user.userName}
+      {g->text text="Welcome, %s" arg1=$user.fullName|default:$user.userName}
     </span>
     {/if}
     {foreach from=$layout.systemLinks item=item}

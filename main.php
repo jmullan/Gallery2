@@ -317,6 +317,7 @@ function _GalleryMain($returnHtml=false) {
     }
     $template->setVariable('main', $main);
     $template->setVariable('l10Domain', 'modules_core');
+    $template->setVariable('user', _GalleryMain_UserInfo());
 
     if (isset($main['html']) || !$returnHtml) {
 	$templatePath = isset($main['html']) ? 'gallery:templates/standalone.tpl'
@@ -415,6 +416,27 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
     $main['gallery']['version'] = $version;
 
     return isset($error) ? $error : GalleryStatus::success();
+}
+
+function _GalleryMain_UserInfo() {
+    /* Standard user info available for every view */
+    global $gallery;
+    $user = $gallery->getActiveUser();
+    $info = $user->getMemberData();
+    list ($ret, $guestId) =
+	GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+    if ($ret->isError()) {
+	$info['isGuest'] = true;
+	$info['isRegisteredUser'] = false;
+    } else {
+	$info['isGuest'] = ($user->getId() == $guestId);
+	$info['isRegisteredUser'] = !$info['isGuest'];
+    }
+    list ($ret, $info['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
+    if ($ret->isError()) {
+	$info['isAdmin'] = false;
+    }
+    return $info;
 }
 
 function _GalleryMain_doRedirect($redirectUrl, $template=null) {
