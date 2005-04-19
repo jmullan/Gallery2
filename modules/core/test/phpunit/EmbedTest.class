@@ -1,0 +1,120 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEmbed.class');
+
+/**
+ * Test Embed functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Andy Staudacher <ast@gmx.ch>
+ */
+class EmbedTest extends GalleryTestCase {
+
+    function EmbedTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    /**
+     * create some pseudo <head> html section and use parseHtml to extract the title, css, and
+     * javascript. Multiple css styles are allowed and multiple javascript sections are allowed.
+     * Furthermore, there are 2 types of css tags and 2 types of script tags.
+     */
+    function testParseHtml() {
+	/* Create some pseudo html <head> section */
+	$refTitle = '
+  Gallery
+';
+	$refCss = array('<link rel="stylesheet" type="text/css" '.
+			'href="http://www.domain.com/gallery2/templates/layout.css"/>',
+			'<style type="text/css" media="all">@import ' .
+			'url(http://domain.com/some/path/themes/classic_theme/style/style.css);'.
+			'</style>',
+			'<link rel="stylesheet" type="text/css" ' .
+			'href="http://localhost/gallery2/layouts/matrix/layout.css"/>',
+			'<link rel="stylesheet" type="text/css" '.
+			'href="http://127.0.0.1/gallery2/themes/matrix/theme.css"/>');
+	$refJs = array('<script type="text/javascript" '.
+		       'src="themes/Xaraya_Classic/scripts/switch_styles.js"></script>',
+		       '<script type="text/javascript">
+                
+    //<![CDATA[
+    var agent = navigator.userAgent.toLowerCase();
+    var appver = parseInt(navigator.appVersion);
+    '."var bCanBlend = (agent.indexOf('msie') != -1) && (agent.indexOf('opera') == -1) &&
+                    (appver >= 4) && (agent.indexOf('msie 4') == -1) &&
+                    (agent.indexOf('msie 5.0') == -1);
+    var filterNames = new Array(16), filters = new Array(16);
+    filterNames[0] = 'Blend';
+    filters[0] = 'progid:DXImageTransform.Microsoft.Fade(duration=1)';
+    filterNames[1] = 'Blinds';
+    filters[1] = 'progid:DXImageTransform.Microsoft.Blinds(duration=1,bands=20)';
+    // ]]>
+
+</script>",
+		       '<script type="text/javascript" '.
+		       'src="http://127.0.0.1/gallery2/lib/javascript/BlockToggle.js"></script>');
+	$headHtml =  '   <head>   
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<!-- the title -->
+	<title>'.$refTitle.'</title>
+<!-- Some css links -->	    
+'.$refCss[0].'
+<!-- A css import style -->	 
+   '.$refCss[1].'
+	    '.$refCss[2].$refCss[3].'
+						  
+  '.$refJs[0].'
+
+<!-- Some javascript code -->						  
+'.$refJs[1].'
+ <!-- A javascript src link -->
+      '.$refJs[2].'</head>';	    
+
+        list ($title, $css, $javascript) = GalleryEmbed::parseHead($headHtml);
+	$this->assertEquals($title, $refTitle, 'the title does not match the reference title');
+	$this->assert(is_array($css), '$css should be an array!');
+	if (is_array($css)) {
+	    $this->assertEquals(count($css), count($refCss), 'array size of $css is incorrect!');
+	    for ($i = 0; $i < count($css); $i++) {
+		$this->assertEquals($css[$i], $refCss[$i], 'css style not captured correctly or out of order!');
+	    }
+	}
+	$this->assert(is_array($javascript), '$javascript should be an array!');
+	if (is_array($javascript)) {
+	    $this->assertEquals(count($javascript), count($refJs), 'array size of $javascript is incorrect!');
+	    for ($i = 0; $i < count($javascript); $i++) {
+		$this->assertEquals($javascript[$i], $refJs[$i], 'javascript not captured correctly or out of order!');
+	    }
+	}
+    }
+    
+ 
+}
+?>
