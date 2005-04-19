@@ -402,23 +402,17 @@ class GalleryTranslator {
 	    } else {
 		$localized = dgettext($domain, $data['text']);
 	    }
-	    if (! function_exists('bind_textdomain_codeset') && function_exists('nl_langinfo') ) {
-		/*
-		 * If there is no bind_textdomain_codeset (PHP 4.1.x), the
-		 * string will be returned from gettext in the default
-		 * encoding for that language. Here we convert that encoding
-		 * to the active charset manually.
-		 * Note: 'nl_langinfo' is not available under Win32, so this
-		 * "hack" only works on Unix-systems.
-		 */
+
+	    /*
+	     * If there is no bind_textdomain_codeset (PHP 4.1.x), the string will be returned
+	     * from gettext in the default encoding for that language. Here we convert that
+	     * encoding to the active charset manually.  Note: 'nl_langinfo' is not available
+	     * under Win32, so this "hack" only works on Unix-systems.
+	     */
+	    if (!function_exists('bind_textdomain_codeset') && function_exists('nl_langinfo')) {
 		$codeSet = nl_langinfo(CODESET);
-		/* Suppress warnings, which can happen in $codeSet is not supported */
-		if (function_exists('mb_convert_encoding')) {
-		    $localized = @mb_convert_encoding($localized, 'UTF-8', $codeSet);
-		} else if (function_exists('iconv')) {
-		    $localized = @iconv($codeSet, 'UTF-8', $localized);
-		} else if (function_exists('recode_string')) {
-		    $localized = @recode_string($codeSet . '..UTF-8', $localized);
+		if ($codeSet != 'UTF-8') {
+		    $localized = GalleryCoreApi::convertToUtf8($localized, $codeSet);
 		}
 	    }
 	} else {
