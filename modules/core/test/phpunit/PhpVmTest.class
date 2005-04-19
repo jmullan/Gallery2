@@ -47,12 +47,12 @@ class PhpVmTest extends GalleryTestCase {
     }
 
     function testMd5() {
-	$this->assertEquals(md5('foobar'), $this->_phpVm->md5('foobar'), 
+	$this->assertEquals(md5('foobar'), $this->_phpVm->md5('foobar'),
 			    'PhpVm MD5 output doesn\'t match PHP output');
     }
 
     function testFunctionExists() {
-	$this->assertEquals(function_exists('testFunctionExists'), 
+	$this->assertEquals(function_exists('testFunctionExists'),
 			    $this->_phpVm->function_exists('testFunctionExists'),
 			    'PhpVm function_exists output doesn\'t match PHP output');
     }
@@ -60,8 +60,8 @@ class PhpVmTest extends GalleryTestCase {
     function testIconv() {
 	if (function_exists('iconv')) {
 	    $this->assertEquals(
-		iconv('ISO-8859-1', 'UTF8', 'foo bar'),
-		$this->_phpVm->iconv('ISO-8859-1', 'UTF8', 'foo bar'));
+		iconv('ISO-8859-1', 'UTF-8', 'foo bar'),
+		$this->_phpVm->iconv('ISO-8859-1', 'UTF-8', 'foo bar'));
 	}
     }
 
