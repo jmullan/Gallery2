@@ -162,15 +162,6 @@ class ShowItemView extends GalleryView {
 	    return array(GalleryStatus::success(), $results);
 	}
 
-	/* Update the view count for non-data items, like Albums */
-	if (GalleryUtilities::isA($item, 'GalleryItem') &&
-		!GalleryUtilities::isA($item, 'GalleryDataItem')) {
-	    $ret = GalleryCoreApi::incrementItemViewCount($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
 	if (isset($results['html'])) {
 	    return array(GalleryStatus::success(), $results);
 	}
