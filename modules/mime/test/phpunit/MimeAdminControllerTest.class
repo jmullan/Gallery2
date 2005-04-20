@@ -27,45 +27,45 @@
  */
 
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
+
 class MimeAdminControllerTest extends GalleryControllerTestCase {
 
     function MimeAdminControllerTest($methodName) {
-        $this->GalleryControllerTestCase($methodName, 'mime:MimeAdmin');
+	$this->GalleryControllerTestCase($methodName, 'mime:MimeAdmin');
     }
 
     function setUp() {
-        parent::setUp();        
-        $mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test', 'viewable' => 0);
-        $ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);    
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	parent::setUp();
+	$mimeTypeMap = array('extension' => 'xxx', 'mimeType' => 'test/test', 'viewable' => 0);
+	$ret = GalleryMimeTypeMap::addMapEntry($mimeTypeMap);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
-    
+
     function tearDown() {
-        $ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test'));    
-        if ($ret->isError()) {
-            print $ret->getAsHtml();
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        parent::tearDown();
+	$ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	parent::tearDown();
     }
-        
+
     function testDelete() {
-        GalleryUtilities::putRequestVariable('form[action][delete]', 'test/test');
-        $results = $this->handleRequest();
-        $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+	GalleryUtilities::putRequestVariable('form[action][delete]', 'test/test');
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
 						      'subView' => 'mime:MimeAdmin'),
 				  'status' => array('deleted' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Delete');
-        list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }
-        $this->assertEquals(null, $extensions, 'Delete results');
-    }    
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals(null, $extensions, 'Delete results');
+    }
 }
-
 ?>

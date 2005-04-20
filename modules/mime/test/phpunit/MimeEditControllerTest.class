@@ -27,6 +27,7 @@
  */
 
 GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.class');
+
 class MimeEditControllerTest extends GalleryControllerTestCase {
 
     function MimeEditControllerTest($methodName) {
@@ -36,12 +37,10 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
     function tearDown() {
 	$ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test'));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'test/test2'));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	parent::tearDown();
@@ -99,12 +98,15 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results, 'Add new');
 	list($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assertEquals(array('xxx'), $extensions);
 	list($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(!$isViewable);
+	$this->assert(!$isViewable, 'viewable');
     }
 
     function testMissingType() {
@@ -163,6 +165,40 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 				      'form[error][extensions][inuse][' . $extension . ']')),
 			    $results, 'Add new');
     }
-}
 
+    function testSaveUppercase() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[mimeType]', 'Test/Test');
+	GalleryUtilities::putRequestVariable('form[extensions]', array('xXx'));
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'mime:MimeAdmin'),
+				  'status' => array('saved' => 'test/test'),
+				  'error' => array()),
+			    $results, 'Add new');
+	list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions('test/test');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('xxx'), $extensions);
+	list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('xxx');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/test', $mimeType);
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType('test/test');
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$isViewable, 'viewable');
+
+	if (empty($extensions)) {
+	    /* Delete mime entry in case test failed.. */
+	    $ret = GalleryMimeTypeMap::removeMapEntry(array('mimeType' =>'Test/Test'));
+	    if ($ret->isError()) {
+		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+}
 ?>
