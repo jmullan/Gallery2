@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -39,6 +39,7 @@ class GalleryItemAttributesHelper_advanced {
      *
      * @param int the parent id
      * @param int the order spacing
+     * @return object GalleryStatus a status code
      * @static
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
@@ -48,7 +49,7 @@ class GalleryItemAttributesHelper_advanced {
 	if ($ret->isError()) {
  	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIdsIgnorePermissions($parentItem);
 	if ($ret->isError()) {
  	    return $ret->wrap(__FILE__, __LINE__);
@@ -71,7 +72,8 @@ class GalleryItemAttributesHelper_advanced {
      * Fetch the highest or lowest weight of all children
      * @param int the parent item id
      * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
-     * @return int a weight
+     * @return array object GalleryStatus a status code
+     *               int a weight
      * @static
      */
     function fetchExtremeChildWeight($itemId, $direction) {
@@ -82,7 +84,7 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $aggregate = 'MAX';
 	}
-	
+
 	$query = '
         SELECT
           ' . $aggregate . '([GalleryItemAttributesMap::orderWeight])
@@ -104,7 +106,7 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $weight = 0;
 	}
-			 
+
 	return array(GalleryStatus::success(), $weight);
     }
 
@@ -113,7 +115,8 @@ class GalleryItemAttributesHelper_advanced {
      *
      * @param int the item id
      * @param int the direction (HIGHER_WEIGHT, LOWER_WEIGHT)
-     * @return int a weight
+     * @return array object GalleryStatus a status code
+     *               int a weight
      * @static
      */
     function fetchNextWeight($itemId, $direction) {
@@ -126,7 +129,7 @@ class GalleryItemAttributesHelper_advanced {
 	    $aggregate = 'MIN';
 	    $comparison = '>';
 	}
-	
+
 	$query = '
         SELECT
           ' . $aggregate . '([GalleryItemAttributesMap=2::orderWeight])
@@ -156,7 +159,7 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $weight = null;
 	}
-			 
+
 	return array(GalleryStatus::success(), $weight);
     }
 
@@ -164,6 +167,7 @@ class GalleryItemAttributesHelper_advanced {
      * Update the view count for this item id
      * @param int the item id
      * @param int the new count
+     * @return object GalleryStatus a status code
      * @static
      */
     function setViewCount($itemId, $count) {
@@ -191,7 +195,7 @@ class GalleryItemAttributesHelper_advanced {
 	} else {
 	    $parentSequence = join('/', $parentSequence) . '/';
 	}
-	
+
 	require_once(dirname(__FILE__) . '/../GalleryItemAttributesMap.class');
 	$ret = GalleryItemAttributesMap::updateMapEntry(array('itemId' => $itemId),
 							array('parentSequence' => $parentSequence));
@@ -206,6 +210,7 @@ class GalleryItemAttributesHelper_advanced {
      * Create a new set of attributes for an item
      * @param int the item id
      * @param array the sequence of parent ids
+     * @return object GalleryStatus a status code
      * @static
      */
     function createItemAttributes($itemId, $parentSequence) {
@@ -222,13 +227,14 @@ class GalleryItemAttributesHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	return GalleryStatus::success();
     }
 
     /**
      * Remove the attributes for the given item
      * @param int the item id
+     * @return object GalleryStatus a status code
      * @static
      */
     function removeItemAttributes($itemId) {
@@ -245,6 +251,7 @@ class GalleryItemAttributesHelper_advanced {
      * Set the order weight for an item id
      * @param int the item id
      * @param int the new order weight
+     * @return object GalleryStatus a status code
      * @static
      */
     function setOrderWeight($itemId, $orderWeight) {
@@ -261,11 +268,14 @@ class GalleryItemAttributesHelper_advanced {
     /**
      * Get the view count for this item id
      * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               int view count
      * @static
      */
     function fetchViewCount($itemId) {
 	require_once(dirname(__FILE__) . '/GalleryItemAttributesHelper_medium.class');
-	list ($ret, $viewCounts) = GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
+	list ($ret, $viewCounts) =
+	    GalleryItemAttributesHelper_medium::fetchViewCounts(array($itemId));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -287,7 +297,7 @@ class GalleryItemAttributesHelper_advanced {
 
 	$oldParentSequence = join('/', $oldParentSequence) . '/';
 	$newParentSequence = join('/', $newParentSequence) . '/';
-	
+
 	$storage =& $gallery->getStorage();
 	list ($ret, $substring) = $storage->getFunctionSql('SUBSTRING', array(
 		  '[GalleryItemAttributesMap::parentSequence]', strlen($oldParentSequence) + 1));
