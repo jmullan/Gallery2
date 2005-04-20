@@ -921,10 +921,10 @@ class ConfirmImportController extends GalleryController {
 
 					$width = $importAlbumItem->image->raw_width;
 					$height = $importAlbumItem->image->raw_height;
-					$xPerc = round($importAlbumItem->image->thumb_x * 100 / $width, 3);
-					$yPerc = round($importAlbumItem->image->thumb_y * 100 / $height, 3);
-					$widthPerc = round($importAlbumItem->image->thumb_width * 100 / $width, 3);
-					$heightPerc = round($importAlbumItem->image->thumb_height * 100 / $height, 3);
+					$xPerc = GalleryUtilities::roundToString($importAlbumItem->image->thumb_x * 100 / $width, 3);
+					$yPerc = GalleryUtilities::roundToString($importAlbumItem->image->thumb_y * 100 / $height, 3);
+					$widthPerc = GalleryUtilities::roundToString($importAlbumItem->image->thumb_width * 100 / $width, 3);
+					$heightPerc = GalleryUtilities::roundToString($importAlbumItem->image->thumb_height * 100 / $height, 3);
 					list ($ret, $operations) =
 						GalleryCoreApi::mergeDerivativeOperations($thumbnail->getDerivativeOperations(),
 											  sprintf('crop|%s,%s,%s,%s',

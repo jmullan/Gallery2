@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,23 +38,19 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_album);
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemEditPhotoThumbnailPluginTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemEditPhotoThumbnailPluginTestToolkit',
-							     'ItemEditPhotoThumbnailPluginTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	    'ItemEditPhotoThumbnailPluginTestToolkit', 'ItemEditPhotoThumbnailPluginTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -97,10 +93,11 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
 								 'test/file',
-								 array('width' => 640, 'height' => 480),
+								 array('width' => 640,
+								       'height' => 480),
 								 __FILE__,
 								 'ItemEditPhotoThumbnailTestItem');
 	if ($ret->isError()) {
@@ -109,7 +106,8 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 
 	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId(),
 								 'test/file',
-								 array('width' => 640, 'height' => 480),
+								 array('width' => 640,
+								       'height' => 480),
 								 __FILE__,
 								 'ItemEditPhotoThumbnailTestItem');
 
@@ -139,13 +137,6 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoThumbnailPluginTestToolkit');
 	if ($ret->isError()) {
@@ -156,8 +147,6 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
     }
 
     function testEditThumbnail() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
 	GalleryUtilities::putRequestVariable('form[crop][x]', '50');
@@ -176,14 +165,12 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// The crop operation is expressed in percentages, not in pixels
+	/* The crop operation is expressed in percentages, not in pixels */
 	$this->assertEquals('crop|7.813,10.417,31.25,41.667;scale|200',
 			    $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testEditThumbnail2() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
 	GalleryUtilities::putRequestVariable('form[crop][x]', '0');
@@ -202,14 +189,14 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// The crop operation is expressed in percentages, not in pixels
+	/* The crop operation is expressed in percentages, not in pixels */
 	$this->assertEquals('crop|0,0,100,100;scale|200',
 			    $this->_derivative[1]->getDerivativeOperations());
     }
 
     function testResetThumbnail() {
-	list ($ret, $operations) = 
-	    GalleryCoreApi::mergeDerivativeOperations('crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
+	list ($ret, $operations) = GalleryCoreApi::mergeDerivativeOperations(
+	    'crop|0,0,100,100', $this->_derivative[2]->getDerivativeOperations());
 
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[2]->getId());
 	if ($ret->isError()) {
@@ -234,7 +221,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// The crop operation is expressed in percentages, not in pixels
+	/* The crop operation is expressed in percentages, not in pixels */
 	$this->assertEquals('crop|0,0,100,100;scale|200',
 			    $this->_derivative[2]->getDerivativeOperations());
 
@@ -250,9 +237,46 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// The crop operation is expressed in percentages, not in pixels
-	$this->assertEquals('scale|200',
-			    $this->_derivative[2]->getDerivativeOperations(), 'Crop value not removed');
+	/* The crop operation is expressed in percentages, not in pixels */
+	$this->assertEquals('scale|200', $this->_derivative[2]->getDerivativeOperations(),
+			    'Crop value not removed');
+    }
+
+    function testLocale() {
+	/*
+	 * Verify that percentages don't get written like 12,5 if the current locale
+	 * uses a comma for the fraction separator.
+	 */
+	$currentLocale = setlocale(LC_ALL, '0');
+	foreach (array('de_DE', 'de_DE.ISO8859-1', 'de_DE.ISO-8859-1') as $locale) {
+	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+		break;
+	    }
+	}
+	if (empty($newLocale)) {
+	    return $this->assert(false, 'Unable to select German locale');
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][crop]', 1);
+	GalleryUtilities::putRequestVariable('form[crop][x]', '50');
+	GalleryUtilities::putRequestVariable('form[crop][y]', '50');
+	GalleryUtilities::putRequestVariable('form[crop][width]', '200');
+	GalleryUtilities::putRequestVariable('form[crop][height]', '200');
+
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Thumbnail cropped successfully')),
+			    $results);
+
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    setlocale(LC_ALL, $currentLocale);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('crop|7.813,10.417,31.25,41.667;scale|200',
+			    $this->_derivative[1]->getDerivativeOperations());
+
+	setlocale(LC_ALL, $currentLocale);
     }
 }
 
@@ -298,8 +322,8 @@ class ItemEditPhotoThumbnailPluginTestToolkit extends GalleryToolkit {
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
+
 	if ($sourceFilename != $destFilename) {
 	    $platform->copy($sourceFilename, $destFilename);
 	}

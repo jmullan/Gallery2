@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -90,10 +90,11 @@ class GalleryToolkit {
     }
 
     /**
-     * Apply the transform operation to the set of target operations.  The transform operation will typically
-     * have happened upstream from the target operations, so we have to adjust the target operations to take
-     * it into account.  For example, if the target operations include a crop operation and upstream we rotate|90
-     * it, then you'd want to rotate the crop's parameters accordingly.
+     * Apply the transform operation to the set of target operations.  The transform operation
+     * will typically have happened upstream from the target operations, so we have to adjust
+     * the target operations to take it into account.  For example, if the target operations
+     * include a crop operation and upstream we rotate|90 it, then you'd want to rotate the
+     * crop's parameters accordingly.
      *
      * @param string transformOperation the upstream transform
      * @param string targetOperations the current set of operations
@@ -129,7 +130,8 @@ class GalleryToolkit {
 
 			switch ($rotationAmount) {
 			case '90':
-			    $newX = round((float)100.0 - (float)$y - (float)$height, 3);
+			    $newX = GalleryUtilities::roundToString(
+					   (float)100.0 - (float)$y - (float)$height, 3);
 			    $newY = $x;
 			    $newWidth = $height;
 			    $newHeight = $width;
@@ -138,14 +140,17 @@ class GalleryToolkit {
 			case '-90':
 			case '270':
 			    $newX = $y;
-			    $newY = round((float)100.0 - (float)$x - (float)$width, 3);
+			    $newY = GalleryUtilities::roundToString(
+					   (float)100.0 - (float)$x - (float)$width, 3);
 			    $newWidth = $height;
 			    $newHeight = $width;
 			    break;
 
 			case '180':
-			    $newX = round((float)100.0 - (float)$x - (float)$width, 3);
-			    $newY = round((float)100.0 - (float)$y - (float)$height, 3);
+			    $newX = GalleryUtilities::roundToString(
+					   (float)100.0 - (float)$x - (float)$width, 3);
+			    $newY = GalleryUtilities::roundToString(
+					   (float)100.0 - (float)$y - (float)$height, 3);
 			    $newWidth = $width;
 			    $newHeight = $height;
 			    break;
@@ -158,7 +163,8 @@ class GalleryToolkit {
 			    $newHeight = $height;
 			}
 
-			$newOperations[] = sprintf('crop|%s,%s,%s,%s', $newX, $newY, $newWidth, $newHeight);
+			$newOperations[] = sprintf('crop|%s,%s,%s,%s',
+						   $newX, $newY, $newWidth, $newHeight);
 		    } else {
 			$newOperations[] = $operation;
 		    }
@@ -192,7 +198,8 @@ class GalleryToolkit {
 	if ($operation1 != $operation2) {
 	    /* But not all like operations have the same name */
 	    $likeOperations = array('resize', 'scale', 'thumbnail');
-	    if (!(in_array($operation1, $likeOperations) && in_array($operation2, $likeOperations))) {
+	    if (!(in_array($operation1, $likeOperations)
+		    && in_array($operation2, $likeOperations))) {
 		return array(false, null, null);
 	    }
 	}
@@ -234,7 +241,7 @@ class GalleryToolkit {
      * @static
      */
     function estimateDimensions(&$derivative, $source) {
-        if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
+	if (method_exists($source, 'getwidth') && method_exists($source, 'getheight')) {
 	    $width = $source->getWidth();
 	    $height = $source->getHeight();
 	    if ($width && $height) {

@@ -447,7 +447,7 @@ class GalleryUtilities {
 	    $markers = str_repeat($markerFragment . ',', $count-1);
 	}
 	$markers .= $markerFragment;
-	
+
 	return $markers;
     }
 
@@ -521,8 +521,8 @@ class GalleryUtilities {
 	    $targetHeight = $targetWidth;
 	}
 	if ($width > $targetWidth || $height > $targetHeight) {
-	    list ($width, $height) =
-		GalleryUtilities::scaleDimensionsToFit($width, $height, $targetWidth, $targetHeight);
+	    list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
+					    $width, $height, $targetWidth, $targetHeight);
 	}
 	return array($width, $height);
     }
@@ -551,6 +551,19 @@ class GalleryUtilities {
 	    $height = (int)$targetHeight;
 	}
 	return array($width, $height);
+    }
+
+    /**
+     * Round a float and convert to a string.
+     * Replace , with . in case current locale uses comma as fraction separator.
+     *
+     * @param float value to round
+     * @param int precision, defaults to zero
+     * @return string rounded value
+     * @static
+     */
+    function roundToString($floatValue, $precision=0) {
+	return str_replace(',', '.', round($floatValue, $precision));
     }
 
     /**
@@ -783,7 +796,7 @@ class GalleryUtilities {
 	} else {
 	    /* Unsanitize dangerous html entities */
 	    $value = GalleryUtilities::htmlEntityDecode($value);
-	    
+
 	    /* Redo the damage caused by magic_quotes */
 	    if ($adaptForMagicQuotes) {
 		if (get_magic_quotes_gpc()) {
@@ -1065,7 +1078,8 @@ class GalleryUtilities {
 	$data[] = array('depth' => $depth, 'data' => $map[$id]['instance']->getMemberData());
 	if (isset($map[$id]['children'])) {
 	    foreach ($map[$id]['children'] as $childId) {
-		$data = array_merge($data, GalleryUtilities::_createDepthTree($map, $childId, $depth+1));
+		$data = array_merge($data,
+				    GalleryUtilities::_createDepthTree($map, $childId, $depth+1));
 	    }
 	}
 
@@ -1327,7 +1341,7 @@ class GalleryUtilities {
 
     /**
      * Check if G2 is in embedded mode.
-     * 
+     *
      * @return boolean true if G2 is in embedded mode, else false
      */
     function isEmbedded() {

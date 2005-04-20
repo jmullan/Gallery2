@@ -53,7 +53,7 @@ class ToolkitTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
 							     'TestToolkit2',
 							     'TestToolkit2',
@@ -282,7 +282,8 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals('test/type3', $outputMimeType, '1-2');
 
 	/* Unregister operation for single mime-type */
-	$ret = GalleryCoreApi::unregisterToolkitOperation('TestToolkit', 'test-operation1', array('test/unused', 'test/nonexist'));
+	$ret = GalleryCoreApi::unregisterToolkitOperation('TestToolkit', 'test-operation1',
+					 array('test/unused', 'test/nonexist'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -453,7 +454,8 @@ class ToolkitTest extends GalleryTestCase {
 	$toolkit = new GalleryToolkit();
 
 	/* Rotate transform of cropped operation results in rotated coordinates*/
-	list ($success, $result) = $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50');
+	list ($success, $result) =
+	    $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50');
 	$this->assert($success);
 	$this->assertEquals('rotate|90;crop|35,15,50,40', $result, 'test 1');
 
@@ -468,9 +470,36 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals('rotate|90;crop|15,15,40,50', $result, 'test 3');
 
 	/* Reverse rotate transform of cropped operation results in rotated coordinates*/
-	list ($success, $result) = $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50', true);
+	list ($success, $result) =
+	    $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,15,40,50', true);
 	$this->assert($success);
 	$this->assertEquals('rotate|90;crop|15,45,50,40', $result, 'test 4');
+    }
+
+    function testApplyTransformLocale() {
+	/*
+	 * Verify that percentages don't get written like 12,5 if the current locale
+	 * uses a comma for the fraction separator.
+	 */
+	$currentLocale = setlocale(LC_ALL, '0');
+	foreach (array('de_DE', 'de_DE.ISO8859-1', 'de_DE.ISO-8859-1') as $locale) {
+	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+		break;
+	    }
+	}
+	if (empty($newLocale)) {
+	    return $this->assert(false, 'Unable to select German locale');
+	}
+
+	$toolkit = new GalleryToolkit();
+
+	/* Rotate transform of cropped operation results in rotated coordinates*/
+	list ($success, $result) =
+	    $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,20.5,40.62,50');
+	$this->assert($success);
+	$this->assertEquals('rotate|90;crop|29.5,15,50,40.62', $result, 'test 1');
+
+	setlocale(LC_ALL, $currentLocale);
     }
 
     function testGetMaximumManagedPriority() {

@@ -44,6 +44,10 @@ class RandomHighlightSiteAdminController extends GalleryController {
 	$status = array();
 	$error = array();
 	if (isset($form['action']['save'])) {
+	    if (isset($form['duration'])) {
+		/* Accept input for locales that use comma as fraction separator */
+		$form['duration'] = str_replace(',', '.', $form['duration']);
+	    }
 	    if (!isset($form['duration']) || !is_numeric($form['duration'])) {
 		$error[] = 'form[error][duration]';
 	    } else {
@@ -84,7 +88,8 @@ class RandomHighlightSiteAdminView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $form['duration'] = round($duration / 60, 2);
+	    /* String conversion here may use comma as fraction separator, based on locale */
+	    $form['duration'] = (string)round($duration / 60, 2);
 	}
 
 	$template->setVariable('controller', 'randomhighlight:RandomHighlightSiteAdmin');
