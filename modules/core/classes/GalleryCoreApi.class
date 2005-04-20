@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 4);
+	return array(5, 5);
     }
 
     /**
@@ -183,7 +183,7 @@ class GalleryCoreApi {
      */
     function loadPlugin($pluginType, $pluginId, $ignoreVersionMismatch=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
-	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId, 
+	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
 						      $ignoreVersionMismatch);
     }
 
@@ -355,7 +355,7 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      * @static
      */
-    function setPluginParameter($pluginType, $pluginId, $parameterName, 
+    function setPluginParameter($pluginType, $pluginId, $parameterName,
 				$parameterValue, $itemId=0) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_medium.class');
 	return GalleryPluginHelper_medium::setParameter($pluginType, $pluginId,
@@ -523,12 +523,11 @@ class GalleryCoreApi {
     }
 
     /**
-     * Return a count of groups
-     *
-     * You can specify how many groupnames to list, and where the windows is in
-     * the list of all groups.
+     * Return a count of groups, optionally matching a search string
      *
      * @param string the substring to match
+     * @return array object GalleryStatus a status code
+     *               int group count
      * @static
      */
     function fetchGroupCount($substring=null) {
@@ -664,7 +663,7 @@ class GalleryCoreApi {
     function removeGroupPermission($itemId, $groupId, $permission, $applyToChildren=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::removeGroupPermission($itemId, $groupId,
-								       $permission, 
+								       $permission,
 								       $applyToChildren);
     }
 
@@ -739,7 +738,7 @@ class GalleryCoreApi {
     function registerPermission($module, $permissionId, $description, $flags=0, $composites=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_advanced.class');
 	return GalleryPermissionHelper_advanced::registerPermission($module, $permissionId,
-								    $description, $flags, 
+								    $description, $flags,
 								    $composites);
     }
 
@@ -912,7 +911,7 @@ class GalleryCoreApi {
      */
     function mergeDerivativeOperations($operationSet1, $operationSet2, $highPriority=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2, 
+	return GalleryDerivativeHelper_advanced::mergeOperations($operationSet1, $operationSet2,
 								 $highPriority);
     }
 
@@ -973,7 +972,7 @@ class GalleryCoreApi {
      */
     function adjustDependentDerivatives($id, $operation, $reverse=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryDerivativeHelper_advanced.class');
-	return GalleryDerivativeHelper_advanced::adjustDependentDerivatives($id, $operation, 
+	return GalleryDerivativeHelper_advanced::adjustDependentDerivatives($id, $operation,
 									    $reverse);
     }
 
@@ -1053,7 +1052,9 @@ class GalleryCoreApi {
      *        the toolkits themselves.
      *
      * @param object GalleryDerivativeImage the derivative
-     * @param object GalleryDerivativeEntity the source (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @param object GalleryDerivativeEntity the source
+     *               (probably a GalleryPhotoItem or GalleryMovieItem)
+     * @return object GalleryStatus a status code
      * @static
      */
     function estimateDerivativeDimensions(&$derivative, $source) {
@@ -1065,6 +1066,7 @@ class GalleryCoreApi {
      * Update the view count for this item id
      * @param int the item id
      * @param int the amount to increment
+     * @return object GalleryStatus a status code
      * @static
      */
     function incrementItemViewCount($itemId, $step=1) {
@@ -1076,6 +1078,7 @@ class GalleryCoreApi {
      * Create a new set of attributes for an item
      * @param int the item id
      * @param array the sequence of parent ids
+     * @return object GalleryStatus a status code
      * @static
      */
     function createItemAttributes($itemId, $parentSequence) {
@@ -1086,6 +1089,7 @@ class GalleryCoreApi {
     /**
      * Remove the attributes for the given item
      * @param int the item id
+     * @return object GalleryStatus a status code
      * @static
      */
     function removeItemAttributes($itemId) {
@@ -1097,6 +1101,7 @@ class GalleryCoreApi {
      * Update the view count for this item id
      * @param int the item id
      * @param int the new count
+     * @return object GalleryStatus a status code
      * @static
      */
     function setItemViewCount($itemId, $count) {
@@ -1107,6 +1112,8 @@ class GalleryCoreApi {
     /**
      * Get the view counts for many item ids
      * @param int the item id
+     * @return array object GalleryStatus a status code
+     *               int view count
      * @static
      */
     function fetchItemViewCount($itemId) {
@@ -1130,6 +1137,7 @@ class GalleryCoreApi {
      * Set the order weight for an item id
      * @param int the item id
      * @param int the new order weight
+     * @return object GalleryStatus a status code
      * @static
      */
     function setItemOrderWeight($itemId, $orderWeight) {
@@ -1170,6 +1178,7 @@ class GalleryCoreApi {
      *
      * @param int the parent id
      * @param int the order spacing
+     * @return object GalleryStatus a status code
      * @static
      */
     function rebalanceChildOrderWeights($parentItemId, $spacing=1000) {
@@ -1226,7 +1235,7 @@ class GalleryCoreApi {
      */
     function updateParentSequence($oldParentSequence, $newParentSequence) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemAttributesHelper_advanced.class');
-	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence, 
+	return GalleryItemAttributesHelper_advanced::updateParentSequence($oldParentSequence,
 									  $newParentSequence);
     }
 
@@ -1331,7 +1340,7 @@ class GalleryCoreApi {
      */
     function fetchChildItemIdsWithPermission($itemId, $permissionId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildItemIdsWithPermission($itemId, 
+	return GalleryChildEntityHelper_simple::fetchChildItemIdsWithPermission($itemId,
 										$permissionId);
     }
 
@@ -1350,7 +1359,7 @@ class GalleryCoreApi {
      */
     function fetchLinkableChildItemIdsWithPermission($itemId, $permissionId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchLinkableChildItemIdsWithPermission($itemId, 
+	return GalleryChildEntityHelper_simple::fetchLinkableChildItemIdsWithPermission($itemId,
 										    $permissionId);
     }
 
@@ -1439,7 +1448,7 @@ class GalleryCoreApi {
 			    $description, $mimeType, $albumId, $symlink=false) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_medium.class');
 	return GalleryItemHelper_medium::addItemToAlbum($fileName, $itemName, $title, $summary,
-							$description, $mimeType, $albumId, 
+							$description, $mimeType, $albumId,
 							$symlink);
     }
 
@@ -1614,7 +1623,7 @@ class GalleryCoreApi {
      */
     function fetchUsersForGroup($groupId, $count=null, $offset=null, $substring=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserGroupHelper_medium.class');
-	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count, 
+	return GalleryUserGroupHelper_medium::fetchUsersForGroup($groupId, $count,
 								 $offset, $substring);
     }
 
@@ -1662,7 +1671,7 @@ class GalleryCoreApi {
      */
     function checkPathCollision($pathComponent, $newParentId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
-	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent, 
+	return GalleryFileSystemEntityHelper_medium::checkPathCollision($pathComponent,
 									$newParentId);
     }
 
@@ -1678,7 +1687,7 @@ class GalleryCoreApi {
      */
     function getLegalPathComponent($pathComponent, $parentId) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_medium.class');
-	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent, 
+	return GalleryFileSystemEntityHelper_medium::getLegalPathComponent($pathComponent,
 									   $parentId);
     }
 
@@ -1697,7 +1706,7 @@ class GalleryCoreApi {
      */
     function fetchChildIdByPathComponent($parentId, $pathComponent) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryFileSystemEntityHelper_simple.class');
-	return GalleryFileSystemEntityHelper_simple::fetchChildIdByPathComponent($parentId, 
+	return GalleryFileSystemEntityHelper_simple::fetchChildIdByPathComponent($parentId,
 										 $pathComponent);
     }
 
@@ -1724,9 +1733,9 @@ class GalleryCoreApi {
 				      $parameterTypesArray, $description,
 				      $outputMimeType='', $priority=5) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes, 
+	return GalleryToolkitHelper_medium::registerOperation($toolkitId, $mimeTypes,
 							      $operationName, $parameterTypesArray,
-							      $description, $outputMimeType, 
+							      $description, $outputMimeType,
 							      $priority);
     }
 
@@ -1741,7 +1750,7 @@ class GalleryCoreApi {
      */
     function unregisterToolkitOperation($toolkitId, $operationName, $mimeTypes=array()) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
-	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName, 
+	return GalleryToolkitHelper_medium::unregisterOperation($toolkitId, $operationName,
 								$mimeTypes);
     }
 
@@ -2178,7 +2187,7 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
 	return GalleryChildEntityHelper_simple::fetchDescendentItemIds($item, $offset, $count, $permission);
     }
-    
+
     /**
      * Return the ids of the children of this entity, in the order specified
      * by the orderBy field and the direction specified by the orderDirection
@@ -2309,7 +2318,7 @@ class GalleryCoreApi {
      *
      * @param string the mime type
      * @return array object GalleryStatus a status code
-     *               boolean 
+     *               boolean
      */
     function isViewableMimeType($mimeType) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
@@ -2326,7 +2335,7 @@ class GalleryCoreApi {
         GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
         return GalleryMimeTypeHelper_simple::removeMimeType($mimeType);
     }
-    
+
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
      * upon completion return the http response, headers and the actual URL that we used to
@@ -2372,10 +2381,10 @@ class GalleryCoreApi {
      * Convert the string from the source encoding to UTF8
      *
      * @param string the input string
-     * @param string the source encoding (eg, 'ISO-8859-1')
+     * @param string the source encoding (eg, 'ISO-8859-1'), defaults from current locale
      * @return string the result
      */
-    function convertToUtf8($inputString, $sourceEncoding) {
+    function convertToUtf8($inputString, $sourceEncoding=null) {
 	GalleryCoreApi::relativeRequireOnce(
 	    'modules/core/classes/helpers/GalleryCharsetHelper_simple.class');
 	return GalleryCharsetHelper_simple::convertToUtf8($inputString, $sourceEncoding);
@@ -2422,12 +2431,12 @@ class GalleryCoreApi {
      * @param string to address(es) (comma separated)
      * @param string email subject
      * @return object GalleryStatus a status code
-     * @static  
+     * @static
      */
     function sendTemplatedEmail($file, $data, $from, $to, $subject) {
         GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
 	return MailHelper_simple::sendTemplatedEmail($file, $data, $from, $to, $subject);
-    } 
+    }
 
 }
 ?>

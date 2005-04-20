@@ -37,14 +37,26 @@ class GalleryCharsetHelper_simple {
      * Convert the string from the source encoding to UTF8
      *
      * @param string the input string
-     * @param string the source encoding (eg, 'ISO-8859-1')
+     * @param string the source encoding (eg, 'ISO-8859-1'), defaults from current locale
      * @return string the result
      */
-    function convertToUtf8($string, $sourceEncoding) {
+    function convertToUtf8($string, $sourceEncoding=null) {
 	global $gallery;
 
-	$platform = $gallery->getPlatform();
-	$slash = $platform->getDirectorySeparator();
+	if (empty($sourceEncoding)) {
+	    /* Determine character set of current locale */
+	    if (function_exists('nl_langinfo')) {
+		$sourceEncoding = nl_langinfo(CODESET);
+	    } else {
+		$locale = setlocale(LC_ALL, '0');
+		if (($i = strpos($locale, '.')) !== false) {
+		    $sourceEncoding = substr($locale, $i + 1);
+		} else {
+		    /* Unable to determine source encoding - no conversion possible */
+		    return $string;
+		}
+	    }
+	}
 
 	if (!strcmp($sourceEncoding, 'UTF-8')) {
 	    return $string;
