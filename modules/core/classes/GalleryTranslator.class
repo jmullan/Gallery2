@@ -257,11 +257,7 @@ class GalleryTranslator {
 	    putenv("LANG=${languageCode}");
 	    putenv("LANGUAGE=${languageCode}");
 
-	    // XXX: we'd like to say:
-	    //    setlocale(LC_ALL, "${language}_${country}", "${language}");
-	    // but the setlocale() call doesn't accept fallbacks until PHP 4.3+
-
-	    setlocale(LC_ALL, $languageCode);
+	    GalleryTranslator::_setlocale(LC_ALL, $languageCode);
 	}
 
 	/* Set the appropriate charset in our HTTP header */
@@ -270,6 +266,38 @@ class GalleryTranslator {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * Attempt to set the requested locale.
+     * Try fallbacks and character sets if needed to find a valid locale.
+     *
+     * @param mixed category
+     * @param string locale
+     * @return string locale selected or boolean false if none
+     * @static
+     * @private
+     */
+    function _setlocale($category, $locale) {
+	global $gallery;
+
+	if (($ret = setlocale($category, $locale)) !== false) {
+	    return $ret;
+	}
+	/* Try just selecting the language */
+	if (($i = strpos($locale, '_')) !== false
+		&& ($ret = setlocale($category, substr($locale, 0, $i))) !== false) {
+	    return $ret;
+	}
+	/* Try appending some character set names; some systems (like FreeBSD) need this */
+	foreach (array('ISO8859-1', 'ISO8859-2', 'ISO8859-5', 'EUC', 'Big5')
+		 as $charset) {
+	    if (($ret = setlocale($category, $locale . '.' . $charset)) !== false) {
+		return $ret;
+	    }
+	}
+	$gallery->debug("Warning: Unable to select locale $locale");
+	return false;
     }
 
     /**
