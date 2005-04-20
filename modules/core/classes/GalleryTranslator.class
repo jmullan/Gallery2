@@ -122,11 +122,8 @@ class GalleryTranslator {
 	    $defaultCountry['en'] = 'US';
 
 	    /* Spanish */
-	    $supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
-	    $defaultCountry['es'] = 'AR';
-
-	    /* Spanish */
 	    $supportedLanguages['es']['MX']['description'] = 'Espa&#241;ol (MX)';
+	    $supportedLanguages['es']['AR']['description'] = 'Espa&#241;ol (AR)';
 	    $defaultCountry['es'] = 'MX';
 
 	    /* Finnish */
@@ -212,10 +209,6 @@ class GalleryTranslator {
 	    /* Czech */
 	    $supportedLanguages['cs']['CZ']['description'] = '&#x010c;esky';
 	    $defaultCountry['cs'] = 'CZ';
-
-	    /* Dutch */
-	    $supportedLanguages['nl']['NL']['description'] = 'Nederlands';
-	    $defaultCountry['nl'] = 'NL';
 	}
 
 	return array($supportedLanguages, $defaultCountry);
@@ -290,8 +283,8 @@ class GalleryTranslator {
 	    return $ret;
 	}
 	/* Try appending some character set names; some systems (like FreeBSD) need this */
-	foreach (array('ISO8859-1', 'ISO8859-2', 'ISO8859-5', 'EUC', 'Big5')
-		 as $charset) {
+	foreach (array('ISO8859-1', 'ISO8859-2', 'ISO8859-5', 'ISO8859-7', 'ISO8859-9',
+		       'EUC', 'Big5') as $charset) {
 	    if (($ret = setlocale($category, $locale . '.' . $charset)) !== false) {
 		return $ret;
 	    }
