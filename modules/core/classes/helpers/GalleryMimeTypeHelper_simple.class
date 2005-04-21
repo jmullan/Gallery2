@@ -207,6 +207,13 @@ class GalleryMimeTypeHelper_simple {
 	);
 	$viewableMimeTypes = array('image/jpeg' => 1, 'image/pjpeg' => 1,
 	    'image/gif' => 1, 'image/png' => 1);
+
+	/* Start with a clean slate */
+	$ret = GalleryMimeTypeMap::removeAllMapEntries();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	foreach ($mimeTypes as $ext => $mime) {
 	    $mimeTypeMap = array('extension' => $ext, 'mimeType' => $mime,
 		'viewable' => (int) isset($viewableMimeTypes[$mime]));
