@@ -115,20 +115,21 @@ class ClassicLayout extends MatrixLayout {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $sample = ' (<a href="' . $sampleUrl . '">' .  $gallery->i18n('View Samples') . '</a>)';
+	    $sample = ' (<a href="' . $sampleUrl . '">'
+		    . $this->translate('View Samples') . '</a>)';
 
 	    $settings[] = array('key' => 'albumFrame',
-				'name' => $gallery->i18n('Album Frame') . $sample,
+				'name' => $this->translate('Album Frame') . $sample,
 				'type' => 'single-select',
 				'choices' => $list,
 				'value' => $params['albumFrame']);
 	    $settings[] = array('key' => 'itemFrame',
-				'name' => $gallery->i18n('Item Frame') . $sample,
+				'name' => $this->translate('Item Frame') . $sample,
 				'type' => 'single-select',
 				'choices' => $list,
 				'value' => $params['itemFrame']);
 	    $settings[] = array('key' => 'photoFrame',
-				'name' => $gallery->i18n('Photo Frame') . $sample,
+				'name' => $this->translate('Photo Frame') . $sample,
 				'type' => 'single-select',
 				'choices' => $list,
 				'value' => $params['photoFrame']);

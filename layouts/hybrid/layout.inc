@@ -298,15 +298,16 @@ class HybridLayout extends GalleryLayout {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $sample = ' (<a href="' . $sampleUrl . '">' .  $gallery->i18n('View Samples') . '</a>)';
+	    $sample = ' (<a href="' . $sampleUrl . '">'
+		    . $this->translate('View Samples') . '</a>)';
 
 	    $settings[] = array('key' => 'albumFrame',
-				'name' => $gallery->i18n('Album Frame') . $sample,
+				'name' => $this->translate('Album Frame') . $sample,
 				'type' => 'single-select',
 				'choices' => $list,
 				'value' => $params['albumFrame']);
 	    $settings[] = array('key' => 'imageFrame',
-				'name' => $gallery->i18n('Image Frame') . $sample,
+				'name' => $this->translate('Image Frame') . $sample,
 				'type' => 'single-select',
 				'choices' => $list,
 				'value' => $params['imageFrame']);
