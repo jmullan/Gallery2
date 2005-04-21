@@ -12,8 +12,8 @@
 
   <input type="text" id="giFormUsername" size="10"
    name="{g->formVar var="form[username]"}" value="{g->text text="Username"}"
-   onfocus="var f=document.getElementById('giFormUsername'); if (f.value == '{g->text text="Username"}') {ldelim} f.value = '' {rdelim}"
-   onblur="var f=document.getElementById('giFormUsername'); if (f.value == '') {ldelim} f.value = '{g->text text="Username"}' {rdelim}"
+   onfocus="var f=document.getElementById('giFormUsername'); if (f.value == '{g->text text="Username" forJavascript=1}') {ldelim} f.value = '' {rdelim}"
+   onblur="var f=document.getElementById('giFormUsername'); if (f.value == '') {ldelim} f.value = '{g->text text="Username" forJavascript=1}' {rdelim}"
    />
   <br/>
 
