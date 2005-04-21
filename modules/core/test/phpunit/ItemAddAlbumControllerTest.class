@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,7 +38,6 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -46,22 +45,10 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	global $gallery;
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
+	$this->_markForCleanup($this->_parentAlbum);
     }
 
     function testAddAlbum() {
-	global $gallery;
-
 	/* Use valid inputs */
 	$name = 'testalbum-'.rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
@@ -83,20 +70,19 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getChildId()),
-				  'status' => array('editMessage' => $core->translate('Album created successfully.')),
+				  'status' => array('editMessage' =>
+						$core->translate('Album created successfully.')),
 				  'error' => array()),
 			    $results);
     }
 
     function testAddDuplicateAlbum() {
-	global $gallery;
-
 	/* Create an album */
 	list ($ret, $subAlbum) = $this->_createRandomAlbum($this->_parentAlbum->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Use valid inputs */
 	$name = 'testalbum-'.rand();
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
@@ -120,7 +106,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core:ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getSecondChildId()),
-				  'status' => array('editMessage' => $core->translate('Album created successfully.')),
+				  'status' => array('editMessage' =>
+						$core->translate('Album created successfully.')),
 				  'error' => array()),
 			    $results);
 
@@ -129,13 +116,11 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Verify that the new album's path component is unique (it's got _001 as a suffix)
+	/* Verify that the new album's path component is unique (it's got _001 as a suffix) */
 	$this->assertEquals($subAlbum->getPathComponent() . '_001', $newAlbum->getPathComponent());
     }
-    
-    function testAddAlbumMissingName() {
-	global $gallery;
 
+    function testAddAlbumMissingName() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
@@ -153,10 +138,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 				  'error' => array('form[error][pathComponent][missing]')),
 			    $results);
     }
-    
-    function testAddAlbumInvalidName() {
-	global $gallery;
 
+    function testAddAlbumInvalidName() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
@@ -175,6 +158,50 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 			    $results);
     }
 
+    function testAddAlbumWithSpaces() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	$name = ' testalbum-' . rand() . ' ';
+	GalleryUtilities::putRequestVariable('itemId', $this->_parentAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[action][create]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $name);
+	GalleryUtilities::putRequestVariable('form[title]', 'title');
+	GalleryUtilities::putRequestVariable('form[summary]', 'summary');
+	GalleryUtilities::putRequestVariable('form[keywords]', 'keywords');
+	GalleryUtilities::putRequestVariable('form[description]', 'description');
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
+						      'subView' => 'core:ItemEdit',
+						      'editPlugin' => 'ItemEditAlbum',
+						      'itemId' => ($id = $this->_getChildId())),
+				  'status' => array('editMessage' =>
+						$core->translate('Album created successfully.')),
+				  'error' => array()),
+			    $results);
+
+	list ($ret, $newAlbum) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(trim($name), $newAlbum->getPathComponent(), 'path component');
+
+	list ($ret, $path) = $newAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($platform->is_dir($path), "directory '$path'");
+	$this->assertEquals(trim($name), basename($path),
+			    'directory name: "' . basename($path) . '"');
+    }
+
     function _getChildId() {
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	$this->assertEquals(1, sizeof($ids));
@@ -185,7 +212,7 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_parentAlbum);
 	$this->assertEquals(2, sizeof($ids));
 
-	// We want the larger id, since it's the newer one
+	/* We want the larger id, since it's the newer one */
 	return max($ids[0], $ids[1]);
     }
 }
