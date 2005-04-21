@@ -189,6 +189,7 @@
   <!-- REMOVE -->
   <xsl:template match="remove">
     DROP TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>;
+
     DELETE FROM <xsl:value-of select="$tablePrefix"/>Schema
     WHERE <xsl:value-of select="$columnPrefix"/>name = '<xsl:value-of select="table-name"/>';
   </xsl:template>
