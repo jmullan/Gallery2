@@ -531,7 +531,19 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 				  $itemViewCount[$testItem->getId()]     // count of clicks
 				  ),
 			    'item 0');
-	$chipperId = $testItem->getId();
+
+	list ($ret, $chipperThumb) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($testItem->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, count($chipperThumb), 'thumbnail exists');
+	if (count($chipperThumb) == 1) {
+	    $chipperThumb = array_shift($chipperThumb);
+	    $this->assert(GalleryUtilities::isA($chipperThumb, 'GalleryDerivative'), 'derivative');
+	    $this->assertEquals('crop|34.568,40.923,34.877,35.077;thumbnail|150',
+				$chipperThumb->getDerivativeOperations(), 'derivative operations');
+	}
 
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[1]);
 	if ($ret->isError()) {
