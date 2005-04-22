@@ -106,7 +106,7 @@
     {g->text text="Place your watermark on the canvas below in the location where you'd like it to appear when you watermark newly uploaded photos.  You'll be able to edit individual photos to move the watermark later on, if you choose."}
   </p>
 
-  <div id="background" class="gcBackground1 gcBorder2"
+  <div id="background" class="gcBackground1"
    style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
     <img name="floater"
      src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}"
@@ -153,7 +153,7 @@
 
 <script type="text/javascript">{literal}
 // <![CDATA[
-SET_DHTML("background"+NO_DRAG, "floater");
+SET_DHTML("background"+NO_DRAG, "floater"+CURSOR_MOVE);
 function watermarkInit() {
   moveToOriginalLocation();
   verifyBounds();
