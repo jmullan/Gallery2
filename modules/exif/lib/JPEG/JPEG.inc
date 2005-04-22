@@ -996,7 +996,7 @@ class JPEG // extends PEAR
             if (!$wroteEXIF && (($marker < 0xE0) || ($marker > 0xEF))) {
                 if (isset($this->_info['exif']) && is_array($this->_info['exif'])) {
                     $exif =& $this->_createMarkerEXIF();
-                    $this->_writeJPEGMarker(0xE1, strlen(&$exif), &$exif, 0);
+                    $this->_writeJPEGMarker(0xE1, strlen($exif), $exif, 0);
                     unset($exif);
                 }
                 $wroteEXIF = true;
@@ -1006,7 +1006,7 @@ class JPEG // extends PEAR
                 if ((isset($this->_info['adobe']) && is_array($this->_info['adobe']))
                 || (isset($this->_info['iptc']) && is_array($this->_info['iptc']))) {
                     $adobe =& $this->_createMarkerAdobe();
-                    $this->_writeJPEGMarker(0xED, strlen(&$adobe), &$adobe, 0);
+                    $this->_writeJPEGMarker(0xED, strlen($adobe), $adobe, 0);
                     unset($adobe);
                 }
                 $wroteAdobe = true;
@@ -1014,11 +1014,11 @@ class JPEG // extends PEAR
 
             $origLength = $length;
             if (isset($data)) {
-                $length = strlen(&$data);
+                $length = strlen($data);
             }
 
             if ($marker != -1) {
-                $this->_writeJPEGMarker($marker, $length, &$data, $origLength);
+                $this->_writeJPEGMarker($marker, $length, $data, $origLength);
             }
         }
 
@@ -1051,7 +1051,7 @@ class JPEG // extends PEAR
 
         if (isset($data)) {
             // Copy the generated data
-            fputs($this->_fpout, &$data, $length);
+            fputs($this->_fpout, $data, $length);
 
             if ($origLength > 0) {   // Skip the original data
                 $result = @fseek($this->_fp, $origLength, SEEK_CUR);
@@ -1067,12 +1067,12 @@ class JPEG // extends PEAR
             if ($marker == 0xDA) {  // Copy until EOF
                 while (!feof($this->_fp)) {
                     $data =& fread($this->_fp, 1024 * 16);
-                    fputs($this->_fpout, &$data, strlen(&$data));
+                    fputs($this->_fpout, $data, strlen($data));
                 }
             }
             else { // Copy only $length bytes
                 $data =& fread($this->_fp, $length);
-                fputs($this->_fpout, &$data, $length);
+                fputs($this->_fpout, $data, $length);
             }
         }
 
@@ -1132,7 +1132,7 @@ class JPEG // extends PEAR
         $count = count($this->_markers);
         for ($i = 0; $i < $count; $i++) {
             if ($this->_markers[$i]['marker'] == 0xE0) {
-                $signature = $this->_getFixedString(&$this->_markers[$i]['data'], 0, 4);
+                $signature = $this->_getFixedString($this->_markers[$i]['data'], 0, 4);
                 if ($signature == 'JFIF') {
                     $data =& $this->_markers[$i]['data'];
                     break;
@@ -1149,12 +1149,12 @@ class JPEG // extends PEAR
         $this->_info['jfif'] = array();
 
 
-        $vmaj = $this->_getByte(&$data, 5);
-        $vmin = $this->_getByte(&$data, 6);
+        $vmaj = $this->_getByte($data, 5);
+        $vmin = $this->_getByte($data, 6);
 
         $this->_info['jfif']['Version'] = sprintf('%d.%02d', $vmaj, $vmin);
 
-        $units = $this->_getByte(&$data, 7);
+        $units = $this->_getByte($data, 7);
         switch ($units) {
         case 0:
             $this->_info['jfif']['Units'] = 'pixels';
@@ -1170,14 +1170,14 @@ class JPEG // extends PEAR
             break;
         }
 
-        $xdens = $this->_getShort(&$data, 8);
-        $ydens = $this->_getShort(&$data, 10);
+        $xdens = $this->_getShort($data, 8);
+        $ydens = $this->_getShort($data, 10);
 
         $this->_info['jfif']['XDensity'] = $xdens;
         $this->_info['jfif']['YDensity'] = $ydens;
 
-        $thumbx = $this->_getByte(&$data, 12);
-        $thumby = $this->_getByte(&$data, 13);
+        $thumbx = $this->_getByte($data, 12);
+        $thumby = $this->_getByte($data, 13);
 
         $this->_info['jfif']['ThumbnailWidth'] = $thumbx;
         $this->_info['jfif']['ThumbnailHeight'] = $thumby;
@@ -1243,10 +1243,10 @@ class JPEG // extends PEAR
 
         $this->_info['sof']['Format'] = $format;
 
-        $this->_info['sof']['SamplePrecision'] = $this->_getByte(&$data, $pos + 0);
-        $this->_info['sof']['ImageHeight'] = $this->_getShort(&$data, $pos + 1);
-        $this->_info['sof']['ImageWidth'] = $this->_getShort(&$data, $pos + 3);
-        $this->_info['sof']['ColorChannels'] = $this->_getByte(&$data, $pos + 5);
+        $this->_info['sof']['SamplePrecision'] = $this->_getByte($data, $pos + 0);
+        $this->_info['sof']['ImageHeight'] = $this->_getShort($data, $pos + 1);
+        $this->_info['sof']['ImageWidth'] = $this->_getShort($data, $pos + 3);
+        $this->_info['sof']['ColorChannels'] = $this->_getByte($data, $pos + 5);
 
         return true;
     }
@@ -1266,7 +1266,7 @@ class JPEG // extends PEAR
         $count = count($this->_markers);
         for ($i = 0; $i < $count; $i++) {
             if ($this->_markers[$i]['marker'] == 0xE1) {
-                $signature = $this->_getFixedString(&$this->_markers[$i]['data'], 0, 6);
+                $signature = $this->_getFixedString($this->_markers[$i]['data'], 0, 6);
                 if ($signature == "Exif\0\0") {
                     $data =& $this->_markers[$i]['data'];
                     break;
@@ -1283,7 +1283,7 @@ class JPEG // extends PEAR
 
         // We don't increment $pos after this because Exif uses offsets relative to this point
 
-        $byteAlign = $this->_getShort(&$data, $pos + 0);
+        $byteAlign = $this->_getShort($data, $pos + 0);
 
         if ($byteAlign == 0x4949) { // "II"
             $isBigEndian = false;
@@ -1295,7 +1295,7 @@ class JPEG // extends PEAR
             return false; // Unexpected data
         }
 
-        $alignCheck = $this->_getShort(&$data, $pos + 2, $isBigEndian);
+        $alignCheck = $this->_getShort($data, $pos + 2, $isBigEndian);
         if ($alignCheck != 0x002A) // That's the expected value
             return false; // Unexpected data
 
@@ -1306,13 +1306,13 @@ class JPEG // extends PEAR
             $this->_info['exif']['ByteAlign'] = "Little Endian";
         }
 
-        $offsetIFD0 = $this->_getLong(&$data, $pos + 4, $isBigEndian);
+        $offsetIFD0 = $this->_getLong($data, $pos + 4, $isBigEndian);
         if ($offsetIFD0 < 8)
             return false; // Unexpected data
 
-        $offsetIFD1 = $this->_readIFD(&$data, $pos, $offsetIFD0, $isBigEndian, 'ifd0');
+        $offsetIFD1 = $this->_readIFD($data, $pos, $offsetIFD0, $isBigEndian, 'ifd0');
         if ($offsetIFD1 != 0)
-            $this->_readIFD(&$data, $pos, $offsetIFD1, $isBigEndian, 'ifd1');
+            $this->_readIFD($data, $pos, $offsetIFD1, $isBigEndian, 'ifd1');
 
         return true;
     }
@@ -1322,7 +1322,7 @@ class JPEG // extends PEAR
     {
         $EXIFTags = $this->_exifTagNames($mode);
 
-        $numEntries = $this->_getShort(&$data, $base + $offset, $isBigEndian);
+        $numEntries = $this->_getShort($data, $base + $offset, $isBigEndian);
         $offset += 2;
 
         $exifTIFFOffset = 0;
@@ -1331,11 +1331,11 @@ class JPEG // extends PEAR
         $exifThumbnailLength = 0;
 
         for ($i = 0; $i < $numEntries; $i++) {
-            $tag = $this->_getShort(&$data, $base + $offset, $isBigEndian);
+            $tag = $this->_getShort($data, $base + $offset, $isBigEndian);
             $offset += 2;
-            $type = $this->_getShort(&$data, $base + $offset, $isBigEndian);
+            $type = $this->_getShort($data, $base + $offset, $isBigEndian);
             $offset += 2;
-            $count = $this->_getLong(&$data, $base + $offset, $isBigEndian);
+            $count = $this->_getLong($data, $base + $offset, $isBigEndian);
             $offset += 4;
 
             if (($type < 1) || ($type > 12))
@@ -1345,23 +1345,23 @@ class JPEG // extends PEAR
 
             $dataLength = $typeLengths[$type] * $count;
             if ($dataLength > 4) {
-                $dataOffset = $this->_getLong(&$data, $base + $offset, $isBigEndian);
-                $rawValue = $this->_getFixedString(&$data, $base + $dataOffset, $dataLength);
+                $dataOffset = $this->_getLong($data, $base + $offset, $isBigEndian);
+                $rawValue = $this->_getFixedString($data, $base + $dataOffset, $dataLength);
             }
             else {
-                $rawValue = $this->_getFixedString(&$data, $base + $offset, $dataLength);
+                $rawValue = $this->_getFixedString($data, $base + $offset, $dataLength);
             }
             $offset += 4;
 
             switch ($type) {
             case 1:    // UBYTE
                 if ($count == 1) {
-                    $value = $this->_getByte(&$rawValue, 0);
+                    $value = $this->_getByte($rawValue, 0);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getByte(&$rawValue, $j);
+                        $value[$j] = $this->_getByte($rawValue, $j);
                 }
                 break;
             case 2:    // ASCII
@@ -1369,28 +1369,28 @@ class JPEG // extends PEAR
                 break;
             case 3:    // USHORT
                 if ($count == 1) {
-                    $value = $this->_getShort(&$rawValue, 0, $isBigEndian);
+                    $value = $this->_getShort($rawValue, 0, $isBigEndian);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getShort(&$rawValue, $j * 2, $isBigEndian);
+                        $value[$j] = $this->_getShort($rawValue, $j * 2, $isBigEndian);
                 }
                 break;
             case 4:    // ULONG
                 if ($count == 1) {
-                    $value = $this->_getLong(&$rawValue, 0, $isBigEndian);
+                    $value = $this->_getLong($rawValue, 0, $isBigEndian);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getLong(&$rawValue, $j * 4, $isBigEndian);
+                        $value[$j] = $this->_getLong($rawValue, $j * 4, $isBigEndian);
                 }
                 break;
             case 5:    // URATIONAL
                 if ($count == 1) {
-                    $a = $this->_getLong(&$rawValue, 0, $isBigEndian);
-                    $b = $this->_getLong(&$rawValue, 4, $isBigEndian);
+                    $a = $this->_getLong($rawValue, 0, $isBigEndian);
+                    $b = $this->_getLong($rawValue, 4, $isBigEndian);
                     $value = array();
                     $value['val'] = 0;
                     $value['num'] = $a;
@@ -1402,8 +1402,8 @@ class JPEG // extends PEAR
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++) {
-                        $a = $this->_getLong(&$rawValue, $j * 8, $isBigEndian);
-                        $b = $this->_getLong(&$rawValue, ($j * 8) + 4, $isBigEndian);
+                        $a = $this->_getLong($rawValue, $j * 8, $isBigEndian);
+                        $b = $this->_getLong($rawValue, ($j * 8) + 4, $isBigEndian);
                         $value = array();
                         $value[$j]['val'] = 0;
                         $value[$j]['num'] = $a;
@@ -1415,12 +1415,12 @@ class JPEG // extends PEAR
                 break;
             case 6:    // SBYTE
                 if ($count == 1) {
-                    $value = $this->_getByte(&$rawValue, 0);
+                    $value = $this->_getByte($rawValue, 0);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getByte(&$rawValue, $j);
+                        $value[$j] = $this->_getByte($rawValue, $j);
                 }
                 break;
             case 7:    // UNDEFINED
@@ -1428,28 +1428,28 @@ class JPEG // extends PEAR
                 break;
             case 8:    // SSHORT
                 if ($count == 1) {
-                    $value = $this->_getShort(&$rawValue, 0, $isBigEndian);
+                    $value = $this->_getShort($rawValue, 0, $isBigEndian);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getShort(&$rawValue, $j * 2, $isBigEndian);
+                        $value[$j] = $this->_getShort($rawValue, $j * 2, $isBigEndian);
                 }
                 break;
             case 9:    // SLONG
                 if ($count == 1) {
-                    $value = $this->_getLong(&$rawValue, 0, $isBigEndian);
+                    $value = $this->_getLong($rawValue, 0, $isBigEndian);
                 }
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++)
-                        $value[$j] = $this->_getLong(&$rawValue, $j * 4, $isBigEndian);
+                        $value[$j] = $this->_getLong($rawValue, $j * 4, $isBigEndian);
                 }
                 break;
             case 10:   // SRATIONAL
                 if ($count == 1) {
-                    $a = $this->_getLong(&$rawValue, 0, $isBigEndian);
-                    $b = $this->_getLong(&$rawValue, 4, $isBigEndian);
+                    $a = $this->_getLong($rawValue, 0, $isBigEndian);
+                    $b = $this->_getLong($rawValue, 4, $isBigEndian);
                     $value = array();
                     $value['val'] = 0;
                     $value['num'] = $a;
@@ -1460,8 +1460,8 @@ class JPEG // extends PEAR
                 else {
                     $value = array();
                     for ($j = 0; $j < $count; $j++) {
-                        $a = $this->_getLong(&$rawValue, $j * 8, $isBigEndian);
-                        $b = $this->_getLong(&$rawValue, ($j * 8) + 4, $isBigEndian);
+                        $a = $this->_getLong($rawValue, $j * 8, $isBigEndian);
+                        $b = $this->_getLong($rawValue, ($j * 8) + 4, $isBigEndian);
                         $value = array();
                         $value[$j]['val'] = 0;
                         $value[$j]['num'] = $a;
@@ -1484,10 +1484,10 @@ class JPEG // extends PEAR
 
             $tagName = '';
             if (($mode == 'ifd0') && ($tag == 0x8769)) {  // ExifIFDOffset
-                $this->_readIFD(&$data, $base, $value, $isBigEndian, 'exif');
+                $this->_readIFD($data, $base, $value, $isBigEndian, 'exif');
             }
             elseif (($mode == 'ifd0') && ($tag == 0x8825)) {  // GPSIFDOffset
-                $this->_readIFD(&$data, $base, $value, $isBigEndian, 'gps');
+                $this->_readIFD($data, $base, $value, $isBigEndian, 'gps');
             }
             elseif (($mode == 'ifd1') && ($tag == 0x0111)) {  // TIFFStripOffsets
                 $exifTIFFOffset = $value;
@@ -1502,7 +1502,7 @@ class JPEG // extends PEAR
                 $exifThumbnailLength = $value;
             }
             elseif (($mode == 'exif') && ($tag == 0xA005)) {  // InteropIFDOffset
-                $this->_readIFD(&$data, $base, $value, $isBigEndian, 'interop');
+                $this->_readIFD($data, $base, $value, $isBigEndian, 'interop');
             }
             // elseif (($mode == 'exif') && ($tag == 0x927C)) {  // MakerNote
             // }
@@ -1533,14 +1533,14 @@ class JPEG // extends PEAR
         }
 
         if (($exifThumbnailOffset > 0) && ($exifThumbnailLength > 0)) {
-            $this->_info['exif']['JFIFThumbnail'] = $this->_getFixedString(&$data, $base + $exifThumbnailOffset, $exifThumbnailLength);
+            $this->_info['exif']['JFIFThumbnail'] = $this->_getFixedString($data, $base + $exifThumbnailOffset, $exifThumbnailLength);
         }
 
         if (($exifTIFFOffset > 0) && ($exifTIFFLength > 0)) {
-            $this->_info['exif']['TIFFStrips'] = $this->_getFixedString(&$data, $base + $exifTIFFOffset, $exifTIFFLength);
+            $this->_info['exif']['TIFFStrips'] = $this->_getFixedString($data, $base + $exifTIFFOffset, $exifTIFFLength);
         }
 
-        $nextOffset = $this->_getLong(&$data, $base + $offset, $isBigEndian);
+        $nextOffset = $this->_getLong($data, $base + $offset, $isBigEndian);
         return $nextOffset;
     }
 
@@ -1551,7 +1551,7 @@ class JPEG // extends PEAR
         $count = count($this->_markers);
         for ($i = 0; $i < $count; $i++) {
             if ($this->_markers[$i]['marker'] == 0xE1) {
-                $signature = $this->_getFixedString(&$this->_markers[$i]['data'], 0, 6);
+                $signature = $this->_getFixedString($this->_markers[$i]['data'], 0, 6);
                 if ($signature == "Exif\0\0") {
                     $data =& $this->_markers[$i]['data'];
                     break;
@@ -1570,21 +1570,21 @@ class JPEG // extends PEAR
         if (isset($this->_info['exif']['ByteAlign']) && ($this->_info['exif']['ByteAlign'] == "Big Endian")) {
             $isBigEndian = true;
             $aux = "MM";
-            $pos = $this->_putString(&$data, $pos, &$aux);
+            $pos = $this->_putString($data, $pos, $aux);
         }
         else {
             $isBigEndian = false;
             $aux = "II";
-            $pos = $this->_putString(&$data, $pos, &$aux);
+            $pos = $this->_putString($data, $pos, $aux);
         }
-        $pos = $this->_putShort(&$data, $pos, 0x002A, $isBigEndian);
-        $pos = $this->_putLong(&$data, $pos, 0x00000008, $isBigEndian); // IFD0 Offset is always 8
+        $pos = $this->_putShort($data, $pos, 0x002A, $isBigEndian);
+        $pos = $this->_putLong($data, $pos, 0x00000008, $isBigEndian); // IFD0 Offset is always 8
 
         $ifd0 =& $this->_getIFDEntries($isBigEndian, 'ifd0');
         $ifd1 =& $this->_getIFDEntries($isBigEndian, 'ifd1');
 
-        $pos = $this->_writeIFD(&$data, $pos, $offsetBase, &$ifd0, $isBigEndian, true);
-        $pos = $this->_writeIFD(&$data, $pos, $offsetBase, &$ifd1, $isBigEndian, false);
+        $pos = $this->_writeIFD($data, $pos, $offsetBase, $ifd0, $isBigEndian, true);
+        $pos = $this->_writeIFD($data, $pos, $offsetBase, $ifd1, $isBigEndian, false);
 
         return $data;
     }
@@ -1598,53 +1598,53 @@ class JPEG // extends PEAR
         $entryCount = count($entries);
 
         $dataPos = $pos + 2 + ($entryCount * 12) + 4;
-        $pos = $this->_putShort(&$data, $pos, $entryCount, $isBigEndian);
+        $pos = $this->_putShort($data, $pos, $entryCount, $isBigEndian);
 
         for ($i = 0; $i < $entryCount; $i++) {
             $tag = $entries[$i]['tag'];
             $type = $entries[$i]['type'];
 
             if ($type == -99) { // SubIFD
-                $pos = $this->_putShort(&$data, $pos, $tag, $isBigEndian);
-                $pos = $this->_putShort(&$data, $pos, 0x04, $isBigEndian); // LONG
-                $pos = $this->_putLong(&$data, $pos, 0x01, $isBigEndian); // Count = 1
-                $pos = $this->_putLong(&$data, $pos, $dataPos - $offsetBase, $isBigEndian);
+                $pos = $this->_putShort($data, $pos, $tag, $isBigEndian);
+                $pos = $this->_putShort($data, $pos, 0x04, $isBigEndian); // LONG
+                $pos = $this->_putLong($data, $pos, 0x01, $isBigEndian); // Count = 1
+                $pos = $this->_putLong($data, $pos, $dataPos - $offsetBase, $isBigEndian);
 
-                $dataPos = $this->_writeIFD(&$data, $dataPos, $offsetBase, &$entries[$i]['value'], $isBigEndian, false);
+                $dataPos = $this->_writeIFD($data, $dataPos, $offsetBase, $entries[$i]['value'], $isBigEndian, false);
             }
             elseif ($type == -98) { // TIFF Data
-                $pos = $this->_putShort(&$data, $pos, $tag, $isBigEndian);
-                $pos = $this->_putShort(&$data, $pos, 0x04, $isBigEndian); // LONG
-                $pos = $this->_putLong(&$data, $pos, 0x01, $isBigEndian); // Count = 1
+                $pos = $this->_putShort($data, $pos, $tag, $isBigEndian);
+                $pos = $this->_putShort($data, $pos, 0x04, $isBigEndian); // LONG
+                $pos = $this->_putLong($data, $pos, 0x01, $isBigEndian); // Count = 1
                 $tiffDataOffsetPos = $pos;
-                $pos = $this->_putLong(&$data, $pos, 0x00, $isBigEndian); // For Now
+                $pos = $this->_putLong($data, $pos, 0x00, $isBigEndian); // For Now
                 $tiffData =& $entries[$i]['value'] ;
             }
             else { // Regular Entry
-                $pos = $this->_putShort(&$data, $pos, $tag, $isBigEndian);
-                $pos = $this->_putShort(&$data, $pos, $type, $isBigEndian);
-                $pos = $this->_putLong(&$data, $pos, $entries[$i]['count'], $isBigEndian);
+                $pos = $this->_putShort($data, $pos, $tag, $isBigEndian);
+                $pos = $this->_putShort($data, $pos, $type, $isBigEndian);
+                $pos = $this->_putLong($data, $pos, $entries[$i]['count'], $isBigEndian);
                 if (strlen($entries[$i]['value']) > 4) {
-                    $pos = $this->_putLong(&$data, $pos, $dataPos - $offsetBase, $isBigEndian);
-                    $dataPos = $this->_putString(&$data, $dataPos, &$entries[$i]['value']);
+                    $pos = $this->_putLong($data, $pos, $dataPos - $offsetBase, $isBigEndian);
+                    $dataPos = $this->_putString($data, $dataPos, $entries[$i]['value']);
                 }
                 else {
                     $val = str_pad($entries[$i]['value'], 4, "\0");
-                    $pos = $this->_putString(&$data, $pos, &$val);
+                    $pos = $this->_putString($data, $pos, $val);
                 }
             }
         }
 
         if ($tiffData != null) {
-            $this->_putLong(&$data, $tiffDataOffsetPos, $dataPos - $offsetBase, $isBigEndian);
-            $dataPos = $this->_putString(&$data, $dataPos, &$tiffData);
+            $this->_putLong($data, $tiffDataOffsetPos, $dataPos - $offsetBase, $isBigEndian);
+            $dataPos = $this->_putString($data, $dataPos, $tiffData);
         }
 
         if ($hasNext) {
-            $pos = $this->_putLong(&$data, $pos, $dataPos - $offsetBase, $isBigEndian);
+            $pos = $this->_putLong($data, $pos, $dataPos - $offsetBase, $isBigEndian);
         }
         else {
-            $pos = $this->_putLong(&$data, $pos, 0, $isBigEndian);
+            $pos = $this->_putLong($data, $pos, 0, $isBigEndian);
         }
 
         return $dataPos;
@@ -1733,7 +1733,7 @@ class JPEG // extends PEAR
                 // This makes it easier to process variable size elements
                 if (!is_array($origValue) || isset($origValue['val'])) {
                     unset($origValue); // Break the reference
-                    $origValue = array(&$this->_info['exif'][$name]);
+                    $origValue = array($this->_info['exif'][$name]);
                 }
                 $origCount = count($origValue);
 
@@ -1752,12 +1752,12 @@ class JPEG // extends PEAR
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
 
-                        $this->_putByte(&$value, $j, $origValue[$j]);
+                        $this->_putByte($value, $j, $origValue[$j]);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putByte(&$value, $j, 0);
+                        $this->_putByte($value, $j, 0);
                         $j++;
                     }
                     break;
@@ -1772,7 +1772,7 @@ class JPEG // extends PEAR
 
                     $count = strlen($v);
 
-                    $this->_putString(&$value, 0, $v);
+                    $this->_putString($value, 0, $v);
                     break;
                 case 3:    // USHORT
                     if ($count == 0) {
@@ -1781,12 +1781,12 @@ class JPEG // extends PEAR
 
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
-                        $this->_putShort(&$value, $j * 2, $origValue[$j], $isBigEndian);
+                        $this->_putShort($value, $j * 2, $origValue[$j], $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putShort(&$value, $j * 2, 0, $isBigEndian);
+                        $this->_putShort($value, $j * 2, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1797,12 +1797,12 @@ class JPEG // extends PEAR
 
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
-                        $this->_putLong(&$value, $j * 4, $origValue[$j], $isBigEndian);
+                        $this->_putLong($value, $j * 4, $origValue[$j], $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putLong(&$value, $j * 4, 0, $isBigEndian);
+                        $this->_putLong($value, $j * 4, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1823,14 +1823,14 @@ class JPEG // extends PEAR
                             $b = 0;
                             // TODO: Allow other types and convert them
                         }
-                        $this->_putLong(&$value, $j * 8, $a, $isBigEndian);
-                        $this->_putLong(&$value, ($j * 8) + 4, $b, $isBigEndian);
+                        $this->_putLong($value, $j * 8, $a, $isBigEndian);
+                        $this->_putLong($value, ($j * 8) + 4, $b, $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putLong(&$value, $j * 8, 0, $isBigEndian);
-                        $this->_putLong(&$value, ($j * 8) + 4, 0, $isBigEndian);
+                        $this->_putLong($value, $j * 8, 0, $isBigEndian);
+                        $this->_putLong($value, ($j * 8) + 4, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1841,12 +1841,12 @@ class JPEG // extends PEAR
 
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
-                        $this->_putByte(&$value, $j, $origValue[$j]);
+                        $this->_putByte($value, $j, $origValue[$j]);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putByte(&$value, $j, 0);
+                        $this->_putByte($value, $j, 0);
                         $j++;
                     }
                     break;
@@ -1861,7 +1861,7 @@ class JPEG // extends PEAR
 
                     $count = strlen($v);
 
-                    $this->_putString(&$value, 0, $v);
+                    $this->_putString($value, 0, $v);
                     break;
                 case 8:    // SSHORT
                     if ($count == 0) {
@@ -1870,12 +1870,12 @@ class JPEG // extends PEAR
 
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
-                        $this->_putShort(&$value, $j * 2, $origValue[$j], $isBigEndian);
+                        $this->_putShort($value, $j * 2, $origValue[$j], $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putShort(&$value, $j * 2, 0, $isBigEndian);
+                        $this->_putShort($value, $j * 2, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1886,12 +1886,12 @@ class JPEG // extends PEAR
 
                     $j = 0;
                     while (($j < $count) && ($j < $origCount)) {
-                        $this->_putLong(&$value, $j * 4, $origValue[$j], $isBigEndian);
+                        $this->_putLong($value, $j * 4, $origValue[$j], $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putLong(&$value, $j * 4, 0, $isBigEndian);
+                        $this->_putLong($value, $j * 4, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1913,14 +1913,14 @@ class JPEG // extends PEAR
                             // TODO: Allow other types and convert them
                         }
 
-                        $this->_putLong(&$value, $j * 8, $a, $isBigEndian);
-                        $this->_putLong(&$value, ($j * 8) + 4, $b, $isBigEndian);
+                        $this->_putLong($value, $j * 8, $a, $isBigEndian);
+                        $this->_putLong($value, ($j * 8) + 4, $b, $isBigEndian);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putLong(&$value, $j * 8, 0, $isBigEndian);
-                        $this->_putLong(&$value, ($j * 8) + 4, 0, $isBigEndian);
+                        $this->_putLong($value, $j * 8, 0, $isBigEndian);
+                        $this->_putLong($value, ($j * 8) + 4, 0, $isBigEndian);
                         $j++;
                     }
                     break;
@@ -1938,12 +1938,12 @@ class JPEG // extends PEAR
                         elseif (strlen($v) < 4) {
                             $v = str_pad($v, 4, "\0");
                         }
-                        $this->_putString(&$value, $j * 4, $v);
+                        $this->_putString($value, $j * 4, $v);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putString(&$value, $j * 4, "\0\0\0\0");
+                        $this->_putString($value, $j * 4, "\0\0\0\0");
                         $j++;
                     }
                     break;
@@ -1961,12 +1961,12 @@ class JPEG // extends PEAR
                         elseif (strlen($v) < 8) {
                             $v = str_pad($v, 8, "\0");
                         }
-                        $this->_putString(&$value, $j * 8, $v);
+                        $this->_putString($value, $j * 8, $v);
                         $j++;
                     }
 
                     while ($j < $count) {
-                        $this->_putString(&$value, $j * 8, "\0\0\0\0\0\0\0\0");
+                        $this->_putString($value, $j * 8, "\0\0\0\0\0\0\0\0");
                         $j++;
                     }
                     break;
@@ -2006,7 +2006,7 @@ class JPEG // extends PEAR
         // Look for APP13: IPTC / Photoshop data
         for ($i = 0; $i < $count; $i++) {
             if ($this->_markers[$i]['marker'] == 0xED) {
-                $signature = $this->_getFixedString(&$this->_markers[$i]['data'], 0, 14);
+                $signature = $this->_getFixedString($this->_markers[$i]['data'], 0, 14);
                 if ($signature == "Photoshop 3.0\0") {
                     $data =& $this->_markers[$i]['data'];
                     break;
@@ -2024,18 +2024,18 @@ class JPEG // extends PEAR
         $this->_info['adobe']['raw'] = array();
         $this->_info['iptc'] = array();
 
-        $datasize = strlen(&$data);
+        $datasize = strlen($data);
 
         while ($pos < $datasize) {
-            $signature = $this->_getFixedString(&$data, $pos, 4);
+            $signature = $this->_getFixedString($data, $pos, 4);
             if ($signature != '8BIM')
                 return false;
             $pos += 4;
 
-            $type = $this->_getShort(&$data, $pos);
+            $type = $this->_getShort($data, $pos);
             $pos += 2;
 
-            $strlen = $this->_getByte(&$data, $pos);
+            $strlen = $this->_getByte($data, $pos);
             $pos += 1;
             $header = '';
             for ($i = 0; $i < $strlen; $i++) {
@@ -2043,38 +2043,38 @@ class JPEG // extends PEAR
             }
             $pos += $strlen + 1 - ($strlen % 2);  // The string is padded to even length, counting the length byte itself
 
-            $length = $this->_getLong(&$data, $pos);
+            $length = $this->_getLong($data, $pos);
             $pos += 4;
 
             $basePos = $pos;
 
             switch ($type) {
             case 0x0404: // Caption (IPTC Data)
-                $pos = $this->_readIPTC(&$data, $pos);
+                $pos = $this->_readIPTC($data, $pos);
                 // TODO: -re- this check fails all the time! Read comment on _readIPTC()!
                 if ($pos == false)
                     return false;
                 break;
             case 0x040A: // CopyrightFlag
-                $this->_info['adobe']['CopyrightFlag'] = $this->_getByte(&$data, $pos);
+                $this->_info['adobe']['CopyrightFlag'] = $this->_getByte($data, $pos);
                 $pos += $length;
                 break;
             case 0x040B: // ImageURL
-                $this->_info['adobe']['ImageURL'] = $this->_getFixedString(&$data, $pos, $length);
+                $this->_info['adobe']['ImageURL'] = $this->_getFixedString($data, $pos, $length);
                 $pos += $length;
                 break;
             case 0x040C: // Thumbnail
-                $aux = $this->_getLong(&$data, $pos);
+                $aux = $this->_getLong($data, $pos);
                 $pos += 4;
                 if ($aux == 1) {
-                    $this->_info['adobe']['ThumbnailWidth'] = $this->_getLong(&$data, $pos);
+                    $this->_info['adobe']['ThumbnailWidth'] = $this->_getLong($data, $pos);
                     $pos += 4;
-                    $this->_info['adobe']['ThumbnailHeight'] = $this->_getLong(&$data, $pos);
+                    $this->_info['adobe']['ThumbnailHeight'] = $this->_getLong($data, $pos);
                     $pos += 4;
 
                     $pos += 16; // Skip some data
 
-                    $this->_info['adobe']['ThumbnailData'] = $this->_getFixedString(&$data, $pos, $length - 28);
+                    $this->_info['adobe']['ThumbnailData'] = $this->_getFixedString($data, $pos, $length - 28);
                     $pos += $length - 28;
                 }
                 break;
@@ -2087,7 +2087,7 @@ class JPEG // extends PEAR
             $this->_info['adobe']['raw'][$label] = array();
             $this->_info['adobe']['raw'][$label]['type'] = $type;
             $this->_info['adobe']['raw'][$label]['header'] = $header;
-            $this->_info['adobe']['raw'][$label]['data'] =& $this->_getFixedString(&$data, $basePos, $length);
+            $this->_info['adobe']['raw'][$label]['data'] =& $this->_getFixedString($data, $basePos, $length);
 
             $pos = $basePos + $length + ($length % 2); // Even padding
         }
@@ -2105,19 +2105,19 @@ class JPEG // extends PEAR
      */
     function _readIPTC(&$data, $pos = 0)
     {
-        $totalLength = strlen(&$data);
+        $totalLength = strlen($data);
 
         $IPTCTags =& $this->_iptcTagNames();
 
         while ($pos < ($totalLength - 5)) {
-            $signature = $this->_getShort(&$data, $pos);
+            $signature = $this->_getShort($data, $pos);
             if ($signature != 0x1C02)
                 return $pos;
             $pos += 2;
 
-            $type = $this->_getByte(&$data, $pos);
+            $type = $this->_getByte($data, $pos);
             $pos += 1;
-            $length = $this->_getShort(&$data, $pos);
+            $length = $this->_getShort($data, $pos);
             $pos += 2;
 
             $basePos = $pos;
@@ -2137,10 +2137,10 @@ class JPEG // extends PEAR
                         $aux[0] = $this->_info['iptc'][$label];
                         $this->_info['iptc'][$label] = $aux;
                     }
-                    $this->_info['iptc'][$label][ count($this->_info['iptc'][$label]) ] = $this->_getFixedString(&$data, $pos, $length);
+                    $this->_info['iptc'][$label][ count($this->_info['iptc'][$label]) ] = $this->_getFixedString($data, $pos, $length);
                 }
                 else {
-                    $this->_info['iptc'][$label] = $this->_getFixedString(&$data, $pos, $length);
+                    $this->_info['iptc'][$label] = $this->_getFixedString($data, $pos, $length);
                 }
             }
 
@@ -2174,11 +2174,11 @@ class JPEG // extends PEAR
             reset($this->_info['adobe']['raw']);
             while (list($key) = each($this->_info['adobe']['raw'])) {
                 $pos = $this->_write8BIM(
-                            &$data,
+                            $data,
                             $pos,
                             $this->_info['adobe']['raw'][$key]['type'],
                             $this->_info['adobe']['raw'][$key]['header'],
-                            &$this->_info['adobe']['raw'][$key]['data'] );
+                            $this->_info['adobe']['raw'][$key]['data'] );
             }
         }
 
@@ -2190,22 +2190,22 @@ class JPEG // extends PEAR
     {
         $signature = "8BIM";
 
-        $pos = $this->_putString(&$data, $pos, &$signature);
-        $pos = $this->_putShort(&$data, $pos, $type);
+        $pos = $this->_putString($data, $pos, $signature);
+        $pos = $this->_putShort($data, $pos, $type);
 
         $len = strlen($header);
 
-        $pos = $this->_putByte(&$data, $pos, $len);
-        $pos = $this->_putString(&$data, $pos, $header);
+        $pos = $this->_putByte($data, $pos, $len);
+        $pos = $this->_putString($data, $pos, $header);
         if (($len % 2) == 0) {  // Even padding, including the length byte
-            $pos = $this->_putByte(&$data, $pos, 0);
+            $pos = $this->_putByte($data, $pos, 0);
         }
 
-        $len = strlen(&$value);
-        $pos = $this->_putLong(&$data, $pos, $len);
-        $pos = $this->_putString(&$data, $pos, &$value);
+        $len = strlen($value);
+        $pos = $this->_putLong($data, $pos, $len);
+        $pos = $this->_putString($data, $pos, $value);
         if (($len % 2) != 0) {  // Even padding
-            $pos = $this->_putByte(&$data, $pos, 0);
+            $pos = $this->_putByte($data, $pos, 0);
         }
         return $pos;
     }
@@ -2235,11 +2235,11 @@ class JPEG // extends PEAR
             if ($type != -1) {
                 if (is_array($value)) {
                     for ($i = 0; $i < count($value); $i++) {
-                        $pos = $this->_writeIPTCEntry(&$data, $pos, $type, &$value[$i]);
+                        $pos = $this->_writeIPTCEntry($data, $pos, $type, $value[$i]);
                     }
                 }
                 else {
-                    $pos = $this->_writeIPTCEntry(&$data, $pos, $type, &$value);
+                    $pos = $this->_writeIPTCEntry($data, $pos, $type, $value);
                 }
             }
         }
@@ -2250,10 +2250,10 @@ class JPEG // extends PEAR
     /*************************************************************/
     function _writeIPTCEntry(&$data, $pos, $type, &$value)
     {
-        $pos = $this->_putShort(&$data, $pos, 0x1C02);
-        $pos = $this->_putByte(&$data, $pos, $type);
-        $pos = $this->_putShort(&$data, $pos, strlen(&$value));
-        $pos = $this->_putString(&$data, $pos, &$value);
+        $pos = $this->_putShort($data, $pos, 0x1C02);
+        $pos = $this->_putByte($data, $pos, $type);
+        $pos = $this->_putShort($data, $pos, strlen($value));
+        $pos = $this->_putString($data, $pos, $value);
 
         return $pos;
     }
@@ -2822,7 +2822,7 @@ class JPEG // extends PEAR
     function & _getNullString(&$data, $pos)
     {
         $str = '';
-        $max = strlen(&$data);
+        $max = strlen($data);
 
         while ($pos < $max) {
             if (ord($data{$pos}) == 0) {
@@ -2849,7 +2849,7 @@ class JPEG // extends PEAR
     function & _getFixedString(&$data, $pos, $length = -1)
     {
         if ($length == -1) {
-            $length = strlen(&$data) - $pos;
+            $length = strlen($data) - $pos;
         }
 
         return substr($data, $pos, $length);
@@ -2858,7 +2858,7 @@ class JPEG // extends PEAR
     /*************************************************************/
     function _putString(&$data, $pos, &$str)
     {
-        $len = strlen(&$str);
+        $len = strlen($str);
         for ($i = 0; $i < $len; $i++) {
           $data{$pos + $i} = $str{$i};
         }
@@ -2869,8 +2869,8 @@ class JPEG // extends PEAR
     /*************************************************************/
     function _hexDump(&$data, $start = 0, $length = -1)
     {
-        if (($length == -1) || (($length + $start) > strlen(&$data))) {
-            $end = strlen(&$data);
+        if (($length == -1) || (($length + $start) > strlen($data))) {
+            $end = strlen($data);
         }
         else {
             $end = $start + $length;
@@ -2891,7 +2891,7 @@ class JPEG // extends PEAR
             $start++;
 
             $aux = dechex($c);
-            if (strlen(&$aux) == 1)
+            if (strlen($aux) == 1)
                 echo '0';
             echo $aux . ' ';
 
