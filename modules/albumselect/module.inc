@@ -145,6 +145,17 @@ class AlbumSelectModule extends GalleryModule {
 		    $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
 	    }
 
+	    list ($ret, $rootAlbumId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($rootAlbumId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $titles['root'] = $rootAlbum->getTitle();
+
 	    $treeList = array();
 	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
 	    $nodeId = 0;
