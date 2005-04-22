@@ -1733,7 +1733,7 @@ class JPEG // extends PEAR
                 // This makes it easier to process variable size elements
                 if (!is_array($origValue) || isset($origValue['val'])) {
                     unset($origValue); // Break the reference
-                    $origValue = array($this->_info['exif'][$name]);
+                    $origValue = array(&$this->_info['exif'][$name]);
                 }
                 $origCount = count($origValue);
 
