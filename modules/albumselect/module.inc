@@ -141,8 +141,8 @@ class AlbumSelectModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($items as $item) {
-		$titles[$item->getId()] =
-		    $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
+		$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
+		$titles[$item->getId()] = preg_replace('/\r\n/', ' ', $title);
 	    }
 
 	    list ($ret, $rootAlbumId) =

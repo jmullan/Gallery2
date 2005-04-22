@@ -22,11 +22,11 @@
       albumTree.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       albumTree.config.useCookies = {if $params.treeCookies}true{else}false{/if};
       albumTree.config.closeSameLevel = {if $params.treeCloseSameLevel}true{else}false{/if};
-      albumTree.add(0, -1, " {$AlbumSelectSystemContent.titles.root|replace:"\n":" "}",
+      albumTree.add(0, -1, " {$AlbumSelectSystemContent.titles.root}",
 		    '{g->url}');
       {foreach from=$AlbumSelectSystemContent.tree item=node}
 	{assign var="title" value=$AlbumSelectSystemContent.titles[$node.id]}
-	albumTree.add({$node.nodeId}, {$node.parentNode}, "{$title|replace:"\n":" "}",
+	albumTree.add({$node.nodeId}, {$node.parentNode}, "{$title}",
 		      '{g->url arg1="view=core:ShowItem" arg2="itemId=`$node.id`"}');
       {/foreach}
       document.write(albumTree);
