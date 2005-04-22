@@ -112,10 +112,12 @@ class ItemAddController extends GalleryController {
 		}
 
 		/* Check if we should extract individual files out of an archive */
-		list ($ret, $toolkit) =
-		    GalleryCoreApi::getToolkitByOperation($addedItem->getMimeType(), 'extract');
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		if (GalleryUtilities::isA($addedItem, 'GalleryDataItem')) {
+		    list ($ret, $toolkit) =
+			GalleryCoreApi::getToolkitByOperation($addedItem->getMimeType(), 'extract');
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 		}
 		if (isset($toolkit)) {
 		    list ($ret, $addedFiles) = $this->_extractAndAddFiles($addedItem, $toolkit);
@@ -145,7 +147,7 @@ class ItemAddController extends GalleryController {
 		/* for each item, put the items warnings into our status array */
 		for ($j = 0; $j < count($optionWarnings); $j++) {
 		    $status['addedFiles'][$j]['warnings'] =
-		        array_merge($status['addedFiles'][$j]['warnings'], $optionWarnings[$j]);
+			array_merge($status['addedFiles'][$j]['warnings'], $optionWarnings[$j]);
 		}
 	    }
 
