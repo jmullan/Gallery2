@@ -68,12 +68,12 @@ class MatrixLayout extends GalleryLayout {
 	$settings[] = array('key' => 'rows',
 			    'name' => $gallery->i18n('Rows per album page'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => $params['rows']);
 	$settings[] = array('key' => 'columns',
 			    'name' => $gallery->i18n('Columns per album page'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => $params['columns']);
 	$settings[] = array('key' => 'showImageOwner',
 			    'name' => $gallery->i18n('Show image owners'),

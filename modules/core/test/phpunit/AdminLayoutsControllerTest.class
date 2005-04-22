@@ -89,7 +89,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'config'),
 		  'status' => array('uninstalled' => 'AdminLayouts Controller Test'),
@@ -106,7 +106,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	$this->_testLayout->_set('_isActive', true);
 
 	/* The ui doesn't permit this, so expect a silent failure */
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
@@ -181,7 +181,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'config'),
 		  'status' => array('deactivated' => 'AdminLayouts Controller Test'),
@@ -204,11 +204,11 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	}
 
 	/* The ui doesn't permit this, so expect a silent failure */
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'config'),
 		  'status' => array(),
@@ -227,7 +227,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'config'),
 		  'status' => array(),
@@ -247,13 +247,13 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'editLayout',
 				      'layoutId' => 'testLayoutId2'),
 		  'status' => array('savedLayout' => 'Test Layout 2'),
 		  'error' => array()),
-            $results);
+	    $results);
 
 	$map =& TestLayoutId2Layout::getMap();
 	$this->assertEquals(2, (int)$map['rows']);
@@ -269,7 +269,7 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('redirect' => array('view' => 'core:SiteAdmin',
+	    array('redirect' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts',
 				      'mode' => 'editLayout',
 				      'layoutId' => 'testLayoutId2'),
@@ -287,12 +287,12 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-            array('delegate' => array('view' => 'core:SiteAdmin',
+	    array('delegate' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminLayouts'),
 		  'status' => array(),
 		  'error' => array('form[error][key][rows][invalid]',
 				   'form[error][key][columns][invalid]')),
-            $results);
+	    $results);
     }
 
     function testSaveDefaults() {
@@ -322,7 +322,8 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('desc', $params['default.orderDirection'], 'orderDirection');
 	$this->assertEquals('matrix', $params['default.layout'], 'layout');
 	$this->assertEquals('matrix', $params['default.theme'], 'theme');
-	$this->assertEquals('true', $params['default.newAlbumsUseDefaults'], 'newAlbumsUseDefaults');
+	$this->assertEquals('true', $params['default.newAlbumsUseDefaults'],
+			    'newAlbumsUseDefaults');
     }
 }
 
@@ -347,12 +348,12 @@ class TestLayoutId1Layout extends GalleryLayout {
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 4);
 	$settings[] = array('key' => 'columns',
 			    'name' => 'Columns per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 99);
 	return array(GalleryStatus::success(), $settings);
     }
@@ -412,12 +413,12 @@ class TestLayoutId2Layout extends GalleryLayout {
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 4);
 	$settings[] = array('key' => 'columns',
 			    'name' => 'Columns per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 3);
 	return array(GalleryStatus::success(), $settings);
     }
@@ -464,7 +465,7 @@ class AdminLayoutsControllerTestLayout {
 	$this->_setCalled('init');
 	return GalleryStatus::success();
     }
-    
+
     function installOrUpgrade() {
 	$this->_setCalled('installOrUpgrade');
 	return GalleryStatus::success();

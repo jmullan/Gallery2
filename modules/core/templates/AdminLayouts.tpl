@@ -265,7 +265,7 @@
 	    {g->text text=$setting.name l10Domain=$layout.l10Domain}
 	  </td><td>
 	    {if ($setting.type == 'text-field')}
-	      <input type="text" size="6"
+	      <input type="text" size="{$setting.typeParams.size|default:6}"
 	       name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
 	    {elseif ($setting.type == 'single-select')}
 	      <select name="{g->formVar var="form[key][$settingKey]"}">

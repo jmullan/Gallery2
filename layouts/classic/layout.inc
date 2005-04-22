@@ -72,12 +72,12 @@ class ClassicLayout extends MatrixLayout {
 	$settings[] = array('key' => 'rows',
 			    'name' => $gallery->i18n('Rows per album page'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => $params['rows']);
 	$settings[] = array('key' => 'columns',
 			    'name' => $gallery->i18n('Columns of thumbnails per album page'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => $params['columns']);
 	$settings[] = array('key' => 'showSubalbums',
 			    'name' => $gallery->i18n('Show subalbum links'),
@@ -86,7 +86,7 @@ class ClassicLayout extends MatrixLayout {
 	$settings[] = array('key' => 'subalbumDepth',
 			    'name' => $gallery->i18n('Depth of subalbums links (0=no limit)'),
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => $params['subalbumDepth']);
 	$settings[] = array('key' => 'showImageOwner',
 			    'name' => $gallery->i18n('Show image owners'),

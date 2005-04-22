@@ -70,7 +70,7 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 
 	$this->_preferred = null;
 
-	// Reset test layout
+	/* Reset test layout */
 	ItemEditLayoutControllerTestLayout::reset();
     }
 
@@ -105,7 +105,7 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(), $this->_translate('Successfully saved layout settings')),
 			    $results);
 
-	// Verify
+	/* Verify */
 	$this->assertEquals(array('setParameter(rows, 3)',
 				  'setParameter(columns, 4)'),
 			    ItemEditLayoutControllerTestLayout::getMap());
@@ -139,7 +139,7 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals(array(array(), $this->_translate('Successfully saved layout settings')),
 			    $results);
 
-	// Verify
+	/* Verify */
 	$this->assertEquals(array('setParameter(rows, 3)',
 				  sprintf('removeItemParameter(columns, %d)', $this->_album->getId())),
 			    ItemEditLayoutControllerTestLayout::getMap());
@@ -162,12 +162,12 @@ class ItemEditLayoutControllerTestLayout {
 	$settings[] = array('key' => 'rows',
 			    'name' => 'Rows per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 4);
 	$settings[] = array('key' => 'columns',
 			    'name' => 'Columns per album page',
 			    'type' => 'text-field',
-			    'type-params' => array('size' => 2),
+			    'typeParams' => array('size' => 2),
 			    'value' => 3);
 	return array(GalleryStatus::success(), $settings);
     }
@@ -272,7 +272,7 @@ class ItemEditLayoutTestPlatform {
     }
 
     function fopen($filename, $modes) {
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
@@ -282,7 +282,7 @@ class ItemEditLayoutTestPlatform {
     }
 
     function fclose($handle) {
-	return fclose($handle); // needed to release locks
+	return fclose($handle); /* needed to release locks */
     }
 
     function getDirectorySeparator() {
@@ -290,7 +290,7 @@ class ItemEditLayoutTestPlatform {
     }
 
     function unlink($path) {
-	return unlink($path); // needed to release locks
+	return unlink($path); /* needed to release locks */
     }
 
     function closedir($path) {
