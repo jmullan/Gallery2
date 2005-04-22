@@ -72,13 +72,18 @@ foreach ($stepOrder as $stepName) {
 }
 
 session_start();
+/*
+ * For reasons unclear to me, register_globals causes the $galleryStub variable to be put into
+ * the global context on session_start, which we don't expect or want.  Possibly because we
+ * declare "global $galleryStub" when we use it in our step classes.  The $steps variable does not
+ * seem to be affected by this.  So unset $galleryStub here to prevent this from causing problems.
+ */
+unset($galleryStub);
 
 if (!isset($_SESSION['path'])) {
     $_SESSION['path'] = __FILE__;
 } else if ($_SESSION['path'] != __FILE__) {
-    /*
-     * Security error!  This session is not valid for this copy of the installer. Start over.
-     */
+    /* Security error!  This session is not valid for this copy of the installer. Start over. */
     session_unset();
     $_SESSION['path'] = __FILE__;
 }
@@ -86,9 +91,7 @@ require_once(dirname(__FILE__) . '/../modules/core/classes/GalleryUrlGenerator.c
 if (!isset($_SESSION['galleryId'])) {
     $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
 } else if ($_SESSION['galleryId'] != GalleryUrlGenerator::getGalleryId()) {
-    /*
-     * Security error!  This session is not valid for this URL. Start over.
-     */
+    /* Security error!  This session is not valid for this URL. Start over. */
     session_unset();
     $_SESSION['path'] = __FILE__;
     $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
