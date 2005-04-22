@@ -24,6 +24,7 @@
  * @package Exif
  * @subpackage PHPUnit
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 /**
@@ -59,6 +60,7 @@ class ExifExtractorTest extends GalleryTestCase {
 	$imagePaths = array($prefix . 'exif/test/data/CanonS30.small.jpg',
 			    $prefix . 'core/test/data/test2.gif',
 			    $prefix . 'exif/test/data/CanonS30.small.jpg',
+			    $prefix . 'exif/test/data/iptc-irfanview.jpg',
 			    $prefix . 'core/test/data/test1.jpg');
 	for ($i = 0; $i < count($imagePaths); $i++) {
 	    list ($ret, $photoId) = $this->_addPhoto(
@@ -162,42 +164,57 @@ class ExifExtractorTest extends GalleryTestCase {
     }
 
 
-    function testOneItemAllData() {
+    function testOneItemAllDataExif() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[0]);
 	$this->assert(!$ret->isError() && isset($data[$this->_photoIds[0]]));
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
     }
 
+    function testOneItemAllDataIptc() {
+	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[3]);
+	$this->assert(!$ret->isError() && isset($data[$this->_photoIds[3]]));
+	$this->assertEquals('Caption: IPTC/Caption',
+	    $data[$this->_photoIds[3]]['IPTC/Caption']['value']);
+    }
+
     function testMultiItemAllData() {
 	list ($ret, $data) = $this->_exif->getMetaData(
-	    array($this->_photoIds[0], $this->_photoIds[2]));
+	    array($this->_photoIds[0], $this->_photoIds[2], $this->_photoIds[3]));
 	$this->assert(!$ret->isError() && isset($data));
-	$this->assertEquals(2, count($data), 'Data size');
+	$this->assertEquals(3, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
+	$this->assertEquals('Caption: IPTC/Caption',
+	    $data[$this->_photoIds[3]]['IPTC/Caption']['value']);
     }
 
     function testMultiItemMixedTypeAllData() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds);
 	$this->assert(!$ret->isError() && isset($data));
-	$this->assertEquals(3, count($data), 'Data size');
+	$this->assertEquals(4, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assertEquals(sprintf('%.2f mm', 21.31),
 	    $data[$this->_photoIds[2]]['FocalLength']['value']);
+	$this->assertEquals('Caption: IPTC/Caption',
+	    $data[$this->_photoIds[3]]['IPTC/Caption']['value']);
     }
 
     function testMultiItemSomeData() {
 	list ($ret, $data) = $this->_exif->getMetaData(
-	    $this->_photoIds, array('DateTime', 'ShutterSpeedValue'));
+	    $this->_photoIds, array('DateTime', 'ShutterSpeedValue', 'IPTC/Byline'));
 	$this->assert(!$ret->isError() && isset($data));
-	$this->assertEquals(3, count($data), 'Data size');
+	$this->assertEquals(4, count($data), 'Data size');
 	$this->assertEquals('1/59 sec',
 	    $data[$this->_photoIds[0]]['ShutterSpeedValue']['value']);
 	$this->assert(!isset($data[$this->_photoIds[2]]['FocalLength']));
+	$this->assert(!isset($data[$this->_photoIds[2]]['IPTC/Byline']));
+	$this->assertEquals('Byline: IPTC/Byline',
+	    $data[$this->_photoIds[3]]['IPTC/Byline']['value']);
+	$this->assert(!isset($data[$this->_photoIds[3]]['FocalLength']));
     }
 }
 ?>

@@ -24,6 +24,7 @@
  * @package Exif
  * @subpackage PHPUnit
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.class');
@@ -35,6 +36,8 @@ GalleryCoreApi::relativeRequireOnce('lib/tools/phpunit/ItemAddOptionTestCase.cla
  * @subpackage PHPUnit
  */
 class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
+
+    var $_album;
 
     function ExifDescriptionOptionTest($methodName) {
 	$this->ItemAddOptionTestCase($methodName, 'exif', 'ExifDescriptionOption');
@@ -61,10 +64,13 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	$this->_items = array();
 	list ($ret, $this->_items[0]) = 
-	    $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
-					 array('summary' => 'original summary 0', 
-					       'description' => 'original description 0'),
-					 dirname(__FILE__) . '/../data/descr.jpg');
+	    $this->_createRandomDataItem(
+		$this->_album->getId(),
+		'image/jpeg',
+		array('summary' => 'original summary 0', 
+		      'description' => 'original description 0',
+		      'keywords' => 'original keyword 0; original keyword 1'),
+		dirname(__FILE__) . '/../data/descr.jpg');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -102,20 +108,20 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals('exif description', $item->getDescription(), 'description 0');
 	$this->assertEquals('original summary 0', $item->getSummary(), 'summary 0');
     }
-    
+
     function testMultipleCreateDescription() {
 	
 	$totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
+	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_items[$j]) = 
-	        $this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
 					     array('summary' => "original summary $j", 
-					           'description' => "original description $j"),
+						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret->isError()) {
-	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $this->_noWarnings[] = array();
 	}
 
@@ -131,7 +137,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret->isError()) {
-	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals('exif description', $item->getDescription(), "description $j");
 	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
@@ -154,21 +160,23 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 
 	$this->assertEquals('original description 0', $item->getDescription(), 'description 0');
 	$this->assertEquals('original summary 0', $item->getSummary(), 'summary 0');
+	$this->assertEquals('original keyword 0; original keyword 1', $item->getKeywords(),
+	    'keywords mismatch');
     }
-    
+
     function testMultipleCreateWithCheckDisabled() {
-    
+
 	$totalTestItems = 3;
-        for ($j = 1; $j < $totalTestItems; $j++) {
+	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_items[$j]) = 
-	    	$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
+		$this->_createRandomDataItem($this->_album->getId(), 'image/jpeg',
 					     array('summary' => "original summary $j", 
-					           'description' => "original description $j"),
+						   'description' => "original description $j"),
 					     dirname(__FILE__) . '/../data/descr.jpg');
 	    if ($ret->isError()) {
-	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $this->_noWarnings[] = array();
 	}  
 
@@ -183,12 +191,32 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	for ($j = 0; $j < $totalTestItems; $j++) {
 	    list ($ret, $item) = $this->_items[$j]->refresh();
 	    if ($ret->isError()) {
-	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals("original description $j", $item->getDescription(), 
-	    			"description $j");
+				"description $j");
 	    $this->assertEquals("original summary $j", $item->getSummary(), "summary $j");
 	}
     }
+
+    function testReturnKeywords() {
+	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', 
+						  IPTC_ITEM_KEYWORDS);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$result = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals(array($this->_noErrors, $this->_noWarnings), $result);
+
+	list ($ret, $item) = $this->_items[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('original keyword 0; original keyword 1', $item->getKeywords(),
+	    'keywords mismatch');
+    }
+
 }
 ?>

@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="EXIF Settings"} </h2>
+  <h2> {g->text text="EXIF/IPTC Settings"} </h2>
 </div>
 
 {if !empty($status)}
@@ -64,15 +64,15 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="Gallery can display the EXIF data that is embedded in photos taken by most digital cameras."}
+    {g->text text="Gallery can display the EXIF data that is embedded in photos taken by most digital cameras. Gallery can also display IPTC data that was added to the photos by some IPTC enabled software."}
   </p>
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Summary and Detailed EXIF displays"} </h3>
+  <h3> {g->text text="Summary and Detailed EXIF/IPTC displays"} </h3>
 
   <p class="giDescription">
-    {g->text text="There can be a great deal of EXIF information stored in photos from modern digital cameras.  We display that data in two different views, summary and detailed.  You can choose which properties are displayed in each view."}
+    {g->text text="There can be a great deal of EXIF/IPTC information stored in photos.  We display that data in two different views, summary and detailed.  You can choose which properties are displayed in each view."}
   </p>
 
   <table class="gbDataTable"><tr>
@@ -165,14 +165,24 @@
     <input type="checkbox" id="cbItemSummary"{if $form.item.summary} checked="checked"{/if}
      name="{g->formVar var="form[item][summary]"}"/>
     <label for="cbItemSummary">
-      {g->text text="Summary"}
+      {g->text text="Item Summary"}
     </label>
     <br/>
 
     <input type="checkbox" id="cbItemDescription"{if $form.item.description} checked="checked"{/if}
      name="{g->formVar var="form[item][description]"}"/>
     <label for="cbItemDescription">
-      {g->text text="Description"}
+      {g->text text="Item Description"}
+    </label>
+  </p>
+  <p class="giDescription">
+    {g->text text="When photos are added to Gallery check for IPTC Keywords and apply to:"}
+  </p>
+  <p class="giDescription">
+    <input type="checkbox" id="cbItemKeywords"{if $form.item.keywords} checked="checked"{/if}
+     name="{g->formVar var="form[item][keywords]"}"/>
+    <label for="cbItemKeywords">
+      {g->text text="Item Keywords"}
     </label>
   </p>
   <input type="submit" class="inputTypeSubmit"

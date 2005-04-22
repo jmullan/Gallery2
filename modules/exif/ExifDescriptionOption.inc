@@ -24,11 +24,13 @@
  * @package Exif
  * @subpackage UserInterface
  * @author Elliot Shepherd <elliot@jarofworms.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 /**
  * This ItemAddOption uses the EXIF description value for the
- * gallery item summary/description when the image is uploaded.
+ * gallery item summary/description and the IPTC keywords for the
+ * gallery item keywords when the image is uploaded.
  *
  * @package Exif
  * @subpackage UserInterface
@@ -59,6 +61,11 @@ class ExifDescriptionOption extends ItemAddOption {
 	    $itemIds[] = $item->getId();
 	}
 	
+	list ($ret, $addOption) =
+	    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -69,32 +76,42 @@ class ExifDescriptionOption extends ItemAddOption {
 	    $itemId = $items[$i]->getId();
 
 	    list ($ret, $exifData) =
-	    	ExifExtractor::getMetaData(array($itemId), array('ImageDescription'));
+		ExifExtractor::getMetaData(array($itemId),
+					   array('ImageDescription', 'IPTC/Keywords'));
 	    if ($ret->isError()) {
-	        return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
+	    $mustSave = false;
+
 	    if (!empty($exifData[$itemId]['ImageDescription']['value'])) {
-	    	$exifDescription = $exifData[$itemId]['ImageDescription']['value'];
+		$exifDescription = $exifData[$itemId]['ImageDescription']['value'];
 
-	    	list ($ret, $addOption) =
-		    GalleryCoreApi::getPluginParameter('module', 'exif', 'addOption');
-	    	if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    	}
 
-	    	if ($addOption & EXIF_ITEM_SUMMARY) {
+		if ($addOption & EXIF_ITEM_SUMMARY) {
 		    $items[$i]->setSummary($exifDescription);
-	    	}
-	    	if ($addOption & EXIF_ITEM_DESCRIPTION) {
+		    $mustSave = true;
+		}
+		if ($addOption & EXIF_ITEM_DESCRIPTION) {
 		    $items[$i]->setDescription($exifDescription);
-	    	}
+		    $mustSave = true;
+		}
+	    }
 
-	    	$ret = $items[$i]->save();
-	    	if ($ret->isError()) {
+	    if (!empty($exifData[$itemId]['IPTC/Keywords']['value'])) {
+		$iptcKeywords = $exifData[$itemId]['IPTC/Keywords']['value'];
+		if ($addOption & IPTC_ITEM_KEYWORDS) {
+		    $items[$i]->setKeywords($iptcKeywords);
+		    $mustSave = true;
+		}
+	    }
+
+	    if ($mustSave) {
+		$ret = $items[$i]->save();
+		if ($ret->isError()) {
 		    GalleryCoreApi::releaseLocks($lockId);
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    	}
+		}
 	    }
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);

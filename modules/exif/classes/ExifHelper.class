@@ -22,7 +22,9 @@
 /**
  * @version $Revision$ $Date$
  * @package Exif
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 /**
@@ -46,7 +48,16 @@ define('EXIF_ITEM_SUMMARY', 1);
 define('EXIF_ITEM_DESCRIPTION', 2);
 
 /**
+ * Import IPTC keywords into item keywords
+ */
+define('IPTC_ITEM_KEYWORDS', 4);
+
+/**
  * A helper class for the EXIF module.
+ * 
+ * This class follows the Adapter pattern: 2 foreign packages with totally different APIs are made
+ * compatible with the G2 API. Methods starting with '_' (underscore), though not neccessarily
+ * declared private, must only be used internally in this class or subclasses.
  *
  * @package Exif
  * @subpackage Classes
@@ -79,6 +90,8 @@ class ExifHelper {
 	    $properties[] = 'MeteringMode';
 	    $properties[] = 'ShutterSpeedValue';
 	    $properties[] = 'DateTime';
+	    $properties[] = 'IPTC/Caption';
+	    $properties[] = 'IPTC/CopyrightNotice';
 	    break;
 
 	case EXIF_DETAILED:
@@ -94,6 +107,9 @@ class ExifHelper {
 	    $properties[] = 'MeteringMode';
 	    $properties[] = 'ShutterSpeedValue';
 	    $properties[] = 'DateTime';
+	    $properties[] = 'IPTC/Caption';
+	    $properties[] = 'IPTC/CopyrightNotice';
+	    $properties[] = 'IPTC/Keywords';
 	    $properties[] = 'ImageType';
 	    $properties[] = 'Orientation';
 	    $properties[] = 'PhotoshopSettings';
@@ -125,7 +141,46 @@ class ExifHelper {
     }
 
     /**
-     * Return the raw EXIF data as returned by Exifer
+     * Add default IPTC properties for the given view mode to the end of current properties.
+     * This is used on upgrade of the module from before IPTC times.
+     *
+     * @param int the view mode
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function addDefaultIptcProperties($viewMode) {
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifPropertiesMap.class');
+	list($ret, $properties) = ExifPropertiesMap::getProperties($viewMode);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	switch($viewMode) {
+	case EXIF_SUMMARY:
+	    $properties[] = 'IPTC/Caption';
+	    $properties[] = 'IPTC/CopyrightNotice';
+	    break;
+
+	case EXIF_DETAILED:
+	    $properties[] = 'IPTC/Caption';
+	    $properties[] = 'IPTC/CopyrightNotice';
+	    $properties[] = 'IPTC/Keywords';
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
+	}
+
+	$ret = ExifPropertiesMap::setProperties($viewMode, $properties);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Retrieve the raw EXIF data as returned by lib/Exifer.
      *
      * @param string the path to the file
      * @param reference to an array where to store the results
@@ -152,16 +207,51 @@ class ExifHelper {
     }
 
     /**
-     * Return the EXIF data for a specific view and file
+     * Return the raw IPTC data as a lib/JPEG object. This method call has the penalty to have
+     * to read in the lib/JPEG library (currently ~100KB) but nearly no penalties for the image:
+     * it isn't read here, that happens lazily when actually accessing IPTC values.
      *
-     * @param string the path to the file
-     * @param int the view mode
-     * @return array object GalleryStatus a status code
-     *               array title/value pairs
+     * @param string   the path to a jpeg file
+     * @return object  the JPEG object containing the IPTC data
+     * @see getIptcValue()
+     * @TODO(xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
+     *      to lazy reading. Before refactoring, add timing tests. 
+     */
+    function getIptcObject($path) {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	if (! $platform->file_exists($path)) {
+	    return null;
+	}
+	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/JPEG/JPEG.inc');
+	$result = new JPEG($path);
+	if ($gallery->getDebug()) {
+	    /* Capture old-school print_r() to support older PHP */
+	    ob_start();
+	    print_r($result->getRawInfo());
+	    $buf = ob_get_contents();
+	    ob_end_clean();
+	    $gallery->debug(str_replace("\0", '', $buf));
+	}
+	return $result;
+    }
+
+    /**
+     * Return the wanted EXIF/IPTC data for one given file according to the given view mode.
+     * This method doesn't return all available EXIF/IPTC data; instead it returns only the data
+     * existing and configured to be viewed in the given mode.
+     *
+     * @param  string  the path to the file
+     * @param  int     the view mode
+     * @return array   object GalleryStatus a status code
+     *                  array title/value pairs
      * @static
      */
     function getExifData($path, $viewMode) {
+	$rawExifData = array();
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
+	$iptcObj = ExifHelper::getIptcObject($path);
 	$exifKeys = ExifHelper::getExifKeys();
 
 	$results = array();
@@ -174,7 +264,11 @@ class ExifHelper {
 	    $title = $exifKeys[$property][0];
 	    for ($i = 1; $i < sizeof($exifKeys[$property]); $i++) {
 		$value =
-		    ExifHelper::_getValue($rawExifData, explode('.', $exifKeys[$property][$i]));
+		    ExifHelper::getExifValue($rawExifData, explode('.', $exifKeys[$property][$i]));
+		if (! isset($value)) {
+		    $value =
+			ExifHelper::getIptcValue($iptcObj, explode('.', $exifKeys[$property][$i]));
+		}
 		if (isset($value)) {
 		    $value = ExifHelper::postProcessValue($property, $value);
 		    $results[] = array('title' => $title, 'value' => $value);
@@ -212,6 +306,33 @@ class ExifHelper {
 	    if (count($results) == 1) {
 		$value = 'f/' . $results[0];
 	    }
+	    break;
+
+	case 'DateTime':
+	    /* Convert to localized string. */
+	    if (preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
+		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
+			       (int)$m[2], (int)$m[3], (int)$m[1]);
+	    }
+	    /* This ISO 8601 pattern seems to be used by newer Adobe products */
+	    else if (preg_match('#(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(([-+])(\d+)(:(\d+))?)?#',
+		     $value, $m)) {
+		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
+			       (int)$m[2], (int)$m[3], (int)$m[1]);
+	    }
+	    if ($time > 0) {
+		if (isset($m[8])) {
+		    $offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
+		    if ($m[8] == '+') {
+			$time += $offset;
+		    }
+		    else {
+			$time -= $offset;
+		    }
+		}
+		$value = strftime('%x %X', $time);
+	    }
+	    break;
 	}
 
 	return $value;
@@ -222,17 +343,46 @@ class ExifHelper {
      *
      * @param string the path to the file
      * @return int an unix timestamp
+     * @TODO(xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only 
+     *      date set by Adobe in IPTC, set time to 0 = midnight or 12 = noon? Also, which priority
+     *      has it: it was explicitely set by the editor, thus first priority? Or to be considered
+     *      just before IFD0.DateTime == last modification time?
      */
     function getOriginationTimestamp($path) {
+	$rawExifData = array();
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
-	foreach (array('SubIFD.DateTimeOriginal', 'IFD0.DateTime', 'SubIFD.DateTimeDigitized')
+	/*
+	 * The method name indicates, that we want the earliest date available for the img.
+	 * As of specs and practice with raw camera images and Adobe manipulated ones it seems,
+	 * that SubIFD.DateTimeOriginal and SubIFD.DateTimeDigitized indicate creation time:
+	 * both are set to shot time by cameras, scanners set only SubIFD.DateTimeDigitized.
+	 * Adobe sets IFD0.DateTime to the last modification date/time. So we preferr creation
+	 * dates.
+	 */
+	foreach (array('SubIFD.DateTimeOriginal', 'SubIFD.DateTimeDigitized', 'IFD0.DateTime')
 		 as $tag) {
-	    $value = ExifHelper::_getValue($rawExifData, explode('.', $tag));
-	    if (isset($value) &&
-		    preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
-		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
-			       (int)$m[2], (int)$m[3], (int)$m[1]);
+	    $value = ExifHelper::getExifValue($rawExifData, explode('.', $tag));
+	    if (isset($value)) {
+		if (preg_match('#(\d+):(\d+):(\d+)\s+(\d+):(\d+):(\d+)#', $value, $m)) {
+		    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
+				   (int)$m[2], (int)$m[3], (int)$m[1]);
+		}
+		/* This ISO 8601 pattern seems to be used by newer Adobe products */
+		else if (preg_match('#(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(([-+])(\d+)(:(\d+))?)?#',
+			  $value, $m)) {
+		    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
+				   (int)$m[2], (int)$m[3], (int)$m[1]);
+		}
 		if ($time > 0) {
+		    if (isset($m[8])) {
+			$offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
+			if ($m[8] == '+') {
+			    $time += $offset;
+			}
+			else {
+			    $time -= $offset;
+			}
+		    }
 		    return $time;
 		}
 	    }
@@ -241,16 +391,16 @@ class ExifHelper {
     }
 
     /**
-     * Retrieve a single value by path from a nested associative array.
+     * Retrieve a single EXIF value by path from a nested associative array.
      * The data source is an array like this:
      *
-     * foo =>
-     *   bar => (a => 1, b => 2, c => 3)
-     *   baz => (d => 4, e => 5, f => 6)
+     * foo => (
+     *   bar => (a => 1, b => 2, c => 3),
+     *   baz => (d => 4, e => 5, f => 6))
      *
-     * the key path is an array like this:
+     * and the key path is an array like this:
      *
-     * (foo, bar, d)
+     * (foo, baz, d)
      *
      * the resulting value would be "4"
      *
@@ -260,7 +410,7 @@ class ExifHelper {
      *               string value
      * @static
      */
-    function _getValue(&$source, $keyPath) {
+    function getExifValue(&$source, $keyPath) {
 	$key = array_shift($keyPath);
 	if (!isset($source[$key])) {
 	    return null;
@@ -268,23 +418,60 @@ class ExifHelper {
 
 	if (empty($keyPath)) {
 	    return str_replace("\0", '', $source[$key]);
-	} else {
-	    return ExifHelper::_getValue($source[$key], $keyPath);
 	}
+
+	return ExifHelper::getExifValue($source[$key], $keyPath);
     }
 
     /**
-     * Return the EXIF keys that we know about (from Exifer).
+     * Retrieve a single IPTC value out of the given JPEG object by key path.
+     * If the key path starts with 'IPTC', the second part is assumed to contain the physical
+     * IPTC name, more parts are silently ignored. When the path does not start with 'IPTC', this
+     * method returns null.
+     * 
+     * @param object   A JPEG object containing the IPTC values
+     * @param array    The key path
+     * @param string   Source encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from current
+     *                 locale 
+     * @return string  An IPTC value or null, if there is no such value or on error
+     * @static
+     * @TODO(xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
+     * @TODO(xlerb) have IPTC input charset overrides for albums (maybe images too?) for cases,
+     *      where users from different countries can upload images with IPTC data. It is such a
+     *      pain, that the charset used isn't recorded in IPTC headers.
+     */
+    function getIptcValue(&$object, $keyPath, $sourceEncoding=null) {
+	if ($keyPath[0] != 'IPTC') {
+	    return null;
+	}
+	$result = $object->getIPTCField($keyPath[1]);
+	if ($result == false) {
+	    return null;
+	}
+	if (is_array($result)) {
+	    $result = implode('; ', $result);
+	}
+	$result = GalleryCoreApi::convertToUtf8($result, $sourceEncoding);
+	return $result;
+    }
+
+    /**
+     * Return the EXIF/IPTC keys that we know about (from lib/Exifer and lib/JPEG).
      *
      * The resulting array is of the form:
      *
-     *   logical exif property => (physical exif property, internationalized title, group)
-     *   logical exif property => (physical exif property, internationalized title, group)
-     *
-     * The logical exif properties are unique and have some correlation to the
-     * physical property, but have been changed for our convenience.  The physical
-     * exif property is the actual exif property name (as reported by Exifer).  The group
-     * is an internationalized name of a group like "General Properties", etc.
+     *   'G2 exif/iptc property 0' => (
+     *       'internationalized title 0',
+     *       'physical exif property' [, 'another physical exif property', ...])
+     *   'G2 exif/iptc property 1' => (
+     *       'internationalized title 1',
+     *       'physical exif property' [, 'another physical exif property', ...])
+     *   ...
+     *   
+     *   The G2 exif/iptc properties are unique and have some correlation to the physical
+     *   properties, but have been changed for our convenience, especially allowing to access
+     *   several physical exif/iptc properties for one and the same logical G2 exif/iptc property.
+     *   The first existing physical property in the given order will be used and returned.
      *
      * @return array exif keys
      * @static
@@ -367,9 +554,10 @@ class ExifHelper {
 	    array($gallery->i18n('Custom Functions'), 'SubIFD.MakerNote.CustomFunctions');
 	$data['CustomerRender'] =
 	    array($gallery->i18n('Customer Render'), 'SubIFD.CustomerRender');
+	/* See comment inside getOriginationTimestamp() for changed order of physical props. */
 	$data['DateTime'] =
 	    array($gallery->i18n('Date/Time'), 'SubIFD.DateTimeOriginal',
-		  'IFD0.DateTime', 'SubIFD.DateTimeDigitized');
+		  'SubIFD.DateTimeDigitized', 'IFD0.DateTime');
 	$data['DigitalZoom'] =
 	    array($gallery->i18n('Digital Zoom'),
 		  'SubIFD.MakerNote.DigitalZoom', 'SubIFD.MakerNote.DigiZoom');
@@ -424,8 +612,6 @@ class ExifHelper {
 	    array($gallery->i18n('Focus Warning'), 'SubIFD.MakerNote.FocusWarning');
 	$data['GainControl'] =
 	    array($gallery->i18n('Gain Control'), 'SubIFD.GainControl');
-	$data['IPTC/NAA'] =
-	    array($gallery->i18n('IPTC/NAA'), 'IFD1.IPTC/NAA');
 	$data['ImageAdjustment'] =
 	    array($gallery->i18n('Image Adjustment'), 'SubIFD.MakerNote.ImageAdjustment');
 	$data['ImageDescription'] =
@@ -629,6 +815,50 @@ class ExifHelper {
 	    array($gallery->i18n('Exif Image Height'), 'SubIFD.ExifImageHeight');
 	$data['ExifImageWidth'] =
 	    array($gallery->i18n('Exif Image Width'), 'SubIFD.ExifImageWidth');
+
+	/* IPTC fields, see http://www.iptc.org/IIM/, if you have time to waste. */
+	$data['IPTC/SupplementalCategories'] =
+	    array($gallery->i18n('IPTC: Supplemental Categories'), 'IPTC.SupplementalCategories');
+	$data['IPTC/Keywords'] =
+	    array($gallery->i18n('IPTC: Keywords'), 'IPTC.Keywords');
+	$data['IPTC/Caption'] =
+	    array($gallery->i18n('IPTC: Caption'), 'IPTC.Caption');
+	$data['IPTC/CaptionWriter'] =
+	    array($gallery->i18n('IPTC: Caption Writer'), 'IPTC.CaptionWriter');
+	$data['IPTC/Headline'] =
+	    array($gallery->i18n('IPTC: Headline'), 'IPTC.Headline');
+	$data['IPTC/SpecialInstructions'] =
+	    array($gallery->i18n('IPTC: Special Instructions'), 'IPTC.SpecialInstructions');
+	$data['IPTC/Category'] =
+	    array($gallery->i18n('IPTC: Category'), 'IPTC.Category');
+	$data['IPTC/Byline'] =
+	    array($gallery->i18n('IPTC: Byline'), 'IPTC.Byline');
+	$data['IPTC/BylineTitle'] =
+	    array($gallery->i18n('IPTC: Byline Title'), 'IPTC.BylineTitle');
+	$data['IPTC/Credit'] =
+	    array($gallery->i18n('IPTC: Credit'), 'IPTC.Credit');
+	$data['IPTC/Source'] =
+	    array($gallery->i18n('IPTC: Source'), 'IPTC.Source');
+	$data['IPTC/CopyrightNotice'] =
+	    array($gallery->i18n('IPTC: Copyright Notice'), 'IPTC.CopyrightNotice');
+	$data['IPTC/ObjectName'] =
+	    array($gallery->i18n('IPTC: Object Name'), 'IPTC.ObjectName');
+	$data['IPTC/City'] =
+	    array($gallery->i18n('IPTC: City'), 'IPTC.City');
+	$data['IPTC/ProvinceState'] =
+	    array($gallery->i18n('IPTC: Province State'), 'IPTC.ProvinceState');
+	$data['IPTC/CountryName'] =
+	    array($gallery->i18n('IPTC: Country Name'), 'IPTC.CountryName');
+	$data['IPTC/OriginalTransmissionReference'] =
+	    array($gallery->i18n('IPTC: Original Transmission Reference'),
+		'IPTC.OriginalTransmissionReference');
+	$data['IPTC/DateCreated'] =
+	    array($gallery->i18n('IPTC: Date Created'), 'IPTC.DateCreated');
+	$data['IPTC/CopyrightFlag'] =
+	    array($gallery->i18n('IPTC: Copyright Flag'), 'IPTC.CopyrightFlag');
+	$data['IPTC/TimeCreated'] =
+	    array($gallery->i18n('IPTC: Time Created'), 'IPTC.TimeCreated');
+
 	return $data;
     }
 }

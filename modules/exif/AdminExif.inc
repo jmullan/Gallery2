@@ -25,6 +25,7 @@
  * @package Exif
  * @subpackage UserInterface
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 /**
@@ -321,8 +322,9 @@ class AdminExifController extends GalleryController {
 		$error[] = 'form[error][detailed][missing]';
 	    }
 	} else if (isset($form['action']['save'])) {
-	    $addOption = (isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0)
-		       | (isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0);
+	    $addOption = (isset($form['item']['summary']) ? EXIF_ITEM_SUMMARY : 0) |
+			 (isset($form['item']['description']) ? EXIF_ITEM_DESCRIPTION : 0) |
+			 (isset($form['item']['keywords']) ? IPTC_ITEM_KEYWORDS : 0);
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $addOption);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -380,7 +382,8 @@ class AdminExifView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $form['item'] = array('summary' => $addOption & EXIF_ITEM_SUMMARY,
-				  'description' => $addOption & EXIF_ITEM_DESCRIPTION);
+				  'description' => $addOption & EXIF_ITEM_DESCRIPTION,
+				  'keywords' => $addOption & IPTC_ITEM_KEYWORDS);
 	}
 
 	$exifKeys = ExifHelper::getExifKeys();

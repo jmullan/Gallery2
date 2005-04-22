@@ -23,7 +23,9 @@
 /**
  * @version $Revision$ $Date$
  * @package Exif
+ * @subpackage Classes
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Georg Rehfeld <rehfeld@georg-rehfeld.de>
  */
 
 /**
@@ -44,7 +46,7 @@ class ExifExtractor extends ExifInterface_1_0 {
      */
     function getMetaData($itemIds, $properties=array()) {
 	global $gallery;
-	require_once(dirname(__FILE__) . '/../lib/exifer/exif.inc');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/exifer/exif.inc');
 
 	if (!is_array($itemIds)) {
 	    $itemIds = array($itemIds);
@@ -59,9 +61,10 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    // Only look at JPEG DataItems..
+	    /* Only look at JPEG DataItems.. */
 	    if (!GalleryUtilities::isA($item, 'GalleryDataItem') ||
-		    ($item->getMimeType() != 'image/jpeg' && $item->getMimeType() != 'image/pjpeg')) {
+		    ($item->getMimeType() != 'image/jpeg' &&
+		     $item->getMimeType() != 'image/pjpeg')) {
 		continue;
 	    }
 	    list($ret, $path) = $item->fetchPath();
@@ -71,13 +74,16 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    $data[$itemId] = array();
 	    $rawExifData = read_exif_data_raw($path, false);
 	    require_once(dirname(__FILE__) . '/ExifHelper.class');
+	    $iptcObj = ExifHelper::getIptcObject($path);
 	    foreach (ExifHelper::getExifKeys() as $property => $keyData) {
 		if (!empty($properties) && !in_array($property, $properties)) {
 		    continue;
 		}
 		for ($i = 1; $i < count($keyData); $i++) {
-		    $value = ExifHelper::_getValue($rawExifData,
-			     explode('.', $keyData[$i]));
+		    $value = ExifHelper::getExifValue($rawExifData, explode('.', $keyData[$i]));
+		    if (! isset($value)) {
+			$value = ExifHelper::getIptcValue($iptcObj, explode('.', $keyData[$i]));
+		    }
 		    if (isset($value)) {
 			$data[$itemId][$property] =
 			    array('title' => $keyData[0], 'value' => $value);
