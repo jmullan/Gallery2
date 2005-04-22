@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,21 +41,21 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('show', 'sort') as $key) {
-	    list ($ret, $params[$key]) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
+	foreach (array('show', 'type', 'sort', 'treeLines', 'treeIcons', 'treeCookies',
+		       'treeExpandCollapse', 'treeCloseSameLevel') as $key) {
+	    list ($ret, $this->_params[$key]) =
+		GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	$this->_params = $params;
     }
 
     function tearDown() {
-	foreach (array('show', 'sort') as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key, $this->_params[$key]);
+	foreach ($this->_params as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key, $value);
 	    if ($ret->isError()) {
-		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -68,24 +68,29 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'albumselect:AlbumSelectSiteAdmin'),
+						  'subView' => 'albumselect:AlbumSelectSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
     }
 
     function testAlbumSelectSiteAdminControllerSave() {
-	GalleryUtilities::putRequestVariable('form[sort]', '1');
+	GalleryUtilities::putRequestVariable('form[type]', 'tree');
+	GalleryUtilities::putRequestVariable('form[sort]', '0');
+	GalleryUtilities::putRequestVariable('form[treeIcons]', '1');
+	GalleryUtilities::putRequestVariable('form[treeCloseSameLevel]', '1');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'albumselect:AlbumSelectSiteAdmin'),
+						  'subView' => 'albumselect:AlbumSelectSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
 
-	foreach (array('show' => '0', 'sort' => '1') as $key => $expectedValue) {
+	foreach (array('show' => '0', 'type' => 'tree', 'sort' => '0', 'treeLines' => '0',
+		       'treeIcons' => '1', 'treeCookies' => '0', 'treeExpandCollapse' => '0',
+		       'treeCloseSameLevel' => '1') as $key => $expectedValue) {
 	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'albumselect', $key);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

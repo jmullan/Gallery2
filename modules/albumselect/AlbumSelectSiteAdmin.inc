@@ -44,7 +44,16 @@ class AlbumSelectSiteAdminController extends GalleryController {
 	$status = array();
 	$error = array();
 	if (isset($form['action']['save'])) {
-	    foreach (array('show', 'sort') as $key) {
+	    if (empty($form['type'])) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect',
+						      'type', $form['type']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    foreach (array('show', 'sort', 'treeLines', 'treeIcons', 'treeCookies',
+			   'treeExpandCollapse', 'treeCloseSameLevel') as $key) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key,
 						(isset($form[$key]) && $form[$key]) ? 1 : 0);
 		if ($ret->isError()) {
@@ -54,10 +63,8 @@ class AlbumSelectSiteAdminController extends GalleryController {
 	    $status['saved'] = 1;
 
 	    /* Flush our cache */
-	    $cachePathInfo = array('type' => 'module-data',
-		                   'module' => 'albumselect',
-		                   'key' => 'loadSystemContent_guest');
-	    GalleryDataCache::removeFromDisk($cachePathInfo);
+	    GalleryDataCache::removeFromDisk(
+		array('type' => 'module-data', 'module' => 'albumselect'));
 	}
 
 	$results = array('redirect' => array('view' => 'core:SiteAdmin',
@@ -79,14 +86,16 @@ class AlbumSelectSiteAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	foreach (array('show', 'sort') as $key) {
+	foreach (array('show', 'type', 'sort', 'treeLines', 'treeIcons', 'treeCookies',
+		       'treeExpandCollapse', 'treeCloseSameLevel') as $key) {
 	    if (!isset($form[$key])) {
 		$form[$key] = false;
 	    }
 	}
 	if ($form['formName'] != 'AlbumSelectSiteAdmin') {
 	    $form['formName'] = 'AlbumSelectSiteAdmin';
-	    list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
+	    list ($ret, $params) =
+		GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

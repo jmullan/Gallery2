@@ -23,6 +23,7 @@
  * @version $Revision$ $Date$
  * @package AlbumSelect
  * @author Alan Harder <alan.harder@sun.com>
+ * @author Jonas Forsberg <jonas@gargamel.nu> (Initial dTree integration)
  */
 
 /**
@@ -36,12 +37,13 @@ class AlbumSelectModule extends GalleryModule {
 	global $gallery;
 	$this->setId('albumselect');
 	$this->setName('Album Select');
-	$this->setDescription($gallery->i18n('Jump directly to any album using a select box'));
-	$this->setVersion('0.9.2');
+	$this->setDescription(
+	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
+	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|loadSystemContent|registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 10));
     }
 
     /**
@@ -75,7 +77,9 @@ class AlbumSelectModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	foreach (array('show' => 1, 'sort' => 0) as $key => $value) {
+	foreach (array('show' => 1, 'type' => 'select', 'sort' => 0,
+		       'treeLines' => 1, 'treeIcons' => 0, 'treeCookies' => 0,
+		       'treeExpandCollapse' => 0, 'treeCloseSameLevel' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
@@ -102,23 +106,17 @@ class AlbumSelectModule extends GalleryModule {
      * We always load the template data, but only show in systemContent if
      * the 'show' module param is set.  Otherwise, we assume that the user still
      * wants the tree, but has chosen to manually put it somewhere else on the
-     * page (by hand editing the templates).
+     * page (by editing the templates).
      */
     function loadSystemContent(&$template) {
 	global $gallery;
-
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
 
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* If it's the anonymous user, try to load it from the cache */
+	/* Try to load it from the cache */
 	$cachePathInfo = array('type' => 'module-data',
 			       'module' => 'albumselect',
 			       'itemId' => $gallery->getActiveUserId());
@@ -149,19 +147,27 @@ class AlbumSelectModule extends GalleryModule {
 
 	    $treeList = array();
 	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
-	    $this->_parseTree($tree, $treeList, $sorter);
+	    $nodeId = 0;
+	    $this->_parseTree($tree, $treeList, $sorter, $nodeId);
 
-	    $dataToCache = array($treeList, $titles);
-	    GalleryDataCache::putToDisk($cachePathInfo, $dataToCache);
+	    GalleryDataCache::putToDisk($cachePathInfo,
+					$dataToCache = array($treeList, $titles));
 	}
 
+	if ($params['type'] == 'tree') {
+	    $template->style('modules/albumselect/dtree.css');
+	    $template->javascript('modules/albumselect/dtree.js');
+	}
+
+	$tpl = ($params['type'] == 'tree') ? 'modules/albumselect/templates/AlbumTree.tpl'
+					   : 'modules/albumselect/templates/AlbumSelect.tpl';
 	$template->setVariable('AlbumSelectSystemContent',
 	    array('tree' => $treeList,
 		  'titles' => $titles,
-		  'template' => 'modules/albumselect/templates/AlbumSelect.tpl'));
+		  'params' => $params,
+		  'template' => $tpl));
 
-	return array(GalleryStatus::success(),
-		     $params['show'] ? 'modules/albumselect/templates/AlbumSelect.tpl' : null);
+	return array(GalleryStatus::success(), $params['show'] ? $tpl : null);
     }
 
     /**
@@ -171,8 +177,8 @@ class AlbumSelectModule extends GalleryModule {
      */
     function handleEvent($event) {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
-	    $cachePathInfo = array('type' => 'module-data', 'module' => 'albumselect');
-	    GalleryDataCache::removeFromDisk($cachePathInfo);
+	    GalleryDataCache::removeFromDisk(
+		array('type' => 'module-data', 'module' => 'albumselect'));
 	}
 
 	return array(GalleryStatus::success(), null);
@@ -182,14 +188,15 @@ class AlbumSelectModule extends GalleryModule {
      * Build template data for subalbum tree
      * @private
      */
-    function _parseTree($tree, &$treeList, &$sorter, $depth=0) {
+    function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode=0, $depth=0) {
 	if (isset($sorter)) {
 	    uksort($tree, array($sorter, 'sort'));
 	}
 	foreach ($tree as $id => $list) {
-	    $treeList[] = array('id' => $id, 'depth' => $depth);
+	    $treeList[] = array('id' => $id, 'nodeId' => ++$nodeId,
+				'parentNode' => $parentNode, 'depth' => $depth);
 	    if (!empty($list)) {
-		$this->_parseTree($list, $treeList, $sorter, $depth+1);
+		$this->_parseTree($list, $treeList, $sorter, $nodeId, $nodeId, $depth + 1);
 	    }
 	}
     }

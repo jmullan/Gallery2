@@ -16,20 +16,79 @@
 
 <div class="gbBlock">
   <p class="giDescription">
-    {g->text text="Turn off display in sidebar if you place the select box elsewhere using a local template (see details below).  List is sorted by each album's manual sort order unless sort by title is checked below."}
+    {g->text text="Albums can be displayed in a simple list box or a dynamic tree.  Turn off display in sidebar if you place the selector elsewhere using a local template (see details below)."}
   </p>
+
+  <h4> {g->text text="Selector type"} </h4>
+
+  <input type="radio" id="rbSelect"{if $form.type=='select'} checked="checked"{/if}
+   name="{g->formVar var="form[type]"}" value="select"/>
+  <label for="rbSelect">
+    {g->text text="List box"}
+  </label>
+  <br/>
+  <input type="radio" id="rbTree"{if $form.type=='tree'} checked="checked"{/if}
+   name="{g->formVar var="form[type]"}" value="tree"/>
+  <label for="rbTree">
+    {g->text text="Tree"}
+  </label>
+  <br/>
 
   <input type="checkbox" id="cbShow"{if $form.show} checked="checked"{/if}
    name="{g->formVar var="form[show]"}"/>
   <label for="cbShow">
-    {g->text text="Show select in sidebar"}
+    {g->text text="Show in sidebar"}
+  </label>
+
+  <h4> {g->text text="Sort order"} </h4>
+
+  <input type="radio" id="rbSortManual"{if !$form.sort} checked="checked"{/if}
+   name="{g->formVar var="form[sort]"}" value="0"/>
+  <label for="rbSortManual">
+    {g->text text="Use manual sort order of albums"}
   </label>
   <br/>
 
-  <input type="checkbox" id="cbSort"{if $form.sort} checked="checked"{/if}
-   name="{g->formVar var="form[sort]"}"/>
-  <label for="cbSort">
+  <input type="radio" id="rbSortTitle"{if $form.sort} checked="checked"{/if}
+   name="{g->formVar var="form[sort]"}" value="1"/>
+  <label for="rbSortTitle">
     {g->text text="Sort albums by title"}
+  </label>
+
+  <h4> {g->text text="Tree"} </h4>
+
+  <input type="checkbox" id="cbLines"{if $form.treeLines} checked="checked"{/if}
+   name="{g->formVar var="form[treeLines]"}"/>
+  <label for="cbLines">
+    {g->text text="Connect tree branches with lines"}
+  </label>
+  <br/>
+
+  <input type="checkbox" id="cbIcons"{if $form.treeIcons} checked="checked"{/if}
+   name="{g->formVar var="form[treeIcons]"}"/>
+  <label for="cbIcons">
+    {g->text text="Show folder icons"}
+  </label>
+  <br/>
+
+  <input type="checkbox" id="cbCookies"{if $form.treeCookies} checked="checked"{/if}
+   name="{g->formVar var="form[treeCookies]"}"/>
+  <label for="cbCookies">
+    {g->text text="Use cookies to remember which branches are open"}
+  </label>
+  <br/>
+
+  <input type="checkbox" id="cbExpandCollapse"{if $form.treeExpandCollapse} checked="checked"{/if}
+   name="{g->formVar var="form[treeExpandCollapse]"}"/>
+  <label for="cbExpandCollapse">
+    {g->text text="Show expand-all and collapse-all options"}
+  </label>
+  <br/>
+
+  <input type="checkbox" id="cbCloseSameLevel"{if $form.treeCloseSameLevel} checked="checked"{/if}
+   name="{g->formVar var="form[treeCloseSameLevel]"}"/>
+  <label for="cbCloseSameLevel">
+    {g->text text="Only one branch within a parent can be expanded at the same time. Expand/collapse functions are disabled with this option."}
   </label>
 </div>
 

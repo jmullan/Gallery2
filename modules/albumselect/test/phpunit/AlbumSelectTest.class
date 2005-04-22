@@ -54,7 +54,8 @@ class AlbumSelectTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
+							       array('title' => 'zzzzzzzz'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -66,7 +67,6 @@ class AlbumSelectTest extends GalleryTestCase {
 	foreach ($this->_param as $key => $value) {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key, $value);
 	    if ($ret->isError()) {
-		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
@@ -75,6 +75,10 @@ class AlbumSelectTest extends GalleryTestCase {
 
     function testAlbumSelect() {
 	$ret = $this->_module->setParameter('show', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('type', 'select');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -90,13 +94,23 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(null, $tpl, 'no system content');
+	$this->assertEquals('zzzzzzzz',
+	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
-	$this->assert(in_array(array('id' => $this->_album->getId(), 'depth' => 0),
-			       $template->data['AlbumSelectSystemContent']['tree']), 'album in tree');
+	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
+	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+				     'parentNode' => 0, 'depth' => 0),
+			       $template->data['AlbumSelectSystemContent']['tree']),
+		      'album in tree');
     }
 
     function testAlbumSelectShowSort() {
 	$ret = $this->_module->setParameter('show', '1');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('type', 'select');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -111,10 +125,50 @@ class AlbumSelectTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('modules/albumselect/templates/AlbumSelect.tpl', $tpl, 'system content');
+	$this->assertEquals('modules/albumselect/templates/AlbumSelect.tpl', $tpl,
+			    'system content');
+	$this->assertEquals('zzzzzzzz',
+	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
-	$this->assert(in_array(array('id' => $this->_album->getId(), 'depth' => 0),
-			       $template->data['AlbumSelectSystemContent']['tree']), 'album in tree');
+	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
+	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+				     'parentNode' => 0, 'depth' => 0),
+			       $template->data['AlbumSelectSystemContent']['tree']),
+		      'album in tree');
+    }
+
+    function testAlbumTree() {
+	$ret = $this->_module->setParameter('show', '1');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('type', 'tree');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('sort', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new AlbumSelectDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals('modules/albumselect/templates/AlbumTree.tpl', $tpl,
+			    'system content');
+	$this->assertEquals('zzzzzzzz',
+	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
+	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
+	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+				     'parentNode' => 0, 'depth' => 0),
+			       $template->data['AlbumSelectSystemContent']['tree']),
+		      'album in tree');
     }
 }
 
@@ -126,6 +180,10 @@ class AlbumSelectDummyGalleryTemplate {
     var $data = array();
     function setVariable($key, $value) {
 	$this->data[$key] = $value;
+    }
+    function style($path) {
+    }
+    function javascript($path) {
     }
 }
 ?>
