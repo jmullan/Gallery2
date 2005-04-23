@@ -77,6 +77,9 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	
 	$this->_platform = new AdminRewriteControllerTestPlatform();
 	$gallery->setPlatform($this->_platform);
+
+	/* Tell or mock platform to allow the file to be writeable */
+	GalleryUtilities::putRequestVariable('isWriteable', true);
     }
     
     function tearDown() {
@@ -203,13 +206,13 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     
     function testSaveBadRules3() {
     	global $gallery;
-    	$platform =& $gallery->getPlatform();
+	/* Tell or mock platform not to allow the file to be writeable */
+	GalleryUtilities::putRequestVariable('isWriteable', false);
     	
 	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
     	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%path%');
-	
-	$platform->setIsWriteable(false);
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'rules',
 						      'view' => 'core:SiteAdmin',
@@ -292,12 +295,6 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
  * @subpackage PHPUnit
  */ 
 class AdminRewriteControllerTestPlatform extends GalleryPlatform{
-    var $_isWriteable = true;
-
-    function setIsWriteable($value) {
-    	$this->_isWriteable = $value;
-    }
-    
     function file_exists($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return true;
@@ -315,8 +312,10 @@ class AdminRewriteControllerTestPlatform extends GalleryPlatform{
     }
     
     function is_writeable($file) {
+	$isWriteable = GalleryUtilities::getRequestVariables('isWriteable');
+
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
-	    return $this->_isWriteable;
+	    return $isWriteable;
 	}
 	
 	return parent::is_writeable($file);
