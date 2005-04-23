@@ -184,5 +184,64 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	$this->handleRequest(ERROR_PERMISSION_DENIED);
     }
+
+    function testSystemLinks() {
+	global $gallery;
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	list ($ret, $userAlbum) = GalleryCoreApi::loadPlugin('module', 'useralbum');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'access');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+
+	$expectedLink[] = array('text' => $core->translate('Your Album'),
+				'params' => array('controller' => 'useralbum:UserAlbum'));
+
+	list($ret, $links) = $userAlbum->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($expectedLink, $links, 'Link not displayed "on access" without album');
+
+	$gallery->setActiveUser($this->_userWithAlbum);
+
+	list($ret, $links) = $userAlbum->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($expectedLink, $links, 'Link not displayed "on access" with album');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'create', 'immediate');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* User with album should get a link */
+	list($ret, $links) = $userAlbum->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($expectedLink, $links, 'Link not displayed "immediate" with album');
+
+	$gallery->setActiveUser($this->_userWithoutAlbum);
+
+	/* User without album should not get a link */
+	list($ret, $links) = $userAlbum->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $links, 'Link displayed "immediate" without album');
+    }
 }
 ?>
