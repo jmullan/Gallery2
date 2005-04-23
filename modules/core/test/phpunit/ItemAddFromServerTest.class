@@ -59,23 +59,15 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->_symlinkDisallowedPlatform =
 	    new ItemAddFromServerTestPlatform($gallery->getPlatform(), false);
 
-	list ($ret, $localServerDirs) =
+	list ($ret, $this->_localServerDirList) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret;
 	}
 
-	if (!empty($localServerDirs)) {
-	    $this->_localServerDirList = join(',', $localServerDirs);
-	} else {
-	    $this->_localServerDirList = '';
-	}
-
-	$ret =
-	    GalleryCoreApi::setPluginParameter('module', 'core',
-					       'uploadLocalServer.dirs', 
-					       dirname(dirname(__FILE__)));
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'uploadLocalServer.dirs', dirname(dirname(__FILE__)));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret;
@@ -86,10 +78,8 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
     }
 
     function tearDown() {
-	$ret =
-            GalleryCoreApi::setPluginParameter('module', 'core',
-                                               'uploadLocalServer.dirs',
-                                               $this->_localServerDirList);
+	$ret = GalleryCoreApi::setPluginParameter(
+	    'module', 'core', 'uploadLocalServer.dirs', $this->_localServerDirList);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret;
