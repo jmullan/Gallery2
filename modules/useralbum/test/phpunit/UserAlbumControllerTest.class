@@ -86,6 +86,12 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_userWithoutAlbum);
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 1);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
@@ -242,6 +248,20 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $links, 'Link displayed "immediate" without album');
+
+	/* User with album should not get a link with homeLink off */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', 0);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	$gallery->setActiveUser($this->_userWithAlbum);
+	list($ret, $links) = $userAlbum->getSystemLinks();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $links, 'Link displayed, but homeLink off');
     }
 }
 ?>
