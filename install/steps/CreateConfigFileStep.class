@@ -63,7 +63,11 @@ class CreateConfigFileStep extends InstallStep {
 		if (!$this->_firstTime) {
 		    if (!file_exists($configFilePath)) {
 			$templateData['error'] = sprintf(
-			    _('The <b>config.php</b> file does not exist in your %s directory'),
+			    _('The config.php file does not exist in your %s directory'),
+			    $baseDir);
+		    } else {
+			$templateData['error'] = sprintf(
+			    _('The config.php file exists but is not writeable.  If your server is Windows, you may have to disable file sharing for config.php and set its permissions manually.'),
 			    $baseDir);
 		    }
 		}
