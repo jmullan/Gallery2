@@ -66,7 +66,9 @@ foreach ($stepOrder as $stepName) {
     require("steps/$className.class");
 }
 
-session_start();
+if (!ini_get('session.auto_start')) {
+    session_start();
+}
 
 if (isset($_SESSION['path'])) {
     if ($_SESSION['path'] != __FILE__) {
