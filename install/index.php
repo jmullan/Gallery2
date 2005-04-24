@@ -71,7 +71,9 @@ foreach ($stepOrder as $stepName) {
     require("steps/$className.class");
 }
 
-session_start();
+if (!ini_get('session.auto_start')) {
+    session_start();
+}
 /*
  * For reasons unclear to me, register_globals causes the $galleryStub variable to be put into
  * the global context on session_start, which we don't expect or want.  Possibly because we
