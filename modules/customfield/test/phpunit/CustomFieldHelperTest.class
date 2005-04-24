@@ -1,0 +1,64 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package CustomField
+ * @subpackage PHPUnit
+ * @author Felix Rabinovich <felix@rabinovich.org>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
+
+/**
+ * CustomFieldHelperTest tests.
+ *
+ * @package CustomField
+ * @subpackage PHPUnit
+ */
+class CustomFieldHelperTest extends GalleryTestCase {
+    function CustomFieldHelperTest($methodname) {
+        $this->GalleryTestCase($methodname);
+    }
+    
+    function setUp() {
+        parent::setUp();
+    }
+    
+    function tearDown() {
+        parent::tearDown();
+    }
+    
+    function testHandleAdminAction() {
+        $form = GalleryUtilities::getFormVariables('form');
+        $form['action']['add']['common'] = 'Add';
+        $form['common']['newField'] = '';
+        /* This only test empty field name (Bug 1165012) */
+        list($ret, $status) = CustomFieldHelper::handleAdminAction($form);
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
+        $this->assertEquals(array('error' => array('empty' => 1)),
+            $status, 'handleAdmin Action status');
+    }        
+}
+
+?>

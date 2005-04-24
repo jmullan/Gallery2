@@ -66,6 +66,9 @@ function pickfield(s) {
   {if isset($status.error.duplicate)}
     <span class="giError"> {g->text text="Field name already in use"} </span>
   {/if}
+  {if isset($status.error.empty)}
+    <span class="giError"> {g->text text="Field name cannot be empty"} </span>
+  {/if}
 </h2></div>
 {/if}
 
