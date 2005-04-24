@@ -773,7 +773,15 @@ class GalleryUtilities {
 		GalleryUtilities::sanitizeInputValues($value[$newKey]);
 	    }
 	} else {
-	    $value = htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
+	    /*
+	     * Simulate calling htmlspecialchars($value, ENT_COMPAT, 'UTF-8')
+	     * We avoid using htmlspecialchars directly because on some versions
+	     * of PHP (notable PHP 4.1.2) it changes the character set of the input
+	     * data (in one environment it converted the UTF-8 data to ISO-8859-1).
+	     */
+	    $value = str_replace(array('&', '"', '<', '>'),
+				 array('&amp;', '&quot;', '&lt;', '&gt;'),
+				 $value);
 
 	    /* Undo the damage caused by magic_quotes */
 	    if ($adaptForMagicQuotes) {
