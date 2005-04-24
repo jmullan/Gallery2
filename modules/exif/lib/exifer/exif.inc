@@ -791,7 +791,15 @@ function read_exif_data_raw($path,$verbose) {
 	
 	//===========================================================Start of InteroperabilityIFD
 	$num = bin2hex(fread( $in, 2 ));
-	if($intel==1) $num = intel2Moto($num);
+
+        // For some reason, intel2Moto returns a really large number with some photos. 
+        // If it's too large, don't do the conversion 
+        if ($intel==1) { 
+            if (intel2Moto($num) < 100) { 
+                $num = intel2Moto($num); 
+            } 
+        } 
+
 	$result['InteroperabilityIFDNumTags'] = hexdec($num);
 	
 	
