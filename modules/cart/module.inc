@@ -30,7 +30,7 @@
  *
  * @package Cart
  */
-class CartModule extends GalleryModule /* and GalleryEventListener */ {
+class CartModule extends GalleryModule {
 
     function CartModule() {
 	global $gallery;
