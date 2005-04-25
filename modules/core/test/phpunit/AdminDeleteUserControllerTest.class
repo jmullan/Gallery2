@@ -151,7 +151,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	list ($ret, $anonymousUserId) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	GalleryUtilities::putRequestVariable('userId', $anonymousUserId);
@@ -368,7 +368,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Verify the item is gone */
 	$ret = $this->_verifyMissing($item->getId());
@@ -426,7 +426,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Verify the item still exists */
 	list ($ret, $item) = $item->refresh();
@@ -505,7 +505,7 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	/* Verifiy the user, his permissions and his groupMappings are gone */
 	$ret = $this->_verifyMissingAll($user->getId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	/* Verify the item still exists */
 	list ($ret, $item) = $item->refresh();

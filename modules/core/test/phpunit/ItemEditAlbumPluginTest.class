@@ -176,7 +176,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals('bletch', $this->_album->getOrderDirection());
 
 	/* Verify derivative preferences */
-	list ($ret, $preferences) = GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
+	list ($ret, $preferences) =
+	    GalleryCoreApi::fetchDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -262,10 +263,9 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Create some children */
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $child[$i]) = $this->_createRandomDataItem($this->_album->getId(), 'test/file',
-								   array(),
-								   __FILE__,
-								   'ItemEditAlbumPluginTestDataItem');
+	    list ($ret, $child[$i]) = $this->_createRandomDataItem(
+		$this->_album->getId(), 'test/file', array(),
+		__FILE__, 'ItemEditAlbumPluginTestDataItem');
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -360,8 +360,9 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
     }
 
     /**
-     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes that are
-     * larger (dimension wise) than the original.
+     
+     * Add a small (dimension wise) photo to an album and make sure that we don't create resizes
+     * that are larger (dimension wise) than the original.
      */
     function testRecreateResizesForSmallPhoto() {
 	global $gallery;
@@ -372,8 +373,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/*
-	 * Set the album preferences such that we have one resize that's smaller than the original, and one
-	 * that's larger.  We know that the image we're using is 62x75
+	 * Set the album preferences such that we have one resize that's smaller than the
+	 * original, and one that's larger.  We know that the image we're using is 62x75
 	 */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
@@ -440,7 +441,9 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	if (isset($resizes[$photo->getId()])) {
 	    $resizes = $resizes[$photo->getId()];
 	    $this->assertEquals(1, sizeof($resizes), 'There should only be one resize');
-	    $this->assertEquals('scale|50,50', $resizes[0]->getDerivativeOperations(), 'The resize operation should be resize|50,50');
+	    $this->assertEquals(
+		'scale|50,50', $resizes[0]->getDerivativeOperations(),
+		'The resize operation should be resize|50,50');
 	}
     }
 }

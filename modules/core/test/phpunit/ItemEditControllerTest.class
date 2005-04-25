@@ -168,15 +168,18 @@ class ItemEditControllerTestPluginSuccess {
 	/* TODO: We should verify the item is legit here */
 	
 	/* Check to see if we have a preferred source */
-	list ($ret, $preferredTable) = GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+	list ($ret, $preferredTable) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if ($preferred != null && (empty($preferredTable) ||
-				   !is_object($preferredTable[$item->getId()]) ||
-				   $preferredTable[$item->getId()]->getId() != $preferred->getId())) {
-	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), array('PREFERRED MISMATCH'), null);
+	if ($preferred != null &&
+	    (empty($preferredTable) ||
+	     !is_object($preferredTable[$item->getId()]) ||
+	     $preferredTable[$item->getId()]->getId() != $preferred->getId())) {
+	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__),
+			 array('PREFERRED MISMATCH'), null);
 	}
 
 	return array(GalleryStatus::success(), array(), 'success');

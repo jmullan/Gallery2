@@ -63,14 +63,14 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'core', 'uploadLocalServer.dirs', dirname(dirname(__FILE__)));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 
@@ -82,7 +82,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    'module', 'core', 'uploadLocalServer.dirs', $this->_localServerDirList);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $ret;
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);

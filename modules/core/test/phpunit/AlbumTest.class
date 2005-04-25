@@ -475,19 +475,19 @@ class AlbumTest extends GalleryTestCase {
 	list ($ret, $derivative) =
 	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', '*');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = $derivative->create($subAlbum->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'test/file');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$derivative->setMimeType('test/file');
 	$derivative->setDerivativeSourceId($this->_parentAlbum->getId());
 	$derivative->setDerivativeOperations('thumbnail|150');
 	$ret = $derivative->save();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $child) = $this->_createRandomDataItem($subAlbum->getId(), 'test/file');
@@ -816,7 +816,7 @@ class AlbumTest extends GalleryTestCase {
 	 */
 	$ret = GalleryCoreApi::removeUserFromAllGroups($user->getId());
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Put user in some random group that has no permissions */

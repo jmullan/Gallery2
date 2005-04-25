@@ -146,12 +146,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.adminGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -169,12 +169,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);
@@ -192,12 +192,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	GalleryUtilities::putRequestVariable('form[action][addRemoveUsersFromText]', 1);
@@ -215,12 +215,12 @@ class AdminGroupsControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	list ($ret, $id) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($id);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	GalleryUtilities::putRequestVariable('form[action][deleteFromText]', 1);

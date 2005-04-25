@@ -202,7 +202,7 @@ class ItemTest extends GalleryTestCase {
         ';
         list ($ret, $searchResults) = $gallery->search($query);
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         while ($results = $searchResults->nextResult()) {
             $mimeType = $results[0];
@@ -698,7 +698,7 @@ class ItemTest extends GalleryTestCase {
 	/* Set the preference for one album to something unusual */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($album[0]->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add a thumbnail preference */
@@ -956,7 +956,7 @@ class ItemTest extends GalleryTestCase {
 	/* Delete existing derivative preferences */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add a thumbnail preference */
@@ -997,8 +997,7 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	if (!isset($derivativeTable[$newItem->getId()])) {
-	    $this->assert(false, 'Missing item derivative');
-	    return;
+	    return $this->assert(false, 'Missing item derivative');
 	}
 
 	$this->assert(1, sizeof($derivativeTable[$newItem->getId()]));
@@ -1215,28 +1214,28 @@ class ItemTest extends GalleryTestCase {
 	 */
 	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addDerivativePreference(1, $this->_album->getId(),
 						       DERIVATIVE_TYPE_IMAGE_RESIZE,
 						       'scale|50');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addDerivativePreference(2, $this->_album->getId(),
 						       DERIVATIVE_TYPE_IMAGE_RESIZE,
 						       'scale|100');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::addDerivativePreference(3, $this->_album->getId(),
 						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
 						       'thumbnail|25');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/jpeg');
