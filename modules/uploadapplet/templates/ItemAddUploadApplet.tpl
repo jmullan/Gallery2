@@ -26,6 +26,7 @@
     <param name="gr_cookie_path" value="{$ItemAddUploadApplet.cookiePath}"/>
     <param name="gr_album" value="{$ItemAddUploadApplet.album}"/>
     <param name="gr_user_agent" value="{$ItemAddUploadApplet.userAgent}"/>
+    <param name="gr_gallery_version" value="{$ItemAddUploadApplet.galleryVersion}"/>
     {foreach key=key item=value from=$ItemAddUploadApplet.defaults}
     <param name="GRDefault_{$key}" value="{$value}"/>
     {/foreach}
@@ -50,7 +51,8 @@
           gr_cookie_domain="{$ItemAddUploadApplet.cookieDomain}"
           gr_cookie_path="{$ItemAddUploadApplet.cookiePath}"
           gr_album="{$ItemAddUploadApplet.album}"
-	  gr_user_agent="{$ItemAddUploadApplet.userAgent}"
+          gr_user_agent="{$ItemAddUploadApplet.userAgent}"
+          gr_gallery_version="{$ItemAddUploadApplet.galleryVersion}"
           {foreach key=key item=value from=$ItemAddUploadApplet.defaults}
           GRDefault_{$key}="{$value}"
           {/foreach}
