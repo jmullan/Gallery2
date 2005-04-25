@@ -23,7 +23,7 @@
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
- * @subpackage UserInterface
+ * @subpackage Classes
  * @author Alan Harder <alan.harder@sun.com>
  */
 
@@ -34,7 +34,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
  * (thumbnails, etc) have been built.
  *
  * @package GalleryCore
- * @subpackage UserInterface
+ * @subpackage Classes
  *
  */
 class BuildDerivativesTask extends MaintenanceTask {
@@ -88,7 +88,7 @@ class BuildDerivativesTask extends MaintenanceTask {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    
+
 	    if (++$i % 5 == 0 || $i == $total) {
 		$message = $module->translate(
 		    array('text' => 'Processing image %d of %d', 'arg1' => $i, 'arg2' => $total));

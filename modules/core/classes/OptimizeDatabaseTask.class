@@ -23,7 +23,7 @@
 /**
  * @version $Revision$ $Date$
  * @package GalleryCore
- * @subpackage UserInterface
+ * @subpackage Classes
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
@@ -31,10 +31,10 @@ GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
 
 /**
  * This is a MaintenanceTask that will optimize all the Gallery tables in the
- * database to make Gallery run smoothly. 
+ * database to make Gallery run smoothly.
  *
  * @package GalleryCore
- * @subpackage UserInterface
+ * @subpackage Classes
  *
  */
 class OptimizeDatabaseTask extends MaintenanceTask {
@@ -69,7 +69,7 @@ class OptimizeDatabaseTask extends MaintenanceTask {
 	}
 
 	$details = array($module->translate('Database optimized successfully'));
-	
+
 	return array(GalleryStatus::success(), true, $details);
     }
 }
