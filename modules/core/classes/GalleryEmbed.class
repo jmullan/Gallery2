@@ -22,7 +22,8 @@
 /**
  * @package GalleryCore
  * @version $Revision$ $Date$
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
+ * @author Andy Staudacher <ast@gmx.ch>
  */
 
 /**
@@ -30,8 +31,8 @@
  *
  * All of these methods should be accessed in a static sense,
  * ie:
- *
  *   GalleryEmbed::handleRequest();
+ * See embed.php and docs/EMBEDDING in gallery2 directory for more information.
  *
  * @package GalleryCore
  * @subpackage Classes
@@ -44,7 +45,7 @@ class GalleryEmbed {
      *
      * @param array (optional--required before calling handleRequest) (
      *   'embedUri' => URI to access G2 via CMS application (example: index.php?module=gallery2)
-     *   'embedPath' => url path to embedUri (example: '/', or '/cms/') 
+     *   'embedPath' => url path to embedUri (example: '/', or '/cms/')
      *   'relativeG2Path' => relative path from CMS (dir with embedUri) to G2 base dir
      *   'loginRedirect' => URI for redirect to CMS login view (example: /cms/index.php)
      *   'embedSessionString' => (optional) To support cookieless browsing, pass in key=value for
@@ -148,14 +149,14 @@ class GalleryEmbed {
 	}
 
 	if (empty($activeUserId)) {
-	    // Logout..
+	    /* Logout */
 	    $ret = $session->reset();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $session->put('embed.id.externalUser', '');
 	} else {
-	    // Set G2 active user..
+	    /* Set G2 active user */
 	    list ($ret, $user) =
 		GalleryCoreApi::loadEntityByExternalId($activeUserId, 'GalleryUser');
 	    if ($ret->isError()) {
@@ -197,7 +198,7 @@ class GalleryEmbed {
      */
     function logout() {
 	require_once(dirname(__FILE__) . '/GallerySession.class');
-        require_once(dirname(__FILE__) . '/GalleryUtilities.class');
+	require_once(dirname(__FILE__) . '/GalleryUtilities.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
 	if (empty($hasSession)) {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
@@ -323,7 +324,7 @@ class GalleryEmbed {
 		&& !empty($args['hashedpassword'])) {
 	    $user->setHashedPassword($args['hashedpassword']);
 	} elseif ($create) {
-	    // Create a random password..
+	    /* Create a random password */
 	    $user->changePassword('G' . rand(100000,999999) . '2');
 	}
 
@@ -673,22 +674,23 @@ class GalleryEmbed {
 	$css = array();
 	$javascript = array();
 
-	/* only 1 title allowed */
+	/* Only one title allowed */
 	if (preg_match("|<title(?:\s[^>]*)?>(.*)</title>|Usi", $headhtml, $regs)) {
 	    $title = $regs[1];
 	}
 
-	/* more than one script section allowed */
-	if(preg_match_all("|<script(?:\s[^>]*)?(?:\ssrc=[\"\'].+[\"\'])?(?:\s[^>]*)?>.*</script>|Usi",
-			  $headhtml, $regs, PREG_PATTERN_ORDER)) {
+	/* More than one script section allowed */
+	if (preg_match_all(
+		"|<script(?:\s[^>]*)?(?:\ssrc=[\"\'].+[\"\'])?(?:\s[^>]*)?>.*</script>|Usi",
+		$headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[0] as $script) {
 		$javascript[] = $script;
 	    }
 	}
 
-	/* more than one style allowed */
-	if(preg_match_all("/<link .*\/>|<style(?:\s[^>]*)?>.*<\/style>/Usi",
-			  $headhtml, $regs, PREG_PATTERN_ORDER)) {
+	/* More than one style allowed */
+	if (preg_match_all("/<link .*\/>|<style(?:\s[^>]*)?>.*<\/style>/Usi",
+			   $headhtml, $regs, PREG_PATTERN_ORDER)) {
 	    foreach ($regs[0] as $style) {
 		$css[] = $style;
 	    }
@@ -701,13 +703,13 @@ class GalleryEmbed {
      * Get HTML for an image block
      *
      * @param array ('blocks' => string, 'show' => string, (optional)'heading' => int,
-     *                (optional)'itemId' => int)
+     *                (optional)'itemId' => int, (optional)'maxSize' => int)
      * 'blocks' is a pipe (|) separated list, of one or more possible blocks which are:
      * randomImage|recentImage|viewedImage|randomAlbum|recentAlbum|viewedAlbum|specificItem
      * dailyImage|weeklyImage|monthlyImage|dailyAlbum|weeklyAlbum|monthlyAlbum
      * 'show' is a pipe (|) separated list of one or more possible choices which are:
      * title|date|views|owner|heading|fullSize or just 'none'
-     * If you choose 'blocks' = 'specificItem', you got the specify 'itemId' too.
+     * If you choose 'blocks' => 'specificItem', you must specify 'itemId' too.
      * example: GalleryEmbed::getImageBlock(array('blocks' => 'randomImage',
      *                                            'show' => 'title|date'));
      * @return array object GalleryStatus
@@ -731,7 +733,7 @@ class GalleryEmbed {
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	    $template->setVariable('l10Domain', 'module_' . $moduleId);
 
-	    // generate the imageblock
+	    /* Generate the imageblock */
 	    GalleryCoreApi::requireOnce(
 		dirname(__FILE__) . '/../../imageblock/classes/ImageBlockHelper.class');
 	    list ($ret, $tpl) = ImageBlockHelper::loadImageBlocks($template, $params);
@@ -740,7 +742,7 @@ class GalleryEmbed {
 	    }
 
 	    if (!empty($tpl)) {
-		// render and get the imageblock html
+		/* Render and get the imageblock html */
 		list ($ret, $blockHtml) = $template->fetch(dirname(__FILE__) . '/../../../' . $tpl);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -752,20 +754,21 @@ class GalleryEmbed {
 
     /**
      * Add an externalId<->entityId map entry for existing G2/emApp users/groups
+     * example: GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');
      *
      * @param integer/string the user/group id in the embedded application
      * @param integer the entityId of the user/group in G2
      * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
      * @return object GalleryStatus
-     * example: GalleryEmbed::addExternalIdMapEntry($uid, $g2user->getId(), 'GalleryUser');
      * @static
      */
     function addExternalIdMapEntry($externalId, $entityId, $entityType) {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/ExternalIdMap.class');
 	$ret = ExternalIdMap::addMapEntry(array('externalId' => $externalId,
-						'entityType' => $entityType, 'entityId' => $entityId));
+						'entityType' => $entityType,
+						'entityId' => $entityId));
 	if ($ret->isError()) {
-	  return $ret->wrap(__FILE__, __LINE__);
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	return GalleryStatus::success();
     }
@@ -781,27 +784,30 @@ class GalleryEmbed {
      * @static
      */
     function getExternalIdMap($key) {
-        global $gallery;
-        /* Input validation */ 
-        if ($key != 'externalId' && $key != 'entityId') {
-	  return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
-        }
+	global $gallery;
+	/* Input validation */
+	if ($key != 'externalId' && $key != 'entityId') {
+	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
 
-        $query = 'SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
-		FROM [ExternalIdMap]';
-	list ($ret, $results) = $gallery->search($query, array());
+	$query = '
+	SELECT [ExternalIdMap::entityId], [ExternalIdMap::externalId], [ExternalIdMap::entityType]
+	FROM [ExternalIdMap]
+	';
+	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {
-	  return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$map = array();
 	while ($result = $results->nextResult()) {
-	  $entry = array('externalId' => $result[1], 'entityId' => $result[0], 'entityType' => $result[2]);
-	  if ($key == 'externalId') {
-	    $map[$result[1]] = $entry;
-	  } elseif ($key == 'entityId') {
-	    $map[$result[0]] = $entry;
-	  }
+	    $entry = array('externalId' => $result[1],
+			   'entityId' => $result[0], 'entityType' => $result[2]);
+	    if ($key == 'externalId') {
+		$map[$result[1]] = $entry;
+	    } else if ($key == 'entityId') {
+		$map[$result[0]] = $entry;
+	    }
 	}
 	return array(GalleryStatus::success(), $map);
     }
@@ -815,21 +821,23 @@ class GalleryEmbed {
      * @param integer/string the user/group id in the embedded application
      * @param string either 'GalleryUser' for a user mapping, 'GalleryGroup' for a group mapping
      * @return object GalleryStatus
-     * 
+     *
      * @static
      */
     function isExternalIdMapped($externalId, $entityType) {
-        global $gallery;
+	global $gallery;
 
-	$query = 'SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap] ' .
-		 'WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?';
+	$query = '
+	SELECT [ExternalIdMap::entityId] FROM [ExternalIdMap]
+	WHERE [ExternalIdMap::externalId] = ? AND [ExternalIdMap::entityType] = ?
+	';
 	list ($ret, $results) = $gallery->search($query, array($externalId, $entityType));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!($result = $results->nextResult())) {
 	    return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-					      "$externalId $entityType");
+					"$externalId $entityType");
 	}
 
 	return GalleryStatus::success();
