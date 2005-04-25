@@ -1,0 +1,72 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test index.php functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class IndexDotPhpTest extends GalleryTestCase {
+
+    function IndexDotPhpTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+    }
+
+    function tearDown() {
+	parent::tearDown();
+    }
+
+    /* Test if we redirect correctly to main.php */
+    function testHttpRedirect() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$url = $urlGenerator->getCurrentUrl();
+	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
+	$baseUrl = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
+	/* Request http://domain.com/path/  and for http://domain.com/path/index.php */
+	foreach(array($baseUrl, $baseUrl.'index.php', $baseUrl.'index.php?some=value&something=else') as $url) {
+	    /* Make the HTTP request */
+	    list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
+	    $this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
+	    $this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
+	    if (isset($headers['Set-Cookie'])) {
+		/* Check if the G2 cookie is present */
+		if (strstr($headers['Set-Cookie'], SESSION_ID_PARAMETER) === false) {
+		    $this->assert(false, 'G2 cookie not present in HTTP headers');
+		}
+	    }
+	}
+    }
+}
+?>

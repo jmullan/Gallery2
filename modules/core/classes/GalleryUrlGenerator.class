@@ -177,6 +177,25 @@ class GalleryUrlGenerator {
 			    '$1', $url);
     }
 
+    /**
+     * Return the path component of the current url
+     *
+     * @return string the current URL path component
+     * @static
+     */
+    function getCurrentUrlPath() {
+	if ($tmp = GalleryUtilities::getServerVar('REQUEST_URI')) {
+	    $path = GalleryUtilities::htmlEntityDecode($tmp);
+	} else if ($tmp = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
+	    $path = $tmp;
+	    if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) != $path) {
+		$path .= $tmp;
+	    }
+	}
+
+	return $path;
+    }
+
     /*
      * ****************************************
      *              Object Methods
@@ -220,16 +239,8 @@ class GalleryUrlGenerator {
      */
     function getCurrentUrl() {
 	if (!isset($this->_currentUrl)) {
-	    if ($tmp = GalleryUtilities::getServerVar('REQUEST_URI')) {
-		$path = GalleryUtilities::htmlEntityDecode($tmp);
-	    } else if ($tmp = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
-		$path = $tmp;
-		if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) != $path) {
-		    $path .= $tmp;
-		}
-	    }
-
-	    $this->_currentUrl = GalleryUrlGenerator::makeUrl($path);
+	    $this->_currentUrl =
+		GalleryUrlGenerator::makeUrl(GalleryUrlGenerator::getCurrentUrlPath());
 	}
 
 	return $this->_currentUrl;

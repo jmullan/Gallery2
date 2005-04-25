@@ -24,5 +24,17 @@
  * @package Gallery
  * @author Bharat Mediratta <bharat@menalto.com>
  */
-header('Location: main.php');
+
+/*
+ * This script will just redirect to main.php. But the Location header requires an absolute url to
+ * conform with HTTP/1.1
+ */
+
+include(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class'); 
+
+/* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */
+$path = preg_replace('|index\.php.*|', '', GalleryUrlGenerator::getCurrentUrlPath());
+
+header('Location: ' . GalleryUrlGenerator::makeUrl($path) . 'main.php');
+
 ?>
