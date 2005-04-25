@@ -235,8 +235,11 @@ class GalleryTemplateAdapter {
 
 	unset($params['item']);
 	unset($params['image']);
-	$fallback = isset($params['fallback']) ? $params['fallback'] : null;
-	unset($params['fallback']);
+	if (isset($params['fallback'])) {
+	    $fallback = $params['fallback'];
+	} else {
+	    $fallback = $params['fallback'] = null;
+	}
 
 	if ($entity->getId() == $item->getId()) {
 	    $html = $item->render('HTML', $params);

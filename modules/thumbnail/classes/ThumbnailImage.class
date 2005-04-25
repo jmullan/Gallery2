@@ -320,6 +320,7 @@ class ThumbnailImage_core extends GalleryChildEntity {
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
+	    unset($params['fallback']);
 	    foreach ($params as $attr => $value) {
 		$html .= " $attr=\"$value\"";
 	    }

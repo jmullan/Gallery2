@@ -396,6 +396,7 @@ class WatermarkImage_core extends GalleryEntity {
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
+	    unset($params['fallback']);
 	    foreach ($params as $attr => $value) {
 		$html .= " $attr=\"$value\"";
 	    }

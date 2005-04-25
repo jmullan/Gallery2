@@ -230,6 +230,7 @@ class GalleryPhotoItem_core extends GalleryDataItem {
 	    }
 
 	    $html = sprintf('<img src="%s"%s', $src, $sizeStr);
+	    unset($params['fallback']);
 	    foreach ($params as $attr => $value) {
 		$html .= " $attr=\"$value\"";
 	    }
