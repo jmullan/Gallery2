@@ -18,6 +18,9 @@
     <h2 class="giSuccess">
       {g->text text="Your recovery request has been sent!"}
     </h2>
+    <h2> 
+      {g->text text="Note that if the account does not have an email address, you may not receive the email and you should contact your system administrator for help."}
+    </h2>
   </div>
   {/if}
 
@@ -33,16 +36,6 @@
   {if isset($form.error.userName.missing)}
   <div class="giError">
     {g->text text="You must enter a username"}
-  </div>
-  {/if}
-  {if isset($form.error.email.missing)}
-  <div class="giError">
-    {g->text text="Your user account has no email address assigned to it.  Please contact your Gallery administrator to retrieve your password."}
-  </div>
-  {/if}
-  {if isset($form.error.request.tooSoon)}
-  <div class="giError">
-    {g->text text="Your last request was less than 20 minutes ago.  Please wait at least 20 minutes between requests."}
   </div>
   {/if}
 </div>

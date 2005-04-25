@@ -118,6 +118,7 @@ class UserRecoverPasswordController extends GalleryController {
 	     * Still no errors?  Check the DB for a previous request and then 
 	     * update, reject or add based on the results.
 	     */
+	    $shouldSendEmail = false;
 	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
@@ -126,89 +127,96 @@ class UserRecoverPasswordController extends GalleryController {
 
 		if (isset($user) && $user->getEmail() != '') {
 		    /* Generate a unique auth string based on userName, time of request and IP */
-		    $authString = $phpVm->md5($user->getUserName() . time() . 
-					      GalleryUtilities::getRemoteHostAddress());
-
+		    $authString = $phpVm->md5(
+			$user->getUserName() . time() . GalleryUtilities::getRemoteHostAddress());
+		    
 		    /* Generate the request expiration: Now + 7 Days */
-		     $requestExpires = mktime(date('G'), date('i'), date('s'), 
-					      date('m'), date('d')+7, date('Y'));
-
+		    $requestExpires = mktime(date('G'), date('i'), date('s'), 
+					     date('m'), date('d')+7, date('Y'));
+		    
 		    /*
 		     * Check the database to see if a previous request.
 		     * If a request exists, check the timestamp to see if a new
 		     * request can be generated, or if they will be denied
 		     * because the window is too small.
 		     */
-		    if ($lastRequest = UserRecoverPasswordHelper_simple::getRequestExpires(
-			    $user->getUserName(), null)) {
-			if (!empty($lastRequest) && ($lastRequest + (20*60)) > time()) {
-			    /* 
-			     * This request was made less than 20 minutes ago
-			     * refuse the request to prevent spam / abuse
-			     */
-			    $error[] = 'form[error][request][tooSoon]';
-			}
-			$ret = GalleryRecoverPasswordMap::updateMapEntry(
+		    list ($ret, $lastRequest) = UserRecoverPasswordHelper_simple::getRequestExpires(
+			$user->getUserName(), null);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		    
+		    /* 
+		     * This request was made less than 20 minutes ago.  Don't update the auth
+		     * string.  We'll silently succeed to thwart phishing attempts.
+		     */
+		    if (!empty($lastRequest)) {
+			if (($lastRequest + (20 * 60)) < time()) {
+			    $ret = GalleryRecoverPasswordMap::updateMapEntry(
 				array('userName' => $user->getUserName()), 
-				      array('authString' => $authString, 
-					    'requestExpires' => $requestExpires));
+				array('authString' => $authString,
+				      'requestExpires' => $requestExpires));
+			}
 		    } else {
 			/* 
 			 * Add the map entry before sending email to the user -
-			 * we don't want to send them mail if the data never gets into the DB
+			 * We don't want to send them mail if the data never gets into the DB
 			 */
 			$ret = GalleryRecoverPasswordMap::addMapEntry(
-				    array('userName' => $form['userName'],
-					  'authString' => $authString,
-					  'requestExpires' => $requestExpires));
+			    array('userName' => $form['userName'],
+				  'authString' => $authString,
+				  'requestExpires' => $requestExpires));
 			if ($ret->isError()) {
-			    return array($ret, null);
-			}			
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			$shouldSendEmail = true;
 		    }
 		} else if (isset($user) && $user->getEmail() == '')  {
-		    /* Username is valid, but the user has no email address */
-		    $error[] = 'form[error][email][missing]';
+		    /* Silently succeed; we don't reward phishing attempts */
 		} else if ($user === null) {
-		    /* Invalid userName */
-		    $error[] = 'form[error][userName][invalid]';
+		    /* Silently succeed; we don't reward phishing attempts */
 		}
 		
 		if (empty($error)) {
 		    /* Set the recovered info flag */
 		    $status['requestSent'] = 1;
 
-		    /* Generate baseUrl and recoverUrl for the email template */
-		    $generator =& $gallery->getUrlGenerator();
-		    $baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
-		    $recoverUrl = str_replace('&amp;', '&', $generator->generateUrl(
-			 array('view' => 'core:UserAdmin',
-			       'subView' => 'core:UserRecoverPasswordConfirm',
-			       'userName' => $user->getUserName(),
-			       'authString' => $authString )));
-
-		    /* email template data */
-		    $tplData = array('name' => $user->getfullName(),
-				     'baseUrl' => $baseUrl,
-				     'ip' => GalleryUtilities::getRemoteHostAddress(),
-				     'date' => date('r'),
-				     'userName' => $user->getUserName(),
-				     'recoverUrl' => $recoverUrl,
-				    );
-
-		    /* Load core for translation */
-		    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    /* Send the user email based on our confirmation template */
-		    $ret = GalleryCoreApi::sendTemplatedEmail(
+		    if ($shouldSendEmail) {
+			/* Generate baseUrl and recoverUrl for the email template */
+			$generator =& $gallery->getUrlGenerator();
+			$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
+			$recoverUrl = str_replace(
+			    '&amp;', '&',
+			    $generator->generateUrl(
+				array('view' => 'core:UserAdmin',
+				      'subView' => 'core:UserRecoverPasswordConfirm',
+				      'userName' => $user->getUserName(),
+				      'authString' => $authString)));
+			
+			/* email template data */
+			$tplData = array('name' => $user->getfullName(),
+					 'baseUrl' => $baseUrl,
+					 'ip' => GalleryUtilities::getRemoteHostAddress(),
+					 'date' => date('r'),
+					 'userName' => $user->getUserName(),
+					 'recoverUrl' => $recoverUrl,
+					 );
+			
+			/* Load core for translation */
+			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+			
+			/* Send the user email based on our confirmation template */
+			$ret = GalleryCoreApi::sendTemplatedEmail(
 			    'modules/core/templates/UserRecoverPasswordEmail.tpl',
 			    $tplData, '', $user->getEmail(), 
 			    $module->translate('Password Recovery'));
-		    if ($ret->isError()) {
-			return array($ret, null);
-		    }		    
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}		    
+		    }
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {

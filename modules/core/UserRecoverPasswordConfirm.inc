@@ -86,9 +86,7 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 		$error[] = 'form[error][password][mismatch]';
 	    }
 
-	    /*
-	     * No errors?  Check the DB for the request and then update the user's password
-	     */
+	    /* No errors?  Check the DB for the request and then update the user's password */
 	    if (empty($error)) {
 		list ($ret, $user) = GalleryCoreApi::fetchUserByUsername($form['userName']);
 		if ($ret->isError() && !($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
@@ -100,9 +98,14 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 		 * request can be generated, or if they will be denied
 		 * because the window is too small.
 		 */
-		if ($lastRequest = UserRecoverPasswordHelper_simple::getRequestExpires(
-			$form['userName'], $form['authString'])) {
-		    if (!empty($lastRequest) && $lastRequest < time()) {
+		list ($ret, $requestExpires) = UserRecoverPasswordHelper_simple::getRequestExpires(
+		    $form['userName'], $form['authString']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		if ($user && !empty($requestExpires)) {
+		    if ($requestExpires < time()) {
 			/* 
 			 * This request was made more than 7 days ago
 			 * purge it from the system and redirect to the request page
@@ -188,12 +191,23 @@ class UserRecoverPasswordConfirmView extends GalleryView {
 	    $form['formName'] = 'UserRecoverPasswordConfirm';
 	}
 
-	$UserRecoverPasswordConfirm = array();
+	list ($ret, $requestExpires) = UserRecoverPasswordHelper_simple::getRequestExpires(
+	    $form['userName'], $form['authString']);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
-	$template->setVariable('UserRecoverPasswordConfirm', $UserRecoverPasswordConfirm);
-	$template->setVariable('controller', 'core:UserRecoverPasswordConfirm');
-	return array(GalleryStatus::success(),
-		     array('body' => 'modules/core/templates/UserRecoverPasswordConfirm.tpl'));
+	if (empty($requestExpires)) {
+	    return array(GalleryStatus::success(),
+			 array('redirect' => array('view' => 'core:UserAdmin',
+						   'subView' => 'core:UserRecoverPassword')));
+	} else {
+	    $UserRecoverPasswordConfirm = array();
+	    $template->setVariable('UserRecoverPasswordConfirm', $UserRecoverPasswordConfirm);
+	    $template->setVariable('controller', 'core:UserRecoverPasswordConfirm');
+	    return array(GalleryStatus::success(),
+			 array('body' => 'modules/core/templates/UserRecoverPasswordConfirm.tpl'));
+	}
     }
 }
 ?>
