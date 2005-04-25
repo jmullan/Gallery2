@@ -47,15 +47,19 @@ class IndexDotPhpTest extends GalleryTestCase {
 	parent::tearDown();
     }
 
-    /* Test if we redirect correctly to main.php */
+    /**
+     * Test if we redirect correctly to main.php
+     */
     function testHttpRedirect() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$url = $urlGenerator->getCurrentUrl();
-	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
+	/* Strip off the /lib/tools/test/ part to get a valid G2 request uri */
 	$baseUrl = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
 	/* Request http://domain.com/path/  and for http://domain.com/path/index.php */
-	foreach(array($baseUrl, $baseUrl.'index.php', $baseUrl.'index.php?some=value&something=else') as $url) {
+	foreach(array($baseUrl,
+		      $baseUrl . 'index.php',
+		      $baseUrl . 'index.php?some=value&something=else') as $url) {
 	    /* Make the HTTP request */
 	    list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	    $this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
