@@ -1,105 +1,108 @@
-    <h1><?php print _("Install Other Modules") ?></h1>
+  <h1><?php print _("Install Other Modules") ?></h1>
 
-    <script type="text/javascript">
-      // <![CDATA[
-      function checkAll(newValue) {
-         for (var i = 0; i < document.forms[0].length; i++) {
-             var element = document.forms[0].elements[i];
-             if (element.type == 'checkbox' &&
-                   element.name.substr(0,6) == 'module' &&
-                   ! element.disabled) {
-                 element.checked = newValue;
-             }
-         }
-      }
-      // ]]>
-    </script>
+  <script type="text/javascript">
+    // <![CDATA[
+    function checkAll(newValue) {
+	for (var i = 0; i < document.forms[0].length; i++) {
+	    var element = document.forms[0].elements[i];
+	    if (element.type == 'checkbox' &&
+		element.name.substr(0,6) == 'module' && !element.disabled) {
+		element.checked = newValue;
+	    }
+	}
+    }
+    // ]]>
+  </script>
 
-    <p>
-      <?php print _("The following modules can be automatically installed and activated for you.  You should install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of your images.  On most systems, the automatic install will work properly for you.  However, in some cases it may fail.  You can always activate new modules or deactivate any of the ones you choose here on the Site Administration page, so any decision you make here is not permanent.") ?>
-    </p>
-    <p>
-      <?php print _("Some modules may fail to install automatically.  That's ok.  It typically means that they require some configuration, which you can do on the Site Adminstration page"); ?>
-    </p>
+  <p>
+    <?php print _("The following modules can be automatically installed and activated for you.  You should install at least one of the graphics toolkits otherwise Gallery can't make thumbnails out of your images.  On most systems, the automatic install will work properly for you.  However, in some cases it may fail.  You can always activate new modules or deactivate any of the ones you choose here on the Site Administration page, so any decision you make here is not permanent.") ?>
+  </p>
+  <p>
+    <?php print _("Some modules may fail to install automatically.  That's ok.  It typically means that they require some configuration, which you can do on the Site Adminstration page"); ?>
+  </p>
 
-    <?php if (!empty($templateData['groupedModules'])): ?>
+  <?php if (!empty($templateData['groupedModules'])): ?>
     <form method="post" action="">
       <table class="modules">
-        <tr style="background: #ccc;">
-          <th>
-            &nbsp;
-          </th>
-          <th>
-            <?php print _("Name") ?>
-          </th>
-          <th>
-            <?php print _("Version") ?>
-          </th>
-          <th>
-            <?php print _("Description") ?>
-          </th>
-        </tr>
-        <?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
+	<tr style="background: #ccc;">
+	  <th>
+	    &nbsp;
+	  </th>
+	  <th>
+	    <?php print _("Name") ?>
+	  </th>
+	  <th>
+	    <?php print _("Version") ?>
+	  </th>
+	  <th>
+	    <?php print _("Description") ?>
+	  </th>
+	</tr>
+	<?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
 	  <tr style="background:#ffff">
 	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
 	  </tr>
 	  <?php $counter = 0; ?>
-          <?php foreach ($modules as $id => $module): ?>
+	  <?php foreach ($modules as $id => $module): ?>
 	  <?php $isInstalled = $templateData['moduleInstalled'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background:#eee;"' ?>>
-            <td>
-              <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
-                <?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
-                  checked="checked"
-                <?php endif; ?>
-	        <?php if ($isInstalled): ?>
-	          disabled="disabled"
-	        <?php endif; ?>
-              />
-            </td>
-            <td class="modules">
+	    <td>
+	      <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
+		<?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
+		  checked="checked"
+		<?php endif; ?>
+		<?php if ($isInstalled): ?>
+		  disabled="disabled"
+		<?php endif; ?>
+	      />
+	    </td>
+	    <td class="modules">
 	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
 	      <label for="module_<?php print $id ?>">
 		<?php print $module->getName() ?>
 	      </label>
 	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
-            </td>
-            <td>
+	    </td>
+	    <td>
 	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getVersion() ?>
 	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
-            </td>
-            <td>
+	    </td>
+	    <td>
 	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getDescription() ?>
 	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
-            </td>
-          </tr>
+	    </td>
+	  </tr>
 	  <?php $counter++; ?>
 	  <?php endforeach; ?>
 	<?php endforeach; ?>
-        <tr style="background: #ccc;">
-          <td>
-            <input type="checkbox" onclick="checkAll(this.checked);" checked="checked"/>
-          </td>
-          <td colspan="3">
-            <?php print _("(un)check all") ?>
-            <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
-            <input type="hidden" name="activate" value="1"/>
-          </td>
-        </tr>
+	<?php if ($templateData['anyInstallable']): ?>
+	<tr style="background: #ccc;">
+	  <td>
+	    <input type="checkbox" onclick="checkAll(this.checked);" checked="checked"/>
+	  </td>
+	  <td colspan="3">
+	    <?php print _("(un)check all") ?>
+	    <input type="hidden" name="step" value="<?php print $currentStep->getStepNumber() ?>"/>
+	    <input type="hidden" name="activate" value="1"/>
+	  </td>
+	</tr>
+	<?php endif; ?>
       </table>
     </form>
 
+    <?php if ($templateData['anyInstallable']): ?>
     <div class="go">
       <span class="goToNext">
 	<a href="javascript:document.forms[0].submit();"><?php print _('Activate Selected Modules') ?></a>
       </span>
       <?php $nextStep = $stepNumber + 1 ?>
       <span class="goToNextL">
-        <a href="index.php?step=<?php print $nextStep?>">
-          <?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?>
-        </a>
+	<a href="index.php?step=<?php print $nextStep?>">
+	  <?php printf(_('Continue to Step %d Without Activating&raquo;'), $nextStep); ?>
+	</a>
       </span>
     </div>
     <?php endif; ?>
+  <?php endif; ?>

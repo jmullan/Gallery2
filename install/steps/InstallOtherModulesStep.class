@@ -42,10 +42,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 
-	/* We want to avoid using the cache */
-	$groupedModules = array();
-	$groupLabel = array();
-	$moduleInstalled = array();
+	$groupedModules = $groupLabel = $moduleInstalled = array();
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -129,12 +126,21 @@ class InstallOtherModulesStep extends InstallStep {
 	} else {
 	    $templateData['groupedModules'] =& $groupedModules;
 	    $templateData['groupLabel'] = $groupLabel;
-	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
 	    $templateData['moduleInstalled'] = $moduleInstalled;
+	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
 	}
-
-	/* This step is never truly complete */
-	$this->setComplete(false);
+	$templateData['anyInstallable'] = false;
+	if (empty($templateData['errors'])) {
+	    foreach ($moduleInstalled as $moduleId => $tmp) {
+		if (!$tmp) {
+		    $templateData['anyInstallable'] = true;
+		    break;
+		}
+	    }
+	    if (!$templateData['anyInstallable']) {
+		$this->setComplete(true);
+	    }
+	}
     }
 
     function isRedoable() {

@@ -19,18 +19,18 @@
     </p>
     <?php endif; ?>
 
+    <?php if ($templateData['anyInstallable']): ?>
     <div class="go">
       <span class="goToNext">
-        <a href="index.php?step=<?php print $currentStep->getStepNumber() ?>">
-          <?php print _('Activate More Modules'); ?>
-        </a>
+	<a href="index.php?step=<?php print $currentStep->getStepNumber() ?>">
+	  <?php print _('Activate More Modules'); ?>
+	</a>
       </span>
       <?php $nextStep = $stepNumber + 1 ?>
       <span class="goToNextL">
-        <a href="index.php?step=<?php print $nextStep ?>">
-          <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
-        </a>
+	<a href="index.php?step=<?php print $nextStep ?>">
+	  <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
+	</a>
       </span>
     </div>
-
-    
+    <?php endif; ?>
