@@ -160,12 +160,20 @@ class GalleryImmediateStatusView extends GalleryView {
 	} else {
 	    $timeRemaining = '';
 	}
+
+	/* it is possible to not have this function compiled into php */
+	$memoryUsage = (function_exists('memory_get_usage')) ? memory_get_usage() : 0;
+	
+	/* A disabled memory_limit is -1, 0 crashes php */
+	$memoryLimit = (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0;
 	
 	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	$statusTemplate->setVariable('l10Domain', 'modules_core');
 	$statusTemplate->setVariable('ImmediateStatusMessage',
 				     array('sectionTitle' => $title,
 					   'sectionDescription' => $description,
+					   'memoryUsage' => $memoryUsage,
+					   'memoryLimit' => $memoryLimit,
 					   'percentComplete' => $percentComplete,
 					   'timeRemaining' => $timeRemaining));
 	$ret = $statusTemplate->display('modules/core/templates/ImmediateStatusMessage.tpl');

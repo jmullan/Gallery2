@@ -5,4 +5,6 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <script type="text/javascript">updateStatus("{$ImmediateStatusMessage.sectionTitle}", "{$ImmediateStatusMessage.sectionDescription}", {$ImmediateStatusMessage.percentComplete}, "{$ImmediateStatusMessage.timeRemaining}")</script>
-
+{if $ImmediateStatusMessage.memoryUsage || $ImmediateStatusMessage.memoryLimit}
+<p style="background-color: white; color: black; position: absolute; top: 0px; right: 0px;">{$ImmediateStatusMessage.memoryUsage}/{$ImmediateStatusMessage.memoryLimit}</p>
+{/if}
