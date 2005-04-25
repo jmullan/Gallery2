@@ -48,10 +48,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 	if (isset($form['action']['save'])) {
 
 	    /* Validate the input data */
-	    if (!is_numeric($form['thumbnail']['size']) && !empty($form['thumbnail']['size'])) {
-		$error[] = 'form[error][thumbnail][size][invalid]';
-	    }
-
 	    for ($i = 0; $i < sizeof($form['resizes']); $i++) {
 		if (empty($form['resizes'][$i]['active'])) {
 		    continue;
@@ -69,90 +65,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    }
 
 	    if (empty($error)) {
-		/* Load the thumbnail */
-		list ($ret, $thumbTable) =
-		    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
-		}
-
-		if (isset($thumbTable[$item->getId()]) &&
-		    !empty($form['thumbnail']['size']) &&
-		    $form['thumbnail']['size'] > 0) {
-		    /* Change the thumbnail */
-		    $thumbnail = $thumbTable[$item->getId()];
-		    $thumbnail->setDerivativeOperations(
-			preg_replace('/((^|;)thumbnail)\|\d+/', '$1|' .
-				     $form['thumbnail']['size'],
-				     $thumbnail->getDerivativeOperations()));
-
-		    if ($thumbnail->isModified()) {
-			list ($ret, $lockId) =
-			    GalleryCoreApi::acquireWriteLock($thumbnail->getId());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-			$thumbnail->expireCache();
-			$ret = $thumbnail->save();
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-			$ret = GalleryCoreApi::releaseLocks(array($lockId));
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-		    }
-		} else if (!isset($thumbTable[$item->getId()]) &&
-			   !empty($form['thumbnail']['size']) &&
-			   $form['thumbnail']['size'] > 0) {
-		    list ($ret, $source) = GalleryCoreApi::fetchPreferredSource($item);
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-
-		    /* Create the thumbnail */
-		    list ($ret, $toolkit, $outputMimeType) =
-			GalleryCoreApi::getToolkitByOperation($source->getMimeType(), 'thumbnail');
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		    if (isset($toolkit)) {
-			list ($ret, $thumbnail) =
-			    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative',
-								     $source->getEntityType());
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-
-			if (!isset($thumbnail)) {
-			    return array(GalleryStatus::error(ERROR_MISSING_OBJECT,
-							      __FILE__, __LINE__), null, null);
-			}
-
-			$ret = $thumbnail->create($item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-
-			$thumbnail->setMimeType($outputMimeType);
-			$thumbnail->setDerivativeSourceId($source->getId());
-			$thumbnail->setDerivativeOperations('thumbnail|' .
-							    $form['thumbnail']['size']);
-
-			$ret = $thumbnail->save();
-			if ($ret->isError()) {
-			    return array($ret->wrap(__FILE__, __LINE__), null, null);
-			}
-		    }
-		} else if (isset($thumbTable[$item->getId()]) &&
-			   empty($form['thumbnail']['size'])) {
-		    /* Delete the thumbnail */
-		    $ret = GalleryCoreApi::deleteEntityById($thumbTable[$item->getId()]->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
-		}
-
 		/* Get and delete all current resizes */
 		list ($ret, $resizesTable) =
 		    GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
@@ -255,15 +167,9 @@ class ItemEditPhoto extends ItemEditPlugin {
     function loadTemplate(&$template, &$form, $item, $thumbnail) {
 	global $gallery;
 
-	$ItemEditPhoto = array();
-
-	list ($ret, $ItemEditPhoto['isAdmin']) = GalleryCoreApi::isUserInSiteAdminGroup();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
 	if ($form['formName'] != 'ItemEditPhoto') {
 	    /* First time around, reset the form */
+	    $form['formName'] = 'ItemEditPhoto';
 
 	    /* Load the resizes */
 	    list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
@@ -283,19 +189,6 @@ class ItemEditPhoto extends ItemEditPlugin {
 		    }
 		}
 	    }
-
-	    if (!empty($thumbnail)) {
-		if (preg_match('/thumbnail\|(\d+)/',
-			       $thumbnail->getDerivativeOperations(),
-			       $matches)) {
-		    $size = $matches[1];
-		}
-		$form['thumbnail']['size'] = $size;
-	    } else {
-		$form['thumbnail']['size'] = null;
-	    }
-
-	    $form['formName'] = 'ItemEditPhoto';
 	}
 
 	/* Tag on a few form blanks */
@@ -319,13 +212,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	    }
 	}
 
-	/* Figure out what options we can provide */
-	list ($ret, $toolkit) =
-	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'thumbnail');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$ItemEditPhoto['editSizes']['can']['createThumbnail'] = isset($toolkit);
+	$ItemEditPhoto = array();
 
 	/* Figure out what options we can provide */
 	list ($ret, $toolkit) =

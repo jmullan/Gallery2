@@ -5,39 +5,6 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  <h3> {g->text text="Thumbnail"} </h3>
-
-  <p class="giDescription">
-    {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value. Leave this field blank if you don't want a thumbnail."}
-  </p>
-
-  {if $ItemEditPhoto.editSizes.can.createThumbnail}
-    <input type="text" size="6"
-     name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
-  {else}
-    <b>
-    {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify a thumbnail."}
-    {if $ItemEditPhoto.isAdmin}
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
-	{g->text text="site admin"}
-      </a>
-    {/if}
-    </b>
-  {/if}
-
-  {if !empty($form.error.thumbnail.size.missing)}
-  <div class="giError">
-    {g->text text="You must enter a thumbnail size"}
-  </div>
-  {/if}
-  {if !empty($form.error.thumbnail.size.invalid)}
-  <div class="giError">
-    {g->text text="You must enter a number (greater than zero)"}
-  </div>
-  {/if}
-</div>
-
-<div class="gbBlock">
   <h3> {g->text text="Resized Photos"} </h3>
 
   <p class="giDescription">

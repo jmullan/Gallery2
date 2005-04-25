@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -38,16 +38,16 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $this->_item[$i]) = $this->_createRandomDataItem($this->_getRootId());
+	    list ($ret, $this->_item[$i]) =
+		$this->_createRandomDataItem($this->_getRootId(), 'test/file');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $this->_markForCleanup($this->_item[$i]);
 	}
 
 	for ($i = 0; $i < 2; $i++) {
@@ -56,34 +56,58 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $this->_markForCleanup($this->_album[$i]);
+	}
+
+	/* Register a dummy toolkit */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemEditItemPluginTestToolkit', 'ItemEditItemPluginTestToolkit',
+	    'modules/core/test/phpunit/ItemEditItemPluginTest.class', 'coreTest', null);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+
+	/* Register operations that we can perform on our mock data items */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditItemPluginTestToolkit', array('test/file'), 'convert-to-image/jpeg',
+	    array(), 'test-description', 'image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditItemPluginTestToolkit', array('test/file'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test')),
+	    'test-description', '');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $this->_thumbnail) =
+	    $this->_createDerivative($this->_item[0], $this->_item[0]->getId(),
+				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|200');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->_preferred = null;
     }
 
     function tearDown() {
-	global $gallery;
-
-	foreach ($this->_item as $item) {
-	    $ret = GalleryCoreApi::deleteEntityById($item->getId());
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = GalleryCoreApi::unregisterToolkit('ItemEditItemPluginTestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	foreach ($this->_album as $album) {
-	    $ret = GalleryCoreApi::deleteEntityById($album->getId());
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	
 	parent::tearDown();
     }
 
     function testUndo() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
@@ -93,17 +117,17 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testEditItem() {
-	global $gallery;
-
 	/* Use valid inputs */
-  	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
+	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $newPathComponent);
 	GalleryUtilities::putRequestVariable('form[title]', ' new title ');
 	GalleryUtilities::putRequestVariable('form[summary]', ' new summary ');
 	GalleryUtilities::putRequestVariable('form[keywords]', ' new keywords ');
 	GalleryUtilities::putRequestVariable('form[description]', ' new description ');
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_item[0]->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '400');
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_item[0], $this->_preferred);
@@ -119,12 +143,23 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	$this->assertEquals('new summary', $this->_item[0]->getSummary());
 	$this->assertEquals('new keywords', $this->_item[0]->getKeywords());
 	$this->assertEquals('new description', $this->_item[0]->getDescription());
+
+	/* Examine the thumbnail and make sure it lines up */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (isset($thumbTable[$this->_item[0]->getId()])) {
+	    $this->assertEquals('thumbnail|400',
+				$thumbTable[$this->_item[0]->getId()]->getDerivativeOperations());
+	} else {
+	    $this->assert(false, 'thumbnail missing');
+	}
     }
 
     function testInvalidPathComponent() {
-	global $gallery;
-
-	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', '#$%W$%W?$%W%/');
@@ -136,9 +171,6 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testMissingPathComponent() {
-	global $gallery;
-
-	/* Use valid inputs */
 	$newPathComponent = $this->_item[0]->getPathComponent() . rand();
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::removeRequestVariable('form[pathComponent]');
@@ -151,17 +183,19 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testPathCollisionItem() {
 	global $gallery;
-	
+
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[pathComponent]',
+					     $this->_item[1]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_item[0]->getSerialNumber());
 
-	/* Perform the request and verify that we succeeded (the controller works around the collision) */
+	/* Perform the request and verify success (the controller works around the collision) */
 	$results = $this->handleRequest($this->_item[0], $this->_preferred);
 	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
 				  $results);
@@ -171,7 +205,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -181,7 +215,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals($comparePath . '_001', $newPath);
 
 	/* Make sure that the file was moved */
@@ -190,15 +224,13 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testMissingRootTitle() {
-        global $gallery;
-
-        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$originalTitle = $rootAlbum->getTitle();
-	
+
 	/* Use invalid title (missing) */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', $rootAlbum->getPathComponent());
@@ -207,30 +239,27 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
 	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
 	GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
-	
+
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest($rootAlbum, $this->_preferred);
 	$this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
-                            $results);
-			    
-        /* Make sure the title was not changed */
+			    $results);
+
+	/* Make sure the title was not changed */
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals($originalTitle, $rootAlbum->getTitle());
     }
 
     function testRenameRoot() {
-        global $gallery;
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
-        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-
-	
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'floort');
@@ -253,53 +282,52 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testMissingRootTitle2() {
-        global $gallery;
-        
-        list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-	
+	list ($ret, $rootAlbum) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$originalTitle = $rootAlbum->getTitle();
 
-        /* Use invalid title */
-        GalleryUtilities::putRequestVariable('form[action][save]', 1);
-        GalleryUtilities::putRequestVariable('form[pathComponent]', $rootAlbum->getPathComponent());
-        GalleryUtilities::putRequestVariable('form[title]', ' ');
-        GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
-        GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
-        GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
-        GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
+	/* Use invalid title */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $rootAlbum->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', ' ');
+	GalleryUtilities::putRequestVariable('form[summary]', $rootAlbum->getSummary());
+	GalleryUtilities::putRequestVariable('form[keywords]', $rootAlbum->getKeywords());
+	GalleryUtilities::putRequestVariable('form[description]', $rootAlbum->getDescription());
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $rootAlbum->getSerialNumber());
 
 	list ($ret, $rootAlbum) = $rootAlbum->refresh();
-	
-        /* Perform the request and verify that we failed */
-        $results = $this->handleRequest($rootAlbum, $this->_preferred);
-        $this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
-                            $results);
 
-        /* Make sure the title was not changed */
-        list ($ret, $rootAlbum) = $rootAlbum->refresh();
-        if ($ret->isError()) {
-            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($rootAlbum, $this->_preferred);
+	$this->assertEquals(array(array('form[error][title][missingRootTitle]'), null),
+			    $results);
 
-        $this->assertEquals($originalTitle, $rootAlbum->getTitle());
+	/* Make sure the title was not changed */
+	list ($ret, $rootAlbum) = $rootAlbum->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals($originalTitle, $rootAlbum->getTitle());
     }
 
     function testPathCollisionAlbum() {
 	global $gallery;
-	
+
 	/* Get some stats on the file before we try moving */
 	$platform = $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_album[1]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[pathComponent]',
+					     $this->_album[1]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
@@ -315,7 +343,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -327,11 +355,10 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testInvalidSerialNumber() {
-	global $gallery;
-	
 	/* Use an invalid Serial */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[0]->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[pathComponent]',
+					     $this->_item[0]->getPathComponent());
 	GalleryUtilities::putRequestVariable('form[title]', 'new title');
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
@@ -343,14 +370,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testMoveItemWithInvalidSerialNumber() {
 	global $gallery;
-	
+
 	/* Get some stats on the file before we try moving */
 	$platform = $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_item[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Use an invalid Serial */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
@@ -367,7 +394,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $newPath) = $this->_item[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -380,14 +407,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
     function testMoveAlbumWithInvalidSerialNumber() {
 	global $gallery;
-	
+
 	/* Get some stats on the file before we try moving */
 	$platform = $gallery->getPlatform();
 	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Use an invalid Serial */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]', 'new' . rand(0,1000));
@@ -404,7 +431,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $newPath) = $this->_album[0]->fetchPath();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -416,21 +443,10 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     }
 
     function testEditOriginationTimestamp() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
-	GalleryUtilities::putRequestVariable('form[pathComponent]', $this->_item[0]->getPathComponent());
-	GalleryUtilities::putRequestVariable('form[title]', $this->_item[0]->getTitle());
-	GalleryUtilities::putRequestVariable('form[summary]', $this->_item[0]->getSummary());
-	GalleryUtilities::putRequestVariable('form[keywords]', $this->_item[0]->getKeywords());
-	GalleryUtilities::putRequestVariable('form[description]', $this->_item[0]->getDescription());
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_item[0]->getSerialNumber());
+	$this->_putItemRequestVariables($this->_item[0]);
 
-	for ($i = 0; $i < 3; $i++) {
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][active]', 1);
-	    GalleryUtilities::putRequestVariable('form[resizes][' . $i . '][size]', 100 * ($i+1));
-	}
 	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Month]', '08');
 	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Day]', '09');
 	GalleryUtilities::putRequestVariable('form[originationTimestampSplit][Date_Year]', '2003');
@@ -440,8 +456,205 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 
 	/* Perform the request and verify that we are ok */
 	$results = $this->handleRequest($this->_item[0], $this->_preferred);
-	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')), $results);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
 	$this->assertEquals(mktime(22,50,59,8,9,2003), $this->_item[0]->getOriginationTimestamp());
+    }
+
+    function testCreateThumbnail() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 200);
+	$this->_putItemRequestVariables($this->_item[1]);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item[1], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	/* Verify thumbnail */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[1]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (isset($thumbTable[$this->_item[1]->getId()])) {
+	    /* convert-to-image/jpeg is added to make thumbnail a viewable mime type */
+	    $this->assertEquals('thumbnail|200;convert-to-image/jpeg',
+				$thumbTable[$this->_item[1]->getId()]->getDerivativeOperations());
+	} else {
+	    $this->assert(false, 'We should have a thumbnail');
+	}
+    }
+
+    function testCreateAlbumHighlight() {
+	list ($ret, $item) = $this->_createRandomDataItem($this->_album[0]->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify we don't have a highlight */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($thumbTable), 'We shouldn\'t have a thumbnail');
+
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 200);
+	$this->_putItemRequestVariables($this->_album[0]);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_album[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	/* Verify thumbnail */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	if (isset($thumbTable[$this->_album[0]->getId()])) {
+	    $this->assertEquals('thumbnail|200',
+				$thumbTable[$this->_album[0]->getId()]->getDerivativeOperations());
+	} else {
+	    $this->assert(false, 'We should have a thumbnail');
+	}
+    }
+
+    function testRemoveThumbnail() {
+	/* Verify we have a thumbnail */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '');
+	$this->_putItemRequestVariables($this->_item[0]);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	/* Verify we have no more thumbnail */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
+		      'We should not have a thumbnail');
+    }
+
+    function testZeroThumbnail() {
+	/* Size zero should remove thumbnail, just like empty value */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbTable[$this->_item[0]->getId()]), 'We should have a thumbnail');
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '0');
+	$this->_putItemRequestVariables($this->_item[0]);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+			    $results);
+
+	/* Verify we have no more thumbnail */
+	list ($ret, $thumbTable) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item[0]->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($thumbTable[$this->_item[0]->getId()]),
+		      'We should not have a thumbnail');
+    }
+
+    function testInvalidThumbnailSize() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 'xyz');
+	$this->_putItemRequestVariables($this->_item[0]);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]'), null), $results);
+    }
+
+    function testNegativeThumbnailSize() {
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	GalleryUtilities::putRequestVariable('form[thumbnail][size]', '-100');
+	$this->_putItemRequestVariables($this->_item[0]);
+
+	/* Perform the request and verify that we failed */
+	$results = $this->handleRequest($this->_item[0], $this->_preferred);
+	$this->assertEquals(array(array('form[error][thumbnail][size][invalid]'), null), $results);
+    }
+
+
+    function _putItemRequestVariables(&$item) {
+	/* Put item attributes into request */
+	GalleryUtilities::putRequestVariable('form[pathComponent]', $item->getPathComponent());
+	GalleryUtilities::putRequestVariable('form[title]', $item->getTitle());
+	GalleryUtilities::putRequestVariable('form[summary]', $item->getSummary());
+	GalleryUtilities::putRequestVariable('form[keywords]', $item->getKeywords());
+	GalleryUtilities::putRequestVariable('form[description]', $item->getDescription());
+	GalleryUtilities::putRequestVariable('form[serialNumber]', $item->getSerialNumber());
+    }
+}
+
+/**
+ * Required by our test toolkit
+ */
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
+
+/**
+ * Test toolkit
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class ItemEditItemPluginTestToolkit extends GalleryToolkit {
+    /**
+     * @see GalleryToolkit::performOperation()
+     * Dummy operation
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	if ($sourceFilename != $destFilename) {
+	    $platform->copy($sourceFilename, $destFilename);
+	}
+
+	$fd = $platform->fopen($destFilename, 'a');
+	$platform->fwrite($fd, $operationName);
+	$platform->fclose($fd);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
+    }
+
+    /**
+     * @see GalleryToolkit::mergeOperations()
+     * Dummy operation
+     */
+    function mergeOperations($operation1, $args1, $operation2, $args2) {
+	/* Do something stupid, but predictable */
+	return array(GalleryStatus::success(),
+		     $operation1 . '+' . $operation2,
+		     array_merge($args1, array('+'), $args2));
     }
 }
 ?>

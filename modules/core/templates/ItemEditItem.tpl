@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  {if isset($ItemEditItem.can.changePathComponent)}
+  {if $ItemEditItem.can.changePathComponent}
   <div>
     <h2>
       {g->text text="Name"}
@@ -165,6 +165,36 @@
   </div>
   {/if}
 </div>
+
+{if $ItemEditItem.can.editThumbnail}
+<div class="gbBlock">
+  <h3> {g->text text="Thumbnail"} </h3>
+
+  <p class="giDescription">
+    {g->text text="Set the size of the thumbnail.  The largest side of the thumbnail will be no larger than this value. Leave this field blank if you don't want a thumbnail."}
+  </p>
+
+  {if $ItemEditItem.can.createThumbnail}
+    <input type="text" size="6"
+     name="{g->formVar var="form[thumbnail][size]"}" value="{$form.thumbnail.size}"/>
+  {else}
+    <b>
+    {g->text text="There are no graphics toolkits enabled that support this type of item, so we cannot create or modify a thumbnail."}
+    {if $user.isAdmin}
+      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+	{g->text text="site admin"}
+      </a>
+    {/if}
+    </b>
+  {/if}
+
+  {if !empty($form.error.thumbnail.size.invalid)}
+  <div class="giError">
+    {g->text text="You must enter a number (greater than zero)"}
+  </div>
+  {/if}
+</div>
+{/if}
 
 {* Include our extra ItemEditOptions *}
 {foreach from=$ItemEdit.options item=option}
