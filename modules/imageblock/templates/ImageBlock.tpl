@@ -46,7 +46,7 @@
       isset($ImageBlockSystemContent.show.owner)}
     <p class="giInfo">
       {if isset($ImageBlockSystemContent.show.date)}
-	{g->text text="Date:"} {g->date timestamp=$block.item.originationTimestamp format="%D"}
+	{g->text text="Date:"} {g->date timestamp=$block.item.originationTimestamp}
 	<br/>
       {/if}
 
