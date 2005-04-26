@@ -60,22 +60,23 @@ class AdminCoreController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    $canSave = true;
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
-	    $path = $form['uploadLocalServer']['newDir'];
-
 	    $platform = $gallery->getPlatform();
+	    $path = $form['uploadLocalServer']['newDir'];
+	    $realpath = $platform->realpath($path);
+
 	    if (empty($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
-	    } else if ($platform->isRestrictedByOpenBasedir($path)) {
+	    } else if ($platform->isRestrictedByOpenBasedir($realpath)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBasedir]';
-	    } else if (!$platform->is_readable($path)) {
+	    } else if (!$platform->is_readable($realpath)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
-	    } else if (!$platform->is_dir($path)) {
+	    } else if (!$platform->is_dir($realpath)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][notADirectory]';
 	    }
 
 	    if (empty($error)) {
-		if (!in_array($path, $localServerDirList)) {
-		    $localServerDirList[] = $path;
+		if (!in_array($realpath, $localServerDirList)) {
+		    $localServerDirList[] = $realpath;
 		}
 
 		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
@@ -93,7 +94,6 @@ class AdminCoreController extends GalleryController {
 		$status['addedDir'] = 1;
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminCore';
-	    } else {
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
 	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
@@ -143,7 +143,7 @@ class AdminCoreController extends GalleryController {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
 		    $ret = GalleryCoreApi::setPluginParameter(
-		        'module', 'core', $key, $form[$outer][$inner]);
+			'module', 'core', $key, $form[$outer][$inner]);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
