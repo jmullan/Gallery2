@@ -145,6 +145,10 @@ class UserAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    if (isset($results['redirect'])) {
+		return array(GalleryStatus::success(), $results);
+	    }
+
 	    $UserAdmin['viewBodyFile'] = $results['body'];
 	    $UserAdmin['viewL10Domain'] = $subView->getL10Domain();
 	}
