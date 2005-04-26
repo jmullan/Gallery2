@@ -62,7 +62,9 @@
 	{/if}
       </td><td>
 	<a href="{g->url arg1="controller=core:AdminMaintenance" arg2="form[action][runTask]=1"
-	 arg3="taskId=`$taskId`"}">{g->text text="run now"}</a>
+	 arg3="taskId=`$taskId`"}"{if isset($info.confirmRun)} onclick="return confirm('{g->text
+	 text=$info.title forJavascript=1}: {g->text text="Are you sure?" forJavascript=1}')"
+	 {/if}>{g->text text="run now"}</a>
       </td>
     </tr>
     <tr class="{$rowClass}" id="task-{$taskId}-description"

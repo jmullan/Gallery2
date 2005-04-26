@@ -654,6 +654,9 @@ class CoreModuleExtras {
 	case '0.9.11':
 	    /* Added GalleryRecoverPasswordMap */
 
+	case '0.9.12':
+	    /* Added ResetViewCountsTask */
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
@@ -1063,6 +1066,7 @@ class CoreModuleExtras {
 	$regs[] = array('MaintenanceTask', 'FlushTemplatesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'BuildDerivativesTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'ResetViewCountsTask', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its
