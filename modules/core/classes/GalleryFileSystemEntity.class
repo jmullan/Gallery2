@@ -98,8 +98,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	 * really practical to check the entire tree so just check the parent.
 	 */
 	if (!GalleryCoreApi::isReadLocked($parentId)) {
-	    return GalleryStatus::error(ERROR_LOCK_REQUIRED,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	}
 
 	list ($ret, $pathComponent) =
@@ -292,9 +291,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 	if (!empty($parentId)) {
 	    if (!GalleryCoreApi::isReadLocked($parentId) &&
 		    !GalleryCoreApi::isWriteLocked($parentId)) {
-		printf("<pre>%s</pre>", print_r($gallery->_lockSystem, 1));
-		return GalleryStatus::error(ERROR_LOCK_REQUIRED,
-					    __FILE__, __LINE__);
+		return GalleryStatus::error(ERROR_LOCK_REQUIRED, __FILE__, __LINE__);
 	    }
 	}
 
