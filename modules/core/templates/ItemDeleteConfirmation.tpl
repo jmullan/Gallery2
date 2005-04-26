@@ -9,5 +9,5 @@
 </div>
 
 <div class="gbBlock">
-  <h2> {g->text text="Item successfully deleted"} </h2>
+  <h2 class="giSuccess"> {g->text text="Item successfully deleted"} </h2>
 </div>
