@@ -40,9 +40,9 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('getSiteAdminViews');
+	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
 	$this->setRequiredModuleApi(array(0, 9));
     }
@@ -61,7 +61,7 @@ class ThumbnailModule extends GalleryModule {
 	if (!isset($currentVersion)) {
 	    $currentVersion = '0';
 	}
-	
+
 	switch ($currentVersion) {
 	case '0':
 	    /* Initial install */
@@ -72,7 +72,7 @@ class ThumbnailModule extends GalleryModule {
 		}
 	    }
 	    break;
-	    
+
 	case '0.8.1':
 	case '0.8.2':
 	    /*
@@ -111,6 +111,8 @@ class ThumbnailModule extends GalleryModule {
 						"Unable to create $thumbnailDir");
 		}
 	    }
+
+	case '0.9.2':
 
 	case 'end of upgrade path':
 	    /*
@@ -153,6 +155,13 @@ class ThumbnailModule extends GalleryModule {
 	}
 
 	return GalleryStatus::success();
+    }
+
+    /**
+     * @see GalleryModule::registerEventListeners()
+     */
+    function registerEventListeners() {
+	GalleryCoreApi::registerEventListener('GalleryEntity::delete', new ThumbnailModule());
     }
 
     /**
@@ -199,8 +208,10 @@ class ThumbnailModule extends GalleryModule {
 	$itemId = array();
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ThumbnailImage.class');
 	foreach (array(
-	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff', 'audio/midi', 'audio/basic', 'audio/x-ms-wma'),
-	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo', 'video/x-ms-asf', 'video/x-ms-wmv')
+	    'G2audio.jpg' => array('audio/mpeg', 'audio/x-wav', 'audio/x-aiff',
+				   'audio/midi', 'audio/basic', 'audio/x-ms-wma'),
+	    'G2video.jpg' => array('video/mpeg', 'video/quicktime', 'video/x-msvideo',
+				   'video/x-ms-asf', 'video/x-ms-wmv')
 	    ) as $mimeImage => $mimeList) {
 	    foreach ($mimeList as $mime) {
 		if (!isset($toolkitMime[$mime])) {
@@ -257,6 +268,36 @@ class ThumbnailModule extends GalleryModule {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Thumbnails'),
 				 'view' => 'thumbnail:ThumbnailSiteAdmin')));
+    }
+
+    /**
+     * Event handler for GalleryEntity::delete event.
+     * Remove custom ThumbnailImage if the thumbnail itself is deleted.
+     *
+     * @see GalleryEventListener::handleEvent
+     */
+    function handleEvent($event) {
+	$entity = $event->getEntity();
+	if (GalleryUtilities::isA($entity, 'GalleryDerivativeImage') &&
+		$entity->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL &&
+		$entity->getDerivativeSourceId() != $entity->getParentId()) {
+	    list ($ret, $source) =
+		GalleryCoreApi::loadEntitiesById($entity->getDerivativeSourceId());
+	    if ($ret->isError()) {
+		if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    /* Already gone.. ok! */
+		    return array(GalleryStatus::success(), null);
+		}
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (GalleryUtilities::isA($source, 'ThumbnailImage')) {
+		$ret = GalleryCoreApi::deleteEntityById($source->getId());
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	}
+	return array(GalleryStatus::success(), null);
     }
 }
 ?>

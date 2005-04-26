@@ -115,6 +115,51 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	$this->assertEquals(array(), $warning);
     }
 
+    function testAddRemoveThumbnail() {
+	/* Add custom thumbnail to item with no thumbnail.. */
+	$form = array('name' => array(1 => 'test.jpg'),
+		      'type' => array(1 => 'image/jpeg'),
+		      'tmp_name' => array(1 =>
+			    dirname(__FILE__) . '/../../../core/test/data/test1.jpg'));
+
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(isset($thumbnailImage), 'thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array($this->_item->getId()), array_keys($thumbnails), 'derivative');
+	$thumbnail = array_shift($thumbnails);
+	$this->assertEquals($thumbnailImage->getId(),
+			    $thumbnail->getDerivativeSourceId(), 'source');
+
+	/* Remove custom thumbnail.. */
+	$form = array('CustomThumbnailOption' => array('delete' => '1'));
+	$result = $this->_handleRequestAfterEdit($form, $this->_item);
+	$this->assertEquals(array(array(), array()), $result);
+
+	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!isset($thumbnailImage), 'removed thumbnailImage');
+
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $thumbnails, 'removed derivative');
+    }
+
     function testAddDeleteThumbnail() {
 	/* Add custom thumbnail to item with no thumbnail.. */
 	$form = array('name' => array(1 => 'test.jpg'),
@@ -138,25 +183,28 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	}
 	$this->assertEquals(array($this->_item->getId()), array_keys($thumbnails), 'derivative');
 	$thumbnail = array_shift($thumbnails);
-	$this->assertEquals($thumbnailImage->getId(), $thumbnail->getDerivativeSourceId(), 'source');
+	$this->assertEquals($thumbnailImage->getId(),
+			    $thumbnail->getDerivativeSourceId(), 'source');
 
-	/* Remove custom thumbnail.. */
-	$form = array('CustomThumbnailOption' => array('delete' => '1'));
-	$result = $this->_handleRequestAfterEdit($form, $this->_item);
-	$this->assertEquals(array(array(), array()), $result);
+	/* Delete thumbnail from item and ensure ThumbnailImage is deleted too */
+	$ret = GalleryCoreApi::deleteEntityById($thumbnail->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	list ($ret, $thumbnailImage) = ThumbnailHelper::fetchThumbnail($this->_item->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(!isset($thumbnailImage), 'removed thumbnailImage');
+	$this->assert(!isset($thumbnailImage), 'thumbnailImage should have been deleted');
 
-	list ($ret, $thumbnails) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_item->getId()));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	if (isset($thumbnailImage)) {
+	    /* In case test failed, delete ThumbnailImage */
+	    $ret = GalleryCoreApi::deleteEntityById($thumbnailImage->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
 	}
-	$this->assertEquals(array(), $thumbnails, 'removed derivative');
     }
 
     function testChangeRestoreThumbnail() {

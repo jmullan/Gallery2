@@ -297,6 +297,7 @@ class ThumbnailHelper {
 	}
 	$ret = $item->save();
 	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$ret = GalleryCoreApi::releaseLocks($lockId);
@@ -376,6 +377,9 @@ class ThumbnailHelper {
 	$derivative->setMimeType('image/jpeg');
 	$ret = $derivative->save();
 	if ($ret->isError()) {
+	    if (isset($lockId)) {
+		GalleryCoreApi::releaseLocks($lockId);
+	    }
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (isset($lockId)) {
