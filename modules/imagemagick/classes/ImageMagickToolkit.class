@@ -102,9 +102,20 @@ class ImageMagickToolkit extends GalleryToolkit {
 	}
 
 	/* Use context look-ahead to see if we can queue up parameters to use later.. */
-	$queueIt = in_array($operationName, $convertOps)
-	    && isset($context['next.toolkit']) && $context['next.toolkit'] == $this
-	    && in_array($context['next.operation'], $convertOps);
+	$queueIt = in_array($operationName, $convertOps) &&
+	    isset($context['next.toolkit']) && $context['next.toolkit'] == $this &&
+	    in_array($context['next.operation'], $convertOps);
+
+	/*
+	 * Some versions of ImageMagick (6.1.6) are broken if you try to do a -crop followed
+	 * by a -geometry, so if we look ahead and see a -geometry and we have a -crop in our
+	 * queue, then we can't queue the geometry.
+	 */
+	if ($queueIt && 
+	    in_array($context['next.operation'], array('thumbnail', 'scale', 'resize')) &&
+	    ($operationName == 'crop' || in_array('-crop', $transform))) {
+	    $queueIt = false;
+	}
 
 	if (!isset($width) &&
 		($queueIt || in_array($operationName, array('thumbnail', 'crop', 'composite')))) {
