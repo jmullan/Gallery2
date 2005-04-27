@@ -114,10 +114,21 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	/* For translation */
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
 	$this->_noWarnings = array(array());
 	$this->_noErrors = array();
-	$this->_expectWarnings = array(array('WARNING: Cannot resize mime type image/unknown',
-					     'WARNING: Cannot compress mime type image/unknown'));
+	
+	$this->_expectWarnings = array(array(
+	    $module->translate(array('text' => 'WARNING: Cannot resize mime type %s',
+				     'arg1' => $this->_itemsUnknown[0]->getMimeType())),
+	    $module->translate(array('text' => 'WARNING: Cannot compress mime type %s',
+				     'arg1' => $this->_itemsUnknown[0]->getMimeType()))));
 	$this->_expectResize = array('scale');
 	$this->_expectCompress = array('compress');
     }
@@ -684,6 +695,8 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    }
 	}
 
+	$singleExpectedWarning = $this->_expectWarnings[0];
+	
 	$totalTestItems = 3;
 	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_itemsUnknown[$j]) =
@@ -695,8 +708,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    $this->_expectWarnings[] = array('WARNING: Cannot resize mime type image/unknown',
-					     'WARNING: Cannot compress mime type image/unknown');
+	    $this->_expectWarnings[] = $singleExpectedWarning;
 	}
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
