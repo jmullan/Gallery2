@@ -18,7 +18,6 @@
   {foreach from=$CommentItemDetails.comments item=comment}
     {assign var="userId" value=$comment.commenterId}
     {assign var="user" value=$CommentItemDetails.commenters.$userId}
-    {capture name="date"}{g->date timestamp=$comment.date format="%e-%b-%Y %H:%M"}{/capture}
     {include file="gallery:modules/comment/templates/Comment.tpl" user=$user comment=$comment
      can=$CommentItemDetails.can item=$CommentItemDetails.item truncate=256}
   {/foreach}
