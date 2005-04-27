@@ -169,11 +169,8 @@ class GalleryTemplateAdapter {
      * @return string a URL
      */
     function date($params, &$smarty) {
-	if (empty($params['format'])) {
-	    $params['format'] = '%x';
-	}
-
-	return strftime($params['format'], $params['timestamp']);
+	return strftime(!empty($params['format']) ? $params['format'] : '%x',
+			!empty($params['timestamp']) ? $params['timestamp'] : time());
     }
 
     /**
