@@ -107,6 +107,7 @@ function GalleryInitFirstPass($params=array()) {
     /* Initialize our session */
     if (!isset($params['noDatabase'])) {
 	if (isset($params['gallerySessionId'])) {
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/modules/core/classes/GallerySession.class');
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $params['gallerySessionId']);
 	}
 	$ret = $gallery->initSession();
