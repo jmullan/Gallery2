@@ -1368,6 +1368,9 @@ class GalleryUtilities {
      * This function does it exactly the other way around, to a) fix our cookie/login problems and
      * to b) conform with the RFC.
      *
+     * Fixes also another PHP cookie bug. PHP doesn't expect the cookie header to have
+     * quoted-strings, but they are perfectly legal according to RFC 2965.
+     *
      * This function reevaluates the HTTP Cookie header and populates $_COOKIE with the correct
      * cookies. We fix only non-array and non '[', ']' containing cookies for simplicity. To fix
      * our login problem, we'd have to fix only the GALLERYSID cookie anyway.
@@ -1381,65 +1384,69 @@ class GalleryUtilities {
 	    $fixed = true;
 	    if (isset($_SERVER['HTTP_COOKIE']) && !empty($_SERVER['HTTP_COOKIE'])) {
 		/*
-		 * Get rid of less specific cookies if multiple cookies with the same NAME
-		 * are present. Do this by going from left/first cookie to right/last cookie.
-		 * Use the strtok (tokenizer). Tokenize by separators comma and semicolon.
+		 * Array to keep track of fixed cookies to not make the same mistake as php, i.e.
+		 * don't assign values to cookies that were already fixed / set before. 
 		 */
 		$fixedCookies = array();
-		$tok = strtok($_SERVER['HTTP_COOKIE'], ',;');
-		$first = true;
-		while ($first || $tok = strtok(',;')) {
-		    $first = false;
+		/* Check if the Cookie header contains quoted-strings */
+		if (strstr($_SERVER['HTTP_COOKIE'], '"') === false) {
 		    /*
-		     * Split NAME [=VALUE], value is optional for all attributes
-		     * but the cookie name
+		     * Use fast method, no quoted-strings in the header.
+		     * Get rid of less specific cookies if multiple cookies with the same NAME
+		     * are present. Do this by going from left/first cookie to right/last cookie.
 		     */
-		    if (($pos = strpos($tok, '=')) !== false) {
-			$val = substr($tok, $pos+1);
-			$key = substr($tok, 0, $pos);
-		    } else {
-			/* No cookie name=value attr, we can ignore it */
-			continue;
+		    $tok = strtok($_SERVER['HTTP_COOKIE'], ',;');
+		    while ($tok) {
+			GalleryUtilities::_registerCookieAttr($tok, $fixedCookies);
+			$tok = strtok(',;');
 		    }
-		    /* Urldecode header data */
-		    $key = trim(urldecode($key));
-		    /* Don't accept zero length key */
-		    if (($len = strlen($key)) == 0) {
-			continue;
-		    }
-		    /* Don't fix cookies with '[', ']' or any array-cookies (for simplicity) */
-		    $pos = strchr($key, '[');
-		    if (strchr($key, '[') !== false || strchr($key, ']') !== false) {
-			continue;
-		    }
-		    /* Make it a binary safe variable name */
-		    for ($i = 0; $i < $len; $i++) {
-			if ($key{$i} == ' ' || $key{$i} == '.') {
-			    $key{$i} = '_';
-			} 
-		    }
+		} else {
 		    /*
-		     * Don't register non-NAME attributes like domain, path, ... which are all
-		     * starting with a dollar sign
+		     * We can't just tokenize the Cookie header string because there are
+		     * quoted-strings and delimiters in quoted-string should be handled as values
+		     * and not as delimiters.
+		     * Thus, we have to parse it character by character.
 		     */
-		    if (strpos($key, '$') === 0) {
-			continue;
+		    $quotedStringOpen = false;
+		    $string = $_SERVER['HTTP_COOKIE'];
+		    $len = strlen($string);
+		    $i = 0;
+		    $lastPos = 0;
+		    while ($i < $len) {
+			switch ($string{$i}) {
+			    /* the two attr-pair separators */
+			case ',':
+			case ';':
+			    if ($quotedStringOpen) {
+				/* Ignore separators within quoted-strings */
+			    } else {
+				/* else, this is an attr[=value] pair */
+				GalleryUtilities::_registerCookieAttr(substr($string, $lastPos,
+									     $i - $lastPos),
+								      $fixedCookies);
+				$lastPos = $i+1; /* next attr starts at next char */
+				
+			    }
+			    break;
+			case '"':
+			    $quotedStringOpen = !$quotedStringOpen;
+			    break;
+			case '\\':
+			    /* escape the next character = jump over it */
+			    $i++;
+			    break;
+			}
+			$i++;
 		    }
-		    /* Urldecode value */
-		    $val = trim(urldecode($val));
-		    /* Addslashes if magic_quotes_gpc is on */
-		    if (get_magic_quotes_gpc()) {
-			$key = addslashes($key);
-			$val = addslashes($val);
-		    }
-		    if (!isset($fixedCookies[$key])) {
-			$_COOKIE[$key] = $val;
-			$fixedCookies[$key] = true;
+		    /* register last attr in header, but only if the syntax is correct */
+		    if (!$quotedStringOpen) {
+			GalleryUtilities::_registerCookieAttr(substr($string, $lastPos),
+							      $fixedCookies);
 		    }
 		}
 	    }
 	}
-
+	
 	/*
 	 * To test methods that call fixCookieVars, we have to first unset the static $fixed
 	 * variable to enable testability of these functions.
@@ -1448,6 +1455,61 @@ class GalleryUtilities {
 	 */
 	if ($unset) {
 	    $fixed = null;
+	}
+    }
+
+
+    /**
+     * Register a Cookie Var safely
+     * @param string the cookie var attr, NAME [=VALUE]
+     * @param array (string already registered cookie name)
+     */
+    function _registerCookieAttr($attr, &$fixedCookies) {
+	/*
+	 * Split NAME [=VALUE], value is optional for all attributes
+	 * but the cookie name
+	 */
+	if (($pos = strpos($attr, '=')) !== false) {
+	    $val = substr($attr, $pos+1);
+	    $key = substr($attr, 0, $pos);
+	} else {
+	    /* No cookie name=value attr, we can ignore it */
+	    return;
+	}
+	/* Urldecode header data (php-style of name = attr handling) */
+	$key = trim(urldecode($key));
+	/* Don't accept zero length key */
+	if (($len = strlen($key)) == 0) {
+	    return;
+	}
+	/* Don't fix cookies with '[', ']' or any array-cookies (for simplicity) */
+	$pos = strchr($key, '[');
+	if (strchr($key, '[') !== false || strchr($key, ']') !== false) {
+	    return;
+	}
+	/* Make it a binary safe variable name */
+	for ($i = 0; $i < $len; $i++) {
+	    if ($key{$i} == ' ' || $key{$i} == '.') {
+		$key{$i} = '_';
+	    } 
+	}
+	/*
+	 * Don't register non-NAME attributes like domain, path, ... which are all
+	 * starting with a dollar sign according to RFC 2965.
+	 */
+	if (strpos($key, '$') === 0) {
+	    return;
+	}
+	/* Urldecode value */
+	$val = trim(urldecode($val));
+	/* Addslashes if magic_quotes_gpc is on */
+	if (get_magic_quotes_gpc()) {
+	    $key = addslashes($key);
+	    $val = addslashes($val);
+	}
+	if (!isset($fixedCookies[$key])) {
+	    $_COOKIE[$key] = $val;
+	    $fixedCookies[$key] = true;
 	}
     }
 }

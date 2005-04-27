@@ -872,37 +872,40 @@ class UtilitiesTest extends GalleryTestCase {
 	    $_COOKIE['foobar'] = array('foo' => 'bar');
 	    GalleryUtilities::fixCookieVars(true);
 	    $this->assertEquals(true, isset($_COOKIE[$key1]),
-			    'quoted-string cookie 1 not set for delimiter "' . $sep . '"');
+				'urlencoded quoted-string cookie 1 not set for delimiter "' .
+				$sep . '"');
 	    if (isset($_COOKIE[$key1])) {
 		$check = get_magic_quotes_gpc() ? addslashes($val1) : $val1;
 		$this->assertEquals($check, $_COOKIE[$key1],
-			    'quoted-string cookie 1 incorrect for delimiter "' . $sep . '"');
+				    'quoted-string cookie 1 incorrect for delimiter "' .
+				    $sep . '"');
 	    }
 	    $this->assertEquals(true, isset($_COOKIE[$key6]),
-			    'quoted-string cookie 6 not set for delimiter "' . $sep . '"');
+				'quoted-string cookie 6 not set for delimiter "' . $sep . '"');
 	    if (isset($_COOKIE[$key6])) {
 		$check = get_magic_quotes_gpc() ? addslashes($val6) : $val6;
 		$this->assertEquals($check, $_COOKIE[$key6],
-			    'quoted-string cookie 6 incorrect for delimiter "' . $sep . '"');
+				    'quoted-string cookie 6 incorrect for delimiter "' .
+				    $sep . '"');
 	    }
 	    $this->assertEquals(false, isset($_COOKIE[$key5]),
-			    'illegal name cookie 5  was set for delimiter "' . $sep . '"');
+				'illegal name cookie 5  was set for delimiter "' . $sep . '"');
 	    $this->assertEquals(true, isset($_COOKIE[$key4]),
-			    'token cookie 4 not set for delimiter "' . $sep . '"');
+				'token cookie 4 not set for delimiter "' . $sep . '"');
 	    if (isset($_COOKIE[$key4])) {
 		$this->assertEquals($val4, $_COOKIE[$key4],
-			    'token cookie 4 incorrect for delimiter "' . $sep . '"');
+				    'token cookie 4 incorrect for delimiter "' . $sep . '"');
 	    }
 	    $this->assertEquals(false, isset($_COOKIE[$key3]),
-			    'empty cookie value was set for delimiter "' . $sep . '"');
+				'empty cookie value was set for delimiter "' . $sep . '"');
 	    $this->assertEquals(false, isset($_COOKIE[$key2]),
-			    '$Version cookie was set for delimiter "' . $sep . '"');
+				'$Version cookie was set for delimiter "' . $sep . '"');
 	    /* Check if the array-cookie is still there */
 	    $this->assertEquals(true, isset($_COOKIE['foobar']),
-			    'array cookie not set for separator "' . $sep . '"');
+				'array cookie not set for separator "' . $sep . '"');
 	    if (isset($_COOKIE['foobar'])) {
 		$this->assertEquals(array('foo' => 'bar'), $_COOKIE['foobar'],
-			    'array cookie value changed for delimiter "' . $sep . '"');
+				    'array cookie value changed for delimiter "' . $sep . '"');
 	    }
 	}
 
@@ -932,6 +935,63 @@ class UtilitiesTest extends GalleryTestCase {
 	 */
 	$this->assertEquals(empty($this->_originalCookie), empty($this->_originalServerHttpCookie),
 			    'HTTP_COOKIE not set although $_COOKIE is nonempty!');
+
+	/* Check for quoted-string cookies */
+	$key1 = 'foo1';
+	$val1 = '" sdsd , wsdsds ;  wewew"';
+	$key2 = '$Version';
+	$val2 = '1';
+	$key3 = 'foo2';
+	$key4 = 'foo4';
+	$val4 = 'bar';
+	$key5 = 'dontfix[key';
+	$val5 = 'bar2';
+	$key6 = 'foo5';
+	$val6 = '"iui7 asa9a,. \\" a; \\asas, bla"';
+	/* Use one time commas as delimiters, the other time semicolons */
+	foreach(array(',', ';') as $sep) {
+	    $_SERVER['HTTP_COOKIE'] = $key1 . '=' . $val1 . $sep . $key2 . '=' .
+		$val2 . $sep . $key3 .  $sep . $key4 . '=' . $val4
+		. $sep . $key5 . '=' . $val5 . $sep . $key6 . '= ' . $val6;
+	    $_COOKIE = array();
+	    $_COOKIE['foobar'] = array('foo' => 'bar');
+	    GalleryUtilities::fixCookieVars(true);
+	    $this->assertEquals(true, isset($_COOKIE[$key1]),
+				'true quoted-string cookie 1 not set for delimiter "' . $sep . '"');
+	    if (isset($_COOKIE[$key1])) {
+		$check = get_magic_quotes_gpc() ? addslashes($val1) : $val1;
+		$this->assertEquals($check, $_COOKIE[$key1],
+				    'true quoted-string cookie 1 incorrect for delimiter "' .
+				    $sep . '"');
+	    }
+	    $this->assertEquals(true, isset($_COOKIE[$key6]),
+				'true quoted-string cookie 6 not set for delimiter "' . $sep . '"');
+	    if (isset($_COOKIE[$key6])) {
+		$check = get_magic_quotes_gpc() ? addslashes($val6) : $val6;
+		$this->assertEquals($check, $_COOKIE[$key6],
+				    'true quoted-string cookie 6 incorrect for delimiter "' .
+				    $sep . '"');
+	    }
+	    $this->assertEquals(false, isset($_COOKIE[$key5]),
+				'qs: illegal name cookie 5  was set for delimiter "' . $sep . '"');
+	    $this->assertEquals(true, isset($_COOKIE[$key4]),
+				'qs: token cookie 4 not set for delimiter "' . $sep . '"');
+	    if (isset($_COOKIE[$key4])) {
+		$this->assertEquals($val4, $_COOKIE[$key4],
+				    'qs: token cookie 4 incorrect for delimiter "' . $sep . '"');
+	    }
+	    $this->assertEquals(false, isset($_COOKIE[$key3]),
+				'qs: empty cookie value was set for delimiter "' . $sep . '"');
+	    $this->assertEquals(false, isset($_COOKIE[$key2]),
+				'qs: $Version cookie was set for delimiter "' . $sep . '"');
+	    /* Check if the array-cookie is still there */
+	    $this->assertEquals(true, isset($_COOKIE['foobar']),
+				'qs: array cookie not set for separator "' . $sep . '"');
+	    if (isset($_COOKIE['foobar'])) {
+		$this->assertEquals(array('foo' => 'bar'), $_COOKIE['foobar'],
+				    'qs: array cookie value changed for delimiter "' . $sep . '"');
+	    }
+	}
     }
 }
 
