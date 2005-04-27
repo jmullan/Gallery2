@@ -195,6 +195,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->getUrlGenerator();
 	$this->_saveVars[] = $gallery->_config;
 	$this->_saveVars[] = $gallery->_phpVm;
+	$this->_saveVars[] = $gallery->getActiveUser();
 
 	$_GET = array();
 	$_POST = array();
@@ -293,6 +294,7 @@ class GalleryTestCase extends TestCase {
 	$gallery->setUrlGenerator(array_shift($this->_saveVars));
 	$gallery->_config = array_shift($this->_saveVars);
 	$gallery->_phpVm = array_shift($this->_saveVars);
+	$gallery->setActiveUser(array_shift($this->_saveVars));
 
 	parent::tearDown();
 
