@@ -169,8 +169,9 @@ class GalleryTemplateAdapter {
      * @return string a URL
      */
     function date($params, &$smarty) {
-	return strftime(!empty($params['format']) ? $params['format'] : '%x',
-			!empty($params['timestamp']) ? $params['timestamp'] : time());
+	return GalleryCoreApi::convertToUtf8(
+	    strftime(!empty($params['format']) ? $params['format'] : '%x',
+		     !empty($params['timestamp']) ? $params['timestamp'] : time()));
     }
 
     /**
