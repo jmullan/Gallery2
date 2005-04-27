@@ -49,6 +49,7 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	$this->_exceptions['gd_info']['GdFunctionality.class'] = 1;
 	$this->_exceptions['gd_info']['GdToolkitHelper.class'] = 1;
 	$this->_exceptions['gd_info']['TestGdFunctionality.class'] = 1;
+	$this->_exceptions['memory_get_usage']['GalleryImmediateStatusView.class'] = 1;
     }
 
     /**
@@ -57,8 +58,8 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
     function shouldCheckFile($fileName) {
 	/* Skip files we don't care about */
 	if ($fileName == 'Php41IllegalFunctions.inc' ||
-	        substr($fileName, -10) == 'Test.class' ||
-	        substr($fileName, -4) == '.tpl') {
+		substr($fileName, -10) == 'Test.class' ||
+		substr($fileName, -4) == '.tpl') {
 	    return false;
 	}
 
@@ -90,7 +91,7 @@ class Php41CompatibilityTest extends CodeAuditTestCase {
 	for ($i = 0; $i < sizeof($lines); $i++) {
 	    if (preg_match_all($this->_illegalRegexp, $lines[$i], $matches)) {
 		foreach (array_unique($matches[0]) as $keyword) {
-		    // Remove trailing open paren matched by the pattern, and any spaces
+		    /* Remove trailing open paren matched by the pattern, and any spaces */
 		    $keyword = trim(substr($keyword, 0, -1));
 		    if (!isset($this->_exceptions[$keyword]) ||
 			!isset($this->_exceptions[$keyword][basename($fileName)])) {
