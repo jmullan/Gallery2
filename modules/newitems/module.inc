@@ -134,13 +134,6 @@ class NewItemsModule extends GalleryModule {
      * @see GalleryModule::getItemSummaries()
      */
     function getItemSummaries($items) {
-	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$newImage = $urlGenerator->generateUrl(
-				   array('href' => 'modules/newitems/images/new.gif'), false);
-	$updatedImage = $urlGenerator->generateUrl(
-				       array('href' => 'modules/newitems/images/updated.gif'), false);
-
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'newitems');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -148,19 +141,18 @@ class NewItemsModule extends GalleryModule {
 	$newTime = time() - $param['days.new'] * 86400;
 	$updatedTime = time() - $param['days.updated'] * 86400;
 
-	$newAltString = $this->translate('New');
-	$updatedAltString = $this->translate('Updated');
+	$newString = $this->translate('New');
+	$updatedString = $this->translate('Updated');
 
 	$summaries = array();
 	foreach ($items as $item) {
 	    if ($param['days.new'] > 0 && $item->getCreationTimestamp() > $newTime) {
-		$summaries[$item->getId()] = sprintf('<img src="%s" alt="%s"/>',
-						     $newImage,
-						     $newAltString);
-	    } else if ($param['days.updated'] > 0 && $item->getModificationTimestamp() > $updatedTime) {
-		$summaries[$item->getId()] = sprintf('<img src="%s" alt="%s"/>',
-						     $updatedImage,
-						     $updatedAltString);
+		$summaries[$item->getId()] = '<span class="gcBackground2 gcBorder2 giNew">'
+                    . $newString . '</span>';
+	    } else if ($param['days.updated'] > 0 && $item->getModificationTimestamp() > 
+            $updatedTime) {
+		$summaries[$item->getId()] = '<span class="gcBackground2 gcBorder2 giUpdated">'
+                    . $updatedString . '</span>';
 	    }
 	}
 	return array(GalleryStatus::success(), $summaries);
