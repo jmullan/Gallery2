@@ -656,6 +656,8 @@ class CoreModuleExtras {
 
 	case '0.9.12':
 	    /* Added ResetViewCountsTask */
+	case '0.9.13':
+	    /* Added SystemInfoTask */
 
 	case 'end of upgrade path':
 	    /*
@@ -1067,6 +1069,7 @@ class CoreModuleExtras {
 	$regs[] = array('MaintenanceTask', 'FlushDatabaseCacheTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'BuildDerivativesTask', 'class', null);
 	$regs[] = array('MaintenanceTask', 'ResetViewCountsTask', 'class', null);
+	$regs[] = array('MaintenanceTask', 'SystemInfoTask', 'class', null);
 
 	/*
 	 * Unlike other modules, the core module doesn't get deactivated so its
