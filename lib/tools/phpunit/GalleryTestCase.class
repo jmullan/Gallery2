@@ -129,7 +129,9 @@ class GalleryTestCase extends TestCase {
 
     function GalleryTestCase($methodName) {
 	$this->TestCase($methodName);
-	$this->_cleanup = array('entity' => array(), 'factoryModuleId' => array());
+	$this->_cleanup = array('entity' => array(), 
+				'factoryModuleId' => array(),
+				'pluginParameters' => array());
     }
 
     function &getEntityCounter() {
@@ -252,6 +254,19 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
 
+	foreach ($this->_cleanup['pluginParameters'] as $cleanupPlugin) {
+	    $pluginType = array_shift($cleanupPlugin);
+	    $pluginId = array_shift($cleanupPlugin);
+	    foreach (array_shift($cleanupPlugin) as $key => $pluginParam) {
+		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId, 
+							  $key, $pluginParam);
+		if ($ret->isError()) {
+		    /* Print the error, but continue to set the variables */
+		    print $ret->getAsHtml();
+		}
+	    }
+	}
+
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
@@ -307,6 +322,25 @@ class GalleryTestCase extends TestCase {
 
     function _markFactoryModuleForCleanup($moduleId) {
 	$this->_cleanup['factoryModuleId'][] = $moduleId;
+    }
+
+    /**
+     * Store plugin parameters to be restored in tearDown
+     *
+     * @param string pluginType
+     * @param string pluginId
+     * @return GalleryStatus
+     */
+    function _markPluginParametersForCleanup($pluginType, $pluginId) {
+	list($ret, $pluginParams) = 
+		GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	$this->_cleanup['pluginParameters'][] = array($pluginType, $pluginId, $pluginParams);
+	return GalleryStatus::success();
     }
 
     function assert($boolean, $message=null) {
