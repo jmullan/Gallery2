@@ -925,6 +925,13 @@ class UtilitiesTest extends GalleryTestCase {
 	GalleryUtilities::fixCookieVars(true);
 	$this->assertEquals($_COOKIE, $this->_originalCookie,
 			    'HTTP_COOKIE unset test: $_COOKIE was modified!');
+
+	/*
+	 * Check if $_SERVER['HTTP_COOKIE'] is set (more as a feedback once we know that there are
+	 * still login / auth problems)
+	 */
+	$this->assertEquals(empty($this->_originalCookie), empty($this->_originalServerHttpCookie),
+			    'HTTP_COOKIE not set although $_COOKIE is nonempty!');
     }
 }
 
