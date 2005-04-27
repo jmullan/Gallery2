@@ -85,7 +85,8 @@ class RewriteModule extends GalleryModule {
 	$baseUrlComponents = parse_url($urlGenerator->getCurrentUrlDir(true));
 	$baseUrl = $baseUrlComponents['path'];
 	if (preg_match('/\/(upgrade|install)\/index.php$/', $baseUrl)) {
-	    $baseUrl = dirname(dirname($baseUrl)) . '/';
+	    $baseUrl = dirname(dirname($baseUrl));
+	    $baseUrl .= $baseUrl != '/' ? '/' : ''; 
 	}
 	$ret = $this->setParameter('galleryLocation', $baseUrl);
 	if ($ret->isError()) {
