@@ -41,10 +41,10 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_param) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Create random album to test assignment */
@@ -54,20 +54,7 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-    }
-
-    function tearDown() {
-	foreach ($this->_param as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	if (isset($this->_parentAlbum)) {
-	    $this->_markForCleanup($this->_parentAlbum);
-	}
-	parent::tearDown();
+	$this->_markForCleanup($this->_parentAlbum);
     }
 
     function testUserAlbumSiteAdminControllerReset() {

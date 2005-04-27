@@ -47,6 +47,7 @@ class AlbumTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_parentAlbum);
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/AlbumTest.class';
@@ -73,34 +74,14 @@ class AlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	foreach (array('default.orderBy',
-		       'default.orderDirection',
-		       'default.layout',
-		       'default.theme',
-		       'default.newAlbumsUseDefaults') as $key) {
-	    list ($ret, $this->_save[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'core', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
 
     function tearDown() {
-	global $gallery;
-
-	foreach ($this->_save as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
-	    /* Ignore errors so that we do our best to restore the original values */
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Unregister toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('AlbumTestToolkit');
 	if ($ret->isError()) {

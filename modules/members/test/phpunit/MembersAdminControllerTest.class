@@ -41,25 +41,11 @@ class MembersAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_param) = GalleryCoreApi::fetchAllPluginParameters('module', 'members');
+	$ret = $this->_markPluginParametersForCleanup('module', 'members');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    }
-
-    function tearDown() {
-	$ret = array();
-	foreach ($this->_param as $key => $value) {
-	    $ret[] = GalleryCoreApi::setPluginParameter('module', 'members', $key, $value);
-	}
-	foreach ($ret as $return) {
-	    if ($return->isError()) {
-		print $return->getAsHtml();
-		return $this->failWithStatus($return->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testMembersAdminControllerReset() {

@@ -46,27 +46,17 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $this->_params) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
+
+	$this->_markForCleanup($this->_album);
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
     }
 
     function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'nokiaupload', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 	if (isset($this->_groupId)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_groupId);
 	    if ($ret->isError()) {

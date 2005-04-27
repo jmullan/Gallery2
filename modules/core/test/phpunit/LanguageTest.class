@@ -43,7 +43,6 @@ class LanguageTest extends GalleryControllerTestCase {
 	parent::setUp();
 	$session =& $gallery->getSession();
 	$this->_sessionLanguage = $session->get('core.language');
-	$this->_user = $gallery->getActiveUser();
 	list ($ret, $this->_siteLanguage) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.language');
 	if ($ret->isError()) {
@@ -54,7 +53,6 @@ class LanguageTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-	$gallery->setActiveUser($this->_user);
 	$gallery->setActiveLanguageCode($this->_sessionLanguage);
 	parent::tearDown();
     }

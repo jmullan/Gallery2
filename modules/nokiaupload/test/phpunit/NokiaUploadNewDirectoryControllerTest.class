@@ -47,11 +47,17 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_album);
+
 	list ($ret, $this->_group) = $this->_createRandomGroup();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_group);
+
 	$ret = GalleryCoreApi::addGroupPermission(
 			  $this->_album->getId(), $this->_group->getId(), 'core.addAlbumItem');
 	if ($ret->isError()) {
@@ -63,17 +69,19 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_user);
+
 	$this->_password = 'password';
 	if (!$this->_user->isCorrectPassword($this->_password)) {
 	    return $this->assert(false, "test user wasn't created with expected password");
 	}
 
-	list ($ret, $tmp) = GalleryCoreApi::fetchAllPluginParameters('module', 'nokiaupload');
+	$ret = $this->_markPluginParametersForCleanup('module', 'nokiaupload');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$this->_params = array_merge(array('id.mobileGroup' => '', 'id.uploadAlbum' => ''), $tmp);
 
 	$ret = GalleryCoreApi::setPluginParameter(
 			  'module', 'nokiaupload', 'id.mobileGroup', $this->_group->getId());
@@ -87,33 +95,6 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	global $gallery;
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'nokiaupload', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_group->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_user->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
     }
 
     function testNewDirectoryController() {

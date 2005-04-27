@@ -41,11 +41,10 @@ class AlbumSelectTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_param) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'albumselect');
+	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $this->_module) = GalleryCoreApi::loadPlugin('module', 'albumselect');
@@ -61,16 +60,6 @@ class AlbumSelectTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
-    }
-
-    function tearDown() {
-	foreach ($this->_param as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'albumselect', $key, $value);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testAlbumSelect() {

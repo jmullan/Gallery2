@@ -40,27 +40,18 @@ class CaptchaSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_savedKeys) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'captcha');
+	$ret = $this->_markPluginParametersForCleanup('module', 'captcha');
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Set our threshold to a known value */
 	$ret = GalleryCoreApi::setPluginParameter('module', 'captcha', 'failedAttemptThreshold', 1);
 	if ($ret->isError()) {
+	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_savedKeys as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'captcha', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testSave() {

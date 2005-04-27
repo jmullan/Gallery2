@@ -69,13 +69,13 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	list ($ret, $this->_params) =
-	    GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
+	
+	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
 	$ret = CustomFieldHelper::saveParameters(array(
 	    'common' => array(
 		array('field' => 'Catalog Id',
@@ -115,16 +115,6 @@ class CustomFieldItemEditPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testCustomFieldPlugin() {

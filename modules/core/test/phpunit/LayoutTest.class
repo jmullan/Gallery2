@@ -62,11 +62,10 @@ class LayoutTest extends GalleryTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_saveDefault) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.layout');
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->_savePlatform = $gallery->_platform;
@@ -79,14 +78,6 @@ class LayoutTest extends GalleryTestCase {
 
 	if (isset($this->_installed)) {
 	    $ret = GalleryCoreApi::removePlugin('layout', 'layouttest');
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	if (isset($this->_saveDefault)) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core',
-						      'default.layout', $this->_saveDefault);
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }

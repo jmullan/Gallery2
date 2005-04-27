@@ -43,30 +43,13 @@ class MailHelperTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_smtpFrom) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$this->templateFile = 'modules/core/test/data/MailHelperTest.tpl';
-    }
-
-    function tearDown() {
-
-	if (empty($this->_smtpFrom)) {
-	    $ret = GalleryCoreapi::removePluginParameter('module', 'core', 'smtp.from');
-	} else {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core',
-						      'smtp.from', $this->_smtpFrom);
-	}
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testSendTemplatedEmail() {

@@ -50,17 +50,22 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 
+		'image/test', array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_params) = GalleryCoreApi::fetchAllPluginParameters('module', 'customfield');
+	$ret = $this->_markPluginParametersForCleanup('module', 'customfield');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
+
 	$ret = CustomFieldHelper::saveParameters(array(
 	    'common' => array(
 		array('field' => 'Catalog Id',
@@ -85,22 +90,6 @@ class CustomFieldItemAdminControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'customfield', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testCustomFieldItemAdminController() {

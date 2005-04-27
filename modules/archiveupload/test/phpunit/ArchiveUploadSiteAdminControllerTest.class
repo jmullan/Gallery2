@@ -41,27 +41,13 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	foreach (array('unzipPath') as $key) {
-	    list ($ret, $this->_saveParameters[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'archiveupload', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'archiveupload');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	$gallery->_platform = new ArchiveUploadSiteAdminControllerTestPlatform();
-    }
-
-    function tearDown() {
-	foreach ($this->_saveParameters as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'archiveupload', $key, $value);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testSaveGoodPath() {

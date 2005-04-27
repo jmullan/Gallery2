@@ -41,10 +41,10 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_param) = GalleryCoreApi::fetchAllPluginParameters('module', 'useralbum');
+	$ret = $this->_markPluginParametersForCleanup('module', 'useralbum');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	list ($ret, $targetAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -92,17 +92,6 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_param as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testExistingAlbum() {

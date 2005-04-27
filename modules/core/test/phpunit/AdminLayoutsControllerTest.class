@@ -45,22 +45,11 @@ class AdminLayoutsControllerTest extends GalleryControllerTestCase {
 	$this->_testLayout =& AdminLayoutsControllerTestLayout::getSingleton();
 	$this->_testLayout->resetCalls();
 
-	list ($ret, $this->_params) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    if (strpos($key, 'default.') === 0) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
-	}
-	parent::tearDown();
     }
 
     function testInstall() {

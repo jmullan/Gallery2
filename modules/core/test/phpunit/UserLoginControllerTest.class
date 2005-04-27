@@ -53,7 +53,6 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_saveUser = $gallery->getActiveUser();
 	$this->_saveSession = $gallery->_session;
 
 	/* Disable all plugins by default. */
@@ -72,7 +71,6 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$gallery->setActiveUser($this->_saveUser);
 	$gallery->_session = $this->_saveSession;
 
 	parent::tearDown();

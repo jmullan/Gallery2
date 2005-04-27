@@ -40,41 +40,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	$this->_keys = array('permissions.directory',
-			     'permissions.file',
-			     'exec.expectedStatus',
-			     'default.orderBy',
-			     'default.orderDirection',
-			     'default.layout',
-			     'default.theme',
-			     'default.language',
-			     'session.lifetime',
-			     'session.inactivityTimeout',
-			     'uploadLocalServer.dirs',
-			     'misc.markup',
-			     'lock.system');
-
-	/* Save the original values */
-	foreach ($this->_keys as $key) {
-	    list ($ret, $this->_save[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'core', $key);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
-    }
-
-    function tearDown() {
-	/* Restore the original values */
-	foreach ($this->_keys as $key) {
-	    $value = isset($this->_save[$key]) ? $this->_save[$key] : '';
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', $key, $value);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testChangeValues() {

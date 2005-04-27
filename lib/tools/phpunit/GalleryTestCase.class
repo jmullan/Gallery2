@@ -237,6 +237,13 @@ class GalleryTestCase extends TestCase {
     function tearDown() {
 	global $gallery;
 
+	/* Make sure we're not hanging onto any locks */
+	$lockIds = GalleryCoreApi::getLockIds();
+	if (!empty($lockIds)) {
+	    GalleryCoreApi::releaseAllLocks(false);
+	    $this->assert(0, 'There are unreleased locks!');
+	}
+
 	/* Do our cleanup */
 	foreach ($this->_cleanup['entity'] as $entity) {
 	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
@@ -257,6 +264,15 @@ class GalleryTestCase extends TestCase {
 	foreach ($this->_cleanup['pluginParameters'] as $cleanupPlugin) {
 	    $pluginType = array_shift($cleanupPlugin);
 	    $pluginId = array_shift($cleanupPlugin);
+
+	    /* Remove all existing parameters to prevent new keys from existing */
+	    $ret = GalleryCoreApi::removeAllPluginParameters($pluginType, $pluginId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* Restore each key from the saved list */
 	    foreach (array_shift($cleanupPlugin) as $key => $pluginParam) {
 		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId, 
 							  $key, $pluginParam);
@@ -265,13 +281,6 @@ class GalleryTestCase extends TestCase {
 		    print $ret->getAsHtml();
 		}
 	    }
-	}
-
-	/* Make sure we're not hanging onto any locks */
-	$lockIds = GalleryCoreApi::getLockIds();
-	if (!empty($lockIds)) {
-	    GalleryCoreApi::releaseAllLocks(false);
-	    $this->assert(0, 'There are unreleased locks!');
 	}
 
 	$storage =& $gallery->getStorage();
