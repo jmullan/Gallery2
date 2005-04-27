@@ -122,10 +122,13 @@ class GallerySession {
      */
     function init() {
 	global $gallery;
-
+	
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
+	    /* Fix a php bug */
+	    GalleryUtilities::fixCookieVars();
+	    
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
@@ -239,21 +242,35 @@ class GallerySession {
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $this->_cookiePath = $urlGenerator->getCookiePath();
-	    $this->_cookieDomain = $urlGenerator->getCurrentDomain();
-
-	    /* remove port number in the domain */
-	    $colon = strpos($this->_cookieDomain, ':');
-	    if ($colon) {
-		$this->_cookieDomain = substr($this->_cookieDomain, 0, $colon);
-	    }
 
 	    $cookie .= '; path=' . $this->_cookiePath;
 
-	    /* Only add a "domain=" part if we have a fqdn */
-	    if (strpos($this->_cookieDomain, '.')) {
-		$cookie .= '; domain=.' . $this->_cookieDomain;
-	    }
-
+	    /*
+	     * Don't set the cookie domain to fix sub.domain.com vs. domain.com auth/login
+	     * problems. RFC 2965 defines that if no domain is set by the server, the user agent
+	     * should default to the host string, (eg. sub.domain.com) without a leading dot. This
+	     * default-domain can only domain-match itself, i.e. the user agent should never
+             * send a cookie with domain=domain.com in a request for a domain=www.domain.com page.
+	     * Practice shows that the tested browsers conform to RFC 2965 in this
+	     * aspect. Internet Explorer 6 SP2 does not, but lists the cookie with the more
+	     * specific domain (www.domain.com) before the less specific one (domain.com). So this
+	     * non-standard behavior is also fixed by GalleryUtilities::fixCookieVars().
+	     *
+	     * If cookie domain is reintroduced in G2, remember to:
+	     *    - remove port number in the domain (strpos ':')
+	     *    - Only add a domain part, if we have a fqdn (strpos '.')
+	     *    - add a dot at the beginning of the domain
+	     *    - RFC 2965 does not define an order for the domain-matching, i.e. it might be a
+	     *      good idea to set the domain always to the same value, independent of the
+	     *      subdomain
+	     *
+	     * Our next best alternative:
+	     *    - set Domain attribute to .domain.com (no subdomains) unless the host string is
+	     *      an IP
+	     *    - set Path attribute to '/'
+	     *    - set Name attribute to 'G2SID' . substr(md5($galleryId), 0, 4))
+	     */
+	    
 	    /*
 	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
 	     * with this in it from being visible to JavaScript, which mitigates

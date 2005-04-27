@@ -1342,6 +1342,9 @@ class GalleryUtilities {
 	    return null;
 	}
 
+	/* Fix a php bug */
+	GalleryUtilities::fixCookieVars();
+	
 	$value = $_COOKIE[$key];
 	GalleryUtilities::sanitizeInputValues($value);
 	return $value;
@@ -1354,6 +1357,98 @@ class GalleryUtilities {
      */
     function isEmbedded() {
 	return defined('G2_EMBED');
+    }
+
+    /**
+     * Fix the superglobal $_COOKIE to conform with RFC 2965
+     *
+     * We don't use $_COOKIE[$cookiename], because it doesn't conform to RFC 2965 (the
+     * cookie standard), i.e. in $_COOKIE, we don't get the cookie with the most specific path for
+     * a given cookie name, we get the cookie with the least specific cookie path.
+     * This function does it exactly the other way around, to a) fix our cookie/login problems and
+     * to b) conform with the RFC.
+     *
+     * This function reevaluates the HTTP Cookie header and populates $_COOKIE with the correct
+     * cookies. We fix only non-array and non '[', ']' containing cookies for simplicity. To fix
+     * our login problem, we'd have to fix only the GALLERYSID cookie anyway.
+     *
+     * @param boolean force the reevaluation of the HTTP header string Cookie
+     * @param boolean unset static variable for testability
+     */
+    function fixCookieVars($force = false, $unset = false) {
+	static $fixed;
+	if (!isset($fixed) || $force) {
+	    $fixed = true;
+	    if (isset($_SERVER['HTTP_COOKIE']) && !empty($_SERVER['HTTP_COOKIE'])) {
+		/*
+		 * Get rid of less specific cookies if multiple cookies with the same NAME
+		 * are present. Do this by going from left/first cookie to right/last cookie.
+		 * Use the strtok (tokenizer). Tokenize by separators comma and semicolon.
+		 */
+		$fixedCookies = array();
+		$tok = strtok($_SERVER['HTTP_COOKIE'], ',;');
+		$first = true;
+		while ($first || $tok = strtok(',;')) {
+		    $first = false;
+		    /*
+		     * Split NAME [=VALUE], value is optional for all attributes
+		     * but the cookie name
+		     */
+		    if (($pos = strpos($tok, '=')) !== false) {
+			$val = substr($tok, $pos+1);
+			$key = substr($tok, 0, $pos);
+		    } else {
+			/* No cookie name=value attr, we can ignore it */
+			continue;
+		    }
+		    /* Urldecode header data */
+		    $key = trim(urldecode($key));
+		    /* Don't accept zero length key */
+		    if (($len = strlen($key)) == 0) {
+			continue;
+		    }
+		    /* Don't fix cookies with '[', ']' or any array-cookies (for simplicity) */
+		    $pos = strchr($key, '[');
+		    if (strchr($key, '[') !== false || strchr($key, ']') !== false) {
+			continue;
+		    }
+		    /* Make it a binary safe variable name */
+		    for ($i = 0; $i < $len; $i++) {
+			if ($key{$i} == ' ' || $key{$i} == '.') {
+			    $key{$i} = '_';
+			} 
+		    }
+		    /*
+		     * Don't register non-NAME attributes like domain, path, ... which are all
+		     * starting with a dollar sign
+		     */
+		    if (strpos($key, '$') === 0) {
+			continue;
+		    }
+		    /* Urldecode value */
+		    $val = trim(urldecode($val));
+		    /* Addslashes if magic_quotes_gpc is on */
+		    if (get_magic_quotes_gpc()) {
+			$key = addslashes($key);
+			$val = addslashes($val);
+		    }
+		    if (!isset($fixedCookies[$key])) {
+			$_COOKIE[$key] = $val;
+			$fixedCookies[$key] = true;
+		    }
+		}
+	    }
+	}
+
+	/*
+	 * To test methods that call fixCookieVars, we have to first unset the static $fixed
+	 * variable to enable testability of these functions.
+	 * This way, fixCookieVars will repopulate $_COOKIE on the next call, i.e. it simulates a
+	 * case, where fixCookieVars has not been called before on the request. 
+	 */
+	if ($unset) {
+	    $fixed = null;
+	}
     }
 }
 ?>

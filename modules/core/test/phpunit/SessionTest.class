@@ -38,6 +38,22 @@ class SessionTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+	
+	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
+	$this->_originalServerHttpCookie = isset($_SERVER['HTTP_COOKIE']) ?
+	    $_SERVER['HTTP_COOKIE'] : null;
+    }
+
+    function tearDown() {
+	$_COOKIE = $this->_originalCookie;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	
+	parent::tearDown();
+    }
+    
     function testGetAndPut() {
 	global $gallery;
 	$key = 'test-key';
@@ -181,11 +197,15 @@ class SessionTest extends GalleryTestCase {
 	global $gallery;
 	$saveSession = $gallery->_session;
 	$isUsingCookies = $saveSession->isUsingCookies();
-
+	
 	/* Test an illegal sessionId */
 	$_COOKIE[SESSION_ID_PARAMETER] = '../oops.txt';
+	$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . '../oops.txt' . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
-	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $_COOKIE[SESSION_ID_PARAMETER]);
+	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER,
+						 $_COOKIE[SESSION_ID_PARAMETER]);
 	}
 
 	$gallery->_session = null;
@@ -195,9 +215,15 @@ class SessionTest extends GalleryTestCase {
 	$this->assert(! preg_match('#^\.\.#', $session->getSessionId()), 'Dangerous session-id!');
 
 	/* Now test a legal sessionId */
-	$_COOKIE[SESSION_ID_PARAMETER] = md5(rand());
+	$sessionId = md5(rand());
+	$_COOKIE[SESSION_ID_PARAMETER] = $sessionId;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
-	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $_COOKIE[SESSION_ID_PARAMETER]);
+	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER,
+						 $_COOKIE[SESSION_ID_PARAMETER]);
 	}
 
 	$gallery->_session = null;
@@ -206,7 +232,34 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assertEquals($session->getSessionId(), $_COOKIE[SESSION_ID_PARAMETER]);
 
-	// Restore original session
+	/*
+	 * Now test that the right SESSION_ID_PARAMETER cookie is used.
+	 * (When multiple cookies exist with different paths, or in IE)
+	 */
+	GalleryUtilities::fixCookieVars(false, true);
+	$rand = rand();
+	$sessionId = md5($rand);
+	$wrongSessionId = md5($rand + 3000);
+	$_COOKIE[SESSION_ID_PARAMETER] = $wrongSessionId;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId . ' ; ' .
+	    SESSION_ID_PARAMETER . '=' . $wrongSessionId . $delimiter . $_SERVER['HTTP_COOKIE'];
+	/* Force the use of cookies */
+	if (!$isUsingCookies) {
+	    GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	}
+
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+
+	$this->assertEquals($sessionId, $session->getSessionId(),
+			    'multiple cookies, not the right one was picked');
+	$this->assertEquals($sessionId, $_COOKIE[SESSION_ID_PARAMETER],
+			    'multiple cookies, not the right one was set/fixed');
+
+	/* Restore original session */
 	$gallery->_session =& $saveSession;
     }
 
@@ -217,6 +270,9 @@ class SessionTest extends GalleryTestCase {
 	$sid = md5(rand());
 
 	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
+	$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sid . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid);
 	}
@@ -354,9 +410,14 @@ class SessionTest extends GalleryTestCase {
 	    if ($type == 'with-cookies') {
 		GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 		$_COOKIE[SESSION_ID_PARAMETER] = 'TESTSID';
+		$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+		$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=TESTSID' . $delimiter .
+		    $_SERVER['HTTP_COOKIE'];
 	    } else {
 		GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, 'TESTSID');
 		unset($_COOKIE[SESSION_ID_PARAMETER]);
+		/* Remove cookies also from HTTP Header */
+		$_SERVER['HTTP_COOKIE'] = '';
 	    }
 	    unset($_SERVER['HTTP_X_FORWARDED_FOR']);
 	    unset($_SERVER['HTTP_CLIENT_IP']);
@@ -512,6 +573,7 @@ class SessionTest extends GalleryTestCase {
 
     function testSearchEngineCrawlerSessions() {
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	$_SERVER['HTTP_COOKIE'] = '';
 	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
 	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
 	$session = new GallerySession();
@@ -527,12 +589,36 @@ class SessionTest extends GalleryTestCase {
 	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0), array(0)));
 	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0), array(0, 1)));
 	$this->assertEquals(1, GallerySession::_compareIdentifiers(array(0, 1), array(0)));
-	$this->assertEquals(2, GallerySession::_compareIdentifiers(array('x', 1, 'y'), array('x', 0, 'y')));
+	$this->assertEquals(2, GallerySession::_compareIdentifiers(array('x', 1, 'y'),
+								   array('x', 0, 'y')));
 	$this->assertEquals(0, GallerySession::_compareIdentifiers(array(1), 'x'));
 	$this->assertEquals(0, GallerySession::_compareIdentifiers(array(1), null));
 	$this->assertEquals(0, GallerySession::_compareIdentifiers(null, array(1)));
 	$this->assertEquals(0, GallerySession::_compareIdentifiers(null, null));
 	$this->assertEquals(0, GallerySession::_compareIdentifiers('x', 'x'));
+    }
+
+    /* Test if G2 creates cookies without an explicit domain */
+    function testSessionCookieDomain() {
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$url = $urlGenerator->getCurrentUrl();
+	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
+	$url = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
+	list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
+	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
+	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
+	if (isset($headers['Set-Cookie'])) {
+	    /* SESSION_ID_PARAMETER cookie must be there */
+	    $this->assertEquals(1, preg_match('|' . SESSION_ID_PARAMETER . '|s',
+					      $headers['Set-Cookie']),
+				'G2 session cookie does not exist!');
+	    /* But there should be no domain set in the cookie header */
+	    $this->assertEquals(0, preg_match('|domain|si',
+					      $headers['Set-Cookie']),
+				'Cookie sent from G2 contains domain: "' .
+					$headers['Set-Cookie'] . '"');
+	}
     }
 }
 ?>
