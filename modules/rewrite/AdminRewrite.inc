@@ -334,7 +334,7 @@ class AdminRewriteView extends GalleryView {
 	    }
 	    
 	    if ($AdminRewrite['isEmbedded']) {
-		$AdminRewrite['embeddedCode'] = RewriteHelper::checkFile(true);
+		list ($ret, $AdminRewrite['embeddedCode']) = RewriteHelper::checkFile(true);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
