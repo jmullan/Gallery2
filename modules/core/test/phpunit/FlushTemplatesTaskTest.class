@@ -43,6 +43,12 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
     function testRunSuccess() {
 	global $gallery;
 
+	list ($ret, $dirPerms) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$gallery->setConfig('data.smarty.templates_c', '/templates_c');
 	$mockPlatform = new FlushTemplatesTaskTestPlatform(array());
 	$gallery->setPlatform($mockPlatform);
@@ -63,7 +69,7 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 	    array($module->translate('Template cache deleted successfully')), $details);
 	$this->assertEquals(array('file_exists(/templates_c)',
 				  'recursiveRmdir(/templates_c)',
-				  'mkdir(/templates_c)'),
+				  "mkdir(/templates_c,$dirPerms)"),
 			    $mockPlatform->getCalls());
     }
 
@@ -111,13 +117,13 @@ class FlushTemplatesTaskTestPlatform {
     function getCalls() {
 	return GalleryUtilities::getRequestVariables('calls');
     }
-    
+
     function file_exists($dir) {
 	return $this->_addCall("file_exists($dir)");
     }
 
-    function mkdir($dir) {
-	return $this->_addCall("mkdir($dir)");
+    function mkdir($dir, $stringPerms='123') {
+	return $this->_addCall("mkdir($dir,$stringPerms)");
     }
 
     function recursiveRmdir($dir) {

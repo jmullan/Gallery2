@@ -76,7 +76,15 @@ class FlushTemplatesTask extends MaintenanceTask {
 	}
 
 	if ($success) {
-	    $success = $platform->mkdir($dir);
+	    list ($ret, $dirPerms) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+	    if ($ret->isError() || empty($dirPerms)) {
+		$details[] = $module->translate(
+		    'No directory permissions preference, using system default permissions');
+		$success = $platform->mkdir($dir);
+	    } else {
+		$success = $platform->mkdir($dir, $dirPerms);
+	    }
 	    if (!$success) {
 		$details[] = $module->translate(
 		    array('text' => 'Unable to create directory: %s',
