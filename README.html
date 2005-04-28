@@ -982,7 +982,12 @@
 	PostgreSQL. We require you to create the database yourself.
 	In our examples below, we&rsquo;ll be creating a database called
 	<b>gallery2</b>.  You can use any database name that you
-	choose.
+	choose. <br />
+        Grant all required <strong>privileges</strong> to your database user. This includes but is not confined to:
+        CREATE TABLE, ALTER TABLE, DROP TABLE in the gallery2 database; SELECT, INSERT, UPDATE, DELETE on all 
+        (gallery2) tables in the gallery2 database; CREATE INDEX and some other privileges that are specific to the 
+        different database management systems.  CREATE/DROP DATABASE and the ability to GRANT privileges to other 
+        database users are not required.
 
 	<div class="instructions">
 	  <h3>MySQL</h3>
@@ -1061,6 +1066,33 @@
     </p>
     <ol>
       <li>
+	<b> Upload </b> - Copy the Gallery 2 files to a directory on your webserver. There are
+        several alternatives for this step:
+        <ul>
+	  <li>
+	    Ideally, you can use cvs to install and update your Gallery 2 installation directly 
+            on the server. But this option is only available if you have command line access to
+            the server (ssh/telnet).
+	  </li>
+          <li>
+            The next best alternative is to upload the gallery2.tar.gz or gallery2.zip archive via
+            FTP or another method. Then unarchive / extract the archive in the command line 
+            (ssh/telnet) or with a miniature PHP script with the command &rsquo;tar -xzf 
+            gallery2.tar.gz&rsquo; for the .tar.gz archive or &rsquo;unzip gallery2.zip&rsquo; for
+            the .zip archive. Some webhosting companies offer a control panel with a web 
+            file-browser which is capable of extracting / unarchiving archive files. It&rsquo;s 
+            worth a try to check if this option is available.
+          </li>
+          <li>
+            If you have neither of these options, you have to upload the complete contents of the 
+            Gallery 2 archive to the webserver with an FTP program. This will take a lot of time 
+            and is error-prone. In this case, pay special attention to the &rsquo;System 
+            Checks&rsquo; step of the installer and make sure that there are no missing or modified
+            files.
+          </li>
+        </ul>
+      </li>
+      <li>
 	<b> Authenticate </b> - You will be asked to create and save a
 	small text file in order to authenticate.  You may not proceed
 	until you do this.  That&rsquo;s how G2 knows that you&rsquo;re authorized
@@ -1068,7 +1100,7 @@
       </li>
       <li>
 	<b> System Checks </b> - The installer checks your system to
-	make sure that it will support G2.
+	make sure that it will support G2. Make sure that all checks are successful!
       </li>
       <li>
 	<b> Admin User Setup </b> - You are prompted for an
