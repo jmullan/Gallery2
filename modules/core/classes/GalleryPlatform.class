@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -27,9 +27,9 @@
 
 /**
  * A framework for doing platform specific tasks.
- * 
+ *
  * This is an abstract class that implements many basic tasks that are
- * different from platform to platform.  
+ * different from platform to platform.
  *
  * @package GalleryCore
  * @abstract
@@ -38,7 +38,7 @@
 class GalleryPlatform {
 
     /**
-     * Copy a file 
+     * Copy a file
      *
      * @param string the source file
      * @param string the destination file
@@ -50,7 +50,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("copy($source, $dest)");
 	}
-	
+
 	$umask = umask(0133);
 	if (is_uploaded_file($source)) {
 	    $results = move_uploaded_file($source, $dest);
@@ -63,7 +63,7 @@ class GalleryPlatform {
     }
 
     /**
-     * Symlink a file 
+     * Symlink a file
      *
      * @param string the source file
      * @param string the destination file
@@ -75,7 +75,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("symlink($source, $dest)");
 	}
-	
+
 	$umask = umask(0133);
 	$results = symlink($source, $dest);
 	umask($umask);
@@ -160,7 +160,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_link($filename)");
 	}
-	
+
 	return is_link($filename);
     }
 
@@ -176,14 +176,14 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_dir($filename)");
 	}
-	
+
 	return is_dir($filename);
     }
 
     /**
      * Is the given path a normal file?
      *
-     * @param string a filesystem path 
+     * @param string a filesystem path
      * @return bool TRUE if the path is a file, FALSE otherwise
      * @access public
      */
@@ -192,14 +192,14 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_file($filename)");
 	}
-	
+
 	return @file_exists($filename) && @is_file($filename);
     }
 
     /**
      * Is the given path a writeable file
      *
-     * @param string a filesystem path 
+     * @param string a filesystem path
      * @return bool TRUE if the path is writeable, FALSE otherwise
      * @access public
      */
@@ -208,14 +208,14 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_writeable($filename)");
 	}
-	
+
 	return is_writeable($filename);
     }
 
     /**
      * Is the given path a readable file
      *
-     * @param string a filesystem path 
+     * @param string a filesystem path
      * @return bool TRUE if the path is readable, FALSE otherwise
      * @access public
      */
@@ -224,14 +224,14 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_readable($filename)");
 	}
-	
+
 	return is_readable($filename);
     }
 
     /**
      * Is the given path an uploaded file
      *
-     * @param string a filesystem path 
+     * @param string a filesystem path
      * @return bool TRUE if the path is an uploaded file, FALSE otherwise
      * @access public
      */
@@ -240,14 +240,14 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_uploaded_file($filename)");
 	}
-	
+
 	return is_uploaded_file($filename);
     }
 
     /**
      * Is the given path an executable file?
      *
-     * @param string a filesystem path 
+     * @param string a filesystem path
      * @return bool TRUE if the path is an executable file, FALSE otherwise
      * @access public
      */
@@ -256,7 +256,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("is_executable($filename)");
 	}
-	
+
 	return is_executable($filename);
     }
 
@@ -272,7 +272,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("filesize($filename)");
 	}
-	
+
 	return filesize($filename);
     }
 
@@ -286,7 +286,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug('clearstatcache()');
 	}
-	
+
 	return clearstatcache();
     }
 
@@ -303,10 +303,10 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("file($filename, $use_include_path)");
 	}
-	
+
 	return file($filename, $use_include_path);
     }
-    
+
     /**
      * Output a file
      *
@@ -322,7 +322,7 @@ class GalleryPlatform {
 	}
 	return readfile($filename, $use_include_path);
     }
-    
+
     /**
      * Open a file or URL
      *
@@ -362,7 +362,7 @@ class GalleryPlatform {
     /**
      * Perform an atomic write to a file.  This guarantees that the data written is not corrupted
      * (but it does not prevent another process from immediately replacing the file with its own
-     * version). 
+     * version).
      *
      * @param filename
      * @param string data to be written
@@ -383,12 +383,11 @@ class GalleryPlatform {
 	}
 
 	if ($success) {
-	    $this->rename($tempFile, $filename);
+	    return $this->rename($tempFile, $filename);
 	} else {
 	    @unlink($tempFile);
+	    return false;
 	}
-	
-	return $success;
     }
 
     /**
@@ -403,7 +402,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("opendir($path)");
 	}
-	
+
 	return opendir($path);
     }
 
@@ -418,7 +417,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("readdir($resource)");
 	}
-	
+
 	return readdir($resource);
     }
 
@@ -433,7 +432,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("closedir($resource)");
 	}
-	
+
 	return closedir($resource);
     }
 
@@ -468,7 +467,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("stat($filename)");
 	}
-	
+
 	return stat($filename);
     }
 
@@ -505,7 +504,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("unlink($filename)");
 	}
-	
+
 	return unlink($filename);
     }
 
@@ -521,7 +520,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("rmdir($filename)");
 	}
-	
+
 	return rmdir($filename);
     }
 
@@ -547,13 +546,13 @@ class GalleryPlatform {
 		continue;
 	    }
 	    $path = "$dirname/$filename";
-	    
+
 	    if ($this->is_dir($path)) {
 		$ret = $this->recursiveRmdir($path);
 	    } else {
 		$ret = $this->unlink($path);
 	    }
-	    
+
 	    if ($ret == false) {
 		return false;
 	    }
@@ -579,7 +578,7 @@ class GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug(sprintf("mkdir(%s, %o)", $path, $octalPerms));
 	}
-	
+
 	$umask = umask(0);
 
 	$results = mkdir($path, $octalPerms);
@@ -670,7 +669,7 @@ class GalleryPlatform {
 
 	return $baseName;
     }
-    
+
     /**
      * Execute a command and record the results and status.
      *
@@ -870,11 +869,11 @@ class GalleryPlatform {
     }
 
     /**
-     * Expand all symbolic links and resolve references to '/./', '/../' and extra '/' characters in the input
-     * path and return the canonicalized absolute pathname.   The resulting path will have no symbolic
-     * link, '/./' or '/../' components. [cribbed from http://php.net/realpath]
+     * Expand all symbolic links and resolve references to '/./', '/../' and extra '/' characters
+     * in the input path and return the canonicalized absolute pathname.   The resulting path will
+     * have no symbolic link, '/./' or '/../' components. [cribbed from http://php.net/realpath]
      *
-     * @return FALSE on failure, e.g. if the file does not exists. 
+     * @return FALSE on failure, e.g. if the file does not exists.
      */
     function realpath($file) {
 	global $gallery;
@@ -888,11 +887,11 @@ class GalleryPlatform {
     /**
      * touch -- Sets access and modification time of file
      *
-     * Attempts to set the access and modification time of the file named by filename to the value given by
-     * time. If the option time is not given, uses the present time. This is equivalent to what utime
-     * (sometimes referred to as utimes) does. If the third option atime is present, the access time of the
-     * given filename is set to the value of atime. Note that the access time is always modified, regardless
-     * of the number of parameters.
+     * Attempts to set the access and modification time of the file named by filename to the value
+     * given by time. If the option time is not given, uses the present time. This is equivalent
+     * to what utime (sometimes referred to as utimes) does. If the third option atime is present,
+     * the access time of the given filename is set to the value of atime. Note that the access
+     * time is always modified, regardless of the number of parameters.
      *
      * @param string the file path
      * @param int (optional) the modification time
@@ -978,18 +977,18 @@ class GalleryPlatform {
 	assert(false);
     }
 
-    /** 
+    /**
      * Return the string of characters which represent the line ending on
      * this platform
-     *      
+     *
      * @return string Line ending
-     *              
+     *
      * @access public
-     */     
+     */
     function getLineEnding() {
         /* This must be implemented in a platform specific way */
         assert(false);
-    }       
+    }
 
 
     /**
