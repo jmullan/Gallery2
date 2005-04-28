@@ -242,29 +242,29 @@ class AdminCoreView extends GalleryView {
 	}
 
 	$platform = $gallery->getPlatform();
-
-	/* Set up our language selection list */
-	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	$languageList = array();
-	$languageList[''] = $module->translate('&laquo; None &raquo;');
-
 	$translator =& $gallery->getTranslator();
-	$supportedLanguages = $translator->getSupportedLanguages();
-	foreach ($supportedLanguages as $language => $countryList) {
-	    foreach ($countryList as $country => $languageData) {
-		$languageList[$language . '_' . $country] =
-		    $languageData['description'];
-	    }
-	}
+	$AdminCore = $can = array();
 
-	$languageSelectorList = array(
-	    'none' => $module->translate('None'),
-	    'guest' => $module->translate('Guest User Only'),
-	    'all' => $module->translate('Everybody')
-	);
+	if ($translator->canTranslate()) {
+	    $can['translate'] = true;
+
+	    /* Set up our language selection list */
+	    $AdminCore['languageList'] = array('' => $module->translate('&laquo; None &raquo;'));
+
+	    $supportedLanguages = $translator->getSupportedLanguages();
+	    foreach ($supportedLanguages as $language => $countryList) {
+		foreach ($countryList as $country => $languageData) {
+		    $AdminCore['languageList'][$language . '_' . $country] =
+			$languageData['description'];
+		}
+	    }
+
+	    $AdminCore['languageSelectorList'] = array(
+		'none' => $module->translate('None'),
+		'guest' => $module->translate('Guest User Only'),
+		'all' => $module->translate('Everybody')
+	    );
+	}
 
 	/* Set up our session time lists */
 	$sessionTimeLists = array();
@@ -298,9 +298,14 @@ class AdminCoreView extends GalleryView {
 	}
 	$sessionTimeList[25 * 365 * 86400] = $module->translate('forever');
 
-	/* Set up our permission selection lists */
-	$permissionsDirectoryList = array('700', '750', '755', '770', '775', '777');
-	$permissionsFileList = array('600', '640', '644', '660', '664', '666');
+	if (GalleryUtilities::isA($platform, 'UnixPlatform')) {
+	    $can['setPermissions'] = true;
+
+	    /* Set up our permission selection lists */
+	    $AdminCore['permissionsDirectoryList'] =
+		array('700', '750', '755', '770', '775', '777');
+	    $AdminCore['permissionsFileList'] = array('600', '640', '644', '660', '664', '666');
+	}
 
 	/* Miscellaneous lists */
 	$loginMethod = array('link' => $module->translate('Link to Login Page'),
@@ -319,17 +324,11 @@ class AdminCoreView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$AdminCore = array();
+	$AdminCore['can'] = $can;
 	$AdminCore['localServerDirList'] = $localServerDirList;
-	$AdminCore['languageList'] = $languageList;
-	$AdminCore['languageSelectorList'] = $languageSelectorList;
-	$AdminCore['translationsSupported'] = $translator->canTranslate();
-	$AdminCore['permissionsDirectoryList'] = $permissionsDirectoryList;
-	$AdminCore['permissionsFileList'] = $permissionsFileList;
 	$AdminCore['sessionTimeList'] = $sessionTimeList;
 	$AdminCore['loginMethod'] = $loginMethod;
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
-	$AdminCore['shortUrlTestItemId'] = $rootId;
 	$AdminCore['lockSystemList'] = $lockSystemList;
 
 	$template->setVariable('controller', 'core:AdminCore');

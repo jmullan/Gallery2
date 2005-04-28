@@ -29,7 +29,7 @@
     {g->text text="Select language defaults for Gallery. Individual users can override this setting in their personal preferences or via the language selector if activated below."}
   </p>
 
-  {if $AdminCore.translationsSupported}
+  {if isset($AdminCore.can.translate)}
   <table class="gbDataTable"><tr>
     <td>
       {g->text text="Default language"}
@@ -57,6 +57,7 @@
   {/if}
 </div>
 
+{if isset($AdminCore.can.setPermissions)}
 <div class="gbBlock">
   <h3> {g->text text="Filesystem Permissions"} </h3>
 
@@ -84,6 +85,7 @@
     </td>
   </tr></table>
 </div>
+{/if}
 
 <div class="gbBlock">
   <h3> {g->text text="Local Server Upload Paths"} </h3>
