@@ -53,6 +53,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($targetAlbum);
+
 	$ret = GalleryCoreApi::setPluginParameter(
 	    'module', 'useralbum', 'targetLocation', $targetAlbum->getId());
 	if ($ret->isError()) {
@@ -244,7 +245,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$gallery->setActiveUser($this->_userWithAlbum);
 	list($ret, $links) = $userAlbum->getSystemLinks();
 	if ($ret->isError()) {
@@ -252,5 +253,47 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assertEquals(array(), $links, 'Link displayed, but homeLink off');
     }
+
+    function testUserAlbumTitle() {
+	/* Check that album title is set from user fullname, or username if no fullname */
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($this->_userAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->_userWithAlbum->getFullName(), $album->getTitle(), 'fullname');
+
+	list ($ret, $lockId) =
+	    GalleryCoreApi::acquireWriteLock(array($this->_userWithoutAlbum->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_userWithoutAlbum->setFullName('');
+	$this->_userWithoutAlbum->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = UserAlbumHelper::createUserAlbum($this->_userWithoutAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $albumId) = GalleryCoreApi::getPluginParameter(
+	    'module', 'useralbum', 'albumId', $this->_userWithoutAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album) = GalleryCoreApi::loadEntitiesById($albumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals($this->_userWithoutAlbum->getUserName(),
+			    $album->getTitle(), 'username');
+    }
+
 }
 ?>

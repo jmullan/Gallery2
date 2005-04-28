@@ -51,10 +51,14 @@ class UserAlbumHelper {
 	}
 
 	/* Create album.. */
+	$albumTitle = trim($user->getFullName());
+	if (empty($albumTitle)) {
+	    $albumTitle = $user->getUserName();
+	}
 	$albumName = $user->getUserName();
 	while (true) {
 	    list ($ret, $album) = GalleryCoreApi::createAlbum(
-		$module['targetLocation'], $albumName, $user->getFullName(), '', '', '');
+		$module['targetLocation'], $albumName, $albumTitle, '', '', '');
 	    if ($ret->isSuccess()) {
 		break;
 	    }
