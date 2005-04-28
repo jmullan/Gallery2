@@ -66,7 +66,12 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	case '0':
 	    /* Initial install */
 	    if (!$platform->is_dir($watermarkDir)) {
-		if (!@$platform->mkdir($watermarkDir)) {
+		list ($ret, $dirPerms) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if (!@$platform->mkdir($watermarkDir, $dirPerms)) {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to create directory: $watermarkDir");
 		}
@@ -91,7 +96,12 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 						"Unable to move $oldDir to $watermarkDir");
 		}
 	    } else if (!$platform->is_dir($watermarkDir)) {
-		if (!$platform->mkdir($watermarkDir)) {
+		list ($ret, $dirPerms) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		if (!$platform->mkdir($watermarkDir, $dirPerms)) {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to create $watermarkDir");
 		}
@@ -99,13 +109,13 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 
 	    /* Update all derivatives that use watermarks */
 	    $query = "
-            SELECT
-              [GalleryDerivative::id]
-            FROM
-              [GalleryDerivative]
-            WHERE
-              [GalleryDerivative::postFilterOperations] LIKE '%composite|watermark%'
-            ";
+	    SELECT
+	      [GalleryDerivative::id]
+	    FROM
+	      [GalleryDerivative]
+	    WHERE
+	      [GalleryDerivative::postFilterOperations] LIKE '%composite|watermark%'
+	    ";
 
 	    /* Do them 50 at a time to improve locking efficiency */
 	    while (true) {
