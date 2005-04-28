@@ -55,7 +55,6 @@ class FlushTemplatesTask extends MaintenanceTask {
      */
     function run() {
 	global $gallery;
-
 	$platform = $gallery->getPlatform();
 	$dir = $gallery->getConfig('data.smarty.templates_c');
 	$success = true;
@@ -65,35 +64,16 @@ class FlushTemplatesTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$details = array();
 	if ($platform->file_exists($dir)) {
 	    $success = $platform->recursiveRmdir($dir);
-	    if (!$success) {
-		$details[] = $module->translate(
-		    array('text' => 'Unable to delete directory: %s',
-			  'arg1' => $dir));
-	    }
 	}
 
-	if ($success) {
-	    list ($ret, $dirPerms) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	    if ($ret->isError() || empty($dirPerms)) {
-		$details[] = $module->translate(
-		    'No directory permissions preference, using system default permissions');
-		$success = $platform->mkdir($dir);
-	    } else {
-		$success = $platform->mkdir($dir, $dirPerms);
-	    }
-	    if (!$success) {
-		$details[] = $module->translate(
-		    array('text' => 'Unable to create directory: %s',
-			  'arg1' => $dir));
-	    }
-	}
-
+	$details = array();
 	if ($success) {
 	    $details[] = $module->translate('Template cache deleted successfully');
+	} else {
+	    $details[] = $module->translate(
+		array('text' => 'Unable to delete directory: %s', 'arg1' => $dir));
 	}
 
 	return array(GalleryStatus::success(), $success, $details);

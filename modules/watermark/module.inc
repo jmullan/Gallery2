@@ -65,16 +65,10 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	switch ($currentVersion) {
 	case '0':
 	    /* Initial install */
-	    if (!$platform->is_dir($watermarkDir)) {
-		list ($ret, $dirPerms) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		if (!@$platform->mkdir($watermarkDir, $dirPerms)) {
-		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						"Unable to create directory: $watermarkDir");
-		}
+	    list ($success) = GalleryUtilities::guaranteeDirExists($watermarkDir);
+	    if (!$success) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Unable to create directory: $watermarkDir");
 	    }
 	    break;
 
@@ -95,13 +89,9 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to move $oldDir to $watermarkDir");
 		}
-	    } else if (!$platform->is_dir($watermarkDir)) {
-		list ($ret, $dirPerms) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		if (!$platform->mkdir($watermarkDir, $dirPerms)) {
+	    } else {
+		list ($success) = GalleryUtilities::guaranteeDirExists($watermarkDir);
+		if (!$success) {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to create $watermarkDir");
 		}

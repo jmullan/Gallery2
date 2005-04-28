@@ -252,7 +252,8 @@ class GalleryTemplate {
 
 	$templateVersionFile = $dir . '/v_' . TEMPLATE_DATA_VERSION;
 	if (!$platform->file_exists($dir)) {
-	    if (!$platform->mkdir($dir)) {
+	    list ($success) = GalleryUtilities::guaranteeDirExists($dir);
+	    if (!$success) {
 		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					    "Unable to mkdir($dir)");
 	    }

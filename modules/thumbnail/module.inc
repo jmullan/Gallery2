@@ -65,16 +65,10 @@ class ThumbnailModule extends GalleryModule {
 	switch ($currentVersion) {
 	case '0':
 	    /* Initial install */
-	    if (!$platform->is_dir($thumbnailDir)) {
-		list ($ret, $dirPerms) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		if (!@$platform->mkdir($thumbnailDir, $dirPerms)) {
-		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
-						"Unable to create directory: $thumbnailDir");
-		}
+	    list ($success) = GalleryUtilities::guaranteeDirExists($thumbnailDir);
+	    if (!$success) {
+		return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					    "Unable to create directory: $thumbnailDir");
 	    }
 	    break;
 
@@ -110,13 +104,9 @@ class ThumbnailModule extends GalleryModule {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to move $oldDir to $thumbnailDir");
 		}
-	    } else if (!$platform->is_dir($thumbnailDir)) {
-		list ($ret, $dirPerms) =
-		    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-		if (!$platform->mkdir($thumbnailDir, $dirPerms)) {
+	    } else {
+		list ($success) = GalleryUtilities::guaranteeDirExists($thumbnailDir);
+		if (!$success) {
 		    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 						"Unable to create $thumbnailDir");
 		}

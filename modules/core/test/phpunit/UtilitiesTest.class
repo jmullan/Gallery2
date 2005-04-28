@@ -45,14 +45,14 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
 	$this->_originalServerHttpCookie = isset($_SERVER['HTTP_COOKIE']) ?
 	    $_SERVER['HTTP_COOKIE'] : null;
-	
+
 	$gallery->_platform = new UtilitiesTestPlatform($this);
     }
 
     function tearDown() {
 	$_COOKIE = $this->_originalCookie;
 	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
-	
+
 	parent::tearDown();
     }
 
@@ -236,7 +236,7 @@ class UtilitiesTest extends GalleryTestCase {
     function testConvertPathToUrl() {
 	global $gallery;
 
-	// Simulate unix to line up with our mock platform
+	/* Simulate unix to line up with our mock platform */
 	$file = str_replace('\\', '/', __FILE__);
 
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?foo=bar';
@@ -250,7 +250,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    'http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
 	    GalleryUtilities::convertPathToUrl($file), 'test');
 
-	// Simulate embedded (request uri doesn't reference g2 install dir)
+	/* Simulate embedded (request uri doesn't reference g2 install dir) */
 	$urlGenerator = new GalleryUrlGenerator();
 	$urlGenerator->init('phpunit_test.php?test=on', null, '../gallery2/');
 	$gallery->setUrlGenerator($urlGenerator);
@@ -260,7 +260,7 @@ class UtilitiesTest extends GalleryTestCase {
 	    'http://example.com/gallery2/modules/core/test/phpunit/UtilitiesTest.class',
 	    GalleryUtilities::convertPathToUrl($file), 'embed');
 
-	// Simulate apache alias (/g2test -> this g2 dir, not under docroot)
+	/* Simulate apache alias (/g2test -> this g2 dir, not under docroot) */
 	$_SERVER['DOCUMENT_ROOT'] = '/g2testroot';
 	$_SERVER['REQUEST_URI'] = '/g2test/phpunit_test.php?foo=bar';
 	$urlGenerator = new GalleryUrlGenerator();
@@ -290,7 +290,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$results = GalleryUtilities::shrinkDimensionsToFit(800, 600, 1600, 300);
 	$this->assertEquals(array(400, 300), $results);
 
-	// make sure ints are returned even if size param is a string
+	/* make sure ints are returned even if size param is a string */
 	$results = GalleryUtilities::shrinkDimensionsToFit(150, 201, "150");
 	$this->assertEquals(array(112, 150), $results);
 	$this->assertEquals(150, $results[1]);
@@ -788,7 +788,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$_SERVER['HTTP_COOKIE'] .= $key . '=foo';
 	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals('foo', GalleryUtilities::getCookieVar($key));
-	
+
 	/* Missing */
 	unset($_COOKIE[$key]);
 	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
@@ -808,7 +808,7 @@ class UtilitiesTest extends GalleryTestCase {
 	/* COOKIE has a wrong value, should be fixed automatically */
 	GalleryUtilities::fixCookieVars(false, true);
 	$rand = rand(1,9999);
-	$val1 = 'bar' . $rand; 
+	$val1 = 'bar' . $rand;
 	$val2 = 'bar' . ($rand + 3000);
 	$_COOKIE[$key] = $val2;
 	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
@@ -820,7 +820,7 @@ class UtilitiesTest extends GalleryTestCase {
     }
 
     /* Test if we correctly fix the superglobal $_COOKIE */
-    function testFixCookieVars() {	
+    function testFixCookieVars() {
 	/* Only 1 cookie with the same NAME */
 	$key = 'foo' . rand(1,9999);
 	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
@@ -831,11 +831,11 @@ class UtilitiesTest extends GalleryTestCase {
 			    'single cookie, getCookieVars');
 	$this->assertEquals('foo', $_COOKIE[$key],
 			    'single cookie, superglobal _COOKIE');
-	
+
 	/* Two cookies with the same name, different paths */
 	$key = 'foo' . rand(1,9999);
 	$rand = rand(1,9999);
-	$val1 = 'bar' . $rand; 
+	$val1 = 'bar' . $rand;
 	$val2 = 'bar' . ($rand + 3000);
 	/* Define cookie with $val1 to be the one with higher precedence (more specific path) */
 	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
@@ -993,6 +993,12 @@ class UtilitiesTest extends GalleryTestCase {
 	    }
 	}
     }
+
+    function testGuaranteeDirExists() {
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
+	$this->assert($success, 'guaranteeDirExists');
+	$this->assertEquals(array('/test/one', '/test/one/two'), $created);
+    }
 }
 
 /**
@@ -1020,7 +1026,7 @@ class UtilitiesTestPlatform {
 
 	$path = realpath($file);
 
-	// Stick with Unix slashes for the purpose of our tests
+	/* Stick with Unix slashes for the purpose of our tests */
 	return str_replace('\\', '/', $path);
     }
 
@@ -1029,6 +1035,15 @@ class UtilitiesTestPlatform {
     }
 
     function file_exists($path) {
+	switch ($path) {
+	case '/test':
+	    return true;
+
+	case '/test/one':
+	case '/test/one/two':
+	    return false;
+	}
+
 	switch(realpath($path)) {
 	case __FILE__:
 	case realpath(dirname(__FILE__) . '/../../classes/GalleryAlbumItem.class'):
@@ -1041,6 +1056,20 @@ class UtilitiesTestPlatform {
 
     function filesize($file) {
 	return filesize($file);
+    }
+
+    function mkdir($dir, $stringPerms=null) {
+	return !empty($stringPerms);
+    }
+
+    function is_dir($dir) {
+	switch ($dir) {
+	case '/test':
+	    return true;
+
+	default:
+	    return false;
+	}
     }
 }
 

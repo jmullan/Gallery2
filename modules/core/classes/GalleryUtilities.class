@@ -1009,21 +1009,35 @@ class GalleryUtilities {
     }
 
     /**
-     * Make sure that the given directory exists (creating it if necessary)
+     * Make sure that the given directory exists (creating it and parent directories if necessary)
      *
      * @param string the dir
+     * @return array boolean true if dir exists or was created successfully
+     *               array of directories that were created
      */
     function guaranteeDirExists($dir) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-
-	if (!$platform->file_exists($dir)) {
-	    $base = dirname($dir);
-	    if ($base != $dir) {
-		GalleryUtilities::guaranteeDirExists($base);
-	    }
-	    $platform->mkdir($dir);
+	if ($platform->file_exists($dir)) {
+	    return array($platform->is_dir($dir), array());
 	}
+
+	static $dirPerms;
+	if (!isset($dirPerms)) {
+	    list ($ret, $dirPerms) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+	    /* Ignore error here.. */
+	}
+
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists(dirname($dir));
+	if ($success) {
+	    $success = !empty($dirPerms) ? $platform->mkdir($dir, $dirPerms)
+					 : $platform->mkdir($dir);
+	    if ($success) {
+		$created[] = $dir;
+	    }
+	}
+	return array($success, $created);
     }
 
     /**

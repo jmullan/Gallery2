@@ -208,17 +208,8 @@ class ThumbnailImage_core extends GalleryChildEntity {
 
 	$platform = $gallery->getPlatform();
 	$dir = $this->getThumbnailDir();
-	if (!$platform->file_exists($dir)) {
-	    list ($ret, $dirPerms) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	    if (!$platform->mkdir($dir, $dirPerms)) {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
-	    }
-	}
-	if (!$platform->is_dir($dir)) {
+	list ($success) = GalleryUtilities::guaranteeDirExists($dir);
+	if (!$success) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 

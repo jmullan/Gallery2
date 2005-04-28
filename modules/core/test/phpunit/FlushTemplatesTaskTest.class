@@ -68,8 +68,7 @@ class FlushTemplatesTaskTest extends GalleryTestCase {
 	$this->assertEquals(
 	    array($module->translate('Template cache deleted successfully')), $details);
 	$this->assertEquals(array('file_exists(/templates_c)',
-				  'recursiveRmdir(/templates_c)',
-				  "mkdir(/templates_c,$dirPerms)"),
+				  'recursiveRmdir(/templates_c)'),
 			    $mockPlatform->getCalls());
     }
 
