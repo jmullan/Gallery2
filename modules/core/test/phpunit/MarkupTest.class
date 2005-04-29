@@ -43,23 +43,13 @@ class MarkupTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * @see GalleryTestCase::setUp
-     */
     function setUp() {
-	global $gallery;
+	parent::setUp();
+
 	$this->_bbcode = new GalleryBbcodeMarkupParser();
 	$this->_html = new GalleryHtmlMarkupParser();
 	$this->_none = new GalleryNoMarkupParser();
 	$this->_strip = new GalleryStripBbcodeAndHtmlParser();
-	parent::setUp();
-    }
-
-    /**
-     * @see GalleryTestCase::tearDown
-     */
-    function tearDown() {
-	parent::tearDown();
     }
 
     function testBold() {

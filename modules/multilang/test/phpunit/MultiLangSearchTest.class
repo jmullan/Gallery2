@@ -108,12 +108,14 @@ class MultiLangSearchTest extends GalleryTestCase {
 
     function tearDown() {
 	global $gallery;
+
 	$session =& $gallery->getSession();
 	if (empty($this->_saveLanguage)) {
 	    $session->remove('core.language');
 	} else {
 	    $session->put('core.language', $this->_saveLanguage);
 	}
+
 	parent::tearDown();
     }
 

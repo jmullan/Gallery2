@@ -71,7 +71,8 @@ class CustomFieldSearchTest extends GalleryTestCase {
 
 	$this->_randomKey = "a" . rand(1,100000) . "z";
 
-	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 
+								   'id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -82,11 +83,15 @@ class CustomFieldSearchTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_album);
+
 	$ret = GalleryCoreApi::addGroupPermission($this->_album->getId(), $groupId, 'core.view');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
 	$ret = CustomFieldHelper::saveParameters(array(
 	    'common' => array(
 	        array('field' => 'Catalog Id',
@@ -122,21 +127,6 @@ class CustomFieldSearchTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-    }
-
-    /**
-     *
-     */
-    function tearDown() {
-	global $gallery;
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testGetSearchModuleInfo() {

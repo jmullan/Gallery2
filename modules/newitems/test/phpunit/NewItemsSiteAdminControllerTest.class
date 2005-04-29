@@ -47,22 +47,18 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('days.new', 'days.updated') as $key) {
-	    list ($ret, $params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'newitems', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	$this->_params = $params;
-
-	list ($ret, $this->_defaultSort) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'default.orderBy');
+	$ret = $this->_markPluginParametersForCleanup('module', 'newitems');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'default.orderBy', 'NewItems');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -75,28 +71,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
 
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'newitems', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	$ret = GalleryCoreApi::setPluginParameter(
-			     'module', 'core', 'default.orderBy', $this->_defaultSort);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
+	$this->_markForCleanup($this->_album);
     }
 
     function testNewItemsSiteAdminControllerUndo() {

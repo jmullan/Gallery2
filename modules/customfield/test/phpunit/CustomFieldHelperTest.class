@@ -39,14 +39,6 @@ class CustomFieldHelperTest extends GalleryTestCase {
         $this->GalleryTestCase($methodname);
     }
     
-    function setUp() {
-        parent::setUp();
-    }
-    
-    function tearDown() {
-        parent::tearDown();
-    }
-    
     function testHandleAdminAction() {
         $form = GalleryUtilities::getFormVariables('form');
         $form['action']['add']['common'] = 'Add';

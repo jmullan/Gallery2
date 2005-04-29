@@ -49,6 +49,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_parentAlbum);
+
 	$ret = GalleryCoreApi::addUserPermission($this->_parentAlbum->getId(),
 						       $gallery->getActiveUserId(),
 						       'core.all');
@@ -69,17 +71,6 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     /**

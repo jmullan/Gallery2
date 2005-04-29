@@ -41,30 +41,11 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_blocks) = GalleryCoreApi::getPluginParameter('module', 'imageblock', 'blocks');
+	$ret = $this->_markPluginParametersForCleanup('module', 'imageblock');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $this->_show) = GalleryCoreApi::getPluginParameter('module', 'imageblock', 'show');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imageblock', 'blocks', $this->_blocks);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imageblock', 'show', $this->_show);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
     }
 
     function testImageBlockSiteAdminControllerReset() {

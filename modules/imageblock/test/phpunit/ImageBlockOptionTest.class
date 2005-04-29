@@ -50,12 +50,16 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
 	parent::setUp();
 	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
 
-	list ($ret, $this->_topAlbum, $this->_topItems) = $this->_createSubAlbumWithItems($this->_getRootId());
+	list ($ret, $this->_topAlbum, $this->_topItems) = 
+		$this->_createSubAlbumWithItems($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_subAlbum, $this->_subItems) = $this->_createSubAlbumWithItems($this->_topAlbum->getId());
+	$this->_markForCleanup($this->_topAlbum);
+
+	list ($ret, $this->_subAlbum, $this->_subItems) = 
+		$this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -65,11 +69,6 @@ class ImageBlockOptionTest extends ItemEditOptionTestCase {
      * Delete the album that was used for testing
      */
     function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_topAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	foreach (array_merge($this->_topItems, $this->_subItems) as $item) {
 	    $ret = ImageBlockDisabledMap::removeMapEntry(array('itemId' => $item->getId()));
 	    if ($ret->isError()) {

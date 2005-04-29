@@ -38,23 +38,11 @@ class WebTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     *
-     */
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	$this->_saveConfig = $gallery->_config;
 
 	$gallery->_platform = new WebTestPlatform($this);
-    }
-
-    /**
-     *
-     */
-    function tearDown() {
-	parent::tearDown();
-	$gallery->_config = $this->_saveConfig;
     }
 
     function testFetchWebPage() {

@@ -64,6 +64,8 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_item);
+
 	list ($ret, $this->_thumbnail) = $this->_createDerivative(
 	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
@@ -75,11 +77,6 @@ class ThumbPageItemEditPluginTest extends ItemEditPluginTestCase {
     function tearDown() {
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('ThumbPageTestToolkit');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

@@ -46,6 +46,8 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemEditRotateAndScalePhotoPluginTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
@@ -122,11 +124,6 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
     }
 
     function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemEditRotateAndScalePhotoPluginTestToolkit');
 	if ($ret->isError()) {

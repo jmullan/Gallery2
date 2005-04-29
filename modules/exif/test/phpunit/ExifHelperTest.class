@@ -94,8 +94,6 @@ class ExifHelperTest extends GalleryTestCase {
      * @see GalleryTestCase::tearDown()
      */
     function tearDown() {
-	parent::tearDown();
-
 	$ret = ExifPropertiesMap::setProperties(EXIF_SUMMARY, $this->_save['summary']);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -107,6 +105,8 @@ class ExifHelperTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	parent::tearDown();
     }
 
     /**

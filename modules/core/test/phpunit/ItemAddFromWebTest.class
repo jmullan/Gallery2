@@ -57,6 +57,8 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_rootAlbum);
+
 	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -71,11 +73,6 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	$gallery->setPlatform($this->_savePlatform);
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

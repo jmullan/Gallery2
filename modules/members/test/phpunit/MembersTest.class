@@ -56,6 +56,8 @@ class MembersTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	/* Create a dummy user */
 	list ($ret, $this->_user) = $this->_createRandomUser();
 	if ($ret->isError()) {
@@ -63,43 +65,13 @@ class MembersTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_originalCanViewMembersModule) =
-	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewMembersModule');
+	$this->_markForCleanup($this->_user);
+
+	$ret = $this->_markPluginParametersForCleanup('module', 'members');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
-	list ($ret, $this->_originalCanViewEmailAddress) =
-	    GalleryCoreApi::getPluginParameter('module', 'members', 'canViewEmailAddress');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-    }
-
-    function tearDown() {
-	/* Remove our dummy user and album, return original settings */
-	$ret = array();
-
-	/*
-	 * We want to make sure all the original settings are replaced,
-	 * so we do not check for errors until they have all completed
-	 */
-	$ret[] = GalleryCoreApi::deleteEntityById($this->_user->getId());
-	$ret[] = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	$ret[] = GalleryCoreApi::setPluginParameter(
-	    'module', 'members', 'canViewMembersModule', $this->_originalCanViewMembersModule);
-	$ret[] = GalleryCoreApi::setPluginParameter(
-	    'module', 'members', 'canViewEmailAddress', $this->_originalCanViewEmailAddress);
-	foreach ($ret as $return) {
-	    if ($return->isError()) {
-		print $return->getAsHtml();
-		return array($return->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testFetchUserItemCount() {

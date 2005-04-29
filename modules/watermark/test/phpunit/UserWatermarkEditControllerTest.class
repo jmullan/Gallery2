@@ -53,6 +53,9 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_user);
+
 	$this->_saveUser = $gallery->getActiveUser();
 	$gallery->setActiveUser($this->_user);
 
@@ -88,13 +91,6 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-	$ret = $this->_deleteUser($this->_user);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	if (isset($this->_idToDelete)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_idToDelete);
 	    if ($ret->isError()) {
@@ -102,8 +98,6 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
-	$gallery->setActiveUser($this->_saveUser);
 	parent::tearDown();
     }
 

@@ -41,25 +41,11 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('duration') as $key) {
-	    list ($ret, $this->_params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'randomhighlight');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'randomhighlight', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testRandomHighlightSiteAdminControllerUndo() {

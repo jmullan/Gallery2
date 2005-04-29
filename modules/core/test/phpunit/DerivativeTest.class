@@ -50,6 +50,8 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_root);
+
 	/* Register a mock data item type */
 	$path = 'modules/core/test/phpunit/DerivativeTest.class';
 	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryItem',
@@ -93,11 +95,6 @@ class DerivativeTest extends GalleryTestCase {
     function tearDown() {
 	global $gallery;
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_root->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('DerivativeTestToolkit');
 	if ($ret->isError()) {
@@ -106,7 +103,6 @@ class DerivativeTest extends GalleryTestCase {
 
 	parent::tearDown();
     }
-
 
     function testRemapSourceIds() {
 	list ($ret, $item1) = $this->_createRandomAlbum($this->_root->getId());

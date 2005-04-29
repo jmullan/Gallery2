@@ -63,15 +63,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->_toolkit = new FfmpegToolkit();
     }
 
-    /**
-     *
-     */
-    function tearDown() {
-	global $gallery;
-	
-	parent::tearDown();
-    }
-
     function testGetProperties() {
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('video/x-msvideo', 'dimensions', 'testGetProperties1.avi');

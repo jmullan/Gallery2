@@ -47,50 +47,15 @@ class GalleryPendingUserTest extends GalleryTestCase {
     function setUp() {
     	global $gallery;
     		
-    	/* store settings */
-    	$this->_params = array();
-	foreach (array('confirmation') as $key) {
-	    list($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    $this->_params[$key] = $value;
+	$ret = $this->_markPluginParametersForCleanup('module', 'register');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     	  
-//    	/* store active user */
-//    	$this->_activeUserId = $gallery->getActiveUserId();
-//    	
-//    	list($ret, $guestId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-//    	if ($ret->isError())
-//    		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-//    	
-//    	/* become guest */
-//    	$gallery->setActiveUserId( $guestId );
-//    	
 	parent::setUp();
     }
     
-    function tearDown() {
-    	global $gallery;
-
-	/* restore parameters */
-	foreach( array('confirmation') as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-//    	$gallery->setActiveUserId($this->_activeUserId);
-//    	$id = $gallery->getActiveUserId();
-//    	echo "_user is $id";
-//    	$this->assertEquals($this->_activeUserId, $id, 'Could not restore user');
-//    	
-	parent::tearDown();
-    }
-
-
     function testPendingUserCreation() {
 	global $gallery;
 

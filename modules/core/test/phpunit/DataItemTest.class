@@ -40,28 +40,15 @@ class DataItemTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
-	
 	parent::setUp();
 	
-	$iterations = 3;
-	$parentId = $this->_getRootId();
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
 
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
+	$this->_markForCleanup($this->_album);
     }
 
     /**

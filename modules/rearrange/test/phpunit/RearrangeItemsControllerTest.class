@@ -48,6 +48,8 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	for ($i = 0; $i < 5; $i++) {
 	    if ($i == 3) {
 		list ($ret, $this->_child[$i]) = $this->_createRandomAlbum($this->_album->getId());
@@ -77,15 +79,6 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	    }
 	    $this->_childIds[] = $this->_child[$i]->getId();
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testReset() {

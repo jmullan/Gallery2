@@ -38,16 +38,6 @@ class DataCacheTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function setUp() {
-	global $gallery;
-	parent::setUp();
-    }
-
-    function tearDown() {
-	global $gallery;
-	parent::tearDown();
-    }
-
     function testPutAndGet() {
 	$key = 'test-key';
 	$value = 'test-value';

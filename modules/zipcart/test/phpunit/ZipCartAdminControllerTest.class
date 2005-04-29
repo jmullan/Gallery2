@@ -41,26 +41,13 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $this->_saveParameters['path']) =
-	    GalleryCoreApi::getPluginParameter('module', 'zipcart', 'path');
+	$ret = $this->_markPluginParametersForCleanup('module', 'zipcart');
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$gallery->setPlatform(new ZipCartAdminControllerTestPlatform());
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'zipcart', 'path', $this->_saveParameters['path']);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testReset() {

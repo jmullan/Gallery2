@@ -60,13 +60,10 @@ class GdToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 
-	$this->_save = array();
-	foreach (array('jpegQuality') as $key) {
-	    list ($ret, $this->_save[$key]) = GalleryCoreApi::getPluginParameter('module', 'gd', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'gd');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Reset to the defaults -- tearDown will undo this */
@@ -89,13 +86,6 @@ class GdToolkitTest extends GalleryTestCase {
 
     function tearDown() {
 	global $gallery;
-
-	foreach ($this->_save as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'gd', $key, $value);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
 
 	$gallery->setConfig('data.gallery.base', $this->_oldBase);
 

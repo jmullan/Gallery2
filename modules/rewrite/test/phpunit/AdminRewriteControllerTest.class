@@ -57,16 +57,13 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	foreach (array('embeddedLocation' => '', 'embeddedHtaccess' => '')
-		 as $param => $value) {
-	    /* Save original value */
-	    list ($ret, $this->_saveParameters[$param]) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
-	    if ($ret->isError()) {
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
+	}
+	foreach (array('embeddedLocation' => '', 'embeddedHtaccess' => '')
+		 as $param => $value) {
 	    /* Set test value */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
 	    if ($ret->isError()) {
@@ -83,22 +80,13 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     }
     
     function tearDown() {
-    	global $gallery;
-    	parent::tearDown();
-    	
-    	foreach ($this->_saveParameters as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	
 	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+    	parent::tearDown();
     }
 
     function testSave() {

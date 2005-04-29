@@ -43,49 +43,49 @@ class PermissionSetTest extends GalleryTestCase {
 	parent::setUp();
 	
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test1',
-							   'item admin permission',
-							   GALLERY_PERMISSION_ITEM_ADMIN);
+						  'test.test1',
+						  'item admin permission',
+						  GALLERY_PERMISSION_ITEM_ADMIN);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test2',
-							   'regular permission');
+						  'test.test2',
+						  'regular permission');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test3',
-							   'composite permission',
-							   GALLERY_PERMISSION_COMPOSITE,
-							   array('test.test1', 'test.test2'));
+						  'test.test3',
+						  'composite permission',
+						  GALLERY_PERMISSION_COMPOSITE,
+						  array('test.test1', 'test.test2'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test4',
-							   'all access permission',
-							   GALLERY_PERMISSION_ALL_ACCESS);
+						  'test.test4',
+						  'all access permission',
+						  GALLERY_PERMISSION_ALL_ACCESS);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test5',
-							   'another regular permission');
+						  'test.test5',
+						  'another regular permission');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
 	$ret = GalleryCoreApi::registerPermission('testModule',
-							   'test.test6',
-							   'overlap composite permission',
-							   GALLERY_PERMISSION_COMPOSITE,
-							   array('test.test1', 'test.test5'));
+						  'test.test6',
+						  'overlap composite permission',
+						  GALLERY_PERMISSION_COMPOSITE,
+						  array('test.test1', 'test.test5'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

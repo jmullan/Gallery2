@@ -56,17 +56,12 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_save = array();
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $key) {
-	    list ($ret, $this->_save[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'netpbm', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'netpbm');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	/* Reset to the defaults -- tearDown will undo this */
 	foreach (array('jpegQuality' => 75,
 		       'pnmtojpeg' => 'ppmtojpeg',
 		       'jheadPath' => '/usr/local/bin/')
@@ -80,17 +75,6 @@ class NetPbmToolkitTest extends GalleryTestCase {
 
 	/* Get a toolkit to work with */
 	$this->_toolkit = new NetPbmToolkit();
-    }
-
-    function tearDown() {
-	foreach ($this->_save as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testPerformOperations() {

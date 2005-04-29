@@ -70,14 +70,12 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	foreach (array('duration') as $key) {
-	    list ($ret, $this->_params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'webcam', $key);
-	    if ($ret->isError()) {
+	$ret = $this->_markPluginParametersForCleanup('module', 'webcam');
+	if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	}
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'webcam', 'duration', '-100');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -90,18 +88,13 @@ class ItemAddWebCamTest extends ItemAddPluginTestCase {
 
     function tearDown() {
 	global $gallery;
+
+	/* Restore platform before releasing locks */
 	$gallery->setPlatform($this->_savePlatform);
 
 	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	}
 
 	parent::tearDown();

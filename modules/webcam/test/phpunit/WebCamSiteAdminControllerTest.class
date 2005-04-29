@@ -41,25 +41,11 @@ class WebCamSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('duration') as $key) {
-	    list ($ret, $this->_params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'webcam', $key);
-	    if ($ret->isError()) {
+	$ret = $this->_markPluginParametersForCleanup('module', 'webcam');
+	if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'webcam', $key, $value);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testWebCamSiteAdminControllerUndo() {

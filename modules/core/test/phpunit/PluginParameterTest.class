@@ -47,6 +47,8 @@ class PluginParameterTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    $this->failWithStatus($ret);
 	}
+
+	$this->_markForCleanup($this->_parentAlbum);
     }
 
     function tearDown() {
@@ -55,11 +57,6 @@ class PluginParameterTest extends GalleryTestCase {
 	    $this->failWithStatus($ret);
 	}
 
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret);
-	}
-							
 	parent::tearDown();
     }
 

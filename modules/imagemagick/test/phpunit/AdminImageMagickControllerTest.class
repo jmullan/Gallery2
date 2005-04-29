@@ -41,39 +41,13 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	list ($ret, $this->_saveParameters['path']) =
-	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $this->_saveParameters['jpegQuality']) =
-	    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'jpegQuality');
+	$ret = $this->_markPluginParametersForCleanup('module', 'imagemagick');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$gallery->_platform = new AdminImageMagickControllerTestPlatform($gallery->getPlatform());
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'path',
-						  $this->_saveParameters['path']);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', 'jpegQuality',
-						  $this->_saveParameters['jpegQuality']);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testSaveGoodPath() {

@@ -68,14 +68,10 @@ class LayoutTest extends GalleryTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$this->_savePlatform = $gallery->_platform;
 	$gallery->_platform = new LayoutTestPlatform();
     }
 
     function tearDown() {
-	global $gallery;
-	$gallery->_platform = $this->_savePlatform;
-
 	if (isset($this->_installed)) {
 	    $ret = GalleryCoreApi::removePlugin('layout', 'layouttest');
 	    if ($ret->isError()) {

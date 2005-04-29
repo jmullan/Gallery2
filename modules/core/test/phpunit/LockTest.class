@@ -42,27 +42,13 @@ class LockTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
-	$this->_saveLockSystem = $gallery->_lockSystem;
-
 	parent::setUp();
 
 	list ($ret, $this->_parentAlbum) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->_lockSystem = $this->_saveLockSystem;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
+	$this->_markForCleanup($this->_parentAlbum);
     }
 
     function _tryAllLockSystems($testFunction) {

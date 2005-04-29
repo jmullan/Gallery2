@@ -53,6 +53,8 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	for ($i = 0; $i < 3; $i++) {
 	    /*
 	     * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
@@ -143,14 +145,6 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 
     function tearDown() {
 	global $gallery;
-
-	/* Restore the platform and url generator */
-	list ($gallery->_platform, $gallery->_urlGenerator) = $this->_save;
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 
 	/* Restore session id */
 	$session =& $gallery->getSession();

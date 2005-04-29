@@ -77,7 +77,6 @@ class NokiaUploadDirectoryListingControllerTest extends GalleryControllerTestCas
 	if (!$this->_user->isCorrectPassword($this->_password)) {
 	    return $this->assert(false, "test user wasn't created with expected password");
 	}
-	$this->_saveUser = $gallery->getActiveUser();
 
 	$ret = $this->_markPluginParametersForCleanup('module', 'albumselect');
 	if ($ret->isError()) {
@@ -103,12 +102,6 @@ class NokiaUploadDirectoryListingControllerTest extends GalleryControllerTestCas
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->setActiveUser($this->_saveUser);
-	parent::tearDown();
     }
 
     function testDirectoryListingController() {

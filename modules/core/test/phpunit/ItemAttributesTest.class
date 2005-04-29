@@ -48,6 +48,8 @@ class ItemAttributesTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_parentItem);
+
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $this->_childItems[$i]) =
 		$this->_createRandomAlbum($this->_parentItem->getId());
@@ -56,17 +58,6 @@ class ItemAttributesTest extends GalleryTestCase {
 	    }
 	}
     }
-
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentItem->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
-    }	
 
     /**
      * Update the view count and verify it

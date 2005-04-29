@@ -53,6 +53,8 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	/*
 	 * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
 	 * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
@@ -110,14 +112,6 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-
-	/* Restore the platform and url generator */
-	list ($gallery->_platform, $gallery->_urlGenerator) = $this->_save;
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 
 	/* Restore session id */
 	$session =& $gallery->getSession();

@@ -55,8 +55,7 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_save) = GalleryCoreApi::getPluginParameter('module', 'exif', 
-								       'addOption');
+	$ret = $this->_markPluginParametersForCleanup('module', 'exif');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -78,16 +77,6 @@ class ExifDescriptionOptionTest extends ItemAddOptionTestCase {
 	
 	$this->_noWarnings = array(array());
 	$this->_noErrors = array();
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'exif', 'addOption', $this->_save);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testCreateDescription() {

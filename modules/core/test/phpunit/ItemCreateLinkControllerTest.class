@@ -38,8 +38,6 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
-	
 	parent::setUp();
 
 	/* Create a container album for all our test items */
@@ -48,17 +46,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
 
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	    
-	parent::tearDown();
+	$this->_markForCleanup($this->_album);
     }
 
     /**

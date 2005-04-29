@@ -73,6 +73,7 @@ class ZipCartPluginTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markForCleanup($this->_album);
 
 	/* Photo with core.viewSource */
 	list ($ret, $this->_items[0]) = $this->_addItem($this->_album->getId(), 'GalleryPhotoItem',
@@ -123,14 +124,6 @@ class ZipCartPluginTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-	$gallery->setPlatform($this->_savePlatform);
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	$ret = GalleryCoreApi::unregisterToolkit('ZipCartToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

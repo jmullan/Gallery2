@@ -38,8 +38,6 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
-	
 	parent::setUp();
 	
 	/* create an album to hold all of the test items */
@@ -47,19 +45,10 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_album);
     }
 	
-    function tearDown() {
-	global $gallery;
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	parent::tearDown();
-    }
-    
     /**
      * Create a random album and verify that we can delete it.
      */

@@ -42,15 +42,15 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 	
+	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
+	if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	foreach (array('embeddedHtaccess' => '',
 		       'embeddedLocation' => '')
 		as $param => $value) {
-	    list ($ret, $this->_saveParameters[$param]) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', $param);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -60,20 +60,6 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 
 	$this->_platform = new SetupRewriteControllerTestPlatform();
 	$gallery->setPlatform($this->_platform);
-    }
-    
-    function tearDown() {
-    	global $gallery;
-    	parent::tearDown();
-    	
-    	foreach ($this->_saveParameters as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $key,
-		    $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
     }
     
     function testDone() {

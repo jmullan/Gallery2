@@ -38,14 +38,14 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_album);
 
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret->isError()) {
@@ -86,17 +86,6 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	parent::tearDown();
     }
 
     function testHandleRequestWithPreferred() {

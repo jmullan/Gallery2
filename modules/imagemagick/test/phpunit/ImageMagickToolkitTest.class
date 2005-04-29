@@ -77,15 +77,10 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	$gallery->_platform =& new ImageMagickToolkitTestPlatform($gallery->getPlatform(),
 								  $this->_files);
 
-	$this->_save = array();
-	foreach (array('path', 'jpegQuality', 'compositeCmd', 'binary', 'removeMetaDataSwitch')
-		 as $key) {
-	    list ($ret, $this->_save[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'imagemagick', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'imagemagick');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Reset to the defaults -- tearDown will undo this */
@@ -99,20 +94,6 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 
 	/* Get a toolkit to work with */
 	$this->_toolkit =& new ImageMagickToolkit();
-    }
-
-    /**
-     *
-     */
-    function tearDown() {
-	foreach ($this->_save as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'imagemagick', $key, $value);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-	}
-
-	parent::tearDown();
     }
 
     /**

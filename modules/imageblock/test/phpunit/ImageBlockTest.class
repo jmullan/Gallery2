@@ -119,35 +119,16 @@ class ImageBlockTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $blocks) = $module->getParameter('blocks');
+	$ret = $this->_markPluginParametersForCleanup('module', 'imageblock');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$params = array();
-	foreach (array('dailyImage', 'weeklyImage', 'monthlyImage',
-		       'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum') as $key) {
-	    list ($ret, $value) = $module->getParameter($key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    if (isset($value)) {
-		$params[$key] = $value;
-		$ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', $key);
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
 	}
 
 	$this->_album = $album;
 	$this->_photo = $photo;
 	$this->_module = $module;
 	$this->_view = $view;
-	$this->_blocks = $blocks;
-	$this->_params = $params;
 	$this->_everybodyGroupId = $everybodyGroupId;
     }
 
@@ -223,33 +204,7 @@ class ImageBlockTest extends GalleryTestCase {
 	return array(GalleryStatus::success(), $derivative->getId());
     }
 
-    /**
-     * Delete the album that was used for testing
-     */
     function tearDown() {
-	global $gallery;
-	$ret = $this->_module->setParameter('blocks', $this->_blocks);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	foreach (array('dailyImage', 'weeklyImage', 'monthlyImage',
-		       'dailyAlbum', 'weeklyAlbum', 'monthlyAlbum') as $key) {
-	    if (isset($this->_params[$key])) {
-		$ret = GalleryCoreApi::setPluginParameter(
-		       'module', 'imageblock', $key, $this->_params[$key]);
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    } else {
-		$ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', $key);
-		if ($ret->isError()) {
-		    print $ret->getAsHtml();
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
-	}
 	/* Unregister dummy toolkit */
 	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
 	if ($ret->isError()) {

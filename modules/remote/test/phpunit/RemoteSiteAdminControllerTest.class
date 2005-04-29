@@ -41,26 +41,11 @@ class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('showItemAdd') as $key) {
-	    list ($ret, $params[$key]) = GalleryCoreApi::getPluginParameter('module', 'remote', $key);
-	    if ($ret->isError()) {
+	$ret = $this->_markPluginParametersForCleanup('module', 'remote');
+	if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
 	}
-	$this->_params = $params;
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'remote', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testRemoteSiteAdminControllerReset() {

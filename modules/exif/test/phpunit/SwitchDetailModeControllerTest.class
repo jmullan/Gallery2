@@ -37,16 +37,6 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	$this->GalleryControllerTestCase($methodName, 'exif:SwitchDetailMode');
     }
 
-    function setUp() {
-	global $gallery;
-	parent::setUp();
-    }
-
-    function tearDown() {
-	global $gallery;
-	parent::tearDown();
-    }
-
     function testSwitchToSummary() {
 	global $gallery;
 	GalleryUtilities::putRequestVariable('mode', 'summary');

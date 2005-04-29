@@ -48,6 +48,8 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	/* Save the existing cart */
 	list($ret, $this->_saveCartItemCounts) = CartHelper::fetchCartItemCounts();
 	if ($ret->isError()) {
@@ -72,11 +74,6 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();

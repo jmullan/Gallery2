@@ -47,11 +47,14 @@ class ExifExtractorTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Create a new subalbum and add some jpegs */
-	list ($ret, $album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($album->getId());
+
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -64,7 +67,7 @@ class ExifExtractorTest extends GalleryTestCase {
 			    $prefix . 'core/test/data/test1.jpg');
 	for ($i = 0; $i < count($imagePaths); $i++) {
 	    list ($ret, $photoId) = $this->_addPhoto(
-		  $album->getId(), $imagePaths[$i], $i + 1);
+		  $this->_album->getId(), $imagePaths[$i], $i + 1);
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -85,7 +88,6 @@ class ExifExtractorTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_album = $album;
 	$this->_photoIds = $photoIds;
 	$this->_exif = $exif;
     }
@@ -150,19 +152,6 @@ class ExifExtractorTest extends GalleryTestCase {
 	}
 	return array(GalleryStatus::success(), $derivative->getId());
     }
-
-    /**
-     * Delete the album that was used for testing
-     */
-    function tearDown() {
-	global $gallery;
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
-    }
-
 
     function testOneItemAllDataExif() {
 	list ($ret, $data) = $this->_exif->getMetaData($this->_photoIds[0]);

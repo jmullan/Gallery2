@@ -44,14 +44,7 @@ class OptimizeDatabaseTaskTest extends GalleryTestCase {
 	global $gallery;
 
 	$this->_task = new OptimizeDatabaseTask();
-	$this->_storage = $gallery->_storage;
 	parent::setUp();
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->_storage = $this->_storage;
-	parent::tearDown();
     }
 
     function testRun() {

@@ -56,14 +56,12 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	foreach (array('duration') as $key) {
-	    list ($ret, $this->_params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'randomhighlight', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'randomhighlight');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
 	$ret = GalleryCoreApi::setPluginParameter('module', 'randomhighlight', 'duration', '-100');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -91,13 +89,6 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
     }
 
     function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'randomhighlight', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
 	$ret = GalleryCoreApi::unregisterToolkit('RandomHighlightTestToolkit');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

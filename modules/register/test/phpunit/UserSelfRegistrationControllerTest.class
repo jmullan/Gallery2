@@ -47,15 +47,10 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	/* store settings */
-	$this->_params = array();
-	    foreach (array('confirmation', 'emailadmins') as $key) {
-	    list($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
-	    if ($ret->isError()) {
+	$ret = $this->_markPluginParametersForCleanup('module', 'register');
+	if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $this->_params[$key] = $value;
 	}
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'register', 'emailadmins', '0');
@@ -65,19 +60,6 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    function tearDown() {
-	global $gallery;
-	/* restore parameters */
-	foreach (array('confirmation', 'emailadmins') as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
-    }
-    
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();

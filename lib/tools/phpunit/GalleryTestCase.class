@@ -195,6 +195,8 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->getUrlGenerator();
 	$this->_saveVars[] = $gallery->_config;
 	$this->_saveVars[] = $gallery->_phpVm;
+	$this->_saveVars[] = $gallery->_lockSystem;
+	$this->_saveVars[] = $gallery->_storage;
 
 	$_GET = array();
 	$_POST = array();
@@ -237,6 +239,21 @@ class GalleryTestCase extends TestCase {
     function tearDown() {
 	global $gallery;
 
+	/* Restore saved vars */
+	$_GET = array_shift($this->_saveVars);
+	$_POST = array_shift($this->_saveVars);
+	$_FILES = array_shift($this->_saveVars);
+	$_COOKIE = array_shift($this->_saveVars);
+	$_SERVER = array_shift($this->_saveVars);
+	$_ENV = array_shift($this->_saveVars);
+	$gallery->setPlatform(array_shift($this->_saveVars));
+	$gallery->setActiveUser(array_shift($this->_saveVars));
+	$gallery->setUrlGenerator(array_shift($this->_saveVars));
+	$gallery->_config = array_shift($this->_saveVars);
+	$gallery->_phpVm = array_shift($this->_saveVars);
+	$gallery->_lockSystem = array_shift($this->_saveVars);
+	$gallery->_storage = array_shift($this->_saveVars);
+
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
@@ -245,22 +262,6 @@ class GalleryTestCase extends TestCase {
 	}
 
 	/* Do our cleanup */
-	foreach ($this->_cleanup['entity'] as $entity) {
-	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
-	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
 	foreach ($this->_cleanup['pluginParameters'] as $cleanupPlugin) {
 	    $pluginType = array_shift($cleanupPlugin);
 	    $pluginId = array_shift($cleanupPlugin);
@@ -283,25 +284,28 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
 
+	foreach ($this->_cleanup['entity'] as $entity) {
+	    $ret = GalleryCoreApi::deleteEntityById($entity->getId());
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
+	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
 	$storage =& $gallery->getStorage();
 	$ret = $storage->commitTransaction();
 	if ($ret->isError()) {
 	    $ret = $ret->wrap(__FILE__, __LINE__);
 	    $this->fail($ret->getAsText());
 	}
-
-	/* Restore saved vars */
-	$_GET = array_shift($this->_saveVars);
-	$_POST = array_shift($this->_saveVars);
-	$_FILES = array_shift($this->_saveVars);
-	$_COOKIE = array_shift($this->_saveVars);
-	$_SERVER = array_shift($this->_saveVars);
-	$_ENV = array_shift($this->_saveVars);
-	$gallery->setPlatform(array_shift($this->_saveVars));
-	$gallery->setActiveUser(array_shift($this->_saveVars));
-	$gallery->setUrlGenerator(array_shift($this->_saveVars));
-	$gallery->_config = array_shift($this->_saveVars);
-	$gallery->_phpVm = array_shift($this->_saveVars);
 
 	parent::tearDown();
 

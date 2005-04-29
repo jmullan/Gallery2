@@ -75,6 +75,8 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_topAlbum);
+
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret->isError()) {
@@ -125,12 +127,6 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 
 	$ret = GalleryCoreApi::removePluginParameter($this->_module->getPluginType(),
 						     $this->_module->getId(), 'itemId');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_topAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

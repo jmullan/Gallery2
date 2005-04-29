@@ -60,14 +60,6 @@ class FastDownloadTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-
-	$this->_savePlatform = $gallery->getPlatform();
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->setPlatform($this->_savePlatform);
-	parent::tearDown();
     }
 
     function testCreateFastDownloadFile() {

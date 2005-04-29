@@ -40,23 +40,12 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_saveParameters['jpegQuality']) =
-	    GalleryCoreApi::getPluginParameter('module', 'gd', 'jpegQuality');
+	$ret = $this->_markPluginParametersForCleanup('module', 'gd');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::setPluginParameter('module', 'gd', 'jpegQuality', $this->_saveParameters['jpegQuality']);
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testSaveGoodPath() {

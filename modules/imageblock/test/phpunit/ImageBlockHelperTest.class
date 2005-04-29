@@ -51,6 +51,8 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_topAlbum);
+
 	list ($ret, $this->_subAlbum, $this->_subItems) =
 	    $this->_createSubAlbumWithItems($this->_topAlbum->getId());
 	if ($ret->isError()) {
@@ -74,18 +76,6 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	}
 
 	return array(GalleryStatus::success(), $album, $items);
-    }
-
-    /**
-     * Delete the album that was used for testing
-     */
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_topAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testImageBlockHelperGetDisabledFlag() {

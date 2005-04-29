@@ -46,6 +46,9 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_item);
+
 	list ($ret, $this->_thumb) = $this->_createDerivative($this->_item, $this->_item->getId(),
 							      DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
@@ -77,10 +80,6 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	$ret = G1MigrateMap::removeMapEntry(array('g1album' => $this->_albumName));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_itemId);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

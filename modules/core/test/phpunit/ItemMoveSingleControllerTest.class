@@ -38,8 +38,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
     }
 
     function setUp() {
-	global $gallery;
-	
 	parent::setUp();
 
 	/* Register a dummy toolkit */
@@ -88,6 +86,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_rootAlbum);
 	$this->_setDerivativePreferences($this->_rootAlbum->getId(), 150, 300, 400);
 	
 	list ($ret, $this->_destinationAlbum) = $this->_createRandomAlbum($this->_getRootId());
@@ -95,6 +95,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_markForCleanup($this->_destinationAlbum);
 	$this->_setDerivativePreferences($this->_destinationAlbum->getId(), 200, 400, 600, 800);
 	
 	/* Create a data item */
@@ -107,22 +109,10 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	global $gallery;
-
 	/* Unregister */
 	$ret = GalleryCoreApi::unregisterToolkit('ItemMoveSingleTestToolkit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_rootAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	$ret = GalleryCoreApi::deleteEntityById($this->_destinationAlbum->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	parent::tearDown();
@@ -185,8 +175,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item
      */
     function testMoveItem() {
-	global $gallery;
-
 	/* Create derivatives according to prefs of original album */
 	$ret = GalleryCoreApi::addExistingItemToAlbum(
 				$this->_item, $this->_rootAlbum->getId(), true);
@@ -265,7 +253,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item to a bogus destination
      */
     function testMoveItemIntoEmptyDestination() {
-	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 
@@ -281,7 +268,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item into itself
      */
     function testMoveItemIntoSelf() {
-	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_rootAlbum->getId());
@@ -298,8 +284,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item into its own child
      */
     function testMoveItemIntoChild() {
-	global $gallery;
-
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -322,7 +306,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item into a container where we have no add permissions
      */
     function testMoveItemIntoAlbumWithNoPermissions() {
-	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
@@ -340,7 +323,6 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
      * Test moving an item that we can't delete
      */
     function testMoveItemWithNoDeletePermissions() {
-	global $gallery;
 	GalleryUtilities::putRequestVariable('itemId', $this->_item->getId());
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());

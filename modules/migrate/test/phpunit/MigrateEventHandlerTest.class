@@ -52,6 +52,8 @@ class MigrateEventHandlerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_temporaryAlbum);
+
 	$this->_temporaryAlbumId = $this->_temporaryAlbum->getId();
 
 	list ($ret, $this->_mapCount) = G1MigrateHelper::fetchMapCount();
@@ -62,12 +64,6 @@ class MigrateEventHandlerTest extends GalleryControllerTestCase {
 
     function tearDown() {
 	global $gallery;
-
-	/* Clean up our test album */
-	$ret = GalleryCoreApi::deleteEntityById($this->_temporaryAlbumId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
 
 	list ($ret, $mapCount) = G1MigrateHelper::fetchMapCount();
 	if ($ret->isError()) {

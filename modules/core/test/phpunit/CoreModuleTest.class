@@ -53,6 +53,8 @@ class CoreModuleTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_parentAlbum);
+
 	$ret = GalleryCoreApi::addUserPermission($this->_parentAlbum->getId(),
 						       $gallery->getActiveUserId(),
 						       'core.all');
@@ -60,16 +62,6 @@ class CoreModuleTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testGetSiteAdminViews() {

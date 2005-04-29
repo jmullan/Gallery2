@@ -39,22 +39,16 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function AdminSelfRegistrationControllerTest($methodName) {
 	$this->GalleryControllerTestCase($methodName, 'register:AdminSelfRegistration');
-
-	$this->paramNames = array('confirmation', 'emailadmins', 'adminsubject', 'subject', 'from');
     }
 
     function setUp() {
 	parent::setUp();
 
-	foreach ( $this->paramNames as $key) {
-	    list ($ret, $value) = GalleryCoreApi::getPluginParameter('module', 'register', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	    $params[$key] = (string) $value;
+	$ret = $this->_markPluginParametersForCleanup('module', 'register');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_params =& $params;
 
 	// Create a pending user..
 	list ($ret, $pendingUser) =
@@ -78,13 +72,6 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     }
 
     function tearDown() {
-	foreach ($this->paramNames as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'register', $key, $this->_params[$key]);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
 	if (isset($this->_pendingUser)) {
 	    $ret = GalleryCoreApi::deleteEntityById($this->_pendingUser->getId());
 	    if ($ret->isError()) {

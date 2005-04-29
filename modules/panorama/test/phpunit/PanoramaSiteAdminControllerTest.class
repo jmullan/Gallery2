@@ -47,30 +47,31 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('itemType', 'itemLink', 'width') as $key) {
-	    list ($ret, $params[$key]) = GalleryCoreApi::getPluginParameter('module', 'panorama', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'panorama');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_params = $params;
 
-	list ($ret, $item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test', array(), __FILE__, 'GalleryPhotoItem');
+	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_getRootId(), 'image/test',
+		array(), __FILE__, 'GalleryPhotoItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$item->setMimeType('image/gif');
-	$ret = PanoramaHelper::assignEntityType($item, true);
+
+	$this->_markForCleanup($this->_item);
+
+	$this->_item->setMimeType('image/gif');
+	$ret = PanoramaHelper::assignEntityType($this->_item, true);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_item = $item;
 
 	list ($ret, $derivative) =
-	    $this->_createDerivative($item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+	    $this->_createDerivative($this->_item, $this->_item->getId(), 
+				     DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -83,24 +84,7 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->_derivative = $derivative;
     }
 
-    function tearDown() {
-	foreach (array('itemType', 'itemLink', 'width') as $key) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'panorama', $key, $this->_params[$key]);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	$ret = GalleryCoreApi::deleteEntityById($this->_item->getId());
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
-    }
-
     function testPanoramaSiteAdminControllerUndo() {
-
 	GalleryUtilities::putRequestVariable('form[action][undo]', '1');
 
 	$results = $this->handleRequest();
@@ -112,7 +96,6 @@ class PanoramaSiteAdminControllerTest extends GalleryControllerTestCase {
     }
 
     function testPanoramaSiteAdminControllerSave() {
-
 	GalleryUtilities::putRequestVariable('form[itemLink]', '1');
 	GalleryUtilities::putRequestVariable('form[width]', '1000');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');

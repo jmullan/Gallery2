@@ -52,6 +52,8 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'video/x-msvideo');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -60,20 +62,7 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
 	$this->_preferred = null;
     }
 
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	
-	parent::tearDown();
-    }
-
     function testChangeSize() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[width]', 123);
 	GalleryUtilities::putRequestVariable('form[height]', 456);
@@ -97,8 +86,6 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
     }
 
     function testChangeSizeMissingValues() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[width]', '');
 	GalleryUtilities::putRequestVariable('form[height]', '');
@@ -122,8 +109,6 @@ class ItemEditMoviePluginTest extends ItemEditPluginTestCase {
     }
     
     function testChangeSizeInvalidValues() {
-	global $gallery;
-
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[width]', -123);
 	GalleryUtilities::putRequestVariable('form[height]', -456);

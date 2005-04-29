@@ -41,25 +41,11 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	foreach (array('languages') as $key) {
-	    list ($ret, $this->_params[$key]) =
-		GalleryCoreApi::getPluginParameter('module', 'multilang', $key);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'multilang');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	foreach ($this->_params as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'multilang', $key, $value);
-	    if ($ret->isError()) {
-		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
-	parent::tearDown();
     }
 
     function testMultiLangSiteAdminControllerReset() {

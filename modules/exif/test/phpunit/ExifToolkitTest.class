@@ -53,13 +53,6 @@ class ExifToolkitTest extends GalleryTestCase {
 	$this->_toolkit =& new ExifToolkit();
     }
 
-    /**
-     *
-     */
-    function tearDown() {
-	parent::tearDown();
-    }
-
     function testGetProperties() {
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('image/jpeg', 'originationTimestamp',

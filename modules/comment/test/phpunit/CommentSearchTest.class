@@ -39,9 +39,6 @@ class CommentSearchTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * 
-     */
     function setUp() {
 	global $gallery;
 	
@@ -69,6 +66,8 @@ class CommentSearchTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+
+	    $this->_markForCleanup($this->_item[$j]);
 
 	    /* Create some comments */
 	    for ($i = 0; $i < 2; $i++) {
@@ -158,24 +157,6 @@ class CommentSearchTest extends GalleryTestCase {
 	}
 
 	$this->_user = $gallery->getActiveUser();
-    }
-
-    /**
-     *
-     */
-    function tearDown() {
-	global $gallery;
-	
-	if (!empty($this->_item)) {
-	    foreach ($this->_item as $item) {
-		$ret = GalleryCoreApi::deleteEntityById($item->getId());
-		if ($ret->isError()) {
-		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-		}
-	    }
-	}
-	
-	parent::tearDown();
     }
 
     function testFetchSearchModuleInfo() {

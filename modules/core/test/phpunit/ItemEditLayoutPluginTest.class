@@ -48,6 +48,8 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_album);
+
 	/* Assign our test layout */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_album->getId());
 	if ($ret->isError()) {
@@ -65,25 +67,12 @@ class ItemEditLayoutPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->setPlatform(new ItemEditLayoutTestPlatform());
 
 	$this->_preferred = null;
 
 	/* Reset test layout */
 	ItemEditLayoutControllerTestLayout::reset();
-    }
-
-    function tearDown() {
-	global $gallery;
-	$gallery->setPlatform($this->_savePlatform);
-
-	$ret = GalleryCoreApi::deleteEntityById($this->_album->getId());
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testUndo() {

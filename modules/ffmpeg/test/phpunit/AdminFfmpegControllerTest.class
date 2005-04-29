@@ -41,29 +41,13 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	foreach (array('path') as $param) {
-	    list ($ret, $this->_saveParameters[$param]) =
-		GalleryCoreApi::getPluginParameter('module', 'ffmpeg', $param);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'ffmpeg');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$gallery->_platform = new AdminFfmpegControllerTestPlatform();
-    }
-
-    function tearDown() {
-	parent::tearDown();
-
-	foreach (array('path') as $param) {
-	    $ret = GalleryCoreApi::setPluginParameter(
-		'module', 'ffmpeg', $param, $this->_saveParameters[$param]);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
     }
 
     function testSaveGoodPath() {

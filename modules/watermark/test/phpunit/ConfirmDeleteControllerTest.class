@@ -106,12 +106,6 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	}
     }
 
-    function tearDown() {
-	global $gallery;
-	$gallery->setActiveUser($this->_saveUser);
-	parent::tearDown();
-    }
-
     function testUserCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());

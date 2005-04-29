@@ -52,7 +52,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_saveUser = $gallery->getActiveUser();
+
+	$this->_markForCleanup($this->_user);
 	$gallery->setActiveUser($this->_user);
 
 	/* Create a watermark */
@@ -76,17 +77,6 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_watermark = $watermark;
-    }
-
-    function tearDown() {
-	global $gallery;
-	$ret = $this->_deleteUser($this->_user);
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$gallery->setActiveUser($this->_saveUser);
-	parent::tearDown();
     }
 
     function testEditWatermarkEverything() {

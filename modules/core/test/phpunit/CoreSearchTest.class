@@ -68,6 +68,8 @@ class CoreSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$this->_markForCleanup($this->_parentAlbum);
+
 	$this->_item = array();
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $this->_item[$i]) =
@@ -120,22 +122,6 @@ class CoreSearchTest extends GalleryTestCase {
 	}
 
 	$this->_user = $gallery->getActiveUser();
-    }
-
-    /**
-     *
-     */
-    function tearDown() {
-	global $gallery;
-	
-	if (!empty($this->_parentAlbum)) {
-	    $ret = GalleryCoreApi::deleteEntityById($this->_parentAlbum->getId());
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	
-	parent::tearDown();
     }
 
     function testFetchSearchModuleInfo() {

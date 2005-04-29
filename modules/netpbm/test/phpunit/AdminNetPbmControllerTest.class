@@ -41,13 +41,10 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	parent::setUp();
 
-	foreach (array('path', 'jpegQuality', 'pnmtojpeg', 'jheadPath') as $param) {
-	    list ($ret, $this->_save[$param]) = GalleryCoreApi::getPluginParameter(
-		'module', 'netpbm', $param);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	$ret = $this->_markPluginParametersForCleanup('module', 'netpbm');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Reset to the defaults -- tearDown will undo this */
@@ -60,17 +57,6 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	}
 
 	$gallery->_platform = new AdminNetPbmControllerTestPlatform($gallery->getPlatform());
-    }
-
-    function tearDown() {
-	foreach ($this->_save as $key => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'netpbm', $key, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-	parent::tearDown();
     }
 
     function testSaveGoodNetPbmPathNoJheadPath() {
