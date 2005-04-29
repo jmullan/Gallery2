@@ -242,20 +242,20 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $actual);
     }
 
-    function testGetCurrentUrlPath() {
+    function testGetCurrentRequestUri() {
 	$expected = '/gallery2/phpunit_test.php?foo=bar';
-	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlPath());
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri());
 
 	/* IIS.. no REQUEST_URI; has SCRIPT_NAME.. */
 	unset($_SERVER['REQUEST_URI']);
 	unset($_SERVER['PATH_INFO']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$expected = '/gallery2/phpunit_test.php';
-	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlPath(), 'iis');
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'iis');
 
 	/* Sometimes IIS has PATH_INFO value the same as SCRIPT_NAME.. */
 	$_SERVER['PATH_INFO'] = $_SERVER['SCRIPT_NAME'];
-	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlPath(), 'iis path_info');
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'iis path_info');
     }
     
     function testGetCurrentUrl() {

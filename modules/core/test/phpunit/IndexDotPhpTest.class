@@ -51,7 +51,9 @@ class IndexDotPhpTest extends GalleryTestCase {
 	/* Request http://domain.com/path/  and for http://domain.com/path/index.php */
 	foreach(array($baseUrl,
 		      $baseUrl . 'index.php',
-		      $baseUrl . 'index.php?some=value&something=else') as $url) {
+		      $baseUrl . 'index.php?some=value&something=else',
+		      $baseUrl . '?somepath#',
+		      $baseUrl . '//') as $url) {
 	    /* Make the HTTP request */
 	    list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
 	    $this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');

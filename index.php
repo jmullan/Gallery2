@@ -33,7 +33,7 @@
 include(dirname(__FILE__) . '/modules/core/classes/GalleryUrlGenerator.class'); 
 
 /* The REQUEST_URI can either be /path/index.php or just /path/. Get rid of index.php.* */
-$path = preg_replace('|index\.php.*|', '', GalleryUrlGenerator::getCurrentUrlPath());
+$path = preg_replace('|^(/(?:[^?#/]+/)*).*|', '$1', GalleryUrlGenerator::getCurrentRequestUri());
 
 header('Location: ' . GalleryUrlGenerator::makeUrl($path) . 'main.php');
 
