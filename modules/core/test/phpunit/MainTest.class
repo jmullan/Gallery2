@@ -44,10 +44,15 @@ class MainTest extends GalleryTestCase {
 
 	$this->_saveGallery = $GLOBALS['gallery'];
 
-	if (!GalleryUtilities::isEmbedded()) {
-	    define('G2_EMBED', 1);
-	}
+	/* 
+	 * Previously we defined G2_EMBED here to prevent main.php from displaying any content
+	 * when it was included.  This caused problems with some tests that varied their behavior
+	 * based on G2_EMBED.  Now we capture the output and send it to /dev/null via output
+	 * buffering.  G2_EMBED is not required for testEmbedOnly().
+	 */
+	ob_start();
 	GalleryCoreApi::relativeRequireOnce('main.php');
+	ob_end_clean();
 
 	GalleryUtilities::putRequestVariable('view', 'maintest:FooView');
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
