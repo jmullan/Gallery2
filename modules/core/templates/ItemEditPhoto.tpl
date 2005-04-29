@@ -11,7 +11,7 @@
     {g->text text="These sizes are alternate resized versions of the original you would like to have available for viewing."}
   </p>
 
-  {if $ItemEditPhoto.editSizes.can.createThumbnail}
+  {if $ItemEditPhoto.editSizes.can.createResizes}
     {counter start=0 assign=index}
     {foreach from=$form.resizes item=resize}
       <input type="checkbox"{if $form.resizes.$index.active} checked="checked"{/if}
@@ -35,7 +35,7 @@
   {else}
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot create or modify resized versions."}
-    {if $ItemEditPhoto.isAdmin}
+    {if $user.isAdmin}
       <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
 	{g->text text="site admin"}
       </a>
