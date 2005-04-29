@@ -607,11 +607,18 @@ class GalleryUrlGenerator {
 	    $params['navId'] = $this->_navId;
 	}
 
-	/* Escape all values (up to 2-deep array) */
+	/* Escape all values (up to 3-deep array) (oh won't somebody overhaul UrlGenerator?) */
 	foreach (array_keys($params) as $key) {
 	    if (is_array($params[$key])) {
 		foreach ($params[$key] as $subKey => $subValue) {
-		    $params[$key . '[' . $subKey . ']'] = htmlentities($subValue);
+		    if (is_array($subValue)) {
+			foreach ($subValue as $subSubKey => $subSubValue) {
+			    $params[$key . '[' . $subKey . '][' . $subSubKey . ']'] =
+				htmlentities($subSubValue);
+			}
+		    } else {
+			$params[$key . '[' . $subKey . ']'] = htmlentities($subValue);
+		    }
 		}
 		unset($params[$key]);
 	    } else {
