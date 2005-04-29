@@ -9,9 +9,10 @@
     {assign var="params" value=$AlbumSelectSystemContent.params}
     {if $params.treeExpandCollapse and !$params.treeCloseSameLevel}
       <p>
-	<a href="javascript: albumTree.openAll(); this.blur()">{g->text text="Expand"}</a>
+	<a href="javascript: albumTree.openAll()" onclick="this.blur()">{g->text text="Expand"}</a>
 	|
-	<a href="javascript: albumTree.closeAll(); this.blur()">{g->text text="Collapse"}</a>
+	<a href="javascript: albumTree.closeAll()"
+	 onclick="this.blur()">{g->text text="Collapse"}</a>
       </p>
     {/if}
 
