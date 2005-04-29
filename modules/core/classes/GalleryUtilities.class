@@ -1024,6 +1024,7 @@ class GalleryUtilities {
 
 	static $dirPerms;
 	if (!isset($dirPerms)) {
+	    $dirPerms = 0; /* To avoid looping if getPluginParameter calls guaranteeDirExists */
 	    list ($ret, $dirPerms) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
 	    /* Ignore error here.. */
