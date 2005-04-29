@@ -999,6 +999,21 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assert($success, 'guaranteeDirExists');
 	$this->assertEquals(array('/test/one', '/test/one/two'), $created);
     }
+
+    function testGuaranteeDirExistsLoop() {
+	/*
+	 * Ensure no infinite loop if getPluginParameter call from guaranteeDirExists
+	 * results in another guaranteeDirExists call (from GalleryDataCache)..
+	 */
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+	global $gallery;
+	$gallery->setConfig('data.gallery.cache', '/testcache/');
+
+	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
+	$this->assert($success, 'guaranteeDirExists');
+	$this->assertEquals(array('/test/one', '/test/one/two'), $created);
+    }
 }
 
 /**
@@ -1037,6 +1052,7 @@ class UtilitiesTestPlatform {
     function file_exists($path) {
 	switch ($path) {
 	case '/test':
+	case '/testcache/module/core/0':
 	    return true;
 
 	case '/test/one':
@@ -1065,11 +1081,16 @@ class UtilitiesTestPlatform {
     function is_dir($dir) {
 	switch ($dir) {
 	case '/test':
+	case '/testcache/module/core/0':
 	    return true;
 
 	default:
 	    return false;
 	}
+    }
+
+    function atomicWrite($filename, $data) {
+	return true;
     }
 }
 
