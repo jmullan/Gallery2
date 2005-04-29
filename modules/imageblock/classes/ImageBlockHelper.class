@@ -41,7 +41,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @return array GalleryStatus a status code
      *               string template file or null
      */
-    function loadImageBlocks(&$template, $params = array('heading' => 1, 'maxSize' => 140)) {
+    function loadImageBlocks(&$template, $params = array('heading' => 1, 'maxSize' => 120)) {
 	global $gallery;
 	list ($ret, $moduleParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
