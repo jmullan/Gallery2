@@ -46,6 +46,7 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->_originalServerHttpCookie = isset($_SERVER['HTTP_COOKIE']) ?
 	    $_SERVER['HTTP_COOKIE'] : null;
 
+	$this->_mkdir = array();
 	$gallery->_platform = new UtilitiesTestPlatform($this);
     }
 
@@ -1013,6 +1014,32 @@ class UtilitiesTest extends GalleryTestCase {
 	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
 	$this->assert($success, 'guaranteeDirExists');
 	$this->assertEquals(array('/test/one', '/test/one/two'), $created);
+
+	$this->assert(isset($this->_mkdir['/test/one']) &&
+		      $this->_mkdir['/test/one'] != '', 'mkdir with perms');
+	$this->assert(isset($this->_mkdir['/testcache/module/core/0/0']) &&
+		      $this->_mkdir['/testcache/module/core/0/0'] == '',
+		      'mkdir for cache, but without specific perms');
+    }
+
+    function testGuaranteeDirExistsLoop2() {
+	/*
+	 * Ensure mkdir of same dir isn't performed twice if guaranteeDirExists is
+	 * called and the nested call from getPluginParameter actually creates the
+	 * original dir that was requested.
+	 */
+	GalleryDataCache::setFileCachingEnabled(true);
+	GalleryDataCache::reset();
+	global $gallery;
+	$gallery->setConfig('data.gallery.cache', '/testcache/');
+
+	list ($success, $created) =
+	    GalleryUtilities::guaranteeDirExists('/testcache/module/core/0/0');
+	$this->assert($success, 'guaranteeDirExists');
+	$this->assertEquals(array(), $created);
+
+	$this->assertEquals(array('/testcache/module/core/0/0' => ''), $this->_mkdir,
+			    'mkdir for cache, but without specific perms');
     }
 }
 
@@ -1050,6 +1077,9 @@ class UtilitiesTestPlatform {
     }
 
     function file_exists($path) {
+	if (isset($this->_testCase->_mkdir[$path])) {
+	    return true;
+	}
 	switch ($path) {
 	case '/test':
 	case '/testcache/module/core/0':
@@ -1074,11 +1104,18 @@ class UtilitiesTestPlatform {
 	return filesize($file);
     }
 
-    function mkdir($dir, $stringPerms=null) {
-	return !empty($stringPerms);
+    function mkdir($dir, $stringPerms='') {
+	if (isset($this->_testCase->_mkdir[$dir])) {
+	    return false;
+	}
+	$this->_testCase->_mkdir[$dir] = $stringPerms;
+	return true;
     }
 
     function is_dir($dir) {
+	if (isset($this->_testCase->_mkdir[$dir])) {
+	    return true;
+	}
 	switch ($dir) {
 	case '/test':
 	case '/testcache/module/core/0':

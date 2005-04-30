@@ -1022,12 +1022,19 @@ class GalleryUtilities {
 	    return array($platform->is_dir($dir), array());
 	}
 
-	static $dirPerms;
-	if (!isset($dirPerms)) {
-	    $dirPerms = 0; /* To avoid looping if getPluginParameter calls guaranteeDirExists */
+	static $cacheKey = 'GalleryUtilities::guaranteeDirExists';
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    $dirPerms = GalleryDataCache::get($cacheKey);
+	} else {
+	    /* To avoid looping if getPluginParameter calls guaranteeDirExists */
+	    GalleryDataCache::put($cacheKey, 0);
 	    list ($ret, $dirPerms) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
-	    /* Ignore error here.. */
+	    /* Ignore error here.. then recheck $dir in case it was created in nested call */
+	    GalleryDataCache::put($cacheKey, $dirPerms);
+	    if ($platform->file_exists($dir)) {
+		return array($platform->is_dir($dir), array());
+	    }
 	}
 
 	list ($success, $created) = GalleryUtilities::guaranteeDirExists(dirname($dir));
