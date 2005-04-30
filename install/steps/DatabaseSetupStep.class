@@ -49,6 +49,7 @@ class DatabaseSetupStep extends InstallStep {
 	    }
 	}
 
+	$dbPlatformType = null; 
 	switch ($this->_config['type']) {
 	    case 'mysql':
 	    case 'mysqlt':
@@ -56,6 +57,7 @@ class DatabaseSetupStep extends InstallStep {
 		    $templateData['error']['phpDbMissing'] =
 			'You must have the MySQL PHP module installed';
 		}
+		$dbPlatformType = 'mysql';
 		break;
 	    case 'postgres7':
 	    case 'postgres':
@@ -63,12 +65,14 @@ class DatabaseSetupStep extends InstallStep {
 		    $templateData['error']['phpDbMissing'] =
 			'You must have the PostgreSQL PHP module installed';
 		}
+		$dbPlatformType = 'postgres';
 		break;
 	    case 'oci8po':
 		if (!function_exists('OCIPLogon')) {
 		    $templateData['error']['phpDbMissing'] =
 			'You must have the Oracle OCI8 PHP module installed';
 		}
+		$dbPlatformType = 'oracle';
 		break;
 	}
 
@@ -88,11 +92,11 @@ class DatabaseSetupStep extends InstallStep {
 		require_once(dirname(__FILE__) . '/../../lib/adodb/adodb.inc.php');
 
 		$this->_captureStart();
-		$db =& ADONewConnection($this->_config['type']);
-		$db->debug = true;
+		$this->_db =& ADONewConnection($this->_config['type']);
+		$this->_db->debug = true;
 		$this->_captureEnd();
 
-		if (empty($db)) {
+		if (empty($this->_db)) {
 		    $templateData['errors'][] = sprintf(
 			_('Unable to create a database connection of type %s'),
 			$this->_config['type']);
@@ -100,7 +104,7 @@ class DatabaseSetupStep extends InstallStep {
 
 		if (empty($templateData['errors'])) {
 		    $this->_captureStart();
-		    $result = $db->NConnect($this->_config['hostname'],
+		    $result = $this->_db->NConnect($this->_config['hostname'],
 					    $this->_config['username'],
 					    $this->_config['password'],
 					    $this->_config['database']);
@@ -114,12 +118,25 @@ class DatabaseSetupStep extends InstallStep {
 
 	    if (empty($templateData['errors']) && empty($templateData['error'])) {
 		$this->_captureStart();
-		$result = $db->MetaTables();
-		$this->_captureEnd();
+		$result = $this->_db->MetaTables();
 		if ($result === false) {
 		    $templateData['errors'][] =
 			_('The database you specified does not exist.  Please create it.');
+		} else {
+		    /*
+		     * Check if the db user has (all?) required db privileges to finish the
+		     * installer steps.
+		     */
+		    list ($ret, $error) = $this->_testPrivileges($dbPlatformType, $result);
+		    if ($ret === false) {
+			$templateData['errors'][] = 'The database privileges test did not ' .
+			    'complete successfully.';
+			if (!empty($error)) {
+			    $templateData['errors'][] = $error;
+			}
+		    }
 		}
+		$this->_captureEnd();
 
 		if (empty($_POST['confirmReuseTables'])) {
 		    if (in_array($this->_config['tablePrefix'] . 'Schema', $result) ||
@@ -187,5 +204,107 @@ class DatabaseSetupStep extends InstallStep {
     function isRedoable() {
 	return true;
     }
+
+    /**
+     * Check if the user has the most basic database privileges required to finish the install
+     * steps successfully. Check:
+     *      - CREATE TABLE, ALTER TABLE, DROP TABLE
+     *      - CREATE INDEX, DROP INDEX
+     *      - CREATE SEQUENCE, DROP SEQUENCE
+     *
+     * @param: string db type platform name (i.e. not mysqlt, but mysql)
+     * @param: array (string tableName)
+     * return array (boolean success, string errors)
+     */
+    function _testPrivileges($platform, $metatables) {
+	if (!is_array($metatables) || empty($platform)) {
+	    return array(false, 'Unknown DB type or no known tables information.');
+	}
+	/*
+	 * The test script executes an InstallerTest_sql script from the core module.
+	 * It tries to create, alter and drop a table, and create and drop index.
+	 * Because our .xml transforms (MySQL.xsl,...) always updates the Schema table for all
+	 * table create, alter, drops, we use here a test table which also has the name and the
+	 * structure of the Schema table, just with another tablePrefix.
+	 */
+	
+	/*
+	 * Set an unused tablePrefix such that we can play with create/drop table in an
+	 * unused database "namespace". Try a few prefices, don't try to drop!
+	 */
+	$ok = false;
+	for ($i = 0; $i < 10; $i++) {
+	    $tablePrefix = 'g2dbtest' . $i . '_';
+	    if (!in_array($tablePrefix . 'Schema', $metatables)) {
+		$ok = true;
+		break;
+	    }
+	}
+	if (!$ok) {
+	    return array(false, 'Could not find an unused table prefix similar to "' .
+			 $tablePrefix . '".');
+	}
+	
+	/* Load the Test SQL code */
+	$slash = DIRECTORY_SEPARATOR;
+	$fileName = dirname(__FILE__) . $slash . '..' . $slash . '..' . $slash .
+	    'modules' . $slash . 'core' . $slash . 'classes' . $slash .
+	    'GalleryStorage' . $slash . 'DatabaseStorage' . $slash . 'schema' .
+	    $slash . 'platform' . $slash . $platform . $slash . 'InstallerTest_sql';
+	
+	/* GalleryPlatform not available at this point */
+	if (!file_exists($fileName)) {
+	    return array(false, 'SQL test file "' . $fileName .'" not found.');
+	}
+	/* The following code is copied from DatabaseStorage::_getModuleSql() */
+	if (!($fd = fopen($fileName, 'r'))) {
+	    return array(false, 'Could not open SQL test file "' . $fileName .'".');
+	}
+	$buffer = null;
+	while (!feof($fd)) {
+	    $buffer .= fgets($fd, 4096);
+	}
+	fclose($fd);
+
+	/* Split the file where semicolons are followed by a blank line..
+	 * PL/SQL blocks will have other semicolons, so we can't split on every one.
+	 */
+	$statements = preg_split('/; *\r?\n *\r?\n/s', $buffer);
+	/* Do not execute the last statement, because we already drop the schema table */
+	array_pop($statements);
+	/* Execute the rest */
+	foreach ($statements as $query) {
+	    $query = trim($query);
+	    if (!empty($query)) {
+		$query = str_replace('DB_TABLE_PREFIX', $tablePrefix, $query);
+		$query = str_replace('DB_COLUMN_PREFIX', $this->_columnPrefix, $query);
+		/* For mysql, another replacement is required */
+		$query = str_replace('DB_TABLE_TYPE', 'MyISAM', $query);
+		
+		$result = $this->_db->Execute($query);
+		if (empty($result)) {
+		    return array(false, 'Check the returned error message and the ' .
+				 'README.html for missing privileges and clean up the database.');
+		}
+	    }
+	}
+
+	/* Check CREATE and DROP SEQUENCE privileges */
+	$sequenceId = 'g2privtestseq';
+	$result = $this->_db->CreateSequence($tablePrefix . $sequenceId);
+	if (empty($result)) {
+	    return array(false, 'Failed to create a DB test sequence.'.
+			 'Check the returned error message and the ' .
+			 'README.html for missing privileges and clean up the database.');
+	}
+	$result = $this->_db->DropSequence($tablePrefix . $sequenceId);
+	if (empty($result)) {
+	    return array(false, 'Test failed to drop a DB test sequence.'.
+			 'Check the returned error message and the ' .
+			 'README.html for missing privileges and clean up the database.');
+	}
+	
+	return array(true, null);
+    }	
 }
 ?>
