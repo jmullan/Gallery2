@@ -19,8 +19,8 @@
     DB_COLUMN_PREFIXderivativeOperations
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -43,8 +43,8 @@
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -53,24 +53,24 @@
     DB_COLUMN_PREFIXpostFilterOperations
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_85338 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_85338
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeSourceId);
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_25243 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_25243
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeOrder);
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivative_97216 
+    CREATE INDEX DB_TABLE_PREFIXDerivative_97216
     ON DB_TABLE_PREFIXDerivative
     (DB_COLUMN_PREFIXderivativeType);
 

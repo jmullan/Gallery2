@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXuserName
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -23,35 +23,35 @@
     DB_COLUMN_PREFIXfullName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXhashedPassword
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXemail
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXlanguage
       varchar(
       
-          128
-        
+	  128
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

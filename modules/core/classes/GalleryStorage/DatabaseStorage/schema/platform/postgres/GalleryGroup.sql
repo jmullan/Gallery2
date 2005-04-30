@@ -19,8 +19,8 @@
     DB_COLUMN_PREFIXgroupName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
     );
@@ -29,7 +29,7 @@
     ALTER TABLE DB_TABLE_PREFIXGroup
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXGroup_19099 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXGroup_19099
     ON DB_TABLE_PREFIXGroup
     (DB_COLUMN_PREFIXgroupName);
     

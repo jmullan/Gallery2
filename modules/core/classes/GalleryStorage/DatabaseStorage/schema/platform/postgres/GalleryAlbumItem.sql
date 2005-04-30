@@ -13,32 +13,32 @@
     DB_COLUMN_PREFIXlayout
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       ,
     DB_COLUMN_PREFIXtheme
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderBy
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderDirection
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
     );

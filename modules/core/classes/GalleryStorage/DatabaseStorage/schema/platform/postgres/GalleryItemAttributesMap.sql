@@ -21,8 +21,8 @@
     DB_COLUMN_PREFIXparentSequence
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       NOT NULL
@@ -30,7 +30,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXItemAttributesMap_95270 
+    CREATE INDEX DB_TABLE_PREFIXItemAttributesMap_95270
     ON DB_TABLE_PREFIXItemAttributesMap
     (DB_COLUMN_PREFIXparentSequence);
 

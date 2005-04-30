@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXexternalId
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXentityType
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -34,7 +34,7 @@
   
     ALTER TABLE DB_TABLE_PREFIXExternalIdMap
     ADD PRIMARY KEY (DB_COLUMN_PREFIXexternalId
-        ,
+	,
       DB_COLUMN_PREFIXentityType);
     
 

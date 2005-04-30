@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,

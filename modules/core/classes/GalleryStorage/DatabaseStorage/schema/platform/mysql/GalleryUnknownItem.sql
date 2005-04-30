@@ -9,7 +9,7 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXpluginType
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXpluginId
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -33,8 +33,8 @@
     DB_COLUMN_PREFIXparameterName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -43,25 +43,25 @@
     DB_COLUMN_PREFIXparameterValue
       varchar(
       
-          255
-        
+	  255
+	
       )
     
     NOT NULL
   
-    , 
+    ,
   
       UNIQUE KEY (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId
-        ,
+	,
       DB_COLUMN_PREFIXitemId
-        ,
+	,
       DB_COLUMN_PREFIXparameterName)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXpluginType
+    INDEX DB_TABLE_PREFIXPluginParameterMap_12808 (DB_COLUMN_PREFIXpluginType
       ,
     DB_COLUMN_PREFIXpluginId
       ,
@@ -69,7 +69,7 @@
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXpluginType)
+    INDEX DB_TABLE_PREFIXPluginParameterMap_80596 (DB_COLUMN_PREFIXpluginType)
     
 
     ) TYPE=DB_TABLE_TYPE;

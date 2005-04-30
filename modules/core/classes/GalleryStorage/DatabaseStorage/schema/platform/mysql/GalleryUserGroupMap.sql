@@ -15,13 +15,13 @@
     
     NOT NULL
   
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXuserId)
+    INDEX DB_TABLE_PREFIXUserGroupMap_69068 (DB_COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXgroupId)
+    INDEX DB_TABLE_PREFIXUserGroupMap_89328 (DB_COLUMN_PREFIXgroupId)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -23,29 +23,29 @@
     
     NOT NULL
   
-    , 
+    ,
   
       UNIQUE KEY (DB_COLUMN_PREFIXaccessListId
-        ,
+	,
       DB_COLUMN_PREFIXuserId
-        ,
+	,
       DB_COLUMN_PREFIXgroupId)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXaccessListId)
+    INDEX DB_TABLE_PREFIXAccessMap_83732 (DB_COLUMN_PREFIXaccessListId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXuserId)
+    INDEX DB_TABLE_PREFIXAccessMap_69068 (DB_COLUMN_PREFIXuserId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXgroupId)
+    INDEX DB_TABLE_PREFIXAccessMap_89328 (DB_COLUMN_PREFIXgroupId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXpermission)
+    INDEX DB_TABLE_PREFIXAccessMap_18058 (DB_COLUMN_PREFIXpermission)
     
 
     ) TYPE=DB_TABLE_TYPE;

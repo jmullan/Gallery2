@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXextension
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL

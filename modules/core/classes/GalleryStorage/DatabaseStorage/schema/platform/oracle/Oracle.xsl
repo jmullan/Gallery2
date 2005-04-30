@@ -30,7 +30,7 @@
 
   <xsl:for-each select="index">
     CREATE INDEX <xsl:call-template name="indexName"/>
-    ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/table/table-name"/>
+    ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../table-name"/>
     (<xsl:call-template name="indexColumns"/>);
   </xsl:for-each>
 
@@ -55,18 +55,11 @@
 
   <!-- CHANGE -->
   <xsl:template match="change">
-
     <xsl:if test="add/column or add/key or remove/column or remove/key or alter">
       ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
-      <xsl:if test="remove/column or remove/key">
-        <xsl:apply-templates select="remove"/>
-      </xsl:if>
-      <xsl:if test="alter">
-        <xsl:apply-templates select="alter"/>
-      </xsl:if>
-      <xsl:if test="add/column or add/key">
-        <xsl:apply-templates select="add"/>
-      </xsl:if>
+      <xsl:apply-templates select="remove"/>
+      <xsl:apply-templates select="alter"/>
+      <xsl:apply-templates select="add"/>
       ;
     </xsl:if>
 
@@ -76,29 +69,32 @@
 
     <xsl:for-each select="add/index">
       CREATE INDEX <xsl:call-template name="indexName"/>
-      ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/change/table-name"/>
+      ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>
       (<xsl:call-template name="indexColumns"/>);
     </xsl:for-each>
 
     UPDATE <xsl:value-of select="$tablePrefix"/>Schema
-      SET <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of select="schema-to/schema-major"/>,
-          <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of select="schema-to/schema-minor"/>
+      SET <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of
+							   select="schema-to/schema-major"/>,
+	  <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of
+							   select="schema-to/schema-minor"/>
       WHERE <xsl:value-of select="$columnPrefix"/>name='<xsl:value-of select="table-name"/>' AND
-          <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of select="schema-from/schema-major"/> AND
-          <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of select="schema-from/schema-minor"/>;
+	  <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of
+							   select="schema-from/schema-major"/> AND
+	  <xsl:value-of select="$columnPrefix"/>minor=<xsl:value-of
+							   select="schema-from/schema-minor"/>;
   </xsl:template>
 
   <!-- Change/add -->
   <xsl:template match="add">
-
     <xsl:if test="column">
       ADD (
-        <xsl:for-each select="column">
-          <xsl:call-template name="column"/>
-          <xsl:if test="position()!=last()">
-           ,
-          </xsl:if>
-        </xsl:for-each>
+	<xsl:for-each select="column">
+	  <xsl:call-template name="column"/>
+	  <xsl:if test="position()!=last()">
+	   ,
+	  </xsl:if>
+	</xsl:for-each>
       )
     </xsl:if>
 
@@ -109,21 +105,28 @@
 
   <!-- Change/remove -->
   <xsl:template match="remove">
-
     <xsl:if test="column">
       DROP (
-        <xsl:for-each select="column">
-          <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
-          <xsl:if test="position()!=last()">
-            ,
-          </xsl:if>
-        </xsl:for-each>
+	<xsl:for-each select="column">
+	  <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
+	  <xsl:if test="position()!=last()">
+	    ,
+	  </xsl:if>
+	</xsl:for-each>
       )
     </xsl:if>
 
     <xsl:for-each select="key">
       DROP <xsl:call-template name="key"/>
     </xsl:for-each>
+
+    <!-- REMOVE table -->
+    <xsl:if test="table-name">
+      DROP TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>;
+
+      DELETE FROM <xsl:value-of select="$tablePrefix"/>Schema
+      WHERE <xsl:value-of select="$columnPrefix"/>name = '<xsl:value-of select="table-name"/>';
+    </xsl:if>
   </xsl:template>
 
   <!-- Change/alter -->
@@ -132,18 +135,10 @@
     <xsl:for-each select="column">
       <xsl:call-template name="column"/>
       <xsl:if test="position()!=last()">
-        ,
+	,
       </xsl:if>
     </xsl:for-each>
     )
-  </xsl:template>
-
-  <!-- REMOVE -->
-  <xsl:template match="remove">
-    DROP TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>;
-
-    DELETE FROM <xsl:value-of select="$tablePrefix"/>Schema
-    WHERE <xsl:value-of select="$columnPrefix"/>name = '<xsl:value-of select="table-name"/>';
   </xsl:template>
 
   <!-- General purpose column definition -->
@@ -159,9 +154,9 @@
     <xsl:when test="column-type='STRING'">
       VARCHAR2(
       <xsl:choose>
-        <xsl:when test="column-size='SMALL'"> 32 </xsl:when>
-        <xsl:when test="column-size='MEDIUM'"> 128 </xsl:when>
-        <xsl:when test="column-size='LARGE'"> 255 </xsl:when>
+	<xsl:when test="column-size='SMALL'"> 32 </xsl:when>
+	<xsl:when test="column-size='MEDIUM'"> 128 </xsl:when>
+	<xsl:when test="column-size='LARGE'"> 255 </xsl:when>
       </xsl:choose>
       )
     </xsl:when>
@@ -197,16 +192,24 @@
     <xsl:for-each select="column-name">
       <xsl:value-of select="crc:update(.)"/>
     </xsl:for-each>
-    <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/*/table-name"/>_<xsl:value-of select="crc:getValue()"/>
+    <xsl:value-of select="$tablePrefix"/><xsl:choose>
+      <xsl:when test="../table-name"><xsl:value-of select="../table-name"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="../../table-name"/></xsl:otherwise>
+    </xsl:choose>_<xsl:value-of select="crc:getValue()"/>
   </xsl:template>
 
   <xsl:template name="indexColumns">
     <xsl:for-each select="column-name">
       <xsl:value-of select="$columnPrefix"/><xsl:value-of select="."/>
       <xsl:if test="position()!=last()">
-        ,
+	,
       </xsl:if>
     </xsl:for-each>
+  </xsl:template>
+
+  <!-- InstallerTest -->
+  <xsl:template match="test">
+    <xsl:apply-templates select="*"/> 
   </xsl:template>
 
 </xsl:stylesheet>

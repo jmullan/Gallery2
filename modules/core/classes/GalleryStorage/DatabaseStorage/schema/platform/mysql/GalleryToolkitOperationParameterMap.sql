@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXoperationName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -23,8 +23,8 @@
     DB_COLUMN_PREFIXtype
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -33,13 +33,13 @@
     DB_COLUMN_PREFIXdescription
       varchar(
       
-          255
-        
+	  255
+	
       )
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXoperationName)
+    INDEX DB_TABLE_PREFIXTkOperatnParameterMap_2014 (DB_COLUMN_PREFIXoperationName)
     
 
     ) TYPE=DB_TABLE_TYPE;

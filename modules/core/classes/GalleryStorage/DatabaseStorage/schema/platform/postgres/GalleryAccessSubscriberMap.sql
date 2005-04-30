@@ -18,7 +18,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXAccessSubscriberMap_83732 
+    CREATE INDEX DB_TABLE_PREFIXAccessSubscriberMap_83732
     ON DB_TABLE_PREFIXAccessSubscriberMap
     (DB_COLUMN_PREFIXaccessListId);
 

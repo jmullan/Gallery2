@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXtaskId
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -34,7 +34,7 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXMaintenanceMap_21687 
+    CREATE INDEX DB_TABLE_PREFIXMaintenanceMap_21687
     ON DB_TABLE_PREFIXMaintenanceMap
     (DB_COLUMN_PREFIXtaskId);
 

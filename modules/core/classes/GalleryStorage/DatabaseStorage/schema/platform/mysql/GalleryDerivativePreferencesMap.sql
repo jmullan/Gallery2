@@ -19,13 +19,13 @@
     DB_COLUMN_PREFIXderivativeOperations
       varchar(
       
-          255
-        
+	  255
+	
       )
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXitemId)
+    INDEX DB_TABLE_PREFIXDerivativePrefsMap_75985 (DB_COLUMN_PREFIXitemId)
     
 
     ) TYPE=DB_TABLE_TYPE;

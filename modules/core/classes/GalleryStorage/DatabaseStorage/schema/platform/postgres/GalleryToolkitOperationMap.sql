@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXname
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXparametersCrc
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -27,16 +27,16 @@
     DB_COLUMN_PREFIXoutputMimeType
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXdescription
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
     );

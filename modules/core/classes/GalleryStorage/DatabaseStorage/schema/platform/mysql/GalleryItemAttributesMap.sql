@@ -21,19 +21,19 @@
     DB_COLUMN_PREFIXparentSequence
       varchar(
       
-          255
-        
+	  255
+	
       )
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXitemId)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXparentSequence)
+    INDEX DB_TABLE_PREFIXItemAttributesMap_95270 (DB_COLUMN_PREFIXparentSequence)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -30,7 +30,7 @@
   
     ALTER TABLE DB_TABLE_PREFIXPluginMap
       ADD PRIMARY KEY (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId)
   ;
   

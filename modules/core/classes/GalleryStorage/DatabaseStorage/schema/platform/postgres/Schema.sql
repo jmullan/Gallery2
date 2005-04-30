@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXname
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL

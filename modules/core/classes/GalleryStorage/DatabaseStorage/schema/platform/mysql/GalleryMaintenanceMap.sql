@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXtaskId
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -31,13 +31,13 @@
     DB_COLUMN_PREFIXdetails
       text
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXrunId)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXtaskId)
+    INDEX DB_TABLE_PREFIXMaintenanceMap_21687 (DB_COLUMN_PREFIXtaskId)
     
 
     ) TYPE=DB_TABLE_TYPE;

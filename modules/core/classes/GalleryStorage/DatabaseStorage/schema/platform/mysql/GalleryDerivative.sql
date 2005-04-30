@@ -19,8 +19,8 @@
     DB_COLUMN_PREFIXderivativeOperations
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -43,8 +43,8 @@
     DB_COLUMN_PREFIXmimeType
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -53,25 +53,25 @@
     DB_COLUMN_PREFIXpostFilterOperations
       varchar(
       
-          255
-        
+	  255
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXderivativeSourceId)
+    INDEX DB_TABLE_PREFIXDerivative_85338 (DB_COLUMN_PREFIXderivativeSourceId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXderivativeOrder)
+    INDEX DB_TABLE_PREFIXDerivative_25243 (DB_COLUMN_PREFIXderivativeOrder)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXderivativeType)
+    INDEX DB_TABLE_PREFIXDerivative_97216 (DB_COLUMN_PREFIXderivativeType)
     
 
     ) TYPE=DB_TABLE_TYPE;

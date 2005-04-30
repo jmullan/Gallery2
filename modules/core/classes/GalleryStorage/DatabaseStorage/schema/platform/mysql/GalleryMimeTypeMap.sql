@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXextension
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXmimeType
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -27,7 +27,7 @@
     DB_COLUMN_PREFIXviewable
       int(1)
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXextension)
     

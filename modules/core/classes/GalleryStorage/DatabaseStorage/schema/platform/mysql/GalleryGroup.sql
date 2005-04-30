@@ -19,11 +19,11 @@
     DB_COLUMN_PREFIXgroupName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

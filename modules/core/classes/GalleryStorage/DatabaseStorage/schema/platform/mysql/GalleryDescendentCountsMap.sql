@@ -21,10 +21,10 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXuserId
-        ,
+	,
       DB_COLUMN_PREFIXitemId)
     
 

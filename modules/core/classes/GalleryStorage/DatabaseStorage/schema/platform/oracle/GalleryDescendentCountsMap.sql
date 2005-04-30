@@ -26,7 +26,7 @@
   
     ALTER TABLE DB_TABLE_PREFIXDescendentCountsMap
       ADD PRIMARY KEY (DB_COLUMN_PREFIXuserId
-        ,
+	,
       DB_COLUMN_PREFIXitemId)
   ;
   

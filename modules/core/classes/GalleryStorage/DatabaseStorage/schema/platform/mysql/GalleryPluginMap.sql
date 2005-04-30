@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXpluginType
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXpluginId
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -29,10 +29,10 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId)
     
 

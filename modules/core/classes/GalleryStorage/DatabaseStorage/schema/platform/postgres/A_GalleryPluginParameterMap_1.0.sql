@@ -4,8 +4,8 @@
   
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       ;
@@ -15,8 +15,8 @@
    = CAST(DB_COLUMN_PREFIXpluginType AS 
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     )
       ;
@@ -31,17 +31,17 @@
       ;
 
       
-        ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
-        ALTER DB_COLUMN_PREFIXpluginType SET NOT NULL
-        ;
+	ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
+	ALTER DB_COLUMN_PREFIXpluginType SET NOT NULL
+	;
       
       ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
       ADD COLUMN DB_COLUMN_PREFIXpluginIdTemp
   
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       ;
@@ -51,8 +51,8 @@
    = CAST(DB_COLUMN_PREFIXpluginId AS 
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     )
       ;
@@ -67,16 +67,15 @@
       ;
 
       
-        ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
-        ALTER DB_COLUMN_PREFIXpluginId SET NOT NULL
-        ;
+	ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
+	ALTER DB_COLUMN_PREFIXpluginId SET NOT NULL
+	;
       
 
-    UPDATE DB_TABLE_PREFIXSchema 
+    UPDATE DB_TABLE_PREFIXSchema
       SET DB_COLUMN_PREFIXmajor=1,
-          DB_COLUMN_PREFIXminor=1
+	  DB_COLUMN_PREFIXminor=1
       WHERE DB_COLUMN_PREFIXname='PluginParameterMap' AND
-          DB_COLUMN_PREFIXmajor=1 AND
-          DB_COLUMN_PREFIXminor=0;
-
+	  DB_COLUMN_PREFIXmajor=1 AND
+	  DB_COLUMN_PREFIXminor=0;
   

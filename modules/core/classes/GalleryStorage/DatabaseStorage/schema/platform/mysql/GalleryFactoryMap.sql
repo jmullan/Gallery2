@@ -7,56 +7,56 @@
   DB_COLUMN_PREFIXclassType
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXclassName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplId
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplPath
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplModuleId
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXhints
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderWeight
       varchar(
       
-          255
-        
+	  255
+	
       )
     
 

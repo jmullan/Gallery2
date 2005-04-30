@@ -19,14 +19,14 @@
     DB_COLUMN_PREFIXderivativeOperations
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXDerivativePrefsMap_75985 
+    CREATE INDEX DB_TABLE_PREFIXDerivativePrefsMap_75985
     ON DB_TABLE_PREFIXDerivativePrefsMap
     (DB_COLUMN_PREFIXitemId);
 

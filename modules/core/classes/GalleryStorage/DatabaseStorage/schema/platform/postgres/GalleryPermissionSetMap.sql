@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXmodule
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXpermission
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXdescription
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -46,7 +46,7 @@
     );
 
   
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXPermissionSetMap_18058 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXPermissionSetMap_18058
     ON DB_TABLE_PREFIXPermissionSetMap
     (DB_COLUMN_PREFIXpermission);
     

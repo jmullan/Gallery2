@@ -23,9 +23,9 @@
     DB_COLUMN_PREFIXrequest
       int(11)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXlockId)
+    INDEX DB_TABLE_PREFIXLock_11039 (DB_COLUMN_PREFIXlockId)
     
 
     ) TYPE=DB_TABLE_TYPE;

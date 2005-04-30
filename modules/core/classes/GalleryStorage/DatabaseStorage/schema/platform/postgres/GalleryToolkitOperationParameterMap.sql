@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXoperationName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -23,8 +23,8 @@
     DB_COLUMN_PREFIXtype
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -33,14 +33,14 @@
     DB_COLUMN_PREFIXdescription
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXTkOperatnParameterMap_2014 
+    CREATE INDEX DB_TABLE_PREFIXTkOperatnParameterMap_2014
     ON DB_TABLE_PREFIXTkOperatnParameterMap
     (DB_COLUMN_PREFIXoperationName);
 

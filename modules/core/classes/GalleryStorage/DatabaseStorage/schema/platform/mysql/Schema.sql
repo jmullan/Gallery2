@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXname
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -25,7 +25,7 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXname)
     

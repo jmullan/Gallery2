@@ -13,15 +13,15 @@
     DB_COLUMN_PREFIXmimeType
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXsize
       int(11)
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

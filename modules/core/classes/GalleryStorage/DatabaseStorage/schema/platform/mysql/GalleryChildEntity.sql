@@ -15,13 +15,13 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXparentId)
+    INDEX DB_TABLE_PREFIXChildEntity_52718 (DB_COLUMN_PREFIXparentId)
     
 
     ) TYPE=DB_TABLE_TYPE;

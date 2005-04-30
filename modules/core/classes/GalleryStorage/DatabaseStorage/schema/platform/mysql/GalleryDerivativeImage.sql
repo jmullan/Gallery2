@@ -17,7 +17,7 @@
     DB_COLUMN_PREFIXheight
       int(11)
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

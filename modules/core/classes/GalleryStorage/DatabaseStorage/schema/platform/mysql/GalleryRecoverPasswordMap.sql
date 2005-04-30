@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXuserName
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXauthString
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -29,7 +29,7 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXuserName)
     

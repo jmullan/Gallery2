@@ -41,8 +41,8 @@
     DB_COLUMN_PREFIXentityType
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -51,29 +51,29 @@
     DB_COLUMN_PREFIXonLoadHandlers
       varchar(
       
-          128
-        
+	  128
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXcreationTimestamp)
+    INDEX DB_TABLE_PREFIXEntity_76255 (DB_COLUMN_PREFIXcreationTimestamp)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXisLinkable)
+    INDEX DB_TABLE_PREFIXEntity_35978 (DB_COLUMN_PREFIXisLinkable)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXmodificationTimestamp)
+    INDEX DB_TABLE_PREFIXEntity_63025 (DB_COLUMN_PREFIXmodificationTimestamp)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXserialNumber)
+    INDEX DB_TABLE_PREFIXEntity_60702 (DB_COLUMN_PREFIXserialNumber)
     
 
     ) TYPE=DB_TABLE_TYPE;

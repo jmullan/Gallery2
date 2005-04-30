@@ -13,35 +13,35 @@
     DB_COLUMN_PREFIXlayout
       varchar(
       
-          32
-        
+	  32
+	
       )
     
       ,
     DB_COLUMN_PREFIXtheme
       varchar(
       
-          32
-        
+	  32
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderBy
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderDirection
       varchar(
       
-          32
-        
+	  32
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

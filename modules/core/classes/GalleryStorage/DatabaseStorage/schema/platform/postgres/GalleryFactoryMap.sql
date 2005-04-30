@@ -7,56 +7,56 @@
   DB_COLUMN_PREFIXclassType
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXclassName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplId
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplPath
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXimplModuleId
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXhints
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
     DB_COLUMN_PREFIXorderWeight
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
     );

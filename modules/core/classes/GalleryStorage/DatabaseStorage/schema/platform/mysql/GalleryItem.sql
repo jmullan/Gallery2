@@ -23,8 +23,8 @@
     DB_COLUMN_PREFIXkeywords
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -37,16 +37,16 @@
     DB_COLUMN_PREFIXsummary
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
     DB_COLUMN_PREFIXtitle
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
@@ -61,25 +61,25 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXkeywords)
+    INDEX DB_TABLE_PREFIXItem_99070 (DB_COLUMN_PREFIXkeywords)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXownerId)
+    INDEX DB_TABLE_PREFIXItem_21573 (DB_COLUMN_PREFIXownerId)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXsummary)
+    INDEX DB_TABLE_PREFIXItem_54147 (DB_COLUMN_PREFIXsummary)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXtitle)
+    INDEX DB_TABLE_PREFIXItem_90059 (DB_COLUMN_PREFIXtitle)
     
 
     ) TYPE=DB_TABLE_TYPE;

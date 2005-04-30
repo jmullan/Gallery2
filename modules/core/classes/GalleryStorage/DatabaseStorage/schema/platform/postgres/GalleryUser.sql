@@ -13,8 +13,8 @@
     DB_COLUMN_PREFIXuserName
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -23,32 +23,32 @@
     DB_COLUMN_PREFIXfullName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXhashedPassword
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXemail
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXlanguage
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
     );
@@ -57,7 +57,7 @@
     ALTER TABLE DB_TABLE_PREFIXUser
     ADD PRIMARY KEY (DB_COLUMN_PREFIXid);
     
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXUser_16233 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXUser_16233
     ON DB_TABLE_PREFIXUser
     (DB_COLUMN_PREFIXuserName);
     

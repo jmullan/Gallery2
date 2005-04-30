@@ -23,8 +23,8 @@
     DB_COLUMN_PREFIXkeywords
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -37,16 +37,16 @@
     DB_COLUMN_PREFIXsummary
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       ,
     DB_COLUMN_PREFIXtitle
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       ,
@@ -64,22 +64,22 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXItem_99070 
+    CREATE INDEX DB_TABLE_PREFIXItem_99070
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXkeywords);
 
   
-    CREATE INDEX DB_TABLE_PREFIXItem_21573 
+    CREATE INDEX DB_TABLE_PREFIXItem_21573
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXownerId);
 
   
-    CREATE INDEX DB_TABLE_PREFIXItem_54147 
+    CREATE INDEX DB_TABLE_PREFIXItem_54147
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXsummary);
 
   
-    CREATE INDEX DB_TABLE_PREFIXItem_90059 
+    CREATE INDEX DB_TABLE_PREFIXItem_90059
     ON DB_TABLE_PREFIXItem
     (DB_COLUMN_PREFIXtitle);
 

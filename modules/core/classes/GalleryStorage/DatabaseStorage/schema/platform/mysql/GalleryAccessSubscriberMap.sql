@@ -15,13 +15,13 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXitemId)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXaccessListId)
+    INDEX DB_TABLE_PREFIXAccessSubscriberMap_83732 (DB_COLUMN_PREFIXaccessListId)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXpluginType
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXpluginId
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -33,8 +33,8 @@
     DB_COLUMN_PREFIXparameterName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -43,8 +43,8 @@
     DB_COLUMN_PREFIXparameterValue
       VARCHAR(
       
-          255
-        
+	  255
+	
       )
     
       NOT NULL
@@ -52,28 +52,28 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_12808 
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_12808
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId
-        ,
+	,
       DB_COLUMN_PREFIXitemId);
 
   
-    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_80596 
+    CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_80596
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType);
 
   
-    CREATE UNIQUE INDEX DB_TABLE_PREFIXPluginParameterMap_26955 
+    CREATE UNIQUE INDEX DB_TABLE_PREFIXPluginParameterMap_26955
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId
-        ,
+	,
       DB_COLUMN_PREFIXitemId
-        ,
+	,
       DB_COLUMN_PREFIXparameterName);
     
 

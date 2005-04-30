@@ -21,7 +21,7 @@
     DB_COLUMN_PREFIXduration
       int(11)
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     

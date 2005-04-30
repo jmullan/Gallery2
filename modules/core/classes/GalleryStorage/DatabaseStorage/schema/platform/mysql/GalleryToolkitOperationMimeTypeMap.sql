@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXoperationName
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXtoolkitId
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXmimeType
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -39,13 +39,13 @@
     
     NOT NULL
   
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXoperationName)
+    INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_2014 (DB_COLUMN_PREFIXoperationName)
     
       ,
     
-    INDEX (DB_COLUMN_PREFIXmimeType)
+    INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_79463 (DB_COLUMN_PREFIXmimeType)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -45,9 +45,9 @@
     CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_12808
     ON DB_TABLE_PREFIXPluginParameterMap
     (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId
-        ,
+	,
       DB_COLUMN_PREFIXitemId);
   
     CREATE INDEX DB_TABLE_PREFIXPluginParameterMap_80596
@@ -56,11 +56,11 @@
   
     ALTER TABLE DB_TABLE_PREFIXPluginParameterMap
       ADD UNIQUE (DB_COLUMN_PREFIXpluginType
-        ,
+	,
       DB_COLUMN_PREFIXpluginId
-        ,
+	,
       DB_COLUMN_PREFIXitemId
-        ,
+	,
       DB_COLUMN_PREFIXparameterName)
   ;
   

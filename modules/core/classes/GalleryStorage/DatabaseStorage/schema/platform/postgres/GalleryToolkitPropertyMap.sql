@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXname
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXtype
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXdescription
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL

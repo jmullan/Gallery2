@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXname
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXparametersCrc
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -27,19 +27,19 @@
     DB_COLUMN_PREFIXoutputMimeType
       varchar(
       
-          128
-        
+	  128
+	
       )
     
       ,
     DB_COLUMN_PREFIXdescription
       varchar(
       
-          255
-        
+	  255
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXname)
     

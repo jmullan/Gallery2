@@ -30,7 +30,7 @@
   
     ALTER TABLE DB_TABLE_PREFIXExternalIdMap
       ADD PRIMARY KEY (DB_COLUMN_PREFIXexternalId
-        ,
+	,
       DB_COLUMN_PREFIXentityType)
   ;
   

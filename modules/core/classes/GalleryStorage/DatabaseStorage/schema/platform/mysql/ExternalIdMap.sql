@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXexternalId
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXentityType
       varchar(
       
-          32
-        
+	  32
+	
       )
     
     NOT NULL
@@ -29,10 +29,10 @@
     
     NOT NULL
   
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXexternalId
-        ,
+	,
       DB_COLUMN_PREFIXentityType)
     
 

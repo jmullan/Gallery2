@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXmodule
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXpermission
       varchar(
       
-          128
-        
+	  128
+	
       )
     
     NOT NULL
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXdescription
       varchar(
       
-          255
-        
+	  255
+	
       )
     
       ,
@@ -43,7 +43,7 @@
     
     NOT NULL
   
-    , 
+    ,
   
       UNIQUE KEY (DB_COLUMN_PREFIXpermission)
     

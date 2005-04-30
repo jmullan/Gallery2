@@ -13,17 +13,17 @@
     DB_COLUMN_PREFIXpathComponent
       varchar(
       
-          128
-        
+	  128
+	
       )
     
-    , 
+    ,
   
       PRIMARY KEY (DB_COLUMN_PREFIXid)
     
-    , 
+    ,
   
-    INDEX (DB_COLUMN_PREFIXpathComponent)
+    INDEX DB_TABLE_PREFIXFileSystemEntity_3406 (DB_COLUMN_PREFIXpathComponent)
     
 
     ) TYPE=DB_TABLE_TYPE;

@@ -44,9 +44,9 @@
   
     ALTER TABLE DB_TABLE_PREFIXAccessMap
       ADD UNIQUE (DB_COLUMN_PREFIXaccessListId
-        ,
+	,
       DB_COLUMN_PREFIXuserId
-        ,
+	,
       DB_COLUMN_PREFIXgroupId)
   ;
   

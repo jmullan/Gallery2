@@ -1446,13 +1446,13 @@ class DatabaseStorage /* implements GalleryStorage */ {
 		 * we have in the database we can figure out which file to
 		 * apply to install/update it.
 		 */
-		if (preg_match('/^(R|A)_(.*)_(\d+).(\d+).sql$/', $file, $matches)) {
+		if (preg_match('/^(R|A)_(.*)_(\d+).(\d+)\.sql$/', $file, $matches)) {
 		    if ($matches[1] == 'R') {
 			$tableDelete[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
 		    } else {
 			$tableAlter[$matches[2]][$matches[3]][$matches[4]] = $sqlDir . '/' . $file;
 		    }
-		} else if (preg_match('/^(.*).sql$/', $file, $matches)) {
+		} else if (preg_match('/^(.*)\.sql$/', $file, $matches)) {
 		    $tableDefinition[$matches[1]] = $sqlDir . '/' . $file;
 		}
 	    }

@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXoperationName
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXtoolkitId
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -27,8 +27,8 @@
     DB_COLUMN_PREFIXmimeType
       VARCHAR(
       
-          128
-        
+	  128
+	
       )
     
       NOT NULL
@@ -42,12 +42,12 @@
     );
 
   
-    CREATE INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_2014 
+    CREATE INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_2014
     ON DB_TABLE_PREFIXTkOperatnMimeTypeMap
     (DB_COLUMN_PREFIXoperationName);
 
   
-    CREATE INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_79463 
+    CREATE INDEX DB_TABLE_PREFIXTkOperatnMimeTypeMap_79463
     ON DB_TABLE_PREFIXTkOperatnMimeTypeMap
     (DB_COLUMN_PREFIXmimeType);
 

@@ -7,8 +7,8 @@
   DB_COLUMN_PREFIXuserName
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
@@ -17,8 +17,8 @@
     DB_COLUMN_PREFIXauthString
       VARCHAR(
       
-          32
-        
+	  32
+	
       )
     
       NOT NULL
