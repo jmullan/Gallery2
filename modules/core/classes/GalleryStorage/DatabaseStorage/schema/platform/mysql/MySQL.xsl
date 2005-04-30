@@ -84,7 +84,7 @@
 
     <xsl:for-each select="remove/index">
       DROP INDEX <xsl:call-template name="indexName"/>
-      ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="/change/table-name"/>;
+      ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>;
     </xsl:for-each>
 
     UPDATE <xsl:value-of select="$tablePrefix"/>Schema
