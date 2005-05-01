@@ -35,27 +35,11 @@ function dTree(objName) {
 		useSelection		: true,
 		useCookies		: true,
 		useLines		: true,
-		useIcons		: true,
+		useIcons		: false,
 		useStatusText		: false,
 		closeSameLevel		: false,
 		inOrder			: false
 	}
-	this.icon = {
-		root			: 'modules/albumselect/images/base.gif',
-		folder			: 'modules/albumselect/images/folder.gif',
-		folderOpen		: 'modules/albumselect/images/imgfolder.gif',
-		node			: 'modules/albumselect/images/imgfolder.gif',
-		empty			: 'modules/albumselect/images/empty.gif',
-		line			: 'modules/albumselect/images/line.gif',
-		join			: 'modules/albumselect/images/join.gif',
-		joinBottom		: 'modules/albumselect/images/joinbottom.gif',
-		plus			: 'modules/albumselect/images/plus.gif',
-		plusBottom		: 'modules/albumselect/images/plusbottom.gif',
-		minus			: 'modules/albumselect/images/minus.gif',
-		minusBottom		: 'modules/albumselect/images/minusbottom.gif',
-		nlPlus			: 'modules/albumselect/images/nolines_plus.gif',
-		nlMinus			: 'modules/albumselect/images/nolines_minus.gif'
-	};
 	this.obj = objName;
 	this.aNodes = [];
 	this.aIndent = [];

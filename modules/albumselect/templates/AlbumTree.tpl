@@ -19,6 +19,22 @@
     <script type="text/javascript">
       // <![CDATA[
       var albumTree = new dTree('albumTree');
+      albumTree.icon = {ldelim}
+	  root            : '{g->url href="modules/albumselect/images/base.gif"}',
+	  folder          : '{g->url href="modules/albumselect/images/folder.gif"}',
+	  folderOpen      : '{g->url href="modules/albumselect/images/imgfolder.gif"}',
+	  node            : '{g->url href="modules/albumselect/images/imgfolder.gif"}',
+	  empty           : '{g->url href="modules/albumselect/images/empty.gif"}',
+	  line            : '{g->url href="modules/albumselect/images/line.gif"}',
+	  join            : '{g->url href="modules/albumselect/images/join.gif"}',
+	  joinBottom      : '{g->url href="modules/albumselect/images/joinbottom.gif"}',
+	  plus            : '{g->url href="modules/albumselect/images/plus.gif"}',
+	  plusBottom      : '{g->url href="modules/albumselect/images/plusbottom.gif"}',
+	  minus           : '{g->url href="modules/albumselect/images/minus.gif"}',
+	  minusBottom     : '{g->url href="modules/albumselect/images/minusbottom.gif"}',
+	  nlPlus          : '{g->url href="modules/albumselect/images/nolines_plus.gif"}',
+	  nlMinus         : '{g->url href="modules/albumselect/images/nolines_minus.gif"}'
+      {rdelim};
       albumTree.config.useLines = {if $params.treeLines}true{else}false{/if};
       albumTree.config.useIcons = {if $params.treeIcons}true{else}false{/if};
       albumTree.config.useCookies = {if $params.treeCookies}true{else}false{/if};
