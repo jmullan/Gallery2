@@ -159,7 +159,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'rewrite:AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][badKeyword]')),
-			    $results);
+			    $results, 'bad keyword');
 			    
 	$activeRules = array();
 	list($ret, $savedRules) = RewriteMap::getActiveRules();
@@ -182,7 +182,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'rewrite:AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][dupe]')),
-			    $results);
+			    $results, 'dupe');
 			    
 	$activeRules = array();
 	list($ret, $savedRules) = RewriteMap::getActiveRules();
@@ -207,8 +207,29 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'rewrite:AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][cantWrite][gallery]')),
-			    $results);
+			    $results, 'bad file');
 
+	$activeRules = array();
+	list($ret, $savedRules) = RewriteMap::getActiveRules();
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$this->assertEquals($activeRules, $savedRules);
+    }
+    
+    function testSaveBadRules4() {
+    	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
+    	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
+	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', '');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('mode' => 'rules',
+						      'view' => 'core:SiteAdmin',
+						      'subView' => 'rewrite:AdminRewrite'),
+				  'status' => array(),
+				  'error' => array('form[error][empty]')),
+			    $results, 'empty pattern');
+			    
 	$activeRules = array();
 	list($ret, $savedRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {

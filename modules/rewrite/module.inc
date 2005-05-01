@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName('URL Rewrite');
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.3'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.4'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -86,7 +86,7 @@ class RewriteModule extends GalleryModule {
 	$baseUrl = $baseUrlComponents['path'];
 	if (preg_match('/\/(upgrade|install)\/index.php$/', $baseUrl)) {
 	    $baseUrl = dirname(dirname($baseUrl));
-	    $baseUrl .= $baseUrl != '/' ? '/' : ''; 
+	    $baseUrl .= ($baseUrl != '/') ? '/' : '';
 	}
 	$ret = $this->setParameter('galleryLocation', $baseUrl);
 	if ($ret->isError()) {

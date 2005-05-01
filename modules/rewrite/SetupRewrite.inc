@@ -119,6 +119,9 @@ class SetupRewriteView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
+	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	$template->javascript($jsUrl);
+	
 	$template->setVariable('SetupRewrite', $SetupRewrite);
 	$template->setVariable('controller', 'rewrite:SetupRewrite');
 

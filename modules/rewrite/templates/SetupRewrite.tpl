@@ -71,17 +71,21 @@
   {/if}
 </div>
 
+{if !empty($showTestButton)}
+  {include file="gallery:modules/rewrite/templates/Troubleshooting.tpl"}
+{/if}
+
 <div class="gbBlock">
   <h3> {g->text text="Gallery .htaccess file"} </h3>
 
   <p class="giDescription">
-    {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted.  We need write access to this file."}
+    {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted. Gallery needs write access to this file."}
   </p>
 
   {assign var="showTestButton" value=false}
   {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY)}
     <div class="giSuccess">
-      {g->text text="Your .htaccess file ok."}
+      {g->text text="Gallery can write to the .htaccess file"}
     </div>
   {/if}
 
@@ -102,7 +106,7 @@
   {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ)}
     {assign var="showTestButton" value=true}
     <div class="giError">
-      {g->text text="Can not read the .htaccess file."}
+      {g->text text="Cannot read the .htaccess file."}
     </div>
   {/if}
   

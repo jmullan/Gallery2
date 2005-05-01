@@ -61,7 +61,6 @@ class RewriteHelper {
     	$urlGenerator =& $gallery->getUrlGenerator();
     	
 	$Htaccess = array();
-	$Htaccess['usePrefixes'] = '';
 	$Htaccess['g2Prefix'] = GALLERY_FORM_VARIABLE_PREFIX;
 	$Htaccess['rules'] = $rewriteRules;
 	
@@ -71,8 +70,15 @@ class RewriteHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	
+	list ($ret, $Htaccess['needOptions']) =
+		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'needOptions');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
 	$Htaccess['directory'] = $Htaccess['galleryDirectory'];
-	$Htaccess['baseFile'] = 'main.php';
+	$Htaccess['rewriteBase'] = $Htaccess['galleryDirectory'];
+	$Htaccess['baseFile'] = $urlGenerator->_baseFile;
 	if ($embedded) {
 	    list ($ret, $Htaccess['directory']) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
@@ -80,17 +86,15 @@ class RewriteHelper {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    
-	    $Htaccess['baseFile'] = $urlGenerator->_baseFile;
+	    $Htaccess['rewriteBase'] = $Htaccess['directory'];
+	    $components = parse_url($Htaccess['baseFile']);
+	    if (isset($components['host'])) {
+		$Htaccess['directory'] = '';
+	    }
 	}
 	
 	if (strpos($Htaccess['baseFile'], '?') === false) {
 	    $Htaccess['baseFile'] = $Htaccess['baseFile'] . '?';
-	}
-	
-	list ($ret, $Htaccess['needOptions']) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'needOptions');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
@@ -226,7 +230,8 @@ class RewriteHelper {
 	$components = parse_url($urlGenerator->getCurrentUrlDir(true));
 	$path = $components['path'];
 	if (preg_match('/\/(upgrade|install)\/index.php$/', $path)) {
-	    $path = dirname(dirname($path)) . '/';
+	    $path = dirname(dirname(path));
+	    $path .= ($path != '/') ? '/' : '';
 	}
 
 	/*

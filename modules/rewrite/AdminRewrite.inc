@@ -62,6 +62,11 @@ class AdminRewriteController extends GalleryController {
 		    $activeRules[$moduleId] = array();
 		    foreach (array_keys($form['shortUrls'][$moduleId]) as $ruleId) {
 			if (isset($form['shortUrls'][$moduleId][$ruleId]['active'])) {
+			    if (empty($form['shortUrls'][$moduleId][$ruleId]['pattern'])) {
+				$error[] = 'form[error][empty]';
+				break 2;
+			    }
+
 			    if (isset($dupe[$form['shortUrls'][$moduleId][$ruleId]['pattern']])) {
 				$error[] = 'form[error][dupe]';
 				break 2;
@@ -364,6 +369,9 @@ class AdminRewriteView extends GalleryView {
 	if ($form['formName'] != 'AdminRewrite') {
 	    $form['formName'] = 'AdminRewrite';
 	}
+	
+	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
+	$template->javascript($jsUrl);
 	
 	$template->setVariable('AdminRewrite', $AdminRewrite);
 	$template->setVariable('controller', 'rewrite:AdminRewrite');

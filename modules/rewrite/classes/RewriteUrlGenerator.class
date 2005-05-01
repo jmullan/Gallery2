@@ -206,6 +206,10 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		}
 	    }
 	    
+	    if (empty($url)) {
+		$url = $this->_baseFile;
+	    }
+	    
 	    $params['href'] = $this->getCurrentUrlDir() . $url;
 	}
 
