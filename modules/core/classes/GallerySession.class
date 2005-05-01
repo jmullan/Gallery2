@@ -143,17 +143,19 @@ class GallerySession {
 	    }
 	} else {
 	    /*
-	     * Many search engine crawlers don't use cookies.  Normally this
-	     * leads to us putting the session id in the url.  But doing so
-	     * causes the search engine to do a lot of extra work to weed out
-	     * the session id, which they may not do very well.  So if we detect
-	     * that this is a search engine, pretend that they accept cookies.
-	     * Later on we won't even save the session anyway.
+	     * Many search engine crawlers don't use cookies.  Normally this leads to us putting
+	     * the session id in the url.  But doing so causes the search engine to do a lot of
+	     * extra work to weed out the session id, which they may not do very well.  So if we
+	     * detect that this is a search engine, pretend that they accept cookies.  We'll
+	     * create a session id like "google-1.2.3.4" where we track the search engine id and
+	     * the ip address so that the crawler stays roughly in the same session (and random
+	     * users who sneakily use crawler tags in their User-Agent don't interfere).
 	     */
 	    $searchEngineId = GalleryUtilities::identifySearchEngine();
 	    if (isset($searchEngineId)) {
 		$this->_isUsingCookies = true;
-		$this->_sessionId = sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
+		$this->_sessionId =
+		    sprintf('%s-%s', $searchEngineId, GalleryUtilities::getRemoteHostAddress());
 	    } else {
 		$this->_isUsingCookies = false;
 		$this->_sessionId = GalleryUtilities::getRequestVariables(SESSION_ID_PARAMETER);
