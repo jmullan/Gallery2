@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{if (isset($layout.currentPage) && $layout.totalPageCount > 1) ||
+{if (isset($layout.currentPage) && $layout.totalPages > 1) ||
     (!isset($layout.currentPage) && isset($layout.peerCount) && $layout.peerCount > 1)}
   <div class="prevnext">
     <span class="prev">
@@ -21,7 +21,7 @@
     <span class="current">{strip}
       &nbsp;
       {if isset($layout.currentPage)}
-	{g->text text="Page %d of %d" arg1=$layout.currentPage arg2=$layout.totalPageCount}
+	{g->text text="Page %d of %d" arg1=$layout.currentPage arg2=$layout.totalPages}
       {else}
 	{if isset($layout.peerCount)}
 	  {g->text text="Picture %d of %d" arg1=$layout.peers[$layout.peerItemIndex].peerIndex

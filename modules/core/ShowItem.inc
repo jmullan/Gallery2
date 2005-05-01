@@ -152,8 +152,58 @@ class ShowItemView extends GalleryView {
 						   'itemId' => $item->getId())));
 	}
 
+	/* Albums have their own settings.  Items use their parent album's settings */
+	if ($item->getCanContainChildren()) {
+	    $targetId = $item->getId();
+	} else {
+	    $targetId = $item->getParentId();
+	}
+	list ($ret, $params) = $layout->fetchParameters($targetId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$perPage = $layout->getPageSize($params);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($item->getCanContainChildren() && !empty($perPage)) {
+	    /* If the layout uses pages, figure out what page we're on */
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    if (empty($page)) {
+		/*
+		 * We don't have a page number.  If we have a highlight id, then figure out what
+		 * page that id is on and redirect to that page.
+		 */
+		$highlightId = GalleryUtilities::getRequestVariables('highlightId');
+		if (!empty($highlightId)) {
+		    list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+
+		    $page = 1;
+		    for ($i = 0; $i < sizeof($childIds); $i++) {
+			if ($childIds[$i] == $highlightId) {
+			    /* Found it */
+			    $page = ceil(($i+1) / $perPage);
+			    break;
+			}
+		    }
+
+		    /* Redirect to the new page */
+		    $results['redirect'] = array(
+			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page);
+		    return array(GalleryStatus::success(), $results);
+		} else {
+		    $page = 1;
+		}
+	    }
+	}
+
 	/* Let the layout load the template and get its body file */
-	list ($ret, $results) = $layout->loadTemplate($template, $item);
+	list ($ret, $results) = $layout->loadTemplate($template, $item, $params);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

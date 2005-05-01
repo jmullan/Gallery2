@@ -54,17 +54,17 @@
     {/if}
   </td><td>
     <input type="radio"{if $layout.params.backgroundId==$it.image.id} checked="checked"{/if}
-     name="{g->formVar var="form[backgroundId]"}" value="{$it.image.id}"/>
+     name="{g->formVar var="form[backgroundId]"}" value="{$it.id}"/>
   </td><td>
     <span class="giTitle">{$it.title|markup}</span>
   </td><td>
-    {assign var="key" value="row_`$it.image.id`"}
+    {assign var="key" value="row_`$it.id`"}
     <input type="text" size="3"
-     name="{g->formVar var="form[row_`$it.image.id`]"}" value="{$layout.params[$key]|default:''}"/>
+     name="{g->formVar var="form[row_`$it.id`]"}" value="{$layout.params[$key]|default:''}"/>
   </td><td>
-    {assign var="key" value="col_`$it.image.id`"}
+    {assign var="key" value="col_`$it.id`"}
     <input type="text" size="3"
-     name="{g->formVar var="form[col_`$it.image.id`]"}" value="{$layout.params[$key]|default:''}"/>
+     name="{g->formVar var="form[col_`$it.id`]"}" value="{$layout.params[$key]|default:''}"/>
   </td></tr>
   {/if}
 {/foreach}

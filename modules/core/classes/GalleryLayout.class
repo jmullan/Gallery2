@@ -45,6 +45,14 @@ class GalleryLayout extends GalleryPlugin {
     var $_requiredLayoutApi;
 
     /**
+     * Which of the standard layout settings this layout supports
+     *
+     * @var array _standardSettings
+     * @access private
+     */
+    var $_standardSettings = array();
+
+    /**
      * Return the major and minor version of the GalleryLayout API.
      *
      * This follows the same rules as the core API.
@@ -53,7 +61,7 @@ class GalleryLayout extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 9);
+	return array(0, 10);
     }
 
     /**
@@ -87,7 +95,114 @@ class GalleryLayout extends GalleryPlugin {
      *               settings array
      */
     function getSettings($itemId=null) {
-	return array(GalleryStatus::success(), array());
+	global $gallery;
+
+	list ($ret, $params) = $this->fetchParameters($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/**
+	 * For simplicity in upgrading, we don't require layouts to delete their old settings.  So
+	 * any item may be carting around extra settings that are no longer valid.  We could fix
+	 * this in the future, but for now, just leave those out of the settings list.
+	 */
+	$standard = $this->getStandardSettings();
+	$params = array_merge($standard, $params);
+
+	$settings = array();
+	if (isset($params['rows']) && isset($standard['rows'])) {
+	    $settings[] = array('key' => 'rows',
+				'name' => $gallery->i18n('Rows per album page'),
+				'type' => 'text-field',
+				'typeParams' => array('size' => 2),
+				'value' => $params['rows']);
+	}
+
+	if (isset($params['columns']) && isset($standard['columns'])) {
+	    $settings[] = array('key' => 'columns',
+				'name' => $gallery->i18n('Columns per album page'),
+				'type' => 'text-field',
+				'typeParams' => array('size' => 2),
+				'value' => $params['columns']);
+	}
+
+	if (isset($params['showImageOwner']) && isset($standard['showImageOwner'])) {
+	    $settings[] = array('key' => 'showImageOwner',
+				'name' => $gallery->i18n('Show image owners'),
+				'type' => 'checkbox',
+				'value' => $params['showImageOwner']);
+	}
+
+	if (isset($params['showAlbumOwner']) && isset($standard['showAlbumOwner'])) {
+	    $settings[] = array('key' => 'showAlbumOwner',
+				'name' => $gallery->i18n('Show album owners'),
+				'type' => 'checkbox',
+				'value' => $params['showAlbumOwner']);
+	}
+
+	if (isset($params['showMicroThumbs']) && isset($standard['showMicroThumbs'])) {
+	    $settings[] = array('key' => 'showMicroThumbs',
+				'name' => $gallery->i18n('Show micro navigation thumbnails'),
+				'type' => 'checkbox',
+				'value' => $params['showMicroThumbs']);
+	}
+
+	if (isset($params['perPage']) && isset($standard['perPage'])) {
+	    $settings[] = array('key' => 'perPage',
+				'name' => $gallery->i18n('Number of items to show per page'),
+				'type' => 'text-field',
+				'typeParams' => array('size' => 2),
+				'value' => $params['perPage']);
+	}
+
+	/* ImageFrame settings, if available */
+	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (isset($imageframe) &&
+	    (isset($params['albumFrame']) ||
+	     isset($params['itemFrame']) ||
+	     isset($params['photoFrame']))) {
+	    list ($ret, $list) = $imageframe->getImageFrameList();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl($itemId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $sample = ' (<a href="' . $sampleUrl . '">'
+		    . $this->translate('View Samples') . '</a>)';
+
+	    if (isset($params['albumFrame']) && isset($standard['albumFrame'])) {
+		$settings[] = array('key' => 'albumFrame',
+				    'name' => $this->translate('Album Frame') . $sample,
+				    'type' => 'single-select',
+				    'choices' => $list,
+				    'value' => $params['albumFrame']);
+	    }
+
+	    if (isset($params['itemFrame']) && isset($standard['itemFrame'])) {
+		$settings[] = array('key' => 'itemFrame',
+				    'name' => $this->translate('Item Frame') . $sample,
+				    'type' => 'single-select',
+				    'choices' => $list,
+				    'value' => $params['itemFrame']);
+	    }
+
+	    if (isset($params['photoFrame']) && isset($standard['photoFrame'])) {
+		$settings[] = array('key' => 'photoFrame',
+				    'name' => $this->translate('Photo Frame') . $sample,
+				    'type' => 'single-select',
+				    'choices' => $list,
+				    'value' => $params['photoFrame']);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $settings);
     }
 
     /**
@@ -99,7 +214,22 @@ class GalleryLayout extends GalleryPlugin {
      * @return array errors in the form of array('key' => 'translated text', ...)
      */
     function validateSettings($settings) {
-	return array();
+	$error = array();
+	$standard = $this->getStandardSettings();
+
+	if (isset($standard['rows'])) {
+	    if (empty($settings['rows']) || !is_numeric($settings['rows'])) {
+		$error['rows'] = $this->translate('You must enter a number greater than 0');
+	    }
+	}
+
+	if (isset($standard['columns'])) {
+	    if (empty($settings['columns']) || !is_numeric($settings['columns'])) {
+		$error['columns'] = $this->translate('You must enter a number greater than 0');
+	    }
+	}
+
+	return $error;
     }
 
     /**
@@ -307,28 +437,111 @@ class GalleryLayout extends GalleryPlugin {
      * @return array object GalleryStatus a status code
      *               array ('body'/'html' => string template or 'redirect' => array)
      */
-    function loadTemplate(&$template, $item) {
-	return array(GalleryStatus::success(), null);
-    }
+    function loadTemplate(&$template, $item, $params) {
+	global $gallery;
 
-    /**
-     * Study items very closely
-     *
-     * Learn whatever we think we'll need.  By performing operations on the
-     * entire set of items, we potentially save time when it comes to
-     * processing each item individually.
-     *
-     * @param array GalleryItem ids
-     * @return object GalleryStatus a status code
-     * @access private
-     */
-    function _studyItems($itemIds) {
-	/* Study all permissions */
-	$ret = GalleryCoreApi::studyPermissions($itemIds);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	$layout =& $template->getVariableByReference('layout');
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
+	$layout['cookiePath'] = $cookiePath;
+	$layout['layoutUrl'] =
+	    $urlGenerator->generateUrl(array('href' => 'layouts/' . $this->getId()), false);
+
+	/* Albums have their own settings.  Photos use their parent album's settings */
+	if ($item->getCanContainChildren()) {
+
+	    /* If we care about pagination, then figure out the current page and total pages */
+	    $perPage = $this->getPageSize($params);
+	    if (!empty($perPage)) {
+		$page = GalleryUtilities::getRequestVariables('page');
+		if (empty($page)) {
+		    $page = 1;
+		}
+
+		/* Use the pagination to calculate the child item ids to load */
+		$start = $perPage * ($page - 1);
+		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, $start, $perPage);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/*
+		 * Load up our child count so that we can figure out the max pages.  We do this
+		 * after we get the child ids because the 'childCount' common template data also
+		 * gets the child counts for the child albums.
+		 */
+		$ret = $this->loadCommonTemplateData(
+		    $template, $item, $params, array('childCount'), $childIds);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/* Store the total pages in the layout */
+		$layout['totalPages'] = ceil($layout['childCount'] / $perPage);
+		$layout['currentPage'] = $page;
+
+		/* If our page is over the max, redirect the user to the max page */
+		if ($page > $layout['totalPages'] && $layout['childCount'] > 0) {
+		    $redirect = array('view' => 'core:ShowItem', 'itemId' => $item->getId(),
+				      'page' => $layout['totalPages']);
+		    return array(GalleryStatus::success(), array('redirect' => $redirect));
+		}
+	    } else {
+		/*
+		 * No pagination; load all children (this isn't going to scale, but the layout is
+		 * the boss... for now).
+		 */
+		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    list ($ret, $bodyFile) = $this->loadAlbumTemplate($template, $item, $params, $childIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    list ($ret, $bodyFile) = $this->loadItemTemplate($template, $item, $params);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
-	return GalleryStatus::success();
+	$layout =& $template->getVariableByReference('layout');
+
+	/* Load image frames if the layout supports them (and they're available) */
+	if (!empty($params['albumFrame']) ||
+	        !empty($params['itemFrame']) ||
+	        !empty($params['photoFrame'])) {
+	    list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (isset($imageframe)) {
+		$frameIds = array();
+		if ($item->getCanContainChildren()) {
+		    foreach (array('albumFrame', 'itemFrame') as $key) {
+			if (!empty($params[$key])) {
+			    $frameIds[] = $layout[$key] = $params[$key];
+			}
+		    }
+		} else {
+		    if (!empty($params['photoFrame'])) {
+			$frameIds[] = $layout['photoFrame'] = $params['photoFrame'];
+		    }
+		}
+		if (!empty($frameIds)) {
+		    $ret = $imageframe->init($template, $frameIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+	    }
+	}
+
+	$layout['params'] = $params;
+
+	return array(GalleryStatus::success(), array('body' => $bodyFile));
     }
 
     /**
@@ -358,8 +571,17 @@ class GalleryLayout extends GalleryPlugin {
      *   itemDetailFiles = array of moduleId => template file path
      *   thumbnails = if childIds non-empty then set thumbnail on each child item
      *   peerThumbnails = set the thumbnails for all the peers
+     *   pageNavigator = calculate urls for first/back/next/last links for album page navigation
+     *   itemNavigator = calculate urls for first/back/next/last links for photo navigation
+     *                   (requires you to load 'peers' also)
+     *   jumpRange = calculate page urls for inter-album navigation (eg, "page: 1, 2 .. 7, 8")
+     *   imageViews = loads entity data for resizes and source images, suitable for display
+     *                when viewing a single image:
+     *                'imageViews' => derivatives,
+     *                'sourceImage' => data item,
+     *                'imageViewsIndex' => index to the resize currently displayed
+     *                'viewInline' => array of bools specifying which imageViews can be viewed inline
      *
-     * @param array object GalleryTemplate the template instance
      * @param object GalleryItem the item to display
      * @param array (string data key, ..) data to load into template
      * @param array (optional) ids of child items to display
@@ -367,15 +589,17 @@ class GalleryLayout extends GalleryPlugin {
      * @access public
      * @static
      */
-    function loadLayoutTemplate(&$template, $item, $dataToLoad, $childIds=array()) {
+    function loadCommonTemplateData(&$template, $item, $params, $dataToLoad,
+				    $childIds=array()) {
 	global $gallery;
-	$urlGenerator =& $gallery->getUrlGenerator();
 
 	/*
 	 * --------------------------------------------------------------------------------------
 	 * Initialize..
 	 */
-	$load = $layout = $childItems = $childData = array();
+	$layout =& $template->getVariableByReference('layout');
+	$load = $childItems = $childData = array();
+
 	foreach ($dataToLoad as $key) {
 	    $load[$key] = true;
 	}
@@ -394,9 +618,11 @@ class GalleryLayout extends GalleryPlugin {
 		$allAlbumIds[] = $it->getId();
 	    }
 	}
+	$perPage = $this->getPageSize($params);
 
 	if (!empty($childIds)) {
-	    $ret = $this->_studyItems($childIds);
+	    /* Study all permissions */
+	    $ret = GalleryCoreApi::studyPermissions($childIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -498,9 +724,11 @@ class GalleryLayout extends GalleryPlugin {
 	 * Always load 'item', 'children' and 'show'
 	 */
 	$layout['item'] = $item->getMemberData();
-	$layout['children'] = array();
-	foreach ($childItems as $child) {
-	    $layout['children'][] = $child->getMemberData();
+	if (!isset($layout['children'])) {
+	    $layout['children'] = array();
+	    foreach ($childItems as $child) {
+		$layout['children'][] = $child->getMemberData();
+	    }
 	}
 	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
 				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
@@ -538,7 +766,7 @@ class GalleryLayout extends GalleryPlugin {
 	 * --------------------------------------------------------------------------------------
 	 * 'childCount'
 	 */
-	if (isset($load['childCount'])) {
+	if (isset($load['childCount']) && !isset($layout['childCount'])) {
 	    list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts($allAlbumIds);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -632,6 +860,8 @@ class GalleryLayout extends GalleryPlugin {
 	if (isset($load['systemLinks']) || isset($load['systemContent'])
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
 		|| isset($load['itemDetailFiles'])) {
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    
 	    if (isset($load['systemLinks'])) {
 		$layout['systemLinks'] = array();
 	    }
@@ -794,14 +1024,263 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'pageNavigator'
+	 */
+	if (isset($load['pageNavigator']) && isset($layout['totalPages'])) {
+	    $page = GalleryUtilities::getRequestVariables('page');
+	    if (empty($page)) {
+		$page = 1;
+	    }
+
+	    /* Set up the navigator */
+	    $navigator = array();
+	    if ($page > 1) {
+		$navigator['first']['urlParams'] =
+		    array('view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => 1);
+		if ($page - 1 != 1) {
+		    $navigator['back']['urlParams'] = array(
+			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page - 1);
+		}
+	    }
+	    if ($page < $layout['totalPages']) {
+		if ($page + 1 != $layout['totalPages']) {
+		    $navigator['next']['urlParams'] = array(
+			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page + 1);
+		}
+
+		$navigator['last']['urlParams'] =
+		    array('view' => 'core:ShowItem', 'itemId' => $item->getId(),
+			  'page' => $layout['totalPages']);
+	    }
+	    $layout['navigator'] = $navigator;
+	}
+
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'itemNavigator'
+	 */
+	if (isset($load['itemNavigator']) && isset($layout['peerItemIndex'])) {
+	    $navigator = array();
+	    $itemIndex = $layout['peerItemIndex'];
+	    if ($itemIndex > 0) {
+		$navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
+							 'itemId' => $layout['peers'][0]['id']);
+		$navigator['first']['item'] = $layout['peers'][0];
+	    }
+
+	    if ($itemIndex > 1) {
+		$navigator['back']['urlParams'] =
+		    array('view' => 'core:ShowItem',
+			  'itemId' => $layout['peers'][$itemIndex - 1]['id']);
+		$navigator['back']['item'] = $layout['peers'][$itemIndex - 1];
+	    }
+
+	    if ($itemIndex < count($layout['peers']) - 2) {
+		$navigator['next']['urlParams'] =
+		    array('view' => 'core:ShowItem',
+			  'itemId' => $layout['peers'][$itemIndex + 1]['id']);
+		$navigator['next']['item'] = $layout['peers'][$itemIndex + 1];
+	    }
+
+	    if ($itemIndex < count($layout['peers']) - 1) {
+		$navigator['last']['urlParams'] =
+		    array('view' => 'core:ShowItem',
+			  'itemId' => $layout['peers'][count($layout['peers']) - 1]['id']);
+		$navigator['last']['item'] = $layout['peers'][count($layout['peers']) - 1];
+	    }
+	    $layout['navigator'] = $navigator;
+	}
+
+
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'jumpRange'
+	 */
+	if (isset($load['jumpRange']) && isset($layout['totalPages'])) {
+	    $windowSize = 6;      /* TODO: make this configurable */
+	    $jumpRange = array();
+	    $lowerPage = max($page - (int)($windowSize / 2), 1);
+	    $upperPage = min($page + (int)($windowSize / 2), $layout['totalPages']);
+	    if ($upperPage == 0) {
+		$upperPage = 1;
+	    }
+	    if ($upperPage == $layout['totalPages']) {
+		$lowerPage = max($upperPage - $windowSize, 1);
+	    } else if ($lowerPage == 1) {
+		$upperPage = min($lowerPage + ($windowSize-1), $layout['totalPages']);
+	    }
+	    for ($i = $lowerPage; $i <= $upperPage; $i++) {
+		$jumpRange[] = $i;
+	    }
+	    if ($lowerPage > 1) {
+		array_unshift($jumpRange, 1);
+	    }
+	    if ($upperPage < $layout['totalPages']) {
+		$jumpRange[] = $layout['totalPages'];
+	    }
+	    $layout['jumpRange'] = $jumpRange;
+	}
+
+	/*
+	 * --------------------------------------------------------------------------------------
+	 * 'imageViews'
+	 */
+	if (isset($load['imageViews'])) {
+	    /*
+	     * Figure out all possible views of this item that the user can see and
+	     * get them into an acceptable format for the template engine.
+	     */
+	    $imageViews = array();
+	    $can = array();
+	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    /* If the user can see resized versions, add those to the list */
+	    if (isset($permissions['core.viewResizes'])) {
+		/* Load the resizes */
+		list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		if (!empty($resizes)) {
+		    foreach ($resizes[$item->getId()] as $resize) {
+			/* Rebuild the derivative if we don't have its dimensions */
+			if ($resize->getWidth() == 0 || $resize->getHeight() == 0) {
+			    list ($ret, $resize) =
+				GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
+			    if ($ret->isError()) {
+				return $ret->wrap(__FILE__, __LINE__);
+			    }
+			}
+			$imageViews[] = $resize->getMemberData();
+			$viewInline[] = 1;
+		    }
+		}
+	    }
+
+	    /* If the user can see the full version, add it to the list */
+	    $sourceImage = null;
+	    if (isset($permissions['core.viewSource'])) {
+		/* Add the full version */
+		list ($ret, $preferred) =
+		    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		/* Show the preferred item, if it's there */
+		if (empty($preferred)) {
+		    $sourceImage = $item->getMemberData();
+		    if ($item->canBeViewedInline()) {
+			$viewInline[] = 1;
+		    } else {
+			$viewInline[] = 0;
+		    }
+		} else {
+		    $sourceImage = $preferred[$item->getId()]->getMemberData();
+		    $viewInline[] = 1;
+		}
+		$sourceImage['itemTypeName'] = $item->itemTypeName();
+		$sourceImage['isSource'] = true;
+		$imageViews[] = $sourceImage;
+		$sourceImageViewIndex = sizeof($imageViews)-1;
+	    }
+	    
+	    /* If all else fails, just show the thumbnail. */
+	    if (empty($imageViews)) {
+		/* Load the thumbnail */
+		list ($ret, $thumbnails) =
+		    GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		
+		if (!empty($thumbnails)) {
+		    $imageViews[] = $thumbnails[$item->getId()]->getMemberData();
+		    $viewInline[] = 1;
+		}
+	    }
+
+	    $imageViewsIndex = GalleryUtilities::getRequestVariables('imageViewsIndex');
+	    if (empty($imageViewsIndex)) {
+		$imageViewsIndex = 0;
+	    }
+	    
+	    /* Don't let the index overflow the images array */
+	    $imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
+	    $layout['viewInline'] = $viewInline;
+	    if (isset($sourceImageViewIndex)) {
+		$layout['sourceImageViewIndex'] = $sourceImageViewIndex;
+	    }
+	    $layout['imageViews'] = $imageViews;
+	    $layout['sourceImage'] = $sourceImage;
+	    $layout['imageViewsIndex'] = $imageViewsIndex;
+	}
+
 	/* -------------------------------------------------------------------------------------- */
 	$template->setVariable('layout', $layout);
 
 	return GalleryStatus::success();
     }
 
+    /**
+     * Sort an array of associative arrays on the 'text' key
+     * @access private
+     */
     function _sortItemLinks($a, $b) {
 	return strcmp($a['text'], $b['text']);
+    }
+
+    /**
+     * Return the number of items per page, or 0 if there is no pagination in this layout.
+     *
+     * @param array the layout parameters
+     * @return int 
+     */
+    function getPageSize($params) {
+	if (!empty($params['rows']) && !empty($params['columns'])) {
+	    return $params['rows'] * $params['columns'];
+	}
+
+	if (!empty($params['perPage'])) {
+	    return $params['perPage'];
+	}
+
+	return 0;
+    }
+
+    /**
+     * Load all the necessary template data to render a page for an album
+     *
+     * @param array object GalleryTemplate the template instance
+     * @param object GalleryAlbumItem the album item to render.
+     * @param array the layout parameters
+     * @param int the child item ids
+     * @return array object GalleryStatus a status code
+     *         string path to a template file
+     * @access private
+     */
+    function loadAlbumTemplate(&$template, $item, $params, $childIds) {
+	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * Load all the necessary template data to render a page for a single item
+     *
+     * @param array object GalleryTemplate the template instance
+     * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
+     * @param array the layout parameters
+     * @return array object GalleryStatus a status code
+     *         string path to a template file
+     * @access private
+     */
+    function loadItemTemplate(&$template, $item, $params) {
+	return array(GalleryStatus::success(), null);
     }
 
     /**
@@ -817,6 +1296,14 @@ class GalleryLayout extends GalleryPlugin {
 
     function getRequiredLayoutApi() {
 	return $this->_requiredLayoutApi;
+    }
+
+    function setStandardSettings($standardSettings) {
+	$this->_standardSettings = $standardSettings;
+    }
+
+    function getStandardSettings() {
+	return $this->_standardSettings;
     }
 }
 ?>

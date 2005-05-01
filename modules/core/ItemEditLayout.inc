@@ -78,10 +78,11 @@ class ItemEditLayout extends ItemEditPlugin {
 		}
 
 		/*
-		 * Any settings that are marked as "use global" should be removed from this item.  Others
-		 * should be updated in the database.  Note that we set the parameter even if it is the same
-		 * as the original setting value, since we want to make sure that the value is stored per
-		 * item, and the original setting value could have been from the global space.
+		 * Any settings that are marked as "use global" should be removed from this item.
+		 * Others should be updated in the database.  Note that we set the parameter even
+		 * if it is the same as the original setting value, since we want to make sure
+		 * that the value is stored per item, and the original setting value could have
+		 * been from the global space.
 		 */
 		foreach ($settings as $setting) {
 		    $key = $setting['key'];
@@ -115,7 +116,10 @@ class ItemEditLayout extends ItemEditPlugin {
 		GalleryUtilities::putRequestVariable('form[errorMessage]', $errorMessage);
 	    }
 	} else if (isset($form['action']['undo'])) {
-	    /* Take no action and we'll be redirected back to the same page which will reset the form */
+	    /*
+	     * Take no action and we'll be redirected back to the same page which will reset
+	     * the form
+	     */
 	}
 
 	return array(GalleryStatus::success(), $error, $status);

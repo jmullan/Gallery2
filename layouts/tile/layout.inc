@@ -43,45 +43,18 @@ class TileLayout extends GalleryLayout {
 	$this->setId('tile');
 	$this->setName('Tile');
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setL10Domain('layouts_tile');
-	$this->setRequiredLayoutApi(array(0, 8));
+	$this->setRequiredLayoutApi(array(0, 10));
 	$this->setRequiredCoreApi(array(5, 0));
     }
 
-    function loadTemplate(&$template, $item, $noHead=false) {
+    function loadAlbumTemplate(&$template, $item, &$params, $childIds, $noHead=false) {
 	global $gallery;
 	$renderId = GalleryUtilities::getRequestVariables('renderId');
+	$this->_setDefaultParameters($params);
 
-	if (!$item->getCanContainChildren() && !empty($renderId)) {
-	    /* Render this item */
-	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $layout = array('item' => $item->getMemberData(),
-			    'image' => $image->getMemberData());
-	    $template->setVariable('layout', $layout);
-	    $template->title('');
-	    return array(GalleryStatus::success(),
-			 array('html' => 'layouts/tile/templates/render.tpl'));
-	}
-
-	if (!$item->getCanContainChildren()) {
-	    /* Load parent with initial view of this item  */
-	    $viewItemId = $item->getId();
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ret = $this->loadLayoutTemplate($template, $item,
+	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
@@ -89,29 +62,22 @@ class TileLayout extends GalleryLayout {
 	}
 	$layout =& $template->getVariableByReference('layout');
 
-	list ($ret, $params) = $this->fetchParameters($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($params['backgroundId'])) {
+	if (!empty($params['backgroundId'])) {
 	    list ($ret, $bgImage) = GalleryCoreApi::loadEntitiesById($params['backgroundId']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $params['bgSerialNumber'] = $bgImage->getSerialNumber();
 	}
-	foreach (array('backgroundId', 'rows', 'cols', 'cellWidth', 'cellHeight') as $key) {
-	    if (!isset($params[$key])) {
-		$params[$key] = '0';
-	    }
-	}
+	
 	$map = array();
 	for ($i = 0; $i < $params['rows']; $i++) {
 	    for ($j = 0; $j < $params['cols']; $j++) {
 		$map[$i][$j] = 0;
 	    }
 	}
-	if (isset($params['map'])) {
+
+	if (!empty($params['map'])) {
 	    foreach (explode(';', $params['map']) as $key) {
 		$value = explode(',', $key);
 		if (count($value) == 3) {
@@ -121,7 +87,6 @@ class TileLayout extends GalleryLayout {
 		}
 	    }
 	}
-	$layout['params'] = $params;
 	$layout['map'] = $map;
 
 	list ($ret, $imageWidths, $imageHeights) =
@@ -139,32 +104,70 @@ class TileLayout extends GalleryLayout {
 	$layout['imageHeights'] = implode(',', $imageHeights);
 	$layout['imageCount'] = count($imageWidths);
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
-	$layout['cookiePath'] = $cookiePath;
-	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/tile'), false);
-
-	/* Init view with specific image */
-	if (isset($viewItemId)) {
-	    foreach ($layout['children'] as $tmp) {
-		if ($tmp['id'] == $viewItemId) {
-		    if (isset($tmp['imageIndex'])) {
-			$layout['viewIndex'] = $tmp['imageIndex'];
-			/* Set cookie to popup image just once */
-			setcookie('G2_tile_view', '1', 0, $cookiePath);
-		    }
-		    break;
-		}
-	    }
-	}
-
 	if (!$noHead) {
 	    $template->head('layouts/tile/templates/header.tpl');
 	    $template->style('templates/layout.css');
 	    $template->style('layouts/tile/layout.css');
 	}
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/tile/templates/tile.tpl'));
+	return array(GalleryStatus::success(), 'layouts/tile/templates/tile.tpl');
+    }
+
+    function _setDefaultParameters(&$params) {
+	foreach (array('backgroundId', 'rows', 'cols', 'cellWidth', 'cellHeight') as $key) {
+	    if (!isset($params[$key])) {
+		$params[$key] = '0';
+	    }
+	}
+    }
+
+    function loadItemTemplate(&$template, $item, $params) {
+	global $gallery;
+	$renderId = GalleryUtilities::getRequestVariables('renderId');
+	$this->_setDefaultParameters($params);
+
+	if (!empty($renderId)) {
+	    /* Render this item */
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout = array('item' => $item->getMemberData(),
+			    'image' => $image->getMemberData());
+	    $template->setVariable('layout', $layout);
+	    $template->title('');
+	    return array(GalleryStatus::success(), 'layouts/tile/templates/render.tpl');
+	}
+
+	/* Load parent with initial view of this item  */
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parent);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $tplFile) = $this->loadAlbumTemplate($template, $parent, $params, $childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	/* Init view with specific image */
+	$layout =& $template->getVariableByReference('layout');
+	foreach ($layout['children'] as $tmp) {
+	    if ($tmp['id'] == $item->getId()) {
+		if (isset($tmp['imageIndex'])) {
+		    $layout['viewIndex'] = $tmp['imageIndex'];
+		    /* Set cookie to popup image just once */
+		    setcookie('G2_tile_view', '1', 0, $cookiePath);
+		}
+		break;
+	    }
+	}
+
+	return array(GalleryStatus::success(), 'layouts/tile/templates/tile.tpl');
     }
 
     function _buildItemList($childIds, &$children) {
@@ -249,8 +252,8 @@ class TileLayout extends GalleryLayout {
 		$image = $image->getMemberData();
 		$children[$i]['image'] = $image;
 		$children[$i]['imageIndex'] = count($imageWidths);
-		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem')
-			&& $image['width'] > 0 && $image['height'] > 0) {
+		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
+		        $image['width'] > 0 && $image['height'] > 0) {
 		    /* Display in <img> */
 		    $imageWidths[] = $image['width'];
 		    $imageHeights[] = $image['height'];
@@ -266,6 +269,13 @@ class TileLayout extends GalleryLayout {
     }
 
     /**
+     * @see GalleryLayout::getPageSize
+     */
+    function getPageSize($params) {
+	 return $params['rows'] * $params['cols'];
+    }
+
+    /**
      * @see GalleryLayout::isAdvancedSettings
      */
     function isAdvancedSettings() {
@@ -276,18 +286,38 @@ class TileLayout extends GalleryLayout {
      * @see GalleryLayout::loadSettingsTemplate
      */
     function loadSettingsTemplate(&$template, &$form, $itemId=null) {
-	if (!isset($itemId)) {
-	    /* Site admin settings */
+        if (!isset($itemId)) {
+	    /* Site admin settings -- we have none. */
 	    return array(GalleryStatus::success(), null);
 	}
+
+	/*
+	 * Our settings template needs everything that an album render requires so load enough
+	 * information to call loadAlbumTemplate.
+	 */
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	list ($ret, $tmp) = $this->loadTemplate($template, $item, true);
+	list ($ret, $params) = $this->fetchParameters($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$this->_setDefaultParameters($params);
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $tmp) = $this->loadAlbumTemplate($template, $item, $params, $childIds, true);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	$layout =& $template->getVariableByReference('layout');
+	$layout['params'] = $params;
+
 	return array(GalleryStatus::success(), 'layouts/tile/templates/edit.tpl');
     }
 

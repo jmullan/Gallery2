@@ -4,7 +4,7 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-{include file="gallery:layouts/matrix/templates/pathbar.tpl" l10Domain="layouts_matrix"}
+{include file="gallery:layouts/classic/templates/pathbar.tpl" l10Domain="layouts_classic"}
 
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top"><td id="gsSidebarCol">
@@ -40,7 +40,7 @@
 	    </span>
 	    {/if}
 	    <br/>
-	    {if $layout.showAlbumOwner}
+	    {if $layout.params.showAlbumOwner}
 	      {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
 	      <br/>
 	    {/if}
@@ -49,7 +49,7 @@
       </table>
     </div>
 
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl" l10Domain="layouts_matrix"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl" l10Domain="layouts_classic"}
 
     {if !count($layout.children)}
     <div class="gbBlock giDescription">
@@ -63,7 +63,7 @@
       {foreach from=$layout.children item=child}
 
       {* Move to a new row *}
-      {if ($childrenInColumnCount == $layout.columnSize)}
+      {if ($childrenInColumnCount == $layout.params.columns)}
 	</tr><tr valign="top">
 	{assign var="childrenInColumnCount" value=0}
       {/if}
@@ -109,8 +109,8 @@
 	  {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
 	  <br/>
 
-	  {if ($child.canContainChildren && $layout.showAlbumOwner)
-	   || (!$child.canContainChildren && $layout.showImageOwner)}
+	  {if ($child.canContainChildren && $layout.params.showAlbumOwner)
+	   || (!$child.canContainChildren && $layout.params.showImageOwner)}
 	    {g->text text="Owner: %s" arg1=$layout.ownerMap[$child.ownerId].fullName|default:$layout.ownerMap[$child.ownerId].userName}
 	    <br/>
 	  {/if}
@@ -149,7 +149,7 @@
 	{/if}
       </td>
 
-      {if $layout.showSubalbums}
+      {if $layout.params.showSubalbums}
       <td class="tree">
 	{if !empty($layout.tree[$child.id])}
 	  <h4> {g->text text="Subalbums:"} </h4>
@@ -177,7 +177,7 @@
       {/foreach}
 
       {* flush the rest of the row with empty cells *}
-      {section name="flush" start=$childrenInColumnCount loop=$layout.columnSize}
+      {section name="flush" start=$childrenInColumnCount loop=$layout.params.columns}
 	<td>&nbsp;</td>
       {/section}
     </tr></table>
@@ -190,7 +190,7 @@
       {/foreach}
     {/if}
 
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl" l10Domain="layouts_matrix"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl" l10Domain="layouts_classic"}
 
     {if !empty($layout.jumprange)}
     <div id="gsPages" class="gbBlock gcBackground1">

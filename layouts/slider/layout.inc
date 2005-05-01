@@ -45,50 +45,24 @@ class SliderLayout extends GalleryLayout {
 	$this->setName('Slider');
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('0.10.0');
+	$this->setVersion('0.10.1');
 	$this->setL10Domain('layouts_slider');
-	$this->setRequiredLayoutApi(array(0, 8));
+	$this->setRequiredLayoutApi(array(0, 10));
 	$this->setRequiredCoreApi(array(5, 0));
     }
 
-    function loadTemplate(&$template, $item) {
+    function loadAlbumTemplate(&$template, $item, $params, $childIds) {
 	global $gallery;
 	$renderId = GalleryUtilities::getRequestVariables('renderId');
 
-	if (!$item->getCanContainChildren() && !empty($renderId)) {
-	    /* Render this item */
-	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $layout = array('item' => $item->getMemberData(),
-			    'image' => $image->getMemberData());
-	    $template->setVariable('layout', $layout);
-	    $template->title('');
-	    return array(GalleryStatus::success(),
-			 array('html' => 'layouts/slider/templates/render.tpl'));
-	}
-
-	if (!$item->getCanContainChildren()) {
-	    /* Load parent with initial view of this item  */
-	    $viewItemId = $item->getId();
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	}
-
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	$ret = $this->loadLayoutTemplate($template, $item,
+	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+
+	/* Add in our extra stuff */
 	$layout =& $template->getVariableByReference('layout');
 
 	list ($ret, $imageWidths, $imageHeights) =
@@ -104,29 +78,58 @@ class SliderLayout extends GalleryLayout {
 	$layout['imageCount'] = count($imageWidths);
 	$layout['show']['sidebarActions'] = false;
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
-	$layout['cookiePath'] = $cookiePath;
-	$layout['layoutUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/slider'), false);
-	$layout['hybridUrl'] = $urlGenerator->generateUrl(array('href' => 'layouts/hybrid'), false);
-
-	/* Init view with specific image */
-	if (isset($viewItemId)) {
-	    foreach ($layout['children'] as $tmp) {
-		if ($tmp['id'] == $viewItemId) {
-		    if (isset($tmp['imageIndex'])) {
-			$layout['viewIndex'] = $tmp['imageIndex'];
-		    }
-		    break;
-		}
-	    }
-	}
-
 	$template->head('layouts/slider/templates/header.tpl');
 	$template->style('templates/layout.css');
 	$template->style('layouts/slider/layout.css');
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/slider/templates/slider.tpl'));
+	return array(GalleryStatus::success(), 'layouts/slider/templates/slider.tpl');
+    }
+
+    function loadItemTemplate(&$template, $item, $params) {
+	global $gallery;
+	$renderId = GalleryUtilities::getRequestVariables('renderId');
+
+	/* Render a specific item, if necessary */
+	if (!empty($renderId)) {
+	    /* Render this item */
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout = array('item' => $item->getMemberData(),
+			    'image' => $image->getMemberData());
+	    $template->setVariable('layout', $layout);
+	    $template->title('');
+	    return array(GalleryStatus::success(), 'layouts/slider/templates/render.tpl');
+	}
+
+	/* Otherwise, load the parent with initial view of this item  */
+	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parent);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $tplFile) = $this->loadAlbumTemplate($template, $parent, $params, $childIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* Init view with specific image */
+	$layout =& $template->getVariableByReference('layout');
+	foreach ($layout['children'] as $tmp) {
+	    if ($tmp['id'] == $item->getId()) {
+		if (isset($tmp['imageIndex'])) {
+		    $layout['viewIndex'] = $tmp['imageIndex'];
+		}
+		break;
+	    }
+	}
+
+	return array(GalleryStatus::success(), $tplFile);
     }
 
     function _buildItemList($childIds, &$children) {

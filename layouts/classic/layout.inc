@@ -25,16 +25,13 @@
  * @author Alan Harder <alan.harder@sun.com>
  */
 
-/* Load parent class */
-GalleryCoreApi::relativeRequireOnce('layouts/matrix/layout.inc');
-
 /**
  * This implements the classic gallery layout
  *
  * @package GalleryLayout
  * @subpackage Layout
  */
-class ClassicLayout extends MatrixLayout {
+class ClassicLayout extends GalleryLayout {
 
     /**
      * Constructor
@@ -50,6 +47,11 @@ class ClassicLayout extends MatrixLayout {
 	$this->setL10Domain('layouts_classic');
 	$this->setRequiredLayoutApi(array(0, 8));
 	$this->setRequiredCoreApi(array(5, 0));
+	$this->setStandardSettings(
+	    array('rows' => 10, 'columns' => 1,
+		  'showImageOwner' => 0, 'showAlbumOwner' => 1,
+		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '',
+		  'showMicroThumbs' => 0));
     }
 
     /**
@@ -57,28 +59,19 @@ class ClassicLayout extends MatrixLayout {
      */
     function getSettings($itemId=null) {
 	global $gallery;
+	
+	list ($ret, $settings) = parent::getSettings($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	list ($ret, $params) = $this->fetchParameters($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$params = array_merge(
-	    array('rows' => 10, 'columns' => 1, 'showImageOwner' => 0, 'showAlbumOwner' => 1,
-		  'albumFrame' => '', 'itemFrame' => '', 'photoFrame' => '', 'showSubalbums' => 1,
-		  'subalbumDepth' => 0, 'showMicroThumbs' => 0),
-	    $params);
 
-	$settings = array();
-	$settings[] = array('key' => 'rows',
-			    'name' => $gallery->i18n('Rows per album page'),
-			    'type' => 'text-field',
-			    'typeParams' => array('size' => 2),
-			    'value' => $params['rows']);
-	$settings[] = array('key' => 'columns',
-			    'name' => $gallery->i18n('Columns of thumbnails per album page'),
-			    'type' => 'text-field',
-			    'typeParams' => array('size' => 2),
-			    'value' => $params['columns']);
+	/* Add in our custom settings */
+	$params = array_merge(array('showSubalbums' => 1, 'subalbumDepth' => 0), $params);
 	$settings[] = array('key' => 'showSubalbums',
 			    'name' => $gallery->i18n('Show subalbum links'),
 			    'type' => 'checkbox',
@@ -88,58 +81,12 @@ class ClassicLayout extends MatrixLayout {
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['subalbumDepth']);
-	$settings[] = array('key' => 'showImageOwner',
-			    'name' => $gallery->i18n('Show image owners'),
-			    'type' => 'checkbox',
-			    'value' => $params['showImageOwner']);
-	$settings[] = array('key' => 'showAlbumOwner',
-			    'name' => $gallery->i18n('Show album owners'),
-			    'type' => 'checkbox',
-			    'value' => $params['showAlbumOwner']);
-	$settings[] = array('key' => 'showMicroThumbs',
-			    'name' => $gallery->i18n('Show micro navigation thumbnails'),
-			    'type' => 'checkbox',
-			    'value' => $params['showMicroThumbs']);
-
-	/* ImageFrame settings, if available */
-	list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if (isset($imageframe)) {
-	    list ($ret, $list) = $imageframe->getImageFrameList();
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    list ($ret, $sampleUrl) = $imageframe->getSampleUrl($itemId);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    $sample = ' (<a href="' . $sampleUrl . '">'
-		    . $this->translate('View Samples') . '</a>)';
-
-	    $settings[] = array('key' => 'albumFrame',
-				'name' => $this->translate('Album Frame') . $sample,
-				'type' => 'single-select',
-				'choices' => $list,
-				'value' => $params['albumFrame']);
-	    $settings[] = array('key' => 'itemFrame',
-				'name' => $this->translate('Item Frame') . $sample,
-				'type' => 'single-select',
-				'choices' => $list,
-				'value' => $params['itemFrame']);
-	    $settings[] = array('key' => 'photoFrame',
-				'name' => $this->translate('Photo Frame') . $sample,
-				'type' => 'single-select',
-				'choices' => $list,
-				'value' => $params['photoFrame']);
-	}
 
 	return array(GalleryStatus::success(), $settings);
     }
 
     /**
-     * @see MatrixLayout::validateSettings
+     * @see GalleryLayout::validateSettings
      */
     function validateSettings($settings) {
 	$error = parent::validateSettings($settings);
@@ -150,21 +97,21 @@ class ClassicLayout extends MatrixLayout {
     }
 
     /**
-     * @see MatrixLayout::_loadAlbumTemplate
+     * @see GalleryLayout::loadAlbumTemplate
      */
-    function _loadAlbumTemplate(&$template, $item, $params) {
-	list ($ret, $matrixResult) = parent::_loadAlbumTemplate($template, $item, $params);
+    function loadAlbumTemplate(&$template, $item, $params, $childIds) {
+	$ret = $this->loadCommonTemplateData(
+	    $template, $item, $params,
+	    array('owner', 'viewCount', 'descendentCount', 'parents', 'peers',
+		  'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries',
+		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
+	     $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (is_array($matrixResult)) {
-	    /* Return now if we are doing a redirect */
-	    return array(GalleryStatus::success(), $matrixResult);
-	}
 
+	/* Add in our extra stuff */
 	$layout =& $template->getVariableByReference('layout');
-	$layout['showSubalbums'] = $params['showSubalbums'];
-
 	if ($params['showSubalbums']) {
 	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree($item->getId(),
 		$params['subalbumDepth'] > 0 ? $params['subalbumDepth'] + 1 : null);
@@ -192,6 +139,8 @@ class ClassicLayout extends MatrixLayout {
 	    }
 	}
 
+	$template->head('layouts/classic/templates/head.tpl');
+	$template->style('templates/layout.css');
 	$template->style('layouts/classic/layout.css');
 	return array(GalleryStatus::success(), 'layouts/classic/templates/albumBody.tpl');
     }
@@ -211,16 +160,23 @@ class ClassicLayout extends MatrixLayout {
     }
 
     /**
-     * @see MatrixLayout::_loadSingleTemplate
+     * @see GalleryLayout::loadItemTemplate
      */
-    function _loadSingleTemplate(&$template, $item, $params) {
-	list ($ret, $matrixResult) = parent::_loadSingleTemplate($template, $item, $params);
+    function loadItemTemplate(&$template, $item, $params) {
+	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'systemContent',
+			   'itemLinks', 'itemDetailFiles', 'itemNavigator', 'imageViews');
+	if (!empty($params['showMicroThumbs'])) {
+	    $dataTypes[] = 'peerThumbnails';
+	}
+	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	/* Including matrix template directly.. switch to matrix domain for localization */
-	$this->setL10Domain('layouts_matrix');
-	return array(GalleryStatus::success(), $matrixResult);
+
+	$template->head('layouts/classic/templates/head.tpl');
+	$template->style('templates/layout.css');
+	$template->style('layouts/classic/layout.css');
+	return array(GalleryStatus::success(), 'layouts/classic/templates/singleBody.tpl');
     }
 }
 ?>

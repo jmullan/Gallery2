@@ -163,8 +163,8 @@
 	  {capture name="link"}
 	    <a href="" onclick="image_show({$it.imageIndex});return false">
 	  {/capture}
-	  {if isset($it.thumbnail) && isset($layout.imageFrame)}
-	    {g->block type="imageframe" frame=$layout.imageFrame}
+	  {if isset($it.thumbnail) && isset($layout.itemFrame)}
+	    {g->block type="imageframe" frame=$layout.itemFrame}
 	      {$smarty.capture.link}
 	      {g->image item=$it image=$it.thumbnail id="%ID%" class="%CLASS% giThumbnail"}
 	      </a>

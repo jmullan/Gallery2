@@ -40,7 +40,7 @@
 	    </span>
             {/if}
             <br/>
-            {if $layout.showAlbumOwner}
+            {if $layout.params.showAlbumOwner}
               {g->text text="Owner: %s" arg1=$layout.owner.fullName|default:$layout.owner.userName}
               <br/>
             {/if}
@@ -64,7 +64,7 @@
       {foreach from=$layout.children item=child}
 
       {* Move to a new row *}
-      {if ($childrenInColumnCount == $layout.columnSize)}
+      {if ($childrenInColumnCount == $layout.params.columns)}
 	</tr><tr valign="top">
         {assign var="childrenInColumnCount" value=0}
       {/if}
@@ -126,8 +126,8 @@
           {g->text text="Date: %s" arg1=$smarty.capture.childTimestamp}
           <br/>
 
-          {if ($child.canContainChildren && $layout.showAlbumOwner)
-	   || (!$child.canContainChildren && $layout.showImageOwner)}
+          {if ($child.canContainChildren && $layout.params.showAlbumOwner)
+	   || (!$child.canContainChildren && $layout.params.showImageOwner)}
             {g->text text="Owner: %s" arg1=$layout.ownerMap[$child.ownerId].fullName|default:$layout.ownerMap[$child.ownerId].userName}
             <br/>
           {/if}
@@ -158,7 +158,7 @@
       {/foreach}
 
       {* flush the rest of the row with empty cells *}
-      {section name="flush" start=$childrenInColumnCount loop=$layout.columnSize}
+      {section name="flush" start=$childrenInColumnCount loop=$layout.params.columns}
         <td>&nbsp;</td>
       {/section}
     </tr></table>
@@ -173,11 +173,11 @@
 
     {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
 
-    {if !empty($layout.jumprange)}
+    {if !empty($layout.jumpRange)}
     <div id="gsPages" class="gbBlock gcBackground1">
       {g->text text="Page:"}
       {assign var="lastPage" value=0}
-      {foreach name=jumprange from=$layout.jumprange item=page}
+      {foreach name=jumpRange from=$layout.jumpRange item=page}
         {if ($page - $lastPage >= 2)}
 	  <span>
           {if ($page - $lastPage == 2)}

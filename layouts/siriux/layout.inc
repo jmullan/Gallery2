@@ -25,16 +25,13 @@
  * @author Nico Kaiser <nico@siriux.net>
  */
 
-/* Load parent class */
-GalleryCoreApi::relativeRequireOnce('layouts/matrix/layout.inc');
-
 /**
  * siriux.net Layout for Gallery
  *
  * @package GalleryLayout
  * @subpackage Layout
  */
-class SiriuxLayout extends MatrixLayout {
+class SiriuxLayout extends GalleryLayout {
 
     /**
      * Constructor
@@ -45,26 +42,28 @@ class SiriuxLayout extends MatrixLayout {
 	$this->setId('siriux');
 	$this->setName('Siriux');
 	$this->setDescription($gallery->i18n('Siriux.net Gallery layout'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setL10Domain('layouts_siriux');
-	$this->setRequiredLayoutApi(array(0, 8));
+	$this->setRequiredLayoutApi(array(0, 10));
 	$this->setRequiredCoreApi(array(5, 0));
+	$this->setStandardSettings(array('showImageOwner' => 0, 'perPage' => 9));
     }
 
-
     /**
-     * @see MatrixLayout::_loadAlbumTemplate
+     * @see GalleryLayout::loadAlbumTemplate
      */
-    function _loadAlbumTemplate(&$template, $item, $params) {
-	list ($ret, $matrixResult) = parent::_loadAlbumTemplate($template, $item, $params);
+    function loadAlbumTemplate(&$template, $item, $params, $childIds) {
+	$ret = $this->loadCommonTemplateData(
+	    $template, $item, $params,
+	    array('owner', 'viewCount', 'childCount', 'descendentCount', 'parents', 'peers',
+		  'systemLinks', 'systemContent', 'itemLinks', 'itemSummaries',
+		  'itemDetailFiles', 'thumbnails', 'pageNavigator', 'jumpRange'),
+	     $childIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (is_array($matrixResult)) {
-	    /* Return now if we are doing a redirect */
-	    return array(GalleryStatus::success(), $matrixResult);
-	}
 
+	/* Override some navigator settings */
 	$layout =& $template->getVariableByReference('layout');
 	if (!isset($layout['navigator']['back']) && isset($layout['navigator']['first'])) {
 	    $layout['navigator']['back'] = $layout['navigator']['first'];
@@ -74,26 +73,27 @@ class SiriuxLayout extends MatrixLayout {
 	    $layout['navigator']['next'] = $layout['navigator']['last'];
 	}
 
-	$template->head('layouts/matrix/templates/head.tpl');
+	$template->head('layouts/siriux/templates/head.tpl');
 	$template->style('templates/layout.css');
 	$template->style('layouts/siriux/layout.css');
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/siriux/templates/albumBody.tpl'));
+	return array(GalleryStatus::success(), 'layouts/siriux/templates/albumBody.tpl');
     }
 
     /**
-     * @see MatrixLayout::_loadSingleTemplate
+     * @see GalleryLayout::loadItemTemplate
      */
-    function _loadSingleTemplate(&$template, $item, $params) {
-	list ($ret, $matrixResult) = parent::_loadSingleTemplate($template, $item, $params);
+    function loadItemTemplate(&$template, $item, $params) {
+	$dataTypes = array('owner', 'parents', 'peers', 'systemLinks', 'systemContent',
+			   'itemLinks', 'itemDetailFiles', 'itemNavigator', 'imageViews');
+	if (!empty($params['showMicroThumbs'])) {
+	    $dataTypes[] = 'peerThumbnails';
+	}
+	$ret = $this->loadCommonTemplateData($template, $item, $params, $dataTypes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (is_array($matrixResult)) {
-	    /* Return now if we are doing a redirect */
-	    return array(GalleryStatus::success(), $matrixResult);
-	}
 
+	/* Override some navigator settings */
 	$layout =& $template->getVariableByReference('layout');
 	if (!isset($layout['navigator']['back']) && isset($layout['navigator']['first'])) {
 	    $layout['navigator']['back'] = $layout['navigator']['first'];
@@ -103,11 +103,10 @@ class SiriuxLayout extends MatrixLayout {
 	    $layout['navigator']['next'] = $layout['navigator']['last'];
 	}
 
-	$template->head('layouts/matrix/templates/head.tpl');
+	$template->head('layouts/siriux/templates/head.tpl');
 	$template->style('templates/layout.css');
 	$template->style('layouts/siriux/layout.css');
-	return array(GalleryStatus::success(),
-		     array('body' => 'layouts/siriux/templates/singleBody.tpl'));
+	return array(GalleryStatus::success(), 'layouts/siriux/templates/singleBody.tpl');
     }
 }
 ?>

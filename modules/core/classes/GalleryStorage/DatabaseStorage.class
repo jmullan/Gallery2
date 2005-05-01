@@ -2347,10 +2347,10 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	/* Put in a lock request */
 	$lockIdCol = $this->_translateColumnName('lockId');
 	$requestCol = $this->_translateColumnName('request');
-	$query = 'INSERT INTO ' . $lockTable .
-		'(' . $lockIdCol . ', ' . $requestCol .
-		') VALUES (?, 1)';
-	$data = array($lockId);
+	$freshUntilCol = $this->_translateColumnName('freshUntil');
+	$query = sprintf('INSERT INTO %s (%s, %s, %s) VALUES(?, 1, ?)',
+			 $lockTable, $lockIdCol, $requestCol, $freshUntilCol);
+	$data = array($lockId, time() + 30);
 
 	$this->_traceStart();
 	$recordSet = $db->Execute($query, $data);

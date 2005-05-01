@@ -8,7 +8,7 @@
 {assign var="image" value=$layout.imageViews[$layout.imageViewsIndex]}
 {/if}
 
-{include file="gallery:layouts/matrix/templates/pathbar.tpl"}
+{include file="gallery:layouts/classic/templates/pathbar.tpl"}
 
 <table width="100%" cellspacing="0" cellpadding="0">
   <tr valign="top"><td id="gsSidebarCol">
@@ -88,7 +88,7 @@
       </table>
     </div>
 
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl"}
 
     <div class="gbBlock">
     {if !empty($layout.imageViews)}
@@ -120,7 +120,7 @@
       {/foreach}
     {/if}
 
-    {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl"}
   </div>
   </td></tr>
 </table>

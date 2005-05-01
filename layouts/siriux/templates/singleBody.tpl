@@ -16,7 +16,7 @@
     </a>
     {/capture}
 
-    {if ($layout.can.viewInline[$layout.imageViewsIndex])}
+    {if ($layout.viewInline[$layout.imageViewsIndex])}
       <div class="gallery-photo">
 	{g->image item=$layout.item image=$layout.imageViews[$layout.imageViewsIndex]
 		  fallback=$smarty.capture.fallback class="gcBorder1"}
@@ -34,7 +34,7 @@
       {g->text text="Date:"}
       {g->date timestamp=$layout.item.originationTimestamp}
     {/if}
-    {if $layout.showImageOwner}
+    {if $layout.params.showImageOwner}
       {g->text text="Owner:"}
       {$layout.owner.fullName|default:$layout.owner.userName}
     {/if}
