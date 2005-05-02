@@ -251,9 +251,6 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	/* Initialize the viewedSince timestamp */
 	$this->setViewedSinceTimestamp(time());
 
-	/* No parent for root */
-	$this->setParentId(0);
-
 	/* Origination timestamp defaults to now */
 	$this->setOriginationTimestamp(time());
 

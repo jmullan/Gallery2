@@ -39,7 +39,7 @@
   <table width="100%" cellspacing="0" cellpadding="0">
     <tr valign="top">
     <td id="gsSidebarCol"><div id="gsSidebar" class="gcBorder1">
-      {if !$ItemAdmin.isRootAlbum}
+      {if !$ItemAdmin.isRootAlbum or !empty($ItemAdmin.thumbnail)}
       <div class="gbBlock">
 	{if empty($ItemAdmin.thumbnail)}
 	  {g->text text="No Thumbnail"}
@@ -51,7 +51,7 @@
       {/if}
 
       <div class="gbBlock">
-        <h2> {g->text text="Options"} </h2>
+	<h2> {g->text text="Options"} </h2>
 	<ul>
 	  {foreach from=$ItemAdmin.subViewChoices key=choiceName item=choiceParams}
 	    <li class="gbAdminLink" id="{g->adminlinkid arg1=$choiceParams}">

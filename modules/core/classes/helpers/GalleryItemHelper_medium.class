@@ -62,19 +62,19 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	$aclMarkers  = GalleryUtilities::makeMarkers(count($aclIds));
 
 	$query = sprintf('
-        SELECT
-          [GalleryItem::id]
-        FROM
-          [GalleryEntity], [GalleryItem], [GalleryAccessSubscriberMap]
-        WHERE
-          [GalleryEntity::entityType] = ?
-          AND
-          [GalleryItem::id] = [GalleryEntity::id]
-          AND
-          [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        ', $aclMarkers);
+	SELECT
+	  [GalleryItem::id]
+	FROM
+	  [GalleryEntity], [GalleryItem], [GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryEntity::entityType] = ?
+	  AND
+	  [GalleryItem::id] = [GalleryEntity::id]
+	  AND
+	  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	', $aclMarkers);
 
 	$data = array();
 	$data[] = $itemType;
@@ -114,12 +114,12 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	/* Search the item table for all items with owner = $ownerId */
 	$query = '
-        SELECT
-          [GalleryItem::id]
-        FROM
-          [GalleryItem]
-        WHERE
-          [GalleryItem::ownerId] = ?
+	SELECT
+	  [GalleryItem::id]
+	FROM
+	  [GalleryItem]
+	WHERE
+	  [GalleryItem::ownerId] = ?
 	';
 	list ($ret, $queryResults) = $gallery->search($query, array($ownerId));
 	if ($ret->isError()) {
@@ -631,42 +631,34 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		/* It's possible that the parent id is empty (only for the root album) */
 		$parentId = $item->getParentId();
-		if (!empty($parentId)) {
-		    list ($ret, $preferences) =
-			GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
-		    if ($ret->isError()) {
-			if (!empty($lockIds)) {
-			    /* Ignore errors -- we're already in an error handler */
-			    GalleryCoreApi::releaseLocks($lockIds);
-			}
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		/* Use derivative preferences of self for root album highlight */
+		if (empty($parentId)) {
+		    $parentId = $item->getId();
+		}
+		list ($ret, $preferences) =
+		    GalleryCoreApi::fetchDerivativePreferencesForItem($parentId);
+		if ($ret->isError()) {
+		    if (!empty($lockIds)) {
+			/* Ignore errors -- we're already in an error handler */
+			GalleryCoreApi::releaseLocks($lockIds);
 		    }
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
-		    foreach ($preferences as $preference) {
-			if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
-			    $derivativeOperations = $preference['derivativeOperations'];
-			    break;
-			}
+		foreach ($preferences as $preference) {
+		    if ($preference['derivativeType'] == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+			$derivativeOperations = $preference['derivativeOperations'];
+			break;
 		    }
+		}
 
-		    if (empty($derivativeOperations)) {
-			if (!empty($lockIds)) {
-			    /* Ignore errors -- we're already in an error handler */
-			    GalleryCoreApi::releaseLocks($lockIds);
-			}
-			return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__),
-				     null);
+		if (empty($derivativeOperations)) {
+		    if (!empty($lockIds)) {
+			GalleryCoreApi::releaseLocks($lockIds);
 		    }
-		} else {
-		    /*
-		     * There's no parent id, which means the target album is the
-		     * root, which means it doesn't need a thumbnail so even
-		     * though we didn't create one this is a success.
-		     */
-		    $success = true;
-		    $derivative = null;
+		    return array(GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__),
+				 null);
 		}
 	    }
 

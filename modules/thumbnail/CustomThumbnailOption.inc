@@ -40,8 +40,7 @@ class CustomThumbnailOption extends ItemEditOption {
      * @see ItemEditOption::isAppropriate
      */
     function isAppropriate($item, $thumbnail) {
-	return array(GalleryStatus::success(),
-		     (GalleryUtilities::isA($item, 'GalleryItem') && $item->getParentId() > 0));
+	return array(GalleryStatus::success(), GalleryUtilities::isA($item, 'GalleryItem'));
     }
 
     /**

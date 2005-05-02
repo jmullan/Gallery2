@@ -40,7 +40,7 @@ class ThumbnailModule extends GalleryModule {
 	$this->setId('thumbnail');
 	$this->setName($gallery->i18n('Thumbnail Manager'));
 	$this->setDescription($gallery->i18n('Set default thumbnails for non-image items'));
-	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -74,17 +74,17 @@ class ThumbnailModule extends GalleryModule {
 
 	case '0.8.1':
 	case '0.8.2':
-	    /*
-	     * Assign parent to existing ThumbnailImage entities
-	     */
+	    /* Assign parent to existing ThumbnailImage entities */
 	    list ($ret, $rootId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $storage =& $gallery->getStorage();
-	    $query = 'INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], '
-		. $rootId . ' FROM [ThumbnailImage]';
+	    $query = '
+	    INSERT INTO [GalleryChildEntity] SELECT [ThumbnailImage::id], ' . $rootId . '
+	    FROM [ThumbnailImage]
+	    ';
 	    $ret = $storage->execute($query);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -113,6 +113,35 @@ class ThumbnailModule extends GalleryModule {
 	    }
 
 	case '0.9.2':
+	case '0.9.3':
+	    /* Now allow thumbnail for root album; remove parent for mime type thumbnails */
+	    list ($ret, $rootId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $query = '
+	    SELECT [ThumbnailImage::id] FROM [ThumbnailImage], [GalleryChildEntity]
+	    WHERE [ThumbnailImage::id] = [GalleryChildEntity::id]
+	    AND [GalleryChildEntity::parentId] = ?
+	    ';
+	    list ($ret, $results) = $gallery->search($query, array($rootId));
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $ids = array();
+	    while ($result = $results->nextResult()) {
+		$ids[] = $result[0];
+	    }
+	    $storage =& $gallery->getStorage();
+	    $query = '
+	    UPDATE [GalleryChildEntity] SET [GalleryChildEntity::parentId] = 0
+	    WHERE [GalleryChildEntity::id] IN (' . GalleryUtilities::makeMarkers($ids) . ')
+	    ';
+	    $ret = $storage->execute($query, $ids);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case 'end of upgrade path':
 	    /*
