@@ -119,21 +119,8 @@ class GalleryLockHelper_simple {
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    /* No parents.  This can only happen when the item is the root */
-	    list ($ret, $rootId) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if ($id == $rootId) {
-		return array(GalleryStatus::success(), null);
-	    } else {
-		/* This should never happen! */
-		return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
-						  "Id: $id"),
-			     null);
-	    }
+	    /* No parents; nothing to lock */
+	    return array(GalleryStatus::success(), null);
 	}
 
 	/* Extract the parent ids */
