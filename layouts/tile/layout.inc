@@ -272,7 +272,12 @@ class TileLayout extends GalleryLayout {
      * @see GalleryLayout::getPageSize
      */
     function getPageSize($params) {
-	 return $params['rows'] * $params['cols'];
+	/* This layout may not be configured yet... */
+	if (isset($params['rows']) && isset($params['cols'])) {
+	    return $params['rows'] * $params['cols'];
+	}
+
+	return 0;
     }
 
     /**
