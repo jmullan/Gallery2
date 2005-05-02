@@ -42,11 +42,8 @@ class GalleryRemoteConstants {
 	static $grVersionCodes;
 
 	if (empty($grVersionCodes)) {
-	    /*
-	     * Gallery remote protocol version 2.10
-	     */
 	    $grVersionCodes['MAJ'] = 2;
-	    $grVersionCodes['MIN'] = 3;
+	    $grVersionCodes['MIN'] = 4;
 	}
 
 	return $grVersionCodes;
@@ -71,6 +68,7 @@ class GalleryRemoteConstants {
 	    $grStatusCodes['LOGIN_MISSING']                     = 202;
 
 	    $grStatusCodes['UNKNOWN_COMMAND']		        = 301;
+	    $grStatusCodes['MISSING_ARGUMENTS']		        = 302;
 
 	    $grStatusCodes['NO_ADD_PERMISSION']	                = 401;
 	    $grStatusCodes['NO_FILENAME']			= 402;
