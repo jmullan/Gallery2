@@ -223,102 +223,103 @@ class GalleryAnimationItem_core extends GalleryDataItem {
 	    switch($this->getMimeType()) {
 	    case 'application/x-shockwave-flash':
 		return sprintf('<script type="text/javascript">
-                                  // <![CDATA[
-                                  if (window.ActiveXObject) {
-                                      document.write(\'<object id="animation"\');
-                                      document.write(\'        %s\');
-                                      document.write(\'        width="%s"\');
-                                      document.write(\'        height="%s"\');
-                                      document.write(\'        autoplay="true"\');
-                                      document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
-                                      document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"\');
-                                      document.write(\'        classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">\');
-                                      document.write(\'  <param name="movie" value="%s" />\');
-                                      document.write(\'  <param name="quality" value="high" />\');
-                                      document.write(\'  <param name="salign" value="TL" />\');
-                                      document.write(\'  <param name="swliveconnect" value="true" />\');
-                                      document.write(\'  %s\');
-                                      document.write(\'</object>\');
-                                  } else {
-                                      document.write(\'<object id="movie"\');
-                                      document.write(\'        %s\');
-                                      document.write(\'        type="%s"\');
-                                      document.write(\'        data="%s"\');
-                                      document.write(\'        width="%s"\');
-                                      document.write(\'        height="%s">\');
-                                      document.write(\'  <param name="movie" value="%s" />\');
-                                      document.write(\'  <param name="quality" value="high" />\');
-                                      document.write(\'  <param name="salign" value="TL" />\');
-                                      document.write(\'  <param name="swliveconnect" value="true" />\');
-                                      document.write(\'  %s\');
-                                      document.write(\'</object>\');
-                                  }
-                                  //]]>
-                                  </script>',
+		    // <![CDATA[
+		    if (window.ActiveXObject) {
+			document.write(\'<object id="animation"\');
+			document.write(\'        %s\');
+			document.write(\'        width="%s"\');
+			document.write(\'        height="%s"\');
+			document.write(\'        autoplay="true"\');
+			document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
+			document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=5,0,30,0"\');
+			document.write(\'        classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">\');
+			document.write(\'  <param name="movie" value="%s" />\');
+			document.write(\'  <param name="quality" value="high" />\');
+			document.write(\'  <param name="salign" value="TL" />\');
+			document.write(\'  <param name="swliveconnect" value="true" />\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
+		    } else {
+			document.write(\'<object id="movie"\');
+			document.write(\'        %s\');
+			document.write(\'        type="%s"\');
+			document.write(\'        data="%s"\');
+			document.write(\'        width="%s"\');
+			document.write(\'        height="%s">\');
+			document.write(\'  <param name="movie" value="%s" />\');
+			document.write(\'  <param name="quality" value="high" />\');
+			document.write(\'  <param name="salign" value="TL" />\');
+			document.write(\'  <param name="swliveconnect" value="true" />\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
+		    }
+		    //]]>
+		    </script>',
 
-			       // IE Object
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			       $width,
-			       $height,
-			       $src,
-			       $fallback,
+		    /* IE Object */
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
+		    $width,
+		    $height,
+		    $src,
+		    $fallback,
 
-			       // Mozilla Object
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			       $this->getMimeType(),
-			       $src,
-			       $width,
-			       $height,
-			       $src,
-			       $fallback);
+		    /* Mozilla Object */
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
+		    $this->getMimeType(),
+		    $src,
+		    $width,
+		    $height,
+		    $src,
+		    $fallback);
 
 	    case 'application/x-director':
 		return sprintf('<script type="text/javascript">
-                                  // <![CDATA[
-                                  if (window.ActiveXObject) {
-                                      document.write(\'<object id="animation"\');
-                                      document.write(\'        %s\');
-                                      document.write(\'        width="%s"\');
-                                      document.write(\'        height="%s"\');
-                                      document.write(\'        autoplay="true"\');
-                                      document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
-                                      document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"\');
-                                      document.write(\'        classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000">\');
+		    // <![CDATA[
+		    if (window.ActiveXObject) {
+			document.write(\'<object id="animation"\');
+			document.write(\'        %s\');
+			document.write(\'        width="%s"\');
+			document.write(\'        height="%s"\');
+			document.write(\'        autoplay="true"\');
+			document.write(\'        pluginspage="http://www.apple.com/quicktime/download/"\');
+			document.write(\'        codebase="http://download.macromedia.com/pub/shockwave/cabs/director/sw.cab#version=8,0,0,0"\');
+			document.write(\'        classid="clsid:166B1BCA-3F9C-11CF-8075-444553540000">\');
 
-                                      document.write(\'  <param name="src" value="%s" />\');
-                                      document.write(\'  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />\');
-                                      document.write(\'  <param name="sw3" value="2" />\');
-                                      document.write(\'  <param name="swStretchStyle" value="none" />\');
-                                      document.write(\'  <param name="bgColor" value="#000000" />\');
-                                      document.write(\'  %s\');
-                                      document.write(\'</object>\');
-                                  } else {
-                                      document.write(\'<object id="movie"\');
-                                      document.write(\'        %s\');
-                                      document.write(\'        type="%s"\');
-                                      document.write(\'        data="%s"\');
-                                      document.write(\'        width="%s"\');
-                                      document.write(\'        height="%s">\');
-                                      document.write(\'  %s\');
-                                      document.write(\'</object>\');
-                                  }
-                                  //]]>
-                                  </script>',
+			document.write(\'  <param name="src" value="%s" />\');
+			document.write(\'  <param name="swRemote" value="swTarget=false swVolume=false swRestart=false swPausePlay=false swFastForward=false swContextMenu=true swSend=false" />\');
+			document.write(\'  <param name="sw3" value="2" />\');
+			document.write(\'  <param name="swStretchStyle" value="none" />\');
+			document.write(\'  <param name="bgColor" value="#000000" />\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
+		    } else {
+			document.write(\'<object id="movie"\');
+			document.write(\'        %s\');
+			document.write(\'        type="%s"\');
+			document.write(\'        data="%s"\');
+			document.write(\'        width="%s"\');
+			document.write(\'        height="%s">\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
+		    }
+		    //]]>
+		    </script>',
 
-			       // IE Object
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			       $width,
-			       $height,
-			       $src,
-			       $fallback,
+		    /* IE Object */
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
+		    $width,
+		    $height,
+		    $src,
+		    $fallback,
 
-			       // Mozilla Object
-			       $params['class'] ? 'class="' . $params['class'] . '"' : '',
-			       $this->getMimeType(),
-			       $src,
-			       $width,
-			       $height,
-			       $fallback);
+		    /* Mozilla Object */
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
+		    $this->getMimeType(),
+		    $src,
+		    $width,
+		    $height,
+		    $fallback);
+
 	    default:
 		return $fallback;
 

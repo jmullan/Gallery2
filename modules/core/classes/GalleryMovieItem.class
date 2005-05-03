@@ -246,42 +246,42 @@ class GalleryMovieItem_core extends GalleryDataItem {
 		return sprintf('<script type="text/javascript">
 		    // <![CDATA[
 		    if (window.ActiveXObject) {
-		        document.write(\'<object id="movie"\');
-		        document.write(\' %s\');
-		        document.write(\' width="%s"\');
-		        document.write(\' height="%s"\');
-		        document.write(\' loop="false"\');
-		        document.write(\' autoplay="true"\');
-		        document.write(\' pluginspage="http://www.apple.com/quicktime/download/"\');
-		        document.write(\' codebase="http://www.apple.com/qtactivex/qtplugin.cab"\');
-		        document.write(\' classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B">\');
-		        document.write(\'  <param name="src" value="%s" />\');
-		        document.write(\'  <param name="autoplay" value="true" />\');
-		        document.write(\'  <param name="controller" value="true" />\');
-		        document.write(\'  %s\');
-		        document.write(\'</object>\');
+			document.write(\'<object id="movie"\');
+			document.write(\' %s\');
+			document.write(\' width="%s"\');
+			document.write(\' height="%s"\');
+			document.write(\' loop="false"\');
+			document.write(\' autoplay="true"\');
+			document.write(\' pluginspage="http://www.apple.com/quicktime/download/"\');
+			document.write(\' codebase="http://www.apple.com/qtactivex/qtplugin.cab"\');
+			document.write(\' classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B">\');
+			document.write(\'  <param name="src" value="%s" />\');
+			document.write(\'  <param name="autoplay" value="true" />\');
+			document.write(\'  <param name="controller" value="true" />\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
 		    } else {
-		        document.write(\'<object id="movie"\');
-		        document.write(\' %s\');
-		        document.write(\' type="%s"\');
-		        document.write(\' data="%s"\');
-		        document.write(\' width="%s"\');
-		        document.write(\' height="%s">\');
-		        document.write(\'  %s\');
-		        document.write(\'</object>\');
+			document.write(\'<object id="movie"\');
+			document.write(\' %s\');
+			document.write(\' type="%s"\');
+			document.write(\' data="%s"\');
+			document.write(\' width="%s"\');
+			document.write(\' height="%s">\');
+			document.write(\'  %s\');
+			document.write(\'</object>\');
 		    }
 		    // ]]>
 		    </script>',
 
 		    /* IE object */
-		    $params['class'] ? 'class="' . $params['class'] . '"' : '',
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
 		    $width,
 		    $height+15,
 		    $src,
 		    $fallback,
 
 		    /* Mozilla object */
-		    $params['class'] ? 'class="' . $params['class'] . '"' : '',
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
 		    $this->getMimeType(),
 		    $src,
 		    $width,
@@ -294,41 +294,41 @@ class GalleryMovieItem_core extends GalleryDataItem {
 		return sprintf('<script type="text/javascript">
 		    // <![CDATA[
 		    if (window.ActiveXObject) {
-		        document.write(\'<object id="movie"\');
-		        document.write(\' %s\');
-		        document.write(\' width="%s"\');
-		        document.write(\' height="%s"\');
-		        document.write(\' classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A">\');
-		        document.write(\'<param name="ShowDisplay" value="0" />\');
-		        document.write(\'<param name="ShowControls" value="1" />\');
-		        document.write(\'<param name="AutoStart" value="1" />\');
-		        document.write(\'<param name="AutoRewind" value="-1" />\');
-		        document.write(\'<param name="Volume" value="0" />\');
-		        document.write(\'<param name="FileName" value="%s" />\');
-		        document.write(\'%s\');
-		        document.write(\'</object>\');
+			document.write(\'<object id="movie"\');
+			document.write(\' %s\');
+			document.write(\' width="%s"\');
+			document.write(\' height="%s"\');
+			document.write(\' classid="CLSID:05589FA1-C356-11CE-BF01-00AA0055595A">\');
+			document.write(\'<param name="ShowDisplay" value="0" />\');
+			document.write(\'<param name="ShowControls" value="1" />\');
+			document.write(\'<param name="AutoStart" value="1" />\');
+			document.write(\'<param name="AutoRewind" value="-1" />\');
+			document.write(\'<param name="Volume" value="0" />\');
+			document.write(\'<param name="FileName" value="%s" />\');
+			document.write(\'%s\');
+			document.write(\'</object>\');
 		    } else {
-		        document.write(\'<object id="movie"\');
-		        document.write(\' %s\');
-		        document.write(\' data="%s"\');
-		        document.write(\' type="%s"\');
-		        document.write(\' width="%s"\');
-		        document.write(\' height="%s">\');
-		        document.write(\'%s\');
-		        document.write(\'</object>\');
+			document.write(\'<object id="movie"\');
+			document.write(\' %s\');
+			document.write(\' data="%s"\');
+			document.write(\' type="%s"\');
+			document.write(\' width="%s"\');
+			document.write(\' height="%s">\');
+			document.write(\'%s\');
+			document.write(\'</object>\');
 		    }
 		    // ]]>
 		    </script>',
 
 		    /* IE object */
-		    $params['class'] ? 'class="' . $params['class'] . '"' : '',
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
 		    $width,
 		    $height+50,
 		    $src,
 		    $fallback,
 
 		    /* Mozilla object */
-		    $params['class'] ? 'class="' . $params['class'] . '"' : '',
+		    !empty($params['class']) ? 'class="' . $params['class'] . '"' : '',
 		    $src,
 		    $this->getMimeType(),
 		    $width,
