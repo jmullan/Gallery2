@@ -161,7 +161,7 @@ class GalleryLayout extends GalleryPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if (isset($imageframe) &&
 	    (isset($params['albumFrame']) ||
 	     isset($params['itemFrame']) ||
@@ -497,12 +497,12 @@ class GalleryLayout extends GalleryPlugin {
 		}
 	    }
 
-	    list ($ret, $bodyFile) = $this->loadAlbumTemplate($template, $item, $params, $childIds);
+	    list ($ret, $result) = $this->loadAlbumTemplate($template, $item, $params, $childIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
-	    list ($ret, $bodyFile) = $this->loadItemTemplate($template, $item, $params);
+	    list ($ret, $result) = $this->loadItemTemplate($template, $item, $params);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -511,9 +511,10 @@ class GalleryLayout extends GalleryPlugin {
 
 	/* Load image frames if the layout supports them (and they're available) */
 	if (!empty($params['albumFrame']) ||
-	        !empty($params['itemFrame']) ||
-	        !empty($params['photoFrame'])) {
-	    list ($ret, $imageframe) = GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
+		!empty($params['itemFrame']) ||
+		!empty($params['photoFrame'])) {
+	    list ($ret, $imageframe) =
+		GalleryCoreApi::newFactoryInstance('ImageFrameInterface_1_1');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -541,7 +542,8 @@ class GalleryLayout extends GalleryPlugin {
 
 	$layout['params'] = $params;
 
-	return array(GalleryStatus::success(), array('body' => $bodyFile));
+	return array(GalleryStatus::success(),
+		     is_array($result) ? $result : array('body' => $result));
     }
 
     /**
@@ -580,7 +582,7 @@ class GalleryLayout extends GalleryPlugin {
      *                'imageViews' => derivatives,
      *                'sourceImage' => data item,
      *                'imageViewsIndex' => index to the resize currently displayed
-     *                'viewInline' => array of bools specifying which imageViews can be viewed inline
+     *                'viewInline' => array of booleans specifying which can be displayed inline
      *
      * @param object GalleryItem the item to display
      * @param array (string data key, ..) data to load into template
@@ -731,7 +733,8 @@ class GalleryLayout extends GalleryPlugin {
 	    }
 	}
 	$layout['show'] = array('sidebar' => GalleryCapabilities::can('showSidebar'),
-				'sidebarGreeting' => GalleryCapabilities::can('showSidebarGreeting'),
+				'sidebarGreeting' =>
+				    GalleryCapabilities::can('showSidebarGreeting'),
 				'sidebarActions' => true,
 				'sidebarPeers' => isset($load['peers']),
 				'pathbar' => GalleryCapabilities::can('showPathbar'));
@@ -861,7 +864,7 @@ class GalleryLayout extends GalleryPlugin {
 		|| isset($load['itemLinks']) || isset($load['itemSummaries'])
 		|| isset($load['itemDetailFiles'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    
+
 	    if (isset($load['systemLinks'])) {
 		$layout['systemLinks'] = array();
 	    }
@@ -1142,17 +1145,19 @@ class GalleryLayout extends GalleryPlugin {
 	    /* If the user can see resized versions, add those to the list */
 	    if (isset($permissions['core.viewResizes'])) {
 		/* Load the resizes */
-		list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
+		list ($ret, $resizes) =
+		    GalleryCoreApi::fetchResizesByItemIds(array($item->getId()));
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 		if (!empty($resizes)) {
 		    foreach ($resizes[$item->getId()] as $resize) {
 			/* Rebuild the derivative if we don't have its dimensions */
 			if ($resize->getWidth() == 0 || $resize->getHeight() == 0) {
 			    list ($ret, $resize) =
-				GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($resize->getId());
+				GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent(
+				    $resize->getId());
 			    if ($ret->isError()) {
 				return $ret->wrap(__FILE__, __LINE__);
 			    }
@@ -1172,7 +1177,7 @@ class GalleryLayout extends GalleryPlugin {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 		/* Show the preferred item, if it's there */
 		if (empty($preferred)) {
 		    $sourceImage = $item->getMemberData();
@@ -1190,7 +1195,7 @@ class GalleryLayout extends GalleryPlugin {
 		$imageViews[] = $sourceImage;
 		$sourceImageViewIndex = sizeof($imageViews)-1;
 	    }
-	    
+
 	    /* If all else fails, just show the thumbnail. */
 	    if (empty($imageViews)) {
 		/* Load the thumbnail */
@@ -1199,7 +1204,7 @@ class GalleryLayout extends GalleryPlugin {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 		if (!empty($thumbnails)) {
 		    $imageViews[] = $thumbnails[$item->getId()]->getMemberData();
 		    $viewInline[] = 1;
@@ -1210,7 +1215,7 @@ class GalleryLayout extends GalleryPlugin {
 	    if (empty($imageViewsIndex)) {
 		$imageViewsIndex = 0;
 	    }
-	    
+
 	    /* Don't let the index overflow the images array */
 	    $imageViewsIndex = min($imageViewsIndex, count($imageViews) - 1);
 	    $layout['viewInline'] = $viewInline;
@@ -1240,7 +1245,7 @@ class GalleryLayout extends GalleryPlugin {
      * Return the number of items per page, or 0 if there is no pagination in this layout.
      *
      * @param array the layout parameters
-     * @return int 
+     * @return int
      */
     function getPageSize($params) {
 	if (!empty($params['rows']) && !empty($params['columns'])) {
@@ -1262,7 +1267,7 @@ class GalleryLayout extends GalleryPlugin {
      * @param array the layout parameters
      * @param int the child item ids
      * @return array object GalleryStatus a status code
-     *         string path to a template file
+     *         string path to a template file or array(html/redirect)
      * @access private
      */
     function loadAlbumTemplate(&$template, $item, $params, $childIds) {
@@ -1276,7 +1281,7 @@ class GalleryLayout extends GalleryPlugin {
      * @param object GalleryItem the item to render.  Can be any subclass of GalleryItem
      * @param array the layout parameters
      * @return array object GalleryStatus a status code
-     *         string path to a template file
+     *         string path to a template file or array(html/redirect)
      * @access private
      */
     function loadItemTemplate(&$template, $item, $params) {
