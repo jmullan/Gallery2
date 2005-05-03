@@ -54,10 +54,6 @@ class HybridLayout extends GalleryLayout {
      * @see GalleryLayout::loadAlbumTemplate
      */
     function loadAlbumTemplate(&$template, $item, $params, $childIds) {
-	global $gallery;
-	$detail = GalleryUtilities::getRequestVariables('detail');
-	$renderId = GalleryUtilities::getRequestVariables('renderId');
-
 	$ret = $this->loadCommonTemplateData($template, $item, $params,
 	    array('owner', 'viewCount', 'parents', 'systemLinks', 'systemContent', 'itemLinks'),
 	    $childIds);
@@ -87,6 +83,41 @@ class HybridLayout extends GalleryLayout {
      * @see GalleryLayout::loadItemTemplate
      */
     function loadItemTemplate(&$template, $item, $params) {
+	list ($detail, $renderId) = GalleryUtilities::getRequestVariables('detail', 'renderId');
+
+	if (!empty($renderId)) {
+	    /* Render this item */
+	    list ($ret, $image) = GalleryCoreApi::loadEntitiesById($renderId);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout = array('item' => $item->getMemberData(),
+			    'image' => $image->getMemberData());
+	    $template->setVariable('layout', $layout);
+	    $template->title('');
+	    return array(GalleryStatus::success(),
+			 array('html' => 'layouts/hybrid/templates/render.tpl'));
+	}
+
+	if (!empty($detail)) {
+	    $ret = $this->loadCommonTemplateData($template, $item, $params,
+						 array('owner', 'viewCount', 'itemDetailFiles'));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $layout =& $template->getVariableByReference('layout');
+	    list ($ret, $thumbnail) =
+		GalleryCoreApi::fetchThumbnailsByItemIds(array($item->getId()));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (!empty($thumbnail)) {
+		$layout['thumbnail'] = $thumbnail[$item->getId()]->getMemberData();
+	    }
+	    return array(GalleryStatus::success(),
+			 array('html' => 'layouts/hybrid/templates/detail.tpl'));
+	}
+
 	/* Load parent with initial view of this item  */
 	list ($ret, $parent) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	if ($ret->isError()) {
