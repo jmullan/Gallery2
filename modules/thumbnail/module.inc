@@ -121,9 +121,14 @@ class ThumbnailModule extends GalleryModule {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $query = '
-	    SELECT [ThumbnailImage::id] FROM [ThumbnailImage], [GalleryChildEntity]
-	    WHERE [ThumbnailImage::id] = [GalleryChildEntity::id]
-	    AND [GalleryChildEntity::parentId] = ?
+	    SELECT
+              [ThumbnailImage::id]
+            FROM
+              [ThumbnailImage], [GalleryChildEntity]
+	    WHERE
+              [ThumbnailImage::id] = [GalleryChildEntity::id]
+	      AND
+              [GalleryChildEntity::parentId] = ?
 	    ';
 	    list ($ret, $results) = $gallery->search($query, array($rootId));
 	    if ($ret->isError()) {
@@ -133,14 +138,26 @@ class ThumbnailModule extends GalleryModule {
 	    while ($result = $results->nextResult()) {
 		$ids[] = $result[0];
 	    }
-	    $storage =& $gallery->getStorage();
-	    $query = '
-	    UPDATE [GalleryChildEntity] SET [GalleryChildEntity::parentId] = 0
-	    WHERE [GalleryChildEntity::id] IN (' . GalleryUtilities::makeMarkers($ids) . ')
-	    ';
-	    $ret = $storage->execute($query, $ids);
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+
+	    GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailImage.class');
+	    if (!empty($ids)) {
+		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($ids);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		list ($ret, $thumbs) = GalleryCoreApi::loadEntitiesById($ids);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+
+		foreach ($thumbs as $thumb) {
+		    $thumb->setParentId(0);
+		    $ret = $thumb->save();
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
 	    }
 
 	case 'end of upgrade path':
