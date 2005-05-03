@@ -122,13 +122,13 @@ class ThumbnailModule extends GalleryModule {
 	    }
 	    $query = '
 	    SELECT
-              [ThumbnailImage::id]
-            FROM
-              [ThumbnailImage], [GalleryChildEntity]
+	      [ThumbnailImage::id]
+	    FROM
+	      [ThumbnailImage], [GalleryChildEntity]
 	    WHERE
-              [ThumbnailImage::id] = [GalleryChildEntity::id]
+	      [ThumbnailImage::id] = [GalleryChildEntity::id]
 	      AND
-              [GalleryChildEntity::parentId] = ?
+	      [GalleryChildEntity::parentId] = ?
 	    ';
 	    list ($ret, $results) = $gallery->search($query, array($rootId));
 	    if ($ret->isError()) {
@@ -141,7 +141,7 @@ class ThumbnailModule extends GalleryModule {
 
 	    GalleryCoreApi::relativeRequireOnce('modules/thumbnail/classes/ThumbnailImage.class');
 	    if (!empty($ids)) {
-		list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($ids);
+		list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -155,8 +155,14 @@ class ThumbnailModule extends GalleryModule {
 		    $thumb->setParentId(0);
 		    $ret = $thumb->save();
 		    if ($ret->isError()) {
+			GalleryCoreApi::releaseLocks($lockId);
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
+		}
+
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
 
