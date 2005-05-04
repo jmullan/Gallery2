@@ -120,6 +120,20 @@ class AdminCoreController extends GalleryController {
 	    } else {
 		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
 	    }
+	} else if (isset($form['action']['emailTest'])) {
+	    if (empty($form['emailTest']['to']) ||
+		    !GalleryUtilities::isValidEmailString($form['emailTest']['to'])) {
+		$error[] = 'form[error][emailTest][invalidTo]';
+	    } else {
+		list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		$canSave = true;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'core:AdminCore';
+	    }
 	}
 
 	if ($canSave) {
@@ -159,6 +173,24 @@ class AdminCoreController extends GalleryController {
 	    $status['saved'] = 1;
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminCore';
+	}
+
+	if (isset($form['action']['emailTest']) && empty($error)) {
+	    $gallery->startRecordingDebugSnippet();
+	    ob_start();
+	    $ret = GalleryCoreApi::sendTemplatedEmail(
+		'modules/core/templates/EmailTest.tpl', array(), null,
+		$form['emailTest']['to'], $module->translate('Gallery Email Test'));
+	    $output = ob_get_contents();
+	    ob_end_clean();
+	    $debugSnippet = $gallery->stopRecordingDebugSnippet();
+
+	    if ($ret->isError()) {
+		$status['emailTestError'] = $ret->getAsHtml();
+		$status['emailTestDebug'] = $output . $debugSnippet;
+	    } else {
+		$status['emailTestSuccess'] = 1;
+	    }
 	}
 
 	if (!empty($redirect)) {
@@ -221,6 +253,7 @@ class AdminCoreView extends GalleryView {
 	    }
 	    $form['formName'] = 'AdminCore';
 	    $form['uploadLocalServer']['newDir'] = '';
+	    $form['emailTest']['to'] = '';
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');

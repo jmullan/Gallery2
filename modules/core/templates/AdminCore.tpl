@@ -17,8 +17,16 @@
     {g->text text="Added local upload directory successfully"}
   {/if}
   {if isset($status.removedDir)}
-      {g->text text="Removed local upload directory successfully"}
+    {g->text text="Removed local upload directory successfully"}
   {/if}
+  {if isset($status.emailTestSuccess)}
+    {g->text text="Test email sent successfully"}
+  {/if}
+</h2></div>
+{/if}
+{if isset($status.emailTestError) or isset($form.error.emailTest)}
+<div class="gbBlock"><h2 class="giError">
+  {g->text text="Error sending test email, see below for details"}
 </h2></div>
 {/if}
 
@@ -205,7 +213,7 @@
   <h3> {g->text text="Email"} </h3>
 
   <p class="giDescription">
-    {g->text text="By default Gallery uses PHP's built in mail function to send email which requires no configuration.  To use a smtp/mail server that requires authentication fill in the values below."}
+    {g->text text="By default Gallery uses PHP's built in mail function to send email which requires no configuration.  To use a smtp/mail server enter the information below, including authentication information if required."}
   </p>
 
   <table class="gbDataTable"><tr>
@@ -237,6 +245,30 @@
        name="{g->formVar var="form[smtp][from]"}" value="{$form.smtp.from}"/>
     </td>
   </tr></table>
+
+  <p class="giDescription">
+    {g->text text="Send a test email to verify your settings are correct (whether using PHP mail or SMTP settings above).  Below enter a recipient email address for a test message."}
+  </p>
+  <p>
+    <input type="text" size="30"
+     name="{g->formVar var="form[emailTest][to]"}" value="{$form.emailTest.to}"/>
+    &nbsp;
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][emailTest]"}" value="{g->text text="Send Email"}"/>
+  </p>
+  {if isset($form.error.emailTest.invalidTo)}
+  <div class="giError">
+    {g->text text="Invalid email address"}
+  </div>
+  {/if}
+  {if isset($status.emailTestError)}
+    <h4> {g->text text="Email Test Error"} </h4>
+    <div class="gcBackground1 gcBorder2"
+     style="border-width: 1px; border-style: dotted; padding: 4px">
+      {$status.emailTestError}
+      <pre>{$status.emailTestDebug}</pre>
+    </div>
+  {/if}
 </div>
 
 <div class="gbBlock">
