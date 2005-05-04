@@ -42,14 +42,14 @@ class MailHelper_simple {
      * @param string to address(es) (comma separated)
      * @param string email subject
      * @return object GalleryStatus a status code
-     * @static  
+     * @static
      */
     function sendTemplatedEmail($file, $data, $from, $to, $subject) {
-        global $gallery;
+	global $gallery;
 
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
-        $template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
-        
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryTemplate.class');
+	$template = new GalleryTemplate(dirname(__FILE__) . '/../../../..');
+
 	/* Set the smarty variables from the data array */
 	foreach ($data as $key => $value) {
 	    $template->setVariable($key, $value);
@@ -71,7 +71,7 @@ class MailHelper_simple {
 	    list ($ret, $smtpFrom) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'smtp.from');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    if (!empty($smtpFrom)) {
@@ -83,14 +83,14 @@ class MailHelper_simple {
 	    $headers .= "From: $from\r\n";
 	}
 
-        $platform = $gallery->getPlatform();
-        $success = $platform->mail($to, $subject, $emailText, $headers);
-        if (!$success) {
-            return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
-                'Could not send mail to ' . $to);
-        }
-       
-        return GalleryStatus::success(); 
-    } 
+	$platform = $gallery->getPlatform();
+	$success = $platform->mail($to, $subject, $emailText, $headers);
+	if (!$success) {
+	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+		'Could not send mail to ' . $to);
+	}
+
+	return GalleryStatus::success();
+    }
 }
 ?>
