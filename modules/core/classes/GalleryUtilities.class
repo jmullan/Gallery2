@@ -1052,6 +1052,10 @@ class GalleryUtilities {
      * Turn a set of albums into a depth tree suitable for display in a
      * hierarchical format.
      *
+     * @param array the GalleryAlbumItem instances
+     * @return array An associative array of tree data.  Each node has a 'depth' element, and
+     *               a 'data' element that contains all the members of the current album item.
+     *       
      * @access private
      */
     function createAlbumTree($albums) {
