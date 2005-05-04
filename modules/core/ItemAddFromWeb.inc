@@ -46,11 +46,9 @@ class ItemAddFromWeb extends ItemAddPlugin {
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
 	    /* Delegate back to the same view */
-	} else if (isset($form['action']['addFromWebPage']) &&
-		   empty($form['webPageUrls'])) {
+	} else if (isset($form['action']['addFromWebPage']) && empty($form['webPageUrls'])) {
 	    GalleryUtilities::putRequestVariable('form[error][webPage][nothingSelected]', 1);
-	} else if (isset($form['action']['addFromWebPage']) &&
-		   is_array($form['webPageUrls'])) {
+	} else if (isset($form['action']['addFromWebPage'])) {
 	    $platform = $gallery->getPlatform();
 	    foreach (array_keys($form['webPageUrls']) as $url) {
 		/* Copy the file locally */
@@ -62,32 +60,14 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		list ($successfullyCopied, $response, $headers) =
 		    GalleryCoreApi::fetchWebFile($url, $tmpFile);
 
-		/* Add it */
 		if ($successfullyCopied && strpos($response, '404 Not Found') === false) {
-		    list ($base, $extension) =
-			GalleryUtilities::getFileNameComponents(basename($url));
-		    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		    /* Add it */
+		    list ($ret, $mimeType, $fileName) = $this->_getMimeType($url, $headers, true);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    /* If we can't get a mime type, try stripping off the query string */
-		    if ($mimeType == 'application/unknown') {
-			if (strstr($url, "?")) {
-			    $tmpUrl = preg_replace("/\?.*$/", "", $url);
-			    if (!empty($tmpUrl)) {
-				$url = $tmpUrl;
-				list ($base, $extension) =
-				    GalleryUtilities::getFileNameComponents(basename($url));
-				list ($ret, $mimeType) =
-				    GalleryCoreApi::convertExtensionToMime($extension);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null);
-				}
-			    }
-			}
-		    }
-
+		    list ($base) = GalleryUtilities::getFileNameComponents($fileName);
 		    $title = (isset($form['set']['title']) && $form['set']['title']) ? $base : '';
 		    $summary = (isset($form['set']['summary'])
 			     && $form['set']['summary']) ? $base : '';
@@ -95,7 +75,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				 && $form['set']['description']) ? $base : '';
 
 		    list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum($tmpFile,
-									   basename($url),
+									   $fileName,
 									   $title,
 									   $summary,
 									   $description,
@@ -129,92 +109,95 @@ class ItemAddFromWeb extends ItemAddPlugin {
 	}
 
 	if (isset($form['action']['findFilesFromWebPage'])) {
-	    /*
-	     * If we're uploading from a web page, get a file list now.
-	     * Download the web page into a temporary file and then parse it
-	     */
+	    /* Download the web page then parse it to get the file list */
 	    if (empty($form['webPage'])) {
 		$form['error']['webPage']['missing'] = 1;
-	    } else {
+	    }
+	    if (empty($form['error'])) {
 		$baseUrlComponents = parse_url($form['webPage']);
 		if (empty($baseUrlComponents['scheme']) || $baseUrlComponents['scheme'] != 'http') {
 		    $form['error']['webPage']['invalid'] = 1;
+		}
+	    }
+	    if (empty($form['error'])) {
+		list ($buffer, $response, $headers, $actualUrl) =
+		    GalleryCoreApi::fetchWebPage($form['webPage']);
+		if (empty($buffer) || strpos($response, '404 Not Found') !== false) {
+		    $form['error']['webPage']['unavailable'] = 1;
+		}
+	    }
+	    if (empty($form['error'])) {
+		if (isset($actualUrl) && $actualUrl != $form['webPage']) {
+		    $form['webPage'] = $actualUrl;
+		    $baseUrlComponents = parse_url($form['webPage']);
+		}
+
+		/* Add path to the recent path list */
+		$session =& $gallery->getSession();
+		$recentUrls = $session->get('core.view.ItemAddFromWeb.recentUrls');
+		$recentUrls[$form['webPage']] = 1;
+		$session->put('core.view.ItemAddFromWeb.recentUrls', $recentUrls);
+
+		$form['webPageUrls'] = array();
+		if (isset($headers['Content-Type']) &&
+			strncmp($headers['Content-Type'], 'text', 4)) {
+		    /*
+		     * If the buffer does not contain text(/html) then just offer
+		     * to add this url, rather than parsing the contents.
+		     */
+		    list ($ret, $typeName) = $this->_getTypeName($form['webPage'], null, $headers);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    if (!empty($typeName)) {
+			$form['webPageUrls'][] = array('url' => $form['webPage'],
+						       'itemType' => $typeName);
+		    }
 		} else {
-		    list ($buffer, $response, $headers, $actualUrl) =
-			GalleryCoreApi::fetchWebPage($form['webPage']);
-		    if (!isset($buffer) || strpos($response, '404 Not Found') !== false) {
-			$form['error']['webPage']['unavailable'] = 1;
-		    } else {
-			if (isset($actualUrl) && $actualUrl != $form['webPage']) {
-			    $form['webPage'] = $actualUrl;
-			    $baseUrlComponents = parse_url($form['webPage']);
+		    /*
+		     * Parse the buffer.  We match:
+		     *  href="foo bar"    href='foo bar'   href=foo
+		     *  src="foo bar"     src='foo bar'    src=foo
+		     */
+		    preg_match_all('/(src|href)\s*=\s*(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
+				   $buffer, $matches);
+
+		    $seenBefore = array();
+		    for ($i = 0; $i < count($matches[1]); $i++) {
+			$url = !empty($matches[2][$i]) ? $matches[2][$i]
+				: !empty($matches[3][$i]) ? $matches[3][$i]
+				  : $matches[4][$i];
+			if (empty($url) || isset($seenBefore[$url])) {
+			    continue;
+			}
+			$seenBefore[$url] = 1;
+
+			/*
+			 * Some sites (slashdot) have images that start with //
+			 * and this confuses Gallery.  Prepend the base scheme.
+			 */
+			if (!strncmp($url, '//', 2)) {
+			    $url = $baseUrlComponents['scheme'] . ':' . $url;
 			}
 
-			/* Add path to the recent path list */
-			$session =& $gallery->getSession();
-			$recentPaths = $session->get('core.view.ItemAddFromWeb.recentPaths');
-			$recentPaths[$form['webPage']] = 1;
-			$session->put('core.view.ItemAddFromWeb.recentPaths', $recentPaths);
-
-			if (isset($headers['Content-Type']) &&
-			    strncmp($headers['Content-Type'], 'text', 4)) {
-			    /*
-			     * If the buffer does not contain text(/html) then just offer
-			     * to add this url, rather than parsing the contents.
-			     */
-			    $matches = array( array(), array($form['webPage']), array(), array() );
-			} else {
-			    /*
-			     * Parse the buffer.  We match:
-			     *  href="foo bar"    href='foo bar'   href=foo
-			     *  src="foo bar"     src='foo bar'    src=foo
-			     */
-			    preg_match_all('/(?:src|href)=(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
-					   $buffer, $matches);
-			}
-
-			/* Validate the URLs as best we can */
-			$webPageUrlList = array();
-			$isSupported = array();
-			$seenBefore = array();
-			$form['webPageUrls'] = array();
-			foreach (array_merge($matches[1], $matches[2], $matches[3]) as $url) {
-			    if (empty($url) || isset($seenBefore[$url])) {
-				continue;
-			    } else {
-				$seenBefore[$url] = 1;
+			/* Convert urls without scheme/host to full urls */
+			if (!preg_match('/^\w+:/', $url)) {
+			    $tmp = $baseUrlComponents['scheme'] . '://'
+				 . $baseUrlComponents['host'];
+			    if (!empty($baseUrlComponents['port'])) {
+				$tmp .= ':' . $baseUrlComponents['port'];
 			    }
-
-			    /*
-			     * Some sites (slashdot) have images that start with //
-			     * and this confuses Gallery.  Prepend the base scheme.
-			     */
-			    if (!strncmp($url, '//', 2)) {
-				$url = $baseUrlComponents['scheme'] . ':' . $url;
-			    }
-			    /*
-			     * parse_url() isn't guaranteed to be reliable on relative urls, so try to make them
-			     * absolute if possible.
-			     */
 			    if ($url[0] == '/') {
-				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
-				if (!empty($baseUrlComponents['port'])) {
-				    $tmp .= ':' . $baseUrlComponents['port'];
-				}
+				/* Absolute path; just prepend scheme/host:port */
 				$url = $tmp . $url;
-			    } else if (!preg_match('/^\w+:/', $url)) {
-				$tmp = $baseUrlComponents['scheme'] . '://' . $baseUrlComponents['host'];
-				if (!empty($baseUrlComponents['port'])) {
-				    $tmp .= ':' . $baseUrlComponents['port'];
-				}
-
+			    } else {
 				/*
-				 * The current url might be one of:
+				 * Relative path; the current url might be one of:
 				 *   http://example.com/path/to/file.html
 				 *   http://example.com/path/to/
 				 *
-				 * If it's a directory, it should have a trailing slash at this point.
-				 * Either way, we want the base path to be:
+				 * If it's a directory, it should have a trailing slash at
+				 * this point.  Either way, we want the base path to be:
 				 *   http://example.com/path/to/
 				 */
 				if (isset($baseUrlComponents['path'])) {
@@ -231,103 +214,155 @@ class ItemAddFromWeb extends ItemAddPlugin {
 				$tmp .= $basePath;
 				$url = $tmp . $url;
 			    }
-
-			    $urlComponents = parse_url($url);
-			    if (empty($urlComponents['scheme'])) {
-				$urlComponents['scheme'] = $baseUrlComponents['scheme'];
-			    }
-
-			    if (empty($urlComponents['path'])) {
-				continue;
-			    }
-
-			    list ($ret, $mimeType) =
-				GalleryCoreApi::getMimeType($urlComponents['path']);
-			    if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null, null);
-			    }
-			    if ($mimeType == 'application/unknown') {
-				/*
-				 * Try again with end of the query string -- just in case.  Some
-				 * sites, like Google's image search feature puts the file name
-				 * at the end of the query string.
-				 */
-				if (empty($urlComponents['query'])) {
-				    continue;
-				}
-
-				list ($ret, $mimeType) =
-				    GalleryCoreApi::getMimeType($urlComponents['query']);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null, null);
-				}
-				if ($mimeType == 'application/unknown') {
-				    continue;
-				}
-			    }
-
-			    if (!isset($mimeTypeItemMap[$mimeType])) {
-				list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
-				    GalleryCoreApi::newItemByMimeType($mimeType);
-				if ($ret->isError()) {
-				    return array($ret->wrap(__FILE__, __LINE__), null, null);
-				}
-				$mimeTypeItemMap[$mimeType]['names'] =
-				    $mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
-			    }
-
-			    if (empty($urlComponents['host'])) {
-				$urlComponents['host'] = $baseUrlComponents['host'];
-			    }
-
-			    $tmp = $urlComponents['scheme'] . '://' . $urlComponents['host'];
-			    if (!empty($urlComponents['port'])) {
-				$tmp .= ':' . $urlComponents['port'];
-			    }
-			    if (!empty($urlComponents['path'])) {
-				if ($urlComponents['path'][0] != '/' &&
-				        $tmp[strlen($tmp)-1] != '/') {
-				    $tmp .= '/';
-				}
-				$tmp .= $urlComponents['path'];
-			    }
-
-			    if (!empty($urlComponents['query'])) {
-				$tmp .= '?' . $urlComponents['query'];
-			    }
-
-			    $form['webPageUrls'][] =
-				array('url' => $tmp,
-				      'itemType' => $mimeTypeItemMap[$mimeType]['names'][0]);
 			}
-			$webPageUrlCount = sizeof($form['webPageUrls']);
+
+			list ($ret, $typeName) = $this->_getTypeName($url, $matches[1][$i]);
+			if ($ret->isError()) {
+			    return array($ret->wrap(__FILE__, __LINE__), null, null);
+			}
+
+			if (!empty($typeName)) {
+			    $form['webPageUrls'][] = array('url' => $url, 'itemType' => $typeName);
+			}
 		    }
 		}
+		if (empty($form['webPageUrls'])) {
+		    /* Didn't find any urls to add */
+		    $form['error']['webPage']['noUrlsFound'] = 1;
+		}
 	    }
-	}
-
-	if (isset($form['action']['addFromWebPage']) && (!isset($form['webPageUrls'])
-		|| !is_array($form['webPageUrls']) || !count($form['webPageUrls']))) {
 	}
 
 	if (!isset($form['set'])) {
 	    $form['set'] = array('title' => 1, 'summary' => 0, 'description' => 0);
 	}
 
-	$ItemAddFromWeb = array();
-	$ItemAddFromWeb['webPageUrlCount'] = isset($webPageUrlCount) ? $webPageUrlCount : 0;
+	$ItemAddFromWeb = array(
+	    'webPageUrlCount' => isset($form['webPageUrls']) ? count($form['webPageUrls']) : 0);
 
 	$session =& $gallery->getSession();
-	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromWeb.recentPaths');
-	if (!isset($recentPaths)) {
-	    $recentPaths = array();
+	$recentUrls = $session->get('core.view.ItemAddFromWeb.recentUrls');
+	if (!isset($recentUrls)) {
+	    $recentUrls = array();
 	}
-	$ItemAddFromWeb['recentPaths'] = array_keys($recentPaths);
+	$ItemAddFromWeb['recentUrls'] = array_keys($recentUrls);
 
 	$template->setVariable('ItemAddFromWeb', $ItemAddFromWeb);
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemAddFromWeb.tpl',
 		     'modules_core');
+    }
+
+    /**
+     * Analyze url and available data to find mime type.  Check:
+     *  1. Parse url for file extension and map this to a mime type.
+     *  2. Check for Content-Disposition http header than includes
+     *     a filename and map this extension to a mime type.
+     *  3. Check for Content-Type http header and use that mime type.
+     *
+     * @param string url
+     * @param array (optional) http response headers
+     * @param boolean (optional) true to also figure out filename
+     * @return array object GalleryStatus a status object
+     *               string mime type
+     *               string filename or null if not requested
+     * @private
+     */
+    function _getMimeType($url, $headers=null, $getFileName=false) {
+	$urlComponents = parse_url($url);
+
+	$fileName = null;
+	if ($getFileName) {
+	    if (!empty($headers['Content-Disposition'])
+		    && preg_match('/filename="(.*?)"/', $headers['Content-Disposition'], $match)) {
+		$fileName = $match[1];
+	    } else if (!empty($urlComponents['path'])) {
+		$fileName = basename($urlComponents['path']);
+	    } else {
+		$fileName = basename($url);
+	    }
+	}
+
+	if (!empty($urlComponents['path'])) {
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['path']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
+		return array(GalleryStatus::success(), $mimeType, $fileName);
+	    }
+	}
+
+	if (!empty($urlComponents['query'])) {
+	    /*
+	     * Try again with end of the query string -- just in case.  Some sites, like
+	     * Google's image search feature, put the file name at the end of the query string.
+	     */
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($urlComponents['query']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
+		return array(GalleryStatus::success(), $mimeType, $fileName);
+	    }
+	}
+
+	if (!empty($headers['Content-Disposition'])
+		&& preg_match('/filename="(.*?)"/', $headers['Content-Disposition'], $match)) {
+	    list ($ret, $mimeType) = GalleryCoreApi::getMimeType($match[1]);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!empty($mimeType) && $mimeType != 'application/unknown') {
+		return array(GalleryStatus::success(), $mimeType, $fileName);
+	    }
+	}
+
+	if (!empty($headers['Content-Type'])) {
+	    return array(GalleryStatus::success(), $headers['Content-Type'], $fileName);
+	}
+
+	return array(GalleryStatus::success(), null, $fileName);
+    }
+
+    /**
+     * Analyze url and available data to find item type.
+     *
+     * @param string url
+     * @param string (optional) html attribute this url was parsed from
+     * @param array (optional) http response headers
+     * @return array object GalleryStatus a status object
+     *               string type name
+     * @private
+     */
+    function _getTypeName($url, $htmlAttribute=null, $headers=null) {
+	if (isset($htmlAttribute) && strtolower($htmlAttribute) == 'src') {
+	    /* For <img> src attribute just assume "Photo" and don't examine mime type */
+	    list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'core');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    return array(GalleryStatus::success(), $module->translate('Photo'));
+	} else {
+	    list ($ret, $mimeType) = $this->_getMimeType($url, $headers);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($mimeType)) {
+		return array(GalleryStatus::success(), null);
+	    }
+
+	    static $mimeTypeNameMap = array();
+	    if (!isset($mimeTypeNameMap[$mimeType])) {
+		list ($ret, $mimeTypeItem) = GalleryCoreApi::newItemByMimeType($mimeType);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$mimeTypeItem->setMimeType($mimeType);
+		$mimeTypeNameMap[$mimeType] = $mimeTypeItem->itemTypeName();
+	    }
+	    return array(GalleryStatus::success(), $mimeTypeNameMap[$mimeType][0]);
+	}
     }
 
     /**

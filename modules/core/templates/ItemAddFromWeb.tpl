@@ -17,8 +17,8 @@
   {rdelim}
 {/if}
 
-  function selectPath(path) {ldelim}
-    document.forms[0].elements['{g->formVar var="form[webPage]"}'].value = path;
+  function selectUrl(url) {ldelim}
+    document.forms[0].elements['{g->formVar var="form[webPage]"}'].value = url;
   {rdelim}
   // ]]>
 </script>
@@ -49,19 +49,25 @@
       {g->text text="The web page you specified is unavailable"}
     </div>
     {/if}
+    {if isset($form.error.webPage.noUrlsFound)}
+    <div class="giError">
+      {g->text text="Nothing to add found from this URL"}
+    </div>
+    {/if}
     {if isset($form.error.webPage.nothingSelected)}
     <div class="giError">
       {g->text text="Nothing added since no items were selected"}
     </div>
     {/if}
 
-    {if !empty($ItemAddFromWeb.recentPaths)}
-      <br/>
-      {g->text text="Recent URLs"}
-      {foreach from=$ItemAddFromWeb.recentPaths item=dir}
+    {if !empty($ItemAddFromWeb.recentUrls)}
+      <h4> {g->text text="Recent URLs"} </h4>
+      <p>
+      {foreach from=$ItemAddFromWeb.recentUrls item=url}
+	<a href="javascript:selectUrl('{$url}')"> {$url} </a>
 	<br/>
-	<a href="javascript:"selectPath('{$dir}')"> {$dir} </a>
       {/foreach}
+      </p>
     {/if}
 
     {capture name="submitButtons"}

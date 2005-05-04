@@ -47,23 +47,23 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
-	list ($ret, $this->_rootAlbum) = $this->_createRandomAlbum($this->_getRootId(),
-								   array('orderBy' => 'orderWeight'));
+	list ($ret, $this->_album) =
+	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_markForCleanup($this->_album);
+
+	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->_markForCleanup($this->_rootAlbum);
-
-	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
+	global $gallery;
 	$this->_savePlatform = $gallery->getPlatform();
 	$gallery->setPlatform(new ItemAddFromWebTestPlatform($this));
     }
@@ -88,26 +88,37 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test1.gif]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test2.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/404.jpg]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/test3.jpg?foo=bar]', 1);
-	GalleryUtilities::putRequestVariable('form[webPageUrls][http://www.test.com/apo\'strophe.jpg]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[webPageUrls][http://www.test.com/test3.jpg?foo=bar]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[webPageUrls][http://www.test.com/main.php?g2_itemId=123]', 1);
+	GalleryUtilities::putRequestVariable(
+	    'form[webPageUrls][http://www.test.com/apo\'strophe.jpg]', 1);
 	GalleryUtilities::putRequestVariable('form[set][title]', 1);
 	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
-	$basenames = array('test1', 'test2', 'test3', 'apo\'strophe');
+	$basenames = array('test1', 'test2', 'test3', 'test4', 'apo\'strophe');
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_rootAlbum);
-	$this->assertEquals(array(), $results[0]);
-	$this->assertEquals(4, sizeof($results[1]['addedFiles']));
-	$this->assertEquals('http://www.test.com/test1.gif', $results[1]['addedFiles'][0]['fileName']);
-	$this->assert(isset($results[1]['addedFiles'][0]['id']));
-	$this->assertEquals('http://www.test.com/test2.jpg', $results[1]['addedFiles'][1]['fileName']);
-	$this->assert(isset($results[1]['addedFiles'][1]['id']));
-	$this->assertEquals('http://www.test.com/test3.jpg', $results[1]['addedFiles'][2]['fileName']);
-	$this->assert(isset($results[1]['addedFiles'][2]['id']));
-	$this->assertEquals('http://www.test.com/apo\'strophe.jpg', $results[1]['addedFiles'][3]['fileName']);
-	$this->assert(isset($results[1]['addedFiles'][3]['id']));
+	$results = $this->handleRequest($this->_album);
+	$this->assertEquals(array(), $results[0], 'errors');
+	$this->assertEquals(5, sizeof($results[1]['addedFiles']), 'number of added files');
+	$this->assertEquals('http://www.test.com/test1.gif',
+			    $results[1]['addedFiles'][0]['fileName'], 'filename 1');
+	$this->assert(isset($results[1]['addedFiles'][0]['id']), 'id 1');
+	$this->assertEquals('http://www.test.com/test2.jpg',
+			    $results[1]['addedFiles'][1]['fileName'], 'filename 2');
+	$this->assert(isset($results[1]['addedFiles'][1]['id']), 'id 2');
+	$this->assertEquals('http://www.test.com/test3.jpg?foo=bar',
+			    $results[1]['addedFiles'][2]['fileName'], 'filename 3');
+	$this->assert(isset($results[1]['addedFiles'][2]['id']), 'id 3');
+	$this->assertEquals('http://www.test.com/main.php?g2_itemId=123',
+			    $results[1]['addedFiles'][3]['fileName'], 'filename 4');
+	$this->assert(isset($results[1]['addedFiles'][3]['id']), 'id 4');
+	$this->assertEquals('http://www.test.com/apo\'strophe.jpg',
+			    $results[1]['addedFiles'][4]['fileName'], 'filename 5');
+	$this->assert(isset($results[1]['addedFiles'][4]['id']), 'id 5');
 
-	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -118,10 +129,11 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $base = $basenames[$i++];
-	    $this->assertEquals($base, $item->getTitle(), 'title');
-	    $this->assertEquals($base, $item->getSummary(), 'summary');
-	    $this->assertEquals(null, $item->getDescription(), 'description');
+	    $base = $basenames[$i];
+	    $this->assertEquals($base, $item->getTitle(), "title $i");
+	    $this->assertEquals($base, $item->getSummary(), "summary $i");
+	    $this->assertEquals(null, $item->getDescription(), "description $i");
+	    $i++;
 	}
     }
 
@@ -136,7 +148,7 @@ class ItemAddFromWebTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[webPageUrls]', null);
 
 	/* Perform the request and verify that we succeeded */
-	$results = $this->handleRequest($this->_rootAlbum);
+	$results = $this->handleRequest($this->_album);
 	$this->assertEquals(array(array(), array()), $results);
 
 	$this->assertEquals('1',
@@ -171,18 +183,11 @@ class ItemAddFromWebTestPlatform  {
     function fwrite($handle, $string, $length=0) {
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
-	    case "GET /test1.gif HTTP/1.0\r\n" .
-		"Host: www.test.com\r\n" .
-		"\r\n":
-	    case "GET /test2.jpg HTTP/1.0\r\n" .
-		"Host: www.test.com\r\n" .
-		"\r\n":
-	    case "GET /test3.jpg?foo=bar HTTP/1.0\r\n" .
-		"Host: www.test.com\r\n" .
-		"\r\n":
-	    case "GET /apo'strophe.jpg HTTP/1.0\r\n" .
-		"Host: www.test.com\r\n" .
-		"\r\n":
+	    case "GET /test1.gif HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+	    case "GET /test2.jpg HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+	    case "GET /test3.jpg?foo=bar HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+	    case "GET /apo'strophe.jpg HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
+	    case "GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n\r\n":
 		$buffer = array();
 		$buffer[] = 'HTTP/1.1 200 OK';
 		$buffer[] = 'Connection: close';
@@ -192,6 +197,10 @@ class ItemAddFromWebTestPlatform  {
 		$buffer[] = 'Server: Apache/1.3.28 (Unix)';
 		$buffer[] = 'Content-Length: 5';
 		$buffer[] = 'Content-Type: text/html';
+		if ($string ==
+			"GET /main.php?g2_itemId=123 HTTP/1.0\r\nHost: www.test.com\r\n\r\n") {
+		    $buffer[] = 'Content-Disposition: inline; filename="test4.jpg"';
+		}
 		$buffer[] = 'Last-Modified: Mon, 24 Nov 2003 05:40:00 GMT';
 		$buffer[] = 'Client-Date: Mon, 24 Nov 2003 05:40:03 GMT';
 		$buffer[] = 'Client-Peer: 209.237.226.157:80';
@@ -250,6 +259,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test1.gif':
 	case 'test2.jpg':
 	case 'test3.jpg':
+	case 'test4.jpg':
 	    return $component;
 
 	case 'apo\'strophe.jpg':
@@ -267,6 +277,7 @@ class ItemAddFromWebTestPlatform  {
 	    case 'test1.gif':
 	    case 'test2.jpg':
 	    case 'test3.jpg':
+	    case 'test4.jpg':
 	    case 'apo_strophe.jpg':
 		return true;
 	    }
@@ -281,6 +292,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test1.gif':
 	case 'test2.jpg':
 	case 'test3.jpg':
+	case 'test4.jpg':
 	case 'apo_strophe.jpg':
 	    return array(100, 200);
 	}
@@ -294,6 +306,7 @@ class ItemAddFromWebTestPlatform  {
 	case 'test1.gif':
 	case 'test2.jpg':
 	case 'test3.jpg':
+	case 'test4.jpg':
 	case 'apo_strophe.jpg':
 	    return 5;
 	}
@@ -322,7 +335,7 @@ class ItemAddFromWebTestPlatform  {
 	    return 1;
 	}
 
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return unlink($filename);
 	}
@@ -375,7 +388,7 @@ class ItemAddFromWebTestPlatform  {
     }
 
     function flock($handle, $operation, &$wouldblock) {
-	// Pass lock requests
+	/* Pass lock requests */
 	return flock($handle, $operation, $wouldblock);
     }
 
@@ -385,7 +398,7 @@ class ItemAddFromWebTestPlatform  {
 	    return true;
 	}
 
-	// Pass locks
+	/* Pass locks */
 	if (is_resource($handle)) {
 	    return fclose($handle);
 	}
@@ -402,7 +415,7 @@ class ItemAddFromWebTestPlatform  {
 	    return $filename;
 	}
 
-	// Pass lock requests
+	/* Pass lock requests */
 	if (preg_match("|\blocks\b|", $filename)) {
 	    return fopen($filename, $modes);
 	}
