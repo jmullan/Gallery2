@@ -260,14 +260,105 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', '');
 	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);
 
-	/* Perform the request and verify that we succeeded */
+	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('delegate' => array('view' => 'core:SiteAdmin',
 				      'subView' => 'core:AdminCore'),
 		  'status' => array(),
 		  'error' => array('form[error][uploadLocalServer][selectedDir][missing]')),
+	    $results);
+    }
+
+    function testEmailTestMissingEmail() {
+	GalleryUtilities::putRequestVariable('form[emailTest][to]', '');
+	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCore'),
+				  'status' => array(),
+				  'error' => array('form[error][emailTest][invalidTo]')),
 			    $results);
+    }
+
+    function testEmailTestInvalidEmail() {
+	GalleryUtilities::putRequestVariable('form[emailTest][to]', 'abc');
+	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCore'),
+				  'status' => array(),
+				  'error' => array('form[error][emailTest][invalidTo]')),
+			    $results);
+    }
+
+    function testEmailTestSuccess() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $gallery->setPlatform(new AdminCoreControllerTestWinNtPlatform(true));
+	} else {
+	    $gallery->setPlatform(new AdminCoreControllerTestUnixPlatform(true));
+	}
+
+	GalleryUtilities::putRequestVariable('form[emailTest][to]', 'nobody@nowhere.com');
+	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'core:AdminCore'),
+				  'status' => array('saved' => 1, 'emailTestSuccess' => 1),
+				  'error' => array()),
+			    $results);
+    }
+
+    function testEmailTestFailure() {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+	    $gallery->setPlatform(new AdminCoreControllerTestWinNtPlatform(false));
+	} else {
+	    $gallery->setPlatform(new AdminCoreControllerTestUnixPlatform(false));
+	}
+
+	GalleryUtilities::putRequestVariable('form[emailTest][to]', 'nobody@nowhere.com');
+	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminCore'),
+			    $results['redirect'], 'redirect');
+	$this->assertEquals(array('saved', 'emailTestError', 'emailTestDebug'),
+			    array_keys($results['status']), 'status keys');
+	$this->assertEquals(1, $results['status']['saved'], 'saved');
+	$this->assert(strpos($results['status']['emailTestError'],
+			     'Could not send mail to nobody@nowhere.com') !== false,
+		      'emailTestError: ' . $results['status']['emailTestError']);
+	$this->assert(strpos($results['status']['emailTestDebug'], 'file_exists') !== false,
+		      'emailTestDebug: ' . $results['status']['emailTestDebug']);
+	$this->assertEquals(array(), $results['error'], 'error');
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+class AdminCoreControllerTestUnixPlatform extends UnixPlatform {
+    function AdminCoreControllerTestUnixPlatform($succeed) {
+	$this->_succeed = $succeed;
+    }
+
+    function mail() {
+	return $this->_succeed;
+    }
+}
+class AdminCoreControllerTestWinNtPlatform extends WinNtPlatform {
+    function AdminCoreControllerTestWinNtPlatform($succeed) {
+	$this->_succeed = $succeed;
+    }
+
+    function mail() {
+	return $this->_succeed;
     }
 }
 ?>
