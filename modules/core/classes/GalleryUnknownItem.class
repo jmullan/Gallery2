@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -68,7 +68,7 @@ class GalleryUnknownItem_core extends GalleryDataItem {
      * @param string the path to the source image
      * @param string the mime type
      * @param string the desired name of the new item
-     * @param boolean (optional) a boolean true if we should symlink instead 
+     * @param boolean (optional) a boolean true if we should symlink instead
      *        of copy (default is false).
      * @return object GalleryStatus a status code
      */
@@ -81,7 +81,7 @@ class GalleryUnknownItem_core extends GalleryDataItem {
 
 	/* We're linkable */
 	$this->setIsLinkable(true);
-	
+
 	return GalleryStatus::success();
     }
 
@@ -101,7 +101,7 @@ class GalleryUnknownItem_core extends GalleryDataItem {
 		    => array($gallery->i18n('Archive'), $gallery->i18n('archive')),
 		':^(text/|application/(pdf|postscript|photoshop|msword)$):'
 		    => array($gallery->i18n('Document'), $gallery->i18n('document')),
-                ':application/vnd.ms-excel:'
+		':application/vnd.ms-excel:'
 		    => array($gallery->i18n('Spreadsheet'), $gallery->i18n('spreadsheet')),
 	    );
 	}
@@ -109,24 +109,18 @@ class GalleryUnknownItem_core extends GalleryDataItem {
 	$core = null;
 	if ($localized) {
 	    list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
-	    if (! $ret->isError()) {
+	    if ($ret->isError()) {
 		$core = null;
 	    }
 	}
 	foreach ($mimeMap as $pattern => $result) {
 	    if (preg_match($pattern, $this->_mimeType)) {
-		if ($core == null) {
-		    return $result;
-		} else {
-		    return array($core->translate($result[0]), $core->translate($result[1]));
-		}
+		return isset($core) ?
+		    array($core->translate($result[0]), $core->translate($result[1])) : $result;
 	    }
 	}
-	if ($core == null) {
-	    return array('Unknown', 'unknown');
-	} else {
-	    return array($core->translate('Unknown'), $core->translate('unknown'));
-	}
+	return isset($core) ? array($core->translate('Unknown'), $core->translate('unknown'))
+			    : array('Unknown', 'unknown');
     }
 }
 
