@@ -23,7 +23,7 @@ modules/core/ItemAddAlbum.inc	558927550	4115789913	5504	5696
 modules/core/ItemAddConfirmation.inc	4270869187	1241457630	2620	2705
 modules/core/ItemAddFromBrowser.inc	3788898426	1005610424	6133	6315
 modules/core/ItemAddFromServer.inc	4138221938	537129018	16565	17074
-modules/core/ItemAddFromWeb.inc	1393784432	3491703213	11206	11551
+modules/core/ItemAddFromWeb.inc	133115544	132301075	12867	13247
 modules/core/ItemAdmin.inc	273362793	1264789496	7822	8073
 modules/core/ItemCreateLink.inc	3579223196	2962602488	11087	11431
 modules/core/ItemCreateLinkSingle.inc	2182641458	4289652152	7081	7307
@@ -68,7 +68,7 @@ modules/core/classes/Gallery.class	1735013149	3749868015	21369	22196
 modules/core/classes/GalleryAccessMap.class	2922525004	3815348105	2594	2674
 modules/core/classes/GalleryAccessSubscriberMap.class	3922081037	121591212	1941	2003
 modules/core/classes/GalleryAlbumItem.class	2885574245	208418361	12320	12772
-modules/core/classes/GalleryAnimationItem.class	2813038167	4048168429	12268	12601
+modules/core/classes/GalleryAnimationItem.class	852607644	2117352555	10154	10488
 modules/core/classes/GalleryCapabilities.class	3657318021	1784581604	3032	3144
 modules/core/classes/GalleryChildEntity.class	2182627470	1338791421	4405	4580
 modules/core/classes/GalleryConstants.class	1362785289	1066557595	3662	3851
@@ -91,12 +91,12 @@ modules/core/classes/GalleryGroup.class	2618933527	2195370047	4749	4928
 modules/core/classes/GalleryImmediateStatusView.class	735832877	1130177050	7808	8046
 modules/core/classes/GalleryItem.class	2087357215	3813327623	12179	12626
 modules/core/classes/GalleryItemAttributesMap.class	2919846118	2758810144	2488	2562
-modules/core/classes/GalleryLayout.class	182344772	2976288337	43429	44738
+modules/core/classes/GalleryLayout.class	358002751	1119870474	43491	44805
 modules/core/classes/GalleryLockSystem.class	3108801615	2327390028	3737	3867
 modules/core/classes/GalleryMaintenanceMap.class	1503385928	2125233334	2318	2391
 modules/core/classes/GalleryMimeTypeMap.class	298588095	2093475537	2044	2109
 modules/core/classes/GalleryModule.class	380213555	1465858307	17630	18171
-modules/core/classes/GalleryMovieItem.class	4141004242	3429708635	10057	10405
+modules/core/classes/GalleryMovieItem.class	3111598113	362556421	9788	10136
 modules/core/classes/GalleryPermissionSetMap.class	2440165991	3176163040	2474	2551
 modules/core/classes/GalleryPersistent.class	3850499751	3517334767	5290	5491
 modules/core/classes/GalleryPhotoItem.class	1315149805	3479031099	6827	7075
@@ -286,7 +286,7 @@ modules/core/classes/GalleryUnknownItem.class	3037702891	1586678176	4185	4319
 modules/core/classes/GalleryUrlGenerator.class	2179376967	2314868168	19726	20369
 modules/core/classes/GalleryUser.class	2794824446	3347526764	9264	9602
 modules/core/classes/GalleryUserGroupMap.class	1935010093	1012970673	1873	1934
-modules/core/classes/GalleryUtilities.class	3216703208	3900768509	45194	46732
+modules/core/classes/GalleryUtilities.class	3429349353	2834931875	45448	46990
 modules/core/classes/GalleryValidationPlugin.class	947672571	345578147	2224	2287
 modules/core/classes/GalleryView.class	3965996503	2025571689	10926	11286
 modules/core/classes/OptimizeDatabaseTask.class	2513975401	846352191	2385	2461
@@ -418,7 +418,7 @@ modules/core/po/pl_PL.po	2638656313	1955882143	82763	86230
 modules/core/po/pt_BR.po	3249947662	3502105494	63036	65903
 modules/core/po/pt_PT.po	3221988280	2801047349	70771	73935
 modules/core/po/strings.raw	1219406291	3691988909	35318	36047
-modules/core/po/sv_SE.po	948052638	1192692491	73799	73777
+modules/core/po/sv_SE.po	948052638	948052638	73799	73799
 modules/core/po/zh_CN.po	1376508751	3004524707	66962	69658
 modules/core/po/zh_TW.po	1665248622	1456692536	72007	75414
 modules/core/templates/AdminCore.tpl	318914645	1373608728	9274	9539
@@ -446,7 +446,7 @@ modules/core/templates/ItemAddAlbum.tpl	110344434	2115909463	3144	3243
 modules/core/templates/ItemAddConfirmation.tpl	151823841	223560309	1338	1382
 modules/core/templates/ItemAddFromBrowser.tpl	1124991175	1654470390	3737	3823
 modules/core/templates/ItemAddFromServer.tpl	72152925	3620489306	10798	11103
-modules/core/templates/ItemAddFromWeb.tpl	3950852968	1680297268	5153	5306
+modules/core/templates/ItemAddFromWeb.tpl	2455394744	2924371122	5395	5555
 modules/core/templates/ItemAdmin.tpl	2813546378	3687970001	2833	2921
 modules/core/templates/ItemCreateLink.tpl	871845187	1500801149	4620	4758
 modules/core/templates/ItemCreateLinkSingle.tpl	2309969313	1137014708	1421	1465
@@ -550,7 +550,7 @@ modules/core/test/phpunit/ItemAddAlbumControllerTest.class	1607738000	105240630	
 modules/core/test/phpunit/ItemAddControllerTest.class	3696657197	1220761532	11391	11727
 modules/core/test/phpunit/ItemAddFromBrowserTest.class	3747809668	3471509034	10932	11213
 modules/core/test/phpunit/ItemAddFromServerTest.class	3081213546	1846595928	14727	15141
-modules/core/test/phpunit/ItemAddFromWebTest.class	3513522108	3880830319	11717	12135
+modules/core/test/phpunit/ItemAddFromWebTest.class	3973706912	1988414046	12508	12939
 modules/core/test/phpunit/ItemAttributesTest.class	2760403044	1964374516	9729	10031
 modules/core/test/phpunit/ItemCreateLinkControllerTest.class	1659963685	3667010521	10629	10934
 modules/core/test/phpunit/ItemCreateLinkSingleControllerTest.class	3531933911	945953734	5079	5227
@@ -575,7 +575,7 @@ modules/core/test/phpunit/ItemReorderControllerTest.class	3809171730	3098786049	
 modules/core/test/phpunit/ItemTest.class	3969645276	1325211466	46659	47974
 modules/core/test/phpunit/LanguageTest.class	913417671	1302425898	3345	3453
 modules/core/test/phpunit/LayoutTest.class	3811600904	3286970408	7527	7774
-modules/core/test/phpunit/LockTest.class	872531572	1757291221	6363	6581
+modules/core/test/phpunit/LockTest.class	104651583	3238862643	8497	8759
 modules/core/test/phpunit/LogoutControllerTest.class	2253538563	892169383	2357	2451
 modules/core/test/phpunit/MailHelperTest.class	3883269366	1284454696	5890	6079
 modules/core/test/phpunit/MainTest.class	2387662472	3541106880	2485	2566
