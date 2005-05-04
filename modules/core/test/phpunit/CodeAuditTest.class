@@ -109,6 +109,10 @@ class CodeAuditTest extends CodeAuditTestCase {
 		$base3 == 'lib' && $base2 == 'exifer') {
 	    return false;
 	}
+	if ($base4 == 'lib' && $base3 == 'JPEG' ||
+		$base3 == 'lib' && $base2 == 'JPEG') {
+	    return false;
+	}
 
 	return true;
     }
@@ -203,11 +207,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	/* Check result of longLineCount */
 	if (!$this->_shouldHalt) {
-	    if ($this->_longLineCount > 1709) {
+	    if ($this->_longLineCount > 1584) {
 		$this->assert(false, 'Found too many lines longer than 100 characters (' .
 			      $this->_longLineCount . ')');
 	    }
-	    if ($this->_longLineCount < 1609) {
+	    if ($this->_longLineCount < 1484) {
 		$this->assert(false, 'Yay!  We are down to ' . $this->_longLineCount .
 			      ' lines longer than 100 characters; update the failure' .
 			      ' thresholds in this unit test.');
