@@ -187,32 +187,32 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testCanBeViewedInlineOthers() {
-        global $gallery;
-        $query = '
-            SELECT [GalleryMimeTypeMap::mimeType]
-            FROM [GalleryMimeTypeMap]
-            WHERE [GalleryMimeTypeMap::mimeType] NOT LIKE \'image/%\'
-        ';
-        list ($ret, $searchResults) = $gallery->search($query);
-        if ($ret->isError()) {
+	global $gallery;
+	$query = '
+	    SELECT [GalleryMimeTypeMap::mimeType]
+	    FROM [GalleryMimeTypeMap]
+	    WHERE [GalleryMimeTypeMap::mimeType] NOT LIKE \'image/%\'
+	';
+	list ($ret, $searchResults) = $gallery->search($query);
+	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-        }
-        while ($results = $searchResults->nextResult()) {
-            $mimeType = $results[0];
-            list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
-            if ($ret->isError()) {
-                return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-            }
-            $instance->setMimeType($mimeType);
-            if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
-                $instance->setWidth(100);
-                $instance->setHeight(100);
-            }
-            /* We need to be able to render what we can view inline */
-            $html = $instance->render('HTML', array('fallback' => 'ERROR', 'class' => 'test'));
-            $inlineOk = ($html != 'ERROR' && $html != null);
-            $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
-        }
+	}
+	while ($results = $searchResults->nextResult()) {
+	    $mimeType = $results[0];
+	    list ($ret, $instance) = GalleryCoreApi::newItemByMimeType($mimeType);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $instance->setMimeType($mimeType);
+	    if (GalleryUtilities::isExactlyA($instance, 'GalleryMovieItem')) {
+		$instance->setWidth(100);
+		$instance->setHeight(100);
+	    }
+	    /* We need to be able to render what we can view inline */
+	    $html = $instance->render('HTML', array('fallback' => 'ERROR', 'class' => 'test'));
+	    $inlineOk = ($html != 'ERROR' && $html != null);
+	    $this->assertEquals($inlineOk, $instance->canBeViewedInline(), $mimeType);
+	}
     }
 
     function testGetChildCounts() {
@@ -470,7 +470,7 @@ class ItemTest extends GalleryTestCase {
 	    }
 	    list ($ret, $items[]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret->isError()) {
-	    	return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
@@ -813,7 +813,8 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $photoItem) = $this->_createRandomDataItem($this->_album->getId(), 'test/image');
+	list ($ret, $photoItem) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'test/image');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -842,6 +843,9 @@ class ItemTest extends GalleryTestCase {
     }
 
     function testAddItemToAlbum() {
+	global $gallery;
+	$gallery->_shutdownActions = null;
+
 	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -876,7 +880,7 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals('caption', $newItem->getSummary());
 	$this->assertEquals('description', $newItem->getDescription());
 	$this->assertEquals('application/unknown', $newItem->getMimeType());
-	$this->assertEquals($this->_album->getId(), $newItem->getParentId());
+	$this->assertEquals($this->_album->getId(), $newItem->getParentId(), 'parent id');
 
 	/* Test the order weight */
 	list ($ret, $weights) = GalleryCoreApi::fetchItemOrderWeights(array($newItem->getId()));
@@ -886,6 +890,17 @@ class ItemTest extends GalleryTestCase {
 
 	$this->assert(isset($weights[$newItem->getId()]));
 	$this->assert($weights[$newItem->getId()] > $maxWeight);
+
+	/* Test that shutdown actions will update parent album's modification timestamp */
+	sleep(1); /* Make sure new timestamp won't equal old one even after update */
+	$gallery->performShutdownActions();
+	list ($ret, $album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    $album->getModificationTimestamp() > $this->_album->getModificationTimestamp(),
+	    'parent modification timestamp');
     }
 
     /*
@@ -1103,7 +1118,48 @@ class ItemTest extends GalleryTestCase {
 			    'Bad thumbnail source (deleted item was ' . $item->getId() . ')');
     }
 
+    function testDelete() {
+	global $gallery;
+	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $item) = $this->_createRandomDataItem($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->_shutdownActions = null;
+
+	$ret = GalleryCoreApi::deleteEntityById($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_album);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(), $ids, 'child item ids');
+
+	/*
+	 * Test that shutdown actions will update parent album's modification timestamp
+	 * Also ensure invalid id in shutdown action is ignored (delete of $item will
+	 * trigger shutdown action for $album which was deleted too...)
+	 */
+	sleep(1); /* Make sure new timestamp won't equal old one even after update */
+	$gallery->performShutdownActions();
+	list ($ret, $album) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    $album->getModificationTimestamp() > $this->_album->getModificationTimestamp(),
+	    'parent modification timestamp');
+    }
+
     function testMove() {
+	global $gallery;
+
 	/* Create a destination album */
 	list ($ret, $album) = $this->_createRandomAlbum($this->_album->getId());
 	if ($ret->isError()) {
@@ -1115,8 +1171,12 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$gallery->_shutdownActions = null;
 
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$this->assertEquals($this->_album->getId(), $item->getParentId(), 'Wrong original parent');
 	$this->assertEquals(array($this->_getRootId(),
@@ -1169,6 +1229,24 @@ class ItemTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	/* Test that shutdown actions will update parent album's modification timestamp */
+	sleep(1); /* Make sure new timestamp won't equal old one even after update */
+	$gallery->performShutdownActions();
+	list ($ret, $refreshedAlbum) = $album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    $refreshedAlbum->getModificationTimestamp() > $album->getModificationTimestamp(),
+	    'destination album modification timestamp');
+	list ($ret, $refreshedAlbum) = $this->_album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(
+	    $refreshedAlbum->getModificationTimestamp() > $this->_album->getModificationTimestamp(),
+	    'source album modification timestamp');
     }
 
     /**
@@ -1254,8 +1332,8 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Now verify the photo has been made the highlight of the album.. */
-	list ($ret, $thumbTable) =
-	    GalleryCoreApi::fetchThumbnailsByItemIds(array($this->_album->getId(), $photo->getId()));
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds(
+				   array($this->_album->getId(), $photo->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -1303,7 +1381,7 @@ class ItemTestToolkit extends GalleryToolkit {
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/GalleryMovieItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMovieItem.class');
 
 /**
  * Test movie item

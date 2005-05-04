@@ -182,6 +182,14 @@ class Gallery {
     var $_timeLimit;
 
     /**
+     * Actions to perform at the end of the request
+     *
+     * @var array $_shutdownActions
+     * @access private
+     */
+    var $_shutdownActions;
+
+    /**
      * A facade in front of the PHP virtual machine.  We use this as an abstraction layer to let
      * us interpose mock objects between our code and the VM for testing purposes.  When we're not
      * in a test environment, this is always an instance of GalleryPhpVm
@@ -199,7 +207,6 @@ class Gallery {
 
     /**
      * Constructor
-     *
      */
     function Gallery() {
 	$this->_activeUser = null;
@@ -810,6 +817,47 @@ class Gallery {
 	    return true;
 	}
 	return false;
+    }
+
+    /**
+     * Add an action to be performed at the end of the request.
+     *
+     * @param callback function
+     * @param array parameters
+     */
+    function addShutdownAction($callback, $parameters) {
+	if (!isset($this->_shutdownActions)) {
+	    $this->_shutdownActions = array();
+	}
+	$action = array($callback, $parameters);
+	/* Skip duplicate actions */
+	if (!in_array($action, $this->_shutdownActions)) {
+	    $this->_shutdownActions[] = $action;
+	}
+    }
+
+    /**
+     * Process registered shutdown actions.
+     */
+    function performShutdownActions() {
+	if (isset($this->_shutdownActions)) {
+	    foreach ($this->_shutdownActions as $action) {
+		$ret = @call_user_func_array($action[0], $action[1]);
+		if ($this->getDebug()) {
+		    /* Ignore errors unless debug is on */
+		    if (is_array($ret) && GalleryUtilities::isA($ret[0], 'GalleryStatus')) {
+			$ret = $ret[0];
+		    } else if (!GalleryUtilities::isA($ret, 'GalleryStatus')) {
+			$ret = null;
+		    }
+		    if (isset($ret) && $ret->isError()) {
+			$this->debug('Error from shutdown action:');
+			$this->debug_r($action);
+			$this->debug_r($ret);
+		    }
+		}
+	    }
+	}
     }
 
     /**

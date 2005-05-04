@@ -129,7 +129,7 @@ class GalleryTestCase extends TestCase {
 
     function GalleryTestCase($methodName) {
 	$this->TestCase($methodName);
-	$this->_cleanup = array('entity' => array(), 
+	$this->_cleanup = array('entity' => array(),
 				'factoryModuleId' => array(),
 				'pluginParameters' => array());
     }
@@ -253,6 +253,7 @@ class GalleryTestCase extends TestCase {
 	$gallery->_phpVm = array_shift($this->_saveVars);
 	$gallery->_lockSystem = array_shift($this->_saveVars);
 	$gallery->_storage = array_shift($this->_saveVars);
+	$gallery->_shutdownActions = null;
 
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
@@ -275,7 +276,7 @@ class GalleryTestCase extends TestCase {
 
 	    /* Restore each key from the saved list */
 	    foreach (array_shift($cleanupPlugin) as $key => $pluginParam) {
-		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId, 
+		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId,
 							  $key, $pluginParam);
 		if ($ret->isError()) {
 		    /* Print the error, but continue to set the variables */
@@ -345,8 +346,8 @@ class GalleryTestCase extends TestCase {
      * @return GalleryStatus
      */
     function _markPluginParametersForCleanup($pluginType, $pluginId) {
-	list($ret, $pluginParams) = 
-		GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
+	list($ret, $pluginParams) =
+	    GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -391,7 +392,7 @@ class GalleryTestCase extends TestCase {
 	list ($ret, $album) = GalleryCoreApi::createAlbum(
 	    $parentId, 'albumtest' . rand(),
 	    'This is my title', 'This is my summary',
-            'This is my description', null);
+	    'This is my description', null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -442,7 +443,8 @@ class GalleryTestCase extends TestCase {
 	global $gallery;
 
 	if (isset($itemClass)) {
-	    list ($ret, $item) = GalleryCoreApi::newFactoryInstanceById('GalleryEntity', $itemClass);
+	    list ($ret, $item) =
+		GalleryCoreApi::newFactoryInstanceById('GalleryEntity', $itemClass);
 	} else {
 	    list ($ret, $item) = GalleryCoreApi::newItemByMimeType($mimeType);
 	}
@@ -744,7 +746,7 @@ class GalleryTestCase extends TestCase {
     function DeepCompare($obj1, $obj2, $context=null) {
 	if (gettype($obj1) !== gettype($obj2)) {
 	    return sprintf("[$context] $obj1 type (%s) !== $obj2 type (%s)",
-		           gettype($obj1), gettype($obj2));
+			   gettype($obj1), gettype($obj2));
 	}
 
 	if (is_array($obj1)) {

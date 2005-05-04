@@ -146,15 +146,15 @@ class GalleryEntityHelper_medium {
 	global $gallery;
 
 	$query = '
-        SELECT
-          [GalleryEntity::id]
-        FROM
-          [GalleryEntity]
-        WHERE
-          [GalleryEntity::linkId] = ?
-        ORDER BY
-          [GalleryEntity::id] ASC
-        ';
+	SELECT
+	  [GalleryEntity::id]
+	FROM
+	  [GalleryEntity]
+	WHERE
+	  [GalleryEntity::linkId] = ?
+	ORDER BY
+	  [GalleryEntity::id] ASC
+	';
 	$storage =& $gallery->getStorage();
 	list ($ret, $searchResults) = $gallery->search($query, array($targetId));
 	if ($ret->isError()) {
@@ -174,6 +174,7 @@ class GalleryEntityHelper_medium {
      *
      * @param array of factory impl ids
      * @return object GalleryStatus a status code
+     * @static
      */
     function removeOnLoadHandlers($handlerIds) {
 	global $gallery;
@@ -214,6 +215,36 @@ class GalleryEntityHelper_medium {
 	    }
 	}
 
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Set modification timestamp for the given entity id to the current time.
+     *
+     * @param int the entity id
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function updateModificationTimestamp($entityId) {
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($entityId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($entityId);
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$entity->setModificationTimestamp(time());
+	$ret = $entity->save();
+	if ($ret->isError()) {
+	    GalleryCoreApi::releaseLocks($lockId);
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 	return GalleryStatus::success();
     }
 }

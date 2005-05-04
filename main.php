@@ -46,9 +46,9 @@ if (!GalleryUtilities::isEmbedded()) {
 		return;
 	    }
 	}
-	
+
 	$path = GalleryDataCache::getCachePath(
-            array('type' => 'fast-download', 'itemId' => $itemId));
+	    array('type' => 'fast-download', 'itemId' => $itemId));
 	/* We don't have a platform yet so we have to use the raw file_exists */
 	if (file_exists($path)) {
 	    include($path);
@@ -78,6 +78,8 @@ function GalleryMain($returnHtml=false) {
     /* Process the request */
     list($ret, $g2Data) = _GalleryMain($returnHtml);
     if ($ret->isSuccess()) {
+	$gallery->performShutdownActions();
+
 	/* Write out our session data */
 	$session =& $gallery->getSession();
 	$ret = $session->save();
@@ -402,7 +404,7 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$main['validationUri'] = sprintf(
 	    'javascript:alert(\'%s\');',
 	    $core->translate('Validation disabled until you set allowSessionAccess in config.php'));

@@ -355,6 +355,10 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    /* Instruct G2 to "touch" modification timestamp of parent album at end of request */
+	    $gallery->addShutdownAction(array('GalleryCoreApi', 'updateModificationTimestamp'),
+					array($this->getParentId()));
 	}
 
 	return GalleryStatus::success();
@@ -394,10 +398,11 @@ class GalleryItem_core extends GalleryFileSystemEntity {
      * @return object GalleryStatus a status code
      */
     function save() {
-	if ($this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED)) {
-	    $newItem = true;
-	} else {
-	    $newItem = false;
+	global $gallery;
+	$newItem = $this->testPersistentFlag(STORAGE_FLAG_NEWLY_CREATED);
+	$changedParent = $this->getModifiedFlag('parentId') != MEMBER_UNMODIFIED;
+	if ($changedParent && !empty($this->_persistentStatus->originalValue['parentId'])) {
+	    $oldParentId = $this->_persistentStatus->originalValue['parentId'];
 	}
 
 	/* Save myself */
@@ -437,6 +442,15 @@ class GalleryItem_core extends GalleryFileSystemEntity {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+	if (($newItem || $changedParent) && $this->getParentId()) {
+	    /* Instruct G2 to "touch" modification timestamp of parent album at end of request */
+	    $gallery->addShutdownAction(array('GalleryCoreApi', 'updateModificationTimestamp'),
+					array($this->getParentId()));
+	}
+	if (!empty($oldParentId)) {
+	    $gallery->addShutdownAction(array('GalleryCoreApi', 'updateModificationTimestamp'),
+					array($oldParentId));
 	}
 
 	return GalleryStatus::success();

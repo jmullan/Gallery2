@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 5);
+	return array(5, 6);
     }
 
     /**
@@ -1060,6 +1060,18 @@ class GalleryCoreApi {
     function estimateDerivativeDimensions(&$derivative, $source) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::estimateDerivativeDimensions($derivative, $source);
+    }
+
+    /**
+     * Set modification timestamp for the given entity id to the current time.
+     *
+     * @param int the entity id
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function updateModificationTimestamp($entityId) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryEntityHelper_medium.class');
+	return GalleryEntityHelper_medium::updateModificationTimestamp($entityId);
     }
 
     /**
