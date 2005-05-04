@@ -80,6 +80,7 @@ class RewriteHelper {
 	$Htaccess['rewriteBase'] = $Htaccess['galleryDirectory'];
 	$Htaccess['baseFile'] = 'main.php';
 	if ($embedded) {
+	    $Htaccess['baseFile'] = $urlGenerator->_baseFile;
 	    list ($ret, $Htaccess['directory']) =
 		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
 	    if ($ret->isError()) {
