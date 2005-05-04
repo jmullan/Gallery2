@@ -47,30 +47,31 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$ItemAddUploadApplet = array();
+	$GRApplet = array();
 
 	if (!isset($modules['remote']['active']) || !$modules['remote']['active']) {
-	    $ItemAddUploadApplet['NoProtocolError'] = 1;
+	    $GRApplet['NoProtocolError'] = 1;
 	} else {
 	    $session =& $gallery->getSession();
-	    $ItemAddUploadApplet['NoProtocolError'] = 0;
-	    $ItemAddUploadApplet['cookieName'] = $session->getKey();
-	    $ItemAddUploadApplet['cookieValue'] = $session->getId();
-	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
-	    $ItemAddUploadApplet['cookiePath'] = $session->getCookiePath();
-	    $ItemAddUploadApplet['album'] = $item->getId();
-	    $ItemAddUploadApplet['defaults'] = array();
-	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
-	    $ItemAddUploadApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	    $ItemAddUploadApplet['galleryVersion'] = 2;
+	    $GRApplet['NoProtocolError'] = 0;
+	    $GRApplet['cookieName'] = $session->getKey();
+	    $GRApplet['cookieValue'] = $session->getId();
+	    $GRApplet['cookieDomain'] = $session->getCookieDomain();
+	    $GRApplet['cookiePath'] = $session->getCookiePath();
+	    $GRApplet['album'] = $item->getId();
+	    $GRApplet['defaults'] = array();
+	    $GRApplet['overrides'] = array('toSysOut' => 'true');
+	    $GRApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	    $GRApplet['galleryVersion'] = 2;
+	    $GRApplet['code'] = 'com.gallery.GalleryRemote.GRAppletMini';
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
+	    $GRApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
 	}
 
-	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);
+	$template->setVariable('GRApplet', $GRApplet);
 	return array(GalleryStatus::success(),
-		     'modules/uploadapplet/templates/ItemAddUploadApplet.tpl',
+		     'lib/java/GRApplet.tpl',
 		     'modules_uploadapplet');
     }
 
