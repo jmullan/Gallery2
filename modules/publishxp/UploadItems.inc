@@ -1,0 +1,167 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2004 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * Controller to process the uploading of photos from Windows XP.
+ * 
+ * Each photo is uploaded via a seperate HTTP request.  The initial response from
+ * this page is to return JavaScript code that instructs Windows how to upload 
+ * the photos.  Subsequent requests from Windows include the photo data and text.
+ * This page processes the data and applies the options to be used while uploading. 
+ *
+ * @version $Id$
+ * @package PublishXp
+ * @author Timothy Webb <tiwebb@cisco.com>
+ */
+class UploadItemsController extends GalleryController {
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	$results = array();
+	$error = array();
+	$status = array();
+	if (isset($form['action']['uploadItem'])) {
+	    /* Check the user has permissions in this album */
+	    $ret = GalleryCoreApi::assertHasItemPermission($form['albumId'], 'core.addDataItem');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    /* Get the file passed in this submission */
+	    $file = GalleryUtilities::getFile('userFile', false);
+ 	    list($ret, $lockIds[]) = GalleryCoreApi::acquireReadLock($form['albumId']);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (empty($file['name'])) {
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	    }
+	    
+	    /* 
+	     * Get the mime type from the upload info.
+	     * If we don't get useful data from that or its a type we don't
+	     * recognize, take a swing at it using the file name.
+	     */
+	    $mimeType = $file['type'];
+	    list($ret, $exts[]) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
+	    if (empty($mimeType) ||
+		    $mimeType == 'application/octet-stream' || 
+		    $mimeType == 'application/unknown' ||
+		    empty($exts)) {
+		$extension = GalleryUtilities::getFileExtension($file['name']);
+		list($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		if ($ret->isError()) {
+		    GalleryCoreApi::releaseLocks($lockIds);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+	    $title = basename($file['name']);
+	    $caption = '';
+	    $description = '';
+	    if (!empty($form['stripExtensions'])) {
+		$title = GalleryUtilities::getFileBase($title);
+	    }
+	    if (!empty($form['setCaptions'])) {
+		$caption = $title;
+	    }
+	    list($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+		$file['tmp_name'], basename($file['name']), $title, $caption, $description,
+		$mimeType, $form['albumId']);
+	    if ($ret->isError()) {
+		GalleryCoreApi::releaseLocks($lockIds);
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $ret = GalleryCoreApi::releaseLocks($lockIds);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    $redirect['view'] = 'publishxp:UploadedItem';
+	}
+
+	if (!empty($redirect)) {
+	    $results['redirect'] = $redirect;
+	} else {
+	    $results['delegate']['view'] = 'publishxp:UploadItems';
+	}
+	$results['status'] = $status;
+	$results['error'] = $error;
+	return array(GalleryStatus::success(), $results);
+    }
+}
+
+/**
+ * View to process the uploading of photos from Windows XP.
+ * 
+ * Each photo is uploaded via a seperate HTTP request.  The initial response from
+ * this page is to return JavaScript code that instructs Windows how to upload 
+ * the photos.  Subsequent requests from Windows include the photo data and text.
+ * This page processes the data and applies the options to be used while uploading. 
+ *
+ * @version $Id$
+ * @package PublishXp
+ * @author Timothy Webb <tiwebb@cisco.com>
+ */
+class UploadItemsView extends GalleryView {
+    /**
+     * Prepares any additional data before rendering the template.
+     * 
+     * @author Timothy Webb <tiwebb@cisco.com>
+     * @param template the template data for rendering.
+     * @param form the form data for rendering.
+     * @return array the status and the results containing the view.
+     * @see GalleryControler:loadTemplate
+     */
+    function loadTemplate(&$template, &$form) {
+	global $gallery;
+	if ($form['formName'] != 'UploadItems') {
+	    $form['formName'] = 'UploadItems';
+	}
+	
+	list ($UploadItems['albumId'],
+	      $UploadItems['stripExtensions'],
+	      $UploadItems['setCaptions']) = GalleryUtilities::getRequestVariables(
+		  'albumId', 'stripExtensions', 'setCaptions');
+
+	if (empty($UploadItems['stripExtensions'])) {
+	    $UploadItems['stripExtensions'] = 0;
+	}
+
+	if (empty($UploadItems['setCaptions'])) {
+	    $UploadItems['setCaptions'] = 0;
+	}
+
+	$template->setVariable('UploadItems', $UploadItems);
+	$template->head('modules/publishxp/templates/Head.tpl');
+	return array(GalleryStatus::success(), 
+		     array('body' => 'modules/publishxp/templates/UploadItems.tpl'));
+    }
+}
+?>
