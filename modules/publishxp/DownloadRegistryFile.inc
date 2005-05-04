@@ -51,7 +51,7 @@ class DownloadRegistryFileView extends GalleryView {
 	global $gallery;
         
 	/* Get the domain name */
-	$urlGenerator = $gallery->getUrlGenerator();
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$domain = $urlGenerator->getCurrentDomain();
         
 	/* Get the name of the gallery */
