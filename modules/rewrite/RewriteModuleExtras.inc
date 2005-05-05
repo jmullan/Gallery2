@@ -37,7 +37,8 @@ class RewriteModuleExtras {
 	    foreach (array('galleryLocation' => '',
 			   'needOptions' => '',
 			   'embeddedLocation' => '',
-			   'embeddedHtaccess' => '')
+			   'embeddedHtaccess' => '',
+			   'accessList' => serialize(array()))
 		     as $key => $value) {
 		$ret = $module->setParameter($key, $value);
 		if ($ret->isError()) {
