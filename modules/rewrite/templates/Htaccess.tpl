@@ -17,7 +17,7 @@
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -f [OR]
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -d [OR] 
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} gallery\_remote2\.php
-    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !main\.php
+    RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.baseFile}
     RewriteRule .   -   [L]
 
     
@@ -26,6 +26,9 @@
   {foreach from=$rule.settings.condition item=condition}
     RewriteCond {$condition}
   {/foreach}
+{/if}
+{if $rule.urlPattern == '^(.+)$'}
+    RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.baseFile}
 {/if}
 {if isset($rule.settings.forbidden)}
     RewriteRule {$rule.urlPattern}   -   [F,L]

@@ -387,7 +387,7 @@ class RewriteHelper {
 	
 	$accessList = array();
 	foreach ($allow as $host) {
-	    $accessList[] = '%{HTTP_REFERER} !\:\/\/' . preg_quote($host) . '\/ [NC]';
+	    $accessList[] = '%{HTTP_REFERER} !://' . preg_quote($host) . '/ [NC]';
 	}
 	
 	return array(GalleryStatus::success(), $accessList);
