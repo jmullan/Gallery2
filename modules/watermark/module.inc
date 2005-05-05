@@ -40,7 +40,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.3'); /* Update upgrade() too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -153,6 +153,8 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+
+	case '0.9.2':
 
 	case 'end of upgrade path':
 	    /*
