@@ -320,7 +320,7 @@ class RewriteHelper {
 		
 		if (!empty($rules[$ruleId]['restrict'])) {
 		    foreach ($rules[$ruleId]['restrict'] as $key => $value) {
-			$settings['condition'][] = '%{QUERY_STRING} ' . preg_quote($key . '=' . $value);
+			$settings['condition'][] = '%{QUERY_STRING} ' . $key . '=' . $value;
 		    }
 		}
 
@@ -331,12 +331,6 @@ class RewriteHelper {
 
 		if (!empty($rules[$ruleId]['queryString'])) {
 		    $queryString = array_merge($queryString, $rules[$ruleId]['queryString']);
-		    
-		    if (!empty($rules[$ruleId]['restrict'])) {
-			foreach ($rules[$ruleId]['queryString'] as $key => $value) {
-			    $settings['condition'][] = '%{QUERY_STRING} !' . preg_quote($key . '=' . $value);
-			}
-		    }
 		}
 		
 		if (isset($rules[$ruleId]['forbidden'])) {
@@ -350,6 +344,12 @@ class RewriteHelper {
 		if (empty($settings['condition'])) {
 		    unset($settings['condition']);
 		}
+		
+		$settings['flags'] = array('QSA', 'L');
+		if (isset($rules[$ruleId]['flags'])) {
+		    $settings['flags'] = array_merge($rules[$ruleId]['flags'], array('L'));
+		}
+		$settings['flags'] = join(',', $settings['flags']);
 
 		$urlPattern = str_replace('%path%', '%_path_%',
 			$activeRules[$moduleId][$ruleId]['pattern']);

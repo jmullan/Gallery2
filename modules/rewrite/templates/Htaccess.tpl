@@ -29,14 +29,10 @@
 {else}
     RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.baseFile}
 {/if}
-{if isset($rule.settings.forbidden)}
-    RewriteRule {$rule.urlPattern}   -   [F,L]
+{if strpos($rule.queryString, 'view=core:DownloadItem') !== false}
+    RewriteRule {$rule.urlPattern}   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [{$rule.settings.flags}]
 {else}
-  {if strpos($rule.queryString, 'view=core:DownloadItem') !== false}
-    RewriteRule {$rule.urlPattern}   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [QSA,L]
-  {else}
-    RewriteRule {$rule.urlPattern}   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [QSA,L]
-  {/if}
+    RewriteRule {$rule.urlPattern}   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [{$rule.settings.flags}]
 {/if}
 
 {/foreach}

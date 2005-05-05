@@ -257,7 +257,7 @@ class RewriteModule extends GalleryModule {
 	$rule['comment'] = $this->translate('Block hotlinked items');
 	$rule['pattern'] = '.';
 	$rule['locked'] = 1;
-	$rule['forbidden'] = 1;
+	$rule['flags'] = array('F');
 	$rule['restrict'] = array('view' => 'core:DownloadItem');
 	$rules[] = $rule;
 	
