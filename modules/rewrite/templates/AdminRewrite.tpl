@@ -13,7 +13,7 @@
   {if isset($status.rulesSaved)}
     {g->text text="Successfully saved URL styles"}
   {/if}
-  
+
   {if isset($status.setupSaved)}
     {g->text text="Successfully saved the configuration"}
   {/if}
@@ -23,24 +23,24 @@
 {if !empty($form.error)}
 <div class="gbBlock">
   <h2 class="giError"> {g->text text="An error occured while trying to save your settings:"} </h3>
-  
+
   <div class="giError">
   {if isset($form.error.cantWrite.gallery)}
     {g->text text="Cannot write to the Gallery .htaccess file"}
   {/if}
-  
+
   {if isset($form.error.cantWrite.embedded)}
     {g->text text="Cannot write to the embedded .htaccess file"}
   {/if}
-  
+
   {if isset($form.error.dupe)}
     {g->text text="Duplicate URL patterns."}
   {/if}
-  
+
   {if isset($form.error.empty)}
     {g->text text="Empty URL pattern."}
   {/if}
-  
+
   {if isset($form.error.badKeyword)}
     {g->text text="Bad keyword."}
   {/if}
@@ -70,7 +70,7 @@
        arg3="mode=setup"}">{g->text text="Setup"}</a>
     </span></li>
   {/if}
-  
+
   {if ($AdminRewrite.mode == 'test')}
     <li class="giSelected"><span>
       {g->text text="Test"}
@@ -88,7 +88,7 @@
   <p class="giDescription">
       {g->text text="Short URLs are compiled out of predefined keywords. Modules may provide additional keywords. Keywords are escaped with % (eg: %itemId%)."}
   </p>
-  
+
   <table class="gbDataTable">
   {assign var="group" value=""}
   {foreach from=$AdminRewrite.shortUrls item=module key=moduleId}
@@ -104,7 +104,7 @@
     <th> {g->text text="URL Pattern"} </th>
     <th> {g->text text="Additional Keywords"} </th>
   </tr>
-    
+
   {foreach from=$form.shortUrls.$moduleId item=rule key=index}
   {cycle values="gbEven,gbOdd" assign="rowClass"}
   <tr class="{$rowClass}">
@@ -178,7 +178,7 @@
   {/foreach}
   </table>
 </div>
-  
+
 <div class="gbBlock gcBackground1">
   <input type="submit"class="inputTypeSubmit" name="{g->formVar var="form[action][saveRules]"}" value="{g->text text="Save"}"/>
 </div>
@@ -187,11 +187,11 @@
 {if $AdminRewrite.mode == 'setup'}
 <div class="gbBlock">
   <h3> {g->text text="Approved referers"} </h3>
-  
+
   <p class="giDescription">
-    {g->text text="Some rules only apply if the referer (the site that linked to the item) is something else than Gallery itself. Hosts in the list below will be treaded as friendly referers."}<br/>
+    {g->text text="Some rules only apply if the referer (the site that linked to the item) is something other than Gallery itself. Hosts in the list below will be treated as friendly referers."}<br/>
   </p>
-  
+
   <table class="gbDataTable"><tr>
     <td><input type="text" name="{g->formVar var="form[dummy]"}" size="60" value="{$AdminRewrite.serverName}" disabled/></td>
   {counter start=0 assign="i"}
@@ -212,11 +212,11 @@
 {if $AdminRewrite.isEmbedded}
 <div class="gbBlock">
   <h3> {g->text text="Embedded Setup"} </h3>
-  
+
   <p class="giDescription">
     {g->text text="For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file to hold the mod_rewrite rules."}
   </p>
-  
+
   <input type="hidden" name="{g->formVar var="form[embedded][save]"}" value="true">
   <table class="gbDataTable"><tr>
     <td>
@@ -281,19 +281,19 @@
       name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
     <br/><br/>
   {/if}
-  
+
   {if !empty($showConfig)}
     <h3>Manual Configuration</h3>
-    
+
     <p class="giDescription">
       {g->text text="Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"}<br/>
     </p>
-    
+
     <p class="giDescription">
       <b>{$AdminRewrite.customFile}</b><br/>
       {g->text text="Line 6:"} {$AdminRewrite.customLine}
     </p>
-    
+
     <p class="giDescription">
       <b>{$AdminRewrite.customFileNoOptions}</b><br/>
       {g->text text="Line 6:"} {$AdminRewrite.customLineNoOptions}
@@ -335,7 +335,7 @@
       {g->text text="Cannot read the .htaccess file."}
     </div>
   {/if}
-  
+
   {if !empty($showTestButton)}
     <br/>
     <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Again"}"/>
@@ -373,7 +373,7 @@
       {g->text text="Can not read the .htaccess file."}
     </div>
   {/if}
-  
+
   {if !empty($showTestButton)}
     <br/>
     <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Again"}"/>
