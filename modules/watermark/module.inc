@@ -40,7 +40,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName('Watermark');
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -275,6 +275,21 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	}
 	return array(GalleryStatus::success(), null);
+    }
+
+    /**
+     * @see GalleryModule::getRewriteRules
+     */
+    function getRewriteRules() {
+	return array(
+	    array( 'comment' => $this->translate('Watermark hotlinked images'),
+		   'pattern' => '.',
+		   'queryString' => array('controller' => 'watermark:DownloadItem'),
+		   'locked' => 1,
+		   'restrict' => array('view' => 'core:DownloadItem'),
+		   'help' => $this->translate('Apply watermark to images downloaded from outside your Gallery. Select which watermark to use in Watermark Site Admin.')
+		 )
+	    );
     }
 }
 ?>

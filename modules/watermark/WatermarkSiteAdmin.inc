@@ -35,8 +35,6 @@ class WatermarkSiteAdminController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	/* Make sure we have adequate permissions */
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
@@ -53,17 +51,21 @@ class WatermarkSiteAdminController extends GalleryController {
 	     * If we don't get useful data from that or its a type we don't
 	     * recognize, take a swing at it using the file name.
 	     */
-        list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	    list ($ret, $mimeExtensions) = GalleryCoreApi::convertMimeToExtensions($mimeType);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    if ($mimeType == 'application/octet-stream' ||
 		    $mimeType == 'application/unknown' || empty($mimeExtensions)) {
 		$extension = GalleryUtilities::getFileExtension($form['name'][1]);
-        list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
-        if ($ret->isError()) {
-            $mimeType = 'application/unknown';
-        }
+		list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
+		if ($ret->isError() || empty($mimeType)) {
+		    $mimeType = 'application/unknown';
+		}
 	    }
 
-	    list ($ret, $item) = GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
+	    list ($ret, $item) =
+		GalleryCoreApi::newFactoryInstance('GalleryEntity', 'WatermarkImage');
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -96,13 +98,11 @@ class WatermarkSiteAdminController extends GalleryController {
 	    }
 
 	    $status['add'] = 1;
-	    $results['redirect']['view'] = 'core:SiteAdmin';
-	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdminEdit';
-	    $results['redirect']['itemId'] = $item->getId();
+	    $results['redirect'] = array('view' => 'core:SiteAdmin',
+					 'subView' => 'watermark:WatermarkSiteAdminEdit',
+					 'itemId' => $item->getId());
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
-	    $results['redirect']['view'] = 'core:SiteAdmin';
-	    $results['redirect']['subView'] = 'watermark:WatermarkSiteAdmin';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
 
@@ -114,17 +114,30 @@ class WatermarkSiteAdminController extends GalleryController {
 
 	    if ($wasDeleted) {
 		$status['delete'] = 1;
-		$results['redirect'] = array('view' => 'core:SiteAdmin',
-					     'subView' => 'watermark:WatermarkSiteAdmin');
 	    } else {
-		// Watermark is in use.. redirect to confirm page:
+		/* Watermark is in use.. redirect to confirm page */
 		$results['redirect'] = array('view' => 'core:SiteAdmin',
 					     'subView' => 'watermark:ConfirmDelete',
 					     'itemId' => $form['delete']['itemId'],
 					     'fromAdmin' => 1);
 	    }
+	} else if (isset($form['action']['save'])) {
+	    if (empty($form['hotlinkWatermarkId'])) {
+		$status['missingId'] = 1;
+	    } else {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'watermark',
+		    'hotlinkWatermarkId', $form['hotlinkWatermarkId']);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$status['idSaved'] = 1;
+	    }
 	}
 
+	if (!isset($results['redirect'])) {
+	    $results['redirect'] = array('view' => 'core:SiteAdmin',
+					 'subView' => 'watermark:WatermarkSiteAdmin');
+	}
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -146,6 +159,12 @@ class WatermarkSiteAdminView extends GalleryView {
 
 	if ($form['formName'] != 'WatermarkSiteAdmin') {
 	    $form['formName'] = 'WatermarkSiteAdmin';
+
+	    list ($ret, $form['hotlinkWatermarkId']) =
+		GalleryCoreApi::getPluginParameter('module', 'watermark', 'hotlinkWatermarkId');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 	list ($ret, $list) = WatermarkHelper::fetchWatermarks();
 	if ($ret->isError()) {

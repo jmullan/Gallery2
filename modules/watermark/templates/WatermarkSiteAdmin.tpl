@@ -19,6 +19,12 @@
   {if isset($status.add_error)}
     <span class="giError">{g->text text="Missing image file"}</span>
   {/if}
+  {if isset($status.missingId)}
+    <span class="giError">{g->text text="No watermark selected"}</span>
+  {/if}
+  {if isset($status.idSaved)}
+    {g->text text="Settings saved successfully"}
+  {/if}
 </h2></div>
 {/if}
 
@@ -28,6 +34,7 @@
     <th> {g->text text="Image"} </th>
     <th> {g->text text="Owner"} </th>
     <th> {g->text text="Action"} </th>
+    <th> {g->text text="Hotlink"} </th>
   </tr>
   {foreach from=$form.list item=item}
   <tr class="{cycle values="gbEven,gbOdd"}">
@@ -50,12 +57,29 @@
        arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
 	{g->text text="delete"}
       </a>
+    </td><td>
+      <input type="radio"{if $item.id == $form.hotlinkWatermarkId} checked="checked"{/if}
+       name="{g->formVar var="form[hotlinkWatermarkId]"}" value="{$item.id}"/>
     </td>
   </tr>
   {/foreach}
+
+  <tr><td colspan="4">
+    <input type="file" size="60" name="{g->formVar var="form[1]"}"/>
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
+  </td><td>
+    {if !empty($form.list)}
+    <input type="submit" class="inputTypeSubmit"
+     name="{g->formVar var="form[action][save]"}" value="{g->text text="Save"}"/>
+    {/if}
+  </td></tr>
   </table>
 
-  <input type="file" size="60" name="{g->formVar var="form[1]"}"/>
-  <input type="submit" class="inputTypeSubmit"
-   name="{g->formVar var="form[action][add]"}" value="{g->text text="Add"}"/>
+  {if !empty($form.list)}
+  <strong> {g->text text="Watermark Hotlinked Images"} </strong>
+  <p class="giDescription">
+    {g->text text="Gallery can automatically apply a watermark to images linked from sites outside your Gallery. Select a watermark above and then activate hotlink watermarks using the Rewrite module."}
+  </p>
+  {/if}
 </div>
