@@ -20,6 +20,14 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 /**
+ * Access point for external application in which Gallery is embedded.
+ * See docs/EMBEDDING for more information on using the GalleryEmbed class.
+ * Three interaction modes:
+ *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
+ *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
+ *     end with GalleryEmbed::done() <-- REQUIRED
+ *  3) Single GalleryEmbed::logout() call
+ *
  * @package GalleryCore
  * @version $Revision$ $Date$
  * @author Alan Harder <alan.harder@sun.com>

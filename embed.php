@@ -21,13 +21,7 @@
  */
 /**
  * Access point for external application in which Gallery is embedded.
- * See docs/EMBEDDING for more information on using the GalleryEmbed class.
- * See also modules/core/classes/GalleryEmbed.class for more details.
- * Three interaction modes:
- *  1) GalleryEmbed::init(array(..)) followed by GalleryEmbed::handleRequest()
- *  2) GalleryEmbed::init() followed by other GalleryEmbed/G2 calls,
- *     end with GalleryEmbed::done() <-- REQUIRED
- *  3) Single GalleryEmbed::logout() call
+ * See docs/EMBEDDING and modules/core/classes/GalleryEmbed.class for more details.
  *
  * @package GalleryMain
  * @version $Revision$ $Date$
