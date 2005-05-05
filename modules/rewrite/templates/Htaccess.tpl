@@ -26,8 +26,7 @@
   {foreach from=$rule.settings.condition item=condition}
     RewriteCond {$condition}
   {/foreach}
-{/if}
-{if $rule.urlPattern == '^(.+)$'}
+{else}
     RewriteCond %{ldelim}REQUEST_URI{rdelim} !{$Htaccess.baseFile}
 {/if}
 {if isset($rule.settings.forbidden)}

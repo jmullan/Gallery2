@@ -93,10 +93,7 @@ class RewriteHelper {
 		$Htaccess['directory'] = '';
 	    }
 	}
-
-	if (strpos($Htaccess['baseFile'], '?') === false) {
-	    $Htaccess['baseFile'] = $Htaccess['baseFile'] . '?';
-	}
+	$Htaccess['baseFile'] .= (strpos($Htaccess['baseFile'], '?') === false) ? '?' : '&';
 
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
 	$template->setVariable('Htaccess', $Htaccess);
