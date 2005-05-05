@@ -286,9 +286,12 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	return array(
 	    array( 'comment' => $this->translate('Watermark hotlinked images'),
 		   'pattern' => '.',
-		   'queryString' => array('controller' => 'watermark:DownloadItem'),
+		   'restrict' => array('view' => 'core:DownloadItem',
+				       'itemId' => '([0-9]+)'),
+		   'queryString' => array('view' => 'watermark:DownloadItem',
+					  'itemId' => '%1'),
+		   'flags' => array(),
 		   'locked' => 1,
-		   'restrict' => array('view' => 'core:DownloadItem'),
 		   'help' => $this->translate('Apply watermark to images downloaded from outside your Gallery. Select which watermark to use in Watermark Site Admin.')
 		 )
 	    );

@@ -27,22 +27,6 @@
  */
 
 /**
- * @package Watermark
- * @subpackage UserInterface
- */
-class DownloadItemController extends GalleryController {
-
-    /**
-     * @see GalleryController::handleRequest
-     */
-    function handleRequest($form) {
-	return array(GalleryStatus::success(),
-		     array('delegate' => array('view' => 'watermark:DownloadItem'),
-			   'status' => array(), 'error' => array()));
-    }
-}
-
-/**
  * Applies watermark on the fly and sends binary item
  *
  * @package Watermark
