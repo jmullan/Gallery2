@@ -15,14 +15,14 @@
   {/if}
   
   {if isset($status.setupSaved)}
-    {g->text text="Successfully saved Embedded Setup"}
+    {g->text text="Successfully saved the configuration"}
   {/if}
 </div>
 {/if}
 
 {if !empty($form.error)}
 <div class="gbBlock">
-  <h2> {g->text text="An error occured while trying to save your settings:"} </h3>
+  <h2 class="giError"> {g->text text="An error occured while trying to save your settings:"} </h3>
   
   <div class="giError">
   {if isset($form.error.cantWrite.gallery)}
@@ -96,9 +96,9 @@
     <tr><td> &nbsp; </td></tr>
   {/if}
   {assign var="group" value=$module.name}
-  <tr><th colspan="5"><h2>{$module.name}</h2></th></tr>
+  <tr><th colspan="6"><h2>{$module.name}</h2></th></tr>
   <tr>
-    <th> &nbsp; </th>
+    <th colspan="2" style="text-align: center;"> {g->text text="Active"} </th>
     <th> {g->text text="Help"} </th>
     <th> {g->text text="View"} </th>
     <th> {g->text text="URL Pattern"} </th>
@@ -109,9 +109,21 @@
   {cycle values="gbEven,gbOdd" assign="rowClass"}
   <tr class="{$rowClass}">
     <td>
-      <input type="checkbox" name="{g->formVar var="form[shortUrls][$moduleId][$index][active]"}" {if isset($rule.active)}checked{/if}/>
+      {if isset($form.error.dupe[$rule.pattern]) || isset($form.error.empty.$moduleId.$index)}
+        <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
+	       alt="{g->text text="Status: Error"}" />
+      {elseif isset($rule.active)}
+        <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
+	     alt="{g->text text="Status: Active"}" />
+      {else}
+        <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
+	     alt="{g->text text="Status: Not Active"}" />
+      {/if}
+    </td>
+    <td>
+      <input type="checkbox" name="{g->formVar var="form[shortUrls][$moduleId][$index][active]"}" {if isset($rule.active)}checked {/if}/>
       {if isset($rule.match)}
-        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][match]}" value="{$rule.match}">
+        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][match]}" value="{$rule.match}" />
       {/if}
     </td>
     <td style="text-align: center;">
@@ -126,9 +138,9 @@
     <td>
       {if isset($AdminRewrite.shortUrls.$moduleId.rules.$index.locked)}
         {$rule.pattern}
-        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}">
+        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
       {else}
-        <input type="text" size="40" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}"/>
+        <input type="text" size="40" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
       {/if}
     </td>
     <td>
@@ -138,10 +150,16 @@
     </td>
   </tr>
   <tr class="{$rowClass}" style="display: none;" id="shortUrls-{$moduleId}-{$index}-help">
-    <td>
+    <td colspan="2">
       &nbsp;
     </td>
     <td colspan="4">
+      <b>{g->text text="Help"}</b><br/>
+      {if isset($AdminRewrite.shortUrls.$moduleId.rules.$index.help)}
+        {$AdminRewrite.shortUrls.$moduleId.rules.$index.help}
+      {else}
+        <i>{g->text text="No help available"}</i>
+      {/if}<br/><br/>
       <b>{g->text text="Keywords"}</b><br/>
       {assign var="hasKeywordHelp" value=false}
       {foreach from=$AdminRewrite.shortUrls.$moduleId.rules.$index.keywords key=keyword item=prefs}
@@ -168,18 +186,43 @@
 
 {if $AdminRewrite.mode == 'setup'}
 <div class="gbBlock">
-  {if $AdminRewrite.isEmbedded}
+  <h3> {g->text text="Approved referers"} </h3>
+  
+  <p class="giDescription">
+    {g->text text="Some rules only apply if the referer (the site that linked to the item) is something else than Gallery itself. Hosts in the list below will be treaded as friendly referers."}<br/>
+  </p>
+  
+  <table class="gbDataTable"><tr>
+    <td><input type="text" name="{g->formVar var="form[dummy]"}" size="60" value="{$AdminRewrite.serverName}" disabled/></td>
+  {counter start=0 assign="i"}
+  {foreach from=$form.allow item=host}
+  </tr><tr>
+    <td><input type="text" name="{g->formVar var="form[allow][$i]"}" size="60" value="{$host}"/></td>
+    {counter print=false}
+  {/foreach}
+  </tr><tr>
+    <td><input type="text" name="{g->formVar var="form[allow][$i]"}" size="60"/></td>
+  </tr><tr>
+    <td><input type="text" name="{g->formVar var="form[allow][`$i+1`]"}" size="60"/></td>
+  </tr><tr>
+    <td><input type="text" name="{g->formVar var="form[allow][`$i+2`]"}" size="60"/></td>
+  </tr></table>
+</div>
+
+{if $AdminRewrite.isEmbedded}
+<div class="gbBlock">
   <h3> {g->text text="Embedded Setup"} </h3>
   
   <p class="giDescription">
     {g->text text="For URL Rewrite to work in an embedded environment you need to set up an extra htaccess file to hold the mod_rewrite rules."}
   </p>
   
+  <input type="hidden" name="{g->formVar var="form[embedded][save]"}" value="true">
   <table class="gbDataTable"><tr>
     <td>
       {g->text text="Htaccess path:"}
     </td><td>
-      <input type="text" size="60" name="{g->formVar var="form[embedded][htaccessPath]"}" value="{$form.embedded.htaccessPath}">
+      <input type="text" size="60" name="{g->formVar var="form[embedded][htaccessPath]"}" value="{$form.embedded.htaccessPath}"/>
       {if isset($form.error.invalidDir)}
         <div class="giError">
           {g->text text="Invalid directory."}
@@ -190,7 +233,7 @@
     <td>
       {g->text text="Public path:"}
     </td><td>
-      {$AdminRewrite.host}<input type="text" size="40" name="{g->formVar var="form[embedded][publicPath]"}" value="{$form.embedded.publicPath}">
+      {$AdminRewrite.host}<input type="text" size="40" name="{g->formVar var="form[embedded][publicPath]"}" value="{$form.embedded.publicPath}"/>
       {if isset($form.error.invalidPath)}
         <div class="giError">
           {g->text text="Invalid path."}
@@ -198,19 +241,12 @@
       {/if}
     </td>
   </tr></table>
-
-  {else}
-  <p class="giDescription">
-    {g->text text="No configuration needed."}
-  </p>
-  {/if}
 </div>
+{/if}
 
-{if $AdminRewrite.isEmbedded}
 <div class="gbBlock gcBackground1">
   <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][saveSetup]"}" value="{g->text text="Save"}"/>
 </div>
-{/if}
 {/if}
 
 {if $AdminRewrite.mode == 'test'}

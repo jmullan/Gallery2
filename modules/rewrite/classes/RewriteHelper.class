@@ -305,9 +305,13 @@ class RewriteHelper {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	    
+	    list ($ret, $accessList) = RewriteHelper::getAccessList();
 
 	    $rules = $module->getRewriteRules();
 	    foreach (array_keys($activeRules[$moduleId]) as $ruleId) {
+	    	$settings = array();
+	    	$settings['condition'] = array();
 		$keywords = array(
 			'_path_' => array(
 				'ignore' => 1),
@@ -316,20 +320,44 @@ class RewriteHelper {
 		if (isset($rules[$ruleId]['keywords'])) {
 		    $keywords = array_merge($keywords, $rules[$ruleId]['keywords']);
 		}
+		
+		if (!empty($rules[$ruleId]['restrict'])) {
+		    foreach ($rules[$ruleId]['restrict'] as $key => $value) {
+			$settings['condition'][] = '%{QUERY_STRING} ' . preg_quote($key . '=' . $value);
+		    }
+		}
 
 		$queryString = array();
 		if (isset($rules[$ruleId]['match'])) {
 		    $queryString = $rules[$ruleId]['match'];
 		}
 
-		if (isset($rules[$ruleId]['queryString'])) {
+		if (!empty($rules[$ruleId]['queryString'])) {
 		    $queryString = array_merge($queryString, $rules[$ruleId]['queryString']);
+		    
+		    if (!empty($rules[$ruleId]['restrict'])) {
+			foreach ($rules[$ruleId]['queryString'] as $key => $value) {
+			    $settings['condition'][] = '%{QUERY_STRING} !' . preg_quote($key . '=' . $value);
+			}
+		    }
+		}
+		
+		if (isset($rules[$ruleId]['forbidden'])) {
+		    $settings['forbidden'] = 1;
+		}
+		
+		if (isset($rules[$ruleId]['restrict'])) {
+		    $settings['condition'] = array_merge($settings['condition'], $accessList);
+		}
+		
+		if (empty($settings['condition'])) {
+		    unset($settings['condition']);
 		}
 
 		$urlPattern = str_replace('%path%', '%_path_%',
 			$activeRules[$moduleId][$ruleId]['pattern']);
 		list ($ret, $code) = RewriteHelper::_parseRule($urlPattern, $keywords,
-			$queryString, $rewriteRules);
+			$queryString, $rewriteRules, $settings);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -344,11 +372,46 @@ class RewriteHelper {
     }
 
     /**
+     * Returns an array of rewrite condition based access list.
+     *
+     * @return array object GalleryStatus a status code
+     *               array of Rewrite conditions
+     */
+    function getAccessList() {
+	list ($ret, $allow) = GalleryCoreApi::getPluginParameter(
+		'module', 'rewrite', 'accessList');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$allow = array_merge(array(GalleryUtilities::getServerVar('SERVER_NAME')), unserialize($allow));
+	
+	$accessList = array();
+	foreach ($allow as $host) {
+	    $accessList[] = '%{HTTP_REFERER} !\:\/\/' . preg_quote($host) . '\/ [NC]';
+	}
+	
+	return array(GalleryStatus::success(), $accessList);
+    }
+
+    /**
      * Comparison function used to order rewrite rules.
      *
      * @access private
      */
     function _sortRules($a, $b) {
+    	if (isset($a['settings']['condition']) || isset($b['settings']['condition'])) {
+	    if (isset($a['settings']['condition']) && isset($b['settings']['condition'])) {
+		$diff = sizeof($a['settings']['condition']) - sizeof($b['settings']['condition']);
+		return $diff;
+	    }
+	    
+	    if (isset($a['settings']['condition'])) {
+		return -1;
+	    }
+	    
+	    return 1;
+    	}
+    	
 	/* Regular expression in both */
 	if (strpos($a['urlPattern'], '(') !== false && strpos($b['urlPattern'], '(') !== false) {
 	    if (strpos($a['urlPattern'], '(') == strpos($b['urlPattern'], '(')) {
@@ -372,18 +435,24 @@ class RewriteHelper {
     }
 
     /**
-     * Replaces all keywords with apropriate rewrite pattern.
+     * Replaces all keywords with apropriate rewrite pattern and append to $rewriteRules.
      *
+     * @param string url pattern
+     * @param array of keywords => regular expresion for the htaccess file
+     * @param array of query string params (key => value)
+     * @param array of parsed rules
+     * @param array of settings ('conditions' => array of RewriteCond's,
+     *				 'forbidden' => sets the [F]-flag for a rule).
      * @access private
      */
-    function _parseRule($urlPattern, $keywords, $queryString, &$rewriteRules) {
+    function _parseRule($urlPattern, $keywords, $queryString, &$rewriteRules, $settings) {
 	$reference = 1;
 	preg_match_all('/\%([^\%]+)\%/', $urlPattern, $regs);
 
 	foreach ($regs[1] as $keyword) {
 	    if ($keyword == '_path_') {
 		list ($ret, $code) = RewriteHelper::_parseRule(str_replace('%_path_%', '%path%',
-			$urlPattern), $keywords, $queryString, $rewriteRules);
+			$urlPattern), $keywords, $queryString, $rewriteRules, $settings);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -410,11 +479,16 @@ class RewriteHelper {
 	foreach ($queryString as $key => $value) {
 	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
 	}
+	
+	if ($urlPattern != '.') {
+	    $urlPattern = sprintf('^%s$', $urlPattern);
+	}
 
-	if (!empty($urlPattern)) {
+	if ($urlPattern != '^$') {
 	    $rewriteRules[] = array(
 		    'urlPattern' => $urlPattern,
-		    'queryString' => join('&', $args));
+		    'queryString' => join('&', $args),
+		    'settings' => $settings);
 	}
 
 	return array(GalleryStatus::success(), REWRITE_STATUS_OK);

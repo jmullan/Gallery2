@@ -63,12 +63,13 @@ class AdminRewriteController extends GalleryController {
 		    foreach (array_keys($form['shortUrls'][$moduleId]) as $ruleId) {
 			if (isset($form['shortUrls'][$moduleId][$ruleId]['active'])) {
 			    if (empty($form['shortUrls'][$moduleId][$ruleId]['pattern'])) {
-				$error[] = 'form[error][empty]';
+				$error[] = 'form[error][empty][' . $moduleId . '][' . $ruleId . ']';
 				break 2;
 			    }
 
 			    if (isset($dupe[$form['shortUrls'][$moduleId][$ruleId]['pattern']])) {
-				$error[] = 'form[error][dupe]';
+				$error[] = 'form[error][dupe][' .
+					$form['shortUrls'][$moduleId][$ruleId]['pattern'] . ']';
 				break 2;
 			    }
 		    	
@@ -141,35 +142,52 @@ class AdminRewriteController extends GalleryController {
 	} else if (isset($form['action']['saveSetup'])) {
 	    $results['delegate']['mode'] = 'setup';
 	    
-            if (!$platform->is_dir($form['embedded']['htaccessPath'])) {
-                $error[] = 'form[error][invalidDir]';
-            }
-            if (empty($form['embedded']['publicPath'])) {
-                $error[] = 'form[error][invalidPath]';
-            }
+	    if (isset($form['embedded']['save'])) {
+		if (!$platform->is_dir($form['embedded']['htaccessPath'])) {
+		    $error[] = 'form[error][invalidDir]';
+		}
+		if (empty($form['embedded']['publicPath'])) {
+		    $error[] = 'form[error][invalidPath]';
+		}
 
-            if (substr($form['embedded']['htaccessPath'], -1) == '/') {
-                $form['embedded']['htaccessPath'] = substr($form['embedded']['htaccessPath'], 0, -1);
-            }
-            if (substr($form['embedded']['publicPath'], 0, 1) != '/') {
-                $form['embedded']['publicPath'] = '/' . $form['embedded']['publicPath'];
-            }
-            if (substr($form['embedded']['publicPath'], -1) != '/') {
-                $form['embedded']['publicPath'] .= '/';
-            }
+		if (substr($form['embedded']['htaccessPath'], -1) == '/') {
+		    $form['embedded']['htaccessPath'] = substr($form['embedded']['htaccessPath'], 0, -1);
+		}
+		if (substr($form['embedded']['publicPath'], 0, 1) != '/') {
+		    $form['embedded']['publicPath'] = '/' . $form['embedded']['publicPath'];
+		}
+		if (substr($form['embedded']['publicPath'], -1) != '/') {
+		    $form['embedded']['publicPath'] .= '/';
+		}
+	    }
+	    
+	    $allow = array();
+	    foreach ($form['allow'] as $host) {
+		if (!empty($host)) {
+		    $allow[] = $host;
+		}
+	    }
             
             if (empty($error)) {
-                $ret = GalleryCoreApi::setPluginParameter(
-                        'module', 'rewrite', 'embeddedHtaccess', $form['embedded']['htaccessPath']);
-                if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
-                }
+            	if (isset($form['embedded']['save'])) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+			    'embeddedHtaccess', $form['embedded']['htaccessPath']);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
 
-                $ret = GalleryCoreApi::setPluginParameter(
-                        'module', 'rewrite', 'embeddedLocation', $form['embedded']['publicPath']);
-                if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
-                }
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+			    'embeddedLocation', $form['embedded']['publicPath']);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+            	}
+            	
+		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+			'accessList', serialize($allow));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
 
                 $status['setupSaved'] = 1;
                 $redirect['view'] = 'core:SiteAdmin';
@@ -305,6 +323,11 @@ class AdminRewriteView extends GalleryView {
 			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['keywords'] =
 				    array();
 			}
+			
+			if (isset($rule['help'])) {
+			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['help'] =
+				    $rule['help'];
+			}
 		    }
 		
 		    if (!sizeof($rules)) {
@@ -359,9 +382,17 @@ class AdminRewriteView extends GalleryView {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
+		
+		list ($ret, $form['allow']) = GalleryCoreApi::getPluginParameter(
+			'module', 'rewrite', 'accessList');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		$form['allow'] = unserialize($form['allow']);
 	    }
 	    
 	    $AdminRewrite['host'] = substr($urlGenerator->makeUrl('/'), 0, -1);
+	    $AdminRewrite['serverName'] = GalleryUtilities::getServerVar('SERVER_NAME');
 	
 	    break;
 	}

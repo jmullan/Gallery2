@@ -14,21 +14,29 @@
 
     RewriteBase {$Htaccess.rewriteBase}
 
-    # Only redirect to Gallery base file if there's no such file already, and
-    # make sure gallery_remote2.php generates a 404 in order to be compatible
-    # with Gallery Remote.
-    
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -f [OR]
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} -d [OR] 
     RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} gallery\_remote2\.php
-    RewriteRule ^.+$   -   [L]
+    RewriteCond %{ldelim}REQUEST_FILENAME{rdelim} !main\.php
+    RewriteRule .   -   [L]
+
     
 {foreach from=$Htaccess.rules item=rule}
-{if strpos($rule.queryString, 'view=core:DownloadItem') !== false}
-    RewriteRule ^{$rule.urlPattern}$   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [QSA,L]
-{else}
-    RewriteRule ^{$rule.urlPattern}$   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [QSA,L]
+{if isset($rule.settings.condition)}
+  {foreach from=$rule.settings.condition item=condition}
+    RewriteCond {$condition}
+  {/foreach}
 {/if}
+{if isset($rule.settings.forbidden)}
+    RewriteRule {$rule.urlPattern}   -   [F,L]
+{else}
+  {if strpos($rule.queryString, 'view=core:DownloadItem') !== false}
+    RewriteRule {$rule.urlPattern}   {$Htaccess.galleryDirectory}main.php?{$rule.queryString}   [QSA,L]
+  {else}
+    RewriteRule {$rule.urlPattern}   {$Htaccess.directory}{$Htaccess.baseFile}{$rule.queryString}   [QSA,L]
+  {/if}
+{/if}
+
 {/foreach}
 </IfModule>
 

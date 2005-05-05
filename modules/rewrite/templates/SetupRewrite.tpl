@@ -66,7 +66,7 @@
     </p>
     
     <p class="giDescription">
-      <input type="checkbox" name="{g->formVar var="form[mod_rewrite][force]"}"> {g->text text="Apache mod_rewrite works."}
+      <input type="checkbox" name="{g->formVar var="form[mod_rewrite][force]"}" /> {g->text text="Apache mod_rewrite works."}
     </p>
   {/if}
 </div>

@@ -62,7 +62,9 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	foreach (array('embeddedLocation' => '', 'embeddedHtaccess' => '')
+	foreach (array('embeddedLocation' => '',
+		       'embeddedHtaccess' => '',
+		       'accessList' => serialize(array()))
 		 as $param => $value) {
 	    /* Set test value */
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
@@ -181,7 +183,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'view' => 'core:SiteAdmin',
 						      'subView' => 'rewrite:AdminRewrite'),
 				  'status' => array(),
-				  'error' => array('form[error][dupe]')),
+				  'error' => array('form[error][dupe][same/]')),
 			    $results, 'dupe');
 			    
 	$activeRules = array();
@@ -227,7 +229,7 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 						      'view' => 'core:SiteAdmin',
 						      'subView' => 'rewrite:AdminRewrite'),
 				  'status' => array(),
-				  'error' => array('form[error][empty]')),
+				  'error' => array('form[error][empty][rewrite][0]')),
 			    $results, 'empty pattern');
 			    
 	$activeRules = array();
@@ -240,6 +242,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     
     function testSaveEmbeddedSetup() {
 	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[embedded][save]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', '');
 	GalleryUtilities::putRequestVariable('form[embedded][htaccessPath]', dirname(__FILE__));
 	GalleryUtilities::putRequestVariable('form[embedded][publicPath]', '/gallery2/');
 	
@@ -268,6 +272,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     
     function testSaveBadEmbeddedSetup() {
 	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[embedded][save]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', '');
 	GalleryUtilities::putRequestVariable('form[embedded][htaccessPath]', '/gallery2/phpunit/');
 	GalleryUtilities::putRequestVariable('form[embedded][publicPath]', '');
 	
@@ -293,6 +299,31 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	$this->assertEquals('', $embeddedLocation, 'embedded htaccess');
+    }
+    
+    function testSaveAccessList() {
+	GalleryUtilities::putRequestVariable('form[action][saveSetup]', 1);
+	GalleryUtilities::putRequestVariable('form[allow][0]', 'example.com');
+	GalleryUtilities::putRequestVariable('form[allow][1]', '');
+	GalleryUtilities::putRequestVariable('form[allow][2]', 'sub.example.net');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'rewrite:AdminRewrite',
+						      'mode' => 'setup'),
+				  'status' => array('setupSaved' => 1),
+				  'error' => array()),
+			    $results, 'save');
+
+	list ($ret, $accessList) = GalleryCoreApi::getPluginParameter(
+		'module', 'rewrite', 'accessList');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$accessList = unserialize($accessList);
+	
+	$this->assertEquals(array('example.com', 'sub.example.net'),
+			    $accessList, 'access list');
     }
 }
 

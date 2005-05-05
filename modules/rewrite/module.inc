@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName('URL Rewrite');
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.4'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.5'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -66,6 +66,13 @@ class RewriteModule extends GalleryModule {
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 		'GalleryUrlGenerator', 'RewriteUrlGenerator', 'RewriteUrlGenerator',
 		'modules/rewrite/classes/RewriteUrlGenerator.class', 'rewrite', null, 2);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+		'MaintenanceTask', 'RewriteCheckConflictTask', 'RewriteCheckConflictTask',
+		'modules/rewrite/classes/RewriteCheckConflictTask.class', 'rewrite', null, 2);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -244,6 +251,14 @@ class RewriteModule extends GalleryModule {
 	    'path' => array(
 		'pattern' => '(.+)'));
 	$rule['locked'] = 1;
+	$rules[] = $rule;
+	
+	$rule = array();
+	$rule['comment'] = $this->translate('Block hotlinked items');
+	$rule['pattern'] = '.';
+	$rule['locked'] = 1;
+	$rule['forbidden'] = 1;
+	$rule['restrict'] = array('view' => 'core:DownloadItem');
 	$rules[] = $rule;
 	
 	return $rules;

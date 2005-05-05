@@ -171,14 +171,18 @@ class RewriteHelperTest extends GalleryTestCase {
 		      'match' => 'core:DownloadItem'),
 		array('pattern' => '%path%')));
 	$expected = array(
-		array('urlPattern' => 'v/',
-		      'queryString' => 'g2_view=core:ShowItem'),
-		array('urlPattern' => 'd/([0-9]+)-([0-9]+)/([^\/]+)',
-		      'queryString' => 'g2_view=core:DownloadItem&g2_itemId=$1&g2_serialNumber=$2'),
-		array('urlPattern' => 'v/(.+)',
-		      'queryString' => 'g2_view=core:ShowItem&g2_path=$1'),
-		array('urlPattern' => '(.+)',
-		      'queryString' => 'g2_view=rewrite:FileNotFound&g2_path=$1'));
+		array('urlPattern' => '^v/$',
+		      'queryString' => 'g2_view=core:ShowItem',
+		      'settings' => array()),
+		array('urlPattern' => '^d/([0-9]+)-([0-9]+)/([^\/]+)$',
+		      'queryString' => 'g2_view=core:DownloadItem&g2_itemId=$1&g2_serialNumber=$2',
+		      'settings' => array()),
+		array('urlPattern' => '^v/(.+)$',
+		      'queryString' => 'g2_view=core:ShowItem&g2_path=$1',
+		      'settings' => array()),
+		array('urlPattern' => '^(.+)$',
+		      'queryString' => 'g2_view=rewrite:FileNotFound&g2_path=$1',
+		      'settings' => array()));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
 	if ($ret->isError()) {
@@ -208,8 +212,9 @@ class RewriteHelperTest extends GalleryTestCase {
 		array('pattern' => 'v/',
 		      'match' => 'core:ShowItem')));
 	$expected = array(
-		array('urlPattern' => 'v/',
-		      'queryString' => 'g2_view=core:ShowItem'));
+		array('urlPattern' => '^v/$',
+		      'queryString' => 'g2_view=core:ShowItem',
+		      'settings' => array()));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
 	if ($ret->isError()) {

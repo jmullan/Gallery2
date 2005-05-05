@@ -175,6 +175,15 @@ class RewriteModuleExtras {
 	    }
 	    
 	case '0.9.3':
+	case '0.9.4':
+	    foreach (array('accessList' => serialize(array()))
+		     as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	    
 	    break;
 
 	default:
