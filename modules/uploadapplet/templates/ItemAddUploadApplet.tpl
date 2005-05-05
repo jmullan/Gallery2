@@ -14,7 +14,7 @@
 	  codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
 	  width="600" height="400">
     <param name="code" value="com.gallery.GalleryRemote.GRAppletMini"/>
-    <param name="archive" value="{g->url href="lib/java/GalleryRemoteAppletMini.jar},{g->url href="lib/java/GalleryRemoteHTTPClient.jar"},{g->url href="lib/java/applet_img.jar"}"/>
+    <param name="archive" value="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
     <param name="scriptable" value="false"/>
     <param name="progressbar" value="true"/>
@@ -38,7 +38,7 @@
       <embed
           type="application/x-java-applet;version=1.4"
           code="com.gallery.GalleryRemote.GRAppletMini"
-          archive="{g->url href="lib/java/GalleryRemoteAppletMini.jar},{g->url href="lib/java/GalleryRemoteHTTPClient.jar"},{g->url href="lib/java/applet_img.jar"}"
+          archive="{g->url href="modules/uploadapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/uploadapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/uploadapplet/applets/applet_img.jar"}"
           width="600"
           height="400"
           scriptable="false"

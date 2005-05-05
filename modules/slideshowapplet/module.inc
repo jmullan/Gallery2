@@ -78,10 +78,9 @@ class SlideshowAppletModule extends GalleryModule {
 	    $links[$item->getId()][] =
 		array('text' => $this->translate('view slideshow (fullscreen)'),
 		      'params' => array(
-			//'view' => 'slideshowapplet:SlideshowApplet',
-			'view' => 'core:ItemAdmin',
-			'subView' => 'slideshowapplet:SlideshowApplet',
-			'itemId' => $item->getId()));
+			  'view' => 'core:ItemAdmin',
+			  'subView' => 'slideshowapplet:SlideshowApplet',
+			  'itemId' => $item->getId()));
 	}
 	return array(GalleryStatus::success(), $links);
     }
@@ -93,7 +92,7 @@ class SlideshowAppletModule extends GalleryModule {
 	global $gallery;
 
 	$view = array('name' => $this->translate('View Slideshow (fullscreen)'),
-				  'view' => 'slideshowapplet:SlideshowApplet');
+		      'view' => 'slideshowapplet:SlideshowApplet');
 
 	return array(GalleryStatus::success(), array($view));
     }

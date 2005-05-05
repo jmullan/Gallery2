@@ -45,58 +45,50 @@ class SlideshowAppletView extends GalleryView {
 
 	$startId = null;
 
-	/*$itemListString = GalleryUtilities::getRequestVariables('itemList');
-	if (!empty($itemListString)) {
-	    // Build slideshow using specified items..
-	    $item = explode('|', $itemListString);
-	} else {*/
-	    // Build slideshow for an album..
-	    list ($ret, $item) = $this->_getItem();
+	/* Build slideshow for an album.. */
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$item->getCanContainChildren()) {
+	    /* Photo: do slideshow of parent album, start at this photo */
+	    $startId = $item->getId();
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 	    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
+	}
 
-	    if (!$item->getCanContainChildren()) {
-			// Photo: do slideshow of parent album, start at this photo
-			$startId = $item->getId();
-			list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
-			if ($ret->isError()) {
-				return array($ret->wrap(__FILE__, __LINE__), null);
-			}
-	    }
-	//}
-
-	$GRApplet = array();
-	$GRApplet['extra'] = array();
+	$SlideshowApplet = array();
+	$SlideshowApplet['extra'] = array();
 
 	if (!isset($modules['remote']['active']) || !$modules['remote']['active']) {
-	    $GRApplet['NoProtocolError'] = 1;
+	    $SlideshowApplet['NoProtocolError'] = 1;
 	} else {
 	    $session =& $gallery->getSession();
-	    $GRApplet['NoProtocolError'] = 0;
-	    $GRApplet['cookieName'] = $session->getKey();
-	    $GRApplet['cookieValue'] = $session->getId();
-	    $GRApplet['cookieDomain'] = $session->getCookieDomain();
-	    $GRApplet['cookiePath'] = $session->getCookiePath();
-	    $GRApplet['album'] = $item->getId();
-	    $GRApplet['defaults'] = array();
-	    $GRApplet['overrides'] = array('toSysOut' => 'true');
-	    $GRApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	    $GRApplet['galleryVersion'] = 2;
-	    $GRApplet['code'] = 'com.gallery.GalleryRemote.GRAppletSlideshow';
+	    $SlideshowApplet['NoProtocolError'] = 0;
+	    $SlideshowApplet['cookieName'] = $session->getKey();
+	    $SlideshowApplet['cookieValue'] = $session->getId();
+	    $SlideshowApplet['cookieDomain'] = $session->getCookieDomain();
+	    $SlideshowApplet['cookiePath'] = $session->getCookiePath();
+	    $SlideshowApplet['album'] = $item->getId();
+	    $SlideshowApplet['defaults'] = array();
+	    $SlideshowApplet['overrides'] = array('toSysOut' => 'true');
+	    $SlideshowApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	    $SlideshowApplet['galleryVersion'] = 2;
+	    $SlideshowApplet['code'] = 'com.gallery.GalleryRemote.GRAppletSlideshow';
 
 	    if (isset($startId)) {
-	    	// format the start_from as album_picture, that's what GR expects
-	    	$GRApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
+	    	/* format the start_from as album_picture, that's what GR expects */
+	    	$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
 	    }
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $GRApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
+	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
 	}
 
-	$template->setVariable('GRApplet', $GRApplet);
-
-	//$template->title($module->translate('Slideshow'));
+	$template->setVariable('SlideshowApplet', $SlideshowApplet);
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/slideshowapplet/templates/SlideshowApplet.tpl'));
     }

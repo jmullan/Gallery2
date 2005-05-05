@@ -38,40 +38,35 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	if ($form['formName'] != 'ItemAddUploadApplet') {
-	    $form['formName'] = 'ItemAddUploadApplet';
-	}
-
 	list ($ret, $modules) = GalleryCoreApi::fetchPluginStatus('module');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$GRApplet = array();
-
+	$ItemAddUploadApplet = array();
 	if (!isset($modules['remote']['active']) || !$modules['remote']['active']) {
-	    $GRApplet['NoProtocolError'] = 1;
+	    $ItemAddUploadApplet['NoProtocolError'] = 1;
 	} else {
 	    $session =& $gallery->getSession();
-	    $GRApplet['NoProtocolError'] = 0;
-	    $GRApplet['cookieName'] = $session->getKey();
-	    $GRApplet['cookieValue'] = $session->getId();
-	    $GRApplet['cookieDomain'] = $session->getCookieDomain();
-	    $GRApplet['cookiePath'] = $session->getCookiePath();
-	    $GRApplet['album'] = $item->getId();
-	    $GRApplet['defaults'] = array();
-	    $GRApplet['overrides'] = array('toSysOut' => 'true');
-	    $GRApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
-	    $GRApplet['galleryVersion'] = 2;
-	    $GRApplet['code'] = 'com.gallery.GalleryRemote.GRAppletMini';
+	    $ItemAddUploadApplet['NoProtocolError'] = 0;
+	    $ItemAddUploadApplet['cookieName'] = $session->getKey();
+	    $ItemAddUploadApplet['cookieValue'] = $session->getId();
+	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
+	    $ItemAddUploadApplet['cookiePath'] = $session->getCookiePath();
+	    $ItemAddUploadApplet['album'] = $item->getId();
+	    $ItemAddUploadApplet['defaults'] = array();
+	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
+	    $ItemAddUploadApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
+	    $ItemAddUploadApplet['galleryVersion'] = 2;
+	    $ItemAddUploadApplet['code'] = 'com.gallery.GalleryRemote.ItemAddUploadAppletMini';
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $GRApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
+	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
 	}
 
-	$template->setVariable('GRApplet', $GRApplet);
+	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);
 	return array(GalleryStatus::success(),
-		     'lib/java/GRApplet.tpl',
+		     'modules/uploadapplet/templates/ItemAddUploadApplet.tpl',
 		     'modules_uploadapplet');
     }
 
