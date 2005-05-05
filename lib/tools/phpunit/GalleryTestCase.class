@@ -266,16 +266,29 @@ class GalleryTestCase extends TestCase {
 	foreach ($this->_cleanup['pluginParameters'] as $cleanupPlugin) {
 	    $pluginType = array_shift($cleanupPlugin);
 	    $pluginId = array_shift($cleanupPlugin);
+	    $pluginParams = array_shift($cleanupPlugin);
 
-	    /* Remove all existing parameters to prevent new keys from existing */
-	    $ret = GalleryCoreApi::removeAllPluginParameters($pluginType, $pluginId);
+	    /* Retrieve the post-test plugin params */
+	    list($ret, $newPluginParams) =
+		GalleryCoreApi::fetchAllPluginParameters($pluginType, $pluginId);
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	    /* Remove each new key from the DB */
+	    foreach ($newPluginParams as $key => $newParam) {
+		if (!array_key_exists($key, $pluginParams)) {
+		    $ret = GalleryCoreApi::removePluginParameter($pluginType, $pluginId, $key);
+		    if ($ret->isError()) {
+			/* Print the error, but continue to remove the parameters */
+			print $ret->getAsHtml();
+		    }
+		}
+	    }
+ 
 	    /* Restore each key from the saved list */
-	    foreach (array_shift($cleanupPlugin) as $key => $pluginParam) {
+	    foreach ($pluginParams as $key => $pluginParam) {
 		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId,
 							  $key, $pluginParam);
 		if ($ret->isError()) {
