@@ -300,7 +300,7 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	    return '.htaccess';
 	}
 	
-	return parent::file($file, $mode, $useIncludePath, $zcontext);
+	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
     }
     
     function fwrite($handle, $string, $length=null) {
