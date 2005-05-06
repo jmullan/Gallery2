@@ -660,6 +660,40 @@ class CoreModuleExtras {
 	    /* Added SystemInfoTask */
 	case '0.9.14':
 	    /* Added SetOriginationTimestampTask */
+	case '0.9.15':
+	    /* 
+             * Changed 'All Users' to 'Registered Users'
+             * Don't change if the user modified the name already!
+             */
+            list ($ret, $allUserGroupId) = GalleryCoreApi::getPluginParameter(
+                'module', 'core', 'id.allUserGroup');
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null);
+            }
+            list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__));
+            }
+            list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null);
+            }
+            $allUserGroupName = $group->getGroupName();
+            $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
+                $module->translate('All Users'));
+            if (!strcmp($allUserGroupName, $originalGroupName)) {
+                $newGroupName = $module->translate('Registered Users');
+		$group->setGroupName($newGroupName);
+		$ret = $group->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		
+		$ret = GalleryCoreApi::releaseLocks($lockId);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+            }            
 
 	case 'end of upgrade path':
 	    /*
@@ -722,7 +756,7 @@ class CoreModuleExtras {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
 	$group = new GalleryGroup();
 
-	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('All Users'));
+	$groupName = $module->translate('Registered Users');
 	$ret = $group->create($groupName, GROUP_ALL_USERS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
