@@ -32,6 +32,30 @@
 class SlideshowView extends GalleryView {
 
     /**
+     * @see GalleryView::getThemeName
+     */
+    function getThemeName() {
+	$itemListString = GalleryUtilities::getRequestVariables('itemList');
+	if (!empty($itemListString)) {
+	    return array(GalleryStatus::success(), null);
+	}
+
+	list ($ret, $item) = $this->_getItem();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
+	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	return array(GalleryStatus::success(), $item->getTheme());
+    }
+
+    /**
      * @see GalleryView::loadTemplate()
      */
     function loadTemplate(&$template, &$form) {
@@ -41,16 +65,16 @@ class SlideshowView extends GalleryView {
 
 	$itemListString = GalleryUtilities::getRequestVariables('itemList');
 	if (!empty($itemListString)) {
-	    // Build slideshow using specified items..
+	    /* Build slideshow using specified items */
 	    $item = explode('|', $itemListString);
 	} else {
-	    // Build slideshow for an album..
+	    /* Build slideshow for an album */
 	    list ($ret, $item) = $this->_getItem();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if (!$item->getCanContainChildren()) {
-		// Photo: do slideshow of parent album, start at this photo
+		/* Photo: do slideshow of parent album, start at this photo */
 		$startId = $item->getId();
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($item->getParentId());
 		if ($ret->isError()) {
@@ -84,12 +108,12 @@ class SlideshowView extends GalleryView {
 	global $gallery;
 	if (!isset($this->init)) {
 	    $this->sizeClasses = array(
-		array(320,320),     // 0:   <320x240
-		array(640,640),     // 1:  ..640x480
-		array(800,800),     // 2:  ..800x600
-		array(1024,1024),   // 3: ..1024x768
-		array(1280,1280),   // 4: ..1280x1024
-	    );                      // 5:  >1280x1024
+		array(320,320),     /* 0:   <320x240  */
+		array(640,640),     /* 1:  ..640x480  */
+		array(800,800),     /* 2:  ..800x600  */
+		array(1024,1024),   /* 3: ..1024x768  */
+		array(1280,1280),   /* 4: ..1280x1024 */
+	    );                      /* 5:  >1280x1024 */
 	    list ($ret, $this->exifExtractor) =
 		GalleryCoreApi::newFactoryInstance('ExifInterface_1_0');
 	    if ($ret->isError()) {
@@ -132,7 +156,7 @@ class SlideshowView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    // If an Exif extractor is available try to get capture dates..
+	    /* If an Exif extractor is available try to get capture dates */
 	    $exif = array();
 	    if (isset($this->exifExtractor)) {
 		list ($ret, $exif) =
@@ -176,7 +200,7 @@ class SlideshowView extends GalleryView {
 
 		$images = array();
 		if (isset($permissions['core.viewSource'])) {
-		    // Full size; check for preferred copy
+		    /* Full size; check for preferred copy */
 		    if (isset($preferredFullImages[$childId])) {
 			$images[] = $preferredFullImages[$childId];
 		    } else if ($child->canBeViewedInline()) {
@@ -193,7 +217,7 @@ class SlideshowView extends GalleryView {
 		    $images[] = $thumbnails[$childId];
 		}
 
-		// build table of {sizeClass}=>{sources_index}
+		/* build table of {sizeClass}=>{sources_index} */
 		$sizeClassMap = $sizeClassArea = array();
 		for ($i = 0; $i <= count($this->sizeClasses); $i++) {
 		    $sizeClassMap[] = $sizeClassArea[] = -1;
@@ -202,7 +226,8 @@ class SlideshowView extends GalleryView {
 		    $image = $images[$i];
 		    if (GalleryUtilities::isA($image, 'GalleryDerivativeImage')) {
 			if (!($image->getWidth() && $image->getHeight())) {
-			    list ($ret, $image) = GalleryCoreApi::rebuildDerivativeCache($image->getId());
+			    list ($ret, $image) =
+				GalleryCoreApi::rebuildDerivativeCache($image->getId());
 			    if ($ret->isError()) {
 				return array($ret->wrap(__FILE__, __LINE__), null);
 			    }
@@ -210,7 +235,7 @@ class SlideshowView extends GalleryView {
 		    }
 		    $image = $images[$i] = $image->getMemberData();
 		    if (!isset($image['width']) || !isset($image['height'])) {
-			continue; // Should not happen
+			continue; /* Should not happen */
 		    }
 		    $area = $image['width'] * $image['height'];
 		    for ($j = count($this->sizeClasses); $j >= 0; $j--) {
