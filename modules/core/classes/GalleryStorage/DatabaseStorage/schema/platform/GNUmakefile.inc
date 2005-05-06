@@ -7,7 +7,9 @@ include $(TOOLDIR)/GNUmakefile.inc
 SQLFILES = $(patsubst $(SRCDIR)/%.xml,%.sql,$(XMLFILES))
 
 sql: $(SQLFILES)
-	mv InstallerTest.sql InstallerTest_sql
+	if [ -f InstallerTest.sql ]; then \
+		mv InstallerTest.sql InstallerTest_sql; \
+	fi
 
 %.sql: $(SRCDIR)/%.xml $(XSLFILE)
 	if [ -f $< ]; then \
