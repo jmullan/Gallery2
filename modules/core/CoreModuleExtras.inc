@@ -660,6 +660,7 @@ class CoreModuleExtras {
 	    /* Added SystemInfoTask */
 	case '0.9.14':
 	    /* Added SetOriginationTimestampTask */
+            
 	case '0.9.15':
 	    /* 
              * Changed 'All Users' to 'Registered Users'
@@ -682,8 +683,7 @@ class CoreModuleExtras {
             $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
                 $module->translate('All Users'));
             if (!strcmp($allUserGroupName, $originalGroupName)) {
-                $newGroupName = $module->translate('Registered Users');
-		$group->setGroupName($newGroupName);
+		$group->setGroupName($module->translate('Registered Users'));
 		$ret = $group->save();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
