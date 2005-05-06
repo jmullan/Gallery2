@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 6);
+	return array(5, 7);
     }
 
     /**
@@ -2344,10 +2344,26 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      */
     function removeMimeType($mimeType) {
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_simple.class');
-        return GalleryMimeTypeHelper_simple::removeMimeType($mimeType);
+        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+        return GalleryMimeTypeHelper_advanced::removeMimeType($mimeType);
     }
 
+
+    /**
+     * Add the given extension to the database and map it to the specified mime type and mark it
+     * viewable as requested.  Return ERROR_COLLISION if there's already a mapping for the given
+     * extension.
+     *
+     * @param string the extension
+     * @param string the mime type
+     * @param bool whether or not it's browser viewable
+     * @return object GalleryStatus a status code
+     */
+    function addMimeType($extension, $mimeType, $viewable) {
+        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+        return GalleryMimeTypeHelper_advanced::addMimeType($extension, $mimeType, $viewable);
+    }
+    
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
      * upon completion return the http response, headers and the actual URL that we used to

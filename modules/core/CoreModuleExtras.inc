@@ -176,8 +176,8 @@ class CoreModuleExtras {
 	    }
 
 	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
-	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	    $ret = GalleryMimeTypeHelper_advanced::initializeMimeTypes();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -342,8 +342,8 @@ class CoreModuleExtras {
 	case '0.9.4':
 	    $gallery->guaranteeTimeLimit(30);
 	    GalleryCoreApi::requireOnce(
-		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_simple.class');
-	    $ret = GalleryMimeTypeHelper_simple::initializeMimeTypes();
+		dirname(__FILE__) . '/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	    $ret = GalleryMimeTypeHelper_advanced::initializeMimeTypes();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
