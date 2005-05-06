@@ -41,7 +41,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
      * @return array GalleryStatus a status code
      *               string template file or null
      */
-    function loadImageBlocks(&$template, $params = array('heading' => 1, 'maxSize' => 120)) {
+    function loadImageBlocks(&$template, $params = array('heading' => 1)) {
 	global $gallery;
 	list ($ret, $moduleParams) =
 	    GalleryCoreApi::fetchAllPluginParameters('module', 'imageblock');
@@ -90,7 +90,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	$ImageBlockSystemContent['show'] = $show;
-	if (isset($params['maxSize'])) {
+	if (array_key_exists('maxSize', $params)) {
 	    $ImageBlockSystemContent['maxSize'] = $params['maxSize'];
 	}
 	if (isset($params['linkTarget'])) {
