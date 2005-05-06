@@ -72,20 +72,15 @@
 
   <!-- CHANGE -->
   <xsl:template match="change">
-    <xsl:if test="add or alter or remove/column or remove/key">
+    <xsl:if test="add or alter or remove">
       ALTER TABLE <xsl:value-of select="$tablePrefix"/><xsl:value-of select="table-name"/>
       <xsl:apply-templates select="remove"/>
-      <xsl:if test="(remove/column or remove/key) and (alter or add)">,</xsl:if>
+      <xsl:if test="remove and (alter or add)">,</xsl:if>
       <xsl:apply-templates select="alter"/>
       <xsl:if test="alter and add">,</xsl:if>
       <xsl:apply-templates select="add"/>
       ;
     </xsl:if>
-
-    <xsl:for-each select="remove/index">
-      DROP INDEX <xsl:call-template name="indexName"/>
-      ON <xsl:value-of select="$tablePrefix"/><xsl:value-of select="../../table-name"/>;
-    </xsl:for-each>
 
     UPDATE <xsl:value-of select="$tablePrefix"/>Schema
       SET <xsl:value-of select="$columnPrefix"/>major=<xsl:value-of
@@ -136,10 +131,19 @@
     </xsl:if>
     </xsl:for-each>
 
-    <xsl:if test="column and key">,</xsl:if>
+    <xsl:if test="column and (key or index)">,</xsl:if>
 
     <xsl:for-each select="key">
       DROP KEY <xsl:value-of select="$columnPrefix"/><xsl:value-of select="column-name"/>
+    <xsl:if test="position()!=last()">
+      ,
+    </xsl:if>
+    </xsl:for-each>
+
+    <xsl:if test="key and index">,</xsl:if>
+
+    <xsl:for-each select="index">
+      DROP INDEX <xsl:call-template name="indexName"/>
     <xsl:if test="position()!=last()">
       ,
     </xsl:if>
