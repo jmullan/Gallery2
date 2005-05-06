@@ -19,9 +19,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gallery 2\n"
+"Project-Id-Version: Gallery: Migrate G1 1.0\n"
 "POT-Creation-Date: 2004-11-25 00:04+0100\n"
-"PO-Revision-Date: 2004-12-03 00:04+0100\n"
+"PO-Revision-Date: 2005-02-20 00:00+0100\n"
 "Last-Translator: Arnaud MOURONVAL <ArnaudMouronval@yahoo.com>\n"
 "Language-Team: French <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -34,7 +34,7 @@ msgid "%s (%s)"
 msgstr "%s (%s)"
 
 msgid "(Default to summary value if not set)"
-msgstr ""
+msgstr "(Par défaut, la valeur résumé)"
 
 msgid ""
 "Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
@@ -61,7 +61,7 @@ msgid "An album already exists with this name.  This album will be renamed."
 msgstr "Un album portant ce nom existe déjà. Cet album va être renommé."
 
 msgid "Base filename"
-msgstr ""
+msgstr "Nom de fichier"
 
 msgid ""
 "Before you migrate any data you must try adding an album and image through "
@@ -70,13 +70,13 @@ msgid ""
 msgstr ""
 
 msgid "Blank"
-msgstr ""
+msgstr "Vide"
 
 msgid "Cancel"
 msgstr "Annuler"
 
 msgid "Caption"
-msgstr ""
+msgstr "Sous-titre"
 
 msgid "Character Encoding of Source Text:"
 msgstr "Méthode d'encodage des caractères du texte source&nbsp;:"
@@ -91,13 +91,13 @@ msgid "Confirm Migration"
 msgstr "Confirmer la migration"
 
 msgid "Creating thumbnails"
-msgstr ""
+msgstr "Génération des vignettes"
 
 msgid "Custom Field:"
-msgstr ""
+msgstr "Champ personnalisé&nbsp;:"
 
 msgid "Custom field:"
-msgstr ""
+msgstr "Champ personnalisé&nbsp;:"
 
 msgid "Default to same as summary if custom field not set"
 msgstr ""
@@ -113,9 +113,8 @@ msgstr ""
 "anciennes URL de Gallery 1.x au lieu de la redirection adéquate vers une "
 "page de Gallery 2.x. Supprimer toutes les entrées&nbsp;?"
 
-#, fuzzy
 msgid "Description"
-msgstr "Description&nbsp;: %s"
+msgstr "Description"
 
 #, c-format
 msgid "Description: %s"
@@ -142,7 +141,7 @@ msgid "Ensure the %s Apache module is enabled."
 msgstr "Assurez-vous que le module Apache %s est activé."
 
 msgid "Enter a custom field name"
-msgstr ""
+msgstr "Saisissez le nom d'un champ personnalisé"
 
 #, c-format
 msgid "Error importing %s"
@@ -173,27 +172,28 @@ msgid ""
 "If G2 is installed in the path where G1 used to exist, you will need to "
 "remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
 "Remote to upload images to G2."
-msgstr ""
+msgstr "Si G2 est installé là où G1 existait, vous devew supprimer le fichier "
+"\"gallery_remote2.php\" issu ude G1 avant de pouvoir utiliser Gallery Remote "
+" pour télécharger des photos dans G2."
 
 #, c-format
 msgid "Import %s now."
-msgstr "Importer %s maintenant"
+msgstr "Importer %s maintenant."
 
 msgid "Import Albums"
 msgstr "Importer les albums"
 
 msgid "Import Complete"
-msgstr "Import réalisé"
+msgstr "Import terminé"
 
 msgid "Import Users"
 msgstr "Importer les utilisateurs"
 
-#, fuzzy
 msgid "Import complete"
-msgstr "Import réalisé"
+msgstr "Import terminé"
 
 msgid "Import from Gallery 1"
-msgstr "Import depuis Gallery 1"
+msgstr "Import le données de Gallery version 1.x"
 
 msgid "Import more data"
 msgstr "Importer plus de données"
@@ -205,21 +205,20 @@ msgstr "Importer"
 msgid "Imported %s"
 msgstr "%s importé"
 
-#, fuzzy
 msgid "Importing Users"
-msgstr "Importer les utilisateurs"
+msgstr "Import des utilisateurs"
 
 msgid "Importing photos"
-msgstr ""
+msgstr "Import des photos"
 
 msgid "Invert Selection"
 msgstr "Inverser la sélection"
 
 msgid "Item captions"
-msgstr ""
+msgstr "Sous-titres des éléments"
 
 msgid "Item fields will be imported from:"
-msgstr ""
+msgstr "Les champs seront importés de&nbps;:"
 
 msgid "Map entries deleted successfully"
 msgstr "Entrées de la table de correspondance effacées avec succès"
@@ -228,7 +227,7 @@ msgid "Migrate your Gallery 1 albums to Gallery 2"
 msgstr "Migration des utilisateurs et albums de Gallery 1 vers Gallery 2"
 
 msgid "Migration Status"
-msgstr ""
+msgstr "Statut de la migration"
 
 msgid "No albums imported."
 msgstr "Aucun album n'a été importé."
@@ -245,13 +244,16 @@ msgid ""
 "the thumbnails at migration time.  Migration will take longer but the first "
 "time you view an album will go much faster."
 msgstr ""
+"Normalement, Gallery génère les vignettes lors de leur premier accès. Si "
+"vous cochez cette case, les vignettes seront crées lors de la migration. La "
+"migration sera plus longue mais le premier affichage des albums sera plus "
+"rapide."
 
 msgid "Path"
 msgstr "Chemin"
 
-#, fuzzy
 msgid "Prepare Import"
-msgstr "Importer"
+msgstr "Préparation de l'import"
 
 msgid "Recently Used Paths"
 msgstr "Chemins utilisés récemment"
@@ -271,29 +273,28 @@ msgstr "Sélectionner les utilisateurs à migrer"
 msgid "Select"
 msgstr "Sélectionner"
 
-#, fuzzy
 msgid "Set description from:"
-msgstr "Description&nbsp;: %s"
+msgstr "Prendre la description de&nbsp;:"
 
 msgid "Set summary from:"
-msgstr ""
+msgstr "Prendre le résumé de&nbsp;:"
 
 msgid "Set title from:"
-msgstr ""
+msgstr "Prendre le titre de&nbsp;:"
 
 msgid "Source:"
 msgstr "Source&nbsp;:"
 
 msgid "Summary"
-msgstr ""
+msgstr "Résumé"
 
 msgid "The path that you entered is invalid."
 msgstr "Le chemin saisi est invalide."
 
 msgid "These users are already in your gallery, and will not be imported:"
 msgstr ""
-"Ces utilisateurs sont déjà présents dans votre installation de Gallery et ne "
-"seront pas importés&nbsp;:"
+"Ces utilisateurs sont déjà présents dans votre installation et ne seront pas "
+"importés&nbsp;:"
 
 #, c-format
 msgid "This album has an illegal name and will be renamed to <i>%s</i>"
@@ -329,7 +330,7 @@ msgstr ""
 
 #, c-format
 msgid "Thumbnail %d of %d"
-msgstr ""
+msgstr "Vignette %d de %d"
 
 msgid "Thumbnail generation"
 msgstr "Génération des vignettes"
@@ -337,9 +338,8 @@ msgstr "Génération des vignettes"
 msgid "Thumbnails will be generated during migration"
 msgstr "Les vignettes seront générées durant la migration."
 
-#, fuzzy
 msgid "Title"
-msgstr "Titre&nbsp;: %s"
+msgstr "Titre"
 
 #, c-format
 msgid "Title: %s"
@@ -373,12 +373,16 @@ msgid ""
 "import now, you will not have any thumbnails.  Visit the <a href=\"%s"
 "\">Modules</a> page to activate a Graphics Toolkit."
 msgstr ""
+"Vous n'avez aucune boîte à outils graphique pour manipuler les images JPEG. "
+"Si vous importez les images maintenant, vous n'aurez aucune vignette. Rendez-"
+"vous à la page <a href=\"%s\">Modules</a> pour activer une boîte à outils "
+"graphique."
 
 msgid "You must choose something to import!"
 msgstr "Vous devez sélectionner quelque chose à importer&nbsp;!"
 
 msgid "You must specify a custom field name"
-msgstr ""
+msgstr "Vous devez spécifier un nom de champ personnalisé"
 
 msgid ""
 "Your Gallery 1 will be converted from this character encoding into UTF-8:"
