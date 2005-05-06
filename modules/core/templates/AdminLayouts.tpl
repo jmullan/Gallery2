@@ -92,7 +92,7 @@
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
 	{if $layout.state == 'install'}
-        <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
+	<img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
 	 alt="{g->text text="Status: Not Installed"}" />
 	{/if}
 	{if $layout.state == 'active'}
@@ -262,7 +262,7 @@
 	{assign var="settingKey" value=$setting.key}
 	<tr class="{cycle values="gbEven,gbOdd"}">
 	  <td>
-	    {g->text text=$setting.name l10Domain=$layout.l10Domain}
+	    {$setting.name}
 	  </td><td>
 	    {if ($setting.type == 'text-field')}
 	      <input type="text" size="{$setting.typeParams.size|default:6}"

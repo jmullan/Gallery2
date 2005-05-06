@@ -95,9 +95,12 @@ class GalleryLayout extends GalleryPlugin {
      *               settings array
      */
     function getSettings($itemId=null) {
-	global $gallery;
-
 	list ($ret, $params) = $this->fetchParameters($itemId);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -113,7 +116,7 @@ class GalleryLayout extends GalleryPlugin {
 	$settings = array();
 	if (isset($params['rows']) && isset($standard['rows'])) {
 	    $settings[] = array('key' => 'rows',
-				'name' => $gallery->i18n('Rows per album page'),
+				'name' => $core->translate('Rows per album page'),
 				'type' => 'text-field',
 				'typeParams' => array('size' => 2),
 				'value' => $params['rows']);
@@ -121,7 +124,7 @@ class GalleryLayout extends GalleryPlugin {
 
 	if (isset($params['columns']) && isset($standard['columns'])) {
 	    $settings[] = array('key' => 'columns',
-				'name' => $gallery->i18n('Columns per album page'),
+				'name' => $core->translate('Columns per album page'),
 				'type' => 'text-field',
 				'typeParams' => array('size' => 2),
 				'value' => $params['columns']);
@@ -129,28 +132,28 @@ class GalleryLayout extends GalleryPlugin {
 
 	if (isset($params['showImageOwner']) && isset($standard['showImageOwner'])) {
 	    $settings[] = array('key' => 'showImageOwner',
-				'name' => $gallery->i18n('Show image owners'),
+				'name' => $core->translate('Show image owners'),
 				'type' => 'checkbox',
 				'value' => $params['showImageOwner']);
 	}
 
 	if (isset($params['showAlbumOwner']) && isset($standard['showAlbumOwner'])) {
 	    $settings[] = array('key' => 'showAlbumOwner',
-				'name' => $gallery->i18n('Show album owners'),
+				'name' => $core->translate('Show album owners'),
 				'type' => 'checkbox',
 				'value' => $params['showAlbumOwner']);
 	}
 
 	if (isset($params['showMicroThumbs']) && isset($standard['showMicroThumbs'])) {
 	    $settings[] = array('key' => 'showMicroThumbs',
-				'name' => $gallery->i18n('Show micro navigation thumbnails'),
+				'name' => $core->translate('Show micro navigation thumbnails'),
 				'type' => 'checkbox',
 				'value' => $params['showMicroThumbs']);
 	}
 
 	if (isset($params['perPage']) && isset($standard['perPage'])) {
 	    $settings[] = array('key' => 'perPage',
-				'name' => $gallery->i18n('Number of items to show per page'),
+				'name' => $core->translate('Number of items to show per page'),
 				'type' => 'text-field',
 				'typeParams' => array('size' => 2),
 				'value' => $params['perPage']);
@@ -175,11 +178,11 @@ class GalleryLayout extends GalleryPlugin {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    $sample = ' (<a href="' . $sampleUrl . '">'
-		    . $this->translate('View Samples') . '</a>)';
+		    . $core->translate('View Samples') . '</a>)';
 
 	    if (isset($params['albumFrame']) && isset($standard['albumFrame'])) {
 		$settings[] = array('key' => 'albumFrame',
-				    'name' => $this->translate('Album Frame') . $sample,
+				    'name' => $core->translate('Album Frame') . $sample,
 				    'type' => 'single-select',
 				    'choices' => $list,
 				    'value' => $params['albumFrame']);
@@ -187,7 +190,7 @@ class GalleryLayout extends GalleryPlugin {
 
 	    if (isset($params['itemFrame']) && isset($standard['itemFrame'])) {
 		$settings[] = array('key' => 'itemFrame',
-				    'name' => $this->translate('Item Frame') . $sample,
+				    'name' => $core->translate('Item Frame') . $sample,
 				    'type' => 'single-select',
 				    'choices' => $list,
 				    'value' => $params['itemFrame']);
@@ -195,7 +198,7 @@ class GalleryLayout extends GalleryPlugin {
 
 	    if (isset($params['photoFrame']) && isset($standard['photoFrame'])) {
 		$settings[] = array('key' => 'photoFrame',
-				    'name' => $this->translate('Photo Frame') . $sample,
+				    'name' => $core->translate('Photo Frame') . $sample,
 				    'type' => 'single-select',
 				    'choices' => $list,
 				    'value' => $params['photoFrame']);

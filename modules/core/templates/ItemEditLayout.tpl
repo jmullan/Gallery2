@@ -27,7 +27,7 @@
     {assign var="settingKey" value=$setting.key}
     <tr class="{cycle values="gbEven,gbOdd"}">
       <td>
-	{g->text text=$setting.name l10Domain=$ItemEditLayout.layout.l10Domain}
+	{$setting.name}
       </td><td>
 	{if ($setting.type == 'text-field')}
 	  <input type="text" size="{$setting.typeParams.size|default:6}"
@@ -87,23 +87,23 @@
       savedValues[key] = document.forms[0].elements[inputWidget].value;
       isSaved[key] = true;
       if (document.forms[0].elements[inputWidget].type == 'checkbox') {
-        if (globalValues[key] != 0) {
-          document.forms[0].elements[inputWidget].checked = 'checked';
-        } else {
+	if (globalValues[key] != 0) {
+	  document.forms[0].elements[inputWidget].checked = 'checked';
+	} else {
 	  document.forms[0].elements[inputWidget].checked = null;
-        }
+	}
       } else {
-        document.forms[0].elements[inputWidget].value = globalValues[key];
+	document.forms[0].elements[inputWidget].value = globalValues[key];
       }
     } else {
       if (document.forms[0].elements[inputWidget].type == 'checkbox') {
-        if (globalValues[key] == 0) {
-          document.forms[0].elements[inputWidget].checked = 'checked';
-        } else {
+	if (globalValues[key] == 0) {
+	  document.forms[0].elements[inputWidget].checked = 'checked';
+	} else {
 	  document.forms[0].elements[inputWidget].checked = null;
-        }
+	}
       } else if (isSaved[key]) {
-        document.forms[0].elements[inputWidget].value = savedValues[key];
+	document.forms[0].elements[inputWidget].value = savedValues[key];
       }
     }
   }

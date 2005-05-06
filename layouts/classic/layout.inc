@@ -58,8 +58,6 @@ class ClassicLayout extends GalleryLayout {
      * @see GalleryLayout::getSettings()
      */
     function getSettings($itemId=null) {
-	global $gallery;
-	
 	list ($ret, $settings) = parent::getSettings($itemId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -73,11 +71,11 @@ class ClassicLayout extends GalleryLayout {
 	/* Add in our custom settings */
 	$params = array_merge(array('showSubalbums' => 1, 'subalbumDepth' => 0), $params);
 	$settings[] = array('key' => 'showSubalbums',
-			    'name' => $gallery->i18n('Show subalbum links'),
+			    'name' => $this->translate('Show subalbum links'),
 			    'type' => 'checkbox',
 			    'value' => $params['showSubalbums']);
 	$settings[] = array('key' => 'subalbumDepth',
-			    'name' => $gallery->i18n('Depth of subalbums links (0=no limit)'),
+			    'name' => $this->translate('Depth of subalbums links (0=no limit)'),
 			    'type' => 'text-field',
 			    'typeParams' => array('size' => 2),
 			    'value' => $params['subalbumDepth']);
