@@ -173,16 +173,16 @@ class RewriteHelperTest extends GalleryTestCase {
 	$expected = array(
 		array('urlPattern' => '^v/$',
 		      'queryString' => 'g2_view=core:ShowItem',
-		      'settings' => array()),
+		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^d/([0-9]+)-([0-9]+)/([^\/]+)$',
 		      'queryString' => 'g2_view=core:DownloadItem&g2_itemId=$1&g2_serialNumber=$2',
-		      'settings' => array()),
+		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^v/(.+)$',
 		      'queryString' => 'g2_view=core:ShowItem&g2_path=$1',
-		      'settings' => array()),
+		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^(.+)$',
 		      'queryString' => 'g2_view=rewrite:FileNotFound&g2_path=$1',
-		      'settings' => array()));
+		      'settings' => array('flags' => 'QSA,L')));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
 	if ($ret->isError()) {
@@ -214,7 +214,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	$expected = array(
 		array('urlPattern' => '^v/$',
 		      'queryString' => 'g2_view=core:ShowItem',
-		      'settings' => array()));
+		      'settings' => array('flags' => 'QSA,L')));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
 	if ($ret->isError()) {
