@@ -61,19 +61,15 @@ class ItemTest extends GalleryTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemTestToolkit',
-							     'ItemTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemTestToolkit', 'ItemTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('coreTest');
 
-	/* Register an operation that we can perform on our mock data items */
 	/* Register a jpeg thumbnail in case there are no other toolkits active */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
 		array('test/image', 'image/jpeg'), 'thumbnail',
@@ -857,13 +853,9 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
-							       'itemName',
-							       'title',
-							       'caption',
-							       'description',
-							       'application/unknown',
-							       $this->_album->getId());
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    __FILE__, 'itemName', 'title', 'caption', 'description',
+	    'application/unknown', $this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -954,21 +946,16 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/* Add a thumbnail preference */
-	$ret = GalleryCoreApi::addDerivativePreference(0, $this->_album->getId(),
-						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-						       'thumbnail|101');
+	$ret = GalleryCoreApi::addDerivativePreference(
+	    0, $this->_album->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|101');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Add our item to the album */
-	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(__FILE__,
-							       'itemName',
-							       'title',
-							       'caption',
-							       'description',
-							       'test/movie',
-							       $this->_album->getId());
+	list ($ret, $newItem) = GalleryCoreApi::addItemToAlbum(
+	    __FILE__, 'itemName', 'title', 'caption', 'description',
+	    'test/movie', $this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -980,12 +967,12 @@ class ItemTest extends GalleryTestCase {
 
 	/*
 	 * Verify that the new item:
-	 *  - has one derivative
-	 *  - its a thumbnail derivative
-	 *  - it has operations of convert-to-image/jpeg;thumbnail|100
+	 *  - has two derivatives
+	 *    1.  preferred with convert-to-image/jpeg
+	 *    2.  thumbnail with thumbnail|100
 	 */
 	list ($ret, $derivativeTable) =
-	    GalleryCoreApi::fetchDerivativesBySourceIds(array($newItem->getId()));
+	    GalleryCoreApi::fetchDerivativesByItemIds(array($newItem->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -994,12 +981,22 @@ class ItemTest extends GalleryTestCase {
 	    return $this->assert(false, 'Missing item derivative');
 	}
 
-	$this->assert(1, sizeof($derivativeTable[$newItem->getId()]));
+	$derivs = $derivativeTable[$newItem->getId()];
+	if (sizeof($derivs) != 2) {
+	    return $this->assert(false, 'Wrong number of derivatives');
+	}
 
-	$derivative = $derivativeTable[$newItem->getId()][0];
-	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivative->getDerivativeType());
-	$this->assertEquals('convert-to-image/jpeg;thumbnail|101',
-			    $derivative->getDerivativeOperations());
+	for ($i = 0; $i < 2; $i++) {
+	    switch($derivs[$i]->getDerivativeType()) {
+	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+		$this->assertEquals('thumbnail|101', $derivs[$i]->getDerivativeOperations());
+		break;
+		
+	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
+		$this->assertEquals('convert-to-image/jpeg', $derivs[$i]->getDerivativeOperations());
+		break;
+	    }
+	}
     }
 
     function testFetchItemIdCount() {
@@ -1352,6 +1349,141 @@ class ItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assert($success, 'should be able to set highlight');
+    }
+
+    function testAddNonViewableImage() {
+	list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get rid of all album preferences */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register an operation to convert from our test type */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('image/nonviewable'), 'convert-to-image/x-portable-pixmap',
+	    array(), 'itemtest-description', 'image/x-portable-pixmap');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/nonviewable');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->create($this->_album->getId(), __FILE__, 'image/nonviewable', 'test image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure that we have a preferred that contains the proper convert operations */
+	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array($photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if (isset($preferreds[$photo->getId()])) {
+	    $this->assertEquals('convert-to-image/x-portable-pixmap;convert-to-image/jpeg',
+				$preferreds[$photo->getId()]->getDerivativeOperations());
+	} else {
+	    $this->assert(false, 'missing preferred');
+	}
+    }
+
+    function testAddNonViewableImageWithPreExistingPreferred() {
+	list ($ret, $lockId[]) = GalleryCoreApi::acquireReadLock($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Get rid of all album preferences */
+	$ret = GalleryCoreApi::removeDerivativePreferencesForItem($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register an operation for our preferred to perform */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('image/nonviewable'), 'test-operation',
+	    array(), 'itemtest-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Register an operation to convert from our test type */
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('image/nonviewable'), 'convert-to-image/x-portable-pixmap',
+	    array(), 'itemtest-description', 'image/x-portable-pixmap');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $photo) = GalleryCoreApi::newItemByMimeType('image/nonviewable');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->create($this->_album->getId(), __FILE__, 'image/nonviewable', 'test image');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $photo->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add a preferred */
+	list ($ret, $preferred) = $this->_createDerivative(
+	    $photo, $photo->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED,
+	    'test-operation', 'image/nonviewable');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $lockId[]) = GalleryCoreApi::acquireWriteLock($photo->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::addExistingItemToAlbum($photo, $this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure that we have a preferred that contains the proper convert operations */
+	list ($ret, $preferreds) = GalleryCoreApi::fetchPreferredsByItemIds(array($photo->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$preferred = $preferreds[$photo->getId()];
+	$this->assertEquals(
+	    'test-operation;convert-to-image/x-portable-pixmap;convert-to-image/jpeg',
+	    $preferred->getDerivativeOperations());
     }
 }
 

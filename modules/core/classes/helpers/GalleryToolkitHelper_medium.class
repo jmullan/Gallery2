@@ -624,34 +624,47 @@ class GalleryToolkitHelper_medium {
      *
      * @param string the original mime type
      * @param string a sequence of operations
-     * @param boolean (optional) true to try prepending convert-to-image/jpeg if needed
+     * @param boolean (optional) true to try prepending convert-to-image/xxx if needed
      * @return array object GalleryStatus a status code
      *               string a sequence of operations, null if not supported
      *               string the output mime type, null if not supported
      * @static
      */
-    function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
-	list ($ret, $isSupported, $outputMimeType) =
-	    GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
-	if (!$isSupported && $forThumbnail) {
-	    /*
-	     * Try harder to make thumbnails.  See if we can convert the input type into
-	     * a jpeg first.
-	     */
-	    $operations = 'convert-to-image/jpeg;' . $operations;
+    function makeSupportedViewableOperationSequence($mimeType, $operations,
+						    $prependConversion=true) {
+	if (empty($operations)) {
+	    $isSupported = true;
+	    $outputMimeType = $mimeType;
+	} else {
 	    list ($ret, $isSupported, $outputMimeType) =
 		GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $operations);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
-	if (!$isSupported) {
-	    return array(GalleryStatus::success(), null, null);
+
+	if (!$isSupported && $prependConversion) {
+	    /* See if we can convert the input type into a format we can deal with first. */
+	    foreach (array('convert-to-image/jpeg;' . $operations,
+			   'convert-to-image/x-portable-pixmap;convert-to-image/jpeg;' . $operations)
+		     as $tmpOperations) {
+		/* Remove trailing ';' on empty $operations */
+		$tmpOperations = preg_replace('/;$/', '', $tmpOperations);
+		list ($ret, $isSupported, $outputMimeType) =
+		    GalleryToolkitHelper_medium::isSupportedOperationSequence(
+			$mimeType, $tmpOperations);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		if ($isSupported) {
+		    $operations = $tmpOperations;
+		    break;
+		}
+	    }
 	}
+ 	if (!$isSupported) {
+ 	    return array(GalleryStatus::success(), null, null);
+  	}
 
 	/* If the output type isn't viewable, then try to turn it into a form that *is* viewable. */
 	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($outputMimeType);
@@ -659,17 +672,24 @@ class GalleryToolkitHelper_medium {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	if (!$isViewable) {
-	    $tmpOperations = $operations . ';convert-to-image/jpeg';
-	    list ($ret, $isSupported, $tmpOutputMimeType) =
-		GalleryToolkitHelper_medium::isSupportedOperationSequence($mimeType, $tmpOperations);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
-	    if ($isSupported) {
-		$operations = $tmpOperations;
-		$outputMimeType = $tmpOutputMimeType;
-	    } else {
-		/* Oh well */
+	    foreach (array($operations . ';convert-to-image/jpeg',
+			   $operations . ';convert-to-image/x-portable-pixmap;convert-to-image/jpeg')
+		     as $tmpOperations) {
+		/* Remove leading ';' on empty $operations */
+		$tmpOperations = preg_replace('/^;/', '', $tmpOperations);
+		list ($ret, $isSupported, $tmpOutputMimeType) =
+		    GalleryToolkitHelper_medium::isSupportedOperationSequence(
+			$mimeType, $tmpOperations);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		if ($isSupported) {
+		    $operations = $tmpOperations;
+		    $outputMimeType = $tmpOutputMimeType;
+		    break;
+		} else {
+		    /* Try the next, or give up if we run out of options. */
+		}
 	    }
 	}
 

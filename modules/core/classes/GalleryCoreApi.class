@@ -1892,16 +1892,16 @@ class GalleryCoreApi {
      *
      * @param string the original mime type
      * @param string a sequence of operations
-     * @param boolean (optional) true to try prepending convert-to-image/jpeg if needed
+     * @param boolean (optional) true to try prepending convert-to-image/xxx if needed
      * @return array object GalleryStatus a status code
      *               string a sequence of operations, null if not supported
      *               string the output mime type, null if not supported
      * @static
      */
-    function makeSupportedViewableOperationSequence($mimeType, $operations, $forThumbnail=true) {
+    function makeSupportedViewableOperationSequence($mimeType, $operations, $prependConversion=true) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_medium.class');
 	return GalleryToolkitHelper_medium::makeSupportedViewableOperationSequence(
-	    $mimeType, $operations, $forThumbnail);
+	    $mimeType, $operations, $prependConversion);
     }
 
     /**

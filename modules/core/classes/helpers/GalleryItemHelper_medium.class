@@ -311,6 +311,94 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 	$mimeType = $source->getMimeType();
 
+	/* Make the file type viewable, if we need to. */
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($source->getMimeType());
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!$isViewable) {
+	    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+		$operations = $source->getDerivativeOperations();
+	    } else {
+		$operations = '';
+	    }
+	    list ($ret, $newOperations, $outputMimeType) =
+		GalleryCoreApi::makeSupportedViewableOperationSequence(
+		    $source->getMimeType(), $operations, false);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($newOperations != $operations) {
+		/*
+		 * We now have operations to make it viewable.  If we don't have a preferred, then
+		 * create one with those operations.  If we already have a preferred then just
+		 * update it to use these operations.
+		 */
+		if (GalleryUtilities::isA($source, 'GalleryItem')) {
+		    /* No preferred.  Create one */ 
+		    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
+			'GalleryDerivative', $item->getEntityType());
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+
+		    if (!isset($preferred)) {
+			return GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__);
+		    }
+
+		    $ret = $preferred->create($source->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+
+		    $preferred->setDerivativeSourceId($source->getId());
+		    $preferred->setMimeType($outputMimeType);
+
+		    $ret = GalleryCoreApi::remapSourceIds($source->getId(), $preferred->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		    $source = $preferred;
+		} else {
+		    /* Lock the preferred so that we can modify it */
+		    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($source->getId());
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+
+		    $ret = $source->expireCache();
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+
+		/* Either way, now $source is a preferred */
+		$source->setDerivativeOperations($newOperations);
+
+		/* Let our change ripple down the derivative tree, if necessary */
+		$ret = GalleryCoreApi::adjustDependentDerivatives($source->getId(), $newOperations);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+
+		$ret = $source->save();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+
+		if (!empty($lockIds)) {
+		    $ret = GalleryCoreApi::releaseLocks($lockIds);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    }
+		}
+
+		/* Mime type must have changed so that it can be viewable. */
+		$mimeType = $outputMimeType;
+	    }
+	}
+
 	/* Get existing derivatives */
 	$derivs = array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL => array(),
 			DERIVATIVE_TYPE_IMAGE_RESIZE => array());
@@ -386,7 +474,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    } else {
 		/* Create a new derivative */
 		list ($ret, $derivative) = GalleryCoreApi::newFactoryInstanceByHint(
-					   'GalleryDerivative', $source->getEntityType());
+		    'GalleryDerivative', $source->getEntityType());
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -406,8 +494,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	     * by an active toolkit and produce a viewable mime type.
 	     */
 	    list ($ret, $operations, $outputMimeType) =
-		GalleryCoreApi::makeSupportedViewableOperationSequence($mimeType, $operations,
-						     $type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+		GalleryCoreApi::makeSupportedViewableOperationSequence(
+		    $mimeType, $operations, $type == DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
