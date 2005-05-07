@@ -118,7 +118,8 @@ class NetPbmToolkit extends GalleryToolkit {
 	case 'scale':
 	    $ysize = empty($parameters[1]) ? $parameters[0] : $parameters[1];
 	    $transform[] = array($this->_pnmCmd('pnmscale'),
-				 '--quiet', '-xysize', $parameters[0], $ysize);
+				 '--quiet', '-xysize', $parameters[0],
+				 $ysize);
 	    if (isset($width)) {
 		list ($width, $height) = GalleryUtilities::scaleDimensionsToFit(
 		    $width, $height, $parameters[0], $ysize);
@@ -258,7 +259,7 @@ class NetPbmToolkit extends GalleryToolkit {
                     "mimeType not handled: $compositeOverlayMimeType"), null, null);
 	    }
 
-	    // Execute commands
+	    /* Execute commands */
 	    list($ret, $output) = $platform->exec(array($getOverlayCmd));
 	    if (!$ret) {
 		$this->_deleteTempFiles($context);
@@ -474,16 +475,22 @@ class NetPbmToolkit extends GalleryToolkit {
 	    return array(GalleryStatus::success(), $results[0], $results[1]);
 	}
 
-	list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	if ($mimeType == 'image/x-portable-pixmap') {
+	    $cmd[] = array($this->_pnmCmd('pnmfile'), '--allimages', $filename);
+	} else {
+	    list($ret, $convertToPnmCmd) = $this->_convertToPnmCmd($mimeType, $filename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    
+	    $cmd = array();
+	    if (!empty($convertToPnmCmd)) {
+		$cmd[] = $convertToPnmCmd;
+	    }
+	    $cmd[] = array($this->_pnmCmd('pnmfile'), '--allimages');
 	}
 
-	list($ret, $output) =
-		$this->_exec(array($convertToPnmCmd,
-				   array($this->_pnmCmd('pnmfile'),
-					 '--allimages')));
-
+	list($ret, $output) = $this->_exec($cmd);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -536,8 +543,29 @@ class NetPbmToolkit extends GalleryToolkit {
 	}
 
 	/* Do the conversion */
-	array_unshift($command, $convertToPnmCmd);
 	$command[] = $convertFromPnmCmd;
+
+	if (!empty($convertToPnmCmd)) {
+	    array_unshift($command, $convertToPnmCmd);
+	} else {
+	    /*
+	     * The source file was PPM already so we have no conversion command.  Attach the file as
+	     * input to the first command in the chain.  If the first command is in the middle of
+	     * a sequence, we can just add the filename to the end of the command.  If it's at
+	     * the end of the sequence, then we're redirecting output to a file so we have to add
+	     * the input file before the '>' redirect.
+	     */
+	    for ($i = 0; $i < sizeof($command[0]); $i++) {
+		if ($command[0][$i] == '>') {
+		    array_splice($command[0], $i, 0, $sourceFilename);
+		    $spliced = true;
+		    break;
+		}
+	    }
+	    if (!$spliced) {
+		$comand[0][] = $sourceFilename;
+	    }
+	}	
 	list($ret, $output) = $this->_exec($command);
 
 	if ($ret->isError()) {
@@ -606,13 +634,20 @@ class NetPbmToolkit extends GalleryToolkit {
 	    $cmd = $this->_pnmCmd('bmptopnm');
 	    break;
 
+	case 'image/x-portable-pixmap':
+	    $cmd = '';
+	    break;
+
 	default:
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE,
                 __FILE__, __LINE__, 'Unsupported file type: ' . $mimeType), null);
 	}
 
-	return array(GalleryStatus::success(),
-		     array($cmd, '--quiet', $filename));
+	if (!empty($cmd)) {
+	    return array(GalleryStatus::success(), array($cmd, '--quiet', $filename));
+	} else {
+	    return array(GalleryStatus::success(), array());
+	}
     }
 
     /**
@@ -675,6 +710,10 @@ class NetPbmToolkit extends GalleryToolkit {
 			 array($this->_pnmCmd('ppmtobmp'),
 			       '>',
 			       $filename));
+	    break;
+
+	case 'image/x-portable-pixmap':
+	    $cmd = null;
 	    break;
 
 	default:

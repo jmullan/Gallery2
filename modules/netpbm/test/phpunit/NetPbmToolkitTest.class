@@ -195,8 +195,19 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	/* Make sure that we actually convert the file, and don't just copy it over */
 	GalleryUtilities::putRequestVariable('toolkitCallCount', 0);
 	list ($ret, $mimeType) = $this->_toolkit->performOperation(
-	    'image/tiff', 'convert-to-image/jpeg', 'testPerformOperations14.tif',
-	    'testPerformOperations14.jpg', array());
+	    'image/tiff', 'convert-to-image/jpeg', 'testPerformOperations15.tif',
+	    'testPerformOperations15.jpg', array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(1, (int)GalleryUtilities::getRequestVariables('toolkitCallCount'));
+	$this->assertEquals('image/jpeg', $mimeType);
+
+	/* Test converting PPM to JPEG */
+	GalleryUtilities::putRequestVariable('toolkitCallCount', 0);
+	list ($ret, $mimeType) = $this->_toolkit->performOperation(
+	    'image/x-portable-pixmap', 'convert-to-image/jpeg', 'testPerformOperations16.ppm',
+	    'testPerformOperations16.jpg', array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -328,6 +339,13 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals(array(30, 40), $results);
 
+	list ($ret, $results) = $this->_toolkit->getProperty(
+	    'image/x-portable-pixmap', 'dimensions', 'testGetProperties3.ppm');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array(50, 60), $results);
+
 	list ($ret, $results) =
 	    $this->_toolkit->getProperty('image/gif', 'BOGUS', 'BOGUS');
 	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
@@ -411,10 +429,11 @@ class NetPbmToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(
-	    array('convert-to-image/jpeg' => array('params' => array(),
-						   'description' => 'Convert to a JPEG',
-						   'mimeTypes' => array('image/tiff'),
-						   'outputMimeType' => 'image/jpeg'),
+	    array('convert-to-image/jpeg' => array(
+		      'params' => array(),
+		      'description' => 'Convert to a JPEG',
+		      'mimeTypes' => array('image/x-portable-pixmap', 'image/tiff'),
+		      'outputMimeType' => 'image/jpeg'),
 		  'scale' => array('params' =>
 				   array(array('type' => 'int',
 					       'description' => 'target width'),
@@ -520,7 +539,8 @@ class NetPbmToolkitTest extends GalleryTestCase {
 							     'image/pjpeg',
 							     'image/png',
 							     'image/tiff',
-							     'image/bmp'))),
+							     'image/bmp',
+							     'image/x-portable-pixmap'))),
 	    $results['properties']);
     }
 
@@ -591,6 +611,11 @@ class NetPbmToolkitTestPlatform {
                 array($this->_netPbmPath . 'giftopnm', '--quiet', 'testGetProperties2.gif'),
 		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'), array());
+	}
+
+	if (serialize($cmd) == serialize(array(
+                array($this->_netPbmPath . 'pnmfile', '--allimages', 'testGetProperties3.ppm')))) {
+	    return array(1, array('stdin:  Image 0:        PGM raw, 50 by 60  maxval 255'), array());
 	}
 
 	/** Operation 1: Resize a GIF */
@@ -748,10 +773,24 @@ class NetPbmToolkitTestPlatform {
 	    return array(1, array(), array());
 	}
 
-	/* Convert to jpeg */
+	/* Convert TIFF to JPEG */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations14.tif'),
+                array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations15.tif'),
 	        array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
+	    return array(1, array(), array());
+	}
+
+	/* Convert PPM to JPEG */
+	if (serialize($cmd) == serialize(array(
+	        array($this->_netPbmPath . 'ppmtojpeg', '--quality=75',
+		      'testPerformOperations16.ppm', '>', 'TEMPFILE')))) {
+	    return array(1, array(), array());
+	}
+
+	/* Rotate a PPM */
+	if (serialize($cmd) == serialize(array(
+		array($this->_netPbmPath . 'pnmflip', '-cw',
+		      'testPerformOperations17.ppm', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 

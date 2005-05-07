@@ -71,14 +71,16 @@ class NetPbmToolkitHelper {
 
 	/* -------------------- Operations -------------------- */
 
-	/* Convert TIFF to JPEG */
+	/* Convert TIFF and PPM to JPEG */
+	$convertFrom[] = 'image/x-portable-pixmap';
 	if (in_array('image/tiff', $mimeTypes)) {
-	    $operations['convert-to-image/jpeg']['params'] = array();
-	    $operations['convert-to-image/jpeg']['description'] =
-		$gallery->i18n('Convert to a JPEG');
-	    $operations['convert-to-image/jpeg']['mimeTypes'] = array('image/tiff');
-	    $operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
+	    $convertFrom[] = 'image/tiff';
 	}
+
+	$operations['convert-to-image/jpeg']['params'] = array();
+	$operations['convert-to-image/jpeg']['description'] = $gallery->i18n('Convert to a JPEG');
+	$operations['convert-to-image/jpeg']['mimeTypes'] = $convertFrom;
+	$operations['convert-to-image/jpeg']['outputMimeType'] = 'image/jpeg';
 
 	/* Scale */
 	$operations['scale']['params'][] = array('type' => 'int',
@@ -156,7 +158,8 @@ class NetPbmToolkitHelper {
 	$properties['dimensions']['type'] = 'int,int';
 	$properties['dimensions']['description'] =
 	    $gallery->i18n('Get the width and height of the image');
-	$properties['dimensions']['mimeTypes'] = $mimeTypes;
+	$properties['dimensions']['mimeTypes'] =
+	    array_merge($mimeTypes, array('image/x-portable-pixmap'));
 
 	return array(GalleryStatus::success(),
 		     array('operations' => $operations, 'properties' => $properties));
