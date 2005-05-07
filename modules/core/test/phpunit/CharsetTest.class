@@ -171,6 +171,7 @@ class CharsetTestPhpVm {
 	if ($this->_returns['iconv'][0] == array($arg1, $arg2, $arg3)) {
 	    return $this->_returns['iconv'][1];
 	}
+	return false;
     }
 
     function mb_convert_encoding($arg1, $arg2, $arg3) {
