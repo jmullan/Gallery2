@@ -61,7 +61,7 @@ class ImageMagickToolkitHelper {
 	foreach (array('image/jpeg', 'image/png', 'image/gif',
 		       'image/tiff', 'image/jp2') as $convertToMimeType) {
 	    if (is_int($i = array_search($convertToMimeType, $mimeTypes))) {
-		$convertFromMimeTypes = $mimeTypes;
+		$convertFromMimeTypes = array_merge($mimeTypes, array('image/x-portable-pixmap'));
 		array_splice($convertFromMimeTypes, $i, 1);
 		$operations['convert-to-' . $convertToMimeType] = array(
 		    'params' => array(),
@@ -164,7 +164,7 @@ class ImageMagickToolkitHelper {
 	$properties['dimensions'] = array(
 	    'type' => 'int,int',
 	    'description' => $gallery->i18n('Get the width and height of the image'),
-	    'mimeTypes' => $mimeTypes);
+	    'mimeTypes' => array_merge($mimeTypes, array('image/x-portable-pixmap')));
 
 	if (!empty($multiPageMimeTypes)) {
 	    $properties['page-count'] = array(

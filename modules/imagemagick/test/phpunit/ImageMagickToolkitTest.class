@@ -699,7 +699,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    foreach (array('image/jpeg', 'image/png', 'image/gif', 'image/tiff', 'image/jp2')
 		     as $mimeType) {
 		if (is_int($i = array_search($mimeType, $environment['mimeTypes']))) {
-		    $convertTo = $environment['mimeTypes'];
+		    $convertTo = array_merge($environment['mimeTypes'], 'image/x-portable-pixmap');
 		    array_splice($convertTo, $i, 1);
 		    $canConvert['convert-to-' . $mimeType] = array(
 			'params' => array(),
@@ -829,7 +829,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		'dimensions' => array(
 		    'type' => 'int,int',
 		    'description' => 'Get the width and height of the image',
-		    'mimeTypes' => $environment['mimeTypes']
+		    'mimeTypes' => array_merge($environment['mimeTypes'], 'image/x-portable-pixmap')
 		),
 		'page-count' => array(
 		    'type' => 'int',

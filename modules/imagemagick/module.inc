@@ -41,7 +41,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName('ImageMagick');
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -55,8 +55,7 @@ class ImageMagickModule extends GalleryModule {
 
 	if (!isset($currentVersion)) {
 	    /* Initial install */
-	    foreach (array('path' => '',
-			   'jpegQuality' => '75')
+	    foreach (array('path' => '', 'jpegQuality' => '75')
 		     as $key => $value) {
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
