@@ -166,10 +166,13 @@ class GalleryPlugin {
     /**
      * Deactivate this plugin
      *
+     * @param bool should we post a deactivation event?  Normally true, but the
+     *             upgrader may choose to suppress this event so that it can
+     *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
-    function deactivate() {
+    function deactivate($postDeactivationEvent=true) {
 	$pluginType = $this->getPluginType();
 	$pluginId = $this->getId();
 
@@ -188,14 +191,73 @@ class GalleryPlugin {
 					       'id' => '_all'));
 	GalleryDataCache::remove("GalleryPluginHelper::fetchPluginList($pluginType)");
 
-	$event = GalleryCoreApi::newEvent('Gallery::DeactivatePlugin');
-	$event->setData(array('pluginType' => $pluginType, 'pluginId' => $pluginId));
-	list ($ret) = GalleryCoreApi::postEvent($event);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	if ($postDeactivationEvent) {
+	    $ret = $this->_postDeactivationEvent();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Reactivate this plugin.  The plugin is already active, so call deactivate() and then
+     * activate().  Perform the deactivation without sending an event because the activation will
+     * immediately follow and we don't want other plugins to sense this deactivation and
+     * deactivate themselves.  If the plugin isn't currently active, don't do anything.
+     *
+     * @return array object GalleryStatus a status code
+     *               array redirect info for error page (empty for success)
+     */
+    function reactivate() {
+	list ($ret, $isActive) = $this->isActive();
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!$isActive) {
+	    return array(GalleryStatus::success(), null);
+	}
+	
+	list ($ret, $redirect) = $this->deactivate(false);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (!empty($redirect)) {
+	    return array(GalleryStatus::success(), $redirect);
+	}
+
+	list ($ret, $redirect) = $this->activate();
+	if ($ret->isError()) {
+	    /* Try to send the deactivation event before failing completely. */
+	    $this->_postDeactivationEvent();
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	
+	if (!empty($redirect)) {
+	    /* Try to send the deactivation event before returning the redirect. */
+	    $this->_postDeactivationEvent();
+	    return array(GalleryStatus::success(), $redirect);
+	}
+
+	return array(GalleryStatus::success(), array());
+    }
+
+    /**
+     * Post a deactivation event for this plugin.  Used by deactivate and reactivate.
+     *
+     * @return object GalleryStatus a status code
+     * @private
+     */
+    function _postDeactivationEvent() {
+	$event = GalleryCoreApi::newEvent('Gallery::DeactivatePlugin');
+	$event->setData(array('pluginType' => $this->getPluginType(), 'pluginId' => $this->getId()));
+	list ($ret) = GalleryCoreApi::postEvent($event);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
+	return GalleryStatus::success();
     }
 
 

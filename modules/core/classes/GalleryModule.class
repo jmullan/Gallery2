@@ -82,7 +82,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 10);
+	return array(0, 11);
     }
 
     /**
@@ -145,32 +145,14 @@ class GalleryModule extends GalleryPlugin {
 	    }
 
 	    /*
-	     * If the module is active, then give it the chance to re-register
-	     * its factory registrations, since they may have been updated with
-	     * the new module's code.  If the module isn't active, this will be
-	     * handled properly next time the module is activated.
-	     *
-	     * TODO: This is a hack.  We really should have a "reactivate"
-	     * method in the module that we can call to let the module do the
-	     * right thing.  This will break sooner or later when we add more
-	     * complexity to GalleryModule::activate().
+	     * Reactivate myself so that any activate based tasks like registering factory
+	     * implementations, toolkit operations, etc can happen.  Note that it's possible for
+	     * this to successfully deactivate and then fail to activate again.  upgrade() should
+	     * get the module read properly but it may fail under some edge cases.
 	     */
-	    list ($ret, $isActive) = $this->isActive();
+	    list ($ret, $redirect) = $this->reactivate();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    if ($isActive) {
-		/* Unregister all factory implementations */
-		$ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($this->getId());
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
-
-		$ret = $this->performFactoryRegistrations();
-		if ($ret->isError()) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		}
 	    }
 
 	    $data = array('_version' => $this->getVersion(),
@@ -233,11 +215,14 @@ class GalleryModule extends GalleryPlugin {
     /**
      * Deactivate this module
      *
+     * @param bool should we post a deactivation event?  Normally true, but the
+     *             upgrader may choose to suppress this event so that it can
+     *             reactivate a module without causing a ripple effect.
      * @return array object GalleryStatus a status code
      *               array redirect info for error page (empty for success)
      */
-    function deactivate() {
-	list ($ret, $redirect) = parent::deactivate();
+    function deactivate($postDeactivationEvent=true) {
+	list ($ret, $redirect) = parent::deactivate($postDeactivationEvent);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
