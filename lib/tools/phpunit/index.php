@@ -12,6 +12,7 @@ require_once('GalleryControllerTestCase.class');
 require_once('ItemAddPluginTestCase.class');
 require_once('ItemEditPluginTestCase.class');
 require_once('CodeAuditTestCase.class');
+require_once('UnitTestPlatform.class');
 
 function PhpUnitGalleryMain(&$testSuite, $filter) {
     $ret = GalleryInitFirstPass();
