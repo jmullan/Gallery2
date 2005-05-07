@@ -37,9 +37,9 @@ class DcrawToolkitHelper {
      * Figure out what operations and properties are supported by the
      * DcrawToolkit and return them.
      *
-     * @return object GalleryStatus a status code
-     *         array('operations' => ...
-     *               'properties' => ...)
+     * @return array object GalleryStatus a status code
+     *               array('operations' => ...
+     *                     'properties' => ...)
      * @static
      */
     function getOperationsAndProperties() {
@@ -66,10 +66,10 @@ class DcrawToolkitHelper {
      *
      * @param string path to the dcraw binary
      * @return array object GalleryStatus general status of tests
-     *	       array ('name' => string: the name of the binary,
-     *		      'success' => boolean: test successful?
-     *		      'message' => string: the error message
-     *		     )
+     *	             array ('name' => string: the name of the binary,
+     *		            'success' => boolean: test successful?
+     *		            'message' => string: the error message
+     *		           
      * @static
      */
     function testBinary($dcrawPath) {
