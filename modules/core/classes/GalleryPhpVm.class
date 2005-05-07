@@ -90,5 +90,25 @@ class GalleryPhpVm {
     function md5($string) {
 	return md5($string);
     }
+
+    /**
+     * Query language and locale information
+     *
+     * @param int item
+     */
+    function nl_langinfo($item) {
+	return nl_langinfo($item);
+    }
+
+    /**
+     * Set locale information.  Passing multiple locales isn't avialable until
+     * PHP 4.3.0 so it's not supported here (yet).
+     *
+     * @param mixed category
+     * @param string locale
+     */
+    function setlocale($category, $locale) {
+	return setlocale($category, $locale);
+    }
 }
 ?>

@@ -439,14 +439,10 @@ class GalleryTranslator {
 	    /*
 	     * If there is no bind_textdomain_codeset (PHP 4.1.x), the string will be returned
 	     * from gettext in the default encoding for that language. Here we convert that
-	     * encoding to the active charset manually.  Note: 'nl_langinfo' is not available
-	     * under Win32, so this "hack" only works on Unix-systems.
+	     * encoding to the active charset manually.
 	     */
-	    if (!function_exists('bind_textdomain_codeset') && function_exists('nl_langinfo')) {
-		$codeSet = nl_langinfo(CODESET);
-		if ($codeSet != 'UTF-8') {
-		    $localized = GalleryCoreApi::convertToUtf8($localized, $codeSet);
-		}
+	    if (!function_exists('bind_textdomain_codeset')) {
+		$localized = GalleryCoreApi::convertToUtf8($localized);
 	    }
 	} else {
 	    /*
