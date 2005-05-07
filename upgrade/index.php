@@ -83,8 +83,7 @@ $_SESSION['path'] = __FILE__;
 
 require_once(dirname(__FILE__) . '/../bootstrap.inc');
 require_once(dirname(__FILE__) . '/../init.inc');
-$ret = GalleryInitFirstPass(array('debug' => 'buffered',
-				  'noDatabase' => 1));
+$ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
 if ($ret->isError()) {
     print $ret->getAsHtml();
     return;
@@ -93,6 +92,9 @@ if ($ret->isError()) {
 /* We want to avoid using the cache */
 GalleryDataCache::setFileCachingEnabled(false);
 GalleryDataCache::setMemoryCachingEnabled(false);
+
+/* Preallocate at least 5 minutes for the upgrade */
+$gallery->guaranteeTimeLimit(300);
 
 /* Check to see if we have a database.  If we don't, then go to the installer */
 $storage =& $gallery->getStorage();
