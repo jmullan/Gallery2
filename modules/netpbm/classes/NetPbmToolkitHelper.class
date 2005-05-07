@@ -239,12 +239,6 @@ class NetPbmToolkitHelper {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
-	/* We need to translate some strings */
-	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'netpbm');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
-	}
-
 	$binaries['giftopnm'] = array('image/gif');
 	$binaries['ppmtogif'] = array('image/gif');
 	$binaries['jpegtopnm'] = array('image/jpeg', 'image/pjpeg');
