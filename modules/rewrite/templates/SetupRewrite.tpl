@@ -62,7 +62,7 @@
     </p>
     
     <p class="giWarning">
-      {g->text text="If the test still fails chanses are slim that this module will work. However, you may procede if you are confident that it will work."}
+      {g->text text="If the test still fails chances are slim that this module will work. However, you may procede if you are confident that it will work."}
     </p>
     
     <p class="giDescription">
