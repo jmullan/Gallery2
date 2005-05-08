@@ -164,7 +164,7 @@ class AdminCreateGroupQuotaView extends GalleryView {
 	}
 
 	if ($form['formName'] != 'AdminCreateGroupQuota') {
-	    // Set the form defaults
+	    /* Set the form defaults */
 	    $form['quotaSize'] = '';
 	    $form['quotaUnit'] = '';
 	    $form['formName'] = 'AdminCreateGroupQuota';
