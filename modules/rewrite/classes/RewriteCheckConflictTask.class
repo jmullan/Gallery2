@@ -70,8 +70,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
-	$ret = $immediateView->renderHeader(
-	    $module->translate(''), $message, '');
+	$ret = $immediateView->renderHeader('', $message, '');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
