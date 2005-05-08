@@ -4,17 +4,17 @@
  *
  * Gallery - a web based derivative album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -68,7 +68,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register an operation that we can perform on our mock data items */
@@ -210,8 +210,7 @@ class DerivativeTest extends GalleryTestCase {
 	 * Make sure that derivatives derived from other derivatives are still based off of the
 	 * original data item.
 	 */
-	list ($ret, $item) =
-	    $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId(), 'test/file');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -575,6 +574,65 @@ class DerivativeTest extends GalleryTestCase {
 	}
 	$this->assertEquals($source, $itemB);
 	$this->assertEquals(array('watermark|B1'), $operations);
+    }
+
+    function testFinalOperations2() {
+	/*
+	 * Verify that we are able to re-use the preferred's data file if the preferred has no
+	 * postfilter operations.  Ie, if we have a thumb based on a preferred based on a source,
+	 * and we want to build the thumb, we can start building from the preferred instead of
+	 * going all the way back to the source, as long as the preferred doesn't have a
+	 * postfilter that would render its output file unusable to us.
+	 */
+	list ($ret, $item) = $this->_createRandomDataItem($this->_root->getId(), 'test/file');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $preferred) = $this->_createDerivative(
+	    $item, $item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED,
+	    'test-operation|source-to-preferred');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $thumb) = $this->_createDerivative(
+	    $item, $preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'test-operation|preferred-to-thumb');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $thumb, $rebuilt) =
+	    GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($thumb->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($rebuilt, 'thumb was rebuilt');
+
+	/*
+	 * We're expecting that we build the preferred (source-to-preferred), then we build the
+	 * thumb (preferred-to-thumb).
+	 */
+	list ($ret, $sourcePath) = $item->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $preferredPath) = $preferred->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $thumbPath) = $thumb->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ops =& DerivativeTestToolkit::getPerformedOperations();
+	$this->assertEquals(array(array('test/file', 'test-operation', $sourcePath, $preferredPath,
+					array('source-to-preferred')),
+				  array('test/file', 'test-operation', $preferredPath, $thumbPath,
+					array('preferred-to-thumb'))),
+			    $ops);
     }
 
     function testHasNoOperations() {

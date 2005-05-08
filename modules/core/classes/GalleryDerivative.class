@@ -304,15 +304,36 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Get the path of the source file */
-	if ($source->isLinked()) {
-	    $linkedEntity = $source->getLinkedEntity();
-	    list($ret, $sourcePath) = $linkedEntity->fetchPath();
+	if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
+	    list ($ret, $rebuild) =
+		GalleryCoreApi::rebuildDerivativeCacheIfNotCurrent($source->getId());
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	    if ($rebuild) {
+		/* Fetch the updated version back from our entity cache */
+		list ($ret, $source) = GalleryCoreApi::loadEntitiesById($source->getId());
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    list ($ret, $sourcePath) = $source->fetchPath();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	} else {
-	    list($ret, $sourcePath) = $source->fetchPath();
-	}
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    /* Get the path of the source file */
+	    if ($source->isLinked()) {
+		$linkedEntity = $source->getLinkedEntity();
+		list($ret, $sourcePath) = $linkedEntity->fetchPath();
+	    } else {
+		list($ret, $sourcePath) = $source->fetchPath();
+	    }
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	$context = array();
@@ -342,7 +363,7 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    }
 
 	    if (!isset($toolkit)) {
-		/* XXX: What can we do now? */
+		/* TODO: What can we do now? */
 		return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					    "$operationName $mimeType");
 	    }
@@ -365,13 +386,9 @@ class GalleryDerivative_core extends GalleryChildEntity {
 	    }
 
 	    /* Perform the operation */
-	    list ($ret, $outputMimeType, $context) =
-		$toolkit->performOperation($mimeType,
-					   $operationName,
-					   $sourcePath,
-					   $destPath,
-					   explode(',', $operationArgs),
-					   $context);
+	    list ($ret, $outputMimeType, $context) = $toolkit->performOperation(
+		$mimeType, $operationName, $sourcePath, $destPath,
+		explode(',', $operationArgs), $context);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -556,7 +573,22 @@ class GalleryDerivative_core extends GalleryChildEntity {
 		array_unshift($sources, $tmp);
 	    }
 
-	    /* Now gather up all the operations, and reduce it to the smallest possible sequence */
+	    /*
+	     * If we have a preferred at the head of the chain, and that preferred has no
+	     * postfilter operations then use that as the source.  We won't run any risk of
+	     * upsampling, and it is as good a source as the original (better in fact, since we
+	     * skip at least one operation).
+	     */
+	    if (count($sources) > 1 && /* we have at least one derivative in the chain */
+		    $sources[0]->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_PREFERRED &&
+		    strlen($sources[0]->getPostFilterOperations()) == 0) {
+		$source = array_shift($sources);  /* the preferred is now our source */
+	    }
+	    
+	    /*
+	     * Now gather up all the remaining operations, and reduce them to the smallest
+	     * possible sequence.
+	     */
 	    $operations = $sources[0]->getDerivativeOperations();
 	    for ($i = 1; $i < sizeof($sources); $i++) {
 		foreach (explode(';', $sources[$i]->getDerivativeOperations()) as $newOperation) {
