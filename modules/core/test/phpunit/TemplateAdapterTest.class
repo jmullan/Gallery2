@@ -42,29 +42,29 @@ class TemplateAdapterTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    function testAdminLinkId1() {
+    function testLinkId1() {
 	$test = array('arg1' => array());
-	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$result = GalleryTemplateAdapter::linkId($test);
 	$this->assertEquals('gbLink_', $result);
     }
     
-    function testAdminLinkId2() {
+    function testLinkId2() {
 	$test = array('arg1' => array('view' => 'core::ItemAdmin'));
-	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$result = GalleryTemplateAdapter::linkId($test);
 	$this->assertEquals('gbLink_core_ItemAdmin', $result);
     }
     
-    function testAdminLinkId3() {
+    function testLinkId3() {
 	$test = array('arg1' => array('view' => '.;-_monkey'));
-	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$result = GalleryTemplateAdapter::linkId($test);
 	$this->assertEquals('gbLink__monkey', $result);
     }
     
-    function testAdminLinkId4() {
+    function testLinkId4() {
 	$test = array('arg1' => array('controller' => 'core:Monkey',
 					'view' => 'core:Pirate',
 					'subView' => 'core:Ninja'));
-	$result = GalleryTemplateAdapter::adminLinkId($test);
+	$result = GalleryTemplateAdapter::linkId($test);
 	$this->assertEquals('gbLink_core_Monkeycore_Piratecore_Ninja', $result);
     }
     

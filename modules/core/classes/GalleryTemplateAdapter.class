@@ -376,20 +376,19 @@ class GalleryTemplateAdapter {
 
     /**
      * This takes an array and looks for view, subview, and controller to make
-     * a linkid
+     * a linkid (being used as a css classname)
      *
-     * @param array the items to make a link out of
-     * @return string the id of the link
+     * @param array the items to make a css class out of
+     * @return string the id of the css class
      */
-    function adminLinkId($params) {
-	$linkArray = $params['arg1'];
+    function linkId($params) {
 	$linkId = 'gbLink_';
-	$linkId .= (!empty($linkArray['controller']))
-		? GalleryTemplateAdapter::_safeCssName($linkArray['controller']) : '';
-	$linkId .= (!empty($linkArray['view']))
-		? GalleryTemplateAdapter::_safeCssName($linkArray['view']) : '';
-	$linkId .= (!empty($linkArray['subView']))
-		? GalleryTemplateAdapter::_safeCssName($linkArray['subView']) : '';
+	$linkId .= (!empty($params['urlParams']['controller']))
+		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['controller']) : '';
+	$linkId .= (!empty($params['urlParams']['view']))
+		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['view']) : '';
+	$linkId .= (!empty($params['urlParams']['subView']))
+		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['subView']) : '';
 	return $linkId;
     }
 

@@ -1,0 +1,150 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Icons
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * IconsSiteAdmin controller tests
+ *
+ * @package Icons
+ * @subpackage PHPUnit
+ */
+class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
+
+    function IconsSiteAdminControllerTest($methodName) {
+	$this->GalleryControllerTestCase($methodName, 'icons:IconsSiteAdmin');
+    }
+    
+    function setUp() {
+	parent::setUp();
+	$ret = $this->_markPluginParametersForCleanup('module', 'icons');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+    }
+    
+    function tearDown() {
+	parent::tearDown();
+    }
+    
+    function testIconsSiteAdminControllerReset() {
+	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'icons:IconsSiteAdmin'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+    }
+    
+    function testIconsSiteAdminControllerSave() {
+	GalleryUtilities::putRequestVariable('form[iconpack]', 'testpack');
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'icons:IconsSiteAdmin'),
+				  'status' => array('saved' => 1),
+				  'error' => array()),
+			    $results);
+	
+	list ($ret, $iconpack) =
+		GalleryCoreApi::getPluginParameter('module', 'icons', 'iconpack');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('testpack', $iconpack, 'iconpack');
+    }
+    
+    function testIconsSiteAdminControllerSaveNoIconPack() {
+	GalleryUtilities::putRequestVariable('form[action][save]', '1');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
+						      'subView' => 'icons:IconsSiteAdmin'),
+				  'status' => array(),
+				  'error' => array('form[error][iconpack][missing]')),
+			    $results);
+    }
+    
+    function testNewFactoryInstance() {
+	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assert(isset($iconpack));
+	$this->assert(GalleryUtilities::isA($iconpack, 'IconsImpl'));
+    }
+    
+    function testSetupTemplateNone() {
+	$impl = new IconsImpl();
+	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$template = new IconsDummyGalleryTemplate();
+	$ret = $impl->init($template);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals($template->style, null);
+    }
+    
+    function testSetupTemplateIcons() {
+	$impl = new IconsImpl();
+	$ret = GalleryCoreApi::setPluginParameter('module', 'icons', 'iconpack', '_phpunitfoo');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$template = new IconsDummyGalleryTemplate();
+	$ret = $impl->init($template);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals($template->style, 'modules/icons/iconpacks/_phpunitfoo/icons.css');
+    }
+}
+
+/**
+ * @package Icons
+ * @subpackage PHPUnit
+ */
+class IconsDummyGalleryTemplate {
+    var $data = array();
+    var $style = null;
+    function setVariable($key, $value) {
+	$this->data[$key] = $value;
+    }
+    function style($path) {
+	$this->style = $path;
+    }
+    function javascript($path) {
+    }
+}
+
+?>

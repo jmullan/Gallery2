@@ -237,7 +237,17 @@ class GalleryView {
 
 	/* Theme style */
 	$template->style("themes/$themeName/theme.css");
-
+	/* Check for icon pack */
+	list ($ret, $iconpack) = GalleryCoreApi::newFactoryInstance('IconsInterface_1_0');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	if (isset($iconpack)) {
+	    $ret = $iconpack->init($template);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
 	return array(GalleryStatus::success(), $results);
     }
 

@@ -47,7 +47,7 @@
 	<h2> {g->text text="User Options"} </h2>
 	<ul>
 	  {foreach from=$UserAdmin.subViewChoices item=choice}
-	    <li class="gbAdminLink" id="{g->adminlinkid arg1=$choice}">
+	    <li class="gbAdminLink {g->linkId urlParams=$choice}">
 	    {if ($UserAdmin.subViewName == $choice.view)}
 	      {$choice.name}
 	    {else}

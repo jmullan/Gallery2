@@ -167,7 +167,7 @@ class ShowItemView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
+	
 	if ($item->getCanContainChildren() && !empty($perPage)) {
 	    /* If the layout uses pages, figure out what page we're on */
 	    $page = GalleryUtilities::getRequestVariables('page');
