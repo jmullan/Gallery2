@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -43,7 +43,7 @@ class CreateThumbnailOption extends ItemAddOption {
 		     'modules/core/templates/CreateThumbnailOption.tpl',
 		     'modules_core');
     }
-    
+
     /**
      * @see ItemAddOption::isAppropriate
      */
@@ -56,22 +56,28 @@ class CreateThumbnailOption extends ItemAddOption {
      */
     function handleRequestAfterAdd($form, $items) {
 	$errors = array();
-	$warnings = array();
-	for ($i = 0; $i < count($items); $i++) {
-	    $warnings[$i] = array();
-	    list ($ret, $thumbTable) = 
-	        GalleryCoreApi::fetchThumbnailsByItemIds(array($items[$i]->getId()));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
-	    }
+	foreach ($items as $item) {
+	    $itemIds[] = $item->getId();
+	    $warnings[] = array();
+	}
+	if (empty($form['CreateThumbnailOption']['createThumbnail'])) {
+	    return array(GalleryStatus::success(), $errors, $warnings);
+	}
 
-	    if (!empty($thumbTable[$items[$i]->getId()])) {
-		$thumbnail = $thumbTable[$items[$i]->getId()];
+	list ($ret, $thumbTable) = GalleryCoreApi::fetchThumbnailsByItemIds($itemIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	foreach ($items as $item) {
+	    $itemId = $item->getId();
+	    if (!empty($thumbTable[$itemId])) {
+		$thumbnail = $thumbTable[$item->getId()];
 		list ($ret, $isCurrent) = $thumbnail->isCacheCurrent();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-	    
+
 		if (!$isCurrent) {
 		    $ret = $thumbnail->rebuildCache();
 		    if ($ret->isError()) {
