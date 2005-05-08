@@ -467,13 +467,13 @@ class DerivativeTest extends GalleryTestCase {
     }
 
     /**
-     * This test makes sure that we're generating the right set of operations for our derivatives for a given
-     * derivative tree, including derivative operations and postfilters.
+     * This test makes sure that we're generating the right set of operations for our derivatives
+     * for a given derivative tree, including derivative operations and postfilters.
      */
     function testFetchFinalOperations() {
 	/*
-	 * If we've got the following scenario where derivative commands are marked with <> and postfilter
-	 * operations are marked with []:
+	 * If we've got the following scenario where derivative commands are marked with <> and
+	 * postfilter operations are marked with []:
 	 *
 	 * Source Image A.jpg (640x480):
 	 * --> Preferred A1: <rotate|90> [watermark|...]
@@ -488,7 +488,7 @@ class DerivativeTest extends GalleryTestCase {
 	 * Then when we really do our calculations, the real operations we perform should be:
 	 *
 	 * TARGET         SOURCE  OPERATONS                                  POSTFILTER
-	 * -----------------------------------------------------------------------------------------------
+	 * ---------------------------------------------------------------------------------------
 	 * Preferred  A1: A.jpg   rotate|90                                  watermark|A1
 	 * Derivative A2: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|150
 	 * Derivative A3: A.jpg   rotate|90;crop|25,49,33,25;thumbnail|75    test|A3;watermark|A3
@@ -507,41 +507,34 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $A1) = $this->_createDerivative($itemA, $itemA->getId(),
-						    DERIVATIVE_TYPE_IMAGE_PREFERRED,
-						    'rotate|90',
-						    'test/file',
-						    array('postFilterOperations' => 'watermark|A1'));
+	list ($ret, $A1) = $this->_createDerivative(
+	    $itemA, $itemA->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED,
+	    'rotate|90', 'test/file', array('postFilterOperations' => 'watermark|A1'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $A2) = $this->_createDerivative($itemA, $A1->getId(),
-						    DERIVATIVE_TYPE_IMAGE_RESIZE,
-						    'crop|25,49,33,25;thumbnail|150');
+	list ($ret, $A2) = $this->_createDerivative(
+	    $itemA, $A1->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'crop|25,49,33,25;thumbnail|150');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $A3) = $this->_createDerivative($itemA, $A2->getId(),
-						    DERIVATIVE_TYPE_IMAGE_RESIZE,
-						    'thumbnail|75',
-						    'test/file',
-						    array('postFilterOperations' => 'test|A3;watermark|A3'));
+	list ($ret, $A3) = $this->_createDerivative(
+	    $itemA, $A2->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'thumbnail|75',
+	    'test/file', array('postFilterOperations' => 'test|A3;watermark|A3'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $A4) = $this->_createDerivative($itemA, $A3->getId(),
-						    DERIVATIVE_TYPE_IMAGE_RESIZE,
-						    'thumbnail|300');
+	list ($ret, $A4) = $this->_createDerivative(
+	    $itemA, $A3->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'thumbnail|300');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $A5) = $this->_createDerivative($itemA, $A1->getId(),
-						    DERIVATIVE_TYPE_IMAGE_RESIZE,
-						    'thumbnail|100');
+	list ($ret, $A5) = $this->_createDerivative(
+	    $itemA, $A1->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'thumbnail|100');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -551,11 +544,9 @@ class DerivativeTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $B1) = $this->_createDerivative($itemB, $itemB->getId(),
-						    DERIVATIVE_TYPE_IMAGE_RESIZE,
-						    '',
-						    'test/file',
-						    array('postFilterOperations' => 'watermark|B1'));
+	list ($ret, $B1) = $this->_createDerivative(
+	    $itemB, $itemB->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, '',
+	    'test/file', array('postFilterOperations' => 'watermark|B1'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -605,9 +596,8 @@ class DerivativeTest extends GalleryTestCase {
     }
 
     function testHasNoOperations() {
-	list ($ret, $derivative) = $this->_createDerivative($this->_root, $this->_root->getId(),
-							    DERIVATIVE_TYPE_IMAGE_PREFERRED,
-							    '');
+	list ($ret, $derivative) = $this->_createDerivative(
+	    $this->_root, $this->_root->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -617,8 +607,8 @@ class DerivativeTest extends GalleryTestCase {
 
     function testRemoveDerivativeOperation() {
 	$this->assertEquals('test|1,2,3,4;test|4,5,6',
-            GalleryCoreApi::removeDerivativeOperation('composite',
-						      'test|1,2,3,4;composite|a,b;test|4,5,6'));
+            GalleryCoreApi::removeDerivativeOperation(
+		'composite', 'test|1,2,3,4;composite|a,b;test|4,5,6'));
     }
 }
 
