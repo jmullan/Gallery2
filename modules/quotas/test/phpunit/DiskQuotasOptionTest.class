@@ -131,7 +131,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
     function tearDown() {
 	foreach ($this->_saveQuota as $groupId => $quota) {
 	    $ret = QuotasMap::addMapEntry(
-		array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
+		array('userOrGroupId' => $groupId, 'quotaSize' => $quota['quota']));
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -188,6 +188,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
     }
 
     function testUserKBQuotaAddOneFail() {
+	global $gallery;
+	
 	$ret = QuotasMap::addMapEntry(
 	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '5'));
 	if ($ret->isError()) {
@@ -204,13 +206,17 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '5', $this->_KB))),
 			    $warnings, 'warnings');
 
-	/* Verify item was deleted */
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
-		      'item should have been deleted');
+	$gallery->performShutdownActions();
+	
+ 	/* Verify item was deleted */
+ 	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
+ 	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
+ 		      'item should have been deleted');
     }
 
     function testUserQuotaAddTwo() {
+	global $gallery;
+	
 	$ret = QuotasMap::addMapEntry(
 	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '15'));
 	if ($ret->isError()) {
@@ -236,14 +242,16 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 		array(sprintf($this->_exceedMessage, '15', $this->_KB))),
 	    $warnings, 'warnings');
 
+	$gallery->performShutdownActions();
+	
 	/* Verify first item ok and second item was deleted */
 	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item2->getId());
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
-		      'item should have been deleted');
+ 	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item2->getId());
+ 	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
+ 		      'item should have been deleted');
     }
 
     function testGroupGBQuota() {
@@ -293,6 +301,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
     }
 
     function testUserAndGroupQuota() {
+	global $gallery;
+	
 	/* Should always use user quota and ignore group quota(s) */
 	$ret = QuotasMap::addMapEntry(
 	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '6'));
@@ -320,10 +330,12 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '6', $this->_KB))),
 			    $warnings, 'warnings');
 
-	/* Verify item was deleted */
-	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
-	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
-		      'item should have been deleted');
+	$gallery->performShutdownActions();
+	
+ 	/* Verify item was deleted */
+ 	list ($ret, $tmp) = GalleryCoreApi::loadEntitiesById($item->getId());
+ 	$this->assert($ret->isError() && ($ret->getErrorCode() & ERROR_MISSING_OBJECT),
+ 		      'item should have been deleted');
     }
 }
 ?>
