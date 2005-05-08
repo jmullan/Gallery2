@@ -296,7 +296,7 @@ class AdminQuotasView extends GalleryView {
 	    list ($ret,
 	          $form['list']['groupNames'][$groupId]['quotaSize'],
 	    	  $form['list']['groupNames'][$groupId]['quotaUnit']) = 
-	        GalleryQuotasHelper::humanReadableFromKiloBytes($values['quota']);
+	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }    
@@ -331,7 +331,7 @@ class AdminQuotasView extends GalleryView {
 	    list ($ret,
 	          $form['list']['userNames'][$userId]['quotaSize'],
 	    	  $form['list']['userNames'][$userId]['quotaUnit']) = 
-	        GalleryQuotasHelper::humanReadableFromKiloBytes($values['quota']);
+	        GalleryQuotasHelper::humanReadableFromKilobytes($values['quota']);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    } 

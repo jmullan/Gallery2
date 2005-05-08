@@ -189,7 +189,7 @@ class AdminEditGroupQuotaView extends GalleryView {
 
 	$form['groupName'] = $group->getGroupName();
 	list ($ret, $form['quotaSize'], $form['quotaUnit']) =
-	    GalleryQuotasHelper::humanReadableFromKiloBytes($groupQuota['quota']);
+	    GalleryQuotasHelper::humanReadableFromKilobytes($groupQuota['quota']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

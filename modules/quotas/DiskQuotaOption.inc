@@ -79,9 +79,8 @@ class DiskQuotaOption extends ItemAddOption {
 		array_shift($excludedIds);
 
 		/* user's disk usage in Bytes */
-		list ($ret, $userDiskUsage) =
-		    GalleryQuotasHelper::getUserDiskUsage($gallery->getActiveUserId(),
-							  $excludedIds);
+		list ($ret, $userDiskUsage) = GalleryQuotasHelper::getUserDiskUsage(
+		    $gallery->getActiveUserId(), $excludedIds);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -91,39 +90,36 @@ class DiskQuotaOption extends ItemAddOption {
 
 		if ($userDiskUsage > $userDiskQuota) {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) =
-			GalleryQuotasHelper::humanReadableFromKiloBytes($userDiskQuota);
+			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    $exceedString = 'Warning: You have reached your disk quota (%s %s), ';
-		    $exceedString .= 'this item will not be added.';
-		    $warnings[$i][] =
-			$module->translate(array('text' => $exceedString,
-						 'arg1' => $userDiskQuotaHumanReadable,
-						 'arg2' => $userDiskQuotaHumanReadableUnit));
+		    $warnings[$i][] = $module->translate(
+			array('text' => 'Warning: You have reached your disk quota (%s %s), this item will not be added.',
+			      'arg1' => $userDiskQuotaHumanReadable,
+			      'arg2' => $userDiskQuotaHumanReadableUnit));
 		    $ret = GalleryCoreApi::deleteEntityById($items[$i]->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		} else {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) = 
-			GalleryQuotasHelper::humanReadableFromKiloBytes($userDiskQuota);
+			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 		    list ($ret, $userDiskUsageHumanReadable, $userDiskUsageHumanReadableUnit) = 
-			GalleryQuotasHelper::humanReadableFromKiloBytes($userDiskUsage);
+			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskUsage);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
-		    $usageString = 'You are using %s %s of your allotted %s %s.';
-		    $warnings[$i][] = 
-			$module->translate(array('text' => $usageString,
-	    					 'arg1' => $userDiskUsageHumanReadable,
-						 'arg2' => $userDiskUsageHumanReadableUnit,
-						 'arg3' => $userDiskQuotaHumanReadable,
-						 'arg4' => $userDiskQuotaHumanReadableUnit));
+		    $warnings[$i][] = $module->translate(
+			array('text' => 'You are using %s %s of your allotted %s %s.',
+			      'arg1' => $userDiskUsageHumanReadable,
+			      'arg2' => $userDiskUsageHumanReadableUnit,
+			      'arg3' => $userDiskQuotaHumanReadable,
+			      'arg4' => $userDiskQuotaHumanReadableUnit));
 		}
 	    }
         }

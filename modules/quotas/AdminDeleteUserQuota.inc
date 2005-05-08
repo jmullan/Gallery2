@@ -137,7 +137,7 @@ class AdminDeleteUserQuotaView extends GalleryView {
 
 	$AdminDeleteUserQuota = array();
 	list ($ret, $AdminDeleteUserQuota['quotaSize'], $AdminDeleteUserQuota['quotaUnit']) =
-	    GalleryQuotasHelper::humanReadableFromKiloBytes($userQuota['quota']);
+	    GalleryQuotasHelper::humanReadableFromKilobytes($userQuota['quota']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
