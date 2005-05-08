@@ -131,7 +131,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
     function tearDown() {
 	foreach ($this->_saveQuota as $groupId => $quota) {
 	    $ret = QuotasMap::addMapEntry(
-		array('userId' => null, 'groupId' => $groupId, 'quotaSize' => $quota));
+		array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -170,7 +170,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
     function testUserMBQuotaAddOneOk() {
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => $this->_user->getId(), 'groupId' => null, 'quotaSize' => '2000'));
+	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '2000'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -180,8 +180,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
-
+	//$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
+	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,
@@ -190,7 +190,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
     function testUserKBQuotaAddOneFail() {
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => $this->_user->getId(), 'groupId' => null, 'quotaSize' => '5'));
+	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '5'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -202,7 +202,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '5.00', $this->_KB))),
+	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '5', $this->_KB))),
 			    $warnings, 'warnings');
 
 	/* Verify item was deleted */
@@ -213,7 +213,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
     function testUserQuotaAddTwo() {
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => $this->_user->getId(), 'groupId' => null, 'quotaSize' => '15'));
+	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '15'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -223,8 +223,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
 
+	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
 	list ($ret, $item2) = $this->_createRandomDataItem($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -233,8 +233,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item, $item2));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(
-		array(sprintf($this->_usingMessage, $filesize, $this->_KB, '15.00', $this->_KB)),
-		array(sprintf($this->_exceedMessage, '15.00', $this->_KB))),
+		array(sprintf($this->_usingMessage, $filesize, $this->_KB, '15', $this->_KB)),
+		array(sprintf($this->_exceedMessage, '15', $this->_KB))),
 	    $warnings, 'warnings');
 
 	/* Verify first item ok and second item was deleted */
@@ -249,7 +249,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
     function testGroupGBQuota() {
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => null, 'groupId' => $this->_group->getId(), 'quotaSize' => '2000000'));
+	    array('userOrGroupId' => $this->_group->getId(), 'quotaSize' => '2000000'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -259,8 +259,8 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
 
+	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,
@@ -270,12 +270,12 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
     function testGroupQuotas() {
 	/* Should use higher of assigned group quotas */
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => null, 'groupId' => $this->_group->getId(), 'quotaSize' => '5'));
+	    array('userOrGroupId' => $this->_group->getId(), 'quotaSize' => '5'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => null, 'groupId' => $this->_group2->getId(), 'quotaSize' => '500'));
+	    array('userOrGroupId' => $this->_group2->getId(), 'quotaSize' => '500'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -285,28 +285,28 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
 
+	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
 	$this->assertEquals(array(array(sprintf($this->_usingMessage, $filesize, $this->_KB,
-						'500.00', $this->_KB))), $warnings, 'warnings');
+						'500', $this->_KB))), $warnings, 'warnings');
     }
 
     function testUserAndGroupQuota() {
 	/* Should always use user quota and ignore group quota(s) */
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => $this->_user->getId(), 'groupId' => null, 'quotaSize' => '6'));
+	    array('userOrGroupId' => $this->_user->getId(), 'quotaSize' => '6'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => null, 'groupId' => $this->_group->getId(), 'quotaSize' => '2'));
+	    array('userOrGroupId' => $this->_group->getId(), 'quotaSize' => '2'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = QuotasMap::addMapEntry(
-	    array('userId' => null, 'groupId' => $this->_group2->getId(), 'quotaSize' => '200'));
+	    array('userOrGroupId' => $this->_group2->getId(), 'quotaSize' => '200'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -318,7 +318,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
-	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '6.00', $this->_KB))),
+	$this->assertEquals(array(array(sprintf($this->_exceedMessage, '6', $this->_KB))),
 			    $warnings, 'warnings');
 
 	/* Verify item was deleted */
