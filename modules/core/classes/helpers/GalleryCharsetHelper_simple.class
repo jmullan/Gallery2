@@ -69,10 +69,17 @@ class GalleryCharsetHelper_simple {
 		return $sourceEncoding;
 	    }
 
-	    /* Remap some known charset issues */
+	    /* 
+             * Remap some known charset issues
+             * see http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
+             * for guidance
+             */
 	    switch($sourceEncoding) {
 	    case '1252':   /* Windows XP has LC_CTYPE=English_United States.1252 */
 		$sourceEncoding = 'Windows-1252';
+		break;
+	    case '1251':   /* Windows XP has LC_CTYPE=Russian_Russia.1251 */
+		$sourceEncoding = 'CP1251';
 		break;
 	    }
 	}

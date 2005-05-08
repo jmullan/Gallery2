@@ -186,6 +186,11 @@ class CharsetTest extends GalleryTestCase {
 			  'LC_CTYPE=English_United States.1252;LC_NUMERIC=C;LC_TIME=C');
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('Windows-1252', GalleryCharsetHelper_simple::detectSystemCharset());
+
+	$phpVm->setReturn('setlocale', array(LC_ALL, '0'),
+			  'LC_CTYPE=Russian_Russia.1251;LC_NUMERIC=C;LC_TIME=C');
+	$gallery->_phpVm = $phpVm;
+	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
     }
 }
 
