@@ -88,7 +88,18 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
     }
 
     function testGroupCollision() {
-	GalleryUtilities::putRequestVariable('form[group]', 'All Users');
+    	list ($ret, $groupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	
+	list ($ret, $group) = GalleryCoreApi::loadEntitiesById($groupId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[group]', $group->getGroupName());
 	GalleryUtilities::putRequestVariable('form[album]', 'Nokia Test');
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
