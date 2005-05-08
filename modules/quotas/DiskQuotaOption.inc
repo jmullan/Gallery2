@@ -98,10 +98,9 @@ class DiskQuotaOption extends ItemAddOption {
 			array('text' => 'Warning: You have reached your disk quota (%s %s), this item will not be added.',
 			      'arg1' => $userDiskQuotaHumanReadable,
 			      'arg2' => $userDiskQuotaHumanReadableUnit));
-		    $ret = GalleryCoreApi::deleteEntityById($items[$i]->getId());
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
-		    }
+
+		    $gallery->addShutdownAction(
+			array('GalleryCoreApi', 'deleteEntityById'), array($items[$i]->getId()));
 		} else {
 		    list ($ret, $userDiskQuotaHumanReadable, $userDiskQuotaHumanReadableUnit) = 
 			GalleryQuotasHelper::humanReadableFromKilobytes($userDiskQuota);
