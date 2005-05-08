@@ -45,6 +45,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_parent);
+	$this->_controller->setOptionInstances(array());
     }
 
     function testUploadItems() {
@@ -53,7 +54,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['type'] = 'test/file';
 	$_FILES['userFile']['tmp_name'] = __FILE__;
 	$_FILES['userFile']['name'] = 'Foo.dat';
-	
+
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
 				  'status' => array(),
@@ -147,6 +148,51 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('Foo', $entity->getTitle(), 'title');
 	$this->assertEquals('Foo', $entity->getSummary(), 'summary');
 	$this->assertEquals(null, $entity->getDescription());
+    }
+
+    function testUploadItemsWithOption() {
+	GalleryUtilities::putRequestVariable('form[action][uploadItem]', 1);
+	GalleryUtilities::putRequestVariable('form[albumId]', $this->_parent->getId());
+	$_FILES['userFile']['type'] = 'test/file';
+	$_FILES['userFile']['tmp_name'] = __FILE__;
+	$_FILES['userFile']['name'] = 'Foo.dat';
+
+	$this->_controller->setOptionInstances(array(new UploadedItemsControllerTestAddOption()));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results);
+
+	$entityCounter =& GalleryTestCase::getEntityCounter();
+	$id = $entityCounter->getRecentEntityId('GalleryUnknownItem');
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($id);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure our option was called */
+	$this->assertEquals($entity->getId(),
+			    UploadedItemsControllerTestAddOption::getCalledWithId());
+
+	$this->assertEquals($this->_parent->getId(), $entity->getParentId());
+	$this->assertEquals('test/file', $entity->getMimeType());
+	$this->assertEquals('Foo.dat', $entity->getTitle());
+	$this->assertEquals(null, $entity->getSummary());
+	$this->assertEquals(null, $entity->getDescription());
+    }
+}
+
+class UploadedItemsControllerTestAddOption {
+
+    function handleRequestAfterAdd($form, $items) {
+	GalleryUtilities::putRequestVariable('calledWith', $items[0]->getId());
+	return array(GalleryStatus::success(), array(), array());
+    }
+
+    function getCalledWithId() {
+	return (int)GalleryUtilities::getRequestVariables('calledWith');
     }
 }
 ?>

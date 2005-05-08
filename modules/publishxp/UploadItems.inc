@@ -33,6 +33,26 @@
  */
 class UploadItemsController extends GalleryController {
     /**
+     * ItemAddOption instances to use when handling this request.  Only used by
+     * test code.
+     *
+     * @var array (optionId => object ItemAddOption) $_optionInstances
+     * @private
+     */
+    var $_optionInstances;
+
+    /**
+     * Tests can use this method to hardwire a specific set of option instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array (optionId => ItemAddOption, ...)
+     */
+    function setOptionInstances($optionInstances) {
+	$this->_optionInstances = $optionInstances;
+    }
+
+    /**
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
@@ -102,6 +122,32 @@ class UploadItemsController extends GalleryController {
 	    $ret = GalleryCoreApi::releaseLocks($lockIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($this->_optionInstances)) {
+		$optionInstances = $this->_optionInstances;
+	    } else {
+		GalleryCoreApi::relativeRequireOnce('modules/core/ItemAdd.inc');
+		list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    /* Allow ItemAddOptions to process added item(s) */
+	    foreach ($optionInstances as $option) {
+		list ($ret, $optionErrors, $optionWarnings) =
+		    $option->handleRequestAfterAdd($form, array($newItem));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+
+		/*
+		 * Swallow option warnings and errors for now.  XP uploads the images one at a
+		 * time, so the right way to handle this would probably be to store the results
+		 * into the session and then redirect to a final status page after all submissions
+		 * are complete.
+		 */
 	    }
 
 	    $redirect['view'] = 'publishxp:UploadedItem';
