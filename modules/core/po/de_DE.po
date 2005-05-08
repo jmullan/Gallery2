@@ -17,12 +17,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # 
+# Previous translators (as far as known, add yourself here, please):
+# - Jens Tkotz <jens@peino.de>
+# - Ernesto Baschny <ernst@baschny.de>
+# - Frederik Kunz <frederik.kunz@web.de>
+# - Georg Rehfeld <rehfeld@georg-rehfeld.de>
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Core 1.0\n"
 "POT-Creation-Date: 2003-02-11 03:09-0800\n"
-"PO-Revision-Date: 2005-05-06 13:00+0100\n"
-"Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
+"PO-Revision-Date: 2005-05-08 01:51+0100\n"
+"Last-Translator: Georg Rehfeld <rehfeld@georg-rehfeld.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -34,41 +40,43 @@ msgstr ""
 
 msgid " Every item requires a thumbnail. Set the default size in pixels here."
 msgstr ""
-"Jedes Element benötigt ein Vorschaubild. Geben Sie hier den Standardwert der "
-"Größe in Pixel an."
+"Jedes Element benötigt ein Vorschaubild. Geben Sie hier die Standardgröße in "
+"Pixel an."
 
+# sidebar.tpl: %d is number of item, %s is truncated title
 #, c-format
 msgid "%d. %s"
 msgstr "%d. %s"
 
+# %s is localized name of item at hand
 #, c-format
 msgid "%s Date and Time"
 msgstr "%s Datum und Zeit"
 
 #, c-format
 msgid "%s Layout Settings"
-msgstr "%s Anzeige Einstellungen"
+msgstr "%s Layout Einstellungen"
 
 msgid "&laquo; None &raquo;"
-msgstr "&laquo; Kein &laquo; "
+msgstr "&laquo; Kein &raquo;"
 
 msgid "&laquo; back"
-msgstr "&laquo; zurück"
+msgstr "&laquo; Zurück"
 
 msgid "&laquo; default layout &raquo;"
-msgstr "&laquo; Keine Sortierreihenfolge &laquo;"
+msgstr "&laquo; Standard Layout &raquo;"
 
 msgid "&laquo; default sort order &raquo;"
-msgstr "&laquo; Standard Sortierreihenfolge &laquo;"
+msgstr "&laquo; Standard Sortierreihenfolge &raquo;"
 
 msgid "&laquo; default theme &raquo;"
-msgstr "&laquo; Standard Theme &laquo;"
+msgstr "&laquo; Standard Thema &raquo;"
 
 msgid "&laquo; first"
-msgstr "&laquo; erstes"
+msgstr "&laquo; Anfang"
 
 msgid "&laquo; no presort &raquo;"
-msgstr "&laquo; Keine Vorsortierung &laquo; "
+msgstr "&laquo; Keine Vorsortierung &raquo; "
 
 msgid "(Un)check all known types"
 msgstr "Alle/keine der bekannten Typen auswählen"
@@ -77,7 +85,7 @@ msgid "(Un)check all"
 msgstr "Alles/nichts auswählen"
 
 msgid "(Un)check symlinks"
-msgstr "Symlinks aus-/abwählen"
+msgstr "Alle/keine Verknüpfungen auswählen"
 
 msgid "(data)"
 msgstr "(Daten)"
@@ -108,9 +116,9 @@ msgid ""
 "format, or ask your system administrator to allow larger uploads."
 msgstr ""
 "<b>Hinweis:</b> Sie können maximal %s Elemente auf einmal hochladen. Wenn "
-"Sie mehr Elemente hochladen möchten, müssen Sie dies einzeln tun, eine "
-"andere Uploadmethode verwenden, oder Ihren Administrator bitten mehr "
-"Elemente zu erlauben."
+"Sie mehr Elemente hochladen möchten, müssen Sie dies nacheinander tun, ein "
+"anderes Format beim Hochladen (z.B. JPEG) verwenden, oder Ihren "
+"Administrator bitten, mehr Elemente zu erlauben."
 
 #, c-format
 msgid ""
@@ -120,18 +128,19 @@ msgid ""
 "administrator to allow larger uploads."
 msgstr ""
 "<b>Hinweis:</b> Sie können maximal %s Elemente auf einmal hochladen. Keine "
-"einzelne Datei darf größer als %s sein. Wenn Sie mehr hochladen möchten, "
-"müssen Sie eine andere Upload-Methode wählen oder Ihren Systemadministrator "
-"bitten, das Hochladen von größeren Dateien zu erlauben."
+"einzelne Datei darf größer als %s sein.  Wenn Sie mehr hochladen möchten, "
+"müssen Sie die Dateien nacheinander hochladen, ein anderes Hochladeformat (z."
+"B. JPEG) wählen oder Ihren Systemadministrator bitten, das Hochladen von "
+"größeren Dateien zu erlauben."
 
 msgid "<none>"
 msgstr "<keine>"
 
 msgid "Account Settings"
-msgstr "Albumeinstellungen"
+msgstr "Zugangseinstellungen"
 
 msgid "Account settings saved successfully"
-msgstr "Die Einstellungen zu Ihrem Zugang wurden erfolgreich gespeichert."
+msgstr "Zugangseinstellungen wurden erfolgreich gespeichert."
 
 msgid "Action"
 msgstr "Aktion"
@@ -152,7 +161,7 @@ msgid "Add Member"
 msgstr "Mitglied hinzufügen"
 
 msgid "Add Permission"
-msgstr "Berechtigungen hinzufügen"
+msgstr "Berechtigung hinzufügen"
 
 msgid "Add Sub-Album"
 msgstr "Unteralbum hinzufügen"
@@ -164,7 +173,7 @@ msgid "Add more files"
 msgstr "Mehr Dateien hinzufügen"
 
 msgid "Add"
-msgstr "Füge hinzu"
+msgstr "Hinzufügen"
 
 msgid "Add/Remove Users"
 msgstr "Benutzer hinzufügen/löschen"
@@ -174,7 +183,7 @@ msgid "Added %s"
 msgstr "%s hinzugefügt"
 
 msgid "Added local upload directory successfully"
-msgstr "Der lokale Upload-Order wurde erfolgreich eingetragen."
+msgstr "Der Hochlade-Order wurde erfolgreich eingetragen"
 
 #, c-format
 msgid "Added user '%s' to group '%s'"
@@ -184,13 +193,13 @@ msgid "Admin Options"
 msgstr "Admin Optionen"
 
 msgid "Album Frame"
-msgstr "Alben-Rahmen"
+msgstr "Album Rahmen"
 
 msgid "Album Highlight"
 msgstr "Titelbild des Albums"
 
 msgid "Album created successfully."
-msgstr "Das Album wurde erfolgreich erstellt."
+msgstr "Album erfolgreich erstellt."
 
 msgid "Album"
 msgstr "Album"
@@ -219,7 +228,7 @@ msgid "An error has occurred."
 msgstr "Es ist ein Fehler aufgetreten."
 
 msgid "An item with the same name already exists."
-msgstr "Ein Element mit dem selben Namen existiert bereits"
+msgstr "Ein Element mit dem selben Namen existiert bereits."
 
 msgid "Animation Size"
 msgstr "Animation Größe"
@@ -241,7 +250,7 @@ msgstr "Archiv"
 
 #, c-format
 msgid "Are you sure you want to delete this %s?"
-msgstr "Sind Sie sicher, daß Sie %s löschen möchten ?"
+msgstr "Sind Sie sicher, daß Sie %s löschen möchten?"
 
 msgid "Are you sure?"
 msgstr "Sind Sie sicher?"
@@ -255,21 +264,23 @@ msgstr "Aufsteigend"
 msgid "Aspect Ratio: "
 msgstr "Seitenverhältnis:"
 
+# %s is name of old owner
 #, c-format
 msgid "Assign a new owner for all items of %s"
-msgstr "wählen Sie einen neuen Bestitzer für alle Elemente von %s"
+msgstr "Ordnen Sie allen Elementen von '%s' einen neuen Besitzer zu."
 
 msgid "Assign caption to:"
 msgstr "Beschriftung zuweisen für:"
 
 msgid "Audio"
-msgstr "Audio"
+msgstr "Audiodatei"
 
 msgid "Authorization missing"
-msgstr "Authorisierung fehlt"
+msgstr "Berechtigung fehlt"
 
+# means bold == Fett
 msgid "B"
-msgstr "B"
+msgstr "F"
 
 msgid "BBCode"
 msgstr "BBCode"
@@ -297,26 +308,26 @@ msgid "Browser"
 msgstr "Browser"
 
 msgid "Build All Thumbnails/Resizes"
-msgstr "Alle Vorschau- und Zwischenbilder erstellen"
+msgstr "Erzeuge alle Vorschaubilder/Zwischengrößen"
 
 msgid "Build all thumbnails/resizes"
-msgstr "Erstelle alle Zwischen- und Vorschaubilder"
+msgstr "Erzeuge alle Vorschaubilder/Zwischengrößen"
 
-#, fuzzy
 msgid ""
 "By default Gallery uses PHP's built in mail function to send email which "
 "requires no configuration.  To use a smtp/mail server enter the information "
 "below, including authentication information if required."
 msgstr ""
-"Standartmäßig benutzt Gallery die Mail-Funktion von PHP um E-Mails zu "
-"verschicken. Wenn Sie einen SMTP/Mail-Server verwenden wollen der eine "
-"Authentifizierung benötigt, füllen Sie die Felder unten aus."
+"Standardmäßig benutzt Gallery die Mail-Funktion von PHP, um E-Mails zu "
+"verschicken.  Dafür ist keine Konfiguration nötig.  Wenn Sie einen SMTP/Mail-"
+"Server verwenden wollen, füllen Sie die Felder unten aus, einschließlich "
+"eventuell erforderlicher Anmeldeinformationen."
 
 msgid "C 90&deg;"
 msgstr "Im Uhrzeigersinn 90&deg;"
 
 msgid "CC 90&deg;"
-msgstr "Gegen de Uhrzeigersinn 90&deg;"
+msgstr "Gegen den Uhrzeigersinn 90&deg;"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -337,41 +348,41 @@ msgid "Changes saved successfully"
 msgstr "Änderungen erfolgreich gespeichert."
 
 msgid "Check All"
-msgstr "Alle auswählen"
+msgstr "Alles auswählen"
 
 msgid "Check None"
-msgstr "Keines Auswählen"
+msgstr "Nichts Auswählen"
 
 #, c-format
 msgid "Checked %d items"
-msgstr "%d Elemente ausgewählt"
+msgstr "%d Elemente geprüft"
 
 msgid "Choose a destination album"
-msgstr "Wählen Sie das Zielalbum"
+msgstr "Wählen Sie ein Zielalbum"
 
 msgid ""
 "Choose a layout for this album. (The way the album is arranged on the page)"
 msgstr ""
-"Bitte wählen Sie ein Layout für dieses Album. (Layout bezieht sich auf die "
-"Anordnung der Alben)"
+"Bitte wählen Sie ein Layout für dieses Album. (Die Anordung der gezeigten "
+"Elemente)"
 
 msgid "Choose a new album for the link"
-msgstr "Wählen Sie ein neues Album für den Link"
+msgstr "Wählen Sie ein neues Album für die Verknüpfung"
 
 msgid "Choose a new album for them"
 msgstr "Wählen Sie ein neues Album"
 
 msgid "Choose a theme for this album.  (The look and feel of this album)"
-msgstr "Wählen Sie ein Thema für dieses Album.  (Das Look and Feel)"
+msgstr "Wählen Sie ein Thema für dieses Album.  (Das Look and Feel des Albums)"
 
 msgid "Choose the items you want to delete"
-msgstr "Selektieren Sie die Elemente, die Sie löschen möchten"
+msgstr "Wählen Sie die Elemente, die Sie löschen möchten"
 
 msgid "Choose the items you want to link"
-msgstr "Selektieren Sie die Elemente, die Sie verlinken möchten"
+msgstr "Wählen Sie die Elemente, die Sie verknüpfen möchten"
 
 msgid "Choose the items you want to move"
-msgstr "Selektieren Sie die Elemente, die Sie verschieben möchten"
+msgstr "Wählen Sie die Elemente, die Sie verschieben möchten"
 
 msgid "CinemaScope 2.35x1"
 msgstr "Kinoformat 2,35x1"
@@ -380,11 +391,11 @@ msgid "Clear"
 msgstr "Löschen"
 
 msgid "Columns per album page"
-msgstr "Spalten pro Albenseite"
+msgstr "Spalten pro Albumseite"
 
 #, c-format
 msgid "Completed %s task successfully."
-msgstr "Wartungsaufgabe %s erfolgreich ausgeführt"
+msgstr "Wartungsaufgabe %s erfolgreich ausgeführt."
 
 msgid "Configuration Error: Missing Layout"
 msgstr "Konfigurationsfehler: Es wurde kein Layout gefunden."
@@ -396,11 +407,11 @@ msgid "Continue..."
 msgstr "Fortfahren..."
 
 msgid "Copy base filenames to:"
-msgstr "Ursprünglichen Dateinamen kopieren nach:"
+msgstr "Basis Dateinamen kopieren nach:"
 
 #, c-format
 msgid "Core API Required: %s (available: %s)"
-msgstr "Folgendes Core API wird benötigt: %s (Verfügbar sind: %s)"
+msgstr "Folgendes Kern API wird benötigt: %s (Verfügbar sind: %s)"
 
 msgid "Create A New Group"
 msgstr "Eine neue Gruppe erstellen"
@@ -415,7 +426,7 @@ msgid "Create User"
 msgstr "Benutzer erstellen"
 
 msgid "Create thumbnails now"
-msgstr "Vorschaubilder erstellen"
+msgstr "Vorschaubilder jetzt erstellen"
 
 msgid "Create"
 msgstr "Erstellen"
@@ -480,32 +491,33 @@ msgstr "Elemente löschen"
 msgid "Delete a User"
 msgstr "Einen Benutzer löschen"
 
+# %s is user name
 #, c-format
 msgid ""
 "Delete all items of %s and assign a new owner for all remaining non empty "
 "albums"
 msgstr ""
-"Alle Elemente aus %s löschen und einen neuen Besitzer für alle übrigen, "
-"nicht leeren Alben festlegen"
+"Lösche alle Elemente von %s und ordne den übrig gebliebenen, nicht leeren, "
+"Alben einen neuen Besitzer zu"
 
 msgid "Delete database cache"
-msgstr "Datenbankcache löschen"
+msgstr "Datenbankpuffer leeren"
 
 msgid "Delete template cache"
-msgstr "Template-Zwischenspeicher löschen"
+msgstr "Vorlagenpuffer leeren"
 
 #, c-format
 msgid "Delete user <strong>%s</strong> and..."
-msgstr "Lösche Benutzer <strong>%s</strong> und ...."
+msgstr "Lösche Benutzer <strong>%s</strong> und ..."
 
 msgid "Delete"
 msgstr "Löschen"
 
 msgid "Deleting old permission tables"
-msgstr "Alte Berechtigungstabellen löschen"
+msgstr "Lösche alte Berechtigungstabellen"
 
 msgid "Deletion Complete"
-msgstr "Löschung beendet"
+msgstr "Löschen fertig"
 
 msgid "Descending"
 msgstr "Absteigend"
@@ -528,7 +540,7 @@ msgstr "Anzeige"
 
 #, c-format
 msgid "Do you really want to uninstall the %s module?"
-msgstr "Möchten Sie das %s Modul wirklich deinstallieren ?"
+msgstr "Möchten Sie das %s Modul wirklich deinstallieren?"
 
 msgid "Document"
 msgstr "Dokument"
@@ -537,7 +549,7 @@ msgid "Done"
 msgstr "Fertig"
 
 msgid "E-mail Address"
-msgstr "Email Adresse"
+msgstr "E-Mail Adresse"
 
 msgid ""
 "Each item has its own independent set of permissions.  Changing the parent's "
@@ -548,67 +560,68 @@ msgid ""
 "to grant permissions to a specific user, you can add (or remove) the user "
 "from the appropriate group."
 msgstr ""
-"Jedes Element hat seine eigenen unabhängigen Berechtigungen. Das Ändern der "
-"Berechtigungen der Eltern hat keine Auswirkung auf das Kind. So können Sie "
-"den Zugang zum Vater dieses Element sperren und trotzdem vollen Zugang zu "
-"dem Element selbst erlauben und umgekehrt. Die beste Methode, dieses System "
-"zu nutzen ist es, Gruppen zu erstellen und diesen die Berechtigungen "
-"zuzuweisen. So kann man einem Benutzer Rechte zuweisen, indem man ihn in die "
-"entsprechende Gruppe aufnimmt."
+"Jedes Element hat seine eigenen unabhängigen Berechtigungen.  Das Ändern der "
+"Berechtigungen der Eltern hat keine Auswirkung auf die Kinder.  So können "
+"Sie den Zugang zum Vater eines Elements sperren und trotzdem vollen Zugang "
+"zu dem Element selbst erlauben und umgekehrt.  Die beste Methode, dieses "
+"System zu nutzen, ist es, Gruppen zu erstellen und denen die Berechtigungen "
+"zuzuweisen.  So kann man einem Benutzer Rechte zuweisen, indem man ihn in "
+"die entsprechende Gruppe aufnimmt."
 
 msgid ""
 "Each item in your album can have multiple sizes. Define the default sizes "
 "here."
 msgstr ""
 "Jedes Element eines Albums kann verschiedene Größen haben.  Geben Sie hier "
-"die Standard-Zielgrößen an."
+"die Standardgrößen an."
 
 #, c-format
 msgid "Edit %s"
-msgstr "%s bearbeiten"
+msgstr "%s Ändern"
 
 msgid "Edit Captions"
-msgstr "Beschriftung bearbeiten"
+msgstr "Beschriftungen ändern"
 
+# errorBody.tpl
 msgid "Edit Conflict!"
-msgstr "Problem bearbeiten!"
+msgstr "Bearbeitungs-Konflikt!"
 
 msgid "Edit Group (by list)"
-msgstr "Gruppe bearbeiten (nach Liste)"
+msgstr "Gruppen (siehe Liste) ändern"
 
 msgid "Edit Group"
-msgstr "Gruppe bearbeiten"
+msgstr "Gruppe ändern"
 
 #, c-format
 msgid "Edit Members of Group '%s'"
-msgstr "Mitglieder der Gruppe '%s' bearbeiten"
+msgstr "Mitglieder der Gruppe '%s' ändern"
 
 msgid "Edit Permissions"
-msgstr "Berechtigungen bearbeiten"
+msgstr "Berechtigungen ändern"
 
 msgid "Edit User (by list)"
-msgstr "Benutzer bearbeiten (nach Liste)"
+msgstr "Benutzer (siehe Liste) ändern"
 
 msgid "Edit User"
-msgstr "Benutzer bearbeiten"
+msgstr "Benutzer ändern"
 
 msgid "Edit a group"
-msgstr "Gruppe bearbeiten"
+msgstr "Eine Gruppe ändern"
 
 msgid "Edit a user"
-msgstr "Benutzer bearbeiten"
+msgstr "Einen Benutzer ändern"
 
 msgid "Edit"
 msgstr "Anpassen"
 
 msgid "Email Address"
-msgstr "Email Adresse"
+msgstr "E-Mail Adresse"
 
 msgid "Email Test Error"
-msgstr ""
+msgstr "E-Mail Test Fehler"
 
 msgid "Email"
-msgstr "Email"
+msgstr "E-Mail"
 
 msgid "Embedded Markup"
 msgstr "Eingebettete Auszeichnung"
@@ -616,29 +629,29 @@ msgstr "Eingebettete Auszeichnung"
 msgid ""
 "Ensure data files for all derivatives (thumbnails, etc) have been built."
 msgstr ""
-"Sicherstellen, dass alle von den Originaldaten abgeleiteten Dateien "
-"(Vorschaubilder, etc.) erstellt wurden."
+"Stellt sicher, daß alle abgeleiteten Dateien (Vorschaubilder usw.) erzeugt "
+"sind."
 
 msgid "Enter a URL"
 msgstr "Bitten geben Sie eine URL ein"
 
 msgid "Enter an image URL"
-msgstr "Geben Sie eine URL zu einem Bild an"
+msgstr "Geben Sie eine URL zu einem Bild ein"
 
 msgid "Enter some text describing the URL"
-msgstr "Geben Sie eine Beschreibung zu dieser URL an"
+msgstr "Geben Sie eine Beschreibung zu dieser URL ein"
 
 msgid ""
 "Enter the full path to the file and an optional caption in the boxes below."
 msgstr ""
-"Geben Sie den vollständigen Pfad der Datei und wahlweise eine Beschriftung "
-"in den folgenden Feldern an."
+"Geben Sie den vollständigen Pfad zur Datei und optional eine Beschriftung in "
+"den folgenden Feldern an."
 
 msgid "Error Detail"
 msgstr "Fehlerdetails"
 
 msgid "Error sending test email, see below for details"
-msgstr ""
+msgstr "Fehler beim Senden der Test-E-Mail, siehe unten für Einzelheiten."
 
 msgid "Error"
 msgstr "Fehler"
@@ -651,7 +664,7 @@ msgid "Everybody"
 msgstr "Jeder"
 
 msgid "Failed"
-msgstr "fehlgeschlagen"
+msgstr "Fehlgeschlagen"
 
 msgid "File name"
 msgstr "Dateiname"
@@ -672,20 +685,20 @@ msgid ""
 "For security purposes, you can't use this feature until the Gallery Site "
 "Administrator configures a set of legal upload directories."
 msgstr ""
-"Aus Sicherheitsgründen können Sie dieses Feature erst verwenden,wenn der "
-"Gallery Administrator die Upload-Verzeichnisse konfiguriert hat."
+"Aus Sicherheitsgründen können Sie dieses Feature erst verwenden, wenn der "
+"Gallery Administrator die Hochlade-Ordner eingerichtet hat."
 
 msgid "Form on Sidebar"
 msgstr "Formular in der Seitenleiste"
 
 msgid "From Local Server"
-msgstr "Vom lokalen Server"
+msgstr "Vom Gallery Server"
 
 msgid "From Web Browser"
 msgstr "Vom Web Browser"
 
 msgid "From Web Page"
-msgstr "Von Webseite"
+msgstr "Von anderer Webseite"
 
 msgid "Full Name"
 msgstr "Voller Name"
@@ -695,13 +708,13 @@ msgid "Gallery %s"
 msgstr "Gallery %s"
 
 msgid "Gallery 2 Core Module"
-msgstr "Gallery 2 Hauptmodul"
+msgstr "Gallery 2 Kernmodul"
 
 msgid "Gallery Administrator"
 msgstr "Gallery Administrator"
 
 msgid "Gallery Core Module"
-msgstr "Gallery Hauptmodul"
+msgstr "Gallery Kernmodul"
 
 msgid "Gallery Core"
 msgstr "Gallery Kern"
@@ -709,9 +722,8 @@ msgstr "Gallery Kern"
 msgid "Gallery Debug Output"
 msgstr "Gallery Debug-Ausgabe"
 
-#, fuzzy
 msgid "Gallery Email Test"
-msgstr "Gallery Module"
+msgstr "Gallery E-Mail-Test"
 
 msgid "Gallery Item Administration"
 msgstr "Gallery Element Administration"
@@ -723,10 +735,10 @@ msgid "Gallery Modules"
 msgstr "Gallery Module"
 
 msgid "Gallery Site Administration"
-msgstr "Administration dieses Gallery-Sites"
+msgstr "Site Administration der Gallery"
 
 msgid "Gallery User Administration"
-msgstr "Gallery Benutzer Administration"
+msgstr "Benutzer Administration der Gallery"
 
 msgid ""
 "Gallery can create thumbnails at upload time, or create them the first time "
@@ -735,10 +747,10 @@ msgid ""
 "viewing albums for the first time go faster at the expense of a longer "
 "upload time."
 msgstr ""
-"Gallery kann Vorschaubilder beim Hochladen or beim ersten Aufrufen "
-"erstellen. Bei beiden Methoden wird das Vorschaubild nur einmal erstellt und "
-"gespeichert, aber wenn Sie die Vorschaubilder beim Hochladen erstellen "
-"lassen, wird das Album beim ersten Aufrufen schneller sein."
+"Gallery kann Vorschaubilder beim Hochladen oder bei der ersten Anzeige "
+"erstellen.  Bei beiden Methoden wird das Vorschaubild nur einmal erstellt "
+"und gespeichert, aber wenn Sie die Vorschaubilder beim Hochladen erstellen "
+"lassen, werden Alben beim ersten Aufrufen schneller angezeigt werden."
 
 msgid ""
 "Gallery compiles template files and saves them for increased performance.  "
@@ -746,12 +758,11 @@ msgid ""
 "try running this task.  Also run this if you remove a local/*.tpl file so "
 "Smarty will switch back to the default tpl file."
 msgstr ""
-"Gallery erzeugt die Template-Dateien und speichert sie zwischen, um die "
-"Verarbeitungsgeschwindigkeit zu erhöhen. Falls die Fehlermeldung <i>Smarty "
-"error</i> auftaucht, dann könnten Sie versuchen, diese Wartungsaufgabe "
-"laufen zu lassen. Lassen Sie diese Aufgabe auch laufen, wenn Sie eine local/"
-"*.tpl gelöscht haben, damit Smarty wieder auf die standardmäßige tpl-Datei "
-"zugreift."
+"Gallery kompiliert Vorlagen Dateien und speichert sie in einem Puffer, um "
+"eine höhere Geschwindigkeit zu erzielen. Wenn Sie Probleme haben und eine "
+"Meldung <i>Smarty Fehler</i> sehen, dann sollten Sie diese Wartungsaufgabe "
+"ausführen.  Benutzen Sie diese Aufgabe auch dann, wenn Sie <i>local/*.tpl</"
+"i> Dateien entfernen, so daß Smarty auf die Standarddatei zurückschaltet."
 
 msgid ""
 "Gallery does not modify your original photo when rotating and scaling. "
@@ -760,11 +771,11 @@ msgid ""
 "Disabling this option will cause any actions (rotating, scaling, etc) to "
 "modify the original."
 msgstr ""
-"Gallery verändert nicht Ihre Originalbilder beim Rotieren oder Skalieren.  "
+"Gallery verändert nicht Ihr Originalbild beim Rotieren oder Skalieren.  "
 "Stattdessen wird ein Duplikat angelegt und mit der Kopie weitergearbeitet.  "
-"Dies verbraucht etwas zusätzlichen Speicherplatz, aber Ihre Originale "
-"bleiben erhalten.  Wenn Sie diese Option deaktivieren werden alle Operation "
-"auf das Originalbild angewendet."
+"Dies verbraucht etwas zusätzlichen Speicherplatz, aber ihre Originale "
+"bleiben erhalten.  Wenn Sie diese Option deaktivieren, werden alle "
+"Operationen auf das Originalbild angewendet."
 
 msgid ""
 "Gallery features come as separate modules.  You can download and install "
@@ -775,9 +786,10 @@ msgid ""
 msgstr ""
 "Gallerys Funktionalitäten sind als separate Module erhältlich.  Sie können "
 "ein Modul herunterladen und installieren, um die entsprechende "
-"Funktionalität hinzuzufügen. Außerdem können Sie aktive Module deaktivieren. "
-"Um eine Funktion zu nutzen, müssen Sie das entsprechende Modul installieren, "
-"konfigurieren und anschließend aktivieren. Später können Sie es nach "
+"Funktionalität hinzuzufügen. Außerdem können Sie ein aktives Modul "
+"deaktivieren, wenn Sie die Funktionalität nicht benötigen.  Um eine Funktion "
+"zu nutzen, müssen Sie das entsprechende Modul installieren, konfigurieren "
+"(falls nötig) und anschließend aktivieren.  Später können Sie es nach "
 "Belieben wieder deaktivieren."
 
 msgid ""
@@ -786,11 +798,10 @@ msgid ""
 "to clean out the cache and force Gallery to reload the information from the "
 "database."
 msgstr ""
-"Gallery speichert häufig verwendete Datenbank-Informationen auf der "
-"Festplatte um die Verarbeitungsgeschwindigkeit zu erhöhen. Falls Sie "
-"manuelle Veränderungen an der Datenbank vornehmen, sollten Sie diese Aufgabe "
-"laufen lassen, um den Zwischenspeicher zu löschen und ein Neuladen der "
-"Datenbankinformationen durch die Gallery zu erzwingen."
+"Gallery speichert häufig benötigte Datenbank-Informationen zur "
+"Beschleunigung in einem Puffer.  Falls Sie die Datenbank direkt geändert "
+"haben, sollten Sie diese Aufgabe ausführen, um den Puffer zu löschen und "
+"Gallery dazu zu zwingen, die Informationen aus der Datenbank neu zu laden."
 
 msgid ""
 "Gallery uses a system of locks to prevent simultaneous changes from "
@@ -802,14 +813,15 @@ msgid ""
 "getting many lock timeouts, you can try switching to database locking "
 "instead.  It's ok to switch back and forth."
 msgstr ""
-"Gallery benutzt ein System zum Sperren von Daten um gleichzeitige Änderungen "
-"zu verhindern. Es stehe zwei Methoden zur Verfügung: <b>Datei</b>basiertes "
-"Sperren ist schnell und effizient, aber arbeitet nicht auf NFS-Dateisystemen "
-"und funktioniert nicht auf Windows-Systemen. <b>Datenbank</b>basiertes "
-"Sperren ist langsamer aber kompatibler. Wenn Sie sich nicht sicher sind, "
-"empfehlen wir Ihnen das dateibasiertes Sperren von Daten. Wenn Sie viele "
-"Timeouts bekommen, können Sie auf datenbankbasiertes Sperren umstellen. Das "
-"Wechseln zwischen den Sperrungs-Möglichkeiten stellt kein Problem dar."
+"Gallery benutzt ein System zum Sperren von Daten um gleichzeitige "
+"kollidierende Änderungen zu verhindern. Es stehen zwei Methoden zur "
+"Verfügung: <b>Datei</b> basiertes Sperren ist schnell und effizient, aber "
+"arbeitet nicht auf NFS-Dateisystemen und funktioniert unzuverlässig auf "
+"Windows Systemen.  <b>Datenbank</b> basiertes Sperren ist langsamer, aber "
+"zuverlässig.  Wenn Sie sich nicht sicher sind, empfehlen wir ihnen das Datei "
+"basierte Sperren.  Wenn Sie viele Timeouts bekommen, können Sie auf "
+"Datenbank basiertes Sperren umstellen.  Das Wechseln zwischen den "
+"Sperrmethoden ist unproblematisch."
 
 msgid "Gallery version"
 msgstr "Gallery Version"
@@ -825,16 +837,17 @@ msgstr "Allgemein"
 
 msgid "Get system details; useful for copy/paste into G2 support forum."
 msgstr ""
-"Details zum System abrufen; nützlich zum Einfügen ins G2 Support-Forum."
+"Zeige System Details. Nützlich, wenn Sie in G2 Foren Hilfe suchen. Bitte "
+"kopieren Sie die gezeigten Informationen und fügen Sie sie dann im Forum ein."
 
 msgid "Go back and try again"
-msgstr "Erneut versuchen"
+msgstr "Zurück und neu versuchen"
 
 msgid "Go"
-msgstr "Start"
+msgstr "Los"
 
 msgid "Graphics Toolkits"
-msgstr "Graphikbearbeitungsprogramm"
+msgstr "Grafische Werkzeuge"
 
 #, c-format
 msgid "Group '%s' already exists"
@@ -855,8 +868,7 @@ msgstr "Gruppenberechtigungen"
 
 msgid "Group already has this permission (check sub-permissions)"
 msgstr ""
-"Diese Gruppe hat diese Berechtigung schon (Prüfen Sie die "
-"Unterberechtigungen)"
+"Die Gruppe hat diese Berechtigung schon (Prüfen Sie die Unterberechtigungen)"
 
 msgid "Group name"
 msgstr "Gruppenname"
@@ -868,7 +880,7 @@ msgid "Groups"
 msgstr "Gruppen"
 
 msgid "Guest User Only"
-msgstr "Nur für Gäste"
+msgstr "Nur Gast Benutzer"
 
 msgid "Guest"
 msgstr "Gast"
@@ -889,10 +901,11 @@ msgstr "Titelbild für:"
 msgid "Highlight"
 msgstr "Titelbild"
 
+# used in email, better use ASCII only (maybe ISO-8859-1 in europe)
 msgid "If you did not request this recovery email, you may safely ignore it."
 msgstr ""
-"Falls Sie diese Wiederherstellung-E-Mail nicht angefordert haben, können Sie "
-"sie problemlos ignorieren."
+"Wenn Sie diese E-Mail zur Wiederherstellung nicht ausdruecklich angefordet "
+"haben, dann ignorieren Sie sie bitte."
 
 msgid ""
 "Import files into Gallery from another website.  Enter a URL below to a web "
@@ -901,21 +914,21 @@ msgid ""
 "directory, you should end the URL with a trailing slash (eg, http://example."
 "com/directory/). "
 msgstr ""
-"Dateien von anderen Webseiten in Gallery importieren. Geben Sie unten eine "
-"URL zu einer Webseite irgendwo im Internet ein und Gallery wird alle "
-"Mediadateien von dieser Seite hochladen. Beachten Sie, dass wenn Sie eine "
-"URL zu einem Verzeichnis eingeben, sollte die URL mit einem Slash (/) enden. "
-"(z.B.: http://beispiel.de/verzeichnis/)."
+"Dateien von anderen Webseiten in Gallery importieren.  Geben Sie eine URL zu "
+"einer Webseite irgendwo im Internet ein und Gallery wird alle Mediadateien "
+"von der Seite auf Ihren Server kopieren.  Beachten Sie: wenn Sie eine URL zu "
+"einem Ordner eingeben, sollte die URL mit einem Schrägstrich (/) enden (z."
+"B.: http://beispiel.de/ordner/)."
 
 msgid ""
 "Improve the performance of your database.  Results will vary depending on "
 "which database you're using, but this routine maintenance will make your "
 "Gallery run faster.  Especially useful after adding or deleting many items."
 msgstr ""
-"Verbessern Sie die Verarbeitungsgeschwindigkeit Ihrer Datenbank. Das "
-"Ergebnis hängt zwar von der verwendeten Datenbjak ab, doch diese Routine "
-"wird Ihre Gallery schneller machen. Dies ist vor allem nach dem Hinzufügen "
-"oder Löschen von vielen Elementen sinnvoll."
+"Verbessern Sie die Geschwindigkeit Ihrer Datenbank. Der erzielbare Gewinn "
+"hängt zwar von der verwendeten Datenbank ab, aber diese regelmäßige "
+"Wartungsaufgabe macht Ihre Gallery insgesamt schneller.  Besonders nützlich, "
+"nachdem Sie viele Elemente hinzugefügt oder gelöscht haben."
 
 msgid ""
 "In order for Gallery to properly display this animation, it has to know the "
@@ -926,14 +939,13 @@ msgid ""
 "changing these values does <b>not</b> change the animation itself so "
 "experimenting won't cause harm."
 msgstr ""
-"Damit die Gallery diese Animation richtig darstellen kann, muss sie die "
-"Breite und Höhe der Animation kennen. Falls sie ein Grafik-Toolkit "
-"installiert haben, das mit Animationen umgehen kann, dann kann es sein, dass "
-"diese Werte schon gesetzt sind. Falls nicht, könnten sie auf 0 gesetzt sein. "
-"Falls sie nicht die korrekten Werte eingeben, könnte die Animation verzerrt "
-"erscheinen, wenn sie im Browser dargestellt wird. Beachten sie bitte, dass "
-"das Ändern dieser Werte <b>keine</b> Veränderung an der Animation selbst zur "
-"Folge hat. Sie können also bedenkenlos experimentieren."
+"Damit Gallery diese Animation korrekt anzeigen kann, muß sie die Breite und "
+"Höhe der Animation kennen. Wenn Sie ein grafisches Werkzeug installiert "
+"haben, das mit Animationen umgehen kann, dann werden diese Werte bereits "
+"richtig eingestellt sein. Ansonsten werden sie wahrscheinlich auf 0 stehen. "
+"Wenn Sie hier falsche Werte angeben, dann wird Ihre Animation im Web-Browser "
+"verzerrt dargestellt. Aber die Werte hier ändern <b>nicht</b> die Animation "
+"selbst. Sie können also bedenkenlos experimentieren."
 
 msgid ""
 "In order for Gallery to properly display this movie, it has to know the "
@@ -944,23 +956,22 @@ msgid ""
 "values do <b>not</b> change the movie itself so experimentation won't cause "
 "harm."
 msgstr ""
-"Damit die Gallery diesen Film richtig darstellen kann, muss sie die Breite "
-"und Höhe des Films kennen. Falls sie ein Grafik-Toolkit installiert haben, "
-"das mit Filmen umgehen kann, dann kann es sein, dass diese Werte schon "
-"gesetzt sind. Falls nicht, könnten sie auf 0 gesetzt sein. Falls sie nicht "
-"die korrekten Werte eingeben, könnte der Film verzerrt erscheinen, wenn er "
-"im Browser dargestellt wird. Beachten sie bitte, dass das Ändern dieser "
-"Werte <b>keine</b> Veränderung an dem Film selbst zur Folge hat. Sie können "
-"also bedenkenlos experimentieren."
+"Damit Gallery diesen Film korrekt anzeigen kann, muß sie die Breite und Höhe "
+"des Films kennen. Wenn Sie ein grafisches Werkzeug installiert haben, das "
+"mit Filmen umgehen kann, dann werden diese Werte bereits richtig eingestellt "
+"sein. Ansonsten werden sie wahrscheinlich auf 0 stehen. Wenn Sie hier "
+"falsche Werte angeben, dann kann Ihr Film im Web-Browser verzerrt "
+"dargestellt werden. Aber die Werte hier ändern <b>nicht</b> den Film selbst. "
+"Sie können also bedenkenlos experimentieren."
 
 msgid "Inactivity Timeout"
 msgstr "Zeitüberschreitung bei Untätigkeit"
 
 msgid "Incompatible layout!"
-msgstr "Inkompatibeles Layout !"
+msgstr "Inkompatibles Layout!"
 
 msgid "Incompatible module!"
-msgstr "Inkompatibeles Modul !"
+msgstr "Inkompatibles Modul!"
 
 msgid "Incorrect password"
 msgstr "Falsches Passwort"
@@ -972,7 +983,7 @@ msgid "Installed"
 msgstr "Bereis installiert"
 
 msgid "Invalid email address"
-msgstr "Ungültige Email Adresse"
+msgstr "Ungültige E-Mail Adresse"
 
 msgid "Invert"
 msgstr "Invertiere"
@@ -1006,14 +1017,14 @@ msgid "Last Changed Date"
 msgstr "Datum der letzten Änderung"
 
 msgid "Last Run Details:"
-msgstr "Details zum letzten Durchlauf:"
+msgstr "Details der letzten Ausführung:"
 
 msgid "Last run"
-msgstr "Zuletzt gelaufen"
+msgstr "Zuletzt ausgeführt"
 
 #, c-format
 msgid "Layout API Required: %s (available: %s)"
-msgstr "Folgendes Layout API wird benötigt: %s (verfügbar: %s)"
+msgstr "Folgendes Layout API wird benötigt: %s (Verfügbar sind: %s)"
 
 msgid "Layout Name"
 msgstr "Layout Name"
@@ -1025,23 +1036,23 @@ msgid "Layouts and Themes"
 msgstr "Layout und Thema"
 
 msgid "Legal Directories"
-msgstr "Erlaubte Verzeichnisse"
+msgstr "Erlaubte Ordner"
 
 #, c-format
 msgid "Link %s"
-msgstr "Verlinke %s"
+msgstr "%s verknüpfen"
 
 msgid "Link an Item"
-msgstr "Verlinken Sie ein Element"
+msgstr "Verknüpfen Sie ein Element"
 
 msgid "Link to Login Page"
-msgstr "Link zur Login Seite."
+msgstr "Verweis zur Login Seite."
 
 msgid "Link"
-msgstr "Verlinke"
+msgstr "Verknüpfe"
 
 msgid "Local Server Upload Paths"
-msgstr "Lokaler Uploadpfad auf dem Server"
+msgstr "Hochlade-Pfad auf dem Server"
 
 msgid "Lock system"
 msgstr "Sperr-Methode"
@@ -1066,8 +1077,8 @@ msgid ""
 "Lost or forgotten passwords can be retrieved using the <a href=\"%s"
 "\">recover password</a> page"
 msgstr ""
-"Verlorene oder vergessene Passwörter können über die Seite <a href=\"%s"
-"\">Passwort zurücksetzen</a> ändern."
+"Ein vergessenes/verlorenes Passwort können Sie auf der Seite <a href=\"%s"
+"\">Passwort wiederherstellen</a> neu erhalten."
 
 msgid "Maintenance"
 msgstr "Wartungsaufgaben"
@@ -1085,21 +1096,21 @@ msgid "Members"
 msgstr "Mitglieder"
 
 msgid "Missing Layout"
-msgstr "fehlendes Layout"
+msgstr "Fehlendes Layout"
 
 msgid "Modified Photo"
 msgstr "Geändertes Bild"
 
 #, c-format
 msgid "Modified group '%s'"
-msgstr "Gruppe '%s' angepasst"
+msgstr "Gruppe '%s' geändert"
 
 #, c-format
 msgid "Modified user '%s'"
-msgstr "Benutzer '%s' angepasst"
+msgstr "Benutzer '%s' geändert"
 
 msgid "Modify Photo"
-msgstr "Bilder verändern"
+msgstr "Photo bearbeiten"
 
 #, c-format
 msgid "Module API Required: %s (available: %s)"
@@ -1115,17 +1126,17 @@ msgid "More.."
 msgstr "mehr..."
 
 msgid "Most Viewed First"
-msgstr "Meistegesehenste zuerst"
+msgstr "Meistgesehene zuerst"
 
 #, c-format
 msgid "Move %s"
 msgstr "%s verschieben"
 
 msgid "Move an Item"
-msgstr "Verschiebe das Element"
+msgstr "Ein Element verschieben"
 
 msgid "Move this item"
-msgstr "Dieses Element verschieben"
+msgstr "Dies Element verschieben"
 
 msgid "Move"
 msgstr "Verschieben"
@@ -1155,13 +1166,13 @@ msgid "New albums"
 msgstr "Neue Alben"
 
 msgid "New directories"
-msgstr "Neue Verzeichnisse"
+msgstr "Neue Ordner"
 
 msgid "New files"
 msgstr "Neue Dateien"
 
 msgid "New owner (leaving blank means one of the Site Admins):"
-msgstr "Neu Besitzer (Leeres Feld bedeutet Gallery Admin):"
+msgstr "Neuer Besitzer (leeres Feld bedeutet Gallery Admin):"
 
 msgid "New owner"
 msgstr "Neuer Besitzer"
@@ -1179,10 +1190,10 @@ msgid "No destination chosen"
 msgstr "Kein Ziel ausgewählt"
 
 msgid "No files added."
-msgstr "Es wurden keine Dateien hinzugefügt"
+msgstr "Es wurden keine Dateien hinzugefügt."
 
 msgid "No items were selected for deletion"
-msgstr "Es wurden keinen Elemente zum Löschen markiert"
+msgstr "Es waren keine Elemente zum Löschen markiert"
 
 msgid "No sources chosen"
 msgstr "Keine Quellen ausgewählt"
@@ -1197,18 +1208,18 @@ msgid ""
 "Note that if the account does not have an email address, you may not receive "
 "the email and you should contact your system administrator for help."
 msgstr ""
-"Bitte beachten Sie, dass Sie keine E-Mail erhalten können, wenn für das "
-"Konto keine E-Mail-Adresse angegeben wurde. In diesem Fall sollten Sie den "
-"System-Administrator um Hilfe bitten."
+"Wenn Ihr Zugang keine E-Mail Adresse besitzt, können Sie natürlich keine E-"
+"Mail bekommen. Bitte wenden Sie sich dann für Hilfe an Ihren System-"
+"Administrator."
 
 msgid "Nothing added since no items were selected"
 msgstr "Es wurde nichts hinzugefügt, da kein Element ausgewählt wurde"
 
 msgid "Nothing to add found from this URL"
-msgstr ""
+msgstr "Diese URL hatte keine Medien, die hinzugefügt werden könnten"
 
 msgid "Number of items to show per page"
-msgstr "Anzahl der dargestellten Elemente pro Seite"
+msgstr "Anzahl der anzuzeigenden Elemente pro Seite"
 
 msgid "Operating system"
 msgstr "Betriebssystem"
@@ -1223,13 +1234,13 @@ msgid "Order"
 msgstr "Reihenfolge"
 
 msgid "Origination Date"
-msgstr "Erstellungsdatum"
+msgstr "Herkunftsdatum"
 
 msgid "Other"
 msgstr "Andere"
 
 msgid "Owner changed successfully"
-msgstr "Benutzer wurde erfolgreich angepasst."
+msgstr "Besitzer wurde erfolgreich geändert."
 
 msgid "Owner"
 msgstr "Besitzer"
@@ -1238,10 +1249,10 @@ msgid "PHP version"
 msgstr "PHP Version"
 
 msgid "Parent Directory"
-msgstr "übergeordnetes Verzeichnis"
+msgstr "Übergeordneter Ordner"
 
 msgid "Password Recovery"
-msgstr "Passwort zurücksetzen"
+msgstr "Passwort Wiederherstellung"
 
 msgid "Password changed successfully"
 msgstr "Passwort erfolgreich geändert."
@@ -1303,16 +1314,16 @@ msgid "Raw HTML"
 msgstr "Pures HTML"
 
 msgid "Recent Directories"
-msgstr "Zuletzt verwendete Verzeichnisse."
+msgstr "Zuletzt verwendete Ordner"
 
 msgid "Recent URLs"
 msgstr "Zuletzt verwendete URLs"
 
 msgid "Recover a lost or forgotten password"
-msgstr "Ein vergessenes oder verlorenes Passwort zurücksetzen"
+msgstr "Verlorenes/vergessenes Passwort wiederherstellen"
 
 msgid "Recover"
-msgstr "Zurücksetzen"
+msgstr "Wiederherstellen"
 
 msgid ""
 "Recovering your password requires that your user account has an email "
@@ -1324,18 +1335,17 @@ msgid ""
 "that time, it will be purged from the system and a new request will have to "
 "be made."
 msgstr ""
-"Das Zurücksetzen Ihres Passworts erfordert, dass Ihrem Benutzerkonto eine E-"
-"Mail-Adresse zugewiesen wurden, und dass Sie Zugang zu diesem E-Mail-"
-"Postfach haben. Eine Bestätigungsmail wird an Sie geschickt, die eine URL "
-"enthält, über die Sie ein neues Passwort für Ihr Benutzerkonto vergeben "
-"können. Zum Schutz vor Misbrauch kann nur ein Zurücksetzversuch alle 20 "
-"Minuten durchgeführt werden. Eine Bestätigungsmail behält für sieben Tage "
-"ihre Gültigkeit. Sollte sie in dem Zeitraum nicht benutzt werden, wird die "
-"Anfrage aus dem System entfernt und die Änderung muss erneut angefordert "
-"werden."
+"Die Wiederherstellung Ihres Passworts erfordert, daß Ihr Zugang eine E-Mail "
+"Adresse konfiguriert hat, deren Eingang Sie sehen können. An diese E-Mail "
+"Adresse wird eine Bestätigung mit einer URL geschickt, die Sie aufsuchen "
+"müssen, um ein neues Passwort für Ihren Zugang zu setzen.  Um Mißbrauch zu "
+"verhindern können Passwort Wiederherstellungs-Anforderungen nur 1 mal alle "
+"20 Minuten geschickt werden.  Eine Anforderung ist sieben Tage lang gültig.  "
+"Wenn Sie diese Zeitspanne nicht ausnutzen, müssen Sie die Wiederhestellung "
+"erneut anfordern."
 
 msgid "Recreate resized images"
-msgstr "Erstelle Zwischenbilder erneut"
+msgstr "Erstelle Zwischengrößen erneut"
 
 msgid "Recreate thumbnails and resizes"
 msgstr "Erstelle Zwischen- und Vorschaubilder erneut"
@@ -1347,14 +1357,15 @@ msgid "Redirect"
 msgstr "weiterleiten"
 
 msgid "Refresh Capture Dates"
-msgstr "Datum der Bilder erneut einlesen"
+msgstr "Aufnahmedaten auffrischen"
 
 msgid "Refresh capture dates"
-msgstr "Datum der Bilder erneut einlesen"
+msgstr "Aufnahmedaten auffrischen"
 
 msgid "Registered Users"
-msgstr ""
+msgstr "Registrierte Benutzer"
 
+# TODO: the msgid is too generic for such a specific translation
 msgid "Remove selected"
 msgstr "Ausgewählte Mitglieder entfernen"
 
@@ -1363,10 +1374,10 @@ msgstr "Entfernen"
 
 #, c-format
 msgid "Removed group '%s'"
-msgstr "Gruppe '%s' entfernen"
+msgstr "Gruppe '%s' entfernt"
 
 msgid "Removed local upload directory successfully"
-msgstr "Der lokale Upload-Ordner wurder erfolgreich entfernt"
+msgstr "Der Hochlade-Ordner wurde erfolgreich entfernt"
 
 #, c-format
 msgid "Removed user '%s'"
@@ -1385,33 +1396,34 @@ msgid ""
 "Reset number of views to zero for all albums and items.  This task flushes "
 "the database cache as well."
 msgstr ""
-"Betrachterzahlen für alle Alben und Elemente auf Null zurücksetzen. Dieser "
-"Vorgang löscht auch den Datenbank-Cache."
+"Setze die Zähler 'Betrachtet x mal' für alle Alben und Elemente auf 0 "
+"zurück.  Dieser Vorgang löscht gleichzeitig den Datenbank-Puffer."
 
 msgid "Reset to default"
 msgstr "Standard wiederherstellen"
 
 msgid "Reset view counts"
-msgstr "Betrachterzahlen zurücksetzen"
+msgstr "Zähler 'Betrachtet x mal' zurücksetzen"
 
 msgid "Reset"
 msgstr "Zurücksetzen"
 
 msgid "Resized Images"
-msgstr "Zwischenbilder (skaliert)"
+msgstr "Skalierte Bilder"
 
 msgid "Resized Photos"
-msgstr "Zwischenbilder"
+msgstr "Skalierte Photos"
 
 msgid "Restore original"
-msgstr "Original wieder herstellen"
+msgstr "Original wiederherstellen"
 
 msgid "Restored layout settings"
-msgstr "Wieder hergestellte Anzeige Einstellungen"
+msgstr "Layout Einstellungen wiederhergestellt"
 
 msgid "Reverted rotate and scale changes successfully"
 msgstr ""
-"Die Rotation,- und Skalierungsänderung wurden erfolgreich rückgängig gemacht."
+"Die Rotations- und Skalierungsänderungen wurden erfolgreich rückgängig "
+"gemacht."
 
 msgid "Rotate"
 msgstr "Drehen"
@@ -1420,7 +1432,7 @@ msgid "Rotated photo successfully"
 msgstr "Photo erfolgreich gedreht"
 
 msgid "Rows per album page"
-msgstr "Zeilen pro Albenseite"
+msgstr "Zeilen per Albumseite"
 
 msgid "SMTP From Address"
 msgstr "SMTP 'Von' Adresse"
@@ -1428,19 +1440,23 @@ msgstr "SMTP 'Von' Adresse"
 msgid "Save and Done"
 msgstr "Speichern und Fertig"
 
+# %s is number of items per page
 #, c-format
 msgid "Save and Edit Next %s"
-msgstr "Speichern und nächsten %s editieren"
+msgstr "Speichern und nächste %s bearbeiten"
 
+# %s is number of items per page
 #, c-format
 msgid "Save and Edit Previous %s"
-msgstr "Speichern und vorherigen %s editieren"
+msgstr "Speichern und vorherige %s editieren"
 
 msgid "Save"
 msgstr "Speichern"
 
+# was: Die Einstellungen wurden erfolgreich gespeichert.
+# But the msgid is too generic.
 msgid "Saved successfully."
-msgstr "Die Einstellungen wurden erfolgreich gespeichert."
+msgstr "Erfolgreich gespeichert."
 
 msgid "Scale"
 msgstr "Skalieren"
@@ -1449,22 +1465,22 @@ msgid "Scaled photo successfully"
 msgstr "Photo erfolgreich skaliert"
 
 msgid "Screen 4x3"
-msgstr "4x3 Rechteck"
+msgstr "Bildschirm 4x3"
 
 msgid "Search descriptions"
-msgstr "Durchsuche Beschreibungen"
+msgstr "Suche in Beschreibungen"
 
 msgid "Search keywords"
-msgstr "Such Schlüsselwörter"
+msgstr "Suche in Schlüsselwörtern"
 
 msgid "Search summaries"
-msgstr "Zusammenfassung der Suche"
+msgstr "Suche in Zusammenfassung"
 
 msgid "Search titles"
-msgstr "Durchsuche Titel"
+msgstr "Suche in Titel"
 
 msgid "Security Violation"
-msgstr "Sicherheitsverstoss"
+msgstr "Sicherheitsverstoß"
 
 msgid ""
 "Select language defaults for Gallery. Individual users can override this "
@@ -1472,18 +1488,20 @@ msgid ""
 "activated below."
 msgstr ""
 "Wählen Sie eine Standard-Sprache für Gallery. Die Benutzer können diese "
-"Auswahl in ihren persönlichen Einstellungen überschreiben oder über der "
-"Sprachauswahlbox, falls diese aktiviert ist."
+"Auswahl in ihren persönlichen Einstellungen überschreiben (oder über die "
+"Sprachauswahlbox, falls diese aktiviert ist)."
 
-#, fuzzy
 msgid "Send Email"
-msgstr "Email"
+msgstr "E-Mail senden"
 
 msgid ""
 "Send a test email to verify your settings are correct (whether using PHP "
 "mail or SMTP settings above).  Below enter a recipient email address for a "
 "test message."
 msgstr ""
+"Senden Sie eine Test-E-Mail um Ihre Einstellungen auf Korrektheit zu prüfen "
+"(egal, ob Sie PHP E-Mail oder obige SMTP Einstellungen benutzen).  Geben Sie "
+"unten die Emfänger-Adresse der Test-E-Mail an."
 
 msgid "Server Path"
 msgstr "Pfad auf dem Server"
@@ -1492,7 +1510,7 @@ msgid "Server"
 msgstr "Server"
 
 msgid "Session Lifetime"
-msgstr "Session Laufzeit"
+msgstr "Sitzungslaufzeit"
 
 msgid "Session Settings"
 msgstr "Sitzungseinstellungen"
@@ -1502,40 +1520,39 @@ msgstr "Elementnamen erstellen aus:"
 
 #, c-format
 msgid "Set the date and time to be displayed for this %s."
-msgstr "Datum und Zeit, welche für %s angezeigt werden soll."
+msgstr "Datum und Zeit, die für %s angezeigt werden soll."
 
 msgid "Set the date and time to be displayed for this item."
-msgstr ""
-"Datum und Zeit einstellen, die für dieses Element angezeigt werden sollen."
+msgstr "Datum und Zeit, die für dieses Element angezeigt werden soll."
 
 msgid "Set the date and time when this image was captured."
-msgstr "Datum und Zeit einstellen, wann diese Bild aufgenommen wurde."
+msgstr "Datum und Zeit einstellen, wann dies Bild aufgenommen wurde."
 
 msgid ""
 "Set the size of the thumbnail.  The largest side of the thumbnail will be no "
 "larger than this value. Leave this field blank if you don't want a thumbnail."
 msgstr ""
-"Geben Sie die Größe der Vorschaubilder an.  Die längere Seite des "
-"Vorschaubilds wird diesen Wert nicht überschreiten. Lassen Sie das Feld "
-"Leer, falls Sie kein Vorschaubild wünschen."
+"Geben Sie die Größe der Vorschaubilder an.  Die längste Seite eines "
+"Vorschaubilds wird diesen Wert nicht überschreiten.  Lassen Sie dies Feld "
+"leer, wenn Sie keine Vorschaubilder benötigen."
 
 msgid "Setting"
-msgstr "Einstellungen"
+msgstr "Einstellung"
 
 msgid "Settings saved successfully"
-msgstr "Die Einstellungen wurden erfolgreich gespeichert."
+msgstr "Einstellungen erfolgreich gespeichert."
 
 msgid "Settings saved successfully."
-msgstr "Die Einstellungen wurden erfolgreich gespeichert."
+msgstr "Einstellungen erfolgreich gespeichert."
 
 msgid "Show album owners"
 msgstr "Albumbesitzer anzeigen"
 
 msgid "Show image owners"
-msgstr "Photobesitzer anzeigen"
+msgstr "Bildbesitzer anzeigen"
 
 msgid "Show micro navigation thumbnails"
-msgstr "Mikronavigationselemente anzeigen"
+msgstr "Mikronavigationsbilder anzeigen"
 
 msgid ""
 "Shrink or enlarge the original photo.  When Gallery scales a photo, it "
@@ -1543,10 +1560,10 @@ msgid ""
 "avoid distortion.  Your photo will be scaled until it fits inside a bounding "
 "box with the size you enter here."
 msgstr ""
-"Schrumpfe oder vergrössere die Quelldatei.  Wenn Gallery ein Bild skaliert, "
-"wird das Seitenverhältnis (Höhe zu Breite) beibehalten, um Verzerrungen zu "
-"vermeiden. Ihr Photo wird so skaliert, daß die längere Seite dem von Ihnen "
-"eingegebenem Wert entspricht."
+"Verkleinere oder vergrößere das Originalbild.  Wenn Gallery ein Bild "
+"skaliert, wird das Seitenverhältnis (Höhe zu Breite) beibehalten, um "
+"Verzerrungen zu vermeiden. Ihr Photo wird so skaliert, daß die längere Seite "
+"dem von Ihnen eingegebenen Wert entspricht."
 
 msgid "Site Admin"
 msgstr "Site Administration"
@@ -1558,7 +1575,7 @@ msgid "Site Admins"
 msgstr "Site Administratoren"
 
 msgid "Size"
-msgstr "Grösse"
+msgstr "Größe"
 
 msgid "Sort order"
 msgstr "Sortierreihenfolge"
@@ -1572,8 +1589,8 @@ msgid ""
 "created."
 msgstr ""
 "Hier können Sie die Berechtigungen der von Gallery erstellten Dateien und "
-"Verzeichnisse einstellen. Dieses wirkt sich nicht auf bereits erstellte "
-"Dateien aus."
+"Ordner einstellen. Dies wirkt sich nicht auf bereits erstellte Dateien/"
+"Ordner aus."
 
 msgid ""
 "Specify the legal directories on the local server where a user can store "
@@ -1583,15 +1600,15 @@ msgid ""
 "upload privileges, so you should limit this to directories that won't "
 "contain sensitive data (eg. /tmp or /usr/ftp/incoming)"
 msgstr ""
-"Wählen Sie die Verzeichnisse auf dem Server aus wo die Benutzer Dateien "
-"ablegen können, die Sie dann in Gallery mit dem Upload <i>Vom lokalen "
-"Server</i> importieren können. Die Verzeichnisse die Sie hier angeben und "
-"alle darin enthaltene Dateien und Unterverzeichnisse werden jedem Gallery "
-"Benutzer zugänglich sein, der den Upload verwenden darf. Es sollten deswegen "
-"unproblematische Verzeichnisse sein (z.B. /tmp oder /usr/ftp/incoming)"
+"Wählen Sie die Ordner auf dem Server aus, in die die Benutzer Dateien "
+"ablegen können und anschließend in Gallery mit dem Hochladen <i>Vom lokalen "
+"Server</i> importieren können. Die Ordner, die Sie hier angeben, und alle "
+"darin enthaltenen Dateien und Unterordner werden jedem Gallery Benutzer "
+"zugänglich sein, der das Hochladen verwenden darf. Es sollten deswegen "
+"unproblematische Ordner sein (z.B. /tmp oder /usr/ftp/incoming)."
 
 msgid "Spreadsheet"
-msgstr "Tabellenkalkulation"
+msgstr "Kalkulationstabelle"
 
 msgid "Square 1x1"
 msgstr "1x1 Quadrat"
@@ -1615,10 +1632,10 @@ msgid "Status: Not Installed"
 msgstr "Status: nicht installiert"
 
 msgid "Status: Upgrade Required (Inactive)"
-msgstr "Status: Upgrade nötig (Inaktiv)"
+msgstr "Status: Aktualisierung nötig (Inaktiv)"
 
 msgid "Submit"
-msgstr "Abschicken"
+msgstr "Absenden"
 
 msgid "Success"
 msgstr "Erfolg"
@@ -1648,16 +1665,16 @@ msgstr "Das Modul %s wurde erfolgreich deaktiviert"
 
 #, c-format
 msgid "Successfully deleted directory: %s"
-msgstr "Erfolgreich Verzeichnis %s gelöscht."
+msgstr "Ordner '%s' erfolgreich gelöscht."
 
 msgid "Successfully deleted directory: /cache/entity"
-msgstr "Erfolgreich Verzeichnis /cache/entity gelöscht."
+msgstr "Ordner '/cache/entity' erfolgreich gelöscht."
 
 msgid "Successfully deleted directory: /cache/layout"
-msgstr "Erfolgreich Verzeichnis /cache/layout gelöscht."
+msgstr "Ordner '/cache/layout' erfolgreich gelöscht."
 
 msgid "Successfully deleted directory: /cache/module"
-msgstr "Erfolgreich Verzeichnis /cache/module gelöscht."
+msgstr "Ordner '/cache/module' erfolgreich gelöscht."
 
 #, c-format
 msgid "Successfully installed and auto-configured module %s"
@@ -1666,14 +1683,14 @@ msgstr ""
 
 #, c-format
 msgid "Successfully installed layout %s"
-msgstr "Das Layout %s wurde erfolgreich installiert."
+msgstr "Das Layout '%s' wurde erfolgreich installiert."
 
 #, c-format
 msgid "Successfully installed module %s"
 msgstr "Das Modul %s wurde erfolgreich installiert."
 
 msgid "Successfully linked"
-msgstr "Erfolgreich verlinkt"
+msgstr "Erfolgreich verknüpft"
 
 msgid "Successfully moved"
 msgstr "Erfolgreich verschoben"
@@ -1689,7 +1706,7 @@ msgstr "Die Layout Einstellungen wurden erfolgreich gespeichert."
 
 #, c-format
 msgid "Successfully uninstalled layout %s"
-msgstr "Das Layout %s wurde erfolgreich deinstalliert."
+msgstr "Das Layout '%s' wurde erfolgreich deinstalliert."
 
 #, c-format
 msgid "Successfully uninstalled module %s"
@@ -1697,7 +1714,7 @@ msgstr "Das Modul %s wurde erfolgreich deinstalliert."
 
 #, c-format
 msgid "Successfully upgraded layout %s"
-msgstr "Das Layout %s wurde erfolgreich aktualisiert."
+msgstr "Das Layout '%s' wurde erfolgreich aktualisiert."
 
 #, c-format
 msgid "Successfully upgraded module %s"
@@ -1710,27 +1727,25 @@ msgid "System Information"
 msgstr "Systeminformationen"
 
 msgid "System Maintenance"
-msgstr "System-Wartungsaufgaben"
+msgstr "System Wartungsaufgaben"
 
-#, fuzzy
 msgid "System information"
 msgstr "Systeminformationen"
 
 msgid "Target Size (pixels)"
-msgstr "Zielgrösse (in Pixels)"
+msgstr "Zielgröße (in Pixel)"
 
 msgid "Task name"
 msgstr "Wartungsaufgabe"
 
 msgid "Template cache deleted successfully"
-msgstr "Template-Zwischenspeicher erfolgreich gelöscht"
+msgstr "Der Puffer für Vorlagen wurde erfolgreich geleert."
 
-#, fuzzy
 msgid "Test email sent successfully"
-msgstr "Das Vorschaubild wurde erfolgreich zurueckgesetzt."
+msgstr "Test-E-Mail wurde gesendet"
 
 msgid "Thank you!"
-msgstr "Danke schön!"
+msgstr "Danke!"
 
 msgid "That username is already in use"
 msgstr "Dieser Benutzername existiert bereits"
@@ -1738,7 +1753,8 @@ msgstr "Dieser Benutzername existiert bereits"
 #, c-format
 msgid "The %s task failed to complete successfully."
 msgstr ""
-"Die Wartungsaufgabe \"%s\" konnte nicht erfolgreich durchgeführt werden."
+"Die Wartungsaufgabe '%s' konnte <b>nicht</b> erfolgreich abgeschlossen "
+"werden."
 
 msgid "The URL entered must begin with http://"
 msgstr "Die von Ihnen eingegebenen URLs müssen mit http:// beginnen"
@@ -1750,29 +1766,29 @@ msgid ""
 "The destination you chose does not accept sub-albums, so all sub-albums have "
 "been deselected."
 msgstr ""
-"Das ausgewählte Ziel erlaubt keine Unteralben, es wurden daher allle "
-"entsprechende Unteralben deselektiert.."
+"Das ausgewählte Ziel erlaubt keine Unteralben, es wurden daher alle "
+"entsprechenden Unteralben abgewählt."
 
 msgid ""
 "The destination you chose only accepts sub-albums, so all non-albums have "
 "been deselected."
 msgstr ""
-"Das ausgewälte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben "
-"deselektiert."
+"Das ausgewählte Ziel erlaubt nur Unteralben, es wurde daher alle nicht-Alben "
+"abgewählt."
 
 msgid ""
 "The directory you entered is illegal.  It must be a sub directory of one of "
 "the directories listed below."
 msgstr ""
-"Das eingegebene Verzeichnis ist nicht gültig. Es muss ein Unterverzeichnis "
-"eines der unten angegebene Verzeichnisse sein."
+"Der eingegebene Ordner ist nicht gültig. Es muß ein Unterordner eines der "
+"unten angegebenen Ordner sein."
 
 msgid ""
 "The directory you entered is invalid.  Make sure that the directory is "
 "readable by all users."
 msgstr ""
-"Das eingegebene Verzeichnis ist nicht gültig. Vegewissern Sie  sich, dass "
-"das Verzeichniss von allen Benutzern gelesen werden kann."
+"Der eingegebene Ordner ist nicht gültig. Vergewissern Sie sich, daß der "
+"Ordner von allen Benutzern gelesen werden kann."
 
 msgid ""
 "The exact nature of database errors is not captured unless Gallery debug "
@@ -1781,10 +1797,10 @@ msgid ""
 "of the lengthy debug output to find error details."
 msgstr ""
 "Die spezifische Datenbankfehler werden nur angezeigt, wenn der Gallery Debug "
-"Modus in der config.php aktiviert wurde. Bitte aktivieren Sie die  \"buffered"
+"Modus in 'config.php' aktiviert wurde. Bitte aktivieren Sie die  \"buffered"
 "\" Debug-Ausgabe und versuchen Sie die Aktion erneut, bevor sie um "
 "Unterstützung hinsichtlich dieses Fehlers bitten. Die Fehlerdetails können "
-"dann relativ am Ende dieser langen Debug-Ausgabe gefunden werden."
+"dann relativ nah am Ende der langen Debug-Ausgabe gefunden werden."
 
 msgid "The group name you entered is invalid"
 msgstr "Der eingegebe Gruppenamen ist nicht gültig"
@@ -1794,18 +1810,19 @@ msgid ""
 "Only use alphanumeric characters, underscores or dashes.  You will be able "
 "to rename it later."
 msgstr ""
-"Der tatsächliche Name Ihres Albums auf der Festplatte. Er muss eindeutig "
+"Der tatsächliche Name Ihres Albums auf der Festplatte. Er muß eindeutig "
 "sein. Sie können hier nur alphanumerische Zeichen, den Unterstrich (_) und "
-"Bindestrich (-) verwenden. Sie können den Namen nachträglich verändern."
+"Bindestrich (-) verwenden. Sie können den Namen auch nachträglich noch "
+"ändern."
 
 msgid ""
 "The name of this item on your hard disk.  It must be unique in this album.  "
 "Only use alphanumeric characters, underscores or dashes."
 msgstr ""
-"Der tatsächliche Name dieses Elements auf der Festplatte. Er muss eindeutig "
+"Der tatsächliche Name dieses Elements auf der Festplatte. Er muß eindeutig "
 "in diesem Album sein. Sie können hier nur alphanumerische Zeichen, den "
-"Unterstrich (_) und Bindestrich (-) verwenden. Sie können den Namen "
-"nachträglich verändern."
+"Unterstrich (_) und Bindestrich (-) verwenden. Sie können den Namen auch "
+"nachträglich noch ändern."
 
 msgid "The name you entered is already in use.  Please choose another."
 msgstr ""
@@ -1820,7 +1837,7 @@ msgstr "Der Besitzer eines Elementes darf kein Gast sein."
 
 msgid "The new owner must be a different user than the user we are deleting!"
 msgstr ""
-"Der neue Benutzer muss unterschiedlich zu dem sein, den Sie gerade löschen!"
+"Der neue Benutzer muß ein anderer als der sein, den Sie gerade löschen!"
 
 msgid "The passwords you entered did not match"
 msgstr "Die eingegebenen Passwörter stimmen nicht überein"
@@ -1836,11 +1853,11 @@ msgid ""
 "The request you are trying to access has expired.  Request a new "
 "authorization from the <a href=\"%s\">lost password page</a>."
 msgstr ""
-"Die von Ihnen abgerufene Anfrage ist veraltet. Bitte fordern Sie eine neue "
-"Authorisierung von Seite <a href=\"%s\">Passwort zurücksetzen</a> an."
+"Die Anforderung ist veraltet. Bitte fordern Sie eine neue auf der Seite <a "
+"href=\"%s\">Passwort zurücksetzen</a> an."
 
 msgid "The root album must have a title."
-msgstr "Das Wurzelalbum muss ein Titel haben."
+msgstr "Das Wurzelalbum muß einen Titel haben."
 
 msgid "The summary of this item."
 msgstr "Zusammenfassung für dieses Element."
@@ -1849,12 +1866,12 @@ msgid ""
 "The thumbnail and resized image settings are for all new items. To apply "
 "these settings to all the items in your album, check the appropriate box."
 msgstr ""
-"Die Einstellungen für Zwischen- und Vorschaubilder werden nur für neue "
-"Elemente übernommen. Falls Sie diese Einstellungen auf alle Elemente "
+"Die Einstellungen für Zwischen- und Vorschaubilder gelten nur für neue "
+"Elemente. Falls Sie diese Einstellungen auf alle vorhandenen Elemente "
 "anwenden möchten, klicken Sie das entsprechende Kästchen an."
 
 msgid "The title of this item."
-msgstr "Titel des Elements"
+msgstr "Titel für dieses Element."
 
 msgid ""
 "The toolkits shown below have some overlap in supported operations and mime "
@@ -1862,7 +1879,7 @@ msgid ""
 "operations."
 msgstr ""
 "Die unten aufgeführten Werkzeuge haben Gemeinsamkeiten in der Unterstützung "
-"von Dateitypen. Leben Sie die Reihenfolge fest, in der die Werkzeuge benutzt "
+"von Dateitypen. Legen sie die Reihenfolge fest, in der die Werkzeuge benutzt "
 "werden sollen."
 
 msgid "The user already has this permission (check sub-permissions)"
@@ -1875,51 +1892,50 @@ msgid "The web page you specified is unavailable"
 msgstr "Die von Ihnen angegebene Webseite ist nicht erreichbar."
 
 msgid "The webserver does not have permissions to read that directory."
-msgstr "Dem Webserver fehlt die Berechtigung das Verzeichnis zu lesen."
+msgstr "Dem Webserver fehlt die Berechtigung den Ordner zu lesen."
 
 msgid "Theme"
 msgstr "Thema"
 
 msgid "There are links to this photo, so you cannot change the original"
 msgstr ""
-"Es existieren Links auf dieses Photo, Sie können deswegen nicht das Original "
-"verändern."
+"Es existieren Verknüpfungen auf dieses Photo, Sie können deswegen das "
+"Original nicht verändern."
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of item, so we "
 "cannot create or modify a thumbnail."
 msgstr ""
-"Es ist kein Graphikverarbeitungsprogramm aktiviert, welches diese Art von "
-"Photos unterstützt. Daher kann weder ein Vorschaubild erzeugt noch verändert "
-"werden."
+"Es ist kein grafisches Werkzeug aktiviert, das diesen Elementtyp "
+"unterstützt. Daher kann ein Vorschaubild weder erzeugt noch verändert werden."
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot create or modify resized versions."
 msgstr ""
-"Es ist kein Bildbearbeitunstool aktiviert welches diese Art von Photos "
-"unterstützt, daher kann weder ein Zwischenbild erzeugt noch verändert werden."
+"Es ist kein grafisches Werkzeug aktiviert, das diesen Phototyp unterstützt, "
+"daher kann ein Zwischenbild weder erzeugt noch verändert werden."
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot crop the thumbnail."
 msgstr ""
-"Es ist kein Bildbearbeitunstool aktiviert welches diese Art von Photos "
-"unterstützt, daher kann das Vorschaubild nicht zugeschnitten werden."
+"Es ist kein grafisches Werkzeug aktiviert, das diesen Phototyp unterstützt, "
+"daher kann das Vorschaubild nicht zugeschnitten werden."
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot rotate it."
 msgstr ""
-"Es ist kein Bildbearbeitunstool aktiviert welches diese Art von Photos "
-"unterstützt, daher kann es nicht rotiert werden."
+"Es ist kein grafisches Werkzeug aktiviert, das diesen Phototyp unterstützt, "
+"daher kann es nicht gedreht werden."
 
 msgid ""
 "There are no graphics toolkits enabled that support this type of photo, so "
 "we cannot scale it."
 msgstr ""
-"Es ist kein Bildbearbeitunstool aktiviert welches diese Art von Photos "
-"unterstützt, daher kann es nicht skaliert werden."
+"Es ist kein grafisches Werkzeug aktiviert, das diesen Phototyp unterstützt, "
+"daher kann es nicht skaliert werden."
 
 msgid "There are no settings for this layout"
 msgstr "Es sind keine Einstellungen für dieses Layout vorhanden."
@@ -1935,12 +1951,12 @@ msgid ""
 "There is no request which matches the username and authorization provided. "
 "Request a new authorization from the <a href=\"%s\">lost password page</a>"
 msgstr ""
-"Es gibt keine Anfrage, die dem Benutzernamen und der Authorisierung "
-"entspricht. Bitte fordern Sie eine neue Authorisierung von Seite <a href=\"%s"
-"\">Passwort zurücksetzen</a> an. "
+"Eine Anforderung für diese Kombination von Namen und Berechtigung liegt "
+"nicht vor. Bitte fordern Sie eine neue Berechtigung auf der Seite <a href=\"%"
+"s\">Passwort zurücksetzen</a> an."
 
 msgid "There is no undo!"
-msgstr "Es gibt kein zurück!"
+msgstr "Es gibt kein rückgängig!"
 
 msgid "There was a problem processing your request."
 msgstr "Es gab ein Problem bei der Bearbeitung Ihrer Anfrage"
@@ -1949,14 +1965,14 @@ msgid ""
 "These are default display settings for albums in your gallery.  They can be "
 "overridden in each album."
 msgstr ""
-"Dies sind die Voreinstellungen für die Darstellung Ihrer Gallery-Alben. Sie "
-"können für jedes einzelne Album überschrieben werden."
+"Dies sind die Voreinstellungen der Album-Anzeige Ihrer Gallery. Sie können "
+"für jedes Album überschrieben werden."
 
 msgid ""
 "These are the global settings for the layout.  They can be overridden at the "
 "album level."
 msgstr ""
-"Dies sind die globalen Voreinstellungen. Sie können in jedem Album "
+"Dies sind die globalen Voreinstellungen. Sie können für jedes Album "
 "überschrieben werden."
 
 msgid ""
@@ -1970,7 +1986,7 @@ msgid "This album contains no items to delete"
 msgstr "Dieses Album enthält keine löschbaren Elemente."
 
 msgid "This album contains no items to link."
-msgstr "Dieses Album enthält keine verlinkbaren Elemente."
+msgstr "Dieses Album enthält keine verknüpfbaren Elemente."
 
 msgid "This album contains no items to move."
 msgstr "Dieses Album enthält keine verschiebbaren Elemente."
@@ -1992,27 +2008,25 @@ msgid ""
 "This album is configured to use the %s layout, but it is either inactive or "
 "not installed."
 msgstr ""
-"Dies Album wurde so konfiguriert, dass es das <b>%s</b> Layout benutzt.  "
-"Diese Einstellungen werden sich also nur auf das Layout dieses Albums "
-"auswirken."
+"Dies Album wurde so konfiguriert, daß es das <b>%s</b> Layout benutzt, das "
+"aber deaktiviert oder nicht mehr installiert ist."
 
 #, c-format
 msgid ""
 "This album is configured to use the <b>%s</b> layout. These settings only "
 "apply to the layout for this album."
 msgstr ""
-"Dies Album wurde so konfiguriert, dass es das <b>%s</b> Layout benutzt.  "
+"Dies Album wurde so konfiguriert, daß es das <b>%s</b> Layout benutzt.  "
 "Diese Einstellungen wird sich also nur auf das Layout dieses Albums "
 "auswirken."
 
 msgid "This is a link to another photo, so you cannot change the original"
 msgstr ""
-"Dies ist ein Link auf ein anderes Photo, daher können Sie das Original nicht "
-"verändern."
+"Dies ist eine Verknüpfung auf ein anderes Photo, daher können Sie das "
+"Original nicht verändern."
 
-#, fuzzy
 msgid "This is a test email from Gallery2"
-msgstr "Dieses ist der Anfang Ihrer Gallery"
+msgstr "Dies ist eine Test-E-Mail von Gallery2"
 
 msgid "This is the album summary."
 msgstr "Dies ist die Albumzusammenfassung."
@@ -2021,13 +2035,13 @@ msgid "This is the album title."
 msgstr "Dies ist der Album Titel."
 
 msgid "This is the long description of the album."
-msgstr "Eine ausführliche Beschreibung für dieses Album"
+msgstr "Eine ausführliche Beschreibung für dieses Album."
 
 msgid "This is the long description of the item."
-msgstr "Eine ausführliche Beschreibung dieses Eintrages."
+msgstr "Eine ausführliche Beschreibung dieses Elements."
 
 msgid "This is the main page of your Gallery"
-msgstr "Dieses ist der Anfang Ihrer Gallery"
+msgstr "Dies ist die Startseite Ihrer Gallery"
 
 msgid ""
 "This item has sub-items.  The changes you make here can be applied to just "
@@ -2039,12 +2053,12 @@ msgid ""
 "default."
 msgstr ""
 "Dieses Element hat Unterelemente. Sie können die hier gemachten Änderungen "
-"entweder nur auf dieses Element anwenden, oder sie können einstellen, dass "
-"sie sich auch auf alle seiner Unterelemente auswirken.  Denken Sie daran, "
-"dass das Ändern der Berechtigungen für Unterelemente ein Zusammenführen mit "
-"den vorhandenen Berechtigungen zur Folge hat. Dies kann bei vielen "
-"Unterelemente sehr zeitaufwendig sein. Besser ist es, Berechtigungen an "
-"Gruppen zu vergeben und dann Benutzer in Gruppen hinzufügen. Änderungen "
+"entweder nur auf dieses Element anwenden, oder sie können einstellen, daß "
+"sie sich auch auf alle seine Unterelemente auswirken.  Denken Sie daran, daß "
+"das Ändern der Berechtigungen für Unterelemente ein Zusammenführen mit den "
+"bereits bestehenden Berechtigungen zur Folge hat. Dies kann bei vielen "
+"Unterelemente sehr zeitaufwendig sein. Besser ist es, Berechtigungen nur an "
+"Gruppen zu vergeben und dann Benutzer den Gruppen zuzuordnen. Änderungen "
 "werden standardmäßig auch für die Unteralben übernommen."
 
 #, c-format
@@ -2059,7 +2073,7 @@ msgid ""
 "This item was modified by somebody else at the same time.  Your changes were "
 "lost."
 msgstr ""
-"Dieses Element wurde von jemand anderem zur gleiche Zeit editiert. Ihre "
+"Dieses Element wurde von jemand anderem zur gleichen Zeit bearbeitet.  Ihre "
 "Änderungen gingen verloren."
 
 msgid "This page is valid XHTML 1.0"
@@ -2067,15 +2081,14 @@ msgstr "Diese Seite ist gültiges XHTML 1.0"
 
 msgid "This page will allow you to reset the password on your account."
 msgstr ""
-"Diese Seite ermöglicht es Ihnen, das Passwort Ihres Benutzerkontos "
-"zurückzusetzen."
+"Auf dieser Seite können Sie das Passwort für Ihren Zugang zurücksetzen."
 
 msgid ""
 "This sets the sort order for the album.  This applies to all current items, "
 "and any newly added items."
 msgstr ""
 "Dies setzt die Standardsortierung für neue Alben. Die Änderung wird auf alle "
-"existierende und neue Elemente angewendet."
+"existierenden und neuen Elemente angewendet."
 
 msgid "This user already is in this group."
 msgstr "Dieser Benutzername existiert bereits in dieser Gruppe."
@@ -2084,8 +2097,8 @@ msgid ""
 "This will also remove any permissions and clean up any temporary data "
 "created by this module."
 msgstr ""
-"Es werden ebenfalls alle Berechtigungen und temporäre Daten entfernt die von "
-"diesem Modul erstellt wurden."
+"Es werden ebenfalls alle Berechtigungen und temporären Daten entfernt, die "
+"von diesem Modul erstellt wurden."
 
 #, c-format
 msgid "This will completely remove %s from Gallery.  There is no undo!"
@@ -2098,14 +2111,14 @@ msgid ""
 "This will completely remove <strong>%s</strong> from Gallery.  There is no "
 "undo!"
 msgstr ""
-"Dies wird <b>%s</b> endgültig aus der Gallery entfernen. Sie können dies "
-"nicht rückgängig machen!"
+"Dies wird <strong>%s</strong> endgültig aus der Gallery entfernen. Sie "
+"können dies nicht rückgängig machen!"
 
 msgid "Thumbnail cropped successfully"
 msgstr "Das Vorschaubild wurde erfolgreich zugeschnitten."
 
 msgid "Thumbnail reset successfully"
-msgstr "Das Vorschaubild wurde erfolgreich zurueckgesetzt."
+msgstr "Das Vorschaubild wurde erfolgreich zurückgesetzt."
 
 msgid "Thumbnail"
 msgstr "Vorschaubild"
@@ -2119,16 +2132,17 @@ msgstr "Zeit:"
 msgid "Title"
 msgstr "Titel"
 
+# used in email, better use ASCII only (maybe ISO-8859-1 in europe)
 msgid ""
 "To finish the password recovery process please click the following link and "
 "enter the required information:"
 msgstr ""
-"Um das Zurücksetzen Ihres Passworts abzuschließen, klicken Sie bitte auf den "
-"folgenden Link und geben Sie die geforderten Infromationen ein:"
+"Um das Zuruecksetzen Ihres Passworts abzuschliessen folgen Sie bitte dem "
+"folgenden Verweis und geben Sie die erforderlichen Informationen ein:"
 
 #, c-format
 msgid "To fix this problem you can either %s or %s."
-msgstr "Um das Problem zu beheben können Sie entweder %s oder %s."
+msgstr "Um das Problem zu beheben können sie entweder %s oder %s."
 
 msgid "Toolkit Priority"
 msgstr "Werkzeugpriorität"
@@ -2146,9 +2160,9 @@ msgid ""
 "the server.  If you're on Unix this means that the files and the directory "
 "the files are in should have modes of at least 755."
 msgstr ""
-"Übertrage Dateien die schon auf dem Server liegen zur Gallery. Die Dateien "
-"müssen schon auf den Server hochgeladen sein (z.B. mit FTP) und in ein "
-"Verzeichnis sein, der von allen zugreifbar ist.  Unter UNIX bedeutet dies "
+"Übertragen Sie Dateien, die schon auf dem Server liegen, in die Gallery.  "
+"Die Dateien müssen bereits auf den Server hochgeladen sein (z.B. mit FTP) "
+"und in einem Ordner sein, der zugreifbar ist.  Unter UNIX bedeutet dies "
 "mindestens die Berechtigung 755."
 
 msgid "Type"
@@ -2163,13 +2177,13 @@ msgstr "URL: %s"
 
 #, c-format
 msgid "Unable to delete directory: %s"
-msgstr "Kann folgendes Verzeichnis nicht löschen: %s"
+msgstr "Konnte den Ordner '%s' nicht löschen"
 
 msgid "Unable to delete directory: /cache/layout"
-msgstr "Kann das Verzeichnis /cache/layout nicht löschen"
+msgstr "Konnte den Ordner '/cache/layout' nicht löschen"
 
 msgid "Unable to delete directory: /templates_c"
-msgstr "Kann das Verzeichnis /templates_c nicht löschen"
+msgstr "Konnte den Ordner '/templates_c' nicht löschen"
 
 msgid "Uninstall"
 msgstr "deinstallieren"
@@ -2184,18 +2198,19 @@ msgid ""
 "Update capture date stored in Gallery for all items with an available date "
 "in the original data file (usually from EXIF data)."
 msgstr ""
-"Das Aufnahmedatum aller Elemente aktuallisieren, welche das Datum in der "
-"Originaldatei gespeichert haben (üblicherweise in den EXIF-Daten)."
+"Aufnahmedaten der Gallery für alle Elemente auffrischen, die ein "
+"Aufnahmedatum in den Media-Daten gesetzt haben (normalerweise in den EXIF "
+"Daten)."
 
 #, c-format
 msgid "Updated %d of %d items"
 msgstr "%d von %d Elementen aktualisiert"
 
 msgid "Upgrading permissions"
-msgstr "Berechtigungen aktualisieren"
+msgstr "Berechtigungen erweitern"
 
 msgid "Upload Complete"
-msgstr "Upload beendet"
+msgstr "Hochladen beendet"
 
 msgid "Upload files directly from your computer."
 msgstr "Laden Sie eine Datei direkt von Ihrem Computer hoch."
@@ -2261,7 +2276,7 @@ msgid "Value"
 msgstr "Wert"
 
 msgid "Verify New Password"
-msgstr "Bestätigen Sie das Passwort"
+msgstr "Bestätigen Sie das neue Passwort"
 
 msgid "Verify Password"
 msgstr "Bestätigen Sie das Passwort"
@@ -2270,13 +2285,13 @@ msgid "Version"
 msgstr "Version"
 
 msgid "View Count"
-msgstr "Anzahl betrachen"
+msgstr "Anzahl betrachtet"
 
 msgid "View Samples"
-msgstr "Beispiele ansehen"
+msgstr "Beispiele zeigen"
 
 msgid "View counts reset successfully"
-msgstr "Die Betrachterzahlen wurden erfolgreich zurückgesetzt."
+msgstr "Alle Zähler wurden erfolgreich zurückgesetzt."
 
 #, c-format
 msgid "Viewing page %d of %d"
@@ -2286,8 +2301,8 @@ msgstr "Sehe Seite %d von %d"
 msgid ""
 "Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit."
 msgstr ""
-"Gehe Sie auf die <a href=\"%s\">Module-Seite</a> um ein Grafikwerkzeug zu "
-"aktivieren."
+"Gehen sie auf die <a href=\"%s\">Module-Seite</a> um ein grafisches Werkzeug "
+"zu aktivieren."
 
 msgid "Webserver"
 msgstr "Webserver"
@@ -2302,9 +2317,9 @@ msgid ""
 "kind of markup that is secure and allows for simple text formatting like "
 "bold, italics, lists, images and urls."
 msgstr ""
-"Welche Art von Syntax sollen in Felder mit Eingabemöglichkeiten für Benutzer "
-"erlaubt sein? Aus Sicherheitsgründen wird nicht empfohlen, HTML freizugeben. "
-"BBCode ist ein spezieller Syntax, der sicher ist und einfache "
+"Welche Art von Syntax soll in Feldern mit Eingabemöglichkeiten für Benutzer "
+"erlaubt sein? Aus Sicherheitsgründen wird nicht empfohlen HTML freizugeben. "
+"BBCode ist eine spezielle Syntax, die sicher ist und einfache "
 "Textformatierungen erlaubt wie fett, kursiv, Liste, Bilder und URLs."
 
 msgid "Width"
@@ -2317,11 +2332,11 @@ msgstr ""
 
 msgid "You are not allowed to move an album to the chosen destination."
 msgstr ""
-"Es ist Ihnen nicht erlaubt ein Album zu dem gewünschten Ziel zu verschieben."
+"Es ist Ihnen nicht erlaubt, ein Album zum gewünschten Ziel zu verschieben."
 
 msgid "You are not allowed to move an item to the chosen destination."
 msgstr ""
-"Es ist Ihnen nicht erlaubt ein Element zu dem gewünschten Ziel zu "
+"Es ist Ihnen nicht erlaubt, ein Element zu dem gewünschten Ziel zu "
 "verschieben."
 
 msgid "You are not allowed to move this item away from here."
@@ -2334,13 +2349,13 @@ msgid ""
 msgstr ""
 "Sie benutzen eine Kopie der Originaldatei, die skaliert oder rotiert wurde. "
 "Die Originaldatei ist immer noch verfügbar, wird aber nicht mehr verwendet. "
-"Jede Änderung, die Sie vornehmen, wird auf dieser Kopie angewandt."
+"Jede Änderung, die Sie vornehmen, wird auf diese Kopie angewandt."
 
 msgid ""
 "You can make this item the thumbnail for its parent or any ancestor album."
 msgstr ""
-"Sie können dieses Element zum Titelbild seines direkten oder jedes anderen "
-"übergeordneten Albums machen."
+"Sie können dieses Element zum Vorschaubild seines direkten oder jedes "
+"anderen übergeordneten Albums machen."
 
 msgid "You can only rotate the photo in 90 degree increments."
 msgstr "Sie können ein Bild nur in 90&deg;-Schritten rotieren"
@@ -2349,37 +2364,41 @@ msgid ""
 "You can select which part of the photo will be used for the thumbnail.  This "
 "will have no effect on the resized or original versions of the image."
 msgstr ""
-"Sie können auswählen, welchen Teil Ihres Photo Sie als Vorschau möchten.  "
-"Dies wird keinen Einfluss auf Ihr Bild haben."
+"Sie können auswählen, welchen Teil Ihres Photo Sie als Vorschaubild "
+"möchten.  Dies hat keinen Einfluß auf Ihre Original- und Zwischen-Bilder."
 
 msgid "You can't remove yourself from this group."
 msgstr "Sie können sich aus dieser Gruppe nicht selbst entfernen."
 
 msgid "You cannot delete that group"
-msgstr "Sie können diese spezielle Gruppe nicht löschen!"
+msgstr "Sie können diese Gruppe nicht löschen!"
 
 msgid "You cannot delete the special guest user."
-msgstr ""
-"Sie können den Benutzer Gast nicht löschen, da er immer vorhanden sein muss."
+msgstr "Sie können den speziellen Benutzer Gast nicht löschen."
 
 msgid "You cannot delete yourself!"
 msgstr "Sie können Sich nicht selbst löschen!"
 
 msgid "You cannot edit that group's users"
-msgstr "Sie können diesen Benutzer nicht bearbeiten"
+msgstr "Sie können die Benutzer dieser Gruppe nicht ändern."
 
 msgid "You cannot move an album into its own subtree."
-msgstr "Sie können ein Album in eines seiner eigenen Unteralben verschieben."
+msgstr ""
+"Sie können ein Album nicht in eines seiner eigenen Unteralben verschieben."
+
+# forget it, this is inside a comment, never used really
+msgid "You did it right!"
+msgstr "Richtig!"
 
 msgid "You do not have permissions to modify this item."
-msgstr "Es ist Ihnen nicht erlaubt in diesem Album Elemente zu bearbeiten."
+msgstr "Sie dürfen in diesem Album keine Elemente bearbeiten."
 
 msgid ""
 "You don't have any Graphics Toolkit activated that can handle JPEG images.  "
 "If you add images, you will probably not have any thumbnails."
 msgstr ""
-"Sie haben kein Grafikwerkzeug aktiviert, welches mit JPEG umgehen kann. Wenn "
-"Sie diese Bilder hinzufügen, werden Sie eventuell keine Vorschaubilder haben."
+"Sie haben kein grafisches Werkzeug aktiviert, das mit JPEG umgehen kann. "
+"Wenn sie Bilder hinzufügen, werden sie keine Vorschaubilder haben."
 
 msgid "You don't have the permission to add items in this album"
 msgstr "Es ist Ihnen nicht erlaubt diesem Album Elemente hinzuzufügen."
@@ -2388,10 +2407,10 @@ msgid "You must enter a URL to a web page"
 msgstr "Sie müssen eine URL zu einer Webseite angeben."
 
 msgid "You must enter a directory to add."
-msgstr "Sie müssen den Ordner angeben den Sie hinzufügen möchten."
+msgstr "Sie müssen den Ordner angeben, den Sie hinzufügen möchten."
 
 msgid "You must enter a directory."
-msgstr "Sie müssen ein Verzeichnis eingeben."
+msgstr "Sie müssen einen Ordner eingeben."
 
 msgid "You must enter a group name"
 msgstr "Sie müssen einen Gruppennamen eingeben"
@@ -2409,16 +2428,16 @@ msgid "You must enter a new username"
 msgstr "Sie müssen einen Benutzernamen eingeben"
 
 msgid "You must enter a number (greater than zero)"
-msgstr "Sie müssen eine Nummer eingeben (grösser als Null)"
+msgstr "Sie müssen eine Zahl eingeben (größer als Null)"
 
 msgid "You must enter a number greater than 0"
-msgstr "Sie müssen eine Nummer eingeben (grösser als Null)"
+msgstr "Sie müssen eine Zahl größer als 0 eingeben"
 
 msgid "You must enter a password"
 msgstr "Sie müssen ein Passwort eingeben"
 
 msgid "You must enter a size"
-msgstr "Sie müssen die Grösse eingeben"
+msgstr "Sie müssen eine Größe eingeben"
 
 msgid "You must enter a user name"
 msgstr "Sie müssen einen Benutzernamen eingeben"
@@ -2433,13 +2452,13 @@ msgid "You must enter a valid date and time"
 msgstr "Sie müssen ein gültiges Datum und Zeit eingeben."
 
 msgid "You must enter a valid size"
-msgstr "Sie müssen eine gültige Grösse eingeben"
+msgstr "Sie müssen eine gültige Größe eingeben"
 
 msgid "You must enter a value greater than or equal to 0"
-msgstr "Sie müssen eine Nummer eingeben (grösser als Null)"
+msgstr "Sie müssen einen Wert größer/gleich 0 eingeben"
 
 msgid "You must enter an email address"
-msgstr "Sie müssen eine Email Adresse eingeben"
+msgstr "Sie müssen eine E-Mail Adresse eingeben"
 
 msgid "You must enter the password a second time"
 msgstr "Sie müssen das Passwort ein zweites Mal eingeben"
@@ -2448,9 +2467,9 @@ msgid ""
 "You must enter your current password to prove that it's you, then enter your "
 "new password twice to make sure that you didn't make a mistake."
 msgstr ""
-"Sie müssen Ihr aktuelles Passwort eingeben, um Missbrauch vorzubeugen. "
-"Danach müssen Sie zwei mal das neue Passwort eingeben, um sicherzustellen, "
-"dass Sie sich nicht vertippen."
+"Sie müssen ihr aktuelles Passwort eingeben um Mißbrauch vorzubeugen. Danach "
+"müssen sie zwei mal Ihr neues Passwort eingeben, um sicherzustellen, daß sie "
+"sich nicht vertippen."
 
 msgid "You must enter your current password"
 msgstr "Sie müssen Ihr aktuelles Passwort eingeben!"
@@ -2459,15 +2478,17 @@ msgid "You must enter your new password again!"
 msgstr "Sie müssen Ihr Passwort zweimal eingeben!"
 
 msgid "You must select a user to remove."
-msgstr "Sie müssen einen Benutzer zum löschen auswählen"
+msgstr "Sie müssen einen Benutzer zum Löschen auswählen."
 
+# used in email, better use ASCII only (maybe ISO-8859-1 in europe)
+# arg1 = baseUrl, arg2 = ip address, arg3 = date
 #, c-format
 msgid ""
 "You receive this email because a password recovery for %s was requested by %"
 "s at %s"
 msgstr ""
-"Sie erhalten diese E-Mail, weil ein Passwortänderung für %s von %s am %s "
-"beantragt wurde."
+"Sie erhalten diese E-Mail, weil eine Passwort Wiederherstellung fuer %s von %"
+"s am %s angefordert wurde."
 
 msgid "Your Account"
 msgstr "Ihr Zugang"
@@ -2476,7 +2497,12 @@ msgid ""
 "Your change cannot be completed because somebody else has made a conflicting "
 "change to the same item.  Use the back button in your browser to go back to "
 "the page you were on, then <b>reload that page</b> and try your change again."
-msgstr "Ihre Änderungen konnten nicht ausgeführt werden"
+msgstr ""
+"Ihre Änderungen konnten nicht übernommen werden, weil jemand anderes "
+"gleichzeitig eine Änderung an diesem Element vorgenommen hat.  Benutzen Sie "
+"den 'Zurück' Knopf ihres Web-Browsers, um auf die vorherige Seite "
+"zurückzukehren, dann <b>laden Sie die Seite erneut (reload)</b> und "
+"versuchen Sie, Ihre Änderung nochmals durchzuführen."
 
 msgid "Your login information is incorrect.  Please try again."
 msgstr "Ihre Login-Daten sind nicht korrekt. Bitte versuchen Sie es erneut."
@@ -2485,13 +2511,13 @@ msgid "Your name contains invalid characters.  Please choose another."
 msgstr "Ihre Name enthält ungültige Zeichen. Bitte wählen Sie einen anderen."
 
 msgid "Your name contains invalid characters.  Please enter another."
-msgstr "Ihr Name enthält ungültige Zeichen. Bitte wählen einen anderen."
+msgstr "Ihr Name enthält ungültige Zeichen. Bitte geben Sie einen anderen ein."
 
 msgid "Your password has been recovered, please login."
-msgstr "Ihr Passwort wurde zurückgesetzt, bitte melden Sie sich erneut an."
+msgstr "Ihr Passwort wurde wiederhergestellt, bitte melden Sie sich an."
 
 msgid "Your recovery request has been sent!"
-msgstr "Ihre Anfrage zur Passwortänderung wurde geschickt!"
+msgstr "Ihre Anforderung zur Wiederherstellung wurde gesendet!"
 
 #, c-format
 msgid "Your username is: %s"
@@ -2502,7 +2528,7 @@ msgid ""
 "Your webserver does not support localization.  Please instruct your system "
 "administrator to reconfigure PHP with the %s option enabled."
 msgstr ""
-"Ihr Webserver unterstützt keine Lokalisierung. Bitten Sie Ihren "
+"Ihr Webserver unterstützt keine Lokalisierung. Bitten Sie ihren "
 "Systemadministrator, PHP neu zu konfigurieren und dabei die Option %s zu "
 "aktivieren."
 
@@ -2510,8 +2536,8 @@ msgid ""
 "Your webserver is configured to disallow file uploads from your web browser "
 "at this time.  Please contact your system administrator for assistance."
 msgstr ""
-"Ihr Webserver wurde so eingerichtet, daß Sie auf diesen Ordner nicht "
-"zugreifen können.  Bitte sprechen Sie mit dem Administrator Ihres Webservers."
+"Ihr Webserver wurde so eingerichtet, daß Sie nicht aus dem Browser hochladen "
+"können.  Bitte sprechen Sie mit dem Administrator Ihres Webservers."
 
 #, c-format
 msgid ""
@@ -2523,34 +2549,34 @@ msgstr ""
 "Administrator Ihres Webservers."
 
 msgid "[core] Add sub-album"
-msgstr "[core] Füge Unter-Album hinzu"
+msgstr "[core] Unter-Alben hinzufügen"
 
 msgid "[core] Add sub-item"
-msgstr "[core] Füge Unter-Element hinzu"
+msgstr "[core] Unter-Elemente hinzufügen"
 
 msgid "[core] Change item permissions"
-msgstr "[core] Ändere Elementberechtigungen"
+msgstr "[core] Element-Berechtigungen ändern"
 
 msgid "[core] Delete item"
-msgstr "[core] Lösche Element"
+msgstr "[core] Elemente löschen"
 
 msgid "[core] Edit item"
-msgstr "[core] Passe Element an"
+msgstr "[core] Elemente ändern"
 
 msgid "[core] View all versions"
-msgstr "[core] Sehe alle Versionen"
+msgstr "[core] Alle Versionen sehen"
 
 msgid "[core] View item"
-msgstr "[core] Betrachte Element"
+msgstr "[core] Elemente sehen"
 
 msgid "[core] View original version"
-msgstr "[core] Betrachte Originalversion"
+msgstr "[core] Originalversionen sehen"
 
 msgid "[core] View resized version(s)"
-msgstr "[core] Betrachte skalierte Zwischenbild(er)"
+msgstr "[core] Skalierte Bilder sehen"
 
 msgid "[test] A permission"
-msgstr "[test] Eine Berechtigung"
+msgstr "[test] eine Zugriffsberechtigung"
 
 msgid "activate"
 msgstr "aktivieren"
@@ -2580,13 +2606,13 @@ msgid "archive"
 msgstr "Archiv"
 
 msgid "audio"
-msgstr "Audio"
+msgstr "Audiodatei"
 
 msgid "before"
 msgstr "vor"
 
 msgid "bullet"
-msgstr "Kugel"
+msgstr "Aufzählungspunkt"
 
 msgid "change password"
 msgstr "Passwort ändern"
@@ -2604,7 +2630,7 @@ msgid "core"
 msgstr "Kern"
 
 msgid "create link"
-msgstr "Link erzeugen"
+msgstr "Verknüpfung erzeugen"
 
 msgid "deactivate"
 msgstr "deaktivieren"
@@ -2630,23 +2656,23 @@ msgstr "runter"
 
 #, c-format
 msgid "edit %s permissions"
-msgstr "Berechtigung %s bearbeiten"
+msgstr "Berechtigung %s ändern"
 
 #, c-format
 msgid "edit %s"
-msgstr "Bearbeite %s"
+msgstr "%s ändern"
 
 msgid "edit captions"
-msgstr "Beschriftungen bearbeiten"
+msgstr "Beschriftungen ändern"
 
 msgid "edit permissions"
-msgstr "Berechtigungen bearbeiten"
+msgstr "Berechtigungen ändern"
 
 msgid "edit"
-msgstr "Anpassen"
+msgstr "Ändere"
 
 msgid "for selected items"
-msgstr "fuer ausgewaehlte Elemente"
+msgstr "für ausgewählte Elemente"
 
 msgid "forever"
 msgstr "ewig"
@@ -2657,14 +2683,15 @@ msgstr "gettext"
 msgid "group"
 msgstr "Gruppe"
 
+# means italic == kursiv
 msgid "i"
-msgstr "i"
+msgstr "k"
 
 msgid "image"
 msgstr "Bild"
 
 msgid "install or activate this layout"
-msgstr "Dieses Layout installieren oder aktivieren"
+msgstr "Installieren oder aktivieren Sie dies Layout"
 
 msgid "install"
 msgstr "installieren"
@@ -2673,10 +2700,10 @@ msgid "key"
 msgstr "Schlüssel"
 
 msgid "last &raquo;"
-msgstr "letztes &raquo;"
+msgstr "Ende &raquo;"
 
 msgid "link an item"
-msgstr "Verlinken Sie ein Element"
+msgstr "Verknüpfen Sie ein Element"
 
 msgid "list"
 msgstr "Liste"
@@ -2707,7 +2734,7 @@ msgid "movie"
 msgstr "Film"
 
 msgid "next &raquo;"
-msgstr "nächstes &raquo;"
+msgstr "Vorwärts &raquo;"
 
 msgid "open_basedir documentation"
 msgstr "open_basedir Dokumentation"
@@ -2722,28 +2749,32 @@ msgid "reorder items"
 msgstr "Elemente umordnen"
 
 msgid "run now"
-msgstr "jetzt starten"
+msgstr "jetzt ausführen"
 
 msgid "site admin"
 msgstr "site admin"
 
+# forget about this, is inside comment, nver used really
+msgid "some text to be spit out in different languages"
+msgstr "x"
+
 msgid "spreadsheet"
-msgstr "Tabellenkalkulation"
+msgstr "Kalkulationstabelle"
 
 msgid "uninstall"
 msgstr "deinstallieren"
 
 msgid "unknown"
-msgstr "Unbekannt"
+msgstr "Unbekanntes Element"
 
 msgid "up"
 msgstr "hoch"
 
 msgid "upgrade"
-msgstr "upgrade"
+msgstr "Aktualisiere"
 
 msgid "url"
-msgstr "url"
+msgstr "Url"
 
 msgid "user"
 msgstr "Benutzer"
@@ -2769,7 +2800,7 @@ msgstr[1] "%d Tage"
 #, c-format
 msgid "%d group matches your filter"
 msgid_plural "%d groups match your filter"
-msgstr[0] "Eine Gruppe enspricht Ihrem Filter."
+msgstr[0] "%d Gruppe enspricht Ihrem Filter."
 msgstr[1] "%d Gruppen entsprechen Ihrem Filter."
 
 #, c-format
@@ -2799,13 +2830,13 @@ msgstr[1] "%d Minuten"
 #, c-format
 msgid "%d url found"
 msgid_plural "%d urls found"
-msgstr[0] "%d url gefunden"
-msgstr[1] "%d urls gefunden"
+msgstr[0] "%d Url gefunden"
+msgstr[1] "%d Urls gefunden"
 
 #, c-format
 msgid "%d user matches your filter"
 msgid_plural "%d users match your filter"
-msgstr[0] "Ein Benutzer enspricht Ihrem Filter."
+msgstr[0] "%d Benutzer enspricht Ihrem Filter."
 msgstr[1] "%d Benutzer entsprechem Ihrem Filter."
 
 #, c-format
@@ -2817,7 +2848,7 @@ msgstr[1] "%d Wochen"
 #, c-format
 msgid "(%d item)"
 msgid_plural "(%d items)"
-msgstr[0] "(1 Element"
+msgstr[0] "(%d Element)"
 msgstr[1] "(%d Elemente)"
 
 #, c-format
@@ -2832,6 +2863,10 @@ msgid_plural "It contains %d items."
 msgstr[0] "Es enthält %d Element."
 msgstr[1] "Es enthält %d Elemente."
 
+# TODO: strange: msgstr[0] "Benutzer '%s' wurde aus der Gruppe '%s' entfernt."
+# TODO: gives error: format specifications in 'msgid' and 'msgstr[0]' for argument 1 are not the same
+# TODO: wheras: msgstr[0] "Benutzer '%d' wurde aus der Gruppe '%s' entfernt."
+# TODO: is accepted, but wrong
 #, c-format
 msgid "Removed user '%s' from group '%s'"
 msgid_plural "Removed %d users from group '%s'"
@@ -2853,8 +2888,8 @@ msgstr[1] "Erfolgreich %d Elemente gelöscht."
 #, c-format
 msgid "Successfully linked %d item"
 msgid_plural "Successfully linked %d items"
-msgstr[0] "Erfolgreich %d Element verlinkt."
-msgstr[1] "Erfolgreich %d Elemente verlinkt."
+msgstr[0] "Erfolgreich %d Element verknüpft."
+msgstr[1] "Erfolgreich %d Elemente verknüpft."
 
 #, c-format
 msgid "Successfully moved %d item"
