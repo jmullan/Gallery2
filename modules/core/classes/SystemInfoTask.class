@@ -69,13 +69,9 @@ class SystemInfoTask extends MaintenanceTask {
 	    ? $version['gallery'] . ' ' . $core->translate('core') . ' ' . $version['core']
 	    : $core->translate('unknown');
 
-	list ($ret, $list) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
+	list ($ret, $list) = GalleryCoreApi::getAllFactoryImplementationIds('GalleryToolkit');
 	if ($ret->isSuccess()) {
-	    $toolkitList = array();
-	    foreach ($list as $tmp) {
-		$toolkitList = array_merge($toolkitList, $tmp);
-	    }
-	    $toolkitList = implode(', ', array_unique($toolkitList));
+	    $toolkitList = implode(', ', array_keys($list));
 	} else {
 	    $toolkitList = $core->translate('unknown');
 	}
