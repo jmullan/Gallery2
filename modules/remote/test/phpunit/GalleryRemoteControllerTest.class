@@ -68,7 +68,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
 	GalleryUtilities::putRequestVariable('form[uname]', $this->_user->getUserName());
-	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error']);
@@ -88,7 +88,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
 	GalleryUtilities::putRequestVariable('form[uname]', 'some-bogus-user');
-	GalleryUtilities::putRequestVariable('form[password]', 'password'); // from _createRandomUser
+	GalleryUtilities::putRequestVariable('form[password]', 'password');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array(), $results['error']);
@@ -122,12 +122,16 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
     function testLoginGuestUser() {
 	global $gallery;
 
-	list ($ret, $anonymousUserId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	
-	// logging in as anonymous works when no existing session exists. Simulate this by dropping the activeUser.
+	/*
+	 * Logging in as anonymous works when no existing session exists.
+	 * Simulate this by dropping the activeUser.
+	 */
 	$gallery->_activeUser = null;
 	
 	GalleryUtilities::putRequestVariable('form[cmd]', 'login');
@@ -182,7 +186,8 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::addUserPermission($album[1]->getId(), $gallery->getActiveUserId(), 'core.view');
+	$ret = GalleryCoreApi::addUserPermission(
+	    $album[1]->getId(), $gallery->getActiveUserId(), 'core.view');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -204,15 +209,21 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	    for ($j = 0; $j < sizeof($album); $j++) {
 		if ($response->getProperty('album.name.' . $i) == $album[$j]->getId()) {
 		    $seen[$j] = 1;
-		    $this->assertEquals($album[$j]->getTitle(), $response->getProperty('album.title.' . $i));
-		    $this->assertEquals($album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
-		    $this->assertEquals($album[$j]->getParentId(), (int)$response->getProperty('album.parent.' . $i));
+		    $this->assertEquals(
+			$album[$j]->getTitle(), $response->getProperty('album.title.' . $i));
+		    $this->assertEquals(
+			$album[$j]->getSummary(), $response->getProperty('album.summary.' . $i));
+		    $this->assertEquals($album[$j]->getParentId(),
+					(int)$response->getProperty('album.parent.' . $i));
 
 		    $expected = $j == 0 ? 'true' : 'false';
 		    $this->assertEquals($expected, $response->getProperty('album.perms.add.' . $i));
-		    $this->assertEquals($expected, $response->getProperty('album.perms.write.' . $i));
-		    $this->assertEquals($expected, $response->getProperty('album.perms.del_alb.' . $i));
-		    $this->assertEquals($expected, $response->getProperty('album.perms.create_sub.' . $i));
+		    $this->assertEquals(
+			$expected, $response->getProperty('album.perms.write.' . $i));
+		    $this->assertEquals(
+			$expected, $response->getProperty('album.perms.del_alb.' . $i));
+		    $this->assertEquals(
+			$expected, $response->getProperty('album.perms.create_sub.' . $i));
 		}
 	    }
 	}
