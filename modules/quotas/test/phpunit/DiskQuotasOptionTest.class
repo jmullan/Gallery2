@@ -180,7 +180,6 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	//$filesize = sprintf('%.2f', $this->_platform->filesize(__FILE__) / 1024);
 	$filesize = (string)round($this->_platform->filesize(__FILE__) / 1024, 2);
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), array($item));
 	$this->assertEquals(array(), $errors, 'errors');
