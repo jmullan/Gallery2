@@ -19,8 +19,7 @@
 
   <p class="giDescription">
     {capture name="user"}<strong>{$AdminDeleteUserQuota.user.userName}</strong>{/capture}
-    {g->text text="This will completely remove the %s (%s %s) user quota from Gallery. 
-                  There is no undo!"
+    {g->text text="This will completely remove the %s (%s %s) user quota from Gallery. There is no undo!"
              arg1=$smarty.capture.user
              arg2=$AdminDeleteUserQuota.quotaSize
              arg3=$AdminDeleteUserQuota.quotaUnit}

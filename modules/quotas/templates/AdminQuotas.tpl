@@ -33,10 +33,7 @@
   {/if}
 
   <p class="giDescription">
-    {g->text text="This system will let you assign disk space quotas to users. By creating a group
-                  quota, any users in that group will be assigned that quota. If a user belongs to
-                  more than one group, the lowest quota of all the groups will be assigned. 
-                  Although, if you create a user quota that will override any group quotas."}
+    {g->text text="This system will let you assign disk space quotas to users. By creating a group quota, any users in that group will be assigned that quota. If a user belongs to more than one group, the lowest quota of all the groups will be assigned. Although, if you create a user quota that will override any group quotas."}
   </p>
 </div>
 
