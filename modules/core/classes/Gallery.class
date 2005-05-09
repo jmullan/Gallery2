@@ -843,7 +843,7 @@ class Gallery {
 	if (isset($this->_shutdownActions)) {
 	    foreach ($this->_shutdownActions as $action) {
 		$ret = @call_user_func_array($action[0], $action[1]);
-		if ($this->getDebug()) {
+		if ($this->getDebug() || class_exists('GalleryTestCase')) {
 		    /* Ignore errors unless debug is on */
 		    if (is_array($ret) && GalleryUtilities::isA($ret[0], 'GalleryStatus')) {
 			$ret = $ret[0];

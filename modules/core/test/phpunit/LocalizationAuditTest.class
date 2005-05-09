@@ -1,0 +1,114 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Lint check our localizations
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class LocalizationAuditTest extends CodeAuditTestCase {
+
+    function LocalizationAuditTest($methodName) {
+	$this->CodeAuditTestCase($methodName);
+    }
+
+    /**
+     * @see CodeAuditTestCase::shouldCheckFile()
+     */
+    function shouldCheckFile($fileName) {
+	if (substr($fileName, -3) == '.po') {
+	    return true;
+	}
+
+	return false;
+    }
+
+    /**
+     * @see CodeAuditTestCase::checkFile()
+     *
+     * 1. Check for a sane Project-Id-Version field
+     * 2. Check for #,fuzzy before the first msgid
+     */
+    function checkFile($fileName, $buffer) {
+	/* Grab Project-Id-Version, which we'll check against this file's peers in finishScan() */
+	preg_match('/Project-Id-Version:(.*).."/', $buffer, $matches);
+	$this->_idMap[dirname($fileName)][basename($fileName)] = $matches[1];
+
+	/* Make sure that our first msgid isn't marked fuzzy */
+	$fuzzyPos = strpos($buffer, '#, fuzzy');
+	$msgIdPos = strpos($buffer, 'msgid');
+
+	if ($fuzzyPos !== false && $msgIdPos !== false && $fuzzyPos < $msgIdPos) {
+	    $path = substr($fileName, strlen(dirname(dirname(dirname(dirname($fileName)))))+1);
+	    $this->assert(false, $path . ': first msgid is marked fuzzy!');
+	}
+    }
+
+    /**
+     * @see CodeAuditTestCase::finishScan()
+     *
+     * Collate our Project-Id-Version info and make sure that they're consistent in every
+     * localization.
+     */
+    function finishScan($halted) {
+	if (!$halted) {
+	    foreach ($this->_idMap as $dir => $dirMap) {
+		$hash = array();
+		$max = 0;
+		foreach ($dirMap as $localization => $projectIdVersion) {
+		    $hash[$projectIdVersion][] = $localization;
+		    if (count($hash[$projectIdVersion]) > $max) {
+			$probablyCorrect = $projectIdVersion;
+			$max = count($hash[$projectIdVersion]);
+		    }
+		}
+
+		$matchCount = count(array_keys($hash));
+		if ($matchCount > 1) {
+		    $poDir = substr($dir, strlen(dirname(dirname(dirname($dir))))+1);
+		    $mismatches = join(', ', array_keys($hash));
+		    $this->assert(false, sprintf(
+				      "%s: %d mismatches (%s) (probably should be: %s)",
+				      $poDir, $matchCount, $mismatches, $probablyCorrect));
+
+		    $script[] = sprintf(
+			'perl -pi.bak -e \'s/(Project-Id-Version:).*(..")/$1%s$2/\' %s/*.po',
+			$probablyCorrect, $poDir);
+		}
+	    }
+	}
+
+	if (isset($script)) {
+	    $this->assert(false, sprintf(
+			      "Fix script:\n<pre>#!/bin/sh\n%s</pre>", join("\n", $script)));
+	}
+    }
+}
+?>

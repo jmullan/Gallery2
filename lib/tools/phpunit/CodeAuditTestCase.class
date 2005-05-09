@@ -54,6 +54,8 @@ class CodeAuditTestCase extends GalleryTestCase {
 	if ($this->_shouldHalt) {
 	    $this->assert(false, 'Halted prematurely');
 	}
+
+	$this->finishScan($this->_shouldHalt);
     }
 
     function _scanDir($dirPath) {
@@ -97,7 +99,7 @@ class CodeAuditTestCase extends GalleryTestCase {
 			// deleted files have a negative version number
 			if ($matches[2] != '-') {
 			    $fileName = $matches[1];
-			    if (preg_match('/\.(class|inc|php|tpl)/', $fileName)) {
+			    if (preg_match('/\.(class|inc|php|tpl|po)$/', $fileName)) {
 				$this->_scanFile(sprintf("%s/%s", $dirPath, $fileName));
 			    }
 			}
@@ -138,6 +140,15 @@ class CodeAuditTestCase extends GalleryTestCase {
      * @access protected
      */
     function checkFile($fileName, $buffer) {
+    }
+
+    /**
+     * Overload this method in subclasses to run any tasks after the scan is complete.
+     *
+     * @param bool true if the scan was halted early
+     * @access protected
+     */
+    function finishScan($halted) {
     }
 
     /**
