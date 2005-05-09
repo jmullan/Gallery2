@@ -255,6 +255,12 @@ class GalleryTestCase extends TestCase {
 	$gallery->_storage = array_shift($this->_saveVars);
 	$gallery->_shutdownActions = null;
 
+	/*
+	 * Resolve any shutdown actions the test or the code being tested registered so that 
+	 * any cleanup happens before we start verifying locks, entities, etc.
+	 */
+	$gallery->performShutdownActions();
+
 	/* Make sure we're not hanging onto any locks */
 	$lockIds = GalleryCoreApi::getLockIds();
 	if (!empty($lockIds)) {
