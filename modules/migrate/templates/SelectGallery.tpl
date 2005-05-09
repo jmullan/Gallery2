@@ -36,7 +36,12 @@
     <h4> {g->text text="Path"} </h4>
 
     <input type="text" size="60"
-     name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"/>
+     name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"
+      id='giFormPath' autocomplete="off"/>
+    {g->autoComplete element="giFormPath"}
+      {g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
+        forJavascript="true"}
+    {/g->autoComplete}
 
     {if isset($form.error.albumsPath.missing)}
     <div class="giError">

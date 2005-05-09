@@ -77,10 +77,85 @@ class SimpleCallbackView extends GalleryView {
 		}
 	    }
 	    break;
-	    
+            
+        case "lookupDirs":
+	    $prefix = GalleryUtilities::getRequestVariables('prefix');
+            $dirs = $this->_getAllImmediateSubdirs($prefix);
+            print join("\n", $dirs);
+	    break;
+            
+        case "lookupFiles":
+	    $prefix = GalleryUtilities::getRequestVariables('prefix');
+            $dirs = $this->_getAllFiles($prefix);
+            print join("\n", $dirs);
+	    break;
 	}
-
+        
 	return GalleryStatus::success();
     }
+    
+    function _getAllImmediateSubdirs($path) {
+        $dirList = array();
+        if (!file_exists($path) || !is_dir($path)) {
+            return $dirList;
+        }
+
+        if ($dir = opendir($path)) {
+            while (($file = readdir($dir)) !== false) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
+
+                if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
+                    $file = $path . $file;
+                } else {
+                    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
+                }
+
+                if (is_dir($file)) {
+                    $dirList[] = $file;
+                }
+            }
+            closedir($dir);
+        }
+
+        sort($dirList);
+        return $dirList;
+    }
+
+    function _getAllFiles($path) {
+        $dirList = array();
+        $fileList = array();
+        if (!file_exists($path) || !is_dir($path)) {
+            return $dirList;
+        }
+
+        if ($dir = opendir($path)) {
+            while (($file = readdir($dir)) !== false) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
+
+                if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
+                    $file = $path . $file;
+                } else {
+                    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
+                }
+
+                if (is_dir($file)) {
+                    $dirList[] = $file;
+                } else if (is_file($file)) {
+                    $fileList[] = $file;
+                }
+            }
+            closedir($dir);
+        }
+
+        sort($dirList);
+        sort($fileList);
+        $result = array_merge($dirList, $fileList);
+        return $result;
+    }
+
 }
 ?>

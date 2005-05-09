@@ -21,7 +21,12 @@
 
   {g->text text="Path to unzip:"}
   <input type="text" size="40"
-   name="{g->formVar var="form[unzipPath]"}" value="{$form.unzipPath}"/>
+   name="{g->formVar var="form[unzipPath]"}" value="{$form.unzipPath}"
+   id='giFormPath' autocomplete="off"/>
+  {g->autoComplete element="giFormPath"}
+    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupFiles" arg3="prefix=__VALUE__"
+      forJavascript="true"}
+  {/g->autoComplete}
 
   {if isset($form.error.unzipPath.missing)}
   <div class="giError">

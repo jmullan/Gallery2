@@ -23,7 +23,12 @@
     <td>
       {g->text text="NetPBM Directory:"}
     </td><td>
-      <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"/>
+      <input type="text" size="40" name="{g->formVar var="form[path]"}" value="{$form.path}"
+        id='giNetPBMPath' autocomplete="off"/>
+      {g->autoComplete element="giNetPBMPath"}
+        {g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
+          forJavascript="true"}
+      {/g->autoComplete}
 
       {if isset($form.error.path.missing)}
       <div class="giError">
@@ -68,7 +73,12 @@
   </p>
 
   {g->text text="jhead Directory:"}
-  <input type="text" size="40" name="{g->formVar var="form[jheadPath]"}" value="{$form.jheadPath}"/>
+  <input type="text" size="40" name="{g->formVar var="form[jheadPath]"}" value="{$form.jheadPath}"
+    id='giJheadPath' autocomplete="off"/>
+  {g->autoComplete element="giJheadPath"}
+    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
+      forJavascript="true"}
+  {/g->autoComplete}
 
   {if isset($form.error.jheadPath.badPath)}
   <div class="giError">
