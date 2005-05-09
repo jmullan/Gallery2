@@ -93,7 +93,7 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 
 	/* Save/clear quotas for All Users,Everybody groups so they won't interfere with tests */
 	$this->_saveQuota = array();
-	foreach (array('allUsersGroup', 'everybodyGroup') as $groupName) {
+	foreach (array('allUserGroup', 'everybodyGroup') as $groupName) {
 	    list ($ret, $groupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.' . $groupName);
 	    if ($ret->isError()) {
@@ -107,7 +107,11 @@ class DiskQuotasOptionTest extends ItemAddOptionTestCase {
 	    }
 	    if ($hasQuota) {
 		$this->_saveQuota[$groupId] = $quota;
-		$ret = QuotasMap::removeMapEntry(array('groupId' => $groupId));
+		$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $groupId));
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
 	    }
 	}
 

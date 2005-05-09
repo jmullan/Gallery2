@@ -80,7 +80,7 @@ class QuotasHelperTest extends GalleryTestCase {
 
 	/* Save/clear quotas for All Users,Everybody groups so they won't interfere with tests */
 	$this->_saveQuota = array();
-	foreach (array('allUsersGroup', 'everybodyGroup') as $groupName) {
+	foreach (array('allUserGroup', 'everybodyGroup') as $groupName) {
 	    list ($ret, $groupId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.' . $groupName);
 	    if ($ret->isError()) {
@@ -95,6 +95,10 @@ class QuotasHelperTest extends GalleryTestCase {
 	    if ($hasQuota) {
 		$this->_saveQuota[$groupId] = $quota;
 		$ret = QuotasMap::removeMapEntry(array('userOrGroupId' => $groupId));
+		if ($ret->isError()) {
+		    print $ret->getAsHtml();
+		    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		}
 	    }
 	}
     }
@@ -102,7 +106,7 @@ class QuotasHelperTest extends GalleryTestCase {
     function tearDown() {	
 	foreach ($this->_saveQuota as $groupId => $quota) {
 	    $ret = QuotasMap::addMapEntry(
-		array('userOrGroupId' => $groupId, 'quotaSize' => $quota));
+		array('userOrGroupId' => $groupId, 'quotaSize' => $quota['quota']));
 	    if ($ret->isError()) {
 		$this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
