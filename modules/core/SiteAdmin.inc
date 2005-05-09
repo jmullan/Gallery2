@@ -127,9 +127,7 @@ class SiteAdminView extends GalleryView {
 	// Set labels..
 	foreach (array_keys($subViewGroups) as $group) {
 	    $data =& $subViewGroups[$group];
-	    if ($data[0]['group'] != 'gallery') {
-		usort($data, array($this, 'nameSort'));
-	    }
+	    usort($data, array($this, 'nameSort'));
 	    if (isset($groupLabels[$group])) {
 		$tmp = -1;
 		foreach ($groupLabels[$group] as $label => $count) {
