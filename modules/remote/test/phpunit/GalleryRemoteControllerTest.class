@@ -282,7 +282,8 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 
-	$this->_controller->setOptionInstances(array(new GalleryRemoteControllerTestAddOption()));
+	$this->_controller->setOptionInstances(
+	    array('instance' => new GalleryRemoteControllerTestAddOption()));
 
         $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
 	    array('name' => 'testfile.txt',

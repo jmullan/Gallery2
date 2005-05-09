@@ -157,7 +157,8 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['tmp_name'] = __FILE__;
 	$_FILES['userFile']['name'] = 'Foo.dat';
 
-	$this->_controller->setOptionInstances(array(new UploadedItemsControllerTestAddOption()));
+	$this->_controller->setOptionInstances(
+	    array('instance' => new UploadedItemsControllerTestAddOption()));
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
