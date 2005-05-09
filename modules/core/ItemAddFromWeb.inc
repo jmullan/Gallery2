@@ -64,7 +64,7 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		    /* Add it */
 		    list ($ret, $mimeType, $fileName) = $this->_getMimeType($url, $headers, true);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
 
 		    list ($base) = GalleryUtilities::getFileNameComponents($fileName);

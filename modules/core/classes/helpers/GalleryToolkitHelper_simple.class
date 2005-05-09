@@ -73,7 +73,7 @@ class GalleryToolkitHelper_simple {
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType, $operationName));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $toolkit = null;
@@ -85,7 +85,7 @@ class GalleryToolkitHelper_simple {
 		list ($ret, $toolkit) =
 		    GalleryCoreApi::newFactoryInstanceById('GalleryToolkit', $toolkitId);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 
 		if (isset($toolkit)) {

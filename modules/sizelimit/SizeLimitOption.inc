@@ -52,7 +52,7 @@ class SizeLimitOption extends ItemEditOption {
         list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
             'module', 'sizelimit', $item->getId());
         if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
         }
         /* if there aren't any - assume 'no limits' */
         if (!isset($params['height']) || $params['height'] == 0) {
@@ -93,18 +93,20 @@ class SizeLimitOption extends ItemEditOption {
         switch ($form['SizeLimitOption']['dimensionChoice']) {
             case 'unlimited':
                 /* delete parameter from plugin table */
-    	        $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit', 'height', $item->getId());
+    	        $ret = GalleryCoreApi::removePluginParameter(
+		    'module', 'sizelimit', 'height', $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
-    	        $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit', 'width', $item->getId());
+    	        $ret = GalleryCoreApi::removePluginParameter(
+		    'module', 'sizelimit', 'width', $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
-    	        $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit', 
-                    'keepOriginal', $item->getId());
+    	        $ret = GalleryCoreApi::removePluginParameter(
+		    'module', 'sizelimit', 'keepOriginal', $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
                 break;
                 
@@ -124,13 +126,15 @@ class SizeLimitOption extends ItemEditOption {
                 if (!is_numeric($width)) {
                     $width = $height;
                 }
-    	        $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'height', $height, $item->getId());
+    	        $ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'sizelimit', 'height', $height, $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
-    	        $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'width', $width, $item->getId());
+    	        $ret = GalleryCoreApi::setPluginParameter(
+		    'module', 'sizelimit', 'width', $width, $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
                 $setOriginal = true;
                 break;
@@ -142,12 +146,12 @@ class SizeLimitOption extends ItemEditOption {
     	        $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit', 
                     'size', $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
     	        $ret = GalleryCoreApi::removePluginParameter('module', 'sizelimit', 
                     'keepOriginal', $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
                 break;
                 
@@ -163,7 +167,7 @@ class SizeLimitOption extends ItemEditOption {
     	        $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'size', 
                     $filesize, $item->getId());
                 if ($ret->isError()) {
-                    return array($ret->wrap(__FILE__, __LINE__), null);
+                    return array($ret->wrap(__FILE__, __LINE__), null, null);
                 }
                 $setOriginal = true;
                 break;
@@ -173,7 +177,7 @@ class SizeLimitOption extends ItemEditOption {
             $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit', 'keepOriginal', 
                 isset($form['SizeLimitOption']['keepOriginal']) ? 1 : 0, $item->getId());
             if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
             }
         }
         return array(GalleryStatus::success(), $error, $warning);

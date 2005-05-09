@@ -213,20 +213,20 @@ class GalleryView {
 
 	list ($ret, $results) = $this->loadTemplate($template, $form);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	/* Get the theme name from the view */
 	list ($ret, $themeName) = $this->getThemeName();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	/* Fallback to default theme if none specified */
 	if (empty($themeName)) {
 	    list ($ret, $themeName) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'default.theme');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
 

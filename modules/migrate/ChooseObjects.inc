@@ -261,7 +261,7 @@ class ChooseObjectsView extends GalleryView {
 
 	list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	foreach($albumList as $albumName => $album) {
@@ -270,12 +270,13 @@ class ChooseObjectsView extends GalleryView {
 
 	list($ret, $hierarchy) = Gallery1DataParser::getAlbumHierarchy($albumsPath);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$tree = array();
 	foreach ($hierarchy as $albumName => $subHierarchy) {
-	    $tree = array_merge($tree, $this->_createG1DepthTree($albumList, $albumName, $subHierarchy));
+	    $tree = array_merge(
+		$tree, $this->_createG1DepthTree($albumList, $albumName, $subHierarchy));
 	}
 
 	return array(GalleryStatus::success(), $tree);

@@ -300,7 +300,7 @@ class RewriteHelper {
 	foreach (array_keys($activeRules) as $moduleId) {
 	    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    
 	    list ($ret, $accessList) = RewriteHelper::getAccessList();
@@ -310,10 +310,10 @@ class RewriteHelper {
 	    	$settings = array();
 	    	$settings['condition'] = array();
 		$keywords = array(
-			'_path_' => array(
-				'ignore' => 1),
-			'itemId' => array(
-				'pattern' => '([0-9]+)'));
+		    '_path_' => array(
+			'ignore' => 1),
+		    'itemId' => array(
+			'pattern' => '([0-9]+)'));
 		if (isset($rules[$ruleId]['keywords'])) {
 		    $keywords = array_merge($keywords, $rules[$ruleId]['keywords']);
 		}

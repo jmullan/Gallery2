@@ -41,7 +41,7 @@ class NewItemsSortOrder extends GallerySortInterface_1_1 {
     function getSortInfo() {
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'newitems');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	return array(GalleryStatus::success(), $module->translate('New Items First'), true);
@@ -56,13 +56,13 @@ class NewItemsSortOrder extends GallerySortInterface_1_1 {
 
 	list ($ret, $newTime) = GalleryCoreApi::getPluginParameter('module', 'newitems', 'days.new');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 	}
 	$newTime = time() - $newTime * 86400;
 	list ($ret, $case) = $storage->getFunctionSql('CASE',
 	    array("[GalleryEntity::creationTimestamp] > $newTime", '0', '1'));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null, null);
 	}
 
 	return array(GalleryStatus::success(), '%1%', $case,

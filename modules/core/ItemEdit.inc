@@ -282,7 +282,7 @@ class ItemEditView extends GalleryView {
 
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$itemTypeNames = $item->itemTypeName(true);

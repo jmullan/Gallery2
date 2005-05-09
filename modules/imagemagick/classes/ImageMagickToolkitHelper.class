@@ -192,17 +192,20 @@ class ImageMagickToolkitHelper {
 
 	if ($imageMagickPath == null) {
 	    list ($ret, $imageMagickPath) =
-		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'path');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__));
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $binary) =
-		    GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'binary');
+		GalleryCoreApi::getPluginParameter('module', 'imagemagick', 'binary');
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__));
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	} else {
 	    list ($ret, $binary) = ImageMagickToolkitHelper::discoverBinary($imageMagickPath);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	}
 
 	if (empty($binary)) {

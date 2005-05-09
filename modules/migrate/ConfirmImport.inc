@@ -183,7 +183,7 @@ class ConfirmImportController extends GalleryController {
 	    require_once(dirname(__FILE__) . '/classes/Gallery1DataParser.class');
 	    list($ret, $albumList) = Gallery1DataParser::getAlbumList($albumsPath);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $uidMap) = Gallery1DataParser::getUserUids($albumsPath);

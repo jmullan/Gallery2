@@ -326,7 +326,7 @@ class GalleryFileSystemEntity_core extends GalleryChildEntity {
 
 		return array(GalleryStatus::success(), $path);
 	    } else {
-		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__));
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	    }
 	}
     }

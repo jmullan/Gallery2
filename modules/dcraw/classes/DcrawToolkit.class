@@ -50,7 +50,7 @@ class DcrawToolkit extends GalleryToolkit {
 
 	if ($mimeType != 'image/x-dcraw') {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
-			 null, null);
+			 null);
 	}
 
 	switch($propertyName) {

@@ -62,7 +62,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	    /* Get our source */
 	    list ($ret, $source) = GalleryCoreApi::loadEntitiesById($thumbnail->getDerivativeSourceId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    list ($ret, $lock) = GalleryCoreApi::acquireWriteLock($thumbnail->getId());

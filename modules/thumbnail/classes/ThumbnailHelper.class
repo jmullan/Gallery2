@@ -150,15 +150,15 @@ class ThumbnailHelper {
     function fetchToolkitSupport($byMimeType=true) {
 	list ($ret, $tList) = GalleryCoreApi::getToolkitOperationMimeTypes('thumbnail');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	list ($ret, $cList) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 	$data = array_merge_recursive($tList, $cList);
 	if ($byMimeType) {
-	    return array(GalleryStatus::success(), $data);
+	    return array(GalleryStatus::success(), $data, null);
 	}
 	$badMime = array();
 	$toolkitMime = array();

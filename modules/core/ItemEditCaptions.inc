@@ -52,13 +52,13 @@ class ItemEditCaptionsController extends GalleryController {
 
 	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($ids);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* We'll check permissions one at a time below, but precache them now */
 	    $ret = GalleryCoreApi::studyPermissions($ids);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
@@ -235,7 +235,7 @@ class ItemEditCaptionsView extends GalleryView {
     function getViewDescription() {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $core->translate('edit captions'));

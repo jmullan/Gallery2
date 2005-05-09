@@ -198,7 +198,7 @@ class AdminEditGroupQuotaView extends GalleryView {
 	$AdminEditGroupQuota['groupId'] = $group->getId();
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'quotas');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$AdminEditGroupQuota['quotaUnitChoices'] = array('KB' => $module->translate('KB'),
 							 'MB' => $module->translate('MB'),

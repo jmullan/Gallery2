@@ -43,7 +43,8 @@ class ImageBlockHelperTest extends GalleryTestCase {
     function setUp() {
 	global $gallery;
 	parent::setUp();
-	GalleryCoreApi::relativeRequireOnce('modules/imageblock/classes/ImageBlockDisabledMap.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/imageblock/classes/ImageBlockDisabledMap.class');
 
 	list ($ret, $this->_topAlbum, $this->_topItems) =
 	    $this->_createSubAlbumWithItems($this->_getRootId());
@@ -64,14 +65,14 @@ class ImageBlockHelperTest extends GalleryTestCase {
 	/* Create a new album and image, set thumbnail and highlight */
 	list ($ret, $album) = $this->_createRandomAlbum($parentId);
 	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	$items = array();
 	for ($i = 0; $i < 5; $i++) {
 	    list($ret, $items[$i]) = $this->_createRandomDataItem($album->getId());
 	    if ($ret->isError()) {
-	        return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
 

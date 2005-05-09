@@ -350,7 +350,7 @@ class GalleryRemoteController extends GalleryController {
 	    $extension = GalleryUtilities::getFileExtension($file['name']);
 	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime($extension);
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__));
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	}
 
@@ -387,7 +387,7 @@ class GalleryRemoteController extends GalleryController {
 	    list ($ret, $optionErrors, $optionWarnings) =
 		$option->handleRequestAfterAdd($form, array($newItem));
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    /*

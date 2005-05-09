@@ -349,7 +349,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		    $ret = $preferred->create($source->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		    $preferred->setDerivativeSourceId($source->getId());
@@ -357,19 +357,19 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 
 		    $ret = GalleryCoreApi::remapSourceIds($source->getId(), $preferred->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		    $source = $preferred;
 		} else {
 		    /* Lock the preferred so that we can modify it */
 		    list ($ret, $lockIds[]) = GalleryCoreApi::acquireWriteLock($source->getId());
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 
 		    $ret = $source->expireCache();
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 
@@ -379,18 +379,18 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		/* Let our change ripple down the derivative tree, if necessary */
 		$ret = GalleryCoreApi::adjustDependentDerivatives($source->getId(), $newOperations);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		$ret = $source->save();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 
 		if (!empty($lockIds)) {
 		    $ret = GalleryCoreApi::releaseLocks($lockIds);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null, null);
+			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
 
@@ -756,8 +756,8 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		 * they're supported by an active toolkit.
 		 */
 		list ($ret, $isSupported, $outputMimeType) =
-		    GalleryCoreApi::isSupportedOperationSequence($sourceMimeType,
-								 $derivativeOperations);
+		    GalleryCoreApi::isSupportedOperationSequence(
+			$sourceMimeType, $derivativeOperations);
 		if ($ret->isError()) {
 		    if (!empty($lockIds)) {
 			/* Ignore errors -- we're already in an error handler */

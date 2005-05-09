@@ -104,7 +104,7 @@ class ShowItemView extends GalleryView {
 		list ($ret2, $anonymousId) = GalleryCoreApi::getPluginParameter(
 		    'module', 'core', 'id.anonymousUser');
 		if ($ret2->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($gallery->getActiveUserId() == $anonymousId) {
 		    /* Redirect to login view */
@@ -115,7 +115,7 @@ class ShowItemView extends GalleryView {
 		list ($ret2, $rootId) = GalleryCoreApi::getPluginParameter(
 		    'module', 'core', 'id.rootAlbum');
 		if ($ret2->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($item->getId() == $rootId) {
 		    /* No permission on root album; redirect to login view */
@@ -167,7 +167,7 @@ class ShowItemView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	if ($item->getCanContainChildren() && !empty($perPage)) {
 	    /* If the layout uses pages, figure out what page we're on */
 	    $page = GalleryUtilities::getRequestVariables('page');

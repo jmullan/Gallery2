@@ -209,7 +209,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 
 	list ($ret, $param, $isContainer) = CustomFieldHelper::loadParameters($containerId);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 
 	$query = 'SELECT [CustomFieldMap::field], [CustomFieldMap::value]
@@ -217,7 +217,7 @@ class CustomFieldHelper extends CustomFieldInterface_1_0 /* and GalleryEventList
 
 	list ($ret, $searchResults) = $gallery->search($query, array($item->getId()));
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return array($ret->wrap(__FILE__, __LINE__), null, null, null);
 	}
 	while ($rec = $searchResults->nextResult()) {
 	    $data[$rec[0]] = $rec[1];

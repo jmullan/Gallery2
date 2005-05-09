@@ -669,15 +669,15 @@ class CoreModuleExtras {
             list ($ret, $allUserGroupId) = GalleryCoreApi::getPluginParameter(
                 'module', 'core', 'id.allUserGroup');
             if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+                return $ret->wrap(__FILE__, __LINE__);
             }
             list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
             if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__));
+                return $ret->wrap(__FILE__, __LINE__);
             }
             list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
             if ($ret->isError()) {
-                return array($ret->wrap(__FILE__, __LINE__), null);
+                return $ret->wrap(__FILE__, __LINE__);
             }
             $allUserGroupName = $group->getGroupName();
             $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
@@ -686,12 +686,12 @@ class CoreModuleExtras {
 		$group->setGroupName($module->translate('Registered Users'));
 		$ret = $group->save();
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
 		
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    return $ret->wrap(__FILE__, __LINE__);
 		}
             }            
 

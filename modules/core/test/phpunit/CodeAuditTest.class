@@ -42,33 +42,49 @@ class CodeAuditTest extends CodeAuditTestCase {
 
 	$platform = $gallery->getPlatform();
 
-	$this->_exception['endphp'] =
-	    array(
-		  'layout.css.php' => 1
-		  );
+	$this->_exception['endphp'] = array(
+	    'layout.css.php' => 1
+	    );
 
-	$this->_exception['superglobals'] =
-	    array(
-		  'FILES' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1,
-				   ),
-		  'POST' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1,
-				  ),
-		  'GET' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1,
-				 ),
-		  'REQUEST' => array(
-				   'modules/core/classes/GallerySession.class' => 1,
-				 ),
-		  'COOKIE' => array(
-				   'modules/core/classes/GallerySession.class' => 1,
-				   'modules/core/classes/GalleryUtilities.class' => 1,
-				 ),
-		  'SERVER' => array(
-				   'modules/core/classes/GalleryUtilities.class' => 1,
-				 ),
-		  );
+	$this->_exception['superglobals'] = array(
+	    'FILES' => array(
+		'modules/core/classes/GalleryUtilities.class' => 1,
+		),
+	    'POST' => array(
+		'modules/core/classes/GalleryUtilities.class' => 1,
+		),
+	    'GET' => array(
+		'modules/core/classes/GalleryUtilities.class' => 1,
+		),
+	    'REQUEST' => array(
+		'modules/core/classes/GallerySession.class' => 1,
+		),
+	    'COOKIE' => array(
+		'modules/core/classes/GallerySession.class' => 1,
+		'modules/core/classes/GalleryUtilities.class' => 1,
+		),
+	    'SERVER' => array(
+		'modules/core/classes/GalleryUtilities.class' => 1,
+		),
+	    );
+
+	$this->_exception['returns'] = array(
+	    'install/steps/SystemChecksStep.class' => array(
+		'SystemChecksStep::CheckManifest' => 1,
+		),
+	    'upgrade/steps/SystemChecksStep.class' => array(
+		'SystemChecksStep::CheckManifest' => 1,
+		),
+	    'modules/netpbm/classes/NetPbmToolkit.class' => array(
+		'NetPbmToolkit::_extractCommands' => 1,
+		),
+	    'modules/nokiaupload/classes/ImageUploadHelper.class' => array(
+		'ImageUploadHelper::getRSCapabilities' => 1,
+		),
+	    'main.php' => array(
+		'::_GalleryMain_doRedirect' => 1,
+		),
+	    );
 
 	$this->_longLineCount = 0;
 	$this->_errorCount = 0;
@@ -127,7 +143,31 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$lines = split("(\r\n|\n)", $buffer);
 	$checkSuperglobals = !preg_match('{/test/phpunit|^install/|^upgrade/}', $fileName);
 	$longLineCount = 0;
+	$currentFunction = null;
+	$currentClass = null;
+	$returnTable = array();
+	
 	for ($i = 0; $i < count($lines); $i++) {
+	    if (preg_match('/^\s*class (\S+)/', $lines[$i], $matches)) {
+		$currentClass = $matches[1];
+	    }
+	    
+	    if (preg_match('/^\s*function (\S+)\(/', $lines[$i], $matches)) {
+		$currentFunction = $currentClass . '::' . $matches[1];
+	    }
+
+	    if (preg_match('/^\s*return (.*)/', $lines[$i])) {
+		if (!isset($currentFunction)) {
+		    $this->_errorCount++;
+		    $this->assert(false, "Return outside of a function on line $i in $fileName");
+		}
+		$return = '';
+		$j = $i;
+		do {
+		    $return .= trim($lines[$j++]);
+		} while ($j < count($lines) && strpos($return, ';') === false);
+		$returnTable[$currentFunction][] = preg_replace('/^return\s+/', '', $return);
+	    }
 
 	    /* Check that Session and UrlGenerator are always accessed by-reference */
 	    if (preg_match_all('/= *\$gallery->get(Session|UrlGenerator)/', $lines[$i], $matches)) {
@@ -180,6 +220,62 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    }
 	}
 
+	/* Examine the return table for discrepancies */
+	$returnMismatch = array();
+	foreach ($returnTable as $function => $returns) {
+	    if (isset($this->_exception['returns'][$fileName][$function])) {
+		continue;
+	    }
+	    
+	    if (count($returns) < 2) {
+		continue;
+	    }
+
+	    for ($i = 0; $i < count($returns); $i++) {
+		if (preg_match('/^array\s*\(/', $returns[$i])) {
+		    /*
+		     * Determine the number of elements in returned arrays:
+		     * 1. Strip off the enclosing array()
+		     * 2. Collapse anything inside any remaining parens and quotes
+		     * 3. Count the commas
+		     */
+		    $tmp = $returnTable[$function][$i];
+		    $tmp = preg_replace('/array\((.*)\)/', '$1', $tmp);
+		    $tmp = preg_replace('/\'[^\']*\'/', '', $tmp);
+		    $tmp = preg_replace('/"[^\']*"/', '', $tmp);
+		    $runaway = 0;
+		    while (strpos($tmp, ')') !== false) {
+			$tmp = preg_replace('/\([^\(\)]*\)/', '', $tmp);
+			if ($runaway++> 10) {
+			    break;
+			}
+		    }
+
+		    $count = substr_count($tmp, ",");
+		    $returnCount[$function][$i] = array($count, $tmp);
+		    if ($i > 0 && $count != $returnCount[$function][0][0]) {
+			$returnMismatch[$function] = 1;
+		    }
+		} else {
+		    $returnCount[$function][$i] = array(1, $returns[$i]);
+		}
+	    }
+	}
+
+	foreach (array_keys($returnMismatch) as $function) {
+	    $returns = '';
+	    for ($i = 0; $i < count($returnTable[$function]); $i++) {
+		$returns .= sprintf("[%d] return %s%s\n",
+				    $returnCount[$function][$i][0],
+				    $returnTable[$function][$i],
+				    false ? '' :  /* set to false to see the transformed return */
+				    ' --> ' . $returnCount[$function][$i][1]);
+	    }
+	    $this->assert(false, sprintf('Mismatched returns in %s %s()<pre>%s</pre>',
+					 $fileName, $function, $returns));
+			  
+	}
+	
 	/*
 	 * Check that php files end with ?>
 	 * As noted in the constructor, Windows CVS will append a CRLF to

@@ -182,7 +182,7 @@ class DcrawToolkitTest extends GalleryTestCase {
     */
 
     function testGetDimensionsBadMimeType() {
-	list ($ret, $outputMimeType, $context) = $this->_toolkit->getProperty(
+	list ($ret, $outputMimeType) = $this->_toolkit->getProperty(
 	    'BAD/MIMETYPE', 'dimensions', 'INPUTFILE');
 	$this->assert($ret->isError() && $ret->getErrorCode() & ERROR_UNSUPPORTED_OPERATION);
     }
