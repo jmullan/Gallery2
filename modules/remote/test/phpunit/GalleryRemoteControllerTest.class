@@ -239,6 +239,8 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
 	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
 
+	$this->_controller->setOptionInstances(array());
+
         $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
 	    array('name' => 'testfile.txt',
 		  'type' => 'text/plain',
@@ -265,6 +267,53 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
+	$this->assertEquals('this is a caption', $newItem->getSummary());
+	$this->assertEquals('testfile.txt', $newItem->getTitle());
+	$this->assertEquals($platform->filesize(__FILE__), $newItem->getSize());
+    }
+
+    function testAddItemWithOption() {
+	global $gallery;
+
+	$platform = $gallery->getPlatform();
+	GalleryUtilities::putRequestVariable('form[cmd]', 'add-item');
+	GalleryUtilities::putRequestVariable('form[set_albumName]', $this->_rootAlbum->getId());
+	GalleryUtilities::putRequestVariable('form[caption]', 'this is a caption');
+
+	$this->_controller->setOptionInstances(array(new GalleryRemoteControllerTestAddOption()));
+
+        $_FILES[GalleryUtilities::prefixFormVariable('userfile')] =
+	    array('name' => 'testfile.txt',
+		  'type' => 'text/plain',
+		  'tmp_name' => __FILE__,
+		  'error' => 0,
+		  'size' => $platform->filesize(__FILE__));
+
+	$results = $this->handleRequest();
+	$this->assertEquals(array(), $results['error']);
+	$this->assertEquals('remote:GalleryRemote', $results['delegate']['view']);
+
+	$response = $results['status']['controllerResponse'];
+	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
+
+	/* Make sure the item was added */
+	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1, sizeof($childIds));
+
+	list ($ret, $newItem) = GalleryCoreApi::loadEntitiesById($childIds[0]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Make sure our option was called */
+	$this->assertEquals($newItem->getId(),
+			    GalleryRemoteControllerTestAddOption::getCalledWithId());
 
 	$this->assertEquals('testfile.txt', $newItem->getPathComponent());
 	$this->assertEquals('this is a caption', $newItem->getSummary());
@@ -314,6 +363,18 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$response = $results['status']['controllerResponse'];
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 	$this->assert($response->hasProperty('status_text'));
+    }
+}
+
+class GalleryRemoteControllerTestAddOption {
+
+    function handleRequestAfterAdd($form, $items) {
+	GalleryUtilities::putRequestVariable('calledWith', $items[0]->getId());
+	return array(GalleryStatus::success(), array(), array());
+    }
+
+    function getCalledWithId() {
+	return (int)GalleryUtilities::getRequestVariables('calledWith');
     }
 }
 ?>

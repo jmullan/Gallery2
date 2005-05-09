@@ -40,6 +40,25 @@ require(dirname(__FILE__) . '/classes/GalleryRemoteConstants.class');
  * @subpackage UserInterface
  */
 class GalleryRemoteController extends GalleryController {
+    /**
+     * ItemAddOption instances to use when handling this request.  Only used by
+     * test code.
+     *
+     * @var array (optionId => object ItemAddOption) $_optionInstances
+     * @private
+     */
+    var $_optionInstances;
+
+    /**
+     * Tests can use this method to hardwire a specific set of option instances to use.
+     * This avoids situations where some of the option instances will do unpredictable
+     * things and derail the tests.
+     *
+     * @param array (optionId => ItemAddOption, ...)
+     */
+    function setOptionInstances($optionInstances) {
+	$this->_optionInstances = $optionInstances;
+    }
 
     /**
      * @see GalleryController::handleRequest()
@@ -351,6 +370,32 @@ class GalleryRemoteController extends GalleryController {
 	$ret = GalleryCoreApi::releaseLocks($lockIds);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
+	}
+
+	if (isset($this->_optionInstances)) {
+	    $optionInstances = $this->_optionInstances;
+	} else {
+	    GalleryCoreApi::relativeRequireOnce('modules/core/ItemAdd.inc');
+	    list ($ret, $optionInstances) = ItemAddOption::getAllAddOptions();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+
+	/* Allow ItemAddOptions to process added item(s) */
+	foreach ($optionInstances as $option) {
+	    list ($ret, $optionErrors, $optionWarnings) =
+		$option->handleRequestAfterAdd($form, array($newItem));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    /*
+	     * Swallow option warnings and errors for now.
+	     *
+	     * TODO: Report warnings and errors back to Gallery Remote.  If the upload is denied
+	     * because of quota limitations, then we'll get an error that we should report back.
+	     */
 	}
 
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
