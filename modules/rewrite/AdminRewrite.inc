@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -41,21 +41,21 @@ class AdminRewriteController extends GalleryController {
      * @see GalleryController::handleRequest()
      */
     function handleRequest(&$form) {
-    	global $gallery;
-    	$platform =& $gallery->getPlatform();
-    	
+	global $gallery;
+	$platform =& $gallery->getPlatform();
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$status = array();
 	$error = array();
 	$dupe = array();
-	
+
 	if (isset($form['action']['saveRules'])) {
 	    $results['delegate']['mode'] = 'rules';
-		
+
 	    $activeRules = array();
 	    if (isset($form['shortUrls'])) {
 		foreach (array_keys($form['shortUrls']) as $moduleId) {
@@ -72,7 +72,7 @@ class AdminRewriteController extends GalleryController {
 					$form['shortUrls'][$moduleId][$ruleId]['pattern'] . ']';
 				break 2;
 			    }
-		    	
+
 			    $activeRules[$moduleId][$ruleId] = array();
 			    $activeRules[$moduleId][$ruleId]['pattern'] =
 				    $form['shortUrls'][$moduleId][$ruleId]['pattern'];
@@ -85,26 +85,26 @@ class AdminRewriteController extends GalleryController {
 				$activeRules[$moduleId][$ruleId]['match'] =
 					$form['shortUrls'][$moduleId][$ruleId]['match'];
 			    }
-			
+
 			    $dupe[$form['shortUrls'][$moduleId][$ruleId]['pattern']] = 1;
 			}
 		    }
-	    
+
 		    if (empty($activeRules[$moduleId])) {
 			unset($activeRules[$moduleId]);
 		    }
 		}
 	    }
-	
+
 	    if (empty($error)) {
-	    	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
+		list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if ($code != REWRITE_STATUS_OK) {
 		    $error[] = 'form[error][badKeyword]';
 		}
-	    	
+
 		list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -112,7 +112,7 @@ class AdminRewriteController extends GalleryController {
 		if ($code != REWRITE_STATUS_OK) {
 		    $error[] = 'form[error][cantWrite][gallery]';
 		}
-		
+
 		if (GalleryUtilities::isEmbedded()) {
 		    list($ret, $code) = RewriteHelper::writeFile($rewriteRules, true);
 		    if ($ret->isError()) {
@@ -122,13 +122,13 @@ class AdminRewriteController extends GalleryController {
 			$error[] = 'form[error][cantWrite][embedded]';
 		    }
 		}
-	
+
 		if (empty($error)) {
 		    $ret = RewriteMap::setActiveRules($activeRules);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-	    	
+
 		    $redirect['view'] = 'core:SiteAdmin';
 		    $redirect['subView'] = 'rewrite:AdminRewrite';
 		    $redirect['mode'] = 'rules';
@@ -141,7 +141,7 @@ class AdminRewriteController extends GalleryController {
 	    $redirect['mode'] = 'test';
 	} else if (isset($form['action']['saveSetup'])) {
 	    $results['delegate']['mode'] = 'setup';
-	    
+
 	    if (isset($form['embedded']['save'])) {
 		if (!$platform->is_dir($form['embedded']['htaccessPath'])) {
 		    $error[] = 'form[error][invalidDir]';
@@ -151,7 +151,8 @@ class AdminRewriteController extends GalleryController {
 		}
 
 		if (substr($form['embedded']['htaccessPath'], -1) == '/') {
-		    $form['embedded']['htaccessPath'] = substr($form['embedded']['htaccessPath'], 0, -1);
+		    $form['embedded']['htaccessPath'] =
+			substr($form['embedded']['htaccessPath'], 0, -1);
 		}
 		if (substr($form['embedded']['publicPath'], 0, 1) != '/') {
 		    $form['embedded']['publicPath'] = '/' . $form['embedded']['publicPath'];
@@ -160,16 +161,16 @@ class AdminRewriteController extends GalleryController {
 		    $form['embedded']['publicPath'] .= '/';
 		}
 	    }
-	    
+
 	    $allow = array();
 	    foreach ($form['allow'] as $host) {
 		if (!empty($host)) {
 		    $allow[] = $host;
 		}
 	    }
-            
-            if (empty($error)) {
-            	if (isset($form['embedded']['save'])) {
+
+	    if (empty($error)) {
+		if (isset($form['embedded']['save'])) {
 		    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 			    'embeddedHtaccess', $form['embedded']['htaccessPath']);
 		    if ($ret->isError()) {
@@ -181,21 +182,21 @@ class AdminRewriteController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-            	}
-            	
+		}
+
 		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
 			'accessList', serialize($allow));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-                $status['setupSaved'] = 1;
-                $redirect['view'] = 'core:SiteAdmin';
-                $redirect['subView'] = 'rewrite:AdminRewrite';
-                $redirect['mode'] = 'setup';
-            }
+		$status['setupSaved'] = 1;
+		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['subView'] = 'rewrite:AdminRewrite';
+		$redirect['mode'] = 'setup';
+	    }
 	}
-	
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	    unset($results['delegate']);
@@ -220,15 +221,15 @@ class AdminRewriteView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	global $gallery;
-    	$urlGenerator =& $gallery->getUrlGenerator();
-    	$AdminRewrite = array();
-    	
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$AdminRewrite = array();
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$AdminRewrite['isEmbedded'] = GalleryUtilities::isEmbedded();
 	$AdminRewrite['mode'] = GalleryUtilities::getRequestVariables('mode');
 	if (empty($AdminRewrite['mode'])) {
@@ -237,29 +238,29 @@ class AdminRewriteView extends GalleryView {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    list ($ret, $code) = RewriteHelper::checkFile();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	
+
 	    if (GalleryUtilities::isEmbedded() && empty($embeddedLocation)) {
 		$AdminRewrite['mode'] = 'setup';
 	    } else if ($code != REWRITE_STATUS_HTACCESS_READY) {
-	    	$AdminRewrite['mode'] = 'test';
+		$AdminRewrite['mode'] = 'test';
 	    } else {
 		$AdminRewrite['mode'] = 'rules';
 	    }
 	}
-	
+
 	switch ($AdminRewrite['mode']) {
 	case 'rules':
 	    list ($ret, $activeRules) = RewriteMap::getActiveRules();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	
-    	    $AdminRewrite['shortUrls'] = array();
+
+	    $AdminRewrite['shortUrls'] = array();
 	    if ($form['formName'] != 'AdminRewrite') {
 		$form['shortUrls'] = array();
 	    }
@@ -271,38 +272,42 @@ class AdminRewriteView extends GalleryView {
 		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	
+
 	    foreach ($modules as $moduleId => $status) {
 		if (isset($status['active'])) {
 		    list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
+			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			    continue;
+			} else {
+			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
 		    }
 
 		    $AdminRewrite['shortUrls'][$moduleId] = array();
 		    $AdminRewrite['shortUrls'][$moduleId]['name'] = $module->getName();
 
 		    $rules = $module->getRewriteRules();
-		
+
 		    foreach ($rules as $ruleId => $rule) {
 			if ($form['formName'] != 'AdminRewrite') {
 			    $form['shortUrls'][$moduleId][$ruleId] = array();
-			
+
 			    if (isset($activeRules[$moduleId][$ruleId])) {
 				$form['shortUrls'][$moduleId][$ruleId]['active'] = 1;
-				$form['shortUrls'][$moduleId][$ruleId]['pattern'] = 
+				$form['shortUrls'][$moduleId][$ruleId]['pattern'] =
 					$activeRules[$moduleId][$ruleId]['pattern'];
 			    } else {
 				$form['shortUrls'][$moduleId][$ruleId]['pattern'] =
 					$rule['pattern'];
 			    }
-			
+
 			    if (isset($rule['match'])) {
 				$form['shortUrls'][$moduleId][$ruleId]['match'] =
 					join('|', $rule['match']);
 			    }
-		        }
-		    
+			}
+
 			if (isset($rule['locked'])) {
 			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['locked'] = 1;
 			}
@@ -323,18 +328,18 @@ class AdminRewriteView extends GalleryView {
 			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['keywords'] =
 				    array();
 			}
-			
+
 			if (isset($rule['help'])) {
 			    $AdminRewrite['shortUrls'][$moduleId]['rules'][$ruleId]['help'] =
 				    $rule['help'];
 			}
 		    }
-		
+
 		    if (!sizeof($rules)) {
 			unset($AdminRewrite['shortUrls'][$moduleId]);
 			unset($form['shortUrls'][$moduleId]);
 		    }
-	        }
+		}
 	    }
 	    break;
 
@@ -347,20 +352,20 @@ class AdminRewriteView extends GalleryView {
 		    '/test/mod_rewrite_no_options/custom/.htaccess';
 	    $AdminRewrite['customLineNoOptions'] = 'RewriteBase ' . $galleryBase['path'] .
 		'modules/rewrite/test/mod_rewrite_no_options/custom/';
-	
+
 	    list ($ret, $AdminRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
 	    if ($ret->isError()) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $AdminRewrite['htaccessCode']) = RewriteHelper::checkFile();
 	    if ($ret->isError()) {
-	        return array($ret->wrap(__FILE__, __LINE__), null);
+		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    list ($ret, $AdminRewrite['apacheCode']) = RewriteHelper::checkModRewrite();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    if ($AdminRewrite['isEmbedded']) {
 		list ($ret, $AdminRewrite['embeddedCode']) = RewriteHelper::checkFile(true);
 		if ($ret->isError()) {
@@ -368,7 +373,7 @@ class AdminRewriteView extends GalleryView {
 		}
 	    }
 	    break;
-	    
+
 	case 'setup':
 	    if ($form['formName'] != 'AdminRewrite') {
 		list ($ret, $form['embedded']['publicPath']) = GalleryCoreApi::getPluginParameter(
@@ -376,13 +381,13 @@ class AdminRewriteView extends GalleryView {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $form['embedded']['htaccessPath']) = GalleryCoreApi::getPluginParameter(
 			'module', 'rewrite', 'embeddedHtaccess');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		list ($ret, $form['allow']) = GalleryCoreApi::getPluginParameter(
 			'module', 'rewrite', 'accessList');
 		if ($ret->isError()) {
@@ -390,24 +395,24 @@ class AdminRewriteView extends GalleryView {
 		}
 		$form['allow'] = unserialize($form['allow']);
 	    }
-	    
+
 	    $AdminRewrite['host'] = substr($urlGenerator->makeUrl('/'), 0, -1);
 	    $AdminRewrite['serverName'] = GalleryUtilities::getServerVar('SERVER_NAME');
-	
+
 	    break;
 	}
-	
+
 	if ($form['formName'] != 'AdminRewrite') {
 	    $form['formName'] = 'AdminRewrite';
 	}
-	
+
 	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
 	$template->javascript($jsUrl);
-	
+
 	$template->setVariable('AdminRewrite', $AdminRewrite);
 	$template->setVariable('controller', 'rewrite:AdminRewrite');
-	
-        return array(GalleryStatus::success(),
+
+	return array(GalleryStatus::success(),
 		array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
     }
 }
