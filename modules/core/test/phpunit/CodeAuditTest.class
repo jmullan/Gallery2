@@ -69,13 +69,13 @@ class CodeAuditTest extends CodeAuditTestCase {
 				   'modules/core/classes/GalleryUtilities.class' => 1,
 				 ),
 		  );
-	
+
 	$this->_longLineCount = 0;
 	$this->_errorCount = 0;
 
 	$this->_lineEnding = $platform->getLineEnding();
 
-	/*	
+	/*
 	 * Windows CVS appends a CRLF after ?>, so allow for it
 	 */
 	$this->_phpEndFile = '/\?>(' . $this->_lineEnding . ')?$/';
@@ -87,7 +87,9 @@ class CodeAuditTest extends CodeAuditTestCase {
     function shouldCheckFile($fileName) {
 	$base1 = basename($fileName);
 
-	if (substr($fileName, -4) == '.tpl' ||  $base1 == 'GNUmakefile.inc') {
+	if (substr($fileName, -4) == '.tpl' ||
+	        substr($fileName, -3) == '.po' ||
+	        $base1 == 'GNUmakefile.inc') {
 	    return false;
 	}
 
@@ -153,7 +155,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 		    if (preg_match("/gallery->debug(|_r)\(.*$item.*\)/", $lines[$i])) {
 			continue;
 		    }
-		    
+
 		    $this->_errorCount++;
 		    $this->assert(false,
 				  sprintf('%s uses the %s superglobal instead of ' .
