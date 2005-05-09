@@ -89,6 +89,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_controller->setOptionInstances(array());
     }
 
     function tearDown() {
