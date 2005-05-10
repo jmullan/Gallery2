@@ -113,8 +113,7 @@ class GalleryCharsetHelper_simple {
 
 	/* Iconv can return false, so try it first.  If it fails, continue */
 	if ($phpVm->function_exists('iconv')) {
-	    $result = $phpVm->iconv($sourceEncoding, 'UTF-8', $string);
-	    if ($result) {
+	    if (($result = $phpVm->iconv($sourceEncoding, 'UTF-8', $string)) !== false) {
 		return $result;
 	    }
 	}
