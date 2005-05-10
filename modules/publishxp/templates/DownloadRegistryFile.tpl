@@ -10,4 +10,4 @@ Windows Registry Editor Version 5.00
 "displayname"="{$DownloadRegistryFile.title} at {$DownloadRegistryFile.domain}"
 "description"="{g->text text="Publish Your Photos and Movies to %s" arg1=$DownloadRegistryFile.title}"
 "href"="{g->url arg1="view=publishxp:Login"}"
-"icon"="{g->url href="/favicon.ico"}"
+"icon"="{g->url href="favicon.ico"}"
