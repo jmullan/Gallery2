@@ -89,7 +89,13 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		return parent::getCurrentUrl();
 	    }
 
-	    $this->_currentUrl = $this->makeUrl($galleryLocation . $this->_baseFile);
+	    $tmp = $galleryLocation . $this->_baseFile;
+	    $queryString = GalleryUtilities::getServerVar('QUERY_STRING');
+	    if (!empty($queryString)) {
+		$tmp .= '?' . $queryString;
+	    }
+
+	    $this->_currentUrl = $this->makeUrl($tmp);
 	}
 
 	return $this->_currentUrl;

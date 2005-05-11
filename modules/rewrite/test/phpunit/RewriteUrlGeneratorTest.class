@@ -45,6 +45,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
     	parent::setUp();
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
+	$_SERVER['QUERY_STRING'] = '';
 	
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret->isError()) {
@@ -104,6 +105,13 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
     
     function testGetCurrentUrl() {
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
+	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
+	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
+    }
+
+    function testGetCurrentUrlWithQueryString() {
+	$_SERVER['QUERY_STRING'] = 'foo=1&bar=2';
+	$expected = 'http://example.com/gallery2/phpunit_test.php?foo=1&bar=2';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
