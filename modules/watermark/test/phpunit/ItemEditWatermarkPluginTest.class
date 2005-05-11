@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -49,31 +49,32 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	}
 	$this->_markForCleanup($this->_album);
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'test/file');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_preferred) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+	list ($ret, $this->_preferred) = $this->_createDerivative(
+	    $this->_item, $this->_item->getId(),
+	    DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90',
+	    'test/file2');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_thumbnail) =
-	    $this->_createDerivative($this->_item, $this->_preferred->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200');
+	list ($ret, $this->_thumbnail) = $this->_createDerivative(
+	    $this->_item, $this->_preferred->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'crop|10,10,30,40;scale|200');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_resize) =
-	    $this->_createDerivative($this->_item, $this->_preferred->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
+	list ($ret, $this->_resize) = $this->_createDerivative(
+	    $this->_item, $this->_preferred->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -81,13 +82,13 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 
 	/* Create a watermark */
 	$this->_watermark = new WatermarkImage();
-	$ret = $this->_watermark->create(dirname(__FILE__) . '/../../../core/test/data/test1.gif',
-					 'image/gif',
-					 'phpunit_' . rand() . '.gif');
+	$ret = $this->_watermark->create(
+	    dirname(__FILE__) . '/../../../core/test/data/test1.gif', 'image/gif',
+	    'phpunit_' . rand() . '.gif');
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $this->_watermark->save();
 	if ($ret->isError()) {
 	    return $this->failWithStatus(__FILE__, __LINE__);
@@ -109,7 +110,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 				  $this->_translate('Watermark applied successfully')),
 			    $results);
 
-	// Verify the postfilters were applied successfully
+	/* Verify the postfilters were applied successfully */
 	foreach (array($this->_preferred, $this->_resize, $this->_thumbnail) as $derivative) {
 	    list ($ret, $derivative) = $derivative->refresh();
 	    if ($ret->isError()) {
@@ -177,17 +178,17 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
     }
 
     function testWatermarkCreatePreferred() {
-	// Remap and get rid of the preferred to start
+	/* Remap and get rid of the preferred to start */
 	$ret = GalleryCoreApi::remapSourceIds($this->_preferred->getId(), $this->_item->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = GalleryCoreApi::deleteEntityById($this->_preferred->getId());
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 1);
 	GalleryUtilities::putRequestVariable('form[whichDerivative][resize]', 1);
@@ -201,7 +202,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 				  $this->_translate('Watermark applied successfully')),
 			    $results);
 
-	// Verify that we now have a preferred and that it has the right postfilter
+	/* Verify that we now have a preferred and that it has the right postfilter */
 	list ($ret, $preferredTable) =
 	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
@@ -229,7 +230,7 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 	    }
 	}
     }
-    
+
     function testRemoveWatermarkDeletePreferred() {
 	/* Give our preferred a watermark but no operation */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_preferred->getId());
@@ -259,7 +260,8 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 			    $results);
 
 	/* Verify that the preferred is gone */
-	list ($ret, $preferredTable) = GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
+	list ($ret, $preferredTable) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($this->_item->getId()));
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -276,5 +278,53 @@ class ItemEditWatermarkPluginTest extends ItemEditPluginTestCase {
 				'Derivative not remapped to point to item');
 	}
     }
+
+    function testIsSupportedItem() {
+	$this->_registerTestToolkit('test/file');
+	$this->assert($this->_plugin->isSupported($this->_item, $this->_preferred),
+		      'test/file should be supported because we registered a toolkit for it');
+    }
+
+    function testIsNotSupportedItem() {
+	$this->assert(!$this->_plugin->isSupported($this->_item, $this->_preferred),
+		      'test/file should not be a supported mime type');
+    }
+
+    function testIsNotSupportedItemButSupportedPreferred() {
+	$this->_registerTestToolkit('test/file2');
+	$this->assert($this->_plugin->isSupported($this->_item, $this->_preferred),
+		      'test/file2 should be a supported mime type');
+    }
+
+    function _registerTestToolkit($mimeType) {
+	/* Register a composite operation for test/file */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemEditWatermarkPluginTestToolkit',
+	    'ItemEditWatermarkPluginTestToolkit',
+	    'modules/watermark/test/phpunit/ItemEditWatermarkPluginTest.class',
+	    'watermarkTest', null);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markToolkitForCleanup('ItemEditWatermarkPluginTestToolkit');
+
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditWatermarkPluginTestToolkit', array($mimeType),
+	    'composite',
+	    array(array('type' => 'string'),
+		  array('type' => 'string'),
+		  array('type' => 'int'),
+		  array('type' => 'int'),
+		  array('type' => 'string'),
+		  array('type' => 'int'),
+		  array('type' => 'int')),
+	    'test-description');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+    }
+    
 }
+
+class ItemEditWatermarkPluginTestToolkit { }
 ?>

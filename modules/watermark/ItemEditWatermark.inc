@@ -260,6 +260,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 
     /**
      * @see ItemEditPlugin::isSupported
+     * @TODO: Broaden this interface to allow a GalleryStatus return code
      */
     function isSupported($item, $thumbnail) {
 	if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {
@@ -271,7 +272,30 @@ class ItemEditWatermark extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return false; /* Swallow the error for now */
 	}
-	return isset($toolkit);
+	if (isset($toolkit)) {
+	    return true;
+	}
+
+	/* Ok we have no composite for the item .. but maybe we do for its preferred? */
+	list ($ret, $preferredTable) =
+	    GalleryCoreApi::fetchPreferredsByItemIds(array($item->getId()));
+	if ($ret->isError()) {
+	    return false; /* Swallow the error for now */
+	}
+
+	if (!empty($preferredTable[$item->getId()])) {
+	    $preferred = $preferredTable[$item->getId()];
+	    list ($ret, $toolkit) =
+		GalleryCoreApi::getToolkitByOperation($preferred->getMimeType(), 'composite');
+	    if ($ret->isError()) {
+		return false; /* Swallow the error for now */
+	    }
+	    if (isset($toolkit)) {
+		return true;
+	    }
+	}
+
+	return false;
     }
 
     /**
