@@ -131,6 +131,7 @@ class GalleryTestCase extends TestCase {
 	$this->TestCase($methodName);
 	$this->_cleanup = array('entity' => array(),
 				'factoryModuleId' => array(),
+				'toolkitId' => array(),
 				'pluginParameters' => array());
     }
 
@@ -256,7 +257,7 @@ class GalleryTestCase extends TestCase {
 	$gallery->_shutdownActions = null;
 
 	/*
-	 * Resolve any shutdown actions the test or the code being tested registered so that 
+	 * Resolve any shutdown actions the test or the code being tested registered so that
 	 * any cleanup happens before we start verifying locks, entities, etc.
 	 */
 	$gallery->performShutdownActions();
@@ -292,7 +293,7 @@ class GalleryTestCase extends TestCase {
 		    }
 		}
 	    }
- 
+
 	    /* Restore each key from the saved list */
 	    foreach ($pluginParams as $key => $pluginParam) {
 		$ret = GalleryCoreApi::setPluginParameter($pluginType, $pluginId,
