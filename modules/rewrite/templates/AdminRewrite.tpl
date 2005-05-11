@@ -121,7 +121,7 @@
       {/if}
     </td>
     <td>
-      <input type="checkbox" name="{g->formVar var="form[shortUrls][$moduleId][$index][active]"}" {if isset($rule.active)}checked {/if}/>
+      <input type="checkbox" name="{g->formVar var="form[shortUrls][$moduleId][$index][active]"}" {if isset($rule.active)}checked="checked"{/if}/>
       {if isset($rule.match)}
         <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][match]}" value="{$rule.match}" />
       {/if}
