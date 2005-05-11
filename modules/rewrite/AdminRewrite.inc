@@ -376,14 +376,14 @@ class AdminRewriteView extends GalleryView {
 
 	case 'setup':
 	    if ($form['formName'] != 'AdminRewrite') {
-		list ($ret, $form['embedded']['publicPath']) = GalleryCoreApi::getPluginParameter(
-			'module', 'rewrite', 'embeddedLocation');
+		list ($ret, $form['embedded']['publicPath']) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedLocation');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		list ($ret, $form['embedded']['htaccessPath']) = GalleryCoreApi::getPluginParameter(
-			'module', 'rewrite', 'embeddedHtaccess');
+		list ($ret, $form['embedded']['htaccessPath']) =
+		    GalleryCoreApi::getPluginParameter('module', 'rewrite', 'embeddedHtaccess');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -406,15 +406,12 @@ class AdminRewriteView extends GalleryView {
 	    $form['formName'] = 'AdminRewrite';
 	}
 
-	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	$template->javascript($jsUrl);
-
 	$template->setVariable('AdminRewrite', $AdminRewrite);
 	$template->setVariable('controller', 'rewrite:AdminRewrite');
 
+	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),
 		array('body' => 'modules/rewrite/templates/AdminRewrite.tpl'));
     }
 }
-
 ?>

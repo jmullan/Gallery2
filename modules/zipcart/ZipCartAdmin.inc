@@ -126,8 +126,6 @@ class ZipCartAdminView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	if ($form['formName'] != 'ZipCartAdmin') {
 	    $form['formName'] = 'ZipCartAdmin';
 	    list ($ret, $form['path']) =
@@ -153,10 +151,7 @@ class ZipCartAdminView extends GalleryView {
 	$ZipCartAdmin = array('isConfigure' => !$isActive);
 	if (isset($form['error']['path']['badZip']) > 0) {
 	    $ZipCartAdmin['debugSnippet'] = GalleryUtilities::getRequestVariables('debugSnippet');
-
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	    $template->javascript($jsUrl);
+	    $template->javascript('lib/javascript/BlockToggle.js');
 	}
 
 	$template->setVariable('ZipCartAdmin', $ZipCartAdmin);

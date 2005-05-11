@@ -28,7 +28,7 @@
 /**
  * Required class
  */
-require_once(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/FfmpegToolkitHelper.class');
 
 /**
  * @package Ffmpeg
@@ -227,9 +227,7 @@ class AdminFfmpegView extends GalleryView {
 	$AdminFfmpeg['isConfigure'] = !$isActive;
 
 	if ($failCount > 0) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	    $template->javascript($jsUrl);
+	    $template->javascript('lib/javascript/BlockToggle.js');
 	}
 
 	$template->setVariable('AdminFfmpeg', $AdminFfmpeg);

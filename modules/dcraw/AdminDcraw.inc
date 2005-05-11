@@ -40,8 +40,6 @@ class AdminDcrawController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -139,7 +137,7 @@ class AdminDcrawView extends GalleryView {
 	/* Load our default values if we didn't just come from this form. */
 	if ($form['formName'] != 'AdminDcraw') {
 	    $form['formName'] = 'AdminDcraw';
-	    
+
 	    list ($ret, $form['path']) =
 		GalleryCoreApi::getPluginParameter('module', 'dcraw', 'path');
 	    if ($ret->isError()) {
@@ -199,9 +197,7 @@ class AdminDcrawView extends GalleryView {
 	$AdminDcraw['isConfigure'] = !$isActive;
 
 	if ($failCount > 0) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	    $template->javascript($jsUrl);
+	    $template->javascript('lib/javascript/BlockToggle.js');
 	}
 
 	$template->setVariable('AdminDcraw', $AdminDcraw);

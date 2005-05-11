@@ -28,7 +28,7 @@
 /**
  * Required class
  */
-require_once(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/NetPbmToolkitHelper.class');
 
 /**
  * @package NetPbm
@@ -290,9 +290,7 @@ class AdminNetPbmView extends GalleryView {
 	$AdminNetPbm['isConfigure'] = !$isActive;
 
 	if ($failCount > 0) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	    $template->javascript($jsUrl);
+	    $template->javascript('lib/javascript/BlockToggle.js');
 	}
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);

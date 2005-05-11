@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2004 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -42,12 +42,12 @@ class SetupRewriteController extends GalleryController {
     function handleRequest(&$form) {
 	global $gallery;
 	$platform =& $gallery->getPlatform();
-	
+
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	$status = array();
 	$error = array();
 
@@ -56,16 +56,17 @@ class SetupRewriteController extends GalleryController {
 	    $redirect['subView'] = 'rewrite:SetupRewrite';
 	} else if (isset($form['action']['done'])) {
 	    if (isset($form['mod_rewrite']['force'])) {
-		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'needOptions', 'true');
+		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+							  'needOptions', 'true');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
-	    
+
 	    $redirect['view'] = 'core:SiteAdmin';
 	    $redirect['subView'] = 'core:AdminModules';
 	}
-	
+
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
@@ -89,10 +90,10 @@ class SetupRewriteView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-    	global $gallery;
-    	$urlGenerator =& $gallery->getUrlGenerator();
+	global $gallery;
+	$urlGenerator =& $gallery->getUrlGenerator();
 	$SetupRewrite = array();
-	
+
 	if ($form['formName'] != 'SetupRewrite') {
 	    $form['formName'] = 'SetupRewrite';
 	}
@@ -105,7 +106,7 @@ class SetupRewriteView extends GalleryView {
 		'/test/mod_rewrite_no_options/custom/.htaccess';
 	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $galleryBase['path'] .
 		'modules/rewrite/test/mod_rewrite_no_options/custom/';
-	
+
 	list ($ret, $SetupRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -118,13 +119,11 @@ class SetupRewriteView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
-	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	$template->javascript($jsUrl);
-	
+
 	$template->setVariable('SetupRewrite', $SetupRewrite);
 	$template->setVariable('controller', 'rewrite:SetupRewrite');
 
+	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),
 		array('body' => 'modules/rewrite/templates/SetupRewrite.tpl'));
     }

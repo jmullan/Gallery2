@@ -28,7 +28,7 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ImageMagickToolkitHelper.class');
 
 /**
  * @package ImageMagick
@@ -250,9 +250,7 @@ class AdminImageMagickView extends GalleryView {
 	$AdminImageMagick['isConfigure'] = !$isActive;
 
 	if ($failCount > 0) {
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	    $template->javascript($jsUrl);
+	    $template->javascript('lib/javascript/BlockToggle.js');
 	}
 
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);

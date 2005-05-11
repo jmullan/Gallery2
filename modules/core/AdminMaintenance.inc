@@ -42,8 +42,6 @@ class AdminMaintenanceController extends GalleryController {
      * @see GalleryController::handleRequest
      */
     function handleRequest($form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -119,8 +117,6 @@ class AdminMaintenanceView extends GalleryView {
      * @see GalleryView::loadTemplate
      */
     function loadTemplate(&$template, &$form) {
-	global $gallery;
-
 	$ret = GalleryCoreApi::assertUserIsSiteAdministrator();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -157,13 +153,10 @@ class AdminMaintenanceView extends GalleryView {
 	    }
 	}
 
-	$urlGenerator =& $gallery->getUrlGenerator();
-	$jsUrl = $urlGenerator->generateUrl(array('href' => 'lib/javascript/BlockToggle.js'));
-	$template->javascript($jsUrl);
-
 	$template->setVariable('AdminMaintenance', $AdminMaintenance);
 	$template->setVariable('controller', 'core:AdminMaintenance');
 
+	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminMaintenance.tpl'));
     }
