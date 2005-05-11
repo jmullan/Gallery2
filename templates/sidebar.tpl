@@ -61,7 +61,7 @@
     <ul>
     {foreach from=$layout.itemLinks item=link}
       <li class="gbAdminLink {g->linkId urlParams=$link.params}">
-	<a href="{$link.url}">{$link.text}</a></span>
+	<a href="{$link.url}">{$link.text}</a>
       </li>
     {/foreach}
     </ul>
