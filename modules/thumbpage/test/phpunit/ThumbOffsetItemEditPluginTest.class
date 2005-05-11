@@ -43,12 +43,13 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	/* Register a dummy toolkit and property */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
             'GalleryToolkit', 'ThumbOffsetTestToolkit', 'ThumbOffsetTestToolkit',
-            'modules/thumbpage/test/phpunit/ThumbOffsetItemEditPluginTest.class', 'thumbpageTest', null);
+            'modules/thumbpage/test/phpunit/ThumbOffsetItemEditPluginTest.class',
+	    'thumbpageTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('thumbpageTest');
+	$this->_markToolkitForCleanup('ThumbOffsetTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty('ThumbOffsetTestToolkit',
 	    array('test/movie'), 'dimensions-and-duration', 'int,int,float', 'desc');
@@ -72,16 +73,6 @@ class ThumbOffsetItemEditPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('ThumbOffsetTestToolkit');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
     }
 
     function testReset() {

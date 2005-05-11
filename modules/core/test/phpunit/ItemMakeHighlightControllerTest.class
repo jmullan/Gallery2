@@ -50,14 +50,14 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemMakeHighlightTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemMakeHighlightTestToolkit',
-		array('test/file'), 'thumbnail',
-		array(array('type' => 'int', 'description' => 'foo'),
-		      array('type' => 'int', 'description' => 'foo')),
-		'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemMakeHighlightTestToolkit', array('test/file'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -90,16 +90,6 @@ class ItemMakeHighlightControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemMakeHighlightTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testCancel() {

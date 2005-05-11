@@ -79,7 +79,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
+	$this->_markToolkitForCleanup('ItemAddControllerTestToolkit');
 	$this->_markFactoryModuleForCleanup('coreTest');
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
@@ -91,16 +91,6 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	}
 
 	$this->_controller->setOptionInstances(array());
-    }
-
-    function tearDown() {
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemAddControllerTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testHandleRequestContinueAdding() {

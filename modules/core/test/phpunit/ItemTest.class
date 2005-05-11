@@ -68,42 +68,33 @@ class ItemTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemTestToolkit');
 
 	/* Register a jpeg thumbnail in case there are no other toolkits active */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
-		array('test/image', 'image/jpeg'), 'thumbnail',
-		array(array('type' => 'int', 'description' => 'foo'),
-		      array('type' => 'int', 'description' => 'foo')),
-		'itemtest-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('test/image', 'image/jpeg'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'itemtest-description');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Register a conversion operation that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemTestToolkit',
-		array('test/movie'), 'convert-to-image/jpeg',
-		array(), 'itemtest-description', 'image/jpeg');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemTestToolkit', array('test/movie'), 'convert-to-image/jpeg',
+	    array(), 'itemtest-description', 'image/jpeg');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryItem',
-							     'ItemTestMovieItem',
-							     'ItemTestMovieItem',
-							     $path,
-							     'coreTest',
-							     array('test/movie'));
-    }
-
-    function tearDown() {
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemTestToolkit');
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryItem', 'ItemTestMovieItem', 'ItemTestMovieItem',
+	    $path, 'coreTest', array('test/movie'));
+	$this->_markFactoryModuleForCleanup('coreTest');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	parent::tearDown();
     }
 
     function testFetchChildIdsByTitle() {

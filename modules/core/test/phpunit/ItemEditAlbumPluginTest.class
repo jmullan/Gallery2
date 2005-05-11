@@ -42,28 +42,23 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 
 	/* Register a dummy entity */
 	$path = 'modules/core/test/phpunit/ItemEditAlbumPluginTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-							     'ItemEditAlbumPluginTestDataItem',
-							     'ItemEditAlbumPluginTestDataItem',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEntity', 'ItemEditAlbumPluginTestDataItem', 'ItemEditAlbumPluginTestDataItem',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	/* Register a dummy toolkit */
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemEditAlbumPluginTestToolkit',
-							     'ItemEditAlbumPluginTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemEditAlbumPluginTestToolkit', 'ItemEditAlbumPluginTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markToolkitForCleanup('ItemEditAlbumPluginTestToolkit');
 	$this->_markFactoryModuleForCleanup('coreTest');
 
 	/* Register operations that we can perform on our mock data items */
@@ -105,17 +100,6 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->_markForCleanup($this->_album);
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditAlbumPluginTestToolkit');
-	if ($ret->isError()) {
-	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testUndo() {

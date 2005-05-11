@@ -68,8 +68,7 @@ class DerivativeTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('DerivativeTestToolkit');
 
 	/* Register an operation that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation(
@@ -81,18 +80,6 @@ class DerivativeTest extends GalleryTestCase {
 
 	DerivativeTestToolkit::clearPerformedOperations();
 	GalleryDataCache::reset();
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('DerivativeTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testRemapSourceIds() {

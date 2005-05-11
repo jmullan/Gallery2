@@ -55,7 +55,7 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemEditPhotoThumbnailPluginTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoThumbnailPluginTestToolkit',
@@ -84,66 +84,47 @@ class ItemEditPhotoThumbnailPluginTest extends ItemEditPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryEntity',
-							     'ItemEditPhotoThumbnailTestItem',
-							     'ItemEditPhotoThumbnailTestItem',
-							     $path,
-							     'coreTest',
-							     array());
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryEntity', 'ItemEditPhotoThumbnailTestItem', 'ItemEditPhotoThumbnailTestItem',
+	    $path, 'coreTest', array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markFactoryModuleForCleanup('coreTest');
+
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
+	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(),
-								 'test/file',
-								 array('width' => 640,
-								       'height' => 480),
-								 __FILE__,
-								 'ItemEditPhotoThumbnailTestItem');
+	list ($ret, $this->_item2) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'test/file', array('width' => 640, 'height' => 480),
+	    __FILE__, 'ItemEditPhotoThumbnailTestItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_item2) = $this->_createRandomDataItem($this->_album->getId(),
-								 'test/file',
-								 array('width' => 640,
-								       'height' => 480),
-								 __FILE__,
-								 'ItemEditPhotoThumbnailTestItem');
-
-	list ($ret, $this->_derivative[0]) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_PREFERRED,
-				     'rotate|90',
-				     'test/file',
-				     array('width' => 640, 'height' => 480));
+	list ($ret, $this->_derivative[0]) = $this->_createDerivative(
+	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90',
+	    'test/file', array('width' => 640, 'height' => 480));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_derivative[1]) =
-	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+	list ($ret, $this->_derivative[1]) = $this->_createDerivative(
+	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'scale|200');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_derivative[2]) =
-	    $this->_createDerivative($this->_item2, $this->_item2->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
+	list ($ret, $this->_derivative[2]) = $this->_createDerivative(
+	    $this->_item2, $this->_item2->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'scale|200');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoThumbnailPluginTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testEditThumbnail() {

@@ -106,7 +106,8 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
 	    'test/fakemime', 'convert-to-image/jpeg',
-	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg', null);
+	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
+	    null);
 	$this->assertEquals(GALLERY_ERROR | ERROR_PLATFORM_FAILURE, $ret->getErrorCode(),
 			    'Error expected for bad destination file');
 
@@ -114,7 +115,8 @@ class ThumbnailToolkitTest extends GalleryTestCase {
 
 	list ($ret, $outputMimeType) = $this->_toolkit->performOperation(
 	    'test/fakemime', 'convert-to-image/jpeg',
-	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg', null);
+	    dirname(__FILE__) . '/x', $gallery->getConfig('data.gallery.base') . '/unittest.jpg',
+	    null);
 	$this->assertEquals(GALLERY_SUCCESS, $ret->getErrorCode(), 'Copy should succeed');
     }
 }

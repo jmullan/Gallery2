@@ -55,7 +55,7 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemEditPhotoPluginTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditPhotoPluginTestToolkit',
@@ -136,16 +136,6 @@ class ItemEditPhotoPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->_preferred =& $this->_derivative[0];
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditPhotoPluginTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testEditResizes() {

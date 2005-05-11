@@ -51,16 +51,13 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/CreateThumbnailOptionTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'CreateThumbnailOptionTestToolkit',
-							     'CreateThumbnailOptionTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'CreateThumbnailOptionTestToolkit', 'CreateThumbnailOptionTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('CreateThumbnailOptionTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation('CreateThumbnailOptionTestToolkit',
@@ -87,15 +84,6 @@ class CreateThumbnailOptionTest extends ItemAddOptionTestCase {
 
 	$this->_noWarnings = array(array());
 	$this->_noErrors = array();
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::unregisterToolkit('CreateThumbnailOptionTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testCreateThumbnail() {

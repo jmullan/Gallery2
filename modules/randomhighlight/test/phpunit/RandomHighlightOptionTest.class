@@ -76,7 +76,7 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('randomhighlightTest');
+	$this->_markToolkitForCleanup('RandomHighlightTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'RandomHighlightTestToolkit', array('image/test'), 'thumbnail',
@@ -86,15 +86,6 @@ class RandomHighlightOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::unregisterToolkit('RandomHighlightTestToolkit');
-	if ($ret->isError()) {
-	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testRandomHighlight() {

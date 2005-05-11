@@ -44,33 +44,30 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemMoveControllerTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'ItemMoveTestToolkit',
-							     'ItemMoveTestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemMoveTestToolkit', 'ItemMoveTestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemMoveTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveTestToolkit',
-		array('image/test'), 'thumbnail',
-		array(array('type' => 'int', 'description' => 'foo'),
-		      array('type' => 'int', 'description' => 'foo')),
-		'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemMoveTestToolkit', array('image/test'), 'thumbnail',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemMoveTestToolkit',
-		array('image/test'), 'scale',
-		array(array('type' => 'int', 'description' => 'foo'),
-		      array('type' => 'int', 'description' => 'foo')),
-		'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemMoveTestToolkit', array('image/test'), 'scale',
+	    array(array('type' => 'int', 'description' => 'foo'),
+		  array('type' => 'int', 'description' => 'foo')),
+	    'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -175,16 +172,6 @@ class ItemMoveControllerTest extends GalleryControllerTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemMoveTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function _setDerivativePreferences() {

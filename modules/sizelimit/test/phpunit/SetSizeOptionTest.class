@@ -55,7 +55,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('sizelimitTest');
+	$this->_markToolkitForCleanup('SetSizeOptionTestToolkit');
 
 	/* applying size limits uses 'compress' */
 	$ret = GalleryCoreApi::registerToolkitOperation('SetSizeOptionTestToolkit',
@@ -131,16 +131,6 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 				     'arg1' => $this->_itemsUnknown[0]->getMimeType()))));
 	$this->_expectResize = array('scale');
 	$this->_expectCompress = array('compress');
-    }
-
-    function tearDown() {
-	global $gallery;
-
-	$ret = GalleryCoreApi::unregisterToolkit('SetSizeOptionTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
     }
 
     function testAppropriate() {

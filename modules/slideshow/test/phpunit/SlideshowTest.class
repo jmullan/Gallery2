@@ -53,6 +53,7 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_markToolkitForCleanup('SlideshowToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitOperation('SlideshowToolkit',
 	    array('image/gif', 'image/jpeg'), 'testoperation',
@@ -317,18 +318,6 @@ class SlideshowTest extends GalleryTestCase {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $derivative->getId());
-    }
-
-    /**
-     * Delete the album that was used for testing
-     */
-    function tearDown() {
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('SlideshowToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	parent::tearDown();
     }
 
     function _runTest($test, $expectedResults, $startId=null, $itemList=null) {

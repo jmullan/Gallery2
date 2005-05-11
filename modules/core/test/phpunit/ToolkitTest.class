@@ -43,28 +43,23 @@ class ToolkitTest extends GalleryTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ToolkitTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'TestToolkit',
-							     'TestToolkit',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'TestToolkit', 'TestToolkit',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-							     'TestToolkit2',
-							     'TestToolkit2',
-							     $path,
-							     'coreTest',
-							     null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'TestToolkit2', 'TestToolkit2',
+	    $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('TestToolkit');
+	$this->_markToolkitForCleanup('TestToolkit2');
     }
 
     function testOperation() {

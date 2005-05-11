@@ -67,7 +67,7 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemEditItemPluginTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
 	$ret = GalleryCoreApi::registerToolkitOperation(
@@ -96,15 +96,6 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	}
 
 	$this->_preferred = null;
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditItemPluginTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testUndo() {

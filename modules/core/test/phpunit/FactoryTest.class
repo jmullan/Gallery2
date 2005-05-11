@@ -41,24 +41,18 @@ class FactoryTest extends GalleryTestCase {
 	parent::setUp();
 
 	$path = 'modules/core/test/phpunit/FactoryTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('FactoryTest',
-							     'FactoryTestDummy',
-							     'FactoryTestDummyId',
-							     $path,
-							     'factoryTest',
-							     array('dummy', '*'));
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'FactoryTest', 'FactoryTestDummy', 'FactoryTestDummyId',
+	    $path, 'factoryTest', array('dummy', '*'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markFactoryModuleForCleanup('factoryTest');
 
-	$ret = GalleryCoreApi::registerFactoryImplementation('FactoryTest',
-							     'FactoryTestDummy',
-							     'FactoryTestDummyId2',
-							     $path,
-							     'factoryTest2',
-							     array('dummy'));
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'FactoryTest', 'FactoryTestDummy', 'FactoryTestDummyId2',
+	    $path, 'factoryTest2', array('dummy'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

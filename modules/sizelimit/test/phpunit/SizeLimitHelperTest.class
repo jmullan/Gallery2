@@ -55,7 +55,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('sizelimitTest');
+	$this->_markToolkitForCleanup('SizeLimitHelperTestToolkit');
 
 	/* applying size limits uses 'compress' */
 	$ret = GalleryCoreApi::registerToolkitOperation('SizeLimitHelperTestToolkit',
@@ -82,7 +82,8 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$this->_markForCleanup($this->_album);
 
 	/* Sample photo image file that can be resized/compressed */
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'image/known',
+	list ($ret, $this->_item) = $this->_createRandomDataItem(
+	    $this->_album->getId(), 'image/known',
 	    array('summary' => 'original summary', 'description' => 'original description'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -97,14 +98,6 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::unregisterToolkit('SizeLimitHelperTestToolkit');
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	parent::tearDown();
     }
 
     /* change dimensions, keep original */

@@ -50,87 +50,72 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
 	/* Register a dummy toolkit */
 	$path = 'modules/core/test/phpunit/ItemEditRotateAndScalePhotoPluginTest.class';
-	$ret = GalleryCoreApi::registerFactoryImplementation('GalleryToolkit',
-            'ItemEditRotateAndScalePhotoPluginTestToolkit',
-            'ItemEditRotateAndScalePhotoPluginTestToolkit',
-            $path,
-            'coreTest',
-            null);
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'ItemEditRotateAndScalePhotoPluginTestToolkit',
+	    'ItemEditRotateAndScalePhotoPluginTestToolkit', $path, 'coreTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('coreTest');
+	$this->_markToolkitForCleanup('ItemEditRotateAndScalePhotoPluginTestToolkit');
 
 	/* Register operations that we can perform on our mock data items */
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
-		array('test/file'), 'scale',
-		array(array('type' => 'int', 'description' => 'test'),
-		      array('type' => 'int', 'description' => 'test')),
-		'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/file'), 'scale',
+	    array(array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test')),
+	    'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
-		array('test/file'), 'rotate',
-		array(array('type' => 'int', 'description' => 'test')),
-		'test-description');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/file'), 'rotate',
+	    array(array('type' => 'int', 'description' => 'test')), 'test-description');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ItemEditRotateAndScalePhotoPluginTestToolkit',
-		array('test/file'), 'resize',
-		array(array('type' => 'int', 'description' => 'test'),
-		      array('type' => 'int', 'description' => 'test')),
-		'test-description', '');
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ItemEditRotateAndScalePhotoPluginTestToolkit', array('test/file'), 'resize',
+	    array(array('type' => 'int', 'description' => 'test'),
+		  array('type' => 'int', 'description' => 'test')),
+	    'test-description', '');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_item) = $this->_createRandomDataItem($this->_album->getId(), 'test/file');
+	list ($ret, $this->_item) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'test/file');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_derivative[0]) =
-	    $this->_createDerivative($this->_item, $this->_item->getId(),
-				     DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
+	list ($ret, $this->_derivative[0]) = $this->_createDerivative(
+	    $this->_item, $this->_item->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED, 'rotate|90');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_derivative[1]) =
-	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;thumbnail|200');
+	list ($ret, $this->_derivative[1]) = $this->_createDerivative(
+	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+	    'crop|10,10,30,40;thumbnail|200');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_derivative[2]) =
-	    $this->_createDerivative($this->_item, $this->_derivative[0]->getId(),
-				     DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
+	list ($ret, $this->_derivative[2]) = $this->_createDerivative(
+	    $this->_item, $this->_derivative[0]->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|500');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('ItemEditRotateAndScalePhotoPluginTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testScalePreserveOriginal() {

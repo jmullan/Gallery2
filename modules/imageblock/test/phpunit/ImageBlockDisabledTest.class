@@ -52,10 +52,10 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('imageblockTest');
+	$this->_markToolkitForCleanup('ImageBlockToolkit');
 
-	$ret = GalleryCoreApi::registerToolkitOperation('ImageBlockToolkit',
-	    array('image/gif'), 'testoperation',
+	$ret = GalleryCoreApi::registerToolkitOperation(
+	    'ImageBlockToolkit', array('image/gif'), 'testoperation',
 	    array(array('type' => 'int', 'description' => 'size')), 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -125,8 +125,8 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$ret = GalleryCoreApi::removePluginParameter($this->_module->getPluginType(),
-						     $this->_module->getId(), 'itemId');
+	$ret = GalleryCoreApi::removePluginParameter(
+	    $this->_module->getPluginType(), $this->_module->getId(), 'itemId');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -136,12 +136,6 @@ class ImageBlockDisabledTest extends GalleryTestCase {
 	$ret = ImageBlockHelper::setDisabledFlag($this->_topAlbum, true, false);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	/* Unregister dummy toolkit */
-	$ret = GalleryCoreApi::unregisterToolkit('ImageBlockToolkit');
-	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 

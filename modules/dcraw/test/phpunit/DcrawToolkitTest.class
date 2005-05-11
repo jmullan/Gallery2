@@ -163,7 +163,7 @@ class DcrawToolkitTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('dcrawTest');
+	$this->_markToolkitForCleanup('DcrawTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty(
 	    'DcrawTestToolkit', array('image/x-portable-pixmap'),

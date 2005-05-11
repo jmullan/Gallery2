@@ -312,6 +312,14 @@ class GalleryTestCase extends TestCase {
 	    }
 	}
 
+	foreach ($this->_cleanup['toolkitId'] as $toolkitId) {
+	    $ret = GalleryCoreApi::unregisterToolkit($toolkitId);
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
 	foreach ($this->_cleanup['factoryModuleId'] as $moduleId) {
 	    $ret = GalleryCoreApi::unregisterFactoryImplementationsByModuleId($moduleId);
 	    if ($ret->isError()) {
@@ -355,6 +363,10 @@ class GalleryTestCase extends TestCase {
 
     function _markFactoryModuleForCleanup($moduleId) {
 	$this->_cleanup['factoryModuleId'][] = $moduleId;
+    }
+
+    function _markToolkitForCleanup($toolkitId) {
+	$this->_cleanup['toolkitId'][] = $toolkitId;
     }
 
     /**

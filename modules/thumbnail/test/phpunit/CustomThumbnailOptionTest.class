@@ -54,7 +54,7 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->_markFactoryModuleForCleanup('thumbnailTest');
+	$this->_markToolkitForCleanup('CustomThumbnailOptionTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitOperation('CustomThumbnailOptionTestToolkit',
 		array('image/test'), 'thumbnail',
@@ -93,15 +93,6 @@ class CustomThumbnailOptionTest extends ItemEditOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-    }
-
-    function tearDown() {
-	$ret = GalleryCoreApi::unregisterToolkit('CustomThumbnailOptionTestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	parent::tearDown();
     }
 
     function testAddBadMime() {
