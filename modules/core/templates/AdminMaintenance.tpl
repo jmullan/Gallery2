@@ -38,7 +38,7 @@
 	<span id="task-{$taskId}-toggle"
 	      class="giBlockToggle gcBackground1 gcBorder2"
 	      style="border-width: 1px"
-	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">+</span>
+	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">{if !isset($status.run) || $status.run.taskId != $taskId}+{else}-{/if}</span>
 	{g->text text=$info.title}
       </td><td>
 	{if isset($info.timestamp)}
