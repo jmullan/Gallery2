@@ -297,9 +297,9 @@ class NetPbmModule extends GalleryModule {
      */
     function deactivate() {
 	/*
-	 * Unregister all of our properties and operations.  Do this before the parent deactivates so that any
-	 * event handlers triggered by the deactivation will see the world as it will be after the
-	 * deactivation is done.
+	 * Unregister all of our properties and operations.  Do this before the parent deactivates
+	 * so that any event handlers triggered by the deactivation will see the world as it will
+	 * be after the deactivation is done.
 	 */
 	$ret = GalleryCoreApi::unregisterToolkit('NetPBM');
 	if ($ret->isError()) {
