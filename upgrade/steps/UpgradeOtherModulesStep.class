@@ -45,19 +45,20 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	$groupedModules = $groupLabel = array();
 	$moduleInstalledStatus = $moduleIsUpgradeable = $installedVersion = array();
+	$templateData['stackTrace'] = '';
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to get the module list');
-		$templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
 	}
 	if (empty($templateData['errors'])) {
 	    list ($ret, $layoutList) = GalleryCoreApi::fetchPluginStatus('layout', true);
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to get the layout list');
-		$templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
 	}
 
@@ -67,7 +68,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		if ($ret->isError()) {
 		    $templateData['errors'][] =
 			sprintf(_('Unable to load the %s module'), $moduleId);
-		    $templateData['stackTrace'] = $ret->getAsHtml();
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		} else {
 		    $modules[$moduleId] = $modulePlugin;
 		}
@@ -76,7 +77,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
 		$gallery->guaranteeTimeLimit(120);
-		
+
 		$module =& $modules[$moduleId];
 		$moduleIsUpgradeable[$moduleId] =
 		    !empty($moduleList[$moduleId]['version']) &&
@@ -89,7 +90,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
-				sprintf(_('Unable to upgrade the %s module'), $module->getName());
+			    sprintf(_('Unable to upgrade the %s module'), $module->getName());
+			$templateData['stackTrace'] .= $ret->getAsHtml();
 			continue;
 		    }
 		    $moduleIsUpgradeable[$moduleId] = false;
@@ -109,7 +111,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		if ($ret->isError()) {
 		    $templateData['errors'][] =
 			sprintf(_('Unable to load the %s layout'), $layoutId);
-		    $templateData['stackTrace'] = $ret->getAsHtml();
+		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		} else {
 		    $layouts[$layoutId] = $layoutPlugin;
 		}
@@ -131,6 +133,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
 			    sprintf(_('Unable to upgrade the %s layout'), $layout->getName());
+			$templateData['stackTrace'] .= $ret->getAsHtml();
 			continue;
 		    }
 		    $moduleIsUpgradeable[$layoutId] = false;
@@ -147,7 +150,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    $ret = $storage->commitTransaction();
 	    if ($ret->isError()) {
 		$templateData['errors'][] = _('Unable to commit database transaction');
-		$templateData['stackTrace'] = $ret->getAsHtml();
+		$templateData['stackTrace'] .= $ret->getAsHtml();
 	    }
 	    $templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
 	} else {
