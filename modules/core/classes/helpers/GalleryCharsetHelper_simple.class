@@ -40,10 +40,15 @@ class GalleryCharsetHelper_simple {
      * @return string an encoding (eg "UTF-8" or "Windows-1252")
      */
     function detectSystemCharset() {
+	static $cacheKey = 'GalleryCharsetHelper_simple::detectSystemCharset';
+	if (GalleryDataCache::containsKey($cacheKey)) {
+	    return GalleryDataCache::get($cacheKey);
+	}
+
 	global $gallery;
+	$phpVm = $gallery->getPhpVm();
 	$sourceEncoding = null;
 
-	$phpVm = $gallery->getPhpVm();
 	/* Determine character set of current locale */
 	if ($phpVm->function_exists('nl_langinfo')) {
 	    $sourceEncoding = $phpVm->nl_langinfo(CODESET);
@@ -69,11 +74,11 @@ class GalleryCharsetHelper_simple {
 		return $sourceEncoding;
 	    }
 
-	    /* 
-             * Remap some known charset issues
-             * see http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
-             * for guidance
-             */
+	    /*
+	     * Remap some known charset issues
+	     * see http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
+	     * for guidance
+	     */
 	    switch($sourceEncoding) {
 	    case '1252':   /* Windows XP has LC_CTYPE=English_United States.1252 */
 		$sourceEncoding = 'Windows-1252';
@@ -84,6 +89,7 @@ class GalleryCharsetHelper_simple {
 	    }
 	}
 
+	GalleryDataCache::put($cacheKey, $sourceEncoding);
 	return $sourceEncoding;
     }
 
@@ -96,20 +102,14 @@ class GalleryCharsetHelper_simple {
      */
     function convertToUtf8($string, $sourceEncoding=null) {
 	global $gallery;
-	static $systemCharset;
+	$phpVm = $gallery->getPhpVm();
 
 	if (empty($sourceEncoding)) {
-	    if (!isset($systemCharset)) {
-		$systemCharset = GalleryCharsetHelper_simple::detectSystemCharset();
-	    }
-	    $sourceEncoding = $systemCharset;
+	    $sourceEncoding = GalleryCharsetHelper_simple::detectSystemCharset();
 	}
-
-	if (!strcmp($sourceEncoding, 'UTF-8')) {
+	if (empty($sourceEncoding) || !strcmp($sourceEncoding, 'UTF-8')) {
 	    return $string;
 	}
-
-	$phpVm = $gallery->getPhpVm();
 
 	/* Iconv can return false, so try it first.  If it fails, continue */
 	if ($phpVm->function_exists('iconv')) {
