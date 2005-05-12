@@ -5,10 +5,10 @@
 
     <div class="go">
       <span class="goToNext">
-      <?php if ($templateData['configType'] != 'newconfig'): ?>
+      <?php $x = ($templateData['configType'] != 'newconfig'); if ($x): ?>
 	<a href="index.php?step=<?php print $stepNumber; ?>&amp;multisite=1"><?php print _('MultiSite Information') ?></a>
       </span>
-      <span class="goToNextL">
+      <span class="goToNext<?php if ($x) print 'L' ?>">
       <?php endif; ?>
 	<a href="index.php?step=<?php print ($stepNumber + 1) ?>">
 	  <?php print _('Begin Installation&raquo;') ?>

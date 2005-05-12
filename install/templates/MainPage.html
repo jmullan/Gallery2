@@ -77,20 +77,20 @@
 	<?php include(dirname(__FILE__) . '/' . $templateData['bodyFile']); ?>
 	<?php if ($currentStep->isComplete() && !$currentStep->isLastStep()): ?>
 	<div class="go">
-	  <?php $nextStep = $stepNumber + 1 ?>
-	  <span class="goToNext">
-	    <a href="index.php?step=<?php print $nextStep?>">
-	      <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
-	    </a>
-	  </span>
-
 	  <?php if ($currentStep->isRedoable()): ?>
-	  <span class="goToNextL">
+	  <span class="goToNext">
 	    <a href="index.php?step=<?php print $stepNumber?>&amp;doOver=1">
 	      <?php print _('Redo this step'); ?>
 	    </a>
 	  </span>
 	  <?php endif; ?>
+
+	  <?php $nextStep = $stepNumber + 1 ?>
+	  <span class="goToNext<?php if ($currentStep->isRedoable()) print 'L' ?>">
+	    <a href="index.php?step=<?php print $nextStep?>">
+	      <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
+	    </a>
+	  </span>
 	</div>
 	<?php endif; ?>
       </div>

@@ -2,6 +2,9 @@
     <p>
       <?php print _('Gallery can support multiple independent sites with a single installation of the code. This is done by configuring the webserver to point multiple URL domains, subdomains or paths at the Gallery code and then rerunning this installer to configure each site.') ?>
     </p>
+    <p><i>
+      <?php print _('Warning: The multisite system will change in the next release. It will be possible to move a multisite Gallery created using the steps below to the future system, but some manual setup will be required.'); ?>
+    </i></p>
     <p>
       <?php print _('This installer session will')
 		. ($templateData['configType'] == 'newsite' ? _(' configure a new site at ')

@@ -127,14 +127,14 @@
 
     <?php if ($templateData['anyUpgradeable']): ?>
     <div class="go">
-      <span class="goToNext">
-	<a href="javascript:document.forms[0].submit();"><?php print _('Upgrade Selected Modules') ?></a>
-      </span>
       <?php $nextStep = $stepNumber + 1 ?>
-      <span class="goToNextL">
+      <span class="goToNext">
 	<a href="index.php?step=<?php print $nextStep?>">
 	  <?php printf(_('Skip Upgrade and Continue to Step %d&raquo;'), $nextStep); ?>
 	</a>
+      </span>
+      <span class="goToNextL">
+	<a href="javascript:document.forms[0].submit();"><?php print _('Upgrade Selected Modules') ?></a>
       </span>
     </div>
     <?php endif; ?>
