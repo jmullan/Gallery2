@@ -190,8 +190,17 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    if ($width && $height) {
 		$operations = $derivative->getDerivativeOperations();
 		if (preg_match('/^(?:thumbnail)\|(\d+)$/', $operations, $matches)) {
-		    $targetSize = min(min($width, $height), $matches[1]);
+		    $targetSize = $matches[1];
 		    if (!empty($targetSize)) {
+			if (!GalleryUtilities::isA($source, 'GalleryDerivativeImage')) {
+			    /*
+			     * If the source is also a derivative then assume the real source
+			     * is large enough that we can make a square of the desired size.
+			     * It's possible the real source is actually smaller than our
+			     * $targetSize, but it will be corrected once the derivative is built.
+			     */
+			    $targetSize = min(min($width, $height), $targetSize);
+			}
 			$derivative->setWidth($targetSize);
 			$derivative->setHeight($targetSize);
 			$handled = true;

@@ -445,6 +445,68 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assertEquals(0, $derivative->getHeight());
     }
 
+    function testEstimateDerivativeDimensions4() {
+	/*
+	 * Test that if the direct source is a derivative too and has smaller dimensions
+	 * then we assume the "real" source is larger and allow upscaling in our estimate.
+	 * This means our estimate could be too high if the real source actually is smaller
+	 * than the desired size, but it will be corrected once the derivative is built.
+	 */
+	list ($ret, $orig) = GalleryCoreApi::newItemByMimeType('image/jpeg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($orig, 'GalleryPhotoItem'), 'photo item');
+
+	$orig->setWidth(400);
+	$orig->setHeight(300);
+
+	list ($ret, $source) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $orig->getEntityType());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($source, 'GalleryDerivativeImage'), 'source deriv');
+
+	$source->setDerivativeOperations('thumbnail|100');
+	$source->setWidth(100);
+	$source->setHeight(75);
+
+	list ($ret, $derivative) =
+	    GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $orig->getEntityType());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(GalleryUtilities::isA($derivative, 'GalleryDerivativeImage'), 'target deriv');
+
+	$derivative->setDerivativeOperations('thumbnail|200');
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $source);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(200, $derivative->getWidth(), 'width 1');
+	$this->assertEquals(150, $derivative->getHeight(), 'height 1');
+
+	/*
+	 * Now verify if the direct source is not a derivative and is smaller than the
+	 * desired size that we don't upsample.
+	 */
+	$orig->setWidth(123);
+	$orig->setHeight(66);
+
+	$ret = GalleryCoreApi::estimateDerivativeDimensions($derivative, $orig);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(123, $derivative->getWidth(), 'width 2');
+	$this->assertEquals(66, $derivative->getHeight(), 'height 2');
+    }
+
     function testApplyTransform() {
 	$toolkit = new GalleryToolkit();
 

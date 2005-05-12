@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,18 +47,18 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	global $gallery;
 
 	parent::setUp();
-	
+
 	/* Register a dummy toolkit, property and operations */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
-            'GalleryToolkit', 'SquareThumbTestToolkit', 'SquareThumbTestToolkit',
-            'modules/squarethumb/test/phpunit/SquareThumbToolkitTest.class',
+	    'GalleryToolkit', 'SquareThumbTestToolkit', 'SquareThumbTestToolkit',
+	    'modules/squarethumb/test/phpunit/SquareThumbToolkitTest.class',
 	    'squarethumbTest', null);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markToolkitForCleanup('SquareThumbTestToolkit');
-	
+
 	$ret = GalleryCoreApi::registerToolkitProperty('SquareThumbTestToolkit',
 	    array('test/dim', 'test/crop', 'test/scale', 'test/image'),
 	    'dimensions', 'int,int', 'desc');
@@ -92,31 +92,31 @@ class SquareThumbToolkitTest extends GalleryTestCase {
     function testPerformOperations() {
 	global $gallery;
 
-	// Bad operation..
+	/* Bad operation */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/nothing', 'crop',
 	      'testPerformOperations1', 'testPerformOperations2', array());
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected for bad operation');
 
-	// No dimensions toolkit..
+	/* No dimensions toolkit */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/nothing', 'thumbnail',
 	      'testPerformOperations3', 'testPerformOperations4', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing dimensions toolkit');
 
-	// No crop toolkit..
+	/* No crop toolkit */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/dim', 'thumbnail',
 	      'testPerformOperations5', 'testPerformOperations6', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing crop toolkit');
 
-	// No scale toolkit..
+	/* No scale toolkit */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
 	      'testPerformOperations7', 'testPerformOperations8', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing scale toolkit');
 
-	// Valid operation..
+	/* Valid operation */
 	$gallery->_squareQueue = array();
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/image', 'thumbnail',
 	      'testPerformOperations9', 'testPerformOperations10', array(150));
@@ -126,7 +126,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$this->assertEquals('test/image', $mimeType, 'Output mime type');
 	$this->assertEquals(array('crop'), $gallery->_squareQueue, 'queued operation');
 
-	// Already square..
+	/* Already square */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/scale', 'thumbnail',
 	      'testPerformOperations11', 'testPerformOperations12', array(150));
 	if ($ret->isError()) {
@@ -134,7 +134,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	}
 	$this->assertEquals('test/scale', $mimeType, 'Output mime type 2');
 
-	// Already small..
+	/* Already small */
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
 	      'testPerformOperations13', 'testPerformOperations14', array(700));
 	if ($ret->isError()) {
@@ -154,7 +154,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	// Operation is smaller than the smallest side
+	/* Operation is smaller than the smallest side */
 	$derivative->setDerivativeOperations('thumbnail|50');
 
 	$toolkit = new SquareThumbToolkit();
@@ -173,7 +173,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	// Operation is bigger than the smallest side
+	/* Operation is bigger than the smallest side */
 	$derivative->setDerivativeOperations('thumbnail|200');
 
 	$toolkit = new SquareThumbToolkit();
@@ -192,7 +192,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$derivative->setWidth(0);
 	$derivative->setHeight(0);
 
-	// Operation is bigger than the biggest side
+	/* Operation is bigger than the biggest side */
 	$derivative->setDerivativeOperations('thumbnail|400');
 
 	$toolkit = new SquareThumbToolkit();
@@ -200,6 +200,25 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 
 	$this->assertEquals(100, $derivative->getWidth());
 	$this->assertEquals(100, $derivative->getHeight());
+    }
+
+    function testEstimateDimensions4() {
+	$source = new GalleryDerivativeImage();
+	$source->setWidth(100);
+	$source->setHeight(150);
+
+	$derivative = new GalleryDerivativeImage();
+	$derivative->setWidth(0);
+	$derivative->setHeight(0);
+
+	/* Operation is bigger than the biggest side, but source is a derivative */
+	$derivative->setDerivativeOperations('thumbnail|400');
+
+	$toolkit = new SquareThumbToolkit();
+	$toolkit->estimateDimensions($derivative, $source);
+
+	$this->assertEquals(400, $derivative->getWidth());
+	$this->assertEquals(400, $derivative->getHeight());
     }
 }
 
@@ -211,7 +230,8 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 class SquareThumbTestToolkit extends GalleryToolkit {
     function getProperty($mimeType, $propertyName, $sourceFilename) {
 	if ($propertyName != 'dimensions') {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__),
+			 null);
 	}
 	switch ($sourceFilename) {
 	case 'testPerformOperations5':

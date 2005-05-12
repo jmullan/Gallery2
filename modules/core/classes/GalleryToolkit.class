@@ -249,8 +249,19 @@ class GalleryToolkit {
 		if (preg_match('/^(?:thumbnail|scale)\|(\d+)$/', $operations, $matches)) {
 		    $target = $matches[1];
 		    if (!empty($target)) {
-			list ($newWidth, $newHeight) =
-			    GalleryUtilities::shrinkDimensionsToFit($width, $height, $matches[1]);
+			if (GalleryUtilities::isA($source, 'GalleryDerivativeImage')) {
+			    /*
+			     * If the source is also a derivative then assume the real source
+			     * is larger and allow upscaling in this estimate.  It's possible
+			     * the real source is actually smaller than our $target size, but
+			     * it will be corrected once the derivative is actually built.
+			     */
+			    list ($newWidth, $newHeight) =
+				GalleryUtilities::scaleDimensionsToFit($width, $height, $target);
+			} else {
+			    list ($newWidth, $newHeight) =
+				GalleryUtilities::shrinkDimensionsToFit($width, $height, $target);
+			}
 			$derivative->setWidth($newWidth);
 			$derivative->setHeight($newHeight);
 		    }
