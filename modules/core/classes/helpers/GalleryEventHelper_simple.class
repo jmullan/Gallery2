@@ -96,15 +96,22 @@ class GalleryEventHelper_simple {
 	    }
 
 	    foreach ($moduleStatus as $moduleId => $status) {
-
 		if (!empty($status['active'])) {
 		    if (in_array('registerEventListeners', explode('|', $status['callbacks']))) {
-			list ($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
+			/*
+			 * Ignore version mismatches when loading the module, since we don't want
+			 * event propagation during the upgrader to lead to the plugin framework
+			 * deactivating plugins, which will in turn post more events.  All we want
+			 * to do is to ignore plugins that are not current, which we'll do below.
+			 */
+			list ($ret, $module) =
+			    GalleryCoreApi::loadPlugin('module', $moduleId, true);
 			if ($ret->isError()) {
-			    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-				continue;
-			    }
 			    return array($ret->wrap(__FILE__, __LINE__), null);
+			}
+
+			if (!GalleryCoreApi::isPluginCompatibleWithApis($module)) {
+			    continue;
 			}
 
 			$module->registerEventListeners();

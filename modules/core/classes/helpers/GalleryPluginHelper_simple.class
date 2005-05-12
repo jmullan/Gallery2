@@ -123,14 +123,7 @@ class GalleryPluginHelper_simple {
 		if (isset($s['active']) &&
 		    isset($s['version']) &&
 		    ($s['version'] != $plugin->getVersion() ||
-		     !GalleryUtilities::isCompatibleWithApi(
-		          $plugin->getRequiredCoreApi(), GalleryCoreApi::getApiVersion()) ||
-		     ($pluginType == 'module' && 
-		      !GalleryUtilities::isCompatibleWithApi(
-		          $plugin->getRequiredModuleApi(), GalleryModule::getApiVersion())) ||
-		     ($pluginType == 'layout' && 
-		      !GalleryUtilities::isCompatibleWithApi(
-			  $plugin->getRequiredLayoutApi(), GalleryLayout::getApiVersion())))) {
+		     !GalleryPluginHelper_simple::isPluginCompatibleWithApis($plugin))) {
 
 		    /* Try to deactivate the plugin */
 		    list ($ret, $redirectInfo) = $plugin->deactivate();
@@ -174,6 +167,25 @@ class GalleryPluginHelper_simple {
 
 	return array(GalleryStatus::success(), $plugin);
     }
+
+    /**
+     * Return true if the plugin is compatible with the current API versions.  False otherwise.
+     *
+     * @param object GalleryPlugin instance
+     * @return bool true if the plugin is compatible
+     * @static
+     */
+    function isPluginCompatibleWithApis($plugin) {
+	$pluginType = $plugin->getPluginType();
+	return GalleryUtilities::isCompatibleWithApi(
+	    $plugin->getRequiredCoreApi(), GalleryCoreApi::getApiVersion()) &&
+	    (($pluginType == 'module' && 
+	      GalleryUtilities::isCompatibleWithApi(
+		  $plugin->getRequiredModuleApi(), GalleryModule::getApiVersion())) ||
+	     ($pluginType == 'layout' && 
+	      GalleryUtilities::isCompatibleWithApi(
+		  $plugin->getRequiredLayoutApi(), GalleryLayout::getApiVersion())));
+    }	
 
     /**
      * Convenience method to retrieve a plugin parameter

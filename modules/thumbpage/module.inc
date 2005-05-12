@@ -218,12 +218,8 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($isActive) {
-		list ($ret, $redirect) = $this->deactivate();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-		/* Reactivate may fail if toolkit support no longer found. */
-		list ($ret, $redirect) = $this->activate();
+ 		/* Reactivate may fail if toolkit support no longer found. */
+		list ($ret, $redirect) = $this->reactivate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

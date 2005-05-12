@@ -190,23 +190,10 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	    if ($isActive) {
-		list ($ret, $redirect) = $this->deactivate();
+ 		/* Reactivate may fail if toolkit support no longer found. */
+		list ($ret, $redirect) = $this->reactivate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		list ($ret, $mimeTypes) = $this->_getSupportedMimeTypes();
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-
-		if (!empty($mimeTypes)) {
-		    list ($ret, $redirect) = $this->activate();
-		    if ($ret->isError()) {
-			return array($ret->wrap(__FILE__, __LINE__), null);
-		    }
-
-		    /* Redirect should be empty since we verified the mime types exist */
 		}
 	    }
 	}

@@ -1,0 +1,123 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Bharat Mediratta <bharat@menalto.com>
+ */
+
+/**
+ * Test Module functionality
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ *
+ */
+class PluginTest extends GalleryTestCase {
+
+    function testCoreApiTooNew() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('layout');
+	$version = GalleryCoreApi::getApiVersion();
+	$plugin->setRequiredCoreApi(array($version[0], $version[1]+1));
+	$plugin->setRequiredLayoutApi(GalleryLayout::getApiVersion());
+	$this->assert(!GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should not be compatible');
+    }
+
+    function testCoreApiOldMinorButOkMajor() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('layout');
+	$version = GalleryCoreApi::getApiVersion();
+	$plugin->setRequiredCoreApi(array($version[0], 0));
+	$plugin->setRequiredLayoutApi(GalleryLayout::getApiVersion());
+	$this->assert(GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should be compatible');
+    }
+
+    function testCompatibleLayout() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('layout');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredLayoutApi(GalleryLayout::getApiVersion());
+	$this->assert(GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should be compatible');
+    }
+
+    function testLayoutTooNew() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('layout');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$version = GalleryLayout::getApiVersion();	
+	$plugin->setRequiredLayoutApi(array($version[0], $version[1]+1));
+	$this->assert(!GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should not be compatible');
+    }
+
+    function testCompatibleModule() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('module');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$plugin->setRequiredModuleApi(GalleryModule::getApiVersion());
+	$this->assert(GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should be compatible');
+    }
+
+    function testModuleTooNew() {
+	$plugin = new PluginTestPlugin();
+	$plugin->setPluginType('module');
+	$plugin->setRequiredCoreApi(GalleryCoreApi::getApiVersion());
+	$version = GalleryModule::getApiVersion();	
+	$plugin->setRequiredModuleApi(array($version[0], $version[1]+1));
+	$this->assert(!GalleryCoreApi::isPluginCompatibleWithApis($plugin),
+		      'should not be compatible');
+    }
+}
+
+class PluginTestPlugin extends GalleryPlugin {
+    function setPluginType($type) {
+	$this->_type = $type;
+    }
+
+    function getPluginType() {
+	return $this->_type;
+    }
+
+    function setRequiredModuleApi($requirement) {
+	$this->_requiredModuleApi = $requirement;
+    }
+
+    function getRequiredModuleApi() {
+	return $this->_requiredModuleApi;
+    }
+    
+    function setRequiredLayoutApi($requirement) {
+	$this->_requiredLayoutApi = $requirement;
+    }
+
+    function getRequiredLayoutApi() {
+	return $this->_requiredLayoutApi;
+    }
+}
+?>
+

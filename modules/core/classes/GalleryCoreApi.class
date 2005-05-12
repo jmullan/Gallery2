@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 7);
+	return array(5, 8);
     }
 
     /**
@@ -185,6 +185,18 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
 	return GalleryPluginHelper_simple::loadPlugin($pluginType, $pluginId,
 						      $ignoreVersionMismatch);
+    }
+
+    /**
+     * Return true if the plugin is compatible with the current API versions.  False otherwise.
+     *
+     * @param object GalleryPlugin instance
+     * @return bool true if the plugin is compatible
+     * @static
+     */
+    function isPluginCompatibleWithApis($plugin) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPluginHelper_simple.class');
+	return GalleryPluginHelper_simple::isPluginCompatibleWithApis($plugin);
     }
 
     /**
