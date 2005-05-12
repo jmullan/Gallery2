@@ -16,7 +16,7 @@
        arg1=$status.addedUser arg2=$AdminEditGroupUsers.group.groupName}
     {/if}
     {if isset($status.removedUser)}
-      {g->text one="Removed user '%s' from group '%s'" many="Removed %d users from group '%s'"
+      {g->text one="Removed user '%s' from group '%s'" many="Removed %s users from group '%s'"
        count=$status.removedUsers
        arg1=$status.removedUser arg2=$AdminEditGroupUsers.group.groupName}
     {/if}
