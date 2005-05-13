@@ -16,10 +16,10 @@
     <?php endforeach; ?>
     <?php endif; ?>
 
-    <?php if (!empty($templateData['errors'])): ?>
-    <?php foreach ($templateData['errors'] as $error): ?>
-    <h3 class="error">
-      <?php print $error; ?>
+    <?php if (!empty($templateData['needsConfig'])): ?>
+    <?php foreach ($templateData['needsConfig'] as $warning): ?>
+    <h3 class="warning">
+      <?php print $warning; ?>
     </h3>
     <?php endforeach; ?>
     <?php endif; ?>

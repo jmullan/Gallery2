@@ -89,9 +89,15 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		      $moduleIsUpgradeable[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
 		    if ($ret->isError()) {
-			$templateData['errors'][] =
-			    sprintf(_('Unable to upgrade the %s module'), $module->getName());
-			$templateData['stackTrace'] .= $ret->getAsHtml();
+			if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
+			    $templateData['needsConfig'][] =
+				sprintf(_('%s module needs configuration'), $module->getName());
+			    $moduleIsUpgradeable[$moduleId] = false;
+			} else {
+			    $templateData['errors'][] =
+				sprintf(_('Unable to upgrade the %s module'), $module->getName());
+			    $templateData['stackTrace'] .= $ret->getAsHtml();
+			}
 			continue;
 		    }
 		    $moduleIsUpgradeable[$moduleId] = false;
