@@ -37,8 +37,9 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('thumbpage');
 	$this->setName($gallery->i18n('Thumbnail Page'));
-	$this->setDescription($gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.9.1');
+	$this->setDescription(
+	    $gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -70,8 +71,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::registerEventListeners();
      */
     function registerEventListeners() {
-	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin',
-					      new ThumbPageModule());
+	GalleryCoreApi::registerEventListener('Gallery::DeactivatePlugin', new ThumbPageModule());
     }
 
     /**
@@ -149,7 +149,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$mimeTypes = array();
-	foreach (array_keys(array_merge($thumbnail, $select)) as $mimeType) {
+	foreach (array_intersect(array_keys($thumbnail), array_keys($select)) as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -167,13 +167,14 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Find out what mime types currently have support for:
-     *   convert-to-image/jpeg, select-page, dimensions-and-duration
+     *   convert-to-image/jpeg, select-offset, dimensions-and-duration
      *
      * @return array object GalleryStatus a status code
      *               array mime types
      */
     function _getSupportedMovieTypes() {
-	list ($ret, $convert) = GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
+	list ($ret, $convert) =
+	    GalleryCoreApi::getToolkitOperationMimeTypes('convert-to-image/jpeg');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -183,7 +184,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	}
 
 	$mimeTypes = array();
-	foreach (array_keys(array_merge($convert, $select)) as $mimeType) {
+	foreach (array_intersect(array_keys($convert), array_keys($select)) as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -218,7 +219,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    if ($isActive) {
- 		/* Reactivate may fail if toolkit support no longer found. */
+		/* Reactivate may fail if toolkit support no longer found. */
 		list ($ret, $redirect) = $this->reactivate();
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
