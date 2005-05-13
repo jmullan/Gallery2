@@ -23,7 +23,7 @@
  * @version $Revision$ $Date$
  * @package GalleryCore
  * @subpackage PHPUnit
- * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Andy Staudacher <ast@gmx.ch>
  */
 
 /**
@@ -56,13 +56,12 @@ class IndexDotPhpTest extends GalleryTestCase {
 		      $baseUrl . '//') as $url) {
 	    /* Make the HTTP request */
 	    list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
-	    $this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
-	    $this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
+	    $this->assertEquals($response, 'HTTP/1.1 200 OK', "Could not retrieve G2 page: $url");
+	    $this->assert(isset($headers['Set-Cookie']), "Set-Cookie header not set: $url");
 	    if (isset($headers['Set-Cookie'])) {
 		/* Check if the G2 cookie is present */
-		if (strstr($headers['Set-Cookie'], SESSION_ID_PARAMETER) === false) {
-		    $this->assert(false, 'G2 cookie not present in HTTP headers');
-		}
+		$this->assert(strstr($headers['Set-Cookie'], SESSION_ID_PARAMETER) !== false,
+			      "G2 cookie not present in HTTP headers: $url");
 	    }
 	}
     }
