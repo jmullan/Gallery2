@@ -110,6 +110,11 @@ class DcrawToolkit extends GalleryToolkit {
 
 	switch($operationName) {
 	case 'convert-to-image/x-portable-pixmap':
+	    list ($ret, $dcraw) = GalleryCoreApi::getPluginParameter('module', 'dcraw', 'path');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
 	    $tmpDir = $gallery->getConfig('data.gallery.tmp');
 	    $platform = $gallery->getPlatform();
 	    $tmpFilename = $platform->tempnam($tmpDir, 'dcraw_');
@@ -119,7 +124,7 @@ class DcrawToolkit extends GalleryToolkit {
 			     null, null);
 	    }
 
-	    $cmd = array('dcraw', '-c', '-a', '-q', $sourceFilename, '>', $tmpFilename);
+	    $cmd = array($dcraw, '-c', '-a', '-q', $sourceFilename, '>', $tmpFilename);
 	    $gallery->guaranteeTimeLimit(90);
 	    list ($success, $output) = $platform->exec(array($cmd));
 	    if (!$success) {
