@@ -186,22 +186,26 @@ class MultiLangSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$title = $this->_module->translate('Title');
+	$summary = $this->_module->translate('Summary');
+	$description = $this->_module->translate('Description');
+
 	$this->assertEquals(
 	    array('start' => 1, 'end' => 2, 'count' => 2,
 		  'results' => array(
 			array('itemId' => $this->_item->getId(),
-			      'fields' => array(array('key' => 'Title',
+			      'fields' => array(array('key' => $title,
 						      'value' => 't' . $this->_randomKey),
-						array('key' => 'Summary',
+						array('key' => $summary,
 						      'value' => 's' . $this->_randomKey),
-						array('key' => 'Description',
+						array('key' => $description,
 						      'value' => 'd' . $this->_randomKey))),
 			array('itemId' => $this->_album->getId(),
-			      'fields' => array(array('key' => 'Title',
+			      'fields' => array(array('key' => $title,
 						      'value' => 't' . $this->_randomKey),
-						array('key' => 'Summary',
+						array('key' => $summary,
 						      'value' => 's' . $this->_randomKey),
-						array('key' => 'Description',
+						array('key' => $description,
 						      'value' => 'd' . $this->_randomKey))))),
 	    $results);
     }
@@ -216,15 +220,19 @@ class MultiLangSearchTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$title = $this->_module->translate('Title');
+	$summary = $this->_module->translate('Summary');
+	$description = $this->_module->translate('Description');
+
 	$this->assertEquals(
 	    array('start' => 2, 'end' => 2, 'count' => 2,
 		  'results' => array(
 			array('itemId' => $this->_album->getId(),
-			      'fields' => array(array('key' => 'Title',
+			      'fields' => array(array('key' => $title,
 						      'value' => 't' . $this->_randomKey),
-						array('key' => 'Summary',
+						array('key' => $summary,
 						      'value' => 's' . $this->_randomKey),
-						array('key' => 'Description',
+						array('key' => $description,
 						      'value' => 'd' . $this->_randomKey))))),
 	    $results);
     }
