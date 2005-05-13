@@ -97,8 +97,9 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$this->assert(isset($iconpack));
-	$this->assert(GalleryUtilities::isA($iconpack, 'IconsImpl'));
+	$this->assert(isset($iconpack), 'Icon pack was not set');
+	$this->assert(GalleryUtilities::isA($iconpack, 'IconsImpl'),
+		      'The factory instance was not an IconsImpl');
     }
     
     function testSetupTemplateNone() {
