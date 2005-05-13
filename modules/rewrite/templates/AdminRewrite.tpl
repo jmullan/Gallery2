@@ -13,11 +13,10 @@
   {if isset($status.rulesSaved)}
     {g->text text="Successfully saved URL styles"}
   {/if}
-
   {if isset($status.setupSaved)}
     {g->text text="Successfully saved the configuration"}
   {/if}
-</div>
+</h2></div>
 {/if}
 
 {if !empty($form.error)}
@@ -110,20 +109,20 @@
   <tr class="{$rowClass}">
     <td>
       {if isset($form.error.dupe[$rule.pattern]) || isset($form.error.empty.$moduleId.$index)}
-        <img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
+	<img src="{g->url href="modules/core/data/module-inactive.gif"}" width="13" height="13"
 	       alt="{g->text text="Status: Error"}" />
       {elseif isset($rule.active)}
-        <img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
+	<img src="{g->url href="modules/core/data/module-active.gif"}" width="13" height="13"
 	     alt="{g->text text="Status: Active"}" />
       {else}
-        <img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
+	<img src="{g->url href="modules/core/data/module-install.gif"}" width="13" height="13"
 	     alt="{g->text text="Status: Not Active"}" />
       {/if}
     </td>
     <td>
       <input type="checkbox" name="{g->formVar var="form[shortUrls][$moduleId][$index][active]"}" {if isset($rule.active)}checked="checked"{/if}/>
       {if isset($rule.match)}
-        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][match]}" value="{$rule.match}" />
+	<input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][match]}" value="{$rule.match}" />
       {/if}
     </td>
     <td style="text-align: center;">
@@ -137,15 +136,15 @@
     </td>
     <td>
       {if isset($AdminRewrite.shortUrls.$moduleId.rules.$index.locked)}
-        {$rule.pattern}
-        <input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
+	{$rule.pattern}
+	<input type="hidden" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
       {else}
-        <input type="text" size="40" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
+	<input type="text" size="40" name="{g->formVar var="form[shortUrls][$moduleId][$index][pattern]"}" value="{$rule.pattern}" />
       {/if}
     </td>
     <td>
       {foreach from=$AdminRewrite.shortUrls.$moduleId.rules.$index.keywords key=keyword item=prefs}
-        %{$keyword}%
+	%{$keyword}%
       {/foreach}
     </td>
   </tr>
@@ -156,20 +155,20 @@
     <td colspan="4">
       <b>{g->text text="Help"}</b><br/>
       {if isset($AdminRewrite.shortUrls.$moduleId.rules.$index.help)}
-        {$AdminRewrite.shortUrls.$moduleId.rules.$index.help}
+	{$AdminRewrite.shortUrls.$moduleId.rules.$index.help}
       {else}
-        <i>{g->text text="No help available"}</i>
+	<i>{g->text text="No help available"}</i>
       {/if}<br/><br/>
       <b>{g->text text="Keywords"}</b><br/>
       {assign var="hasKeywordHelp" value=false}
       {foreach from=$AdminRewrite.shortUrls.$moduleId.rules.$index.keywords key=keyword item=prefs}
-        {if isset($prefs.help)}
-          %{$keyword}% : {$prefs.help}<br/>
-          {assign var="hasKeywordHelp" value=true}
-        {/if}
+	{if isset($prefs.help)}
+	  %{$keyword}% : {$prefs.help}<br/>
+	  {assign var="hasKeywordHelp" value=true}
+	{/if}
       {/foreach}
       {if !$hasKeywordHelp}
-        <i>{g->text text="No keyword help available"}</i>
+	<i>{g->text text="No keyword help available"}</i>
       {/if}
     </td>
   </tr>
@@ -224,9 +223,9 @@
     </td><td>
       <input type="text" size="60" name="{g->formVar var="form[embedded][htaccessPath]"}" value="{$form.embedded.htaccessPath}"/>
       {if isset($form.error.invalidDir)}
-        <div class="giError">
-          {g->text text="Invalid directory."}
-        </div>
+	<div class="giError">
+	  {g->text text="Invalid directory."}
+	</div>
       {/if}
     </td>
   </tr><tr>
@@ -235,9 +234,9 @@
     </td><td>
       {$AdminRewrite.host}<input type="text" size="40" name="{g->formVar var="form[embedded][publicPath]"}" value="{$form.embedded.publicPath}"/>
       {if isset($form.error.invalidPath)}
-        <div class="giError">
-          {g->text text="Invalid path."}
-        </div>
+	<div class="giError">
+	  {g->text text="Invalid path."}
+	</div>
       {/if}
     </td>
   </tr></table>
