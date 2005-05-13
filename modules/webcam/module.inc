@@ -93,6 +93,7 @@ class WebCamModule extends GalleryModule {
 		}
 		break;
 
+	    case '0.9.0':
 	    case '0.9.1':
 	    case '0.9.2':
 		break;
