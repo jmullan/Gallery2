@@ -267,9 +267,6 @@ class AdminRewriteView extends GalleryView {
 
 	    list($ret, $modules) = GalleryCoreAPi::fetchPluginStatus('module');
 	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
-		    continue;
-		}
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
@@ -279,9 +276,8 @@ class AdminRewriteView extends GalleryView {
 		    if ($ret->isError()) {
 			if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
 			    continue;
-			} else {
-			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
 		    $AdminRewrite['shortUrls'][$moduleId] = array();

@@ -56,9 +56,9 @@ class RewriteModule extends GalleryModule {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-    	return GalleryStatus::success();
+	return GalleryStatus::success();
     }
-    
+
     /**
      * @see GalleryModule::performFactoryRegistrations
      */
@@ -69,7 +69,7 @@ class RewriteModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 		'MaintenanceTask', 'RewriteCheckConflictTask', 'RewriteCheckConflictTask',
 		'modules/rewrite/classes/RewriteCheckConflictTask.class', 'rewrite', null, 2);
@@ -79,16 +79,16 @@ class RewriteModule extends GalleryModule {
 
 	return GalleryStatus::success();
     }
-    
+
     /**
      * @see GalleryModule::autoConfigure
      */
     function autoConfigure() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	
+
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	
+
 	$baseUrlComponents = parse_url($urlGenerator->getCurrentUrlDir(true));
 	$baseUrl = $baseUrlComponents['path'];
 	if (preg_match('/\/(upgrade|install)\/index.php$/', $baseUrl)) {
@@ -99,17 +99,17 @@ class RewriteModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $rewriteStatus) = RewriteHelper::checkModRewrite();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	list ($ret, $fileStatus) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-    	
+
 	return array(GalleryStatus::success(), $rewriteStatus == REWRITE_STATUS_OK &&
 		$fileStatus == REWRITE_STATUS_HTACCESS_READY);
     }
@@ -119,7 +119,7 @@ class RewriteModule extends GalleryModule {
      */
     function needsConfiguration() {
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-	
+
 	list ($ret, $status) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -127,7 +127,7 @@ class RewriteModule extends GalleryModule {
 	if ($status != REWRITE_STATUS_HTACCESS_READY) {
 	    return array(GalleryStatus::success(), true);
 	}
-	
+
 	foreach (array('galleryLocation', 'needOptions') as $key) {
 	    list ($ret, $value) = $this->getParameter($key);
 	    if ($ret->isError()) {
@@ -141,7 +141,7 @@ class RewriteModule extends GalleryModule {
 
 	return array(GalleryStatus::success(), false);
     }
-    
+
     /**
      * @see GalleryModule::activate
      */
@@ -154,7 +154,7 @@ class RewriteModule extends GalleryModule {
 	if (!empty($redirect)) {
 	    return array(GalleryStatus::success(), $redirect);
 	}
-	
+
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
 
@@ -165,21 +165,21 @@ class RewriteModule extends GalleryModule {
 	if (!empty($currentRules)) {
 	    return array(GalleryStatus::success(), array());
 	}
-	
+
 	$defaultRules = array('rewrite' => array(
 				  array('pattern' => 'v/%path%',
 					'match' => 'core:ShowItem'),
 				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 					'match' => 'core:DownloadItem')));
-	
-	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($defaultRules);
+
+	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($defaultRules, $this);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($code != REWRITE_STATUS_OK) {
 	    return array(GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__), null);
 	}
-	    	
+
 	list($ret, $code) = RewriteHelper::writeFile($rewriteRules);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -188,15 +188,15 @@ class RewriteModule extends GalleryModule {
 	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
 		    null);
 	}
-	
+
 	$ret = RewriteMap::setActiveRules($defaultRules);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	return array(GalleryStatus::success(), array());
     }
-    
+
     /**
      * @see GalleryModule::getSiteAdminViews
      */
@@ -218,7 +218,7 @@ class RewriteModule extends GalleryModule {
      */
     function getRewriteRules() {
 	$rules = array();
-	
+
 	$rule = array();
 	$rule['comment'] = $this->translate('Show Item');
 	$rule['match'] = array('view' => 'core:ShowItem');
@@ -228,7 +228,7 @@ class RewriteModule extends GalleryModule {
 		'pattern' => '(.+)',
 		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
-	
+
 	$rule = array();
 	$rule['comment'] = $this->translate('Download Item');
 	$rule['match'] = array('view' => 'core:DownloadItem');
@@ -242,7 +242,7 @@ class RewriteModule extends GalleryModule {
 		'help' => $this->translate('Item file name (eg, image.jpg)'),
 		'ignore' => 1));
 	$rules[] = $rule;
-	
+
 	$rule = array();
 	$rule['comment'] = $this->translate('404 File Not Found');
 	$rule['pattern'] = '%path%';
@@ -252,7 +252,7 @@ class RewriteModule extends GalleryModule {
 		'pattern' => '(.+)'));
 	$rule['locked'] = 1;
 	$rules[] = $rule;
-	
+
 	$rule = array();
 	$rule['comment'] = $this->translate('Block hotlinked items');
 	$rule['pattern'] = '.';
@@ -260,7 +260,7 @@ class RewriteModule extends GalleryModule {
 	$rule['flags'] = array('F');
 	$rule['restrict'] = array('view' => 'core:DownloadItem');
 	$rules[] = $rule;
-	
+
 	return $rules;
     }
 }
