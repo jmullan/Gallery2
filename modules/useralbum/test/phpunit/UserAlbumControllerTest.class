@@ -184,7 +184,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
     function testSystemLinks() {
 	global $gallery;
 
-	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core');
+	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'useralbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
@@ -201,7 +201,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 
 	$gallery->setActiveUser($this->_userWithoutAlbum);
 
-	$expectedLink[] = array('text' => $core->translate('Your Album'),
+	$expectedLink[] = array('text' => $module->translate('Your Album'),
 				'params' => array('controller' => 'useralbum:UserAlbum'));
 
 	list($ret, $links) = $userAlbum->getSystemLinks();
