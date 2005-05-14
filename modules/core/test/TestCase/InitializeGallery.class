@@ -93,7 +93,7 @@ class InitializeGalleryTestCase extends TestCase {
 		
 	    if ($success) {
 		list ($ret, $redirect) = $module->activate();
-		if ($ret->isError()) {
+		if ($ret->isError() && !($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED)) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
