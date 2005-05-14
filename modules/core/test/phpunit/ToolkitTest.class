@@ -539,7 +539,8 @@ class ToolkitTest extends GalleryTestCase {
 	 * uses a comma for the fraction separator.
 	 */
 	$currentLocale = setlocale(LC_ALL, '0');
-	foreach (array('de_DE', 'de_DE.ISO8859-1', 'de_DE.ISO-8859-1') as $locale) {
+	foreach (array('de_DE', 'de_DE.ISO8859-1',
+		       'de_DE.ISO-8859-1', 'german') as $locale) {
 	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
 		break;
 	    }
