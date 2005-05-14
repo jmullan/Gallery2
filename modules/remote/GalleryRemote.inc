@@ -499,7 +499,6 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	$i = 1;
-	$num = 0;
 	foreach ($items as $item) {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$response->setProperty('image.name.' . $i, $item->getId());
@@ -535,21 +534,19 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('image.caption.' . $i, $item->getTitle());
 		$response->setProperty('image.hidden.' . $i, 'no');
 
-		$num++;
+		$i++;
 	    } else if (GalleryUtilities::isA($item, 'GalleryAlbumItem') && $albumsToo) {
 		$response->setProperty('album.name.' . $i, $item->getId());
 
-		$num++;
+		$i++;
 	    }
-
-	    $i++;
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
 	$response->setProperty(
 	    'baseurl',
 	    $urlGenerator->getCurrentUrlDir() . 'main.php?g2_view=core:DownloadItem&g2_itemId=');
-	$response->setProperty('image_count', $num);
+	$response->setProperty('image_count', $i - 1);
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-album-images successful.');
 
