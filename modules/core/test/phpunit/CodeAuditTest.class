@@ -146,6 +146,11 @@ class CodeAuditTest extends CodeAuditTestCase {
 	$currentFunction = null;
 	$currentClass = null;
 	$returnTable = array();
+
+	if ($this->_lineEnding == "\n" && strpos($buffer, "\r\n") !== false) {
+	    $this->_errorCount++;
+	    $this->assert(false, sprintf('%s has Windows line endings', $fileName));
+	}
 	
 	for ($i = 0; $i < count($lines); $i++) {
 	    if (preg_match('/^\s*class (\S+)/', $lines[$i], $matches)) {
@@ -202,13 +207,6 @@ class CodeAuditTest extends CodeAuditTestCase {
 					  'its helper on line %d',
 					  $fileName, $item, $i + 1));
 		}
-	    }
-
-	    /* Check that we don't have CRLF (windows-type newlines) */
-	    if (!isset($crlfHit) && strpos($lines[$i], "\r") !== false) {
-		$crlfHit = true;
-		$this->_errorCount++;
-		$this->assert(false, sprintf('%s has CR character on line %d', $fileName, $i + 1));
 	    }
 
 	    /* Check for lines wider than 100 characters */
