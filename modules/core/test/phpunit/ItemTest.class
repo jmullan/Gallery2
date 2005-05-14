@@ -957,10 +957,8 @@ class ItemTest extends GalleryTestCase {
 	}
 
 	/*
-	 * Verify that the new item:
-	 *  - has two derivatives
-	 *    1.  preferred with convert-to-image/jpeg
-	 *    2.  thumbnail with thumbnail|100
+	 * Verify that the new item's derivatives.. note we don't expect a preferred derivative
+	 * with convert-to-image/jpeg.. we only do this for image/* mime types.
 	 */
 	list ($ret, $derivativeTable) =
 	    GalleryCoreApi::fetchDerivativesByItemIds(array($newItem->getId()));
@@ -971,23 +969,14 @@ class ItemTest extends GalleryTestCase {
 	if (!isset($derivativeTable[$newItem->getId()])) {
 	    return $this->assert(false, 'Missing item derivative');
 	}
-
 	$derivs = $derivativeTable[$newItem->getId()];
-	if (sizeof($derivs) != 2) {
-	    return $this->assert(false, 'Wrong number of derivatives');
+	if (count($derivs) != 1) {
+	    return $this->assertEquals(1, count($derivs), 'Wrong number of derivatives');
 	}
 
-	for ($i = 0; $i < 2; $i++) {
-	    switch($derivs[$i]->getDerivativeType()) {
-	    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-		$this->assertEquals('thumbnail|101', $derivs[$i]->getDerivativeOperations());
-		break;
-		
-	    case DERIVATIVE_TYPE_IMAGE_PREFERRED:
-		$this->assertEquals('convert-to-image/jpeg', $derivs[$i]->getDerivativeOperations());
-		break;
-	    }
-	}
+	$this->assertEquals(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, $derivs[0]->getDerivativeType());
+	$this->assertEquals('convert-to-image/jpeg;thumbnail|101',
+			    $derivs[0]->getDerivativeOperations());
     }
 
     function testFetchItemIdCount() {

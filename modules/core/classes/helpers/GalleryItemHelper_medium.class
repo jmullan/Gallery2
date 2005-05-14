@@ -312,11 +312,11 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	$mimeType = $source->getMimeType();
 
 	/* Make the file type viewable, if we need to. */
-	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($source->getMimeType());
+	list ($ret, $isViewable) = GalleryCoreApi::isViewableMimeType($mimeType);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	if (!$isViewable) {
+	if (!$isViewable && !strncmp($mimeType, 'image/', 6)) {
 	    if (GalleryUtilities::isA($source, 'GalleryDerivative')) {
 		$operations = $source->getDerivativeOperations();
 	    } else {
@@ -324,7 +324,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 	    }
 	    list ($ret, $newOperations, $outputMimeType) =
 		GalleryCoreApi::makeSupportedViewableOperationSequence(
-		    $source->getMimeType(), $operations, false);
+		    $mimeType, $operations, false);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -336,7 +336,7 @@ class GalleryItemHelper_medium /* extends GalleryEventListener */ {
 		 * update it to use these operations.
 		 */
 		if (GalleryUtilities::isA($source, 'GalleryItem')) {
-		    /* No preferred.  Create one */ 
+		    /* No preferred.  Create one */
 		    list ($ret, $preferred) = GalleryCoreApi::newFactoryInstanceByHint(
 			'GalleryDerivative', $item->getEntityType());
 		    if ($ret->isError()) {
