@@ -133,7 +133,7 @@ class MailHelperDummyPlatform {
 	    'maildata',
 	    array('to' => $to,
 		  'subject' => $subject,
-		  'body' => $body,
+		  'body' => trim($body),
 		  'headers' => $headers));
 	return true;
     }
