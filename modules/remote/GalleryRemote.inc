@@ -66,8 +66,8 @@ class GalleryRemoteController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 
-    	$status = array();
-    	$error = array();
+	$status = array();
+	$error = array();
 	$response = new GalleryRemoteProperties();
 	$grStatusCodes = GalleryRemoteConstants::getStatusCodes();
 
@@ -132,12 +132,12 @@ class GalleryRemoteController extends GalleryController {
 	    $response->setProperty('debug_user', 'error getting user');
 	}
 
-    	$status['controllerResponse'] = $response;
+	$status['controllerResponse'] = $response;
 
-    	$results['delegate']['view'] = 'remote:GalleryRemote';
+	$results['delegate']['view'] = 'remote:GalleryRemote';
 	$results['status'] = $status;
 	$results['error'] = $error;
-    	return array(GalleryStatus::success(), $results);
+	return array(GalleryStatus::success(), $results);
     }
 
     /**
@@ -174,12 +174,12 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('status', $grStatusCodes['PASSWORD_WRONG']);
 		$response->setProperty('status_text', 'Password incorrect.');
 		return GalleryStatus::success();
-    	    }
+	    }
 	} else {
 	    if ($gallery->getActiveUser()) {
 		/* already logged in... this sounds like the applet logging in with a cookie */
 		$response->setProperty('server_version',
-                    sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		    sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
 		$response->setProperty('status', $grStatusCodes['LOGIN_MISSING']);
 		$response->setProperty('status_text', 'Login parameters not found.');
 		return GalleryStatus::success();
@@ -200,7 +200,7 @@ class GalleryRemoteController extends GalleryController {
 
 		$response->setProperty('debug_anonymous_login', true);
 		$response->setProperty('server_version',
-                    sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
+		    sprintf('%d.%d', $grVersionCodes['MAJ'], $grVersionCodes['MIN']));
 		$response->setProperty('status', $grStatusCodes['SUCCESS']);
 		$response->setProperty('status_text', 'Login successful.');
 		return GalleryStatus::success();
@@ -222,21 +222,21 @@ class GalleryRemoteController extends GalleryController {
 
 	/* find and load the list of albums we can view */
 	list ($ret, $albumIds) = GalleryCoreApi::fetchAllItemIds('GalleryAlbumItem');
-    	if ($ret->isError()) {
-    	    return $ret->wrap(__FILE__, __LINE__);
-    	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-    	if (empty($albumIds)) {
+	if (empty($albumIds)) {
 	    $response->setProperty('status', $grStatusCodes['SUCCESS']);
 	    $response->setProperty('status_text', 'No viewable albums.');
 	    return GalleryStatus::success();
-    	}
+	}
 
 	/* Load the permissions for all those albums */
 	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems($albumIds);
-    	if ($ret->isError()) {
-    	    return $ret->wrap(__FILE__, __LINE__);
-    	}
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
 	/* And load all the entities */
 	list ($ret, $albums) = GalleryCoreApi::loadEntitiesById($albumIds);
@@ -333,7 +333,7 @@ class GalleryRemoteController extends GalleryController {
 	    $response->setProperty('status', $grStatusCodes['NO_FILENAME']);
 	    $response->setProperty('status_text', 'Filename not specified.');
 	    return GalleryStatus::success();
-    	}
+	}
 
 	/* Get the mime type from the upload info. */
 	$mimeType = $file['type'];
@@ -401,7 +401,7 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Add photo successful.');
 
-    	return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -492,9 +492,8 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	/* Load the permissions for all those albums */
-	list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesBySourceIds(
-	    $ids, array(DERIVATIVE_TYPE_IMAGE_THUMBNAIL, DERIVATIVE_TYPE_IMAGE_RESIZE));
+	/* Load the derivatives for all those items */
+	list ($ret, $derivatives) = GalleryCoreApi::fetchDerivativesByItemIds($ids);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -502,8 +501,6 @@ class GalleryRemoteController extends GalleryController {
 	$i = 1;
 	$num = 0;
 	foreach ($items as $item) {
-	    $perms = $permissionsTable[$item->getId()];
-
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$response->setProperty('image.name.' . $i, $item->getId());
 		$response->setProperty('image.raw_width.' . $i, $item->getWidth());
@@ -512,14 +509,17 @@ class GalleryRemoteController extends GalleryController {
 
 		$my_derivatives = $derivatives[$item->getId()];
 		foreach ($my_derivatives as $der) {
-		    if ($der->getDerivativeType() == DERIVATIVE_TYPE_IMAGE_THUMBNAIL) {
+		    switch ($der->getDerivativeType()) {
+		    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 			$response->setProperty('image.thumbName.' . $i, $der->getId());
 			$response->setProperty('image.thumb_width.' . $i, $der->getWidth());
 			$response->setProperty('image.thumb_height.' . $i, $der->getHeight());
-		    } else {
+			break;
+		    case DERIVATIVE_TYPE_IMAGE_RESIZE:
 			$response->setProperty('image.resizedName.' . $i, $der->getId());
 			$response->setProperty('image.resized_width.' . $i, $der->getWidth());
 			$response->setProperty('image.resized_height.' . $i, $der->getHeight());
+			break;
 		    }
 		}
 
