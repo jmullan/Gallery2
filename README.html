@@ -83,7 +83,7 @@
 		width: 480px;
 		margin: 0.6em 0 0.6em 0;
 		padding: 0.6em;
- 		color: #C00;
+		color: #C00;
 	}
 	.important h3 {
 		color: #eee;
@@ -355,7 +355,7 @@
 	<b> System Maintenance </b> - New maintenance tasks:
 	<ul>
 	  <li> Reset view counts for all albums and photos. </li>
-	  <li> Build all thumbnail and resizes at once. </li>
+	  <li> Build all thumbnails and resizes at once. </li>
 	  <li> Display system information, useful for copy/paste to support forum. </li>
 	</ul>
       </li>
@@ -1436,37 +1436,34 @@
 
     <ol>
       <li>
+	<b>Login Problems</b> - There are known login problems where G2 seems to ignore
+	a login request. In a first attempt to fix the problem most scenarios have been
+	fixed, but we are still working on the complete solution. As a consequence of our
+	changes you'll have to delete the GALLERYSID cookie(s) in your browser after an
+	upgrade from version beta-2 (or prior) to beta-3 (or later).
+      </li>
+      <li>
 	<b>Layouts/Themes</b> - The current layout and theme
 	architecture is going to change sometime during the beta
 	cycle.  We are still considering several different approaches
 	to make creating new themes, layouts and modules easier.
       </li>
       <li>
-	<b>Performance</b> - This beta release is much faster than the
-	previous alphas.  There are still some tweaks that we have
-	planned that will make it even faster.  We&rsquo;ve still
-	focused on features and reliability before performance, and
-	will be continually optimizing during the Beta cycle.
+	<b>Performance</b> - This beta release is faster than the previous alphas/betas.
+	There are still some tweaks that we have planned that will make it even faster.
+	We&rsquo;ve still focused on features and reliability before performance, and
+	will be continually optimizing during the beta cycle.
       </li>
       <li>
 	<b>URL Redirection</b> - Rewrite module and G1-&gt;G2 URL redirection
 	do not work together in the same .htaccess file (G2 is installed where
-	G1 used to be). An alternative to the rewrite module will be available
-	soon to get short URLs <i>and</i> G1-&gt;G2 URL redirection
-	at the same time.
+	G1 used to be). In future these will be compatible.
       </li>
       <li>
-	<b>Local Server Upload</b> - Files which contain "[]" characters can not
+	<b>Local Server Upload</b> - Files which contain "[]" characters cannot
 	currently be selected for upload from the local server.  If the file containing
-	the "[]" characters is contained inside a directory that is being uploaded
-	recursively, there is no issue.  This will be addressed in later builds of G2.
-      </li>
-      <li>
-	<b>Login Problems</b> - There are known login problems where G2 seems to ignore 
-        a login request. In a first attempt to fix the problem, most scenarios have been
-        fixed. But we are still working on a <i>perfect</i> fix. As a consequence of our 
-        changes, you'll have to delete the GALLERYSID cookie(s) in your browser after a G2
-        upgrade from version beta-2 (or prior) to beta-3 (or later). 
+	the "[]" characters is contained inside a directory that is being added
+	recursively, there is no issue.  This will be addressed soon after beta-3.
       </li>
     </ol>
 
@@ -1562,10 +1559,10 @@
       title="Gallery 2.0 beta-3 (Bingo!)"
       style="border: none" width="80" height="15"/></a>
 
-    <img  
-      src="modules/core/data/g2b3-bingo.png"  
-      alt="Gallery 2.0 beta-3 (Bingo!)"  
-       style="border: none" width="80" height="15"/>
+    <img
+      src="modules/core/data/g2b3-bingo.png"
+      alt="Gallery 2.0 beta-3 (Bingo!)"
+      style="border: none" width="80" height="15"/>
     <hr />
 
     <p class="fineprint">
