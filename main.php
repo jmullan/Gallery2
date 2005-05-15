@@ -47,6 +47,13 @@ if (!GalleryUtilities::isEmbedded()) {
 	    }
 	}
 
+	/*
+	 * Fast download depends on having data.gallery.cache set, so set it now.  If for some
+	 * reason we fail, we'll reset it in init.inc (but that's ok).
+	 */
+	$gallery->setConfig(
+	    'data.gallery.cache', $gallery->getConfig('data.gallery.base') . '/cache/');
+
 	$path = GalleryDataCache::getCachePath(
 	    array('type' => 'fast-download', 'itemId' => $itemId));
 	/* We don't have a platform yet so we have to use the raw file_exists */
