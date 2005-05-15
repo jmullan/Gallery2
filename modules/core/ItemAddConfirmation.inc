@@ -55,6 +55,17 @@ class ItemAddConfirmationView extends GalleryView {
 	$status = $template->getVariable('status');
 	if (!empty($status['addedFiles'])) {
 	    $count = sizeof($status['addedFiles']);
+	    for ($i = 0; $i < $count; $i++) {
+		list ($ret, $entity) =
+		    GalleryCoreApi::loadEntitiesById($status['addedFiles'][$i]['id']);
+		if ($ret->isSuccess()) {
+		    $status['addedFiles'][$i]['exists'] = true;
+		} else if ($ret->getErrorCode() & ERROR_MISSING_OBJECT) {
+		    $status['addedFiles'][$i]['exists'] = false;
+		} else {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
 	} else {
 	    $count = 0;
 	    $status['addedFiles'] = array();

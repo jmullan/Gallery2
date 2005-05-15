@@ -19,12 +19,16 @@
   </h3>
 
   {foreach from=$ItemAddConfirmation.status.addedFiles item=entry}
+    {if $entry.exists}
     {capture name="itemLink"}
     <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$entry.id`"}">
       {$entry.fileName}
     </a>
     {/capture}
     {g->text text="Added %s" arg1=$smarty.capture.itemLink}
+    {else}
+    {g->text text="Failed to add %s" arg1=$entry.fileName}
+    {/if}
     <br/>
     {if !empty($entry.warnings)}
       <div class="giWarning">
