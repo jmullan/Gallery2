@@ -613,6 +613,7 @@ class Gallery {
     /**
      * Get the profiling state
      *
+     * @string profiling type
      * @return bool
      */
     function isProfiling($type) {
@@ -831,7 +832,13 @@ class Gallery {
 	}
 	$action = array($callback, $parameters);
 	/* Skip duplicate actions */
-	if (!in_array($action, $this->_shutdownActions)) {
+	foreach ($this->_shutdownActions as $item) {
+	    if ($item == $action) {
+		$duplicate = true;
+		break;
+	    }
+	}
+	if (!isset($duplicate)) {
 	    $this->_shutdownActions[] = $action;
 	}
     }
