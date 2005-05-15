@@ -382,16 +382,21 @@ class GalleryTemplateAdapter {
      * @return string the id of the css class
      */
     function linkId($params) {
-	$linkId = 'gbLink_';
-	$linkId .= (!empty($params['urlParams']['controller']))
-		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['controller']) : '';
-	$linkId .= (!empty($params['urlParams']['view']))
-		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['view']) : '';
-	$linkId .= (!empty($params['urlParams']['subView']))
-		? GalleryTemplateAdapter::_safeCssName($params['urlParams']['subView']) : '';
-	return $linkId;
+	$linkId = 'gbLink';
+	if (!empty($params['urlParams']['controller'])) {
+	    $linkId .= '-' . $params['urlParams']['controller'];
+	}
+	if (!empty($params['view'])) {
+	    $linkId .= '-' . $params['view'];
+	} elseif (!empty($params['urlParams']['view'])) {
+	    $linkId .= '-' . $params['urlParams']['view'];
+	}
+	if (!empty($params['urlParams']['subView'])) {
+	    $linkId .= '-' . $params['urlParams']['subView'];
+	}
+	return GalleryTemplateAdapter::_safeCssName($linkId);
     }
-
+    
     /**
      * This removes unsafe characters from a string so they can be used as a class
      * name or id in html and be addressed via css
@@ -404,8 +409,9 @@ class GalleryTemplateAdapter {
      * @return string
      */
     function _safeCssName($string) {
-	$string = ereg_replace("[^A-Za-z0-9_]", "_", $string);
-	$string = ereg_replace("_+", "_", $string);
+	$string = ereg_replace("[^-A-Za-z0-9_]", "_", $string);
+	$string = ereg_replace('__+', '_', $string);
+	$string = ereg_replace('[-_][-_]+', '-', $string);
 	return $string;
     }
 }

@@ -37,7 +37,7 @@
       <input type="hidden" name="{g->formVar var="form[useDefaultSettings]"}" value="1" />
       <input type="submit" class="inputTypeSubmit" value="{g->text text="Go"}"/>
     </li>
-    <li>
+    <li class="gbAdminLink {g->linkId view="search:SearchScan"}">
       <a href="{g->url arg1="view=search:SearchScan" arg2="form[useDefaultSettings]=1"
        arg3="return=1"}">{g->text text="advanced search"}</a>
     </li>
