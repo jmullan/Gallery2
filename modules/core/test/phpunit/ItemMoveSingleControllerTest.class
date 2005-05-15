@@ -212,6 +212,7 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	    $sizes, 'Derivative sizes after move');
 
 	/* Move back */
+	clearstatcache();
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_rootAlbum->getId());
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
