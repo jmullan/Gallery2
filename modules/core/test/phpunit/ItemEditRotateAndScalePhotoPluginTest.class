@@ -437,6 +437,41 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 	$preferred = null;
 	$results = $this->handleRequest($this->_item, $preferred, ERROR_OBSOLETE_DATA);
     }
+
+    function testCheckForOperation() {
+	list ($ret, $result) = $this->_plugin->_checkForOperation('scale', array('test/file'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($result, 'should be supported');
+
+	list ($ret, $result) = $this->_plugin->_checkForOperation(
+	    'scale', array('test/notsupported', 'test/file'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($result, 'should be supported');
+
+	list ($ret, $result) = $this->_plugin->_checkForOperation(
+	    'scale', array('test/file', 'test/notsupported'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert($result, 'should be supported');
+
+	list ($ret, $result) = $this->_plugin->_checkForOperation(
+	    'scale', array('test/notsupported'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$result, 'should not be supported');
+
+	list ($ret, $result) = $this->_plugin->_checkForOperation('scale', array());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(!$result, 'should not be supported');
+    }
 }
 
 /**

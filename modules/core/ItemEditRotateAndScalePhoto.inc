@@ -382,32 +382,32 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-		
+
+	$sourceMimeTypes = array($item->getMimeType());
 	if (empty($results)) {
 	    $ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	} else {
-	    if (preg_match("/(rotate|resize|scale)\|/",
-			   $results[$item->getId()]->getDerivativeOperations())) {
+	    $preferred = $results[$item->getId()];
+	    if (preg_match("/(rotate|resize|scale)\|/", $preferred->getDerivativeOperations())) {
 		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = true;
 	    } else {
 		$ItemEditRotateAndScalePhoto['editPhoto']['hasPreferredSource'] = false;
 	    }
+	    $sourceMimeTypes[] = $preferred->getMimeType();
 	}
 
 	/* Figure out what options we can provide */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation(
-	    $item->getMimeType(), 'rotate');
+	list ($ret, $ItemEditRotateAndScalePhoto['editPhoto']['can']['rotate']) =
+	    $this->_checkForOperation('rotate', $sourceMimeTypes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditRotateAndScalePhoto['editPhoto']['can']['rotate'] = isset($toolkit);
-		
-	/* Figure out what options we can provide */
-	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($item->getMimeType(), 'scale');
+
+	list ($ret, $ItemEditRotateAndScalePhoto['editPhoto']['can']['resize']) =
+	    $this->_checkForOperation('scale', $sourceMimeTypes);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$ItemEditRotateAndScalePhoto['editPhoto']['can']['resize'] = isset($toolkit);
 
 	$template->setVariable('ItemEditRotateAndScalePhoto', $ItemEditRotateAndScalePhoto);
 	$template->setVariable('controller', 'core:ItemEditRotateAndScalePhoto');
@@ -432,6 +432,29 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	}
 
 	return array(GalleryStatus::success(), $module->translate('Modify Photo'));
+    }
+
+    /**
+     * Check to see if a given operation is available for any of a set of mime types
+     *
+     * @param string the operation (eg, 'rotate', or 'scale')
+     * @param array mime types
+     * @return array object GalleryStatus a status code
+     *               bool true if any of the mime types are supported
+     */
+    function _checkForOperation($operation, $mimeTypes) {
+	foreach ($mimeTypes as $mimeType) {
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (isset($toolkit)) {
+		break;
+	    }
+	}
+
+	return array(GalleryStatus::success(), isset($toolkit));
     }
 }
 ?>
