@@ -1,4 +1,6 @@
-    <h1 class="success"><?php print _("Check Security") ?></h1>
+    <h1<?php if ($templateData['secure']) print ' class="success"' ?>>
+      <?php print _("Check Security") ?>
+    </h1>
 
     <?php if (!$templateData['secure']): ?>
     <p>
