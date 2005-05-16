@@ -361,93 +361,93 @@ class CoreModuleExtras {
 	     * those rows from the permissions table.  Repeat.
 	     */
 	    $totalRowsQuery = '
-            SELECT
-              COUNT(DISTINCT [GalleryPermissionMap::itemId])
-            FROM
-              [GalleryPermissionMap]
-            ';
+	    SELECT
+	      COUNT(DISTINCT [GalleryPermissionMap::itemId])
+	    FROM
+	      [GalleryPermissionMap]
+	    ';
 
 	    $findItemIdQuery = '
-            SELECT
-              [GalleryPermissionMap::itemId], COUNT(*) AS C
-            FROM
-              [GalleryPermissionMap]
-            GROUP BY
-              [GalleryPermissionMap::itemId]
-            ORDER BY
-              C DESC
-            ';
+	    SELECT
+	      [GalleryPermissionMap::itemId], COUNT(*) AS C
+	    FROM
+	      [GalleryPermissionMap]
+	    GROUP BY
+	      [GalleryPermissionMap::itemId]
+	    ORDER BY
+	      C DESC
+	    ';
 
 	    $permissionRowCountQuery = '
-            SELECT
-              COUNT(*)
-            FROM
-              [GalleryPermissionMap]
-            WHERE
-              [GalleryPermissionMap::itemId] = ?
-            ';
+	    SELECT
+	      COUNT(*)
+	    FROM
+	      [GalleryPermissionMap]
+	    WHERE
+	      [GalleryPermissionMap::itemId] = ?
+	    ';
 
 	    $createAclQuery = '
-            INSERT INTO
-              [GalleryAccessMap] ([::accessListId], [::userId], [::groupId], [::permission])
-            SELECT
-              ?, [GalleryPermissionMap::userId],
-              [GalleryPermissionMap::groupId], [GalleryPermissionMap::permission]
-            FROM
-              [GalleryPermissionMap]
-            WHERE
-              [GalleryPermissionMap::itemId] = ?
-            ';
+	    INSERT INTO
+	      [GalleryAccessMap] ([::accessListId], [::userId], [::groupId], [::permission])
+	    SELECT
+	      ?, [GalleryPermissionMap::userId],
+	      [GalleryPermissionMap::groupId], [GalleryPermissionMap::permission]
+	    FROM
+	      [GalleryPermissionMap]
+	    WHERE
+	      [GalleryPermissionMap::itemId] = ?
+	    ';
 
 	    $findPossibleDupesQuery = '
-            SELECT
-              [GalleryPermissionMap=2::itemId], COUNT(*)
-            FROM
-              [GalleryPermissionMap=1], [GalleryPermissionMap=2]
-            WHERE
-              [GalleryPermissionMap=1::itemId] = ?
-              AND
-              [GalleryPermissionMap=1::userId] = [GalleryPermissionMap=2::userId]
-              AND
-              [GalleryPermissionMap=1::groupId] = [GalleryPermissionMap=2::groupId]
-              AND
-              [GalleryPermissionMap=1::permission] = [GalleryPermissionMap=2::permission]
-            GROUP BY
-              [GalleryPermissionMap=2::itemId]
-            HAVING
-              COUNT(*) = ?
-            ';
+	    SELECT
+	      [GalleryPermissionMap=2::itemId], COUNT(*)
+	    FROM
+	      [GalleryPermissionMap=1], [GalleryPermissionMap=2]
+	    WHERE
+	      [GalleryPermissionMap=1::itemId] = ?
+	      AND
+	      [GalleryPermissionMap=1::userId] = [GalleryPermissionMap=2::userId]
+	      AND
+	      [GalleryPermissionMap=1::groupId] = [GalleryPermissionMap=2::groupId]
+	      AND
+	      [GalleryPermissionMap=1::permission] = [GalleryPermissionMap=2::permission]
+	    GROUP BY
+	      [GalleryPermissionMap=2::itemId]
+	    HAVING
+	      COUNT(*) = ?
+	    ';
 
 	    $refineDupesQuery = '
-            SELECT
-              [GalleryPermissionMap::itemId], COUNT(*)
-            FROM
-              [GalleryPermissionMap]
-            WHERE
-              [GalleryPermissionMap::itemId] IN (%s)
-            GROUP BY
-              [GalleryPermissionMap::itemId]
-            HAVING
-              COUNT(*) = ?
-            ';
+	    SELECT
+	      [GalleryPermissionMap::itemId], COUNT(*)
+	    FROM
+	      [GalleryPermissionMap]
+	    WHERE
+	      [GalleryPermissionMap::itemId] IN (%s)
+	    GROUP BY
+	      [GalleryPermissionMap::itemId]
+	    HAVING
+	      COUNT(*) = ?
+	    ';
 
 	    $assignAclQuery = '
-            INSERT INTO
-              [GalleryAccessSubscriberMap] ([::itemId], [::accessListId])
-            SELECT DISTINCT
-              [GalleryPermissionMap::itemId], ?
-            FROM
-              [GalleryPermissionMap]
-            WHERE
-              [GalleryPermissionMap::itemId] IN (%s)
-            ';
+	    INSERT INTO
+	      [GalleryAccessSubscriberMap] ([::itemId], [::accessListId])
+	    SELECT DISTINCT
+	      [GalleryPermissionMap::itemId], ?
+	    FROM
+	      [GalleryPermissionMap]
+	    WHERE
+	      [GalleryPermissionMap::itemId] IN (%s)
+	    ';
 
 	    $deleteOldPermsQuery = '
-            DELETE FROM
-              [GalleryPermissionMap]
-            WHERE
-              [GalleryPermissionMap::itemId] IN (%s)
-            ';
+	    DELETE FROM
+	      [GalleryPermissionMap]
+	    WHERE
+	      [GalleryPermissionMap::itemId] IN (%s)
+	    ';
 
 	    /* Determine how many items we are going to process for our status message */
 	    list ($ret, $results) =
@@ -565,7 +565,7 @@ class CoreModuleExtras {
 
 		    $ret = $statusMonitor->renderStatusMessage(
 			$module->translate(array(
-                            'text' => 'Upgrading permissions (%d items complete, %d remaining)',
+			    'text' => 'Upgrading permissions (%d items complete, %d remaining)',
 			    'arg1' => $itemsProcessed,
 			    'arg2' => $totalPermissionItems - $itemsProcessed)),
 			'',
@@ -660,40 +660,39 @@ class CoreModuleExtras {
 	    /* Added SystemInfoTask */
 	case '0.9.14':
 	    /* Added SetOriginationTimestampTask */
-            
+
 	case '0.9.15':
-	    /* 
-             * Changed 'All Users' to 'Registered Users'
-             * Don't change if the user modified the name already!
-             */
-            list ($ret, $allUserGroupId) = GalleryCoreApi::getPluginParameter(
-                'module', 'core', 'id.allUserGroup');
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-            list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-            list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
-            if ($ret->isError()) {
-                return $ret->wrap(__FILE__, __LINE__);
-            }
-            $allUserGroupName = $group->getGroupName();
-            $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
-                $module->translate('All Users'));
-            if (!strcmp($allUserGroupName, $originalGroupName)) {
+	    /*
+	     * Changed 'All Users' to 'Registered Users'
+	     * Don't change if the user modified the name already!
+	     */
+	    list ($ret, $allUserGroupId) = $module->getParameter('id.allUserGroup');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($allUserGroupId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    list ($ret, $group) = GalleryCoreApi::loadEntitiesById($allUserGroupId);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $allUserGroupName = $group->getGroupName();
+	    $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
+		$module->translate('All Users'));
+	    if (!strcmp($allUserGroupName, $originalGroupName)) {
 		$group->setGroupName($module->translate('Registered Users'));
 		$ret = $group->save();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		
+
 		$ret = GalleryCoreApi::releaseLocks($lockId);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-            }            
+	    }
 
 	case 'end of upgrade path':
 	    /*
