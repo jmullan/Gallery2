@@ -56,6 +56,16 @@ if (phpversion() >= '4') {
 	     */
 	    return;
 	}
+	/*
+	 * http://us4.php.net/file_exists#47860
+	 * Older php versions generate stat warnings whenever a file_exists or
+	 * other filesystem function stats a file that doesn't exist.  The functions
+	 * still work correctly.  Allow unit tests to ignore these warnings.
+	 */
+	if (version_compare(phpversion(), '4.3.3') <= 0 &&
+		preg_match('{stat failed for.*\(errno=0 - Success\)}', $errstr)) {
+	    return;
+	}
 
 	$message = "<B>PHP ERROR:</B> ".$errstr;
 	if (function_exists('debug_backtrace')) {
