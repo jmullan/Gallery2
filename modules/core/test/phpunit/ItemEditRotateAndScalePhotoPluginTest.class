@@ -350,6 +350,49 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 			    $this->_derivative[1]->getDerivativeOperations());
     }
 
+    function testRotateFlipConvertedPreferred() {
+	/* Put a convert operation on our preferred */
+	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->_derivative[0]->setDerivativeOperations('convert-to-image/jpeg');
+	$ret = $this->_derivative[0]->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($lockId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Use valid inputs */
+	GalleryUtilities::putRequestVariable('form[action][rotate][flip]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest($this->_item, $this->_derivative[0]);
+	$this->assertEquals(array(array(), $this->_translate('Rotated photo successfully')),
+			    $results);
+
+	/* Verify that the transform went ok */
+	list ($ret, $this->_derivative[0]) = $this->_derivative[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('convert-to-image/jpeg;rotate|180',
+			    $this->_derivative[0]->getDerivativeOperations());
+
+	/* Verify that the thumbnail's crop was adjusted */
+	list ($ret, $this->_derivative[1]) = $this->_derivative[1]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('crop|60,50,30,40;thumbnail|200',
+			    $this->_derivative[1]->getDerivativeOperations());
+    }
+
     function testRevertToOriginal() {
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][revertToOriginal]', 1);
@@ -384,6 +427,10 @@ class ItemEditRotateAndScalePhotoPluginTest extends ItemEditPluginTestCase {
 
     }
 
+    /**
+     * This verifies that we don't remove preferred derivatives that have operations we don't
+     * understand so it covers postfilters as well as convert-to-xxx operations.
+     */
     function testRevertToOriginalWithPostfilter() {
 	/* Put a postfilter on our derivative */
 	list ($ret, $lockId) = GalleryCoreApi::acquireWriteLock($this->_derivative[0]->getId());

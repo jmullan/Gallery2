@@ -190,12 +190,8 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 		}
 
 		/* Perform the operation */
-		list ($ret, $outputMimeType) =
-		    $toolkit->performOperation($item->getMimeType(),
-					       $operation,
-					       $sourcePath,
-					       $sourcePath,
-					       $args);
+		list ($ret, $outputMimeType) = $toolkit->performOperation(
+		    $item->getMimeType(), $operation, $sourcePath, $sourcePath, $args);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
@@ -443,7 +439,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
      *               bool true if any of the mime types are supported
      */
     function _checkForOperation($operation, $mimeTypes) {
-	foreach ($mimeTypes as $mimeType) {
+	foreach (array_unique($mimeTypes) as $mimeType) {
 	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
