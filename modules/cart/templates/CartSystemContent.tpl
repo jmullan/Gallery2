@@ -12,7 +12,7 @@
 	       count=$CartSystemContent.count arg1=$CartSystemContent.count}
     </li>
     {foreach from=$CartSystemContent.links item=link}
-    <li>
+    <li class="gbAdminLink {g->linkId urlParams=$link.params}">
       <a href="{g->url params=$link.params}"> {$link.text} </a>
     </li>
     {/foreach}
