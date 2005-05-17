@@ -808,5 +808,17 @@ class GalleryTestCase extends TestCase {
 
 	return null;
     }
+
+    /**
+     * Like print_r($value, 1)
+     * @static
+     */
+    function sprint_r($value) {
+	ob_start();
+	print_r($value);
+	$buf = ob_get_contents();
+	ob_end_clean();
+	return $buf;
+    }
 }
 ?>

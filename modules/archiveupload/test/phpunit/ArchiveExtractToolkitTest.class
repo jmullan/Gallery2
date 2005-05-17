@@ -98,7 +98,7 @@ class ArchiveExtractToolkitTestPlatform {
 	    return array(1, $results, $stderr);
 	}
 
-	printf("Unexpected command for mock toolkit<pre>%s</pre>", print_r($cmd, 1));
+	printf("Unexpected command for mock toolkit<pre>%s</pre>", GalleryTestCase::sprint_r($cmd));
 
 	return array(0, '', 'unprepared for exec()');
     }

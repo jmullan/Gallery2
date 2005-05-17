@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkitHelper.class');
-require_once(dirname(__FILE__) . '/../../classes/FfmpegToolkit.class');
+GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkitHelper.class');
+GalleryCoreApi::relativeRequireOnce('modules/ffmpeg/classes/FfmpegToolkit.class');
 
 /**
  * Test FfmpegToolkit functionality
@@ -44,14 +44,11 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->GalleryTestCase($methodName);
     }
 
-    /**
-     * 
-     */
     function setUp() {
 	global $gallery;
 
 	parent::setUp();
-	
+
 	$gallery->_platform = new FfmpegToolkitTestPlatform();
 	$ret = $gallery->_platform->init();
 	if ($ret->isError()) {
@@ -77,7 +74,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(200, 240, 3.1), $results, 'dimensions-and-duration mismatch');
-	
+
 	list ($ret, $results) = $this->_toolkit->getProperty('video/x-msvideo', 'BOGUS', 'BOGUS');
 	$this->assert($ret->getErrorCode() & ERROR_UNIMPLEMENTED);
     }
@@ -150,7 +147,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
 			    $results);
 	$this->assertEquals(true, $supportsOffset, 'offset');
-	
+
 	$this->assertEquals($expectedMimeTypes, $mimeTypes);
     }
 
@@ -164,7 +161,7 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	$expectedMimeTypes = array(
 	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
-	
+
 	$output[] = 'File formats:';
 	$output[] = '  E 3gp';
 	$output[] = ' D  4xm';
@@ -364,28 +361,28 @@ class FfmpegToolkitTest extends GalleryTestCase {
 	    'video/mpeg', 'video/x-ms-asf', 'video/x-msvideo', 'video/quicktime', 'video/x-ms-wmv');
 	sort($expectedMimeTypes);
 
-        $output = array();
-        $output[] = 'File formats:';
-        $output[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+	$output = array();
+	$output[] = 'File formats:';
+	$output[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
 	    'ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be ' .
 	    's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
 	    'singlejpeg jpeg ffm audio_device rtp';
-        $output[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe ' .
+	$output[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ppmpipe ' .
 	    'mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw rawvideo rm ' .
 	    'asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device rtsp redir sdp rtp';
-        $output[] = 'Codecs:';
-        $output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
+	$output[] = 'Codecs:';
+	$output[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
 	    'msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le pcm_u16be ' .
 	    'pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-        $output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 mpegvideo ' .
+	$output[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 mpegvideo ' .
 	    'h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 mace6 huffyuv ac3 ' .
 	    'pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw ' .
 	    'adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-        $output[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
-        $output[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
-        $output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+	$output[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
+	$output[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
+	$output[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
 	    'epzs(default) x1';
-	
+
 	$this->assertEquals(array(array('name' => 'ffmpeg', 'success' => 1, 'results' => $output)),
 			    $results);
 	$this->assertEquals(false, $supportsOffset, 'offset');
@@ -421,8 +418,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
     }
 
     function testPerformOperationWithOffset() {
-	global $gallery;
-
 	list ($ret, $results, $context) =
 	    $this->_toolkit->performOperation('video/avi',
 					      'select-offset',
@@ -459,7 +454,6 @@ class FfmpegToolkitTest extends GalleryTestCase {
 class FfmpegToolkitTestPlatform {
 
     function init() {
-	global $gallery;
 	list ($ret, $this->_ffmpegPath) =
 	    GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
@@ -469,8 +463,6 @@ class FfmpegToolkitTestPlatform {
     }
 
     function exec($cmd) {
-	global $gallery;
-
 	$results = array();
 	$stderr = array();
 	switch(serialize($cmd)) {
@@ -517,26 +509,26 @@ class FfmpegToolkitTestPlatform {
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array('/validPath/ffmpeg046FormatsOutput', '-formats'))):
-            $results[] = 'File formats:';
-            $results[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+	    $results[] = 'File formats:';
+	    $results[] = '  Encoding: mpeg vcd vob crc pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
 		'ppmpipe yuv4mpegpipe mp2 ac3 h263 m4v mpeg1video mjpeg s16le s16be u16le u16be ' .
 		's8 u8 mulaw alaw rawvideo null rm asf asf_stream avi wav swf au gif mpjpeg ' .
 		'singlejpeg jpeg ffm audio_device rtp';
-            $results[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
+	    $results[] = '  Decoding: mpeg mpegts pgm pgmyuv ppm .Y.U.V pgmpipe pgmyuvpipe ' .
 		'ppmpipe mp3 ac3 m4v mpegvideo mjpeg s16le s16be u16le u16be s8 u8 mulaw alaw ' .
 		'rawvideo rm asf avi wav swf au mov jpeg dv ffm video_grab_device audio_device ' .
 		'rtsp redir sdp rtp';
-            $results[] = 'Codecs:';
-            $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
+	    $results[] = 'Codecs:';
+	    $results[] = '  Encoders: ac3 mp2 mpeg1video h263 h263p rv10 mjpeg mpeg4 msmpeg4v1 ' .
 		'msmpeg4v2 msmpeg4 wmv1 huffyuv rawvideo pcm_s16le pcm_s16be pcm_u16le ' .
 		'pcm_u16be pcm_s8 pcm_u8 pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-            $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 ' .
+	    $results[] = '  Decoders: rawvideo h263 mpeg4 msmpeg4v1 msmpeg4v2 msmpeg4 wmv1 ' .
 		'mpegvideo h263i rv10 svq1 dvvideo mjpeg mjpegb mp2 mp3 wmav1 wmav2 mace3 ' .
 		'mace6 huffyuv ac3 pcm_s16le pcm_s16be pcm_u16le pcm_u16be pcm_s8 pcm_u8 ' .
 		'pcm_alaw pcm_mulaw adpcm_ima_qt adpcm_ima_wav adpcm_ms';
-            $results[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
-            $results[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
-            $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
+	    $results[] = 'Supported file protocols: file: pipe: udp: rtp: tcp: http:';
+	    $results[] = 'Frame size abbreviations: sqcif qcif cif 4cif';
+	    $results[] = 'Motion estimation methods: zero(fastest) full(slowest) log phods ' .
 		'epzs(default) x1';
 	    return array(1, $results, $stderr);
 
@@ -621,10 +613,10 @@ class FfmpegToolkitTestPlatform {
 	    $results[] = ' DE gif';
 	    $results[] = ' DE sgi';
 	    $results[] = '';
-	    $results[] = 'Codecs:';	   
-	    $results[] = ' D V    4xm';	   
-	    $results[] = ' D V D  8bps';   
-	    $results[] = '  EA    ac3';	   
+	    $results[] = 'Codecs:';
+	    $results[] = ' D V    4xm';
+	    $results[] = ' D V D  8bps';
+	    $results[] = '  EA    ac3';
 	    $results[] = ' DEA    adpcm_4xm';
 	    $results[] = ' DEA    adpcm_adx';
 	    $results[] = ' DEA    adpcm_ea';
@@ -738,7 +730,7 @@ class FfmpegToolkitTestPlatform {
 	    $stderr[] = 'Stream mapping:';
 	    $stderr[] = '  Stream #0.0 -> #0.0';
 	    $stderr[] = 'Press [q] to stop encoding';
-	    $stderr[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
+	    $stderr[] = 'frame=    1 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array($this->_ffmpegPath, '-i', 'testPerformOperation2.avi',
@@ -752,7 +744,7 @@ class FfmpegToolkitTestPlatform {
 	    $stderr[] = 'Stream mapping:';
 	    $stderr[] = '  Stream #0.0 -> #0.0';
 	    $stderr[] = 'Press [q] to stop encoding';
-	    $stderr[] = 'frame=    2 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';	    
+	    $stderr[] = 'frame=    2 q=0.0 size=       2kB time=0.1 bitrate= 232.4kbits/s    ';
 	    return array(1, $results, $stderr);
 
 	case serialize(array(array($this->_ffmpegPath, '-h'))):
@@ -771,8 +763,8 @@ class FfmpegToolkitTestPlatform {
 	    return array(1, $results, $stderr);
 	}
 
-	printf("Unexpected command for mock toolkit<pre>%s</pre>", print_r($cmd, 1));
-	
+	printf("Unexpected command for mock toolkit<pre>%s</pre>", GalleryTestCase::sprint_r($cmd));
+
 	return array(0, '', 'unprepared for exec()');
     }
 
@@ -802,7 +794,7 @@ class FfmpegToolkitTestPlatform {
 	    return true;
 	}
     }
-    
+
     function is_file($path) {
 	switch ($path) {
 	case $this->_ffmpegPath:
@@ -812,12 +804,11 @@ class FfmpegToolkitTestPlatform {
 	case '/validPath/bogusBinary':
 	    return true;
 	}
-	
+
 	return false;
     }
 
     function is_dir($path) {
-	global $gallery;
 	list ($ret, $ffmpegPath) = GalleryCoreApi::getPluginParameter('module', 'ffmpeg', 'path');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -833,7 +824,7 @@ class FfmpegToolkitTestPlatform {
     }
 
     function unlink($path) {
-	// we don't create any files, so no need to unlink any
+	/* we don't create any files, so no need to unlink any */
     }
 
     function tempnam($dir, $prefix) {

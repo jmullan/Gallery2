@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -58,7 +58,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	/*
 	 * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
 	 * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
-	 * involved.  
+	 * involved.
 	 */
 	list ($ret, $this->_photo) =
 	    $this->_createRandomDataItem($this->_album->getId(),
@@ -77,16 +77,16 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$ret = $derivative->create($this->_photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	$derivative->setDerivativeSourceId($this->_photo->getId());
 	$derivative->setDerivativeOperations('thumbnail|150');
 	$derivative->setMimeType('test/file');
-	
+
 	$ret = $derivative->save();
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -126,7 +126,7 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
     function testPrintPhoto() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
 	GalleryUtilities::putRequestVariable('returnUrl', 'RETURN_URL');
 
@@ -139,18 +139,18 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 			    $results);
 
 	$session =& $gallery->getSession();
-	$this->assertEquals('/REQUEST_URL', $session->get('photoaccess.cartUrlFragment')); 
+	$this->assertEquals('/REQUEST_URL', $session->get('photoaccess.cartUrlFragment'));
     }
 
     function testPrintSecondPhoto() {
 	global $gallery;
-	
+
 	GalleryUtilities::putRequestVariable('itemId', $this->_photo->getId());
 	GalleryUtilities::putRequestVariable('returnUrl', 'RETURN_URL');
 
 	$session =& $gallery->getSession();
 	$session->put('photoaccess.cartUrlFragment', '/EXISTING_FRAGMENT');
-	
+
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$expectedHref = 'http://www.photoaccess.com/REDIRECT_URL2?foo=1&bar=2';
@@ -159,9 +159,9 @@ class PrintPhotoControllerTest extends GalleryControllerTestCase {
 				  'error' => array()),
 			    $results);
 
-	$this->assertEquals('/REQUEST_URL2?foo=1&bar=2', $session->get('photoaccess.cartUrlFragment')); 
+	$this->assertEquals('/REQUEST_URL2?foo=1&bar=2', $session->get('photoaccess.cartUrlFragment'));
     }
-    
+
 }
 
 /**
@@ -191,7 +191,7 @@ class PrintPhotoControllerTestPlatform {
 	if ($handle != 'test-resource-1') {
 	    return 0;
 	}
-	
+
 	/*
 	 * This is a little tricky.  We need to anticipate precisely the sequence of GET and POST requests
 	 * that the plugin is going to make.  It will first make a request to get the cart so that it can get
@@ -207,7 +207,7 @@ class PrintPhotoControllerTestPlatform {
 					      'height="0" width="0"/>' .
 					      '</add-cart-request>')));
 
-	if ($string == join("\r\n", 
+	if ($string == join("\r\n",
 			    array('POST /buy/anonCartXML.jsp HTTP/1.0',
 				  'Host: www.photoaccess.com',
 				  'User-Agent: Test User Agent',
@@ -224,7 +224,7 @@ class PrintPhotoControllerTestPlatform {
 	    $buffer[] = $response;
 	    $this->_readBuffer[$handle] = $buffer;
 	    return strlen($string);
-	} else if ($string == join("\r\n", 
+	} else if ($string == join("\r\n",
 			    array('POST /EXISTING_FRAGMENT HTTP/1.0',
 				  'Host: www.photoaccess.com',
 				  'User-Agent: Test User Agent',
@@ -243,13 +243,13 @@ class PrintPhotoControllerTestPlatform {
 	    $this->_readBuffer[$handle] = $buffer;
 	    return strlen($string);
 	} else {
-	    printf("<pre> Expected: %s</pre>", print_r($expectedPost, 1));
-	    printf("<pre>Unxpected: %s</pre>", print_r($string, 1));
+	    printf("<pre> Expected: %s</pre>", GalleryTestCase::sprint_r($expectedPost));
+	    printf("<pre>Unxpected: %s</pre>", GalleryTestCase::sprint_r($string));
 
 	    for ($i = 0; $i < strlen($string); $i++) {
 		if ($expectedPost[$i] != $string[$i]) {
 		    printf("<pre>Differs at byte: %d <...%s...> <...%s...></pre>",
-			   print_r($i, 1),
+			   GalleryTestCase::sprint_r($i),
 			   substr($expectedPost, $i-5, 10),
 			   substr($string, $i-5, 10));
 		    break;

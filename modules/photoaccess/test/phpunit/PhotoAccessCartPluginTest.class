@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -59,7 +59,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    /*
 	     * Create a new item and force it to be a GalleryPhotoItem, cause that's the only type that this
 	     * plugin will print.  Make it an unsupported mime type so that no graphics toolkits will get
-	     * involved.  
+	     * involved.
 	     */
 	    list ($ret, $this->_items[$i]) =
 		$this->_createRandomDataItem($this->_album->getId(),
@@ -72,7 +72,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 
-	    
+
 	    /* Create a stub thumbnail */
 	    list ($ret, $derivative) =
 		GalleryCoreApi::newFactoryInstanceByHint('GalleryDerivative', $this->_items[$i]->getEntityType());
@@ -112,7 +112,7 @@ class PhotoAccessCartPluginTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$ret = $derivative->create($this->_items[2]->getId(), DERIVATIVE_TYPE_IMAGE_PREFERRED);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -208,17 +208,17 @@ class PhotoAccessCartPluginTestPlatform {
 	    'entry-page="/buy/anonCart.jsp" return-url="view=cart:ViewCart">';
 	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
 	    $xml .= sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
-			    $this->_test->_sourceIds[$i], 
+			    $this->_test->_sourceIds[$i],
 			    'view=core:DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
 			    'view=core:DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
 			    0, 0);
 	}
 	$xml .= '</add-cart-request>';
-	    
+
 	$postData = join('&', array('cb=CB_GP', 'xml_request=' . urlencode($xml)));
 
 	$expectedPost =
-	    join("\r\n", 
+	    join("\r\n",
 		 array('POST /buy/anonCartXML.jsp HTTP/1.0',
 		       'Host: www.photoaccess.com',
 		       'User-Agent: Test User Agent',
@@ -226,7 +226,7 @@ class PhotoAccessCartPluginTestPlatform {
 		       'Content-Length: ' . strlen($postData),
 		       '',
 		       $postData)) . "\r\n";
-	
+
 	if ($handle == 'test-resource-1') {
 	    switch($string) {
 	    case $expectedPost:
@@ -241,13 +241,13 @@ class PhotoAccessCartPluginTestPlatform {
 		return strlen($string);
 
 	    default:
-		printf("<pre> Expected: %s</pre>", print_r($expectedPost, 1));
-		printf("<pre>Unxpected: %s</pre>", print_r($string, 1));
+		printf("<pre> Expected: %s</pre>", GalleryTestCase::sprint_r($expectedPost));
+		printf("<pre>Unxpected: %s</pre>", GalleryTestCase::sprint_r($string));
 
 		for ($i = 0; $i < strlen($string); $i++) {
 		    if ($expectedPost[$i] != $string[$i]) {
 			printf("<pre>Differs at byte: %d <...%s...> <...%s...></pre>",
-			       print_r($i, 1),
+			       GalleryTestCase::sprint_r($i),
 			       substr($expectedPost, $i-5, 10),
 			       substr($string, $i-5, 10));
 			break;
