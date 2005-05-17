@@ -570,9 +570,11 @@ class GalleryUtilities {
      * Cast to float taking into account that older php versions will not treat "."
      * as a decimal separator if the current locale uses "," - when we stop supporting
      * these older versions we can ditch this method and just cast to (float).
+     * (Note that newer php versions may accept only "." even if locale uses ",")
      */
     function castToFloat($value) {
-	if (is_string($value) && ($test = (string)1.1) != '1.1' && strlen($test) == 3) {
+	if (is_string($value) && (float)'1.1' != 1.1
+		&& ($test = (string)1.1) != '1.1' && strlen($test) == 3) {
 	    return (float)str_replace('.', $test{1}, $value);
 	}
 	return (float)$value;
