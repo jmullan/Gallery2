@@ -135,14 +135,22 @@ class UserAlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(in_array(
-	    array('userId' => 0, 'groupId' => $this->_allUserGroupId,
-		  'permission' => 'core.viewResizes'),
-	    $permissions), 'view resizes for all users');
-	$this->assert(!in_array(
-	    array('userId' => 0, 'groupId' => $this->_allUserGroupId,
-		  'permission' => 'core.viewSource'),
-	    $permissions), 'no view source for all users');
+
+	$seenViewResizes = false;
+	$seenViewSource = false;
+	foreach ($permissions as $perm) {
+	    if ($perm == array('userId' => 0, 'groupId' => $this->_allUserGroupId,
+			       'permission' => 'core.viewResizes')) {
+		$seenViewResizes = true;
+	    } else if ($perm == array('userId' => 0, 'groupId' => $this->_allUserGroupId,
+				      'permission' => 'core.viewSource')) {
+		$seenViewSource = true;
+	    }
+	}
+	$this->assert($seenViewResizes, sprintf('missing view resizes for all users: %d',
+						 $this->_allUserGroupId));
+	$this->assert(!$seenViewSource, sprintf('unexpected view source for all users: %d',
+						$this->_allUserGroupId));
 
 	/* Create a subalbum.. */
 	list ($ret, $subalbum) =
