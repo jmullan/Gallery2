@@ -34,15 +34,15 @@
  *
  */
 class RewriteHelperTest extends GalleryTestCase {
-	
+
     function RewriteHelperTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
 
     function setUp() {
-    	global $gallery;
+	global $gallery;
 	parent::setUp();
-	
+
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 	$this->_platform = new RewriteHelperTestPlatform();
@@ -50,18 +50,18 @@ class RewriteHelperTest extends GalleryTestCase {
 	$gallery->setPlatform($this->_platform);
 	$gallery->setUrlGenerator($urlGenerator);
     }
-    
+
     function testCheckFile() {
-    	global $gallery;
-    	
-    	/* Make sure we pass if it's all good to write. */
+	global $gallery;
+
+	/* Make sure we pass if it's all good to write. */
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code);
-	
+
 	/* Make sure we're ok if there's already a Gallery section. */
 	list ($ret, $expected) = RewriteHelper::getTemplate(array());
 	if ($ret->isError()) {
@@ -72,7 +72,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	    $expected[$line] .= "\n";
 	}
 
-    	$this->_platform->setPreviousContent($expected);
+	$this->_platform->setPreviousContent($expected);
 	$gallery->setPlatform($this->_platform);
 
 	list ($ret, $code) = RewriteHelper::checkFile();
@@ -81,42 +81,42 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code, 'existing gallery section');
     }
-    
+
     function testCheckFileNoPrefix() {
 	global $gallery;
-	
-    	/* Make sure we pass if it's all good to write. */
+
+	/* Make sure we pass if it's all good to write. */
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_READY, $code);
     }
-    
+
     function testCheckBadFile() {
-    	global $gallery;
-    	
-    	/* Make sure we fail if it's not writable. */
-    	$this->_platform->setIsWriteable(false);
+	global $gallery;
+
+	/* Make sure we fail if it's not writable. */
+	$this->_platform->setIsWriteable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
-	
+
 	/* Make sure we fail if it's not readable */
-    	$this->_platform->setIsReadable(false);
+	$this->_platform->setIsReadable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
-	
+
 	/* Make sure we fail if it's there's no file */
-    	$this->_platform->setFileExists(false);
+	$this->_platform->setFileExists(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
@@ -124,30 +124,30 @@ class RewriteHelperTest extends GalleryTestCase {
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
     }
-    
+
     function testWriteBadFile() {
-    	global $gallery;
-    	
-    	/* Make sure we fail if it's not writable. */
-    	$this->_platform->setIsWriteable(false);
+	global $gallery;
+
+	/* Make sure we fail if it's not writable. */
+	$this->_platform->setIsWriteable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_WRITE, $code, 'cant write');
-	
+
 	/* Make sure we fail if it's not readable */
-    	$this->_platform->setIsReadable(false);
+	$this->_platform->setIsReadable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_CANT_READ, $code, 'cant read');
-	
+
 	/* Make sure we fail if it's there's no file */
-    	$this->_platform->setFileExists(false);
+	$this->_platform->setFileExists(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());
 	if ($ret->isError()) {
@@ -156,13 +156,13 @@ class RewriteHelperTest extends GalleryTestCase {
 	$this->assertEquals(REWRITE_STATUS_HTACCESS_MISSING, $code, 'cant read');
 	$this->assertEquals(null, $this->_platform->_fileContent, 'file content');
     }
-    
+
     function testGetHtaccessPath() {
 	$this->assertEquals(array(GalleryStatus::success(),
 			dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess'),
 		RewriteHelper::getHtaccessPath());
     }
-    
+
     function testParseActiveRules() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
@@ -188,11 +188,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
 	$this->assertEquals($expected, $result, 'rules');
     }
-    
+
     function testParseActiveRulesBadKeyword() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%badKeyword%',
@@ -202,11 +202,11 @@ class RewriteHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(REWRITE_STATUS_BAD_KEYWORD, $code, 'status code');
 	$this->assertEquals(null, $result, 'rules');
     }
-    
+
     function testParseActiveRulesNoKeyword() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/',
@@ -220,7 +220,7 @@ class RewriteHelperTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->assertEquals(REWRITE_STATUS_OK, $code, 'status code');
 	$this->assertEquals($expected, $result, 'rules');
     }
@@ -231,66 +231,66 @@ class RewriteHelperTest extends GalleryTestCase {
  *
  * @package Rewrite
  * @subpackage PHPUnit
- */ 
+ */
 class RewriteHelperTestPlatform extends GalleryPlatform{
     var $_isWriteable;
     var $_isReadable;
     var $_fileExists;
     var $_previousContent;
-    var $_fileContent;
-    
+    var $_fileContent = null;
+
     function init() {
 	$this->_isWriteable = true;
 	$this->_isReadable = true;
 	$this->_fileExists = true;
 	$this->_previousContent = array();
     }
-    
+
     function setIsWriteable($value) {
 	$this->_isWriteable = $value;
     }
-    
+
     function setIsReadable($value) {
 	$this->_isReadable = $value;
     }
-    
+
     function setFileExists($value) {
 	$this->_fileExists = $value;
     }
-    
+
     function setPreviousContent($value) {
 	$this->_previousContent = $value;
     }
-    
+
     function file_exists($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return $this->_fileExists;
 	}
-	
+
 	return parent::file_exists($file);
     }
-    
+
     function is_readable($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return $this->_isReadable;
 	}
-	
+
 	return parent::is_readable($file);
     }
-    
+
     function is_writeable($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return $this->_isWriteable;
 	}
-	
+
 	return parent::is_writeable($file);
     }
-    
+
     function file($file) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
 	    return $this->_previousContent;
 	}
-	
+
 	return parent::file($file);
     }
 
@@ -299,24 +299,24 @@ class RewriteHelperTestPlatform extends GalleryPlatform{
 	    $this->_fileContent = '';
 	    return '.htaccess';
 	}
-	
+
 	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
     }
-    
+
     function fwrite($handle, $string, $length=null) {
 	if ($handle == '.htaccess') {
 	    $this->_fileContent .= $string;
 	    return strlen($string);
 	}
-	
+
 	return fwrite($handle, $string, $length);
     }
-    
+
     function fclose($handle) {
 	if ($handle == '.htaccess') {
 	    return true;
 	}
-	
+
 	return fclose($handle);
     }
 }
