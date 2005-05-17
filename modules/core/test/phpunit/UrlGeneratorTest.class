@@ -47,6 +47,9 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 
+	/* PHP/CGI sets PATH_INFO, but we don't want that for our tests */
+	unset($_SERVER['PATH_INFO']);
+
 	global $gallery;
 	$this->_savedSession = $gallery->_session;
 
@@ -248,7 +251,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* IIS.. no REQUEST_URI; has SCRIPT_NAME.. */
 	unset($_SERVER['REQUEST_URI']);
-	unset($_SERVER['PATH_INFO']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$expected = '/gallery2/phpunit_test.php';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(), 'iis');
@@ -264,7 +266,6 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	/* IIS.. no REQUEST_URI; has SCRIPT_NAME.. */
 	unset($_SERVER['REQUEST_URI']);
-	unset($_SERVER['PATH_INFO']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
 	unset($this->_urlGenerator->_currentUrl);
@@ -422,7 +423,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* Normal behaviour (php+apache) */
 	$this->assertEquals($expected, $this->_urlGenerator->getNavigationReturnUrl());
 
-	/* IIS: no REQUEST_URI, just SCRIPT_NAME */
+	/* IIS: no REQUEST_URI or PATH_INFO, just SCRIPT_NAME */
 	unset($_SERVER['REQUEST_URI']);
 	$_SERVER['SCRIPT_NAME'] = '/gallery2/phpunit_test.php';
 	unset($this->_urlGenerator->_currentUrl);
