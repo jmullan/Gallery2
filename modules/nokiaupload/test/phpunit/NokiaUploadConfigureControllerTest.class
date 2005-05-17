@@ -145,9 +145,15 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(in_array(
-	    array('userId' => 0, 'groupId' => $this->_groupId, 'permission' => 'core.addDataItem'),
-	    $perms), 'addDataItem permission');
+
+	$hasAddDataItem = false;
+	foreach ($perms as $perm) {
+	    if ($perm == array('userId' => 0, 'groupId' => $this->_groupId,
+			       'permission' => 'core.addDataItem')) {
+		$hasDataItem = true;
+	    }
+	}
+	$this->assert($hasDataItem, 'missing addDataItem permission');
     }
 }
 ?>
