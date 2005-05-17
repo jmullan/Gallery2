@@ -130,7 +130,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->testComments = !empty($moduleStatusList['comment']['active']);
-	// Comment permissions might be registered in db even though module isn't active:
+	/* Comment permissions might be registered in db even though module isn't active: */
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('comment.all');
 	$this->commentPermissionsExist = $ret->isSuccess();
     }
@@ -694,8 +694,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(1, sizeof($thumbTable[$ids[0]]));
-
+	$this->assertEquals(1, count($thumbTable), 'thumbnail table');
 	$thumbnail = $thumbTable[$ids[0]];
 	$this->assert(GalleryUtilities::isA($thumbnail, 'GalleryDerivative'));
 
