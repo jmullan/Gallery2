@@ -286,7 +286,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEventListener.c
  * @subpackage PHPUnit
  */
 class EntityTestEventListener extends GalleryEventListener {
-    var $_event;
+    var $_event = null;
 
     function handleEvent($event) {
 	$this->_event = $event;
