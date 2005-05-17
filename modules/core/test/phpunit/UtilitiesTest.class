@@ -1041,6 +1041,48 @@ class UtilitiesTest extends GalleryTestCase {
 	$this->assertEquals(array('/testcache/module/core/0/0' => ''), $this->_mkdir,
 			    'mkdir for cache, but without specific perms');
     }
+
+    function testRoundToString() {
+	$this->assertEquals('12', GalleryUtilities::roundToString(12.34), 'no decimal');
+	$this->assertEquals('12.34', GalleryUtilities::roundToString(12.3432, 2), 'decimal');
+
+	$currentLocale = setlocale(LC_ALL, '0');
+	foreach (array('de_DE', 'de_DE.ISO8859-1',
+		       'de_DE.ISO-8859-1', 'german') as $locale) {
+	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+		break;
+	    }
+	}
+	if (empty($newLocale)) {
+	    return $this->assert(false, 'Unable to select German locale');
+	}
+
+	$this->assertEquals('12', GalleryUtilities::roundToString(12.34), 'no decimal german');
+	$this->assertEquals('12.34', GalleryUtilities::roundToString(12.3432, 2), 'decimal german');
+
+	setlocale(LC_ALL, $currentLocale);
+    }
+
+    function testCastToFloat() {
+	$this->assertEquals(12.34, GalleryUtilities::castToFloat(12.34), 'no cast');
+	$this->assertEquals(12.34, GalleryUtilities::castToFloat('12.34'), 'string');
+
+	$currentLocale = setlocale(LC_ALL, '0');
+	foreach (array('de_DE', 'de_DE.ISO8859-1',
+		       'de_DE.ISO-8859-1', 'german') as $locale) {
+	    if (($newLocale = setlocale(LC_ALL, $locale)) !== false) {
+		break;
+	    }
+	}
+	if (empty($newLocale)) {
+	    return $this->assert(false, 'Unable to select German locale');
+	}
+
+	$this->assertEquals(12.34, GalleryUtilities::castToFloat(12.34), 'no cast german');
+	$this->assertEquals(12.34, GalleryUtilities::castToFloat('12.34'), 'string german');
+
+	setlocale(LC_ALL, $currentLocale);
+    }
 }
 
 /**

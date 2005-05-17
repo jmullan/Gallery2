@@ -551,7 +551,7 @@ class ToolkitTest extends GalleryTestCase {
 
 	$toolkit = new GalleryToolkit();
 
-	/* Rotate transform of cropped operation results in rotated coordinates*/
+	/* Rotate transform of cropped operation results in rotated coordinates */
 	list ($success, $result) =
 	    $toolkit->applyTransform('rotate|90', 'rotate|90;crop|15,20.5,40.62,50');
 	$this->assert($success);
