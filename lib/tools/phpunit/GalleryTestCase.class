@@ -196,7 +196,7 @@ class GalleryTestCase extends TestCase {
 	$this->_saveVars[] = $gallery->getUrlGenerator();
 	$this->_saveVars[] = $gallery->_config;
 	$this->_saveVars[] = $gallery->_phpVm;
-	$this->_saveVars[] = $gallery->_lockSystem;
+	$this->_saveVars[] = isset($gallery->_lockSystem) ? $gallery->_lockSystem : null;
 	$this->_saveVars[] = $gallery->_storage;
 
 	$_GET = array();
