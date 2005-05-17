@@ -88,9 +88,9 @@ class AlbumSelectTest extends GalleryTestCase {
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
 	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-				     'parentNode' => 0, 'depth' => 0),
-			       $template->data['AlbumSelectSystemContent']['tree']),
+	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+					    'parentNode' => 0, 'depth' => 0),
+				      $template->data['AlbumSelectSystemContent']['tree']),
 		      'album in tree');
     }
 
@@ -121,9 +121,9 @@ class AlbumSelectTest extends GalleryTestCase {
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
 	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-				     'parentNode' => 0, 'depth' => 0),
-			       $template->data['AlbumSelectSystemContent']['tree']),
+	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+					    'parentNode' => 0, 'depth' => 0),
+				      $template->data['AlbumSelectSystemContent']['tree']),
 		      'album in tree');
     }
 
@@ -154,10 +154,19 @@ class AlbumSelectTest extends GalleryTestCase {
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
 	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert(in_array(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-				     'parentNode' => 0, 'depth' => 0),
-			       $template->data['AlbumSelectSystemContent']['tree']),
+	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
+					    'parentNode' => 0, 'depth' => 0),
+				      $template->data['AlbumSelectSystemContent']['tree']),
 		      'album in tree');
+    }
+
+    function _inArray($needle, $haystack) {
+	foreach ($haystack as $hay) {
+	    if ($hay == $needle) {
+		return true;
+	    }
+	}
+	return false;
     }
 }
 
