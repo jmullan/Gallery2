@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -37,7 +37,7 @@ class GalleryPermissionHelper_simple {
      * Fetch all the access list ids that grant the given permission to the
      * given user (either directly or via a group).
      *
-     * @param string the permission (eg, 'core.view')
+     * @param string the permission id (eg, 'core.view')
      * @param int the user id
      * @return array object GalleryStatus a status code
      *               array int access list ids
@@ -47,7 +47,8 @@ class GalleryPermissionHelper_simple {
 
 	$cacheKey = "GalleryPermissionHelper::fetchAccessListIds($permission, $userId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	    list ($ret, $groupIds) =
+		GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -60,17 +61,17 @@ class GalleryPermissionHelper_simple {
 	    }
 
 	    $query = sprintf('
-            SELECT DISTINCT
-              [GalleryAccessMap::accessListId]
-            FROM
-              [GalleryAccessMap]
-            WHERE
-              ([GalleryAccessMap::userId] = ?
-              OR
-              [GalleryAccessMap::groupId] IN (%s))
-              AND
-              [GalleryAccessMap::permission] & ? = ?
-            ', $groupIdMarkers);
+	    SELECT DISTINCT
+	      [GalleryAccessMap::accessListId]
+	    FROM
+	      [GalleryAccessMap]
+	    WHERE
+	      ([GalleryAccessMap::userId] = ?
+	      OR
+	      [GalleryAccessMap::groupId] IN (%s))
+	      AND
+	      [GalleryAccessMap::permission] & ? = ?
+	    ', $groupIdMarkers);
 
 	    $storage =& $gallery->getStorage();
 
@@ -108,6 +109,7 @@ class GalleryPermissionHelper_simple {
     /**
      * Return the permission bits for a set of permission ids
      *
+     * @param array of string permission ids or single permission id
      * @return array object GalleryStatus a status code
      *               integer bits
      * @static
@@ -137,7 +139,7 @@ class GalleryPermissionHelper_simple {
     }
 
     /**
-     * Return a list of all available permissions 
+     * Return a list of all available permissions
      *
      * @return array object GalleryStatus a status code
      *               array ('permission' => array('module' => ...,
@@ -156,16 +158,16 @@ class GalleryPermissionHelper_simple {
 	    $permissions = array();
 
 	    $query = '
-            SELECT
-              [GalleryPermissionSetMap::module],
-              [GalleryPermissionSetMap::permission],
-              [GalleryPermissionSetMap::description],
-              [GalleryPermissionSetMap::bits],
-              [GalleryPermissionSetMap::flags]
-            FROM
-              [GalleryPermissionSetMap]
-            ';
-              
+	    SELECT
+	      [GalleryPermissionSetMap::module],
+	      [GalleryPermissionSetMap::permission],
+	      [GalleryPermissionSetMap::description],
+	      [GalleryPermissionSetMap::bits],
+	      [GalleryPermissionSetMap::flags]
+	    FROM
+	      [GalleryPermissionSetMap]
+	    ';
+
 	    list($ret, $searchResults) = $gallery->search($query);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
@@ -192,7 +194,7 @@ class GalleryPermissionHelper_simple {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
+
 		$permissions[$result[1]] = array('module' => $result[0],
 						 'permission' => $result[1],
 						 'description' => $description,

@@ -389,7 +389,7 @@ class GalleryCoreApi {
      * Fetch all the access list ids that grant the given permission to the
      * given user (either directly or via a group).
      *
-     * @param string the permission (eg, 'core.view')
+     * @param string the permission id (eg, 'core.view')
      * @param int the user id
      * @return array object GalleryStatus a status code
      *               array int access list ids
@@ -421,9 +421,10 @@ class GalleryCoreApi {
     }
 
     /**
-     * Assert that the given user has one of the specific permissions for the
-     * target item
+     * Assert that the current user has the specific permission for the target item
      *
+     * @param int item id
+     * @param string permission id
      * @return object GalleryStatus success if the user is an administrator
      *                              ERROR_PERMISSION_DENIED if not.
      * @static
@@ -434,9 +435,10 @@ class GalleryCoreApi {
     }
 
     /**
-     * Return true if the given user has the specific permission for the
-     * target item
+     * Return true if the current user has the specific permission for the target item
      *
+     * @param int item id
+     * @param string permission id
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      * @static
@@ -564,6 +566,7 @@ class GalleryCoreApi {
     /**
      * Return the permission bits for a set of permission ids
      *
+     * @param array of string permission ids or single permission id
      * @return array object GalleryStatus a status code
      *               integer bits
      * @static
@@ -604,6 +607,7 @@ class GalleryCoreApi {
     /**
      * Return all the permissions that the given user has for the given item.
      *
+     * @param int item id
      * @return array object GalleryStatus a status code
      *               array (perm1, perm2)
      * @static
@@ -1357,7 +1361,7 @@ class GalleryCoreApi {
      *
      * @access public
      * @param array item ids
-     * @param int permission id
+     * @param string permission id
      * @return array object GalleryStatus a status code
      *               array a list of ids
      * @static
@@ -1376,7 +1380,7 @@ class GalleryCoreApi {
      *
      * @access public
      * @param array item ids
-     * @param int permission id
+     * @param string permission id
      * @return array object GalleryStatus a status code
      *               array a list of ids
      * @static
@@ -2356,8 +2360,8 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      */
     function removeMimeType($mimeType) {
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
-        return GalleryMimeTypeHelper_advanced::removeMimeType($mimeType);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	return GalleryMimeTypeHelper_advanced::removeMimeType($mimeType);
     }
 
 
@@ -2372,10 +2376,10 @@ class GalleryCoreApi {
      * @return object GalleryStatus a status code
      */
     function addMimeType($extension, $mimeType, $viewable) {
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
-        return GalleryMimeTypeHelper_advanced::addMimeType($extension, $mimeType, $viewable);
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryMimeTypeHelper_advanced.class');
+	return GalleryMimeTypeHelper_advanced::addMimeType($extension, $mimeType, $viewable);
     }
-    
+
     /**
      * Fetch the web page at the given url.  Follow redirects to get the data and
      * upon completion return the http response, headers and the actual URL that we used to
@@ -2458,7 +2462,7 @@ class GalleryCoreApi {
 	static $loaded;
 	if (!isset($loaded[$file])) {
 	    $loaded[$file] = 1;
- 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/../../../' . $file);
 	}
     }
 
@@ -2474,7 +2478,7 @@ class GalleryCoreApi {
      * @static
      */
     function sendTemplatedEmail($file, $data, $from, $to, $subject) {
-        GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
 	return MailHelper_simple::sendTemplatedEmail($file, $data, $from, $to, $subject);
     }
 

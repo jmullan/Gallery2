@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -34,11 +34,12 @@
  * @subpackage Helpers
  */
 class GalleryUserHelper_simple {
-	
+
     /**
-     * Assert that the given user has one of the specific permissions for the
-     * target item
+     * Assert that the given user has one of the specific permissions for the target item
      *
+     * @param int item id
+     * @param string permission id
      * @return object GalleryStatus success if the user is an administrator
      *                              ERROR_PERMISSION_DENIED if not.
      * @static
@@ -52,7 +53,7 @@ class GalleryUserHelper_simple {
 
 	/* Use the active user id */
 	$userId = $gallery->getActiveUserId();
-	
+
 	list ($ret, $hasPermission) =
 	    GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
 	if ($ret->isError()) {
@@ -70,9 +71,10 @@ class GalleryUserHelper_simple {
     }
 
     /**
-     * Return true if the given user has the specific permission for the
-     * target item
+     * Return true if the given user has the specific permission for the target item
      *
+     * @param int item id
+     * @param string permission id
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      * @static
@@ -99,15 +101,15 @@ class GalleryUserHelper_simple {
 	 * hash lookup to see if it's in our valid aclid list.
 	 */
 	$query = sprintf('
-        SELECT
-          [GalleryAccessSubscriberMap::itemId]
-        FROM
-          [GalleryAccessSubscriberMap]
-        WHERE
-          [GalleryAccessSubscriberMap::itemId] = ?
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
-        ', $aclMarkers);
+	SELECT
+	  [GalleryAccessSubscriberMap::itemId]
+	FROM
+	  [GalleryAccessSubscriberMap]
+	WHERE
+	  [GalleryAccessSubscriberMap::itemId] = ?
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	', $aclMarkers);
 
 	$data = array($itemId);
 	$data = array_merge($data, $aclIds);
@@ -119,7 +121,7 @@ class GalleryUserHelper_simple {
 	}
 
 	$hasPermission = ($searchResults->resultCount() > 0);
-	
+
 	return array(GalleryStatus::success(), $hasPermission);
     }
 }
