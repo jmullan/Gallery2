@@ -1,0 +1,91 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package Shutterfly
+ * @subpackage PHPUnit
+ * @author Alan Harder <alan.harder@sun.com>
+ */
+
+/**
+ * Test Shutterfly cart plugin
+ *
+ * @package Shutterfly
+ * @subpackage PHPUnit
+ */
+class ShutterflyCartPluginTest extends GalleryTestCase {
+
+    function ShutterflyCartPluginTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	global $gallery;
+	parent::setUp();
+
+	/* Create some random photo items that we can print */
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($this->_album);
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $this->_items[$i]) =
+		$this->_createRandomDataItem($this->_album->getId(),
+					     'test/jpeg',
+					     array(),
+					     __FILE__,
+					     'GalleryPhotoItem');
+	    if ($ret->isError()) {
+		print $ret->getAsHtml();
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+    }
+
+    function testFulfillCart() {
+	global $gallery;
+
+	$cartItemIds = array();
+	for ($i = 0; $i < count($this->_items); $i++) {
+	    $cartItemIds[$this->_items[$i]->getId()] = $i+1;
+	}
+
+	GalleryCoreApi::relativeRequireOnce('modules/cart/classes/CartPluginInterface_1_0.class');
+	GalleryCoreApi::relativeRequireOnce(
+	    'modules/shutterfly/classes/ShutterflyCartPlugin.class');
+	$cartPlugin = new ShutterflyCartPlugin();
+	list ($ret, $urlParams) = $cartPlugin->fulfillCart($cartItemIds);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('view' => 'shutterfly:PrintPhotos', 'return' => 1), $urlParams);
+
+	$session =& $gallery->getSession();
+	$printCart = $session->get('shutterfly.cart');
+	$this->assertEquals($cartItemIds, $printCart, 'cart');
+	$session->remove('shutterfly.cart');
+    }
+}
+?>

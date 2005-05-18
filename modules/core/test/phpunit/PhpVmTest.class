@@ -1,0 +1,84 @@
+<?php
+/*
+ * $RCSfile$
+ *
+ * Gallery - a web based photo album viewer and editor
+ * Copyright (C) 2000-2005 Bharat Mediratta
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
+ * your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
+/**
+ * @version $Revision$ $Date$
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ * @author Jay Rossiter <cryptographite@users.sf.net>
+ */
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPhpVm.class');
+
+/**
+ * Test the GalleryPhpVm.  These are passthrough functions so all we do is perform a smoke test to
+ * make sure that the basic arguments are getting passed through correctly.
+ *
+ * @package GalleryCore
+ * @subpackage PHPUnit
+ */
+class PhpVmTest extends GalleryTestCase {
+
+    function PhpVmTest($methodName) {
+	$this->GalleryTestCase($methodName);
+    }
+
+    function setUp() {
+	parent::setUp();
+	$this->_phpVm = new GalleryPhpVm();
+    }
+
+    function testMd5() {
+	$this->assertEquals(md5('foobar'), $this->_phpVm->md5('foobar'),
+			    'PhpVm MD5 output doesn\'t match PHP output');
+    }
+
+    function testFunctionExists() {
+	$this->assertEquals(function_exists('testFunctionExists'),
+			    $this->_phpVm->function_exists('testFunctionExists'),
+			    'PhpVm function_exists output doesn\'t match PHP output');
+    }
+
+    function testIconv() {
+	if (function_exists('iconv')) {
+	    $this->assertEquals(
+		iconv('ISO-8859-1', 'UTF-8', 'foo bar'),
+		$this->_phpVm->iconv('ISO-8859-1', 'UTF-8', 'foo bar'));
+	}
+    }
+
+    function testMbConvertEncoding() {
+	if (function_exists('mb_convert_encoding')) {
+	    $this->assertEquals(
+		mb_convert_encoding('foo bar', 'ISO-8859-1', 'UTF8'),
+		$this->_phpVm->mb_convert_encoding('foo bar', 'ISO-8859-1', 'UTF8'));
+	}
+    }
+
+    function testRecodeString() {
+	if (function_exists('recode_string')) {
+	    $this->assertEquals(
+		recode_string('ISO-8859-1..UTF8', 'foo bar'),
+		$this->_phpVm->recode_string('ISO-8859-1..UTF8', 'foo bar'));
+	}
+    }
+}
+?>
