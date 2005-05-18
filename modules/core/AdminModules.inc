@@ -229,8 +229,7 @@ class AdminModulesView extends GalleryView {
 	    }
 
 	    $entry = array();
-	    $entry['name'] = $module->getName();
-	    $entry['l10Domain'] = 'modules_' . $moduleId;
+	    $entry['name'] = $module->translate($module->getName());
 	    $entry['action'] = array();
 	    $coreApiCompatible = GalleryUtilities::isCompatibleWithApi(
                 $module->getRequiredCoreApi(), GalleryCoreApi::getApiVersion());
@@ -301,7 +300,7 @@ class AdminModulesView extends GalleryView {
 		$entry['api']['provided']['core'] = join('.', GalleryCoreApi::getApiVersion());
 	    }
 
-	    $entry['description'] = $module->getDescription();
+	    $entry['description'] = $module->translate($module->getDescription());
 	    $entry['version'] = $module->getVersion();
 	    $entry['installedVersion'] = isset($status['version']) ? $status['version'] : null;
 	    $group = $module->getGroup();

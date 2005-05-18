@@ -97,7 +97,7 @@
 	</td>
 
 	<td>
-	  {g->text text=$module.description l10Domain=$module.l10Domain}
+	  {$module.description}
 	  {if $module.state == 'incompatible'}
 	    <br/>
 	    <span class="giError">

@@ -280,8 +280,8 @@ class AdminRewriteView extends GalleryView {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $AdminRewrite['shortUrls'][$moduleId] = array();
-		    $AdminRewrite['shortUrls'][$moduleId]['name'] = $module->getName();
+		    $AdminRewrite['shortUrls'][$moduleId] = array(
+			'name' => $module->translate($module->getName()));
 
 		    $rules = $module->getRewriteRules();
 
