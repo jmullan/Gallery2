@@ -1,4 +1,5 @@
     <h1><?php print _("Welcome") ?></h1>
     <p>
-      <?php print _(sprintf("Upgrading Gallery 2.0 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the <a href=\"../README.html\" target=\"_blank\">Help File</a> before proceeding.", $templateData['totalSteps'])) ?>
+      <?php printf(_("Upgrading Gallery 2.0 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the %sHelp File%s before proceeding."),
+	$templateData['totalSteps'], '<a href="../README.html" target="_blank">', '</a>') ?>
     </p>

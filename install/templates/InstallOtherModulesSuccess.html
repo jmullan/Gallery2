@@ -3,7 +3,7 @@
     <?php if (isset($templateData['activated'])): ?>
     <?php foreach ($templateData['activated'] as $moduleId => $moduleName): ?>
     <h2 class="success">
-      <?php print _(sprintf("Activated the <i>%s</i> module successfully", $moduleName)); ?>
+      <?php printf(_("Activated the <i>%s</i> module successfully"), $moduleName) ?>
     </h2>
     <?php endforeach; ?>
     <?php endif; ?>
@@ -11,7 +11,7 @@
     <?php if (isset($templateData['needsConfiguration'])): ?>
     <?php foreach ($templateData['needsConfiguration'] as $moduleId => $moduleName): ?>
     <h2 class="warning">
-      <?php print _(sprintf("The <i>%s</i> module was installed, but needs configuration to be activated", $moduleName)); ?>
+      <?php printf(_("The <i>%s</i> module was installed, but needs configuration to be activated"), $moduleName) ?>
     </h2>
     <?php endforeach; ?>
     <p>
