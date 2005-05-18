@@ -77,7 +77,7 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['installed'] = $module->getName();
+		$status['installed'] = $module->translate($module->getName());
 		$status['autoConfigured'] = $autoConfigured;
 		break;
 		
@@ -89,7 +89,7 @@ class AdminModulesController extends GalleryController {
 
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModules';
-		$status['upgraded'] = $module->getName();
+		$status['upgraded'] = $module->translate($module->getName());
 		break;
 		
 	    case 'activate':
@@ -102,7 +102,8 @@ class AdminModulesController extends GalleryController {
 		
 		    /* Can't activate if we need to be configured! */
 		    if ($needsConfiguration) {
-			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+			return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__),
+				     null);
 		    }
 		
 		    list ($ret, $redirect) = $module->activate();
@@ -114,7 +115,7 @@ class AdminModulesController extends GalleryController {
 			$redirect['view'] = 'core:SiteAdmin';
 			$redirect['subView'] = 'core:AdminModules';
 		    }
-		    $status['activated'] = $module->getName();
+		    $status['activated'] = $module->translate($module->getName());
 		}
 		break;
 		
@@ -129,7 +130,7 @@ class AdminModulesController extends GalleryController {
 			$redirect['view'] = 'core:SiteAdmin';
 			$redirect['subView'] = 'core:AdminModules';
 		    }
-		    $status['deactivated'] = $module->getName();
+		    $status['deactivated'] = $module->translate($module->getName());
 		}
 		break;
 
@@ -138,7 +139,7 @@ class AdminModulesController extends GalleryController {
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminModulesVerifyUninstall';
 		$redirect['moduleId'] = $module->getId();
-		$status['uninstalled'] = $module->getName();
+		$status['uninstalled'] = $module->translate($module->getName());
 		break;
 		
 	    default:
