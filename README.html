@@ -272,11 +272,22 @@
     </p>
 
     <h3>
+      Highlight of changes in Gallery 2 (Next Release)
+      <span id="beta4-toggle" class="toggle"
+       onclick="toggle('beta4-list', 'beta4-toggle')"> - </span>
+    </h3>
+    <ol id="beta4-list">
+      <li>
+	<b> Localization </b> - The installer and upgrader can now be localized.
+      </li>
+    </ol>
+
+    <h3>
       Highlight of changes in Gallery 2 Beta 3 (Bingo!)
       <span id="beta3-toggle" class="toggle"
-       onclick="toggle('beta3-list', 'beta3-toggle')"> - </span>
+       onclick="toggle('beta3-list', 'beta3-toggle')"> + </span>
     </h3>
-    <ol id="beta3-list">
+    <ol id="beta3-list" style="display:none">
       <li>
 	<b> New Modules </b>
 	<ul>
@@ -1490,12 +1501,6 @@
 	do not work together in the same .htaccess file (Gallery 2 is installed where
 	Gallery 1 used to be). In future these will be compatible.
       </li>
-      <li>
-	<b>Local Server Upload</b> - Files which contain "[]" characters cannot
-	currently be selected for upload from the local server.  If the file containing
-	the "[]" characters is contained inside a directory that is being added
-	recursively, there is no issue.  This will be addressed soon after beta-3.
-      </li>
     </ol>
 
     <h2><a name="updating">Updating your Gallery 2 Installation</a></h2>
@@ -1567,7 +1572,7 @@
 
     <p>
       <b> For Developers </b> - We've gotten started on some <a
-      href="http://gallery.menalto.com/modules.php?op=modload&name=phpWiki&file=index&pagename=Development%20Documents">developer documentation</a>
+      href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Development%20Documents">developer documentation</a>
       that you should read if you want to start hacking on Gallery 2.  Some of the
       information is a little bit out of date or in early drafts, but it's a start.
     </p>
@@ -1586,14 +1591,10 @@
 
     <a href="http://gallery.sourceforge.net"><img
       src="images/gallery.gif"
-      alt="Gallery 2.0 beta-3 (Bingo!)"
-      title="Gallery 2.0 beta-3 (Bingo!)"
+      alt="Gallery 2.0 beta-3+"
+      title="Gallery 2.0 beta-3+"
       style="border: none" width="80" height="15"/></a>
 
-    <img
-      src="modules/core/data/g2b3-bingo.png"
-      alt="Gallery 2.0 beta-3 (Bingo!)"
-      style="border: none" width="80" height="15"/>
     <hr />
 
     <p class="fineprint">
