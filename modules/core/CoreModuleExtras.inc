@@ -678,6 +678,7 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    $allUserGroupName = $group->getGroupName();
+	    /* We used to entitize data in db; expect that from orignal group name: */
 	    $originalGroupName = GalleryUtilities::utf8ToUnicodeEntities(
 		$module->translate('All Users'));
 	    if (!strcmp($allUserGroupName, $originalGroupName)) {
@@ -818,7 +819,7 @@ class CoreModuleExtras {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
 	$group = new GalleryGroup();
 
-	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Site Admins'));
+	$groupName = $module->translate('Site Admins');
 	$ret = $group->create($groupName, GROUP_SITE_ADMINS);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -859,7 +860,7 @@ class CoreModuleExtras {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryGroup.class');
 	$group = new GalleryGroup();
 
-	$groupName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Everybody'));
+	$groupName = $module->translate('Everybody');
 	$ret = $group->create($groupName, GROUP_EVERYBODY);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -900,8 +901,8 @@ class CoreModuleExtras {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
 	$user = new GalleryUser();
 
-	$userName = GalleryUtilities::utf8ToUnicodeEntities('guest');
-	$fullName = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Guest'));
+	$userName = 'guest';
+	$fullName = $module->translate('Guest');
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -958,9 +959,8 @@ class CoreModuleExtras {
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryUser.class');
 	$user = new GalleryUser();
 
-	$userName = GalleryUtilities::utf8ToUnicodeEntities('admin');
-	$fullName = GalleryUtilities::utf8ToUnicodeEntities(
-		    $module->translate('Gallery Administrator'));
+	$userName = 'admin';
+	$fullName = $module->translate('Gallery Administrator');
 	$ret = $user->create($userName);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -1011,9 +1011,8 @@ class CoreModuleExtras {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$title = GalleryUtilities::utf8ToUnicodeEntities($module->translate('Gallery'));
-	$description = GalleryUtilities::utf8ToUnicodeEntities(
-	    $module->translate('This is the main page of your Gallery'));
+	$title = $module->translate('Gallery');
+	$description = $module->translate('This is the main page of your Gallery');
 	$album->setTitle($title);
 	$album->setDescription($description);
 

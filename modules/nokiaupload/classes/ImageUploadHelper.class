@@ -333,7 +333,7 @@ class ImageUploadHelper {
 							  'Caption', 'Desc');
 
 	if (empty($file) || empty($itemName) || empty($mimeType) ||
-	        empty($albumId) || !is_numeric($albumId)) {
+		empty($albumId) || !is_numeric($albumId)) {
 	    $gallery->debug('ERROR: Missing required parameter.');
 	    return $status;
 	}
@@ -501,8 +501,7 @@ class ImageUploadHelper {
 	}
 
 	/* Choose a name for the album. Hopefully it's unique.*/
-	$albumName = GalleryUtilities::utf8ToUnicodeEntities(
-					   $module->translate('nokia-image-upload-album'));
+	$albumName = $module->translate('nokia-image-upload-album');
 	$ret = $album->create($parentId, $albumName);
 	if ($ret->isError()) {
 	    GalleryCoreApi::releaseLocks($lockId);
@@ -513,15 +512,14 @@ class ImageUploadHelper {
 	$urlGen =& $gallery->getUrlGenerator();
 	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload:Login'), false);
 
-	$title = GalleryUtilities::utf8ToUnicodeEntities($title);
-	$summary = GalleryUtilities::utf8ToUnicodeEntities($module->translate(
+	$summary = $module->translate(
 	    'To upload to this album you need Image Uploader enabled mobile phone '
-	    . '(e.g. Nokia 3650 and 6600). See album description for more details.'));
-	$description = GalleryUtilities::utf8ToUnicodeEntities($module->translate(
+	    . '(e.g. Nokia 3650 and 6600). See album description for more details.');
+	$description = $module->translate(
 	    'You can upload images to this album from your Image Uploader enabled mobile phone '
 	    . "(e.g. Nokia 3650 and 6600) using the phone's built-in Image Uploader. "
 	    . 'New albums will be created under this folder. Web address is ') . "$url\n" .
-	    $module->translate('Username and Password are your Gallery 2 username and password.'));
+	    $module->translate('Username and Password are your Gallery 2 username and password.');
 
 	$album->setTitle($title);
 	$album->setSummary($summary);
