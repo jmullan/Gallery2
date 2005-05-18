@@ -35,7 +35,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
     function UserAlbumModule() {
 	global $gallery;
 	$this->setId('useralbum');
-	$this->setName('User Albums');
+	$this->setName($gallery->i18n('User Albums'));
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));
@@ -126,14 +126,14 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'albumId', $userId);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}   
-		    
+		}
+
 		list ($ret, $createMode) =
 		    GalleryCoreApi::getPluginParameter('module', 'useralbum', 'create');
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}   
-		    
+		}
+
 		if (!empty($albumId) || (empty($albumId) && $createMode == 'access')) {
 		    $links[] = array('text' => $this->translate('Your Album'),
 				     'params' => array('controller' => 'useralbum:UserAlbum'));

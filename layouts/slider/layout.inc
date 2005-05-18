@@ -42,7 +42,7 @@ class SliderLayout extends GalleryLayout {
 	global $gallery;
 
 	$this->setId('slider');
-	$this->setName('Slider');
+	$this->setName($gallery->i18n('Slider'));
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
 	$this->setVersion('0.10.1');

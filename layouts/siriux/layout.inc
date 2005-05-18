@@ -40,7 +40,7 @@ class SiriuxLayout extends GalleryLayout {
 	global $gallery;
 
 	$this->setId('siriux');
-	$this->setName('Siriux');
+	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery layout'));
 	$this->setVersion('0.9.3');
 	$this->setL10Domain('layouts_siriux');

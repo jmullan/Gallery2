@@ -41,7 +41,7 @@ class TileLayout extends GalleryLayout {
 	global $gallery;
 
 	$this->setId('tile');
-	$this->setName('Tile');
+	$this->setName($gallery->i18n('Tile'));
 	$this->setDescription($gallery->i18n('Tile view of background image and image thumbnails; subalbums/other items not shown'));
 	$this->setVersion('0.9.3');
 	$this->setL10Domain('layouts_tile');
@@ -69,7 +69,7 @@ class TileLayout extends GalleryLayout {
 	    }
 	    $params['bgSerialNumber'] = $bgImage->getSerialNumber();
 	}
-	
+
 	$map = array();
 	for ($i = 0; $i < $params['rows']; $i++) {
 	    for ($j = 0; $j < $params['cols']; $j++) {
@@ -153,7 +153,7 @@ class TileLayout extends GalleryLayout {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	
+
 	/* Init view with specific image */
 	$layout =& $template->getVariableByReference('layout');
 	foreach ($layout['children'] as $tmp) {
@@ -253,7 +253,7 @@ class TileLayout extends GalleryLayout {
 		$children[$i]['image'] = $image;
 		$children[$i]['imageIndex'] = count($imageWidths);
 		if (GalleryUtilities::isExactlyA($child, 'GalleryPhotoItem') &&
-		        $image['width'] > 0 && $image['height'] > 0) {
+			$image['width'] > 0 && $image['height'] > 0) {
 		    /* Display in <img> */
 		    $imageWidths[] = $image['width'];
 		    $imageHeights[] = $image['height'];
@@ -291,7 +291,7 @@ class TileLayout extends GalleryLayout {
      * @see GalleryLayout::loadSettingsTemplate
      */
     function loadSettingsTemplate(&$template, &$form, $itemId=null) {
-        if (!isset($itemId)) {
+	if (!isset($itemId)) {
 	    /* Site admin settings -- we have none. */
 	    return array(GalleryStatus::success(), null);
 	}

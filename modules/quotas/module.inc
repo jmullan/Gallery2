@@ -36,7 +36,7 @@ class QuotasModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('quotas');
-	$this->setName('Quotas');
+	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
 	$this->setVersion('0.9.0');
 	$this->setGroup('gallery', $this->translate('Gallery'));
@@ -71,23 +71,23 @@ class QuotasModule extends GalleryModule {
      * @see GalleryModule::getSiteAdminViews
      */
     function getSiteAdminViews() {
-        return array(GalleryStatus::success(),
-	             array(array('name' => $this->translate('Quotas'),
-		                 'view' => 'quotas:AdminQuotas')));
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Quotas'),
+				 'view' => 'quotas:AdminQuotas')));
     }
 
     /**
      * @see GalleryModule::performFactoryRegistrations()
      */
     function performFactoryRegistrations() {
-        $ret = GalleryCoreApi::registerFactoryImplementation(
-            'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
-            'modules/quotas/DiskQuotaOption.inc', 'diskquota', null);
-        if ($ret->isError()) {
-            return $ret->wrap(__FILE__, __LINE__);
-        }
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'ItemAddOption', 'DiskQuotaOption', 'DiskQuotaOption',
+	    'modules/quotas/DiskQuotaOption.inc', 'diskquota', null);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
 
-        return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 
     /**
@@ -101,23 +101,22 @@ class QuotasModule extends GalleryModule {
 	if ($event->getEventName() == 'GalleryEntity::delete') {
 	    $entity = $event->getEntity();
 
-	    
-	    if (GalleryUtilities::isA($entity, 'GalleryGroup') || 
-	        GalleryUtilities::isA($entity, 'GalleryUser')) {
+	    if (GalleryUtilities::isA($entity, 'GalleryGroup') ||
+		GalleryUtilities::isA($entity, 'GalleryUser')) {
 		GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/QuotasMap.class');
-		GalleryCoreApi::requireOnce(dirname(__FILE__) . 
+		GalleryCoreApi::requireOnce(dirname(__FILE__) .
 					    '/classes/GalleryQuotasHelper.class');
 
 		/* If its a group, find if a group quota exists, if so delete it */
 		if (GalleryUtilities::isA($entity, 'GalleryGroup')) {
-		    list ($ret, $quotaExists, $groupQuota) = 
+		    list ($ret, $quotaExists, $groupQuota) =
 			GalleryQuotasHelper::fetchGroupQuota($entity->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		/* If its a user, find if a user quota exists, if so delete it */
 		} else if (GalleryUtilities::isA($entity, 'GalleryUser')) {
-		    list ($ret, $quotaExists, $userQuota) = 
+		    list ($ret, $quotaExists, $userQuota) =
 			GalleryQuotasHelper::fetchUserQuota($entity->getId());
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);

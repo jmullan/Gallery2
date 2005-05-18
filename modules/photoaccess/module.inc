@@ -36,7 +36,7 @@ class PhotoAccessModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('photoaccess');
-	$this->setName('PhotoAccess');
+	$this->setName($gallery->i18n('PhotoAccess'));
 	$this->setDescription($gallery->i18n('PhotoAccess Photo Printing Module'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));

@@ -38,7 +38,7 @@ class DcrawModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('dcraw');
-	$this->setName('Dcraw');
+	$this->setName($gallery->i18n('Dcraw'));
 	$this->setDescription($gallery->i18n('Dcraw Graphics Toolkit'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));

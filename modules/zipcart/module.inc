@@ -36,7 +36,7 @@ class ZipCartModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('zipcart');
-	$this->setName('Zip Download');
+	$this->setName($gallery->i18n('Zip Download'));
 	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));

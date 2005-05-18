@@ -38,7 +38,7 @@ class DebugModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('debug');
-	$this->setName('Debugging');
+	$this->setName($gallery->i18n('Debugging'));
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));

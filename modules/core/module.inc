@@ -36,7 +36,7 @@ class CoreModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('core');
-	$this->setName('Core');
+	$this->setName($gallery->i18n('Core'));
 	$this->setGalleryVersion('2.0-beta-2+');
 	$this->setVersion('0.9.16'); /* Update CoreModuleExtras::upgrade also! */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));

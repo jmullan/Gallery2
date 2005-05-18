@@ -35,7 +35,7 @@ class RandomHighlightModule extends GalleryModule {
     function RandomHighlightModule() {
 	global $gallery;
 	$this->setId('randomhighlight');
-	$this->setName('Random Highlight');
+	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
 	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));

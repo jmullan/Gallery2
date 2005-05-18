@@ -36,7 +36,7 @@ class MembersModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('members');
-	$this->setName('Members');
+	$this->setName($gallery->i18n('Members'));
 	$this->setDescription($gallery->i18n('Members List and Profiles'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));

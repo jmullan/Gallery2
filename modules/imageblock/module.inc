@@ -35,7 +35,7 @@ class ImageBlockModule extends GalleryModule {
     function ImageBlockModule() {
 	global $gallery;
 	$this->setId('imageblock');
-	$this->setName('Image Block');
+	$this->setName($gallery->i18n('Image Block'));
 	$this->setDescription($gallery->i18n('Random, Most Recent or Most Viewed Photo or Album'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('blocks', $this->translate('Blocks'));

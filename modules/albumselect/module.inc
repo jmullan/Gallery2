@@ -36,7 +36,7 @@ class AlbumSelectModule extends GalleryModule {
     function AlbumSelectModule() {
 	global $gallery;
 	$this->setId('albumselect');
-	$this->setName('Album Select');
+	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
 	$this->setVersion('0.9.3');

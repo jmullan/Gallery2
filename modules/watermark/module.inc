@@ -38,7 +38,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	global $gallery;
 
 	$this->setId('watermark');
-	$this->setName('Watermark');
+	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
 	$this->setVersion('0.9.3'); /* Update upgrade() too */
 	$this->setGroup('display', $this->translate('Display'));

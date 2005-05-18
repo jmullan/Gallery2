@@ -30,7 +30,7 @@ class UploadAppletModule extends GalleryModule {
     function UploadAppletModule() {
 	global $gallery;
 	$this->setId('uploadapplet');
-	$this->setName('Upload Applet');
+	$this->setName($gallery->i18n('Upload Applet'));
 	$this->setDescription($gallery->i18n('Easy to use upload applet for media'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('import', $this->translate('Import'));

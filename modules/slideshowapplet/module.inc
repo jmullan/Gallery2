@@ -30,7 +30,7 @@ class SlideshowAppletModule extends GalleryModule {
     function SlideshowAppletModule() {
 	global $gallery;
 	$this->setId('slideshowapplet');
-	$this->setName('Slideshow Applet');
+	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
 	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));

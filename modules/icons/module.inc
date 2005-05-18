@@ -35,7 +35,7 @@ class IconsModule extends GalleryModule {
     function IconsModule() {
 	global $gallery;
 	$this->setId('icons');
-	$this->setName('Icons');
+	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
 	$this->setVersion('0.9.0');
 	$this->setGroup('display', $this->translate('Display'));

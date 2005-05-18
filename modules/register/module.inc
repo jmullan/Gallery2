@@ -36,7 +36,7 @@ class RegisterModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('register');
-	$this->setName('Registration');
+	$this->setName($gallery->i18n('Registration'));
 	$this->setDescription($gallery->i18n('New User Registration'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));

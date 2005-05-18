@@ -38,7 +38,7 @@ class SearchModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('search');
-	$this->setName('Search');
+	$this->setName($gallery->i18n('Search'));
 	$this->setDescription($gallery->i18n('Search your Gallery'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));

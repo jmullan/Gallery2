@@ -35,7 +35,7 @@ class RearrangeModule extends GalleryModule {
     function RearrangeModule() {
 	global $gallery;
 	$this->setId('rearrange');
-	$this->setName('Rearrange');
+	$this->setName($gallery->i18n('Rearrange'));
 	$this->setDescription($gallery->i18n('Rearrange the order of album items all at once'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));

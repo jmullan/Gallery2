@@ -35,7 +35,7 @@ class SlideshowModule extends GalleryModule {
     function SlideshowModule() {
 	global $gallery;
 	$this->setId('slideshow');
-	$this->setName('Slideshow');
+	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('display', $this->translate('Display'));

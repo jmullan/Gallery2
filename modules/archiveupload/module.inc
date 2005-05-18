@@ -39,7 +39,7 @@ class ArchiveUploadModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('archiveupload');
-	$this->setName('Archive Upload');
+	$this->setName($gallery->i18n('Archive Upload'));
 	$this->setDescription($gallery->i18n('Extract items from uploaded zip files'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('import', $this->translate('Import'));

@@ -36,7 +36,7 @@ class CartModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('cart');
-	$this->setName('Cart');
+	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('commerce', $this->translate('Commerce'));

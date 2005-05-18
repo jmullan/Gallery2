@@ -38,7 +38,7 @@ class CommentModule extends GalleryModule {
 	global $gallery;
 
 	$this->setId('comment');
-	$this->setName('Comments');
+	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
 	$this->setVersion('0.9.1');
 	$this->setGroup('data', $this->translate('Extra Data'));
@@ -301,20 +301,20 @@ class CommentModule extends GalleryModule {
      * @see GalleryModule::getRewriteRules
      */
     function getRewriteRules() {
-    	$rules = array();
-    	
+	$rules = array();
+
 	$rule = array();
 	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:AddComment');
 	$rule['pattern'] = 'c/add/%itemId%.html';
 	$rule['comment'] = $this->translate('Add Comment');
 	$rules[] = $rule;
-	
+
 	$rule = array();
 	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:ShowComments');
 	$rule['pattern'] = 'c/view/%itemId%.html';
 	$rule['comment'] = $this->translate('View Comments');
 	$rules[] = $rule;
-	
+
 	return $rules;
     }
 }

@@ -40,7 +40,7 @@ class ClassicLayout extends GalleryLayout {
 	global $gallery;
 
 	$this->setId('classic');
-	$this->setName('Classic');
+	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription(
 	    $gallery->i18n('Columns for thumbnails, item info and links to subalbums'));
 	$this->setVersion('0.9.2');
