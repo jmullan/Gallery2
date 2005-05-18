@@ -37,8 +37,8 @@ class CoreModule extends GalleryModule {
 
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
-	$this->setGalleryVersion('2.0-beta-2+');
-	$this->setVersion('0.9.16'); /* Update CoreModuleExtras::upgrade also! */
+	$this->setGalleryVersion('2.0-beta-3');
+	$this->setVersion('0.9.17'); /* Update CoreModuleExtras::upgrade also! */
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .

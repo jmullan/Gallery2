@@ -694,6 +694,9 @@ class CoreModuleExtras {
 		}
 	    }
 
+	case '0.9.16':
+	    /* Beta 3 release! */ 
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we
