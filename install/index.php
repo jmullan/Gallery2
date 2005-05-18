@@ -44,13 +44,23 @@ require_once(dirname(__FILE__) . '/InstallStep.class');
 require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUtilities.class');
 
 /*
- * if gettext isn't enabled, subvert the _() text translation function
+ * If gettext isn't enabled, subvert the _() text translation function
  * and just pass the string on through in English
  */
 if (!function_exists('_')) {
     function _($s) {
 	return $s;
     }
+}
+
+if (function_exists('dgettext') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    /* Select language based on preferences sent from browser */
+    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryStatus.class');
+    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryTranslator.class');
+    $translator = new GalleryTranslator();
+    $translator->init();
+    bindtextdomain('gallery2_install', dirname(__FILE__) . '/locale');
+    textdomain('gallery2_install');
 }
 
 /* Our install steps, in order */

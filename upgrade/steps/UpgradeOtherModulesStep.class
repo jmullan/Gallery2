@@ -66,11 +66,16 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    foreach (array_keys($moduleList) as $moduleId) {
 		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
 		if ($ret->isError()) {
+		    $this->resetL10Domain();
 		    $templateData['errors'][] =
 			sprintf(_('Unable to load the %s module'), $moduleId);
 		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		} else {
+		    $modulePlugin->setName($modulePlugin->translate($modulePlugin->getName()));
+		    $modulePlugin->setDescription(
+			$modulePlugin->translate($modulePlugin->getDescription()));
 		    $modules[$moduleId] = $modulePlugin;
+		    $this->resetL10Domain();
 		}
 	    }
 
@@ -88,6 +93,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		      isset($_REQUEST['module'][$moduleId]) &&
 		      $moduleIsUpgradeable[$moduleId]) {
 		    $ret = $module->installOrUpgrade();
+		    $this->resetL10Domain();
 		    if ($ret->isError()) {
 			if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
 			    $templateData['needsConfig'][] =
@@ -115,11 +121,16 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    foreach (array_keys($layoutList) as $layoutId) {
 		list ($ret, $layoutPlugin) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
 		if ($ret->isError()) {
+		    $this->resetL10Domain();
 		    $templateData['errors'][] =
 			sprintf(_('Unable to load the %s layout'), $layoutId);
 		    $templateData['stackTrace'] .= $ret->getAsHtml();
 		} else {
+		    $layoutPlugin->setName($layoutPlugin->translate($layoutPlugin->getName()));
+		    $layoutPlugin->setDescription(
+			$layoutPlugin->translate($layoutPlugin->getDescription()));
 		    $layouts[$layoutId] = $layoutPlugin;
+		    $this->resetL10Domain();
 		}
 	    }
 
@@ -136,6 +147,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		      isset($_REQUEST['module'][$layoutId]) &&
 		      $moduleIsUpgradeable[$layoutId]) {
 		    $ret = $layout->installOrUpgrade();
+		    $this->resetL10Domain();
 		    if ($ret->isError()) {
 			$templateData['errors'][] =
 			    sprintf(_('Unable to upgrade the %s layout'), $layout->getName());

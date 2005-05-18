@@ -43,7 +43,7 @@ require_once(dirname(__FILE__) . '/UpgradeStep.class');
 require_once(dirname(__FILE__) . '/StatusTemplate.class');
 
 /*
- * if gettext isn't enabled, subvert the _() text translation function
+ * If gettext isn't enabled, subvert the _() text translation function
  * and just pass the string on through in English
  */
 if (!function_exists('_')) {
@@ -87,6 +87,12 @@ $ret = GalleryInitFirstPass(array('debug' => 'buffered', 'noDatabase' => 1));
 if ($ret->isError()) {
     print $ret->getAsHtml();
     return;
+}
+
+if (function_exists('dgettext')) {
+    /* Select domain for translation */
+    bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
+    textdomain('gallery2_upgrade');
 }
 
 /* We want to avoid using the cache */
@@ -160,7 +166,7 @@ if ($currentStep->processRequest()) {
     /* Round percentage to the nearest 5 */
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
-    
+
     /* Fetch our page into a variable */
     ob_start();
     $template = new StatusTemplate();
