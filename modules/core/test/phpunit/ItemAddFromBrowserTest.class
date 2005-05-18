@@ -65,13 +65,13 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 
     function testAddChildrenFromBrowser() {
 	global $gallery;
+	$platform = $gallery->getPlatform();
 
 	/* Use valid inputs */
 	GalleryUtilities::putRequestVariable('form[action][addFromBrowser]', 1);
 
-	$platform = $gallery->getPlatform();
 	$baseDir = dirname(__FILE__) . '/../data/';
-	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif');
+	$files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif');
 	$i = 0;
 	foreach ($files as $file) {
 	    $i++;
@@ -108,15 +108,16 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	foreach ($files as $file) {
 	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName']);
 	    $this->assert(isset($results[1]['addedFiles'][$i]['id']));
+	    $ids[] = $results[1]['addedFiles'][$i]['id'];
 	    $i++;
 	}
 
 	/* Verify item attributes (like order weight) */
-	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
+	list ($ret, $itemIds) = GalleryCoreApi::fetchChildItemIds($this->_rootAlbum);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(4, count($ids), 'child count');
+	$this->assertEquals(4, count($itemIds), 'child count');
 
 	$seenWeights = array();
 	foreach ($ids as $id) {
@@ -139,14 +140,16 @@ class ItemAddFromBrowserTest extends ItemAddPluginTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
+	$i = 0;
 	foreach ($items as $item) {
-	    list ($base, $extension) =
-		GalleryUtilities::getFileNameComponents($item->getPathComponent());
+	    $this->assertEquals($platform->legalizePathComponent($files[$i]),
+				$item->getPathComponent(), 'path component');
+	    list ($base, $extension) = GalleryUtilities::getFileNameComponents($files[$i]);
 	    $this->assertEquals($base, $item->getTitle(), 'title');
-	    $value = $item->getSummary();
-	    $this->assert(!empty($value), 'summary');
-	    $value = $item->getDescription();
-	    $this->assert(!empty($value), 'description');
+	    $this->assertEquals('this is a caption for ' . $files[$i],
+				$item->getSummary(), 'summary');
+	    $this->assertEquals('this is a caption for ' . $files[$i++],
+				$item->getDescription(), 'description');
 	}
     }
 

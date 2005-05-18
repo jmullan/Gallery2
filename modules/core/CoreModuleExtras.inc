@@ -86,7 +86,6 @@ class CoreModuleExtras {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
 			   'permissions.file' => '0644',
-			   'uploadLocalServer.dirs' => '',
 			   'exec.expectedStatus' => '0',
 			   'default.orderBy' => 'orderWeight',
 			   'default.orderDirection' => '1',
@@ -696,6 +695,26 @@ class CoreModuleExtras {
 
 	case '0.9.16':
 	    /* Beta 3 release! */ 
+
+	case '0.9.17':
+	    /* Split uploadLocalServer.dirs list into one parameter per entry */
+	    list ($ret, $dirList) = $module->getParameter('uploadLocalServer.dirs');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    if (!empty($dirList)) {
+		$dirList = explode(',', $dirList);
+		for ($i = 1; $i <= count($dirList); $i++) {
+		    $ret = $module->setParameter('uploadLocalServer.dir.' . $i, $dirList[$i - 1]);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+	    }
+	    $ret = $module->removeItemParameter('uploadLocalServer.dirs', 0);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 
 	case 'end of upgrade path':
 	    /*

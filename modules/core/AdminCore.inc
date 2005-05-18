@@ -46,13 +46,10 @@ class AdminCoreController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$localServerDirList = split(',', $localServerDirs);
 
 	$error = array();
 	$status = array();
@@ -75,42 +72,33 @@ class AdminCoreController extends GalleryController {
 	    }
 
 	    if (empty($error)) {
-		if (!in_array($realpath, $localServerDirList)) {
-		    $localServerDirList[] = $realpath;
-		}
+		for ($i = 1; !empty($param['uploadLocalServer.dir.' . $i])
+			  && ($param['uploadLocalServer.dir.' . $i] != $realpath); $i++) { }
 
-		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
-		    if (empty($localServerDirList[$i])) {
-			unset($localServerDirList[$i]);
+		if (empty($param['uploadLocalServer.dir.' . $i])) {
+		    $ret = GalleryCoreApi::setPluginParameter(
+			'module', 'core', 'uploadLocalServer.dir.' . $i, $realpath);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		}
-
-		$ret = GalleryCoreApi::setPluginParameter(
-		    'module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
-		if ($ret->isError()) {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
+		    $status['addedDir'] = 1;
 		}
 		$canSave = true;
-		$status['addedDir'] = 1;
 		$redirect['view'] = 'core:SiteAdmin';
 		$redirect['subView'] = 'core:AdminCore';
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
 	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
-		$path = $form['uploadLocalServer']['selectedDir'];
-		$flip = array_flip($localServerDirList);
-		if (isset($flip[$path])) {
-		    unset($flip[$path]);
-		}
-		$localServerDirList = array_flip($flip);
-
-		for ($i = 0; $i < sizeof($localServerDirList); $i++) {
-		    if (empty($localServerDirList[$i])) {
-			unset($localServerDirList[$i]);
+		for ($i = $form['uploadLocalServer']['selectedDir'] + 1;
+			!empty($param['uploadLocalServer.dir.' . $i]); $i++) {
+		    $ret = GalleryCoreApi::setPluginParameter('module', 'core',
+			'uploadLocalServer.dir.' . ($i - 1), $param['uploadLocalServer.dir.' . $i]);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
-		$ret = GalleryCoreApi::setPluginParameter(
-		    'module', 'core', 'uploadLocalServer.dirs', join(',', $localServerDirList));
+		$ret = GalleryCoreApi::removePluginParameter('module', 'core',
+							     'uploadLocalServer.dir.' . ($i - 1));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -262,16 +250,13 @@ class AdminCoreView extends GalleryView {
 	}
 
 	/* Get the list of legal local server dirs */
-	list ($ret, $localServerDirs) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$localServerDirList = split(',', $localServerDirs);
-	for ($i = 0; $i < sizeof($localServerDirList); $i++) {
-	    if (empty($localServerDirList[$i])) {
-		unset($localServerDirList[$i]);
-	    }
+	$localServerDirList = array();
+	for ($i = 1; !empty($param['uploadLocalServer.dir.' . $i]); $i++) {
+	    $localServerDirList[$i] = $param['uploadLocalServer.dir.' . $i];
 	}
 
 	$platform = $gallery->getPlatform();

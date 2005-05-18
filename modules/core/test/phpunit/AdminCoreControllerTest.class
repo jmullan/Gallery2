@@ -63,7 +63,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
-	    list ($outer, $inner) = split('\.', $key);
+	    list ($outer, $inner) = explode('.', $key);
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	}
@@ -92,8 +92,19 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', dirname(__FILE__));
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs', 'a,b,c');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2', 'b');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.4');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -108,9 +119,14 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	GalleryDataCache::reset();
 
-	list ($ret, $dirs) = GalleryCoreApi::getPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs');
-	$this->assertEquals('a,b,c,' . dirname(__FILE__), $dirs);
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
+	$this->assertEquals('b', $param['uploadLocalServer.dir.2']);
+	$this->assertEquals(dirname(__FILE__), $param['uploadLocalServer.dir.3'], 'new dir');
+	$this->assert(!isset($param['uploadLocalServer.dir.4']), 'end of list');
     }
 
     /*
@@ -136,14 +152,17 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
-	    list ($outer, $inner) = split('\.', $key);
+	    list ($outer, $inner) = explode('.', $key);
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
 	}
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', dirname(__FILE__));
 	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
 
-	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
-						  'uploadLocalServer.dirs', 'a,b,c');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -158,6 +177,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	GalleryDataCache::reset();
 
+	$valueMap['uploadLocalServer.dir.1'] = 'a';
+	$valueMap['uploadLocalServer.dir.2'] = dirname(__FILE__);
 	foreach ($valueMap as $key => $expectedValue) {
 	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core', $key);
 	    if ($ret->isError()) {
@@ -166,10 +187,6 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
 	}
-
-	list ($ret, $dirs) = GalleryCoreApi::getPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs');
-	$this->assertEquals('a,b,c,' . $platform->realpath(dirname(__FILE__)), $dirs, 'dir list');
     }
 
     function testAddUploadLocalServerDirMissing() {
@@ -205,8 +222,11 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	$platform = $gallery->getPlatform();
 	$saveDir = $platform->getcwd();
 
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs', 'a,b,c');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.2');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -224,19 +244,38 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 		  'error' => array()),
 	    $results);
 
-	list ($ret, $dirs) = GalleryCoreApi::getPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs');
-	$this->assertEquals('a,b,c,' .  $platform->realpath(dirname(__FILE__)), $dirs, 'dir list');
-
 	$platform->chdir($saveDir);
+
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
+	$this->assertEquals($platform->realpath(dirname(__FILE__)),
+			    $param['uploadLocalServer.dir.2'], 'new dir');
     }
 
     function testRemoveUploadLocalServerDir() {
-	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', 'foo');
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', '2');
 	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);
 
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs', 'a,foo,b,c');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1', 'a');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2', 'x');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.3', 'b');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.4', 'c');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.5');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -251,9 +290,14 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	GalleryDataCache::reset();
 
-	list ($ret, $dirs) = GalleryCoreApi::getPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs');
-	$this->assertEquals('a,b,c', $dirs);
+	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'core');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('a', $param['uploadLocalServer.dir.1']);
+	$this->assertEquals('b', $param['uploadLocalServer.dir.2']);
+	$this->assertEquals('c', $param['uploadLocalServer.dir.3']);
+	$this->assert(!isset($param['uploadLocalServer.dir.4']), 'end of list');
     }
 
     function testRemoveUploadLocalServerDirMissing() {

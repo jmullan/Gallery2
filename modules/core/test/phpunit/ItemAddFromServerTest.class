@@ -49,7 +49,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 	$this->_markForCleanup($this->_rootAlbum);
 
-	list ($ret, $this->_lockIds) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
+	list ($ret, $this->_lockId) = GalleryCoreApi::acquireReadLock($this->_rootAlbum->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -65,26 +65,29 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	list ($ret, $this->_localServerDirList) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'uploadLocalServer.dirs');
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.1',
+						  dirname(dirname(__FILE__)));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$ret = GalleryCoreApi::setPluginParameter(
-	    'module', 'core', 'uploadLocalServer.dirs', dirname(dirname(__FILE__)));
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'uploadLocalServer.dir.2',
+						  $gallery->getConfig('data.gallery.base'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
+	$ret = GalleryCoreApi::removePluginParameter('module', 'core', 'uploadLocalServer.dir.3');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$gallery->_platform = $this->_symlinkAllowedPlatform;
     }
 
     function tearDown() {
-	$ret = GalleryCoreApi::releaseLocks($this->_lockIds);
+	$ret = GalleryCoreApi::releaseLocks($this->_lockId);
 	if ($ret->isError()) {
 	   return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -208,15 +211,16 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$fileKeys = array();
 	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
 
-
 	if ($addFiles) {
-	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'apo\'strophe.jpg');
+	    $files = array('test1.gif', 'test1.jpg', 'test2.gif',
+			   'test[3].gif', 'apo\'strophe.jpg');
 	    rsort($files);
 
-	    $escapedBasenames = array('test1', 'test1', 'test2', 'test3', 'apo\'strophe');
+	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'apo\'strophe');
 	    rsort($escapedBasenames);
 
 	    foreach ($files as $fileName) {
+		$fileName = urlencode($fileName);
 		GalleryUtilities::putRequestVariable(
 		    'form[localServerFiles][' . $fileName . '][selected]', 1);
 		if ($useSymlink) {
@@ -227,25 +231,22 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	}
 
 	if ($addDirectories) {
-	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test3.gif', 'test4.gif');
+	    $files = array('test1.gif', 'test1.jpg', 'test2.gif', 'test[3].gif', 'test4.gif');
 	    rsort($files);
 
-	    $escapedBasenames = array('localUploadDir');
+	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'test4');
 	    rsort($escapedBasenames);
 
-	    $escapedRecursiveBasenames = array('test1', 'test1', 'test2', 'test3', 'test4');
-	    rsort($escapedRecursiveBasenames);
-
-	    $dirName = $baseDir . 'localUploadDir';
+	    $dirName = urlencode('localUploadDir');
 	    GalleryUtilities::putRequestVariable(
 		'form[localServerDirectories][' . $dirName . '][selected]', 1);
 	    GalleryUtilities::putRequestVariable(
-		'form[localServerDirectories][/][selected]', 1);
+		'form[localServerDirectories][..][selected]', 1);
 	    if ($useSymlink) {
 		GalleryUtilities::putRequestVariable(
 		    'form[localServerDirectories][' . $dirName . '][useSymlink]', 1);
 		GalleryUtilities::putRequestVariable(
-		    'form[localServerDirectories][/][useSymlink]', 1);
+		    'form[localServerDirectories][..][useSymlink]', 1);
 	    }
 	}
 
@@ -265,6 +266,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 
 	/* We don't know the ids, but we can verify everything else */
 	$i = 0;
+	$this->assertEquals(5, count($results[1]['addedFiles']), 'added count');
 	usort($results[1]['addedFiles'], $sortAddedFilesFunc);
 	foreach ($files as $file) {
 	    $this->assertEquals($file, $results[1]['addedFiles'][$i]['fileName'], 'added #' . $i);
@@ -277,27 +279,41 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	$seenWeights = array();
-	$i = 0;
-	foreach ($ids as $id) {
-	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($id);
+	if ($addDirectories) {
+	    $this->assertEquals(1, count($ids), 'top child count');
+	    list ($ret, $subalbum) = GalleryCoreApi::loadEntitiesById($ids[0]);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
+	    $this->assertEquals('galleryalbumitem', strtolower(get_class($subalbum)), 'subalbum');
+	    $this->assertEquals('localUploadDir', $subalbum->getPathComponent(), 'subalbum path');
+	    list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($subalbum);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$this->assertEquals(5, count($ids), 'child count');
+	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$seenWeights = array();
+	$i = 0;
+	foreach ($items as $item) {
 	    $base = $escapedBasenames[$i++];
 	    $this->assertEquals($setTitle ? $base : null, $item->getTitle(), 'title');
 	    $this->assertEquals($setSummary ? $base : null, $item->getSummary(), 'summary');
 	    $this->assertEquals($setDescription ? $base : null, $item->getDescription(),
 				'description');
 
-	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($id);
+	    list ($ret, $viewCount) = GalleryCoreApi::fetchItemViewCount($item->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	    $this->assertEquals(0, $viewCount);
 
-	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($id);
+	    list ($ret, $orderWeight) = GalleryCoreApi::fetchItemOrderWeight($item->getId());
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -322,10 +338,12 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 1);
 	/* This is what the browser will send us (urlencoded): */
 	GalleryUtilities::putRequestVariable(
-	    'form[localServerFiles][December - <#952>.jpg][selected]', 1);
+	    'form[localServerFiles][' . urlencode('December - <#952>.jpg') . '][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(), $results[0]);
+	$this->assertEquals(1, count($results[1]));
+	$this->assertEquals(1, count($results[1]['addedFiles']));
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($results[1]['addedFiles'][0]['id']);
 	if ($ret->isError()) {
@@ -335,6 +353,44 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$this->assertEquals('December - &lt;#952&gt;', $item->getTitle(), 'title');
 	$this->assertEquals('December - &lt;#952&gt;', $item->getSummary(), 'summary');
 	$this->assertEquals(null, $item->getDescription(), 'description');
+    }
+
+    /**
+     * Checks that we disallow recursive add from our own g2data directory.
+     */
+    function testAddFromServerG2DataDir() {
+	global $gallery;
+
+	list ($ret, $path) = $this->_rootAlbum->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', dirname($path));
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerDirectories][' .
+	    urlencode(basename($path)) . '][selected]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(array(), array()), $results);
+    }
+
+    function testAddFromServerMalformedInput() {
+	/* Test that manually constructed input can't get outside our approved dirs */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep;
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir);
+	GalleryUtilities::putRequestVariable('form[localServerFiles][..%2Ffoo][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerDirectories][..%2Fbar][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	$this->assertEquals(array(array(), array()), $results);
     }
 }
 
@@ -352,7 +408,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
-	$this->_baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
+	$this->_baseDir = dirname(dirname(__FILE__)) . "{$dirSep}data{$dirSep}";
 	$this->_baseDirRecursive = dirname(__FILE__) .
 		"{$dirSep}..{$dirSep}data{$dirSep}localUploadDir{$dirSep}";
     }
@@ -401,7 +457,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 	if ( $this->_delegate->isSymlinkSupported() == true ) {
 	    return $this->_delegate->symlink($source, $dest);
 	} else {
-	    return $this->copy ( $source, $dest );
+	    return $this->copy($source, $dest);
 	}
     }
 

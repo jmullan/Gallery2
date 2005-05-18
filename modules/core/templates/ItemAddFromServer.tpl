@@ -112,7 +112,7 @@
     {g->text text="Legal Directories"}
 
     {if $ItemAdd.isAdmin}
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
+    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore" arg3="return=true"}">
       {g->text text="modify"}
     </a>
     {/if}

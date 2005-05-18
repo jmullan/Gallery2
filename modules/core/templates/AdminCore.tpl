@@ -107,14 +107,14 @@
     <th> {g->text text="Action"} </th>
   </tr>
 
-  {foreach from=$AdminCore.localServerDirList item=dir}
+  {foreach from=$AdminCore.localServerDirList key=index item=dir}
   <tr class="{cycle values="gbEven,gbOdd"}">
     <td>
       {$dir}
     </td><td>
       <a href="{g->url arg1="controller=core:AdminCore"
 		       arg2="form[action][removeUploadLocalServerDir]=1"
-		       arg3="form[uploadLocalServer][selectedDir]=$dir"}">
+		       arg3="form[uploadLocalServer][selectedDir]=$index"}">
 	{g->text text="remove"}
       </a>
     </td>
