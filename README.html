@@ -84,6 +84,13 @@
 		margin: 0.6em 0 0.6em 0;
 		padding: 0.6em;
 		color: #C00;
+	        text-align: center;
+	}
+	.important .email {
+		font-size: 1.3em;
+		color: black;
+	        font-weight: 700;
+		margin: 0.6em 0 0 0;
 	}
 	.important h3 {
 		color: #eee;
@@ -123,10 +130,10 @@
   <body>
     <img src="images/g2Logo.gif" alt="Gallery 2.0 Beta 2" />
     <p>
-      Welcome to Gallery 2.0 (G2). This is the third
-      &ldquo;Beta&rdquo; release of G2, code named
+      Welcome to Gallery 2.0. This is the third
+      &ldquo;Beta&rdquo; release of Gallery 2, code named
       <b>&ldquo;Bingo!&rdquo;</b>.  Please read through this document
-      carefully before installing G2 and before asking for help.  We
+      carefully before installing Gallery 2 and before asking for help.  We
       have taken care to try to answer as many of your questions here
       as possible.  If you don't read this and have problems, we may
       refer you back to this document as a first resource.
@@ -137,14 +144,14 @@
     <ul>
       <li> <a href="#quick_start">Quick Start</a> </li>
       <li> <a href="#what_is_gallery">What is Gallery?</a> </li>
-      <li> <a href="#what_is_g2">What is G2 Beta?</a> </li>
-      <li> <a href="#Beta_requirements">G2 Beta requirements</a> </li>
-      <li> <a href="#when_to_use">When to use G2 Beta</a> </li>
-      <li> <a href="#when_not_to_use">When not to use G2 Beta</a> </li>
-      <li> <a href="#whats_new">What&rsquo;s new in G2 Beta</a> </li>
-      <li> <a href="#prerequisites">G2 Beta Installation Prerequisites</a> </li>
-      <li> <a href="#installing">Installing G2 Beta</a> </li>
-      <li> <a href="#getting_started">Getting started with G2 Beta</a> </li>
+      <li> <a href="#what_is_g2">What is Gallery 2 Beta?</a> </li>
+      <li> <a href="#Beta_requirements">Gallery 2 Beta requirements</a> </li>
+      <li> <a href="#when_to_use">When to use Gallery 2 Beta</a> </li>
+      <li> <a href="#when_not_to_use">When not to use Gallery 2 Beta</a> </li>
+      <li> <a href="#whats_new">What&rsquo;s new in Gallery 2 Beta</a> </li>
+      <li> <a href="#prerequisites">Gallery 2 Beta Installation Prerequisites</a> </li>
+      <li> <a href="#installing">Installing Gallery 2 Beta</a> </li>
+      <li> <a href="#getting_started">Getting started with Gallery 2 Beta</a> </li>
       <li> <a href="#getting_help">Getting Help</a> </li>
       <li> <a href="#known_issues">Known Issues / Bugs</a> </li>
       <li> <a href="#updating">Updating your Gallery 2 Installation</a> </li>
@@ -154,13 +161,13 @@
     <h2><a name="quick_start">Quick Start</a></h2>
     <p>
       If you&rsquo;re impatient like us, you just want to get going.
-      The odds are that your system is all set to handle G2 so
+      The odds are that your system is all set to handle Gallery 2 so
       just skip right to the <a href="install/index.php"
       target="_guided">installer</a> and start clicking.  It should
       walk you through everything you need to get going.  Before
       you do that, you should really read the <a
-      href="#when_to_use">When to use G2 Beta</a> and <a
-      href="#when_not_to_use">When not to use G2 Beta</a> sections!
+      href="#when_to_use">When to use Gallery 2 Beta</a> and <a
+      href="#when_not_to_use">When not to use Gallery 2 Beta</a> sections!
       <b>But</b> if you hit a snag, please come back here and read
       more before asking questions!  Enjoy.
     </p>
@@ -180,7 +187,7 @@
       manage their own photos on your website!
     </p>
 
-    <h2><a name="what_is_g2">What is G2 Beta?</a></h2>
+    <h2><a name="what_is_g2">What is Gallery 2 Beta?</a></h2>
     <p>
       A Beta release is the second official round of releases of a
       product.  A Beta release can sometimes be unstable, contains
@@ -190,7 +197,7 @@
       that will help us improve the final release.
     </p>
 
-    <h2><a name="Beta_requirements">G2 Beta requirements</a></h2>
+    <h2><a name="Beta_requirements">Gallery 2 Beta requirements</a></h2>
     <ul>
       <li>
 	Web server that can run <a href="http://php.net/">PHP</a>
@@ -212,53 +219,56 @@
       </li>
     </ul>
 
-    <h2><a name="when_to_use">When to use G2 Beta</a></h2>
+    <h2><a name="when_to_use">When to use Gallery 2 Beta</a></h2>
     <p>
-      You should install G2 Beta to try it out.  You could install it
-      next to your production version of Gallery 1.x in a hidden
-      directory.  You could install it on a development server.  We
-      want you to try it, test it, break it, and tell us all about it.
-      Get your friends and colleagues to poke around.  You can use the
-      migration module to import some or all of your G1 albums into G2
-      for test purposes (this shouldn&rsquo;t affect your G1
-      installation at all).
+      You should install Gallery 2 Beta to try it out.  You could
+      install it next to your production version of Gallery 1 in a
+      hidden directory.  You could install it on a development server.
+      We want you to try it, test it, break it, and tell us all about
+      it.  Get your friends and colleagues to poke around.  You can
+      use the migration module to import some or all of your Gallery 1
+      albums into Gallery 2 for test purposes (this shouldn&rsquo;t
+      affect your Gallery 1 installation at all).
     </p>
 
-    <h2><a name="when_not_to_use">When not to use G2 Beta</a></h2>
+    <h2><a name="when_not_to_use">When not to use Gallery 2 Beta</a></h2>
     <p>
       Do not use it as the main repository for your data.  Do not use
       it for a production web site.  Although we provide an upgrade
-      path <b>we will not provide the same level of support for G2 that
-      we provide for G1</b> until we get to release candidates.  We know
-      that G2 is much better than G1, and it may be tempting to just
-      replace your G1 with it.  But we're still making plenty of
-      changes and mistakes happen so if you use it in production, be
-      prepared to dig into it yourself and fix things if they break.
+      path <b>we will not provide the same level of support for
+      Gallery 2 that we provide for Gallery 1</b> until we get to
+      release candidates.  We know that Gallery 2 is much better than
+      Gallery 1, and it may be tempting to just replace your Gallery 1
+      with it.  But we're still making plenty of changes and mistakes
+      happen so if you use it in production, be prepared to dig into
+      it yourself and fix things if they break.
     </p>
 
     <div class="important">
       <h3>Warning!</h3>
       <span>
-	G2 has not yet been subjected to a rigorous security audit!
-	While we have taken great pains to make sure that it is
-	secure, there is still the chance that there are some big
+	Gallery 2 has not yet been subjected to a rigorous security
+	audit!  While we have taken great pains to make sure that it
+	is secure, there is still the chance that there are some big
 	security holes in it that might cause you trouble.  If you
-	find a security flaw, please contact us at <a
-	href="mailto:gallery@menalto.com">gallery@menalto.com</a>
-	right away!
+	find a security flaw, do not hesitate to email us at:
+	<div class="email"> security AT gallery.menalto.com </div>
       </span>
     </div>
 
-    <h2><a name="whats_new">What&rsquo;s new in G2 Beta</a></h2>
+    <h2><a name="whats_new">What&rsquo;s new in Gallery 2 Beta</a></h2>
 
     <p>
-      G2 has been redesigned from the ground up and is database driven! It is secure,
-      scalable, reliable, modular, customizable, portable and intuitive. In short,
-      we looked at all the things we did wrong in G1 and we did them again the right
-      way. Two and a half years of design and development have gone into G2. It&rsquo;s got
-      customizable themes and layouts using XHTML compliant templates which makes it much
-      easier for you to personalize your G2 install. All the cool bells and whistles are
-      in modules that can be enabled separately for maximum control.
+      Gallery 2 has been redesigned from the ground up and is database
+      driven! It is secure, scalable, reliable, modular, customizable,
+      portable and intuitive. In short, we looked at all the things we
+      did wrong in Gallery 1 and we did them again the right way. Two
+      and a half years of design and development have gone into
+      Gallery 2. It&rsquo;s got customizable themes and layouts using
+      XHTML compliant templates which makes it much easier for you to
+      personalize your Gallery 2 install. All the cool bells and
+      whistles are in modules that can be enabled separately for
+      maximum control.
     </p>
 
     <h3>
@@ -329,11 +339,11 @@
 	<b> IPTC </b> - Support for reading IPTC data added to EXIF/IPTC module.
       </li>
       <li>
-	<b> Forgot Password </b> - New system to reset the password for any G2 user with
+	<b> Forgot Password </b> - New system to reset the password for any Gallery 2 user with
 	an email address.
       </li>
       <li>
-	<b> Short URLs </b> - More control in Site Admin over how short urls are constructed.
+	<b> Short URLs </b> - More control in Site Admin over how short URLs are constructed.
       </li>
       <li>
 	<b> Owner Permissions </b> - Permissions are now transferred to the new owner
@@ -344,8 +354,8 @@
 	move, delete in that album (so New Items module will show "Updated").
       </li>
       <li>
-	<b> Add From Web </b> - Improved support for urls where extension doesn't
-	match the actual mime type (like G2 URLs!).
+	<b> Add From Web </b> - Improved support for URLs where extension doesn't
+	match the actual mime type (like Gallery 2 URLs!).
       </li>
       <li>
 	<b> Email Test </b> - Added ability to send a test email from Site Admin to
@@ -357,7 +367,7 @@
 	  <li> Reset view counts for all albums and photos. </li>
 	  <li> Build all thumbnails and resizes at once. </li>
 	  <li> Display system information, useful for copy/paste to support forum. </li>
-	  <li> Rewrite module task to check for conflicts between short urls
+	  <li> Rewrite module task to check for conflicts between short URLs
 	       and actual Gallery files. </li>
 	</ul>
       </li>
@@ -474,7 +484,7 @@
     <ol id="beta1-list" style="display:none">
       <li>
 	<b> Rewrite </b> - New module for creating compact, search
-	engine friendly urls.
+	engine friendly URLs.
       </li>
 
       <li>
@@ -493,8 +503,9 @@
       </li>
 
       <li>
-	<b> Classic Layout </b> - New layout similar to the G1 top level album.
-	Shows thumbnails, item details and a tree of links to subalbums.
+	<b> Classic Layout </b> - New layout similar to the Gallery 1
+	top level album.  Shows thumbnails, item details and a tree of
+	links to subalbums.
       </li>
 
       <li>
@@ -644,7 +655,7 @@
     <ol id="alpha4-list" style="display:none">
       <li>
 	<b> Upgradeable Core and Modules </b> - At long last we
-	support upgrading from one version of G2 to the next.
+	support upgrading from one version of Gallery 2 to the next.
 	Unfortunately, this may not work reliably for all version
 	before Alpha 4, so we recommend that you reinstall Alpha 4
 	from scratch just to be sure.
@@ -764,7 +775,7 @@
       </li>
 
       <li>
-	<b> Embedding G2 </b> - We've made great improvements in
+	<b> Embedding Gallery 2 </b> - We've made great improvements in
 	embedding Gallery 2 into other applications.  We've
 	successfully (though not completely) embedded it into Xaraya
 	and have begun working on other platforms.  There's now a
@@ -862,17 +873,17 @@
 	    We now preserve the order of imported subalbums
 	  </li>
 	  <li>
-	    G1 summary and description fields are now transposed on
-	    import so that the G1 "summary" (which was shown inside
-	    the album itself) is now the G2 "description" and vice
-	    versa.
+	    Gallery 1 summary and description fields are now
+	    transposed on import so that the Gallery 1 "summary"
+	    (which was shown inside the album itself) is now the
+	    Gallery 2 "description" and vice versa.
 	  </li>
 	</ul>
       </li>
 
       <li>
 	<b> CMS Integration </b> - Although this is not yet readily visible, a
-	great deal of work has been done on getting G2 ready to integrate into
+	great deal of work has been done on getting Gallery 2 ready to integrate into
 	external content management systems.  We&rsquo;ve successfully done partial
 	integrations with <a target="_blank"
 	href="http://www.xaraya.com/">Xaraya</a> and <a target="_blank"
@@ -944,7 +955,7 @@
       </li>
       <li>
 	<b> Java Upload Applet </b> - New upload option where you can
-	drag and drop files onto an applet and G2 will upload them for you.
+	drag and drop files onto an applet and Gallery 2 will upload them for you.
       </li>
       <li>
 	<b> GD Graphics toolkit </b> - Implemented <a target="_blank"
@@ -963,7 +974,7 @@
       </li>
       <li>
 	<b> Self Registration module </b> - Allows guests to register
-	for their own account in your G2.
+	for their own account in your Gallery 2.
       </li>
       <li>
 	<b> Language selection </b> - There&rsquo;s a new box in the sidebar
@@ -971,21 +982,22 @@
       </li>
       <li>
 	<b> Nokia Mobile Phone Uploader Module </b> - Upload images to
-	your G2 from your mobile phone!
+	your Gallery 2 from your mobile phone!
       </li>
       <li>
-	<b> Migration module </b> - We now import G1 permissions, and
-	allow you to choose the source encoding (character set) of
-	your Gallery 1 so that we can convert it to UTF-8 as part of
-	the migration.  We now also track where your G1 albums wound
-	up in G2 so that you can create an .htaccess file in your G1
-	to redirect G1 URLs to G2, for ease of migration.
+	<b> Migration module </b> - We now import Gallery 1
+	permissions, and allow you to choose the source encoding
+	(character set) of your Gallery 1 so that we can convert it to
+	UTF-8 as part of the migration.  We now also track where your
+	Gallery 1 albums wound up in Gallery 2 so that you can create
+	an .htaccess file in your Gallery 1 to redirect Gallery 1 URLs
+	to Gallery 2, for ease of migration.
       </li>
       <li>
-	<b> Gallery Remote </b> - GR now supports creating new G2 albums.
+	<b> Gallery Remote </b> - GR now supports creating new Gallery 2 albums.
       </li>
       <li>
-	<b> PHP5 Support </b> G2 has been tested on PHP 5.0.1 on
+	<b> PHP5 Support </b> Gallery 2 has been tested on PHP 5.0.1 on
 	FreeBSD and Linux.
       </li>
       <li>
@@ -1000,11 +1012,11 @@
     </h3>
     <ul id="alpha1-list" style="display:none">
       <li>
-	<b> First Release of G2! </b>
+	<b> First Release of Gallery 2! </b>
       </li>
     </ul>
 
-    <h2><a name="prerequisites">G2 Beta Installation Prerequisites</a></h2>
+    <h2><a name="prerequisites">Gallery 2 Beta Installation Prerequisites</a></h2>
     <ol>
       <li>
 	<b><a name="get_latest_code">Latest Version</a></b> -
@@ -1025,7 +1037,7 @@
 	    <b>CVS</b> - This is a better way to get the latest code,
 	    but it&rsquo;s for <i>advanced</i> users.  Follow the <a
 	      href="http://gallery.sourceforge.net/wiki.php?page=DownloadingGalleryUsingCVS"
-	      target="_blank">CVS instructions</a> to obtain the latest G2
+	      target="_blank">CVS instructions</a> to obtain the latest Gallery 2
 	    code.  It&rsquo;s easier to stay up to date with this method since
 	    you can run one command and get the latest code at any time.
 	  </li>
@@ -1038,13 +1050,13 @@
 	security reasons we suggest that you do not put it in the web
 	root.  If you put it in the web root, then anybody can get
 	directly to your images with their web browser which
-	circumvents G2&rsquo;s security.
+	circumvents Gallery 2&rsquo;s security.
 	<div class="instructions">
 	  <h3>Unix Example</h3>
 	  <code>
-	    % cd $HOME <br/>
-	    % mkdir g2data <br/>
-	    % chmod 777 g2data
+	    $ cd $HOME <br/>
+	    $ mkdir g2data <br/>
+	    $ chmod 777 g2data
 	  </code>
 	</div>
 
@@ -1056,7 +1068,7 @@
 	</div>
 
 	In the Unix example, you may note that modes of 777 on your
-	<tt>g2data</tt> directory are not all that secure.  However, making it
+	<strong>g2data</strong> directory are not all that secure.  However, making it
 	more secure depends on how your system is configured.  Talk
 	with your system administrator about ways to change the
 	permissions on that directory to make it so that Gallery can
@@ -1085,8 +1097,8 @@
 	<div class="instructions">
 	  <h3>MySQL</h3>
 	  <code>
-	    mysqladmin -uroot create gallery2  <br />
-	    mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO <strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>" <br />
+	    $ mysqladmin -uroot create gallery2  <br />
+	    $ mysql gallery2 -uroot -e"GRANT ALL ON gallery2.* TO<br/> &nbsp;&nbsp;<strong>username</strong>@localhost IDENTIFIED BY <strong>'password'</strong>" <br />
 	  </code>
 	</div>
 
@@ -1102,34 +1114,34 @@
 	<div class="instructions">
 	  <h3>PostgreSQL</h3>
 	  <code>
-	    createdb gallery2 -E UNICODE
+	    $ createdb gallery2 -E UNICODE
 	  </code>
 	  <br/>
 	  <br/>
 	  <i>If it complains that UNICODE is not a valid encoding name, then try:</i>
 	  <br/>
 	  <code>
-	    createdb gallery2 -E SQL_ASCII
+	    $ createdb gallery2 -E SQL_ASCII
 	  </code>
 	  <br/>
 	  <br/>
 	  <i>If it complains about that, too then try:</i>
 	  <br/>
 	  <code>
-	    createdb gallery2
+	    $ createdb gallery2
 	  </code>
 	</div>
 
 	<div class="instructions">
 	  <h3>Oracle</h3>
 	  <code>
-	    create database gallery2 {additional parameters};
+	    $ create database gallery2 {additional parameters};
 	  </code>
 	</div>
       </li>
 
       <li>
-	<b>Graphics Toolkits</b> - G2 works with <a
+	<b>Graphics Toolkits</b> - Gallery 2 works with <a
 	href="http://netpbm.sourceforge.net"
 	target="_blank">NetPBM</a>, <a
 	href="http://www.imagemagick.org/"
@@ -1143,19 +1155,20 @@
 	recent, however it may not have support for all image types
 	(e.g. it might not have JPEG support). If the binaries for
 	NetPBM and ImageMagick are installed in default, or standard,
-	locations then G2 will auto-detect them during G2
+	locations then Gallery 2 will auto-detect them during Gallery 2
 	installation.  It won&rsquo;t cause any harm to enable all of
 	these toolkits&#8212;in fact you&rsquo;ll get the widest file
 	type support if you do so.
       </li>
     </ol>
 
-    <h2><a name="installing">Installing G2 Beta</a></h2>
+    <h2><a name="installing">Installing Gallery 2 Beta</a></h2>
     <p>
-      Open up your web browser and browse to the <a href="install/index.php" target="_guided">G2
-      install directory</a>.  G2 will walk you through the process of
-      validating that your system is properly configured and will set
-      everything up for you.
+      Gallery 2 is a web application and must be installed on your web
+      server in order for you to use it.  If you've unpacked it on
+      your desktop, you will have to upload it to your server as part
+      of the install process, then you can configure it using your web
+      browser.
     </p>
     <ol>
       <li>
@@ -1184,16 +1197,28 @@
 	    files.
 	  </li>
 	</ul>
+	<b/> Note: </b> After uploading, you should close this version
+	of the README and browse to the version that you just
+	uploaded.  That way all the links in this document will point
+	to the right places in your Gallery 2 install.
+      </li>
+      <li>
+	<b> Begin Installing </b> - Open up your web browser and
+	browse to the <a href="install/index.php"
+	target="_guided">install directory</a>.  Gallery 2 will walk
+	you through the process of validating that your system is
+	properly configured and will set everything up for you.
       </li>
       <li>
 	<b> Authenticate </b> - You will be asked to create and save a
 	small text file in order to authenticate.  You may not proceed
-	until you do this.  That&rsquo;s how G2 knows that you&rsquo;re authorized
+	until you do this.  That&rsquo;s how Gallery 2 knows that you&rsquo;re authorized
 	to use the installer.
       </li>
       <li>
 	<b> System Checks </b> - The installer checks your system to
-	make sure that it will support G2. Make sure that all checks are successful!
+	make sure that it will support Gallery 2. Make sure that all
+	checks are successful!
       </li>
       <li>
 	<b> Admin User Setup </b> - You are prompted for an
@@ -1207,7 +1232,7 @@
       <li>
 	<b> Storage Setup </b> - Read the instructions on the
 	installer to set up a storage location for Gallery 2.  This is
-	where G2 will store all of your images, as well as other cache
+	where Gallery 2 will store all of your images, as well as other cache
 	information.
       </li>
       <li>
@@ -1215,10 +1240,10 @@
 	your database authentication information.
       </li>
       <li>
-	<b> Create Config File </b> - G2 will create the
-	<b>config.php</b> file in your G2 directory.  This contains
+	<b> Create Config File </b> - Gallery 2 will create the
+	<b>config.php</b> file in your Gallery 2 directory.  This contains
 	all the answers you&rsquo;ve provided in the installer and is
-	necessary for G2 to function properly.
+	necessary for Gallery 2 to function properly.
       </li>
       <li>
 	<b> Install the Core module </b> - Here&rsquo;s where we create all
@@ -1227,7 +1252,7 @@
 	to do here.
       </li>
       <li>
-	<b> Install other modules </b> - G2 has lots of different
+	<b> Install other modules </b> - Gallery 2 has lots of different
 	modules that provide useful functionality.  Choose which ones
 	you want to use.  You can always go to the <a
 	href="main.php?g2_view=core:SiteAdmin" target="_guided">Site
@@ -1235,7 +1260,7 @@
 	uninstall modules, so it&rsquo;s ok to experiment here.
       </li>
       <li>
-	<b> Check Security </b> - G2 walks you through the process of
+	<b> Check Security </b> - Gallery 2 walks you through the process of
 	locking down your new <b>config.php</b>.
       </li>
       <li>
@@ -1244,15 +1269,15 @@
       </li>
     </ol>
 
-    <h2><a name="getting_started">Getting started with G2 Beta</a></h2>
+    <h2><a name="getting_started">Getting started with Gallery 2 Beta</a></h2>
     <ol>
       <li>
-	<b> Log in </b> - Once you&rsquo;ve successfully got G2 Beta installed, you should
+	<b> Log in </b> - Once you&rsquo;ve successfully got Gallery 2 Beta installed, you should
 	start by <a
 	href="main.php?g2_view=core:UserAdmin&amp;g2_subView=core:UserLogin&amp;g2_form[formName]=UserLogin&amp;g2_form[username]=admin" target="_guided">logging
 	in</a> as the admin user that was created for you at install
 	time.  The admin user has special privileges that you&rsquo;ll need
-	in order to administer your new G2.
+	in order to administer your new Gallery 2.
       </li>
       <li>
 	<b> Activate Graphics Toolkits </b> - Click on the <a
@@ -1266,7 +1291,7 @@
       </li>
       <li>
 	<b> Add photos </b> - Browse back to <a
-	href="main.php" target="_guided">the top of your new G2</a>
+	href="main.php" target="_guided">the top of your new Gallery 2</a>
 	and click on the <a
 	href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemAdd&amp;g2_itemId=6"
 	target="_guided">Add Items</a> link.  This will bring up a
@@ -1278,9 +1303,9 @@
       </li>
       <li>
 	<b> Add an album </b> - You don't want to put all of your
-	images into the top level of your G2, so you should try
+	images into the top level of your Gallery 2, so you should try
 	creating a new album.  Browse back to <a href="main.php"
-	target="_guided">the top of your new G2</a> and click on the
+	target="_guided">the top of your new Gallery 2</a> and click on the
 	<a
 	href="main.php?g2_view=core:ItemAdmin&amp;g2_subView=core:ItemAddAlbum&amp;g2_itemId=6"
 	target="_guided">add sub-album</a> link from the left side of
@@ -1292,12 +1317,12 @@
 	into this new album.
       </li>
       <li>
-	<b> Import Gallery 1.x albums </b> - you can easily import
-	albums from Gallery 1.x (G1).  It won&rsquo;t cause any harm
-	to your G1.  Just go to the <a
+	<b> Import Gallery 1 albums </b> - you can easily import
+	albums from Gallery 1.  It won&rsquo;t cause any harm
+	to your Gallery 1.  Just go to the <a
 	href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=migrate:SelectGallery"
 	target="_guided">Migration Page</a> and enter the path to your
-	G1 albums directory and then follow the instructions.
+	Gallery 1 albums directory and then follow the instructions.
       </li>
       <li>
 	<b> Plenty to do and see! </b> -
@@ -1305,7 +1330,7 @@
 	  <li>
 	    Explore the different <a
 	    href="main.php?g2_view=core:SiteAdmin"
-	    target="_guided">Site Admin</a> options and tune your G2
+	    target="_guided">Site Admin</a> options and tune your Gallery 2
 	    the way that you want it.
 	  </li>
 
@@ -1320,9 +1345,14 @@
 	  <li>
 	    You can <a
 	    href="main.php?g2_view=search:SearchScan&amp;g2_form[useDefaultSettings]=1"
-	    target="_guided">search your G2</a> and view the <a
+	    target="_guided">search your Gallery 2</a> and view the <a
 	    href="main.php?g2_view=members:MembersList"
 	    target="_guided">members list</a> if these modules are active.
+	  </li>
+
+	  <li>
+	    Activate the <b>Icons</b> module and select the fun icons
+	    from Paul Armstrong Designs.
 	  </li>
 
 	  <li>
@@ -1371,14 +1401,14 @@
 	    MP3 and see that it&rsquo;s got a custom thumbnail. Use the <a
 	    href="main.php?g2_view=core:SiteAdmin&amp;g2_subView=thumbnail:ThumbnailSiteAdmin"
 	    target="_guided">thumbnail manager</a> to upload your own
-	    custom thumbnails for different file types.  G2 lets you
+	    custom thumbnails for different file types.  Gallery 2 lets you
 	    upload files of any type!
 	  </li>
 
 	  <li>
 	    Activate the <b>ImageBlock</b> module and see random
 	    images appear in the sidebar when you browse through your
-	    G2.
+	    Gallery 2.
 	  </li>
 
 	  <li>
@@ -1392,7 +1422,7 @@
 
 	  <li>
 	    Take a look at the list of <a
-	    href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=G2%20-%20User%20Contributions">User
+	    href="http://gallery.menalto.com/modules.php?op=modload&amp;name=phpWiki&amp;file=index&amp;pagename=Gallery 2%20-%20User%20Contributions">User
 	    Contributions</a> to find even more modules, layouts, themes, utilities, mods and more.
 	  </li>
 	</ul>
@@ -1403,12 +1433,12 @@
     <p>
       If you have problems, you should start by looking in the <a
       href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewforum&amp;f=22"
-      target="_blank">G2 Support Forum</a> on the <a
+      target="_blank">Gallery 2 Support Forum</a> on the <a
       href="http://gallery.sourceforge.net" target="_blank">Gallery
       Website</a>.  Search the forum to see if somebody else has
       posted a similar problem and maybe there&rsquo;s an answer
       there, otherwise start a new topic to get help.  If the problem
-      seems like a bug in the G2 software you can <a
+      seems like a bug in the Gallery 2 software you can <a
       href="http://sourceforge.net/tracker/?group_id=7130&amp;atid=107130"
       target="_blank">file a bug</a> in our bug tracker on
       SourceForge.  Please read our <a
@@ -1418,12 +1448,12 @@
       you're unsure whether to file a bug you can always post in the
       forums first and we'll ask you to file a bug if needed.  If you
       want to talk about development issues, you can you can try to
-      catch one of the G2 developers on our irc channel, <a href=
-      "irc://irc.freenode.net/#gallery" target="_blank">#gallery on
+      catch one of the Gallery 2 developers on our irc channel, <a href=
+      "irc://irc.freenode.net/#gallery-support" target="_blank">#gallery-support on
       irc.freenode.net</a>.  Our developers use this IRC channel as
       our primary means of communication, so if they ask you to post
       in the forums please respect their request.  If we spend all of
-      our time doing tech support, we won't have time to write G2.
+      our time doing tech support, we won't have time to write Gallery 2.
     </p>
 
     <p>
@@ -1438,7 +1468,7 @@
 
     <ol>
       <li>
-	<b>Login Problems</b> - There are known login problems where G2 seems to ignore
+	<b>Login Problems</b> - There are known login problems where Gallery 2 seems to ignore
 	a login request. In a first attempt to fix the problem most scenarios have been
 	fixed, but we are still working on the complete solution. As a consequence of our
 	changes you'll have to delete the GALLERYSID cookie(s) in your browser after an
@@ -1457,9 +1487,9 @@
 	will be continually optimizing during the beta cycle.
       </li>
       <li>
-	<b>URL Redirection</b> - Rewrite module and G1-&gt;G2 URL redirection
-	do not work together in the same .htaccess file (G2 is installed where
-	G1 used to be). In future these will be compatible.
+	<b>URL Redirection</b> - Rewrite module and Gallery 1-&raquo;Gallery 2 URL redirection
+	do not work together in the same .htaccess file (Gallery 2 is installed where
+	Gallery 1 used to be). In future these will be compatible.
       </li>
       <li>
 	<b>Local Server Upload</b> - Files which contain "[]" characters cannot
@@ -1477,13 +1507,14 @@
     <ol>
       <li>
 	<a href="#get_latest_code">Get the latest code</a> and
-	unpack it over your existing copy of G2.
+	unpack it over your existing copy of Gallery 2.
       </li>
 
       <li>
-	If you use a PHP accelerator / cache (e.g. Turk mmCache, Ioncube PHPA,
-	eaccelerator, Zend Studio, etc.), flush (clear) the cache of the accelerator.
-	Omitting this step may and has lead to errors during and after the upgrade process.
+	If you use a PHP accelerator / cache (e.g. Turk mmCache,
+	Ioncube PHPA, eaccelerator, Zend Studio, etc.), flush (clear)
+	the cache of the accelerator.  Omitting this step can
+	sometimes lead to errors during and after the upgrade process.
       </li>
 
       <li>
@@ -1496,22 +1527,22 @@
       </li>
 
       <li>
-	Enjoy your new version of G2.
+	Enjoy your new version of Gallery 2.
       </li>
     </ol>
 
     <h2><a name="advanced_topics">Advanced Topics</a></h2>
     <p>
-      <b> Unit Tests </b> - G2 was designed using <a target="_blank"
+      <b> Unit Tests </b> - Gallery 2 was designed using <a target="_blank"
       href="http://www.google.com/search?q=extreme+programming">Extreme
       Programming</a> methodologies.  This means that we have a ton of unit
       tests that help us make sure that the code is behaving as it should.  If
       you want to help us out, you can <a href="lib/tools/phpunit/index.php"
       target="_guided">try running the unit tests</a> and report back
       to us if any of them fail.  <i> Note </i> - these tests
-      shouldn&rsquo;t change your G2 settings at all, but if they fail, they
+      shouldn&rsquo;t change your Gallery 2 settings at all, but if they fail, they
       may leave things in a weird state.  Be warned that you might
-      have to ditch your G2 data and start over if something
+      have to ditch your Gallery 2 data and start over if something
       catastrophic happens.
     </p>
 
@@ -1525,7 +1556,7 @@
 
     <p>
       <b> Localization </b> - If you&rsquo;re interested in localizing
-      G2 into another language, you can <a
+      Gallery 2 into another language, you can <a
       href="lib/tools/reports/localization.php"
       target="_guided">review the current state of localization</a>
       and then <a href="docs/LOCALIZING" target="_guided">read the
@@ -1538,14 +1569,14 @@
     <p>
       <b> For Developers </b> - We've gotten started on some <a
       href="http://gallery.menalto.com/modules.php?op=modload&amp;name=GalleryDocs&amp;file=index&amp;page=gallery2-devguide.php">documentation</a>
-      that you should read if you want to start hacking on G2.  It's
+      that you should read if you want to start hacking on Gallery 2.  It's
       an early draft and is a little bit out of date, but it's a
       start.
     </p>
 
     <p>
       <b> Embedding </b> - See this <a href="http://gallery.menalto.com/index.php?name=PNphpBB2&amp;file=viewtopic&amp;t=23957">forum topic</a>
-      for the status of the integration modules to embed G2 in various applications.
+      for the status of the integration modules to embed Gallery 2 in various applications.
       This <a href="docs/EMBEDDING">documentation</a> explains how to setup an integrated
       environment or build the integration module for a new application.
     </p>
