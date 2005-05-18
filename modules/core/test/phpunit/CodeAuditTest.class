@@ -103,9 +103,7 @@ class CodeAuditTest extends CodeAuditTestCase {
     function shouldCheckFile($fileName) {
 	$base1 = basename($fileName);
 
-	if (substr($fileName, -4) == '.tpl' ||
-	        substr($fileName, -3) == '.po' ||
-	        $base1 == 'GNUmakefile.inc') {
+	if ($base1 == 'GNUmakefile.inc') {
 	    return false;
 	}
 
@@ -151,12 +149,16 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    $this->_errorCount++;
 	    $this->assert(false, sprintf('%s has Windows line endings', $fileName));
 	}
-	
+	if (substr($fileName, -4) == '.tpl' || substr($fileName, -3) == '.po') {
+	    /* Only perform newlines check on tpl and po files */
+	    return;
+	}
+
 	for ($i = 0; $i < count($lines); $i++) {
 	    if (preg_match('/^\s*class (\S+)/', $lines[$i], $matches)) {
 		$currentClass = $matches[1];
 	    }
-	    
+
 	    if (preg_match('/^\s*function (\S+)\(/', $lines[$i], $matches)) {
 		$currentFunction = $currentClass . '::' . $matches[1];
 	    }
@@ -224,7 +226,7 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    if (isset($this->_exception['returns'][$fileName][$function])) {
 		continue;
 	    }
-	    
+
 	    if (count($returns) < 2) {
 		continue;
 	    }
@@ -271,9 +273,8 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    }
 	    $this->assert(false, sprintf('Mismatched returns in %s %s()<pre>%s</pre>',
 					 $fileName, $function, $returns));
-			  
 	}
-	
+
 	/*
 	 * Check that php files end with ?>
 	 * As noted in the constructor, Windows CVS will append a CRLF to
@@ -290,9 +291,9 @@ class CodeAuditTest extends CodeAuditTestCase {
 	    /* printf("%s: %d<br/>", $fileName, $longLineCount); */
 	}
 
- 	if ($this->_errorCount > 10) {
- 	    $this->halt();
- 	}
+	if ($this->_errorCount > 10) {
+	    $this->halt();
+	}
     }
 
     /**
