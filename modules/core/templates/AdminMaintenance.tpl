@@ -10,7 +10,8 @@
 
 {if isset($status.run)}
 <div class="gbBlock">
-  {capture name=taskTitle}<b>{$AdminMaintenance.tasks[$status.run.taskId].title}</b>{/capture}
+  {capture name=taskTitle}<b>{g->text text=$AdminMaintenance.tasks[$status.run.taskId].title
+   l10Domain=$AdminMaintenance.tasks[$status.run.taskId].l10Domain}</b>{/capture}
   {if ($status.run.success)}
     <h2 class="giSuccess">
       {g->text text="Completed %s task successfully." arg1=$smarty.capture.taskTitle}
@@ -39,7 +40,7 @@
 	      class="giBlockToggle gcBackground1 gcBorder2"
 	      style="border-width: 1px"
 	      onclick="BlockToggle('task-{$taskId}-description', 'task-{$taskId}-toggle', 'table-row')">{if !isset($status.run) || $status.run.taskId != $taskId}+{else}-{/if}</span>
-	{g->text text=$info.title}
+	{g->text text=$info.title l10Domain=$info.l10Domain}
       </td><td>
 	{if isset($info.timestamp)}
 	  {g->date format="%X %x" timestamp=$info.timestamp}
@@ -70,7 +71,7 @@
     <tr class="{$rowClass}" id="task-{$taskId}-description"
      {if !isset($status.run) || $status.run.taskId != $taskId}style="display: none"{/if}>
       <td colspan="4">
-	{g->text text=$info.description}
+	{g->text text=$info.description l10Domain=$info.l10Domain}
 	{if !empty($info.details)}
 	  <p class="giDescription"> {g->text text="Last Run Details:"} </p>
 	  <p class="giInfo">
