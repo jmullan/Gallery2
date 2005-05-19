@@ -146,14 +146,14 @@ class SystemChecksStep extends UpgradeStep {
 	/* Warning if file_uploads are not allowed */
 	if (! GalleryUtilities::getPhpIniBool('file_uploads')) {
 	    $templateData['check'][] =
-		array('title' => 'File uploads allowed',
+		array('title' => _('File uploads allowed'),
 		      'warning' => true,
 		      'notice' =>  _('Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</b> parameter in php.ini). You will need to enable this option if you want to upload files to your Gallery with a web browser.'),
 		);
 	    $suggestedHtaccess[] = 'php_flag file_uploads on';
 	} else {
 	    $templateData['check'][] =
-		array('title' => 'File uploads allowed', 'success' => true);
+		array('title' => _('File uploads allowed'), 'success' => true);
 	}
 
 	/* Warning if upload_max_filesize is less than 2M */
