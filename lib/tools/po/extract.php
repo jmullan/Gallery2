@@ -39,7 +39,6 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
-sort($strings);
 print join("\n", $strings) . "\n";
 
 /**
@@ -86,9 +85,9 @@ function extractStrings($filename) {
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $text = $match[2];
-	    #$text = preg_replace('/\"/', '\\\"', $text);    # escape double-quotes
 	    $cmd = sprintf('return %s;', $text);
 	    $text = eval($cmd);
+	    $text = str_replace('"', '\\"', $text);    # escape double-quotes
 	    $string = sprintf('gettext("%s")', $text);
 	    $strings[$string] = TRUE;
 	}
@@ -100,8 +99,8 @@ function extractStrings($filename) {
 	foreach ($matches as $match) {
 	    $one = $match[1];
 	    $many = $match[2];
-	    $one = preg_replace('/\"/', '\\\"', $one);      # escape double-quotes
-	    $many = preg_replace('/\"/', '\\\"', $many);    # escape double-quotes
+	    $one = str_replace('"', '\\"', $one);      # escape double-quotes
+	    $many = str_replace('"', '\\"', $many);    # escape double-quotes
 	    $string = sprintf('ngettext("%s", "%s")', $one, $many);
 	    $strings[$string] = TRUE;
 	}
@@ -112,7 +111,7 @@ function extractStrings($filename) {
 		       $data, $matches, PREG_SET_ORDER)) {
 	foreach ($matches as $match) {
 	    $text = $match[1];
-	    $text = preg_replace('/\"/', '\\\"', $text);    # escape double-quotes
+	    $text = str_replace('"', '\\"', $text);    # escape double-quotes
 	    $string = sprintf('gettext("%s")', $text);
 	    $strings[$string] = TRUE;
 	}
@@ -140,7 +139,7 @@ function extractStrings($filename) {
 		$text = $matches[1];
 	    } elseif (preg_match("/text='(.*?)'/s", $string, $matches)) {
 		$text = $matches[1];
-		$text = preg_replace('/\"/', '\\\"', $text);    # escape double-quotes
+		$text = str_replace('"', '\\"', $text);    # escape double-quotes
 	    }
 
 	    # one = .....
@@ -148,7 +147,7 @@ function extractStrings($filename) {
 		$one = $matches[1];
 	    } elseif (preg_match("/\s+one='(.*?)'/s", $string, $matches)) {
 		$one = $matches[1];
-		$one = preg_replace('/\"/', '\\\"', $one);    # escape double-quotes
+		$one = str_replace('"', '\\"', $one);    # escape double-quotes
 	    }
 
 	    # many = .....
@@ -156,7 +155,7 @@ function extractStrings($filename) {
 		$many = $matches[1];
 	    } elseif (preg_match("/\s+many='(.*?)'/s", $string, $matches)) {
 		$many = $matches[1];
-		$many = preg_replace('/\"/', '\\\"', $many);    # escape double-quotes
+		$many = str_replace('"', '\\"', $many);    # escape double-quotes
 	    }
 
 	    # pick gettext() or ngettext()
@@ -173,7 +172,7 @@ function extractStrings($filename) {
 		exit(1);
 	    }
 
-	    $string = preg_replace("/\\\}/s", '\}', $string);    # unescape right-curly-braces
+	    $string = str_replace('\\}', '}', $string);    # unescape right-curly-braces
 	    $strings[$string] = TRUE;
 	}
     }
