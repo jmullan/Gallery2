@@ -39,6 +39,7 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
+sort($strings);
 print join("\n", $strings) . "\n";
 
 /**
