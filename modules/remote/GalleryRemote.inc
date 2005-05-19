@@ -487,6 +487,14 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	if (empty($ids)) {
+		// nothing in this album
+		$response->setProperty('image_count', 0);
+		$response->setProperty('status', $grStatusCodes['SUCCESS']);
+		$response->setProperty('status_text', 'Fetch-album-images successful, but no items found.');
+		return GalleryStatus::success();
+	}
+
 	list ($ret, $items) = GalleryCoreApi::loadEntitiesById($ids);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
@@ -506,20 +514,23 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('image.raw_height.' . $i, $item->getHeight());
 		$response->setProperty('image.raw_filesize.' . $i, $item->getSize());
 
-		$my_derivatives = $derivatives[$item->getId()];
-		foreach ($my_derivatives as $der) {
-		    switch ($der->getDerivativeType()) {
-		    case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
-			$response->setProperty('image.thumbName.' . $i, $der->getId());
-			$response->setProperty('image.thumb_width.' . $i, $der->getWidth());
-			$response->setProperty('image.thumb_height.' . $i, $der->getHeight());
-			break;
-		    case DERIVATIVE_TYPE_IMAGE_RESIZE:
-			$response->setProperty('image.resizedName.' . $i, $der->getId());
-			$response->setProperty('image.resized_width.' . $i, $der->getWidth());
-			$response->setProperty('image.resized_height.' . $i, $der->getHeight());
-			break;
-		    }
+		if (isset($derivatives[$item->getId()])) {
+			$my_derivatives = $derivatives[$item->getId()];
+
+			foreach ($my_derivatives as $der) {
+				switch ($der->getDerivativeType()) {
+				case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
+				$response->setProperty('image.thumbName.' . $i, $der->getId());
+				$response->setProperty('image.thumb_width.' . $i, $der->getWidth());
+				$response->setProperty('image.thumb_height.' . $i, $der->getHeight());
+				break;
+				case DERIVATIVE_TYPE_IMAGE_RESIZE:
+				$response->setProperty('image.resizedName.' . $i, $der->getId());
+				$response->setProperty('image.resized_width.' . $i, $der->getWidth());
+				$response->setProperty('image.resized_height.' . $i, $der->getHeight());
+				break;
+				}
+			}
 		}
 
 		list ($ret, $extensions) =
