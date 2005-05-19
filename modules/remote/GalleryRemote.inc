@@ -29,8 +29,8 @@
 /**
  * Required classes
  */
-require(dirname(__FILE__) . '/classes/GalleryRemoteProperties.class');
-require(dirname(__FILE__) . '/classes/GalleryRemoteConstants.class');
+GalleryCoreApi::relativeRequireOnce('modules/remote/classes/GalleryRemoteProperties.class');
+GalleryCoreApi::relativeRequireOnce('modules/remote/classes/GalleryRemoteConstants.class');
 
 /**
  * This controller fields requests from Gallery Remote and perform any required changes
@@ -276,7 +276,7 @@ class GalleryRemoteController extends GalleryController {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$response->setProperty('can_create_root', ($perm || $isSiteAdmin)?'true':'false');
+	$response->setProperty('can_create_root', ($perm || $isSiteAdmin) ? 'true' : 'false');
 	$response->setProperty('album_count', sizeof($albums));
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-albums successful.');
@@ -516,9 +516,7 @@ class GalleryRemoteController extends GalleryController {
 		$response->setProperty('image.raw_filesize.' . $i, $item->getSize());
 		
 		if (isset($derivatives[$item->getId()])) {
-		    $myDerivatives = $derivatives[$item->getId()];
-		    
-		    foreach ($myDerivatives as $der) {
+		    foreach ($derivatives[$item->getId()] as $der) {
 			switch ($der->getDerivativeType()) {
 			case DERIVATIVE_TYPE_IMAGE_THUMBNAIL:
 			    $response->setProperty('image.thumbName.' . $i, $der->getId());

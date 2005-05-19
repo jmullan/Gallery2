@@ -374,12 +374,13 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Create some images */
 	$parentId = $this->_rootAlbum->getId();
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $image[$i]) = $this->_createRandomDataItem(
-		$parentId, 'image/jpg', array(),
-		dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
+	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
 	    list ($ret, $derivative[$i]) = $this->_createDerivative(
-		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-		'crop|10,10,30,40;scale|200', 'image/jpg');
+		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -394,7 +395,7 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($this->_code['SUCCESS'], (int)$response->getProperty('status'));
 
 	/* Make sure the there are no images */
-	$this->assert($response->getProperty('image_count') == 2);
+	$this->assertEquals('2', $response->getProperty('image_count'));
 	$this->assert($response->hasProperty('status_text'));
     }
 
