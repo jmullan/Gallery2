@@ -236,6 +236,10 @@ class AdminModulesControllerTestModule {
 	$singleton = &$this->getSingleton();
 	return array(GalleryStatus::success(), $singleton->_needsConfiguration);
     }
+
+    function translate($string) {
+	return $string;
+    }
 }
 
 ?>
