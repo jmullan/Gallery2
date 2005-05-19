@@ -129,7 +129,7 @@ class SystemChecksStep extends UpgradeStep {
 
 	/* Warning if memory_limit is set and is too low */
 	$memoryLimit = ini_get('memory_limit');
-	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? 'no limit' : $memoryLimit . 'b'));
+	$title = sprintf('%s (%s)', _('Memory limit'), ($memoryLimit == '' ? _('no limit') : $memoryLimit . 'b'));
 	$minimumMemoryLimit = 16;
 	if ($memoryLimit != '' && ($this->_getBytes($memoryLimit) / (1024 * 1024)) < $minimumMemoryLimit) {
 	    $templateData['check'][] =
