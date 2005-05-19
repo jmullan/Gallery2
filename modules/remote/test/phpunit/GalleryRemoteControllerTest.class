@@ -374,9 +374,12 @@ class GalleryRemoteControllerTest extends GalleryControllerTestCase {
 	/* Create some images */
 	$parentId = $this->_rootAlbum->getId();
 	for ($i = 0; $i < 2; $i++) {
-	    list ($ret, $image[$i]) = $this->_createRandomDataItem($parentId, 'image/jpg', array(), dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
-	    list ($ret, $derivative[$i]) = $this->_createDerivative($image[$i], $image[$i]->getId(),
-				DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'crop|10,10,30,40;scale|200', 'image/jpg');
+	    list ($ret, $image[$i]) = $this->_createRandomDataItem(
+		$parentId, 'image/jpg', array(),
+		dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
+	    list ($ret, $derivative[$i]) = $this->_createDerivative(
+		$image[$i], $image[$i]->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
+		'crop|10,10,30,40;scale|200', 'image/jpg');
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
