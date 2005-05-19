@@ -93,6 +93,9 @@ if (function_exists('dgettext')) {
     /* Select domain for translation */
     bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
     textdomain('gallery2_upgrade');
+    if (function_exists('bind_textdomain_codeset')) {
+	bind_textdomain_codeset('gallery2_upgrade', 'UTF-8');
+    }
 }
 
 /* We want to avoid using the cache */
@@ -189,7 +192,7 @@ function addSessionIdToUrls($html) {
      */
     $sid = SID;
     if (!empty($sid) && !ini_get('session.use_trans_sid')) {
-	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&' . $sid . '"', $html);
+	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&amp;' . $sid . '"', $html);
     }
     return $html;
 }
