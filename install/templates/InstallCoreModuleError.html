@@ -1,7 +1,8 @@
     <h1 class="error"><?php print _("Error installing Gallery Core") ?></h1>
 
     <p>
-      <?php print _("Something went wrong when we tried to install the core module.  In the boxes below you can find some debug information.  Report this in the <a href=\"http://gallery.sourceforge.net/forums.php\">Gallery Forums</a> and we'll help you diagnose the problem."); ?>
+      <?php printf(_("Something went wrong when we tried to install the core module.  In the boxes below you can find some debug information.  Report this in the %sGallery Forums%s and we'll help you diagnose the problem."),
+	'<a href="http://gallery.sourceforge.net/forums.php">', '</a>') ?>
     </p>
 
     <h2>

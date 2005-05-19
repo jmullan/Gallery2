@@ -6,8 +6,9 @@
     <p class="bold"><?php print $currentStep->getUniqueKey(); ?></p>
 
     <p>
-      <?php printf(_("As a convenience to you, we've prepared a <a href=\"%s\">correct version of login.txt</a> for you.  Download that and copy it into your install directory and you're all set."),
-      'index.php?step=' . $currentStep->getStepNumber() . '&amp;downloadLogin=1'); ?>
+      <?php printf(_("As a convenience to you, we've prepared a %scorrect version of login.txt%s for you.  Download that and copy it into your install directory and you're all set."),
+	'<a href="index.php?step=' . $currentStep->getStepNumber() . '&amp;downloadLogin=1">',
+	'</a>') ?>
     </p>
 
     <p>
