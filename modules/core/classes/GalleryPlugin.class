@@ -96,12 +96,42 @@ class GalleryPlugin {
      */
 
     /**
-     * Localize the given content
+     * Localize the given content.
      *
-     * @see Gallery::translate()
-     *
+     * Gallery uses GNU gettext for internationalization (i18n) and localization (l10n) of
+     * text presented to the user. Gettext needs to know about all places involving strings,
+     * that must be translated. Mark any place, where localization at runtime shall take place
+     * by using this function.
+     * 
+     * E.g. instead of:
+     *   print 'some text to be spit out in different languages';
+     * use (in any modules subclass of GalleryPlugin):
+     *   print $this->translate('some text to be spit out in different languages');
+     * and you are all set for pure literals. The translation teams will receive that literal
+     * string as a job to translate and will translate it (when the message is clear enough).
+     * At runtime the message is then printed localized.
+     * 
+     * But consider this case:
+     *   $message_to_be_localized = 'You did it right!';
+     *   print $this->translate($message_to_be_localized);
+     * 
+     * The translate() method is called in the right place for runtime handling, but there
+     * is no message at gettext preprocessing time to be given to the translation teams,
+     * just a variable name. Translation of the variable name would break the code! So all
+     * places potentially feeding this variable have to be marked to be given to translation
+     * teams, but not translated at runtime!
+     * 
+     * The (noop) method Gallery::i18n() is there to resolve all such cases (including storing
+     * the original string in, say, the database). Simply mark the candidates:
+     *   $message_to_be_localized = $gallery->i18n('You did it right!');
+     *   print $this->translate($message_to_be_localized);
+     * 
+     * The i18n() method does nothing, but feeding translators with that new string.
+     * This method does the runtime job, thanks to GNU gettext.
+     * 
      * @param mixed a single string, or an array of parameters
      * @return string the localized value
+     * @see Gallery::i18n()
      */
     function translate($params) {
 	global $gallery;
