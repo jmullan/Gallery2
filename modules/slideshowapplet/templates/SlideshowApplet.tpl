@@ -17,7 +17,7 @@
   {else}
   <object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93"
 	  codebase="http://java.sun.com/products/plugin/autodl/jinstall-1_4-windows-i586.cab#Version=1,4,0,0"
-	  width="600" height="400">
+	  width="300" height="430">
     <param name="code" value="{$SlideshowApplet.code}"/>
     <param name="archive" value="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"/>
     <param name="type" value="application/x-java-applet;version=1.4"/>
@@ -47,8 +47,8 @@
           type="application/x-java-applet;version=1.4"
           code="{$SlideshowApplet.code}"
           archive="{g->url href="modules/slideshowapplet/applets/GalleryRemoteAppletMini.jar},{g->url href="modules/slideshowapplet/applets/GalleryRemoteHTTPClient.jar"},{g->url href="modules/slideshowapplet/applets/applet_img.jar"}"
-          width="600"
-          height="400"
+          width="300"
+          height="430"
           scriptable="false"
           progressbar="true"
           boxmessage="{g->text text="Downloading the Gallery Remote Applet"}"
