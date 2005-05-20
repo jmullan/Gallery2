@@ -25,18 +25,18 @@
       {if !$smarty.section.parent.last}
 	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`"
 	 arg3="highlightId=`$layout.parents[parent.index_next].id`"}">
-	  {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
+	  {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       {else}
 	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.parents[parent].id`"
 	 arg3="highlightId=`$layout.item.id`"}">
-	  {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup}
+	  {$layout.parents[parent].title|default:$layout.parents[parent].pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       {/if}
     </li>
     {/section}
     <li{if empty($layout.parents)} class="firstChild"{/if}>
-      {$layout.item.title|default:$layout.item.pathComponent|markup}
+      {$layout.item.title|default:$layout.item.pathComponent|markup:stripBbcodeAndHtml}
     </li>
   </ul>
 </div>

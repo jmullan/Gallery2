@@ -7,7 +7,7 @@
 <div id="gsSystemLinks" class="gcBorder1">
   <ul class="gbBreadCrumb">
     <li class="firstChild">
-      <a href="{g->url}">{$MembersItems.rootAlbum.title}</a>
+      <a href="{g->url}">{$MembersItems.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
     </li>
     <li>
       <a href="{g->url arg1="view=members:MembersList"}">{g->text text="Members List"}</a>

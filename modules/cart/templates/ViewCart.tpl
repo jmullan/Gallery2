@@ -15,7 +15,7 @@
 
   <ul class="gbBreadCrumb">
     <li class="firstChild">
-      <a href="{g->url}">{$ViewCart.rootAlbum.title}</a>
+      <a href="{g->url}">{$ViewCart.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
     </li>
     <li>
       {g->text text="View Cart"}

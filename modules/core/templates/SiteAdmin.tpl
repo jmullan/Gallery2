@@ -27,7 +27,7 @@
 
     <ul class="gbBreadCrumb">
       <li class="firstChild">
-	<a href="{g->url}">{$SiteAdmin.rootAlbum.title}</a>
+	<a href="{g->url}">{$SiteAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
       </li>
       <li>
 	{g->text text="Site Administration"}

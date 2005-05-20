@@ -27,7 +27,7 @@
 
     <ul class="gbBreadCrumb">
       <li class="firstChild">
-	<a href="{g->url}">{$UserAdmin.rootAlbum.title}</a>
+	<a href="{g->url}">{$UserAdmin.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
       </li>
       <li>
 	{g->text text="Your Account"}
