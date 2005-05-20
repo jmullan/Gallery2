@@ -44,6 +44,9 @@
 	    <?php if (isset($templateData['error']['readonly_dir'])): ?>
 	    <?php print _('The directory you entered is read only'); ?>
 	    <?php endif; ?>
+	    <?php if (isset($templateData['error']['creation_error'])): ?>
+	    <?php print _('There was an error creating the directory structure within the storage directory.'); ?>
+	    <?php endif; ?>
 	  </td>
 	</tr>
 	<?php endif; ?>
