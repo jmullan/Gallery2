@@ -164,7 +164,7 @@
 	  <tr>
 	    <td <?php print ($templateData['percentComplete'] != 0 && $templateData['percentComplete'] != 100) ? 'colspan="2"' : '';?> >
 	      <span class="statusLine">
-		<?php print _('Install ') . $templateData['percentComplete'] ._('% complete')?>
+		<?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']) ?>
 	      </span>
 	    </td>
 	  </tr>
