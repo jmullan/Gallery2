@@ -37,6 +37,25 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryEmbed.class');
  */
 class EmbedTest extends GalleryTestCase {
 
+    function setUp() {
+	parent::setUp();
+
+	/* Some of the test replace the global gallery object, therefore back it up */
+	global $gallery;
+	$this->_origGallery =& $gallery;
+	/* Clean all cached variables */
+	GalleryDataCache::reset();
+    }
+
+    function tearDown() {
+	/* Restore */
+	$GLOBALS['gallery'] =& $this->_origGallery;
+	$gallery =& $GLOBALS['gallery'];
+	GalleryDataCache::reset();
+	
+	parent::tearDown();
+    }
+    
     function EmbedTest($methodName) {
 	$this->GalleryTestCase($methodName);
     }
@@ -103,18 +122,60 @@ class EmbedTest extends GalleryTestCase {
 	if (is_array($css)) {
 	    $this->assertEquals(count($css), count($refCss), 'array size of $css is incorrect!');
 	    for ($i = 0; $i < count($css); $i++) {
-		$this->assertEquals($css[$i], $refCss[$i], 'css style not captured correctly or out of order!');
+		$this->assertEquals($css[$i], $refCss[$i],
+				    'css style not captured correctly or out of order!');
 	    }
 	}
 	$this->assert(is_array($javascript), '$javascript should be an array!');
 	if (is_array($javascript)) {
-	    $this->assertEquals(count($javascript), count($refJs), 'array size of $javascript is incorrect!');
+	    $this->assertEquals(count($javascript), count($refJs),
+				'array size of $javascript is incorrect!');
 	    for ($i = 0; $i < count($javascript); $i++) {
-		$this->assertEquals($javascript[$i], $refJs[$i], 'javascript not captured correctly or out of order!');
+		$this->assertEquals($javascript[$i], $refJs[$i],
+				    'javascript not captured correctly or out of order!');
 	    }
 	}
     }
-    
+
+    /*
+     * GalleryEmbed::init shouldn't be called more than once per HTTP request. If it is called
+     * multiple times, then we make sure that it doesn't call initFirstPass or initSecondPass
+     * more than once per HTTP request.
+     */
+    function testInitMultipleTimes() {
+	$expectedUrl = GalleryUrlGenerator::makeUrl('/cms/');
+	/* Init a first time */
+	$ret = GalleryEmbed::init(array('embedUri' => 'index.php?mod=g2', 'embedPath' => '/cms/'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Check if we get the the urls that it should generate (sanity check) */
+	global $gallery;
+	$urlgenerator =& $gallery->getUrlGenerator();
+	/* force the embedded url directory */
+	$this->assertEquals($urlgenerator->getCurrentUrlDir(true), $expectedUrl,
+			   'First init call failed.');
+	/*
+	 * Now do what you shouldn't do, call init a second time. It shouldn't call initFirstPass
+	 * again, i.e. the generated urls should be the same as before.
+	 */
+	$ret = GalleryEmbed::init(array('embedUri' => 'index.php?mod=g2', 'embedPath' => '/cms2nd/'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	global $gallery;
+	$urlgenerator =& $gallery->getUrlGenerator();
+	/* force the embedded url directory */
+	$this->assertEquals($urlgenerator->getCurrentUrlDir(true), $expectedUrl,
+			   'Second init call called initFirstPass again.');
+
+	/* Now check initSecondPass */
+	/*
+	 * FIXME: Currently, calling initSecondPass just sets the activeUserId, which isn't
+	 * harmful and the same is done in GalleryEmbed::init (checkActiveUser)
+	 * Once we put more logic into initSecondPass, we can and should add here a test.
+	 */
+    }
  
 }
 ?>

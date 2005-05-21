@@ -71,11 +71,19 @@ class GalleryEmbed {
      * @static
      */
     function init($initParams=array()) {
-	$ret = GalleryInitFirstPass($initParams);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+	/* GDC as static var replacement for better testability */
+	static $firstCacheKey = 'GalleryEmbed::initFirstPass';
+	static $secondCacheKey = 'GalleryEmbed::initSecondPass';
 
+	/* Only InitFirstPass if not already done so in a prior call */
+	if (!GalleryDataCache::containsKey($firstCacheKey)) {
+	    $ret = GalleryInitFirstPass($initParams);
+	    GalleryDataCache::put($firstCacheKey, true);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	}
+	
 	GalleryCapabilities::set('login', false);
 	if (isset($initParams['loginRedirect'])) {
 	    GalleryCapabilities::set('loginRedirect',
@@ -90,9 +98,13 @@ class GalleryEmbed {
 	}
 
 	if (empty($initParams) || isset($initParams['fullInit'])) {
-	    $ret = GalleryInitSecondPass();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+	    /* Only InitSecondPass if not already done so in a prior call */
+	    if (!GalleryDataCache::containsKey($secondCacheKey)) {
+		$ret = GalleryInitSecondPass();
+		GalleryDataCache::put($secondCacheKey, true);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
 	    }
 	}
 
@@ -137,6 +149,8 @@ class GalleryEmbed {
      * @static
      */
     function handleRequest() {
+	static $secondCacheKey = 'GalleryEmbed::initSecondPass';
+	GalleryDataCache::put($secondCacheKey, true);
 	return GalleryMain(true);
     }
 
