@@ -42,17 +42,24 @@
 
   <h4> {g->text text="Sort order"} </h4>
 
-  <input type="radio" id="rbSortManual"{if !$form.sort} checked="checked"{/if}
-   name="{g->formVar var="form[sort]"}" value="0"/>
+  <input type="radio" id="rbSortManual"{if $form.sort=='manual'} checked="checked"{/if}
+   name="{g->formVar var="form[sort]"}" value="manual"/>
   <label for="rbSortManual">
     {g->text text="Use manual sort order of albums"}
   </label>
   <br/>
 
-  <input type="radio" id="rbSortTitle"{if $form.sort} checked="checked"{/if}
-   name="{g->formVar var="form[sort]"}" value="1"/>
+  <input type="radio" id="rbSortTitle"{if $form.sort=='title'} checked="checked"{/if}
+   name="{g->formVar var="form[sort]"}" value="title"/>
   <label for="rbSortTitle">
     {g->text text="Sort albums by title"}
+  </label>
+  <br/>
+
+  <input type="radio" id="rbSortAlbum"{if $form.sort=='album'} checked="checked"{/if}
+   name="{g->formVar var="form[sort]"}" value="album"/>
+  <label for="rbSortAlbum">
+    {g->text text="Use sort order defined in each album (affects performance)"}
   </label>
 
   <h4> {g->text text="Tree"} </h4>

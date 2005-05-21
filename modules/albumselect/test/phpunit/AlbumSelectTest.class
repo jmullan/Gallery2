@@ -54,15 +54,37 @@ class AlbumSelectTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
-							       array('title' => 'zzzzzzzz'));
+	    array('title' => 'zzzzzzzz', 'summary' => 'zzzzzzzz',
+		  'orderBy' => 'summary', 'orderDirection' => 'asc'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($this->_album);
+
+	/* Manual order: 1,2,3  Title order: 3,2,1  Summary order: 2,3,1 */
+	list ($ret, $this->_subalbum[1]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'zzzz', 'summary' => 'zzzz'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_subalbum[2]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'mmmm', 'summary' => 'aaaa'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $this->_subalbum[3]) = $this->_createRandomAlbum($this->_album->getId(),
+	    array('title' => 'aaaa', 'summary' => 'mmmm'));
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function testAlbumSelect() {
+	/* No show, manual sort */
 	$ret = $this->_module->setParameter('show', '0');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -71,7 +93,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setParameter('sort', '0');
+	$ret = $this->_module->setParameter('sort', 'manual');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -87,14 +109,24 @@ class AlbumSelectTest extends GalleryTestCase {
 	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
-	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-					    'parentNode' => 0, 'depth' => 0),
-				      $template->data['AlbumSelectSystemContent']['tree']),
-		      'album in tree');
+	/* Test album and its subalbums should be last 4 tree items: subalbums 1,2,3 */
+	$albumNode = count($template->data['AlbumSelectSystemContent']['tree']) - 3;
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($template->data['AlbumSelectSystemContent']['tree'], -4),
+	    'test albums in tree');
     }
 
-    function testAlbumSelectShowSort() {
+    function testAlbumSelectSortByTitle() {
+	/* Show in system content, sort by title */
 	$ret = $this->_module->setParameter('show', '1');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -103,7 +135,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setParameter('sort', '1');
+	$ret = $this->_module->setParameter('sort', 'title');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -120,11 +152,68 @@ class AlbumSelectTest extends GalleryTestCase {
 	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
-	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-					    'parentNode' => 0, 'depth' => 0),
-				      $template->data['AlbumSelectSystemContent']['tree']),
-		      'album in tree');
+	/* Test album and its subalbums should be last 4 tree items: subalbums 3,2,1 */
+	$albumNode = count($template->data['AlbumSelectSystemContent']['tree']) - 3;
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($template->data['AlbumSelectSystemContent']['tree'], -4),
+	    'test albums in tree');
+    }
+
+    function testAlbumSelectSortByAlbum() {
+	$ret = $this->_module->setParameter('show', '0');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('type', 'select');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = $this->_module->setParameter('sort', 'album');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$template = new AlbumSelectDummyGalleryTemplate();
+	list ($ret, $tpl) = $this->_module->loadSystemContent($template);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(null, $tpl, 'no system content');
+	$this->assertEquals('zzzzzzzz',
+	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
+	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
+	/* Find test album in tree; subalbum order is 2,3,1 */
+	$tree = $template->data['AlbumSelectSystemContent']['tree'];
+	for ($i = 0; $i < count($tree); $i++) {
+	    if ($tree[$i]['id'] == $this->_album->getId()) {
+		break;
+	    }
+	}
+	$this->assert($i < count($tree), 'test album not found');
+	$albumNode = $tree[$i]['nodeId'];
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($tree, $i, 4),
+	    'test albums in tree');
     }
 
     function testAlbumTree() {
@@ -136,7 +225,7 @@ class AlbumSelectTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$ret = $this->_module->setParameter('sort', '0');
+	$ret = $this->_module->setParameter('sort', 'manual');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -153,20 +242,20 @@ class AlbumSelectTest extends GalleryTestCase {
 	    $template->data['AlbumSelectSystemContent']['titles'][$this->_album->getId()], 'title');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['params']), 'params');
 	$this->assert(!empty($template->data['AlbumSelectSystemContent']['tree']), 'tree');
-	$albumCount = count($template->data['AlbumSelectSystemContent']['tree']);
-	$this->assert($this->_inArray(array('id' => $this->_album->getId(), 'nodeId' => $albumCount,
-					    'parentNode' => 0, 'depth' => 0),
-				      $template->data['AlbumSelectSystemContent']['tree']),
-		      'album in tree');
-    }
-
-    function _inArray($needle, $haystack) {
-	foreach ($haystack as $hay) {
-	    if ($hay == $needle) {
-		return true;
-	    }
-	}
-	return false;
+	/* Test album and its subalbums should be last 4 tree items: subalbums 1,2,3 */
+	$albumNode = count($template->data['AlbumSelectSystemContent']['tree']) - 3;
+	$this->assertEquals(
+	    array(
+		array('id' => $this->_album->getId(), 'nodeId' => $albumNode,
+		      'parentNode' => 0, 'depth' => 0),
+		array('id' => $this->_subalbum[1]->getId(), 'nodeId' => $albumNode + 1,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[2]->getId(), 'nodeId' => $albumNode + 2,
+		      'parentNode' => $albumNode, 'depth' => 1),
+		array('id' => $this->_subalbum[3]->getId(), 'nodeId' => $albumNode + 3,
+		      'parentNode' => $albumNode, 'depth' => 1)),
+	    array_slice($template->data['AlbumSelectSystemContent']['tree'], -4),
+	    'test albums in tree');
     }
 }
 

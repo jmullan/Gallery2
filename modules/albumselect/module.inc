@@ -39,8 +39,8 @@ class AlbumSelectModule extends GalleryModule {
 	$this->setName($gallery->i18n('Album Select'));
 	$this->setDescription(
 	    $gallery->i18n('Jump directly to any album using a select box or tree view'));
-	$this->setVersion('0.9.3');
-	$this->setGroup('display', $this->translate('Display'));
+	$this->setVersion('0.9.4');
+	$this->setGroup('blocks', $this->translate('Blocks'));
 	$this->setCallbacks('getSiteAdminViews|loadSystemContent|registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
 	$this->setRequiredModuleApi(array(0, 10));
@@ -65,8 +65,9 @@ class AlbumSelectModule extends GalleryModule {
      * @see GalleryModule::registerEventListeners()
      */
     function registerEventListeners() {
-	GalleryCoreApi::registerEventListener(
-	    'Gallery::ViewableTreeChange', new AlbumSelectModule());
+	$listener = new AlbumSelectModule();
+	GalleryCoreApi::registerEventListener('Gallery::ViewableTreeChange', $listener);
+	GalleryCoreApi::registerEventListener('GalleryEntity::save', $listener);
     }
 
     /**
@@ -77,10 +78,17 @@ class AlbumSelectModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	foreach (array('show' => 1, 'type' => 'select', 'sort' => 0,
+	foreach (array('show' => 1, 'type' => 'select', 'sort' => 'manual',
 		       'treeLines' => 1, 'treeIcons' => 0, 'treeCookies' => 0,
 		       'treeExpandCollapse' => 0, 'treeCloseSameLevel' => 0) as $key => $value) {
 	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    } else if ($key == 'sort' && ($params[$key] == 0 || $params[$key] == 1)) {
+		/* v0.9.4 changed 'sort' param from 0/1 to manual/title */
+		$value = ($params[$key] == 1) ? 'title' : 'manual';
 		$ret = $this->setParameter($key, $value);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
@@ -123,28 +131,6 @@ class AlbumSelectModule extends GalleryModule {
 	list ($treeList, $titles) = GalleryDataCache::getFromDisk($cachePathInfo);
 
 	if (!isset($titles) || !isset($treeList)) {
-	    list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-		    $tree = null;
-		} else {
-		    return array($ret->wrap(__FILE__, __LINE__), null);
-		}
-	    }
-	    if (empty($tree)) {
-		return array(GalleryStatus::success(), null);
-	    }
-
-	    list ($ret, $items) =
-		GalleryCoreApi::loadEntitiesById(GalleryUtilities::arrayKeysRecursive($tree));
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    foreach ($items as $item) {
-		$title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
-		$titles[$item->getId()] = preg_replace('/\r\n/', ' ', $title);
-	    }
-
 	    list ($ret, $rootAlbumId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	    if ($ret->isError()) {
@@ -154,13 +140,52 @@ class AlbumSelectModule extends GalleryModule {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    $titles['root'] = $rootAlbum->getTitle();
-
+	    $titles = array('root' => preg_replace('/\r\n/', ' ', $rootAlbum->getTitle()));
 	    $treeList = array();
-	    $sorter = $params['sort'] ? new AlbumSelectTreeSorter($titles) : null;
-	    $nodeId = 0;
-	    $this->_parseTree($tree, $treeList, $sorter, $nodeId);
 
+	    if ($params['sort'] != 'album') {
+		list ($ret, $tree) = GalleryCoreApi::fetchAlbumTree();
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
+			$tree = null;
+		    } else {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		if (empty($tree)) {
+		    return array(GalleryStatus::success(), null);
+		}
+
+		list ($ret, $items) =
+		    GalleryCoreApi::loadEntitiesById(GalleryUtilities::arrayKeysRecursive($tree));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		foreach ($items as $item) {
+		    $title = $item->getTitle() ? $item->getTitle() : $item->getPathComponent();
+		    $titles[$item->getId()] = preg_replace('/\r\n/', ' ', $title);
+		}
+
+		$sorter = ($params['sort'] == 'title') ? new AlbumSelectTreeSorter($titles) : null;
+		$nodeId = 0;
+		$this->_parseTree($tree, $treeList, $sorter, $nodeId);
+
+	    } else {
+		list ($ret, $canView) =
+		    GalleryCoreApi::hasItemPermission($rootAlbumId, 'core.view');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($canView) {
+		    $ret = $this->_buildTree($rootAlbum, $treeList, $titles, $nodeId);
+		    if ($ret->isError()) {
+			return array($ret->wrap(__FILE__, __LINE__), null);
+		    }
+		}
+		if (empty($treeList)) {
+		    return array(GalleryStatus::success(), null);
+		}
+	    }
 	    GalleryDataCache::putToDisk($cachePathInfo,
 					$dataToCache = array($treeList, $titles));
 	}
@@ -190,13 +215,27 @@ class AlbumSelectModule extends GalleryModule {
 	if ($event->getEventName() == 'Gallery::ViewableTreeChange') {
 	    GalleryDataCache::removeFromDisk(
 		array('type' => 'module-data', 'module' => 'albumselect'));
+	} else if ($event->getEventName() == 'GalleryEntity::save') {
+	    $entity = $event->getEntity();
+	    if ($entity->getEntityType() == 'GalleryAlbumItem'
+		    && ($entity->getModifiedFlag('orderBy') & MEMBER_MODIFIED
+			|| $entity->getModifiedFlag('orderDirection') & MEMBER_MODIFIED)) {
+		list ($ret, $sort) = $this->getParameter('sort');
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if ($sort == 'album') {
+		    GalleryDataCache::removeFromDisk(
+			array('type' => 'module-data', 'module' => 'albumselect'));
+		}
+	    }
 	}
 
 	return array(GalleryStatus::success(), null);
     }
 
     /**
-     * Build template data for subalbum tree
+     * Build template data for subalbum tree (manual and title sorting)
      * @private
      */
     function _parseTree($tree, &$treeList, &$sorter, &$nodeId, $parentNode=0, $depth=0) {
@@ -210,6 +249,37 @@ class AlbumSelectModule extends GalleryModule {
 		$this->_parseTree($list, $treeList, $sorter, $nodeId, $nodeId, $depth + 1);
 	    }
 	}
+    }
+
+    /**
+     * Build template data for subalbum tree (apply sort preference of each album)
+     * @return object GalleryStatus a status code
+     * @private
+     */
+    function _buildTree($album, &$treeList, &$titles, &$nodeId, $parentNode=0, $depth=0) {
+	list ($ret, $subAlbumIds) = GalleryCoreApi::fetchChildAlbumItemIds($album);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!empty($subAlbumIds)) {
+	    list ($ret, $subAlbums) = GalleryCoreApi::loadEntitiesById($subAlbumIds);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($subAlbums as $subAlbum) {
+		$treeList[] = array('id' => $subAlbum->getId(), 'nodeId' => ++$nodeId,
+				    'parentNode' => $parentNode, 'depth' => $depth);
+		$title = $subAlbum->getTitle() ? $subAlbum->getTitle()
+					       : $subAlbum->getPathComponent();
+		$titles[$subAlbum->getId()] = preg_replace('/\r\n/', ' ', $title);
+		$ret = $this->_buildTree($subAlbum, $treeList, $titles,
+					 $nodeId, $nodeId, $depth + 1);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+	return GalleryStatus::success();
     }
 }
 
