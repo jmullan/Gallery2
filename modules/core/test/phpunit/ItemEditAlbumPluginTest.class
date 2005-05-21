@@ -130,7 +130,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][active]', 1);
 	GalleryUtilities::putRequestVariable('form[resizes][2][width]', 456);
 	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
@@ -286,7 +287,7 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[layout]', 'foo');
 	GalleryUtilities::putRequestVariable('form[theme]', 'bar');
 	GalleryUtilities::putRequestVariable('form[orderBy]', '');
-	// for empty orderBy, orderDirection can be omitted
+	/* for empty orderBy, orderDirection can be omitted */
 	GalleryUtilities::putRequestVariable('form[thumbnail][size]', 123);
 	GalleryUtilities::putRequestVariable('form[resizes][0][active]', 1);
 	GalleryUtilities::putRequestVariable('form[resizes][0][width]', 234);
@@ -299,7 +300,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][2][height]', 456);
 	GalleryUtilities::putRequestVariable('form[recreateThumbnails]', 1);
 	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
@@ -313,28 +315,34 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
 
 	/* Verify the thumbnail and resizes on our children */
-	list ($ret, $thumbnails) = GalleryCoreApi::fetchThumbnailsByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	list ($ret, $thumbnails) =
+	    GalleryCoreApi::fetchThumbnailsByItemIds(array($child[0]->getId(), $child[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals('thumbnail|123', $thumbnails[$child[0]->getId()]->getDerivativeOperations());
-	$this->assertEquals('crop|0,0,50,50;thumbnail|123', $thumbnails[$child[1]->getId()]->getDerivativeOperations());
+	$this->assertEquals('thumbnail|123',
+	    $thumbnails[$child[0]->getId()]->getDerivativeOperations());
+	$this->assertEquals('crop|0,0,50,50;thumbnail|123',
+	    $thumbnails[$child[1]->getId()]->getDerivativeOperations());
 
-	list ($ret, $resizes) = GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(), $child[1]->getId()));
+	list ($ret, $resizes) =
+	    GalleryCoreApi::fetchResizesByItemIds(array($child[0]->getId(), $child[1]->getId()));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	for ($i = 0; $i < 2; $i++) {
-	    $this->assertEquals('scale|234,234', $resizes[$child[$i]->getId()][0]->getDerivativeOperations());
-	    $this->assertEquals('scale|345,543', $resizes[$child[$i]->getId()][1]->getDerivativeOperations());
-	    $this->assertEquals('scale|456,456', $resizes[$child[$i]->getId()][2]->getDerivativeOperations());
+	    $this->assertEquals('scale|234,234',
+		$resizes[$child[$i]->getId()][0]->getDerivativeOperations(), "$i 0");
+	    $this->assertEquals('scale|345,543',
+		$resizes[$child[$i]->getId()][1]->getDerivativeOperations(), "$i 1");
+	    $this->assertEquals('scale|456,456',
+		$resizes[$child[$i]->getId()][2]->getDerivativeOperations(), "$i 2");
 	}
     }
 
     /**
-     
      * Add a small (dimension wise) photo to an album and make sure that we don't create resizes
      * that are larger (dimension wise) than the original.
      */
@@ -395,7 +403,8 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[resizes][1][width]', 100);
 	GalleryUtilities::putRequestVariable('form[resizes][1][height]', 100);
 	GalleryUtilities::putRequestVariable('form[recreateResizes]', 1);
-	GalleryUtilities::putRequestVariable('form[serialNumber]', $this->_album->getSerialNumber());
+	GalleryUtilities::putRequestVariable('form[serialNumber]',
+					     $this->_album->getSerialNumber());
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album, $this->_preferred);
@@ -419,6 +428,9 @@ class ItemEditAlbumPluginTest extends ItemEditPluginTestCase {
 	}
     }
 }
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDataItem.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryToolkit.class');
 
 /**
  * Mock data item
