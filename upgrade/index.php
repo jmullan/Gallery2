@@ -89,7 +89,14 @@ if ($ret->isError()) {
     return;
 }
 
-if (function_exists('dgettext')) {
+$translator = $gallery->getTranslator();
+if (!$translator->canTranslate()) {
+    unset($translator);
+} else {
+    if (empty($_SESSION['language'])) {
+	$_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
+    }
+    $translator->init($_SESSION['language']);
     /* Select domain for translation */
     bindtextdomain('gallery2_upgrade', dirname(__FILE__) . '/locale');
     textdomain('gallery2_upgrade');

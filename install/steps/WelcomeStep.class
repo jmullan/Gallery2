@@ -38,6 +38,12 @@ class WelcomeStep extends InstallStep {
 	    header("Content-Disposition: attachment; filename=.htaccess");
 	    print $htaccess;
 	    return false;
+	} else if (!empty($_GET['language'])) {
+	    global $translator, $gallery;
+	    $gallery = new GalleryStub();
+	    $translator->init($_GET['language']);
+	    unset($gallery);
+	    $_SESSION['language'] = $_GET['language'];
 	}
 
 	return true;

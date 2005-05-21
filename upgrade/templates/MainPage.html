@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="styles/style.css"/>
   </head>
 
-  <body>
+  <body<?php global $translator; if (isset($translator)
+		 && $translator->isRightToLeft()) print ' style="direction:rtl"' ?>>
     <div id="box">
       <div id="header">
 	<img src="images/g2Logo_upgrade_head.png" alt="Gallery Upgrader"/>
@@ -18,7 +19,8 @@
 	  <?php for ($i = 0; $i < sizeof($steps); $i++): ?>
 	  <li class="navitem">
 	    <span class="nav_num">
-	      <?php if ($i <= $currentStep->getStepNumber() && ($steps[$i]->isComplete() || $steps[$i]->isOptional())): ?>
+	      <?php if ($i <= $currentStep->getStepNumber()
+		    && ($steps[$i]->isComplete() || $steps[$i]->isOptional())): ?>
 	      <span class="success">&radic;</span>
 	      <?php elseif ($steps[$i]->isInError()): ?>
 	      <span class="error">&#10007;</span>

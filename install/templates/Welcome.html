@@ -4,6 +4,27 @@
 	$templateData['totalSteps'],
 	'<a href="../README.html" target="_blank">', '</a>') ?>
     </p>
+    <?php if (isset($translator)): ?>
+    <form method="get" action="index.php"><p>
+      <input type="hidden" name="step" value="<?php print $stepNumber ?>"/>
+      <?php print _("Select Language:") ?>
+      <select name="language" onchange="this.form.submit()" style="direction:ltr">
+	<?php
+	  foreach ($translator->getSupportedLanguages() as $language => $list) {
+	    foreach ($list as $country => $data) {
+	      $code = $language . '_' . $country;
+	      print '<option value="' . $code . '"';
+	      if ($code == $_SESSION['language']) print ' selected="selected"';
+	      print '>' . $data['description'] . "</option>\n";
+	    }
+	  }
+	?>
+      </select>
+      <noscript>
+	<input type="submit" class="inputTypeSubmit" value="{g->text text="Go"}"/>
+      </noscript>
+    </p></form>
+    <?php endif; ?>
 
     <div class="go">
       <span class="goToNext">
