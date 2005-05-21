@@ -72,9 +72,11 @@ function parsePoFiles($poFiles) {
     $seenPlugins = array();
     $maxMessageCount = array();
     foreach ($poFiles as $poFile) {
-	if (! preg_match("|/(\w+/\w+)/po/(\w+_\w+).po|", $poFile, $matches)) {
+    if (! preg_match("|/(\w+/\w+)/po/(\w+_\w+).po|", $poFile, $matches)) {
+        if (! preg_match("|/(\w+/)+po/(\w+_\w+).po|", $poFile, $matches)) {
 	    continue;
 	}
+    }
 	list ($plugin, $locale) = array($matches[1], $matches[2]);
 	$seenPlugins[$plugin] = 1;
 
