@@ -122,7 +122,7 @@ class CoreModuleTest extends GalleryTestCase {
 		      'view' => 'core:ItemPermissions'),
 		array('name' => $this->_module->translate('Add Items'),
 		      'view' => 'core:ItemAdd'),
-		array('name' => $this->_module->translate('Add Sub-Album'),
+		array('name' => $this->_module->translate('Add Album'),
 		      'view' => 'core:ItemAddAlbum')
 		),
 	    $content);
@@ -212,7 +212,7 @@ class CoreModuleTest extends GalleryTestCase {
 			     'itemId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
 			     ));
-	$links[] = array('text' => $this->_module->translate('add sub-album'),
+	$links[] = array('text' => $this->_module->translate('add album'),
 			 'params' => array(
 			     'view' => 'core:ItemAdmin',
 			     'subView' => 'core:ItemAddAlbum',
