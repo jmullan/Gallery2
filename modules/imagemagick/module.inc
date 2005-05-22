@@ -96,11 +96,18 @@ class ImageMagickModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('ImageMagick');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }   
+            
+        if (!$priority) {
+	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $priority++;
 	}
-	$priority++;
 
 	foreach ($results['operations'] as $operation => $info) {
 	    $outputMimeType = isset($info['outputMimeType']) ? $info['outputMimeType'] : '';

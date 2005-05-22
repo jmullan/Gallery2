@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(5, 8);
+	return array(5, 9);
     }
 
     /**
@@ -1962,6 +1962,20 @@ class GalleryCoreApi {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_simple.class');
 	return GalleryToolkitHelper_simple::getMaximumManagedPriority();
     }
+
+    /**
+     * Get maximum priority value (lowest priority) in managed priority range (20-40)
+     *
+     * @param string Toolkit Id
+     * @return array object GalleryStatus a status code
+     *               int priority
+     * @static
+     */
+    function getToolkitPriorityById($toolkitId) {
+	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryToolkitHelper_simple.class');
+	return GalleryToolkitHelper_simple::getToolkitPriorityById($toolkitId);
+    }
+
 
     /**
      * Get list of toolkits/priorities in managed priority range (20-40) for which

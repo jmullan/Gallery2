@@ -67,14 +67,23 @@ class DcrawModule extends GalleryModule {
      */
     function activate() {
 	global $gallery;
-	list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+
+        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('Dcraw');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }   
+            
+        if (!$priority) {
+	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    $priority++;
 	}
 
 	$ret = GalleryCoreApi::registerToolkitOperation(
 	    'Dcraw', array('image/x-dcraw'), 'convert-to-image/x-portable-pixmap',
-	    array(), $gallery->i18n('Convert to PPM'), 'image/x-portable-pixmap', $priority + 1);
+	    array(), $gallery->i18n('Convert to PPM'), 'image/x-portable-pixmap', $priority);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

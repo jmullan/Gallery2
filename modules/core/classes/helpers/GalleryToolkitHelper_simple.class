@@ -205,5 +205,36 @@ class GalleryToolkitHelper_simple {
 
 	return array(GalleryStatus::success(), $priority);
     }
+
+    /**
+     * Get priority for toolkit by toolkit id
+     *
+     * @return array object GalleryStatus a status code
+     *               int priority
+     * @static
+     */
+    function getToolkitPriorityById($toolkitId) {
+	global $gallery;
+
+	$query = 
+	'SELECT [GalleryToolkitOperationMimeTypeMap::priority]
+	   FROM [GalleryToolkitOperationMimeTypeMap]
+	  WHERE [GalleryToolkitOperationMimeTypeMap::toolkitId] = ?';
+
+	list ($ret, $results) = $gallery->search($query, array($toolkitId));
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if ($result = $results->nextResult()) {
+	    $priority = $result[0];
+	}
+	if (empty($priority)) {
+	    $priority = 0;
+	}
+
+	return array(GalleryStatus::success(), $priority);
+    }
+
 }
 ?>
