@@ -76,24 +76,39 @@ class ExifDescriptionOption extends ItemAddOption {
 	    $itemId = $items[$i]->getId();
 
 	    list ($ret, $exifData) =
-		ExifExtractor::getMetaData(array($itemId),
-					   array('ImageDescription', 'IPTC/Keywords'));
+		ExifExtractor::getMetaData(
+		    array($itemId),
+		    array('IPTC/Caption', 
+			  'ImageDescription',
+			  'UserComment', 
+			  'IPTC/Keywords', 
+			 )
+		);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 
 	    $mustSave = false;
 
-	    if (!empty($exifData[$itemId]['ImageDescription']['value'])) {
-		$exifDescription = $exifData[$itemId]['ImageDescription']['value'];
+	    /* TODO(xlerb) reconsider, if ExifHelper should be changed to do the preferences. */
+	    $itemDescription = '';
+	    if (!empty($exifData[$itemId]['IPTC/Caption']['value'])) {
+		$itemDescription = $exifData[$itemId]['IPTC/Caption']['value'];
+	    }
+	    elseif (!empty($exifData[$itemId]['ImageDescription']['value'])) {
+		$itemDescription = $exifData[$itemId]['ImageDescription']['value'];
+	    }
+	    elseif (!empty($exifData[$itemId]['UserComment']['value'])) {
+		$itemDescription = $exifData[$itemId]['UserComment']['value'];
+	    }
 
-
+	    if (!empty($itemDescription)) {
 		if ($addOption & EXIF_ITEM_SUMMARY) {
-		    $items[$i]->setSummary($exifDescription);
+		    $items[$i]->setSummary($itemDescription);
 		    $mustSave = true;
 		}
 		if ($addOption & EXIF_ITEM_DESCRIPTION) {
-		    $items[$i]->setDescription($exifDescription);
+		    $items[$i]->setDescription($itemDescription);
 		    $mustSave = true;
 		}
 	    }
