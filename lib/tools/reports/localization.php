@@ -221,7 +221,8 @@ function parsePoFiles($poFiles) {
 						     'total' => $total,
 						     'fuzzy' => $fuzzy,
 						     'obsolete' => $obsolete,
-						     'percentDone' => $percentDone);
+						     'percentDone' => $percentDone,
+						     'name' => $plugin);
 
 	foreach (array('translated', 'untranslated', 'fuzzy', 'obsolete') as $key) {
 	    if (!isset($summary[$locale][$key])) {
@@ -248,6 +249,7 @@ function parsePoFiles($poFiles) {
 	    if (!isset($poData[$locale]['plugins'][$plugin])) {
 		$poData[$locale]['plugins'][$plugin]['missing'] = 1;
 		$poData[$locale]['plugins'][$plugin]['percentDone'] = 0;
+		$poData[$locale]['plugins'][$plugin]['name'] = $plugin;
 	    } else {
 		$pluginTotal +=
 		    $poData[$locale]['plugins'][$plugin]['translated'] -
@@ -275,6 +277,17 @@ function parsePoFiles($poFiles) {
     return $poData;
 }
 
+/**
+ * Comparision function to be called by uasort elsewhere. The given params are arrays expected to
+ * have at least a key of 'percentDone' with a numeric value. Optionally the arrays may have
+ * two more keys: 'missing' and 'name'. Main sort is by 'percentDone' ASC. But if one of the
+ * given params has a key 'missing' and the other not, the entries with 'missing' are sorted last.
+ * When two entries are otherwise equal and both have a 'name' entry, then the sort is by 'name'
+ * ASC.
+ * @param array  first entry to sort
+ * @param array  second entry to sort
+ * @return int   -1, 0, +1, depending an the comparision
+ */
 function sortByPercentDone($a, $b) {
     if (isset($a['missing']) && !isset($b['missing'])) {
 	return 1;
@@ -283,6 +296,9 @@ function sortByPercentDone($a, $b) {
     }
     
     if ($a['percentDone'] == $b['percentDone']) {
+	if (isset($a['name']) && isset($b['name'])) {
+	    return ($a['name'] < $b['name']) ? -1 : 1;
+	}
 	return 0;
     }
     return ($a['percentDone'] < $b['percentDone']) ? 1 : -1;
