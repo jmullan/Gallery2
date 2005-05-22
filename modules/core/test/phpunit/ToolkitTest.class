@@ -637,6 +637,11 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $priority, 'Returned value for undefined toolkit');
+
+	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 }
 
