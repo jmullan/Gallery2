@@ -408,17 +408,17 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
 
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
-	$this->_baseDir = dirname(__FILE__) . "{$dirSep}..{$dirSep}data{$dirSep}";
+	$this->_baseDir = dirname(dirname(__FILE__)) . "{$dirSep}data{$dirSep}";
 	$this->_baseDirRecursive = dirname(__FILE__) .
 		"{$dirSep}..{$dirSep}data{$dirSep}localUploadDir{$dirSep}";
     }
 
     /*
-     * Make realpath a passthrough to skip over all the issues we'll have if
-     * it's actually different.
+     * Simply collapse .. clauses out of paths.  If we use realpath() it'll try to verify that the
+     * path actually exists (which it won't, in some cases)
      */
     function realpath($path) {
-	return $path;
+	return preg_replace('|[^/\\\]+[/\\\]\.\.[/\\\]|', '', $path);
     }
     
     function file_exists($path) {
