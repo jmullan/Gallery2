@@ -196,7 +196,7 @@ function parsePoFiles($poFiles) {
 	     */
 	    if (!empty($msgId)) {
 		if (preg_match('/^msgstr/', $line)) {
-		    if (preg_match('/^msgstr(.*)""/', $line)) {
+		    if (preg_match('/^msgstr\s*""\s*$/', $line)) {
 			$lastLineWasEmptyMsgStr = 1;
 		    } else {
 			if ($nextIsFuzzy) {
