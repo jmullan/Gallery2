@@ -123,9 +123,13 @@
 
   <tr>
     <td>
-      <input type="text" size="40"
+      <input type="text" size="40" id="newDir" autocomplete="off"
        name="{g->formVar var="form[uploadLocalServer][newDir]"}"
        value="{$form.uploadLocalServer.newDir}"/>
+      {g->autoComplete element="newDir"}
+	{g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs"
+	 arg3="prefix=__VALUE__" forJavascript="true"}
+      {/g->autoComplete}
     </td><td>
       <input type="submit" class="inputTypeSubmit"
        name="{g->formVar var="form[action][addUploadLocalServerDir]"}"
