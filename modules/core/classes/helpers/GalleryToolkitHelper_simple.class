@@ -71,7 +71,8 @@ class GalleryToolkitHelper_simple {
               [GalleryToolkitOperationMimeTypeMap::priority] ASC
             ';
 
-	    list ($ret, $searchResults) = $gallery->search($query, array($mimeType, $operationName));
+	    list ($ret, $searchResults) = 
+		$gallery->search($query, array($mimeType, $operationName));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -114,7 +115,8 @@ class GalleryToolkitHelper_simple {
     function getToolkitByProperty($mimeType, $propertyName) {
 	$cacheKey = "GalleryToolkitHelper::getToolkitByProperty($mimeType, $propertyName)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $toolkits) = GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
+	    list ($ret, $toolkits) = 
+		GalleryToolkitHelper_simple::getToolkitsByProperty($mimeType, $propertyName);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -187,11 +189,17 @@ class GalleryToolkitHelper_simple {
     function getMaximumManagedPriority() {
 	global $gallery;
 
-	list ($ret, $results) = $gallery->search(
-	'SELECT MAX([GalleryToolkitOperationMimeTypeMap::priority])
-	   FROM [GalleryToolkitOperationMimeTypeMap]
-	  WHERE [GalleryToolkitOperationMimeTypeMap::priority] >= 20
-	    AND [GalleryToolkitOperationMimeTypeMap::priority] <= 40');
+	$query = 
+	    'SELECT
+		MAX([GalleryToolkitOperationMimeTypeMap::priority])
+	     FROM 
+		[GalleryToolkitOperationMimeTypeMap]
+	     WHERE 
+		[GalleryToolkitOperationMimeTypeMap::priority] >= 20
+		AND 
+		[GalleryToolkitOperationMimeTypeMap::priority] <= 40';
+
+	list ($ret, $results) = $gallery->search($query);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -209,17 +217,21 @@ class GalleryToolkitHelper_simple {
     /**
      * Get priority for toolkit by toolkit id
      *
+     * @param string Toolkit Id
      * @return array object GalleryStatus a status code
-     *               int priority
+     *               int priority (null if not found in db)
      * @static
      */
     function getToolkitPriorityById($toolkitId) {
 	global $gallery;
 
 	$query = 
-	'SELECT [GalleryToolkitOperationMimeTypeMap::priority]
-	   FROM [GalleryToolkitOperationMimeTypeMap]
-	  WHERE [GalleryToolkitOperationMimeTypeMap::toolkitId] = ?';
+	    'SELECT 
+		[GalleryToolkitOperationMimeTypeMap::priority]
+	     FROM 
+		[GalleryToolkitOperationMimeTypeMap]
+	     WHERE 
+		[GalleryToolkitOperationMimeTypeMap::toolkitId] = ?';
 
 	list ($ret, $results) = $gallery->search($query, array($toolkitId));
 	if ($ret->isError()) {
@@ -227,10 +239,10 @@ class GalleryToolkitHelper_simple {
 	}
 
 	if ($result = $results->nextResult()) {
-	    $priority = $result[0];
+	    $priority = (int)$result[0];
 	}
 	if (empty($priority)) {
-	    $priority = 0;
+	    $priority = null;
 	}
 
 	return array(GalleryStatus::success(), $priority);

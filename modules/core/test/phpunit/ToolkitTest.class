@@ -615,6 +615,29 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
+
+    function testGetToolkitPriorityById() {
+	$ret = GalleryCoreApi::registerToolkitOperation('TestToolkit',
+		array('test/type'), 'test-operation', array(),
+		'test-description', 'test/outputType', 30);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Validate that toolkit priority is returned correctly */
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('TestToolkit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(30, $priority, 'Toolkit Priority Doesn\'t Match');
+	
+	/* Test return for an undefined toolkit */
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('TestToolkit2');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(null, $priority, 'Returned value for undefined toolkit');
+    }
 }
 
 /**
