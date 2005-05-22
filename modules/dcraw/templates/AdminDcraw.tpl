@@ -25,7 +25,7 @@
 	{g->text text="Path to dcraw binary:"}
       </td>
       <td>
-	<input type="text" id="giFormPath" autocomplete="off"
+	<input type="text" id="giFormPath" size="40" autocomplete="off"
 	 name="{g->formVar var="form[path]"}" value="{$form.path}"/>
 	{g->autoComplete element="giFormPath"}
 	  {g->url arg1="view=core:SimpleCallback" arg2="command=lookupFiles"

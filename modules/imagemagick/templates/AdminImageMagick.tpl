@@ -23,11 +23,11 @@
     <td>
       {g->text text="Directory to ImageMagick/GraphicsMagick binaries:"}
     </td><td>
-      <input type="text" id='giFormPath' name="{g->formVar var="form[path]"}" 
-        autocomplete="off" value="{$form.path}"/>
+      <input type="text" id='giFormPath' size="40" autocomplete="off"
+       name="{g->formVar var="form[path]"}" value="{$form.path}"/>
       {g->autoComplete element="giFormPath"}
-        {g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
-          forJavascript="true"}
+	{g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
+	  forJavascript="true"}
       {/g->autoComplete}
 
       {if isset($form.error.path.missing)}
