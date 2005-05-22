@@ -280,10 +280,11 @@ function parsePoFiles($poFiles) {
 /**
  * Comparision function to be called by uasort elsewhere. The given params are arrays expected to
  * have at least a key of 'percentDone' with a numeric value. Optionally the arrays may have
- * two more keys: 'missing' and 'name'. Main sort is by 'percentDone' ASC. But if one of the
- * given params has a key 'missing' and the other not, the entries with 'missing' are sorted last.
- * When two entries are otherwise equal and both have a 'name' entry, then the sort is by 'name'
- * ASC.
+ * two more keys: 'missing' and 'name'. Main sort is by 'percentDone' DESC. But if one of the
+ * given params has a key 'missing' and the other not, the entry with 'missing' is sorted last,
+ * regardless of percentage. When two entries are otherwise equal and both have a 'name' entry,
+ * then the sort is by 'name' ASC.
+ * 
  * @param array  first entry to sort
  * @param array  second entry to sort
  * @return int   -1, 0, +1, depending an the comparision
