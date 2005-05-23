@@ -343,7 +343,9 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    foreach ($memberInfo['members'] as $columnName => $columnInfo) {
 		list ($tableName, $unused) = $this->_translateTableName($columnInfo['class']);
 		$types[] = $columnInfo['type'];
-		$callbacks[] = 'set' . ucFirst($columnName);
+		/* Don't use ucfirst as it may be affected by current locale */
+		$callbacks[] = 'set' . strtr($columnName{0}, 'abcdefghijklmnopqrstuvwxyz',
+		    'ABCDEFGHIJKLMNOPQRSTUVWXYZ') . substr($columnName, 1);
 		$columns[$tableName . '.' . $this->_translateColumnName($columnName)] = 1;
 		$tables[$tableName] = 1;
 	    }
@@ -1006,7 +1008,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    list ($lockTable, $unused) = $this->_translateTableName('Lock');
 	    $lockIdCol = $this->_translateColumnName('lockId');
 	    $freshUntilCol = $this->_translateColumnName('freshUntil');
@@ -1039,7 +1041,7 @@ class DatabaseStorage /* implements GalleryStorage */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	    
+
 	list ($lockTable, $unused) = $this->_translateTableName('Lock');
 	$freshUntilCol = $this->_translateColumnName('freshUntil');
 	$query = sprintf('DELETE FROM %s WHERE %s < ?',
