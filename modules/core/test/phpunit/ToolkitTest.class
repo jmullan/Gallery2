@@ -347,12 +347,6 @@ class ToolkitTest extends GalleryTestCase {
 	}
 	$this->assert(isset($data['test/type']) && in_array('TestToolkit', $data['test/type']),
 		      'Operation mime type');
-
-	/* Unregister */
-	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testEstimateDerivativeDimensions() {
@@ -574,11 +568,6 @@ class ToolkitTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals('40', $priority);
-
-	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testGetRedundantPriorities() {
@@ -604,16 +593,6 @@ class ToolkitTest extends GalleryTestCase {
 	$this->assert(count($list) >= 2, 'count');
 	$this->assertEquals(30, $list['TestToolkit'], 'TestToolkit');
 	$this->assertEquals(27, $list['TestToolkit2'], 'TestToolkit2');
-
-	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit2');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 
     function testGetToolkitPriorityById() {
@@ -637,11 +616,6 @@ class ToolkitTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(null, $priority, 'Returned value for undefined toolkit');
-
-	$ret = GalleryCoreApi::unregisterToolkit('TestToolkit');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
     }
 }
 
