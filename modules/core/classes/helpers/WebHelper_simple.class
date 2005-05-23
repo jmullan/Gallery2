@@ -115,6 +115,10 @@ class WebHelper_simple {
 
 	if (isset($headers['Location'])) {
 	    $redirectUrl = $headers['Location'];
+	    if (is_array($redirectUrl)) {
+		/* If odd http response has multiple Location headers just pick the first */
+		$redirectUrl = array_shift($redirectUrl);
+	    }
 
 	    /* The redirect url is supposed to be absolute, but not everybody plays by the rules */
 	    $redirectComponents = parse_url($redirectUrl);
@@ -257,6 +261,10 @@ class WebHelper_simple {
 
 	if (isset($headers['Location'])) {
 	    $redirectUrl = $headers['Location'];
+	    if (is_array($redirectUrl)) {
+		/* If odd http response has multiple Location headers just pick the first */
+		$redirectUrl = array_shift($redirectUrl);
+	    }
 
 	    /* The redirect url is supposed to be absolute, but not everybody plays by the rules */
 	    $redirectComponents = parse_url($redirectUrl);
