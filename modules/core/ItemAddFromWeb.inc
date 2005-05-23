@@ -159,14 +159,14 @@ class ItemAddFromWeb extends ItemAddPlugin {
 		     *  href="foo bar"    href='foo bar'   href=foo
 		     *  src="foo bar"     src='foo bar'    src=foo
 		     */
-		    preg_match_all('/(src|href)\s*=\s*(?:\'(.*?)\'|\"(.*?)\"|([^\'\"\> ]*))/i',
+		    preg_match_all('/(src|href)\s*=\s*(?:\"(.*?)\"|\'(.*?)\'|([^\'\"\> ]*))/i',
 				   $buffer, $matches);
 
 		    $seenBefore = array();
 		    for ($i = 0; $i < count($matches[1]); $i++) {
 			$url = !empty($matches[2][$i]) ? $matches[2][$i]
-				: !empty($matches[3][$i]) ? $matches[3][$i]
-				  : $matches[4][$i];
+				: (!empty($matches[3][$i]) ? $matches[3][$i]
+				: $matches[4][$i]);
 			if (empty($url) || isset($seenBefore[$url])) {
 			    continue;
 			}
