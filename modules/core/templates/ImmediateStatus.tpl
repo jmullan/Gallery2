@@ -11,12 +11,6 @@
     document.getElementById('ImmediateStatus_title').innerHTML = title;
     document.getElementById('ImmediateStatus_description').innerHTML = description;
 
-    /* Address languages that use comma as the decimal separator (de_DE) */
-    var commaSepDecimal = /,/;
-    if (commaSepDecimal.test(percentComplete)) {
-	percentComplete = percentComplete.replace(commaSepDecimal, ".");
-    }
-
     var progressMade = Math.round(percentComplete * 100);
     var progressToGo = document.getElementById('ImmediateStatus_progressToGo');
 

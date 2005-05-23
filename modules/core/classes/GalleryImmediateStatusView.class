@@ -167,6 +167,13 @@ class GalleryImmediateStatusView extends GalleryView {
 	/* A disabled memory_limit is -1, 0 crashes php */
 	$memoryLimit = (0 < ini_get('memory_limit')) ? ini_get('memory_limit') : 0;
 	
+	/* 
+	 * Ensure that percentComplete is in a dotted-decimal format.  Since
+	 * the immediateView is dealing in percentages, anything beyond two decimal
+	 * places is unnecessary.
+	 */
+	$percentComplete = GalleryUtilities::roundToString($percentComplete, 2);
+
 	$statusTemplate = new GalleryTemplate(dirname(__FILE__) . '/../../..');
 	$statusTemplate->setVariable('l10Domain', 'modules_core');
 	$statusTemplate->setVariable('ImmediateStatusMessage',
