@@ -17,7 +17,7 @@
     {/capture}
 
     {if ($layout.viewInline[$layout.imageViewsIndex])}
-      <div class="gallery-photo">
+      <div id="gsImageView" class="gallery-photo">
 	{g->image item=$layout.item image=$layout.imageViews[$layout.imageViewsIndex]
 		  fallback=$smarty.capture.fallback class="gcBorder1"}
       </div>
