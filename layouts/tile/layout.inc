@@ -161,7 +161,7 @@ class TileLayout extends GalleryLayout {
 		if (isset($tmp['imageIndex'])) {
 		    $layout['viewIndex'] = $tmp['imageIndex'];
 		    /* Set cookie to popup image just once */
-		    setcookie('G2_tile_view', '1', 0, $cookiePath);
+		    setcookie('G2_tile_view', '1');
 		}
 		break;
 	    }

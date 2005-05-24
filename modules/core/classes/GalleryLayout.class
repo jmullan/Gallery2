@@ -445,8 +445,6 @@ class GalleryLayout extends GalleryPlugin {
 
 	$layout =& $template->getVariableByReference('layout');
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$cookiePath = preg_replace('|^[^/]*//[^/]*/|', '/', $urlGenerator->getCurrentUrlDir());
-	$layout['cookiePath'] = $cookiePath;
 	$layout['layoutUrl'] =
 	    $urlGenerator->generateUrl(array('href' => 'layouts/' . $this->getId()), false);
 

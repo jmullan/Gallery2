@@ -7,7 +7,7 @@ if (window.attachEvent) { // IE
 
 function app_init() {
   var c = getcookie('G2_tile_view');
-  if (c) document.cookie = 'G2_tile_view=;expires=' + new Date().toUTCString() + ';path=' + path;
+  if (c) document.cookie = 'G2_tile_view=;expires=' + new Date().toUTCString();
   if (c && view >= 0) image_show(view);
 }
 function app_onload() {

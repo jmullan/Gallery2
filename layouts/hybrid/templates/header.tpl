@@ -16,7 +16,7 @@ var data_iw = new Array({$layout.imageWidths});
 var data_ih = new Array({$layout.imageHeights});
 {/if}
 var data_count = data_iw.length, data_name = '{$layout.item.id}',
-    data_view = {$layout.viewIndex|default:-1}, app_path = '{$layout.cookiePath}',
+    data_view = {$layout.viewIndex|default:-1},
     album_showtext = '{g->text text="show details"}',
     album_hidetext = '{g->text text="hide details"}',
     album_showlinks = '{g->text text="show item links"}',

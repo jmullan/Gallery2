@@ -141,7 +141,7 @@ class HybridLayout extends GalleryLayout {
 		if (isset($child['imageIndex'])) {
 		    $layout['viewIndex'] = $child['imageIndex'];
 		    /* Set cookie to popup image just once */
-		    setcookie('G2_hybrid_view', '1', 0, $layout['cookiePath']);
+		    setcookie('G2_hybrid_view', '1');
 		}
 		break;
 	    }

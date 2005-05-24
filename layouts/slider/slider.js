@@ -71,7 +71,7 @@ function app_onload() {
 function app_setcookie() {
   var d = new Date(), c = thumbs_horiz + ';' + slide_order + ';' + (slide_delay/1000) + ';';
   d.setTime(d.getTime() + 90*24*60*60*1000); // 90 day cookie
-  document.cookie = 'G2_slider=' + escape(c) + ';expires=' + d.toUTCString() + ';path=' + app_path;
+  document.cookie = 'G2_slider=' + escape(c) + ';expires=' + d.toUTCString();
 }
 function app_getcookie() {
   var c = getcookie('G2_slider'), i,j,v,n,it=1;

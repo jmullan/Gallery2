@@ -16,6 +16,6 @@ var data_iw = new Array({$layout.imageWidths}),
     data_ih = new Array({$layout.imageHeights});
 {/if}
 var data_count = data_iw.length, data_name = '{$layout.item.id}',
-    data_view = {$layout.viewIndex|default:0}, app_path = '{$layout.cookiePath}';
+    data_view = {$layout.viewIndex|default:0};
 </script>
 <script type="text/javascript" src="{$layout.layoutUrl}/slider.js"></script>

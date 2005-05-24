@@ -69,7 +69,7 @@ function app_setcookie() {
   var d = new Date(), c = slide_order + ';' + (slide_delay/1000) + ';' + sidebar_on + ';' +
     album_detailson + ';' + album_itemlinkson + ';' + text_on + ';';
   d.setTime(d.getTime() + 90*24*60*60*1000); // 90 day cookie
-  document.cookie = 'G2_hybrid=' + escape(c) + ';expires=' + d.toUTCString() + ';path=' + app_path;
+  document.cookie = 'G2_hybrid=' + escape(c) + ';expires=' + d.toUTCString();
 }
 function app_getcookie() {
   var c = getcookie('G2_hybrid'), i,j,v,n,it=1,r=-1;
@@ -90,7 +90,7 @@ function app_getcookie() {
   c = getcookie('G2_hybrid_view');
   if (c) {
     r = data_view;
-    document.cookie = 'G2_hybrid_view=;expires=' + new Date().toUTCString() + ';path=' + app_path;
+    document.cookie = 'G2_hybrid_view=;expires=' + new Date().toUTCString();
   }
   return r;
 }

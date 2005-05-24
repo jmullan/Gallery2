@@ -16,7 +16,6 @@ var image_width = new Array({$layout.imageWidths});
 var image_height = new Array({$layout.imageHeights});
 {/if}
 var view = {$layout.viewIndex|default:-1};
-var path = '{$layout.cookiePath}';
 </script>
 <script type="text/javascript" src="{$layout.layoutUrl}/tile.js"></script>
 <style type="text/css">
