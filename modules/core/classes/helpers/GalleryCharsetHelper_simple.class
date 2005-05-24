@@ -51,8 +51,10 @@ class GalleryCharsetHelper_simple {
 
 	/* Determine character set of current locale */
 	if ($phpVm->function_exists('nl_langinfo')) {
-	    $sourceEncoding = $phpVm->nl_langinfo(CODESET);
-	} else {
+	    /* @suppress windows warning: "nl_langinfo() is not supported in this PHP build" */
+	    $sourceEncoding = @$phpVm->nl_langinfo(CODESET);
+	}
+	if (empty($sourceEncoding)) {
 	    $lcTable = explode(';', $phpVm->setlocale(LC_ALL, '0'));
 	    /*
 	     * setlocale() returns a string like this:

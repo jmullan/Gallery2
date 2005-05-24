@@ -197,6 +197,17 @@ class CharsetTest extends GalleryTestCase {
 			  'LC_CTYPE=Russian_Russia.1251;LC_NUMERIC=C;LC_TIME=C');
 	$gallery->_phpVm = $phpVm;
 	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
+
+	/*
+	 * Windows may return true for function_exists('nl_langinfo') and then print
+	 * a warning message when the function is called:
+	 * Warning: nl_langinfo() is not supported in this PHP build
+	 */
+	GalleryDataCache::reset();
+	$phpVm->setFunctionExists('nl_langinfo', true);
+	$phpVm->setReturn('nl_langinfo', array(CODESET), false);
+	$gallery->_phpVm = $phpVm;
+	$this->assertEquals('CP1251', GalleryCharsetHelper_simple::detectSystemCharset());
     }
 
     function testConvertSystemCharset() {
