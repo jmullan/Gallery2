@@ -717,6 +717,16 @@ class CoreModuleExtras {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
+	case '0.9.18':
+	    /* Add image/x-photo-cd mime type */
+	    list ($ret, $mimeType) = GalleryCoreApi::convertExtensionToMime('pcd');
+	    if ($ret->isSuccess() && $mimeType == 'application/unknown') {
+		$ret = GalleryCoreApi::addMimeType('pcd', 'image/x-photo-cd', false);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

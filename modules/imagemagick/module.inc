@@ -41,7 +41,7 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -96,12 +96,12 @@ class ImageMagickModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('ImageMagick');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }   
-            
-        if (!$priority) {
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('ImageMagick');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

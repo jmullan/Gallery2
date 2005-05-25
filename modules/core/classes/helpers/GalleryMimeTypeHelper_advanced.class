@@ -203,7 +203,8 @@ class GalleryMimeTypeHelper_advanced {
 	    'jpm' => 'image/jpm',
 	    'jpgm' => 'image/jpgm',
 
-	    'psd' => 'application/photoshop'
+	    'psd' => 'application/photoshop',
+	    'pcd' => 'image/x-photo-cd'
 	);
 	$viewableMimeTypes = array('image/jpeg' => 1, 'image/pjpeg' => 1,
 	    'image/gif' => 1, 'image/png' => 1);
@@ -213,7 +214,7 @@ class GalleryMimeTypeHelper_advanced {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	
+
 	foreach ($mimeTypes as $ext => $mime) {
 	    $mimeTypeMap = array('extension' => $ext, 'mimeType' => $mime,
 		'viewable' => (int) isset($viewableMimeTypes[$mime]));
@@ -251,16 +252,16 @@ class GalleryMimeTypeHelper_advanced {
      */
     function addMimeType($extension, $mimeType, $viewable) {
 	global $gallery;
-	
+
 	/* Check to see if the extension already exists. */
 	$query = '
-        SELECT
-            [GalleryMimeTypeMap::extension]
-        FROM
-            [GalleryMimeTypeMap]
-        WHERE
-            [GalleryMimeTypeMap::extension] = ?
-        ';
+	SELECT
+	    [GalleryMimeTypeMap::extension]
+	FROM
+	    [GalleryMimeTypeMap]
+	WHERE
+	    [GalleryMimeTypeMap::extension] = ?
+	';
 	list ($ret, $results) =
 	    $gallery->search($query, array($extension), array('limit' => array('count' => 1)));
 	if ($ret->isError()) {
@@ -272,8 +273,8 @@ class GalleryMimeTypeHelper_advanced {
 	}
 
 	/* Insert the record */
-	$ret = GalleryMimeTypeMap::addMapEntry(
-	    array('extension' => $extension, 'mimeType' => $mimeType, 'viewable' => $viewable));
+	$ret = GalleryMimeTypeMap::addMapEntry(array(
+	    'extension' => $extension, 'mimeType' => $mimeType, 'viewable' => $viewable ? 1 : 0));
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
