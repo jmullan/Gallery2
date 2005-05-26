@@ -495,7 +495,7 @@ class CoreModule extends GalleryModule {
 
 	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->getCanContainChildren()) {
-		$views[] = array('name' => $this->translate('Add Sub-Album'),
+		$views[] = array('name' => $this->translate('Add Album'),
 				 'view' => 'core:ItemAddAlbum');
 	    }
 	}
