@@ -553,10 +553,10 @@ class GalleryRemoteController extends GalleryController {
 	}
 
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$response->setProperty('baseurl',
+	$response->setProperty('baseurl', str_replace('&amp;', '&',
 	    GalleryUrlGenerator::appendParamsToUrl(
 		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
-		array('view' => 'core:DownloadItem', 'itemId' => '')));
+		array('view' => 'core:DownloadItem', 'itemId' => ''))));
 	$response->setProperty('image_count', $i - 1);
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-album-images successful.');
