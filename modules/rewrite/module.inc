@@ -88,6 +88,14 @@ class RewriteModule extends GalleryModule {
 	$urlGenerator =& $gallery->getUrlGenerator();
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
 
+	if (strpos($urlGenerator->getCurrentUrlDir(true), 'install/index.php') !== false &&
+		$gallery->getConfig('galleryBaseUrl')) {
+	    /*
+	     * We can't autoconfigure from installer in a multisite install because
+	     * the current url is for the primary site, not the site being installed.
+	     */
+	    return array(GalleryStatus::success(), false);
+	}
 	$baseUrlComponents = parse_url(preg_replace('{(install|upgrade)/index\.php.*}', '',
 						    $urlGenerator->getCurrentUrlDir(true)));
 	$ret = $this->setParameter('galleryLocation', $baseUrlComponents['path']);
@@ -113,28 +121,12 @@ class RewriteModule extends GalleryModule {
      * @see GalleryModule::needsConfiguration
      */
     function needsConfiguration() {
-	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
-
-	list ($ret, $status) = RewriteHelper::checkFile();
+	/* Just try to autoConfigure; if it succeeds then we don't need configuration */
+	list ($ret, $configured) = $this->autoConfigure();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if ($status != REWRITE_STATUS_HTACCESS_READY) {
-	    return array(GalleryStatus::success(), true);
-	}
-
-	foreach (array('galleryLocation', 'needOptions') as $key) {
-	    list ($ret, $value) = $this->getParameter($key);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (empty($value)) {
-		return array(GalleryStatus::success(), true);
-	    }
-	}
-
-	return array(GalleryStatus::success(), false);
+	return array(GalleryStatus::success(), !$configured);
     }
 
     /**
