@@ -1,0 +1,77 @@
+    <script type="text/javascript" src="../lib/javascript/AutoComplete.js"></script>
+    <script type="text/javascript" src="../lib/javascript/XmlHttp.js"></script>
+
+    <h1>Multisite Setup</h1>
+    <p>
+      <?php print _('Gallery can support multiple independent sites with a single installation of the code. Additional sites may support different URL domains, subdomains or paths.') ?>
+    </p>
+    <form method="post" action="">
+    <p style="margin-left: 2.2em; text-indent: -2.2em">
+      <input type="radio" id="rbStandard" name="isMultisite" value="0" onclick="linkToggle(0)"
+	<?php if (!$templateData['isMultisite']) print 'checked="checked"' ?>>
+      <label for="rbStandard">
+	<?php print _('Standard installation') ?>
+      </label>
+      <br/>
+      <?php printf(_('Configuration file located in %s'),
+		   '<tt>' . $templateData['galleryDir'] . '</tt>') ?>
+    </p>
+    <p style="margin-left: 2.2em; text-indent: -2.2em">
+      <input type="radio" id="rbMultisite" name="isMultisite" value="1" onclick="linkToggle(1)"
+	<?php if ($templateData['isMultisite']) print 'checked="checked"' ?>>
+      <label for="rbMultisite">
+	<?php print _('Multisite installation') ?>
+      </label>
+      <br/>
+      <?php print _('Enter directory for configuration file below:') ?>
+      <br/>
+      <input type="text" id="dir" name="configPath" size="50"
+	     value="<?php print $templateData['configPath'] ?>" autocomplete="off"/>
+      <script type="text/javascript">
+	// <![CDATA[
+	autoCompleteAttach('dir', '<?php print 'index.php?step=' . $currentStep->getStepNumber() . '&doAutoComplete=1&path=__VALUE__'; ?>');
+
+	function linkToggle(m) {
+	  document.getElementById('linkContinue').style.display = m ? 'none' : 'inline';
+	  document.getElementById('linkSelect').style.display = m ? 'inline' : 'none';
+	}
+	// ]]>
+      </script>
+      <br/>
+      <?php if (isset($templateData['error'])): ?>
+	<span class="error">
+	  <?php if (isset($templateData['error']['missing_value'])) {
+		print _('You must enter a directory'); } ?>
+	  <?php if (isset($templateData['error']['missing_dir'])) {
+		print _('The directory you entered does not exist'); } ?>
+	  <?php if (isset($templateData['error']['inaccessible_dir'])) {
+		print _('The directory you entered is not accessible.  Change the permissions so that the webserver can read this directory.'); } ?>
+	  <?php if (isset($templateData['error']['creation_error'])) {
+		print _('Unable to create multisite files. Ensure the files listed below are writeable.'); } ?>
+	</span>
+	<br/>
+      <?php endif; ?>
+      <?php print _('The directory must be writeable by your webserver/php user or contain the following writeable files:') ?>
+      <div class="example" style="margin-top: 0; padding-top: 0; padding-bottom: 0">
+<pre>main.php
+index.php
+embed.php
+upgrade/index.php</pre>
+      </div>
+    </p>
+    </form>
+
+    <div class="go">
+      <span class="goToNext">
+	<a href="javascript:document.forms[0].submit()">
+	  <span id="linkContinue"
+	    <?php if ($templateData['isMultisite']) print ' style="display: none"' ?>>
+	    <?php printf(_('Continue to Step %d&raquo;'), $stepNumber + 1) ?>
+	  </span>
+	  <span id="linkSelect"
+	    <?php if (!$templateData['isMultisite']) print ' style="display: none"' ?>>
+	    <?php print _('Select Directory') ?>
+	  </span>
+	</a>
+      </span>
+    </div>

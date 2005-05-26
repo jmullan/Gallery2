@@ -31,5 +31,4 @@
 define('G2_EMBED', 1);
 require(dirname(__FILE__) . '/main.php');
 require(dirname(__FILE__) . '/modules/core/classes/GalleryEmbed.class');
-
 ?>

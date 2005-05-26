@@ -85,9 +85,11 @@ class SlideshowAppletView extends GalleryView {
 	    }
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
+	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
 	}
 
+	$form['formName'] = '';
+	$template->setVariable('controller', '');
 	$template->setVariable('SlideshowApplet', $SlideshowApplet);
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/slideshowapplet/templates/SlideshowApplet.tpl'));

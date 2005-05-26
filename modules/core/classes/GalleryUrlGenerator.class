@@ -23,13 +23,13 @@
  * @version $Revision$ $Date$
  * @package GalleryCore
  * @author Bharat Mediratta <bharat@menalto.com>
+ * @author Alan Harder <alan.harder@sun.com>
  */
 
-/*
- * Don't use GalleryCoreApi::requireOnce here.. lib/tools/security.inc includes
- * config.php before GalleryCoreApi is loaded; multisite config.php includes this class.
- */
+/* Don't use GalleryCoreApi::requireOnce here; index.php uses this file without GalleryCoreApi */
 require_once(dirname(__FILE__) . '/GalleryUtilities.class');
+
+define('GALLERY_MAIN_PHP', 'main.php');
 
 /**
  * Url Generator
@@ -45,15 +45,24 @@ class GalleryUrlGenerator {
      */
 
     /**
-     * The base filename for the application
+     * The base filename for the application.
      *
      * @var string $_baseFile
-     * @access private
+     * @private
      */
     var $_baseFile;
 
     /**
-     * The relative path between G2 request urls and the G2 basedir.
+     * Url path to embedding application.
+     * Only required for non-G2 requests (such as using imageblock on non-G2 pages in embed app).
+     *
+     * @var string $_embedPath
+     * @private
+     */
+    var $_embedPath;
+
+    /**
+     * The relative path between G2 request urls and the G2 site dir.
      * Should only be nonempty when G2 is embedded.
      *
      * @var string $_relativeG2Path
@@ -71,7 +80,10 @@ class GalleryUrlGenerator {
     var $_embedSessionString;
 
     /**
-     * The navigation id of the current URL
+     * The navigation id of the current URL.
+     *
+     * @var string $_navId
+     * @private
      */
     var $_navId = '';
 
@@ -87,8 +99,7 @@ class GalleryUrlGenerator {
      * @static
      */
     function getCurrentDomain() {
-	$httpXForwardedServer = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER');
-	if ($httpXForwardedServer) {
+	if ($httpXForwardedServer = GalleryUtilities::getServerVar('HTTP_X_FORWARDED_SERVER')) {
 	    return $httpXForwardedServer;
 	} else {
 	    return GalleryUtilities::getServerVar('HTTP_HOST');
@@ -102,11 +113,6 @@ class GalleryUrlGenerator {
      * @static
      */
     function makeUrl($path) {
-	static $defaultPort;
-	if (!isset($defaultPort)) {
-	    $defaultPort = array('http' => 80, 'https' => 443);
-	}
-
 	$protocol = (GalleryUtilities::getServerVar('HTTPS') == 'on') ? 'https' : 'http';
 	$domain = GalleryUrlGenerator::getCurrentDomain();
 	if (empty($path)) {
@@ -119,85 +125,84 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Build a query string out of the given params
+     * Return the current request URI.
+     * Example: for http://domain.com/gallery2/main.php?g2_view=core:ShowItem
+     *          it returns /gallery2/main.php?g2_view=core:ShowItem
      *
-     * @param array key value pairs (where keys are not prefixed by our form variable prefix)
-     * @param boolean (optional) if true return value starts with &amp; instead of ?
-     * @return string the query string, prefixed with ? or &amp; and using &amp; as a separator
+     * @return string the current URL path component plus query parameters
      * @static
      */
-    function buildQueryString($params, $append=false) {
-	if (empty($params)) {
-	    return '';
+    function getCurrentRequestUri() {
+	if (!($path = GalleryUtilities::getServerVar('REQUEST_URI')) &&
+		($path = GalleryUtilities::getServerVar('SCRIPT_NAME'))) {
+	    if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) && $tmp != $path) {
+		$path .= $tmp;
+	    }
+	    if ($tmp = GalleryUtilities::getServerVar('QUERY_STRING')) {
+		$path .= '?' . $tmp;
+	    }
 	}
 
-	$args = array();
-	foreach ($params as $key => $value) {
-	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
-	}
-
-	return ($append ? '&amp;' : '?') . implode('&amp;', $args);
+	return GalleryUtilities::htmlEntityDecode($path);
     }
 
     /**
      * Append parameters to a url using the G2 prefix and urlencoding the keys and values.
      *
      * @param string the original url
-     * @param array key/value pairs to be appended
-     * @return string the new url
+     * @param array key/value pairs to be appended; may contain nested arrays
+     * @param boolean (optional) false to not add prefix on parameter names
+     * @return string the new url (&amp; separates added params)
      * @static
      */
-    function appendParamsToUrl($url, $params) {
-	$first = true;
-	foreach ($params as $key => $value) {
-	    if ($first && strpos($url, '?') === false) {
-		$url .= '?';
-	    } else {
-		$url .= '&amp;';
-	    }
-	    $first = false;
-
-	    $url .= sprintf('%s=%s', urlencode(GalleryUtilities::prefixFormVariable($key)),
-				     urlencode($value));
+    function appendParamsToUrl($url, $params, $addPrefix=true) {
+	if (empty($params)) {
+	    return $url;
 	}
 
-	return $url;
+	$args = array();
+	foreach ($params as $key => $value) {
+	    $key = $addPrefix ? GalleryUtilities::prefixFormVariable(urlencode($key))
+			      : urlencode($key);
+	    if (is_array($value)) {
+		GalleryUrlGenerator::_appendNestedParams($args, $value, $key . '[');
+	    } else {
+		$args[] = $key . '=' . urlencode($value);
+	    }
+	}
+
+	/* Prefix appended params with ? if the URL doesn't already have a query string */
+	return $url . ((strpos($url, '?') === false) ? '?' : '&amp;') . implode('&amp;', $args);
     }
 
     /**
-     * Get the "galleryId" from the current url.
+     * Append array of (possibly nested) query parameters to flat array of keys/values.
      *
-     * @return string "galleryId" for this site.
+     * @param array output array
+     * @param array input key/value pairs; may contain nested arrays
+     * @param string prefix; used in recursive calls
      * @static
+     * @private
+     */
+    function _appendNestedParams(&$args, $params, $prefix) {
+	foreach ($params as $key => $value) {
+	    if (is_array($value)) {
+		GalleryUrlGenerator::_appendNestedParams($args, $value,
+							 $prefix . urlencode($key) . '][');
+	    } else {
+		$args[] = $prefix . urlencode($key) . ']=' . urlencode($value);
+	    }
+	}
+    }
+
+    /**
+     * Old multisite system used a galleryId based on the current url.
+     * Return a value here so sites won't break before they can upgrade.
+     * @static
+     * @deprecated
      */
     function getGalleryId() {
-	$urlGenerator = new GalleryUrlGenerator();
-	$url = $urlGenerator->getCurrentUrl();
-	return preg_replace('{^.*?://(.*?)/(main.php|(install|upgrade|lib/tools)/).*$}',
-			    '$1', $url);
-    }
-
-    /**
-     * Return the current REQUEST_URI
-     *
-     * Example: for http://domain.com/gallery2/main.php?hell0=world
-     *          it returns /gallery2/main.php?hell0=world
-     *          or /gallery2/main.php depending on the system.
-     *
-     * @return string the current URL path component
-     * @static
-     */
-    function getCurrentRequestUri() {
-	if ($tmp = GalleryUtilities::getServerVar('REQUEST_URI')) {
-	    $path = GalleryUtilities::htmlEntityDecode($tmp);
-	} else if ($tmp = GalleryUtilities::getServerVar('SCRIPT_NAME')) {
-	    $path = $tmp;
-	    if (($tmp = GalleryUtilities::getServerVar('PATH_INFO')) != $path) {
-		$path .= $tmp;
-	    }
-	}
-
-	return $path;
+	return '';
     }
 
     /*
@@ -209,30 +214,33 @@ class GalleryUrlGenerator {
     /**
      * Initializer.  Configure the url generator with all the data it needs.
      *
-     * @param string the base URL
+     * @param string the base URL (optional)
      * @param string (optional) when embedded, this is the path from document root to baseFile
      * @param string (optional) when embedded, relative path between G2 request urls and G2 basedir
      * @param string (optional) when embedded in CMS app that supports cookieless browsing,
      *                          key=value string for CMS session key and id
      */
-    function init($baseFile, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
-	$this->_baseFile = $baseFile;
+    function init($baseFile=null, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
+	$this->_baseFile = empty($baseFile) ? GALLERY_MAIN_PHP : $baseFile;
+	$this->_embedPath = $embedPath;
 	$this->_relativeG2Path = $relativeG2Path;
 	$this->_embedSessionString = $embedSessionString;
-	$this->_embedPath = $embedPath;
 
-	if (!empty($this->_relativeG2Path) &&
-		$this->_relativeG2Path{strlen($this->_relativeG2Path)-1} != '/') {
-	    $this->_relativeG2Path .= '/';
-	}
+	$this->_isBaseFullUrl = preg_match('{^https?:}', $this->_baseFile);
+	$this->_isBaseAbsolute = $this->_baseFile{0} == '/';
 
 	if (!empty($this->_embedPath)) {
-	    if ($this->_embedPath{strlen($this->_embedPath)-1} != '/') {
+	    if ($this->_embedPath{strlen($this->_embedPath) - 1} != '/') {
 		$this->_embedPath .= '/';
 	    }
 	    if ($this->_embedPath{0} != '/') {
-		$this->_embedPath = '/'.$this->_embedPath;
+		$this->_embedPath = '/' . $this->_embedPath;
 	    }
+	}
+
+	if (!empty($this->_relativeG2Path) &&
+		$this->_relativeG2Path{strlen($this->_relativeG2Path) - 1} != '/') {
+	    $this->_relativeG2Path .= '/';
 	}
     }
 
@@ -253,7 +261,6 @@ class GalleryUrlGenerator {
     /**
      * Return the current URL's directory.  Eg, if the url is:
      *   http://example.com/gallery2/main.php
-     *
      * Then we return:
      *   http://example.com/gallery2/
      *
@@ -265,11 +272,10 @@ class GalleryUrlGenerator {
 	    return $this->_currentUrlDir[$forceG2Base];
 	}
 
-	/* Force currentUrlDir if embedPath is set */
 	if (!empty($this->_embedPath)) {
 	    /*
-	     * Set the currentUrlDir without parsing the REQUEST_URI. Goal: Decouple generated urls
-	     * from current REQUEST_URI in embedded mode.
+	     * Embed request for a non-G2 view sets embedPath for building urls,
+	     * as we cannot construct new urls using the current url.
 	     */
 	    $url = GalleryUrlGenerator::makeUrl($this->_embedPath);
 	} else {
@@ -310,26 +316,106 @@ class GalleryUrlGenerator {
     }
 
     /**
-     * Get cookie path that will encompass G2 (and CMS app if embedded)
+     * Return a valid Gallery URL.
      *
-     * @return string path
+     * @param array key/value pairs to be included in the URL
+     *  special 'href' key specifies path to append to G2 base url instead of a query param
+     * @param boolean (optional) set to true/false to force the session id to be in/not in the url
+     *  by default it is included when cookies are not in use (for href urls, default=not included)
      */
-    function getCookiePath() {
-	$urlComponents = parse_url($this->getCurrentUrlDir());
-	$path = $urlComponents['path'];
-	if (!empty($this->_relativeG2Path)) {
-	    $relativePath = $this->_relativeG2Path;
-	    while (strncmp($relativePath, '../', 3) == 0) {
-		$path = preg_replace('|/[^/]+/?$|', '/', $path);
-		$relativePath = substr($relativePath, 3);
+    function generateUrl($params=array(), $forceSessionId=null, $baseUrl=null) {
+	global $gallery;
+	$currentView = $gallery->getCurrentView();
+
+	/*
+	 * For 'href' urls always use G2 base url
+	 * (direct to G2 codebase location, even if multisite or embedded),
+	 * For 'core:DownloadItem' urls always use G2 site url
+	 * (direct to main.php in directory for active config.php, even if embedded)
+	 * Otherwise use application url
+	 * (embed url; same as G2 site url if not embedded)
+	 */
+	if (isset($baseUrl)) {
+	    $url = $baseUrl;
+	    $appSession = true;
+	} else if (isset($params['href'])) {
+	    $url = $gallery->getConfig('galleryBaseUrl');
+	    if (empty($url)) {
+		$url = $this->getCurrentUrlDir(true);
 	    }
-	}
-	if ($path{strlen($path)-1} != '/') {
-	    $path .= '/';
+
+	    $href = $params['href'];
+	    unset($params['href']);
+	    if (!isset($forceSessionId)) {
+		/* Default to not including session id in href urls */
+		$forceSessionId = false;
+	    }
+
+	    /* Check for local override */
+	    $override = sprintf('%s/local/%s', dirname($href), basename($href));
+	    $platform = $gallery->getPlatform();
+	    if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
+		$href = $override;
+	    }
+
+	    $url .= $href;
+	} else if (isset($params['view']) && $params['view'] == 'core:DownloadItem') {
+	    $url = $this->getCurrentUrlDir(true) . GALLERY_MAIN_PHP;
+	} else {
+	    $url = $this->_isBaseFullUrl ? $this->_baseFile
+		 : ($this->_isBaseAbsolute ? GalleryUrlGenerator::makeUrl($this->_baseFile)
+		 : $this->getCurrentUrlDir() . $this->_baseFile);
+	    $appSession = true;
 	}
 
-	return $path;
+	/* Decide whether to include session id in the url */
+	if ($session =& $gallery->getSession() &&
+		( (!isset($forceSessionId) && !$session->isUsingCookies()) ||
+		  (isset($forceSessionId) && $forceSessionId === true) )) {
+	    if (!empty($this->_embedSessionString) && isset($appSession)) {
+		$embedSessionString = $this->_embedSessionString;
+	    } else {
+		$params[$session->getKey()] = $session->getId();
+	    }
+	}
+
+	/* Swap in the actual url for the 'return' placeholder */
+	if (isset($params['return'])) {
+	    list ($ret, $view) = GalleryView::loadView($currentView);
+	    if ($ret->isSuccess()) {
+		list ($ret, $viewDescription) = $view->getViewDescription();
+		if ($ret->isSuccess()) {
+		    $params['returnName'] = $viewDescription;
+		}
+	    }
+	    $params['return'] = str_replace('&amp;', '&', $this->getNavigationReturnUrl());
+	    if (!empty($this->_navId)) {
+		$params['navId'] = $this->_navId;
+	    }
+	}
+
+	/* Navigation */
+	$targetView = isset($params['view']) ? $params['view'] : '';
+	if (!empty($this->_navId) &&
+	    (empty($currentView) || $currentView == $targetView || !empty($params['controller']))) {
+	    /*
+	     * We are moving around in the same view or we are redirecting to a controller,
+	     * who knows where it will redirect to.  Let's keep the navigation.
+	     */
+	    $params['navId'] = $this->_navId;
+	}
+
+	/* Add parameters to url */
+	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
+
+	/* Add embed session id if needed */
+	if (isset($embedSessionString)) {
+	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $embedSessionString;
+	}
+
+	return $url;
     }
+
 
     /**
      * Initialize the navigation branch
@@ -360,20 +446,70 @@ class GalleryUrlGenerator {
 	    }
 	    $session =& $gallery->getSession();
 	    $this->_navId = $session->addToNavigation($navData);
-	    $gallery->debug("Branched navigation: " . $this->_navId);
 	} else {
 	    if (!empty($fromNavId)) {
 		/* We came back from a navigational branch. Delete it */
-		$gallery->debug("Back from $fromNavId to $navId");
 		$session =& $gallery->getSession();
 		$session->jumpNavigation($fromNavId, $navId);
 	    }
 	    if (!empty($navId)) {
 		/* Just continue in our current navigation level */
-		$gallery->debug("Continuing navigation $navId");
 		$this->_navId = $navId;
 	    }
 	}
+    }
+
+    /**
+     * Get the current navigation id
+     *
+     * @return string the navigation id
+     */
+    function getNavigationId() {
+	return $this->_navId;
+    }
+
+    /**
+     * Get an URL to return to the currently loaded view, stripping all parameters
+     * that are of navigational nature.
+     *
+     * @return string the URL
+     */
+    function getNavigationReturnUrl() {
+	global $gallery;
+
+	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
+	if (!empty($formUrl)) {
+	    /*
+	     * We don't really have an URL, because we are in a POST request.
+	     * This is the last known URL when the form was originally rendered:
+	     */
+	    return $formUrl;
+	}
+
+	$url = $this->getCurrentUrl();
+	if ($i = strpos($url, '?')) {
+	    /* We'll add the query params later */
+	    $url = substr($url, 0, $i);
+	}
+	$params = GalleryUtilities::getUrlVariablesFiltered(
+				    array('return', 'returnName', 'navId', 'fromNavId'));
+	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params, false);
+
+	/*
+	 * In rare cases (like first access of the app) it's possible to not be using cookies,
+	 * but not have the session id in the url yet.  Detect that case and add the sid here.
+	 */
+	$session =& $gallery->getSession();
+	if (!$session->isUsingCookies()) {
+	    $sessionCheck = !empty($this->_embedSessionString)
+			     ? $this->_embedSessionString
+			     : (GalleryUtilities::prefixFormVariable(urlencode($session->getKey()))
+				. '=' . urlencode($session->getId()));
+	    if (strpos($url, $sessionCheck) === false) {
+		$url .= (strpos($url, '?') === false ? '?' : '&amp;') . $sessionCheck;
+	    }
+	}
+	return $url;
     }
 
     /**
@@ -388,10 +524,7 @@ class GalleryUrlGenerator {
 	}
 	$session =& $gallery->getSession();
 	$navData = $session->getNavigation($this->_navId);
-	if (count($navData) > 0) {
-	    return true;
-	}
-	return false;
+	return (count($navData) > 0);
     }
 
     /**
@@ -418,7 +551,7 @@ class GalleryUrlGenerator {
 	$i = 0;
 	foreach ($navData as $navItem) {
 	    $i++;
-	    if ($depth != null && $i > $depth) {
+	    if (isset($depth) && $i > $depth) {
 		break;
 	    }
 	    $url = $navItem['returnUrl'];
@@ -432,212 +565,34 @@ class GalleryUrlGenerator {
 	    } else {
 		$name = $core->translate('Back');
 	    }
-	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
-	    $links[] = array('url' => $url,
-			     'name' => $name);
+	    $url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
+	    $links[] = array('url' => $url, 'name' => $name);
 	}
 	return array(GalleryStatus::success(), $links);
     }
 
+
     /**
-     * Get the current navigation id
+     * Get cookie path that will encompass G2 (and CMS app if embedded)
      *
-     * @return string the navigation id
+     * @return string path
+     * @deprecated
      */
-    function getNavigationId() {
-	return $this->_navId;
-    }
-
-    /**
-     * Get an URL to return to the currently loaded view, stripping all
-     * parameters that are of navigational nature
-     *
-     * @return string the URL
-     */
-    function getNavigationReturnUrl() {
-	global $gallery;
-
-	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
-	if (!empty($formUrl)) {
-	    /*
-	     * We don't really have an URL, because we are in a POST request.
-	     * This is the last known URL when the form was originally rendered:
-	     */
-	    return $formUrl;
-	}
-
-	$url = $this->getCurrentUrl();
-	if ($pos = strpos($url, '?')) {
-	    /* We'll add the query params later */
-	    $url = substr($url, 0, $pos);
-	}
-	$urlVariables = GalleryUtilities::getUrlVariablesFiltered(
-			array('return', 'returnName', 'navId', 'fromNavId'));
-	if (!empty($urlVariables)) {
-	    $args = array();
-	    $this->_buildQueryParameters($args, $urlVariables);
-	    $url .= '?' . implode('&amp;', $args);
-	}
-
-	/*
-	 * In very rare cases (like first access of the app) it's possible to not be using cookies,
-	 * but not have the session id in the url yet.  Detect that case and add the url here.
-	 */
-	$session =& $gallery->getSession();
-	if (!($session->isUsingCookies())) {
-	    $sessionCheck = !empty($this->_embedSessionString)
-				? $this->_embedSessionString
-				: (GalleryUtilities::prefixFormVariable($session->getKey())
-				   . '=' . $session->getId());
-	    if (strpos($url, $sessionCheck) === false) {
-		$url .= (strpos($url, '?') === false ? '?' : '&amp;') . $sessionCheck;
+    function getCookiePath() {
+	$urlComponents = parse_url($this->getCurrentUrlDir());
+	$path = $urlComponents['path'];
+	if (!empty($this->_relativeG2Path)) {
+	    $relativePath = $this->_relativeG2Path;
+	    while (strncmp($relativePath, '../', 3) == 0) {
+		$path = preg_replace('|/[^/]+/?$|', '/', $path);
+		$relativePath = substr($relativePath, 3);
 	    }
 	}
-	return $url;
-    }
-
-    /**
-     * Build array of query parameters for array of keys/values (possibly nested)
-     * @private
-     */
-    function _buildQueryParameters(&$args, $urlVariables, $prefix='') {
-	foreach ($urlVariables as $key => $value) {
-	    if (is_array($value)) {
-		$this->_buildQueryParameters($args, $value,
-					     $prefix . $key . (empty($prefix) ? '[' : ']['));
-	    } else {
-		$args[] = $prefix . $key . (empty($prefix) ? '=' : ']=') . $value;
-	    }
-	}
-    }
-
-    /**
-     * Return a valid Gallery URL.
-     *
-     * @param array key/value pairs to be included in the URL
-     * @param boolean (optional) set to true/false to force the session id to be in/not in
-     *                the url; by default it is include when cookies are not in use
-     */
-    function generateUrl($params=array(), $forceSessionId=null) {
-	global $gallery;
-
-	$session =& $gallery->getSession();
-	if ($session) {
-	    if ( (!isset($forceSessionId) && !($session->isUsingCookies())) ||
-		 (isset($forceSessionId) && $forceSessionId === true)) {
-		if (!empty($this->_embedSessionString)) {
-		    $sessionString = $this->_embedSessionString;
-		} else {
-		    $params[$session->getKey()] = $session->getId();
-		}
-	    }
+	if ($path{strlen($path)-1} != '/') {
+	    $path .= '/';
 	}
 
-	/* Force direct-g2 url for core:DownloadItem view, even if embedded: */
-	if (isset($params['view']) && $params['view'] == 'core:DownloadItem'
-		&& !isset($params['href'])) {
-	    $params['href'] = 'main.php';
-	    if (isset($sessionString)) {
-		$sessionString = null;
-		if ($session) {
-		    $params[$session->getKey()] = $session->getId();
-		}
-	    }
-	}
-
-	/* If the url specifies a full href, then let's use that */
-	if (isset($params['href'])) {
-	    $url = $params['href'];
-	    unset($params['href']);
-
-	    /* Prepend G2 base dir to all relative urls */
-	    $components = parse_url($url);
-	    if (!isset($components['host']) &&
-		    (isset($components['path']) && $components['path'][0] != '/')) {
-		/* It's a relative URL.  Check for overrides */
-		$override = sprintf('%s/local/%s', dirname($url), basename($url));
-		$overrideRealPath = dirname($this->_baseFile) . '/' . $override;
-		$platform = $gallery->getPlatform();
-		if ($platform->file_exists($overrideRealPath)) {
-		    $url = $override;
-		}
-		$url = $this->getCurrentUrlDir(true) . $url;
-	    }
-	} else {
-	    /* Else start with our regular URL */
-	    $components = parse_url($this->_baseFile);
-	    if (isset($components['host'])) {
-		$url = $this->_baseFile;
-	    } else {
-		$url = $this->getCurrentUrlDir() . $this->_baseFile;
-	    }
-	}
-
-	/* Swap in the actual url for the 'return' placeholder, if necessary */
-	if (isset($params['view'])) {
-	    $targetView = $params['view'];
-	} else {
-	    /* Possibly a controller, but we don't know where it will redirect to */
-	    $targetView = '';
-	}
-	$currentView = $gallery->getCurrentView();
-	if ($currentView != $targetView && isset($params['return'])) {
-	    /* This link changes the view and the source want us to remember
-	     * it for back navigation
-	     */
-	    list ($ret, $view) = GalleryView::loadView($currentView);
-	    if ($ret->isError()) {
-		$viewDescription = '';
-	    } else {
-		list ($ret, $viewDescription) = $view->getViewDescription();
-		if ($ret->isError()) {
-		    $viewDescription = '';
-		}
-	    }
-	    /* urlencode name in case it has utf-8 chars which htmlentities below may distort */
-	    $params['returnName'] = urlencode($viewDescription);
-	    $params['return'] =
-		urlencode(str_replace('&amp;', '&', $this->getNavigationReturnUrl()));
-	    if (!empty($this->_navId)) {
-		$params['navId'] = $this->_navId;
-	    }
-	}
-	if ((empty($currentView) || $currentView == $targetView || ! empty($params['controller']))
-		&& !empty($this->_navId)) {
-	    /* We are moving around in the same view, or we are redirecting to
-	     * a controller, who knows where it will redirect to.
-	     * Let's keep the navigation.
-	     */
-	    $params['navId'] = $this->_navId;
-	}
-
-	/* Escape all values (up to 3-deep array) (oh won't somebody overhaul UrlGenerator?) */
-	foreach (array_keys($params) as $key) {
-	    if (is_array($params[$key])) {
-		foreach ($params[$key] as $subKey => $subValue) {
-		    if (is_array($subValue)) {
-			foreach ($subValue as $subSubKey => $subSubValue) {
-			    $params[$key . '[' . $subKey . '][' . $subSubKey . ']'] =
-				htmlentities($subSubValue);
-			}
-		    } else {
-			$params[$key . '[' . $subKey . ']'] = htmlentities($subValue);
-		    }
-		}
-		unset($params[$key]);
-	    } else {
-		$params[$key] = htmlentities($params[$key]);
-	    }
-	}
-
-	if (!empty($params)) {
-	    $url .= $this->buildQueryString($params, strpos($url, '?') !== false);
-	}
-	if (isset($sessionString)) {
-	    $url .= ((strpos($url, '?') === false) ? '?' : '&amp;') . $sessionString;
-	}
-
-	return $url;
+	return $path;
     }
 }
 ?>

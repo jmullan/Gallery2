@@ -34,53 +34,33 @@ class CreateConfigFileStep extends InstallStep {
     function loadTemplateData(&$templateData) {
 	global $galleryStub;
 
-	$baseDir = dirname(dirname(dirname(__FILE__)));
-	$configFilePath = $baseDir . '/config.php';
-	if (file_exists($configFilePath) && !is_writable($configFilePath)) {
+	$configDir = $_SESSION['configPath'];
+	$configFilePath = $configDir . '/config.php';
+	if (file_exists($configFilePath) && !is_writeable($configFilePath)) {
 	    /* The file exists but we can't write to it */
-	    $templateData['error'] = sprintf(_('Unable to write to the <b>config.php</b> configuration file in your <tt>%s</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.'), basename($baseDir));
+	    $templateData['error'] = sprintf(_('Unable to write to the <b>config.php</b> configuration file in your <tt>%s</tt> directory.  Please change its permissions.  If you\'re on Unix you can do <i>chmod 666 config.php</i> to fix this.'), basename($configDir));
 	    $this->setInError(true);
 	    $templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
-	    $templateData['galleryDir'] = basename($baseDir);
+	    $templateData['galleryDir'] = basename($configDir);
 	} else {
-	    $isNewSite = $galleryStub->getConfig('newsite');
-	    $isMultisite = $galleryStub->getConfig('multisite');
-	    $galleryId = $galleryStub->getConfig('galleryId');
-	    $currentConfig = array();
-
-	    if ($isNewSite || $isMultisite) {
-		$currentConfig = @file($configFilePath);
-		if (empty($currentConfig)) {
-		    $templateData['error'] = _('Unable to read config.php');
-		}
-	    }
-
 	    if (!$out = @fopen($configFilePath, 'w')) {
 		/* Give the user instructions */
 		$templateData['bodyFile'] = 'CreateConfigFileInstructions.html';
-		$templateData['galleryDir'] = basename($baseDir);
+		$templateData['galleryDir'] = basename($configDir);
 
 		if (!$this->_firstTime) {
 		    if (!file_exists($configFilePath)) {
 			$templateData['error'] = sprintf(
 			    _('The config.php file does not exist in your %s directory'),
-			    $baseDir);
+			    $configDir);
 		    } else {
 			$templateData['error'] = sprintf(
 			    _('The config.php file exists but is not writeable.  If your server is Windows, you may have to disable file sharing for config.php and set its permissions manually.'),
-			    $baseDir);
+			    $configDir);
 		    }
 		}
 	    } else {
-		if ($isNewSite && !$isMultisite) {
-		    $this->_newMultiConfig($out, $baseDir, $currentConfig, $galleryId);
-		} else if ($isNewSite) {
-		    $this->_addMultiConfig($out, $baseDir, $currentConfig, $galleryId);
-		} else if ($isMultisite) {
-		    $this->_updateMultiConfig($out, $baseDir, $currentConfig, $galleryId);
-		} else {
-		    $this->_writeSingleConfig($out, $baseDir, $galleryId);
-		}
+		$this->_writeConfig($out, $configDir);
 		fclose($out);
 		$this->setComplete(true);
 		$templateData['bodyFile'] = 'CreateConfigFileSuccess.html';
@@ -89,8 +69,12 @@ class CreateConfigFileStep extends InstallStep {
 	$this->_firstTime = false;
     }
 
-    function _writeSingleConfig(&$out, $baseDir) {
+    function _writeConfig(&$out, $configDir) {
 	global $galleryStub;
+	$baseDir = dirname(dirname(dirname(__FILE__)));
+	require_once($baseDir . '/modules/core/classes/GalleryUrlGenerator.class');
+	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{install/index.php\?.*}', '',
+						GalleryUrlGenerator::getCurrentRequestUri()));
 
 	$newStoreConfig = $galleryStub->getConfig('storage.config');
 	$in = @fopen($baseDir . '/install/config.php-template', 'r');
@@ -105,11 +89,6 @@ class CreateConfigFileStep extends InstallStep {
 		$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 	    }
 
-	    if (trim($line) == '$gallery->setConfig(\'galleryId\', \'\');') {
-		$tmp = addslashes($galleryStub->getConfig('galleryId'));
-		$line = sprintf("\$gallery->setConfig('galleryId', '%s');\n", $tmp);
-	    }
-
 	    foreach (array('type', 'hostname', 'database', 'username',
 			   'password', 'tablePrefix', 'columnPrefix') as $key) {
 		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
@@ -118,57 +97,16 @@ class CreateConfigFileStep extends InstallStep {
 		}
 	    }
 
+	    if (trim($line) == '$gallery->setConfig(\'galleryBaseUrl\', \'\');' &&
+		    $configDir != $baseDir) {
+		/* galleryBaseUrl not required for config.php in codebase dir */
+		$tmp = addslashes($baseUrl);
+		$line = sprintf("\$gallery->setConfig('galleryBaseUrl', '%s');\n", $tmp);
+	    }
+
 	    fwrite($out, $line);
 	}
 	fclose($in);
-    }
-
-    function _newMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
-	$in = @fopen($baseDir . '/install/multiconfig.php-template', 'r');
-	while ($line = fgets($in, 2000)) {
-	    fwrite($out, $line);
-	    if (preg_match('{^/\*>-*<\*/$}', $line)) {
-		fwrite($out, "case '" . $galleryId . "': ?>\n");
-		$this->_writeSingleConfig($out, $baseDir);
-		fwrite($out, "<?php\nbreak;\n${line}default: ?>\n");
-		foreach ($currentConfig as $tmp) {
-		    fwrite($out, $tmp);
-		}
-		fwrite($out, "<?php\n$line");
-	    }
-	}
-	fclose($in);
-    }
-
-    function _addMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
-	$added = false;
-	foreach ($currentConfig as $line) {
-	    fwrite($out, $line);
-	    if (preg_match('{^/\*>-*<\*/$}', $line) && !$added) {
-		fwrite($out, "case '" . $galleryId . "': ?>\n");
-		$this->_writeSingleConfig($out, $baseDir);
-		fwrite($out, "<?php\nbreak;\n$line");
-		$added = true;
-	    }
-	}
-    }
-
-    function _updateMultiConfig(&$out, $baseDir, $currentConfig, $galleryId) {
-	$skip = $updated = false;
-	foreach ($currentConfig as $line) {
-	    if (preg_match('{^/\*>-*<\*/$}', $line)) {
-		$skip = false;
-	    }
-	    if (!$skip) {
-		fwrite($out, $line);
-	    }
-	    if (strpos($line, "case '$galleryId': ?>") === 0
-		    || (!$updated && strpos($line, 'default:') === 0)) {
-		$this->_writeSingleConfig($out, $baseDir);
-		fwrite($out, "<?php\nbreak;\n");
-		$skip = $updated = true;
-	    }
-	}
     }
 }
 ?>

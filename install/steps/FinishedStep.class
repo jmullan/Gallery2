@@ -26,6 +26,9 @@ class FinishedStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
+	$templateData['isMultisite'] =
+	    $_SESSION['configPath'] != dirname(dirname(dirname(__FILE__)));
+	$templateData['galleryDir'] = basename($_SESSION['configPath']);
 	$templateData['bodyFile'] = 'Finished.html';
 	$this->setComplete(true);
     }

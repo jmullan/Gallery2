@@ -98,7 +98,7 @@ function GalleryInitFirstPass($params=array()) {
 	$urlGenerator = new GalleryUrlGenerator();
     }
     $urlGenerator->init(
-	isset($params['embedUri']) ? $params['embedUri'] : 'main.php',
+	isset($params['embedUri']) ? $params['embedUri'] : null,
 	isset($params['embedPath']) ? $params['embedPath'] : null,
 	isset($params['relativeG2Path']) ? $params['relativeG2Path'] : null,
 	isset($params['embedSessionString']) ? $params['embedSessionString'] : null);

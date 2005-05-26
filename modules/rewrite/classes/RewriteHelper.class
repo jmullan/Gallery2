@@ -78,7 +78,7 @@ class RewriteHelper {
 
 	$Htaccess['directory'] = $Htaccess['galleryDirectory'];
 	$Htaccess['rewriteBase'] = $Htaccess['galleryDirectory'];
-	$Htaccess['baseFile'] = 'main.php';
+	$Htaccess['baseFile'] = GALLERY_MAIN_PHP;
 	if ($embedded) {
 	    $Htaccess['baseFile'] = $urlGenerator->_baseFile;
 	    list ($ret, $Htaccess['directory']) =
@@ -122,8 +122,7 @@ class RewriteHelper {
 	    return array(GalleryStatus::success(), $path . '/.htaccess');
 	}
 
-	return array(GalleryStatus::success(),
-		dirname(dirname(dirname(dirname(__FILE__)))) . '/.htaccess');
+	return array(GalleryStatus::success(), GALLERY_CONFIG_DIR . '/.htaccess');
     }
 
     /**
@@ -224,31 +223,29 @@ class RewriteHelper {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
 
-	/* Get the correct Gallery directory. */
-	$components = parse_url($urlGenerator->getCurrentUrlDir(true));
-	$path = $components['path'];
-	if (preg_match('/\/(upgrade|install)\/index.php$/', $path)) {
-	    $path = dirname(dirname($path));
-	    $path .= ($path != '/') ? '/' : '';
+	$baseUrl = $gallery->getConfig('galleryBaseUrl');
+	if (empty($baseUrl)) {
+	    $baseUrl = preg_replace('{(install|upgrade)/index\.php.*}', '',
+				    $urlGenerator->getCurrentUrlDir(true));
 	}
+	$baseUrl .= 'modules/rewrite/test/';
+	$components = parse_url($baseUrl);
+	$path = $components['path'];
 
 	/*
 	 * Testing mod_rewrite functionality.  In order for mod_rewrite to work
 	 * properly, it needs a .htaccess file containing a RewriteBase
 	 * directive that matches the URL of its containing directory.
 	 */
-	if ($path == '/gallery2/') {
+	if (!strncmp($path, '/gallery2/', 10)) {
 	    $target = 'gallery2';
-	} else if ($path == '/gallery/') {
+	} else if (!strncmp($path, '/gallery/', 9)) {
 	    $target = 'gallery';
 	} else {
 	    $target = 'custom';
 	}
 
-	$fetch = $urlGenerator->generateUrl(
-		array('href' => $urlGenerator->makeUrl($path) .
-			'modules/rewrite/test/mod_rewrite_no_options/' . $target .
-			'/Rewrite.txt'));
+	$fetch = $baseUrl . "mod_rewrite_no_options/$target/Rewrite.txt";
 	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {
@@ -264,9 +261,7 @@ class RewriteHelper {
 	 * Apache mod_rewrite needs Options +FollowSymlinks, and we might need to explicit
 	 * require it in the .htaccess file.
 	 */
-	$fetch = $urlGenerator->generateUrl(
-		array('href' => $urlGenerator->makeUrl($path) .
-			'modules/rewrite/test/mod_rewrite/' . $target . '/Rewrite.txt'));
+	$fetch = $baseUrl . "mod_rewrite/$target/Rewrite.txt";
 	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {

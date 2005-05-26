@@ -95,7 +95,8 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	$baseUrl = GalleryUtilities::convertPathToUrl(dirname(__FILE__) . '/../frames');
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$baseUrl = $urlGenerator->generateUrl(array('href' => 'modules/imageframe/frames'));
 	if (!is_array($frameIds)) {
 	    $frameIds = array($frameIds);
 	}

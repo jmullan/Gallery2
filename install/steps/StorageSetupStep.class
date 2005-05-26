@@ -31,8 +31,7 @@ class StorageSetupStep extends InstallStep {
 	if (empty($this->_dir)) {
 	    $this->_dir = $galleryStub->getConfig('data.gallery.base');
 	    if (empty($this->_dir)) {
-		$this->_dir =
-		    dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'g2data';
+		$this->_dir = $_SESSION['configPath'] . DIRECTORY_SEPARATOR . 'g2data';
 	    }
 	}
 
@@ -45,7 +44,7 @@ class StorageSetupStep extends InstallStep {
 		    $templateData['error']['missing_dir'] = 1;
 		} else if (!is_readable($dir)) {
 		    $templateData['error']['inaccessible_dir'] = 1;
-		} else if (!is_writable($dir)) {
+		} else if (!is_writeable($dir)) {
 		    $templateData['error']['readonly_dir'] = 1;
 		} else {
 		    /* Populate the dir */
@@ -78,49 +77,11 @@ class StorageSetupStep extends InstallStep {
 
     function processRequest() {
 	if (!empty($_GET['doAutoComplete'])) {
-	    $path = !empty($_GET['path']) ? $_GET['path'] : '';
-	    /* Undo the damage caused by magic_quotes */
-	    if (get_magic_quotes_gpc()) {
-		$path = stripslashes($path);
-	    }
-
-	    /* Find all matching paths */
-	    header("Content-Type: text/plain");
- 	    $dirs = $this->_getAllImmediateSubdirs($path);
- 	    print join("\n", $dirs);
+	    processAutoCompleteRequest();
 	    return false;
 	}
 
 	return true;
-    }
-
-    function _getAllImmediateSubdirs($path) {
-	$dirList = array();
-	if (!file_exists($path) || !is_dir($path)) {
-	    return $dirList;
-	}
-
-	if ($dir = opendir($path)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file == '.' || $file == '..') {
-		    continue;
-		}
-
-		if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
-		    $file = $path . $file;
-		} else {
-		    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
-		}
-
-		if (is_dir($file)) {
-		    $dirList[] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
-
-	sort($dirList);
-	return $dirList;
     }
 
     function populateDataDirectory($dataBase) {

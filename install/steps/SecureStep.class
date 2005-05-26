@@ -26,19 +26,24 @@ class SecureStep extends InstallStep {
     }
 
     function loadTemplateData(&$templateData) {
-	$configFilePath = dirname(__FILE__) . '/../../config.php';
+	$configFilePath = $_SESSION['configPath'] . '/config.php';
 
 	if (!file_exists($configFilePath)) {
 	    $templateData['errors']['missingConfigFile'] = 1;
 	} else {
-	    $stats = stat($configFilePath);
-	    $mode = sprintf("%o", $stats['mode']);
+	    /* Grab the last 3 characters of the mode for file and parent dir */
+	    $stat = stat($configFilePath);
+	    $fileMode = substr(sprintf('%o', $stat['mode']), -3);
+	    $stat = stat($_SESSION['configPath']);
+	    $dirMode = substr(sprintf('%o', $stat['mode']), -3);
 
-	    // Grab the last 3 characters of the mode
-	    $mode = substr($mode, -3, 3);
 	    $templateData['configFilePath'] = realpath($configFilePath);
-	    $templateData['modes'] = $mode;
-	    $templateData['secure'] = !((int)$mode[1] & 2 || (int)$mode[2] & 2);
+	    $templateData['file']['mode'] = $fileMode;
+	    $templateData['file']['secure'] = !((int)$fileMode{1} & 2 || (int)$fileMode{2} & 2);
+	    $templateData['dir']['mode'] = $dirMode;
+	    $templateData['dir']['secure'] = !((int)$dirMode{1} & 2 || (int)$dirMode{2} & 2);
+	    $templateData['secure'] =
+		$templateData['file']['secure'] && $templateData['dir']['secure'];
 	}
 
 	$templateData['bodyFile'] = 'Secure.html';
@@ -46,7 +51,7 @@ class SecureStep extends InstallStep {
     }
 
     function isRelevant() {
-	// This step isn't relevant on Windows
+	/* This step isn't relevant on Windows */
 	return (strtolower(PHP_OS) != 'winnt');
     }
 }

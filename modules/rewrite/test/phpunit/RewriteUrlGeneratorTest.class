@@ -46,7 +46,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 	$_SERVER['QUERY_STRING'] = '';
-	
+
 	$ret = $this->_markPluginParametersForCleanup('module', 'rewrite');
 	if ($ret->isError()) {
 		print $ret->getAsHtml();
@@ -62,34 +62,35 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
-	
+
 	/* Save original activeRules */
 	list ($ret, $this->_saveActiveRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/* Set test activeRules */
 	$testRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%', 'match' => 'core:ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 			'match' => 'core:DownloadItem'),
-		array('pattern' => 'phpunit/', 'match' => 'php:Unit')));
+		array('pattern' => 'phpunit/', 'match' => 'php:Unit'),
+		array('pattern' => 'phpunitsub/%itemId%', 'match' => 'php:Unit|test:subView')));
 	$ret = RewriteMap::setActiveRules($testRules);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_urlGenerator = new RewriteUrlGenerator();
 	$this->_urlGenerator->init('phpunit_test.php');
 	$gallery->setUrlGenerator($this->_urlGenerator);
     }
-    
+
     function tearDown() {
     	global $gallery;
-    	
+
 	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -98,11 +99,11 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
     	parent::tearDown();
     }
-    
+
     function testInit() {
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
-    
+
     function testGetCurrentUrl() {
 	$expected = 'http://example.com/gallery2/phpunit_test.php';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
@@ -115,18 +116,18 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
-    
+
     function testGetCurrentUrlDir() {
 	$expected = 'http://example.com/gallery2/';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrlDir());
 	$this->assertEquals(false, $this->_urlGenerator->_error, 'error');
     }
-    
+
     function testGetCurrentShortUrl() {
 	$urlGenerator = new RewriteUrlGenerator();
 	$urlGenerator->init('phpunit_test.php');
 	$this->assertEquals(false, $urlGenerator->_error, 'init error');
-	
+
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php',
 			    $urlGenerator->getCurrentUrl(), 'get current url');
 	$this->assertEquals(false, $urlGenerator->_error, 'call error');
@@ -135,7 +136,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 			    $urlGenerator->_currentUrl, 'get cached url');
 	$this->assertEquals(false, $urlGenerator->_error, 'call error');
     }
-    
+
     function testShortUrls() {
 	global $gallery;
 	$session =& $gallery->getSession();
@@ -179,7 +180,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	/* core:DownloadItem on items have the id, serial number, path component and file type */
 	$tests[] = array(sprintf('http://example.com/gallery2/d/%d-%d/%s',
 				 $testItem->getId(), $testItem->getSerialNumber(),
-				 $testItem->getPathComponent()),
+				 urlencode($testItem->getPathComponent())),
 			 array('view' => 'core:DownloadItem', 'itemId' => $testItem->getId()));
 	/* php:Unit pattern withouth any keywords */
 	$tests[] = array('http://example.com/gallery2/phpunit/',
@@ -190,7 +191,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
 	    $expectedUrlWithSessionId = GalleryUrlGenerator::appendParamsToUrl(
 		$expectedUrl,
-                array($session->getKey() => $session->getId()));
+		array($session->getKey() => $session->getId()));
 
 	    /* Session id not in the url */
 	    $actualUrl = $this->_urlGenerator->generateUrl($params, false);
@@ -201,6 +202,15 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    $this->assertEquals($expectedUrlWithSessionId, $actualUrl, 'With session id');
 	}
     }
-}
 
+    function testNavigationId() {
+	global $gallery;
+	$gallery->setCurrentView('php:Unit');
+	$this->_urlGenerator->_navId = '456';
+
+	$actualUrl = $this->_urlGenerator->generateUrl(
+	    array('view' => 'php:Unit', 'subView' => 'test:subView', 'itemId' => 123), false);
+	$this->assertEquals('http://example.com/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
+    }
+}
 ?>

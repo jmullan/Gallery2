@@ -86,7 +86,7 @@ class PhotoAccessModule extends GalleryModule {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
 		$params['controller'] = 'photoaccess:PrintPhoto';
 		$params['itemId'] = $item->getId();
-		$params['returnUrl'] = urlencode($urlGenerator->getCurrentUrl());
+		$params['returnUrl'] = $urlGenerator->getCurrentUrl();
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('print on photoaccess.com'),
 			  'params' => $params);

@@ -35,5 +35,8 @@ require_once(dirname(__FILE__) . '/modules/core/classes/GalleryUtilities.class')
 $GLOBALS['gallery'] =& new Gallery();
 $gallery =& $GLOBALS['gallery'];
 
-@include(dirname(__FILE__) . '/config.php');
+if (!defined('GALLERY_CONFIG_DIR')) {
+    define('GALLERY_CONFIG_DIR', dirname(__FILE__));
+}
+@include(GALLERY_CONFIG_DIR . '/config.php');
 ?>

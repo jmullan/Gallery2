@@ -1,7 +1,8 @@
     <h1><?php print _("Welcome") ?></h1>
     <p>
       <?php printf(_("Upgrading Gallery 2.0 requires %d steps. This upgrade tool will guide you through these steps and provide assistance along the way if additional steps are required. Please read the %sHelp File%s before proceeding."),
-	$templateData['totalSteps'], '<a href="../README.html" target="_blank">', '</a>') ?>
+	$templateData['totalSteps'],
+	'<a href="' . generateUrl('../README.html', false) . '" target="_blank">', '</a>') ?>
     </p>
     <?php global $translator; if (isset($translator)): ?>
     <form method="get" action="index.php"><p>

@@ -4,14 +4,14 @@
   <head>
     <title> <?php print _('Welcome to the Gallery Upgrader') ?> </title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link rel="stylesheet" type="text/css" href="styles/style.css"/>
+    <link rel="stylesheet" type="text/css" href="<?php generateUrl('styles/style.css') ?>"/>
   </head>
 
   <body<?php global $translator; if (isset($translator)
 		 && $translator->isRightToLeft()) print ' style="direction:rtl"' ?>>
     <div id="box">
       <div id="header">
-	<img src="images/g2Logo_upgrade_head.png" alt="Gallery Upgrader"/>
+	<img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
       </div>
       <div id="navbar">
 	<h2><?php print _('Upgrade Steps') ?></h2>
@@ -41,7 +41,7 @@
 	      }
 	      ?>
 	      <?php if ($linkable): ?>
-	      <a href="index.php?step=<?php print $i?>">
+	      <a href="<?php generateUrl('index.php?step=' . $i) ?>">
 		<?php endif; ?>
 		<?php print $steps[$i]->stepName(); ?>
 		<?php if ($linkable): ?>
@@ -52,9 +52,10 @@
 	  <?php endfor; ?>
 	</ol>
 	<ul>
-	  <li><span class="helpBox">?</span><a href="../README.html" target="_blank"><?php print _('Upgrader Help'); ?></a>
+	  <li><span class="helpBox">?</span><a href="<?php generateUrl('../README.html') ?>"
+	   target="_blank"><?php print _('Upgrader Help'); ?></a>
           </li>
-	  <li><span class="helpBox">X</span><a href="index.php?startOver=1"><?php print _('Start Over'); ?></a></li>
+	  <li><span class="helpBox">X</span><a href="<?php generateUrl('index.php?startOver=1') ?>"><?php print _('Start Over'); ?></a></li>
 	</ul>
       </div>
       <div id="main">
@@ -130,7 +131,7 @@
 	<div class="go">
 	  <?php if ($currentStep->isRedoable()): ?>
 	  <span class="goToNext">
-	    <a href="index.php?step=<?php print $stepNumber?>&amp;doOver=1">
+	    <a href="<?php generateUrl('index.php?step=' . $stepNumber . '&amp;doOver=1') ?>">
 	      <?php print _('Redo this step'); ?>
 	    </a>
 	  </span>
@@ -138,7 +139,7 @@
 
 	  <?php $nextStep = $stepNumber + 1 ?>
 	  <span class="goToNext<?php if ($currentStep->isRedoable()) print 'L' ?>">
-	    <a href="index.php?step=<?php print $nextStep?>">
+	    <a href="<?php generateUrl('index.php?step=' . $nextStep) ?>">
 	      <?php printf(_('Continue to Step %d&raquo;'), $nextStep); ?>
 	    </a>
 	  </span>

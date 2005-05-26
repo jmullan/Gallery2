@@ -479,8 +479,7 @@ class GalleryUtilities {
 
 	/* Prepend the G2 base URL */
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$urlBase = $urlGenerator->getCurrentUrlDir(true);
-	return $urlBase . $relativePath;
+	return $urlGenerator->generateUrl(array('href' => $relativePath));
     }
 
     /**

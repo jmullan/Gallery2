@@ -97,7 +97,7 @@ class RewriteHelperTest extends GalleryTestCase {
     function testCheckBadFile() {
 	global $gallery;
 
-	/* Make sure we fail if it's not writable. */
+	/* Make sure we fail if it's not writeable. */
 	$this->_platform->setIsWriteable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::checkFile();
@@ -128,7 +128,7 @@ class RewriteHelperTest extends GalleryTestCase {
     function testWriteBadFile() {
 	global $gallery;
 
-	/* Make sure we fail if it's not writable. */
+	/* Make sure we fail if it's not writeable. */
 	$this->_platform->setIsWriteable(false);
 	$gallery->setPlatform($this->_platform);
 	list ($ret, $code) = RewriteHelper::writeFile(array());

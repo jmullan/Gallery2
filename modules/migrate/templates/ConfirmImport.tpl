@@ -30,7 +30,7 @@
   {foreach from=$form.sourceAlbums item=albumName}
   <tr class="{cycle values="gbEven,gbOdd"}">
     <td>
-      {$ConfirmImport.urlDecoded.$albumName}
+      {$albumName}
       <input type="hidden" name="{g->formVar var="form[sourceAlbums][$albumName]"}" value="1"/>
     </td><td>
       {$ConfirmImport.titles.$albumName}

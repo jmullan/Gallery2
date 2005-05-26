@@ -1056,7 +1056,7 @@
 
       <li>
 	<b>Storage</b> - Create a directory for gallery to store
-	photos.  This must be writable by the web server, but for
+	photos.  This must be writeable by the web server, but for
 	security reasons we suggest that you do not put it in the web
 	root.  If you put it in the web root, then anybody can get
 	directly to your images with their web browser which
@@ -1180,11 +1180,11 @@
       of the install process, then you can configure it using your web
       browser.
     </p>
-    <ol>
+    <ul style="margin-bottom: 0">
       <li>
 	<b> Upload </b> - Copy the Gallery 2 files to a directory on your webserver. There are
 	several alternatives for this step:
-	<ul>
+	<ul style="margin-top: 0.4em; margin-bottom: 0">
 	  <li>
 	    Ideally, you can use cvs to install and update your Gallery 2 installation directly
 	    on the server. But this option is only available if you have command line access to
@@ -1219,6 +1219,8 @@
 	you through the process of validating that your system is
 	properly configured and will set everything up for you.
       </li>
+    </ul>
+    <ol style="margin-top: 0.2em">
       <li>
 	<b> Authenticate </b> - You will be asked to create and save a
 	small text file in order to authenticate.  You may not proceed
@@ -1229,6 +1231,11 @@
 	<b> System Checks </b> - The installer checks your system to
 	make sure that it will support Gallery 2. Make sure that all
 	checks are successful!
+      </li>
+      <li>
+	<b> Multisite Setup </b> - Gallery can support multiple independent sites with
+	a single installation of the code.  Here you will select a standard single install
+	or the location of a new multisite install.
       </li>
       <li>
 	<b> Admin User Setup </b> - You are prompted for an
@@ -1500,6 +1507,56 @@
 	<b>URL Redirection</b> - Rewrite module and Gallery 1-&raquo;Gallery 2 URL redirection
 	do not work together in the same .htaccess file (Gallery 2 is installed where
 	Gallery 1 used to be). In future these will be compatible.
+      </li>
+      <li>
+	<a name="multisite"></a>
+	<b>Multisite config.php</b> - The multisite system has changed and old style
+	multisite config.php files are no longer supported.  Follow these steps to move
+	your sites to the new system:
+	<ul>
+	  <li>
+	    Replace any symlinks created for multisite support with real directories
+	    and/or remove any .htaccess files that were setup to redirect requests
+	    from a multisite directory to the G2 codebase.
+	  </li>
+	  <li>
+	    Examine your config.php file and learn the basics of its structure.  You
+	    will find multiple complete single configurations that each start with
+	    <tt>&lt;?php</tt> and end with <tt>?&gt;</tt>, with some additional content
+	    above, below and between these sections.
+	  </li>
+	  <li>
+	    Copy each configuration in the combined file into separate single files.
+	    Each new file should have <tt>&lt;?php</tt> as the very first line and
+	    <tt>?&gt;</tt> as the very last line with no extra spaces or blank lines
+	    at the top or bottom.  Place each new single config.php in the multisite
+	    directory for that site.  The <tt>case 'domain/path':</tt> line just above
+	    each configuration in the combined file will help you determine which
+	    config.php goes in which multisite directory.  Note that this "case" line
+	    does not go in the new config.php file.  The last configuration in the
+	    combined file has <tt>default:</tt> just above it instead of "case".
+	    Rename the combined file to something else and put this last configuration
+	    in place as the config.php in this directory.
+	  </li>
+	  <li>
+	    Now access the primary site and run through the upgrader.  Make sure
+	    everything is working correctly with this site.
+	  </li>
+	  <li>
+	    For each additional site follow this process: browse to install/index.php
+	    of the primary site.  In step 3 enter the path to the multisite directory
+	    to update.  After this step you should see some new files in the multisite
+	    directory, including <tt>upgrade/index.php</tt>.  At this point <i>stop</i>
+	    using the installer and browse to <tt>upgrade/index.php</tt> for this site
+	    (not the primary site).  Step through the upgrader up to the upgrade core
+	    module step.  After the core upgrade completes manually edit the config.php
+	    for this site.  At the bottom you will find a <tt>galleryBaseUrl</tt> setting.
+	    Enter the URL for the primary site here, ending with a /.  For example,
+	    <tt>http://mydomain.com/gallery2/</tt> or <tt>http://photos.mydomain.com/</tt>.
+	    Save this change and finish the remaining steps of the upgrader.  Make sure this
+	    site now works correctly.
+	  </li>
+	</ul>
       </li>
     </ol>
 

@@ -34,9 +34,11 @@ class InstallOtherModulesStep extends InstallStep {
 	require(dirname(__FILE__) . '/../../modules/core/classes/GalleryDataCache.class');
 	GalleryDataCache::setFileCachingEnabled(false);
 
+	define('GALLERY_CONFIG_DIR', $_SESSION['configPath']);
 	require(dirname(__FILE__) . '/../../bootstrap.inc');
 	require(dirname(__FILE__) . '/../../init.inc');
-	$ret = GalleryInitFirstPass(array('debug' => 'buffered'));
+	$ret = GalleryInitFirstPass(array('debug' => 'buffered',
+					  'activeLanguage' => $_SESSION['language']));
 	if ($ret->isError()) {
 	    $templateData['errors'][] = _('Unable to initialize our Gallery data');
 	    $templateData['stackTrace'] = $ret->getAsHtml();

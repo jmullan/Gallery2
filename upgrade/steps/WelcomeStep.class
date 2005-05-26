@@ -35,6 +35,13 @@ class WelcomeStep extends UpgradeStep {
     }
 
     function loadTemplateData(&$templateData) {
+	global $gallery;
+	if (@$gallery->getConfig('multisite')) {
+	    /* Prevent upgrade if old style multisite config.php is found */
+	    $templateData['bodyFile'] = 'InvalidConfig.html';
+	    return;
+	}
+
 	$templateData['totalSteps'] = count($GLOBALS['steps'])-1;
 	$templateData['bodyFile'] = 'Welcome.html';
 	$this->setComplete(true);

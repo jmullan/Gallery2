@@ -70,16 +70,13 @@ if (!ini_get('session.auto_start')) {
     session_start();
 }
 
-if (isset($_SESSION['path'])) {
-    if ($_SESSION['path'] != __FILE__) {
-	/*
-	 * Security error!  This session is not valid for this copy of the
-	 * installer. Start over.
-	 */
-	session_unset();
-    }
+if (!isset($_SESSION['path'])) {
+    $_SESSION['path'] = __FILE__;
+} else if ($_SESSION['path'] != __FILE__) {
+    /* Security error!  This session is not valid for this copy of the upgrader. Start over. */
+    session_unset();
+    $_SESSION['path'] = __FILE__;
 }
-$_SESSION['path'] = __FILE__;
 
 require_once(dirname(__FILE__) . '/../bootstrap.inc');
 require_once(dirname(__FILE__) . '/../init.inc');
@@ -116,7 +113,15 @@ $gallery->guaranteeTimeLimit(300);
 $storage =& $gallery->getStorage();
 list ($ret, $isInstalled) = $storage->isInstalled();
 if ($ret->isError() || !$isInstalled) {
-    header("Location: ../install/");
+    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryUrlGenerator.class');
+    /* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
+    $baseUrl = @$gallery->getConfig('galleryBaseUrl');
+    if (empty($baseUrl)) {
+	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{upgrade/(index.php)?(\?.*)?}', '',
+						GalleryUrlGenerator::getCurrentRequestUri()));
+    }
+    header('Location: ' . $baseUrl . 'install/index.php');
+    return;
 }
 
 /* If we don't have our steps in our session, initialize them now. */
@@ -202,6 +207,24 @@ function addSessionIdToUrls($html) {
 	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&amp;' . $sid . '"', $html);
     }
     return $html;
+}
+
+/**
+ * Mini url generator for upgrader
+ */
+function generateUrl($uri, $print=true) {
+    if (strncmp($uri, 'index.php', 9) && strncmp($uri, '../main.php', 11)) {
+	global $gallery;
+	/* Add @ here in case we haven't yet upgraded config.php to include galleryBaseUrl */
+	$baseUrl = @$gallery->getConfig('galleryBaseUrl');
+	if (!empty($baseUrl)) {
+	     $uri = $baseUrl . 'upgrade/' . $uri;
+	}
+    }
+    if ($print) {
+	print $uri;
+    }
+    return $uri;
 }
 
 /*

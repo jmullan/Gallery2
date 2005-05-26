@@ -137,7 +137,9 @@ class GalleryPluginHelper_simple {
 			 * Forcibly abort this request and jump to the upgrader so this
 			 * module can be upgraded.
 			 */
-			header('Location: upgrade/');
+			$urlGenerator =& $gallery->getUrlGenerator();
+			header('Location: ' .
+			       $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php');
 			exit;
 		    }
 

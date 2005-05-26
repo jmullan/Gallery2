@@ -78,7 +78,7 @@ class CoreModuleExtras {
 	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2. Go to the
 	 * end of the switch and find the 'end of upgrade path' case.  Create a new case *above*
 	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
-	 * then your code.  Do *not* put in a break statement.
+	 * then your code.  Do *not* put in a break statement. (Update _prepareConfigUpgrade too)
 	 */
 	switch ($currentVersion) {
 	case '0':
@@ -695,7 +695,7 @@ class CoreModuleExtras {
 	    }
 
 	case '0.9.16':
-	    /* Beta 3 release! */ 
+	    /* Beta 3 release! */
 
 	case '0.9.17':
 	    /* Split uploadLocalServer.dirs list into one parameter per entry */
@@ -726,6 +726,9 @@ class CoreModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+
+	case '0.9.19':
+	    /* New multisite system and support for config.php upgrades */
 
 	case 'end of upgrade path':
 	    /*
@@ -762,6 +765,155 @@ class CoreModuleExtras {
 	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
 					'Can\'t write to the versions file');
 	}
+
+	return GalleryStatus::success();
+    }
+
+    /**
+     * Determine what changes to config.php are required for this upgrade.
+     * @param string current core version
+     * @return array of array('remove' => array of string regexp removals,
+     *                        'add' => array of string additions)
+     * @static
+     * @private
+     */
+    function _prepareConfigUpgrade($currentVersion) {
+	global $gallery;
+	$configChanges = array();
+
+	/**
+	 * README: How to update the block below.
+	 *
+	 * If you add a new feature to the core module and revise the version, you should do the
+	 * following.  Supposing the current version is 1.0.1 and you're adding 1.0.2. Go to the
+	 * end of the switch and find the 'end of upgrade path' case.  Create a new case *above*
+	 * that one with the old version number.  For our example you'd add: "case '1.0.1':" and
+	 * then your code.  Do *not* put in a break statement. (Update upgrade function too)
+	 */
+	switch ($currentVersion) {
+	case '0.8.4':
+	case '0.8.5':
+	case '0.8.6':
+	case '0.8.7':
+	case '0.8.8':
+	case '0.8.9':
+	case '0.8.10':
+	case '0.8.11':
+	case '0.8.12':
+	case '0.8.13':
+	case '0.8.14':
+	case '0.8.15':
+	case '0.8.16':
+	case '0.8.17':
+	case '0.9.0':
+	case '0.9.1':
+	case '0.9.2':
+	case '0.9.3':
+	case '0.9.4':
+	case '0.9.5':
+	case '0.9.6':
+	case '0.9.7':
+	case '0.9.8':
+	case '0.9.9':
+	case '0.9.10':
+	case '0.9.11':
+	case '0.9.12':
+	case '0.9.13':
+	case '0.9.14':
+	case '0.9.15':
+	case '0.9.16':
+	case '0.9.17':
+	case '0.9.18':
+	case '0.9.19':
+	    $add = array();
+	    if (!isset($gallery->_config['allowSessionAccess'])) {
+		/*
+		 * This item was added to config.php before config.php upgrades were supported.
+		 * Add it only if not already present.
+		 */
+		$add[] =
+'/*
+ * Allow a particular IP address to access the session (it still must know the
+ * session id) even though it doesn\'t match the address/user agent that created
+ * the session.  Put the address of validator.w3.org (\'128.30.52.13\') here to allow
+ * validation of non-public Gallery pages from the links at the bottom of the page.
+ */
+$gallery->setConfig(\'allowSessionAccess\', false);
+';
+	    }
+
+	    $add[] =
+'/*
+ * URL of Gallery codebase; required only for multisite install.
+ */
+$gallery->setConfig(\'galleryBaseUrl\', \'\');
+';
+
+	    $configChanges[] = array(
+		'remove' => array('{/\*[^/]*\*/\s*\$gallery->setConfig\(\'galleryId\',.*?;\s*}s'),
+		'add' => $add);
+
+	case 'end of upgrade path':
+	    /*
+	     * Leave this bogus case at the end of the legitimate case statements so that we
+	     * always properly terminate our upgrade path with a break.
+	     */
+	    break;
+
+	default:
+	    $gallery->debug("Unknown module version $currentVersion in prepareConfigUpgrade()");
+	}
+
+	return $configChanges;
+    }
+
+    /**
+     * Check if any changes to config.php are required for this upgrade.
+     * @param string current core version
+     * @return boolean true if change is required
+     * @static
+     */
+    function isConfigUpgradeRequired($currentVersion) {
+	$configChanges = CoreModuleExtras::_prepareConfigUpgrade($currentVersion);
+	return !empty($configChanges);
+    }
+
+    /**
+     * Perform upgrade of config.php file.
+     * @param string current core version
+     * @return object GalleryStatus a status code
+     * @static
+     */
+    function performConfigUpgrade($currentVersion) {
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+	$configFilePath = GALLERY_CONFIG_DIR . '/config.php';
+	$configContents = implode('', $platform->file($configFilePath));
+	if (empty($configContents) || strlen($configContents) < 100) {
+	    return GalleryStatus::error(ERROR_MISSING_VALUE, __FILE__, __LINE__,
+					'Unable to read current config.php contents');
+	}
+
+	$configChanges = CoreModuleExtras::_prepareConfigUpgrade($currentVersion);
+	foreach ($configChanges as $change) {
+	    foreach ($change['remove'] as $regexp) {
+		$configContents = preg_replace($regexp, '', $configContents);
+	    }
+	    foreach ($change['add'] as $content) {
+		$configContents = preg_replace('{\?>\s*\z}', $content . "\n?>\n", $configContents);
+	    }
+	}
+
+	if (!$out = $platform->fopen($configFilePath, 'w')) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					'Unable to write to config.php');
+	}
+	if ($platform->fwrite($out, $configContents) < strlen($configContents)) {
+	    return GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					'Unable to write config.php contents');
+	}
+	$platform->fclose($out);
 
 	return GalleryStatus::success();
     }

@@ -42,7 +42,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * If there's an error, use parent GalleryUrlGenerator functions.
      *
-     * @var bool has an error uccured?
+     * @var bool has an error occured?
      * @access private
      */
     var $_error = false;
@@ -58,7 +58,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
     /**
      * @see GalleryUrlGenerator::init
      */
-    function init($baseFile, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
+    function init($baseFile=null, $embedPath=null, $relativeG2Path=null, $embedSessionString=null) {
 	parent::init($baseFile, $embedPath, $relativeG2Path, $embedSessionString);
 
 	list($ret, $this->_shortUrls) = RewriteMap::getShortUrls();
@@ -105,8 +105,6 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @see GalleryUrlGenerator::getNavigationReturnUrl
      */
     function getNavigationReturnUrl() {
-	global $gallery;
-
 	$formUrl = GalleryUtilities::getRequestVariables('formUrl');
 	if (!empty($formUrl)) {
 	    /*
@@ -135,15 +133,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
      * @see GalleryUrlGenerator::generateUrl
      */
     function generateUrl($params=array(), $forceSessionId=null) {
-	global $gallery;
-
 	if ($this->_error) {
 	    return parent::generateUrl($params, $forceSessionId);
 	}
 
 	if (isset($params['view'])) {
 	    $index = $params['view'];
-
 	    if (isset($params['subView'])) {
 		$index .= '|' . $params['subView'];
 	    }
@@ -151,6 +146,18 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 
 	/* Build the short style URL */
 	if (isset($index) && isset($this->_shortUrls[$index]) && !isset($params['href'])) {
+	    /* Navigation */
+	    global $gallery;
+	    $currentView = $gallery->getCurrentView();
+	    if (!empty($this->_navId) && (empty($currentView) ||
+		    $currentView == $params['view'] || !empty($params['controller']))) {
+		/*
+		 * We are moving around in the same view or we are redirecting to a controller,
+		 * who knows where it will redirect to.  Let's keep the navigation.
+		 */
+		$params['navId'] = $this->_navId;
+	    }
+
 	    $url = $this->_shortUrls[$index];
 	    unset($params['view']);
 	    unset($params['subView']);
@@ -158,10 +165,10 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    /* Load the entity if we need it later on */
 	    if ((strpos($url, '%path%') !== false || strpos($url, '%fileName%') !== false ||
 		    strpos($url, '%serialNumber%') !== false)) {
-		/* Assume rootAlbum idemId if not specified */
+		/* Assume rootAlbum itemId if not specified */
 		if (!isset($params['itemId'])) {
 		    list ($ret, $params['itemId']) =
-			    GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+			GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 		    if ($ret->isError()) {
 			unset($params['itemId']);
 			return parent::generateUrl($params, $forceSessionId);
@@ -174,7 +181,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		}
 	    }
 
-	    preg_match_all('/\%([^\%]+)\%/', $url, $regs);
+	    preg_match_all('/%([^%]+)%/', $url, $regs);
 	    foreach ($regs[1] as $arg) {
 		if ($arg == 'path' && isset($entity)) {
 		    list ($ret, $path) = $entity->fetchLogicalPath();
@@ -182,32 +189,31 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
 			    $path .= '.html';
 			}
-			$path = str_replace(' ', '+', $path);
-			$path = str_replace('#', '%23', $path);
-
-			$url = str_replace('%' . $arg . '%', substr($path, 1), $url);
+			/* urlencode except for path separators(/) */
+			$url = str_replace('%path%',
+			    str_replace('%2F', '/', urlencode(substr($path, 1))), $url);
 			unset($params['itemId']);
 		    }
 		} else if ($arg == 'fileName' && isset($entity)) {
 		    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
 		    if ($ret->isError()) {
-			return null;
+			return parent::generateUrl($params, $forceSessionId);
 		    }
 
 		    if (strpos($pseudoFileName, '.') === false) {
-			list ($ret, $extensions) = GalleryCoreApi::convertMimeToExtensions(
-				$entity->getMimeType());
+			list ($ret, $extensions) =
+			    GalleryCoreApi::convertMimeToExtensions($entity->getMimeType());
 			if (!empty($extensions)) {
 			    $pseudoFileName .= '.' . $extensions[0];
 			}
 		    }
 
-		    $url = str_replace('%' . $arg . '%', $pseudoFileName, $url);
+		    $url = str_replace('%fileName%', urlencode($pseudoFileName), $url);
 		} else if ($arg == 'serialNumber' && isset($entity)) {
-		    $url = str_replace('%' . $arg . '%', $entity->getSerialNumber(), $url);
+		    $url = str_replace('%serialNumber%', $entity->getSerialNumber(), $url);
 		    unset($params['serialNumber']);
 		} else {
-		    $url = str_replace('%' . $arg . '%', $params[$arg], $url);
+		    $url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
 		    unset($params[$arg]);
 		}
 	    }
@@ -216,11 +222,10 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		$url = $this->_baseFile;
 	    }
 
-	    $params['href'] = $this->getCurrentUrlDir() . $url;
+	    return parent::generateUrl($params, $forceSessionId, $this->getCurrentUrlDir() . $url);
 	}
 
 	return parent::generateUrl($params, $forceSessionId);
     }
 }
-
 ?>

@@ -95,7 +95,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 		$path = substr($path, 0, $query);
 	    }
 
-	    if ($platform->file_exists($baseDir . $path) && $path != '/main.php') {
+	    if ($platform->file_exists($baseDir . $path) && $path != ('/' . GALLERY_MAIN_PHP)) {
 		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($result[0]);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -104,7 +104,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 				'subView' => 'core:ItemEdit',
 				'editPlugin' => 'ItemEditItem',
 				'itemId' => $result[0]);
-		
+
 		$status[++$badPath] = $module->translate('Bad path:') .
 			sprintf(' <a href="%s">%s</a>: %s',
 				$urlGenerator->generateUrl($params),
@@ -121,7 +121,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 		}
 	    }
 	}
-	
+
 	$status[0] = $module->translate(array('text' => 'Checked %d items and found %d conflicts',
 					   'arg1' => $total, 'arg2' => $badPath));
 	return array(GalleryStatus::success(), true, $status);

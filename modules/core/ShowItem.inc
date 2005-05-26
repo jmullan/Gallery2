@@ -85,7 +85,7 @@ class ShowItemView extends GalleryView {
 		$path = substr($path, 0, -5);
 	    }
 
-	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath(urldecode($path));
+	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

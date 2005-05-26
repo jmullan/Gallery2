@@ -98,14 +98,14 @@ class SetupRewriteView extends GalleryView {
 	    $form['formName'] = 'SetupRewrite';
 	}
 
-	$galleryBase = parse_url($urlGenerator->getCurrentUrlDir(true));
+	$baseUrl = parse_url($urlGenerator->generateUrl(
+	    array('href' => 'modules/rewrite/test/'), false));
 	$SetupRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
-	$SetupRewrite['customLine'] = 'RewriteBase ' . $galleryBase['path'] .
-		'modules/rewrite/test/mod_rewrite/custom/';
+	$SetupRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
 	$SetupRewrite['customFileNoOptions'] = dirname(__FILE__) .
-		'/test/mod_rewrite_no_options/custom/.htaccess';
-	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $galleryBase['path'] .
-		'modules/rewrite/test/mod_rewrite_no_options/custom/';
+	    '/test/mod_rewrite_no_options/custom/.htaccess';
+	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
+	    'mod_rewrite_no_options/custom/';
 
 	list ($ret, $SetupRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
 	if ($ret->isError()) {

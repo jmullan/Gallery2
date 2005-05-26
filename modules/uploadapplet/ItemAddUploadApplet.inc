@@ -61,7 +61,7 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['code'] = 'com.gallery.GalleryRemote.ItemAddUploadAppletMini';
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir();
+	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
 	}
 
 	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);

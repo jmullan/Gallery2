@@ -60,7 +60,7 @@ class AuthenticateStep extends InstallStep {
 	}
 
 	if (!$this->isComplete()) {
-	    // authenticate
+	    /* Authenticate */
 	    $authenticated = false;
 	    $authFile = dirname(__FILE__) . '/../login.txt';
 	    if (!file_exists($authFile)) {

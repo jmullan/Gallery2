@@ -25,7 +25,8 @@ include(dirname(__FILE__) . '/bootstrap.inc');
  * If they don't have a setup password, we assume that the config.php is
  * empty and this is an initial install.
  */
-if (!$gallery->getConfig('setup.password')) {
+if (!@$gallery->getConfig('setup.password')) {
+    /* May be invalid if a multisite install lost its config.php; galleryBaseUrl unknown */
     header('Location: install/');
     return;
 }
@@ -141,7 +142,7 @@ function _GalleryMain($returnHtml=false) {
     }
     $installedVersions = $core->getInstalledVersions();
     if ($installedVersions['core'] != $core->getVersion()) {
-	$redirectUrl = $urlGenerator->generateUrl(array('href' => 'upgrade/'));
+	$redirectUrl = $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php';
 	return array(GalleryStatus::success(), _GalleryMain_doRedirect($redirectUrl));
     }
 
@@ -403,9 +404,8 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
 	    $main['validationUri'] = $urlGenerator->appendParamsToUrl(
 		$main['validationUri'], array($session->getKey() => $session->getId()));
 	}
-	$main['validationUri'] = urlencode(str_replace('&amp;', '&', $main['validationUri']));
-	$main['validationUri'] =
-	    sprintf('http://validator.w3.org/check?uri=%s&amp;ss=1', $main['validationUri']);
+	$main['validationUri'] = sprintf('http://validator.w3.org/check?uri=%s&amp;ss=1',
+	    urlencode(str_replace('&amp;', '&', $main['validationUri'])));
     } else {
 	list ($ret, $core) = GalleryCoreApi::loadPlugin('module', 'core', true);
 	if ($ret->isError()) {

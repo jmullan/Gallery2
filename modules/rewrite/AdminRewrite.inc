@@ -340,14 +340,14 @@ class AdminRewriteView extends GalleryView {
 	    break;
 
 	case 'test':
-	    $galleryBase = parse_url($urlGenerator->getCurrentUrlDir(true));
+	    $baseUrl = parse_url($urlGenerator->generateUrl(
+		array('href' => 'modules/rewrite/test/'), false));
 	    $AdminRewrite['customFile'] = dirname(__FILE__) . '/test/mod_rewrite/custom/.htaccess';
-	    $AdminRewrite['customLine'] = 'RewriteBase ' . $galleryBase['path'] .
-		    'modules/rewrite/test/mod_rewrite/custom/';
+	    $AdminRewrite['customLine'] = 'RewriteBase ' . $baseUrl['path'] . 'mod_rewrite/custom/';
 	    $AdminRewrite['customFileNoOptions'] = dirname(__FILE__) .
-		    '/test/mod_rewrite_no_options/custom/.htaccess';
-	    $AdminRewrite['customLineNoOptions'] = 'RewriteBase ' . $galleryBase['path'] .
-		'modules/rewrite/test/mod_rewrite_no_options/custom/';
+		'/test/mod_rewrite_no_options/custom/.htaccess';
+	    $AdminRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
+		'mod_rewrite_no_options/custom/';
 
 	    list ($ret, $AdminRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
 	    if ($ret->isError()) {

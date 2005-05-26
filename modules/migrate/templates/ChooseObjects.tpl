@@ -106,7 +106,7 @@
 
     <select multiple="multiple" size="10" name="{g->formVar var="form[sourceAlbums][]"}">
       {foreach from=$ChooseObjects.g1AlbumTree item=album}
-	<option value="{$album.data.urlencodedname}">
+	<option value="{$album.data.name}">
 	  {"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--
 	  {g->text text="%s (%s)" arg1=$album.data.title|htmlentities arg2=$album.data.name}
 	</option>

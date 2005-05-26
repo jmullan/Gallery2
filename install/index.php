@@ -57,6 +57,7 @@ if (!function_exists('_')) {
 $stepOrder[] = 'Welcome';
 $stepOrder[] = 'Authenticate';
 $stepOrder[] = 'SystemChecks';
+$stepOrder[] = 'Multisite';
 $stepOrder[] = 'AdminUserSetup';
 $stepOrder[] = 'StorageSetup';
 $stepOrder[] = 'DatabaseSetup';
@@ -73,6 +74,14 @@ foreach ($stepOrder as $stepName) {
 
 if (!ini_get('session.auto_start')) {
     session_start();
+}
+
+if (!isset($_SESSION['path'])) {
+    $_SESSION['path'] = __FILE__;
+} else if ($_SESSION['path'] != __FILE__) {
+    /* Security error!  This session is not valid for this copy of the installer. Start over. */
+    session_unset();
+    $_SESSION['path'] = __FILE__;
 }
 
 if (function_exists('dgettext') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
@@ -101,46 +110,17 @@ if (function_exists('dgettext') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
  */
 unset($galleryStub);
 
-if (!isset($_SESSION['path'])) {
-    $_SESSION['path'] = __FILE__;
-} else if ($_SESSION['path'] != __FILE__) {
-    /* Security error!  This session is not valid for this copy of the installer. Start over. */
-    session_unset();
-    $_SESSION['path'] = __FILE__;
-}
-require_once(dirname(__FILE__) . '/../modules/core/classes/GalleryUrlGenerator.class');
-if (!isset($_SESSION['galleryId'])) {
-    $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
-} else if ($_SESSION['galleryId'] != GalleryUrlGenerator::getGalleryId()) {
-    /* Security error!  This session is not valid for this URL. Start over. */
-    session_unset();
-    $_SESSION['path'] = __FILE__;
-    $_SESSION['galleryId'] = GalleryUrlGenerator::getGalleryId();
+if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
+    $steps = unserialize($_SESSION['install_steps']);
+    if (isset($_SESSION['galleryStub'])) {
+	$galleryStub = unserialize($_SESSION['galleryStub']);
+    }
 }
 
 /* If we don't have our steps in our session, initialize them now. */
-if (!isset($_GET['startOver']) && !empty($_SESSION['install_steps'])) {
-    $steps = unserialize($_SESSION['install_steps']);
-    $galleryStub = unserialize($_SESSION['galleryStub']);
-}
-
 if (empty($steps) || !is_array($steps)) {
-    /* Load our existing config.php, which requires $gallery to be valid */
-    $configFile = dirname(__FILE__) . '/../config.php';
-    $gallery = new GalleryStub();
-    if (is_file($configFile) && is_readable($configFile)) {
-	ob_start();
-	@include($configFile);
-	ob_end_clean();
-    }
-
-    /* Get rid of $gallery so that we can call init.php later on and get a real $gallery */
-    $galleryStub = $gallery;
-    $_SESSION['galleryStub'] = serialize($galleryStub);
-    unset($gallery);
-
     $steps = array();
-    for ($i = 0; $i < sizeof($stepOrder); $i++) {
+    for ($i = 0; $i < count($stepOrder); $i++) {
 	$className = $stepOrder[$i] . 'Step';
 	$step = new $className();
 	if ($step->isRelevant()) {
@@ -153,18 +133,14 @@ if (empty($steps) || !is_array($steps)) {
     }
 
     /* Don't do this in the loop, since not all steps are relevant */
-    $steps[sizeof($steps)-1]->setIsLastStep(true);
+    $steps[count($steps)-1]->setIsLastStep(true);
 }
 
-if (isset($_GET['step'])) {
-    $stepNumber = (int)$_GET['step'];
-} else {
-    $stepNumber = 0;
-}
+$stepNumber = isset($_GET['step']) ? (int)$_GET['step'] : 0;
 
 /* Make sure all steps up to the current one are ok */
 for ($i = 0; $i < $stepNumber; $i++) {
-    if (!$steps[$i]->isComplete() && ! $steps[$i]->isOptional()) {
+    if (!$steps[$i]->isComplete() && !$steps[$i]->isOptional()) {
 	$stepNumber = $i;
 	break;
     }
@@ -177,7 +153,7 @@ if (!empty($_GET['doOver'])) {
 
 /* If the current step is incomplete, the rest of the steps can't be complete either */
 if (!$currentStep->isComplete()) {
-    for ($i = $stepNumber+1; $i < sizeof($steps); $i++) {
+    for ($i = $stepNumber+1; $i < count($steps); $i++) {
 	$steps[$i]->setComplete(false);
 	$steps[$i]->setInError(false);
     }
@@ -191,7 +167,7 @@ if ($currentStep->processRequest()) {
     $templateData['errors'] = array();
     $currentStep->loadTemplateData($templateData);
     $stepsComplete = max($stepNumber - ($currentStep->isComplete() ? 0 : 1), 0);
-    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (sizeof($steps)-1))) / 5) * 5;
+    $templateData['percentComplete'] = (int)((100 * ($stepsComplete / (count($steps)-1))) / 5) * 5;
 
     /* Fetch our page into a variable */
     ob_start();
@@ -217,6 +193,36 @@ function addSessionIdToUrls($html) {
 	$html = preg_replace('/href="(.*\?.*)"/', 'href="$1&amp;' . $sid . '"', $html);
     }
     return $html;
+}
+
+function processAutoCompleteRequest() {
+    $path = !empty($_GET['path']) ? $_GET['path'] : '';
+    /* Undo the damage caused by magic_quotes */
+    if (get_magic_quotes_gpc()) {
+	$path = stripslashes($path);
+    }
+                    
+    /* Find all matching paths */
+    $dirList = array();
+    if (file_exists($path) && is_dir($path) && ($dir = opendir($path))) {
+	if ($path{strlen($path)-1} != DIRECTORY_SEPARATOR) {
+	    $path .= DIRECTORY_SEPARATOR;
+	}
+	while (($file = readdir($dir)) !== false) {
+	    if ($file == '.' || $file == '..') {
+		continue;
+	    }
+	    $file = $path . $file;
+	    if (is_dir($file)) {
+		$dirList[] = $file;
+	    }
+	}
+	closedir($dir);
+	sort($dirList);
+    }
+
+    header("Content-Type: text/plain");
+    print implode("\n", $dirList);
 }
 
 /*
