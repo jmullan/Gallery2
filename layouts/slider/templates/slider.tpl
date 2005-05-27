@@ -82,7 +82,7 @@
   {if !empty($layout.itemLinks)}
   <div class="gbBlock">
     <h3> {g->text text="Album"} </h3>
-    <select onchange="{literal}javascript:if (this.value) { var u=this.value; this.options[0].selected=1; location.href=u; }{/literal}" style="margin-left: 1em">
+    <select onchange="{literal}if (this.value) { var u=this.value; this.options[0].selected=1; location.href=u; }{/literal}" style="margin-left: 1em">
       <option label="{g->text text="&laquo; actions &raquo;"}" value="">
 	{g->text text="&laquo; actions &raquo;"}
       </option>
@@ -94,7 +94,7 @@
   {/if}
   <div id="photoActions" class="gbBlock" style="display: none">
     <h3> {g->text text="Photo"} </h3>
-    <select id="linkList" onchange="{literal}javascript:if (this.value) { var u=this.value; this.options[0].selected=1; location.href=u; }{/literal}" style="margin-left: 1em">
+    <select id="linkList" onchange="{literal}if (this.value) { var u=this.value; this.options[0].selected=1; location.href=u; }{/literal}" style="margin-left: 1em">
       <option label="{g->text text="&laquo; actions &raquo;"}" value="">
 	{g->text text="&laquo; actions &raquo;"}
       </option>

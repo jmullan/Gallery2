@@ -176,11 +176,11 @@
     {/foreach}
   </table>
 
-  <input type="button" class="inputTypeButton" onclick="javascript:setCheck(1)"
+  <input type="button" class="inputTypeButton" onclick="setCheck(1)"
    name="{g->formVar var="form[action][checkall]"}" value="{g->text text="Check All"}"/>
-  <input type="button" class="inputTypeButton" onclick="javascript:setCheck(0)"
+  <input type="button" class="inputTypeButton" onclick="setCheck(0)"
    name="{g->formVar var="form[action][checknone]"}" value="{g->text text="Check None"}"/>
-  <input type="button" class="inputTypeButton" onclick="javascript:invertCheck()"
+  <input type="button" class="inputTypeButton" onclick="invertCheck()"
    name="{g->formVar var="form[action][invert]"}" value="{g->text text="Invert"}"/>
 
   {if ($ItemMove.page > 1)}
@@ -201,7 +201,7 @@
   </p>
 
   <select name="{g->formVar var="form[destination]"}"
-   onchange="javascript:checkPermissions(this.form)">
+   onchange="checkPermissions(this.form)">
     {foreach from=$ItemMove.albumTree item=album}
       <option value="{$album.data.id}"
 	      {if ($album.data.id == $form.destination)}selected="selected"{/if}>

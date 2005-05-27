@@ -111,7 +111,7 @@
     {/foreach}
     <tr>
       <th>
-	<input type="checkbox" name="selectionToggle" onClick="javascript:toggleSelections()"/>
+	<input type="checkbox" name="selectionToggle" onclick="toggleSelections()"/>
       </th>
       <th colspan="2">
 	{g->text text="(Un)check all"}

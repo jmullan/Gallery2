@@ -5,7 +5,7 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock">
-  <select onchange="{literal}javascript:if (this.value) { var newLocation = this.value; this.options[0].selected = true; location.href = newLocation; }{/literal}">
+  <select onchange="{literal}if (this.value) { var newLocation = this.value; this.options[0].selected = true; location.href = newLocation; }{/literal}">
     <option value="">
       {g->text text="&laquo; Jump to Album &raquo;"}
     </option>

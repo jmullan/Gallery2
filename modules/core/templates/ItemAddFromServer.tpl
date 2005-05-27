@@ -183,7 +183,7 @@
 	<td style="text-align: center">
 	  <input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}"
 	   {if $ItemAddFromServer.showSymlink}
-	     onClick="javascript:toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
+	     onclick="toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
 	   {/if}
 	   name="{g->formVar var="form[localServerFiles][$key][selected]"}"/>
 	</td><td>
@@ -206,7 +206,7 @@
 	<td>
 	  <input type="checkbox" id="cb_{$smarty.foreach.fileIndex.iteration}"
 	   {if $ItemAddFromServer.showSymlink}
-	     onClick="javascript:toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
+	     onclick="toggleSymlinkEnabled('{$smarty.foreach.fileIndex.iteration}')"
 	   {/if}
 	   name="{g->formVar var="form[localServerDirectories][$key][selected]"}"/>
 	</td><td>
@@ -241,7 +241,7 @@
     {/foreach}
     <tr>
       <th>
-	<input type="checkbox" name="selectionToggle" onClick="javascript:toggleSelections()"/>
+	<input type="checkbox" name="selectionToggle" onclick="toggleSelections()"/>
       </th>
       <th colspan="{if $ItemAddFromServer.showSymlink}2{else}3{/if}">
 	  {g->text text="(Un)check all known types"}
@@ -251,8 +251,7 @@
 	{g->text text="(Un)check symlinks"}<br/>{g->text text="for selected items"}
       </th>
       <th style="text-align: center">
-	<input type="checkbox" name="selectionToggle"
-	 onClick="javascript:invertSymlinkSelection()"/>
+	<input type="checkbox" name="selectionToggle" onclick="invertSymlinkSelection()"/>
       </th>
       {/if}
     </tr></table>

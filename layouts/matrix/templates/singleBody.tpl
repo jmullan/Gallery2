@@ -37,7 +37,7 @@
 
 	    {if count($layout.imageViews) > 1}
 	      {g->text text="Size: "}
-	      <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
+	      <select onchange="{literal}if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
 	      {section name=imageView loop=$layout.imageViews}
 		<option value="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.item.id`"
 		 arg3="imageViewsIndex=`$smarty.section.imageView.index`"}"{if

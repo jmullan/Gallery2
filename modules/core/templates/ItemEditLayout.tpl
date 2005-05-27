@@ -31,22 +31,22 @@
       </td><td>
 	{if ($setting.type == 'text-field')}
 	  <input type="text" size="{$setting.typeParams.size|default:6}"
-	   onkeypress="javascript:changeSetting('{$settingKey}')"
+	   onkeypress="changeSetting('{$settingKey}')"
 	   name="{g->formVar var="form[key][$settingKey]"}" value="{$form.key.$settingKey}"/>
 	{elseif ($setting.type == 'single-select')}
 	  <select name="{g->formVar var="form[key][$settingKey]"}"
-	   onchange="javascript:changeSetting('{$settingKey}')">
+	   onchange="changeSetting('{$settingKey}')">
 	    {html_options options=$setting.choices selected=$setting.value}
 	  </select>
 	{elseif ($setting.type == 'checkbox')}
-	  <input type="checkbox" onchange="javascript:changeSetting('{$settingKey}')"
+	  <input type="checkbox" onchange="changeSetting('{$settingKey}')"
 	   name="{g->formVar var="form[key][$settingKey]"}"
 	   {if !empty($setting.value)}checked="checked"{/if}/>
 	{/if}
       </td>
 
       <td align="center">
-	<input type="checkbox" onclick="javascript:toggleGlobal('{$settingKey}')"
+	<input type="checkbox" onclick="toggleGlobal('{$settingKey}')"
 	 name="{g->formVar var="form[useGlobal][$settingKey]"}"
 	 {if (!isset($ItemEditLayout.globalParams.$settingKey))}
 	   disabled="disabled"

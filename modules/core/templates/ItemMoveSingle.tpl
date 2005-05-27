@@ -21,8 +21,7 @@
     {g->text text="Choose a destination album"}
   </p>
 
-  <select name="{g->formVar var="form[destination]"}"
-   onchange="javascript:checkPermissions(this.form)">
+  <select name="{g->formVar var="form[destination]"}" onchange="checkPermissions(this.form)">
     {foreach from=$ItemMoveSingle.albumTree item=album}
       <option value="{$album.data.id}" {if ($album.data.id == $form.destination)}selected="selected"{/if}>
 	{"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"|repeat:$album.depth}--

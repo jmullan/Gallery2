@@ -107,7 +107,7 @@
 
   <h2> {g->text text="Aspect Ratio: "} </h2>
 
-  <select onchange="javascript:setAspectRatio(this.value)">
+  <select onchange="setAspectRatio(this.value)">
     {foreach from=$ItemEditPhotoThumbnail.editThumbnail.aspectRatioList key=index item=aspect}
       <option label="{$aspect.label}" value="{$index}"
 	{if $ItemEditPhotoThumbnail.editThumbnail.selectedAspect == $index}
@@ -117,7 +117,7 @@
     {/foreach}
   </select>
 
-  <select onchange="javascript:setOrientation(this.value)">
+  <select onchange="setOrientation(this.value)">
     {html_options options=$ItemEditPhotoThumbnail.editThumbnail.orientationList
 		  selected=$ItemEditPhotoThumbnail.editThumbnail.selectedOrientation}
   </select>
@@ -127,9 +127,9 @@
   <input type="hidden" id="crop_width" name="{g->formVar var="form[crop][width]"}"/>
   <input type="hidden" id="crop_height" name="{g->formVar var="form[crop][height]"}"/>
 
-  <input type="submit" class="inputTypeSubmit" onclick="javascript:setCropFields(); submit()"
+  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); submit()"
    name="{g->formVar var="form[action][crop]"}" value="{g->text text="Crop"}"/>
-  <input type="submit" class="inputTypeSubmit" onclick="javascript:setCropFields(); submit()"
+  <input type="submit" class="inputTypeSubmit" onclick="setCropFields(); submit()"
    name="{g->formVar var="form[action][reset]"}" value="{g->text text="Reset to default"}"/>
 
   {else}

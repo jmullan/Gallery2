@@ -26,14 +26,14 @@
     <div style="font-weight: bold">
       {g->text text="Maximum dimensions of full sized images"}
     </div>
-    <input type="radio" id="SizeLimit_DimNone" onclick="javascript:SetSizeLimitOption_toggleXY()"
+    <input type="radio" id="SizeLimit_DimNone" onclick="SetSizeLimitOption_toggleXY()"
      name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="unlimited"
      {if $SizeLimitOption.dimensionChoice == "unlimited"}checked="checked"{/if}/>
     <label for="SizeLimit_DimNone">
       {g->text text="No Limits"}
     </label>
     <br/>
-    <input type="radio" onclick="javascript:SetSizeLimitOption_toggleXY()"
+    <input type="radio" onclick="SetSizeLimitOption_toggleXY()"
      name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="explicit"
      {if $SizeLimitOption.dimensionChoice == "explicit"}checked="checked"{/if}/>
     {g->dimensions formVar="SizeLimitOption_dimensions"
@@ -57,14 +57,14 @@
     <div style="font-weight: bold">
       {g->text text="Maximum file size of full sized images in kilobytes"}
     </div>
-    <input type="radio" id="SizeLimit_SizeNone" onclick="javascript:SetSizeLimitOption_toggleSize()"
+    <input type="radio" id="SizeLimit_SizeNone" onclick="SetSizeLimitOption_toggleSize()"
      name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="unlimited"
      {if $SizeLimitOption.sizeChoice == "unlimited"}checked="checked"{/if}/>
     <label for="SizeLimit_SizeNone">
       {g->text text="No Limits"}
     </label>
     <br/>
-    <input type="radio" onclick="javascript:SetSizeLimitOption_toggleSize()"
+    <input type="radio" onclick="SetSizeLimitOption_toggleSize()"
      name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="explicit"
      {if $SizeLimitOption.sizeChoice == "explicit"}checked="checked"{/if}/>
     <input type="text" size="7" maxlength="6"

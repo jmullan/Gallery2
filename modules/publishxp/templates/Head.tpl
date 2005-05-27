@@ -15,7 +15,7 @@
   var title="{g->text text="Upload to Gallery"}";
 
   {*
-   * If you enable XpDebug, you get Back/Next buttons for all browsers, not 
+   * If you enable XpDebug, you get Back/Next buttons for all browsers, not
    * just the XP Publishing Wizard.  It's useful for debugging in a development
    * environment, but should be disabled for production environments.
    *}
@@ -37,7 +37,7 @@
   {else}
   impl = window.external;
   {/if}
-  
+
   {literal}
   function setOnBackUrl(url) {
     onBackUrl = url;
@@ -50,7 +50,7 @@
   function setSubtitle(subTitle) {
     impl.SetHeaderText(title, subTitle);
   }
-	            
+
   function OnBack() {
     if (onBackUrl) {
       window.location.href = onBackUrl;
@@ -74,6 +74,6 @@
 </script>
 
 {if ($XpDebug)}
-<input type="button" onclick="javascript:OnBack()" value="< Back">
-<input type="button" onclick="javascript:OnNext()" value="Next >">
+<input type="button" onclick="OnBack()" value="< Back">
+<input type="button" onclick="OnNext()" value="Next >">
 {/if}

@@ -119,7 +119,7 @@ dTree.prototype.node = function(node, nodeId) {
 		if (node.target) str += ' target="' + node.target + '"';
 		if (this.config.useStatusText) str += ' onmouseover="window.status=\'' + node.name + '\';return true;" onmouseout="window.status=\'\';return true;" ';
 		if (this.config.useSelection && ((node._hc && this.config.folderLinks) || !node._hc))
-			str += ' onclick="javascript: ' + this.obj + '.s(' + nodeId + ');"';
+			str += ' onclick="' + this.obj + '.s(' + nodeId + ');"';
 		str += '>';
 	}
 	else if ((!this.config.folderLinks || !node.url) && node._hc && node.pid != this.root.id)
