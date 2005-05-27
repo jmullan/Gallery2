@@ -60,6 +60,13 @@ class GalleryPermissionHelper_simple {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    $storage =& $gallery->getStorage();
+	    list ($ret, $bitAndPermission) =
+		$storage->getFunctionSql('BITAND', array('[GalleryAccessMap::permission]', '?'));
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    
 	    $query = sprintf('
 	    SELECT DISTINCT
 	      [GalleryAccessMap::accessListId]
@@ -70,7 +77,7 @@ class GalleryPermissionHelper_simple {
 	      OR
 	      [GalleryAccessMap::groupId] IN (%s))
 	      AND
-	      [GalleryAccessMap::permission] & ? = ?
+	      ' . $bitAndPermission . ' = ?
 	    ', $groupIdMarkers);
 
 	    $storage =& $gallery->getStorage();
