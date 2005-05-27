@@ -97,7 +97,8 @@ class GalleryEmbed {
 	    }
 	}
 
-	if (empty($initParams) || isset($initParams['fullInit'])) {
+	if (empty($initParams)
+	        || (isset($initParams['fullInit']) && $initParams['fullInit'] == true)) {
 	    /* Only InitSecondPass if not already done so in a prior call */
 	    if (!GalleryDataCache::containsKey($secondCacheKey)) {
 		$ret = GalleryInitSecondPass();

@@ -144,6 +144,9 @@ class EmbedTest extends GalleryTestCase {
      */
     function testInitMultipleTimes() {
 	$expectedUrl = GalleryUrlGenerator::makeUrl('/cms/');
+	/* These cache keys are the same as the ones defined in GalleryEmbed::init */
+	$firstCacheKey = 'GalleryEmbed::initFirstPass';
+	$secondCacheKey = 'GalleryEmbed::initSecondPass';
 	/* Init a first time */
 	$ret = GalleryEmbed::init(array('embedUri' => 'index.php?mod=g2', 'embedPath' => '/cms/'));
 	if ($ret->isError()) {
@@ -155,6 +158,11 @@ class EmbedTest extends GalleryTestCase {
 	/* force the embedded url directory */
 	$this->assertEquals($urlgenerator->getCurrentUrlDir(true), $expectedUrl,
 			   'First init call failed.');
+	/* And check if init first pass has been called, but not init second pass */
+	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
+		      'GalleryInitFirstPass has not been called in first init.');
+	$this->assert(!GalleryDataCache::containsKey($secondCacheKey),
+		      'GallerySecondPass has been called in first init.');
 	/*
 	 * Now do what you shouldn't do, call init a second time. It shouldn't call initFirstPass
 	 * again, i.e. the generated urls should be the same as before.
@@ -168,13 +176,68 @@ class EmbedTest extends GalleryTestCase {
 	/* force the embedded url directory */
 	$this->assertEquals($urlgenerator->getCurrentUrlDir(true), $expectedUrl,
 			   'Second init call called initFirstPass again.');
-
+	/* And check if init first pass has been called, but not init second pass */
+	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
+		      'GalleryInitFirstPass has not been called in second init.');
+	$this->assert(!GalleryDataCache::containsKey($secondCacheKey),
+		      'GallerySecondPass has been called in second init.');
 	/* Now check initSecondPass */
 	/*
 	 * FIXME: Currently, calling initSecondPass just sets the activeUserId, which isn't
 	 * harmful and the same is done in GalleryEmbed::init (checkActiveUser)
 	 * Once we put more logic into initSecondPass, we can and should add here a test.
 	 */
+    }
+
+    /*
+     * GalleryInitSecondPass should only be called if there are no params at all or if fullInit =
+     * true
+     */
+    function testInitSecondPass() {
+	$firstCacheKey = 'GalleryEmbed::initFirstPass';
+	$secondCacheKey = 'GalleryEmbed::initSecondPass';
+	$ret = GalleryEmbed::init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Both, init first pass and second pass should have been called */
+	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
+		      'GalleryInitFirstPass has not been called in first call.');
+	$this->assert(GalleryDataCache::containsKey($secondCacheKey),
+		      'GallerySecondPass has not been called in first call.');
+	/* Reset for next try */
+	GalleryDataCache::reset();
+	$this->assert(!GalleryDataCache::containsKey($firstCacheKey),
+		      'GDC reset did not delete GalleryEmbed:initFirstPass key.');
+	$this->assert(!GalleryDataCache::containsKey($secondCacheKey),
+		      'GDC reset did not delete GalleryEmbed:initSecondPass key.');
+
+	/* we set fullInit = false, only InitFirstPass should be called */
+	$ret = GalleryEmbed::init(array('fullInit' => false));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Verify */
+	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
+		      'GalleryInitFirstPass has not been called in second call.');
+	$this->assert(!GalleryDataCache::containsKey($secondCacheKey),
+		      'GallerySecondPass has been called in second call.');
+	/* Reset for next try */
+	GalleryDataCache::reset();
+	$this->assert(!GalleryDataCache::containsKey($firstCacheKey),
+		      'GDC reset did not delete GalleryEmbed:initFirstPass key.');
+	$this->assert(!GalleryDataCache::containsKey($secondCacheKey),
+		      'GDC reset did not delete GalleryEmbed:initSecondPass key.');
+	/* we set fullInit = true, both should be called */
+	$ret = GalleryEmbed::init(array('fullInit' => true));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Verify */
+	$this->assert(GalleryDataCache::containsKey($firstCacheKey),
+		      'GalleryInitFirstPass has not been called in third call.');
+	$this->assert(GalleryDataCache::containsKey($secondCacheKey),
+		      'GallerySecondPass has not been called in third call.');
     }
  
 }
