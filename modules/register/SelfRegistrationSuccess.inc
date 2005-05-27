@@ -42,8 +42,8 @@ class SelfRegistrationSuccessController extends GalleryController {
     function handleRequest($form) {
 	global $gallery;
 	$results = array();
-	$results['delegate']['view'] = 'core:UserAdmin';
-	$results['delegate']['subView'] = 'register:SelfRegistrationSuccess';
+	$results['delegate']['view'] = 'core.UserAdmin';
+	$results['delegate']['subView'] = 'register.SelfRegistrationSuccess';
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -65,7 +65,7 @@ class SelfRegistrationSuccessView extends GalleryView {
 	
 	$selfregistration = array('email' => 'e@mail.de');
 	$template->setVariable('selfregistration', $selfregistration);
-	$template->setVariable('controller', 'register:SelfRegistrationSuccess');
+	$template->setVariable('controller', 'register.SelfRegistrationSuccess');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/register/templates/SelfRegistrationSuccess.tpl'));
     }

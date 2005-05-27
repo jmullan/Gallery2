@@ -30,7 +30,7 @@
 
 	<div class="gallery-album">
 	  <div class="gallery-thumb">
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 	      {if isset($child.thumbnail)}
 		{g->image item=$child image=$child.thumbnail class="gcBorder1"}
 	      {else}
@@ -40,7 +40,7 @@
 	  </div>
 
 	  <h4>
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 	      {$child.title|default:$child.pathComponent|markup}
 	    </a>
 	  </h4>
@@ -66,7 +66,7 @@
     {foreach from=$layout.children item=child}
       {if !$child.canContainChildren}
 	<div class="gallery-thumb">
-	  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 	    {if isset($child.thumbnail)}
 	      {g->image item=$child image=$child.thumbnail class="gcBorder1"}
 	    {else}

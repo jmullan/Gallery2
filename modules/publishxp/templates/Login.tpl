@@ -13,7 +13,7 @@
     </script>
   
     {g->hiddenFormVars}
-    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp:Login"/>
+    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp.Login"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="form[action][login]"}" value="1"/>
   </div>

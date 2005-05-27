@@ -35,7 +35,7 @@
 class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function RandomHighlightSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'randomhighlight:RandomHighlightSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'randomhighlight.RandomHighlightSiteAdmin');
     }
 
     function setUp() {
@@ -52,8 +52,8 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'randomhighlight:RandomHighlightSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'randomhighlight.RandomHighlightSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -64,8 +64,8 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'randomhighlight:RandomHighlightSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'randomhighlight.RandomHighlightSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -82,8 +82,8 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'randomhighlight:RandomHighlightSiteAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'randomhighlight.RandomHighlightSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][duration]')),
 			    $results);
@@ -94,8 +94,8 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'randomhighlight:RandomHighlightSiteAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'randomhighlight.RandomHighlightSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][duration]')),
 			    $results);
@@ -107,8 +107,8 @@ class RandomHighlightSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'randomhighlight:RandomHighlightSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'randomhighlight.RandomHighlightSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

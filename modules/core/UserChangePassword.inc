@@ -58,14 +58,14 @@ class UserChangePasswordController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to user preferences */
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserPreferences';
+	    $redirect['view'] = 'core.UserAdmin';
+	    $redirect['subView'] = 'core.UserPreferences';
 	    
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserChangePassword';
+	    $redirect['view'] = 'core.UserAdmin';
+	    $redirect['subView'] = 'core.UserChangePassword';
 	    
 	} else if (isset($form['action']['save'])) {
 
@@ -118,8 +118,8 @@ class UserChangePasswordController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:UserAdmin';
-		$redirect['subView'] = 'core:UserChangePassword';
+		$redirect['view'] = 'core.UserAdmin';
+		$redirect['subView'] = 'core.UserChangePassword';
 		$status['changedPassword'] = 1;
 	    }
 	}
@@ -127,8 +127,8 @@ class UserChangePasswordController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'core:UserChangePassword';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'core.UserChangePassword';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -158,7 +158,7 @@ class UserChangePasswordView extends GalleryView {
 	}
 
 	/* Render the HTML body */
-	$template->setVariable('controller', 'core:UserChangePassword');
+	$template->setVariable('controller', 'core.UserChangePassword');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserChangePassword.tpl'));
     }

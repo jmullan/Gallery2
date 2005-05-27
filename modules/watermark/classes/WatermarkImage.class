@@ -376,7 +376,7 @@ class WatermarkImage_core extends GalleryEntity {
 	switch($format) {
 	case 'HTML':
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $src = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem',
+	    $src = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem',
 						    'itemId' => $this->getId(),
 						    'serialNumber' => $this->getSerialNumber()));
 

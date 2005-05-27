@@ -129,15 +129,15 @@ class AdminRewriteController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'rewrite:AdminRewrite';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'rewrite.AdminRewrite';
 		    $redirect['mode'] = 'rules';
 		    $status['rulesSaved'] = 1;
 		}
 	    }
 	} else if (isset($form['action']['test'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'rewrite:AdminRewrite';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'rewrite.AdminRewrite';
 	    $redirect['mode'] = 'test';
 	} else if (isset($form['action']['saveSetup'])) {
 	    $results['delegate']['mode'] = 'setup';
@@ -191,8 +191,8 @@ class AdminRewriteController extends GalleryController {
 		}
 
 		$status['setupSaved'] = 1;
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'rewrite:AdminRewrite';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'rewrite.AdminRewrite';
 		$redirect['mode'] = 'setup';
 	    }
 	}
@@ -201,8 +201,8 @@ class AdminRewriteController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	    unset($results['delegate']);
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'rewrite:AdminRewrite';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'rewrite.AdminRewrite';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -403,7 +403,7 @@ class AdminRewriteView extends GalleryView {
 	}
 
 	$template->setVariable('AdminRewrite', $AdminRewrite);
-	$template->setVariable('controller', 'rewrite:AdminRewrite');
+	$template->setVariable('controller', 'rewrite.AdminRewrite');
 
 	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),

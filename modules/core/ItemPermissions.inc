@@ -71,8 +71,8 @@ class ItemPermissionsController extends GalleryController {
             }
 
             /* Figure out where to redirect upon success */
-            $redirect['view'] = 'core:ItemAdmin';
-            $redirect['subView'] = 'core:ItemPermissions';
+            $redirect['view'] = 'core.ItemAdmin';
+            $redirect['subView'] = 'core.ItemPermissions';
             $redirect['itemId'] = $itemId;
             $redirect['form[group][permission]'] = $permissionId;
 
@@ -94,8 +94,8 @@ class ItemPermissionsController extends GalleryController {
             }
 
             /* Figure out where to redirect upon success */
-            $redirect['view'] = 'core:ItemAdmin';
-            $redirect['subView'] = 'core:ItemPermissions';
+            $redirect['view'] = 'core.ItemAdmin';
+            $redirect['subView'] = 'core.ItemPermissions';
             $redirect['itemId'] = $itemId;
             $redirect['form[user][permission]'] = $permissionId;
 
@@ -154,8 +154,8 @@ class ItemPermissionsController extends GalleryController {
                         }
 
                         /* Figure out where to redirect upon success */
-                        $redirect['view'] = 'core:ItemAdmin';
-                        $redirect['subView'] = 'core:ItemPermissions';
+                        $redirect['view'] = 'core.ItemAdmin';
+                        $redirect['subView'] = 'core.ItemPermissions';
                         $redirect['itemId'] = $itemId;
                         $redirect['form[user][userName]'] = $user->getUserName();
                     } else {
@@ -211,8 +211,8 @@ class ItemPermissionsController extends GalleryController {
                             return array($ret->wrap(__FILE__, __LINE__), null);
                         }
                         /* Figure out where to redirect upon success */
-                        $redirect['view'] = 'core:ItemAdmin';
-                        $redirect['subView'] = 'core:ItemPermissions';
+                        $redirect['view'] = 'core.ItemAdmin';
+                        $redirect['subView'] = 'core.ItemPermissions';
                         $redirect['itemId'] = $itemId;
                         $redirect['form[group][groupName]'] = $group->getGroupName();
                     } else {
@@ -323,8 +323,8 @@ class ItemPermissionsController extends GalleryController {
                     }
 
                     /* Figure out where to redirect upon success */
-                    $redirect['view'] = 'core:ItemAdmin';
-                    $redirect['subView'] = 'core:ItemPermissions';
+                    $redirect['view'] = 'core.ItemAdmin';
+                    $redirect['subView'] = 'core.ItemPermissions';
                     $redirect['itemId'] = $itemId;
                     $status['changedOwner'] = 1;
                 }
@@ -345,8 +345,8 @@ class ItemPermissionsController extends GalleryController {
         if (!empty($redirect)) {
             $results['redirect'] = $redirect;
         } else {
-            $results['delegate']['view'] = 'core:ItemAdmin';
-            $results['delegate']['subView'] = 'core:ItemPermissions';
+            $results['delegate']['view'] = 'core.ItemAdmin';
+            $results['delegate']['subView'] = 'core.ItemPermissions';
         }
         $results['status'] = $status;
         $results['error'] = $error;
@@ -524,7 +524,7 @@ class ItemPermissionsView extends GalleryView {
         $ItemPermissions['allPermissions'] = $allPermissions;
 
         $template->setVariable('ItemPermissions', $ItemPermissions);
-        $template->setVariable('controller', 'core:ItemPermissions');
+        $template->setVariable('controller', 'core.ItemPermissions');
 
         return array(GalleryStatus::success(),
                      array('body' => 'modules/core/templates/ItemPermissions.tpl'));

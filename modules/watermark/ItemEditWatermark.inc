@@ -254,7 +254,7 @@ class ItemEditWatermark extends ItemEditPlugin {
 	    isset($displayDerivative) ? $displayDerivative->getMemberData() : null;
 
 	$template->setVariable('ItemEditWatermark', $ItemEditWatermark);
-	$template->setVariable('controller', 'core:ItemEditWatermark');
+	$template->setVariable('controller', 'core.ItemEditWatermark');
 	return array(GalleryStatus::success(), 'modules/watermark/templates/ItemEditWatermark.tpl');
     }
 

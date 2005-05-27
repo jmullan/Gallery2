@@ -98,8 +98,8 @@ class WatermarkSiteAdminController extends GalleryController {
 	    }
 
 	    $status['add'] = 1;
-	    $results['redirect'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'watermark:WatermarkSiteAdminEdit',
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'watermark.WatermarkSiteAdminEdit',
 					 'itemId' => $item->getId());
 	} else if (isset($form['action']['add'])) {
 	    $status['add_error'] = 1;
@@ -116,8 +116,8 @@ class WatermarkSiteAdminController extends GalleryController {
 		$status['delete'] = 1;
 	    } else {
 		/* Watermark is in use.. redirect to confirm page */
-		$results['redirect'] = array('view' => 'core:SiteAdmin',
-					     'subView' => 'watermark:ConfirmDelete',
+		$results['redirect'] = array('view' => 'core.SiteAdmin',
+					     'subView' => 'watermark.ConfirmDelete',
 					     'itemId' => $form['delete']['itemId'],
 					     'fromAdmin' => 1);
 	    }
@@ -135,8 +135,8 @@ class WatermarkSiteAdminController extends GalleryController {
 	}
 
 	if (!isset($results['redirect'])) {
-	    $results['redirect'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'watermark:WatermarkSiteAdmin');
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'watermark.WatermarkSiteAdmin');
 	}
 	$results['status'] = $status;
 	$results['error'] = array();
@@ -201,7 +201,7 @@ class WatermarkSiteAdminView extends GalleryView {
 	$WatermarkSiteAdmin = array();
 	$WatermarkSiteAdmin['owners'] = $owners;
 
-	$template->setVariable('controller', 'watermark:WatermarkSiteAdmin');
+	$template->setVariable('controller', 'watermark.WatermarkSiteAdmin');
 	$template->setVariable('WatermarkSiteAdmin', $WatermarkSiteAdmin);
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/watermark/templates/WatermarkSiteAdmin.tpl'));

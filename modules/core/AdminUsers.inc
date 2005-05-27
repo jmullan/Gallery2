@@ -70,8 +70,8 @@ class AdminUsersController extends GalleryController {
 	} else if (isset($form['action']['create'])) {
 
 	    /* Show the "create user" view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminCreateUser';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminCreateUser';
 	    
 	} else if (isset($form['action']['editFromText'])) {
 
@@ -81,9 +81,9 @@ class AdminUsersController extends GalleryController {
 		$error[] = 'form[error][text][noSuchUser]';
 	    } else {
 		/* Show the "delete user" view */
-		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['view'] = 'core.SiteAdmin';
 		$redirect['userId'] = $user->getId();
-		$redirect['subView'] = 'core:AdminEditUser';
+		$redirect['subView'] = 'core.AdminEditUser';
 	    }
 	    
 	} else if (isset($form['action']['deleteFromText'])) {
@@ -115,8 +115,8 @@ class AdminUsersController extends GalleryController {
 
 	    if (empty($error)) {
 		/* Show the "delete user" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminDeleteUser';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminDeleteUser';
 		$redirect['userId'] = $user->getId();
 	    }
 	}
@@ -124,8 +124,8 @@ class AdminUsersController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminUsers';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminUsers';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -225,7 +225,7 @@ class AdminUsersView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminUsers', $AdminUsers);
-	$template->setVariable('controller', 'core:AdminUsers');
+	$template->setVariable('controller', 'core.AdminUsers');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminUsers.tpl'));

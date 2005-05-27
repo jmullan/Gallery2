@@ -55,8 +55,8 @@ class AdminDeleteGroupController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminGroups';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminGroups';
 	    
 	} else if (isset($form['action']['delete'])) {
 
@@ -78,8 +78,8 @@ class AdminDeleteGroupController extends GalleryController {
 		}
 		
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminGroups';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminGroups';
 		$status['deletedGroup'] = $group->getGroupName();
 	    }
 	}
@@ -87,8 +87,8 @@ class AdminDeleteGroupController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminDeleteGroup';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminDeleteGroup';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -133,7 +133,7 @@ class AdminDeleteGroupView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminDeleteGroup', $AdminDeleteGroup);
-	$template->setVariable('controller', 'core:AdminDeleteGroup');
+	$template->setVariable('controller', 'core.AdminDeleteGroup');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminDeleteGroup.tpl'));

@@ -50,7 +50,7 @@
 
   {if isset($item.thumbnail)}{strip}
   <div style="float: right">
-    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
       {g->image item=$item image=$item.thumbnail maxSize=150 class="giThumbnail"}
     </a>
   </div>

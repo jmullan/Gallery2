@@ -47,16 +47,16 @@ class ViewTest extends GalleryTestCase {
 
     function testLoadViewSuccess() {
 	require_once(dirname(__FILE__) . '/../../classes/GalleryView.class');
-	list ($ret, $view) = GalleryView::loadView('core:ShowItem');
+	list ($ret, $view) = GalleryView::loadView('core.ShowItem');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
     }
 
     function testLoadViewFail() {
-	list ($ret, $view) = GalleryView::loadView('viewtest:SomeRandomView');
+	list ($ret, $view) = GalleryView::loadView('viewtest.SomeRandomView');
 	if ($ret->isError() && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
-	    // this is what we expect
+	    /* this is what we expect */
 	} else {
 	    $this->assert(false, 'The view of a deactivated module should not load.');
 	}
@@ -67,7 +67,7 @@ class ViewTest extends GalleryTestCase {
 	 * We can load the config view even though the module is deactivated
 	 * because we're an admin.
 	 */
-	list ($ret, $view) = GalleryView::loadView('viewtest:ViewTestConfig');
+	list ($ret, $view) = GalleryView::loadView('viewtest.ViewTestConfig');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -80,7 +80,7 @@ class ViewTestModule {
     }
 
     function getConfigurationView() {
-	return 'viewtest:ViewTestConfig';
+	return 'viewtest.ViewTestConfig';
     }
 }
 

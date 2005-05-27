@@ -21,7 +21,7 @@
 {if (!$SelectGallery.hasToolkit)}
 <div class="gbBlock"><p class="giError">
   {capture name="url"}
-    {g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminModules"}
   {/capture}
   {g->text text="You don't have any Graphics Toolkit activated to handle JPEG images.  If you import now, you will not have any thumbnails.  Visit the <a href=\"%s\">Modules</a> page to activate a Graphics Toolkit." arg1=$smarty.capture.url}
 </p></div>
@@ -39,7 +39,7 @@
      name="{g->formVar var="form[albumsPath]"}" value="{$form.albumsPath}"
       id='giFormPath' autocomplete="off"/>
     {g->autoComplete element="giFormPath"}
-      {g->url arg1="view=core:SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
+      {g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirs" arg3="prefix=__VALUE__"
         forJavascript="true"}
     {/g->autoComplete}
 
@@ -97,7 +97,7 @@
     </span>
     &nbsp;
     <span>
-      <a href="{g->url arg1="controller=migrate:SelectGallery" arg2="form[action][deleteMap]=1"}"
+      <a href="{g->url arg1="controller=migrate.SelectGallery" arg2="form[action][deleteMap]=1"}"
 	 onclick="return confirm('{g->text text="Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors instead of redirecting to G2 pages.  Delete all entries?"}')">
 	{g->text text="Delete All"}
       </a>

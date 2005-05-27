@@ -80,12 +80,12 @@
 	<div>
 	{if isset($layout.$frameType) && isset($child.thumbnail)}
 	  {g->block type="imageframe" frame=$layout.$frameType}
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 	      {g->image item=$child image=$child.thumbnail id="%ID%" class="%CLASS% giThumbnail"}
 	    </a>
 	  {/g->block}
 	{else}
-	  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$child.id`"}">
+	  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$child.id`"}">
 	    {if isset($child.thumbnail)}
 	      {g->image item=$child image=$child.thumbnail class="giThumbnail"}
 	    {else}
@@ -181,7 +181,7 @@
         {if ($page - $lastPage >= 2)}
 	  <span>
           {if ($page - $lastPage == 2)}
-            <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`"
+            <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.item.id`"
 	     arg3="page=`$page-1`"}">{$page-1}</a>
           {else}
             ...
@@ -193,7 +193,7 @@
         {if ($layout.currentPage == $page)}
           {$page}
         {else}
-          <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`"
+          <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.item.id`"
 	   arg3="page=$page"}">{$page}</a>
         {/if}
 	</span>

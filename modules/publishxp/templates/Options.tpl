@@ -8,12 +8,12 @@
   <div>      
     <script type="text/javascript">
       setSubtitle("{g->text text="Set options for the photos to be added."}");
-      setOnBackUrl("{g->url arg1="view=publishxp:SelectAlbum" arg2="albumId=`$form.albumId`" forJavascript="true"}");
+      setOnBackUrl("{g->url arg1="view=publishxp.SelectAlbum" arg2="albumId=`$form.albumId`" forJavascript="true"}");
       setSubmitOnNext(true);
       setButtons(true, true, false);
     </script>
     {g->hiddenFormVars}
-    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp:Options"/>
+    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp.Options"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="form[albumId]"}" value="{$form.albumId}"/>
     <input type="hidden" name="{g->formVar var="form[action][setOptions]"}" value="1"/>

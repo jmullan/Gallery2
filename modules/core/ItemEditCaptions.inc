@@ -108,8 +108,8 @@ class ItemEditCaptionsController extends GalleryController {
 	     * Figure out where to redirect.  We always redirect even if we have
 	     * an error since we may have saved some items, but not others.
 	     */
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'core:ItemEditCaptions';
+	    $redirect['view'] = 'core.ItemAdmin';
+	    $redirect['subView'] = 'core.ItemEditCaptions';
 	    $redirect['itemId'] = (int)$itemId;
 	    if (!$status['errorCount'] && isset($form['action']['save']['next'])) {
 		$redirect['page'] = $page + 1;
@@ -128,8 +128,8 @@ class ItemEditCaptionsController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEditCaptions';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemEditCaptions';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -221,7 +221,7 @@ class ItemEditCaptionsView extends GalleryView {
 	$ItemEditCaptions['page'] = $page;
 	$ItemEditCaptions['numPages'] = $numPages;
 
-	$template->setVariable('controller', 'core:ItemEditCaptions');
+	$template->setVariable('controller', 'core.ItemEditCaptions');
 	$template->setVariable('ItemEditCaptions', $ItemEditCaptions);
 
 	return array(GalleryStatus::success(),

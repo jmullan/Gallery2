@@ -7,7 +7,7 @@
 <div class="gbBlock">
   {if isset($form.adminFlag)}
     <p class="giDescription">
-      <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
+      <a href="{g->url arg1="controller=customfield.CustomFieldItemAdmin"
                        arg2="cfAdmin=`$form.adminFlag`" arg3="itemId=`$form.itemId`"
                        arg4="return=true"}">
 	{if $form.adminFlag==2}

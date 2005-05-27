@@ -123,7 +123,7 @@ class ShowItemView extends GalleryView {
 				 array('redirect' => GalleryCapabilities::get('loginRedirect')));
 		}
 		return array(GalleryStatus::success(), array('redirect' =>
-		    array('view' => 'core:ShowItem', 'itemId' => $rootId)));
+		    array('view' => 'core.ShowItem', 'itemId' => $rootId)));
 	    }
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -147,7 +147,7 @@ class ShowItemView extends GalleryView {
 
 	if (!$validLayout) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:ShowItemError',
+			 array('redirect' => array('view' => 'core.ShowItemError',
 						   'problem' => 'missingLayout',
 						   'itemId' => $item->getId())));
 	}
@@ -194,7 +194,7 @@ class ShowItemView extends GalleryView {
 
 		    /* Redirect to the new page */
 		    $results['redirect'] = array(
-			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page);
+			'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page);
 		    return array(GalleryStatus::success(), $results);
 		} else {
 		    $page = 1;

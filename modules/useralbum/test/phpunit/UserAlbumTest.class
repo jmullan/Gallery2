@@ -166,7 +166,7 @@ class UserAlbumTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array(array('controller' => 'useralbum:UserAlbum')),
+	$this->assertEquals(array(array('controller' => 'useralbum.UserAlbum')),
 			    $result, 'login redirect');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'loginRedirect', '0');
@@ -194,7 +194,7 @@ class UserAlbumTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(array('text' => $module->translate('Your Album'),
-					'params' => array('controller' => 'useralbum:UserAlbum'))),
+					'params' => array('controller' => 'useralbum.UserAlbum'))),
 			    $links, 'system link');
 
 	$ret = GalleryCoreApi::setPluginParameter('module', 'useralbum', 'homeLink', '0');

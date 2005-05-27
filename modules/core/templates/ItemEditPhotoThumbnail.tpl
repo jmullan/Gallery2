@@ -136,7 +136,7 @@
   <b>
     {g->text text="There are no graphics toolkits enabled that support this type of photo, so we cannot crop the thumbnail."}
     {if $ItemEditPhotoThumbnail.isAdmin}
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}">
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminModules"}">
 	{g->text text="site admin"}
       </a>
     {/if}

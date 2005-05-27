@@ -150,13 +150,13 @@ class UploadItemsController extends GalleryController {
 		 */
 	    }
 
-	    $redirect['view'] = 'publishxp:UploadedItem';
+	    $redirect['view'] = 'publishxp.UploadedItem';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'publishxp:UploadItems';
+	    $results['delegate']['view'] = 'publishxp.UploadItems';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;

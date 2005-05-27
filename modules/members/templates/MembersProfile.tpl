@@ -10,7 +10,7 @@
       <a href="{g->url}">{$MembersProfile.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
     </li>
     <li>
-      <a href="{g->url arg1="view=members:MembersList"}">{g->text text="Members List"}</a>
+      <a href="{g->url arg1="view=members.MembersList"}">{g->text text="Members List"}</a>
     </li>
     <li>
       {g->text text="Members Profile"}
@@ -83,7 +83,7 @@
 		   alt="{g->text text="Item"}" width="16" height="16"/>
 	    {/if}
 	    </td><td>
-	      <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+	      <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
 		{$item.title|default:$item.pathComponent}
 	      </a>
 	    </td>
@@ -91,7 +91,7 @@
 	  {/foreach}
 	  <tr>
 	    <td colspan="2">
-	      <a href="{g->url arg1="view=members:MembersItems"
+	      <a href="{g->url arg1="view=members.MembersItems"
 	       arg2="userId=`$MembersProfile.user.id`"}">
 		{g->text text="List All &raquo;"}
 	      </a>

@@ -11,7 +11,7 @@
 
   {if !empty($layout.imageViews)}
     {capture name="fallback"}
-    <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.item.id`"}">
+    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
       {g->text text="Download this item"}
     </a>
     {/capture}
@@ -49,7 +49,7 @@
   {if count($layout.imageViews) > 1}
     {if !empty($layout.sourceImage)}
       <p style="padding: 0 50px;">
-	<a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.item.id`"}">
+	<a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
 	  {g->text text="Download picture"}
 	  {if !empty($layout.sourceImage.width)}
 	    ({g->text text="%dx%d" arg1=$layout.sourceImage.width arg2=$layout.sourceImage.height})

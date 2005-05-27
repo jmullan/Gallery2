@@ -38,7 +38,7 @@ class UserWatermarkEditController extends GalleryController {
      */
     function handleRequest($form) {
 	list ($ret, $results) = WatermarkHelper::handleEditRequest($form,
-	    'core:UserAdmin', 'watermark:UserWatermarks', 'watermark:UserWatermarkEdit');
+	    'core.UserAdmin', 'watermark.UserWatermarks', 'watermark.UserWatermarkEdit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

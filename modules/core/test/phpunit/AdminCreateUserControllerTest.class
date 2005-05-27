@@ -34,14 +34,14 @@
 class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateUserControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminCreateUser');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminCreateUser');
     }
     
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -58,8 +58,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('createdUser' => $userName),
 				  'error' => array()),
 			    $results,
@@ -73,8 +73,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 	/* Create one user */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCreateUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCreateUser'),
 				  'status' => array(),
 				  'error' => array('form[error][userName][missing]',
 						   'form[error][email][missing]',
@@ -97,8 +97,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCreateUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCreateUser'),
 				  'status' => array(),
 				  'error' => array('form[error][password2][mismatch]')),
 			    $results);
@@ -117,8 +117,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('createdUser' => $userName),
 				  'error' => array()),
 			    $results,
@@ -127,8 +127,8 @@ class AdminCreateUserControllerTest extends GalleryControllerTestCase {
 
 	/* Create a second user with the same name */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCreateUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCreateUser'),
 				  'status' => array(),
 				  'error' => array('form[error][userName][exists]')),
 			    $results);

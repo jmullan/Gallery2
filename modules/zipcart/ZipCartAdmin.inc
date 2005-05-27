@@ -87,27 +87,27 @@ class ZipCartAdminController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['view'] = 'core.SiteAdmin';
 	    if ($isActive) {
-		$redirect['subView'] = 'zipcart:ZipCartAdmin';
+		$redirect['subView'] = 'zipcart.ZipCartAdmin';
 		$status['saved'] = 1;
 	    } else {
-		$redirect['subView'] = 'core:AdminModules';
+		$redirect['subView'] = 'core.AdminModules';
 		$status['configured'] = 'zipcart';
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'zipcart:ZipCartAdmin';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'zipcart.ZipCartAdmin';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'zipcart:ZipCartAdmin';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'zipcart.ZipCartAdmin';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -155,7 +155,7 @@ class ZipCartAdminView extends GalleryView {
 	}
 
 	$template->setVariable('ZipCartAdmin', $ZipCartAdmin);
-	$template->setVariable('controller', 'zipcart:ZipCartAdmin');
+	$template->setVariable('controller', 'zipcart.ZipCartAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/zipcart/templates/ZipCartAdmin.tpl'));
     }

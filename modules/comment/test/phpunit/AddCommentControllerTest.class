@@ -39,7 +39,7 @@ require_once(dirname(__FILE__) . '/../../classes/GalleryCommentHelper.class');
 class AddCommentControllerTest extends GalleryControllerTestCase {
 
     function AddCommentControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'comment:AddComment');
+	$this->GalleryControllerTestCase($methodName, 'comment.AddComment');
     }
 
     function setUp() {
@@ -69,8 +69,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:CommentChangeConfirmation',
+				  'redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('added' => 1),
 				  'error' => array()),
@@ -104,8 +104,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:AddComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.AddComment'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -122,8 +122,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:AddComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.AddComment'),
 				  'status' => array(),
 				  'error' => array('form[error][subject][missing]',
 						   'form[error][comment][missing]')),
@@ -148,8 +148,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:AddComment'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.AddComment'),
 				  'status' => array(),
 				  'error' => array('form[error][subject][missing]',
 						   'form[error][comment][missing]')),
@@ -177,8 +177,8 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:CommentChangeConfirmation',
+				  'redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('added' => 1),
 				  'error' => array()),
@@ -213,7 +213,7 @@ class AddCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
+				  'redirect' => array('view' => 'core.ItemAdmin',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array(),
 				  'error' => array()),

@@ -37,11 +37,11 @@ class RearrangeModule extends GalleryModule {
 	$this->setId('rearrange');
 	$this->setName($gallery->i18n('Rearrange'));
 	$this->setDescription($gallery->i18n('Rearrange the order of album items all at once'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -90,8 +90,8 @@ class RearrangeModule extends GalleryModule {
 		    !empty($childCounts[$itemId]) && $childCounts[$itemId] > 1) {
 		$links[$itemId][] =
 		    array('text' => $this->translate('rearrange items'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'rearrange:RearrangeItems',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'rearrange.RearrangeItems',
 					    'itemId' => $itemId, 'return' => 1));
 	    }
 	}
@@ -120,7 +120,7 @@ class RearrangeModule extends GalleryModule {
 
 	if (isset($permissions['core.edit']) && $childCount > 1) {
 	    $views[] = array('name' => $this->translate('Rearrange Items'),
-			     'view' => 'rearrange:RearrangeItems');
+			     'view' => 'rearrange.RearrangeItems');
 	}
 
 	return array(GalleryStatus::success(), $views);

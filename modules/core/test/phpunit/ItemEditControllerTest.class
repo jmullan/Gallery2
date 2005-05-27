@@ -34,7 +34,7 @@
 class ItemEditControllerTest extends GalleryControllerTestCase {
 
     function ItemEditControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEdit');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemEdit');
     }
 
     function setUp() {
@@ -94,8 +94,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:ItemAdmin',
-				      'subView' => 'core:ItemEdit',
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEdit',
 				      'editPlugin' => 'ItemEditControllerTestPluginSuccess',
 				      'itemId' => $this->_item->getId()),
 		  'status' => array('editMessage' => 'success',
@@ -111,8 +111,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:ItemAdmin',
-				      'subView' => 'core:ItemEdit',
+	    array('redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEdit',
 				      'editPlugin' => 'ItemEditControllerTestPluginSuccess',
 				      'itemId' => $this->_item->getId()),
 		  'status' => array('editMessage' => 'success',
@@ -130,8 +130,8 @@ class ItemEditControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:ItemAdmin',
-				      'subView' => 'core:ItemEdit',
+	    array('delegate' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEdit',
 				      'editPlugin' => 'ItemEditControllerTestPluginFailAndWarn'),
 		  'status' => array('editMessage' => null,
 				    'warning' => array('a warning')),   /* from its option */

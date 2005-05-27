@@ -9,7 +9,7 @@
     {g->text text="Type the word appearing in the picture."}
   </h3>
   <div>
-    <img src="{g->url arg1="view=captcha:CaptchaImage"}" width="100" height="100" alt=""/>
+    <img src="{g->url arg1="view=captcha.CaptchaImage"}" width="100" height="100" alt=""/>
   </div>
   <input type="text" size="12"
    name="{g->formVar var="form[CaptchaValidationPlugin][word]"}" value=""/>

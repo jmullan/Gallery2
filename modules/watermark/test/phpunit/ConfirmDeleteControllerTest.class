@@ -41,7 +41,7 @@ GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.cl
 class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 
     function ConfirmDeleteControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'watermark:ConfirmDelete');
+	$this->GalleryControllerTestCase($methodName, 'watermark.ConfirmDelete');
     }
 
     function setUp() {
@@ -111,8 +111,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -127,8 +127,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[fromAdmin]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -139,8 +139,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[itemId]', $this->_watermark->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('delete' => 1),
 				  'error' => array()),
 			    $results);
@@ -166,8 +166,8 @@ class ConfirmDeleteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[fromAdmin]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('delete' => 1),
 				  'error' => array()),
 			    $results);

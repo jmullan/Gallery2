@@ -114,28 +114,28 @@ class AdminImageMagickController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['view'] = 'core.SiteAdmin';
 		if ($isActive) {
-		    $redirect['subView'] = 'imagemagick:AdminImageMagick';
+		    $redirect['subView'] = 'imagemagick.AdminImageMagick';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core.AdminModules';
 		    $status['configured'] = 'imagemagick';
 		}
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'imagemagick:AdminImageMagick';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'imagemagick.AdminImageMagick';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'imagemagick:AdminImageMagick';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'imagemagick.AdminImageMagick';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -254,7 +254,7 @@ class AdminImageMagickView extends GalleryView {
 	}
 
 	$template->setVariable('AdminImageMagick', $AdminImageMagick);
-	$template->setVariable('controller', 'imagemagick:AdminImageMagick');
+	$template->setVariable('controller', 'imagemagick.AdminImageMagick');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/imagemagick/templates/AdminImageMagick.tpl'));

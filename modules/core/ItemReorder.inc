@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -99,9 +99,9 @@ class ItemReorderController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    
+
 		    list ($ret, $next) = GalleryCoreApi::fetchNextItemWeight($targetId,
-                        $before ? LOWER_WEIGHT : HIGHER_WEIGHT);
+			$before ? LOWER_WEIGHT : HIGHER_WEIGHT);
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
@@ -120,7 +120,7 @@ class ItemReorderController extends GalleryController {
 		    if (abs($delta) > 0) {
 			break;
 		    }
-			
+
 		    if ($loopCount++ > 0) {
 			/*
 			 * If we have to rebalance more than once then something went wrong!
@@ -135,15 +135,15 @@ class ItemReorderController extends GalleryController {
 		    }
 		}
 		$newWeight = $orderWeights[$targetId] + $delta;
-		
+
 		$ret = GalleryCoreApi::setItemOrderWeight($selectedId, $newWeight);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
-		
-		// Redirect back to the same page so that we can do more reordering
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemReorder';
+
+		/* Redirect back to the same page so that we can do more reordering */
+		$redirect['view'] = 'core.ItemAdmin';
+		$redirect['subView'] = 'core.ItemReorder';
 		$redirect['itemId'] = $itemId;
 	    }
 	}
@@ -151,12 +151,12 @@ class ItemReorderController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemReorder';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemReorder';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
-	
+
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -235,9 +235,9 @@ class ItemReorderView extends GalleryView {
 
 	$ItemReorder['show'] = $show;
 
-        $template->setVariable('ItemReorder', $ItemReorder);
-        $template->setVariable('controller', 'core:ItemReorder');
-        return array(GalleryStatus::success(),
+	$template->setVariable('ItemReorder', $ItemReorder);
+	$template->setVariable('controller', 'core.ItemReorder');
+	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemReorder.tpl'));
     }
 

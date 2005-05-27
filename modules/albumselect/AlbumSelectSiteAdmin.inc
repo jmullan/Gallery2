@@ -68,8 +68,8 @@ class AlbumSelectSiteAdminController extends GalleryController {
 		array('type' => 'module-data', 'module' => 'albumselect'));
 	}
 
-	$results = array('redirect' => array('view' => 'core:SiteAdmin',
-					     'subView' => 'albumselect:AlbumSelectSiteAdmin'),
+	$results = array('redirect' => array('view' => 'core.SiteAdmin',
+					     'subView' => 'albumselect.AlbumSelectSiteAdmin'),
 			 'status' => $status,
 			 'error' => $error);
 
@@ -105,7 +105,7 @@ class AlbumSelectSiteAdminView extends GalleryView {
 	    }
 	}
 
-	$template->setVariable('controller', 'albumselect:AlbumSelectSiteAdmin');
+	$template->setVariable('controller', 'albumselect.AlbumSelectSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/albumselect/templates/AlbumSelectSiteAdmin.tpl'));
     }

@@ -115,13 +115,13 @@ class ItemEditController extends GalleryController {
 	}
 
 	if (empty($error)) {
-	    $results['redirect'] = array('view' => 'core:ItemAdmin',
-					 'subView' => 'core:ItemEdit',
+	    $results['redirect'] = array('view' => 'core.ItemAdmin',
+					 'subView' => 'core.ItemEdit',
 					 'editPlugin' => $editPlugin,
 					 'itemId' => $item->getId());
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemEdit';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemEdit';
 	    $results['delegate']['editPlugin'] = $editPlugin;
 	}
 
@@ -264,7 +264,7 @@ class ItemEditView extends GalleryView {
 	}
 
 	$template->setVariable('ItemEdit', $ItemEdit);
-	$template->setVariable('controller', 'core:ItemEdit');
+	$template->setVariable('controller', 'core.ItemEdit');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemEdit.tpl'));
     }

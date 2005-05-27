@@ -165,8 +165,8 @@ class ItemCreateLinkController extends GalleryController {
 		}
 
 		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemCreateLink';
+		$redirect['view'] = 'core.ItemAdmin';
+		$redirect['subView'] = 'core.ItemCreateLink';
 		$redirect['itemId'] = $itemId;
 	    }
 	} else if (isset($form['action']['next'])) {
@@ -193,8 +193,8 @@ class ItemCreateLinkController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    if (empty($results['return'])) {
-		$results['delegate']['view'] = 'core:ItemAdmin';
-		$results['delegate']['subView'] = 'core:ItemCreateLink';
+		$results['delegate']['view'] = 'core.ItemAdmin';
+		$results['delegate']['subView'] = 'core.ItemCreateLink';
 	    }
 	}
 	$results['status'] = $status;
@@ -324,7 +324,7 @@ class ItemCreateLinkView extends GalleryView {
 	$ItemCreateLink['selectedIds'] = array_keys($selectedIds);
 
 	$template->setVariable('ItemCreateLink', $ItemCreateLink);
-        $template->setVariable('controller', 'core:ItemCreateLink');
+        $template->setVariable('controller', 'core.ItemCreateLink');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemCreateLink.tpl'));
     }

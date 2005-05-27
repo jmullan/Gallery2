@@ -54,8 +54,8 @@ class RemoteSiteAdminController extends GalleryController {
 	    $status['saved'] = 1;
 	}
 
-	$results = array('redirect' => array('view' => 'core:SiteAdmin',
-					     'subView' => 'remote:RemoteSiteAdmin'),
+	$results = array('redirect' => array('view' => 'core.SiteAdmin',
+					     'subView' => 'remote.RemoteSiteAdmin'),
 			 'status' => $status,
 			 'error' => $error);
 
@@ -87,7 +87,7 @@ class RemoteSiteAdminView extends GalleryView {
 	    }
 	}
 
-	$template->setVariable('controller', 'remote:RemoteSiteAdmin');
+	$template->setVariable('controller', 'remote.RemoteSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/remote/templates/RemoteSiteAdmin.tpl'));
     }

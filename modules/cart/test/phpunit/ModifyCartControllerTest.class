@@ -34,7 +34,7 @@
 class ModifyCartControllerTest extends GalleryControllerTestCase {
 
     function ModifyCartControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'cart:ModifyCart');
+	$this->GalleryControllerTestCase($methodName, 'cart.ModifyCart');
     }
 
     function setUp() {
@@ -88,7 +88,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
 				  'status' => array('cartModified' => 1),
 				  'error' => array()),
 			    $results);
@@ -108,7 +108,7 @@ class ModifyCartControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'cart:ViewCart'),
+	$this->assertEquals(array('redirect' => array('view' => 'cart.ViewCart'),
 				  'status' => array('cartModified' => 1),
 				  'error' => array()),
 			    $results);

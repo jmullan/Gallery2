@@ -40,12 +40,12 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -77,7 +77,7 @@ class CustomFieldModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Custom Fields'),
-				 'view' => 'customfield:CustomFieldSiteAdmin')));
+				 'view' => 'customfield.CustomFieldSiteAdmin')));
     }
 
     /**

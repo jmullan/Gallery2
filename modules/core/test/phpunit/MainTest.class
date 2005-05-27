@@ -54,7 +54,7 @@ class MainTest extends GalleryTestCase {
 	GalleryCoreApi::relativeRequireOnce('main.php');
 	ob_end_clean();
 
-	GalleryUtilities::putRequestVariable('view', 'maintest:FooView');
+	GalleryUtilities::putRequestVariable('view', 'maintest.FooView');
 	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php';
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;

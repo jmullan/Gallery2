@@ -34,7 +34,7 @@ if (!@$gallery->getConfig('setup.password')) {
 if (!GalleryUtilities::isEmbedded()) {
     /* If this is a request for a public data file, give it to the user immediately */
     list ($view, $itemId) = GalleryUtilities::getRequestVariables('view', 'itemId');
-    if ($view == 'core:DownloadItem' && !empty($itemId)) {
+    if ($view == 'core.DownloadItem' && !empty($itemId)) {
 	/*
 	 * Our urls are immutable because they have the serial numbers embedded.
 	 * So if the browser presents us with an If-Modified-Since then it has
@@ -130,7 +130,7 @@ function _GalleryMain($returnHtml=false) {
     list($viewName, $controllerName) = GalleryUtilities::getRequestVariables('view', 'controller');
 
     if (!$returnHtml && $gallery->getConfig('mode.embed.only')
-		     && $viewName != 'core:DownloadItem') {
+		     && $viewName != 'core.DownloadItem') {
 	/* Lock out direct access when embed-only is set */
 	return array(GalleryStatus::error(ERROR_PERMISSION_DENIED, __FILE__, __LINE__), null);
     }
@@ -272,7 +272,7 @@ function _GalleryMain($returnHtml=false) {
 
     /* Load and run the appropriate view */
     if (empty($viewName)) {
-	$viewName = 'core:ShowItem';
+	$viewName = 'core.ShowItem';
     }
 
     if (!isset($view)) {

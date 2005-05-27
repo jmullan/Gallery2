@@ -97,8 +97,8 @@ class ItemAddAlbumController extends GalleryController {
 		}
 
 		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemEdit';
+		$redirect['view'] = 'core.ItemAdmin';
+		$redirect['subView'] = 'core.ItemEdit';
 		$redirect['editPlugin'] = 'ItemEditAlbum';
 		$redirect['itemId'] = $instance->getId();
 
@@ -120,8 +120,8 @@ class ItemAddAlbumController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemAddAlbum';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemAddAlbum';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -171,7 +171,7 @@ class ItemAddAlbumView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('ItemAddAlbum', $ItemAddAlbum);
-	$template->setVariable('controller', 'core:ItemAddAlbum');
+	$template->setVariable('controller', 'core.ItemAddAlbum');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemAddAlbum.tpl'));

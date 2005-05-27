@@ -9,14 +9,14 @@
     <script type="text/javascript">
       // <![CDATA[
       setSubtitle("{g->text text="Choose an album"}");
-      setOnBackUrl("{g->url arg1="view=publishxp:SelectAlbum"}");
+      setOnBackUrl("{g->url arg1="view=publishxp.SelectAlbum"}");
       setSubmitOnNext(true);
       setButtons(false, true, false);
       // ]]>
     </script>
 
     {g->hiddenFormVars}
-    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp:SelectAlbum"/>
+    <input type="hidden" name="{g->formVar var="controller"}" value="publishxp.SelectAlbum"/>
     <input type="hidden" name="{g->formVar var="form[formName]"}" value="{$form.formName}"/>
     <input type="hidden" name="{g->formVar var="form[action][select]"}" value="1"/>
   </div>
@@ -29,7 +29,7 @@
 
   <div class="gbBlock">
     <p class="giDescription">
-      {capture name=url}{g->url arg1="view=publishxp:NewAlbum"}{/capture}
+      {capture name=url}{g->url arg1="view=publishxp.NewAlbum"}{/capture}
       {g->text text="Choose an album for new photos, or create a new album." arg1=$smarty.capture.url}
     </p>
 

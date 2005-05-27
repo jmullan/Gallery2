@@ -54,8 +54,8 @@ class ConfirmDeleteController extends GalleryController {
 	} /* else $form['action']['cancel'] */
 
 	$results['redirect'] = isset($form['fromAdmin'])
-	    ? array('view' => 'core:SiteAdmin', 'subView' => 'watermark:WatermarkSiteAdmin')
-	    : array('view' => 'core:UserAdmin', 'subView' => 'watermark:UserWatermarks');
+	    ? array('view' => 'core.SiteAdmin', 'subView' => 'watermark.WatermarkSiteAdmin')
+	    : array('view' => 'core.UserAdmin', 'subView' => 'watermark.UserWatermarks');
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -93,7 +93,7 @@ class ConfirmDeleteView extends GalleryView {
 	$template->setVariable('ConfirmDelete',
 			       array('item' => $item->getMemberData(),
 				     'count' => count($itemIds)));
-	$template->setVariable('controller', 'watermark:ConfirmDelete');
+	$template->setVariable('controller', 'watermark.ConfirmDelete');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/watermark/templates/ConfirmDelete.tpl'));

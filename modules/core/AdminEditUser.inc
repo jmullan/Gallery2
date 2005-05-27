@@ -68,14 +68,14 @@ class AdminEditUserController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the AdminUsers view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminUsers';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminUsers';
 
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminEditUser';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminEditUser';
 	    $redirect['userId'] = $userId;
 
 	} else if (isset($form['action']['save'])) {
@@ -153,8 +153,8 @@ class AdminEditUserController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminUsers';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminUsers';
 		$status['modifiedUser'] = $user->getUserName();
 	    }
 	}
@@ -162,8 +162,8 @@ class AdminEditUserController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminEditUser';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminEditUser';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -243,7 +243,7 @@ class AdminEditUserView extends GalleryView {
 	}
 
 	$template->setVariable('AdminEditUser', $AdminEditUser);
-	$template->setVariable('controller', 'core:AdminEditUser');
+	$template->setVariable('controller', 'core.AdminEditUser');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminEditUser.tpl'));
     }

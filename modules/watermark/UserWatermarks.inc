@@ -93,13 +93,13 @@ class UserWatermarksController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $results['redirect']['view'] = 'core:UserAdmin';
-	    $results['redirect']['subView'] = 'watermark:UserWatermarkEdit';
+	    $results['redirect']['view'] = 'core.UserAdmin';
+	    $results['redirect']['subView'] = 'watermark.UserWatermarkEdit';
 	    $results['redirect']['itemId'] = $item->getId();
 	} else if (isset($form['action']['add'])) {
 	    $error[] = 'form[error][missingFile]';
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'watermark:UserWatermarks';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'watermark.UserWatermarks';
 	} else if (isset($form['action']['delete']) && isset($form['delete']['itemId'])) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/WatermarkHelper.class');
 
@@ -111,12 +111,12 @@ class UserWatermarksController extends GalleryController {
 
 	    if ($wasDeleted) {
 		$status['delete'] = 1;
-		$results['redirect']['view'] = 'core:UserAdmin';
-		$results['redirect']['subView'] = 'watermark:UserWatermarks';
+		$results['redirect']['view'] = 'core.UserAdmin';
+		$results['redirect']['subView'] = 'watermark.UserWatermarks';
 	    } else {
 		// Watermark is in use.. redirect to confirm page:
-		$results['redirect']['view'] = 'core:UserAdmin';
-		$results['redirect']['subView'] = 'watermark:ConfirmDelete';
+		$results['redirect']['view'] = 'core.UserAdmin';
+		$results['redirect']['subView'] = 'watermark.ConfirmDelete';
 		$results['redirect']['itemId'] = $form['delete']['itemId'];
 	    }
 	}
@@ -184,7 +184,7 @@ class UserWatermarksView extends GalleryView {
 	$UserWatermarks['watermarks'] = $watermarks;
 
 	$template->setVariable('UserWatermarks', $UserWatermarks);
-	$template->setVariable('controller', 'watermark:UserWatermarks');
+	$template->setVariable('controller', 'watermark.UserWatermarks');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/watermark/templates/UserWatermarks.tpl'));
     }

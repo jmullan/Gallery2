@@ -40,7 +40,7 @@
 	&nbsp;
       {/if}
     </td><td align="center">
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=mime:MimeEdit"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=mime.MimeEdit"
        arg3="mimeType=`$mime`"}">
 	<img src="{g->url href="modules/mime/data/b_edit.png"}"
 	 width="16" height="16" alt="{g->text text="edit"}" title="{g->text text="edit"}"/>
@@ -56,7 +56,7 @@
 </div>
 
 <div class="gbBlock gcBackground1">
-  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=mime:MimeEdit"}">
+  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=mime.MimeEdit"}">
     {g->text text="Add new MIME type"}
   </a>
 </div>

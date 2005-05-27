@@ -39,11 +39,11 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('migrate');
 	$this->setName($gallery->i18n('Migration'));
 	$this->setDescription($gallery->i18n('Migrate your Gallery 1 albums to Gallery 2'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 3));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -90,7 +90,7 @@ class MigrateModule extends GalleryModule /* and GalleryEventListener */ {
 	global $gallery;
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Gallery 1'),
-				 'view' => 'migrate:SelectGallery')));
+				 'view' => 'migrate.SelectGallery')));
     }
 }
 ?>

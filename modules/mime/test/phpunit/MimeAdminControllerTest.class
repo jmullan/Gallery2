@@ -31,7 +31,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.cla
 class MimeAdminControllerTest extends GalleryControllerTestCase {
 
     function MimeAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'mime:MimeAdmin');
+	$this->GalleryControllerTestCase($methodName, 'mime.MimeAdmin');
     }
 
     function setUp() {
@@ -56,8 +56,8 @@ class MimeAdminControllerTest extends GalleryControllerTestCase {
     function testDelete() {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 'test/test');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeAdmin'),
 				  'status' => array('deleted' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Delete');

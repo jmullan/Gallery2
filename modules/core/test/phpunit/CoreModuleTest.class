@@ -71,19 +71,19 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	$expected = array(
 			  array('name' => $this->_module->translate('General'),
-				'view' => 'core:AdminCore'),
+				'view' => 'core.AdminCore'),
 			  array('name' => $this->_module->translate('Modules'),
-				'view' => 'core:AdminModules'),
+				'view' => 'core.AdminModules'),
 			  array('name' => $this->_module->translate('Layouts and Themes'),
-				'view' => 'core:AdminLayouts',
+				'view' => 'core.AdminLayouts',
 				'group' => 'display',
 				'groupLabel' => $this->_module->translate('Display')),
 			  array('name' => $this->_module->translate('Users'),
-				'view' => 'core:AdminUsers'),
+				'view' => 'core.AdminUsers'),
 			  array('name' => $this->_module->translate('Groups'),
-				'view' => 'core:AdminGroups'),
+				'view' => 'core.AdminGroups'),
 			  array('name' => $this->_module->translate('Maintenance'),
-				'view' => 'core:AdminMaintenance'),
+				'view' => 'core.AdminMaintenance'),
 			  );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret->isError()) {
@@ -91,7 +91,7 @@ class CoreModuleTest extends GalleryTestCase {
 	}
 	if (!empty($list)) {
 	    $expected[] = array('name' => $this->_module->translate('Toolkit Priority'),
-				'view' => 'core:AdminToolkitPriority',
+				'view' => 'core.AdminToolkitPriority',
 				'group' => 'toolkits',
 				'groupLabel' => $this->_module->translate('Graphics Toolkits'));
 	}
@@ -109,21 +109,21 @@ class CoreModuleTest extends GalleryTestCase {
 		array('name' => $this->_module->translate(
 			  array('text' => 'Edit %s',
 				'arg1' => $this->_module->translate('Album'))),
-		      'view' => 'core:ItemEdit'),
+		      'view' => 'core.ItemEdit'),
 		array('name' => $this->_module->translate(
 			  array('text' => 'Delete %s',
 				'arg1' => $this->_module->translate('Album'))),
-		      'view' => 'core:ItemDeleteSingle'),
+		      'view' => 'core.ItemDeleteSingle'),
 		array('name' => $this->_module->translate(
 			  array('text' => 'Move %s',
 				'arg1' => $this->_module->translate('Album'))),
-		      'view' => 'core:ItemMoveSingle'),
+		      'view' => 'core.ItemMoveSingle'),
 		array('name' => $this->_module->translate('Edit Permissions'),
-		      'view' => 'core:ItemPermissions'),
+		      'view' => 'core.ItemPermissions'),
 		array('name' => $this->_module->translate('Add Items'),
-		      'view' => 'core:ItemAdd'),
+		      'view' => 'core.ItemAdd'),
 		array('name' => $this->_module->translate('Add Album'),
-		      'view' => 'core:ItemAddAlbum')
+		      'view' => 'core.ItemAddAlbum')
 		),
 	    $content);
     }
@@ -141,14 +141,14 @@ class CoreModuleTest extends GalleryTestCase {
 
         $this->assertEquals(array(
                                   array('text' => $this->_module->translate('Site Admin'),
-                                        'params' => array('view' => 'core:SiteAdmin',
+                                        'params' => array('view' => 'core.SiteAdmin',
 							  'return' => 1)),
                                   array('text' => $this->_module->translate('Your Account'),
-                                        'params' => array('view' => 'core:UserAdmin',
-							  'subView' => 'core:UserPreferences',
+                                        'params' => array('view' => 'core.UserAdmin',
+							  'subView' => 'core.UserPreferences',
 							  'return' => 1)),
                                   array('text' => $this->_module->translate('Logout'),
-                                        'params' => array('controller' => 'core:Logout',
+                                        'params' => array('controller' => 'core.Logout',
 							  'return' => 1))
                                   ),
                             $content);
@@ -198,8 +198,8 @@ class CoreModuleTest extends GalleryTestCase {
 
 	$links[] = array('text' => $this->_module->translate('add items'),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemAdd',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemAdd',
 			     'itemId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
 			     ));
@@ -207,22 +207,22 @@ class CoreModuleTest extends GalleryTestCase {
 			     array('text' => 'edit %s',
 				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemEdit',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemEdit',
 			     'itemId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
 			     ));
 	$links[] = array('text' => $this->_module->translate('add album'),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemAddAlbum',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemAddAlbum',
 			     'itemId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
 			     ));
 	$links[] = array('text' => $this->_module->translate('edit permissions'),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemPermissions',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemPermissions',
 			     'itemId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
 			     ));
@@ -230,8 +230,8 @@ class CoreModuleTest extends GalleryTestCase {
 			     array('text' => 'delete %s',
 				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemDelete',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemDelete',
 			     'itemId' => $this->_parentAlbum->getParentId(),
 			     'selectedId' => $this->_parentAlbum->getId(),
 			     'return' => 1,
@@ -240,8 +240,8 @@ class CoreModuleTest extends GalleryTestCase {
 			     array('text' => 'move %s',
 				   'arg1' => $this->_module->translate('album'))),
 			 'params' => array(
-			     'view' => 'core:ItemAdmin',
-			     'subView' => 'core:ItemMove',
+			     'view' => 'core.ItemAdmin',
+			     'subView' => 'core.ItemMove',
 			     'itemId' => $this->_parentAlbum->getParentId(),
 			     'selectedId' => $this->_parentAlbum->getId(),
 			     'return' => 1,

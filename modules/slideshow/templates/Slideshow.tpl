@@ -7,7 +7,7 @@
 {if empty($SlideShow.itemList)}
 <div id="gsContent">
   {g->text text="This album has no photos to show in a slideshow."}
-  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$SlideShow.item.id`"}">
+  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$SlideShow.item.id`"}">
     {g->text text="Back to Album View"}
   </a>
 </div>
@@ -17,11 +17,11 @@
 <div style="visibility:hidden;position:absolute">
   {foreach from=$it.sources key=j item=source}
     <a id="item_{$i}_{$j}"
-     href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$source.id`"
+     href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$source.id`"
 		   arg3="serialNumber=`$source.serialNumber`"}"></a>
   {/foreach}
 
-  <a id="href_{$i}" href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}"></a>
+  <a id="href_{$i}" href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"}"></a>
   <span id="title_{$i}">{$it.data.title|markup}</span>
   <span id="summary_{$i}">{$it.data.summary|markup}</span>
   <span id="date_{$i}">
@@ -158,7 +158,7 @@
 
 <div id="gsContent" class="gcBorder1">
   <div id="toolbar" class="gbBlock gcBackground1">
-    <a id="stop" href="{g->url arg1="view=core:ShowItem"
+    <a id="stop" href="{g->url arg1="view=core.ShowItem"
      arg2="itemId=`$SlideShow.itemList[$SlideShow.start].id`"}">
       {g->text text="Stop"}
     </a>

@@ -34,7 +34,7 @@
 class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
     function ItemAddAlbumControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemAddAlbum');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemAddAlbum');
     }
 
     function setUp() {
@@ -66,8 +66,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getChildId()),
 				  'status' => array('editMessage' =>
@@ -102,8 +102,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => $this->_getSecondChildId()),
 				  'status' => array('editMessage' =>
@@ -132,8 +132,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemAddAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemAddAlbum'),
 				  'status' => array(),
 				  'error' => array('form[error][pathComponent][missing]')),
 			    $results);
@@ -151,8 +151,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemAddAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemAddAlbum'),
 				  'status' => array(),
 				  'error' => array('form[error][pathComponent][invalid]')),
 			    $results);
@@ -178,8 +178,8 @@ class ItemAddAlbumControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEdit',
 						      'editPlugin' => 'ItemEditAlbum',
 						      'itemId' => ($id = $this->_getChildId())),
 				  'status' => array('editMessage' =>

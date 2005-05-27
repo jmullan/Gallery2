@@ -52,7 +52,7 @@ class SwitchDetailModeController extends GalleryController {
 	$session->put('exif.module.loadItemDetails.mode', $mode);
 
 	$results['return'] = 1;
-	$results['redirect']['view'] = 'core:ShowItem';
+	$results['redirect']['view'] = 'core.ShowItem';
 	$results['status'] = array();
 	$results['error'] = array();
 

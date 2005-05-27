@@ -24,14 +24,14 @@
     <ul class="gbBreadCrumb">
       {foreach name="parent" from=$ItemAdmin.parents item=parent}
       <li {if $smarty.foreach.parent.first}class="firstChild"{/if}>
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
 	  {$parent.title|default:$parent.pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       </li>
       {/foreach}
 
       <li {if empty($ItemAdmin.parents)}class="firstChild"{/if}>
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
+	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$ItemAdmin.item.id`"}">
 	  {$ItemAdmin.item.title|default:$ItemAdmin.item.pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       </li>

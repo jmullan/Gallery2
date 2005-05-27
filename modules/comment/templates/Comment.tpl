@@ -12,7 +12,7 @@
   {if isset($can) && ($can.edit || $can.delete || ($can.view && isset($truncate)))}
   <div>
     {if $can.edit}
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=comment:EditComment"
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=comment.EditComment"
        arg3="itemId=`$item.id`" arg4="commentId=`$comment.id`" arg5="return=true"}">
 	{g->text text="edit"}
       </a>
@@ -20,7 +20,7 @@
     {/if}
 
     {if $can.delete}
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=comment:DeleteComment"
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=comment.DeleteComment"
        arg3="itemId=`$item.id`" arg4="commentId=`$comment.id`" arg5="return=true"}">
 	{g->text text="delete"}
       </a>
@@ -28,7 +28,7 @@
     {/if}
 
     {if $can.view && isset($truncate)}
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=comment:ShowComments"
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=comment.ShowComments"
        arg3="itemId=`$item.id`" arg4="commentId=`$comment.id`" arg5="return=true"}">
 	{g->text text="full"}
       </a>

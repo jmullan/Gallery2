@@ -75,8 +75,8 @@ class AdminDeleteUserController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminUsers';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminUsers';
 
 	} else if (isset($form['action']['delete'])) {
 
@@ -168,8 +168,8 @@ class AdminDeleteUserController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminUsers';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminUsers';
 		$status['deletedUser'] = $user->getUsername();
 	    } /* /if empty($error) && $userId != $anonymousUserId ... */
 	} /* /if isset($form['action']['delete']) */
@@ -177,8 +177,8 @@ class AdminDeleteUserController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminDeleteUser';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminDeleteUser';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -227,7 +227,7 @@ class AdminDeleteUserView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminDeleteUser', $AdminDeleteUser);
-	$template->setVariable('controller', 'core:AdminDeleteUser');
+	$template->setVariable('controller', 'core.AdminDeleteUser');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminDeleteUser.tpl'));

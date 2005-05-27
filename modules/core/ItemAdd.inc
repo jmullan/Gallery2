@@ -151,12 +151,12 @@ class ItemAddController extends GalleryController {
 		}
 	    }
 
-	    $results['redirect'] = array('view' => 'core:ItemAdmin',
-					 'subView' => 'core:ItemAddConfirmation',
+	    $results['redirect'] = array('view' => 'core.ItemAdmin',
+					 'subView' => 'core.ItemAddConfirmation',
 					 'itemId' => $item->getId());
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemAdd';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemAdd';
 	    $results['delegate']['addPlugin'] = $addPlugin;
 	}
 
@@ -381,7 +381,7 @@ class ItemAddView extends GalleryView {
 	}
 
 	$template->setVariable('ItemAdd', $ItemAdd);
-	$template->setVariable('controller', 'core:ItemAdd');
+	$template->setVariable('controller', 'core.ItemAdd');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemAdd.tpl'));
     }

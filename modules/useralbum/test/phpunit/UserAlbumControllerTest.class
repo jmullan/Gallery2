@@ -35,7 +35,7 @@
 class UserAlbumControllerTest extends GalleryControllerTestCase {
 
     function UserAlbumControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'useralbum:UserAlbum');
+	$this->GalleryControllerTestCase($methodName, 'useralbum.UserAlbum');
     }
 
     function setUp() {
@@ -100,7 +100,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_userWithAlbum);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_userAlbumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -126,7 +126,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assert(empty($albumId), 'Album should not have been created');
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ShowItem',
 						      'itemId' => $albumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -147,7 +147,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	}
 	$this->assert(isset($albumId), 'Album was not created');
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ShowItem',
 						      'itemId' => $albumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -158,7 +158,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('userId', $this->_userWithAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_userAlbumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -202,7 +202,7 @@ class UserAlbumControllerTest extends GalleryControllerTestCase {
 	$gallery->setActiveUser($this->_userWithoutAlbum);
 
 	$expectedLink[] = array('text' => $module->translate('Your Album'),
-				'params' => array('controller' => 'useralbum:UserAlbum'));
+				'params' => array('controller' => 'useralbum.UserAlbum'));
 
 	list($ret, $links) = $userAlbum->getSystemLinks();
 	if ($ret->isError()) {

@@ -44,9 +44,9 @@ class SearchShowAllController extends GalleryController {
 	global $gallery;
 
 	if (isset($form['action']['scan'])) {
-	    $results['delegate']['view'] = 'search:SearchScan';
+	    $results['delegate']['view'] = 'search.SearchScan';
 	} else {
-	    $results['delegate']['view'] = 'search:SearchShowAll';
+	    $results['delegate']['view'] = 'search.SearchShowAll';
 	}
 
 	$results['status'] = array();
@@ -192,7 +192,7 @@ class SearchShowAllView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('SearchShowAll', array(
-	    'controller' => 'search:SearchShowAll',
+	    'controller' => 'search.SearchShowAll',
 	    'maxPages' => $maxPages,
 	    'moduleInfo' => $moduleInfo,
 	    'moduleId' => $moduleId,
@@ -201,7 +201,7 @@ class SearchShowAllView extends GalleryView {
 	    'items' => $items,
 	    'rootAlbum' => $rootAlbum->getMemberData()));
 
-	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

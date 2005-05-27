@@ -40,7 +40,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugi
 class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
     function UserSelfRegistrationControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'register:UserSelfRegistration');
+	$this->GalleryControllerTestCase($methodName, 'register.UserSelfRegistration');
     }
     
     function setUp() {
@@ -63,7 +63,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -85,8 +85,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password2]', 'password');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:SelfRegistrationSuccess'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.SelfRegistrationSuccess'),
 		'status' => array('activatedUser' => $userName),
 		'error' => array()),
 	    $results,
@@ -125,8 +125,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$gallery->_platform = new RegisterDummyPlatform($platform);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-	      'subView' => 'register:SelfRegistrationSuccess'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+	      'subView' => 'register.SelfRegistrationSuccess'),
 	  'status' => array('registeredUser' => $userName),
 	  'error' => array()),
 	    $results,
@@ -148,8 +148,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][userName][missing]',
 				   'form[error][email][missing]',
@@ -169,8 +169,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][email][invalid]')),
 	    $results);
@@ -191,8 +191,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][password2][mismatch]')),
 	    $results);
@@ -217,8 +217,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:SelfRegistrationSuccess'),
+	    array('redirect' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.SelfRegistrationSuccess'),
 		  'status' => array('registeredUserNoEmail' => $userName),
 		  'error' => array()),
 	    $results,
@@ -228,8 +228,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* fails because we have the existing pending user */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][userName][exists]')),
 	    $results, 'Create duplicate');
@@ -256,8 +256,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:SelfRegistrationSuccess'),
+	    array('redirect' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.SelfRegistrationSuccess'),
 		  'status' => array('activatedUser' => $userName),
 		  'error' => array()),
 	    $results,
@@ -267,8 +267,8 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	/* fails because we have the existing  user */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin',
-				      'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin',
+				      'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][userName][exists]')),
 	    $results, 'Create duplicate');
@@ -310,7 +310,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]')),
 	    $results);
@@ -340,7 +340,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'register:UserSelfRegistration'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'register.UserSelfRegistration'),
 		  'status' => array(),
 		  'error' => array('form[error][UserSelfRegistrationControllerTestPlugin1][anError]',
 				   'form[error][UserSelfRegistrationControllerTestPlugin2][anError]')),
@@ -373,7 +373,7 @@ class UserSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:UserAdmin', 'subView' => 'register:SelfRegistrationSuccess'),
+	    array('redirect' => array('view' => 'core.UserAdmin', 'subView' => 'register.SelfRegistrationSuccess'),
 		  'status' => array('activatedUser' => $userName),
 		  'error' => array()),
 	    $results);

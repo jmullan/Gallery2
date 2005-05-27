@@ -55,10 +55,10 @@ class LogoutController extends GalleryController {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* Force return to core:ShowItem, as we don't know if the guest user
+	/* Force return to core.ShowItem, as we don't know if the guest user
 	 * has necessary permissions for the return page
 	 */
-	$results['redirect']['view'] = 'core:ShowItem';
+	$results['redirect']['view'] = 'core.ShowItem';
 	$results['status'] = array();
 	$results['error'] = array();
 

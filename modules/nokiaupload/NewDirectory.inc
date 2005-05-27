@@ -41,7 +41,7 @@ class NewDirectoryController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('CreateAlbumController');
 
-	$results['delegate'] = array('view' => 'nokiaupload:NewDirectory');
+	$results['delegate'] = array('view' => 'nokiaupload.NewDirectory');
 	$results['status'] = ImageUploadHelper::createNewDirectory();
 	$results['error'] = array();
 

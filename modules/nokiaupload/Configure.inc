@@ -83,11 +83,11 @@ class ConfigureController extends GalleryController {
 	} /* else $form['action']['cancel'] */
 
 	if (empty($error)) {
-	    $results['redirect'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'core:AdminModules');
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'core.AdminModules');
 	} else {
-	    $results['delegate'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'nokiaupload:Configure');
+	    $results['delegate'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'nokiaupload.Configure');
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -134,7 +134,7 @@ class ConfigureView extends GalleryView {
 
 	$Configure = array('albumTree' => $albumTree);
 	$template->setVariable('NokiaUploadConfigure', $Configure);
-	$template->setVariable('controller', 'nokiaupload:Configure');
+	$template->setVariable('controller', 'nokiaupload.Configure');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/nokiaupload/templates/Configure.tpl'));

@@ -54,7 +54,7 @@ class UserSelfRegistrationController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $redirect['view'] = 'core:UserAdmin';
+	    $redirect['view'] = 'core.UserAdmin';
 	    
 	} else if (isset($form['action']['create'])) {
 
@@ -174,8 +174,8 @@ class UserSelfRegistrationController extends GalleryController {
 		    }
 
 		    /* Request a redirect to the confirmation screen */
-		    $redirect['view'] = 'core:UserAdmin';
-		    $redirect['subView'] = 'register:SelfRegistrationSuccess';
+		    $redirect['view'] = 'core.UserAdmin';
+		    $redirect['subView'] = 'register.SelfRegistrationSuccess';
 		}
 	    }
 	}
@@ -183,8 +183,8 @@ class UserSelfRegistrationController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'register:UserSelfRegistration';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'register.UserSelfRegistration';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -257,7 +257,7 @@ class UserSelfRegistrationView extends GalleryView {
 	}
 
 	$template->setVariable('UserSelfRegistration', $UserSelfRegistration);
-	$template->setVariable('controller', 'register:UserSelfRegistration');
+	$template->setVariable('controller', 'register.UserSelfRegistration');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/register/templates/UserSelfRegistration.tpl'));

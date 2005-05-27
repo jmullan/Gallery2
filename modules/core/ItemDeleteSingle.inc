@@ -83,16 +83,16 @@ class ItemDeleteSingleController extends GalleryController {
 	    $status['deleted'] = 1;
 
 	    /* Figure out where to redirect upon success */
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'core:ItemDeleteConfirmation';
+	    $redirect['view'] = 'core.ItemAdmin';
+	    $redirect['subView'] = 'core.ItemDeleteConfirmation';
 	    $redirect['itemId'] = $item->getParentId();
 	}
 		
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemDeleteSingle';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemDeleteSingle';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -138,7 +138,7 @@ class ItemDeleteSingleView extends GalleryView {
 	$ItemDeleteSingle['itemTypeNames'] = $item->itemTypeName();
 	$ItemDeleteSingle['childCount'] = $childCount;
 
-	$template->setVariable('controller', 'core:ItemDeleteSingle');
+	$template->setVariable('controller', 'core.ItemDeleteSingle');
 	$template->setVariable('ItemDeleteSingle', $ItemDeleteSingle);
 	
 	return array(GalleryStatus::success(),

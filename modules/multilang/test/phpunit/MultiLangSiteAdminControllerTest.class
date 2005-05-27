@@ -35,7 +35,7 @@
 class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function MultiLangSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'multilang:MultiLangSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'multilang.MultiLangSiteAdmin');
     }
 
     function setUp() {
@@ -52,8 +52,8 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'multilang:MultiLangSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'multilang.MultiLangSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -66,8 +66,8 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'multilang:MultiLangSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'multilang.MultiLangSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -84,8 +84,8 @@ class MultiLangSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'multilang:MultiLangSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'multilang.MultiLangSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

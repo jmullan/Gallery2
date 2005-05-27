@@ -16,7 +16,7 @@
     <div>
     {foreach from=$SiteAdmin.moduleSystemLinks item=module}
       {foreach from=$module item=link}
-      {if isset($link.params.view) && $link.params.view == "core:SiteAdmin"}
+      {if isset($link.params.view) && $link.params.view == "core.SiteAdmin"}
 	<span> {$link.text} </span>
       {else}
 	<span> <a href="{g->url params=$link.params}">{$link.text}</a> </span>
@@ -49,7 +49,7 @@
 		{if ($SiteAdmin.subViewName == $choice.view)}
 		  {$choice.name}
 		{else}
-		  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=`$choice.view`"}">
+		  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=`$choice.view`"}">
 		    {$choice.name}
 		  </a>
 		{/if}

@@ -9,7 +9,7 @@
   <h3> {g->text text="Recent comments"} </h3>
 
   {if sizeof($CommentItemDetails.comments) < $CommentItemDetails.totalComments }
-    <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=comment:ShowComments"
+    <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=comment.ShowComments"
      arg3="itemId=`$CommentItemDetails.item.id`"}">
       {g->text text="(view all %d comments)" arg1=$CommentItemDetails.totalComments}
     </a>

@@ -92,15 +92,15 @@ class MimeEditController extends GalleryController {
 
 	if (empty($error)) {
 	    if (isset($form['action']['apply'])) {
-		$results['redirect'] = array('view' => 'core:SiteAdmin',
-					     'subView' => 'mime:MimeEdit',
+		$results['redirect'] = array('view' => 'core.SiteAdmin',
+					     'subView' => 'mime.MimeEdit',
 					     'mimeType' => $form['mimeType']);
 	    } else {
-		$results['redirect'] = array('view' => 'core:SiteAdmin',
-					     'subView' => 'mime:MimeAdmin');
+		$results['redirect'] = array('view' => 'core.SiteAdmin',
+					     'subView' => 'mime.MimeAdmin');
 	    }
 	} else {
-	    $results['delegate'] = array('view' => 'core:SiteAdmin', 'subView' => 'mime:MimeEdit');
+	    $results['delegate'] = array('view' => 'core.SiteAdmin', 'subView' => 'mime.MimeEdit');
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -161,7 +161,7 @@ class MimeEditView extends GalleryView {
 	    $form['extensions'] = $tmp;
 	}
 
-	$template->setVariable('controller', 'mime:MimeEdit');
+	$template->setVariable('controller', 'mime.MimeEdit');
 	return array(GalleryStatus::success(),
 	     array('body' => 'modules/mime/templates/MimeEdit.tpl'));
     }

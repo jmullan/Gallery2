@@ -34,7 +34,7 @@
 class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 
     function ItemEditCaptionsControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemEditCaptions');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemEditCaptions');
     }
 
     function setUp() {
@@ -76,8 +76,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(
 	    array('return' => 1,
-		  'redirect' => array('view' => 'core:ItemAdmin',
-				      'subView' => 'core:ItemEditCaptions',
+		  'redirect' => array('view' => 'core.ItemAdmin',
+				      'subView' => 'core.ItemEditCaptions',
 				      'itemId' => $this->_album->getId(),
 				      'page' => 2),
 		  'status' => array('successCount' => 3,
@@ -118,8 +118,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditCaptions',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEditCaptions',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 3),
 				  'status' => array('successCount' => 3,
@@ -160,8 +160,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditCaptions',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEditCaptions',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 1),
 				  'status' => array('successCount' => 3,
@@ -194,8 +194,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditCaptions'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEditCaptions'),
 				  'return' => 1,
 				  'status' => array(),
 				  'error' => array()),
@@ -239,8 +239,8 @@ class ItemEditCaptionsControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemEditCaptions',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemEditCaptions',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 2),
 				  'status' => array('successCount' => 1,

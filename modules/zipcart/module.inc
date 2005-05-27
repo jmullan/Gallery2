@@ -38,11 +38,11 @@ class ZipCartModule extends GalleryModule {
 	$this->setId('zipcart');
 	$this->setName($gallery->i18n('Zip Download'));
 	$this->setDescription($gallery->i18n('Download cart items in a zip file'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -158,14 +158,14 @@ class ZipCartModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Zip Download'),
-				 'view' => 'zipcart:ZipCartAdmin')));
+				 'view' => 'zipcart.ZipCartAdmin')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'zipcart:ZipCartAdmin';
+	return 'zipcart.ZipCartAdmin';
     }
 }
 ?>

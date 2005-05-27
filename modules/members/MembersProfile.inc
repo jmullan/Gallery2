@@ -49,7 +49,7 @@ class MembersProfileView extends GalleryView {
 	}
 	if (!$result) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:ShowItem')));
+			 array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	$userId = GalleryUtilities::getRequestVariables('userId');
@@ -108,7 +108,7 @@ class MembersProfileView extends GalleryView {
 
 	$template->setVariable('MembersProfile', $MembersProfile);
 
-	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

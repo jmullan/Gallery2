@@ -159,7 +159,7 @@ class GalleryPendingUserHelper {
 
 	$generator =& $gallery->getUrlGenerator();
 	$confirmationUrl = $generator->generateUrl(
-			 array( 'controller' => 'register:ConfirmRegistration',
+			 array( 'controller' => 'register.ConfirmRegistration',
 				'username' => $pendingUser->getUserName(),
 				'key' => $pendingUser->getRegistrationKey() ));
 	/* it seems that spaces in the username are not translated to %20, so do it here */

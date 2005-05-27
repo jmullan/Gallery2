@@ -35,7 +35,7 @@
 class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 
     function NokiaUploadUploadControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'nokiaupload:Upload');
+	$this->GalleryControllerTestCase($methodName, 'nokiaupload.Upload');
     }
 
     function setUp() {
@@ -127,7 +127,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('MimeType', 'image/jpeg', false);
 	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
 						    'spaceleft' => 10000000),
 				  'error' => array()),
@@ -136,7 +136,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	/* Empty file */
 	$_FILES['ImageData'] = array('size' => 0, 'tmp_name' => '');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_TOOBIG,
 						    'spaceleft' => 10000000),
 				  'error' => array()),
@@ -147,7 +147,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
             'tmp_name' => dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
 	GalleryUtilities::putRequestVariable('DirId', 'badId', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
 						    'spaceleft' => 10000000),
 				  'error' => array()),
@@ -156,7 +156,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	/* No permission */
 	GalleryUtilities::putRequestVariable('DirId', $this->_subAlbum->getId(), false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN,
 						    'spaceleft' => 10000000),
 				  'error' => array()),
@@ -166,7 +166,7 @@ class NokiaUploadUploadControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('DirId', $this->_album->getId(), false);
 	GalleryUtilities::putRequestVariable('Desc', 'this is the description', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Upload'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Upload'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_NOERR,
 						    'spaceleft' => 10000000),
 				  'error' => array()),

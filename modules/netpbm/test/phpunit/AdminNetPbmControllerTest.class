@@ -34,7 +34,7 @@
 class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
     function AdminNetPbmControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'netpbm:AdminNetPbm');
+	$this->GalleryControllerTestCase($methodName, 'netpbm.AdminNetPbm');
     }
 
     function setUp() {
@@ -67,8 +67,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -91,8 +91,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -112,8 +112,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -123,8 +123,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -138,8 +138,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array('form[error][path][testError]')),
 				  $results);
@@ -153,8 +153,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
@@ -168,8 +168,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);
@@ -184,8 +184,8 @@ class AdminNetPbmControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'netpbm:AdminNetPbm'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'netpbm.AdminNetPbm'),
 				  'status' => array(),
 				  'error' => array('form[error][jheadPath][badPath]')),
 			    $results);

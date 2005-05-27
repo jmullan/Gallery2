@@ -39,7 +39,7 @@ require_once(dirname(__FILE__) . '/../../classes/QuotasMap.class');
 class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateGroupQuotaControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'quotas:AdminCreateGroupQuota');
+	$this->GalleryControllerTestCase($methodName, 'quotas.AdminCreateGroupQuota');
     }
 
     function testCancel() {
@@ -54,8 +54,8 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -76,8 +76,8 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('createdGroup' => $group->getGroupName()),
 				  'error' => array()),
 			    $results);
@@ -97,8 +97,8 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateGroupQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]',
 						   'form[error][quotaUnit][missing]')),
@@ -108,8 +108,8 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 2048);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateGroupQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaUnit][missing]')),
 			    $results);
@@ -119,8 +119,8 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateGroupQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]')),
 			    $results);
@@ -146,16 +146,16 @@ class AdminCreateGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('createdGroup' => $group->getGroupName()),
 				  'error' => array()),
 			    $results);
 
 	/* Attempt to create a quota for the group that already has one */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateGroupQuota'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

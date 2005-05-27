@@ -178,8 +178,8 @@ class ItemMoveSingleController extends GalleryController {
 		$status['moved'] = 1;
 
 		/* Figure out where to redirect upon success */
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'core:ItemMoveSingle';
+		$redirect['view'] = 'core.ItemAdmin';
+		$redirect['subView'] = 'core.ItemMoveSingle';
 		$redirect['itemId'] = $itemId;
 	    }
 	}
@@ -187,8 +187,8 @@ class ItemMoveSingleController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemMoveSingle';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemMoveSingle';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -252,7 +252,7 @@ class ItemMoveSingleView extends GalleryView {
 	$ItemMoveSingle['itemTypeNames'] = $item->itemTypeName();
 
         $template->setVariable('ItemMoveSingle', $ItemMoveSingle);
-        $template->setVariable('controller', 'core:ItemMoveSingle');
+        $template->setVariable('controller', 'core.ItemMoveSingle');
 
         return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/ItemMoveSingle.tpl'));

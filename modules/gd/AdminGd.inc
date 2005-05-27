@@ -65,26 +65,26 @@ class AdminGdController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
+	    $redirect['view'] = 'core.SiteAdmin';
 	    if ($isActive) {
-		$redirect['subView'] = 'gd:AdminGd';
+		$redirect['subView'] = 'gd.AdminGd';
 		$status['saved'] = 1;
 	    } else {
-		$redirect['subView'] = 'core:AdminModules';
+		$redirect['subView'] = 'core.AdminModules';
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'gd:AdminGd';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'gd.AdminGd';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'gd:AdminGd';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'gd.AdminGd';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -163,7 +163,7 @@ class AdminGdView extends GalleryView {
 	$AdminGd['isConfigure'] = !$isActive;
 
 	$template->setVariable('AdminGd', $AdminGd);
-	$template->setVariable('controller', 'gd:AdminGd');
+	$template->setVariable('controller', 'gd.AdminGd');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/gd/templates/AdminGd.tpl'));

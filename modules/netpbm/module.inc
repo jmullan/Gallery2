@@ -40,11 +40,11 @@ class NetPbmModule extends GalleryModule {
 	$this->setId('netpbm');
 	$this->setName($gallery->i18n('NetPBM'));
 	$this->setDescription($gallery->i18n('NetPBM Graphics Toolkit'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -346,14 +346,14 @@ class NetPbmModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('NetPBM'),
-				 'view' => 'netpbm:AdminNetPbm')));
+				 'view' => 'netpbm.AdminNetPbm')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return 'netpbm:AdminNetPbm';
+	return 'netpbm.AdminNetPbm';
     }
 }
 ?>

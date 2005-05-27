@@ -41,7 +41,7 @@ GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.cl
 class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 
     function UserWatermarkEditControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'watermark:UserWatermarkEdit');
+	$this->GalleryControllerTestCase($methodName, 'watermark.UserWatermarkEdit');
     }
 
     function setUp() {
@@ -112,8 +112,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -141,8 +141,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -166,8 +166,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][name][missing]',
 						   'form[error][whichDerivative][missing]')),
@@ -196,8 +196,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][resizes]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][name][duplicate]')),
 			    $results);
@@ -221,8 +221,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][resizes]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -246,8 +246,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -270,8 +270,8 @@ class UserWatermarkEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

@@ -34,7 +34,7 @@
 class ItemAddControllerTest extends GalleryControllerTestCase {
 
     function ItemAddControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemAdd');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemAdd');
     }
 
     function setUp() {
@@ -99,8 +99,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' =>
-				  array('view' => 'core:ItemAdmin',
-					'subView' => 'core:ItemAdd',
+				  array('view' => 'core.ItemAdmin',
+					'subView' => 'core.ItemAdd',
 					'addPlugin' => 'ItemAddControllerTestPluginContinue'),
 				  'status' => array(),
 				  'error' => array()),
@@ -117,8 +117,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemAddConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
 						    array('fileName' => 'foo',
@@ -141,8 +141,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemAddConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
 						    array('fileName' => 'foo',
@@ -170,8 +170,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('addPlugin', 'ItemAddControllerTestPluginSuccess');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAddConfirmation',
+	$this->assertEquals(array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemAddConfirmation',
 					    'itemId' => $this->_album->getId()),
 			    $results['redirect'], 'redirect');
 	$this->assertEquals(array('an error', 'an error'), $results['error'], 'error');
@@ -209,8 +209,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' =>
-				  array('view' => 'core:ItemAdmin',
-					'subView' => 'core:ItemAdd',
+				  array('view' => 'core.ItemAdmin',
+					'subView' => 'core.ItemAdd',
 					'addPlugin' => 'ItemAddControllerTestPluginFail'),
 				  'status' => array(),
 				  'error' => array('failed')),

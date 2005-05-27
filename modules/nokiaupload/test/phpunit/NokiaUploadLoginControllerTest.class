@@ -36,7 +36,7 @@
 class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 
     function NokiaUploadLoginControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'nokiaupload:Login');
+	$this->GalleryControllerTestCase($methodName, 'nokiaupload.Login');
     }
 
     function setUp() {
@@ -100,7 +100,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('Username', 'this is an invalid username', false);
 	GalleryUtilities::putRequestVariable('Password', 'x', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Login'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Login'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_UNKNOWN),
 				  'error' => array()),
 			    $results, 'user');
@@ -110,7 +110,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
 	GalleryUtilities::putRequestVariable('Password', 'wrong password', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:Login'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.Login'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_AUTH),
 				  'error' => array()),
 			    $results, 'pass');
@@ -120,7 +120,7 @@ class NokiaUploadLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('Username', $this->_user->getUserName(), false);
 	GalleryUtilities::putRequestVariable('Password', $this->_password, false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'nokiaupload:Login'), $results['delegate'], 'delegate');
+	$this->assertEquals(array('view' => 'nokiaupload.Login'), $results['delegate'], 'delegate');
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals(NOKIAUPLOAD_ERR_NOERR, $results['status']['success'], 'success');
 	$this->assert(!empty($results['status']['rsurl']), 'rsurl');

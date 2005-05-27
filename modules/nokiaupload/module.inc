@@ -43,11 +43,11 @@ class NokiaUploadModule extends GalleryModule {
 	$this->setName($gallery->i18n('Nokia Image Upload'));
 	$this->setDescription(
 	    $gallery->i18n('Implementation of Nokia Image Upload Server API v1.1'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('import', $this->translate('Import'));
 	$this->setCallbacks('');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -77,7 +77,7 @@ class NokiaUploadModule extends GalleryModule {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'nokiaupload:Configure';
+	return 'nokiaupload.Configure';
     }
 }
 ?>

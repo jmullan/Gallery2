@@ -38,11 +38,11 @@ class QuotasModule extends GalleryModule {
 	$this->setId('quotas');
 	$this->setName($gallery->i18n('Quotas'));
 	$this->setDescription($gallery->i18n('User/Group Disk Quotas'));
-	$this->setVersion('0.9.0');
+	$this->setVersion('0.9.1');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 10));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -73,7 +73,7 @@ class QuotasModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Quotas'),
-				 'view' => 'quotas:AdminQuotas')));
+				 'view' => 'quotas.AdminQuotas')));
     }
 
     /**

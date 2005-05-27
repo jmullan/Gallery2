@@ -35,7 +35,7 @@
  */
 class SetupRewriteControllerTest extends GalleryControllerTestCase {
     function SetupRewriteControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'rewrite:SetupRewrite');
+	$this->GalleryControllerTestCase($methodName, 'rewrite.SetupRewrite');
     }
 
     function setUp() {
@@ -66,8 +66,8 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][done]', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -77,8 +77,8 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][test]', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:SetupRewrite'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.SetupRewrite'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

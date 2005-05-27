@@ -34,7 +34,7 @@
 class UploadItemsControllerTest extends GalleryControllerTestCase {
 
     function UploadItemsControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'publishxp:UploadItems');
+	$this->GalleryControllerTestCase($methodName, 'publishxp.UploadItems');
     }
 
     function setUp() {
@@ -56,7 +56,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['name'] = 'Foo.dat';
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -102,7 +102,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['name'] = 'Foo.csh';
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -131,7 +131,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	$_FILES['userFile']['name'] = 'Foo.dat';
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -161,7 +161,7 @@ class UploadItemsControllerTest extends GalleryControllerTestCase {
 	    array('instance' => new UploadedItemsControllerTestAddOption()));
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'publishxp:UploadedItem'),
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.UploadedItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

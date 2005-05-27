@@ -111,7 +111,7 @@ class ItemEditThumbOffset extends ItemEditPlugin {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	$form['duration'] = sprintf('%.3f', $duration);
-	$template->setVariable('controller', 'thumbpage:ItemEditThumbOffset');
+	$template->setVariable('controller', 'thumbpage.ItemEditThumbOffset');
 	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Offset.tpl');
     }
 

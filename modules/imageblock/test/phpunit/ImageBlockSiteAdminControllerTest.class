@@ -35,7 +35,7 @@
 class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function ImageBlockSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'imageblock:ImageBlockSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'imageblock.ImageBlockSiteAdmin');
     }
 
     function setUp() {
@@ -54,8 +54,8 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -67,8 +67,8 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -82,8 +82,8 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -101,8 +101,8 @@ class ImageBlockSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imageblock:ImageBlockSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imageblock.ImageBlockSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

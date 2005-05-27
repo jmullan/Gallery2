@@ -43,7 +43,7 @@
 
     <strong>
       {g->text text="URL: %s" arg1=$form.imageUrl}
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd"
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
 	 arg3="itemId=`$ItemAdmin.item.id`" arg4="addPlugin=ItemAddWebCam"}">
 	{g->text text="change"}
       </a>

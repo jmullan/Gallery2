@@ -35,7 +35,7 @@
 class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 
     function NokiaUploadNewDirectoryControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'nokiaupload:NewDirectory');
+	$this->GalleryControllerTestCase($methodName, 'nokiaupload.NewDirectory');
     }
 
     function setUp() {
@@ -121,7 +121,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('DirName', 'test', false);
 	GalleryUtilities::putRequestVariable('Pid', 'badID', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:NewDirectory'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.NewDirectory'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_DIRCREATE),
 				  'error' => array()),
 			    $results, 'bad parent');
@@ -130,7 +130,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('DirName', 'test', false);
 	GalleryUtilities::putRequestVariable('Pid', $this->_getRootId(), false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload:NewDirectory'),
+	$this->assertEquals(array('delegate' => array('view' => 'nokiaupload.NewDirectory'),
 				  'status' => array('success' => NOKIAUPLOAD_ERR_DIRCREATE),
 				  'error' => array()),
 			    $results, 'no permission parent');
@@ -140,7 +140,7 @@ class NokiaUploadNewDirectoryControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('DirDesc', 'this is the description', false);
 	GalleryUtilities::removeRequestVariable('Pid', false);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'nokiaupload:NewDirectory'),
+	$this->assertEquals(array('view' => 'nokiaupload.NewDirectory'),
 			    $results['delegate'], 'delegate');
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals(NOKIAUPLOAD_ERR_NOERR, $results['status']['success'], 'success');

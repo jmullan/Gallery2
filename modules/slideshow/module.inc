@@ -37,11 +37,11 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -83,7 +83,7 @@ class SlideshowModule extends GalleryModule {
 	    $links[$item->getId()][] =
 		array('text' => $this->translate('view slideshow'),
 		      'params' => array(
-			'view' => 'slideshow:Slideshow',
+			'view' => 'slideshow.Slideshow',
 			'itemId' => $item->getId()));
 	}
 	return array(GalleryStatus::success(), $links);

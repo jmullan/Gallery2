@@ -11,7 +11,7 @@
   {/if}
 
   {capture name="link"}
-  <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$block.id`"}" {strip}
+  <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$block.id`"}" {strip}
     {if isset($ImageBlockSystemContent.linkTarget)}
       target="{$ImageBlockSystemContent.linkTarget}"
     {/if}{/strip}>

@@ -120,7 +120,7 @@ class ImageUploadHelper {
 
 	/* Generate URL for Remote Storage Capabilities query. */
 	$generator =& $gallery->getUrlGenerator();
-	$rsurl = $generator->generateUrl(array('view' => 'nokiaupload:RemoteStorageCapabilities'));
+	$rsurl = $generator->generateUrl(array('view' => 'nokiaupload.RemoteStorageCapabilities'));
 	$rsurl = GalleryUtilities::htmlEntityDecode($rsurl);
 	$rsurl .= '&';  /* API specification requires URL to end with '&' (or '?'). */
 
@@ -158,13 +158,13 @@ class ImageUploadHelper {
 	/* Generate URLs for all supported API calls. Specification requires URLs to end in '&'. */
 	$urlGen =& $gallery->getUrlGenerator();
 
-	$createDirUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload:NewDirectory'));
+	$createDirUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload.NewDirectory'));
 	$createDirUrl = GalleryUtilities::htmlEntityDecode($createDirUrl) . '&';
 
-	$uploadUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload:Upload'));
+	$uploadUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload.Upload'));
 	$uploadUrl = GalleryUtilities::htmlEntityDecode($uploadUrl) . '&';
 
-	$albumListUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload:DirectoryListing'));
+	$albumListUrl = $urlGen->generateUrl(array('controller' => 'nokiaupload.DirectoryListing'));
 	$albumListUrl = GalleryUtilities::htmlEntityDecode($albumListUrl) . '&';
 
 	if (empty($createDirUrl) || empty($uploadUrl) || empty($albumListUrl)) {
@@ -510,7 +510,7 @@ class ImageUploadHelper {
 
 	/* Set the album info and save it. */
 	$urlGen =& $gallery->getUrlGenerator();
-	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload:Login'), false);
+	$url = $urlGen->generateUrl(array('controller' => 'nokiaupload.Login'), false);
 
 	$summary = $module->translate(
 	    'To upload to this album you need Image Uploader enabled mobile phone '

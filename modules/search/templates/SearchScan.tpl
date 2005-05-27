@@ -113,7 +113,7 @@
 	      <td class="{if
 		$SearchScan.items.$itemId.canContainChildren}gbItemAlbum{else}gbItemImage{/if}"
 		style="width: 10%">
-		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=$itemId"}">
+		<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=$itemId"}">
 		{if isset($SearchScan.thumbnails.$itemId)}
 		  {g->image item=$SearchScan.items.$itemId image=$SearchScan.thumbnails.$itemId
 			    class="giThumbnail"}

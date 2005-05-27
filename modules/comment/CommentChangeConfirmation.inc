@@ -55,7 +55,7 @@ class CommentChangeConfirmationView extends GalleryView {
 	$CommentChangeConfirmation = array();
 	
 	$template->setVariable('CommentChangeConfirmation', $CommentChangeConfirmation);
-	$template->setVariable('controller', 'comment:CommentChangeConfirmation');
+	$template->setVariable('controller', 'comment.CommentChangeConfirmation');
 	
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/CommentChangeConfirmation.tpl'));

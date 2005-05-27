@@ -34,15 +34,15 @@
 class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateGroupControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminCreateGroup');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminCreateGroup');
     }
 
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -54,8 +54,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[groupName]', $groupName);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array('createdGroup' => $groupName),
 				  'error' => array()),
 			    $results);
@@ -68,8 +68,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][create]', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCreateGroup'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCreateGroup'),
 				  'status' => array(),
 				  'error' => array('form[error][groupName][missing]')),
 			    $results);
@@ -84,8 +84,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[groupName]', $groupName);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array('createdGroup' => $groupName),
 				  'error' => array()),
 			    $results);
@@ -93,8 +93,8 @@ class AdminCreateGroupControllerTest extends GalleryControllerTestCase {
 
 	/* Create a second group with the same name */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCreateGroup'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCreateGroup'),
 				  'status' => array(),
 				  'error' => array('form[error][groupName][exists]')),
 			    $results);

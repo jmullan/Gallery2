@@ -35,7 +35,7 @@
 class PrintPhotoControllerTest extends GalleryControllerTestCase {
 
     function PrintPhotoControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'photoaccess:PrintPhoto');
+	$this->GalleryControllerTestCase($methodName, 'photoaccess.PrintPhoto');
     }
 
     function setUp() {
@@ -202,8 +202,8 @@ class PrintPhotoControllerTestPlatform {
 				    urlencode('<add-cart-request cobrand="CB_GP" pricelist="1" ' .
 					      'entry-page="/buy/anonCart.jsp" return-url="RETURN_URL">' .
 					      '<image id="' . $this->_test->_sourceId . '" ' .
-					      'url="view=core:DownloadItem/itemId=' . $this->_test->_sourceId . '" ' .
-					      'thumb-url="view=core:DownloadItem/itemId=' . $this->_test->_thumbId . '" ' .
+					      'url="view=core.DownloadItem/itemId=' . $this->_test->_sourceId . '" ' .
+					      'thumb-url="view=core.DownloadItem/itemId=' . $this->_test->_thumbId . '" ' .
 					      'height="0" width="0"/>' .
 					      '</add-cart-request>')));
 

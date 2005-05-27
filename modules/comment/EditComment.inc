@@ -128,8 +128,8 @@ class EditCommentController extends GalleryController {
 		}
 
 		$status['changed'] = 1;
-		$redirect['view'] = 'core:ItemAdmin';
-		$redirect['subView'] = 'comment:CommentChangeConfirmation';
+		$redirect['view'] = 'core.ItemAdmin';
+		$redirect['subView'] = 'comment.CommentChangeConfirmation';
 		$redirect['itemId'] = (int)$itemId;
 	    }
 	} else if (isset($form['action']['preview'])) {
@@ -174,7 +174,7 @@ class EditCommentController extends GalleryController {
 	    /* Fall through back to the current view */
 	} else if (isset($form['action']['cancel'])) {
 	    /* Where to go on a cancel?  Go to item admin.*/
-	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['view'] = 'core.ItemAdmin';
 	    $redirect['itemId'] = (int)$itemId;
 	}
 
@@ -184,8 +184,8 @@ class EditCommentController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    /* Stay on the same page */
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'comment:EditComment';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'comment.EditComment';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -255,7 +255,7 @@ class EditCommentView extends GalleryView {
 	$EditComment['comment'] = $comment->getMemberData();
 
 	$template->setVariable('EditComment', $EditComment);
-	$template->setVariable('controller', 'comment:EditComment');
+	$template->setVariable('controller', 'comment.EditComment');
 	
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/EditComment.tpl'));

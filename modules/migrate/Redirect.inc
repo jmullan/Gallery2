@@ -44,7 +44,7 @@ class RedirectController extends GalleryController {
 
 	list($file, $full, $page) = GalleryUtilities::getRequestVariables('file', 'full', 'page');
 	$path = preg_split('|/|', $file, -1, PREG_SPLIT_NO_EMPTY);
-	$view = 'core:ShowItem';
+	$view = 'core.ShowItem';
 
 	if (count($path) > 1) {
 	    /* Check for direct link to image file (name.type, name.thumb.type, name.sized.type) */
@@ -57,7 +57,7 @@ class RedirectController extends GalleryController {
 		    $derivative = DERIVATIVE_TYPE_IMAGE_THUMBNAIL;
 		}
 	    case 2:
-		$view = 'core:DownloadItem';
+		$view = 'core.DownloadItem';
 		$path[1] = $file[0];
 		if (!isset($derivative)) {
 		    $derivative = DERIVATIVE_TYPE_IMAGE_PREFERRED;

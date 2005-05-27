@@ -262,7 +262,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	     * logging out the user.
 	     */
 	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $url = $urlGenerator->generateUrl(array('view' => 'core:DownloadItem', 'itemId' => $source->getId()), true);
+	    $url = $urlGenerator->generateUrl(array('view' => 'core.DownloadItem', 'itemId' => $source->getId()), true);
 
 	    $ItemEditPhotoThumbnail['editThumbnail']['appletCodeBase'] =
 		GalleryUtilities::convertPathToUrl(dirname(__FILE__)) . '/plugins';
@@ -351,7 +351,7 @@ class ItemEditPhotoThumbnail extends ItemEditPlugin {
 	}
 
 	$template->setVariable('ItemEditPhotoThumbnail', $ItemEditPhotoThumbnail);
-	$template->setVariable('controller', 'core:ItemEditPhotoThumbnail');
+	$template->setVariable('controller', 'core.ItemEditPhotoThumbnail');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditPhotoThumbnail.tpl');
     }
 

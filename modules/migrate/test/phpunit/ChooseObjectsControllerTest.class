@@ -34,7 +34,7 @@
 class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 
     function ChooseObjectsControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'migrate:ChooseObjects');
+	$this->GalleryControllerTestCase($methodName, 'migrate.ChooseObjects');
     }
 
     function testImportNothingSelected() {
@@ -45,8 +45,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:ChooseObjects'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.ChooseObjects'),
 				  'status' => array(),
 				  'error' => array('form[error][nothingSelected]')),
 			    $results);
@@ -61,8 +61,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:ConfirmImport'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.ConfirmImport'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -78,8 +78,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[customfield][description]', 'Description');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:ConfirmImport'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.ConfirmImport'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -94,8 +94,8 @@ class ChooseObjectsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][description]', 'custom');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:ChooseObjects'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.ChooseObjects'),
 				  'status' => array(),
 				  'error' => array('form[error][emptyCustomField][title]',
 						   'form[error][emptyCustomField][summary]',

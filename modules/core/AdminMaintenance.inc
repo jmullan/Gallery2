@@ -75,8 +75,8 @@ class AdminMaintenanceController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminMaintenance';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminMaintenance';
 		$status['run'] = array('taskId' => $taskId, 'success' => $success);
 	    }
 	}
@@ -87,8 +87,8 @@ class AdminMaintenanceController extends GalleryController {
 		$results['sendLateRedirect'] = $immediateView;
 	    }
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminMaintenance';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminMaintenance';
 	}
 
 	$results['status'] = $status;
@@ -154,7 +154,7 @@ class AdminMaintenanceView extends GalleryView {
 	}
 
 	$template->setVariable('AdminMaintenance', $AdminMaintenance);
-	$template->setVariable('controller', 'core:AdminMaintenance');
+	$template->setVariable('controller', 'core.AdminMaintenance');
 
 	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),

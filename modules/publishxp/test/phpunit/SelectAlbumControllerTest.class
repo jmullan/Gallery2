@@ -34,7 +34,7 @@
 class SelectAlbumControllerTest extends GalleryControllerTestCase {
 
     function SelectAlbumControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'publishxp:SelectAlbum');
+	$this->GalleryControllerTestCase($methodName, 'publishxp.SelectAlbum');
     }
 
     function testNewAlbum() {
@@ -43,7 +43,7 @@ class SelectAlbumControllerTest extends GalleryControllerTestCase {
 
 	$result = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'publishxp:NewAlbum',
+				      'view' => 'publishxp.NewAlbum',
 				      'parentId' => 1),
 				  'status' => array(),
 				  'error' => array()),
@@ -54,7 +54,7 @@ class SelectAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][newAlbum]', 1);
 
 	$result = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'publishxp:SelectAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'publishxp.SelectAlbum'),
 				  'status' => array(),
 				  'error' => array('form[error][albumId][missing]')),
 			    $result);
@@ -66,7 +66,7 @@ class SelectAlbumControllerTest extends GalleryControllerTestCase {
 
 	$result = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'publishxp:Options',
+				      'view' => 'publishxp.Options',
 				      'albumId' => 1),
 				  'status' => array(),
 				  'error' => array()),
@@ -77,7 +77,7 @@ class SelectAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
 	$result = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'publishxp:SelectAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'publishxp.SelectAlbum'),
 				  'status' => array(),
 				  'error' => array('form[error][albumId][missing]')),
 			    $result);

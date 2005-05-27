@@ -40,11 +40,11 @@ class NewItemsModule extends GalleryModule {
 	$this->setId('newitems');
 	$this->setName($gallery->i18n('New Items'));
 	$this->setDescription($gallery->i18n('Highlight new/updated Gallery items'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -110,8 +110,8 @@ class NewItemsModule extends GalleryModule {
 	if ($count > 0 || strpos($default, 'NewItems') !== false) {
 	    // Can't deactivate if NewItems sort is in use..
 	    return array(GalleryStatus::success(),
-			 array('view' => 'core:SiteAdmin',
-			       'subView' => 'newitems:NewItemsSiteAdmin'));
+			 array('view' => 'core.SiteAdmin',
+			       'subView' => 'newitems.NewItemsSiteAdmin'));
 	}
 
 	list ($ret, $redirect) = parent::deactivate();
@@ -127,7 +127,7 @@ class NewItemsModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('New Items'),
-				 'view' => 'newitems:NewItemsSiteAdmin')));
+				 'view' => 'newitems.NewItemsSiteAdmin')));
     }
 
     /**

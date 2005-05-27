@@ -109,7 +109,7 @@
   <div id="background" class="gcBackground1"
    style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
     <img name="floater"
-     src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}"
+     src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}"
      width="{$watermark.width}" height="{$watermark.height}" alt=""/>
   </div>
 

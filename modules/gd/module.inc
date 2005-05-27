@@ -40,11 +40,11 @@ class GdModule extends GalleryModule {
 	$this->setId('gd');
 	$this->setName($gallery->i18n('Gd'));
 	$this->setDescription($gallery->i18n('Gd Graphics Toolkit'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -217,14 +217,14 @@ class GdModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Gd'),
-				 'view' => 'gd:AdminGd')));
+				 'view' => 'gd.AdminGd')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'gd:AdminGd';
+	return 'gd.AdminGd';
     }
 }
 ?>

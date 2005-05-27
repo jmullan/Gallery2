@@ -41,7 +41,7 @@ class DirectoryListingController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('DirectoryListingController');
 
-	$results['delegate'] = array('view' => 'nokiaupload:DirectoryListing');
+	$results['delegate'] = array('view' => 'nokiaupload.DirectoryListing');
 	$results['status'] = ImageUploadHelper::getDirectoryListing();
 	$results['error'] = array();
 

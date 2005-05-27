@@ -40,11 +40,11 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName($gallery->i18n('Debugging'));
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -69,7 +69,7 @@ class DebugModule extends GalleryModule {
 	    foreach ($items as $item) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('show debug tree'),
-			  'params' => array('view' => 'debug:ShowTree',
+			  'params' => array('view' => 'debug.ShowTree',
 					    'itemId' => $item->getId()));
 	    }
 	}

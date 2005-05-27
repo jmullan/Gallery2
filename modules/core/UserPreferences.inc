@@ -59,14 +59,14 @@ class UserPreferencesController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the current view */
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserPreferences';
+	    $redirect['view'] = 'core.UserAdmin';
+	    $redirect['subView'] = 'core.UserPreferences';
 
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:UserAdmin';
-	    $redirect['subView'] = 'core:UserPreferences';
+	    $redirect['view'] = 'core.UserAdmin';
+	    $redirect['subView'] = 'core.UserPreferences';
 
 	} else if (isset($form['action']['save'])) {
 
@@ -127,8 +127,8 @@ class UserPreferencesController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:UserAdmin';
-		$redirect['subView'] = 'core:UserPreferences';
+		$redirect['view'] = 'core.UserAdmin';
+		$redirect['subView'] = 'core.UserPreferences';
 		$status['saved'] = 1;
 	    }
 	}
@@ -136,8 +136,8 @@ class UserPreferencesController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'core:UserPreferences';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'core.UserPreferences';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -204,7 +204,7 @@ class UserPreferencesView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('UserPreferences', $UserPreferences);
-	$template->setVariable('controller', 'core:UserPreferences');
+	$template->setVariable('controller', 'core.UserPreferences');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserPreferences.tpl'));
     }

@@ -149,10 +149,10 @@ class ViewCartView extends GalleryView {
 	$ViewCart['itemTypeNames'] = $itemTypeNames;
 	$ViewCart['thumbnails'] = $thumbnails;
 	$ViewCart['plugins'] = $plugins;
-	$ViewCart['controller'] = 'cart:ModifyCart';
+	$ViewCart['controller'] = 'cart.ModifyCart';
 	$template->setVariable('ViewCart', $ViewCart);
 
-	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

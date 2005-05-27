@@ -35,7 +35,7 @@
 class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function IconsSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'icons:IconsSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'icons.IconsSiteAdmin');
     }
     
     function setUp() {
@@ -55,8 +55,8 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'icons:IconsSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'icons.IconsSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -67,8 +67,8 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'icons:IconsSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'icons.IconsSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -85,8 +85,8 @@ class IconsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'icons:IconsSiteAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'icons.IconsSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][iconpack][missing]')),
 			    $results);

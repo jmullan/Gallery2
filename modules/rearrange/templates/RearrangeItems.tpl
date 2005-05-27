@@ -20,7 +20,7 @@
 <div class="gbBlock">
   <p class="giDescription">
     {g->text text="This album has an automatic sort order specified, so you cannot change the order of items manually.  You must remove the automatic sort order to continue."}
-    <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit"
+    <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
      arg3="editPlugin=ItemEditAlbum" arg4="itemId=`$ItemAdmin.item.id`"}">
       {g->text text="change"}
     </a>

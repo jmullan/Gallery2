@@ -41,11 +41,11 @@
        name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
       {if ($form.list.page > 1)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditGroupUsers"
 	 arg3="form[list][page]=1"
 	 arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="&laquo; first"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditGroupUsers"
 	 arg3="form[list][page]=`$form.list.backPage`"
 	 arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="&laquo; back"}</a>
       {/if}
@@ -55,11 +55,11 @@
       &nbsp;
 
       {if ($form.list.page < $form.list.maxPages)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditGroupUsers"
 	 arg3="form[list][page]=`$form.list.nextPage`"
 	 arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="next &raquo;"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditGroupUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditGroupUsers"
 	 arg3="form[list][page]=`$form.list.maxPages`"
 	 arg4="groupId=`$AdminEditGroupUsers.group.id`"}">{g->text text="last &raquo;"}</a>
       {/if}
@@ -129,7 +129,7 @@
   <input type="text" id="giFormUsername"
    name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
   {g->autoComplete element="giFormUsername"}
-    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupUsername"
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername"
      arg3="prefix=__VALUE__" forJavascript="true"}
   {/g->autoComplete}
 

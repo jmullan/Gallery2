@@ -38,11 +38,11 @@ class MembersModule extends GalleryModule {
 	$this->setId('members');
 	$this->setName($gallery->i18n('Members'));
 	$this->setDescription($gallery->i18n('Members List and Profiles'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('loadSystemContent|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -89,7 +89,7 @@ class MembersModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Members'),
-				 'view' => 'members:AdminMembers')));
+				 'view' => 'members.AdminMembers')));
     }
 
     /**
@@ -100,7 +100,7 @@ class MembersModule extends GalleryModule {
 	$content = array();
 
 	$view = GalleryUtilities::getRequestVariables('view');
-	if ($view == 'members:MembersList' || $view == 'members:MembersProfile') {
+	if ($view == 'members.MembersList' || $view == 'members.MembersProfile') {
 	    return array(GalleryStatus::success(), array());
 	}
 
@@ -114,7 +114,7 @@ class MembersModule extends GalleryModule {
 	$links = array();
 	if ($canView) {
 	    $links[] = array('text' => $this->translate('Members List'),
-			     'params' => array('view' => 'members:MembersList',
+			     'params' => array('view' => 'members.MembersList',
 					       'return' => true));
 	}
 	$MembersSystemContent['links'] = $links;

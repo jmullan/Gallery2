@@ -34,7 +34,7 @@
 class NewAlbumControllerTest extends GalleryControllerTestCase {
 
     function NewAlbumControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'publishxp:NewAlbum');
+	$this->GalleryControllerTestCase($methodName, 'publishxp.NewAlbum');
     }
 
     function testNewAlbum() {
@@ -49,7 +49,7 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$entityCounter =& GalleryTestCase::getEntityCounter();
 	$albumId = $entityCounter->getRecentEntityId('GalleryAlbumItem');
-	$this->assertEquals(array('redirect' => array('view' => 'publishxp:SelectAlbum',
+	$this->assertEquals(array('redirect' => array('view' => 'publishxp.SelectAlbum',
 						      'albumId' => $albumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -82,7 +82,7 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][newAlbum]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'publishxp:NewAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'publishxp.NewAlbum'),
 				  'status' => array(),
 				  'error' => array('form[error][pathComponent][invalid]')),
 			    $results);
@@ -92,7 +92,7 @@ class NewAlbumControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][newAlbum]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'publishxp:NewAlbum'),
+	$this->assertEquals(array('delegate' => array('view' => 'publishxp.NewAlbum'),
 				  'status' => array(),
 				  'error' => array(
 				      'form[error][pathComponent][missing]',

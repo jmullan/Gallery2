@@ -223,7 +223,7 @@ class ItemEditPhoto extends ItemEditPlugin {
 	$ItemEditPhoto['editSizes']['can']['createResizes'] = isset($toolkit);
 
 	$template->setVariable('ItemEditPhoto', $ItemEditPhoto);
-	$template->setVariable('controller', 'core:ItemEditPhoto');
+	$template->setVariable('controller', 'core.ItemEditPhoto');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditPhoto.tpl');
     }
 

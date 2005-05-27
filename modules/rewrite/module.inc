@@ -39,11 +39,11 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.5'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.6'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -155,9 +155,9 @@ class RewriteModule extends GalleryModule {
 
 	$defaultRules = array('rewrite' => array(
 				  array('pattern' => 'v/%path%',
-					'match' => 'core:ShowItem'),
+					'match' => 'core.ShowItem'),
 				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-					'match' => 'core:DownloadItem')));
+					'match' => 'core.DownloadItem')));
 
 	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($defaultRules, $this);
 	if ($ret->isError()) {
@@ -190,14 +190,14 @@ class RewriteModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		    array(array('name' => $this->translate('URL Rewrite'),
-			    'view' => 'rewrite:AdminRewrite')));
+			    'view' => 'rewrite.AdminRewrite')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'rewrite:SetupRewrite';
+	return 'rewrite.SetupRewrite';
     }
 
     /**
@@ -208,7 +208,7 @@ class RewriteModule extends GalleryModule {
 
 	$rule = array();
 	$rule['comment'] = $this->translate('Show Item');
-	$rule['match'] = array('view' => 'core:ShowItem');
+	$rule['match'] = array('view' => 'core.ShowItem');
 	$rule['pattern'] = 'v/%path%';
 	$rule['keywords'] = array(
 	    'path' => array(
@@ -218,7 +218,7 @@ class RewriteModule extends GalleryModule {
 
 	$rule = array();
 	$rule['comment'] = $this->translate('Download Item');
-	$rule['match'] = array('view' => 'core:DownloadItem');
+	$rule['match'] = array('view' => 'core.DownloadItem');
 	$rule['pattern'] = 'd/%itemId%-%serialNumber%/%fileName%';
 	$rule['keywords'] = array(
 	    'serialNumber' => array(
@@ -233,7 +233,7 @@ class RewriteModule extends GalleryModule {
 	$rule = array();
 	$rule['comment'] = $this->translate('404 File Not Found');
 	$rule['pattern'] = '%path%';
-	$rule['queryString'] = array('view' => 'rewrite:FileNotFound');
+	$rule['queryString'] = array('view' => 'rewrite.FileNotFound');
 	$rule['keywords'] = array(
 	    'path' => array(
 		'pattern' => '(.+)'));
@@ -245,7 +245,7 @@ class RewriteModule extends GalleryModule {
 	$rule['pattern'] = '.';
 	$rule['locked'] = 1;
 	$rule['flags'] = array('F');
-	$rule['restrict'] = array('view' => 'core:DownloadItem');
+	$rule['restrict'] = array('view' => 'core.DownloadItem');
 	$rules[] = $rule;
 
 	return $rules;

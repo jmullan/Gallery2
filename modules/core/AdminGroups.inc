@@ -70,8 +70,8 @@ class AdminGroupsController extends GalleryController {
 	} else if (isset($form['action']['create'])) {
 
 	    /* Show the "create group" view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminCreateGroup';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminCreateGroup';
 	    
 	} else if (isset($form['action']['editFromText'])) {
 
@@ -81,8 +81,8 @@ class AdminGroupsController extends GalleryController {
 		$error[] = 'form[error][text][noSuchGroup]';
 	    } else {
 		/* Show the "edit group" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminEditGroup';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminEditGroup';
 		$redirect['groupId'] = $group->getId();
 	    }
 	    
@@ -106,8 +106,8 @@ class AdminGroupsController extends GalleryController {
 
 	    if (empty($error)) {
 		/* Show the "delete group" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminDeleteGroup';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminDeleteGroup';
 		$redirect['groupId'] = $group->getId();
 	    }
 		
@@ -131,8 +131,8 @@ class AdminGroupsController extends GalleryController {
 
 	    if (empty($error)) {
 		/* Show the "edit group's users" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminEditGroupUsers';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminEditGroupUsers';
 		$redirect['groupId'] = $group->getId();
 	    }
 		
@@ -141,8 +141,8 @@ class AdminGroupsController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminGroups';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminGroups';
 	}
 
 	$results['status'] = $status;
@@ -258,7 +258,7 @@ class AdminGroupsView extends GalleryView {
 	$AdminGroups['totalGroupCount'] = $totalGroupCount;
 	
 	$template->setVariable('AdminGroups', $AdminGroups);
-	$template->setVariable('controller', 'core:AdminGroups');
+	$template->setVariable('controller', 'core.AdminGroups');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminGroups.tpl'));

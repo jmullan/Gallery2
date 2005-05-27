@@ -34,7 +34,7 @@
 class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 
     function ItemMoveSingleControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemMoveSingle');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemMoveSingle');
     }
 
     function setUp() {
@@ -185,8 +185,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('moved' => 1),
 				  'error' => array()),
@@ -215,8 +215,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	clearstatcache();
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_rootAlbum->getId());
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('moved' => 1),
 				  'error' => array()),
@@ -248,8 +248,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][move]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][empty]')),
 			    $results);
@@ -264,8 +264,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_rootAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][selfMove]')),
 			    $results);
@@ -286,8 +286,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_childAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][selfMove]')),
 			    $results);
@@ -372,8 +372,8 @@ class ItemMoveSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemMoveSingle',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemMoveSingle',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('moved' => 1),
 				  'error' => array()),

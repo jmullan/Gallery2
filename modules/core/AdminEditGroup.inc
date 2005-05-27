@@ -60,14 +60,14 @@ class AdminEditGroupController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminGroups';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminGroups';
 	    
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminEditGroup';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminEditGroup';
 	    $redirect['groupId'] = $groupId;
 	    
 	} else if (isset($form['action']['save'])) {
@@ -111,8 +111,8 @@ class AdminEditGroupController extends GalleryController {
 		}
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminGroups';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminGroups';
 		$status['modifiedGroup'] = $group->getGroupName();
 	    }
 	}
@@ -120,8 +120,8 @@ class AdminEditGroupController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminEditGroup';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminEditGroup';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -164,7 +164,7 @@ class AdminEditGroupView extends GalleryView {
 	$AdminEditGroup = array();
 	$AdminEditGroup['group'] = $group->getMemberData();
 	$template->setVariable('AdminEditGroup', $AdminEditGroup);
-	$template->setVariable('controller', 'core:AdminEditGroup');
+	$template->setVariable('controller', 'core.AdminEditGroup');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminEditGroup.tpl'));

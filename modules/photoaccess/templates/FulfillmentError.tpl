@@ -13,7 +13,7 @@
     <p class="giDescription">
       {g->text text="An error occurred while sending your photos over to PhotoAccess.com for printing.  If this failure occurs more than once, please contact your system administrator for assistance."}
     </p>
-    <a href="{g->url arg1="view=cart:ViewCart"}">
+    <a href="{g->url arg1="view=cart.ViewCart"}">
       {g->text text="View your cart"}
     </a>
   </div>

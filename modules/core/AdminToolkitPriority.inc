@@ -68,8 +68,8 @@ class AdminToolkitPriorityController extends GalleryController {
 	} /* else $form['action']['reset'] */
 
 	$results['return'] = 0;
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'core:AdminToolkitPriority';
+	$results['redirect']['view'] = 'core.SiteAdmin';
+	$results['redirect']['subView'] = 'core.AdminToolkitPriority';
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -108,7 +108,7 @@ class AdminToolkitPriorityView extends GalleryView {
 
 	$AdminToolkitPriority = array('list' => $list, 'count' => count($list));
 	$template->setVariable('AdminToolkitPriority', $AdminToolkitPriority);
-	$template->setVariable('controller', 'core:AdminToolkitPriority');
+	$template->setVariable('controller', 'core.AdminToolkitPriority');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminToolkitPriority.tpl'));

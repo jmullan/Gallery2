@@ -82,8 +82,8 @@ class AdminLayoutsController extends GalleryController {
 		    $status['activated'] = $layout->getName();
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'config';
 	    } else if (isset($form['action']['install'])) {
 		$ret = $layout->installOrUpgrade();
@@ -91,8 +91,8 @@ class AdminLayoutsController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'config';
 		$status['installed'] = $layout->getName();
 	    } else if (isset($form['action']['upgrade'])) {
@@ -101,8 +101,8 @@ class AdminLayoutsController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'config';
 		$status['upgraded'] = $layout->getName();
 	    } else if (isset($form['action']['uninstall'])) {
@@ -114,8 +114,8 @@ class AdminLayoutsController extends GalleryController {
 		    $status['uninstalled'] = $layout->getName();
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'config';
 	    } else if (isset($form['action']['deactivate'])) {
 		list ($ret, $defaultLayoutId) =
@@ -133,8 +133,8 @@ class AdminLayoutsController extends GalleryController {
 		    $status['deactivated'] = $layout->getName();
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'config';
 	    } else if ($layout->isAdvancedSettings()) {
 		list ($ret, $error, $statusKey) = $layout->handleSettingsRequest($form);
@@ -143,8 +143,8 @@ class AdminLayoutsController extends GalleryController {
 		}
 		if (empty($error)) {
 		    /* Redirect upon success */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminLayouts';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminLayouts';
 		    $redirect['mode'] = 'editLayout';
 		    $redirect['layoutId'] = $layoutId;
 		    $status[$statusKey] = $layout->getName();
@@ -176,8 +176,8 @@ class AdminLayoutsController extends GalleryController {
 		    }
 
 		    /* Redirect upon success */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminLayouts';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminLayouts';
 		    $redirect['mode'] = 'editLayout';
 		    $redirect['layoutId'] = $layoutId;
 		    $status['savedLayout'] = $layout->getName();
@@ -190,8 +190,8 @@ class AdminLayoutsController extends GalleryController {
 		}
 	    } else if (isset($form['action']['undoLayout'])) {
 		/* Redirect back to ourselves to reset the form */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'editLayout';
 		$redirect['layoutId'] = $layoutId;
 		$status['restoredLayout'] = $layout->getName();
@@ -218,8 +218,8 @@ class AdminLayoutsController extends GalleryController {
 		}
 
 		/* Redirect upon success */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminLayouts';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminLayouts';
 		$redirect['mode'] = 'defaults';
 		$status['savedDefaults'] = 1;
 	    }
@@ -228,8 +228,8 @@ class AdminLayoutsController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminLayouts';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminLayouts';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -339,14 +339,14 @@ class AdminLayoutsView extends GalleryView {
 			if (empty($status['version'])) {
 			    $entry['action'][] =
 				array('text' => $module->translate('install'),
-				      'params' => array('controller' => 'core:AdminLayouts',
+				      'params' => array('controller' => 'core.AdminLayouts',
 							'layoutId' => $id,
 							'form[action][install]' => 1));
 			    $entry['state'] = 'install';
 			} else {
 			    $entry['action'][] =
 				array('text' => $module->translate('upgrade'),
-				      'params' => array('controller' => 'core:AdminLayouts',
+				      'params' => array('controller' => 'core.AdminLayouts',
 							'layoutId' => $id,
 							'form[action][upgrade]' => 1));
 			    $entry['state'] = 'upgrade';
@@ -354,12 +354,12 @@ class AdminLayoutsView extends GalleryView {
 		    } else {
 			$entry['action'][] =
 			    array('text' => $module->translate('activate'),
-				  'params' => array('controller' => 'core:AdminLayouts',
+				  'params' => array('controller' => 'core.AdminLayouts',
 						    'layoutId' => $id,
 						    'form[action][activate]' => 1));
 			$entry['action'][] =
 			    array('text' => $module->translate('uninstall'),
-				  'params' => array('controller' => 'core:AdminLayouts',
+				  'params' => array('controller' => 'core.AdminLayouts',
 						    'layoutId' => $id,
 						    'form[action][uninstall]' => 1));
 		    }
@@ -368,7 +368,7 @@ class AdminLayoutsView extends GalleryView {
 		    if ($id != $defaultLayoutId) {
 			$entry['action'][] =
 			    array('text' => $module->translate('deactivate'),
-				  'params' => array('controller' => 'core:AdminLayouts',
+				  'params' => array('controller' => 'core.AdminLayouts',
 						    'layoutId' => $id,
 						    'form[action][deactivate]' => 1));
 		    }
@@ -489,7 +489,7 @@ class AdminLayoutsView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminLayouts', $AdminLayouts);
-	$template->setVariable('controller', 'core:AdminLayouts');
+	$template->setVariable('controller', 'core.AdminLayouts');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminLayouts.tpl'));

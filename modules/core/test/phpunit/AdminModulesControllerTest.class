@@ -34,7 +34,7 @@
 class AdminModulesControllerTest extends GalleryControllerTestCase {
 
     function AdminModulesControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminModules');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminModules');
     }
 
     function setUp() {
@@ -56,8 +56,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array('installed' => 'AdminModules Controller Test',
 						    'autoConfigured' => true),
 				  'error' => array()),
@@ -76,8 +76,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array('upgraded' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
@@ -95,8 +95,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->_testModule->_needsConfiguration = false;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array('activated' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
@@ -123,8 +123,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->_testModule->_isActive = true;
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array('deactivated' => 'AdminModules Controller Test'),
 				  'error' => array()),
 			    $results);
@@ -138,8 +138,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->_testModule->_isActive = false;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -153,8 +153,8 @@ class AdminModulesControllerTest extends GalleryControllerTestCase {
 	$this->_testModule->_isActive = true;
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModulesVerifyUninstall',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModulesVerifyUninstall',
 						      'moduleId' => 'AdminModulesControllerTest'),
 				  'status' => array('uninstalled' => 'AdminModules Controller Test'),
 				  'error' => array()),

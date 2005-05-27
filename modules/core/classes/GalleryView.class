@@ -103,12 +103,12 @@ class GalleryView {
      * Load a view
      *
      * Be very security conscious about checking the inputs for possible
-     * misuse. The view name is in the format <module>:<classname>, where
+     * misuse. The view name is in the format <module>.<classname>, where
      * - <module> is the module the view belongs to
      * - <classname> is the name of the .inc-file to be loaded. The class
      *   that is loaded is the <classname>View, that must extend GalleryView class
      *
-     * @param string a view name in the format <module>:<classname> (eg 'core:ShowItem')
+     * @param string a view name in the format <module>.<classname> (eg 'core.ShowItem')
      * @return array object GalleryStatus a status code
      *               object GalleryView a view
      * @static
@@ -116,7 +116,8 @@ class GalleryView {
     function loadView($viewName) {
 	global $gallery;
 
-	if (preg_match('/^(\w+):(\w+)$/', $viewName, $regs) == 1) {
+	/* Continue to support old style : separator for a while */
+	if (preg_match('/^(\w+)[.:](\w+)$/', $viewName, $regs) == 1) {
 	    $module = $regs[1];
 	    $class = $regs[2];
 	} else {
@@ -152,7 +153,8 @@ class GalleryView {
 
 	    $platform = $gallery->getPlatform();
 	    if (!$platform->file_exists($fileName)) {
-		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__, $fileName), null);
+		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
+						  $fileName), null);
 	    }
 
 	    /*
@@ -167,14 +169,14 @@ class GalleryView {
 
 	    if (!class_exists($viewClassName)) {
 		return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-						  "Class $viewClassName not defined in $viewName"), null);
+			     "Class $viewClassName not defined in $viewName"), null);
 	    }
 	}
 
 	$view = new $viewClassName();
 	if (!GalleryUtilities::isA($view, 'GalleryView')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
-					      "Class $viewClassName is not a subclass of GalleryView"), null);
+			 "Class $viewClassName is not a subclass of GalleryView"), null);
 	}
 
 	/* Tell the view what module its in */

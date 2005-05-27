@@ -34,7 +34,7 @@
 class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
     function AdminEditGroupUsersControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminEditGroupUsers');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminEditGroupUsers');
     }
 
     function setUp() {
@@ -66,8 +66,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -88,8 +88,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
 				  'status' => array('removedUsers' => 1,
 						    'removedUser' => $this->_user->getUserName()),
@@ -122,8 +122,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
 				  'status' => array('removedUsers' => 2, 'removedUser' => 2),
 				  'error' => array()),
@@ -160,8 +160,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers'),
 				  'status' => array(),
 				  'error' => array('form[error][list][cantRemoveSelf]')),
 			    $results);
@@ -182,8 +182,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers',
 						      'groupId' => $this->_group->getId()),
 				  'status' => array('addedUser' => $this->_user->getUserName()),
 				  'error' => array()),
@@ -197,8 +197,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers'),
 				  'status' => array(),
 				  'error' => array('form[error][text][userName][invalid]')),
 			    $results);
@@ -211,8 +211,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers'),
 				  'status' => array(),
 				  'error' => array('form[error][text][userName][missing]')),
 			    $results);
@@ -232,8 +232,8 @@ class AdminEditGroupUsersControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroupUsers'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroupUsers'),
 				  'status' => array(),
 				  'error' => array('form[error][text][userName][alreadyInGroup]')),
 			    $results);

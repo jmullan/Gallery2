@@ -39,11 +39,11 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setName($gallery->i18n('Thumbnail Page'));
 	$this->setDescription(
 	    $gallery->i18n('Select page/frame from a multipage file or movie for the thumbnail'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -103,8 +103,8 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
 
 	if (empty($page) && empty($movie)) {
 	    /* Can't activate unless there's already toolkit support */
-	    return array(GalleryStatus::success(), array('view' => 'core:SiteAdmin',
-							 'subView' => 'thumbpage:CantActivate'));
+	    return array(GalleryStatus::success(), array('view' => 'core.SiteAdmin',
+							 'subView' => 'thumbpage.CantActivate'));
 	} else {
 	    $ret = $this->setParameter('pageTypes', implode('|', $page));
 	    if ($ret->isError()) {
@@ -128,7 +128,7 @@ class ThumbPageModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return 'thumbpage:CantActivate';
+	return 'thumbpage.CantActivate';
     }
 
     /**

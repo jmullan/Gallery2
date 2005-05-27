@@ -44,7 +44,7 @@ require_once(dirname(__FILE__) . '/../../classes/QuotasMap.class');
 class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 
     function AdminEditGroupQuotaControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'quotas:AdminEditGroupQuota');
+	$this->GalleryControllerTestCase($methodName, 'quotas.AdminEditGroupQuota');
     }
 
     function testCancel() {
@@ -57,8 +57,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -75,8 +75,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminEditGroupQuota',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminEditGroupQuota',
 						      'groupId' => $group->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -100,8 +100,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('modifiedGroup' => $group->getGroupName()),
 				  'error' => array()),
 			    $results);
@@ -138,8 +138,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 2048);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminEditGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminEditGroupQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaUnit][missing]')),
 			    $results);
@@ -149,8 +149,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminEditGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminEditGroupQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]')),
 			    $results);
@@ -177,8 +177,8 @@ class AdminEditGroupQuotaControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminEditGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminEditGroupQuota'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

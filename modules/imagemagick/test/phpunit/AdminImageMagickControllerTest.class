@@ -34,7 +34,7 @@
 class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
     function AdminImageMagickControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'imagemagick:AdminImageMagick');
+	$this->GalleryControllerTestCase($methodName, 'imagemagick.AdminImageMagick');
     }
 
     function setUp() {
@@ -63,8 +63,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imagemagick:AdminImageMagick'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imagemagick.AdminImageMagick'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -80,8 +80,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imagemagick:AdminImageMagick'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imagemagick.AdminImageMagick'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -91,8 +91,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -110,8 +110,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imagemagick:AdminImageMagick'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imagemagick.AdminImageMagick'),
 				  'status' => array(),
 				  'error' => array('form[error][path][testError]')),
 				  $results);
@@ -129,8 +129,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imagemagick:AdminImageMagick'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imagemagick.AdminImageMagick'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
@@ -148,8 +148,8 @@ class AdminImageMagickControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'imagemagick:AdminImageMagick'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'imagemagick.AdminImageMagick'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);

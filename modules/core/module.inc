@@ -38,14 +38,14 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
 	$this->setGalleryVersion('2.0-beta-3+');
-	$this->setVersion('0.9.20'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
+	$this->setVersion('0.9.21'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|loadSystemContent|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
 	$this->setRequiredCoreApi(array(5, 8));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -108,8 +108,8 @@ class CoreModule extends GalleryModule {
 	    if ($isAlbum && isset($permissions['core.addDataItem'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add items'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAdd',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemAdd',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -119,8 +119,8 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate(array('text' => 'edit %s',
 							   'arg1' => $itemTypeNames[1])),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEdit',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemEdit',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -144,8 +144,8 @@ class CoreModule extends GalleryModule {
 		    if ($count > 0) {
 			$links[$item->getId()][] =
 			    array('text' => $this->translate('create link'),
-				  'params' => array('view' => 'core:ItemAdmin',
-						    'subView' => 'core:ItemCreateLink',
+				  'params' => array('view' => 'core.ItemAdmin',
+						    'subView' => 'core.ItemCreateLink',
 						    'itemId' => $item->getParentId(),
 						    'selectedId' => $item->getId(),
 						    'return' => 1));
@@ -156,8 +156,8 @@ class CoreModule extends GalleryModule {
 	    if ($isAlbum && isset($permissions['core.addAlbumItem'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('add album'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemAddAlbum',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemAddAlbum',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -165,8 +165,8 @@ class CoreModule extends GalleryModule {
 	    if (isset($permissions['core.changePermissions'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit permissions'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemPermissions',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemPermissions',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -175,8 +175,8 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate(array('text' => 'delete %s',
 							   'arg1' => $itemTypeNames[1])),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemDelete',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemDelete',
 					    'itemId' => $item->getParentId(),
 					    'selectedId' => $item->getId(),
 					    'return' => 1));
@@ -186,8 +186,8 @@ class CoreModule extends GalleryModule {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate(array('text' => 'move %s',
 							   'arg1' => $itemTypeNames[1])),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemMove',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemMove',
 					    'itemId' => $item->getParentId(),
 					    'selectedId' => $item->getId(),
 					    'return' => 1));
@@ -198,8 +198,8 @@ class CoreModule extends GalleryModule {
 		    $childCounts[$item->getId()] > 0) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('edit captions'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemEditCaptions',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemEditCaptions',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -208,8 +208,8 @@ class CoreModule extends GalleryModule {
 		    isset($permissions['core.edit'])) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('make highlight'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemMakeHighlight',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemMakeHighlight',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -219,8 +219,8 @@ class CoreModule extends GalleryModule {
 		    $childCounts[$item->getId()] > 1) {
 		$links[$item->getId()][] =
 		    array('text' => $this->translate('reorder items'),
-			  'params' => array('view' => 'core:ItemAdmin',
-					    'subView' => 'core:ItemReorder',
+			  'params' => array('view' => 'core.ItemAdmin',
+					    'subView' => 'core.ItemReorder',
 					    'itemId' => $item->getId(),
 					    'return' => 1));
 	    }
@@ -248,7 +248,7 @@ class CoreModule extends GalleryModule {
 
 	if ($isAdmin) {
 	    $links[] = array('text' => $this->translate('Site Admin'),
-			     'params' => array('view' => 'core:SiteAdmin',
+			     'params' => array('view' => 'core.SiteAdmin',
 					       'return' => 1));
 	}
 
@@ -256,17 +256,17 @@ class CoreModule extends GalleryModule {
 	    if ($gallery->getActiveUserId() == $param['id.anonymousUser']) {
 		if ($param['misc.login'] != 'form') {
 		    $links[] = array('text' => $this->translate('Login'),
-				     'params' => array('view' => 'core:UserAdmin',
-						       'subView' => 'core:UserLogin',
+				     'params' => array('view' => 'core.UserAdmin',
+						       'subView' => 'core.UserLogin',
 						       'return' => 1));
 		}
 	    } else {
 		$links[] = array('text' => $this->translate('Your Account'),
-				 'params' => array('view' => 'core:UserAdmin',
-						   'subView' => 'core:UserPreferences',
+				 'params' => array('view' => 'core.UserAdmin',
+						   'subView' => 'core.UserPreferences',
 						   'return' => 1));
 		$links[] = array('text' => $this->translate('Logout'),
-				 'params' => array('controller' => 'core:Logout',
+				 'params' => array('controller' => 'core.Logout',
 						   'return' => 1));
 	    }
 	}
@@ -326,19 +326,19 @@ class CoreModule extends GalleryModule {
      */
     function getSiteAdminViews() {
 	$data = array(array('name' => $this->translate('General'),
-			    'view' => 'core:AdminCore'),
+			    'view' => 'core.AdminCore'),
 		      array('name' => $this->translate('Modules'),
-			    'view' => 'core:AdminModules'),
+			    'view' => 'core.AdminModules'),
 		      array('name' => $this->translate('Layouts and Themes'),
-			    'view' => 'core:AdminLayouts',
+			    'view' => 'core.AdminLayouts',
 			    'group' => 'display',
 			    'groupLabel' => $this->translate('Display')),
 		      array('name' => $this->translate('Users'),
-			    'view' => 'core:AdminUsers'),
+			    'view' => 'core.AdminUsers'),
 		      array('name' => $this->translate('Groups'),
-			    'view' => 'core:AdminGroups'),
+			    'view' => 'core.AdminGroups'),
 		      array('name' => $this->translate('Maintenance'),
-			    'view' => 'core:AdminMaintenance'),
+			    'view' => 'core.AdminMaintenance'),
 		      );
 	list ($ret, $list) = GalleryCoreApi::getRedundantToolkitPriorities();
 	if ($ret->isError()) {
@@ -346,7 +346,7 @@ class CoreModule extends GalleryModule {
 	}
 	if (!empty($list)) {
 	    $data[] = array('name' => $this->translate('Toolkit Priority'),
-			    'view' => 'core:AdminToolkitPriority',
+			    'view' => 'core.AdminToolkitPriority',
 			    'group' => 'toolkits',
 			    'groupLabel' => $this->translate('Graphics Toolkits'));
 	}
@@ -369,12 +369,12 @@ class CoreModule extends GalleryModule {
 
 	    if ($user->getId() != $anonymousUserId) {
 		$views[] = array('name' => $this->translate('Account Settings'),
-				 'view' => 'core:UserPreferences');
+				 'view' => 'core.UserPreferences');
 		$views[] = array('name' => $this->translate('Change Password'),
-				 'view' => 'core:UserChangePassword');
+				 'view' => 'core.UserChangePassword');
 	    } else {
 		$views[] = array('name' => $this->translate('Login'),
-				 'view' => 'core:UserLogin');
+				 'view' => 'core.UserLogin');
 	    }
 	}
 
@@ -429,19 +429,19 @@ class CoreModule extends GalleryModule {
 	    if ($isAlbum) {
 		if ($childCount > 1) {
 		    $views[] = array('name' => $this->translate('Reorder Items'),
-				     'view' => 'core:ItemReorder');
+				     'view' => 'core.ItemReorder');
 		}
 	    }
 
 	    /* Edit view for all item types */
 	    $views[] = array('name' => $this->translate(
 					array('text' => 'Edit %s', 'arg1' => $itemTypeNames[0])),
-			     'view' => 'core:ItemEdit');
+			     'view' => 'core.ItemEdit');
 
 	    if (!empty($parentId) && $hasThumb && $parentId != $rootId
 		    && isset($parentPermissions['core.edit'])) {
 		$views[] = array('name' => $this->translate('Make Highlight'),
-				 'view' => 'core:ItemMakeHighlight');
+				 'view' => 'core.ItemMakeHighlight');
 	    }
 	}
 
@@ -464,7 +464,7 @@ class CoreModule extends GalleryModule {
 		if ($count > 0) {
 		    $views[] = array('name' => $this->translate(
 					array('text' => 'Link %s', 'arg1' => $itemTypeNames[0])),
-				     'view' => 'core:ItemCreateLinkSingle');
+				     'view' => 'core.ItemCreateLinkSingle');
 		}
 	    }
 	}
@@ -473,30 +473,30 @@ class CoreModule extends GalleryModule {
 	    if ($item->getId() != $rootId) {
 		$views[] = array('name' => $this->translate(
 					array('text' => 'Delete %s', 'arg1' => $itemTypeNames[0])),
-				 'view' => 'core:ItemDeleteSingle');
+				 'view' => 'core.ItemDeleteSingle');
 
 		$views[] = array('name' => $this->translate(
 					array('text' => 'Move %s', 'arg1' => $itemTypeNames[0])),
-				 'view' => 'core:ItemMoveSingle');
+				 'view' => 'core.ItemMoveSingle');
 	    }
 	}
 
 	if (isset($permissions['core.changePermissions'])) {
 	    $views[] = array('name' => $this->translate('Edit Permissions'),
-			     'view' => 'core:ItemPermissions');
+			     'view' => 'core.ItemPermissions');
 	}
 
 	if (isset($permissions['core.addDataItem'])) {
 	    if ($item->getCanContainChildren()) {
 		$views[] = array('name' => $this->translate('Add Items'),
-				 'view' => 'core:ItemAdd');
+				 'view' => 'core.ItemAdd');
 	    }
 	}
 
 	if (isset($permissions['core.addAlbumItem'])) {
 	    if ($item->getCanContainChildren()) {
 		$views[] = array('name' => $this->translate('Add Album'),
-				 'view' => 'core:ItemAddAlbum');
+				 'view' => 'core.ItemAddAlbum');
 	    }
 	}
 

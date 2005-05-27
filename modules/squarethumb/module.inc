@@ -41,11 +41,11 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -101,8 +101,8 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	} else {
 	    /* Can't activate unless there's a toolkit to leech off of */
 	    return array(GalleryStatus::success(),
-			 array('view' => 'core:SiteAdmin',
-			       'subView' => 'squarethumb:CantActivate'));
+			 array('view' => 'core.SiteAdmin',
+			       'subView' => 'squarethumb.CantActivate'));
 	}
 
 	list ($ret, $redirect) = parent::activate();
@@ -204,7 +204,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return 'squarethumb:CantActivate';
+	return 'squarethumb.CantActivate';
     }
 }
 ?>

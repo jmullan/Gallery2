@@ -68,13 +68,13 @@ class DeleteCommentController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:ItemAdmin';
-	    $redirect['subView'] = 'comment:CommentChangeConfirmation';
+	    $redirect['view'] = 'core.ItemAdmin';
+	    $redirect['subView'] = 'comment.CommentChangeConfirmation';
 	    $redirect['itemId'] = $itemId;
 	    $status['deleted'] = 1;
 	} else if (isset($form['action']['cancel'])) {
 	    /* Where to go on a cancel?  Go to item admin.*/
-	    $redirect['view'] = 'core:ItemAdmin';
+	    $redirect['view'] = 'core.ItemAdmin';
 	    $redirect['itemId'] = (int)$itemId;
 	}
 
@@ -83,8 +83,8 @@ class DeleteCommentController extends GalleryController {
 	    $results['return'] = 1;
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'comment:DeleteComment';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'comment.DeleteComment';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -144,7 +144,7 @@ class DeleteCommentView extends GalleryView {
 	$DeleteComment['commenter'] = $commenter->getMemberData();
 
 	$template->setVariable('DeleteComment', $DeleteComment);
-	$template->setVariable('controller', 'comment:DeleteComment');
+	$template->setVariable('controller', 'comment.DeleteComment');
 	
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/comment/templates/DeleteComment.tpl'));

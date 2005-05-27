@@ -73,8 +73,8 @@ class PanoramaSiteAdminController extends GalleryController {
 
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'panorama:PanoramaSiteAdmin';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'panorama.PanoramaSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -114,7 +114,7 @@ class PanoramaSiteAdminView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$template->setVariable('controller', 'panorama:PanoramaSiteAdmin');
+	$template->setVariable('controller', 'panorama.PanoramaSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/panorama/templates/PanoramaSiteAdmin.tpl'));
     }

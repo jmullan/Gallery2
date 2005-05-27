@@ -92,28 +92,28 @@ class AdminDcrawController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['view'] = 'core.SiteAdmin';
 		if ($isActive) {
-		    $redirect['subView'] = 'dcraw:AdminDcraw';
+		    $redirect['subView'] = 'dcraw.AdminDcraw';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core.AdminModules';
 		    $status['configured'] = 'dcraw';
 		}
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'dcraw:AdminDcraw';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'dcraw.AdminDcraw';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'dcraw:AdminDcraw';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'dcraw.AdminDcraw';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -201,7 +201,7 @@ class AdminDcrawView extends GalleryView {
 	}
 
 	$template->setVariable('AdminDcraw', $AdminDcraw);
-	$template->setVariable('controller', 'dcraw:AdminDcraw');
+	$template->setVariable('controller', 'dcraw.AdminDcraw');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/dcraw/templates/AdminDcraw.tpl'));

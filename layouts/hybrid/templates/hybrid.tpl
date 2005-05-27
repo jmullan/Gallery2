@@ -152,13 +152,13 @@
       <td class="i">
 	{if isset($it.image)}
 	  {if isset($it.renderItem)}
-	    <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
+	    <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core.ShowItem"
 	     arg2="itemId=`$it.id`" arg3="renderId=`$it.image.id`"}"></a>
 	  {else}
-	    <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:DownloadItem"
+	    <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core.DownloadItem"
 	     arg2="itemId=`$it.image.id`" arg3="serialNumber=`$it.image.serialNumber`"}"></a>
 	  {/if}
-	  <a id="info_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
+	  <a id="info_{$it.imageIndex}" href="{g->url arg1="view=core.ShowItem"
 	   arg2="itemId=`$it.id`" arg3="detail=1"}"></a>
 	  {capture name="link"}
 	    <a href="" onclick="image_show({$it.imageIndex});return false">
@@ -180,7 +180,7 @@
 	  {/if}
 	{elseif ($it.canContainChildren)}
 	  {capture name="link"}
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$it.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$it.id`"}">
 	  {/capture}
 	  {if isset($it.thumbnail) && isset($layout.albumFrame)}
 	    {g->block type="imageframe" frame=$layout.albumFrame}
@@ -198,7 +198,7 @@
 	    </a>
 	  {/if}
 	{else}
-	  <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$it.id`"}">
+	  <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$it.id`"}">
 	    {if isset($it.thumbnail)}
 	      {g->image item=$it image=$it.thumbnail class="giThumbnail"}
 	    {else}

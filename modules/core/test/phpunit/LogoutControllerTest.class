@@ -34,7 +34,7 @@
 class LogoutControllerTest extends GalleryControllerTestCase {
 
     function LogoutControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:Logout');
+	$this->GalleryControllerTestCase($methodName, 'core.Logout');
     }
 
     function setUp() {
@@ -59,7 +59,7 @@ class LogoutControllerTest extends GalleryControllerTestCase {
 	global $gallery;
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

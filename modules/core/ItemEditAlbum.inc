@@ -466,7 +466,7 @@ class ItemEditAlbum extends ItemEditPlugin {
 	$ItemEditAlbum['orderDirectionList'] = $orderDirectionList;
 
 	$template->setVariable('ItemEditAlbum', $ItemEditAlbum);
-	$template->setVariable('controller', 'core:ItemEditAlbum');
+	$template->setVariable('controller', 'core.ItemEditAlbum');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditAlbum.tpl');
     }
 

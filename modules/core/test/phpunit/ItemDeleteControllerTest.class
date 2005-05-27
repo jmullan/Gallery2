@@ -34,7 +34,7 @@
 class ItemDeleteControllerTest extends GalleryControllerTestCase {
 
     function ItemDeleteControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemDelete');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemDelete');
     }
 
     function setUp() {
@@ -69,7 +69,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $album->getParentId()),
 				  'status' => array('deleted' => array('count' => 1)),
 				  'error' => array()),
@@ -111,8 +111,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemDelete',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemDelete',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 2),
 				  'status' => array(),
@@ -148,8 +148,8 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemDelete',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemDelete',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 1),
 				  'status' => array(),
@@ -187,7 +187,7 @@ class ItemDeleteControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ShowItem',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ShowItem',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('deleted' => array('count' => 5)),
 				  'error' => array()),

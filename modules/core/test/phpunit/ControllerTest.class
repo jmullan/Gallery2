@@ -46,7 +46,7 @@ class ControllerTest extends GalleryTestCase {
 
     function testLoadControllerSuccess() {
 	require_once(dirname(__FILE__) . '/../../classes/GalleryController.class');
-	list ($ret, $controller) = GalleryController::loadController('core:ItemEdit');
+	list ($ret, $controller) = GalleryController::loadController('core.ItemEdit');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -55,7 +55,8 @@ class ControllerTest extends GalleryTestCase {
 
     function testLoadControllerFail() {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryController.class');
-	list ($ret, $controller) = GalleryController::loadController('controllertest:SomeRandomController');
+	list ($ret, $controller) =
+	    GalleryController::loadController('controllertest.SomeRandomController');
 	if ($ret->isError() && $ret->getErrorCode() & ERROR_PERMISSION_DENIED) {
 	    // this is what we expect
 	} else {
@@ -68,7 +69,7 @@ class ControllerTest extends GalleryTestCase {
 	 * We can load the config controller even though the module is deactivated
 	 * because we're an admin.
 	 */
-	list ($ret, $controller) = GalleryController::loadController('controllertest:ConfigView');
+	list ($ret, $controller) = GalleryController::loadController('controllertest.ConfigView');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -88,7 +89,7 @@ class ControllerTestModule {
     }
 
     function getConfigurationView() {
-	return 'controllertest:ConfigView';
+	return 'controllertest.ConfigView';
     }
 }
 

@@ -190,7 +190,7 @@ class SlideshowTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $view) = GalleryView::loadView('slideshow:Slideshow');
+	list ($ret, $view) = GalleryView::loadView('slideshow.Slideshow');
 	if ($ret->isError() || !isset($view)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

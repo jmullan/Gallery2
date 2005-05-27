@@ -10,7 +10,7 @@
   {foreach from=$WatermarkOption.watermarks item=watermark}
   WatermarkOption_watermarkUrlMap[{$watermark.id}] = new Array;
   WatermarkOption_watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true"
-    arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
+    arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}';
   WatermarkOption_watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
   WatermarkOption_watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
   {/foreach}
@@ -36,7 +36,7 @@
   <p class="giDescription">
     {g->text text="Choose a watermark to apply to the images you add."}
     <br/>
-    <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=watermark:UserWatermarks"}">
+    <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=watermark.UserWatermarks"}">
       {g->text text="Edit your watermarks"}
     </a>
   </p>

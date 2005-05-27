@@ -12,7 +12,7 @@
     {if ($ExifItemDetails.mode == 'summary')}
       {g->text text="summary"}
     {else}
-      <a href="{g->url arg1="controller=exif:SwitchDetailMode" arg2="mode=summary"
+      <a href="{g->url arg1="controller=exif.SwitchDetailMode" arg2="mode=summary"
        arg3="return=true"}">
 	{g->text text="summary"}
       </a>
@@ -21,7 +21,7 @@
     {if ($ExifItemDetails.mode == 'detailed')}
       {g->text text="details"}
     {else}
-      <a href="{g->url arg1="controller=exif:SwitchDetailMode" arg2="mode=detailed"
+      <a href="{g->url arg1="controller=exif.SwitchDetailMode" arg2="mode=detailed"
        arg3="return=true"}">
 	{g->text text="details"}
       </a>

@@ -34,7 +34,7 @@
 class AdminGdControllerTest extends GalleryControllerTestCase {
 
     function AdminGdControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'gd:AdminGd');
+	$this->GalleryControllerTestCase($methodName, 'gd.AdminGd');
     }
 
     function setUp() {
@@ -59,8 +59,8 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'gd:AdminGd'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'gd.AdminGd'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -74,8 +74,8 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'gd:AdminGd'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'gd.AdminGd'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -85,8 +85,8 @@ class AdminGdControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

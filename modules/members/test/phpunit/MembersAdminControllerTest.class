@@ -35,7 +35,7 @@
 class MembersAdminControllerTest extends GalleryControllerTestCase {
 
     function MembersAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'members:AdminMembers');
+	$this->GalleryControllerTestCase($methodName, 'members.AdminMembers');
     }
 
     function setUp() {
@@ -54,8 +54,8 @@ class MembersAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'members:AdminMembers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'members.AdminMembers'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -69,8 +69,8 @@ class MembersAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'members:AdminMembers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'members.AdminMembers'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

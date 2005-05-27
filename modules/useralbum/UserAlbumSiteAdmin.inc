@@ -60,8 +60,8 @@ class UserAlbumSiteAdminController extends GalleryController {
 	} /* else $form['action']['reset'] */
 
 	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'useralbum:UserAlbumSiteAdmin';
+	$results['redirect']['view'] = 'core.SiteAdmin';
+	$results['redirect']['subView'] = 'useralbum.UserAlbumSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -121,7 +121,7 @@ class UserAlbumSiteAdminView extends GalleryView {
 	);
 
 	$template->setVariable('UserAlbumSiteAdmin', $UserAlbumSiteAdmin);
-	$template->setVariable('controller', 'useralbum:UserAlbumSiteAdmin');
+	$template->setVariable('controller', 'useralbum.UserAlbumSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/useralbum/templates/UserAlbumSiteAdmin.tpl'));
     }

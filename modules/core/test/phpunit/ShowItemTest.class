@@ -54,7 +54,7 @@ class ShowItemTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_view) = GalleryView::loadView('core:ShowItem');
+	list ($ret, $this->_view) = GalleryView::loadView('core.ShowItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -92,7 +92,7 @@ class ShowItemTest extends GalleryTestCase {
 
     function testViewCountItem() {
 	/*
-	 * If we change view-count back to counting data items on core:DownloadItem
+	 * If we change view-count back to counting data items on core.DownloadItem
 	 * instead of ShowItem then this test will need to be updated.
 	 */
 	$this->_testViewCount($this->_item->getId());

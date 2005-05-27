@@ -9,12 +9,12 @@
     {g->text text="These are album-specific custom field settings. Common fields are available on all items; Album and Photo fields can be assigned only to items of the appropriate type."}
   </p>
   <p class="giDescription">
-    <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
+    <a href="{g->url arg1="controller=customfield.CustomFieldItemAdmin"
                      arg2="cfAdmin=-1" arg3="itemId=`$form.itemId`" arg4="return=true"}">
       {g->text text="Edit custom field values for this album"}
     </a>
     <br/>
-    <a href="{g->url arg1="controller=customfield:CustomFieldItemAdmin"
+    <a href="{g->url arg1="controller=customfield.CustomFieldItemAdmin"
                      arg2="cfAdmin=-2" arg3="itemId=`$form.itemId`" arg4="return=true"}"
        onclick="return confirm('{g->text text="WARNING: Values for all fields that do not also exist in the global settings will be deleted for this album and its items!"}')">
       {g->text text="Revert to global custom field settings for this album"}

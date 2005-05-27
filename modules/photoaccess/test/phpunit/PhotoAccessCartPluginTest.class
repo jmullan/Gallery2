@@ -205,12 +205,12 @@ class PhotoAccessCartPluginTestPlatform {
 	 * a session id from the photoaccess server, then it will make a POST for each photo in the cart.
 	 */
 	$xml = '<add-cart-request cobrand="CB_GP" pricelist="1" ' .
-	    'entry-page="/buy/anonCart.jsp" return-url="view=cart:ViewCart">';
+	    'entry-page="/buy/anonCart.jsp" return-url="view=cart.ViewCart">';
 	for ($i = 0; $i < sizeof($this->_test->_items); $i++) {
 	    $xml .= sprintf('<image id="%d" url="%s" thumb-url="%s" height="%d" width="%d"/>',
 			    $this->_test->_sourceIds[$i],
-			    'view=core:DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
-			    'view=core:DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
+			    'view=core.DownloadItem/itemId=' . $this->_test->_sourceIds[$i],
+			    'view=core.DownloadItem/itemId=' . $this->_test->_thumbIds[$i],
 			    0, 0);
 	}
 	$xml .= '</add-cart-request>';

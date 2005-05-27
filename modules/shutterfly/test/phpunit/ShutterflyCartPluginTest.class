@@ -80,7 +80,7 @@ class ShutterflyCartPluginTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(array('view' => 'shutterfly:PrintPhotos', 'return' => 1), $urlParams);
+	$this->assertEquals(array('view' => 'shutterfly.PrintPhotos', 'return' => 1), $urlParams);
 
 	$session =& $gallery->getSession();
 	$printCart = $session->get('shutterfly.cart');

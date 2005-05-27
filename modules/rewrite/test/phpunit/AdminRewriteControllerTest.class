@@ -36,7 +36,7 @@
 class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
     function AdminRewriteControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'rewrite:AdminRewrite');
+	$this->GalleryControllerTestCase($methodName, 'rewrite.AdminRewrite');
     }
 
     function setUp() {
@@ -97,20 +97,20 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%path%');
 	GalleryUtilities::putRequestVariable(
-		'form[shortUrls][rewrite][0][match]', 'core:ShowItem');
+		'form[shortUrls][rewrite][0][match]', 'core.ShowItem');
 		
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][1][active]', 'on');
 	GalleryUtilities::putRequestVariable(
 		'form[shortUrls][rewrite][1][pattern]', 'd/%itemId%-%serialNumber%/%fileName%');
 	GalleryUtilities::putRequestVariable(
-		'form[shortUrls][rewrite][1][match]', 'core:DownloadItem');
+		'form[shortUrls][rewrite][1][match]', 'core.DownloadItem');
 
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][active]', 'on');
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][2][pattern]', '%path%');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
 				  'status' => array('rulesSaved' => 1),
 				  'error' => array()),
@@ -118,9 +118,9 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
 	$activeRules = array( 'rewrite' => array(
 		array('pattern' => 'v/%path%',
-		      'match' => 'core:ShowItem'),
+		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core:DownloadItem'),
+		      'match' => 'core.DownloadItem'),
 		array('pattern' => '%path%')));
 	list($ret, $savedRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {
@@ -133,8 +133,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][saveRules]', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'rules'),
 				  'status' => array('rulesSaved' => 1),
 				  'error' => array()),
@@ -153,12 +153,12 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
     	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][active]', 'on');
 	GalleryUtilities::putRequestVariable('form[shortUrls][rewrite][0][pattern]', 'v/%badKeyword%');
 	GalleryUtilities::putRequestVariable(
-		'form[shortUrls][rewrite][0][match]', 'core:ShowItem');
+		'form[shortUrls][rewrite][0][match]', 'core.ShowItem');
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'rules',
-						      'view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite'),
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][badKeyword]')),
 			    $results, 'bad keyword');
@@ -180,8 +180,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'rules',
-						      'view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite'),
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][dupe][same/]')),
 			    $results, 'dupe');
@@ -205,8 +205,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'rules',
-						      'view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite'),
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][cantWrite][gallery]')),
 			    $results, 'bad file');
@@ -226,8 +226,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'rules',
-						      'view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite'),
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][empty][rewrite][0]')),
 			    $results, 'empty pattern');
@@ -248,8 +248,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[embedded][publicPath]', '/gallery2/');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'setup'),
 				  'status' => array('setupSaved' => 1),
 				  'error' => array()),
@@ -279,8 +279,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array('mode' => 'setup',
-						      'view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite'),
+						      'view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite'),
 				  'status' => array(),
 				  'error' => array('form[error][invalidDir]',
 				  		   'form[error][invalidPath]')),
@@ -308,8 +308,8 @@ class AdminRewriteControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[allow][2]', 'sub.example.net');
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'rewrite:AdminRewrite',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.AdminRewrite',
 						      'mode' => 'setup'),
 				  'status' => array('setupSaved' => 1),
 				  'error' => array()),

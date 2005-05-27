@@ -66,7 +66,7 @@ class NewAlbumController extends GalleryController {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
-		    $redirect['view'] = 'publishxp:SelectAlbum';
+		    $redirect['view'] = 'publishxp.SelectAlbum';
 		    $redirect['albumId'] = $newAlbum->getId();
 		}
 	    }
@@ -75,7 +75,7 @@ class NewAlbumController extends GalleryController {
         if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'publishxp:NewAlbum';
+	    $results['delegate']['view'] = 'publishxp.NewAlbum';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -141,7 +141,7 @@ class NewAlbumView extends GalleryView {
 	$NewAlbum['parents'] = $parents;
 
 	$template->setVariable('NewAlbum', $NewAlbum);
-	$template->setVariable('controller', 'publishxp:NewAlbum');
+	$template->setVariable('controller', 'publishxp.NewAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/publishxp/templates/NewAlbum.tpl'));

@@ -38,12 +38,12 @@ class OptionsController extends GalleryController {
 	$results = array();
 	if (isset($form['action']['setOptions'])) {
 	    /* No form processing/validation required so just continue the next page */
-	    $results['redirect']['view'] = 'publishxp:UploadItems';
+	    $results['redirect']['view'] = 'publishxp.UploadItems';
 	    $results['redirect']['stripExtensions'] = isset($form['stripExtensions']);
 	    $results['redirect']['setCaptions'] = isset($form['setCaptions']);
 	    $results['redirect']['albumId'] = $form['albumId'];
 	} else {
-	    $results['delegate']['view'] = 'publishxp:Options';
+	    $results['delegate']['view'] = 'publishxp.Options';
 	}
 	$results['status'] = array();
 	$results['error'] = array();

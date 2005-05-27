@@ -32,11 +32,11 @@ class SlideshowAppletModule extends GalleryModule {
 	$this->setId('slideshowapplet');
 	$this->setName($gallery->i18n('Slideshow Applet'));
 	$this->setDescription($gallery->i18n('Fullscreen slideshow using a Java applet'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -78,8 +78,8 @@ class SlideshowAppletModule extends GalleryModule {
 	    $links[$item->getId()][] =
 		array('text' => $this->translate('view slideshow (fullscreen)'),
 		      'params' => array(
-			  'view' => 'core:ItemAdmin',
-			  'subView' => 'slideshowapplet:SlideshowApplet',
+			  'view' => 'core.ItemAdmin',
+			  'subView' => 'slideshowapplet.SlideshowApplet',
 			  'itemId' => $item->getId()));
 	}
 	return array(GalleryStatus::success(), $links);
@@ -92,7 +92,7 @@ class SlideshowAppletModule extends GalleryModule {
 	global $gallery;
 
 	$view = array('name' => $this->translate('View Slideshow (fullscreen)'),
-		      'view' => 'slideshowapplet:SlideshowApplet');
+		      'view' => 'slideshowapplet.SlideshowApplet');
 
 	return array(GalleryStatus::success(), array($view));
     }

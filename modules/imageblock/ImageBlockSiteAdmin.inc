@@ -82,8 +82,8 @@ class ImageBlockSiteAdminController extends GalleryController {
 	} /* else $form['action']['reset'] */
 
 	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'imageblock:ImageBlockSiteAdmin';
+	$results['redirect']['view'] = 'core.SiteAdmin';
+	$results['redirect']['subView'] = 'imageblock.ImageBlockSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -143,7 +143,7 @@ class ImageBlockSiteAdminView extends GalleryView {
 	}
 
 	$template->setVariable('ImageBlockSiteAdmin', $ImageBlockSiteAdmin);
-	$template->setVariable('controller', 'imageblock:ImageBlockSiteAdmin');
+	$template->setVariable('controller', 'imageblock.ImageBlockSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/imageblock/templates/ImageBlockSiteAdmin.tpl'));
     }

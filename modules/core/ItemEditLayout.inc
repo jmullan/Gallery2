@@ -197,7 +197,7 @@ class ItemEditLayout extends ItemEditPlugin {
 	$ItemEditLayout['layout']['l10Domain'] = $layout->getL10Domain();
 
 	$template->setVariable('ItemEditLayout', $ItemEditLayout);
-	$template->setVariable('controller', 'core:ItemEditLayout');
+	$template->setVariable('controller', 'core.ItemEditLayout');
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditLayout.tpl');
     }
 

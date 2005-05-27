@@ -729,6 +729,8 @@ class CoreModuleExtras {
 
 	case '0.9.19':
 	    /* New multisite system and support for config.php upgrades */
+	case '0.9.20':
+	    /* Change view/controller separator: core:ShowItem -> core.ShowItem */
 
 	case 'end of upgrade path':
 	    /*
@@ -852,6 +854,8 @@ $gallery->setConfig(\'galleryBaseUrl\', \'\');
 	    $configChanges[] = array(
 		'remove' => array('{/\*[^/]*\*/\s*\$gallery->setConfig\(\'galleryId\',.*?;\s*}s'),
 		'add' => $add);
+
+	case '0.9.20':
 
 	case 'end of upgrade path':
 	    /*

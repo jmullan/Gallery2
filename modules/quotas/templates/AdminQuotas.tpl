@@ -55,7 +55,7 @@
          name="{g->formVar var="form[text][groupName]"}" 
                            value="{$form.text.groupName}"/>
   {g->autoComplete element="giFormGroupname"}
-  {g->url forJavascript="true" arg1="view=core:SimpleCallback" 
+  {g->url forJavascript="true" arg1="view=core.SimpleCallback" 
                                arg2="command=lookupGroupname" arg3="prefix=__VALUE__"}
   {/g->autoComplete}
   <input type="submit" class="inputTypeSubmit"
@@ -109,13 +109,13 @@
            value="{$form.list.maxPages}"/>
     
     {if ($form.list.group.page > 1)}
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                        arg3="form[list][group][page]=1"}">
         {g->text text="&laquo; first"}
       </a>
       &nbsp;
-      <a href="{g->url arg1="view=core:SiteAdmin" 
-                       arg2="subView=quotas:AdminQuotas" 
+      <a href="{g->url arg1="view=core.SiteAdmin" 
+                       arg2="subView=quotas.AdminQuotas" 
                        arg3="form[list][group][page]=`$form.list.group.backPage`"}">
         {g->text text="&laquo; back"}
       </a>
@@ -126,12 +126,12 @@
 	     arg2=$form.list.group.maxPages}
 
     {if ($form.list.group.page < $form.list.group.maxPages)}
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][group][page]=`$form.list.group.nextPage`"}">
       {g->text text="next &raquo;"}
     </a>
     &nbsp;
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][group][page]=`$form.list.group.maxPages`"}">
       {g->text text="last &raquo;"}
     </a>
@@ -161,14 +161,14 @@
         {$group.quotaSize} {$group.quotaUnit}
       </td>
       <td>
-        <a href="{g->url arg1="view=core:SiteAdmin" 
-                         arg2="subView=quotas:AdminEditGroupQuota" 
+        <a href="{g->url arg1="view=core.SiteAdmin" 
+                         arg2="subView=quotas.AdminEditGroupQuota" 
                          arg3="groupId=$groupId"}">
           {g->text text="edit"}
         </a>
         &nbsp;
-        <a href="{g->url arg1="view=core:SiteAdmin" 
-                         arg2="subView=quotas:AdminDeleteGroupQuota" 
+        <a href="{g->url arg1="view=core.SiteAdmin" 
+                         arg2="subView=quotas.AdminDeleteGroupQuota" 
                          arg3="groupId=$groupId"}">
           {g->text text="delete"}
         </a>
@@ -196,7 +196,7 @@
   <input id="giFormUsername" type="text" size="20" autocomplete="off" 
          name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
   {g->autoComplete element="giFormUsername"}
-  {g->url forJavascript="true" arg1="view=core:SimpleCallback" arg2="command=lookupUsername" 
+  {g->url forJavascript="true" arg1="view=core.SimpleCallback" arg2="command=lookupUsername" 
                                arg3="prefix=__VALUE__"}
   {/g->autoComplete}
   <input type="submit" class="inputTypeSubmit"
@@ -250,12 +250,12 @@
            value="{$form.list.user.maxPages}"/>
 
     {if ($form.list.user.page > 1)}
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][user][page]=1"}">
       {g->text text="&laquo; first"}
     </a>
     &nbsp;
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][user][page]=`$form.list.user.backPage`"}">
       {g->text text="&laquo; back"}
     </a>
@@ -267,12 +267,12 @@
     &nbsp;
 
     {if ($form.list.page < $form.list.user.maxPages)}
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][user][page]=`$form.list.user.nextPage`"}">
       {g->text text="next &raquo;"}
     </a>
     &nbsp;
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminQuotas" 
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminQuotas" 
                      arg3="form[list][user][page]=`$form.list.user.maxPages`"}">
       {g->text text="last &raquo;"}
     </a>
@@ -303,12 +303,12 @@
 	{$user.quotaSize} {$user.quotaUnit}
       </td>
       <td>
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminEditUserQuota" 
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminEditUserQuota" 
 	                 arg3="userId=$userId"}">
 	  {g->text text="edit"}
 	</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=quotas:AdminDeleteUserQuota" 
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=quotas.AdminDeleteUserQuota" 
 	                 arg3="userId=$userId"}">
 	  {g->text text="delete"}
 	</a>

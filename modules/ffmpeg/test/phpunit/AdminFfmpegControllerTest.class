@@ -34,7 +34,7 @@
 class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
     function AdminFfmpegControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'ffmpeg:AdminFfmpeg');
+	$this->GalleryControllerTestCase($methodName, 'ffmpeg.AdminFfmpeg');
     }
 
     function setUp() {
@@ -57,8 +57,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -78,8 +78,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -96,8 +96,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -107,8 +107,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -121,8 +121,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array(),
 				  'error' => array('form[error][path][testError]')),
 				  $results);
@@ -135,8 +135,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
@@ -149,8 +149,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array(),
 				  'error' => array('form[error][path][notExecutable]')),
 			    $results);
@@ -163,8 +163,8 @@ class AdminFfmpegControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'ffmpeg:AdminFfmpeg'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'ffmpeg.AdminFfmpeg'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);

@@ -10,7 +10,7 @@
 
 <div class="gbBlock"><h2 class="giError">
   {capture name="url"}
-    {g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminModules"}
+    {g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminModules"}
   {/capture}
   {g->text text="This module requires you to have at least one graphics toolkit active in order for it to operate properly.  Please return to the <a href=\"%s\">Modules</a> page and activate a graphics toolkit." arg1=$smarty.capture.url}
 </h2></div>

@@ -157,8 +157,8 @@ class ConfirmImportController extends GalleryController {
 	$sourceEncoding = $form['sourceEncoding'];
 
 	if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'migrate:SelectGallery';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'migrate.SelectGallery';
 	} else if (isset($form['action']['import'])) {
 	    /* We reuse this instance all the way through */
 	    list ($ret, $immediateView) = $this->getImmediateStatusView();
@@ -1215,8 +1215,8 @@ class ConfirmImportController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'migrate:ImportResults';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'migrate.ImportResults';
 	}
 	if (isset($importLockIds)) {
 	    $ret = GalleryCoreApi::releaseLocks($importLockIds);
@@ -1236,8 +1236,8 @@ class ConfirmImportController extends GalleryController {
 		$results['sendLateRedirect'] = $immediateView;
 	    }
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'migrate:ConfirmImport';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'migrate.ConfirmImport';
 	}
 
 	return array(GalleryStatus::success(), $results);
@@ -1425,7 +1425,7 @@ class ConfirmImportView extends GalleryView {
 	$ConfirmImport['albumOwnerUid'] = $albumOwnerUid;
 	$ConfirmImport['targetAlbum'] = $targetAlbum->getMemberData();
 	$ConfirmImport['titles'] = $titles;
-	$template->setVariable('controller', 'migrate:ConfirmImport');
+	$template->setVariable('controller', 'migrate.ConfirmImport');
 	$template->setVariable('ConfirmImport', $ConfirmImport);
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/migrate/templates/ConfirmImport.tpl'));

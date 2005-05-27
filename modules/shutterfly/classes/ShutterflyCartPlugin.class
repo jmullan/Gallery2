@@ -60,7 +60,7 @@ class ShutterflyCartPlugin extends CartPluginInterface_1_0 {
 	$session->put('shutterfly.cart', $cartItemIds);
 
 	return array(GalleryStatus::success(),
-		     array('view' => 'shutterfly:PrintPhotos', 'return' => 1));
+		     array('view' => 'shutterfly.PrintPhotos', 'return' => 1));
     }
 }
 ?>

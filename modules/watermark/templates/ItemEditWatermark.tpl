@@ -14,7 +14,7 @@
   {foreach from=$ItemEditWatermark.watermarks item=watermark}
   watermarkUrlMap[{$watermark.id}] = new Array;
   watermarkUrlMap[{$watermark.id}]['url'] = '{g->url forJavascript="true"
-    arg1="view=core:DownloadItem" arg2="itemId=`$watermark.id`"}';
+    arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}';
   watermarkUrlMap[{$watermark.id}]['width'] = {$watermark.width};
   watermarkUrlMap[{$watermark.id}]['height'] = {$watermark.height};
   watermarkUrlMap[{$watermark.id}]['xPercent'] = {if
@@ -93,7 +93,7 @@
 
   <p class="giDescription">
     {g->text text="You must first upload some watermark images so that you can apply them to your image."}
-    <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=watermark:UserWatermarks"}">
+    <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=watermark.UserWatermarks"}">
       {g->text text="Upload some watermarks now."}
     </a>
   </p>
@@ -120,7 +120,7 @@
 	      image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
   </div>
   <img name="watermark_floater"
-   src="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$form.watermarkId`"}"
+   src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$form.watermarkId`"}"
    width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
    height="{$ItemEditWatermark.watermarks[$form.watermarkId].height}"
    alt="{g->text text="watermark"}" style="position: absolute"/>

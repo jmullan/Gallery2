@@ -113,12 +113,12 @@ class PhotoAccessHelper {
 
 	    $entry['id'] = $source->getId();
 	    $entry['imageUrl'] = $urlGenerator->generateUrl(
-		array('view' => 'core:DownloadItem', 'itemId' => $source->getId()),
+		array('view' => 'core.DownloadItem', 'itemId' => $source->getId()),
 		true);
 
 	    if (isset($thumbnails[$itemId])) {
 		$entry['thumbUrl'] = $urlGenerator->generateUrl(
-		    array('view' => 'core:DownloadItem',
+		    array('view' => 'core.DownloadItem',
 			  'itemId' => $thumbnails[$itemId]->getId()),
 		    true);
 	    } else {
@@ -192,7 +192,7 @@ class PhotoAccessHelper {
 	    $redirectUrl = 'http://' . $photoAccessServer . str_replace('&#38;', '&', $matches[2]);
 	} else {
 	    $redirectUrl =
-		$urlGenerator->generateUrl(array('view' => 'photoaccess:FulfillmentError'));
+		$urlGenerator->generateUrl(array('view' => 'photoaccess.FulfillmentError'));
 	}
 
 	return array(GalleryStatus::success(), $redirectUrl);

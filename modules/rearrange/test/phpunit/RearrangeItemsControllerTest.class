@@ -34,7 +34,7 @@
 class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 
     function RearrangeItemsControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'rearrange:RearrangeItems');
+	$this->GalleryControllerTestCase($methodName, 'rearrange.RearrangeItems');
     }
 
     function setUp() {
@@ -86,8 +86,8 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'rearrange:RearrangeItems',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'rearrange.RearrangeItems',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -100,8 +100,8 @@ class RearrangeItemsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'rearrange:RearrangeItems',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'rearrange.RearrangeItems',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('saved' => 1),
 				  'error' => array()),

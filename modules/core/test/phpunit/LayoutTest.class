@@ -48,7 +48,7 @@ class LayoutTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $this->_view) = GalleryView::loadView('core:ShowItem');
+	list ($ret, $this->_view) = GalleryView::loadView('core.ShowItem');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -83,7 +83,7 @@ class LayoutTest extends GalleryTestCase {
     }
 
     /**
-     * Ensure core:ShowItem view won't use an inactive or uninstalled layout
+     * Ensure core.ShowItem view won't use an inactive or uninstalled layout
      * Also tests deactivate default layout (not allowed) and uninstall removes layout
      * from albums (reset to default layout).
      */
@@ -98,7 +98,7 @@ class LayoutTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:ShowItemError',
+	    array('redirect' => array('view' => 'core.ShowItemError',
 				      'problem' => 'missingLayout',
 				      'itemId' => $this->_album->getId())),
 	    $results, 'not installed');
@@ -117,7 +117,7 @@ class LayoutTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:ShowItemError',
+	    array('redirect' => array('view' => 'core.ShowItemError',
 				      'problem' => 'missingLayout',
 				      'itemId' => $this->_album->getId())),
 	    $results, 'not activated');
@@ -175,7 +175,7 @@ class LayoutTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:ShowItemError',
+	    array('redirect' => array('view' => 'core.ShowItemError',
 				      'problem' => 'missingLayout',
 				      'itemId' => $this->_album->getId())),
 	    $results, 'deactivated');

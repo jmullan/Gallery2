@@ -126,8 +126,8 @@ class GalleryUrlGenerator {
 
     /**
      * Return the current request URI.
-     * Example: for http://domain.com/gallery2/main.php?g2_view=core:ShowItem
-     *          it returns /gallery2/main.php?g2_view=core:ShowItem
+     * Example: for http://domain.com/gallery2/main.php?g2_view=core.ShowItem
+     *          it returns /gallery2/main.php?g2_view=core.ShowItem
      *
      * @return string the current URL path component plus query parameters
      * @static
@@ -283,7 +283,7 @@ class GalleryUrlGenerator {
 
 	    /*
 	     * Remove the base file and any query string or path info after it:
-	     *    http://example.com/gallery2/main.php/core:ShowView/foo=bar/...
+	     *    http://example.com/gallery2/main.php/core.ShowView/foo=bar/...
 	     * Extract everything up to but not including main.php:
 	     *    http://example.com/gallery2/
 	     *
@@ -330,7 +330,7 @@ class GalleryUrlGenerator {
 	/*
 	 * For 'href' urls always use G2 base url
 	 * (direct to G2 codebase location, even if multisite or embedded),
-	 * For 'core:DownloadItem' urls always use G2 site url
+	 * For 'core.DownloadItem' urls always use G2 site url
 	 * (direct to main.php in directory for active config.php, even if embedded)
 	 * Otherwise use application url
 	 * (embed url; same as G2 site url if not embedded)
@@ -359,7 +359,7 @@ class GalleryUrlGenerator {
 	    }
 
 	    $url .= $href;
-	} else if (isset($params['view']) && $params['view'] == 'core:DownloadItem') {
+	} else if (isset($params['view']) && $params['view'] == 'core.DownloadItem') {
 	    $url = $this->getCurrentUrlDir(true) . GALLERY_MAIN_PHP;
 	} else {
 	    $url = $this->_isBaseFullUrl ? $this->_baseFile

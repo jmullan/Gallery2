@@ -58,8 +58,8 @@ class AdminCreateGroupQuotaController extends GalleryController {
 	}
 	if (isset($form['action']['cancel'])) {
 	    /* Go back to the AdminQuotas view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminQuotas';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminQuotas';
 	} else if (isset($form['action']['create'])) {
 	    /*
 	     * If all the right fields are in place then go ahead and
@@ -103,8 +103,8 @@ class AdminCreateGroupQuotaController extends GalleryController {
 			    }
 
 			    /* Request a redirect to the confirmation screen */
-			    $redirect['view'] = 'core:SiteAdmin';
-			    $redirect['subView'] = 'quotas:AdminQuotas';
+			    $redirect['view'] = 'core.SiteAdmin';
+			    $redirect['subView'] = 'quotas.AdminQuotas';
 			    $status['createdGroup'] = $group->getGroupName();
 			}
 		    } else {
@@ -128,8 +128,8 @@ class AdminCreateGroupQuotaController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'quotas:AdminCreateGroupQuota';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'quotas.AdminCreateGroupQuota';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -183,7 +183,7 @@ class AdminCreateGroupQuotaView extends GalleryView {
 							   'MB' => $module->translate('MB'),
 							   'GB' => $module->translate('GB'));
 	$template->setVariable('AdminCreateGroupQuota', $AdminCreateGroupQuota);
-	$template->setVariable('controller', 'quotas:AdminCreateGroupQuota');
+	$template->setVariable('controller', 'quotas.AdminCreateGroupQuota');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/quotas/templates/AdminCreateGroupQuota.tpl'));

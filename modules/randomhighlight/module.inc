@@ -37,11 +37,11 @@ class RandomHighlightModule extends GalleryModule {
 	$this->setId('randomhighlight');
 	$this->setName($gallery->i18n('Random Highlight'));
 	$this->setDescription($gallery->i18n('Periodically change the album highlight'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 10));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -102,6 +102,9 @@ class RandomHighlightModule extends GalleryModule {
 	    case '0.9.0':
 	    case '0.9.1':
 	    case '0.9.2':
+	    case '0.9.3':
+
+	    case 'end of upgrade path':
 		break;
 
 	    default:
@@ -163,7 +166,7 @@ class RandomHighlightModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Random Highlight'),
-				 'view' => 'randomhighlight:RandomHighlightSiteAdmin')));
+				 'view' => 'randomhighlight.RandomHighlightSiteAdmin')));
     }
 
     /**

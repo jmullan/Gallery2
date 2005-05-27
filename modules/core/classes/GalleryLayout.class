@@ -61,7 +61,7 @@ class GalleryLayout extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 11);
+	return array(0, 12);
     }
 
     /**
@@ -483,7 +483,7 @@ class GalleryLayout extends GalleryPlugin {
 
 		/* If our page is over the max, redirect the user to the max page */
 		if ($page > $layout['totalPages'] && $layout['childCount'] > 0) {
-		    $redirect = array('view' => 'core:ShowItem', 'itemId' => $item->getId(),
+		    $redirect = array('view' => 'core.ShowItem', 'itemId' => $item->getId(),
 				      'page' => $layout['totalPages']);
 		    return array(GalleryStatus::success(), array('redirect' => $redirect));
 		}
@@ -1042,20 +1042,20 @@ class GalleryLayout extends GalleryPlugin {
 	    $navigator = array();
 	    if ($page > 1) {
 		$navigator['first']['urlParams'] =
-		    array('view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => 1);
+		    array('view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => 1);
 		if ($page - 1 != 1) {
 		    $navigator['back']['urlParams'] = array(
-			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page - 1);
+			'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page - 1);
 		}
 	    }
 	    if ($page < $layout['totalPages']) {
 		if ($page + 1 != $layout['totalPages']) {
 		    $navigator['next']['urlParams'] = array(
-			'view' => 'core:ShowItem', 'itemId' => $item->getId(), 'page' => $page + 1);
+			'view' => 'core.ShowItem', 'itemId' => $item->getId(), 'page' => $page + 1);
 		}
 
 		$navigator['last']['urlParams'] =
-		    array('view' => 'core:ShowItem', 'itemId' => $item->getId(),
+		    array('view' => 'core.ShowItem', 'itemId' => $item->getId(),
 			  'page' => $layout['totalPages']);
 	    }
 	    $layout['navigator'] = $navigator;
@@ -1069,28 +1069,28 @@ class GalleryLayout extends GalleryPlugin {
 	    $navigator = array();
 	    $itemIndex = $layout['peerItemIndex'];
 	    if ($itemIndex > 0) {
-		$navigator['first']['urlParams'] = array('view' => 'core:ShowItem',
+		$navigator['first']['urlParams'] = array('view' => 'core.ShowItem',
 							 'itemId' => $layout['peers'][0]['id']);
 		$navigator['first']['item'] = $layout['peers'][0];
 	    }
 
 	    if ($itemIndex > 1) {
 		$navigator['back']['urlParams'] =
-		    array('view' => 'core:ShowItem',
+		    array('view' => 'core.ShowItem',
 			  'itemId' => $layout['peers'][$itemIndex - 1]['id']);
 		$navigator['back']['item'] = $layout['peers'][$itemIndex - 1];
 	    }
 
 	    if ($itemIndex < count($layout['peers']) - 2) {
 		$navigator['next']['urlParams'] =
-		    array('view' => 'core:ShowItem',
+		    array('view' => 'core.ShowItem',
 			  'itemId' => $layout['peers'][$itemIndex + 1]['id']);
 		$navigator['next']['item'] = $layout['peers'][$itemIndex + 1];
 	    }
 
 	    if ($itemIndex < count($layout['peers']) - 1) {
 		$navigator['last']['urlParams'] =
-		    array('view' => 'core:ShowItem',
+		    array('view' => 'core.ShowItem',
 			  'itemId' => $layout['peers'][count($layout['peers']) - 1]['id']);
 		$navigator['last']['item'] = $layout['peers'][count($layout['peers']) - 1];
 	    }

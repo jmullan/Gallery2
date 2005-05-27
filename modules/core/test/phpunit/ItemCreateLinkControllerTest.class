@@ -34,7 +34,7 @@
 class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 
     function ItemCreateLinkControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemCreateLink');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemCreateLink');
     }
 
     function setUp() {
@@ -72,8 +72,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_album->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLink',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLink',
 						      'itemId' => $childAlbum->getId()),
 				  'status' => array('linked' => array('count' => 1)),
 				  'error' => array()),
@@ -149,8 +149,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLink'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLink'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][empty]')),
 			    $results);
@@ -211,8 +211,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLink',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLink',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 2),
 				  'status' => array(),
@@ -244,8 +244,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLink',
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLink',
 						      'itemId' => $this->_album->getId(),
 						      'page' => 1),
 				  'status' => array(),
@@ -296,8 +296,8 @@ class ItemCreateLinkControllerTest extends GalleryControllerTestCase {
 
         $results = $this->handleRequest();
         $results = $this->handleRequest();
-        $this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-            'subView' => 'core:ItemCreateLink'),
+        $this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+            'subView' => 'core.ItemCreateLink'),
             'status' => array(),
             'error' => array('form[error][sources][empty]')), $results);
     }

@@ -85,8 +85,8 @@ class NewItemsSiteAdminController extends GalleryController {
 
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'newitems:NewItemsSiteAdmin';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'newitems.NewItemsSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -126,7 +126,7 @@ class NewItemsSiteAdminView extends GalleryView {
 	}
 	$form['isDefault'] = strpos($default, 'NewItems') !== false;
 
-	$template->setVariable('controller', 'newitems:NewItemsSiteAdmin');
+	$template->setVariable('controller', 'newitems.NewItemsSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/newitems/templates/NewItemsSiteAdmin.tpl'));
     }

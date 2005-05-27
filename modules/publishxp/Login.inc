@@ -64,7 +64,7 @@ class LoginController extends GalleryController {
 		    $session =& $gallery->getSession();
 		    $session->regenerate();
 		    
-		    $results['redirect']['view'] = 'publishxp:SelectAlbum';
+		    $results['redirect']['view'] = 'publishxp.SelectAlbum';
 		} else {
 		    $error[] = 'form[error][password][invalid]';
 		}
@@ -72,7 +72,7 @@ class LoginController extends GalleryController {
 	}
 
 	if (!isset($results['delegate']['view'])) {
-	    $results['delegate']['view'] = 'publishxp:Login';
+	    $results['delegate']['view'] = 'publishxp.Login';
 	}
 	$results['status'] = array();
 	$results['error'] = $error;
@@ -110,10 +110,10 @@ class LoginView extends GalleryView {
 	if ($gallery->getActiveUserId() != $anonymousUserId) {
 	    /* No need to log in */
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'publishxp:SelectAlbum')));
+			 array('redirect' => array('view' => 'publishxp.SelectAlbum')));
 	}
 
-	$template->setVariable('controller', 'publishxp:Login');
+	$template->setVariable('controller', 'publishxp.Login');
 	$template->head('modules/publishxp/templates/Head.tpl');
 	return array(GalleryStatus::success(), 
 		     array('body' => 'modules/publishxp/templates/Login.tpl'));

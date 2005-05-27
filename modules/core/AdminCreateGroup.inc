@@ -53,8 +53,8 @@ class AdminCreateGroupController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminGroups';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminGroups';
 	    
 	} else if (isset($form['action']['create'])) {
 	    /*
@@ -87,8 +87,8 @@ class AdminCreateGroupController extends GalleryController {
 		    }
 
 		    /* Request a redirect to the confirmation screen */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminGroups';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminGroups';
 		    $status['createdGroup'] = $group->getGroupName();
 		}
 	    } else {
@@ -100,8 +100,8 @@ class AdminCreateGroupController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminCreateGroup';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminCreateGroup';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -138,7 +138,7 @@ class AdminCreateGroupView extends GalleryView {
 
 	$AdminCreateGroup = array();
 	$template->setVariable('AdminCreateGroup', $AdminCreateGroup);
-	$template->setVariable('controller', 'core:AdminCreateGroup');
+	$template->setVariable('controller', 'core.AdminCreateGroup');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminCreateGroup.tpl'));

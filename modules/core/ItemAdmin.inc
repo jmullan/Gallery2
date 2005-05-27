@@ -102,7 +102,7 @@ class ItemAdminView extends GalleryView {
 	usort($subViewChoiceData, array($this, 'sortByName'));
 
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	if ($subViewName == 'core:ItemAdmin') {
+	if ($subViewName == 'core.ItemAdmin') {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 
@@ -115,7 +115,7 @@ class ItemAdminView extends GalleryView {
 
 	    /* Move the view -> subView and set ItemAdmin as the view */
 	    $params['subView'] = $params['view'];
-	    $params['view'] = 'core:ItemAdmin';
+	    $params['view'] = 'core.ItemAdmin';
 	    if ($subViewName == $params['subView']) {
 		$params['active'] = true;
 	    }
@@ -130,7 +130,7 @@ class ItemAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	if (empty($subViewName) && !empty($subViewChoices)) {
-	    $subViewName = 'core:ItemEdit';
+	    $subViewName = 'core.ItemEdit';
 	}
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
@@ -219,7 +219,7 @@ class ItemAdminView extends GalleryView {
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {
-	    $subViewName = 'core:ItemEdit';
+	    $subViewName = 'core.ItemEdit';
 	}
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {

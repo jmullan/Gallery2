@@ -10,10 +10,10 @@
       <a href="{g->url}">{$MembersItems.rootAlbum.title|markup:stripBbcodeAndHtml}</a>
     </li>
     <li>
-      <a href="{g->url arg1="view=members:MembersList"}">{g->text text="Members List"}</a>
+      <a href="{g->url arg1="view=members.MembersList"}">{g->text text="Members List"}</a>
     </li>
     <li>
-      <a href="{g->url arg1="view=members:MembersProfile"
+      <a href="{g->url arg1="view=members.MembersProfile"
 		       arg2="userId=`$MembersItems.user.id`"}">{g->text text="Member Profile"}</a>
     </li>
     <li>
@@ -46,12 +46,12 @@
 	 name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
 	{if ($form.list.page > 1)}
-	  <a href="{g->url arg1="view=members:MembersItems"
+	  <a href="{g->url arg1="view=members.MembersItems"
 	   arg2="form[list][page]=1" arg3="userId=`$MembersItems.user.id`"}">
 	    {g->text text="&laquo; first"}
 	  </a>
 	  &nbsp;
-	  <a href="{g->url arg1="view=members:MembersItems"
+	  <a href="{g->url arg1="view=members.MembersItems"
 	   arg2="form[list][page]=`$form.list.backPage`" arg3="userId=`$MembersItems.user.id`"}">
 	    {g->text text="&laquo; back"}
 	  </a>
@@ -66,12 +66,12 @@
 	&nbsp;
 
 	{if ($form.list.page < $form.list.maxPages)}
-	  <a href="{g->url arg1="view=members:MembersItems"
+	  <a href="{g->url arg1="view=members.MembersItems"
 	   arg2="form[list][page]=`$form.list.nextPage`" arg3="userId=`$MembersItems.user.id`"}">
 	    {g->text text="next &raquo;"}
 	  </a>
 	  &nbsp;
-	  <a href="{g->url arg1="view=members:MembersItems"
+	  <a href="{g->url arg1="view=members.MembersItems"
 	   arg2="form[list][page]=`$form.list.maxPages`" arg3="userId=`$MembersItems.user.id`"}">
 	    {g->text text="last &raquo;"}
 	  </a>
@@ -106,7 +106,7 @@
 	  </td><td>
 	    {g->date timestamp=$item.creationTimestamp format="%l:%M:%S %p %Z"}
 	  </td><td>
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
 	      {$item.title|default:$item.pathComponent}
 	    </a>
 	  </td>

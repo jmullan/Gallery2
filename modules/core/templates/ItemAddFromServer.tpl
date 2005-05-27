@@ -74,7 +74,7 @@
   <div class="giWarning">
     {g->text text="For security purposes, you can't use this feature until the Gallery Site Administrator configures a set of legal upload directories."}
     {if $ItemAdd.isAdmin}
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore"}">
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminCore"}">
 	{g->text text="site admin"}
       </a>
     {/if}
@@ -112,7 +112,7 @@
     {g->text text="Legal Directories"}
 
     {if $ItemAdd.isAdmin}
-    <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminCore" arg3="return=true"}">
+    <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminCore" arg3="return=true"}">
       {g->text text="modify"}
     </a>
     {/if}
@@ -150,7 +150,7 @@
       {foreach name="pathElements" from=$ItemAddFromServer.pathElements key=idx item=element}
 	{if $idx>1}{$ItemAddFromServer.pathSeparator}{/if}
 	{if ($element.legal && !$smarty.foreach.pathElements.last)}
-	  <a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer"
+	  <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
 	   arg3="form[localServerPath]=`$element.path`" arg4="itemId=`$ItemAdmin.item.id`"
 	   arg5="form[action][findFilesFromLocalServer]=1"
 	   arg6="form[formName]=ItemAddFromServer"}">{$element.name}</a>
@@ -211,7 +211,7 @@
 	   name="{g->formVar var="form[localServerDirectories][$key][selected]"}"/>
 	</td><td>
 	  {if $file.legal}{strip}
-	    <a href="{g->url arg1="controller=core:ItemAdd" arg2="addPlugin=ItemAddFromServer"
+	    <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
 	     arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`"
 	     arg5="form[action][findFilesFromLocalServer]=1"
 	     arg6="form[formName]=ItemAddFromServer"}">
@@ -283,8 +283,8 @@
        value="{g->text text="Add Files"}"/>
       <input type="submit" class="inputTypeSubmit"
        name="{g->formVar var="form[action][startOver]"}" value="{g->text text="Start Over"}"
-       onclick="document.location='{g->url arg1="view=core:ItemAdmin"
-	arg2="subView=core:ItemAdd" arg3="itemId=`$ItemAdmin.item.id`"
+       onclick="document.location='{g->url arg1="view=core.ItemAdmin"
+	arg2="subView=core.ItemAdd" arg3="itemId=`$ItemAdmin.item.id`"
 	arg4="form[localServerPath]=`$form.localServerPath`"
 	arg5="form[formName]=ItemAddFromServer" arg6="addPlugin=ItemAddFromServer"}'"/>
     {/capture}

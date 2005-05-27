@@ -28,7 +28,7 @@
   </p>
   <p class="giDescription">
       {g->text text="You can now"}
-      <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin"}">
+      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin"}">
 	{g->text text="login"}
       </a>
       {g->text text="to your account with your username and password."}
@@ -40,7 +40,7 @@
   </p>
   <p class="giDescription">
     {capture name=loginLink}{strip}
-      <a href="{g->url arg1="view=core:UserAdmin" arg2="subView=core:UserLogin"}">
+      <a href="{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserLogin"}">
 	{g->text text="login"}
       </a>
     {/strip}{/capture}

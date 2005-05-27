@@ -149,8 +149,8 @@ class UserLoginController extends GalleryController {
 	}
 
 	if (!empty($error)) {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'core:UserLogin';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'core.UserLogin';
 	}
 	$results['status'] = array();
 	$results['error'] = $error;
@@ -210,7 +210,7 @@ class UserLoginView extends GalleryView {
 	}
 
 	$template->setVariable('UserLogin', $UserLogin);
-	$template->setVariable('controller', 'core:UserLogin');
+	$template->setVariable('controller', 'core.UserLogin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserLogin.tpl'));
     }

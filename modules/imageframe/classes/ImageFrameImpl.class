@@ -154,7 +154,7 @@ class ImageFrameImpl extends ImageFrameInterface_1_1 {
     function getSampleUrl($itemId=null) {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$params = array('view' => 'imageframe:Sample');
+	$params = array('view' => 'imageframe.Sample');
 	if (isset($itemId)) {
 	    $params['itemId'] = $itemId;
 	}

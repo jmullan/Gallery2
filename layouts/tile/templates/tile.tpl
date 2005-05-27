@@ -19,10 +19,10 @@
 {foreach from=$layout.children key=i item=it}
   {if isset($it.image)}
     {if isset($it.renderItem)}
-      <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:ShowItem"
+      <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core.ShowItem"
        arg2="itemId=`$it.id`" arg3="renderId=`$it.image.id`"}"></a>
     {else}
-      <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core:DownloadItem"
+      <a id="img_{$it.imageIndex}" href="{g->url arg1="view=core.DownloadItem"
        arg2="itemId=`$it.image.id`" arg3="serialNumber=`$it.image.serialNumber`"}"></a>
     {/if}
     <span id="title_{$it.imageIndex}">{$it.title|markup}</span>
@@ -43,7 +43,7 @@
 
 <div class="gbBlock">
 {if isset($layout.params.bgSerialNumber)}
-  <table id="tile" style="background-image:url({g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.params.backgroundId`" arg3="serialNumber=`$layout.params.bgSerialNumber`"})" cellspacing="0">
+  <table id="tile" style="background-image:url({g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.params.backgroundId`" arg3="serialNumber=`$layout.params.bgSerialNumber`"})" cellspacing="0">
   {section name=row loop=$layout.map}
    <tr>
    {section name=col loop=$layout.map[row]}
@@ -64,7 +64,7 @@
   </table>
 {else}
   {g->text text="The layout has not been"}
-  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit" arg3="editPlugin=ItemEditLayout" arg4="itemId=`$layout.item.id`"}">
+  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit" arg3="editPlugin=ItemEditLayout" arg4="itemId=`$layout.item.id`"}">
     {g->text text="configured."}
   </a>
 {/if}

@@ -84,8 +84,8 @@ class AdminCoreController extends GalleryController {
 		    $status['addedDir'] = 1;
 		}
 		$canSave = true;
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminCore';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminCore';
 	    }
 	} else if (isset($form['action']['removeUploadLocalServerDir'])) {
 	    if (!empty($form['uploadLocalServer']['selectedDir'])) {
@@ -103,8 +103,8 @@ class AdminCoreController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		$status['removedDir'] = 1;
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminCore';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminCore';
 	    } else {
 		$error[] = 'form[error][uploadLocalServer][selectedDir][missing]';
 	    }
@@ -119,8 +119,8 @@ class AdminCoreController extends GalleryController {
 		}
 
 		$canSave = true;
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminCore';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminCore';
 	    }
 	}
 
@@ -159,8 +159,8 @@ class AdminCoreController extends GalleryController {
 		}
 	    }
 	    $status['saved'] = 1;
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminCore';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminCore';
 	}
 
 	if (isset($form['action']['emailTest']) && empty($error)) {
@@ -184,8 +184,8 @@ class AdminCoreController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminCore';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminCore';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -349,7 +349,7 @@ class AdminCoreView extends GalleryView {
 	$AdminCore['embeddedMarkupList'] = $embeddedMarkupList;
 	$AdminCore['lockSystemList'] = $lockSystemList;
 
-	$template->setVariable('controller', 'core:AdminCore');
+	$template->setVariable('controller', 'core.AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);
 
 	return array(GalleryStatus::success(),

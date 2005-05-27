@@ -35,7 +35,7 @@
 class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 
     function NokiaUploadConfigureControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'nokiaupload:Configure');
+	$this->GalleryControllerTestCase($methodName, 'nokiaupload.Configure');
     }
 
     function setUp() {
@@ -70,8 +70,8 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', '1');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						   'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						   'subView' => 'core.AdminModules'),
 				  'status' => array(), 'error' => array()),
 			    $results);
     }
@@ -81,7 +81,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array(
-	    'delegate' => array('view' => 'core:SiteAdmin', 'subView' => 'nokiaupload:Configure'),
+	    'delegate' => array('view' => 'core.SiteAdmin', 'subView' => 'nokiaupload.Configure'),
 	    'status' => array(),
 	    'error' => array('form[error][group][missing]', 'form[error][album][missing]')),
 		$results);
@@ -104,7 +104,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array(
-	    'delegate' => array('view' => 'core:SiteAdmin', 'subView' => 'nokiaupload:Configure'),
+	    'delegate' => array('view' => 'core.SiteAdmin', 'subView' => 'nokiaupload.Configure'),
 	    'status' => array(),
 	    'error' => array('form[error][group][duplicate]')),
 		$results);
@@ -118,7 +118,7 @@ class NokiaUploadConfigureControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 	$results = $this->handleRequest();
 	$this->assertEquals(array(
-	    'redirect' => array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminModules'),
+	    'redirect' => array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminModules'),
 	    'status' => array('configured' => 'nokiaupload'), 'error' => array()),
 		$results);
 

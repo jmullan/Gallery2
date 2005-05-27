@@ -87,8 +87,8 @@ class RearrangeItemsController extends GalleryController {
 	    $status['saved'] = 1;
 	} /* else $form['action']['reset'] */
 
-	$results['redirect'] = array('view' => 'core:ItemAdmin',
-				     'subView' => 'rearrange:RearrangeItems',
+	$results['redirect'] = array('view' => 'core.ItemAdmin',
+				     'subView' => 'rearrange.RearrangeItems',
 				     'itemId' => $itemId);
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -196,7 +196,7 @@ class RearrangeItemsView extends GalleryView {
 	}
 
 	$template->setVariable('RearrangeItems', $RearrangeItems);
-	$template->setVariable('controller', 'rearrange:RearrangeItems');
+	$template->setVariable('controller', 'rearrange.RearrangeItems');
 	$template->head('modules/rearrange/templates/Header.tpl');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/rearrange/templates/RearrangeItems.tpl'));

@@ -38,11 +38,11 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('multilang');
 	$this->setName($gallery->i18n('MultiLanguage'));
 	$this->setDescription($gallery->i18n('Support item captions in multiple languages'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 10));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -123,7 +123,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'multilang:CantActivate';
+	return 'multilang.CantActivate';
     }
 
     /**
@@ -132,7 +132,7 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('MultiLanguage'),
-				 'view' => 'multilang:MultiLangSiteAdmin')));
+				 'view' => 'multilang.MultiLangSiteAdmin')));
     }
 
     /**
@@ -141,11 +141,11 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
     function onLoad(&$entity) {
 	/*
 	 * Load in captions for active language.
-	 * However, skip this step for core:ItemAdmin or any controller (esp core:ItemEdit)
+	 * However, skip this step for core.ItemAdmin or any controller (esp core.ItemEdit)
 	 * to avoid inadvertently saving multilang captions into the actual entity.
 	 */
 	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
-	if ($view != 'core:ItemAdmin' && empty($controller)) {
+	if ($view != 'core.ItemAdmin' && empty($controller)) {
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/MultiLangHelper.class');
 	    $ret = MultiLangHelper::onLoad($entity);
 	    if ($ret->isError()) {

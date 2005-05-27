@@ -52,11 +52,11 @@ class MimeAdminController extends GalleryController {
             }
 	    $status['deleted'] = $mimeType;
 	    
-            $results['redirect'] = array('view' => 'core:SiteAdmin',
-                'subView' => 'mime:MimeAdmin');
+            $results['redirect'] = array('view' => 'core.SiteAdmin',
+                'subView' => 'mime.MimeAdmin');
         } elseif (isset($form['action']['addNew'])) {
-            $results['redirect'] = array('view' => 'core:SiteAdmin',
-                'subView' => 'mime:MimeEdit');
+            $results['redirect'] = array('view' => 'core.SiteAdmin',
+                'subView' => 'mime.MimeEdit');
         }
     
         $results['status'] = $status;
@@ -95,7 +95,7 @@ class MimeAdminView extends GalleryView {
             $MimeAdmin[$mimeType]['viewable'] = $typeMap['viewable'][$mimeType];
         }
         
-        $template->setVariable('controller', 'mime:MimeAdmin');
+        $template->setVariable('controller', 'mime.MimeAdmin');
         $template->setVariable('MimeAdmin', $MimeAdmin);
         return array(GalleryStatus::success(),
              array('body' => 'modules/mime/templates/MimeAdmin.tpl'));

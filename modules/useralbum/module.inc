@@ -37,11 +37,11 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('useralbum');
 	$this->setName($gallery->i18n('User Albums'));
 	$this->setDescription($gallery->i18n('Create an album for each new user'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getSystemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -94,7 +94,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('User Albums'),
-				 'view' => 'useralbum:UserAlbumSiteAdmin')));
+				 'view' => 'useralbum.UserAlbumSiteAdmin')));
     }
 
     /**
@@ -136,7 +136,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 
 		if (!empty($albumId) || (empty($albumId) && $createMode == 'access')) {
 		    $links[] = array('text' => $this->translate('Your Album'),
-				     'params' => array('controller' => 'useralbum:UserAlbum'));
+				     'params' => array('controller' => 'useralbum.UserAlbum'));
 		}
 	    }
 	}
@@ -220,7 +220,7 @@ class UserAlbumModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 	    if (!empty($loginRedirect)) {
 		/* Return a redirect to the user album.. */
-		$result = array('controller' => 'useralbum:UserAlbum');
+		$result = array('controller' => 'useralbum.UserAlbum');
 	    }
 	    break;
 	}

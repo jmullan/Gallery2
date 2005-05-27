@@ -45,9 +45,9 @@ class SliderLayout extends GalleryLayout {
 	$this->setName($gallery->i18n('Slider'));
 	$this->setDescription(
 	    $gallery->i18n('Image viewer/slideshow; subalbums/other items not shown'));
-	$this->setVersion('0.10.1');
+	$this->setVersion('0.10.2');
 	$this->setL10Domain('layouts_slider');
-	$this->setRequiredLayoutApi(array(0, 10));
+	$this->setRequiredLayoutApi(array(0, 12));
 	$this->setRequiredCoreApi(array(5, 0));
     }
 

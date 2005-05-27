@@ -113,7 +113,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	list ($ret, $view) = GalleryView::loadView('imageblock:ImageBlockSiteAdmin');
+	list ($ret, $view) = GalleryView::loadView('imageblock.ImageBlockSiteAdmin');
 	if ($ret->isError() || !isset($view)) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -275,7 +275,7 @@ class ImageBlockTest extends GalleryTestCase {
 
     function testExternalImageBlock() {
 	$form = array();
-	list ($ret, $external) = GalleryView::loadView('imageblock:External');
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -406,7 +406,7 @@ class ImageBlockTest extends GalleryTestCase {
 	    }
 	}
 
-	list ($ret, $external) = GalleryView::loadView('imageblock:External');
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

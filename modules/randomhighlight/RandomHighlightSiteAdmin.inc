@@ -62,8 +62,8 @@ class RandomHighlightSiteAdminController extends GalleryController {
 
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'randomhighlight:RandomHighlightSiteAdmin';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'randomhighlight.RandomHighlightSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -92,7 +92,7 @@ class RandomHighlightSiteAdminView extends GalleryView {
 	    $form['duration'] = (string)round($duration / 60, 2);
 	}
 
-	$template->setVariable('controller', 'randomhighlight:RandomHighlightSiteAdmin');
+	$template->setVariable('controller', 'randomhighlight.RandomHighlightSiteAdmin');
 	return array(GalleryStatus::success(), array('body' =>
 		     'modules/randomhighlight/templates/RandomHighlightSiteAdmin.tpl'));
     }

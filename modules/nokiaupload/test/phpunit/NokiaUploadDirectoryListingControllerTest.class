@@ -35,7 +35,7 @@
 class NokiaUploadDirectoryListingControllerTest extends GalleryControllerTestCase {
 
     function NokiaUploadDirectoryListingControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'nokiaupload:DirectoryListing');
+	$this->GalleryControllerTestCase($methodName, 'nokiaupload.DirectoryListing');
     }
 
     function setUp() {
@@ -125,7 +125,7 @@ class NokiaUploadDirectoryListingControllerTest extends GalleryControllerTestCas
 	}
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'nokiaupload:DirectoryListing'),
+	$this->assertEquals(array('view' => 'nokiaupload.DirectoryListing'),
 			    $results['delegate'], 'delegate');
 	$this->assertEquals(array(), $results['error'], 'error');
 	$this->assertEquals(NOKIAUPLOAD_ERR_NOERR, $results['status']['success'], 'success');

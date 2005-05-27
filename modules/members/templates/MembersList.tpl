@@ -37,11 +37,11 @@
 	   name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
 	  {if ($form.list.page > 1)}
-	    <a href="{g->url arg1="view=members:MembersList" arg2="form[list][page]=1"}">
+	    <a href="{g->url arg1="view=members.MembersList" arg2="form[list][page]=1"}">
 	      {g->text text="&laquo; first"}
 	    </a>
 	    &nbsp;
-	    <a href="{g->url arg1="view=members:MembersList"
+	    <a href="{g->url arg1="view=members.MembersList"
 	     arg2="form[list][page]=`$form.list.backPage`"}">
 	      {g->text text="&laquo; back"}
 	    </a>
@@ -56,12 +56,12 @@
 	  &nbsp;
 
 	  {if ($form.list.page < $form.list.maxPages)}
-	    <a href="{g->url arg1="view=members:MembersList"
+	    <a href="{g->url arg1="view=members.MembersList"
 	     arg2="form[list][page]=`$form.list.nextPage`"}">
 	      {g->text text="next &raquo;"}
 	    </a>
 	    &nbsp;
-	    <a href="{g->url arg1="view=members:MembersList"
+	    <a href="{g->url arg1="view=members.MembersList"
 	     arg2="form[list][page]=`$form.list.maxPages`"}">
 	      {g->text text="last &raquo;"}
 	    </a>
@@ -85,7 +85,7 @@
 	<td>
 	  {$smarty.foreach.MembersListLoop.iteration+$form.list.startingUser}
 	</td><td>
-	  <a href="{g->url arg1="view=members:MembersProfile" arg2="userId=`$user.id`"}">
+	  <a href="{g->url arg1="view=members.MembersProfile" arg2="userId=`$user.id`"}">
 	   {$user.userName}
 	  </a>
 	</td><td>

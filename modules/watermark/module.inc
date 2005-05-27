@@ -40,11 +40,11 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('watermark');
 	$this->setName($gallery->i18n('Watermark'));
 	$this->setDescription($gallery->i18n('Watermark your images'));
-	$this->setVersion('0.9.3'); /* Update upgrade() too */
+	$this->setVersion('0.9.4'); /* Update upgrade() too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners|getSiteAdminViews|getUserAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -155,6 +155,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	    }
 
 	case '0.9.2':
+	case '0.9.3':
 
 	case 'end of upgrade path':
 	    /*
@@ -227,7 +228,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Watermarks'),
-				 'view' => 'watermark:WatermarkSiteAdmin')));
+				 'view' => 'watermark.WatermarkSiteAdmin')));
     }
 
     /**
@@ -245,7 +246,7 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	$views = array();
 	if ($user->getId() != $anonymousUserId) {
 	    $views[] = array('name' => $this->translate('Watermarks'),
-			     'view' => 'watermark:UserWatermarks');
+			     'view' => 'watermark.UserWatermarks');
 	}
 
 	return array(GalleryStatus::success(), $views);
@@ -286,9 +287,9 @@ class WatermarkModule extends GalleryModule /* and GalleryEventListener */ {
 	return array(
 	    array( 'comment' => $this->translate('Watermark hotlinked images'),
 		   'pattern' => '.',
-		   'restrict' => array('view' => 'core:DownloadItem',
+		   'restrict' => array('view' => 'core.DownloadItem',
 				       'itemId' => '([0-9]+)'),
-		   'queryString' => array('view' => 'watermark:DownloadItem',
+		   'queryString' => array('view' => 'watermark.DownloadItem',
 					  'itemId' => '%1'),
 		   'flags' => array(),
 		   'locked' => 1,

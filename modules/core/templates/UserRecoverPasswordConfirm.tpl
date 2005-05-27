@@ -14,7 +14,7 @@
 
 <div class="gbBlock">
   {capture name="recoverUrl"}
-  {g->url arg1="view=core:UserAdmin" arg2="subView=core:UserRecoverPassword"}
+  {g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPassword"}
   {/capture}
 
   {if isset($form.error.request.missing)}

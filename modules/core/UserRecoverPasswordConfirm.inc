@@ -151,12 +151,12 @@ class UserRecoverPasswordConfirmController extends GalleryController {
 	} 
 	
 	if (empty($error) && !empty($status)) {
-	    $results['redirect']['view'] = 'core:UserAdmin';
-	    $results['redirect']['subView'] = 'core:UserLogin';
+	    $results['redirect']['view'] = 'core.UserAdmin';
+	    $results['redirect']['subView'] = 'core.UserLogin';
 	    $results['return'] = 0;
 	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'core:UserRecoverPasswordConfirm';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'core.UserRecoverPasswordConfirm';
 	}
 	
 	$results['status'] = $status;
@@ -199,12 +199,12 @@ class UserRecoverPasswordConfirmView extends GalleryView {
 
 	if (empty($requestExpires)) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:UserAdmin',
-						   'subView' => 'core:UserRecoverPassword')));
+			 array('redirect' => array('view' => 'core.UserAdmin',
+						   'subView' => 'core.UserRecoverPassword')));
 	} else {
 	    $UserRecoverPasswordConfirm = array();
 	    $template->setVariable('UserRecoverPasswordConfirm', $UserRecoverPasswordConfirm);
-	    $template->setVariable('controller', 'core:UserRecoverPasswordConfirm');
+	    $template->setVariable('controller', 'core.UserRecoverPasswordConfirm');
 	    return array(GalleryStatus::success(),
 			 array('body' => 'modules/core/templates/UserRecoverPasswordConfirm.tpl'));
 	}

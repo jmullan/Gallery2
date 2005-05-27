@@ -34,7 +34,7 @@
 class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 
     function ItemDeleteSingleControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemDeleteSingle');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemDeleteSingle');
     }
 
     function setUp() {
@@ -67,8 +67,8 @@ class ItemDeleteSingleControllerTest extends GalleryControllerTestCase {
 	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemDeleteConfirmation',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemDeleteConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('deleted' => 1),
 				  'error' => array()),

@@ -166,22 +166,22 @@ class RewriteHelperTest extends GalleryTestCase {
     function testParseActiveRules() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
-		      'match' => 'core:ShowItem'),
+		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core:DownloadItem'),
+		      'match' => 'core.DownloadItem'),
 		array('pattern' => '%path%')));
 	$expected = array(
 		array('urlPattern' => '^v/$',
-		      'queryString' => 'g2_view=core:ShowItem',
+		      'queryString' => 'g2_view=core.ShowItem',
 		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^d/([0-9]+)-([0-9]+)/([^\/]+)$',
-		      'queryString' => 'g2_view=core:DownloadItem&g2_itemId=$1&g2_serialNumber=$2',
+		      'queryString' => 'g2_view=core.DownloadItem&g2_itemId=$1&g2_serialNumber=$2',
 		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^v/(.+)$',
-		      'queryString' => 'g2_view=core:ShowItem&g2_path=$1',
+		      'queryString' => 'g2_view=core.ShowItem&g2_path=$1',
 		      'settings' => array('flags' => 'QSA,L')),
 		array('urlPattern' => '^(.+)$',
-		      'queryString' => 'g2_view=rewrite:FileNotFound&g2_path=$1',
+		      'queryString' => 'g2_view=rewrite.FileNotFound&g2_path=$1',
 		      'settings' => array('flags' => 'QSA,L')));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
@@ -196,7 +196,7 @@ class RewriteHelperTest extends GalleryTestCase {
     function testParseActiveRulesBadKeyword() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%badKeyword%',
-		      'match' => 'core:ShowItem')));
+		      'match' => 'core.ShowItem')));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);
 	if ($ret->isError()) {
@@ -210,10 +210,10 @@ class RewriteHelperTest extends GalleryTestCase {
     function testParseActiveRulesNoKeyword() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/',
-		      'match' => 'core:ShowItem')));
+		      'match' => 'core.ShowItem')));
 	$expected = array(
 		array('urlPattern' => '^v/$',
-		      'queryString' => 'g2_view=core:ShowItem',
+		      'queryString' => 'g2_view=core.ShowItem',
 		      'settings' => array('flags' => 'QSA,L')));
 
 	list ($ret, $code, $result) = RewriteHelper::parseActiveRules($activeRules);

@@ -84,8 +84,8 @@ class SelectGalleryController extends GalleryController {
 		}
 		$session->put('migrate.view.SelectGallery.recentPaths', $recentPaths);
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'migrate:ChooseObjects';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'migrate.ChooseObjects';
 		$redirect['albumsPath'] = $form['albumsPath'];
 	    }
 	} else if (isset($form['action']['deleteMap'])) {
@@ -95,16 +95,16 @@ class SelectGalleryController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'migrate:SelectGallery';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'migrate.SelectGallery';
 	    $status['mapDeleted'] = 1;
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'migrate:SelectGallery';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'migrate.SelectGallery';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -164,7 +164,7 @@ class SelectGalleryView extends GalleryView {
 	$urlComponents = parse_url($urlGenerator->getCurrentUrl());
 	$SelectGallery['uriBase'] = $urlComponents['path'];
 
-	$template->setVariable('controller', 'migrate:SelectGallery');
+	$template->setVariable('controller', 'migrate.SelectGallery');
 	$template->setVariable('SelectGallery', $SelectGallery);
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/migrate/templates/SelectGallery.tpl'));

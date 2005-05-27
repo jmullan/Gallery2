@@ -60,13 +60,13 @@ class AdminEditUserQuotaController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the AdminQuotas view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminQuotas';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminQuotas';
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminEditUserQuota';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminEditUserQuota';
 	    $redirect['userId'] = $userId;
 	} else if (isset($form['action']['save'])) {
 
@@ -113,8 +113,8 @@ class AdminEditUserQuotaController extends GalleryController {
 			    }
 
 			    /* Request a redirect to the confirmation screen */
-			    $redirect['view'] = 'core:SiteAdmin';
-			    $redirect['subView'] = 'quotas:AdminQuotas';
+			    $redirect['view'] = 'core.SiteAdmin';
+			    $redirect['subView'] = 'quotas.AdminQuotas';
 			    $status['modifiedUser'] = $user->getUserName();
 			}
 		    } else {
@@ -138,8 +138,8 @@ class AdminEditUserQuotaController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'quotas:AdminEditUserQuota';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'quotas.AdminEditUserQuota';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -204,7 +204,7 @@ class AdminEditUserQuotaView extends GalleryView {
 							'MB' => $module->translate('MB'),
 							'GB' => $module->translate('GB'));
 	$template->setVariable('AdminEditUserQuota', $AdminEditUserQuota);
-	$template->setVariable('controller', 'quotas:AdminEditUserQuota');
+	$template->setVariable('controller', 'quotas.AdminEditUserQuota');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/quotas/templates/AdminEditUserQuota.tpl'));

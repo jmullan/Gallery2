@@ -40,7 +40,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryValidationPlugi
 class UserLoginControllerTest extends GalleryControllerTestCase {
 
     function UserLoginControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:UserLogin');
+	$this->GalleryControllerTestCase($methodName, 'core.UserLogin');
     }
 
     function setUp() {
@@ -99,8 +99,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password]', 'password');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserLogin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'core.UserLogin'),
 				  'status' => array(),
 				  'error' => array('form[error][invalidPassword]')),
 			    $results);
@@ -112,8 +112,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password]', 'wrong password');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserLogin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'core.UserLogin'),
 				  'status' => array(),
 				  'error' => array('form[error][invalidPassword]')),
 			    $results);
@@ -125,8 +125,8 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[password]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'core:UserLogin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'core.UserLogin'),
 				  'status' => array(),
 				  'error' => array('form[error][username][missing]',
 						   'form[error][password][missing]')),
@@ -160,7 +160,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
 		  'status' => array(),
 		  'error' => array('form[error][UserLoginControllerTestPlugin][anError]')),
 	    $results);
@@ -187,7 +187,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
 		  'status' => array(),
 		  'error' => array('form[error][UserLoginControllerTestPlugin1][anError]',
 				   'form[error][UserLoginControllerTestPlugin2][anError]')),
@@ -215,7 +215,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
 		  'status' => array(),
 		  'error' => array('form[error][UserLoginControllerTestPlugin1][anError]')),
 	    $results);
@@ -237,7 +237,7 @@ class UserLoginControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:UserAdmin', 'subView' => 'core:UserLogin'),
+	    array('delegate' => array('view' => 'core.UserAdmin', 'subView' => 'core.UserLogin'),
 		  'status' => array(),
 		  'error' => array('form[error][UserLoginControllerTestPlugin][anError]')),
 	    $results);

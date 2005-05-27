@@ -49,7 +49,7 @@ class MembersItemsView extends GalleryView {
 	}
 	if (!$result) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:ShowItem')));
+			 array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	if (!isset($form['list']['page']) || $form['list']['page'] < 1) {
@@ -80,7 +80,7 @@ class MembersItemsView extends GalleryView {
 
 	if ($form['list']['count'] == 0) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:ShowItem')));
+			 array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	$form['list']['pageSize'] = $form['list']['count'] > 25 ? 25 : $form['list']['count'];
@@ -126,7 +126,7 @@ class MembersItemsView extends GalleryView {
 
 	$template->setVariable('MembersItems', $MembersItems);
 
-	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

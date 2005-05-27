@@ -100,7 +100,7 @@
 {/if}
 
 <div class="gbBlock">
-  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=migrate:SelectGallery"}">
+  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=migrate.SelectGallery"}">
     {g->text text="Import more data"}
   </a>
 </div>

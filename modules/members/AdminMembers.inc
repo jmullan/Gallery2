@@ -61,11 +61,11 @@ class AdminMembersController extends GalleryController {
     	} /* else $form['action']['cancel'] */
     
     	if (empty($error)) {
-    	    $results['redirect'] = array('view' => 'core:SiteAdmin',
-    					 'subView' => 'members:AdminMembers');
+    	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+    					 'subView' => 'members.AdminMembers');
     	} else {
-    	    $results['delegate']['view'] = 'core:SiteAdmin';
-    	    $results['delegate']['subView'] = 'members:AdminMembers';
+    	    $results['delegate']['view'] = 'core.SiteAdmin';
+    	    $results['delegate']['subView'] = 'members.AdminMembers';
     	}
     	$results['status'] = $status;
     	$results['error'] = $error;
@@ -120,7 +120,7 @@ class AdminMembersView extends GalleryView {
     	$members['emailViews'] = array(true => $module->translate('Show Email Addresses'),
     	                               false => $module->translate("Don't Show Email Addresses"));
 	$template->setVariable('Members', $members);
-    	$template->setVariable('controller', 'members:AdminMembers');
+    	$template->setVariable('controller', 'members.AdminMembers');
     
     	return array(GalleryStatus::success(),
     		     array('body' => 'modules/members/templates/AdminMembers.tpl'));

@@ -39,11 +39,11 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 3));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -136,14 +136,14 @@ class CaptchaModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Captcha'),
-				 'view' => 'captcha:CaptchaSiteAdmin')));
+				 'view' => 'captcha.CaptchaSiteAdmin')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return 'captcha:CaptchaConfigAdmin';
+	return 'captcha.CaptchaConfigAdmin';
     }
 }
 ?>

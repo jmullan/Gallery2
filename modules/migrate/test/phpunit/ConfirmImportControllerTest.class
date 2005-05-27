@@ -50,7 +50,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
     var $_mapCount;
 
     function ConfirmImportControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'migrate:ConfirmImport');
+	$this->GalleryControllerTestCase($methodName, 'migrate.ConfirmImport');
     }
 
     function setUp() {
@@ -198,8 +198,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']);
 	$this->assertEquals(array(),
 			    $results['error']);
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	/* Verify the user exists */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunit_foobar');
@@ -229,8 +229,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']);
 	$this->assertEquals(array(),
 			    $results['error']);
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	/* Verify the user exists */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunitfoo002');
@@ -262,8 +262,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']);
 	$this->assertEquals(array(),
 			    $results['error']);
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 
 
@@ -283,8 +283,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    $results['status']);
 	$this->assertEquals(array(),
 			    $results['error']);
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:SelectGallery'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.SelectGallery'),
 			    $results['redirect']);
     }
 
@@ -306,8 +306,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$this->assertEquals(array('album03', 'album02'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -671,8 +671,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('album04'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -739,8 +739,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('album03'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(true, $results['status']['urlRedirect']);
@@ -867,8 +867,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('album05'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -1041,8 +1041,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('album01'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -1141,8 +1141,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('no_NO'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -1286,8 +1286,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('fr_FR'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);
@@ -1433,8 +1433,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	$this->assertEquals(array('KOI-8'),
 			    array_keys($results['status']['albumImportSuccess']));
-	$this->assertEquals(array('view' => 'core:SiteAdmin',
-				  'subView' => 'migrate:ImportResults'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin',
+				  'subView' => 'migrate.ImportResults'),
 			    $results['redirect']);
 	$this->assertEquals(array(), $results['error']);
 	$this->assertEquals(array(), $results['status']['userImportFailure']);

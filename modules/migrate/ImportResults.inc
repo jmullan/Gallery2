@@ -62,7 +62,7 @@ class ImportResultsView extends GalleryView {
 	$urlComponents = parse_url($urlGenerator->getCurrentUrl());
 	$ImportResults['uriBase'] = $urlComponents['path'];
 	$template->setVariable('ImportResults', $ImportResults);
-	$template->setVariable('controller', 'migrate:ImportResults');
+	$template->setVariable('controller', 'migrate.ImportResults');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/migrate/templates/ImportResults.tpl'));
     }

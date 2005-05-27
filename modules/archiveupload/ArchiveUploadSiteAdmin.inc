@@ -87,25 +87,25 @@ class ArchiveUploadSiteAdminController extends GalleryController {
 		}
 
 		if ($isActive) {
-		    $redirectSubview = 'archiveupload:ArchiveUploadSiteAdmin';
+		    $redirectSubview = 'archiveupload.ArchiveUploadSiteAdmin';
 		    $status['saved'] = 1;
 		} else {
-		    $redirectSubview = 'core:AdminModules';
+		    $redirectSubview = 'core.AdminModules';
 		    $status['configured'] = 'archiveupload';
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
-	    $redirectSubview = 'core:AdminModules';
+	    $redirectSubview = 'core.AdminModules';
 	} else if (isset($form['action']['reset'])) {
-	    $redirectSubview = 'archiveupload:ArchiveUploadSiteAdmin';
+	    $redirectSubview = 'archiveupload.ArchiveUploadSiteAdmin';
 	}
 
 	if (!empty($redirectSubview)) {
-	    $results['redirect'] = array('view' => 'core:SiteAdmin',
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
 					 'subView' => $redirectSubview);
 	} else {
-	    $results['delegate'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'archiveupload:ArchiveUploadSiteAdmin');
+	    $results['delegate'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'archiveupload.ArchiveUploadSiteAdmin');
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -161,7 +161,7 @@ class ArchiveUploadSiteAdminView extends GalleryView {
 	    }
 	}
 
-	$template->setVariable('controller', 'archiveupload:ArchiveUploadSiteAdmin');
+	$template->setVariable('controller', 'archiveupload.ArchiveUploadSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/archiveupload/templates/ArchiveUploadSiteAdmin.tpl'));
     }

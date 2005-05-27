@@ -89,10 +89,10 @@
        name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
       {if ($form.list.page > 1)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=register.AdminSelfRegistration"
 	 arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=register.AdminSelfRegistration"
 	 arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
       {/if}
 
@@ -101,10 +101,10 @@
       &nbsp;
 
       {if ($form.list.page < $form.list.maxPages)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=register.AdminSelfRegistration"
 	 arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=register:AdminSelfRegistration"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=register.AdminSelfRegistration"
 	 arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
       {/if}
     </span></div>
@@ -125,10 +125,10 @@
     <td> {$user.email} </td>
     <td> {g->date timestamp=$user.creationTimestamp} </td>
     <td>
-      <a href="{g->url arg1="controller=register:AdminSelfRegistration"
+      <a href="{g->url arg1="controller=register.AdminSelfRegistration"
        arg2="form[action][activate]=1" arg3="form[userId]=$userId"}">{g->text text="activate"}</a>
       &nbsp;
-      <a href="{g->url arg1="controller=register:AdminSelfRegistration"
+      <a href="{g->url arg1="controller=register.AdminSelfRegistration"
        arg2="form[action][delete]=1" arg3="form[userId]=$userId"}">{g->text text="delete"}</a>
     </td>
   </tr>

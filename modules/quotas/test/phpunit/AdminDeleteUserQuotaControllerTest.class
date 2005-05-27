@@ -44,7 +44,7 @@ require_once(dirname(__FILE__) . '/../../classes/QuotasMap.class');
 class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 
     function AdminDeleteUserQuotaControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'quotas:AdminDeleteUserQuota');
+	$this->GalleryControllerTestCase($methodName, 'quotas.AdminDeleteUserQuota');
     }
 
     function testCancel() {
@@ -57,8 +57,8 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -81,8 +81,8 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('deletedUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results,
@@ -120,8 +120,8 @@ class AdminDeleteUserQuotaControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminDeleteUserQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminDeleteUserQuota'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

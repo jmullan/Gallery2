@@ -60,13 +60,13 @@ class AdminEditGroupQuotaController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Redirect back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminQuotas';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminQuotas';
 	} else if (isset($form['action']['undo'])) {
 
 	    /* Redirect back to the same view to reset the form */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminEditGroupQuota';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminEditGroupQuota';
 	    $redirect['groupId'] = $groupId;
 	} else if (isset($form['action']['save'])) {
 
@@ -113,8 +113,8 @@ class AdminEditGroupQuotaController extends GalleryController {
 			    }
 
 			    /* Request a redirect to the confirmation screen */
-			    $redirect['view'] = 'core:SiteAdmin';
-			    $redirect['subView'] = 'quotas:AdminQuotas';
+			    $redirect['view'] = 'core.SiteAdmin';
+			    $redirect['subView'] = 'quotas.AdminQuotas';
 			    $status['modifiedGroup'] = $group->getGroupName();
 			}
 		    } else {
@@ -138,8 +138,8 @@ class AdminEditGroupQuotaController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'quotas:AdminEditGroupQuota';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'quotas.AdminEditGroupQuota';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -204,7 +204,7 @@ class AdminEditGroupQuotaView extends GalleryView {
 							 'MB' => $module->translate('MB'),
 							 'GB' => $module->translate('GB'));
 	$template->setVariable('AdminEditGroupQuota', $AdminEditGroupQuota);
-	$template->setVariable('controller', 'quotas:AdminEditGroupQuota');
+	$template->setVariable('controller', 'quotas.AdminEditGroupQuota');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/quotas/templates/AdminEditGroupQuota.tpl'));

@@ -35,7 +35,7 @@
 class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function UserAlbumSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'useralbum:UserAlbumSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'useralbum.UserAlbumSiteAdmin');
     }
 
     function setUp() {
@@ -63,8 +63,8 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'useralbum:UserAlbumSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'useralbum.UserAlbumSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -81,8 +81,8 @@ class UserAlbumSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'useralbum:UserAlbumSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'useralbum.UserAlbumSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

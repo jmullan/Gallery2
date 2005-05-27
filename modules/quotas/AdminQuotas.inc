@@ -90,8 +90,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "create group quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminCreateGroupQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminCreateGroupQuota';
 		$redirect['groupId'] = $group->getId();
 	    }
 	} else if (isset($form['action']['user']['createFromText'])) {
@@ -111,8 +111,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "create user quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminCreateUserQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminCreateUserQuota';
 		$redirect['userId'] = $user->getId();
 	    }
 	} else if (isset($form['action']['group']['editFromText'])) {
@@ -133,8 +133,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "edit group quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminEditGroupQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminEditGroupQuota';
 		$redirect['groupId'] = $group->getId();
 	    }
 	    
@@ -156,8 +156,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "edit user quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminEditUserQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminEditUserQuota';
 		$redirect['userId'] = $user->getId();
 	    }
 	    
@@ -179,8 +179,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "delete group quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminDeleteGroupQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminDeleteGroupQuota';
 		$redirect['groupId'] = $group->getId();
 	    }
 	  	
@@ -202,8 +202,8 @@ class AdminQuotasController extends GalleryController {
 	    }
 	    if (empty($error)) {
 		/* Show the "delete user quota" view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminDeleteUserQuota';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminDeleteUserQuota';
 		$redirect['userId'] = $user->getId();
 	    }
 		
@@ -212,8 +212,8 @@ class AdminQuotasController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'quotas:AdminQuotas';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'quotas.AdminQuotas';
 	}
 
 	$results['status'] = $status;
@@ -342,7 +342,7 @@ class AdminQuotasView extends GalleryView {
 	$AdminQuotas['totalUserCount'] = $totalUserCount;
 
 	$template->setVariable('AdminQuotas', $AdminQuotas);
-	$template->setVariable('controller', 'quotas:AdminQuotas');
+	$template->setVariable('controller', 'quotas.AdminQuotas');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/quotas/templates/AdminQuotas.tpl'));

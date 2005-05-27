@@ -6,7 +6,7 @@
  *}
 <div class="gbBlock">
 <form id="LanguageSystemContent" method="post"
-      action="{g->url arg1="controller=core:ChangeLanguage" arg2="return=1"}"><div>
+      action="{g->url arg1="controller=core.ChangeLanguage" arg2="return=1"}"><div>
   <h3> {g->text text="Language"} </h3>
 
   <select name="{g->formVar var="language"}" onchange="this.form.submit()" style="direction:ltr">

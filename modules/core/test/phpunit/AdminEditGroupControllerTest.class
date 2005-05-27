@@ -34,7 +34,7 @@
 class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 
     function AdminEditGroupControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminEditGroup');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminEditGroup');
     }
 
     function testCancel() {
@@ -47,8 +47,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -65,8 +65,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][undo]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroup',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroup',
 						      'groupId' => $group->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -87,8 +87,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[groupName]', $newGroupName);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminGroups'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminGroups'),
 				  'status' => array('modifiedGroup' => $newGroupName),
 				  'error' => array()),
 			    $results);
@@ -106,8 +106,8 @@ class AdminEditGroupControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[groupName]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminEditGroup'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminEditGroup'),
 				  'status' => array(),
 				  'error' => array('form[error][groupName][missing]')),
 			    $results);

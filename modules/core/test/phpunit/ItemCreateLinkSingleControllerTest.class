@@ -34,7 +34,7 @@
 class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 
     function ItemCreateLinkSingleControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemCreateLinkSingle');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemCreateLinkSingle');
     }
 
     function setUp() {
@@ -74,8 +74,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[destination]', $this->_destinationAlbum->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLinkSingle',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLinkSingle',
 						      'itemId' => $this->_item->getId()),
 				  'status' => array('linked' => 1),
 				  'error' => array()),
@@ -120,8 +120,8 @@ class ItemCreateLinkSingleControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][link]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemCreateLinkSingle'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemCreateLinkSingle'),
 				  'status' => array(),
 				  'error' => array('form[error][destination][empty]')),
 			    $results);

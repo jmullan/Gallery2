@@ -41,7 +41,7 @@ class LoginController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('LoginController');
 
-	$results['delegate'] = array('view' => 'nokiaupload:Login');
+	$results['delegate'] = array('view' => 'nokiaupload.Login');
 	$results['status'] = ImageUploadHelper::doLogin();
 	$results['error'] = array();
 

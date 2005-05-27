@@ -10,7 +10,7 @@
       // <![CDATA[
       setSubtitle("{g->text text="Specify the name and title for the new album."}");
       setSubmitOnNext(true);
-      setOnBackUrl("{g->url arg1="view=publishxp:SelectAlbum" forJavascript="true"}");
+      setOnBackUrl("{g->url arg1="view=publishxp.SelectAlbum" forJavascript="true"}");
       setButtons(true, true, false);
       // ]]>
     </script>

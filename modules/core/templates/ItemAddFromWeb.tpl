@@ -79,7 +79,7 @@
     <strong>
       {g->text text="URL: %s" arg1=$form.webPage}
       &nbsp;
-      <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd"
+      <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
        arg3="itemId=`$ItemAdmin.item.id`" arg4="form[webPage]=`$form.webPage`"
        arg5="form[formName]=ItemAddFromWeb" arg6="addPlugin=ItemAddFromWeb"}">
 	{g->text text="change"}

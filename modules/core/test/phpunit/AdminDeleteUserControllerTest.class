@@ -36,7 +36,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDataCache.class
 class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 
     function AdminDeleteUserControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminDeleteUser');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminDeleteUser');
     }
 	
     /* We're creating a tree of test items owned by the user */
@@ -81,8 +81,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
     function testCancel() {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -106,8 +106,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('deletedUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results,
@@ -135,8 +135,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	$results = $this->handleRequest();
 	GalleryDataCache::reset();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminDeleteUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminDeleteUser'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -161,8 +161,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminDeleteUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminDeleteUser'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -204,8 +204,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminDeleteUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminDeleteUser'),
 				  'status' => array(),
 				  'error' => array('form[error][text][noSuchUser]')),
 			    $results);
@@ -244,8 +244,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminDeleteUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminDeleteUser'),
 				  'status' => array(),
 				  'error' => array('form[error][text][newOwnerIsDeletedUser]')),
 			    $results);
@@ -296,8 +296,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminDeleteUser'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminDeleteUser'),
 				  'status' => array(),
 				  'error' => array('form[error][text][newOwnerIsGuest]')),
 			    $results);
@@ -358,8 +358,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('deletedUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results,
@@ -416,8 +416,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('deletedUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results,
@@ -495,8 +495,8 @@ class AdminDeleteUserControllerTest extends GalleryControllerTestCase {
 	
 	GalleryDataCache::reset();
 	
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminUsers'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminUsers'),
 				  'status' => array('deletedUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results,

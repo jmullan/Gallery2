@@ -66,8 +66,8 @@ class AdminEditGroupUsersController extends GalleryController {
 	} else if (isset($form['action']['done'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminGroups';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminGroups';
 	    
 	} else if ($group->getGroupType() != GROUP_ALL_USERS) {
 	    if (isset($form['action']['remove'])) {
@@ -102,8 +102,8 @@ class AdminEditGroupUsersController extends GalleryController {
 		    }
 
 		    /* Redirect back to the same view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminEditGroupUsers';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminEditGroupUsers';
 		    $redirect['groupId'] = $group->getId();
 		    $status['removedUsers'] = $removedUsers;
 		    $status['removedUser'] =
@@ -141,8 +141,8 @@ class AdminEditGroupUsersController extends GalleryController {
 		    }
 		    
 		    /* Redirect back to the same view */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminEditGroupUsers';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminEditGroupUsers';
 		    $redirect['groupId'] = $group->getId();
 		    $status['addedUser'] = $user->getUsername();
 		}
@@ -152,8 +152,8 @@ class AdminEditGroupUsersController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminEditGroupUsers';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminEditGroupUsers';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -259,7 +259,7 @@ class AdminEditGroupUsersView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminEditGroupUsers', $AdminEditGroupUsers);
-	$template->setVariable('controller', 'core:AdminEditGroupUsers');
+	$template->setVariable('controller', 'core.AdminEditGroupUsers');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminEditGroupUsers.tpl'));

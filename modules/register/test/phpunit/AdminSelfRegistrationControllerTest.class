@@ -38,7 +38,7 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
     var $paramNames;
 
     function AdminSelfRegistrationControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'register:AdminSelfRegistration');
+	$this->GalleryControllerTestCase($methodName, 'register.AdminSelfRegistration');
     }
 
     function setUp() {
@@ -92,8 +92,8 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'redirect' => array('view' => 'core:SiteAdmin',
-					    'subView' => 'register:AdminSelfRegistration'),
+		array(	'redirect' => array('view' => 'core.SiteAdmin',
+					    'subView' => 'register.AdminSelfRegistration'),
 			'status' => array('saved' => 1),
 			'error' => array()),
 		$results);
@@ -122,8 +122,8 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'redirect' => array('view' => 'core:SiteAdmin',
-					    'subView' => 'register:AdminSelfRegistration'),
+		array(	'redirect' => array('view' => 'core.SiteAdmin',
+					    'subView' => 'register.AdminSelfRegistration'),
 			'status' => array('activated' => $this->_pendingUser->getUserName()),
 			'error' => array()),
 		$results);
@@ -149,8 +149,8 @@ class AdminSelfRegistrationControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(
-		array(	'redirect' => array('view' => 'core:SiteAdmin',
-					    'subView' => 'register:AdminSelfRegistration'),
+		array(	'redirect' => array('view' => 'core.SiteAdmin',
+					    'subView' => 'register.AdminSelfRegistration'),
 			'status' => array('deleted' => $this->_pendingUser->getUserName()),
 			'error' => array()),
 		$results);

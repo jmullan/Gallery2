@@ -38,11 +38,11 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -81,7 +81,7 @@ class ShutterflyModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$params['view'] = 'shutterfly:PrintPhotos';
+		$params['view'] = 'shutterfly.PrintPhotos';
 		$params['itemId'] = $item->getId();
 		$params['return'] = 1;
 		$links[$item->getId()][] =

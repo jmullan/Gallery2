@@ -53,8 +53,8 @@ class AdminCreateUserController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminUsers view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminUsers';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminUsers';
 	    
 	} else if (isset($form['action']['create'])) {
 	    /*
@@ -96,8 +96,8 @@ class AdminCreateUserController extends GalleryController {
 		    }
 
 		    /* Request a redirect to the confirmation screen */
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminUsers';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminUsers';
 		    $status['createdUser'] = $form['userName'];
 		}
 	    } else {
@@ -118,8 +118,8 @@ class AdminCreateUserController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminCreateUser';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminCreateUser';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -177,7 +177,7 @@ class AdminCreateUserView extends GalleryView {
 	$AdminCreateUser['languageList'] = $languageList;
 
 	$template->setVariable('AdminCreateUser', $AdminCreateUser);
-	$template->setVariable('controller', 'core:AdminCreateUser');
+	$template->setVariable('controller', 'core.AdminCreateUser');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminCreateUser.tpl'));

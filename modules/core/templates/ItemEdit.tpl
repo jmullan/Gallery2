@@ -43,7 +43,7 @@
       </span></li>
     {else}
       <li><span>
-	<a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemEdit"
+	<a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit"
 	 arg3="itemId=`$ItemAdmin.item.id`" arg4="editPlugin=`$plugin.id`"}">
 	  {$plugin.title}
 	</a>

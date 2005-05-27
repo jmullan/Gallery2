@@ -34,7 +34,7 @@
 class AdminCoreControllerTest extends GalleryControllerTestCase {
 
     function AdminCoreControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminCore');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminCore');
     }
 
     function setUp() {
@@ -70,8 +70,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -111,8 +111,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array('addedDir' => 1, 'saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -169,8 +169,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array('addedDir' => 1, 'saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -196,8 +196,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'core:AdminCore'),
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
 		  'status' => array(),
 		  'error' => array('form[error][uploadLocalServer][newDir][missing]')),
 			    $results);
@@ -210,8 +210,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'core:AdminCore'),
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
 		  'status' => array(),
 		  'error' => array('form[error][uploadLocalServer][newDir][notADirectory]')),
 			    $results);
@@ -238,8 +238,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'core:AdminCore'),
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
 		  'status' => array('addedDir' => 1, 'saved' => 1),
 		  'error' => array()),
 	    $results);
@@ -282,8 +282,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array('removedDir' => 1),
 				  'error' => array()),
 			    $results);
@@ -307,8 +307,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we failed */
 	$results = $this->handleRequest();
 	$this->assertEquals(
-	    array('delegate' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'core:AdminCore'),
+	    array('delegate' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
 		  'status' => array(),
 		  'error' => array('form[error][uploadLocalServer][selectedDir][missing]')),
 	    $results);
@@ -319,8 +319,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array(),
 				  'error' => array('form[error][emailTest][invalidTo]')),
 			    $results);
@@ -331,8 +331,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array(),
 				  'error' => array('form[error][emailTest][invalidTo]')),
 			    $results);
@@ -351,8 +351,8 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminCore'),
 				  'status' => array('saved' => 1, 'emailTestSuccess' => 1),
 				  'error' => array()),
 			    $results);
@@ -371,7 +371,7 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][emailTest]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('view' => 'core:SiteAdmin', 'subView' => 'core:AdminCore'),
+	$this->assertEquals(array('view' => 'core.SiteAdmin', 'subView' => 'core.AdminCore'),
 			    $results['redirect'], 'redirect');
 	$this->assertEquals(array('saved', 'emailTestError', 'emailTestDebug'),
 			    array_keys($results['status']), 'status keys');

@@ -40,11 +40,11 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName($gallery->i18n('Panorama'));
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -129,8 +129,8 @@ class PanoramaModule extends GalleryModule {
 	if ($count > 0) {
 	    /* Can't deactivate if panorama entities exist.. */
 	    return array(GalleryStatus::success(),
-			 array('view' => 'core:SiteAdmin',
-			       'subView' => 'panorama:PanoramaSiteAdmin'));
+			 array('view' => 'core.SiteAdmin',
+			       'subView' => 'panorama.PanoramaSiteAdmin'));
 	}
 
 	list ($ret, $redirect) = parent::deactivate();
@@ -146,7 +146,7 @@ class PanoramaModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Panorama'),
-				 'view' => 'panorama:PanoramaSiteAdmin')));
+				 'view' => 'panorama.PanoramaSiteAdmin')));
     }
 
     /**
@@ -179,7 +179,7 @@ class PanoramaModule extends GalleryModule {
 			($image->getHeight() / $width < 0.6)) {
 		    $links[$item->getId()][] =
 			array('text' => $this->translate('view panorama'),
-			      'params' => array('view' => 'panorama:Panorama',
+			      'params' => array('view' => 'panorama.Panorama',
 						'itemId' => $item->getId()));
 		}
 	    }

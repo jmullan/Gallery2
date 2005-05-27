@@ -34,7 +34,7 @@
 class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
     function AdminDcrawControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'dcraw:AdminDcraw');
+	$this->GalleryControllerTestCase($methodName, 'dcraw.AdminDcraw');
     }
 
     function setUp() {
@@ -70,8 +70,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results);
@@ -90,8 +90,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array(),
 				  'status' => array('saved' => 1)),
 			    $results);
@@ -102,8 +102,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array('form[error][path][missing]'),
 				  'status' => array()),
 			    $results);
@@ -118,8 +118,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array('form[error][path][badPath]'),
 				  'status' => array()),
 			    $results);
@@ -138,8 +138,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array('form[error][path][testError]'),
 				  'status' => array()),
 			    $results);
@@ -150,8 +150,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'dcraw:AdminDcraw'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'dcraw.AdminDcraw'),
 				  'error' => array(),
 				  'status' => array()),
 			    $results);
@@ -162,8 +162,8 @@ class AdminDcrawControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'core:AdminModules'),
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminModules'),
 				  'error' => array(),
 				  'status' => array()),
 			    $results);

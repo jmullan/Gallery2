@@ -34,7 +34,7 @@
 class AdminToolkitPriorityControllerTest extends GalleryControllerTestCase {
 
     function AdminToolkitPriorityControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminToolkitPriority');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminToolkitPriority');
     }
 
     function setUp() {
@@ -62,8 +62,8 @@ class AdminToolkitPriorityControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 0,
-				  'redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminToolkitPriority'),
+				  'redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminToolkitPriority'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -76,8 +76,8 @@ class AdminToolkitPriorityControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 0,
-				  'redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminToolkitPriority'),
+				  'redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminToolkitPriority'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

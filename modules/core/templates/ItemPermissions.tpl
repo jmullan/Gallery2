@@ -38,7 +38,7 @@
     <input type="text" id="giFormUsername" autocomplete="off"
      name="{g->formVar var="form[owner][ownerName]"}" value="{$form.owner.ownerName}"/>
     {g->autoComplete element="giFormUsername"}
-      {g->url arg1="view=core:SimpleCallback" arg2="command=lookupUsername"
+      {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername"
 	      arg3="prefix=__VALUE__" forJavascript="true"}
     {/g->autoComplete}
 
@@ -125,7 +125,7 @@
   <input type="text" id="giFormGroupname" autocomplete="off"
    name="{g->formVar var="form[group][groupName]"}" value="{$form.group.groupName}"/>
   {g->autoComplete element="giFormGroupname"}
-    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupGroupname"
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupGroupname"
 	    arg3="prefix=__VALUE__" forJavascript="true"}
   {/g->autoComplete}
 
@@ -206,7 +206,7 @@
   <input type="text" id="giFormUsername2" class="giFormUsername" autocomplete="off"
    name="{g->formVar var="form[user][userName]"}" value="{$form.user.userName}"/>
   {g->autoComplete element="giFormUsername2"}
-    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupUsername"
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername"
 	    arg3="prefix=__VALUE__" forJavascript="true"}
   {/g->autoComplete}
 

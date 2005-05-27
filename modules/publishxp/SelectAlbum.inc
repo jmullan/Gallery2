@@ -46,7 +46,7 @@ class SelectAlbumController extends GalleryController {
 	if (isset($form['action']['newAlbum'])) {
 	    /* Redirect to the new album page. */
 	    if (isset($form['albumId'])) {
-		$redirect['view'] = 'publishxp:NewAlbum';
+		$redirect['view'] = 'publishxp.NewAlbum';
 		$redirect['parentId'] = $form['albumId'];
 	    } else {
 		$error[] = 'form[error][albumId][missing]';
@@ -54,7 +54,7 @@ class SelectAlbumController extends GalleryController {
 	} else if (isset($form['action']['select'])) {
 	    /* Redirect to the options page */
 	    if (isset($form['albumId'])) {
-		$redirect['view'] = 'publishxp:Options';
+		$redirect['view'] = 'publishxp.Options';
 		$redirect['albumId'] = $form['albumId'];
 	    } else {
 		$error[] = 'form[error][albumId][missing]';
@@ -66,7 +66,7 @@ class SelectAlbumController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'publishxp:SelectAlbum';
+	    $results['delegate']['view'] = 'publishxp.SelectAlbum';
 	}
 	return array(GalleryStatus::success(), $results);
     }
@@ -132,7 +132,7 @@ class SelectAlbumView extends GalleryView {
 	$SelectAlbum['albumTree'] = GalleryUtilities::createAlbumTree($albums);
 
 	$template->setVariable('SelectAlbum', $SelectAlbum);
-	$template->setVariable('controller', 'publishxp:SelectAlbum');
+	$template->setVariable('controller', 'publishxp.SelectAlbum');
 	$template->head('modules/publishxp/templates/Head.tpl');
 	return array(GalleryStatus::success(), 
 		     array('body' => 'modules/publishxp/templates/SelectAlbum.tpl'));

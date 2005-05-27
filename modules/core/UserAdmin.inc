@@ -83,7 +83,7 @@ class UserAdminView extends GalleryView {
 
 	/* If we have a specific sub view, load it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	if ($subViewName == 'core:UserAdmin') {
+	if ($subViewName == 'core.UserAdmin') {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	if (empty($subViewName) && !empty($subViewChoices)) {
@@ -168,7 +168,7 @@ class UserAdminView extends GalleryView {
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {
-	    $subViewName = 'core:ItemEdit';
+	    $subViewName = 'core.ItemEdit';
 	}
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {

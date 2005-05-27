@@ -36,7 +36,7 @@
   <input type="text" id="giFormUsername" size="20" autocomplete="off"
    name="{g->formVar var="form[text][userName]"}" value="{$form.text.userName}"/>
   {g->autoComplete element="giFormUsername"}
-    {g->url arg1="view=core:SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"
+    {g->url arg1="view=core.SimpleCallback" arg2="command=lookupUsername" arg3="prefix=__VALUE__"
 	    forJavascript="true"}
   {/g->autoComplete}
 
@@ -78,10 +78,10 @@
        name="{g->formVar var="form[list][maxPages]"}" value="{$form.list.maxPages}"/>
 
       {if ($form.list.page > 1)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
 	 arg3="form[list][page]=1"}">{g->text text="&laquo; first"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
 	 arg3="form[list][page]=`$form.list.backPage`"}">{g->text text="&laquo; back"}</a>
       {/if}
 
@@ -90,10 +90,10 @@
       &nbsp;
 
       {if ($form.list.page < $form.list.maxPages)}
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
 	 arg3="form[list][page]=`$form.list.nextPage`"}">{g->text text="next &raquo;"}</a>
 	&nbsp;
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminUsers"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminUsers"
 	 arg3="form[list][page]=`$form.list.maxPages`"}">{g->text text="last &raquo;"}</a>
       {/if}
     </span></div>
@@ -111,12 +111,12 @@
 	{$user.userName}
       </td>
       <td>
-	<a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditUser"
+	<a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditUser"
 	 arg3="userId=$userId"}">{g->text text="edit"}</a>
 
 	{if ($user.can.delete)}
 	  &nbsp;
-	  <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminDeleteUser"
+	  <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminDeleteUser"
 	   arg3="userId=$userId"}">{g->text text="delete"}</a>
 	{/if}
       </td>

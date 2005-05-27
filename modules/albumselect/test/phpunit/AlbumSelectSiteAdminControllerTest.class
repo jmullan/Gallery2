@@ -35,7 +35,7 @@
 class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function AlbumSelectSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'albumselect:AlbumSelectSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'albumselect.AlbumSelectSiteAdmin');
     }
 
     function setUp() {
@@ -52,8 +52,8 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						  'subView' => 'albumselect:AlbumSelectSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						  'subView' => 'albumselect.AlbumSelectSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -67,8 +67,8 @@ class AlbumSelectSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						  'subView' => 'albumselect:AlbumSelectSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						  'subView' => 'albumselect.AlbumSelectSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

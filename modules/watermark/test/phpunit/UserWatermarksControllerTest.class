@@ -41,7 +41,7 @@ GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.cl
 class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
     function UserWatermarksControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'watermark:UserWatermarks');
+	$this->GalleryControllerTestCase($methodName, 'watermark.UserWatermarks');
     }
 
     function setUp() {
@@ -92,8 +92,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit',
 						      'itemId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
@@ -114,8 +114,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][add]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array(),
 				  'error' => array('form[error][missingFile]')),
 			    $results);
@@ -138,8 +138,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[delete][itemId]', $watermark->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarks'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarks'),
 				  'status' => array('delete' => 1),
 				  'error' => array()),
 			    $results);
@@ -182,8 +182,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[delete][itemId]', $watermark->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:ConfirmDelete',
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.ConfirmDelete',
 						      'itemId' => $watermark->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -226,8 +226,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit',
 						      'itemId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
@@ -274,8 +274,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$this->_idToDelete = $expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit',
 						      'itemId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),
@@ -294,8 +294,8 @@ class UserWatermarksControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:UserAdmin',
-						      'subView' => 'watermark:UserWatermarkEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.UserAdmin',
+						      'subView' => 'watermark.UserWatermarkEdit',
 						      'itemId' => $expectedId),
 				  'status' => array(),
 				  'error' => array()),

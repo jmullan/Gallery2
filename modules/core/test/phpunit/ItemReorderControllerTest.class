@@ -34,7 +34,7 @@
 class ItemReorderControllerTest extends GalleryControllerTestCase {
 
     function ItemReorderControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:ItemReorder');
+	$this->GalleryControllerTestCase($methodName, 'core.ItemReorder');
     }
 
     function setUp() {
@@ -86,8 +86,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -119,8 +119,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -152,8 +152,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -185,8 +185,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -235,8 +235,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder'),
 				  'status' => array(),
 				  'error' => array('form[error][selectedId][missing]')),
 			    $results);
@@ -253,8 +253,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder'),
 				  'status' => array(),
 				  'error' => array('form[error][targetId][missing]')),
 			    $results);
@@ -292,8 +292,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -334,8 +334,8 @@ class ItemReorderControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reorder]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'core:ItemReorder',
+	$this->assertEquals(array('redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'core.ItemReorder',
 						      'itemId' => $this->_parentAlbum->getId()),
 				  'status' => array(),
 				  'error' => array()),

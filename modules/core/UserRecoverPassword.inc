@@ -188,8 +188,8 @@ class UserRecoverPasswordController extends GalleryController {
 			$recoverUrl = str_replace(
 			    '&amp;', '&',
 			    $generator->generateUrl(
-				array('view' => 'core:UserAdmin',
-				      'subView' => 'core:UserRecoverPasswordConfirm',
+				array('view' => 'core.UserAdmin',
+				      'subView' => 'core.UserRecoverPasswordConfirm',
 				      'userName' => $user->getUserName(),
 				      'authString' => $authString)));
 			
@@ -224,11 +224,11 @@ class UserRecoverPasswordController extends GalleryController {
 	} 
 	
 	if (empty($error)) {
-	    $results['redirect']['view'] = 'core:UserAdmin';
-	    $results['redirect']['subView'] = 'core:UserRecoverPassword';
+	    $results['redirect']['view'] = 'core.UserAdmin';
+	    $results['redirect']['subView'] = 'core.UserRecoverPassword';
 	} else {
-	    $results['delegate']['view'] = 'core:UserAdmin';
-	    $results['delegate']['subView'] = 'core:UserRecoverPassword';
+	    $results['delegate']['view'] = 'core.UserAdmin';
+	    $results['delegate']['subView'] = 'core.UserRecoverPassword';
 	}
 	
 	$results['status'] = $status;
@@ -292,7 +292,7 @@ class UserRecoverPasswordView extends GalleryView {
 	}
 
 	$template->setVariable('UserRecoverPassword', $UserRecoverPassword);
-	$template->setVariable('controller', 'core:UserRecoverPassword');
+	$template->setVariable('controller', 'core.UserRecoverPassword');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/UserRecoverPassword.tpl'));
     }

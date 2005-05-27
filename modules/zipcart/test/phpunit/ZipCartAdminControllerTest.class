@@ -34,7 +34,7 @@
 class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 
     function ZipCartAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'zipcart:ZipCartAdmin');
+	$this->GalleryControllerTestCase($methodName, 'zipcart.ZipCartAdmin');
     }
 
     function setUp() {
@@ -54,8 +54,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -65,8 +65,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -77,8 +77,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);
@@ -89,8 +89,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][path][missing]')),
 			    $results);
@@ -101,8 +101,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/zip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
@@ -113,8 +113,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/invalidPath/zip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badPath]')),
 			    $results);
@@ -125,8 +125,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/zip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -140,8 +140,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/zip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 				  $results);
@@ -153,8 +153,8 @@ class ZipCartAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[path]', '/validPath/unzip');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'zipcart:ZipCartAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'zipcart.ZipCartAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][path][badZip]')),
 				  $results);

@@ -31,7 +31,7 @@
     {foreach from=$layout.parents item=parent}
       <li>
 	&raquo;
-	<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$parent.id`"}">
+	<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$parent.id`"}">
 	  {$parent.title|default:$parent.pathComponent|markup:stripBbcodeAndHtml}
 	</a>
       </li>
@@ -89,7 +89,7 @@
 	  {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|entitytruncate:14}
 	</li>
       {else}
-	<li><a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$peer.id`"}">
+	<li><a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$peer.id`"}">
 	  {g->text text="%d. %s" arg1=$peer.peerIndex arg2=$title|entitytruncate:14}
 	</a></li>
       {/if}

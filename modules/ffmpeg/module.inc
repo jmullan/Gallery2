@@ -40,11 +40,11 @@ class FfmpegModule extends GalleryModule {
 	$this->setId('ffmpeg');
 	$this->setName($gallery->i18n('Ffmpeg'));
 	$this->setDescription($gallery->i18n('A toolkit for processing movies'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -276,14 +276,14 @@ class FfmpegModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Ffmpeg'),
-				 'view' => 'ffmpeg:AdminFfmpeg')));
+				 'view' => 'ffmpeg.AdminFfmpeg')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView()
      */
     function getConfigurationView() {
-	return 'ffmpeg:AdminFfmpeg';
+	return 'ffmpeg.AdminFfmpeg';
     }
 }
 ?>

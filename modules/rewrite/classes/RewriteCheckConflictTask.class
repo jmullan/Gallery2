@@ -87,7 +87,7 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 	$status = array('');
 	$total = $results->resultCount();
 	while ($result = $results->nextResult()) {
-	    $params = array('view' => 'core:ShowItem',
+	    $params = array('view' => 'core.ShowItem',
 			    'itemId' => $result[0]);
 	    $path = substr($urlGenerator->generateUrl($params),
 		    strlen($urlGenerator->getCurrentUrlDir()) - 1);
@@ -100,8 +100,8 @@ class RewriteCheckConflictTask extends MaintenanceTask {
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
-		$params = array('view' => 'core:ItemAdmin',
-				'subView' => 'core:ItemEdit',
+		$params = array('view' => 'core.ItemAdmin',
+				'subView' => 'core.ItemEdit',
 				'editPlugin' => 'ItemEditItem',
 				'itemId' => $result[0]);
 

@@ -34,7 +34,7 @@
 class DeleteCommentControllerTest extends GalleryControllerTestCase {
 
     function DeleteCommentControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'comment:DeleteComment');
+	$this->GalleryControllerTestCase($methodName, 'comment.DeleteComment');
     }
 
     function setUp() {
@@ -78,8 +78,8 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
-						      'subView' => 'comment:CommentChangeConfirmation',
+				  'redirect' => array('view' => 'core.ItemAdmin',
+						      'subView' => 'comment.CommentChangeConfirmation',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array('deleted' => 1),
 				  'error' => array()),
@@ -117,7 +117,7 @@ class DeleteCommentControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ItemAdmin',
+				  'redirect' => array('view' => 'core.ItemAdmin',
 						      'itemId' => $this->_item[0]->getId()),
 				  'status' => array(),
 				  'error' => array()),

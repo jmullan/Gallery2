@@ -39,7 +39,7 @@ require_once(dirname(__FILE__) . '/../../classes/QuotasMap.class');
 class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 
     function AdminCreateUserQuotaControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'quotas:AdminCreateUserQuota');
+	$this->GalleryControllerTestCase($methodName, 'quotas.AdminCreateUserQuota');
     }
 
     function testCancel() {
@@ -53,8 +53,8 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -75,8 +75,8 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('createdUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results);
@@ -96,8 +96,8 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateUserQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateUserQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]',
 						   'form[error][quotaUnit][missing]')),
@@ -107,8 +107,8 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaSize]', 2048);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateUserQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateUserQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaUnit][missing]')),
 			    $results);
@@ -118,8 +118,8 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[quotaUnit]', 'MB');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateUserQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateUserQuota'),
 				  'status' => array(),
 				  'error' => array('form[error][quotaSize][missing]')),
 			    $results);
@@ -145,16 +145,16 @@ class AdminCreateUserQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('userId', $user->getId());
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('createdUser' => $user->getUserName()),
 				  'error' => array()),
 			    $results);
 
 	/* Attempt to create a quota for the user that already has one */
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminCreateUserQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminCreateUserQuota'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

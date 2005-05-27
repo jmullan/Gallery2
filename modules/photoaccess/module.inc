@@ -38,11 +38,11 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName($gallery->i18n('PhotoAccess'));
 	$this->setDescription($gallery->i18n('PhotoAccess Photo Printing Module'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -84,7 +84,7 @@ class PhotoAccessModule extends GalleryModule {
 	$links = array();
 	foreach ($items as $item) {
 	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$params['controller'] = 'photoaccess:PrintPhoto';
+		$params['controller'] = 'photoaccess.PrintPhoto';
 		$params['itemId'] = $item->getId();
 		$params['returnUrl'] = $urlGenerator->getCurrentUrl();
 		$links[$item->getId()][] =

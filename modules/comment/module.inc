@@ -40,12 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -130,8 +130,8 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    if (isset($permissions['comment.add'])) {
-		$params['view'] = 'core:ItemAdmin';
-		$params['subView'] = 'comment:AddComment';
+		$params['view'] = 'core.ItemAdmin';
+		$params['subView'] = 'comment.AddComment';
 		$params['itemId'] = $item->getId();
 		$params['return'] = 1;
 		$links[$item->getId()][] =
@@ -140,8 +140,8 @@ class CommentModule extends GalleryModule {
 	    }
 
 	    if (isset($permissions['comment.view'])) {
-		$params['view'] = 'core:ItemAdmin';
-		$params['subView'] = 'comment:ShowComments';
+		$params['view'] = 'core.ItemAdmin';
+		$params['subView'] = 'comment.ShowComments';
 		$params['itemId'] = $item->getId();
 		$params['return'] = 1;
 		$links[$item->getId()][] =
@@ -284,14 +284,14 @@ class CommentModule extends GalleryModule {
 
 	if (isset($permissions['comment.add'])) {
 		$views[] = array('name' => $this->translate('Add Comment'),
-				 'view' => 'comment:AddComment');
+				 'view' => 'comment.AddComment');
 	}
 
 	if (isset($permissions['comment.edit']) ||
 	    isset($permissions['comment.delete']) ||
 	    isset($permissions['comment.view'])) {
 		$views[] = array('name' => $this->translate('View Comments'),
-				 'view' => 'comment:ShowComments');
+				 'view' => 'comment.ShowComments');
 	}
 
 	return array(GalleryStatus::success(), $views);
@@ -304,13 +304,13 @@ class CommentModule extends GalleryModule {
 	$rules = array();
 
 	$rule = array();
-	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:AddComment');
+	$rule['match'] = array('view' => 'core.ItemAdmin', 'subView' => 'comment.AddComment');
 	$rule['pattern'] = 'c/add/%itemId%.html';
 	$rule['comment'] = $this->translate('Add Comment');
 	$rules[] = $rule;
 
 	$rule = array();
-	$rule['match'] = array('view' => 'core:ItemAdmin', 'subView' => 'comment:ShowComments');
+	$rule['match'] = array('view' => 'core.ItemAdmin', 'subView' => 'comment.ShowComments');
 	$rule['pattern'] = 'c/view/%itemId%.html';
 	$rule['comment'] = $this->translate('View Comments');
 	$rules[] = $rule;

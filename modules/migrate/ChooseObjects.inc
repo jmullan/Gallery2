@@ -63,15 +63,15 @@ class ChooseObjectsController extends GalleryController {
 	    }
 
 	    if (!empty($error)) {
-		$results['delegate']['view'] = 'core:SiteAdmin';
-		$results['delegate']['subView'] = 'migrate:ChooseObjects';
+		$results['delegate']['view'] = 'core.SiteAdmin';
+		$results['delegate']['subView'] = 'migrate.ChooseObjects';
 	    } else {
-		$results['delegate']['view'] = 'core:SiteAdmin';
-		$results['delegate']['subView'] = 'migrate:ConfirmImport';
+		$results['delegate']['view'] = 'core.SiteAdmin';
+		$results['delegate']['subView'] = 'migrate.ConfirmImport';
 	    }
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'migrate:ConfirmImport';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'migrate.ConfirmImport';
 	}
 
 	$results['status'] = $status;
@@ -247,7 +247,7 @@ class ChooseObjectsView extends GalleryView {
 	$ChooseObjects['availableEncodings'] = $availableEncodings;
 	$ChooseObjects['possibleEncodingMatch'] = $possibleEncodingMatch;
 	$template->setVariable('ChooseObjects', $ChooseObjects);
-	$template->setVariable('controller', 'migrate:ChooseObjects');
+	$template->setVariable('controller', 'migrate.ChooseObjects');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/migrate/templates/ChooseObjects.tpl'));

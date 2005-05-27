@@ -54,7 +54,7 @@
     </span></li>
   {else}
     <li><span>
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=rewrite:AdminRewrite"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=rules"}">{g->text text="Rules"}</a>
     </span></li>
   {/if}
@@ -65,7 +65,7 @@
     </span></li>
   {else}
     <li><span>
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=rewrite:AdminRewrite"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=setup"}">{g->text text="Setup"}</a>
     </span></li>
   {/if}
@@ -76,7 +76,7 @@
     </span></li>
   {else}
     <li><span>
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=rewrite:AdminRewrite"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=rewrite.AdminRewrite"
        arg3="mode=test"}">{g->text text="Test"}</a>
     </span></li>
   {/if}

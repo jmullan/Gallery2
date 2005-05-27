@@ -524,7 +524,7 @@ class WatermarkHelper {
 	}
 
 	$template->setVariable($formName, array('watermark' => $watermark->getMemberData()));
-	$template->setVariable('controller', "watermark:$formName");
+	$template->setVariable('controller', "watermark.$formName");
 	return GalleryStatus::success();
     }
 }

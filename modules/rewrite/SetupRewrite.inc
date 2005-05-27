@@ -52,8 +52,8 @@ class SetupRewriteController extends GalleryController {
 	$error = array();
 
 	if (isset($form['action']['test'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'rewrite:SetupRewrite';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'rewrite.SetupRewrite';
 	} else if (isset($form['action']['done'])) {
 	    if (isset($form['mod_rewrite']['force'])) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
@@ -63,15 +63,15 @@ class SetupRewriteController extends GalleryController {
 		}
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'rewrite:SetupRewrite';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'rewrite.SetupRewrite';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -121,7 +121,7 @@ class SetupRewriteView extends GalleryView {
 	}
 
 	$template->setVariable('SetupRewrite', $SetupRewrite);
-	$template->setVariable('controller', 'rewrite:SetupRewrite');
+	$template->setVariable('controller', 'rewrite.SetupRewrite');
 
 	$template->javascript('lib/javascript/BlockToggle.js');
 	return array(GalleryStatus::success(),

@@ -36,7 +36,7 @@ GalleryCoreApi::relativeRequireOnce('modules/migrate/classes/G1MigrateMap.class'
 class RedirectControllerTest extends GalleryControllerTestCase {
 
     function RedirectControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'migrate:Redirect');
+	$this->GalleryControllerTestCase($methodName, 'migrate.Redirect');
     }
 
     function setUp() {
@@ -97,7 +97,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem',
+						      'view' => 'core.ShowItem',
 						      'itemId' => $this->_albumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -108,7 +108,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem',
+						      'view' => 'core.ShowItem',
 						      'itemId' => $this->_albumId),
 				  'status' => array(),
 				  'error' => array()),
@@ -120,7 +120,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem',
+						      'view' => 'core.ShowItem',
 						      'itemId' => $this->_albumId,
 						      'page' => '2'),
 				  'status' => array(),
@@ -133,7 +133,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem',
+						      'view' => 'core.ShowItem',
 						      'itemId' => $this->_itemId),
 				  'status' => array(),
 				  'error' => array()),
@@ -145,7 +145,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem',
+						      'view' => 'core.ShowItem',
 						      'itemId' => $this->_itemId,
 						      'imageViewsIndex' => '1'),
 				  'status' => array(),
@@ -158,7 +158,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:ShowItem'),
+						      'view' => 'core.ShowItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results, 'invalid item');
@@ -169,7 +169,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:DownloadItem',
+						      'view' => 'core.DownloadItem',
 						      'itemId' => $this->_itemId),
 				  'status' => array(),
 				  'error' => array()),
@@ -181,7 +181,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:DownloadItem',
+						      'view' => 'core.DownloadItem',
 						      'itemId' => $this->_sized->getId()),
 				  'status' => array(),
 				  'error' => array()),
@@ -193,7 +193,7 @@ class RedirectControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('href' => $href,
-						      'view' => 'core:DownloadItem',
+						      'view' => 'core.DownloadItem',
 						      'itemId' => $this->_thumb->getId()),
 				  'status' => array(),
 				  'error' => array()),

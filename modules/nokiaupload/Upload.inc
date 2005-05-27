@@ -41,7 +41,7 @@ class UploadController extends GalleryController {
     function handleRequest($form) {
 	ImageUploadHelper::logRequest('UploadController');
 
-	$results['delegate'] = array('view' => 'nokiaupload:Upload');
+	$results['delegate'] = array('view' => 'nokiaupload.Upload');
 	$results['status'] = ImageUploadHelper::doUpload();
 	$results['error'] = array();
 

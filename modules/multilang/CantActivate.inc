@@ -40,8 +40,8 @@ class CantActivateController extends GalleryController {
      */
     function handleRequest($form) {
 	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'core:AdminModules';
+	$results['redirect']['view'] = 'core.SiteAdmin';
+	$results['redirect']['subView'] = 'core.AdminModules';
 	$results['status'] = array();
 	$results['error'] = array();
 
@@ -68,7 +68,7 @@ class CantActivateView extends GalleryView {
 	    $form['formName'] = 'CantActivate';
 	}
 
-	$template->setVariable('controller', 'multilang:CantActivate');
+	$template->setVariable('controller', 'multilang.CantActivate');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/multilang/templates/CantActivate.tpl'));
     }

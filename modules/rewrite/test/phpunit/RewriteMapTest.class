@@ -65,9 +65,9 @@ class RewriteMapTest extends GalleryTestCase {
     function testActiveRules() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
-		      'match' => 'core:ShowItem'),
+		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core:DownloadItem'),
+		      'match' => 'core.DownloadItem'),
 		array('pattern' => '%path%')));
 	
 	$ret = RewriteMap::setActiveRules($activeRules);
@@ -85,13 +85,13 @@ class RewriteMapTest extends GalleryTestCase {
     function testShortUrls() {
 	$activeRules = array('rewrite' => array(
 		array('pattern' => 'v/%path%',
-		      'match' => 'core:ShowItem'),
+		      'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-		      'match' => 'core:DownloadItem'),
+		      'match' => 'core.DownloadItem'),
 		array('pattern' => '%path%')));
 	$expected = array(
-		'core:ShowItem' => 'v/%path%',
-		'core:DownloadItem' => 'd/%itemId%-%serialNumber%/%fileName%');
+		'core.ShowItem' => 'v/%path%',
+		'core.DownloadItem' => 'd/%itemId%-%serialNumber%/%fileName%');
 	
 	$ret = RewriteMap::setActiveRules($activeRules);
 	if ($ret->isError()) {

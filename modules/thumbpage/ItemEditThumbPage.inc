@@ -105,7 +105,7 @@ class ItemEditThumbPage extends ItemEditPlugin {
 	    $ItemEditThumbPage['pageList'][$i] = $i;
 	}
 	$template->setVariable('ItemEditThumbPage', $ItemEditThumbPage);
-	$template->setVariable('controller', 'thumbpage:ItemEditThumbPage');
+	$template->setVariable('controller', 'thumbpage.ItemEditThumbPage');
 	return array(GalleryStatus::success(), 'modules/thumbpage/templates/Page.tpl');
     }
 

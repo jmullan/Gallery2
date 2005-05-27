@@ -144,11 +144,11 @@ class SiteAdminView extends GalleryView {
 
 	/* If we have a specific sub view, render it now */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
-	if ($subViewName == 'core:SiteAdmin') {
+	if ($subViewName == 'core.SiteAdmin') {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
 	if (empty($subViewName)) {
-	    $subViewName = 'core:AdminCore';
+	    $subViewName = 'core.AdminCore';
 	}
 
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
@@ -204,7 +204,7 @@ class SiteAdminView extends GalleryView {
 	/* Get the description from the current subView */
 	$subViewName = GalleryUtilities::getRequestVariables('subView');
 	if (empty($subViewName)) {
-	    $subViewName = 'core:AdminCore';
+	    $subViewName = 'core.AdminCore';
 	}
 	list ($ret, $subView) = GalleryView::loadView($subViewName);
 	if ($ret->isError()) {

@@ -41,7 +41,7 @@ require_once(dirname(__FILE__) . '/../../classes/NewItemsHelper.class');
 class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function NewItemsSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'newitems:NewItemsSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'newitems.NewItemsSiteAdmin');
     }
 
     function setUp() {
@@ -80,8 +80,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][undo]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'newitems:NewItemsSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'newitems.NewItemsSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -94,8 +94,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'newitems:NewItemsSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'newitems.NewItemsSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -112,8 +112,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'newitems:NewItemsSiteAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'newitems.NewItemsSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][new]', 'form[error][updated]')),
 			    $results);
@@ -126,8 +126,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'newitems:NewItemsSiteAdmin'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'newitems.NewItemsSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][updated]')),
 			    $results);
@@ -148,8 +148,8 @@ class NewItemsSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'newitems:NewItemsSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'newitems.NewItemsSiteAdmin'),
 				  'status' => array('reset' => 1),
 				  'error' => array()),
 			    $results);

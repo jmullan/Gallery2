@@ -39,7 +39,7 @@
 	      {g->text text="Size: "}
 	      <select onchange="{literal}javascript:if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
 	      {section name=imageView loop=$layout.imageViews}
-		<option value="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`"
+		<option value="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.item.id`"
 		 arg3="imageViewsIndex=`$smarty.section.imageView.index`"}"{if
 		 $smarty.section.imageView.index==$layout.imageViewsIndex} selected="selected"{/if}>
 		  {if empty($layout.imageViews[imageView].width)}
@@ -69,7 +69,7 @@
 		{/if}
 	      {/capture}
 	      {if count($layout.imageViews) > 1}
-		<a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$layout.item.id`"
+		<a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$layout.item.id`"
 		 arg3="imageViewsIndex=`$layout.sourceImageViewIndex`"}">
 		  {$smarty.capture.fullSize}
 		</a>
@@ -93,7 +93,7 @@
     <div id="gsImageView" class="gbBlock">
     {if !empty($layout.imageViews)}
       {capture name="fallback"}
-      <a href="{g->url arg1="view=core:DownloadItem" arg2="itemId=`$layout.item.id`"}">
+      <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
 	{g->text text="Download this %s" arg1=`$layout.sourceImage.itemTypeName.1`}
       </a>
       {/capture}

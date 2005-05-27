@@ -41,11 +41,11 @@ class ImageMagickModule extends GalleryModule {
 	$this->setId('imagemagick');
 	$this->setName($gallery->i18n('ImageMagick'));
 	$this->setDescription($gallery->i18n('ImageMagick Graphics Toolkit'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -298,14 +298,14 @@ class ImageMagickModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('ImageMagick'),
-				 'view' => 'imagemagick:AdminImageMagick')));
+				 'view' => 'imagemagick.AdminImageMagick')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'imagemagick:AdminImageMagick';
+	return 'imagemagick.AdminImageMagick';
     }
 }
 ?>

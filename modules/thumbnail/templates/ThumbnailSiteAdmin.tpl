@@ -68,7 +68,7 @@
 	    <td>
 	      {$mime}{if isset($form.mimeMap[$mime])} ({$form.mimeMap[$mime]}){/if}
 	    </td><td>
-	      <a href="{g->url arg1="controller=thumbnail:ThumbnailSiteAdmin"
+	      <a href="{g->url arg1="controller=thumbnail.ThumbnailSiteAdmin"
 	       arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"
 	       arg4="form[delete][mimeType]=`$mime`"}">{g->text text="delete"}</a>
 	    </td>
@@ -83,7 +83,7 @@
     </td><td>
       {g->image item=$item image=$item maxSize=150}
     </td><td>
-      <a href="{g->url arg1="controller=thumbnail:ThumbnailSiteAdmin"
+      <a href="{g->url arg1="controller=thumbnail.ThumbnailSiteAdmin"
        arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}"
        onclick="return confirm('{g->text text="Delete this image?"}\n{g->text text="(Will not remove thumbnails from existing items using this image, but those items will be unable to rebuild thumbs)"}')">
 	{g->text text="delete"}

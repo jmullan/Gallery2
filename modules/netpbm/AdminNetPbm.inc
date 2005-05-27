@@ -147,28 +147,28 @@ class AdminNetPbmController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['view'] = 'core.SiteAdmin';
 		if ($isActive) {
-		    $redirect['subView'] = 'netpbm:AdminNetPbm';
+		    $redirect['subView'] = 'netpbm.AdminNetPbm';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core.AdminModules';
 		    $status['configured'] = 'netpbm';
 		}
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'netpbm:AdminNetPbm';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'netpbm.AdminNetPbm';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'netpbm:AdminNetPbm';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'netpbm.AdminNetPbm';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -294,7 +294,7 @@ class AdminNetPbmView extends GalleryView {
 	}
 
 	$template->setVariable('AdminNetPbm', $AdminNetPbm);
-	$template->setVariable('controller', 'netpbm:AdminNetPbm');
+	$template->setVariable('controller', 'netpbm.AdminNetPbm');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/netpbm/templates/AdminNetPbm.tpl'));
     }

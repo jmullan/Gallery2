@@ -105,7 +105,7 @@ class ItemDeleteController extends GalleryController {
 	     * Can't use return url because it may be for an item we just deleted, but
 	     * check for g2_page param and include that if found (matrix layout specific..)
 	     */
-	    $results['redirect'] = array('view' => 'core:ShowItem',
+	    $results['redirect'] = array('view' => 'core.ShowItem',
 					 'itemId' => $itemId);
 
 	    $urlGenerator =& $gallery->getUrlGenerator();
@@ -139,8 +139,8 @@ class ItemDeleteController extends GalleryController {
 	}
 
 	if (!empty($results['delegate'])) {
-	    $results['delegate']['view'] = 'core:ItemAdmin';
-	    $results['delegate']['subView'] = 'core:ItemDelete';
+	    $results['delegate']['view'] = 'core.ItemAdmin';
+	    $results['delegate']['subView'] = 'core.ItemDelete';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -274,7 +274,7 @@ class ItemDeleteView extends GalleryView {
 	$ItemDelete['numPerPage'] = $form['numPerPage'];
 	$ItemDelete['selectedIds'] = array_keys($selectedIds);
 
-	$template->setVariable('controller', 'core:ItemDelete');
+	$template->setVariable('controller', 'core.ItemDelete');
 	$template->setVariable('ItemDelete', $ItemDelete);
 
 	return array(GalleryStatus::success(),

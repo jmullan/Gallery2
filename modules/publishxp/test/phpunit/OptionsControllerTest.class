@@ -33,7 +33,7 @@
  */
 class OptionsControllerTest extends GalleryControllerTestCase {
     function OptionsControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'publishxp:Options');
+	$this->GalleryControllerTestCase($methodName, 'publishxp.Options');
     }
 
     function testSetOptions() {
@@ -44,7 +44,7 @@ class OptionsControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'publishxp:UploadItems',
+				      'view' => 'publishxp.UploadItems',
 				      'stripExtensions' => true,
 				      'setCaptions' => true,
 				      'albumId' => 3),
@@ -59,7 +59,7 @@ class OptionsControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[albumId]', 3);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'publishxp:Options'),
+	$this->assertEquals(array('delegate' => array('view' => 'publishxp.Options'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

@@ -43,7 +43,7 @@ require_once(dirname(__FILE__) . '/../../classes/QuotasMap.class');
 class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 
     function AdminDeleteGroupQuotaControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'quotas:AdminDeleteGroupQuota');
+	$this->GalleryControllerTestCase($methodName, 'quotas.AdminDeleteGroupQuota');
     }
 
     function testCancel() {
@@ -56,8 +56,8 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 	GalleryUtilities::putRequestVariable('groupId', $group->getId());
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -80,8 +80,8 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][delete]', 1);
 	
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminQuotas'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminQuotas'),
 				  'status' => array('deletedGroup' => $group->getGroupName()),
 				  'error' => array()),
 			    $results,
@@ -119,8 +119,8 @@ class AdminDeleteGroupQuotaControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'quotas:AdminDeleteGroupQuota'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'quotas.AdminDeleteGroupQuota'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

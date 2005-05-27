@@ -31,7 +31,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryMimeTypeMap.cla
 class MimeEditControllerTest extends GalleryControllerTestCase {
 
     function MimeEditControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'mime:MimeEdit');
+	$this->GalleryControllerTestCase($methodName, 'mime.MimeEdit');
     }
 
     function tearDown() {
@@ -51,8 +51,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', 'test/test');
 	GalleryUtilities::putRequestVariable('form[extensions]', array('xxx'));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit',
 						      'mimeType' => 'test/test'),
 				  'status' => array('saved' => 'test/test'),
 				  'error' => array()),
@@ -72,8 +72,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[extensions]', array('xxx'));
 	GalleryUtilities::putRequestVariable('form[viewable]', 'on');
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit',
 						      'mimeType' => 'test/test'),
 				  'status' => array('saved' => 'test/test'),
 				  'error' => array()),
@@ -92,8 +92,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', 'test/test');
 	GalleryUtilities::putRequestVariable('form[extensions]', array('xxx'));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeAdmin'),
 				  'status' => array('saved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');
@@ -114,8 +114,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', '');
 	GalleryUtilities::putRequestVariable('form[extensions]', array('xxx'));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][mimeType][missing]')),
 			    $results, 'Add new');
@@ -126,8 +126,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', 'test/test');
 	GalleryUtilities::putRequestVariable('form[extensions]', array(''));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][extensions][missing]')),
 			    $results, 'Add new');
@@ -138,8 +138,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', '');
 	GalleryUtilities::putRequestVariable('form[extensions]', array(''));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][mimeType][missing]',
 						   'form[error][extensions][missing]')),
@@ -158,8 +158,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', 'test/test');
 	GalleryUtilities::putRequestVariable('form[extensions]', array($extension));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeEdit'),
 				  'status' => array(),
 				  'error' => array(
 				      'form[error][extensions][inuse][' . $extension . ']')),
@@ -171,8 +171,8 @@ class MimeEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[mimeType]', 'Test/Test');
 	GalleryUtilities::putRequestVariable('form[extensions]', array('xXx'));
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'mime:MimeAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'mime.MimeAdmin'),
 				  'status' => array('saved' => 'test/test'),
 				  'error' => array()),
 			    $results, 'Add new');

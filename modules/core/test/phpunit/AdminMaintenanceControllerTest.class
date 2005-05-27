@@ -37,7 +37,7 @@ GalleryCoreApi::relativeRequireOnce('modules/core/AdminMaintenance.inc');
 class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 
     function AdminMaintenanceControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminMaintenance');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminMaintenance');
     }
 
     function setUp() {
@@ -96,8 +96,8 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskSuccess');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminMaintenance'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminMaintenance'),
 				  'status' => array(
 				      'run' => array(
 					  'taskId' => 'AdminMaintenanceControllerTestTaskSuccess',
@@ -125,8 +125,8 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	$immediateStatus->_l10Domain = $immediateStatus->_template = 'test';
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminMaintenance'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminMaintenance'),
 				  'sendLateRedirect' => $immediateStatus,
 				  'status' => array(
 				      'run' => array(
@@ -152,8 +152,8 @@ class AdminMaintenanceControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('taskId', 'AdminMaintenanceControllerTestTaskFail');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminMaintenance'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminMaintenance'),
 				  'status' => array(
 				      'run' => array(
 					  'taskId' => 'AdminMaintenanceControllerTestTaskFail',

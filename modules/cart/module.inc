@@ -38,11 +38,11 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2'); /* Update upgrade() function below too */
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks|loadSystemContent');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -81,6 +81,9 @@ class CartModule extends GalleryModule {
 
 	    case '0.8.9':
 	    case '0.8.10':
+	    case '0.9.1':
+
+	    case 'end of upgrade path':
 		break;
 
 	    default:
@@ -117,7 +120,7 @@ class CartModule extends GalleryModule {
 	    $links[$item->getId()][] =
 		array('text' => $this->translate(array('text' => 'add %s to cart',
 						       'arg1' => $itemTypeNames[1])),
-		      'params' => array('controller' => 'cart:AddToCart',
+		      'params' => array('controller' => 'cart.AddToCart',
 					'itemId' => $item->getId(),
 					'return' => true));
 	}
@@ -132,14 +135,14 @@ class CartModule extends GalleryModule {
 	$content = array();
 
 	$view = GalleryUtilities::getRequestVariables('view');
-	if ($view == 'cart:ViewCart') {
+	if ($view == 'cart.ViewCart') {
 	    return array(GalleryStatus::success(), array());
 	}
 
 	/* The "View Cart" link */
 	$links = array();
 	$links[] = array('text' => $this->translate('View Cart'),
-			 'params' => array('view' => 'cart:ViewCart',
+			 'params' => array('view' => 'cart.ViewCart',
 					   'return' => true));
 	$CartSystemContent['links'] = $links;
 

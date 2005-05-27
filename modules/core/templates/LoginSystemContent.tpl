@@ -7,7 +7,7 @@
 <div class="gbBlock">
 <form id="LoginSystemContent" action="{g->url}" method="post"><div>
   {g->hiddenFormVars}
-  <input type="hidden" name="{g->formVar var="controller"}" value="core:UserLogin" />
+  <input type="hidden" name="{g->formVar var="controller"}" value="core.UserLogin" />
   <input type="hidden" name="{g->formVar var="form[formName]"}" value="UserLogin" />
 
   <input type="text" id="giFormUsername" size="10"

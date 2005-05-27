@@ -47,7 +47,7 @@ class MembersListView extends GalleryView {
 	}
 	if (!$result) {
 	    return array(GalleryStatus::success(),
-			 array('redirect' => array('view' => 'core:ShowItem')));
+			 array('redirect' => array('view' => 'core.ShowItem')));
 	}
 
 	if ($form['formName'] != 'MembersList') {
@@ -122,7 +122,7 @@ class MembersListView extends GalleryView {
 	/* Render the HTML body */
 	$template->setVariable('MembersList', $MembersList);
 
-	list ($ret, $navigationView) = GalleryView::loadView('core:Navigation');
+	list ($ret, $navigationView) = GalleryView::loadView('core.Navigation');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

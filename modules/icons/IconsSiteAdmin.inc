@@ -58,8 +58,8 @@ class IconsSiteAdminController extends GalleryController {
 
 	/* Figure out where to redirect upon success */
 	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'icons:IconsSiteAdmin';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'icons.IconsSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -98,7 +98,7 @@ class IconsSiteAdminView extends GalleryView {
 	    $template->setVariable('IconsSiteAdmin', array('iconpacks' => $list));
 	}
 
-	$template->setVariable('controller', 'icons:IconsSiteAdmin');
+	$template->setVariable('controller', 'icons.IconsSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/icons/templates/IconsSiteAdmin.tpl'));
     }

@@ -43,17 +43,17 @@
     </td><td>
       {g->image item=$item image=$item maxSize=150}
     </td><td>
-      <a href="{g->url arg1="view=core:SiteAdmin" arg2="subView=core:AdminEditUser"
+      <a href="{g->url arg1="view=core.SiteAdmin" arg2="subView=core.AdminEditUser"
        arg3="userId=`$item.ownerId`"}">
 	{$WatermarkSiteAdmin.owners[$item.ownerId].fullName|default:$WatermarkSiteAdmin.owners[$item.ownerId].userName}
       </a>
     </td><td>
-      <a href="{g->url arg1="view=core:SiteAdmin"
-       arg2="subView=watermark:WatermarkSiteAdminEdit" arg3="itemId=`$item.id`"}">
+      <a href="{g->url arg1="view=core.SiteAdmin"
+       arg2="subView=watermark.WatermarkSiteAdminEdit" arg3="itemId=`$item.id`"}">
 	{g->text text="edit"}
       </a>
       &nbsp;
-      <a href="{g->url arg1="controller=watermark:WatermarkSiteAdmin"
+      <a href="{g->url arg1="controller=watermark.WatermarkSiteAdmin"
        arg2="form[action][delete]=1" arg3="form[delete][itemId]=`$item.id`"}">
 	{g->text text="delete"}
       </a>

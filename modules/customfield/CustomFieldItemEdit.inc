@@ -136,7 +136,7 @@ class CustomFieldItemEdit extends ItemEditPlugin {
 	    }
 	    $tpl = 'modules/customfield/templates/CustomFieldItemEdit.tpl';
 	}
-	$template->setVariable('controller', 'customfield:CustomFieldItemEdit');
+	$template->setVariable('controller', 'customfield.CustomFieldItemEdit');
 	return array(GalleryStatus::success(), $tpl);
     }
 

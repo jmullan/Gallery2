@@ -34,7 +34,7 @@
 class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCase {
 
     function AdminModulesVerifyUninstallControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'core:AdminModulesVerifyUninstall');
+	$this->GalleryControllerTestCase($methodName, 'core.AdminModulesVerifyUninstall');
     }
 
     function setUp() {
@@ -56,8 +56,8 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 	$this->_testModule->_isActive = false;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array('uninstalled' => 'AdminModulesVerifyUninstall Controller Test'),
 				  'error' => array()),
 			    $results);
@@ -71,8 +71,8 @@ class AdminModulesVerifyUninstallControllerTest extends GalleryControllerTestCas
 	$this->_testModule->_isActive = true;
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);

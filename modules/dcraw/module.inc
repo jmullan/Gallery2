@@ -40,11 +40,11 @@ class DcrawModule extends GalleryModule {
 	$this->setId('dcraw');
 	$this->setName($gallery->i18n('Dcraw'));
 	$this->setDescription($gallery->i18n('Dcraw Graphics Toolkit'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 6));
-	$this->setRequiredModuleApi(array(0, 10));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -258,14 +258,14 @@ class DcrawModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Dcraw'),
-				 'view' => 'dcraw:AdminDcraw')));
+				 'view' => 'dcraw.AdminDcraw')));
     }
 
     /**
      * @see GalleryModule::getConfigurationView
      */
     function getConfigurationView() {
-	return 'dcraw:AdminDcraw';
+	return 'dcraw.AdminDcraw';
     }
 }
 ?>

@@ -41,7 +41,7 @@ GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkImage.cl
 class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 
     function WatermarkSiteAdminEditControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'watermark:WatermarkSiteAdminEdit');
+	$this->GalleryControllerTestCase($methodName, 'watermark.WatermarkSiteAdminEdit');
     }
 
     function setUp() {
@@ -90,8 +90,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -119,8 +119,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -144,8 +144,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdminEdit'),
 				  'status' => array(),
 				  'error' => array('form[error][name][missing]',
 						   'form[error][whichDerivative][missing]')),
@@ -165,8 +165,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -189,8 +189,8 @@ class WatermarkSiteAdminEditControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[whichDerivative][thumbnail]', 'on');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

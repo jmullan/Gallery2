@@ -93,11 +93,11 @@ class AdminSelfRegistrationController extends GalleryController {
 	} /* else $form['action']['cancel'] */
 
 	if (empty($error)) {
-	    $results['redirect'] = array('view' => 'core:SiteAdmin',
-					 'subView' => 'register:AdminSelfRegistration');
+	    $results['redirect'] = array('view' => 'core.SiteAdmin',
+					 'subView' => 'register.AdminSelfRegistration');
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'register:AdminSelfRegistration';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'register.AdminSelfRegistration';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -169,7 +169,7 @@ class AdminSelfRegistrationView extends GalleryView {
 	$selfregistration['reallySendList'] = array(
 	    'true' => $module->translate('Yes'), 'false' => $module->translate('No') );
 	$template->setVariable('SelfRegistration', $selfregistration);
-	$template->setVariable('controller', 'register:AdminSelfRegistration');
+	$template->setVariable('controller', 'register.AdminSelfRegistration');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/register/templates/AdminSelfRegistration.tpl'));

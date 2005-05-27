@@ -134,7 +134,7 @@ class GalleryRemoteController extends GalleryController {
 
 	$status['controllerResponse'] = $response;
 
-	$results['delegate']['view'] = 'remote:GalleryRemote';
+	$results['delegate']['view'] = 'remote.GalleryRemote';
 	$results['status'] = $status;
 	$results['error'] = $error;
 	return array(GalleryStatus::success(), $results);
@@ -556,7 +556,7 @@ class GalleryRemoteController extends GalleryController {
 	$response->setProperty('baseurl', str_replace('&amp;', '&',
 	    GalleryUrlGenerator::appendParamsToUrl(
 		$urlGenerator->getCurrentUrlDir(true) . GALLERY_MAIN_PHP,
-		array('view' => 'core:DownloadItem', 'itemId' => ''))));
+		array('view' => 'core.DownloadItem', 'itemId' => ''))));
 	$response->setProperty('image_count', $i - 1);
 	$response->setProperty('status', $grStatusCodes['SUCCESS']);
 	$response->setProperty('status_text', 'Fetch-album-images successful.');

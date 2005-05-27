@@ -87,7 +87,7 @@
 	    <input type="text" size="3"
 	     name="{g->formVar var="form[counts][`$item.id`]"}" value="{$form.counts[$item.id]}"/>
 	  </td><td>
-	    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$item.id`"}">
+	    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$item.id`"}">
 	      {if isset($ViewCart.thumbnails[$item.id])}
 		{g->image item=$ViewCart.items[$item.id] image=$ViewCart.thumbnails[$item.id]
 			  maxSize=90}

@@ -75,8 +75,8 @@ class AdminModulesController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminModules';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminModules';
 		$status['installed'] = $module->translate($module->getName());
 		$status['autoConfigured'] = $autoConfigured;
 		break;
@@ -87,8 +87,8 @@ class AdminModulesController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminModules';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminModules';
 		$status['upgraded'] = $module->translate($module->getName());
 		break;
 		
@@ -112,8 +112,8 @@ class AdminModulesController extends GalleryController {
 		    }
 
 		    if (empty($redirect)) {
-			$redirect['view'] = 'core:SiteAdmin';
-			$redirect['subView'] = 'core:AdminModules';
+			$redirect['view'] = 'core.SiteAdmin';
+			$redirect['subView'] = 'core.AdminModules';
 		    }
 		    $status['activated'] = $module->translate($module->getName());
 		}
@@ -127,8 +127,8 @@ class AdminModulesController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		    if (empty($redirect)) {
-			$redirect['view'] = 'core:SiteAdmin';
-			$redirect['subView'] = 'core:AdminModules';
+			$redirect['view'] = 'core.SiteAdmin';
+			$redirect['subView'] = 'core.AdminModules';
 		    }
 		    $status['deactivated'] = $module->translate($module->getName());
 		}
@@ -136,8 +136,8 @@ class AdminModulesController extends GalleryController {
 
 	    case 'uninstall':
 		/* Show the confirmation view */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'core:AdminModulesVerifyUninstall';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'core.AdminModulesVerifyUninstall';
 		$redirect['moduleId'] = $module->getId();
 		$status['uninstalled'] = $module->translate($module->getName());
 		break;
@@ -152,8 +152,8 @@ class AdminModulesController extends GalleryController {
 	    $results['redirect'] = $redirect;
 	} else {
 	    if (empty($delegate)) {
-		$results['delegate']['view'] = 'core:SiteAdmin';
-		$results['delegate']['subView'] = 'core:AdminModules';
+		$results['delegate']['view'] = 'core.SiteAdmin';
+		$results['delegate']['subView'] = 'core.AdminModules';
 	    } else {
 		$results['delegate'] = $delegate;
 	    }
@@ -248,13 +248,13 @@ class AdminModulesView extends GalleryView {
 		    if ($version != $module->getVersion()) {
 			if (empty($version)) {
 			    $entry['action'][] = array('text' => $coreModule->translate('install'),
-						       'controller' => 'core:AdminModules',
+						       'controller' => 'core.AdminModules',
 						       'moduleId' => $module->getId(),
 						       'action' => 'install');
 			    $entry['state'] = 'install';
 			} else {
 			    $entry['action'][] = array('text' => $coreModule->translate('upgrade'),
-						       'controller' => 'core:AdminModules',
+						       'controller' => 'core.AdminModules',
 						       'moduleId' => $module->getId(),
 						       'action' => 'upgrade');
 			    $entry['state'] = 'upgrade';
@@ -275,12 +275,12 @@ class AdminModulesView extends GalleryView {
 						       'view' => $configView);
 			} else {
 			    $entry['action'][] = array('text' => $coreModule->translate('activate'),
-						       'controller' => 'core:AdminModules',
+						       'controller' => 'core.AdminModules',
 						       'moduleId' => $moduleId,
 						       'action' => 'activate');
 			}
 			$entry['action'][] = array('text' => $coreModule->translate('uninstall'),
-						   'controller' => 'core:AdminModules',
+						   'controller' => 'core.AdminModules',
 						   'moduleId' => $moduleId,
 						   'action' => 'uninstall');
 		    }
@@ -288,7 +288,7 @@ class AdminModulesView extends GalleryView {
 		    $entry['state'] = 'active';
 		    if ($moduleId != 'core') {
 			$entry['action'][] = array('text' => $coreModule->translate('deactivate'),
-						   'controller' => 'core:AdminModules',
+						   'controller' => 'core.AdminModules',
 						   'moduleId' => $moduleId,
 						   'action' => 'deactivate');
 		    }
@@ -315,7 +315,7 @@ class AdminModulesView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminModules', $AdminModules);
-	$template->setVariable('controller', 'core:AdminModules');
+	$template->setVariable('controller', 'core.AdminModules');
 	
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminModules.tpl'));

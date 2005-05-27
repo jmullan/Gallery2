@@ -69,8 +69,8 @@ class ConfirmRegistrationController extends GalleryController {
 	    }
 	}				
 
-	$results['delegate']['view'] = 'core:UserAdmin';
-	$results['delegate']['subView'] = 'register:ConfirmRegistration';
+	$results['delegate']['view'] = 'core.UserAdmin';
+	$results['delegate']['subView'] = 'register.ConfirmRegistration';
 
 	return array(GalleryStatus::success(), $results);
     }
@@ -90,7 +90,7 @@ class ConfirmRegistrationView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$template->setVariable('controller', 'register:ConfirmRegistration');
+	$template->setVariable('controller', 'register.ConfirmRegistration');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/register/templates/ConfirmRegistration.tpl'));

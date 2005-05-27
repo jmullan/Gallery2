@@ -34,7 +34,7 @@
 class SelectGalleryControllerTest extends GalleryControllerTestCase {
 
     function SelectGalleryControllerTest($methodName) {
-        $this->GalleryControllerTestCase($methodName, 'migrate:SelectGallery');
+        $this->GalleryControllerTestCase($methodName, 'migrate.SelectGallery');
     }
 
     /**
@@ -45,8 +45,8 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
         $results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:SelectGallery'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.SelectGallery'),
 				  'status' => array(),
 				  'error' => array('form[error][albumsPath][invalid]')),
 			    $results);
@@ -65,8 +65,8 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
         $results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:ChooseObjects',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.ChooseObjects',
 						      'albumsPath' => $albumsPath . $slash),
 				  'status' => array(),
 				  'error' => array()),
@@ -81,8 +81,8 @@ class SelectGalleryControllerTest extends GalleryControllerTestCase {
         GalleryUtilities::putRequestVariable('form[action][select]', 1);
 
         $results = $this->handleRequest();
-	$this->assertEquals(array('delegate' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'migrate:SelectGallery'),
+	$this->assertEquals(array('delegate' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'migrate.SelectGallery'),
 				  'status' => array(),
 				  'error' => array('form[error][albumsPath][missing]')),
 			    $results);

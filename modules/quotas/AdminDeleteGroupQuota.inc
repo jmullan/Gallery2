@@ -58,8 +58,8 @@ class AdminDeleteGroupQuotaController extends GalleryController {
 	if (isset($form['action']['cancel'])) {
 
 	    /* Go back to the AdminGroups view */
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'quotas:AdminQuotas';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'quotas.AdminQuotas';
 
 	} else if (isset($form['action']['delete'])) {
 
@@ -79,8 +79,8 @@ class AdminDeleteGroupQuotaController extends GalleryController {
                 }
 
 		/* Request a redirect to the confirmation screen */
-		$redirect['view'] = 'core:SiteAdmin';
-		$redirect['subView'] = 'quotas:AdminQuotas';
+		$redirect['view'] = 'core.SiteAdmin';
+		$redirect['subView'] = 'quotas.AdminQuotas';
 		$status['deletedGroup'] = $group->getGroupName();
 	    }
 	}
@@ -88,8 +88,8 @@ class AdminDeleteGroupQuotaController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'quotas:AdminDeleteGroupQuota';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'quotas.AdminDeleteGroupQuota';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -145,7 +145,7 @@ class AdminDeleteGroupQuotaView extends GalleryView {
 
 	/* Render the HTML body */
 	$template->setVariable('AdminDeleteGroupQuota', $AdminDeleteGroupQuota);
-	$template->setVariable('controller', 'quotas:AdminDeleteGroupQuota');
+	$template->setVariable('controller', 'quotas.AdminDeleteGroupQuota');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/quotas/templates/AdminDeleteGroupQuota.tpl'));

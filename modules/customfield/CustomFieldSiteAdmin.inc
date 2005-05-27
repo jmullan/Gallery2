@@ -49,8 +49,8 @@ class CustomFieldSiteAdminController extends GalleryController {
 	}
 
 	/* Figure out where to redirect upon success */
-	$results['redirect']['view'] = 'core:SiteAdmin';
-	$results['redirect']['subView'] = 'customfield:CustomFieldSiteAdmin';
+	$results['redirect']['view'] = 'core.SiteAdmin';
+	$results['redirect']['subView'] = 'customfield.CustomFieldSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = array();
 
@@ -76,7 +76,7 @@ class CustomFieldSiteAdminView extends GalleryView {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	}
-	$template->setVariable('controller', 'customfield:CustomFieldSiteAdmin');
+	$template->setVariable('controller', 'customfield.CustomFieldSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/customfield/templates/CustomFieldSiteAdmin.tpl'));
     }

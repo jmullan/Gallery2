@@ -35,7 +35,7 @@
 class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function RemoteSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'remote:RemoteSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'remote.RemoteSiteAdmin');
     }
 
     function setUp() {
@@ -52,8 +52,8 @@ class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][reset]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'remote:RemoteSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'remote.RemoteSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -64,8 +64,8 @@ class RemoteSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'remote:RemoteSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'remote.RemoteSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);

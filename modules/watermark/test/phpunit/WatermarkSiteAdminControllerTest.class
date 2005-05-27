@@ -41,7 +41,7 @@ GalleryCoreApi::relativeRequireOnce('modules/watermark/classes/WatermarkHelper.c
 class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function WatermarkSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'watermark:WatermarkSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'watermark.WatermarkSiteAdmin');
     }
 
     function setUp() {
@@ -89,8 +89,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('add_error' => 1),
 				  'error' => array()),
 			    $results, 'No file');
@@ -107,8 +107,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdminEdit',
 						      'itemId' => $expectedId),
 				  'status' => array('add' => 1),
 				  'error' => array()),
@@ -135,8 +135,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	    $results = $this->handleRequest();
 	    $counter =& GalleryTestCase::getEntityCounter();
 	    $expectedId = $counter->getRecentEntityId('WatermarkImage');
-	    $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-							  'subView' => 'watermark:WatermarkSiteAdminEdit',
+	    $this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+							  'subView' => 'watermark.WatermarkSiteAdminEdit',
 							  'itemId' => $expectedId),
 				      'status' => array('add' => 1),
 				      'error' => array()),
@@ -165,8 +165,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdminEdit',
 						      'itemId' => $expectedId),
 				  'status' => array('add' => 1),
 				  'error' => array()),
@@ -196,8 +196,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$results = $this->handleRequest();
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdminEdit',
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdminEdit',
 						      'itemId' => $expectedId),
 				  'status' => array('add' => 1),
 				  'error' => array()),
@@ -217,8 +217,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	    $results = $this->handleRequest();
 	    $this->assertEquals(array('redirect' => array(
-					  'view' => 'core:SiteAdmin',
-					  'subView' => 'watermark:WatermarkSiteAdmin'),
+					  'view' => 'core.SiteAdmin',
+					  'subView' => 'watermark.WatermarkSiteAdmin'),
 				      'status' => array('delete' => 1),
 				      'error' => array()),
 				$results, 'Delete');
@@ -245,8 +245,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(
-	    array('redirect' => array('view' => 'core:SiteAdmin',
-				      'subView' => 'watermark:WatermarkSiteAdminEdit',
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'watermark.WatermarkSiteAdminEdit',
 				      'itemId' => $expectedId),
 		  'status' => array('add' => 1),
 		  'error' => array()),
@@ -280,8 +280,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 						 $watermark->getId());
 
 	    $results = $this->handleRequest();
-	    $this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-							  'subView' => 'watermark:ConfirmDelete',
+	    $this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+							  'subView' => 'watermark.ConfirmDelete',
 							  'itemId' => $watermark->getId(),
 							  'fromAdmin' => 1),
 				      'status' => array(),
@@ -326,8 +326,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	$counter =& GalleryTestCase::getEntityCounter();
 	$expectedId = $counter->getRecentEntityId('WatermarkImage');
 	$this->assertEquals(array('redirect' => array(
-				      'view' => 'core:SiteAdmin',
-				      'subView' => 'watermark:WatermarkSiteAdminEdit',
+				      'view' => 'core.SiteAdmin',
+				      'subView' => 'watermark.WatermarkSiteAdminEdit',
 				      'itemId' => $expectedId),
 				  'status' => array('add' => 1),
 				  'error' => array()),
@@ -371,8 +371,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][save]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('missingId' => 1),
 				  'error' => array()),
 			    $results);
@@ -383,8 +383,8 @@ class WatermarkSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[hotlinkWatermarkId]', 123);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'watermark:WatermarkSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'watermark.WatermarkSiteAdmin'),
 				  'status' => array('idSaved' => 1),
 				  'error' => array()),
 			    $results);

@@ -61,8 +61,8 @@ class WebCamSiteAdminController extends GalleryController {
 	}
 
 	$method = empty($error) ? 'redirect' : 'delegate';
-	$results[$method]['view'] = 'core:SiteAdmin';
-	$results[$method]['subView'] = 'webcam:WebCamSiteAdmin';
+	$results[$method]['view'] = 'core.SiteAdmin';
+	$results[$method]['subView'] = 'webcam.WebCamSiteAdmin';
 	$results['status'] = $status;
 	$results['error'] = $error;
 
@@ -91,7 +91,7 @@ class WebCamSiteAdminView extends GalleryView {
 	    $form['duration'] = (string)round($duration / 60, 2);
 	}
 
-	$template->setVariable('controller', 'webcam:WebCamSiteAdmin');
+	$template->setVariable('controller', 'webcam.WebCamSiteAdmin');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/webcam/templates/WebCamSiteAdmin.tpl'));
     }

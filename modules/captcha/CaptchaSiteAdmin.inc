@@ -62,19 +62,19 @@ class CaptchaSiteAdminController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'captcha:CaptchaSiteAdmin';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'captcha.CaptchaSiteAdmin';
 	    $status['saved'] = 1;
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'captcha:CaptchaSiteAdmin';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'captcha.CaptchaSiteAdmin';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'captcha:CaptchaSiteAdmin';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'captcha.CaptchaSiteAdmin';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -110,7 +110,7 @@ class CaptchaSiteAdminView extends GalleryView {
 	$CaptchaSiteAdmin['failedAttemptThresholdList'] = range(0, 5);
 
 	$template->setVariable('CaptchaSiteAdmin', $CaptchaSiteAdmin);
-	$template->setVariable('controller', 'captcha:CaptchaSiteAdmin');
+	$template->setVariable('controller', 'captcha.CaptchaSiteAdmin');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/captcha/templates/CaptchaSiteAdmin.tpl'));

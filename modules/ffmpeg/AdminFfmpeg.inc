@@ -128,28 +128,28 @@ class AdminFfmpegController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 
-		$redirect['view'] = 'core:SiteAdmin';
+		$redirect['view'] = 'core.SiteAdmin';
 		if ($isActive) {
-		    $redirect['subView'] = 'ffmpeg:AdminFfmpeg';
+		    $redirect['subView'] = 'ffmpeg.AdminFfmpeg';
 		    $status['saved'] = 1;
 		} else {
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['subView'] = 'core.AdminModules';
 		    $status['configured'] = 'ffmpeg';
 		}
 	    }
 	} else if (isset($form['action']['reset'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'ffmpeg:AdminFfmpeg';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'ffmpeg.AdminFfmpeg';
 	} else if (isset($form['action']['cancel'])) {
-	    $redirect['view'] = 'core:SiteAdmin';
-	    $redirect['subView'] = 'core:AdminModules';
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'core.AdminModules';
 	}
 
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'ffmpeg:AdminFfmpeg';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'ffmpeg.AdminFfmpeg';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -231,7 +231,7 @@ class AdminFfmpegView extends GalleryView {
 	}
 
 	$template->setVariable('AdminFfmpeg', $AdminFfmpeg);
-	$template->setVariable('controller', 'ffmpeg:AdminFfmpeg');
+	$template->setVariable('controller', 'ffmpeg.AdminFfmpeg');
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/ffmpeg/templates/AdminFfmpeg.tpl'));
     }

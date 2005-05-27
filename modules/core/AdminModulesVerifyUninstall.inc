@@ -69,8 +69,8 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 		if (empty($redirect)) {
-		    $redirect['view'] = 'core:SiteAdmin';
-		    $redirect['subView'] = 'core:AdminModules';
+		    $redirect['view'] = 'core.SiteAdmin';
+		    $redirect['subView'] = 'core.AdminModules';
 		}
 		$status['uninstalled'] = $module->getName();
 	    }
@@ -79,8 +79,8 @@ class AdminModulesVerifyUninstallController extends GalleryController {
 	if (!empty($redirect)) {
 	    $results['redirect'] = $redirect;
 	} else {
-	    $results['delegate']['view'] = 'core:SiteAdmin';
-	    $results['delegate']['subView'] = 'core:AdminModules';
+	    $results['delegate']['view'] = 'core.SiteAdmin';
+	    $results['delegate']['subView'] = 'core.AdminModules';
 	}
 	$results['status'] = $status;
 	$results['error'] = $error;
@@ -122,7 +122,7 @@ class AdminModulesVerifyUninstallView extends GalleryView {
 	$AdminModulesVerifyUninstall = array();
 	$AdminModulesVerifyUninstall['module'] = $moduleInfo;
 	$template->setVariable('AdminModulesVerifyUninstall', $AdminModulesVerifyUninstall);
-	$template->setVariable('controller', 'core:AdminModulesVerifyUninstall');
+	$template->setVariable('controller', 'core.AdminModulesVerifyUninstall');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminModulesVerifyUninstall.tpl'));

@@ -351,7 +351,7 @@ class ItemEditItem extends ItemEditPlugin {
 
 	/* Render the HTML body */
 	$template->setVariable('ItemEditItem', $ItemEditItem);
-	$template->setVariable('controller', 'core:ItemEditItem');
+	$template->setVariable('controller', 'core.ItemEditItem');
 
 	return array(GalleryStatus::success(), 'modules/core/templates/ItemEditItem.tpl');
     }

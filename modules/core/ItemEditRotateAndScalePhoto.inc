@@ -406,7 +406,7 @@ class ItemEditRotateAndScalePhoto extends ItemEditPlugin {
 	}
 
 	$template->setVariable('ItemEditRotateAndScalePhoto', $ItemEditRotateAndScalePhoto);
-	$template->setVariable('controller', 'core:ItemEditRotateAndScalePhoto');
+	$template->setVariable('controller', 'core.ItemEditRotateAndScalePhoto');
 	return array(GalleryStatus::success(),
 		     'modules/core/templates/ItemEditRotateAndScalePhoto.tpl');
     }

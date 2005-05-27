@@ -72,11 +72,11 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
 	/* Set test activeRules */
 	$testRules = array('rewrite' => array(
-		array('pattern' => 'v/%path%', 'match' => 'core:ShowItem'),
+		array('pattern' => 'v/%path%', 'match' => 'core.ShowItem'),
 		array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
-			'match' => 'core:DownloadItem'),
-		array('pattern' => 'phpunit/', 'match' => 'php:Unit'),
-		array('pattern' => 'phpunitsub/%itemId%', 'match' => 'php:Unit|test:subView')));
+			'match' => 'core.DownloadItem'),
+		array('pattern' => 'phpunit/', 'match' => 'php.Unit'),
+		array('pattern' => 'phpunitsub/%itemId%', 'match' => 'php.Unit|test.subView')));
 	$ret = RewriteMap::setActiveRules($testRules);
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -168,23 +168,23 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	$testItemPath = str_replace('#', '%23', $testItemPath);
 
 	$tests = array();
-	/* core:ShowItem on albums have the logical path */
+	/* core.ShowItem on albums have the logical path */
 	$tests[] = array('http://example.com/gallery2/v' . $testAlbumPath,
-			 array('view' => 'core:ShowItem', 'itemId' => $testAlbum->getId()));
-	/* core:ShowItem on items have the logical path, file type and .html */
+			 array('view' => 'core.ShowItem', 'itemId' => $testAlbum->getId()));
+	/* core.ShowItem on items have the logical path, file type and .html */
 	$tests[] = array('http://example.com/gallery2/v' . $testItemPath . '.html',
-			 array('view' => 'core:ShowItem', 'itemId' => $testItem->getId()));
-	/* core:ShowItem at the top level has no prefix */
+			 array('view' => 'core.ShowItem', 'itemId' => $testItem->getId()));
+	/* core.ShowItem at the top level has no prefix */
 	$tests[] = array('http://example.com/gallery2/v/',
-			 array('view' => 'core:ShowItem'));
-	/* core:DownloadItem on items have the id, serial number, path component and file type */
+			 array('view' => 'core.ShowItem'));
+	/* core.DownloadItem on items have the id, serial number, path component and file type */
 	$tests[] = array(sprintf('http://example.com/gallery2/d/%d-%d/%s',
 				 $testItem->getId(), $testItem->getSerialNumber(),
 				 urlencode($testItem->getPathComponent())),
-			 array('view' => 'core:DownloadItem', 'itemId' => $testItem->getId()));
-	/* php:Unit pattern withouth any keywords */
+			 array('view' => 'core.DownloadItem', 'itemId' => $testItem->getId()));
+	/* php.Unit pattern withouth any keywords */
 	$tests[] = array('http://example.com/gallery2/phpunit/',
-			 array('view' => 'php:Unit'));
+			 array('view' => 'php.Unit'));
 
 	foreach ($tests as $test) {
 	    list ($expectedUrl, $params) = $test;
@@ -205,11 +205,11 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 
     function testNavigationId() {
 	global $gallery;
-	$gallery->setCurrentView('php:Unit');
+	$gallery->setCurrentView('php.Unit');
 	$this->_urlGenerator->_navId = '456';
 
 	$actualUrl = $this->_urlGenerator->generateUrl(
-	    array('view' => 'php:Unit', 'subView' => 'test:subView', 'itemId' => 123), false);
+	    array('view' => 'php.Unit', 'subView' => 'test.subView', 'itemId' => 123), false);
 	$this->assertEquals('http://example.com/gallery2/phpunitsub/123?g2_navId=456', $actualUrl);
     }
 }

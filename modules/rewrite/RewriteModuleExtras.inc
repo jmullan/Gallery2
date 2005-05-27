@@ -169,12 +169,12 @@ class RewriteModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
 	    list ($ret, $code) = $module->autoConfigure();
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	case '0.9.3':
 	case '0.9.4':
 	    foreach (array('accessList' => serialize(array()))
@@ -184,7 +184,28 @@ class RewriteModuleExtras {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	    
+
+	case '0.9.5':
+	    /* Update view names in match strings to new . separator; core.ShowItem, etc */
+	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/RewriteMap.class');
+	    list ($ret, $activeRules) = RewriteMap::getActiveRules();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    foreach ($activeRules as $moduleId => $rules) {
+		for ($i = 0; $i < count($rules); $i++) {
+		    if (!empty($rules[$i]['match'])) {
+			$activeRules[$moduleId][$i]['match'] =
+			    str_replace(':', '.', $rules[$i]['match']);
+		    }
+		}
+	    }
+	    $ret = RewriteMap::setActiveRules($activeRules);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
+	case 'end of upgrade path':
 	    break;
 
 	default:
@@ -192,7 +213,7 @@ class RewriteModuleExtras {
 					sprintf('Unknown module version %s', $currentVersion));
 	}
 
-    	return GalleryStatus::success();
+	return GalleryStatus::success();
     }
 }
 ?>

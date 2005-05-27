@@ -41,7 +41,7 @@ require_once(dirname(__FILE__) . '/../../classes/ThumbnailHelper.class');
 class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function ThumbnailSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'thumbnail:ThumbnailSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'thumbnail.ThumbnailSiteAdmin');
     }
 
     function testThumbnailSiteAdminControllerAddNoMime() {
@@ -49,8 +49,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][add]', '1');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('mime_error' => 1),
 				  'error' => array()),
 			    $results);
@@ -63,8 +63,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[image]', 'new');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('file_error' => 1),
 				  'error' => array()),
 			    $results);
@@ -91,8 +91,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	    dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('mime_duplicate' => 1),
 				  'error' => array()),
 			    $results, 'Add core mime type');
@@ -107,8 +107,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	    dirname(__FILE__) . '/../../../core/test/data/test1.gif');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('imagemime_error' => 1),
 				  'error' => array()),
 			    $results, 'Add non-jpeg image');
@@ -125,8 +125,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	    dirname(__FILE__) . '/../../../core/test/data/test1.jpg');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('add' => 1),
 				  'error' => array()),
 			    $results, 'Add new');
@@ -153,8 +153,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[oldimage]', $itemId);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('addMime' => 1),
 				  'error' => array()),
 			    $results, 'Add mime type to existing image');
@@ -168,8 +168,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('image/jpeg', $outputMimeType, 'Output mime type');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('mime_duplicate' => 1),
 				  'error' => array()),
 			    $results, 'Add duplicate mime type');
@@ -180,8 +180,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[delete][mimeType]', 'test/fakemime');
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('deleteMime' => 1),
 				  'error' => array()),
 			    $results, 'Delete mime type entry');
@@ -206,8 +206,8 @@ class ThumbnailSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[delete][itemId]', $itemId);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'thumbnail:ThumbnailSiteAdmin'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'thumbnail.ThumbnailSiteAdmin'),
 				  'status' => array('delete' => 1),
 				  'error' => array()),
 			    $results, 'Delete image');

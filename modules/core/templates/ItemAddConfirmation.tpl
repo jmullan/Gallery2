@@ -21,7 +21,7 @@
   {foreach from=$ItemAddConfirmation.status.addedFiles item=entry}
     {if $entry.exists}
     {capture name="itemLink"}
-    <a href="{g->url arg1="view=core:ShowItem" arg2="itemId=`$entry.id`"}">
+    <a href="{g->url arg1="view=core.ShowItem" arg2="itemId=`$entry.id`"}">
       {$entry.fileName}
     </a>
     {/capture}
@@ -41,7 +41,7 @@
 </div>
 
 <div class="gbBlock">
-  <a href="{g->url arg1="view=core:ItemAdmin" arg2="subView=core:ItemAdd"
+  <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemAdd"
    arg3="itemId=`$ItemAdmin.item.id`"}">
     {g->text text="Add more files"}
   </a>

@@ -34,7 +34,7 @@
 class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
     function ArchiveUploadSiteAdminControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'archiveupload:ArchiveUploadSiteAdmin');
+	$this->GalleryControllerTestCase($methodName, 'archiveupload.ArchiveUploadSiteAdmin');
     }
 
     function setUp() {
@@ -56,8 +56,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -77,8 +77,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array('saved' => 1),
 				  'error' => array()),
 			    $results);
@@ -97,8 +97,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -108,8 +108,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[action][cancel]', 1);
 
 	$results = $this->handleRequest();
-	$this->assertEquals(array('redirect' => array('view' => 'core:SiteAdmin',
-						      'subView' => 'core:AdminModules'),
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'core.AdminModules'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -121,8 +121,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][exec]')),
 				  $results);
@@ -134,8 +134,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][badPath]')),
 			    $results);
@@ -147,8 +147,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][notExecutable]')),
 			    $results);
@@ -160,8 +160,8 @@ class ArchiveUploadSiteAdminControllerTest extends GalleryControllerTestCase {
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('delegate' => array(
-					'view' => 'core:SiteAdmin',
-					'subView' => 'archiveupload:ArchiveUploadSiteAdmin'),
+					'view' => 'core.SiteAdmin',
+					'subView' => 'archiveupload.ArchiveUploadSiteAdmin'),
 				  'status' => array(),
 				  'error' => array('form[error][unzipPath][missing]')),
 			    $results);

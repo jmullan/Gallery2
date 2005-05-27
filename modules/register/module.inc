@@ -38,11 +38,11 @@ class RegisterModule extends GalleryModule {
 	$this->setId('register');
 	$this->setName($gallery->i18n('Registration'));
 	$this->setDescription($gallery->i18n('New User Registration'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSystemLinks|getUserAdminViews|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
-	$this->setRequiredModuleApi(array(0, 9));
+	$this->setRequiredModuleApi(array(0, 12));
     }
 
     /**
@@ -107,8 +107,8 @@ class RegisterModule extends GalleryModule {
 	// Only anonymous users will see the register link
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
 	    $links[] = array('text' => $this->translate('Register'),
-			     'params' => array('view' => 'core:UserAdmin',
-					       'subView' => 'register:UserSelfRegistration',
+			     'params' => array('view' => 'core.UserAdmin',
+					       'subView' => 'register.UserSelfRegistration',
 					       'return' => 1, )
 			    );
 	}
@@ -132,7 +132,7 @@ class RegisterModule extends GalleryModule {
 	// Only anonymous users will see the register link
 	if ($gallery->getActiveUserId() == $anonymousUserId) {
 	    $views[] = array('name' => $this->translate('Register'),
-			     'view' => 'register:UserSelfRegistration');
+			     'view' => 'register.UserSelfRegistration');
 	}
 
 	return array(GalleryStatus::success(), $views);
@@ -144,7 +144,7 @@ class RegisterModule extends GalleryModule {
     function getSiteAdminViews() {
 	return array(GalleryStatus::success(),
 		     array(array('name' => $this->translate('Registration'),
-				 'view' => 'register:AdminSelfRegistration')));
+				 'view' => 'register.AdminSelfRegistration')));
     }
 }
 ?>

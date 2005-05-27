@@ -34,7 +34,7 @@
 class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 
     function SwitchDetailModeControllerTest($methodName) {
-	$this->GalleryControllerTestCase($methodName, 'exif:SwitchDetailMode');
+	$this->GalleryControllerTestCase($methodName, 'exif.SwitchDetailMode');
     }
 
     function testSwitchToSummary() {
@@ -44,7 +44,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
+				  'redirect' => array('view' => 'core.ShowItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -64,7 +64,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
+				  'redirect' => array('view' => 'core.ShowItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
@@ -84,7 +84,7 @@ class SwitchDetailModeControllerTest extends GalleryControllerTestCase {
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('return' => 1,
-				  'redirect' => array('view' => 'core:ShowItem'),
+				  'redirect' => array('view' => 'core.ShowItem'),
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
