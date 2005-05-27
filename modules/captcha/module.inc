@@ -39,7 +39,7 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 3));
@@ -75,11 +75,15 @@ class CaptchaModule extends GalleryModule {
 	switch ($currentVersion) {
 
 	case '':
+	    break;
+
 	case '0.9.0':
 	    /* Captcha changed from LoginPlugin to ValidationPlugin to add registration support */
-
 	case '0.9.1':
 	    /* Updated GalleryCoreApi requirement to 5.3 to use Gallery::getPhpVm() */
+	case '0.9.2':
+
+	case 'end of upgrade path':
 	    break;
 
 	default:
