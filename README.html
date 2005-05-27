@@ -278,6 +278,11 @@
     </h3>
     <ol id="beta4-list">
       <li>
+	<b> Multisite Support </b> - The multisite system has been completely
+	redesigned and is now compatible with both URL Rewrite module and embedded G2.
+	Multisite G2 refers to multiple independent sites using a single codebase.
+      </li>
+      <li>
 	<b> Localization </b> - The installer and upgrader can now be localized.
       </li>
     </ol>
@@ -1529,14 +1534,15 @@
 	    Copy each configuration in the combined file into separate single files.
 	    Each new file should have <tt>&lt;?php</tt> as the very first line and
 	    <tt>?&gt;</tt> as the very last line with no extra spaces or blank lines
-	    at the top or bottom.  Place each new single config.php in the multisite
-	    directory for that site.  The <tt>case 'domain/path':</tt> line just above
-	    each configuration in the combined file will help you determine which
-	    config.php goes in which multisite directory.  Note that this "case" line
-	    does not go in the new config.php file.  The last configuration in the
-	    combined file has <tt>default:</tt> just above it instead of "case".
-	    Rename the combined file to something else and put this last configuration
-	    in place as the config.php in this directory.
+	    at the top or bottom, and there should be only one of each of these tags.
+	    Place each new single config.php in the multisite directory for that site.
+	    The <tt>case 'domain/path':</tt> line just above each configuration in the
+	    combined file will help you determine which config.php goes in which
+	    multisite directory.  Note that this "case" line does not go in the new
+	    config.php file.  The last configuration in the combined file has
+	    <tt>default:</tt> just above it instead of "case".  Rename the combined
+	    file to something else and put this last configuration in place as the
+	    config.php in this directory.
 	  </li>
 	  <li>
 	    Now access the primary site and run through the upgrader.  Make sure
@@ -1548,13 +1554,14 @@
 	    to update.  After this step you should see some new files in the multisite
 	    directory, including <tt>upgrade/index.php</tt>.  At this point <i>stop</i>
 	    using the installer and browse to <tt>upgrade/index.php</tt> for this site
-	    (not the primary site).  Step through the upgrader up to the upgrade core
-	    module step.  After the core upgrade completes manually edit the config.php
-	    for this site.  At the bottom you will find a <tt>galleryBaseUrl</tt> setting.
+	    (not the primary site).  Step through the upgrader to the upgrade core module
+	    step.  After the core upgrade completes manually edit the config.php for this
+	    site.  At the bottom you will find a <tt>galleryBaseUrl</tt> setting.
 	    Enter the URL for the primary site here, ending with a /.  For example,
 	    <tt>http://mydomain.com/gallery2/</tt> or <tt>http://photos.mydomain.com/</tt>.
-	    Save this change and finish the remaining steps of the upgrader.  Make sure this
-	    site now works correctly.
+	    Note this is the URL for the primary site, not the site you are currently
+	    upgrading.  Save this change and finish the remaining steps of the upgrader.
+	    Make sure this site now works correctly.
 	  </li>
 	</ul>
       </li>
