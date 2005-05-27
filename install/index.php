@@ -84,13 +84,13 @@ if (!isset($_SESSION['path'])) {
     $_SESSION['path'] = __FILE__;
 }
 
-if (function_exists('dgettext') && !empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryStatus.class');
-    require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryTranslator.class');
-    if (empty($_SESSION['language'])) {
-	/* Select language based on preferences sent from browser */
-	$_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
-    }
+require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryStatus.class');
+require_once(dirname(dirname(__FILE__)) . '/modules/core/classes/GalleryTranslator.class');
+if (empty($_SESSION['language'])) {
+    /* Select language based on preferences sent from browser */
+    $_SESSION['language'] = GalleryTranslator::getLanguageCodeFromRequest();
+}
+if (function_exists('dgettext')) {
     $gallery = new GalleryStub();
     $translator = new GalleryTranslator();
     $translator->init($_SESSION['language']);
