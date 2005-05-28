@@ -112,7 +112,13 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    }
 		    $useSymlink = isset($data['useSymlink']);
 
-		    $ret = $this->addDirectory($item->getId(), $dir . urldecode($directory),
+		    $path = $this->_platform->realpath(urldecode($directory));
+		    if (!GalleryUtilities::isPathInList(dirname($path), $localServerDirList)) {
+			/* Ensure malformed input like fileKey = ../foo doesn't work */
+			continue;
+		    }
+
+		    $ret = $this->addDirectory($item->getId(), $path,
 					       $useSymlink, $textFields, $status, $error);
 		    if ($ret->isError()) {
 			GalleryCoreApi::releaseLocks($lockId);
