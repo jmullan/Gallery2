@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.6'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.7'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(5, 0));
@@ -145,21 +145,24 @@ class RewriteModule extends GalleryModule {
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteHelper.class');
 	GalleryCoreApi::relativeRequireOnce('modules/rewrite/classes/RewriteMap.class');
 
-	list ($ret, $currentRules) = RewriteMap::getActiveRules();
+	list ($ret, $activeRules) = RewriteMap::getActiveRules();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!empty($currentRules)) {
-	    return array(GalleryStatus::success(), array());
-	}
-
-	$defaultRules = array('rewrite' => array(
+	if (!empty($activeRules)) {
+	    $activeRules = array('rewrite' => array(
 				  array('pattern' => 'v/%path%',
 					'match' => 'core.ShowItem'),
 				  array('pattern' => 'd/%itemId%-%serialNumber%/%fileName%',
 					'match' => 'core.DownloadItem')));
 
-	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($defaultRules, $this);
+	    $ret = RewriteMap::setActiveRules($activeRules);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	}
+
+	list($ret, $code, $rewriteRules) = RewriteHelper::parseActiveRules($activeRules, $this);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -174,11 +177,6 @@ class RewriteModule extends GalleryModule {
 	if ($code != REWRITE_STATUS_OK) {
 	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__),
 		    null);
-	}
-
-	$ret = RewriteMap::setActiveRules($defaultRules);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), array());
