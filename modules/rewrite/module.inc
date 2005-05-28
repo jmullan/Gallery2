@@ -108,6 +108,19 @@ class RewriteModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
+	if ($rewriteStatus == REWRITE_STATUS_APACHE_UNABLE_TO_TEST) {
+	    /* Check for an override */
+	    list ($ret, $needOptions) = $this->getParameter('needOptions');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
+	    if (!empty($needOptions)) {
+		/* We know everything we need to, so we don't need to test */
+		$rewriteStatus = REWRITE_STATUS_OK;
+	    }
+	}
+
 	list ($ret, $fileStatus) = RewriteHelper::checkFile();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
