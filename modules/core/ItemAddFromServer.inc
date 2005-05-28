@@ -330,11 +330,10 @@ class ItemAddFromServer extends ItemAddPlugin {
 				if (!$legal && $fileName == '..') {
 				    continue;
 				}
-				$fileKey = urlencode($form['localServerPath'] . '/' . $fileName);
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
 					  'fileName' => $fileName,
-					  'fileKey' => $fileKey,
+					  'fileKey' => urlencode($filePath),
 					  'legal' => $legal);
 			    } else {
 				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
