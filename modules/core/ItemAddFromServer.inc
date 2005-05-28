@@ -290,7 +290,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* If we're uploading from the local server, get a file list now */
 	    $form['localServerPath'] = trim($form['localServerPath']);
-	    $form['localServerPath'] = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
+	    $form['localServerPath'] = urldecode($form['localServerPath']);
 	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
 
 	    /* Validate the path */
@@ -330,10 +330,11 @@ class ItemAddFromServer extends ItemAddPlugin {
 				if (!$legal && $fileName == '..') {
 				    continue;
 				}
+				$fileKey = urlencode($form['localServerPath'] . '/' . $fileName);
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
 					  'fileName' => $fileName,
-					  'fileKey' => urlencode($fileName),
+					  'fileKey' => $fileKey,
 					  'legal' => $legal);
 			    } else {
 				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
