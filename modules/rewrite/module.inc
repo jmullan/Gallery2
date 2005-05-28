@@ -149,7 +149,7 @@ class RewriteModule extends GalleryModule {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	if (!empty($activeRules)) {
+	if (empty($activeRules)) {
 	    $activeRules = array('rewrite' => array(
 				  array('pattern' => 'v/%path%',
 					'match' => 'core.ShowItem'),

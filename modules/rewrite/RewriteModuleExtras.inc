@@ -206,16 +206,6 @@ class RewriteModuleExtras {
 	    }
 
 	case '0.9.6':
-	    /* Update the .htaccess file to use the new . spearator */
-	    list ($ret, $unused) = $module->deactivate();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
-
-	    list ($ret, $unused) = $module->activate();
-	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
-	    }
 
 	case 'end of upgrade path':
 	    break;
