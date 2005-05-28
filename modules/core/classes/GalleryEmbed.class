@@ -751,7 +751,8 @@ class GalleryEmbed {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])) {
+	if (isset($moduleStatus[$moduleId]) && !empty($moduleStatus[$moduleId]['active'])
+	        && $moduleStatus[$moduleId]['active']) {
 	    /* Load the G2 templating engine */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryTemplate.class');
 	    $template = new GalleryTemplate(dirname(__FILE__) . '/../../..');
@@ -772,6 +773,8 @@ class GalleryEmbed {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+	} else {
+	    return array(GalleryStatus::error(ERROR_CONFIGURATION_REQUIRED, __FILE__, __LINE__), null);
 	}
 	return array(GalleryStatus::success(), $blockHtml);
     }
