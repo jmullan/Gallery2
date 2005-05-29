@@ -437,11 +437,13 @@ class GalleryTranslator {
 	    }
 
 	    /*
-	     * If there is no bind_textdomain_codeset (PHP 4.1.x), the string will be returned
-	     * from gettext in the default encoding for that language. Here we convert that
-	     * encoding to the active charset manually.
+	     * In PHP 4.1.x (before bind_textdomain_codeset) the string will be returned from
+	     * gettext in the default encoding for that language. Here we convert that encoding
+	     * to the active charset.  However, it seems newer versions of PHP that are missing
+	     * bind_textdomain_charset do return the output in UTF-8.
 	     */
-	    if (!function_exists('bind_textdomain_codeset')) {
+	    if (!function_exists('bind_textdomain_codeset') &&
+		    version_compare(phpversion(), '4.2.0') < 0) {
 		$localized = GalleryCoreApi::convertToUtf8($localized);
 	    }
 	} else {

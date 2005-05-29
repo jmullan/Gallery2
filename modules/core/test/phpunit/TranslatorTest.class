@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -60,15 +60,16 @@ class TranslatorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	// Init a new translator so that we reset our locale
+	/* Init a new translator so that we reset our locale */
 	$translator = new GalleryTranslator();
 	$translator->init($this->_languageCode);
-	
+
 	parent::tearDown();
     }
 
     function testGetLanguageCodeFromRequest() {
 	global $gallery;
+	$origLang = getenv('LANG');
 
 	/* Init with a null language code and a valid accept language */
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'de';
@@ -77,8 +78,7 @@ class TranslatorTest extends GalleryTestCase {
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('de_DE', getenv('LANG'), 'null init, valid language');
 	} else {
-	    // If we don't have gettext, who knows what the LANG will be set to!
-	    // $this->assertEquals(false, getenv('LANG'));
+	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged');
 	}
 
 	/* Init with a null language code and a valid accept language/country */
@@ -88,8 +88,7 @@ class TranslatorTest extends GalleryTestCase {
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('pt_BR', getenv('LANG'), 'null init, valid language/country');
 	} else {
-	    // If we don't have gettext, who knows what the LANG will be set to!
-	    // $this->assertEquals(false, getenv('LANG'));
+	    $this->assertEquals($origLang, getenv('LANG'), 'null init, lang unchanged 2');
 	}
 
 	/* Invalid accept language/country */
@@ -98,7 +97,8 @@ class TranslatorTest extends GalleryTestCase {
 
 	/* Invalid,valid accept language */
 	$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'xx,no';
-	$this->assertEquals('no_NO', $translator->getLanguageCodeFromRequest(), 'invalid,valid language');
+	$this->assertEquals('no_NO', $translator->getLanguageCodeFromRequest(),
+			    'invalid, valid language');
 
 	/* Init with a real language code */
 	$translator = new GalleryTranslator();
@@ -106,8 +106,7 @@ class TranslatorTest extends GalleryTestCase {
 	if (function_exists('dgettext')) {
 	    $this->assertEquals('no_NO', getenv('LANG'), 'valid init');
 	} else {
-	    // If we don't have gettext, who knows what the LANG will be set to!
-	    // $this->assertEquals(false, getenv('LANG'));
+	    $this->assertEquals($origLang, getenv('LANG'), 'valid init, lang unchanged');
 	}
     }
 
@@ -128,6 +127,19 @@ class TranslatorTest extends GalleryTestCase {
 	    $this->assertEquals('Descripci&oacute;n', $results);
 	} else {
 	    $this->assertEquals('Description', $results);
+	}
+
+	/* Test something with some non-ascii in the result */
+	$translator->init('fr_FR');
+	list ($ret, $results) =
+	    $translator->translateDomain($domain, array('text' => 'Create'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	if ($translator->canTranslate()) {
+	    $this->assertEquals('Créer', $results);
+	} else {
+	    $this->assertEquals('Create', $results);
 	}
     }
 
@@ -153,7 +165,7 @@ class TranslatorTest extends GalleryTestCase {
 	} else {
 	    $this->assertEquals('1 user matches your filter', $results);
 	}
-	
+
 	/* Plural text data, count=2 (plural) */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain,
@@ -177,12 +189,12 @@ class TranslatorTest extends GalleryTestCase {
 
     function testTranslateCharset() {
 	global $gallery;
-	
+
 	$domain = 'modules_core';
-	
+
 	$translator = new GalleryTranslator();
 	$translator->init('pt_BR');
-	
+
 	/* Singular text data */
 	list ($ret, $results) =
 	    $translator->translateDomain($domain, array('text' => 'Album'));
@@ -196,5 +208,4 @@ class TranslatorTest extends GalleryTestCase {
 	}
     }
 }
-
 ?>
