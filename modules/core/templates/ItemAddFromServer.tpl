@@ -153,9 +153,9 @@
 	  <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
 	   arg3="form[localServerPath]=`$element.path`" arg4="itemId=`$ItemAdmin.item.id`"
 	   arg5="form[action][findFilesFromLocalServer]=1"
-	   arg6="form[formName]=ItemAddFromServer"}">{$element.name}</a>
+	   arg6="form[formName]=ItemAddFromServer"}">{$element.name|escape}</a>
 	{else}
-	  {$element.name}
+	  {$element.name|escape}
 	{/if}
       {/foreach}
     {/strip}{/capture}
@@ -164,7 +164,7 @@
     </strong>
 
     <input type="hidden"
-     name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath}"/>
+     name="{g->formVar var="form[localServerPath]"}" value="{$form.localServerPath|escape}"/>
     <br/>
 
     <table class="gbDataTable"><tr>
@@ -212,7 +212,7 @@
 	</td><td>
 	  {if $file.legal}{strip}
 	    <a href="{g->url arg1="controller=core.ItemAdd" arg2="addPlugin=ItemAddFromServer"
-	     arg3="form[localServerPath]=$key" arg4="itemId=`$ItemAdmin.item.id`"
+	     arg3="form[localServerPath]=`$file.filePath`" arg4="itemId=`$ItemAdmin.item.id`"
 	     arg5="form[action][findFilesFromLocalServer]=1"
 	     arg6="form[formName]=ItemAddFromServer"}">
 	      {if $file.fileName == ".."}

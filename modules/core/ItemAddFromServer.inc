@@ -49,7 +49,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	if (isset($form['action']['addFromLocalServer'])
 		&& (!empty($form['localServerFiles']) || !empty($form['localServerDirectories']))) {
 	    /* Add the selected items */
-	    $dir = $form['localServerPath'];
+	    $dir = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
 
 	    $textFields = array(
 		'title' => (isset($form['set']['title'])) ? 1 : 0,
@@ -112,13 +112,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    }
 		    $useSymlink = isset($data['useSymlink']);
 
-		    $path = $this->_platform->realpath(urldecode($directory));
-		    if (!GalleryUtilities::isPathInList(dirname($path), $localServerDirList)) {
-			/* Ensure malformed input like fileKey = ../foo doesn't work */
-			continue;
-		    }
-
-		    $ret = $this->addDirectory($item->getId(), $path,
+		    $ret = $this->addDirectory($item->getId(), $dir . urldecode($directory),
 					       $useSymlink, $textFields, $status, $error);
 		    if ($ret->isError()) {
 			GalleryCoreApi::releaseLocks($lockId);
@@ -296,7 +290,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 	} else if (isset($form['action']['findFilesFromLocalServer'])) {
 	    /* If we're uploading from the local server, get a file list now */
 	    $form['localServerPath'] = trim($form['localServerPath']);
-	    $form['localServerPath'] = urldecode($form['localServerPath']);
+	    $form['localServerPath'] = GalleryUtilities::htmlEntityDecode($form['localServerPath']);
 	    $form['localServerPath'] = $platform->realpath($form['localServerPath']);
 
 	    /* Validate the path */
@@ -339,7 +333,8 @@ class ItemAddFromServer extends ItemAddPlugin {
 				$form['localServerFiles'][] =
 				    array('type' => 'directory',
 					  'fileName' => $fileName,
-					  'fileKey' => urlencode($filePath),
+					  'filePath' => $filePath,
+					  'fileKey' => urlencode($fileName),
 					  'legal' => $legal);
 			    } else {
 				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);

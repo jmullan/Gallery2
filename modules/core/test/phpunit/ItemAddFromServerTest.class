@@ -237,7 +237,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	    $escapedBasenames = array('test1', 'test1', 'test2', 'test[3]', 'test4');
 	    rsort($escapedBasenames);
 
-	    $dirName = urlencode($baseDir . $dirSep . 'localUploadDir');
+	    $dirName = urlencode('localUploadDir');
 	    GalleryUtilities::putRequestVariable(
 		'form[localServerDirectories][' . $dirName . '][selected]', 1);
 	    GalleryUtilities::putRequestVariable(
@@ -370,7 +370,7 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[localServerPath]', dirname($path));
 	GalleryUtilities::putRequestVariable('form[set][title]', 1);
 	GalleryUtilities::putRequestVariable('form[localServerDirectories][' .
-	    urlencode($path) . '][selected]', 1);
+	    urlencode(basename($path)) . '][selected]', 1);
 
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(array(), array()), $results);
@@ -392,6 +392,28 @@ class ItemAddFromServerTest extends ItemAddPluginTestCase {
 	$results = $this->handleRequest($this->_rootAlbum);
 	$this->assertEquals(array(array(), array()), $results);
     }
+
+    function testAddFromServerEntityDir() {
+	/* Test that characters in dirname that get entitized still work ok */
+	global $gallery;
+	$platform = $gallery->getPlatform();
+	$dirSep = $platform->getDirectorySeparator();
+	$baseDir = dirname(dirname(__FILE__)) . $dirSep . 'data' . $dirSep;
+
+	GalleryUtilities::putRequestVariable('form[action][addFromLocalServer]', 1);
+	GalleryUtilities::putRequestVariable('form[localServerPath]', $baseDir . '<My "Files">');
+	GalleryUtilities::putRequestVariable('form[localServerFiles][foo][selected]', 1);
+	GalleryUtilities::putRequestVariable('form[set][title]', 1);
+
+	$results = $this->handleRequest($this->_rootAlbum);
+	if (empty($results[1]['addedFiles'][0]['id'])) {
+	    $this->assert(false, 'missing id of added item');
+	} else {
+	    $id = $results[1]['addedFiles'][0]['id'];
+	    $this->assertEquals(array(array(), array('addedFiles' =>
+		array(array('fileName' => 'foo', 'id' => $id, 'warnings' => array())))), $results);
+	}
+    }
 }
 
 /**
@@ -404,7 +426,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function ItemAddFromServerTestPlatform($delegate, $symlinkSupported) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$dirSep = $platform->getDirectorySeparator();
+	$dirSep = $this->_dirSep = $platform->getDirectorySeparator();
 
 	$this->_delegate = $delegate;
 	$this->_symlinkSupported = $symlinkSupported;
@@ -420,10 +442,11 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function realpath($path) {
 	return preg_replace('|[^/\\\]+[/\\\]\.\.[/\\\]|', '', $path);
     }
-    
+
     function file_exists($path) {
 	switch ($path) {
 	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
@@ -439,6 +462,7 @@ class ItemAddFromServerTestPlatform extends GalleryPlatform {
     function copy($source, $dest) {
 	switch ($source) {
 	case $this->_baseDir . 'December - <#952>.jpg':
+	case $this->_baseDir . '<My "Files">' . $this->_dirSep . 'foo':
 	case $this->_baseDir . 'apo\'strophe.jpg':
 	case $this->_baseDirRecursive . 'apo\'strophe.jpg':
 	    /* The windows path is a little weird -- but we can live with it */
