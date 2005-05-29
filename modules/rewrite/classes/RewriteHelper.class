@@ -304,6 +304,13 @@ class RewriteHelper {
 	    } else {
 		list($ret, $module) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_PLUGIN_VERSION_MISMATCH) {
+			/*
+			 * Add CONFIGURATION_REQUIRED code to more gracefully abort upgrade
+			 * if a dependent module for one of our rules also needs upgrading.
+			 */
+			$ret->addErrorCode(ERROR_CONFIGURATION_REQUIRED);
+		    }
 		    return array($ret->wrap(__FILE__, __LINE__), null, null);
 		}
 	    }
