@@ -1,6 +1,6 @@
 
 -- Create BIT_OR aggregate function (requires Oracle 9i or higher)
--- Extra semicolons above ensure executed statements includes a semicolon at the end
+-- Extra semicolons below ensure executed statements include a semicolon at the end
 -- (one is stripped off when this file is split into multiple blocks)
 
 create or replace type BIT_OR_IMPL as object (
