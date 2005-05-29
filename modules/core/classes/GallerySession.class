@@ -29,7 +29,8 @@
  * Define gallery session key for this install
  */
 global $gallery;
-define('SESSION_ID_PARAMETER', 'GALLERYSID_' . $gallery->getConfig('cookieId'));
+/* Add @ here in case we haven't yet upgraded config.php to include cookieId */
+define('SESSION_ID_PARAMETER', 'GALLERYSID_' . @$gallery->getConfig('cookieId'));
 
 /**
  * Container for session related data
