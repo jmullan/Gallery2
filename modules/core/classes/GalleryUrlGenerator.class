@@ -351,14 +351,18 @@ class GalleryUrlGenerator {
 		$forceSessionId = false;
 	    }
 
-	    /* Check for local override */
-	    $override = sprintf('%s/local/%s', dirname($href), basename($href));
-	    $platform = $gallery->getPlatform();
-	    if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
-		$href = $override;
+	    if (preg_match('{^[a-z]+://}', $href)) {
+		/* Absolute URL */
+		$url = $href;
+	    } else {
+		/* Check for local override */
+		$override = sprintf('%s/local/%s', dirname($href), basename($href));
+		$platform = $gallery->getPlatform();
+		if ($platform->file_exists(dirname(__FILE__) . '/../../../' . $override)) {
+		    $href = $override;
+		}
+		$url .= $href;
 	    }
-
-	    $url .= $href;
 	} else if (isset($params['view']) && $params['view'] == 'core.DownloadItem') {
 	    $url = $this->getCurrentUrlDir(true) . GALLERY_MAIN_PHP;
 	} else {
