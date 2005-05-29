@@ -76,20 +76,24 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	if (empty($this->_currentUrl)) {
-	    $location = (GalleryUtilities::isEmbedded()) ? 'embeddedLocation' : 'galleryLocation';
-	    list ($ret, $galleryLocation) =
-		    GalleryCoreApi::getPluginParameter('module', 'rewrite', $location);
-	    if ($ret->isError() || empty($galleryLocation)) {
-		/*
-		 * We dont know where we're at. This could happen if rewrite was installed
-		 * in G2 standalone, and now is accessed as G2 embedded. Turn off short URLs
-		 * for the embedded mode and wait until the user has set it up corectly.
-		 */
-		$this->_error = true;
-		return parent::getCurrentUrl();
+	    if (GalleryUtilities::isEmbedded() && !empty($this->_embedPath)) {
+		$path = $this->_embedPath;
+	    } else {
+		$location = (GalleryUtilities::isEmbedded()) ? 'embeddedLocation' : 'galleryLocation';
+		list ($ret, $path) =
+			GalleryCoreApi::getPluginParameter('module', 'rewrite', $location);
+		if ($ret->isError() || empty($path)) {
+		    /*
+		     * We dont know where we're at. This could happen if rewrite was installed
+		     * in G2 standalone, and now is accessed as G2 embedded. Turn off short URLs
+		     * for the embedded mode and wait until the user has set it up corectly.
+		     */
+		    $this->_error = true;
+		    return parent::getCurrentUrl();
+		}
 	    }
 
-	    $tmp = $galleryLocation . $this->_baseFile;
+	    $tmp = $path . $this->_baseFile;
 	    $queryString = GalleryUtilities::getServerVar('QUERY_STRING');
 	    if (!empty($queryString)) {
 		$tmp .= '?' . GalleryUtilities::htmlEntityDecode($queryString);
