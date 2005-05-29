@@ -1,5 +1,7 @@
 
 -- Create BIT_OR aggregate function (requires Oracle 9i or higher)
+-- Extra semicolons above ensure executed statements includes a semicolon at the end
+-- (one is stripped off when this file is split into multiple blocks)
 
 create or replace type BIT_OR_IMPL as object (
   val NUMBER,
@@ -41,8 +43,4 @@ create or replace type body BIT_OR_IMPL is
 end;;
 
 create or replace function BIT_OR(input number) return number
-  parallel_enable aggregate using BIT_OR_IMPL;;
-
--- Extra semicolons above ensure executed statements includes a semicolon at the end
--- (one is stripped off when this file is split into multiple blocks)
-
+  parallel_enable aggregate using BIT_OR_IMPL;
