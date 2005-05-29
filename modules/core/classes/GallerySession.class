@@ -25,10 +25,11 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
-/**
- * Write lock type
+/*
+ * Define gallery session key for this install
  */
-define('SESSION_ID_PARAMETER', 'GALLERYSID');
+global $gallery;
+define('SESSION_ID_PARAMETER', 'GALLERYSID_' . $gallery->getConfig('cookieId'));
 
 /**
  * Container for session related data
@@ -93,14 +94,6 @@ class GallerySession {
     var $_cookieDomain;
 
     /**
-     * The path for our cookie
-     *
-     * @var string $_cookiePath
-     * @access private
-     */
-    var $_cookiePath;
-
-    /**
      * A set of identifying values that we can use to verify that the session is coming
      * from the same browser as it used to (to prevent session hijacking).
      *
@@ -126,9 +119,6 @@ class GallerySession {
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
-	    /* Fix a php bug */
-	    GalleryUtilities::fixCookieVars();
-	    
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
@@ -241,37 +231,51 @@ class GallerySession {
 		$expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
 		$cookie .= '; expires=' . $expirationDate;
 	    }
-
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $this->_cookiePath = $urlGenerator->getCookiePath();
-
-	    $cookie .= '; path=' . $this->_cookiePath;
+	    
+	    /*
+	     * Set the cookie path always to '/'.
+	     * Reason: The cookie should be visible to G2 even if G2 is embedded.
+	     * And together with our definition of cookie domain, we guarantee the
+	     * existence of only a single GALLERYSID cookie.
+	     * Q: Why not set the path to the actual G2 path?
+	     * A: Because there is a) a php bug (fixed in 4.3.13 or so) that selects the least
+	     * specific path-matched cookie instead of the most specific cookie.
+	     */
+	    $cookie .= '; path=/';
 
 	    /*
-	     * Don't set the cookie domain to fix sub.domain.com vs. domain.com auth/login
-	     * problems. RFC 2965 defines that if no domain is set by the server, the user agent
-	     * should default to the host string, (eg. sub.domain.com) without a leading dot. This
-	     * default-domain can only domain-match itself, i.e. the user agent should never
-             * send a cookie with domain=domain.com in a request for a domain=www.domain.com page.
-	     * Practice shows that the tested browsers conform to RFC 2965 in this
-	     * aspect. Internet Explorer 6 SP2 does not, but lists the cookie with the more
-	     * specific domain (www.domain.com) before the less specific one (domain.com). So this
-	     * non-standard behavior is also fixed by GalleryUtilities::fixCookieVars().
+	     * Set the cookie domain always to .example.com omitting subdomains. And don't set
+	     * the cookie domain for numeric host names (IPs).
+	     * Reason: Multiple subdomains could point to the same G2 install and the embedded
+	     * G2 could be in another subdomain. (www.example.com, example.com,
+	     * photos.example.com, ... )
+	     * If we set the cookie domain to .example.com and the cookie path to /, we
+	     * avoid the case where the browser sends multiple GALLERYSID cookies back to G2
+	     * and thus there's no chance to get problems because one GALLERYSID has a guest
+	     * session and the other has a logged in session.
 	     *
-	     * If cookie domain is reintroduced in G2, remember to:
-	     *    - remove port number in the domain (strpos ':')
-	     *    - Only add a domain part, if we have a fqdn (strpos '.')
-	     *    - add a dot at the beginning of the domain
-	     *    - RFC 2965 does not define an order for the domain-matching, i.e. it might be a
-	     *      good idea to set the domain always to the same value, independent of the
-	     *      subdomain
+	     * Q: Why not set the cookie domain to the actual host string (i.e. .www.example.com
+	     * when G2 is accessed like that or .example.com in other requests, ...)?
+	     * A: Because in RFC 2965, there is no rule in what order the browser should send back
+	     * the cookies. And thus, php/G2 wouldn't know which is the right cookie.
 	     *
-	     * Our next best alternative:
-	     *    - set Domain attribute to .domain.com (no subdomains) unless the host string is
-	     *      an IP
-	     *    - set Path attribute to '/'
-	     *    - set Name attribute to 'G2SID' . substr(md5($galleryId), 0, 4))
-	     */
+	     * Q: Why not just omit the cookie domain in the set cookie calls?
+	     * A: Actually, this is a good solution. Because if no cookie domain was set, the
+	     * browser sends only cookies back that match the requested domain exactly. So it
+	     * won't return a example.com cookie for www.example.com and the other way around.
+	     * But, and this is a big but, Internet Explorer doesn't conform to the RFC 2965.
+	     * IE sends back example.com and www.example.com cookies when it shouldn't.
+	     * Together with the php bug (least, most specific cookie match in HTTP_COOKIE),
+	     * this results in an unpredictable behavior for various php version / IE scenarios.
+	     *
+	     * Therefore we set the cookie domain always to .example.com and the cookie path to /.
+	     * Together with a unique GALLERYSID name (cookieId), we can host multiple G2 installs
+	     * on the same domain (different paths, subdomains) without getting into trouble.
+ 	     */
+	    $this->_cookieDomain = $this->getCookieDomain();
+	    if (!empty($this->_cookieDomain)) {
+		$cookie .= '; domain=' . $this->_cookieDomain;
+	    }
 	    
 	    /*
 	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
@@ -351,6 +355,9 @@ class GallerySession {
 	 */
 	unset($_REQUEST[SESSION_ID_PARAMETER]);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
+
+	/* Reset 'cached' variables */
+	$this->_cookieDomain = null;
 
 	$ret = $this->init();
 	if ($ret->isError()) {
@@ -454,7 +461,7 @@ class GallerySession {
     }
 
     /**
-     * Te session id parameter used URLS and the cookie
+     * The session key parameter used in URLS and the cookie
      * @return array string
      */
     function getKey() {
@@ -469,20 +476,77 @@ class GallerySession {
 	return $this->_sessionId;
     }
 
-    /**
-     * The domain used by our cookie
-     * @return string a domain (like "www.example.com")
+    /*
+     * Returns a string for domain name based host names and '' for IP based host
+     * names. Don't set the cookie domain if '' is returned.
+     *
+     * Examples:
+     *   For host = user:pass@www.example.com:80, return .example.com
+     *   For host = 127.0.0.1:80, return ''
+     *
+     * Explanation: 
+     * - Differentiate domain name based from numeric (IPv4/v6) based host strings.
+     * - Don't verify the validity of the host string
+     *
+     * Set cookie domain for domain name based host strings to .example.com
+     * (omitting the subdomains). For numeric host string, don't set the cookie
+     * domain.
+     *
+     * @return string the cookie domain, or '' if no cookie domain should be set
+     * @static
      */
     function getCookieDomain() {
-	return $this->_cookieDomain;
+	if (isset($this->_cookieDomain)) {
+	    return $this->_cookieDomain;
+	}
+	
+	/* Get the complete host part, including port if present */
+	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryUrlGenerator.class');
+	$host = GalleryUrlGenerator::getCurrentDomain();
+	
+	/* Remove user:password@ if present */
+	if ($at = strpos($host, '@')) {
+	    $host = substr($host, $at+1);
+	}
+	
+	/* Detect IPv6/hexademical format: such an address has at least 2 colons */
+	if (substr_count($host, ':') >= 2) {
+	    return $this->_cookieDomain = '';
+	} else {
+	    /* Remove the trailing port number, if present */
+	    if ($colon = strpos($host, ':')) {
+		$host = substr($host, 0, $colon);
+	    }
+	}
+	
+	/* At this point, $host is either an IP in dotted-decimal format or a domain name */
+	
+	/* As the name implies, only decimal (no hexadecimal) numeric IPs are allowed in
+	 * the dotted format. To detect IPs, we can apply a simple regexp check.
+	 * Theoretically (although very uncommon), IPv6 addresses can also be written in
+	 * dotted-decimal format, so check for at least 3 dots, IPv6 would have 15 dots.
+	 */
+	if (preg_match('|^(\d+\.){3,}\d+$|', $host)) {
+	    return $this->_cookieDomain = '';
+	}
+	
+	/* It's a domain name based host string.
+	 * We set the cookie path to second-level dot top-level domain
+	 * and omit any other parts */
+	$parts = explode('.', $host);
+	if (($nr = count($parts)) < 2) {
+	    return $this->_cookieDomain = '';
+	}
+	
+	return $this->_cookieDomain = '.' . $parts[$nr-2] . '.' . $parts[$nr-1];
     }
-
+    
     /**
      * The path used by our cookie
      * @return string a server path (like /gallery2)
      */
     function getCookiePath() {
-	return $this->_cookiePath;
+	return '/';
     }
 
     /**

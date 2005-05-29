@@ -76,7 +76,7 @@ class CreateConfigFileStep extends InstallStep {
 	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{install/index.php\?.*}', '',
 						GalleryUrlGenerator::getCurrentRequestUri()));
 
-	$newStoreConfig = $galleryStub->getConfig('storage.config');
+	$newStoreConfig = $galleryStub->getConfig('storage.config');	
 	$in = @fopen($baseDir . '/install/config.php-template', 'r');
 	while ($line = fgets($in, 2000)) {
 	    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
@@ -89,6 +89,16 @@ class CreateConfigFileStep extends InstallStep {
 		$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 	    }
 
+	    if (trim($line) == '$gallery->setConfig(\'cookieId\', \'\');') {
+		/* Generate new cookieId */
+		list($usec, $sec) = explode(" ", microtime());
+		/* Note: srand() is required for php versions < 4.2  */
+		srand(100000 * ((float)$usec + (float)$sec));
+		$galleryStub->setConfig('cookieId', substr(md5(rand()), 0, 6));
+		$tmp = $galleryStub->getConfig('cookieId');
+		$line = sprintf("\$gallery->setConfig('cookieId', '%s');\n", $tmp);
+	    }
+	    
 	    foreach (array('type', 'hostname', 'database', 'username',
 			   'password', 'tablePrefix', 'columnPrefix') as $key) {
 		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {

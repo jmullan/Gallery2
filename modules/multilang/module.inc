@@ -38,10 +38,10 @@ class MultiLangModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('multilang');
 	$this->setName($gallery->i18n('MultiLanguage'));
 	$this->setDescription($gallery->i18n('Support item captions in multiple languages'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getSiteAdminViews|registerEventListeners');
-	$this->setRequiredCoreApi(array(5, 0));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 

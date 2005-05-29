@@ -574,29 +574,5 @@ class GalleryUrlGenerator {
 	}
 	return array(GalleryStatus::success(), $links);
     }
-
-
-    /**
-     * Get cookie path that will encompass G2 (and CMS app if embedded)
-     *
-     * @return string path
-     * @deprecated
-     */
-    function getCookiePath() {
-	$urlComponents = parse_url($this->getCurrentUrlDir());
-	$path = $urlComponents['path'];
-	if (!empty($this->_relativeG2Path)) {
-	    $relativePath = $this->_relativeG2Path;
-	    while (strncmp($relativePath, '../', 3) == 0) {
-		$path = preg_replace('|/[^/]+/?$|', '/', $path);
-		$relativePath = substr($relativePath, 3);
-	    }
-	}
-	if ($path{strlen($path)-1} != '/') {
-	    $path .= '/';
-	}
-
-	return $path;
-    }
 }
 ?>

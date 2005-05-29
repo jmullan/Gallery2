@@ -39,10 +39,10 @@ class CaptchaModule extends GalleryModule {
 	$this->setId('captcha');
 	$this->setName($gallery->i18n('Captcha'));
 	$this->setDescription($gallery->i18n('Captcha'));
-	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(5, 3));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 
@@ -82,6 +82,11 @@ class CaptchaModule extends GalleryModule {
 	case '0.9.1':
 	    /* Updated GalleryCoreApi requirement to 5.3 to use Gallery::getPhpVm() */
 	case '0.9.2':
+	     /*
+	      * Updated GalleryCoreApi requirement to 6.0 because we removed
+	      * GalleryUrlGenerator::getCookiePath()
+	      */
+	case '0.9.3':   
 
 	case 'end of upgrade path':
 	    break;

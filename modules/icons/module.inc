@@ -37,10 +37,10 @@ class IconsModule extends GalleryModule {
 	$this->setId('icons');
 	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
-	$this->setVersion('0.9.1');
+	$this->setVersion('0.9.2');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(5, 0));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 

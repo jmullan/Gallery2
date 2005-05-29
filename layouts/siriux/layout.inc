@@ -42,10 +42,10 @@ class SiriuxLayout extends GalleryLayout {
 	$this->setId('siriux');
 	$this->setName($gallery->i18n('Siriux'));
 	$this->setDescription($gallery->i18n('Siriux.net Gallery layout'));
-	$this->setVersion('0.9.4');
+	$this->setVersion('0.9.5');
 	$this->setL10Domain('layouts_siriux');
 	$this->setRequiredLayoutApi(array(0, 12));
-	$this->setRequiredCoreApi(array(5, 0));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setStandardSettings(array('showImageOwner' => 0, 'perPage' => 9));
     }
 

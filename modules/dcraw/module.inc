@@ -40,10 +40,10 @@ class DcrawModule extends GalleryModule {
 	$this->setId('dcraw');
 	$this->setName($gallery->i18n('Dcraw'));
 	$this->setDescription($gallery->i18n('Dcraw Graphics Toolkit'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('toolkits', $this->translate('Graphics Toolkits'));
 	$this->setCallbacks('getSiteAdminViews');
-	$this->setRequiredCoreApi(array(5, 6));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 

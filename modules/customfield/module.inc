@@ -40,11 +40,11 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
-	$this->setRequiredCoreApi(array(5, 0));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 

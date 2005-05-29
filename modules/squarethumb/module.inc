@@ -41,10 +41,10 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
 	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('registerEventListeners');
-	$this->setRequiredCoreApi(array(5, 0));
+	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 

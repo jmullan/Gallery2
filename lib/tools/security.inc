@@ -95,9 +95,8 @@ function savePasswordCookie() {
 
     $urlGenerator = new GalleryUrlGenerator();
     $urlGenerator->init('lib/tools');
-    header(sprintf('Set-Cookie: g2Setup=%s; path=%slib/tools',
-		   md5($gallery->getConfig('setup.password')),
-		   $urlGenerator->getCookiePath()));
+    header(sprintf('Set-Cookie: g2Setup=%s',
+		   md5($gallery->getConfig('setup.password'))));
 }
 
 function askForPassword() {
