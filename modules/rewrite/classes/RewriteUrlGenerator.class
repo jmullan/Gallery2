@@ -193,9 +193,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
 			    $path .= '.html';
 			}
-			/* urlencode except for path separators(/) */
-			$url = str_replace('%path%',
-			    str_replace('%2F', '/', urlencode(substr($path, 1))), $url);
+			/*
+			 * urlencode except for path separators(/), and double-urlencode
+			 * punds(#) so we don't generate an illigal URL.
+			 */
+			$url = str_replace('%path%', str_replace('%2F', '/',
+			    urlencode(str_replace('#', '%23', substr($path, 1)))), $url);
 			unset($params['itemId']);
 		    }
 		} else if ($arg == 'fileName' && isset($entity)) {
