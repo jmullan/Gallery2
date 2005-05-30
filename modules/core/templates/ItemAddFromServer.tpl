@@ -241,17 +241,21 @@
     {/foreach}
     <tr>
       <th>
-	<input type="checkbox" name="selectionToggle" onclick="toggleSelections()"/>
+	<input type="checkbox" id="cbSelectionToggle" onclick="toggleSelections()"/>
       </th>
       <th colspan="{if $ItemAddFromServer.showSymlink}2{else}3{/if}">
+	<label for="cbSelectionToggle">
 	  {g->text text="(Un)check all known types"}
+	</label>
       </th>
       {if $ItemAddFromServer.showSymlink}
       <th>
-	{g->text text="(Un)check symlinks"}<br/>{g->text text="for selected items"}
+	<label for="cbSymlinkToggle">
+	  {g->text text="(Un)check symlinks"}<br/>{g->text text="for selected items"}
+	</label>
       </th>
       <th style="text-align: center">
-	<input type="checkbox" name="selectionToggle" onclick="invertSymlinkSelection()"/>
+	<input type="checkbox" id="cbSymlinkToggle" onclick="invertSymlinkSelection()"/>
       </th>
       {/if}
     </tr></table>
