@@ -165,7 +165,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$testItemPath = str_replace(' ', '+', $testItemPath);
-	$testItemPath = str_replace('#', '%23', $testItemPath);
+	$testItemPath = str_replace('#', '%2523', $testItemPath);
 
 	$tests = array();
 	/* core.ShowItem on albums have the logical path */
