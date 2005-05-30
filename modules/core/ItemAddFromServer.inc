@@ -335,31 +335,32 @@ class ItemAddFromServer extends ItemAddPlugin {
 					  'fileName' => $fileName,
 					  'filePath' => $filePath,
 					  'fileKey' => urlencode($fileName),
-					  'legal' => $legal);
+					  'legal' => $legal,
+					  'unknown' => false);
 			    } else {
 				list ($ret, $mimeType) = GalleryCoreApi::getMimeType($fileName);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null, null);
 				}
 				if (!isset($mimeTypeItemMap[$mimeType])) {
-				    list ($ret, $mimeTypeItemMap[$mimeType]['instance']) =
+				    list ($ret, $mimeTypeItem) =
 					GalleryCoreApi::newItemByMimeType($mimeType);
 				    if ($ret->isError()) {
 					return array($ret->wrap(__FILE__, __LINE__), null, null);
 				    }
-
-				    $mimeTypeItemMap[$mimeType]['names'] =
-					$mimeTypeItemMap[$mimeType]['instance']->itemTypeName();
+				    /* Get localized and english names: */
+				    $mimeTypeItem->setMimeType($mimeType);
+				    $mimeTypeItemMap[$mimeType] =
+					array_merge($mimeTypeItem->itemTypeName(),
+						    $mimeTypeItem->itemTypeName(false));
 				}
 
 				$form['localServerFiles'][] =
 				    array('type' => 'file',
 					  'fileName' => $fileName,
 					  'stat' => $platform->stat($filePath),
-					  'itemType' => $mimeTypeItemMap[$mimeType]['names'][0],
-					  'unknown' => GalleryUtilities::isA(
-					      $mimeTypeItemMap[$mimeType]['instance'],
-					      'GalleryUnknownItem'),
+					  'itemType' => $mimeTypeItemMap[$mimeType][0],
+					  'unknown' => $mimeTypeItemMap[$mimeType][3] == 'unknown',
 					  'fileKey' => urlencode($fileName));
 			    }
 			}
@@ -375,7 +376,9 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    if ($ret->isError()) {
 			return array($ret->wrap(__FILE__, __LINE__), null, null);
 		    }
-		    $mimeTypeItemName = $mimeTypeItem->itemTypeName();
+		    $mimeTypeItem->setMimeType($mimeType);
+		    $mimeTypeItemName = array_merge($mimeTypeItem->itemTypeName(),
+						    $mimeTypeItem->itemTypeName(false));
 
 		    $fileName = basename($path);
 		    $form['localServerFiles'][] =
@@ -383,8 +386,7 @@ class ItemAddFromServer extends ItemAddPlugin {
 			      'fileName' => $fileName,
 			      'stat' => $platform->stat($path),
 			      'itemType' => $mimeTypeItemName[0],
-			      'unknown' => GalleryUtilities::isA($mimeTypeItem,
-								 'GalleryUnknownItem'),
+			      'unknown' => $mimeTypeItemName[3] == 'unknown',
 			      'fileKey' => urlencode($fileName));
 
 		    /* Change localServerPath from file path to parent dir */
@@ -393,9 +395,13 @@ class ItemAddFromServer extends ItemAddPlugin {
 	    }
 	}
 
-	$ItemAddFromServer = array();
+	$ItemAddFromServer = array('pathSeparator' => $slash,
+				   'localServerDirList' => $localServerDirList,
+				   'localServerFileCount' =>
+				     isset($localServerFileCount) ? $localServerFileCount : null);
 
 	if (!empty($form['localServerFiles'])) {
+	    usort($form['localServerFiles'], array($this, '_sortFiles'));
 	    $accumulator = '';
 	    foreach ($platform->splitPath($form['localServerPath']) as $element) {
 		$accumulator .= $element;
@@ -407,11 +413,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 		}
 	    }
 	}
-
-	$ItemAddFromServer['pathSeparator'] = $slash;
-	$ItemAddFromServer['localServerDirList'] = $localServerDirList;
-	$ItemAddFromServer['localServerFileCount'] =
-	    isset($localServerFileCount) ? $localServerFileCount : null;
 
 	$session =& $gallery->getSession();
 	$recentPaths = $session->get('core.view.ItemAdd.ItemAddFromServer.recentPaths');
@@ -457,6 +458,20 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	return array(GalleryStatus::success(), $module->translate('From Local Server'));
+    }
+
+    /**
+     * Sort directory listing.. directory, known types, unknowns.
+     * @private
+     */
+    function _sortFiles($a, $b) {
+	if (($a['type'] == 'directory' || $b['type'] == 'directory') && $a['type'] != $b['type']) {
+	    return ($a['type'] == 'directory') ? -1 : 1;
+	}
+	if (($a['unknown'] || $b['unknown']) && $a['unknown'] != $b['unknown']) {
+	    return $a['unknown'] ? 1 : -1;
+	}
+	return strcasecmp($a['fileName'], $b['fileName']);
     }
 }
 ?>
