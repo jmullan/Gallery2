@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -93,17 +93,17 @@ class GalleryFileSystemEntityHelper_simple {
 	$storage =& $gallery->getStorage();
 
 	$query = '
-        SELECT
-          [GalleryFileSystemEntity::id]
-        FROM
-          [GalleryFileSystemEntity], [GalleryChildEntity]
-        WHERE
-          [GalleryChildEntity::parentId] = ?
-          AND
-          [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
-          AND
-          [GalleryFileSystemEntity::pathComponent] = ?
-        ';
+	SELECT
+	  [GalleryFileSystemEntity::id]
+	FROM
+	  [GalleryFileSystemEntity], [GalleryChildEntity]
+	WHERE
+	  [GalleryChildEntity::parentId] = ?
+	  AND
+	  [GalleryChildEntity::id] = [GalleryFileSystemEntity::id]
+	  AND
+	  [GalleryFileSystemEntity::pathComponent] = ?
+	';
 	$data = array();
 	$data[] = $parentId;
 	$data[] = $pathComponent;
@@ -114,7 +114,8 @@ class GalleryFileSystemEntityHelper_simple {
 	}
 
 	if ($searchResults->resultCount() == 0) {
-	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__), null);
+	    return array(GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__,
+					      "Parent $parentId path $pathComponent"), null);
 	}
 
 	if ($searchResults->resultCount() > 1) {
