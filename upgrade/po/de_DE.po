@@ -19,14 +19,15 @@
 # 
 # Previous translators (as far as known, add yourself here, please):
 # - Frederik Kunz <frederik.kunz@web.de>
+# - Georg Rehfeld <rehfeld@georg-rehfeld.de>
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Updater 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-05-20 12:20+0200\n"
-"PO-Revision-Date: 2005-05-20 16:18+0100\n"
-"Last-Translator: Frederik Kunz <frederik.kunz@web.de>\n"
+"PO-Revision-Date: 2005-05-30 13:42+0100\n"
+"Last-Translator: Georg Rehfeld <rehfeld@georg-rehfeld.de>\n"
 "Language-Team: German <gallery-devel@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -48,6 +49,14 @@ msgstr "<b>Fehler:</b> fasches Passwort."
 
 msgid "<b>Error:</b> missing password."
 msgstr "<b>Fehler:</b> Passwort fehlt."
+
+msgid ""
+"<b>Reminder</b>: Now check the permissions on config.php and make sure it is "
+"not globally writeable."
+msgstr ""
+"<b>Erinnerung:</b> Bitte prüfen Sie jetzt die Zugriffsrechte der Datei "
+"config.php und stellen Sie sicher, dass sie nicht von jedem geändert werden "
+"kann."
 
 msgid "An error ocurred while upgrading Gallery Core Module"
 msgstr ""
@@ -76,6 +85,9 @@ msgstr ""
 
 msgid "Begin Upgrade"
 msgstr "Aktualisierung beginnen"
+
+msgid "Config.php upgrade"
+msgstr "Erweiterung von config.php"
 
 #, c-format
 msgid ""
@@ -184,6 +196,10 @@ msgstr ""
 msgid "Go to my Gallery!"
 msgstr "Gehe zu meiner Gallery!"
 
+# Badly chosen mgsid: means: switch to selected language
+msgid "Go"
+msgstr "Sprache einstellen"
+
 msgid ""
 "If you are using Apache, create a file named .htaccess in the main Gallery "
 "directory with the following content:"
@@ -280,14 +296,23 @@ msgstr "Passwort:"
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
+msgid "Recheck config.php"
+msgstr "Datei config.php nochmals prüfen"
+
 msgid "Redo this step"
 msgstr "Diesen Schritt wiederholen"
+
+msgid "Required"
+msgstr "Erforderlich"
 
 msgid "Safe Mode"
 msgstr "Safe Mode"
 
 msgid "Safe mode disabled"
 msgstr "Safe Mode deaktiviert"
+
+msgid "Select Language:"
+msgstr "Wählen Sie eine Sprache:"
 
 #, c-format
 msgid "Skip Upgrade and Continue to Step %d&raquo;"
@@ -376,6 +401,14 @@ msgstr "Das Layout '%s' kann nicht aktualisiert werden"
 #, c-format
 msgid "Unable to upgrade the %s module"
 msgstr "Das Modul '%s' kann nicht aktualisiert werden"
+
+#, c-format
+msgid ""
+"Unable to write to config.php in your %s directory.  Please change its "
+"permissions."
+msgstr ""
+"Die Datei config.php in Ihrem Ordner %s konnte nicht geändert werden. Bitte "
+"ändern Sie die Zugriffsrechte."
 
 msgid "Unknown"
 msgstr "Unbekannt"
@@ -541,8 +574,23 @@ msgstr "Willkommen zur Gallery-Aktualisierung"
 msgid "Welcome"
 msgstr "Willkommen"
 
+msgid "You can do <i>chmod 666 config.php</i> to fix this."
+msgstr ""
+"Zur Korrektur können Sie das Kommando <i>chmod 666 config.php</i> ausführen."
+
 msgid "Your Gallery Core Module is up to date!"
 msgstr "Ihr Gallery-Kernmodul ist auf dem neusten Stand!"
+
+#, c-format
+msgid ""
+"Your config.php appears to use the old form of multisite support.  Please "
+"see the %sHelp File%s for instructions to update your configuration before "
+"proceeding."
+msgstr ""
+"Ihre Datei config.php scheint die veraltete Form der Multisite-Unterstützung "
+"zu enthalten.  Bitte lesen Sie die %sHilfe Datei%s, sie enthält Anweisungen, "
+"wie Sie Ihre Konfiguration manuell ändern müssen, bevor Sie fortfahren "
+"können."
 
 msgid "Zend compatibility mode"
 msgstr "Zend-Kompatibilitätsmodus"
