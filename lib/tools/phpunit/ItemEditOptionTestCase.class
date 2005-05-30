@@ -45,6 +45,12 @@ class ItemEditOptionTestCase extends GalleryTestCase {
      * @access protected
      */
     var $_option;
+    
+    /**
+     * immediate status view
+     * @access private
+     */
+    var $_statusMonitor;
 
     function ItemEditOptionTestCase($methodName, $moduleName, $optionName) {
 	$this->GalleryTestCase($methodName);
@@ -63,6 +69,7 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+        $this->_statusMonitor = new ItemEditOptionTestImmediateStatusView();
     }
 
     function setUp() {
@@ -80,7 +87,8 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	}
 	$preferred = empty($preferred) ? null : array_shift($preferred);
 
-	list ($ret, $error, $warning) = $this->_option->handleRequestAfterEdit($form, $item, $preferred);
+	list ($ret, $error, $warning) = $this->_option->handleRequestAfterEdit(
+            $form, $item, $preferred, $this->_statusMonitor);
 	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
 		$this->assert(false,
@@ -105,4 +113,40 @@ class ItemEditOptionTestCase extends GalleryTestCase {
 	return $this->_module->translate($message);
     }
 }
+
+/**
+ * Test ImmediateStatusView implementation
+ *
+ * @package Gallery
+ * @subpackage PHPUnit
+ */
+
+class ItemEditOptionTestImmediateStatusView extends GalleryView {
+    function doLoadImmediateTemplate() {
+	$this->_l10Domain = 'test';
+	$this->_template = 'test';
+	return GalleryStatus::success();
+    }
+
+    function renderHeader() {
+	return GalleryStatus::success();
+    }
+
+    function renderStatusMessage($statusMessage) {
+	return GalleryStatus::success();
+    }
+
+    function renderRedirect($redirectUrl) {
+	return GalleryStatus::success();
+    }
+
+    function renderFooter() {
+	return GalleryStatus::success();
+    }
+
+    function setMain($main) {
+	return GalleryStatus::success();
+    }
+}
+
 ?>

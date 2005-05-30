@@ -15,7 +15,7 @@
   function SetSizeLimitOption_toggleSize() {ldelim}
     document.forms[0].elements["{g->formVar var="form[SizeLimitOption][filesize]"}"].disabled =
       !document.forms[0].elements["{g->formVar var="form[SizeLimitOption][sizeChoice]"}"][1].checked;
-  {rdelim}
+  {rdelim}  
   // ]]>
 </script>
 
@@ -27,14 +27,14 @@
       {g->text text="Maximum dimensions of full sized images"}
     </div>
     <input type="radio" id="SizeLimit_DimNone" onclick="SetSizeLimitOption_toggleXY()"
-     name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="unlimited"
+           name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="unlimited"
      {if $SizeLimitOption.dimensionChoice == "unlimited"}checked="checked"{/if}/>
     <label for="SizeLimit_DimNone">
       {g->text text="No Limits"}
     </label>
     <br/>
     <input type="radio" onclick="SetSizeLimitOption_toggleXY()"
-     name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="explicit"
+           name="{g->formVar var="form[SizeLimitOption][dimensionChoice]"}" value="explicit"
      {if $SizeLimitOption.dimensionChoice == "explicit"}checked="checked"{/if}/>
     {g->dimensions formVar="SizeLimitOption_dimensions"
 		   width=$SizeLimitOption.width height=$SizeLimitOption.height}
@@ -58,17 +58,18 @@
       {g->text text="Maximum file size of full sized images in kilobytes"}
     </div>
     <input type="radio" id="SizeLimit_SizeNone" onclick="SetSizeLimitOption_toggleSize()"
-     name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="unlimited"
+           name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="unlimited"
      {if $SizeLimitOption.sizeChoice == "unlimited"}checked="checked"{/if}/>
     <label for="SizeLimit_SizeNone">
       {g->text text="No Limits"}
     </label>
     <br/>
     <input type="radio" onclick="SetSizeLimitOption_toggleSize()"
-     name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="explicit"
+           name="{g->formVar var="form[SizeLimitOption][sizeChoice]"}" value="explicit"
      {if $SizeLimitOption.sizeChoice == "explicit"}checked="checked"{/if}/>
     <input type="text" size="7" maxlength="6"
-     name="{g->formVar var="form[SizeLimitOption][filesize]"}" value="{$SizeLimitOption.filesize}"
+           name="{g->formVar var="form[SizeLimitOption][filesize]"}" 
+           value="{$SizeLimitOption.filesize}"
      {if $SizeLimitOption.sizeChoice != "explicit"}disabled="disabled"{/if}/>
 
     {if !empty($form.error.SizeLimitOption.filesize.invalid)}
@@ -78,10 +79,16 @@
     {/if}
   </div>
 
-  <input type="checkbox" id="SizeLimit_KeepOrig"
-   name="{g->formVar var="form[SizeLimitOption][keepOriginal]"}"
+  <input type="checkbox" id="SizeLimit_KeepOriginal"
+         name="{g->formVar var="form[SizeLimitOption][keepOriginal]"}"
    {if $SizeLimitOption.keepOriginal} checked="checked"{/if}/>
-  <label for="SizeLimit_KeepOrig">
+  <label for="SizeLimit_KeepOriginal">
     {g->text text="Keep original image?"}
+  </label>
+  <br/>
+  <input type="checkbox" id="SizeLimit_ApplyToDescendents"
+         name="{g->formVar var="form[SizeLimitOption][applyToDescendents]"}"/>
+  <label for="SizeLimit_ApplyToDescendents">
+    {g->text text="Check here to apply these size limits to the pictures in this album and all subalbums"}
   </label>
 </div>

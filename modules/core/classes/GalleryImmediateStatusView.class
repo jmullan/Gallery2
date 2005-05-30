@@ -50,6 +50,11 @@ class GalleryImmediateStatusView extends GalleryView {
     var $_startTime;
 
     /**
+     * True if there was data flushed
+     */
+    var $_isFlushed;
+
+    /**
      * Reset any timing statistics we've gathered so far.
      */
     function resetTimingStats() {
@@ -112,7 +117,7 @@ class GalleryImmediateStatusView extends GalleryView {
 	}
 	$pieces = split('SPLIT ON THIS LINE', $html);
 	print $pieces[0];
-	flush();
+	$this->_flush();
 
 	if (empty($this->_startTime)) {
 	    $this->_startTime = time();
@@ -187,7 +192,7 @@ class GalleryImmediateStatusView extends GalleryView {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	flush();
+	$this->_flush();
 	return GalleryStatus::success();
     }
 
@@ -205,7 +210,7 @@ class GalleryImmediateStatusView extends GalleryView {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
-	flush();
+	$this->_flush();
 	return GalleryStatus::success();
     }
     
@@ -223,7 +228,7 @@ class GalleryImmediateStatusView extends GalleryView {
 	}
 	$pieces = split('SPLIT ON THIS LINE', $html);
 	print $pieces[1];
-	flush();
+	$this->_flush();
 	return GalleryStatus::success();
     }
 
@@ -241,6 +246,34 @@ class GalleryImmediateStatusView extends GalleryView {
 	    return (GalleryStatus::error(ERROR_MISSING_OBJECT, __FILE__, __LINE__));	    
 	}
     }
-}
 
+    /**
+     * Indicate whether the data has been output to the screen or cleared
+     *
+     * @param boolean
+     */
+    function setFlushed($val) {
+        $this->_isFlushed = $val;
+    }
+
+    /**
+     * Inquire if the data has been output to the screen
+     *
+     * @return boolean
+     */
+    function getFlushed() {
+        return $this->_isFlushed;
+    }
+    
+    /**
+     * Flush the buffer and set the flag
+     *
+     * @access private
+     */
+    function _flush() {
+        flush();
+        $this->_isFlushed = true;
+    }
+    
+}
 ?>

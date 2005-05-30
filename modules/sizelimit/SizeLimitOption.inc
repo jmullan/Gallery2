@@ -31,6 +31,8 @@
  * @package SizeLimit
  * @subpackage UserInterface
  */
+GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/SizeLimitHelper.class');
+
 class SizeLimitOption extends ItemEditOption {
 
     /**
@@ -86,7 +88,7 @@ class SizeLimitOption extends ItemEditOption {
     /**
      * @see ItemEditOption::handleRequestAfterEdit
      */
-    function handleRequestAfterEdit($form, &$item, &$preferred) {
+    function handleRequestAfterEdit($form, &$item, &$preferred, &$statusMonitor) {
         $error = array();
         $warning = array();
         $setOriginal = false;
@@ -180,7 +182,129 @@ class SizeLimitOption extends ItemEditOption {
                 return array($ret->wrap(__FILE__, __LINE__), null, null);
             }
         }
+        if (isset($form['SizeLimitOption']['applyToDescendents'])) {
+            list ($ret, $error, $warning) = $this->_applyToDescendents($form, $item, $statusMonitor);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+            }
+        }
         return array(GalleryStatus::success(), $error, $warning);
+    }
+    
+    /**
+     * Apply current settings to all qualified subitems
+     *
+     * @param array of form variables
+     * @param object album to apply settings
+     * @param reference to statusMonitor window (Immediate view or status template)
+     */
+    function _applyToDescendents($form, $album, &$statusMonitor) {
+        global $gallery;
+	$errors = array();
+	$warnings = array();
+
+	list($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	}
+
+	$preserveOriginal = isset($form['SizeLimitOption']['keepOriginal']) && 
+            $form['SizeLimitOption']['keepOriginal'];
+        /* 
+         * NOTE: we only need Descendent Data Items, so in the future we may 
+         *       want to create a separate function. But for now let's just
+         *       eliminate everything else
+         */
+        list ($ret, $descendentIds) = GalleryCoreApi::fetchDescendentItemIds(
+            $album, null, null, 'core.edit');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+
+        $ret = $statusMonitor->doLoadImmediateTemplate();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+
+        /* This flushes all buffers and outputs the header directly to the browser */
+        $ret = $statusMonitor->renderHeader($module->translate('Resize Status'), '', '');
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null, null);
+        }
+        
+        $totalItems = count($descendentIds);
+
+        /*
+         * Process these descendents in chunks since we may have thousands of
+         * items and we don't want to give the database a heart attack.
+         */
+        $chunkSize = 200;
+        $numberOfItemsResized = 0;
+        while (!empty($descendentIds)) {
+            $chunk = array_splice($descendentIds, 0, $chunkSize);
+            $gallery->guaranteeTimeLimit(60);
+
+            list ($ret, $descendents) = GalleryCoreApi::loadEntitiesById($chunk);
+            if ($ret->isError()) {
+                return array($ret->wrap(__FILE__, __LINE__), null, null);
+            }
+            foreach ($descendents as $item) {
+                $numberOfItemsResized++;
+		$ret = $statusMonitor->renderStatusMessage(
+		    $module->translate('Resizing photo'), $item->getTitle(),
+		    $numberOfItemsResized / $totalItems);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+                if (!GalleryUtilities::isExactlyA($item, 'GalleryPhotoItem')) {
+                    continue;
+                }
+
+                if ($form['SizeLimitOption']['dimensionChoice'] == 'explicit') {
+                    $dimensions = GalleryUtilities::getRequestVariables(
+                        'SizeLimitOption_dimensions');
+                    $args = array($dimensions['width'], $dimensions['height']);
+                    if (!$preserveOriginal) {
+                        $ret = SizeLimitHelper::applyLimits($item, 'scale', $args);
+                    } else {
+                        $ret = SizeLimitHelper::buildDerivativeWithLimits($item, 
+                            'scale', $args);
+                    }
+                    if ($ret->isError()) {
+                        if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
+                            $warnings[] = $module->translate(
+                                array('text' => 'WARNING: Cannot resize mime type %s',
+                                      'arg1' => $item->getMimeType()));
+                        } else {
+                            return array($ret->wrap(__FILE__, __LINE__), null, null);
+                        }
+                    }
+                }
+
+                if ($form['SizeLimitOption']['sizeChoice'] == 'explicit' && 
+                    $form['SizeLimitOption']['filesize'] > 0) {
+                    $args = array($form['SizeLimitOption']['filesize']);
+                    if (($item->getSize() >> 10) > $form['SizeLimitOption']['filesize']) {
+                        if (!$preserveOriginal) {
+                            $ret = SizeLimitHelper::applyLimits($item, 'compress', $args);
+                        } else {
+                            $ret = SizeLimitHelper::buildDerivativeWithLimits($item, 
+                                'compress', $args);
+                        }
+                        if ($ret->isError()) {
+                            if ($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE) {
+                                $warnings[] = $module->translate(
+                                    array('text' => 'WARNING: Cannot compress mime type %s',
+                                          'arg1' => $item->getMimeType()));
+                            } else {
+                                return array($ret->wrap(__FILE__, __LINE__), null, null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+	return array(GalleryStatus::success(), $errors, $warnings);
     }
 }
 ?>

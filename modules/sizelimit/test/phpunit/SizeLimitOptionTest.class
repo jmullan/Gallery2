@@ -41,7 +41,12 @@ class SizeLimitOptionTest extends ItemEditOptionTestCase {
     }
 
     function setUp() {
+        global $gallery;
         parent::setUp();
+        
+	/* create custom platform to return dummy filesize, imagesize, etc. */
+	$gallery->setPlatform(new SizeLimitOptionTestPlatform($gallery->getPlatform()));
+
         list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
         if ($ret->isError()) {
             print $ret->getAsHtml();
@@ -163,6 +168,184 @@ class SizeLimitOptionTest extends ItemEditOptionTestCase {
             return array($ret->wrap(__FILE__, __LINE__), null);
         }
         $this->assert(empty($params));
+    }
+    
+    function testApplyToDescendents() {
+	global $gallery;
+        
+	/* Register dummy toolkit and operations */
+	$ret = GalleryCoreApi::registerFactoryImplementation(
+	    'GalleryToolkit', 'SizeLimitOptionTestToolkit', 'SizeLimitOptionTestToolkit',
+	    'modules/sizelimit/test/phpunit/SizeLimitOptionTest.class', 'sizelimitTest', null);
+	if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->_markToolkitForCleanup('SizeLimitOptionTestToolkit');
+
+	/* applying size limits uses 'compress' */
+	$ret = GalleryCoreApi::registerToolkitOperation('SizeLimitOptionTestToolkit',
+	    array('image/known'), 'compress',
+	    array(array('type' => 'int', 'description' => 'size')), 'desc');
+	if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* applying dimension limits uses 'scale' */
+	$ret = GalleryCoreApi::registerToolkitOperation('SizeLimitOptionTestToolkit',
+	    array('image/known'), 'scale',
+	    array(array('type' => 'int', 'description' => 'width'),
+	    array('type' => 'int', 'description' => 'height')), 'desc');
+	if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	/* we will return dimensions to whoever asks */
+	$ret = GalleryCoreApi::registerToolkitProperty('SizeLimitOptionTestToolkit',
+	    array('image/known'), 'dimensions', 'int,int', 'desc');
+	if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	list ($ret, $this->_item) =
+	    $this->_createRandomDataItem($this->_album->getId(), 'image/known',
+					 array('summary' => 'original summary 0',
+					 'description' => 'original description 0'));
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        
+	$platform = $gallery->getPlatform();
+        $form['SizeLimitOption']['dimensionChoice'] = 'unlimited';
+        $form['SizeLimitOption']['sizeChoice'] = 'explicit';
+        $form['SizeLimitOption']['filesize'] = 2000;
+        $form['SizeLimitOption']['applyToDescendents'] = 'on';
+        $results = $this->_handleRequestAfterEdit($form, $this->_album);
+        $this->assertEquals(array(array(), array()), $results, 'Results');
+        list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
+            'module', 'sizelimit', $this->_album->getId());
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
+        $this->assertEquals(array('keepOriginal' => 0, 'size' => 2000), $params);
+        
+	$platform->clearstatcache();
+	list ($ret, $this->_item) = $this->_item->refresh();
+	if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$this->assertEquals(1000, $this->_item->getSize(), 'Size');
+    }  
+}
+
+/**
+ * Test platform
+ *
+ * @package SizeLimit
+ * @subpackage PHPUnit
+ */
+class SizeLimitOptionTestPlatform extends GalleryPlatform {
+
+    function SizeLimitOptionTestPlatform($originalPlatform) {
+	$this->_savedPlatform = $originalPlatform;
+	GalleryUtilities::putRequestVariable('resizePerformed', false);
+	GalleryUtilities::putRequestVariable('compressPerformed', false);
+    }
+
+    function filesize($file) {
+	$size = GalleryUtilities::getRequestVariables('size_' . basename($file));
+	if ($size) {
+	    return $size;
+	}
+	return 26031966;
+    }
+
+    function getimagesize($file) {
+	$imagesize = GalleryUtilities::getRequestVariables('imagesize_' . basename($file));
+	if ($imagesize) {
+	    return $imagesize;
+	}
+	return array(1728, 2304);
+    }
+
+    function file_exists($filename) {
+	$compressPerformed = GalleryUtilities::getRequestVariables('compressPerformed');
+	$resizePerformed = GalleryUtilities::getRequestVariables('resizePerformed');
+
+	/* if we created a derivative make-believe that the file exists */
+	if ($resizePerformed || $compressPerformed) {
+	    return true;
+	} else {
+	    return $this->_savedPlatform->file_exists($filename);
+	}
+    }
+
+    function unlink($filename) {
+	/* if it is a derivative - we didn't really create it */
+	if ($this->_savedPlatform->file_exists($filename)) {
+	    return $this->_savedPlatform->unlink($filename);
+	} else {
+	    return true;
+	}
+    }
+}
+
+/**
+ * Test toolkit
+ * @package SizeLimit
+ * @subpackage PHPUnit
+ */
+class SizeLimitOptionTestToolkit extends GalleryToolkit {
+    /**
+     * @see GalleryToolkit::performOperation()
+     */
+    function performOperation($mimeType, $operationName, $sourceFilename,
+			      $destFilename, $parameters, $context=array()) {
+	/* Here we are pretending that conversion happened by setting the flag */
+	switch($operationName) {
+	case 'compress':
+	    GalleryUtilities::putRequestVariable('compressPerformed', true);
+	    GalleryUtilities::putRequestVariable('size_' . basename($destFilename), 1000);
+	    break;
+
+	case 'scale':
+	    GalleryUtilities::putRequestVariable('resizePerformed', true);
+	    GalleryUtilities::putRequestVariable(
+	        'imagesize_' . basename($destFilename), array(768, 1024));
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
+	}
+
+	$operations = array();
+	$operationRequest = GalleryUtilities::getRequestVariables('operation');
+	if (!empty($operationRequest)) {
+	      $operations = $operationRequest;
+	}
+	$operations[] = $operationName;
+	GalleryUtilities::putRequestVariable('operation', $operations);
+
+	return array(GalleryStatus::success(), $mimeType, $context);
+    }
+
+    /**
+     * @see GalleryToolkit::getProperty()
+     */
+    function getProperty($mimeType, $propertyName, $file) {
+	global $gallery;
+
+	/* Our 'mime type' has to support dimensions */
+	switch($propertyName) {
+	case 'dimensions':
+	    $platform = $gallery->getPlatform();
+	    $results = $platform->getimagesize($file);
+	    break;
+
+	default:
+	    return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null);
+	}
+
+	return array(GalleryStatus::success(), $results);
     }
 }
 ?>

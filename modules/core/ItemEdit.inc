@@ -79,6 +79,10 @@ class ItemEditController extends GalleryController {
 
 	$status = array();
 	$error = array();
+        list ($ret, $statusMonitor) = $this->getImmediateStatusView();
+        if ($ret->isError()) {
+            return array($ret->wrap(__FILE__, __LINE__), null);
+        }
 
 	/* Load the correct edit plugin */
 	list ($ret, $plugin) =
@@ -104,7 +108,7 @@ class ItemEditController extends GalleryController {
 	if (isset($form['action']['save'])) {
 	    foreach ($optionInstances as $option) {
 		list ($ret, $optionErrors, $optionWarnings) =
-		    $option->handleRequestAfterEdit($form, $item, $preferred);
+		    $option->handleRequestAfterEdit($form, $item, $preferred, $statusMonitor);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -124,11 +128,22 @@ class ItemEditController extends GalleryController {
 	    $results['delegate']['subView'] = 'core.ItemEdit';
 	    $results['delegate']['editPlugin'] = $editPlugin;
 	}
+        if ($statusMonitor->getFlushed()) {
+            $results['sendLateRedirect'] = $statusMonitor;
+            $statusMonitor->setFlushed(false);
+        }
 
 	$results['status'] = $status;
 	$results['error'] = $error;
 
 	return array(GalleryStatus::success(), $results);
+    }
+    
+    /**
+     * @see GalleryController::canUseImmediateView
+     */
+    function canUseImmediateView() {
+	return true;
     }
 }
 
@@ -421,11 +436,13 @@ class ItemEditOption {
      *
      * @param array the form values
      * @param reference to the item
+     * @param reference to preferred derivative
+     * @param reference to status monitor (immediate status view or status template)
      * @return array object GalleryStatus a status code
      *               array error messages
      *               array localized warning messages
      */
-    function handleRequestAfterEdit($form, &$item, &$preferred) {
+    function handleRequestAfterEdit($form, &$item, &$preferred, &$statusMonitor) {
 	return array(GalleryStatus::error(ERROR_UNIMPLEMENTED, __FILE__, __LINE__), null, null);
     }
 
@@ -439,6 +456,6 @@ class ItemEditOption {
      */
     function isAppropriate($item, $thumbnail) {
 	return array(GalleryStatus::success(), false);
-    }
+    }    
 }
 ?>
