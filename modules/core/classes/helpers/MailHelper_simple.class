@@ -84,10 +84,12 @@ class MailHelper_simple {
 	}
 
 	$platform = $gallery->getPlatform();
-	$success = $platform->mail($to, $subject, $emailText, $headers);
-	if (!$success) {
-	    return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
-		'Could not send mail to ' . $to);
+	foreach(explode(',', $to) as $mailTo) {
+	    $success = $platform->mail($mailTo, $subject, $emailText, $headers);
+	    if (!$success) {
+		return GalleryStatus::error(ERROR_UNKNOWN, __FILE__, __LINE__,
+		    'Could not send mail to ' . $mailTo);
+	    }
 	}
 
 	return GalleryStatus::success();
