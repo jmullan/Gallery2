@@ -75,21 +75,22 @@ class GalleryCharsetHelper_simple {
 		/* Unable to determine source encoding - no conversion possible */
 		return $sourceEncoding;
 	    }
-
-	    /*
-	     * Remap some known charset issues
-	     * see http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
-	     * for guidance
-	     */
-	    switch($sourceEncoding) {
-	    case '1252':   /* Windows XP has LC_CTYPE=English_United States.1252 */
-		$sourceEncoding = 'Windows-1252';
-		break;
-	    case '1251':   /* Windows XP has LC_CTYPE=Russian_Russia.1251 */
-		$sourceEncoding = 'CP1251';
-		break;
-	    }
 	}
+
+	/*
+	 * Remap some known charset issues.
+	 * See http://cvsweb.xfree86.org/cvsweb/xc/nls/locale.alias?rev=1.44
+	 */
+	switch($sourceEncoding) {
+	case '1252':   /* Windows XP has LC_CTYPE=English_United States.1252 */
+	    $sourceEncoding = 'Windows-1252';
+	    break;
+	case '1251':   /* Windows XP has LC_CTYPE=Russian_Russia.1251 */
+	    $sourceEncoding = 'CP1251';
+	    break;
+	}
+	/* FreeBSD may return charset with missing hyphen from nl_langinfo */
+	$sourceEncoding = str_replace('ISO8859', 'ISO-8859', $sourceEncoding);
 
 	GalleryDataCache::put($cacheKey, $sourceEncoding);
 	return $sourceEncoding;
