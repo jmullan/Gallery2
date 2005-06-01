@@ -328,7 +328,7 @@ class ImageMagickToolkitHelper {
 	 * legal.  Else just hope that it's valid and use it.
 	 */
 	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath) &&
-	        !@$platform->is_dir($imageMagickPath)) {
+		!@$platform->is_dir($imageMagickPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 
@@ -619,6 +619,7 @@ class ImageMagickToolkitHelper {
      *
      * ImageMagick 4.x: <none>
      * ImageMagick 5.x, 6.x, GraphicsMagick: +profile '*'
+     * ImageMagick 6.x: -strip
      *
      * @return array object GalleryStatus
      *               array the needed parameters
