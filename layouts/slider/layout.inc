@@ -99,7 +99,8 @@ class SliderLayout extends GalleryLayout {
 			    'image' => $image->getMemberData());
 	    $template->setVariable('layout', $layout);
 	    $template->title('');
-	    return array(GalleryStatus::success(), 'layouts/slider/templates/render.tpl');
+	    return array(GalleryStatus::success(),
+			 array('html' => 'layouts/slider/templates/render.tpl'));
 	}
 
 	/* Otherwise, load the parent with initial view of this item  */
@@ -159,9 +160,14 @@ class SliderLayout extends GalleryLayout {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	}
-	$i = 0;
+	$i = -1;
 	foreach ($childItems as $child) {
+	    $i++;
 	    $childId = $child->getId();
+	    if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
+		continue;
+	    }
+
 	    if (isset($thumbnails[$childId])) {
 		if (!($thumbnails[$childId]->getWidth() && $thumbnails[$childId]->getHeight())) {
 		    list ($ret, $thumbnails[$childId]) =
@@ -171,10 +177,6 @@ class SliderLayout extends GalleryLayout {
 		    }
 		}
 		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
-	    }
-
-	    if (!GalleryUtilities::isA($child, 'GalleryDataItem') || !$child->canBeViewedInline()) {
-		continue;
 	    }
 
 	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($childId);
@@ -187,7 +189,7 @@ class SliderLayout extends GalleryLayout {
 		/* Full size; check for preferred copy */
 		if (isset($preferredFullImages[$childId])) {
 		    $images[] = $preferredFullImages[$childId];
-		} else {
+		} else if ($child->canBeViewedInline()) {
 		    $images[] = $child;
 		}
 	    }
@@ -225,7 +227,6 @@ class SliderLayout extends GalleryLayout {
 		    $imageWidths[] = $imageHeights[] = -1;
 		}
 	    }
-	    $i++;
 	}
 	return array(GalleryStatus::success(), $imageWidths, $imageHeights);
     }
