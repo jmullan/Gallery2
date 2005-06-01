@@ -58,6 +58,12 @@
       </p>
     {/if}
   {/if}
+  {* Download link for item in original format *}
+  {if !empty($layout.sourceImage) && $layout.sourceImage.mimeType != $layout.item.mimeType}
+    <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
+      {g->text text="Download picture in original format"}
+    </a>
+  {/if}
 </div>
 
 {include file="gallery:layouts/siriux/templates/itemNavigator.tpl"}

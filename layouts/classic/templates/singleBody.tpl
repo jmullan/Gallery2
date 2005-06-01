@@ -94,7 +94,7 @@
     {if !empty($layout.imageViews)}
       {capture name="fallback"}
       <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
-	{g->text text="Download this %s" arg1=`$layout.sourceImage.itemTypeName.1`}
+	{g->text text="Download this %s" arg1=$layout.sourceImage.itemTypeName.1}
       </a>
       {/capture}
 
@@ -113,6 +113,15 @@
       {g->text text="There is nothing to view for this item."}
     {/if}
     </div>
+
+    {* Download link for item in original format *}
+    {if !empty($layout.sourceImage) && $layout.sourceImage.mimeType != $layout.item.mimeType}
+    <div class="gbBlock">
+      <a href="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$layout.item.id`"}">
+	{g->text text="Download %s in original format" arg1=$layout.sourceImage.itemTypeName.1}
+      </a>
+    </div>
+    {/if}
 
     {if !empty($layout.itemDetailFiles)}
       {foreach from=$layout.itemDetailFiles key=moduleId item=detailFile}
