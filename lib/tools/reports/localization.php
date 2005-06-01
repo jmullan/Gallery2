@@ -72,9 +72,9 @@ function parsePoFiles($poFiles) {
     $seenPlugins = array();
     $maxMessageCount = array();
     foreach ($poFiles as $poFile) {
-    if (! preg_match("|((?:\w+/)+)po/(\w{2}_\w{2})\.po|", $poFile, $matches)) {
-	continue;
-    }
+	if (! preg_match("|((?:\w+/)+)po/(\w{2}_\w{2})\.po|", $poFile, $matches)) {
+	    continue;
+	}
 	list ($plugin, $locale) = array($matches[1], $matches[2]);
 	$seenPlugins[$plugin] = 1;
 
@@ -208,6 +208,10 @@ function parsePoFiles($poFiles) {
 		    }
 		}
 	    }
+	}
+	/* Catch msgstr "" in last line */
+	if (!empty($msgId) && $lastLineWasEmptyMsgStr) {
+	    $untranslated++;
 	}
 
 	$total = $translated + $untranslated;
