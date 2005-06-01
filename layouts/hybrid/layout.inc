@@ -192,8 +192,7 @@ class HybridLayout extends GalleryLayout {
 		$children[$i]['thumbnail'] = $thumbnails[$childId]->getMemberData();
 	    }
 
-	    if (!(GalleryUtilities::isA($child, 'GalleryDataItem')
-		    && $child->canBeViewedInline())) {
+	    if (!GalleryUtilities::isA($child, 'GalleryDataItem')) {
 		continue;
 	    }
 
@@ -207,7 +206,7 @@ class HybridLayout extends GalleryLayout {
 		/* Full size; check for preferred copy */
 		if (isset($preferredFullImages[$childId])) {
 		    $images[] = $preferredFullImages[$childId];
-		} else {
+		} else if ($child->canBeViewedInline()) {
 		    $images[] = $child;
 		}
 	    }
@@ -216,7 +215,8 @@ class HybridLayout extends GalleryLayout {
 		    $images[] = $resize;
 		}
 	    }
-	    if (isset($thumbnails[$childId])) {
+	    if (!isset($permissions['core.viewSource']) && isset($thumbnails[$childId])) {
+		/* Only use thumbnail as view if we can't link to original file */
 		$images[] = $thumbnails[$childId];
 	    }
 

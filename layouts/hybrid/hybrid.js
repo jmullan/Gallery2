@@ -213,7 +213,9 @@ function image_setsize() {
   imagearea.style.height = (app_wh - textdiv.offsetHeight) + 'px';
 }
 function image_vis(on) {
+  if (on) { app_body.saveScrollTop = app_body.parentNode.scrollTop; } //For gecko
   app_body.style.overflow = on ? 'hidden' : 'auto';
+  if (!on) { app_body.parentNode.scrollTop = app_body.saveScrollTop; } //For gecko
   app_getwinsize();
   if (!on && slide_on) slide_onoff();
   if (app_is_ie && sidebar_on) ui_vis('sidebar', on?0:1); //For IE (hide <select>s)
