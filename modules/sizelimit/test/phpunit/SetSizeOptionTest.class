@@ -78,7 +78,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
 	/* we will return dimensions to whoever asks */
 	$ret = GalleryCoreApi::registerToolkitProperty('SetSizeOptionTestToolkit',
-	    array('image/known'), 'dimensions', 'int,int', 'desc');
+	    array('image/known', 'image/unknown'), 'dimensions', 'int,int', 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -105,8 +105,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->_itemsUnknown = array();
 	/* Not all file types can be resized/compressed. Here is an example of such item */
 	list ($ret, $this->_itemsUnknown[0]) =
-	    $this->_createRandomDataItem($this->_album->getId(),
-					 'image/unknown',
+	    $this->_createRandomDataItem($this->_album->getId(), 'image/unknown',
 					 array('summary' => 'plagiarized summary',
 					       'description' => 'plagiarized description'));
 	if ($ret->isError()) {
@@ -120,10 +119,10 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	$this->_noWarnings = array(array());
 	$this->_noErrors = array();
-	
+
 	$this->_expectWarnings = array(array(
 	    $module->translate(array('text' => 'WARNING: Cannot resize mime type %s',
 				     'arg1' => $this->_itemsUnknown[0]->getMimeType())),
@@ -516,8 +515,6 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 
     /* change dimensions AND size on multiple items, keep originals */
     function testMultipleChangeBothKeepOriginal() {
-	global $gallery;
-	$platform = $gallery->getPlatform();
 	$this->_expectResizeCompress = array_merge($this->_expectResize, $this->_expectCompress);
 	foreach (array('width' => 768, 'height' => 1024, 'size' => 1000, 'keepOriginal' => 1)
 	    as $key => $value) {
@@ -533,7 +530,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	    list ($ret, $this->_items[$j]) =
 		$this->_createRandomDataItem($this->_album->getId(), 'image/known',
 					     array('summary' => "original summary $j",
-					     'description' => "original description $j"));
+						   'description' => "original description $j"));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -571,7 +568,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals($this->_expectResizeCompress, $operation, 'operation');
     }
 
-    /* change dimensions, don't keep original */
+    /* change dimensions AND size, don't keep original */
     function testChangeBothNoOriginal() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
@@ -605,7 +602,7 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	$this->assertEquals(1000, $this->_items[0]->getSize(), 'Size');
     }
 
-    /* change dimensions on multiple items, don't keep originals */
+    /* change dimensions AND size on multiple items, don't keep originals */
     function testMultipleChangeBothNoOriginal() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
@@ -683,12 +680,11 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	}
 
 	$singleExpectedWarning = $this->_expectWarnings[0];
-	
+
 	$totalTestItems = 3;
 	for ($j = 1; $j < $totalTestItems; $j++) {
 	    list ($ret, $this->_itemsUnknown[$j]) =
-		$this->_createRandomDataItem($this->_album->getId(),
-					     'image/unknown',
+		$this->_createRandomDataItem($this->_album->getId(), 'image/unknown',
 					     array('summary' => "plagiarized summary $j",
 						   'description' => "plagiarized description $j"));
 	    if ($ret->isError()) {
@@ -701,6 +697,32 @@ class SetSizeOptionTest extends ItemAddOptionTestCase {
 	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_itemsUnknown);
 	$this->assertEquals($this->_noErrors, $errors);
 	$this->assertEquals($this->_expectWarnings, $warnings);
+    }
+
+    /* ensure no change when image is already smaller than limits (don't stretch) */
+    function testBelowLimits() {
+	foreach (array('width' => 1800, 'height' => 2400, 'size' => 30000, 'keepOriginal' => 0)
+		as $key => $value) {
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
+		$key, $value, $this->_album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	list ($errors, $warnings) = $this->_handleRequestAfterAdd(array(), $this->_items);
+	$this->assertEquals($this->_noErrors, $errors);
+	$this->assertEquals($this->_noWarnings, $warnings);
+
+	list ($ret, $this->_items[0]) = $this->_items[0]->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(1728, $this->_items[0]->getWidth(), 'Width');
+	$this->assertEquals(2304, $this->_items[0]->getHeight(), 'Height');
+	$operation = GalleryUtilities::getRequestVariables('operation');
+	$this->assertEquals('', $operation, 'no operation');
+	$this->assertEquals(1, $this->_items[0]->getSerialNumber(), 'Serial Number');
     }
 }
 
@@ -777,7 +799,7 @@ class SetSizeOptionTestToolkit extends GalleryToolkit {
 	case 'scale':
 	    GalleryUtilities::putRequestVariable('resizePerformed', true);
 	    GalleryUtilities::putRequestVariable(
-	        'imagesize_' . basename($destFilename), array(768, 1024));
+		'imagesize_' . basename($destFilename), array(768, 1024));
 	    break;
 
 	default:
