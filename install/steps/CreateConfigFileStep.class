@@ -76,16 +76,17 @@ class CreateConfigFileStep extends InstallStep {
 	$baseUrl = GalleryUrlGenerator::makeUrl(preg_replace('{install/index.php\?.*}', '',
 						GalleryUrlGenerator::getCurrentRequestUri()));
 
-	$newStoreConfig = $galleryStub->getConfig('storage.config');	
+	$addslashes = array('\\' => '\\\\', "'" => "\\'");
+	$newStoreConfig = $galleryStub->getConfig('storage.config');
 	$in = @fopen($baseDir . '/install/config.php-template', 'r');
 	while ($line = fgets($in, 2000)) {
 	    if (trim($line) == '$gallery->setConfig(\'setup.password\', \'\');') {
-		$tmp = addslashes($galleryStub->getConfig('setup.password'));
+		$tmp = strtr($galleryStub->getConfig('setup.password'), $addslashes);
 		$line = sprintf("\$gallery->setConfig('setup.password', '%s');\n", $tmp);
 	    }
 
 	    if (trim($line) == '$gallery->setConfig(\'data.gallery.base\', \'\');') {
-		$tmp = addslashes($galleryStub->getConfig('data.gallery.base'));
+		$tmp = strtr($galleryStub->getConfig('data.gallery.base'), $addslashes);
 		$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 	    }
 
@@ -98,11 +99,11 @@ class CreateConfigFileStep extends InstallStep {
 		$tmp = $galleryStub->getConfig('cookieId');
 		$line = sprintf("\$gallery->setConfig('cookieId', '%s');\n", $tmp);
 	    }
-	    
+
 	    foreach (array('type', 'hostname', 'database', 'username',
 			   'password', 'tablePrefix', 'columnPrefix') as $key) {
 		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {
-		    $newStoreConfig[$key] = addslashes($newStoreConfig[$key]);
+		    $newStoreConfig[$key] = strtr($newStoreConfig[$key], $addslashes);
 		    $line = "\$storeConfig['$key'] = '$newStoreConfig[$key]';\n";
 		}
 	    }
@@ -110,7 +111,7 @@ class CreateConfigFileStep extends InstallStep {
 	    if (trim($line) == '$gallery->setConfig(\'galleryBaseUrl\', \'\');' &&
 		    $configDir != $baseDir) {
 		/* galleryBaseUrl not required for config.php in codebase dir */
-		$tmp = addslashes($baseUrl);
+		$tmp = strtr($baseUrl, $addslashes);
 		$line = sprintf("\$gallery->setConfig('galleryBaseUrl', '%s');\n", $tmp);
 	    }
 
