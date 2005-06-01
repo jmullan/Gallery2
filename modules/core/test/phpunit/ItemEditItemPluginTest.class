@@ -308,13 +308,6 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
     function testPathCollisionAlbum() {
 	global $gallery;
 
-	/* Get some stats on the file before we try moving */
-	$platform = $gallery->getPlatform();
-	list ($ret, $originalPath) = $this->_album[0]->fetchPath();
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
 	/* Use invalid inputs */
 	GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	GalleryUtilities::putRequestVariable('form[pathComponent]',
@@ -323,13 +316,14 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	GalleryUtilities::putRequestVariable('form[summary]', 'new summary');
 	GalleryUtilities::putRequestVariable('form[keywords]', 'new keywords');
 	GalleryUtilities::putRequestVariable('form[description]', 'new description');
+	GalleryUtilities::putRequestVariable('form[serialNumber]', 1);
 
-	/* Perform the request and verify that we failed */
+	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest($this->_album[0], $this->_preferred);
-	$this->assertEquals(array(array('form[error][pathComponent][collision]'), null),
-			    $results);
+	$this->assertEquals(array(array(), $this->_translate('Changes saved successfully')),
+				  $results);
 
-	/* Make sure the object is still in the original path */
+	/* The object is in the new path, but with a trailing _001 in the name to disambiguate it */
 	list ($ret, $this->_album[0]) = $this->_album[0]->refresh();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -339,10 +333,21 @@ class ItemEditItemPluginTest extends ItemEditPluginTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($originalPath, $newPath);
 
-	/* Make sure that the file wasn't moved */
-	$this->assert($platform->file_exists($originalPath));
+	list ($ret, $targetPath) = $this->_album[1]->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that the new path is correct */
+	$platform = $gallery->getPlatform();
+	$slash = $platform->getDirectorySeparator();
+	$targetPath = sprintf(
+	    '%s%s%s_001%s', dirname($targetPath), $slash, basename($targetPath), $slash);
+	$this->assertEquals($targetPath, $newPath);
+
+	/* Make sure that the dir was actually moved */
+	$this->assert($platform->file_exists($targetPath));
     }
 
     function testInvalidSerialNumber() {
