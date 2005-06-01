@@ -37,11 +37,14 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-msgid "(type again)"
-msgstr "(erneut eingeben)"
+msgid "Unknown"
+msgstr "Unbekannt"
 
-msgid "(un)check all"
-msgstr "alle aus-/abwählen"
+msgid "Admin User Setup"
+msgstr "Administratorkonto"
+
+msgid "Authenticate"
+msgstr "Authentifizierung"
 
 #, c-format
 msgid ""
@@ -66,50 +69,367 @@ msgstr ""
 "Vorlage. Bitte laden Sie unten einen neuen Authentifizierungs-Text herunter "
 "und versuchen Sie es erneut."
 
-msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
-msgstr ""
-"<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn "
-"Sie fertig sind!"
-
-msgid ""
-"<b>Note</b>: This requires that your data directory is web accessible, which "
-"we don't recommend because it circumvents our image firewall.  Once you "
-"figure out the path this way, we recommend that you move your data directory "
-"outside of your web accessible area and then update the path here "
-"accordingly."
-msgstr ""
-"<b>Beachten Sie</b>: Dies erfordert, dass Ihr Speicherordner über die "
-"Webseite zugänglich ist, wovon wir abraten, da dies unsere Image Firewall "
-"umgeht. Sobald Sie auf diese Art den Pfad herausfinden, empfehlen wir Ihnen, "
-"den Speicherordner aus dem von der Webseite zugänglichen Bereich zu "
-"verschieben und dann hier den Pfad anzupassen."
-
-msgid "Activate More Modules"
-msgstr "Noch mehr Module aktivieren"
-
-msgid "Activate Selected Modules"
-msgstr "Ausgewählte Module aktivieren"
+msgid "Create Config File"
+msgstr "Konfigdatei erzeugen"
 
 #, c-format
-msgid "Activated the <i>%s</i> module successfully"
-msgstr "Das Modul '<i>%s</i>' wurde erfolgreich aktiviert"
+msgid ""
+"Unable to write to the <b>config.php</b> configuration file in your <tt>%s</"
+"tt> directory.  Please change its permissions.  If you're on Unix you can do "
+"<i>chmod 666 config.php</i> to fix this."
+msgstr ""
+"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner <tt>%s</tt> ist "
+"fehlgeschlagen.  Bitte ändern Sie die Zugriffsrechte der Datei.  Unter UNIX "
+"können Sie das Kommando <i>chmod 666 config.php</i> benutzen, um dieses "
+"Problem zu lösen."
 
-msgid "Admin User Setup"
-msgstr "Administratorkonto"
+#, c-format
+msgid "The config.php file does not exist in your %s directory"
+msgstr "Es existiert keine Datei namens config.php im Ordner %s"
 
-msgid "Admin user info entered successfully."
-msgstr "Administrator-Benutzerinformationen erfolgreich eingetragen"
+msgid ""
+"The config.php file exists but is not writeable.  If your server is Windows, "
+"you may have to disable file sharing for config.php and set its permissions "
+"manually."
+msgstr ""
+"Die Datei config.php existiert, ist aber nicht schreibbar.  Wenn Sie einen "
+"Windows-Server benutzen, müssen Sie möglicherweise die Dateifreigabe für "
+"config.php ausschalten und die Zugriffsrechte von Hand einstellen."
+
+msgid "Database Setup"
+msgstr "Datenbank einrichten"
+
+#, c-format
+msgid "You must specify a column prefix (we recommend %s)"
+msgstr "Sie müssen einen Spalten-Präfix angeben (wir empfehlen %s)"
+
+#, c-format
+msgid "You must specify a table prefix (we recommend %s)"
+msgstr "Sie müssen einen Tabellen-Präfix angeben (wir empfehlen %s)"
+
+#, c-format
+msgid "Unable to create a database connection of type %s"
+msgstr "Kann keine Datenbankverbindung des Typs %s erstellen"
+
+msgid "Unable to connect to database with the information provided."
+msgstr ""
+"Die Verbindung zur Datenbank konnte mit den angegebenen Informationen nicht "
+"hergestellt werden."
+
+msgid "The database you specified does not exist.  Please create it."
+msgstr "Die angegebene Datenbank existiert nicht. Bitte erzeugen Sie sie."
+
+msgid ""
+"Gallery tables already exist in this database!  If you want to use the "
+"existing tables, you must confirm that below.  Otherwise, you must specify a "
+"new database, or a different table prefix in order to continue."
+msgstr ""
+"Die Gallery-Tabellen existieren schon in dieser Datenbank! Wenn Sie die "
+"vorhandenen Tabellen verwenden möchten, müssten Sie das unten bestätigen. "
+"Ansonsten müssen Sie eine neue Datenbank oder einen anderen Tabellen-Präfix "
+"angeben um fortsetzen zu können."
+
+msgid "MySQL (all versions)"
+msgstr "MySQL (alle Versionen)"
+
+msgid "MySQL with Transactions (v3.23.34a and newer)"
+msgstr "MySQL mit Transaktionen (v3.23.34a und neuer)"
+
+msgid "PostgreSQL v7.x"
+msgstr "PostgreSQL v7.x"
+
+msgid "PostgreSQL v6.x (not well tested)"
+msgstr "PostgreSQL v6.x (kaum getestet)"
+
+msgid "Oracle (9i and newer)"
+msgstr "Oracle (9i und neuer)"
+
+msgid "Finished"
+msgstr "Abgeschlossen"
+
+msgid "Install Gallery Core"
+msgstr "Gallery-Kern"
+
+msgid "Unable to initialize our Gallery data"
+msgstr "Gallery-Daten konnten nicht initialisiert werden"
+
+msgid "Unable to communicate with the database"
+msgstr "Kommunikation mit der Datenbank funktioniert nicht"
+
+msgid "Unable to load the core module"
+msgstr "Kernmodul kann nicht geladen werden"
+
+msgid "Unable to install the core module"
+msgstr "Kernmodul kann nicht installiert werden"
+
+msgid "Unable to activate the core module"
+msgstr "Das Kern-Modul konnte nicht aktiviert werden"
+
+msgid "Unable to commit database transaction"
+msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen weden (commit)"
+
+msgid "Core module is only partially installed."
+msgstr "Das Kernmodul wurde nur teilweise installiert."
+
+msgid "Install More Modules"
+msgstr "Weitere Module"
+
+msgid "Unable to get the module list"
+msgstr "Die Modulliste ist nicht abrufbar"
+
+#, c-format
+msgid "Unable to load the %s module"
+msgstr "%s-Modul kann nicht geladen werden"
+
+#, c-format
+msgid "Unable to install the %s module"
+msgstr "%s-Modul kann nicht installiert werden"
+
+#, c-format
+msgid "Unable to activate the %s module"
+msgstr "Das Modul '%s' konnte nicht aktiviert werden"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Multisite Setup"
+msgstr "Multisite-Installation"
+
+msgid "Check Security"
+msgstr "Sicherheitprüfung"
+
+msgid "Storage Setup"
+msgstr "Speicherort einrichten"
+
+msgid "System Checks"
+msgstr "Systemprüfungen"
+
+msgid "PHP version >= 4.1.0"
+msgstr "PHP-Version >= 4.1.0"
+
+# param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
+#, c-format
+msgid ""
+"Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %"
+"s installed. Contact your webserver administrator to request an upgrade, "
+"available at the %sPHP website%s."
+msgstr ""
+"Fehler: Gallery 2 benötigt PHP Version 4.1.0 oder neuer.  Sie haben PHP "
+"Version %s installiert.  Wenden Sie sich bitte an den Administrator Ihres "
+"Webservers und bitten Sie um eine Aufrüstung, verfügbar auf der %sPHP-"
+"Webseite%s."
+
+msgid "PHP Version"
+msgstr "PHP-Version"
+
+msgid "FILE directive supported"
+msgstr "FILE-Anweisung unterstützt"
+
+msgid ""
+"Error: your PHP __FILE__ directive is not functioning correctly. Please file "
+"a support request with your webserver administrator or in the Gallery forums."
+msgstr ""
+"Fehler: die __FILE__ Anweisung Ihrer PHP-Version funktioniert nicht "
+"korrekt.  Bitten Sie den Administrator Ihres Webservers um Abhilfe oder "
+"fragen Sie in den Gallery-Foren nach Hilfe."
+
+msgid "FILE Directive"
+msgstr "FILE-Anweisung"
+
+msgid "Safe mode disabled"
+msgstr "Safe Mode deaktiviert"
+
+msgid ""
+"Error: Your version of PHP is configured with safe mode enabled.  You must "
+"disable safe mode before Gallery will run."
+msgstr ""
+"Fehler: Ihre Version von PHP ist mit eingeschaltetem 'Safe Mode' "
+"konfiguriert.  Sie müssen ihn ausschalten, bevor Gallery funktionieren kann."
+
+msgid "Safe Mode"
+msgstr "Safe Mode"
+
+msgid "exec() allowed"
+msgstr "exec() erlaubt"
+
+msgid ""
+"Warning: The exec() function is disabled in your php by the "
+"<b>disabled_functions</b> parameter in php.ini. You won't be able to use "
+"modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). "
+"This can only be set server-wide, so you will need to change it in the "
+"global php.ini."
+msgstr ""
+"Warnung: in Ihrem PHP ist die exec()-Funktion deaktiviert "
+"(<b>disabled_functions</b> Parameter in php.ini).  Sie können so keine "
+"Module nutzen, die PHP-externe Programme benötigen (z.B. ImageMagick, NetPBM "
+"oder FFMPEG).  Diese Einstellung kann nur für den ganzen Server aktiviert "
+"werden. Sie oder der Adminstrator des Webservers müssen also die zentrale "
+"php.ini-Datei ändern."
+
+msgid "set_time_limit() allowed"
+msgstr "set_time_limit() erlaubt"
+
+#, c-format
+msgid ""
+"Warning: The set_time_limit() function is disabled in your php by the "
+"<b>disabled_functions</b> parameter in php.ini.  Gallery can function with "
+"this setting, but it will not operate reliably.  Any operation that takes "
+"longer than %d seconds will fail (and in some cases just return a blank "
+"page) possibly leading to data corruption."
+msgstr ""
+"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert "
+"(<b>disabled_functions</b> parameter in php.ini).  Gallery kann zwar im "
+"Prinzip mit dieser Einstellung arbeiten, aber nicht zuverlässig.  Jede "
+"Operation, die länger als %d Sekunden dauert, wird fehlschlagen (und in "
+"einigen Fällen eine leere Seite anzeigen), möglicherweise führt das auch zu "
+"Datenverlust."
+
+msgid "Memory limit"
+msgstr "Speicherbegrenzung"
+
+msgid "no limit"
+msgstr "keine Begrenzung"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</"
+"b> parameter in php.ini). You should raise this limit to at least <b>%sMb</"
+"b> for proper Gallery operation."
+msgstr ""
+"Warnung: Ihr PHP ist für eine Speicher-Beschränkung von %sb konfiguriert "
+"(<b>memory_limit</b> Parameter in php.ini).  Sie sollten die Beschränkung "
+"auf <b>%sMb</b> erhöhen, damit Ihre Gallery korrekt funktioniert."
+
+msgid "File uploads allowed"
+msgstr "Dateiuploads erlaubt"
+
+msgid ""
+"Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
+"b> parameter in php.ini). You will need to enable this option if you want to "
+"upload files to your Gallery with a web browser."
+msgstr ""
+"Warnung: Ihr PHP ist so konfiguriert, dass keine Dateien hochgeladen werden "
+"dürfen (Parameter <b>file_uploads</b> in php.ini). Sie müssen diese Option "
+"aktivieren, wenn Sie Dateien mittels Web-Browser in Ihre Gallery hochladen "
+"wollen."
+
+msgid "Maximum upload size"
+msgstr "Maximale Upload-Größe"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the size of file uploads to %sb "
+"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this "
+"limit to allow uploading bigger files."
+msgstr ""
+"Warnung: Ihre PHP Konfiguration begrenzt das Hochladen von Dateien auf die "
+"Größe %sb (Parameter <b>upload_max_filesize</b> in php.ini).  Sie sollten "
+"die Begrenzung erhöhen, um das Hochladen größerer Dateien zu erlauben."
+
+msgid "Maximum POST size"
+msgstr "Maximale POST-Größe"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured to limit the post data to a maximum of %sb "
+"(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
+"allow uploading bigger files."
+msgstr ""
+"Warnung: Ihre PHP Konfiguration begrenzt die Größe von POST-Formular-Daten "
+"auf %sb (Parameter <b>post_max_size</b> in php.ini).  Sie sollten die "
+"Begrenzung erhöhen, um das Hochladen größerer Dateien zu erlauben."
+
+msgid "Zend compatibility mode"
+msgstr "Zend-Kompatibilitätsmodus"
+
+#, c-format
+msgid ""
+"Warning: Your PHP is configured with Zend ze1_compatibility_mode which can "
+"cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you "
+"see \"SUCCESS\" then your PHP is ok.  If you get an error or no response "
+"then you must turn off ze1_compatibility_mode before proceeding."
+msgstr ""
+"Warnung: Ihr PHP ist für den Zend Modus <tt>ze1_compatibility_mode</tt> "
+"konfiguriert, wodurch PHP abstürzen kann.  Klicken Sie <a href=\"%s\">hier</"
+"a>, um Ihr PHP zu testen.  Wenn Sie \"SUCCESS\" (Erfolg) sehen, dann ist Ihr "
+"PHP OK. Erhalten Sie einen Fehler oder keine Antwort, dann müssen Sie den "
+"<tt>ze1_compatibility_mode</tt> abschalten, bevor Sie fortfahren."
+
+msgid "Gallery file integrity"
+msgstr "Gallery-Dateiintegrität"
+
+msgid "Test skipped due to other errors."
+msgstr "Aufgrund anderer Fehler wurde der Test übersprungen."
+
+msgid "Manifest missing or inaccessible."
+msgstr "Manifest fehlt oder ist nicht abrufbar."
+
+msgid "Welcome"
+msgstr "Willkommen"
+
+msgid ""
+"Every Gallery will have at least one administrator user who has full access "
+"to view/modify everything. Please choose a username and password for your "
+"main administrator account. You can add additional users later."
+msgstr ""
+"Jede Gallery hat zumindest einen Administrator-Benutzer, der vollen Zugriff "
+"beim Betrachten und Ändern aller Elemente hat. Bitte wählen Sie einen "
+"Benutzernamen und ein Passwort für Ihr Haupt-Administratorkonto. Sie können "
+"später auch noch weitere Benutzer hinzufügen."
 
 msgid "Admin username"
 msgstr "Administrator-Benutzername"
 
-msgid ""
-"After finishing this installation, login as Admin and browse to Site Admin. "
-"Go to the <i>Modules</i> view and configure the above listed modules."
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Please enter a password"
+msgstr "Bitte geben Sie ein Passwort ein"
+
+msgid "(type again)"
+msgstr "(erneut eingeben)"
+
+msgid "Missing password!  Please enter the same password twice"
+msgstr "Fehlendes Passwort! Bitte geben Sie das Passwort zweimal ein"
+
+msgid "The passwords you entered do not match!  Please try again."
 msgstr ""
-"Melden Sie sich als Administrator an, sobald Sie die Installation "
-"abgeschlossen haben und öffnen Sie die Site-Administration. Gehen Sie zur "
-"Module-Ansicht und konfigurieren Sie die oben aufgelisteten Module."
+"Die eingegebenen Passworte stimmen nicht überein!  Bitte veruchen Sie es "
+"erneut."
+
+msgid ""
+"For the Beta version, the default username ('admin') cannot be modified in "
+"the installer. You can change the name later on via the user administration "
+"page in your Gallery."
+msgstr ""
+"In der Beta-Version kann der Standard-Benutzername ('admin') im Installer "
+"nicht geändert werden. Sie können den Namen später auf der Administrations-"
+"Seite Ihrer Gallery ändern."
+
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Admin user info entered successfully."
+msgstr "Administrator-Benutzerinformationen erfolgreich eingetragen"
+
+#, c-format
+msgid ""
+"In order to proceed with the install, we have to verify that you are who you "
+"claim.  The best way to be sure is to ask you to make a tiny change in the "
+"Gallery directory which will prove that you have the right permissions.  So, "
+"we're going to ask that you create a new text file called <strong>login.txt</"
+"strong> in the <tt>%s</tt> directory on your webserver (that's the same "
+"directory where this installer is located). It must contain the following "
+"randomly generated characters:"
+msgstr ""
+"Um die Installation fortzusetzen müssen wir bestätigen, dass Sie auch "
+"wirklich der sind, für den Sie sich ausgeben. Der beste Weg das "
+"sicherzustellen ist, Sie zu bitten, eine Veränderung im Gallery-Ordner "
+"vorzunehmen. So können wir feststellen, ob Sie über die notwendigen "
+"Berechtigungen verfügen. Alse bitten wir Sie darum, eine neue Textdatei "
+"namens <strong>login.txt</strong> im Ordner <tt>%s</tt> auf Ihrem Webserver "
+"zu erstellen (das ist der selbe Ordner in dem auch der Installer liegt). Sie "
+"muss die folgende, zufällig generierte Zeichenfolge enthalten:"
 
 #, c-format
 msgid ""
@@ -121,14 +441,38 @@ msgstr ""
 "skorrekte Version von login.txt%s für Sie vorbereitet.  Laden Sie die Datei "
 "herunter und kopieren Sie sie in Ihren install-Ordner. Dann kann es losgehen."
 
+msgid "Once you've uploaded the file, click below to continue."
+msgstr ""
+"Wenn Sie die Datei erzeugt haben, klicken Sie bitte unten um fortzufahren."
+
 msgid "Authenticate Me"
 msgstr "Authentifiziere mich"
 
-msgid "Authenticate"
-msgstr "Authentifizierung"
-
 msgid "Authentication successful!"
 msgstr "Authentifizierung erfolgreich!"
+
+msgid "Please fix this error and try again."
+msgstr "Bitte beheben Sie diesen Fehler und versuchen Sie es erneut."
+
+msgid "Try Again"
+msgstr "Versuchen Sie es erneut"
+
+msgid "Create a config file"
+msgstr "Eine Konfigurationsdatei erstellen"
+
+#, c-format
+msgid ""
+"Now we need to write out all the information you provided into a file called "
+"<b>config.php</b> in your <b>%s</b> directory.  This is a very important "
+"file that gives Gallery all the information that it needs to operate.  After "
+"we create it, you can read through this file and make changes to it if you "
+"want."
+msgstr ""
+"Jetzt müssen wir alle Informationen, die Sie eingegeben haben, in einer "
+"Datei namens <b>config.php</b> in Ihrem Ordner <b>%s</b> speichern.  Dies "
+"ist eine sehr wichtige Datei, welche Gallery sämtliche zur Funktion "
+"erforderlichen Informationen zur Verfügung stellt. Nach dem Erzeugen können "
+"Sie die Datei durchlesen und nötigenfalls ändern."
 
 #, c-format
 msgid ""
@@ -147,24 +491,74 @@ msgstr ""
 "haben, können Sie fortfahren.  Sollten noch Probleme bestehen, dann sagen "
 "wir Ihnen, was zu tun ist."
 
-msgid "Begin Installation&raquo;"
-msgstr "Installation starten&raquo;"
-
-msgid "Check Again"
-msgstr "Erneut prüfen"
-
-msgid "Check Security"
-msgstr "Sicherheitprüfung"
-
-msgid "Column Prefix:"
-msgstr "Spalten-Präfix:"
+msgid "Create config file"
+msgstr "Konfigurationsdatei erstellen"
 
 msgid "Config file created successfully."
 msgstr "Konfigurationsdatei erfolgreich erstellt."
 
-#, c-format
-msgid "Configuration file located in %s"
-msgstr "Konfigurationsdatei gefunden in %s"
+msgid ""
+"We've written out all the information you provided into a file called "
+"<b>config.php</b> in your gallery2 directory.  You can read through this "
+"file and make changes to it if you want.  Be careful, though -- if you make "
+"mistakes in that file then Gallery won't work properly!"
+msgstr ""
+"Wir haben alle von Ihnen angegebenen Informationen in eine Datei names "
+"<b>config.php</b> in Ihrem gallery2-Ordner geschrieben. Sie können diese "
+"Datei anschauen und Änderungen vornehmen, wenn Sie wollen. Seien Sie aber "
+"vorsichtig -- wenn Sie dabei Fehler machen, wird Gallery nicht richtig "
+"funktionieren!"
+
+msgid ""
+"Please select your database type and enter your database authentication "
+"information.  The installer will not create the database for you, so you "
+"must create one yourself and enter the database name here.  If you are "
+"installing Gallery into a database that already has tables in it, the table "
+"and column prefixes will keep Gallery data from conflicting with what you "
+"already have."
+msgstr ""
+"Bitte wählen Sie Ihren Datenbank-Typ aus und geben Sie Ihre Datenbank-"
+"Zugangsinformationen ein. Der Installer wird die Datenbank für Sie nicht "
+"erstellen, Sie müssen diese also selbst anlegen und den Datenbanknamen hier "
+"angeben. Wenn Sie die Gallery in eine Datenbank installieren, die bereits "
+"Tabellen enthält, sorgen die Tabellen- und Spalten-Präfixe dafür, dass Ihre "
+"Gallerydaten nicht mit bestehenden Daten kollidieren."
+
+msgid "Database type:"
+msgstr "Datenbank-Typ:"
+
+msgid "DB Hostname:"
+msgstr "DB-Rechnername:"
+
+msgid "DB Username:"
+msgstr "DB-Benutzername:"
+
+msgid "DB Password:"
+msgstr "DB-Passwort:"
+
+msgid "DB Name:"
+msgstr "DB-Name:"
+
+msgid "Table Prefix:"
+msgstr "Tabellen-Präfix:"
+
+msgid "Column Prefix:"
+msgstr "Spalten-Präfix:"
+
+msgid "We received the following database related errors:"
+msgstr "Wir haben die folgenden datenbankbezogenen Fehler erhalten:"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Reuse Existing Tables"
+msgstr "Vorhandene Tabellen verwenden"
+
+msgid "Database set up successfully."
+msgstr "Datenbank erfolgreich eingerichtet"
+
+msgid "Finished!"
+msgstr "Abgeschlossen!"
 
 # param0 = <span ...>, param1 = </span>
 #, c-format
@@ -175,6 +569,20 @@ msgstr ""
 "Glückwunsch! Ihre Gallery-2-%sBeta-Version%s ist komplett installiert! "
 "Also... war doch gar nicht so schwierig, oder? Jetzt wird es Zeit, ein paar "
 "Bilder hochzuladen!"
+
+msgid "Go to my Gallery!"
+msgstr "Gehe zu meiner Gallery!"
+
+#, c-format
+msgid ""
+"You may now go to your new Gallery.  Enter the URL in your browser for %"
+"smain.php%s in your %s directory."
+msgstr ""
+"Sie können nun Ihre neue Gallery anschauen.  Geben Sie in Ihrem Browser die "
+"URL für %smain.php%s in Ihrem %s-Ordner ein."
+
+msgid "Installed Gallery Core successfully"
+msgstr "Gallery-Kern erfolgreich installiert"
 
 msgid ""
 "Congratulations, we've successfully installed the Gallery framework.  "
@@ -189,128 +597,182 @@ msgstr ""
 "Module zur Installation auswählen, welche Ihnen helfen, Gallery nach Ihren "
 "Wünschen zu erweitern."
 
+msgid "There was an error installing the core module.  Here's the stack trace:"
+msgstr ""
+"Bei der Installation des Kernmoduls ist ein Fehler aufgetreten. Hier finden "
+"Sie den Stack Trace:"
+
+msgid "Error installing Gallery Core"
+msgstr "Fehler bei der Installation des Gallery-Kerns"
+
+# param0 = '<a href...>', param1 = '</a>'
+#, c-format
+msgid ""
+"Something went wrong when we tried to install the core module.  In the boxes "
+"below you can find some debug information.  Report this in the %sGallery "
+"Forums%s and we'll help you diagnose the problem."
+msgstr ""
+"Bei der Installation des Kern-Moduls ist etwas schiefgelaufen. Im Kasten "
+"unten können Sie einige Debug-Informationen finden. Bitte melden Sie das im %"
+"sGallery Forum%s, um Hilfe zur Problem-Diagnose zu bekommen."
+
+msgid "Stack Trace:"
+msgstr "Stack-Trace:"
+
+msgid "Debug Output:"
+msgstr "Debug-Ausgabe:"
+
+msgid "Installed Gallery Core successfully."
+msgstr "Gallery-Kern erfolgreich installiert."
+
+msgid ""
+"We've successfully installed the core of Gallery.  Although everything will "
+"work at this point, you should continue with the installer and add in some "
+"of the optional modules so that you can get the right set of features that "
+"you want for your Gallery installation."
+msgstr ""
+"Wir haben erfolgreich die Kernfunktionen der Gallery installiert. Obwohl nun "
+"alles Wichtige funktioniert, sollten Sie den Installer fortsetzen und einige "
+"der optionalen Module installieren, um die für Sie passenden Funktionen zu "
+"Ihrer Gallery-Installation hinzuzufügen."
+
+msgid "Install Other Modules"
+msgstr "Weitere Module installieren"
+
+msgid ""
+"The following modules can be automatically installed and activated for you.  "
+"You should install at least one of the graphics toolkits otherwise Gallery "
+"can't make thumbnails out of your images.  On most systems, the automatic "
+"install will work properly for you.  However, in some cases it may fail.  "
+"You can always activate new modules or deactivate any of the ones you choose "
+"here on the Site Administration page, so any decision you make here is not "
+"permanent."
+msgstr ""
+"Die folgenden Module können für Sie automatisch installiert und aktiviert "
+"werden. Sie sollten zumindest einges der Graphik-Werkzeuge installieren "
+"damit Gallery Voransichten für Ihre Bilder erstellen kann. Auf den meisten "
+"Systemen funktioniert die automatische Installation problemlos. Dennoch kann "
+"es bei einigen Systemen zu Problemen kommen. Sie können in der Site-"
+"Administration jederzeit neue Module aktivieren und solche deaktivieren, die "
+"Sie hier ausgewählt haben. Die hier getroffenen Entscheidungen sind also "
+"nicht dauerhaft bindend."
+
+msgid ""
+"Some modules may fail to install automatically.  That's ok.  It typically "
+"means that they require some configuration, which you can do on the Site "
+"Adminstration page"
+msgstr ""
+"Bei einigen Modulen könnte die automatische Installation fehlschlagen. Das "
+"ist OK. Normalerweise bedeutet das, dass diese ein paar "
+"Konfigurationseinstellungen brauchen, welche Sie in der Site-Administration "
+"vergeben können."
+
+msgid "Name"
+msgstr "Modulname"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Description"
+msgstr "Beschreibung"
+
+msgid "(un)check all"
+msgstr "alle aus-/abwählen"
+
 #, c-format
 msgid "Continue to Step %d Without Activating&raquo;"
 msgstr "Weiter zum Schritt %d ohne Aktivierung&raquo;"
+
+msgid "Activate Selected Modules"
+msgstr "Ausgewählte Module aktivieren"
+
+#, c-format
+msgid "Activated the <i>%s</i> module successfully"
+msgstr "Das Modul '<i>%s</i>' wurde erfolgreich aktiviert"
+
+#, c-format
+msgid ""
+"The <i>%s</i> module was installed, but needs configuration to be activated"
+msgstr ""
+"Das Modul '<i>%s</i>' wurde installiert, aber es muss noch konfiguriert "
+"werden, bevor es aktiviert werden kann"
+
+msgid ""
+"After finishing this installation, login as Admin and browse to Site Admin. "
+"Go to the <i>Modules</i> view and configure the above listed modules."
+msgstr ""
+"Melden Sie sich als Administrator an, sobald Sie die Installation "
+"abgeschlossen haben und öffnen Sie die Site-Administration. Gehen Sie zur "
+"Module-Ansicht und konfigurieren Sie die oben aufgelisteten Module."
+
+msgid "Activate More Modules"
+msgstr "Noch mehr Module aktivieren"
 
 #, c-format
 msgid "Continue to Step %d&raquo;"
 msgstr "Weiter zum Schritt %d&raquo;"
 
-msgid "Core module is only partially installed."
-msgstr "Das Kernmodul wurde nur teilweise installiert."
+msgid "Welcome to the Gallery Installer"
+msgstr "Willkommen zum Gallery-Installer"
 
-msgid "Create Config File"
-msgstr "Konfigdatei erzeugen"
+msgid "Install Steps"
+msgstr "Installationsschritte"
 
-msgid "Create a config file"
-msgstr "Eine Konfigurationsdatei erstellen"
+msgid "Installer Help"
+msgstr "Installationshilfe"
 
-msgid "Create config file"
-msgstr "Konfigurationsdatei erstellen"
+msgid "Start Over"
+msgstr "Neu anfangen"
 
-msgid "Create"
-msgstr "Erstellen"
+msgid "Redo this step"
+msgstr "Diesen Schritt wiederholen"
 
-msgid "DB Hostname:"
-msgstr "DB-Rechnername:"
+msgid "Installation Status"
+msgstr "Status der Installation"
 
-msgid "DB Name:"
-msgstr "DB-Name:"
-
-msgid "DB Password:"
-msgstr "DB-Passwort:"
-
-msgid "DB Username:"
-msgstr "DB-Benutzername:"
-
-msgid "Database Setup"
-msgstr "Datenbank einrichten"
-
-msgid "Database set up successfully."
-msgstr "Datenbank erfolgreich eingerichtet"
-
-msgid "Database type:"
-msgstr "Datenbank-Typ:"
-
-msgid "Debug Output:"
-msgstr "Debug-Ausgabe:"
-
-msgid "Description"
-msgstr "Beschreibung"
-
-msgid "Directory path:"
-msgstr "Pfad des Ordners:"
-
-msgid "Enter directory for configuration file below:"
-msgstr "Geben Sie hier den Ordner für die Konfigurationsdatei an:"
-
-msgid "Error installing Gallery Core"
-msgstr "Fehler bei der Installation des Gallery-Kerns"
-
-# param0 = existing php version, param1 = '<a href...>', param2 = '</a>'
+# param0 = integer percentage
 #, c-format
-msgid ""
-"Error: Gallery 2 requires PHP version 4.1.0 or newer. You have PHP version %"
-"s installed. Contact your webserver administrator to request an upgrade, "
-"available at the %sPHP website%s."
-msgstr ""
-"Fehler: Gallery 2 benötigt PHP Version 4.1.0 oder neuer.  Sie haben PHP "
-"Version %s installiert.  Wenden Sie sich bitte an den Administrator Ihres "
-"Webservers und bitten Sie um eine Aufrüstung, verfügbar auf der %sPHP-"
-"Webseite%s."
+msgid "Install %d%% complete"
+msgstr "Installation zu %d%% fertig"
 
-msgid ""
-"Error: Your version of PHP is configured with safe mode enabled.  You must "
-"disable safe mode before Gallery will run."
+msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
 msgstr ""
-"Fehler: Ihre Version von PHP ist mit eingeschaltetem 'Safe Mode' "
-"konfiguriert.  Sie müssen ihn ausschalten, bevor Gallery funktionieren kann."
+"Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong>"
+
+#, c-format
+msgid "Missing files (%d)"
+msgstr "Fehlende Dateien (%d)"
 
 msgid ""
-"Error: your PHP __FILE__ directive is not functioning correctly. Please file "
-"a support request with your webserver administrator or in the Gallery forums."
+"Note: You're running Gallery from CVS, so recently removed files may appear "
+"here.  It might be safe to ignore these."
 msgstr ""
-"Fehler: die __FILE__ Anweisung Ihrer PHP-Version funktioniert nicht "
-"korrekt.  Bitten Sie den Administrator Ihres Webservers um Abhilfe oder "
-"fragen Sie in den Gallery-Foren nach Hilfe."
+"Beachten Sie: Sie verwenden die CVS-Version von Gallery, also kann es sein, "
+"dass hier vor kurzem entfernte Dateien stehen. Sie können diese "
+"wahrscheinlich gefahrlos ignorieren."
+
+#, c-format
+msgid "Modified files (%d)"
+msgstr "Veränderte Dateien (%d)"
 
 msgid ""
-"Every Gallery will have at least one administrator user who has full access "
-"to view/modify everything. Please choose a username and password for your "
-"main administrator account. You can add additional users later."
+"Note: You're running Gallery from CVS, so some modified files are to be "
+"expected.  You can probably safely ignore these."
 msgstr ""
-"Jede Gallery hat zumindest einen Administrator-Benutzer, der vollen Zugriff "
-"beim Betrachten und Ändern aller Elemente hat. Bitte wählen Sie einen "
-"Benutzernamen und ein Passwort für Ihr Haupt-Administratorkonto. Sie können "
-"später auch noch weitere Benutzer hinzufügen."
+"Beachten Sie: Sie verwenden die CVS-Version von Gallery, also sind "
+"veränderte Dateien zu erwarten. Sie können diese gefahrlos ignorieren."
 
-msgid "FILE Directive"
-msgstr "FILE-Anweisung"
-
-msgid "FILE directive supported"
-msgstr "FILE-Anweisung unterstützt"
-
-msgid "Failed"
-msgstr "Fehlgeschlagen"
-
-msgid "File uploads allowed"
-msgstr "Dateiuploads erlaubt"
-
-msgid "Finished!"
-msgstr "Abgeschlossen!"
-
-msgid "Finished"
-msgstr "Abgeschlossen"
+#, c-format
+msgid "Old files (%d)"
+msgstr "Veraltete Dateien (%d)"
 
 msgid ""
-"For the Beta version, the default username ('admin') cannot be modified in "
-"the installer. You can change the name later on via the user administration "
-"page in your Gallery."
+"These files are no longer part of Gallery. They probably won't cause any "
+"problems but it is a good idea to remove them to keep your install clean."
 msgstr ""
-"In der Beta-Version kann der Standard-Benutzername ('admin') im Installer "
-"nicht geändert werden. Sie können den Namen später auf der Administrations-"
-"Seite Ihrer Gallery ändern."
+"Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie "
+"keine Probleme, aber es ist dennoch eine gute Idee, sie zu entfernen, um "
+"Ihre Installation sauber zu halten."
 
 msgid ""
 "Gallery can support multiple independent sites with a single installation of "
@@ -318,11 +780,110 @@ msgid ""
 "paths."
 msgstr ""
 "Gallery kann mehrere unabhängige Auftritte (Fotogallerien) mit nur einer "
-"einzigen Code-Installation bedienen. Zusätzliche Auftritte können unterschiedliche "
-"URL-Domänen, Sub-Domänen oder Pfade unterstützen."
+"einzigen Code-Installation bedienen. Zusätzliche Auftritte können "
+"unterschiedliche URL-Domänen, Sub-Domänen oder Pfade unterstützen."
 
-msgid "Gallery file integrity"
-msgstr "Gallery-Dateiintegrität"
+msgid "Standard installation"
+msgstr "Standard-Installation"
+
+#, c-format
+msgid "Configuration file located in %s"
+msgstr "Konfigurationsdatei gefunden in %s"
+
+msgid "Multisite installation"
+msgstr "MultiSite-Installation"
+
+msgid "Enter directory for configuration file below:"
+msgstr "Geben Sie hier den Ordner für die Konfigurationsdatei an:"
+
+msgid "You must enter a directory"
+msgstr "Sie müssen einen Ordner angeben"
+
+msgid "The directory you entered does not exist"
+msgstr "Der von Ihnen angegebene Ordner existiert nicht"
+
+msgid ""
+"The directory you entered is not accessible.  Change the permissions so that "
+"the webserver can read this directory."
+msgstr ""
+"Auf den von Ihnen angegebenen Ordner kann nicht zugegriffen werden. Ändern "
+"Sie die Zugriffsrechte so, dass der Webserver diesen Ordner lesen kann."
+
+msgid ""
+"Unable to create multisite files. Ensure the files listed below are "
+"writeable."
+msgstr ""
+"Multisite-Dateien können nicht erzeugt werden. Stellen Sie sicher, dass die "
+"folgenden Dateien Schreibrechte haben."
+
+msgid ""
+"The directory must be writeable by your webserver/php user or contain the "
+"following writeable files:"
+msgstr ""
+"Der Ordner muß Schreibrechte für Ihren Web-Server/PHP-Benutzer besitzen oder "
+"die folgenden Dateien mit Schreibrechten enthalten:"
+
+msgid "Select Directory"
+msgstr "Ordner auswählen"
+
+msgid "Multisite directory setup successfully."
+msgstr "Multisite-Ordner erfolgreich eingerichtet."
+
+msgid "Standard installation selected."
+msgstr "Standard-Installation ausgewählt."
+
+#, c-format
+msgid ""
+"We want to make sure that your Gallery is secure.  The config.php file that "
+"this installer has edited has permissions that allow other people to write "
+"to it.  This is required because the installer qualifies as an \"other person"
+"\" when it comes to Unix file permissions.  So before you finish, you should "
+"change the permissions on this file such that other users can't write to "
+"it.  Right now your config.php has modes of %s.  We suggest that you do this:"
+msgstr ""
+"Wir wollen sicherstellen, dass Ihre Gallery sicher ist. Die von diesem "
+"Installer geänderte Datei config.php ermöglicht zur Zeit anderen Personen "
+"Schreibzugriff. Dies ist notwendig, weil der Installer als eben eine solche "
+"'andere Person' gilt, wenn es um Unix-Dateizugriffe geht. Bevor Sie die "
+"Installation abschließen, sollten Sie die Berechtigungen dieser Datei so "
+"abändern, dass andere Benutzer keinen Schreibzugriff mehr darauf haben. "
+"Momentan hat Ihre config.php den Modus %s. Wir empfehlen Ihnen, folgendes zu "
+"tun:"
+
+#, c-format
+msgid "chmod 644 %s"
+msgstr "chmod 644 %s"
+
+msgid ""
+"We want to make sure that your Gallery is secure.  The directory containing "
+"your config.php file that this installer has edited has permissions that "
+"allow other people to write or delete files.  So before you finish, you "
+"should change the permissions on this directory such that other users can't "
+"write to it.  We suggest that you do this:"
+msgstr ""
+"Wir wollen sicherstellen, dass Ihre Gallery sicher ist. Der Ordner, der die "
+"Datei config.php enthält, ermöglicht zur Zeit anderen Personen das Löschen "
+"und Ändern von Dateien. Bevor Sie die Installation abschließen, sollten Sie "
+"die Berechtigungen dieses Ordners so abändern, dass andere Benutzer keinen "
+"Schreibzugriff mehr darauf haben. Wir empfehlen Ihnen, folgendes zu tun:"
+
+#, c-format
+msgid "chmod 755 %s"
+msgstr "chmod 755 %s"
+
+msgid ""
+"If you really want to continue, you can.  But we recommend that you take an "
+"extra moment to make sure that you're safe."
+msgstr ""
+"Falls Sie wirklich weitermachen möchten, können Sie das tun. Wir empfehlen "
+"Ihnen jedoch, sich etwas Zeit zu nehmen um sicherzustellen, dass alles "
+"sicher ist."
+
+msgid "Check Again"
+msgstr "Erneut prüfen"
+
+msgid "We've verified that your config.php is secure."
+msgstr "Wir haben festgestellt, dass Ihre config.php sicher ist."
 
 #, c-format
 msgid ""
@@ -351,57 +912,6 @@ msgstr ""
 "es sein, dass Sie diese Möglichkeit nicht haben."
 
 msgid ""
-"Gallery tables already exist in this database!  If you want to use the "
-"existing tables, you must confirm that below.  Otherwise, you must specify a "
-"new database, or a different table prefix in order to continue."
-msgstr ""
-"Die Gallery-Tabellen existieren schon in dieser Datenbank! Wenn Sie die "
-"vorhandenen Tabellen verwenden möchten, müssten Sie das unten bestätigen. "
-"Ansonsten müssen Sie eine neue Datenbank oder einen anderen Tabellen-Präfix "
-"angeben um fortsetzen zu können."
-
-msgid "Gallery: <strong>your photos</strong> on <strong>your website</strong>"
-msgstr ""
-"Gallery: <strong>Ihre Photos</strong> auf <strong>Ihrer Webseite</strong>"
-
-#, c-format
-msgid ""
-"Getting Gallery 2.0 installed on your webserver requires %d steps. This "
-"installer will guide you through these steps and provide assistance along "
-"the way if additional steps are required to get your Gallery up and running. "
-"Once a step has been completed, you can go back and make changes at any "
-"time. Please read the %sInstaller Help File%s before proceeding."
-msgstr ""
-"Um Gallery 2.0 auf Ihrem Webserver zu installieren, müssen Sie %d Schritte "
-"durchlaufen. Dieser Installer wird Sie durch die einzelnen Schritte führen "
-"und Ihnen dabei Hilfestellung leisten, falls weitere Schritte erforderlich "
-"sind um Ihre Gallery zum Laufen zu bringen. Sobald ein Schritt abgeschlossen "
-"ist, können Sie jederzeit zurückgehen und Änderungen vornehmen. Bitte lesen "
-"Sie die %sInstallationshilfe%s, bevor Sie weitermachen."
-
-msgid "Go to my Gallery!"
-msgstr "Gehe zu meiner Gallery!"
-
-# Badly chosen msgid: Button to change to a different language
-msgid "Go"
-msgstr "Sprache einstellen"
-
-msgid ""
-"If you are using Apache, create a file named .htaccess in the main Gallery "
-"directory with the following content:"
-msgstr ""
-"Falls Sie Apache verwenden, erzeugen Sie eine Datei namens .htaccess mit dem "
-"folgenden Inhalt im Hauptordner Ihrer Gallery:"
-
-msgid ""
-"If you really want to continue, you can.  But we recommend that you take an "
-"extra moment to make sure that you're safe."
-msgstr ""
-"Falls Sie wirklich weitermachen möchten, können Sie das tun. Wir empfehlen "
-"Ihnen jedoch, sich etwas Zeit zu nehmen um sicherzustellen, dass alles "
-"sicher ist."
-
-msgid ""
 "If you're using a modern browser, we'll try to autocomplete any path you "
 "enter here.  So if you're having trouble finding the right path to your "
 "g2data directory, try experimenting with paths in the text box below and see "
@@ -413,24 +923,18 @@ msgstr ""
 "experimentieren Sie mit den Pfaden in der Eingabezeile unten und schauen "
 "Sie, welche Vervollständigungen Ihnen angeboten werden."
 
-#, c-format
+msgid "Directory path:"
+msgstr "Pfad des Ordners:"
+
+msgid "The directory you entered is read only"
+msgstr "Der von Ihnen angegebene Ordner ist schreibgeschützt."
+
 msgid ""
-"In order to proceed with the install, we have to verify that you are who you "
-"claim.  The best way to be sure is to ask you to make a tiny change in the "
-"Gallery directory which will prove that you have the right permissions.  So, "
-"we're going to ask that you create a new text file called <strong>login.txt</"
-"strong> in the <tt>%s</tt> directory on your webserver (that's the same "
-"directory where this installer is located). It must contain the following "
-"randomly generated characters:"
+"There was an error creating the directory structure within the storage "
+"directory."
 msgstr ""
-"Um die Installation fortzusetzen müssen wir bestätigen, dass Sie auch "
-"wirklich der sind, für den Sie sich ausgeben. Der beste Weg das "
-"sicherzustellen ist, Sie zu bitten, eine Veränderung im Gallery-Ordner "
-"vorzunehmen. So können wir feststellen, ob Sie über die notwendigen "
-"Berechtigungen verfügen. Alse bitten wir Sie darum, eine neue Textdatei "
-"namens <strong>login.txt</strong> im Ordner <tt>%s</tt> auf Ihrem Webserver "
-"zu erstellen (das ist der selbe Ordner in dem auch der Installer liegt). Sie "
-"muss die folgende, zufällig generierte Zeichenfolge enthalten:"
+"Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein "
+"Fehler aufgetreten."
 
 msgid ""
 "In some web hosting environments, the paths that you see in the shell or via "
@@ -445,577 +949,32 @@ msgstr ""
 "<b>dir.php</b> zu erstellen, die den folgenden Code enthält. Legen Sie diese "
 "Datei in Ihrem Speicherordner ab."
 
-# param0 = integer percentage
-#, c-format
-msgid "Install %d%% complete"
-msgstr "Installation zu %d%% fertig"
-
-msgid "Install Gallery Core"
-msgstr "Gallery-Kern"
-
-msgid "Install More Modules"
-msgstr "Weitere Module"
-
-msgid "Install Other Modules"
-msgstr "Weitere Module installieren"
-
-msgid "Install Steps"
-msgstr "Installationsschritte"
-
-msgid "Installation Status"
-msgstr "Status der Installation"
-
-msgid "Installed Gallery Core successfully"
-msgstr "Gallery-Kern erfolgreich installiert"
-
-msgid "Installed Gallery Core successfully."
-msgstr "Gallery-Kern erfolgreich installiert."
-
-msgid "Installer Help"
-msgstr "Installationshilfe"
-
-msgid "Manifest missing or inaccessible."
-msgstr "Manifest fehlt oder ist nicht abrufbar."
-
-msgid "Maximum POST size"
-msgstr "Maximale POST-Größe"
-
-msgid "Maximum upload size"
-msgstr "Maximale Upload-Größe"
-
-msgid "Memory limit"
-msgstr "Speicherbegrenzung"
-
-#, c-format
-msgid "Missing files (%d)"
-msgstr "Fehlende Dateien (%d)"
-
-msgid "Missing password!  Please enter the same password twice"
-msgstr "Fehlendes Passwort! Bitte geben Sie das Passwort zweimal ein"
-
-#, c-format
-msgid "Modified files (%d)"
-msgstr "Veränderte Dateien (%d)"
-
-msgid "Multisite Setup"
-msgstr "Multisite-Installation"
-
-msgid "Multisite directory setup successfully."
-msgstr "Multisite-Ordner erfolgreich eingerichtet."
-
-msgid "Multisite installation"
-msgstr "MultiSite-Installation"
-
-msgid "MySQL (all versions)"
-msgstr "MySQL (alle Versionen)"
-
-msgid "MySQL with Transactions (v3.23.34a and newer)"
-msgstr "MySQL mit Transaktionen (v3.23.34a und neuer)"
-
-msgid "Name"
-msgstr "Modulname"
-
-msgid ""
-"Note that ftp servers and clients vary so these instructions may not work "
-"for you. Consult the manual for your FTP client or talk to a system "
-"administrator for help with this if you have problems"
-msgstr ""
-"Beachten Sie, dass FTP-Server und -Programme unterschiedlich sind, so dass "
-"diese Anleitung bei Ihnen eventuell nicht funktioniert. Schauen Sie in das "
-"Handbuch Ihres FTP-Programms oder bitten Sie Ihren Systemadministrator um "
-"Hilfe, falls Sie Probleme haben."
-
-msgid ""
-"Note: You're running Gallery from CVS, so recently removed files may appear "
-"here.  It might be safe to ignore these."
-msgstr ""
-"Beachten Sie: Sie verwenden die CVS-Version von Gallery, also kann es sein, "
-"dass hier vor kurzem entfernte Dateien stehen. Sie können diese "
-"wahrscheinlich gefahrlos ignorieren."
-
-msgid ""
-"Note: You're running Gallery from CVS, so some modified files are to be "
-"expected.  You can probably safely ignore these."
-msgstr ""
-"Beachten Sie: Sie verwenden die CVS-Version von Gallery, also sind "
-"veränderte Dateien zu erwarten. Sie können diese gefahrlos ignorieren."
-
-msgid ""
-"Note: these are only examples!  You may find that they don't work quite "
-"right on your system."
-msgstr ""
-"Beachten Sie: Dies sind nur Beispiele! Es kann gut sein, dass Sie auf Ihrem "
-"System nicht richtig funktionieren."
-
 #, c-format
 msgid ""
-"Now we need to write out all the information you provided into a file called "
-"<b>config.php</b> in your <b>%s</b> directory.  This is a very important "
-"file that gives Gallery all the information that it needs to operate.  After "
-"we create it, you can read through this file and make changes to it if you "
-"want."
+"then figure out the URL to dir.php and open it in your web browser (eg, %"
+"s).  This will tell you the exact path to enter here."
 msgstr ""
-"Jetzt müssen wir alle Informationen, die Sie eingegeben haben, in einer "
-"Datei namens <b>config.php</b> in Ihrem Ordner <b>%s</b> speichern.  Dies "
-"ist eine sehr wichtige Datei, welche Gallery sämtliche zur Funktion "
-"erforderlichen Informationen zur Verfügung stellt. Nach dem Erzeugen können "
-"Sie die Datei durchlesen und nötigenfalls ändern."
-
-#, c-format
-msgid "Old files (%d)"
-msgstr "Veraltete Dateien (%d)"
-
-msgid "Once you've uploaded the file, click below to continue."
-msgstr ""
-"Wenn Sie die Datei erzeugt haben, klicken Sie bitte unten um fortzufahren."
-
-msgid "Oracle (9i and newer)"
-msgstr "Oracle (9i und neuer)"
-
-msgid "Other"
-msgstr "Andere"
-
-msgid "PHP Version"
-msgstr "PHP-Version"
-
-msgid "PHP version >= 4.1.0"
-msgstr "PHP-Version >= 4.1.0"
-
-msgid "Password"
-msgstr "Passwort"
-
-msgid "Please enter a password"
-msgstr "Bitte geben Sie ein Passwort ein"
-
-msgid "Please fix this error and try again."
-msgstr "Bitte beheben Sie diesen Fehler und versuchen Sie es erneut."
+"finden Sie dann die URL Ihrer dir.php heraus und öffnen Sie diese im Web-"
+"Browser (z.B. %s). So finden Sie den richtigen Pfad heraus, den Sie hier "
+"eintragen müssen."
 
 msgid ""
-"Please select your database type and enter your database authentication "
-"information.  The installer will not create the database for you, so you "
-"must create one yourself and enter the database name here.  If you are "
-"installing Gallery into a database that already has tables in it, the table "
-"and column prefixes will keep Gallery data from conflicting with what you "
-"already have."
+"<b>Note</b>: This requires that your data directory is web accessible, which "
+"we don't recommend because it circumvents our image firewall.  Once you "
+"figure out the path this way, we recommend that you move your data directory "
+"outside of your web accessible area and then update the path here "
+"accordingly."
 msgstr ""
-"Bitte wählen Sie Ihren Datenbank-Typ aus und geben Sie Ihre Datenbank-"
-"Zugangsinformationen ein. Der Installer wird die Datenbank für Sie nicht "
-"erstellen, Sie müssen diese also selbst anlegen und den Datenbanknamen hier "
-"angeben. Wenn Sie die Gallery in eine Datenbank installieren, die bereits "
-"Tabellen enthält, sorgen die Tabellen- und Spalten-Präfixe dafür, dass Ihre "
-"Gallerydaten nicht mit bestehenden Daten kollidieren."
+"<b>Beachten Sie</b>: Dies erfordert, dass Ihr Speicherordner über die "
+"Webseite zugänglich ist, wovon wir abraten, da dies unsere Image Firewall "
+"umgeht. Sobald Sie auf diese Art den Pfad herausfinden, empfehlen wir Ihnen, "
+"den Speicherordner aus dem von der Webseite zugänglichen Bereich zu "
+"verschieben und dann hier den Pfad anzupassen."
 
-msgid "PostgreSQL v6.x (not well tested)"
-msgstr "PostgreSQL v6.x (kaum getestet)"
-
-msgid "PostgreSQL v7.x"
-msgstr "PostgreSQL v7.x"
-
-msgid "Redo this step"
-msgstr "Diesen Schritt wiederholen"
-
-msgid "Reuse Existing Tables"
-msgstr "Vorhandene Tabellen verwenden"
-
-msgid "Safe Mode"
-msgstr "Safe Mode"
-
-msgid "Safe mode disabled"
-msgstr "Safe Mode deaktiviert"
-
-msgid "Save"
-msgstr "Speichern"
-
-msgid "Select Directory"
-msgstr "Ordner auswählen"
-
-msgid "Select Language:"
-msgstr "Sprache auswählen:"
-
-msgid ""
-"Some modules may fail to install automatically.  That's ok.  It typically "
-"means that they require some configuration, which you can do on the Site "
-"Adminstration page"
+msgid "<b>Note</b>: Don't forget to delete dir.php when you're done!"
 msgstr ""
-"Bei einigen Modulen könnte die automatische Installation fehlschlagen. Das "
-"ist OK. Normalerweise bedeutet das, dass diese ein paar "
-"Konfigurationseinstellungen brauchen, welche Sie in der Site-Administration "
-"vergeben können."
-
-# param0 = '<a href...>', param1 = '</a>'
-#, c-format
-msgid ""
-"Something went wrong when we tried to install the core module.  In the boxes "
-"below you can find some debug information.  Report this in the %sGallery "
-"Forums%s and we'll help you diagnose the problem."
-msgstr ""
-"Bei der Installation des Kern-Moduls ist etwas schiefgelaufen. Im Kasten "
-"unten können Sie einige Debug-Informationen finden. Bitte melden Sie das im %"
-"sGallery Forum%s, um Hilfe zur Problem-Diagnose zu bekommen."
-
-msgid "Stack Trace:"
-msgstr "Stack-Trace:"
-
-msgid "Standard installation selected."
-msgstr "Standard-Installation ausgewählt."
-
-msgid "Standard installation"
-msgstr "Standard-Installation"
-
-msgid "Start Over"
-msgstr "Neu anfangen"
-
-msgid "Storage Setup"
-msgstr "Speicherort einrichten"
-
-msgid "Storage directory set successfully."
-msgstr "Ordner zur Datenspeicherung erfolgreich eingerichtet"
-
-msgid "Success"
-msgstr "Erfolgreich"
-
-msgid "System Checks"
-msgstr "Systemprüfungen"
-
-msgid "Table Prefix:"
-msgstr "Tabellen-Präfix:"
-
-msgid "Test skipped due to other errors."
-msgstr "Aufgrund anderer Fehler wurde der Test übersprungen."
-
-#, c-format
-msgid ""
-"The <i>%s</i> module was installed, but needs configuration to be activated"
-msgstr ""
-"Das Modul '<i>%s</i>' wurde installiert, aber es muss noch konfiguriert "
-"werden, bevor es aktiviert werden kann"
-
-#, c-format
-msgid "The config.php file does not exist in your %s directory"
-msgstr "Es existiert keine Datei namens config.php im Ordner %s"
-
-msgid ""
-"The config.php file exists but is not writeable.  If your server is Windows, "
-"you may have to disable file sharing for config.php and set its permissions "
-"manually."
-msgstr ""
-"Die Datei config.php existiert, ist aber nicht schreibbar.  Wenn Sie einen "
-"Windows-Server benutzen, müssen Sie möglicherweise die Dateifreigabe für "
-"config.php ausschalten und die Zugriffsrechte von Hand einstellen."
-
-msgid "The database you specified does not exist.  Please create it."
-msgstr "Die angegebene Datenbank existiert nicht. Bitte erzeugen Sie sie."
-
-msgid ""
-"The directory must be writeable by your webserver/php user or contain the "
-"following writeable files:"
-msgstr ""
-"Der Ordner muß Schreibrechte für Ihren Web-Server/PHP-Benutzer besitzen oder "
-"die folgenden Dateien mit Schreibrechten enthalten:"
-
-msgid "The directory you entered does not exist"
-msgstr "Der von Ihnen angegebene Ordner existiert nicht"
-
-msgid ""
-"The directory you entered is not accessible.  Change the permissions so that "
-"the webserver can read this directory."
-msgstr ""
-"Auf den von Ihnen angegebenen Ordner kann nicht zugegriffen werden. Ändern "
-"Sie die Zugriffsrechte so, dass der Webserver diesen Ordner lesen kann."
-
-msgid "The directory you entered is read only"
-msgstr "Der von Ihnen angegebene Ordner ist schreibgeschützt."
-
-msgid ""
-"The following modules can be automatically installed and activated for you.  "
-"You should install at least one of the graphics toolkits otherwise Gallery "
-"can't make thumbnails out of your images.  On most systems, the automatic "
-"install will work properly for you.  However, in some cases it may fail.  "
-"You can always activate new modules or deactivate any of the ones you choose "
-"here on the Site Administration page, so any decision you make here is not "
-"permanent."
-msgstr ""
-"Die folgenden Module können für Sie automatisch installiert und aktiviert "
-"werden. Sie sollten zumindest einges der Graphik-Werkzeuge installieren "
-"damit Gallery Voransichten für Ihre Bilder erstellen kann. Auf den meisten "
-"Systemen funktioniert die automatische Installation problemlos. Dennoch kann "
-"es bei einigen Systemen zu Problemen kommen. Sie können in der Site-"
-"Administration jederzeit neue Module aktivieren und solche deaktivieren, die "
-"Sie hier ausgewählt haben. Die hier getroffenen Entscheidungen sind also "
-"nicht dauerhaft bindend."
-
-msgid "The passwords you entered do not match!  Please try again."
-msgstr ""
-"Die eingegebenen Passworte stimmen nicht überein!  Bitte veruchen Sie es "
-"erneut."
-
-msgid ""
-"There was an error creating the directory structure within the storage "
-"directory."
-msgstr ""
-"Beim Erzeugen der Ordner-Struktur im Ordner zur Datenspeicherung ist ein "
-"Fehler aufgetreten."
-
-msgid "There was an error installing the core module.  Here's the stack trace:"
-msgstr ""
-"Bei der Installation des Kernmoduls ist ein Fehler aufgetreten. Hier finden "
-"Sie den Stack Trace:"
-
-msgid ""
-"These files are no longer part of Gallery. They probably won't cause any "
-"problems but it is a good idea to remove them to keep your install clean."
-msgstr ""
-"Diese Dateien gehören nicht mehr zur Gallery. Wahrscheinlich machen sie "
-"keine Probleme, aber es ist dennoch eine gute Idee, sie zu entfernen, um "
-"Ihre Installation sauber zu halten."
-
-msgid "This is sometimes known as an <b>image firewall</b>."
-msgstr "Dies nennt man manchmal auch eine <b>image firewall</b>."
-
-msgid "Try Again"
-msgstr "Versuchen Sie es erneut"
-
-#, c-format
-msgid "Unable to activate the %s module"
-msgstr "Das Modul '%s' konnte nicht aktiviert werden"
-
-msgid "Unable to activate the core module"
-msgstr "Das Kern-Modul konnte nicht aktiviert werden"
-
-msgid "Unable to commit database transaction"
-msgstr "Die Datenbank-Transaktion konnte nicht abgeschlossen weden (commit)"
-
-msgid "Unable to communicate with the database"
-msgstr "Kommunikation mit der Datenbank funktioniert nicht"
-
-msgid "Unable to connect to database with the information provided."
-msgstr ""
-"Die Verbindung zur Datenbank konnte mit den angegebenen Informationen nicht "
-"hergestellt werden."
-
-#, c-format
-msgid "Unable to create a database connection of type %s"
-msgstr "Kann keine Datenbankverbindung des Typs %s erstellen"
-
-msgid ""
-"Unable to create multisite files. Ensure the files listed below are "
-"writeable."
-msgstr ""
-"Multisite-Dateien können nicht erzeugt werden. Stellen Sie sicher, dass die "
-"folgenden Dateien Schreibrechte haben."
-
-msgid "Unable to get the module list"
-msgstr "Die Modulliste ist nicht abrufbar"
-
-msgid "Unable to initialize our Gallery data"
-msgstr "Gallery-Daten konnten nicht initialisiert werden"
-
-#, c-format
-msgid "Unable to install the %s module"
-msgstr "%s-Modul kann nicht installiert werden"
-
-msgid "Unable to install the core module"
-msgstr "Kernmodul kann nicht installiert werden"
-
-#, c-format
-msgid "Unable to load the %s module"
-msgstr "%s-Modul kann nicht geladen werden"
-
-msgid "Unable to load the core module"
-msgstr "Kernmodul kann nicht geladen werden"
-
-#, c-format
-msgid ""
-"Unable to write to the <b>config.php</b> configuration file in your <tt>%s</"
-"tt> directory.  Please change its permissions.  If you're on Unix you can do "
-"<i>chmod 666 config.php</i> to fix this."
-msgstr ""
-"Das Schreiben der Datei <b>config.php</b> in Ihrem Ordner <tt>%s</tt> ist "
-"fehlgeschlagen.  Bitte ändern Sie die Zugriffsrechte der Datei.  Unter UNIX "
-"können Sie das Kommando <i>chmod 666 config.php</i> benutzen, um dieses "
-"Problem zu lösen."
-
-msgid "Unix (with ftp access)"
-msgstr "Unix (mit FTP-Zugang)"
-
-msgid "Unix (with shell access)"
-msgstr "Unix (mit Shell-Zugang)"
-
-msgid "Unknown"
-msgstr "Unbekannt"
-
-msgid "Version"
-msgstr "Version"
-
-msgid "Warning"
-msgstr "Warnung"
-
-msgid ""
-"Warning: The exec() function is disabled in your php by the "
-"<b>disabled_functions</b> parameter in php.ini. You won't be able to use "
-"modules that require external binaries (e.g. ImageMagick, NetPBM or Ffmpeg). "
-"This can only be set server-wide, so you will need to change it in the "
-"global php.ini."
-msgstr ""
-"Warnung: in Ihrem PHP ist die exec()-Funktion deaktiviert "
-"(<b>disabled_functions</b> Parameter in php.ini).  Sie können so keine "
-"Module nutzen, die PHP-externe Programme benötigen (z.B. ImageMagick, NetPBM "
-"oder FFMPEG).  Diese Einstellung kann nur für den ganzen Server aktiviert "
-"werden. Sie oder der Adminstrator des Webservers müssen also die zentrale "
-"php.ini-Datei ändern."
-
-#, c-format
-msgid ""
-"Warning: The set_time_limit() function is disabled in your php by the "
-"<b>disabled_functions</b> parameter in php.ini.  Gallery can function with "
-"this setting, but it will not operate reliably.  Any operation that takes "
-"longer than %d seconds will fail (and in some cases just return a blank "
-"page) possibly leading to data corruption."
-msgstr ""
-"Warnung: die Funktion set_time_limit() in Ihrem PHP ist deaktiviert "
-"(<b>disabled_functions</b> parameter in php.ini).  Gallery kann zwar im "
-"Prinzip mit dieser Einstellung arbeiten, aber nicht zuverlässig.  Jede "
-"Operation, die länger als %d Sekunden dauert, wird fehlschlagen (und in "
-"einigen Fällen eine leere Seite anzeigen), möglicherweise führt das auch zu "
-"Datenverlust."
-
-msgid ""
-"Warning: Your PHP is configured not to allow file uploads (<b>file_uploads</"
-"b> parameter in php.ini). You will need to enable this option if you want to "
-"upload files to your Gallery with a web browser."
-msgstr ""
-"Warnung: Ihr PHP ist so konfiguriert, dass keine Dateien hochgeladen werden "
-"dürfen (Parameter <b>file_uploads</b> in php.ini). Sie müssen diese Option "
-"aktivieren, wenn Sie Dateien mittels Web-Browser in Ihre Gallery hochladen "
-"wollen."
-
-#, c-format
-msgid ""
-"Warning: Your PHP is configured to limit the memory to %sb (<b>memory_limit</"
-"b> parameter in php.ini). You should raise this limit to at least <b>%sMb</"
-"b> for proper Gallery operation."
-msgstr ""
-"Warnung: Ihr PHP ist für eine Speicher-Beschränkung von %sb konfiguriert "
-"(<b>memory_limit</b> Parameter in php.ini).  Sie sollten die Beschränkung "
-"auf <b>%sMb</b> erhöhen, damit Ihre Gallery korrekt funktioniert."
-
-#, c-format
-msgid ""
-"Warning: Your PHP is configured to limit the post data to a maximum of %sb "
-"(<b>post_max_size</b> parameter in php.ini). You should raise this limit to "
-"allow uploading bigger files."
-msgstr ""
-"Warnung: Ihre PHP Konfiguration begrenzt die Größe von POST-Formular-Daten "
-"auf %sb (Parameter <b>post_max_size</b> in php.ini).  Sie sollten die "
-"Begrenzung erhöhen, um das Hochladen größerer Dateien zu erlauben."
-
-#, c-format
-msgid ""
-"Warning: Your PHP is configured to limit the size of file uploads to %sb "
-"(<b>upload_max_filesize</b> parameter in php.ini). You should rise this "
-"limit to allow uploading bigger files."
-msgstr ""
-"Warnung: Ihre PHP Konfiguration begrenzt das Hochladen von Dateien auf die "
-"Größe %sb (Parameter <b>upload_max_filesize</b> in php.ini).  Sie sollten "
-"die Begrenzung erhöhen, um das Hochladen größerer Dateien zu erlauben."
-
-#, c-format
-msgid ""
-"Warning: Your PHP is configured with Zend ze1_compatibility_mode which can "
-"cause PHP to crash.  Click <a href=\"%s\">here</a> to test your PHP.  If you "
-"see \"SUCCESS\" then your PHP is ok.  If you get an error or no response "
-"then you must turn off ze1_compatibility_mode before proceeding."
-msgstr ""
-"Warnung: Ihr PHP ist für den Zend Modus <tt>ze1_compatibility_mode</tt> "
-"konfiguriert, wodurch PHP abstürzen kann.  Klicken Sie <a href=\"%s\">hier</"
-"a>, um Ihr PHP zu testen.  Wenn Sie \"SUCCESS\" (Erfolg) sehen, dann ist Ihr "
-"PHP OK. Erhalten Sie einen Fehler oder keine Antwort, dann müssen Sie den "
-"<tt>ze1_compatibility_mode</tt> abschalten, bevor Sie fortfahren."
-
-msgid "We received the following database related errors:"
-msgstr "Wir haben die folgenden datenbankbezogenen Fehler erhalten:"
-
-#, c-format
-msgid ""
-"We want to make sure that your Gallery is secure.  The config.php file that "
-"this installer has edited has permissions that allow other people to write "
-"to it.  This is required because the installer qualifies as an \"other person"
-"\" when it comes to Unix file permissions.  So before you finish, you should "
-"change the permissions on this file such that other users can't write to "
-"it.  Right now your config.php has modes of %s.  We suggest that you do this:"
-msgstr ""
-"Wir wollen sicherstellen, dass Ihre Gallery sicher ist. Die von diesem "
-"Installer geänderte Datei config.php ermöglicht zur Zeit anderen Personen "
-"Schreibzugriff. Dies ist notwendig, weil der Installer als eben eine solche "
-"'andere Person' gilt, wenn es um Unix-Dateizugriffe geht. Bevor Sie die "
-"Installation abschließen, sollten Sie die Berechtigungen dieser Datei so "
-"abändern, dass andere Benutzer keinen Schreibzugriff mehr darauf haben. "
-"Momentan hat Ihre config.php den Modus %s. Wir empfehlen Ihnen, folgendes zu "
-"tun:"
-
-msgid ""
-"We want to make sure that your Gallery is secure.  The directory containing "
-"your config.php file that this installer has edited has permissions that "
-"allow other people to write or delete files.  So before you finish, you "
-"should change the permissions on this directory such that other users can't "
-"write to it.  We suggest that you do this:"
-msgstr ""
-"Wir wollen sicherstellen, dass Ihre Gallery sicher ist. Der Ordner, der die "
-"Datei config.php enthält, ermöglicht zur Zeit anderen Personen das Löschen "
-"und Ändern von Dateien. Bevor Sie die Installation abschließen, sollten Sie "
-"die Berechtigungen dieses Ordners so abändern, dass andere Benutzer keinen "
-"Schreibzugriff mehr darauf haben. Wir empfehlen Ihnen, folgendes zu tun:"
-
-msgid ""
-"We've successfully installed the core of Gallery.  Although everything will "
-"work at this point, you should continue with the installer and add in some "
-"of the optional modules so that you can get the right set of features that "
-"you want for your Gallery installation."
-msgstr ""
-"Wir haben erfolgreich die Kernfunktionen der Gallery installiert. Obwohl nun "
-"alles Wichtige funktioniert, sollten Sie den Installer fortsetzen und einige "
-"der optionalen Module installieren, um die für Sie passenden Funktionen zu "
-"Ihrer Gallery-Installation hinzuzufügen."
-
-msgid "We've verified that your config.php is secure."
-msgstr "Wir haben festgestellt, dass Ihre config.php sicher ist."
-
-msgid ""
-"We've written out all the information you provided into a file called "
-"<b>config.php</b> in your gallery2 directory.  You can read through this "
-"file and make changes to it if you want.  Be careful, though -- if you make "
-"mistakes in that file then Gallery won't work properly!"
-msgstr ""
-"Wir haben alle von Ihnen angegebenen Informationen in eine Datei names "
-"<b>config.php</b> in Ihrem gallery2-Ordner geschrieben. Sie können diese "
-"Datei anschauen und Änderungen vornehmen, wenn Sie wollen. Seien Sie aber "
-"vorsichtig -- wenn Sie dabei Fehler machen, wird Gallery nicht richtig "
-"funktionieren!"
-
-msgid "Welcome to the Gallery Installer"
-msgstr "Willkommen zum Gallery-Installer"
-
-msgid "Welcome"
-msgstr "Willkommen"
-
-#, c-format
-msgid ""
-"You may now go to your new Gallery.  Enter the URL in your browser for %"
-"smain.php%s in your %s directory."
-msgstr ""
-"Sie können nun Ihre neue Gallery anschauen.  Geben Sie in Ihrem Browser "
-"die URL für %smain.php%s in Ihrem %s-Ordner ein."
-
-msgid "You must enter a directory"
-msgstr "Sie müssen einen Ordner angeben"
-
-#, c-format
-msgid "You must specify a column prefix (we recommend %s)"
-msgstr "Sie müssen einen Spalten-Präfix angeben (wir empfehlen %s)"
-
-#, c-format
-msgid "You must specify a table prefix (we recommend %s)"
-msgstr "Sie müssen einen Tabellen-Präfix angeben (wir empfehlen %s)"
+"<b>Beachten Sie</b>: Vergessen Sie nicht, die Datei dir.php zu löschen, wenn "
+"Sie fertig sind!"
 
 msgid ""
 "Your webserver needs to be able to write to this directory. Permission "
@@ -1033,43 +992,84 @@ msgstr ""
 "sicher wie möglich einrichten können. Um es zum Laufen zu bringen, können "
 "Sie diesen Beispielen folgen."
 
-msgid "Zend compatibility mode"
-msgstr "Zend-Kompatibilitätsmodus"
+msgid ""
+"Note: these are only examples!  You may find that they don't work quite "
+"right on your system."
+msgstr ""
+"Beachten Sie: Dies sind nur Beispiele! Es kann gut sein, dass Sie auf Ihrem "
+"System nicht richtig funktionieren."
 
-#, c-format
-msgid "cd %s"
-msgstr "cd %s"
-
-#, c-format
-msgid "chmod 644 %s"
-msgstr "chmod 644 %s"
-
-#, c-format
-msgid "chmod 755 %s"
-msgstr "chmod 755 %s"
-
-#, c-format
-msgid "chmod 777 %s"
-msgstr "chmod 777 %s"
-
-msgid "exec() allowed"
-msgstr "exec() erlaubt"
+msgid "Unix (with shell access)"
+msgstr "Unix (mit Shell-Zugang)"
 
 #, c-format
 msgid "mkdir %s"
 msgstr "mkdir %s"
 
-msgid "no limit"
-msgstr "keine Begrenzung"
+#, c-format
+msgid "chmod 777 %s"
+msgstr "chmod 777 %s"
 
-msgid "set_time_limit() allowed"
-msgstr "set_time_limit() erlaubt"
+msgid "Unix (with ftp access)"
+msgstr "Unix (mit FTP-Zugang)"
+
+msgid ""
+"Note that ftp servers and clients vary so these instructions may not work "
+"for you. Consult the manual for your FTP client or talk to a system "
+"administrator for help with this if you have problems"
+msgstr ""
+"Beachten Sie, dass FTP-Server und -Programme unterschiedlich sind, so dass "
+"diese Anleitung bei Ihnen eventuell nicht funktioniert. Schauen Sie in das "
+"Handbuch Ihres FTP-Programms oder bitten Sie Ihren Systemadministrator um "
+"Hilfe, falls Sie Probleme haben."
+
+#, c-format
+msgid "cd %s"
+msgstr "cd %s"
+
+msgid "This is sometimes known as an <b>image firewall</b>."
+msgstr "Dies nennt man manchmal auch eine <b>image firewall</b>."
+
+msgid "Storage directory set successfully."
+msgstr "Ordner zur Datenspeicherung erfolgreich eingerichtet"
+
+msgid "Success"
+msgstr "Erfolgreich"
+
+msgid "Warning"
+msgstr "Warnung"
+
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+msgid ""
+"If you are using Apache, create a file named .htaccess in the main Gallery "
+"directory with the following content:"
+msgstr ""
+"Falls Sie Apache verwenden, erzeugen Sie eine Datei namens .htaccess mit dem "
+"folgenden Inhalt im Hauptordner Ihrer Gallery:"
 
 #, c-format
 msgid ""
-"then figure out the URL to dir.php and open it in your web browser (eg, %"
-"s).  This will tell you the exact path to enter here."
+"Getting Gallery 2.0 installed on your webserver requires %d steps. This "
+"installer will guide you through these steps and provide assistance along "
+"the way if additional steps are required to get your Gallery up and running. "
+"Once a step has been completed, you can go back and make changes at any "
+"time. Please read the %sInstaller Help File%s before proceeding."
 msgstr ""
-"finden Sie dann die URL Ihrer dir.php heraus und öffnen Sie diese im Web-"
-"Browser (z.B. %s). So finden Sie den richtigen Pfad heraus, den Sie hier "
-"eintragen müssen."
+"Um Gallery 2.0 auf Ihrem Webserver zu installieren, müssen Sie %d Schritte "
+"durchlaufen. Dieser Installer wird Sie durch die einzelnen Schritte führen "
+"und Ihnen dabei Hilfestellung leisten, falls weitere Schritte erforderlich "
+"sind um Ihre Gallery zum Laufen zu bringen. Sobald ein Schritt abgeschlossen "
+"ist, können Sie jederzeit zurückgehen und Änderungen vornehmen. Bitte lesen "
+"Sie die %sInstallationshilfe%s, bevor Sie weitermachen."
+
+msgid "Select Language:"
+msgstr "Sprache auswählen:"
+
+msgid "Begin Installation&raquo;"
+msgstr "Installation starten&raquo;"
+
+# Badly chosen msgid: Button to change to a different language
+msgid "Go"
+msgstr "Sprache einstellen"
