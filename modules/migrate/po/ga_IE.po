@@ -1,26 +1,26 @@
 # ga_IE.po,v
-#
+# 
 # Gallery - a web based photo album viewer and editor
 # Copyright (C) 2000-2005 Bharat Mediratta
-#
+# 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or (at
 # your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
+# 
 # IRISH PLURAL FORMS (20s system, ordinal non-measurement common nouns)
-#
+# 
 # Group       Numbers             Example
-#
+# 
 # msgstr[0]   0                   Níl aon pheictiúr
 # msgstr[1]   1                   Tá peictiúr amháin
 # msgstr[2]   20,21,40,41,        Tá 20 peictiúr
@@ -33,7 +33,7 @@
 #             11,12,13,14,15,16
 #                22,23,24,25,26
 #             31,32,33,34,...
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Gallery: Migrate 1.0\n"
@@ -48,55 +48,55 @@ msgstr ""
 "Plural-Forms: nplurals=5; plural=n==0 ? 0 : ( n==1 ? 1 : ( n%20<2 ? 2 : ( (n-"
 "1)%10>5 ? 3 : 4 )));\n"
 
+#, fuzzy
+msgid "Migration Status"
+msgstr "Imirce na hAlbaim"
+
+#, fuzzy
+msgid "Importing Users"
+msgstr "Iompórtáil Úsáideora"
+
+msgid "Importing photos"
+msgstr ""
+
+msgid "Creating thumbnails"
+msgstr ""
+
+#, fuzzy
+msgid "Import complete"
+msgstr "Iompórtáil Críochnaithe"
+
 #, c-format
-msgid "%s (%s)"
-msgstr "%s (%s)"
-
-msgid "(Default to summary value if not set)"
+msgid "Thumbnail %d of %d"
 msgstr ""
-
-msgid ""
-"Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
-"you also wish to redirect links to image files and album directories."
-msgstr ""
-
-msgid "Album Name"
-msgstr "Ainm an Albaim"
 
 #, fuzzy
-msgid "Album Notes"
-msgstr "Ainm an Albaim"
+msgid "Migration"
+msgstr "Imirce"
 
-msgid "Album Title"
-msgstr "Teideal an Albaim"
-
-#, fuzzy
-msgid "Albums to import:"
-msgstr "Albaim a iompórtáil"
-
-msgid "An album already exists with this name.  This album will be renamed."
+msgid "Migrate your Gallery 1 albums to Gallery 2"
 msgstr ""
 
-msgid "Base filename"
+msgid "Import"
+msgstr "Iompórtáil"
+
+msgid "Gallery 1"
 msgstr ""
 
-msgid ""
-"Before you migrate any data you must try adding an album and image through "
-"the main gallery interface first.  This will show you if your gallery is "
-"correctly set up."
+msgid "Select Albums and Users"
+msgstr "Rognaigh albaim agus úsáideora"
+
+msgid "You must choose something to import!"
+msgstr "Caithfidh tú rud éigin a iompórtáil!"
+
+msgid "You must specify a custom field name"
 msgstr ""
 
-msgid "Blank"
-msgstr ""
+msgid "Import Users"
+msgstr "Iompórtáil Úsáideora"
 
-msgid "Cancel"
-msgstr "Cealaigh"
-
-msgid "Caption"
-msgstr ""
-
-msgid "Character Encoding of Source Text:"
-msgstr ""
+msgid "Select the users to migrate"
+msgstr "Roghnaigh na húsáideora imirce a dhéanamh"
 
 msgid "Check All"
 msgstr ""
@@ -104,68 +104,59 @@ msgstr ""
 msgid "Clear All"
 msgstr ""
 
-msgid "Confirm Migration"
-msgstr "Deimhnigh an Imirce"
-
-msgid "Creating thumbnails"
+msgid "Invert Selection"
 msgstr ""
 
-msgid "Custom Field:"
+msgid "Select"
+msgstr "Roghnaigh"
+
+msgid "Username"
+msgstr "Logainm"
+
+msgid "No available users"
+msgstr "Níl úsáideoir infhaighte"
+
+msgid "These users are already in your gallery, and will not be imported:"
 msgstr ""
+"Tá na húsáideora seo i do Ghailearaí chéana féin, agus mar sin ní bheidh "
+"siad iompórtáilte:"
 
-msgid "Custom field:"
-msgstr ""
+msgid "Import Albums"
+msgstr "Iompórtáil Albaim"
 
-msgid "Default to same as summary if custom field not set"
-msgstr ""
+msgid "Select the albums to migrate"
+msgstr "Roghnaigh na halbaim imirce a dhéanamh"
 
-msgid "Delete All"
-msgstr ""
+msgid "Source:"
+msgstr "Foinse:"
 
-msgid ""
-"Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors "
-"instead of redirecting to G2 pages.  Delete all entries?"
-msgstr ""
-
-#, fuzzy
-msgid "Description"
-msgstr "Cur síos:"
-
-#, fuzzy, c-format
-msgid "Description: %s"
-msgstr "Cur síos:"
+#, c-format
+msgid "%s (%s)"
+msgstr "%s (%s)"
 
 msgid "Destination:"
 msgstr "Cur síos:"
 
-msgid "Download .htaccess file"
+msgid "Character Encoding of Source Text:"
+msgstr ""
+
+msgid "URL Redirection"
+msgstr ""
+
+msgid "Record G1->G2 mappings during import"
+msgstr ""
+
+msgid "Thumbnail generation"
 msgstr ""
 
 msgid ""
-"Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
-"and add the text shown below to the file. This will also work in your "
-"Gallery2 directory if G2 is installed in the path where G1 used to be."
+"Normally Gallery will generate thumbnails the first time you look at them, "
+"then save them for subsequent views.  If you check this box, we'll create "
+"the thumbnails at migration time.  Migration will take longer but the first "
+"time you view an album will go much faster."
 msgstr ""
 
-#, c-format
-msgid "Encoding: %s"
-msgstr ""
-
-#, c-format
-msgid "Ensure the %s Apache module is enabled."
-msgstr ""
-
-msgid "Enter a custom field name"
-msgstr ""
-
-#, c-format
-msgid "Error importing %s"
-msgstr "Earráid leis %s a iompórtáil"
-
-msgid "G1->G2 mappings will be recorded for use in URL Redirection"
-msgstr ""
-
-msgid "Gallery 1"
+msgid "Item captions"
 msgstr ""
 
 msgid ""
@@ -176,142 +167,61 @@ msgid ""
 "items imported into G2:"
 msgstr ""
 
-msgid "Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."
+msgid "Set title from:"
 msgstr ""
 
-msgid ""
-"If G2 is installed in the path where G1 used to exist, you will need to "
-"remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
-"Remote to upload images to G2."
+msgid "Base filename"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Import %s now."
-msgstr "%s iompórtáilte"
-
-msgid "Import Albums"
-msgstr "Iompórtáil Albaim"
-
-msgid "Import Complete"
-msgstr "Iompórtáil Críochnaithe"
-
-msgid "Import Users"
-msgstr "Iompórtáil Úsáideora"
-
-#, fuzzy
-msgid "Import complete"
-msgstr "Iompórtáil Críochnaithe"
-
-#, fuzzy
-msgid "Import from Gallery 1"
-msgstr "Iompórtáil Críochnaithe"
-
-msgid "Import more data"
-msgstr "Iompórtáil sonraí eile"
-
-msgid "Import"
-msgstr "Iompórtáil"
-
-#, c-format
-msgid "Imported %s"
-msgstr "%s iompórtáilte"
-
-#, fuzzy
-msgid "Importing Users"
-msgstr "Iompórtáil Úsáideora"
-
-msgid "Importing photos"
+msgid "Caption"
 msgstr ""
 
-msgid "Invert Selection"
+msgid "Custom Field:"
 msgstr ""
 
-msgid "Item captions"
+msgid "Enter a custom field name"
 msgstr ""
 
-msgid "Item fields will be imported from:"
+msgid "Blank"
 msgstr ""
 
-msgid "Map entries deleted successfully"
+msgid "Set summary from:"
 msgstr ""
-
-msgid "Migrate your Gallery 1 albums to Gallery 2"
-msgstr ""
-
-#, fuzzy
-msgid "Migration Status"
-msgstr "Imirce na hAlbaim"
-
-#, fuzzy
-msgid "Migration"
-msgstr "Imirce"
-
-#, fuzzy
-msgid "No albums imported."
-msgstr "Ní raibh aon úsáideor iompórtáilte."
-
-msgid "No available users"
-msgstr "Níl úsáideoir infhaighte"
-
-msgid "No users imported."
-msgstr "Ní raibh aon úsáideor iompórtáilte."
-
-msgid ""
-"Normally Gallery will generate thumbnails the first time you look at them, "
-"then save them for subsequent views.  If you check this box, we'll create "
-"the thumbnails at migration time.  Migration will take longer but the first "
-"time you view an album will go much faster."
-msgstr ""
-
-#, fuzzy
-msgid "Path"
-msgstr "Comhadlann:"
-
-#, fuzzy
-msgid "Prepare Import"
-msgstr "Iompórtáil"
-
-msgid "Recently Used Paths"
-msgstr ""
-
-msgid "Record G1->G2 mappings during import"
-msgstr ""
-
-msgid "Select Albums and Users"
-msgstr "Rognaigh albaim agus úsáideora"
-
-msgid "Select the albums to migrate"
-msgstr "Roghnaigh na halbaim imirce a dhéanamh"
-
-msgid "Select the users to migrate"
-msgstr "Roghnaigh na húsáideora imirce a dhéanamh"
-
-msgid "Select"
-msgstr "Roghnaigh"
 
 #, fuzzy
 msgid "Set description from:"
 msgstr "Cur síos:"
 
-msgid "Set summary from:"
+msgid "Default to same as summary if custom field not set"
 msgstr ""
 
-msgid "Set title from:"
+#, fuzzy
+msgid "Prepare Import"
+msgstr "Iompórtáil"
+
+msgid "Confirm Migration"
+msgstr "Deimhnigh an Imirce"
+
+#, fuzzy
+msgid "Users to import:"
+msgstr "Úsáideora a iompórtáil"
+
+#, fuzzy
+msgid "Albums to import:"
+msgstr "Albaim a iompórtáil"
+
+msgid "Album Name"
+msgstr "Ainm an Albaim"
+
+msgid "Album Title"
+msgstr "Teideal an Albaim"
+
+#, fuzzy
+msgid "Album Notes"
+msgstr "Ainm an Albaim"
+
+msgid "An album already exists with this name.  This album will be renamed."
 msgstr ""
-
-msgid "Source:"
-msgstr "Foinse:"
-
-msgid "Summary"
-msgstr ""
-
-msgid "The path that you entered is invalid."
-msgstr "Níl an comhadlann seo bailí."
-
-msgid "These users are already in your gallery, and will not be imported:"
-msgstr ""
-"Tá na húsáideora seo i do Ghailearaí chéana féin, agus mar sin ní bheidh "
-"siad iompórtáilte:"
 
 #, c-format
 msgid "This album has an illegal name and will be renamed to <i>%s</i>"
@@ -321,105 +231,62 @@ msgstr ""
 msgid "This album's owner (%s) hasn't been imported."
 msgstr ""
 
-msgid ""
-"This module is unfinished.  It should not harm your Gallery 1 data, but use "
-"it at your own risk."
-msgstr ""
-
-msgid ""
-"This operation takes data (images, albums, users, etc.) from <strong>Gallery "
-"1</strong> and brings it into <strong>Gallery 2</strong>."
-msgstr ""
-
-msgid ""
-"This process will copy data from an existing Gallery 1 installation.  It "
-"won't modify your Gallery 1 data in any way.  You must enter the path to "
-"your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, we'll "
-"let you know so it's safe to experiment.  Example: <i>/path/to/albums</i>"
-msgstr ""
-
-#, c-format
-msgid "Thumbnail %d of %d"
-msgstr ""
-
-msgid "Thumbnail generation"
-msgstr ""
-
-msgid "Thumbnails will be generated during migration"
-msgstr ""
-
-#, fuzzy
-msgid "Title"
-msgstr "Teideal an Albaim"
-
-#, c-format
-msgid "Title: %s"
-msgstr ""
-
-msgid "To enable URL Redirection under Apache webserver:"
-msgstr ""
+#, fuzzy, c-format
+msgid "Import %s now."
+msgstr "%s iompórtáilte"
 
 msgid ""
 "Top level albums and albums whose parents are not selected will be imported "
 "into this album:"
 msgstr ""
 
-msgid "URL Redirection"
-msgstr ""
-
-msgid "Username"
-msgstr "Logainm"
-
-#, fuzzy
-msgid "Users to import:"
-msgstr "Úsáideora a iompórtáil"
-
-msgid "You did not enter a path."
-msgstr "Ní raibh comhadlann iontráilte."
-
 #, c-format
-msgid ""
-"You don't have any Graphics Toolkit activated to handle JPEG images.  If you "
-"import now, you will not have any thumbnails.  Visit the <a href=\"%s"
-"\">Modules</a> page to activate a Graphics Toolkit."
+msgid "Title: %s"
 msgstr ""
 
-msgid "You must choose something to import!"
-msgstr "Caithfidh tú rud éigin a iompórtáil!"
-
-msgid "You must specify a custom field name"
-msgstr ""
+#, fuzzy, c-format
+msgid "Description: %s"
+msgstr "Cur síos:"
 
 msgid ""
 "Your Gallery 1 will be converted from this character encoding into UTF-8:"
 msgstr ""
 
-#, fuzzy, c-format
-msgid "Error while importing %d album."
-msgid_plural "Errors while importing %d albums."
-msgstr[0] "Earráidí fad náid úsáideoir a iompórtáil."
-msgstr[1] "Earráidí fad úsáideoir amháin a iompórtáil."
-msgstr[2] "Earráidí fad %d úsáideoir a iompórtáil."
-msgstr[3] "Earráidí fad %d n-úsáideoir a iompórtáil."
-msgstr[4] "Earráidí fad %d úsáideoir a iompórtáil."
-
 #, c-format
-msgid "Error while importing %d user."
-msgid_plural "Errors while importing %d users."
-msgstr[0] "Earráidí fad náid úsáideoir a iompórtáil."
-msgstr[1] "Earráidí fad úsáideoir amháin a iompórtáil."
-msgstr[2] "Earráidí fad %d úsáideoir a iompórtáil."
-msgstr[3] "Earráidí fad %d n-úsáideoir a iompórtáil."
-msgstr[4] "Earráidí fad %d úsáideoir a iompórtáil."
+msgid "Encoding: %s"
+msgstr ""
 
-#, fuzzy, c-format
-msgid "Successfully imported %d album."
-msgid_plural "Successfully imported %d albums."
-msgstr[0] "Ní raibh aon úsáideoir iompórtáilte go rathúil."
-msgstr[1] "Bhí úsáideoir amháin iompórtáilte go rathúil."
-msgstr[2] "Bhí %d úsáideoir iompórtáilte go rathúil."
-msgstr[3] "Bhí %d n-úsáideoir iompórtáilte go rathúil."
-msgstr[4] "Bhi %d úsáideoir iompórtáilte go rathúil."
+msgid "G1->G2 mappings will be recorded for use in URL Redirection"
+msgstr ""
+
+msgid "Thumbnails will be generated during migration"
+msgstr ""
+
+msgid "Item fields will be imported from:"
+msgstr ""
+
+#, fuzzy
+msgid "Title"
+msgstr "Teideal an Albaim"
+
+msgid "Custom field:"
+msgstr ""
+
+msgid "Summary"
+msgstr ""
+
+#, fuzzy
+msgid "Description"
+msgstr "Cur síos:"
+
+msgid "(Default to summary value if not set)"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Cealaigh"
+
+msgid "Import Complete"
+msgstr "Iompórtáil Críochnaithe"
 
 #, c-format
 msgid "Successfully imported %d user."
@@ -430,6 +297,128 @@ msgstr[2] "Bhí %d úsáideoir iompórtáilte go rathúil."
 msgstr[3] "Bhí %d n-úsáideoir iompórtáilte go rathúil."
 msgstr[4] "Bhi %d úsáideoir iompórtáilte go rathúil."
 
+msgid "No users imported."
+msgstr "Ní raibh aon úsáideor iompórtáilte."
+
+#, c-format
+msgid "Imported %s"
+msgstr "%s iompórtáilte"
+
+#, c-format
+msgid "Error while importing %d user."
+msgid_plural "Errors while importing %d users."
+msgstr[0] "Earráidí fad náid úsáideoir a iompórtáil."
+msgstr[1] "Earráidí fad úsáideoir amháin a iompórtáil."
+msgstr[2] "Earráidí fad %d úsáideoir a iompórtáil."
+msgstr[3] "Earráidí fad %d n-úsáideoir a iompórtáil."
+msgstr[4] "Earráidí fad %d úsáideoir a iompórtáil."
+
+#, c-format
+msgid "Error importing %s"
+msgstr "Earráid leis %s a iompórtáil"
+
+#, fuzzy, c-format
+msgid "Successfully imported %d album."
+msgid_plural "Successfully imported %d albums."
+msgstr[0] "Ní raibh aon úsáideoir iompórtáilte go rathúil."
+msgstr[1] "Bhí úsáideoir amháin iompórtáilte go rathúil."
+msgstr[2] "Bhí %d úsáideoir iompórtáilte go rathúil."
+msgstr[3] "Bhí %d n-úsáideoir iompórtáilte go rathúil."
+msgstr[4] "Bhi %d úsáideoir iompórtáilte go rathúil."
+
+#, fuzzy
+msgid "No albums imported."
+msgstr "Ní raibh aon úsáideor iompórtáilte."
+
+#, fuzzy, c-format
+msgid "Error while importing %d album."
+msgid_plural "Errors while importing %d albums."
+msgstr[0] "Earráidí fad náid úsáideoir a iompórtáil."
+msgstr[1] "Earráidí fad úsáideoir amháin a iompórtáil."
+msgstr[2] "Earráidí fad %d úsáideoir a iompórtáil."
+msgstr[3] "Earráidí fad %d n-úsáideoir a iompórtáil."
+msgstr[4] "Earráidí fad %d úsáideoir a iompórtáil."
+
+msgid "Import more data"
+msgstr "Iompórtáil sonraí eile"
+
+msgid "To enable URL Redirection under Apache webserver:"
+msgstr ""
+
+#, c-format
+msgid "Ensure the %s Apache module is enabled."
+msgstr ""
+
+msgid ""
+"Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
+"and add the text shown below to the file. This will also work in your "
+"Gallery2 directory if G2 is installed in the path where G1 used to be."
+msgstr ""
+
+msgid ""
+"Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
+"you also wish to redirect links to image files and album directories."
+msgstr ""
+
+msgid ""
+"If G2 is installed in the path where G1 used to exist, you will need to "
+"remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
+"Remote to upload images to G2."
+msgstr ""
+
+msgid "Download .htaccess file"
+msgstr ""
+
+#, fuzzy
+msgid "Import from Gallery 1"
+msgstr "Iompórtáil Críochnaithe"
+
+msgid ""
+"This operation takes data (images, albums, users, etc.) from <strong>Gallery "
+"1</strong> and brings it into <strong>Gallery 2</strong>."
+msgstr ""
+
+msgid ""
+"Before you migrate any data you must try adding an album and image through "
+"the main gallery interface first.  This will show you if your gallery is "
+"correctly set up."
+msgstr ""
+
+msgid ""
+"This module is unfinished.  It should not harm your Gallery 1 data, but use "
+"it at your own risk."
+msgstr ""
+
+#, c-format
+msgid ""
+"You don't have any Graphics Toolkit activated to handle JPEG images.  If you "
+"import now, you will not have any thumbnails.  Visit the <a href=\"%s"
+"\">Modules</a> page to activate a Graphics Toolkit."
+msgstr ""
+
+msgid ""
+"This process will copy data from an existing Gallery 1 installation.  It "
+"won't modify your Gallery 1 data in any way.  You must enter the path to "
+"your Gallery 1 <i>albums</i> directory.  If you enter the wrong path, we'll "
+"let you know so it's safe to experiment.  Example: <i>/path/to/albums</i>"
+msgstr ""
+
+#, fuzzy
+msgid "Path"
+msgstr "Comhadlann:"
+
+msgid "You did not enter a path."
+msgstr "Ní raibh comhadlann iontráilte."
+
+msgid "The path that you entered is invalid."
+msgstr "Níl an comhadlann seo bailí."
+
+msgid "Recently Used Paths"
+msgstr ""
+
+msgid "Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."
+msgstr ""
+
 #, c-format
 msgid "There is one G1->G2 map entry"
 msgid_plural "There are %d G1->G2 map entries"
@@ -438,6 +427,17 @@ msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 msgstr[4] ""
+
+msgid ""
+"Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors "
+"instead of redirecting to G2 pages.  Delete all entries?"
+msgstr ""
+
+msgid "Delete All"
+msgstr ""
+
+msgid "Map entries deleted successfully"
+msgstr ""
 
 #~ msgid "Enter the path to migrate"
 #~ msgstr "Iontráil an comhadlann imirce a dhéanamh"

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
+# 
 # Previous translators:
 # Arjen Gideonse <ArjenGideonse at xs4all REMOVE THIS dot nl>, 2005
 msgid ""
@@ -33,58 +33,52 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "Migration Status"
+msgstr "Migratie Status"
+
+msgid "Importing Users"
+msgstr "Gebruikers worden geïmporteerd"
+
+msgid "Importing photos"
+msgstr "Foto's worden geïmporteerd"
+
+msgid "Creating thumbnails"
+msgstr "Aanmaken miniaturen"
+
+msgid "Import complete"
+msgstr "Import voltooid"
+
 #, c-format
-msgid "%s (%s)"
-msgstr "%s (%s)"
+msgid "Thumbnail %d of %d"
+msgstr "Miniatuur %d van %d"
 
-msgid "(Default to summary value if not set)"
-msgstr "(Standaard naar samenvatting waarde, indien niets opgegeven)"
+#, fuzzy
+msgid "Migration"
+msgstr "Migratie Status"
 
-msgid ""
-"Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
-"you also wish to redirect links to image files and album directories."
-msgstr ""
-"Voeg hetzelfde <tt>.htaccess</tt> blok in de Gallery 1 albums directory als "
-"u ook links naar albeelingen en album directories wilt doorverwijzen."
+msgid "Migrate your Gallery 1 albums to Gallery 2"
+msgstr "Migreer uw Gallery 1 albums naar Gallery 2"
 
-msgid "Album Name"
-msgstr "Album Naam"
+msgid "Import"
+msgstr "Import"
 
-msgid "Album Notes"
-msgstr "Album Notities"
+msgid "Gallery 1"
+msgstr "Gallery 1"
 
-msgid "Album Title"
-msgstr "Album Titel"
+msgid "Select Albums and Users"
+msgstr "Selecteer Albums en Gebruikers"
 
-msgid "Albums to import:"
-msgstr "Albums om te importeren:"
+msgid "You must choose something to import!"
+msgstr "U moet iets kiezen om te importeren!"
 
-msgid "An album already exists with this name.  This album will be renamed."
-msgstr "Er bestaat al een album met deze naam.  Dit album zal worden hernoemd."
+msgid "You must specify a custom field name"
+msgstr "U dient een maatwerk veldnaam op te geven"
 
-msgid "Base filename"
-msgstr "Basis bestandsnaam"
+msgid "Import Users"
+msgstr "Impoteer Gebruikers"
 
-msgid ""
-"Before you migrate any data you must try adding an album and image through "
-"the main gallery interface first.  This will show you if your gallery is "
-"correctly set up."
-msgstr ""
-"Voordat u enige data migreert moet u eerst proberen om een album en een "
-"afbeelding met behulp van de algemene gallery interface toe te voegen.Dit "
-"zal laten zien of uw gallery goed is ingesteld."
-
-msgid "Blank"
-msgstr "Blanco"
-
-msgid "Cancel"
-msgstr "Annuleren"
-
-msgid "Caption"
-msgstr "Bijschrift"
-
-msgid "Character Encoding of Source Text:"
-msgstr "Karacter Codering van de Bron Tekst:"
+msgid "Select the users to migrate"
+msgstr "Selecteer gebruikers om te migreren"
 
 msgid "Check All"
 msgstr "Selecteer Alles"
@@ -92,78 +86,63 @@ msgstr "Selecteer Alles"
 msgid "Clear All"
 msgstr "Alles opschonen"
 
-msgid "Confirm Migration"
-msgstr "Bevestig Migratie"
+msgid "Invert Selection"
+msgstr "Selectie Omkeren"
 
-msgid "Creating thumbnails"
-msgstr "Aanmaken miniaturen"
+msgid "Select"
+msgstr "Selecteer"
 
-msgid "Custom Field:"
-msgstr "Maatwerk Veld:"
+msgid "Username"
+msgstr "Gebruikersnaam"
 
-msgid "Custom field:"
-msgstr "Maatwerk veld:"
+msgid "No available users"
+msgstr "Geen gebruikers beschikbaar"
 
-msgid "Default to same as summary if custom field not set"
+msgid "These users are already in your gallery, and will not be imported:"
 msgstr ""
-"Standaard naar dezelfde samanvatting indien maatwerk veld niet is ingesteld"
+"Deze gebruikers bestaan al in uw gallery en zullen niet geïmporteerd worden:"
 
-msgid "Delete All"
-msgstr "Vewijder Alles"
+msgid "Import Albums"
+msgstr "Import Albums"
 
-msgid ""
-"Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors "
-"instead of redirecting to G2 pages.  Delete all entries?"
-msgstr ""
-"Verwijderen van map ingangen zal ervoor zorgen dat oude Gallery 1 URL een "
-"'HTTP Not Found' foutmelding zullen geven, in plaats van doorverwijzen naar "
-"de Gallery 2 pagina's. Verwijder alle ingangen?"
+msgid "Select the albums to migrate"
+msgstr "Selecteer albums om te migreren"
 
-msgid "Description"
-msgstr "Omschrijving"
+msgid "Source:"
+msgstr "Bron:"
 
 #, c-format
-msgid "Description: %s"
-msgstr "Omschrijving: %s"
+msgid "%s (%s)"
+msgstr "%s (%s)"
 
 msgid "Destination:"
 msgstr "Doel:"
 
-msgid "Download .htaccess file"
-msgstr "Download .htaccess bestand"
+msgid "Character Encoding of Source Text:"
+msgstr "Karacter Codering van de Bron Tekst:"
+
+msgid "URL Redirection"
+msgstr "URL Doorverwijzing"
+
+msgid "Record G1->G2 mappings during import"
+msgstr "Opnemen van G1->G2 mappings tijdens importeren"
+
+msgid "Thumbnail generation"
+msgstr "Miniatuur gegenereren"
 
 msgid ""
-"Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
-"and add the text shown below to the file. This will also work in your "
-"Gallery2 directory if G2 is installed in the path where G1 used to be."
+"Normally Gallery will generate thumbnails the first time you look at them, "
+"then save them for subsequent views.  If you check this box, we'll create "
+"the thumbnails at migration time.  Migration will take longer but the first "
+"time you view an album will go much faster."
 msgstr ""
-"Bewerk of creër een bestand, genaamd <tt>.htaccess</tt> in uw Gallery 1 "
-"directory en voeg de onderstaande text toe aan het bestand. Hiermee kunt u "
-"ook in uw Gallery 2 directory werken als Gallery 2 is geïnstalleerd in het "
-"pad waarin Gallery 1 stond."
+"Normaal genereerd Gallery miniaturen by de eerste keer dat u deze bekijkt en "
+"slaat deze dan op voor volgende weergaven. Als u deze optie selecteerd, we "
+"de miniaturen tijdens de migratie genereren. Migratie duurt daardoor langer, "
+"maar de eerste keer dat u een album bekijkt zal veel sneller zijn."
 
-#, c-format
-msgid "Encoding: %s"
-msgstr "Codering: %s"
-
-#, c-format
-msgid "Ensure the %s Apache module is enabled."
-msgstr "Zorg dat de %s Apache module aan staat."
-
-msgid "Enter a custom field name"
-msgstr "Geen een maatwerkveld naam op"
-
-#, c-format
-msgid "Error importing %s"
-msgstr "Fout bij importeren %s"
-
-msgid "G1->G2 mappings will be recorded for use in URL Redirection"
-msgstr ""
-"G1->G2 verwijzingen zullen worden opgenomen voor gebruik in URL "
-"doorverwijzing"
-
-msgid "Gallery 1"
-msgstr "Gallery 1"
+msgid "Item captions"
+msgstr "Item bijschriften"
 
 msgid ""
 "Gallery 2 has the following fields for all items and albums: title, summary "
@@ -179,142 +158,57 @@ msgstr ""
 "G1 items bevatten alleen een bestandsnaam en bijschrift. Voor items die "
 "worden geïmporteerd naar G2:"
 
-msgid "Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."
-msgstr ""
-"Gallery kan oude Gallery 1 URLs doorverwijzen naar de nieuwe Gallery 2 "
-"pagina's."
+msgid "Set title from:"
+msgstr "Titel bepalen vanuit:"
 
-msgid ""
-"If G2 is installed in the path where G1 used to exist, you will need to "
-"remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
-"Remote to upload images to G2."
-msgstr ""
-"Als Gallery 2 is geïnstalleerd in het pad waar Gallery 1 zich eerst bevond, "
-"dient u het oude G1 bestand \"gallery_remote.php\" te verwijderen voordat u "
-"Gallery Remote kunt gebruiken om afbeeldingen naar Gallery 2 kunt uploaden."
+msgid "Base filename"
+msgstr "Basis bestandsnaam"
 
-#, c-format
-msgid "Import %s now."
-msgstr "Importeer %s nu."
+msgid "Caption"
+msgstr "Bijschrift"
 
-msgid "Import Albums"
-msgstr "Import Albums"
+msgid "Custom Field:"
+msgstr "Maatwerk Veld:"
 
-msgid "Import Complete"
-msgstr "Import Voltooid"
+msgid "Enter a custom field name"
+msgstr "Geen een maatwerkveld naam op"
 
-msgid "Import Users"
-msgstr "Impoteer Gebruikers"
-
-msgid "Import complete"
-msgstr "Import voltooid"
-
-msgid "Import from Gallery 1"
-msgstr "Importeer vanuit Gallery 1"
-
-msgid "Import more data"
-msgstr "Importeer meer data"
-
-msgid "Import"
-msgstr "Import"
-
-#, c-format
-msgid "Imported %s"
-msgstr "%s Geïmporteerd"
-
-msgid "Importing Users"
-msgstr "Gebruikers worden geïmporteerd"
-
-msgid "Importing photos"
-msgstr "Foto's worden geïmporteerd"
-
-msgid "Invert Selection"
-msgstr "Selectie Omkeren"
-
-msgid "Item captions"
-msgstr "Item bijschriften"
-
-msgid "Item fields will be imported from:"
-msgstr "Item velden worden geïmporteerd vanuit:"
-
-msgid "Map entries deleted successfully"
-msgstr "Map ingangen succesvol verwijderd"
-
-msgid "Migrate your Gallery 1 albums to Gallery 2"
-msgstr "Migreer uw Gallery 1 albums naar Gallery 2"
-
-msgid "Migration Status"
-msgstr "Migratie Status"
-
-#, fuzzy
-msgid "Migration"
-msgstr "Migratie Status"
-
-msgid "No albums imported."
-msgstr "Geen albums geïmporteerd."
-
-msgid "No available users"
-msgstr "Geen gebruikers beschikbaar"
-
-msgid "No users imported."
-msgstr "Geen gebruikers geïmporteerd."
-
-msgid ""
-"Normally Gallery will generate thumbnails the first time you look at them, "
-"then save them for subsequent views.  If you check this box, we'll create "
-"the thumbnails at migration time.  Migration will take longer but the first "
-"time you view an album will go much faster."
-msgstr ""
-"Normaal genereerd Gallery miniaturen by de eerste keer dat u deze bekijkt en "
-"slaat deze dan op voor volgende weergaven. Als u deze optie selecteerd, we "
-"de miniaturen tijdens de migratie genereren. Migratie duurt daardoor langer, "
-"maar de eerste keer dat u een album bekijkt zal veel sneller zijn."
-
-msgid "Path"
-msgstr "Pad"
-
-msgid "Prepare Import"
-msgstr "Import Voorbereiden"
-
-msgid "Recently Used Paths"
-msgstr "Onlangs Gebruikte Paden"
-
-msgid "Record G1->G2 mappings during import"
-msgstr "Opnemen van G1->G2 mappings tijdens importeren"
-
-msgid "Select Albums and Users"
-msgstr "Selecteer Albums en Gebruikers"
-
-msgid "Select the albums to migrate"
-msgstr "Selecteer albums om te migreren"
-
-msgid "Select the users to migrate"
-msgstr "Selecteer gebruikers om te migreren"
-
-msgid "Select"
-msgstr "Selecteer"
-
-msgid "Set description from:"
-msgstr "Omschrijving bepalen vanuit:"
+msgid "Blank"
+msgstr "Blanco"
 
 msgid "Set summary from:"
 msgstr "Samenvatting bepalen vanuit: "
 
-msgid "Set title from:"
-msgstr "Titel bepalen vanuit:"
+msgid "Set description from:"
+msgstr "Omschrijving bepalen vanuit:"
 
-msgid "Source:"
-msgstr "Bron:"
-
-msgid "Summary"
-msgstr "Samenvatting"
-
-msgid "The path that you entered is invalid."
-msgstr "Het opgegeven pad is ongeldig."
-
-msgid "These users are already in your gallery, and will not be imported:"
+msgid "Default to same as summary if custom field not set"
 msgstr ""
-"Deze gebruikers bestaan al in uw gallery en zullen niet geïmporteerd worden:"
+"Standaard naar dezelfde samanvatting indien maatwerk veld niet is ingesteld"
+
+msgid "Prepare Import"
+msgstr "Import Voorbereiden"
+
+msgid "Confirm Migration"
+msgstr "Bevestig Migratie"
+
+msgid "Users to import:"
+msgstr "Te importeren gebruikers:"
+
+msgid "Albums to import:"
+msgstr "Albums om te importeren:"
+
+msgid "Album Name"
+msgstr "Album Naam"
+
+msgid "Album Title"
+msgstr "Album Titel"
+
+msgid "Album Notes"
+msgstr "Album Notities"
+
+msgid "An album already exists with this name.  This album will be renamed."
+msgstr "Er bestaat al een album met deze naam.  Dit album zal worden hernoemd."
 
 #, c-format
 msgid "This album has an illegal name and will be renamed to <i>%s</i>"
@@ -325,12 +219,145 @@ msgstr ""
 msgid "This album's owner (%s) hasn't been imported."
 msgstr "De eigenaar van dit album (%s) is niet geïmporteerd"
 
+#, c-format
+msgid "Import %s now."
+msgstr "Importeer %s nu."
+
 msgid ""
-"This module is unfinished.  It should not harm your Gallery 1 data, but use "
-"it at your own risk."
+"Top level albums and albums whose parents are not selected will be imported "
+"into this album:"
 msgstr ""
-"Deze module is nog niet klaar. Het zou uw Gallery 1 data niet moeten "
-"aantasten, maar gebruik het op uw eigen risico."
+"Albums op het hoogste niveau en albums waarvan het bovenliggende albums niet "
+"is geselecteerd zullen worden geïmporteerd in dit album:"
+
+#, c-format
+msgid "Title: %s"
+msgstr "Titel: %s"
+
+#, c-format
+msgid "Description: %s"
+msgstr "Omschrijving: %s"
+
+msgid ""
+"Your Gallery 1 will be converted from this character encoding into UTF-8:"
+msgstr ""
+"Uw Gallery 1 zal worden geconverteerd van deze karakter codering naar UTF-8:"
+
+#, c-format
+msgid "Encoding: %s"
+msgstr "Codering: %s"
+
+msgid "G1->G2 mappings will be recorded for use in URL Redirection"
+msgstr ""
+"G1->G2 verwijzingen zullen worden opgenomen voor gebruik in URL "
+"doorverwijzing"
+
+msgid "Thumbnails will be generated during migration"
+msgstr "Miniaturen zullen gegenereerd worden tijdens de migratie"
+
+msgid "Item fields will be imported from:"
+msgstr "Item velden worden geïmporteerd vanuit:"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Custom field:"
+msgstr "Maatwerk veld:"
+
+msgid "Summary"
+msgstr "Samenvatting"
+
+msgid "Description"
+msgstr "Omschrijving"
+
+msgid "(Default to summary value if not set)"
+msgstr "(Standaard naar samenvatting waarde, indien niets opgegeven)"
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+msgid "Import Complete"
+msgstr "Import Voltooid"
+
+#, c-format
+msgid "Successfully imported %d user."
+msgid_plural "Successfully imported %d users."
+msgstr[0] "Succesvol %d gebruiker geïmporteerd."
+msgstr[1] "Succesvol %d gebruikers geïmporteerd."
+
+msgid "No users imported."
+msgstr "Geen gebruikers geïmporteerd."
+
+#, c-format
+msgid "Imported %s"
+msgstr "%s Geïmporteerd"
+
+#, c-format
+msgid "Error while importing %d user."
+msgid_plural "Errors while importing %d users."
+msgstr[0] "Fout opgetreden bij het importeren van %d gebruiker."
+msgstr[1] "Fout opgetreden bij het importeren van %d gebruikers."
+
+#, c-format
+msgid "Error importing %s"
+msgstr "Fout bij importeren %s"
+
+#, c-format
+msgid "Successfully imported %d album."
+msgid_plural "Successfully imported %d albums."
+msgstr[0] "Succesvol %d album geïmporteerd."
+msgstr[1] "Succesvol %d albums geïmporteerd."
+
+msgid "No albums imported."
+msgstr "Geen albums geïmporteerd."
+
+#, c-format
+msgid "Error while importing %d album."
+msgid_plural "Errors while importing %d albums."
+msgstr[0] "Fout opgetreden bij het importeren van %d album."
+msgstr[1] "Fout opgetreden bij het importeren van %d albums."
+
+msgid "Import more data"
+msgstr "Importeer meer data"
+
+msgid "To enable URL Redirection under Apache webserver:"
+msgstr "Om URL doorverwijzing onder Apache te activeren:"
+
+#, c-format
+msgid "Ensure the %s Apache module is enabled."
+msgstr "Zorg dat de %s Apache module aan staat."
+
+msgid ""
+"Edit or create a file called <tt>.htaccess</tt> in your Gallery1 directory "
+"and add the text shown below to the file. This will also work in your "
+"Gallery2 directory if G2 is installed in the path where G1 used to be."
+msgstr ""
+"Bewerk of creër een bestand, genaamd <tt>.htaccess</tt> in uw Gallery 1 "
+"directory en voeg de onderstaande text toe aan het bestand. Hiermee kunt u "
+"ook in uw Gallery 2 directory werken als Gallery 2 is geïnstalleerd in het "
+"pad waarin Gallery 1 stond."
+
+msgid ""
+"Add the same <tt>.htaccess</tt> block in the Gallery1 albums directory if "
+"you also wish to redirect links to image files and album directories."
+msgstr ""
+"Voeg hetzelfde <tt>.htaccess</tt> blok in de Gallery 1 albums directory als "
+"u ook links naar albeelingen en album directories wilt doorverwijzen."
+
+msgid ""
+"If G2 is installed in the path where G1 used to exist, you will need to "
+"remove the G1 file \"gallery_remote2.php\" file before you can use Gallery "
+"Remote to upload images to G2."
+msgstr ""
+"Als Gallery 2 is geïnstalleerd in het pad waar Gallery 1 zich eerst bevond, "
+"dient u het oude G1 bestand \"gallery_remote.php\" te verwijderen voordat u "
+"Gallery Remote kunt gebruiken om afbeeldingen naar Gallery 2 kunt uploaden."
+
+msgid "Download .htaccess file"
+msgstr "Download .htaccess bestand"
+
+msgid "Import from Gallery 1"
+msgstr "Importeer vanuit Gallery 1"
 
 msgid ""
 "This operation takes data (images, albums, users, etc.) from <strong>Gallery "
@@ -338,6 +365,32 @@ msgid ""
 msgstr ""
 "Deze bewerking neemt data (afbeeldingen, albums, gebruikers etc.) vanuit "
 "<strong>Gallery 1</strong> en brengt deze naar <strong>Gallery 2</strong>."
+
+msgid ""
+"Before you migrate any data you must try adding an album and image through "
+"the main gallery interface first.  This will show you if your gallery is "
+"correctly set up."
+msgstr ""
+"Voordat u enige data migreert moet u eerst proberen om een album en een "
+"afbeelding met behulp van de algemene gallery interface toe te voegen.Dit "
+"zal laten zien of uw gallery goed is ingesteld."
+
+msgid ""
+"This module is unfinished.  It should not harm your Gallery 1 data, but use "
+"it at your own risk."
+msgstr ""
+"Deze module is nog niet klaar. Het zou uw Gallery 1 data niet moeten "
+"aantasten, maar gebruik het op uw eigen risico."
+
+#, c-format
+msgid ""
+"You don't have any Graphics Toolkit activated to handle JPEG images.  If you "
+"import now, you will not have any thumbnails.  Visit the <a href=\"%s"
+"\">Modules</a> page to activate a Graphics Toolkit."
+msgstr ""
+"U heeft geen Grafische Toolkit geactiveerd om JPEG afbeeldingen te "
+"verwerken. Als u nu gaat importeren, zult u geen miniaturen hebben. Ga naar "
+"de <a href=\"%s\">Modules</a> pagina om een Grafische Toolkit te activeren."
 
 msgid ""
 "This process will copy data from an existing Gallery 1 installation.  It "
@@ -351,92 +404,39 @@ msgstr ""
 "pad opgeeft zullen wij u dit laten weten, dus het is veilig om te "
 "expirimenteren. Bijvoorbeeld: <i>pad/naar/albums</i>"
 
-#, c-format
-msgid "Thumbnail %d of %d"
-msgstr "Miniatuur %d van %d"
-
-msgid "Thumbnail generation"
-msgstr "Miniatuur gegenereren"
-
-msgid "Thumbnails will be generated during migration"
-msgstr "Miniaturen zullen gegenereerd worden tijdens de migratie"
-
-msgid "Title"
-msgstr "Titel"
-
-#, c-format
-msgid "Title: %s"
-msgstr "Titel: %s"
-
-msgid "To enable URL Redirection under Apache webserver:"
-msgstr "Om URL doorverwijzing onder Apache te activeren:"
-
-msgid ""
-"Top level albums and albums whose parents are not selected will be imported "
-"into this album:"
-msgstr ""
-"Albums op het hoogste niveau en albums waarvan het bovenliggende albums niet "
-"is geselecteerd zullen worden geïmporteerd in dit album:"
-
-msgid "URL Redirection"
-msgstr "URL Doorverwijzing"
-
-msgid "Username"
-msgstr "Gebruikersnaam"
-
-msgid "Users to import:"
-msgstr "Te importeren gebruikers:"
+msgid "Path"
+msgstr "Pad"
 
 msgid "You did not enter a path."
 msgstr "U heeft geen pad opgegeven."
 
-#, c-format
-msgid ""
-"You don't have any Graphics Toolkit activated to handle JPEG images.  If you "
-"import now, you will not have any thumbnails.  Visit the <a href=\"%s"
-"\">Modules</a> page to activate a Graphics Toolkit."
+msgid "The path that you entered is invalid."
+msgstr "Het opgegeven pad is ongeldig."
+
+msgid "Recently Used Paths"
+msgstr "Onlangs Gebruikte Paden"
+
+msgid "Gallery can redirect old Gallery1 URLs to the new Gallery2 pages."
 msgstr ""
-"U heeft geen Grafische Toolkit geactiveerd om JPEG afbeeldingen te "
-"verwerken. Als u nu gaat importeren, zult u geen miniaturen hebben. Ga naar "
-"de <a href=\"%s\">Modules</a> pagina om een Grafische Toolkit te activeren."
-
-msgid "You must choose something to import!"
-msgstr "U moet iets kiezen om te importeren!"
-
-msgid "You must specify a custom field name"
-msgstr "U dient een maatwerk veldnaam op te geven"
-
-msgid ""
-"Your Gallery 1 will be converted from this character encoding into UTF-8:"
-msgstr ""
-"Uw Gallery 1 zal worden geconverteerd van deze karakter codering naar UTF-8:"
-
-#, c-format
-msgid "Error while importing %d album."
-msgid_plural "Errors while importing %d albums."
-msgstr[0] "Fout opgetreden bij het importeren van %d album."
-msgstr[1] "Fout opgetreden bij het importeren van %d albums."
-
-#, c-format
-msgid "Error while importing %d user."
-msgid_plural "Errors while importing %d users."
-msgstr[0] "Fout opgetreden bij het importeren van %d gebruiker."
-msgstr[1] "Fout opgetreden bij het importeren van %d gebruikers."
-
-#, c-format
-msgid "Successfully imported %d album."
-msgid_plural "Successfully imported %d albums."
-msgstr[0] "Succesvol %d album geïmporteerd."
-msgstr[1] "Succesvol %d albums geïmporteerd."
-
-#, c-format
-msgid "Successfully imported %d user."
-msgid_plural "Successfully imported %d users."
-msgstr[0] "Succesvol %d gebruiker geïmporteerd."
-msgstr[1] "Succesvol %d gebruikers geïmporteerd."
+"Gallery kan oude Gallery 1 URLs doorverwijzen naar de nieuwe Gallery 2 "
+"pagina's."
 
 #, c-format
 msgid "There is one G1->G2 map entry"
 msgid_plural "There are %d G1->G2 map entries"
 msgstr[0] "Er is één G1->G2 map ingang"
 msgstr[1] "Er zijn %d G1->G2 map ingangen"
+
+msgid ""
+"Deleting map entries will cause old G1 URLs to produce HTTP Not Found errors "
+"instead of redirecting to G2 pages.  Delete all entries?"
+msgstr ""
+"Verwijderen van map ingangen zal ervoor zorgen dat oude Gallery 1 URL een "
+"'HTTP Not Found' foutmelding zullen geven, in plaats van doorverwijzen naar "
+"de Gallery 2 pagina's. Verwijder alle ingangen?"
+
+msgid "Delete All"
+msgstr "Vewijder Alles"
+
+msgid "Map entries deleted successfully"
+msgstr "Map ingangen succesvol verwijderd"
