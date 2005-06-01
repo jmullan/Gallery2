@@ -39,7 +39,8 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
-sort($strings);
+/* We don't sort any more, to preserve some msg context. */
+/*sort($strings);*/
 print join("\n", $strings) . "\n";
 
 /**
