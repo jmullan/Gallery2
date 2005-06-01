@@ -40,7 +40,7 @@ class SessionTest extends GalleryTestCase {
 
     function setUp() {
 	parent::setUp();
-	
+
 	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
 
 	/* Backup things that we will overwrite during the test */
@@ -56,10 +56,10 @@ class SessionTest extends GalleryTestCase {
 	foreach ($this->_originalServerVars as $key => $value) {
 	    $_SERVER[$key] = $value;
 	}
-	
+
 	parent::tearDown();
     }
-    
+
     function testGetAndPut() {
 	global $gallery;
 	$key = 'test-key';
@@ -203,7 +203,7 @@ class SessionTest extends GalleryTestCase {
 	global $gallery;
 	$saveSession = $gallery->_session;
 	$isUsingCookies = $saveSession->isUsingCookies();
-	
+
 	/* Test an illegal sessionId */
 	$_COOKIE[SESSION_ID_PARAMETER] = '../oops.txt';
 	if (!$isUsingCookies) {
@@ -279,7 +279,7 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assertEquals(array('j' => 'b'), $session->getStatus($otherStatusId));
 
-	// Restore original session
+	/* Restore original session */
 	$gallery->_session =& $saveSession;
     }
 
@@ -598,15 +598,14 @@ class SessionTest extends GalleryTestCase {
 	    if (!empty($cookieDomain)) {
 		/* escape dots in cookieDomain */
 		$cookieDomain = str_replace('.', '\\.', $cookieDomain);
-		$this->assertEquals(1, preg_match('/domain= ' . $cookieDomain . '(?:[,;].*)?$/i',
-						  $cookie),
-				    'Wrong cookie domain in cookie: "' . $cookie . '"');
+		$this->assert(preg_match('/domain=' . $cookieDomain . '(?:[,;].*)?$/i', $cookie),
+			      "Missing domain=$cookieDomain in cookie: '$cookie'");
 	    }
 	} else {
 	    $this->assert(0, 'G2 session cookie does not exist!');
 	}
     }
-    
+
     /*
      * Test for various host strings if the correct cookie domain is generated.
      */
@@ -624,44 +623,44 @@ class SessionTest extends GalleryTestCase {
 	$testCases[] = array('host' => '127.0.0.1', 'er' => '');
 	$testCases[] = array('host' => '127.0.0.1:8080', 'er' => '');
 	$testCases[] = array('host' => 'user:pass@127.0.0.1', 'er' => '');
-	
+
 	/* Backup things that we will overwrite during the test */
-	foreach ($this->_originalServerVars['keys'] as $key) {
+	foreach (array_keys($this->_originalServerVars) as $key) {
 	    unset($_SERVER[$key]);
 	}
-	
+
 	/* Create a test session with cookie support put well known data in it. */
 	$_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
 	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
-	
+
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	/*
 	 * Generate for each of the test cases the cookie domain and compare it to the expected
 	 * result
 	 */
 	foreach ($testCases as $testCase) {
 	    $_SERVER['HTTP_HOST'] = $testCase['host'];
-	    
+
 	    /* Reset session to clear the cached cookieDomain */
 	    $ret = $session->reset();
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    /* Do the actual test */
 	    $this->assertEquals($testCase['er'], $session->getCookieDomain(),
 				'Failed for host string "' . $testCase['host'] . '"!');
 	}
-	
+
 	$ret = $session->reset();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
- 	}
+	}
     }
 }
 ?>
