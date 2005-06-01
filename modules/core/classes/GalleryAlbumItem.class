@@ -210,16 +210,14 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	/* Create default preferences */
 	/* XXX: parameterize this */
-	$ret = GalleryCoreApi::addDerivativePreference(0, $this->getId(),
-						       DERIVATIVE_TYPE_IMAGE_THUMBNAIL,
-						       'thumbnail|150');
+	$ret = GalleryCoreApi::addDerivativePreference(
+	    0, $this->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL, 'thumbnail|150');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
-	$ret = GalleryCoreApi::addDerivativePreference(0, $this->getId(),
-						       DERIVATIVE_TYPE_IMAGE_RESIZE,
-						       'scale|640');
+	$ret = GalleryCoreApi::addDerivativePreference(
+	    0, $this->getId(), DERIVATIVE_TYPE_IMAGE_RESIZE, 'scale|640');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -243,7 +241,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 
 	$platform = $gallery->getPlatform();
 
-	list($ret, $perm) = GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.directory');
+	list($ret, $perm) = GalleryCoreApi::getPluginParameter(
+	    'module', 'core', 'permissions.directory');
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -320,17 +319,18 @@ class GalleryAlbumItem_core extends GalleryItem {
      * @param string the path component
      * @return object GalleryStatus a status code
      */
-    function rename($newname) {
+    function rename($newName) {
 	global $gallery;
 
-	if ($newname == $this->getPathComponent()) {
+	if ($newName == $this->getPathComponent()) {
 	    return GalleryStatus::success();
 	}
 
 	/*
 	 * Read lock the parent so that we don't have a race condition below.
 	 */
-	if (GalleryCoreApi::isReadLocked($this->getParentId()) || GalleryCoreApi::isWriteLocked($this->getParentId())) {
+	if (GalleryCoreApi::isReadLocked($this->getParentId()) ||
+	        GalleryCoreApi::isWriteLocked($this->getParentId())) {
 	    $lockId = null;
 	} else {
 	    list ($ret, $lockId) = GalleryCoreApi::acquireReadLock($this->getParentId());
@@ -355,14 +355,17 @@ class GalleryAlbumItem_core extends GalleryItem {
 	 * our locks at the end.
 	 */
 	$error = null;
-	$ret = parent::rename($newname);
+	$ret = parent::rename($newName);
 	if ($ret->isError()) {
 	    $error = $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* The parent class may have changed/sanitized the pathComponent, so get it again */
+	$newName = $this->getPathComponent();
+
 	if (!isset($error)) {
 	    /* Check to see if the desired path exists. */
-	    $newPath = dirname($currentPath) . '/' . $newname;
+	    $newPath = dirname($currentPath) . '/' . $newName;
 	    if ($platform->file_exists($newPath)) {
 		$error = GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	    }
@@ -402,8 +405,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 	$oldChildParentSequence = array_merge($oldParentSequence, array($this->getId()));
 
 	/*
-	 * Perform the move.  Note that *after* the move, my parent id is going to be different so the
-	 * getParentId() calls are going to return $newParentId
+	 * Perform the move.  Note that *after* the move, my parent id is going to be different so
+	 * the getParentId() calls are going to return $newParentId
 	 */
 	$ret = parent::move($newParentId);
 	if ($ret->isError()) {
@@ -425,7 +428,8 @@ class GalleryAlbumItem_core extends GalleryItem {
 	}
 
 	/* Convert my children's parent sequences */
-	$ret = GalleryCoreApi::updateParentSequence($oldChildParentSequence, $newChildParentSequence);
+	$ret = GalleryCoreApi::updateParentSequence(
+	    $oldChildParentSequence, $newChildParentSequence);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}

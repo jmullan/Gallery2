@@ -762,7 +762,7 @@ class AlbumTest extends GalleryTestCase {
 
     function testFetchAlbumTreeNoPermissions() {
 	global $gallery;
-	
+
 	list ($ret, $user) = $this->_createRandomUser();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -807,6 +807,89 @@ class AlbumTest extends GalleryTestCase {
 	}
 
 	$this->assertEquals(array(), $tree);
+    }
+
+    function testCreateAlbumWithLeadingAndTrailingSpace() {
+	global $gallery;
+
+	$albumName = sprintf(' album %d test ', rand());
+	list ($ret, $album) = GalleryCoreApi::createAlbum(
+	    $this->_parentAlbum->getId(), $albumName,
+	    'title', 'summary', 'description', 'keywords');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album) = $album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $path) = $album->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(trim($albumName), basename($path));
+	$this->assertEquals(trim($albumName), $album->getPathComponent());
+
+	/*
+	 * Verify that the path in the database matches the path on disk, since we're expecting
+	 * that the whitespace will get trimmed on both sides.
+	 */
+	$platform = $gallery->getPlatform();
+	$this->assert($platform->file_exists($path), 'Path doesn\'t exist');
+    }
+
+    function testRenameAlbumToHaveLeadingAndTrailingSpace() {
+	global $gallery;
+
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$newAlbumName = sprintf(' album %d test ', rand());
+
+	list ($ret, $locks[]) = GalleryCoreApi::acquireWriteLock($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $album->rename($newAlbumName);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = $album->save();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $album) = $album->refresh();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $path) = $album->fetchPath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$ret = GalleryCoreApi::releaseLocks($locks);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/*
+	 * Verify that the path in the database matches the path on disk, since we're expecting
+	 * that the whitespace will get trimmed on both sides.
+	 */
+	$platform = $gallery->getPlatform();
+	$this->assert($platform->file_exists($path), 'Path doesn\'t exist');
+
+	$this->assertEquals(trim($newAlbumName), basename($path));
+	$this->assertEquals(trim($newAlbumName), $album->getPathComponent());
     }
 }
 
