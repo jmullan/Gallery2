@@ -39,31 +39,32 @@ foreach ($_SERVER['argv'] as $moduleDir) {
     find($moduleDir);
 }
 $strings = array_keys($strings);
-/* We don't sort any more, to preserve some msg context. */
-/*sort($strings);*/
-print join("\n", $strings) . "\n";
+print implode("\n", $strings) . "\n";
 
 /**
  * Recursive go through subdirectories
  */
 function find($dir) {
-    if (is_dir($dir)) {
-	if ($dh = opendir($dir)) {
-	    while (($file = readdir($dh)) !== false) {
-		if ($file == '.' || $file == '..') {
-		    continue;
-		}
-		$filename = $dir . '/' . $file;
-		$type = filetype($filename);
-		if ($type == 'dir') {
-		    find($filename);
-		}
-		global $exts;
-		if (preg_match("/\." . $exts . "$/", $file)) {
-		    extractStrings($filename);
-		}
+    if (is_dir($dir) && $dh = opendir($dir)) {
+	$listing = array();
+	while (($file = readdir($dh)) !== false) {
+	    if ($file == '.' || $file == '..') {
+		continue;
 	    }
-	    closedir($dh);
+	    $listing[] = $file;
+	}
+	closedir($dh);
+	sort($listing);
+	global $exts;
+	foreach ($listing as $file) {
+	    $filename = $dir . '/' . $file;
+	    $type = filetype($filename);
+	    if ($type == 'dir') {
+		find($filename);
+	    }
+	    if (preg_match("/\." . $exts . "$/", $file)) {
+		extractStrings($filename);
+	    }
 	}
     }
 }
