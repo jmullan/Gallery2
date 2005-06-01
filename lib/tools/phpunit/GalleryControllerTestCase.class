@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -47,6 +47,9 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+
+	$this->_controller->setImmediateStatusView(
+	    new GalleryControllerTestCaseMockImmediateStatusView());
     }
 
     function setUp() {
@@ -64,10 +67,11 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	list ($ret, $results) = $this->_controller->handleRequest($form);
 	if (isset($errorCode)) {
 	    if (($ret->getErrorCode() & $errorCode) != $errorCode) {
-		$this->assert(false,
-			      sprintf('Expected error code (%s) but received (%s)',
-				      join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
-				      join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
+		$this->assert(
+		    false, sprintf(
+			'Expected error code (%s) but received (%s)',
+			join(' | ', GalleryStatus::getErrorCodeConstants($errorCode)),
+			join(' | ', GalleryStatus::getErrorCodeConstants($ret->getErrorCode()))));
 	    }
 	} else if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -75,12 +79,53 @@ class GalleryControllerTestCase extends GalleryTestCase {
 	    /* Check to make sure we got back everything we want */
 	    $this->assert(isset($results['status']), 'controller results missing status');
 	    $this->assert(isset($results['error']), 'controller results missing error');
-	    $this->assert(isset($results['redirect']) || isset($results['delegate']) || isset($results['return']),
+	    $this->assert(isset($results['redirect']) || isset($results['delegate']) ||
+			      isset($results['return']),
 			  'controller results needs one of (redirect, delegate)');
 	}
 
 	return $results;
     }
+}
 
+/**
+ * Mock immediate status view for controllers that use one.  Right now it does nothing, but it can
+ * be extended to buffer up data and regurgitate it so that we can verify that options are doing
+ * the right thing during our tests.
+ */
+class GalleryControllerTestCaseMockImmediateStatusView {
+    function resetTimingStats() {
+    }
+
+    function doLoadImmediateTemplate() {
+	return GalleryStatus::success();
+    }
+
+    function renderHeader($pageTitle, $sectionTitle, $sectionDescription) {
+	return GalleryStatus::success();
+    }
+
+    function renderStatusMessage($title, $description, $percentComplete) {
+	return GalleryStatus::success();
+    }
+
+    function renderRedirect($redirectUrl) {
+	return GalleryStatus::success();
+    }
+
+    function renderFooter() {
+	return GalleryStatus::success();
+    }
+
+    function setMain($main) {
+	return GalleryStatus::success();
+    }
+
+    function setFlushed($val) {
+    }
+
+    function getFlushed() {
+	return false;
+    }
 }
 ?>
