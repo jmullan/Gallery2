@@ -26,8 +26,6 @@
  * @author Jay Rossiter <cryptopgraphite@users.sf.net>
  */
 
-GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/MailHelper_simple.class');
-
 /**
  * Test mail functionality
  *
@@ -54,11 +52,11 @@ class MailHelperTest extends GalleryTestCase {
 
     function testSendTemplatedEmail() {
 	global $gallery;
-        
+
         $platform = $gallery->getPlatform();
         $gallery->_platform = new MailHelperDummyPlatform($platform);
 
-        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', ''); 
+        $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'smtp.from', '');
         if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
@@ -70,7 +68,7 @@ class MailHelperTest extends GalleryTestCase {
 	    'headers' => '');
 
 	/* Test that the from header is empty */
-	$ret = MailHelper_simple::sendTemplatedEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -82,7 +80,7 @@ class MailHelperTest extends GalleryTestCase {
 	$emailData['headers'] = "From: $from\r\n";
 
 	/* Test that the from header is retrieved from function input */
-	$ret = MailHelper_simple::sendTemplatedEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -95,7 +93,7 @@ class MailHelperTest extends GalleryTestCase {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
 
-	$ret = MailHelper_simple::sendTemplatedEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -107,12 +105,12 @@ class MailHelperTest extends GalleryTestCase {
 	$emailData['headers'] = "From: $from\r\n";
 
 	/* Test that the from header is preferred from the function over the core.smtp.from field */
-	$ret = MailHelper_simple::sendTemplatedEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, $from, $emailData['to'], $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals($emailData, $gallery->_platform->getMailData(), 
+	$this->assertEquals($emailData, $gallery->_platform->getMailData(),
 			    'function over smtp.from');
     }
 
@@ -120,7 +118,7 @@ class MailHelperTest extends GalleryTestCase {
 	global $gallery;
 
         $platform = $gallery->getPlatform();
-        $gallery->_platform = new MailHelperDummyPlatform($platform);
+	$gallery->_platform = $dummyPlatform = new MailHelperDummyPlatform($platform);
 
 	$emailData = array(
 	    'to' => 'mailhelpertest@test.com',
@@ -130,25 +128,25 @@ class MailHelperTest extends GalleryTestCase {
 
 	$multiTo = "test1@example.com,test2@example.com,test3@example.com,test4@example.com";
 
-	$ret = MailHelper_simple::sendTemplatedEmail(
+	$ret = GalleryCoreApi::sendTemplatedEmail(
 	    $this->templateFile, $emailData, null, $multiTo, $emailData['subject']);
 	if ($ret->isError()) {
 	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals(4, $gallery->_platform->mailedCount, 'MailedCount incorrect');
+	$this->assertEquals(4, $dummyPlatform->getMailedCount(), 'MailedCount incorrect');
     }
 }
 
-/**     
+/**
  * Dummy GalleryPlatform for MailHelperTest
- *          
+ *
  * @package GalleryCore
  * @subpackage PHPUnit
  */
 class MailHelperDummyPlatform {
     function MailHelperDummyPlatform($platform) {
 	$this->_platform = $platform;
-	$this->mailedCount = 0;
+	$_REQUEST['mailedCount'] = 0;
     }
 
     function mail($to, $subject, $body, $headers=null) {
@@ -159,8 +157,12 @@ class MailHelperDummyPlatform {
 		  'body' => trim($body),
 		  'headers' => $headers));
 
-	$this->mailedCount++;
+	$_REQUEST['mailedCount']++;
 	return true;
+    }
+
+    function getMailedCount() {
+	return $_REQUEST['mailedCount'];
     }
 
     function getMailData() {
