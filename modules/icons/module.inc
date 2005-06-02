@@ -37,7 +37,7 @@ class IconsModule extends GalleryModule {
 	$this->setId('icons');
 	$this->setName($gallery->i18n('Icons'));
 	$this->setDescription($gallery->i18n('Display icons for links'));
-	$this->setVersion('0.9.2');
+	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -59,6 +59,30 @@ class IconsModule extends GalleryModule {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
+	}
+
+	if (empty($currentVersion)) {
+	    return GalleryStatus::success();
+	}
+
+	switch ($currentVersion) {
+	case '0.9.0':
+	case '0.9.1':
+	case '0.9.2':
+	    if (isset($params['iconpack']) && $params['iconpack'] == 'paularmstrongdesigns.com') {
+		/* Removed ".com" from paularmstrongdesigns.com dir, IIS 5.1 didn't like it */
+		$ret = $this->setParameter('iconpack', 'paularmstrongdesigns');
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	case 'end of upgrade path':
+	    break;
+
+	default:
+	    return GalleryStatus::error(ERROR_BAD_PLUGIN, __FILE__, __LINE__,
+					sprintf('Unknown module version %s', $currentVersion));
 	}
 
 	return GalleryStatus::success();
