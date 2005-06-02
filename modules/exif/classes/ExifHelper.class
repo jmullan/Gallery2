@@ -54,7 +54,7 @@ define('IPTC_ITEM_KEYWORDS', 4);
 
 /**
  * A helper class for the EXIF module.
- * 
+ *
  * This class follows the Adapter pattern: 2 foreign packages with totally different APIs are made
  * compatible with the G2 API. Methods starting with '_' (underscore), though not neccessarily
  * declared private, must only be used internally in this class or subclasses.
@@ -191,7 +191,7 @@ class ExifHelper {
 	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/exifer/exif.inc');
 
 	$platform = $gallery->getPlatform();
-	if (! $platform->file_exists($path)) {
+	if (!$platform->file_exists($path)) {
 	    $rawExifData = null;
 	    return;
 	}
@@ -215,13 +215,13 @@ class ExifHelper {
      * @return object  the JPEG object containing the IPTC data
      * @see getIptcValue()
      * @TODO(xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
-     *      to lazy reading. Before refactoring, add timing tests. 
+     *      to lazy reading. Before refactoring, add timing tests.
      */
     function getIptcObject($path) {
 	global $gallery;
 
 	$platform = $gallery->getPlatform();
-	if (! $platform->file_exists($path)) {
+	if (!$platform->file_exists($path)) {
 	    return null;
 	}
 	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/JPEG/JPEG.inc');
@@ -265,7 +265,7 @@ class ExifHelper {
 	    for ($i = 1; $i < sizeof($exifKeys[$property]); $i++) {
 		$value =
 		    ExifHelper::getExifValue($rawExifData, explode('.', $exifKeys[$property][$i]));
-		if (! isset($value)) {
+		if (!isset($value)) {
 		    $value =
 			ExifHelper::getIptcValue($iptcObj, explode('.', $exifKeys[$property][$i]));
 		}
@@ -320,7 +320,7 @@ class ExifHelper {
 		$time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
 			       (int)$m[2], (int)$m[3], (int)$m[1]);
 	    }
-	    if ($time > 0) {
+	    if (!empty($time)) {
 		if (isset($m[8])) {
 		    $offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
 		    if ($m[8] == '+') {
@@ -343,7 +343,7 @@ class ExifHelper {
      *
      * @param string the path to the file
      * @return int an unix timestamp
-     * @TODO(xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only 
+     * @TODO(xlerb) check for IPTC.DateCreated and IPTC.TimeCreated additionally? Problem: only
      *      date set by Adobe in IPTC, set time to 0 = midnight or 12 = noon? Also, which priority
      *      has it: it was explicitely set by the editor, thus first priority? Or to be considered
      *      just before IFD0.DateTime == last modification time?
@@ -356,7 +356,7 @@ class ExifHelper {
 	 * As of specs and practice with raw camera images and Adobe manipulated ones it seems,
 	 * that SubIFD.DateTimeOriginal and SubIFD.DateTimeDigitized indicate creation time:
 	 * both are set to shot time by cameras, scanners set only SubIFD.DateTimeDigitized.
-	 * Adobe sets IFD0.DateTime to the last modification date/time. So we preferr creation
+	 * Adobe sets IFD0.DateTime to the last modification date/time. So we prefer creation
 	 * dates.
 	 */
 	foreach (array('SubIFD.DateTimeOriginal', 'SubIFD.DateTimeDigitized', 'IFD0.DateTime')
@@ -373,7 +373,7 @@ class ExifHelper {
 		    $time = mktime((int)$m[4], (int)$m[5], (int)$m[6],
 				   (int)$m[2], (int)$m[3], (int)$m[1]);
 		}
-		if ($time > 0) {
+		if (!empty($time)) {
 		    if (isset($m[8])) {
 			$offset = ((int)$m[9] * 60 + (isset($m[11]) ? (int)$m[11] : 0)) * 60;
 			if ($m[8] == '+') {
@@ -428,11 +428,11 @@ class ExifHelper {
      * If the key path starts with 'IPTC', the second part is assumed to contain the physical
      * IPTC name, more parts are silently ignored. When the path does not start with 'IPTC', this
      * method returns null.
-     * 
+     *
      * @param object   A JPEG object containing the IPTC values
      * @param array    The key path
      * @param string   Source encoding of the IPTC value, e.g. 'ISO-8859-1', defaults from current
-     *                 locale 
+     *                 locale
      * @return string  An IPTC value or null, if there is no such value or on error
      * @static
      * @TODO(xlerb) have IPTC input charset default in EXIF/IPTC admin interface.
@@ -467,7 +467,7 @@ class ExifHelper {
      *       'internationalized title 1',
      *       'physical exif property' [, 'another physical exif property', ...])
      *   ...
-     *   
+     *
      *   The G2 exif/iptc properties are unique and have some correlation to the physical
      *   properties, but have been changed for our convenience, especially allowing to access
      *   several physical exif/iptc properties for one and the same logical G2 exif/iptc property.
