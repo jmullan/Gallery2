@@ -41,8 +41,8 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
     }
 
     function setUp() {
-    	global $gallery;
-    	parent::setUp();
+	global $gallery;
+	parent::setUp();
 	$_SERVER['HTTP_HOST'] = 'example.com';
 	$_SERVER['SERVER_PORT'] = 80;
 	$_SERVER['QUERY_STRING'] = '';
@@ -89,7 +89,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
     }
 
     function tearDown() {
-    	global $gallery;
+	global $gallery;
 
 	$ret = RewriteMap::setActiveRules($this->_saveActiveRules);
 	if ($ret->isError()) {
@@ -97,7 +97,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-    	parent::tearDown();
+	parent::tearDown();
     }
 
     function testInit() {
@@ -150,7 +150,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	list ($ret, $testItem) = $this->_createRandomDataItem(
 	    $testAlbum->getId(),
 	    'application/unknown',
-	    array('pathComponent' => 'foo# bar.dat'));
+	    array('pathComponent' => 'foo# bar&.dat'));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -164,8 +164,8 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$testItemPath = str_replace(' ', '+', $testItemPath);
-	$testItemPath = str_replace('#', '%2523', $testItemPath);
+	/* Expect double-urlencoded # -- see comment in RewriteUrlGenerator */
+	$testItemPath = str_replace('%2F', '/', urlencode(str_replace('#', '%23', $testItemPath)));
 
 	$tests = array();
 	/* core.ShowItem on albums have the logical path */

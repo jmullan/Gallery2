@@ -194,8 +194,9 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			    $path .= '.html';
 			}
 			/*
-			 * urlencode except for path separators(/), and double-urlencode
-			 * punds(#) so we don't generate an illigal URL.
+			 * urlencode except for path separators(/)
+			 * double-urlencode # to workaround mod_rewrite problem(bug?) where
+			 *   g2_path value is truncated at # when only single urlencoded.
 			 */
 			$url = str_replace('%path%', str_replace('%2F', '/',
 			    urlencode(str_replace('#', '%23', substr($path, 1)))), $url);
