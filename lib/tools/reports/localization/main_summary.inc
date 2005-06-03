@@ -38,7 +38,12 @@
 		<?php print round($summaryData['fuzzy']) ?>%
 	      </td>
 	      <td class="<?php print modifier('untranslated') ?>">
-		<?php print round($summaryData['untranslated']) ?>%
+		<?php
+		  print '<span title="overall untranslated including missing *.po files">'
+		    . round(100 - $summaryData['translated'])
+		    . '%</span> (<span title="untranslated in existing *.po files">'
+		    . round($summaryData['untranslated']) . '%</span>)';
+		?>
 	      </td>
 	      <td class="<?php print modifier('obsolete') ?>">
 		<?php print round($summaryData['obsolete']) ?>%

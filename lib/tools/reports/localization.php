@@ -277,7 +277,7 @@ function parsePoFiles($poFiles) {
 
     /* Sort locales by overall total */
     uasort($poData, 'sortByPercentDone');
-    
+
     return $poData;
 }
 
@@ -291,7 +291,7 @@ function parsePoFiles($poFiles) {
  * 
  * @param array  first entry to sort
  * @param array  second entry to sort
- * @return int   -1, 0, +1, depending an the comparision
+ * @return int   -1, 0, +1, depending on the comparision
  */
 function sortByPercentDone($a, $b) {
     if (isset($a['missing']) && !isset($b['missing'])) {
