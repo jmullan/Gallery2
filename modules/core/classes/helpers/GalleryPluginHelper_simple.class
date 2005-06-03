@@ -137,6 +137,8 @@ class GalleryPluginHelper_simple {
 			 * Forcibly abort this request and jump to the upgrader so this
 			 * module can be upgraded.
 			 */
+			$gallery->debug("Unable to deactivate $pluginId, jumping to upgrader.");
+			$gallery->debug_r($redirectInfo);
 			$urlGenerator =& $gallery->getUrlGenerator();
 			header('Location: ' .
 			       $urlGenerator->getCurrentUrlDir(true) . 'upgrade/index.php');
@@ -146,7 +148,7 @@ class GalleryPluginHelper_simple {
 		    /*  Return a handleable error */
 		    return array(GalleryStatus::error(ERROR_PLUGIN_VERSION_MISMATCH,
 						      __FILE__, __LINE__,
-                                     sprintf('[%s] db: (v: %s core api: %s, %s api: %s) '.
+				     sprintf('[%s] db: (v: %s core api: %s, %s api: %s) '.
 					     'code: (v: %s core api: %s, %s api: %s) ',
 					     $pluginId,
 					     $s['version'],
@@ -181,13 +183,13 @@ class GalleryPluginHelper_simple {
 	$pluginType = $plugin->getPluginType();
 	return GalleryUtilities::isCompatibleWithApi(
 	    $plugin->getRequiredCoreApi(), GalleryCoreApi::getApiVersion()) &&
-	    (($pluginType == 'module' && 
+	    (($pluginType == 'module' &&
 	      GalleryUtilities::isCompatibleWithApi(
 		  $plugin->getRequiredModuleApi(), GalleryModule::getApiVersion())) ||
-	     ($pluginType == 'layout' && 
+	     ($pluginType == 'layout' &&
 	      GalleryUtilities::isCompatibleWithApi(
 		  $plugin->getRequiredLayoutApi(), GalleryLayout::getApiVersion())));
-    }	
+    }
 
     /**
      * Convenience method to retrieve a plugin parameter
@@ -253,18 +255,18 @@ class GalleryPluginHelper_simple {
 							 'id' => $pluginId));
 	    if (!isset($data)) {
 		$query = '
-                  SELECT
-                    [GalleryPluginParameterMap::parameterName],
-                    [GalleryPluginParameterMap::parameterValue]
-                  FROM
-                    [GalleryPluginParameterMap]
-                  WHERE
-                    [GalleryPluginParameterMap::pluginType] = ?
-                    AND
-                    [GalleryPluginParameterMap::pluginId] = ?
-                    AND
-                    [GalleryPluginParameterMap::itemId] = ?
-                  ';
+		  SELECT
+		    [GalleryPluginParameterMap::parameterName],
+		    [GalleryPluginParameterMap::parameterValue]
+		  FROM
+		    [GalleryPluginParameterMap]
+		  WHERE
+		    [GalleryPluginParameterMap::pluginType] = ?
+		    AND
+		    [GalleryPluginParameterMap::pluginId] = ?
+		    AND
+		    [GalleryPluginParameterMap::itemId] = ?
+		  ';
 
 		list ($ret, $searchResults) =
 		    $gallery->search($query, array($pluginType, $pluginId, $itemId));
@@ -307,7 +309,7 @@ class GalleryPluginHelper_simple {
 	if ($ignoreCache || !GalleryDataCache::containsKey($cacheKey)) {
 	    if (!$ignoreCache) {
 		$plugins =& GalleryDataCache::getFromDisk(
-                    array('type' => $pluginType,
+		    array('type' => $pluginType,
 			  'itemId' => 'GalleryPluginHelper_fetchPluginStatus',
 			  'id' => '_all'));
 	    }
@@ -355,7 +357,7 @@ class GalleryPluginHelper_simple {
 			    foreach ($frameworkParams as $paramName) {
 				list ($ret, $plugins[$pluginId][$paramName]) =
 				    GalleryPluginHelper_simple::getParameter(
-                                        $pluginType, $pluginId, '_' . $paramName);
+					$pluginType, $pluginId, '_' . $paramName);
 				if ($ret->isError()) {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
@@ -426,14 +428,14 @@ class GalleryPluginHelper_simple {
 	$cacheKey = "GalleryPluginHelper::fetchPluginList($pluginType)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
 	    $query = '
-            SELECT
-              [GalleryPluginMap::pluginId],
-              [GalleryPluginMap::active]
-            FROM
-              [GalleryPluginMap]
-            WHERE
-              [GalleryPluginMap::pluginType] = ?
-            ';
+	    SELECT
+	      [GalleryPluginMap::pluginId],
+	      [GalleryPluginMap::active]
+	    FROM
+	      [GalleryPluginMap]
+	    WHERE
+	      [GalleryPluginMap::pluginType] = ?
+	    ';
 
 	    list ($ret, $searchResults) = $gallery->search($query, array($pluginType));
 	    if ($ret->isError()) {
