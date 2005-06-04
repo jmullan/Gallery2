@@ -206,6 +206,9 @@ function _GalleryMain($returnHtml=false) {
 		$redirectUrl = $navigationLinks[0]['url'];
 	    } else {
 		$redirectUrl = GalleryUtilities::getRequestVariables('return');
+		if (empty($redirectUrl)) {
+		    $redirectUrl = GalleryUtilities::getRequestVariables('formUrl');
+		}
 	    }
 	}
 
