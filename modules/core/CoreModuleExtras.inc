@@ -82,6 +82,17 @@ class CoreModuleExtras {
 	 */
 	switch ($currentVersion) {
 	case '0':
+	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
+		$flockType = 'database';
+	    } else {
+		$fileToLock = $platform->fopen(__FILE__, 'r');
+		if ($platform->flock($fileToLock, LOCK_SH, false)) {
+		    $flockType = 'flock';
+		} else {
+		    $flockType = 'database';
+		}
+		$platform->fclose($fileToLock);
+	    }
 	    /* Initial install.  Make sure all our module parameters are set. */
 	    GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/GalleryTranslator.class');
 	    foreach (array('permissions.directory' => '0755',
@@ -98,7 +109,7 @@ class CoreModuleExtras {
 			   'session.inactivityTimeout' => 14 * 86400, /* two weeks */
 			   'misc.markup' => 'bbcode',
 			   'misc.login' => 'both',
-			   'lock.system' => 'flock',
+			   'lock.system' => $flockType
 			   ) as $key => $value) {
 		if (!isset($param[$key])) {
 		    $ret = $module->setParameter($key, $value);
