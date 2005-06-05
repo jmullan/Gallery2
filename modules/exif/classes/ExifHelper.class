@@ -212,7 +212,8 @@ class ExifHelper {
      * it isn't read here, that happens lazily when actually accessing IPTC values.
      *
      * @param string   the path to a jpeg file
-     * @return object  the JPEG object containing the IPTC data
+     * @return array   object GalleryStatus a status code
+     *                 object  the JPEG object containing the IPTC data
      * @see getIptcValue()
      * @TODO(xlerb) reduce size of lib/JPEG: 1. remove whitespace/comments; 2. refactor according
      *      to lazy reading. Before refactoring, add timing tests.
@@ -222,7 +223,9 @@ class ExifHelper {
 
 	$platform = $gallery->getPlatform();
 	if (!$platform->file_exists($path)) {
-	    return null;
+	    return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__,
+					      "Missing $path"),
+			 null);
 	}
 	GalleryCoreApi::relativeRequireOnce('modules/exif/lib/JPEG/JPEG.inc');
 	$result = new JPEG($path);
@@ -234,7 +237,7 @@ class ExifHelper {
 	    ob_end_clean();
 	    $gallery->debug(str_replace("\0", '', $buf));
 	}
-	return $result;
+	return array(GalleryStatus::success(), $result);
     }
 
     /**
@@ -251,7 +254,11 @@ class ExifHelper {
     function getExifData($path, $viewMode) {
 	$rawExifData = array();
 	ExifHelper::_fetchRawExifData($path, $rawExifData);
-	$iptcObj = ExifHelper::getIptcObject($path);
+	list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
 	$exifKeys = ExifHelper::getExifKeys();
 
 	$results = array();

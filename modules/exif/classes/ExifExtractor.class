@@ -74,7 +74,10 @@ class ExifExtractor extends ExifInterface_1_0 {
 	    $data[$itemId] = array();
 	    $rawExifData = read_exif_data_raw($path, false);
 	    require_once(dirname(__FILE__) . '/ExifHelper.class');
-	    $iptcObj = ExifHelper::getIptcObject($path);
+	    list ($ret, $iptcObj) = ExifHelper::getIptcObject($path);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    foreach (ExifHelper::getExifKeys() as $property => $keyData) {
 		if (!empty($properties) && !in_array($property, $properties)) {
 		    continue;

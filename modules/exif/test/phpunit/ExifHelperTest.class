@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -49,7 +49,7 @@
  *      Tests to add are especially JPEG files manipulated by more than one IPTC capable
  *      application in turn, e.g. PS->Exifer->IrfanView. Also the current jpeg files are
  *      all produced on little endian machines. Small jpeg files produced on big endian
- *      machines and stored as big endian would provide for another neccessary test. 
+ *      machines and stored as big endian would provide for another neccessary test.
  */
 class ExifHelperTest extends GalleryTestCase {
 
@@ -164,8 +164,11 @@ class ExifHelperTest extends GalleryTestCase {
      * to only XMP data, which is not distinguishable in current Adobe products).
      */
     function testGetRawIptcDataAdobe() {
-	$iptcObj =
+	list ($ret, $iptcObj) =
 	    ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/exif-iptc-xmp-ps.jpg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assert(isset($iptcObj));
 
 	$data = ExifHelper::getIptcValue($iptcObj, array('IPTC', 'Keywords'));
@@ -218,7 +221,7 @@ class ExifHelperTest extends GalleryTestCase {
 	/*
 	 * TODO(xlerb) This test fails. Adobe PS does not set the field CopyrightFlag into
 	 * any true IPTC value. Also, 'CopyrightFlag' is named 'Urgency' in the IPTC specification.
-	 * Other IPTC apps partly seem to support 'Urgency'. 
+	 * Other IPTC apps partly seem to support 'Urgency'.
 	 */
 	/*
 	$data = ExifHelper::getIptcValue($iptcObj, array('IPTC', 'CopyrightFlag'));
@@ -249,12 +252,16 @@ class ExifHelperTest extends GalleryTestCase {
 
 
     /**
-     * Test getting IPTC data from an Exifer for Windows test file, see 
+     * Test getting IPTC data from an Exifer for Windows test file, see
      * (http://www.exifer.friedemann.info/) which does not know about XMP data. The author reports
      * problems with some PHP software, so let's make sure, we are doing things right.
      */
     function testGetRawIptcDataExifer() {
-	$iptcObj = ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-exifer.jpg');
+	list ($ret, $iptcObj) =
+	    ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-exifer.jpg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assert(isset($iptcObj));
 
 	$data = ExifHelper::getIptcValue($iptcObj, array('IPTC', 'Keywords'));
@@ -284,7 +291,11 @@ class ExifHelperTest extends GalleryTestCase {
      * which does not know about XMP data.
      */
     function testGetRawIptcDataIrfanView() {
-	$iptcObj = ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-irfanview.jpg');
+	list ($ret, $iptcObj) =
+	    ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-irfanview.jpg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assert(isset($iptcObj));
 
 	$data = ExifHelper::getIptcValue($iptcObj, array('IPTC', 'Keywords'));
@@ -344,7 +355,11 @@ class ExifHelperTest extends GalleryTestCase {
      * converted to UTF-8.
      */
     function testGetRawIptcDataISO_8859_1() {
-	$iptcObj = ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-iso-8859-1.jpg');
+	list ($ret, $iptcObj) =
+	    ExifHelper::getIptcObject(dirname(__FILE__) . '/../data/iptc-iso-8859-1.jpg');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 	$this->assert(isset($iptcObj));
 
 	$data = ExifHelper::getIptcValue($iptcObj, array('IPTC', 'Caption'), 'ISO-8859-1');
