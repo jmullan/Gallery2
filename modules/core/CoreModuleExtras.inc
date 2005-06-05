@@ -86,7 +86,8 @@ class CoreModuleExtras {
 		$flockType = 'database';
 	    } else {
 		$fileToLock = $platform->fopen(__FILE__, 'r');
-		if ($platform->flock($fileToLock, LOCK_SH, false)) {
+		$wouldBlock = false;
+		if ($platform->flock($fileToLock, LOCK_SH, $wouldBlock) || $wouldBlock) {
 		    $flockType = 'flock';
 		} else {
 		    $flockType = 'database';
