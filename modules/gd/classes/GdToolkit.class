@@ -545,6 +545,7 @@ class GdToolkit extends GalleryToolkit {
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
+	$gd->setFilePermissions($filename);
 	return GalleryStatus::success();
     }
 

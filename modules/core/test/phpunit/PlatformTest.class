@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -52,55 +52,55 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
 	$this->assert($this->_platform->unlink($this->_destFile));
     }
-    
+
     function testSymlink() {
 	if ($this->_platform->isSymlinkSupported()) {
 	    $this->assert($this->_platform->symlink($this->_sourceFile, $this->_destFile));
 	    $this->assert($this->_platform->unlink($this->_destFile));
 	}
     }
-    
+
     function testMoveUploadedFile() {
-	// XXX: How do we test this?  We don't have an uploaded file :-(
+	/* XXX: How do we test this?  We don't have an uploaded file :-( */
 	$this->assert(!$this->_platform->move_uploaded_file($this->_sourceFile, $this->_destFile));
     }
-    
+
     function testFileExists() {
 	$this->assert($this->_platform->file_exists($this->_sourceFile));
 	$this->assert(!$this->_platform->file_exists($this->_destFile));
     }
-    
+
     function testIsLink() {
 	$this->assert(!$this->_platform->is_link($this->_sourceFile));
     }
-    
+
     function testIsDir() {
 	$this->assert($this->_platform->is_dir(dirname(__FILE__)));
 	$this->assert(!$this->_platform->is_dir(__FILE__));
     }
-    
+
     function testIsFile() {
 	$this->assert($this->_platform->is_file(__FILE__));
 	$this->assert(!$this->_platform->is_file('bogus-file-name'));
     }
-    
+
     function testIsWriteable() {
-	// On Win32, all files are writeable so the next assertion isn't that useful!
-	// $this->assert(!$this->_platform->is_writeable(__FILE__));
-	
+	/* On Win32, all files are writeable so the next assertion isn't that useful! */
+	/* $this->assert(!$this->_platform->is_writeable(__FILE__)); */
+
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
 	$this->assert($this->_platform->is_writeable($this->_destFile));
 	$this->assert($this->_platform->unlink($this->_destFile));
     }
-    
+
     function testIsReadable() {
 	$this->assert($this->_platform->is_readable($this->_sourceFile));
     }
-    
+
     function testIsUploadedFile() {
 	$this->assert(!$this->_platform->is_uploaded_file($this->_sourceFile));
     }
-    
+
     function testIsExecutable() {
 	if (GalleryUtilities::isA($this->_platform, 'WinNtPlatform')) {
 	    $this->assert($this->_platform->is_executable($this->_sourceFile));
@@ -108,7 +108,7 @@ class PlatformTest extends GalleryTestCase {
 	    $this->assert(!$this->_platform->is_executable($this->_sourceFile));
 	}
     }
-    
+
     function testFilesize() {
 	$this->assertEquals(1083,
 			    $this->_platform->filesize($this->_sourceFile));
@@ -120,13 +120,13 @@ class PlatformTest extends GalleryTestCase {
 	/* --> Target Line <-- */
 	$this->assertEquals("/* --> Target Line <-- */", trim($lines[__LINE__-2]));
     }
-    
+
     function testFopen() {
 	$fd = $this->_platform->fopen($this->_sourceFile, 'r');
 	$this->assert($fd);
 	fclose($fd);
     }
-    
+
     function testOpendir() {
 	$dir = $this->_platform->opendir(dirname(__FILE__));
 	$this->assert($dir);
@@ -143,34 +143,34 @@ class PlatformTest extends GalleryTestCase {
 
 	$this->assertEquals(1, $files[basename(__FILE__)]);
     }
-    
+
     function testRename() {
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
 	$this->assert($this->_platform->rename($this->_destFile,
 					       $this->_destFile . '-new'));
 	$this->assert($this->_platform->unlink($this->_destFile . '-new'));
     }
-    
+
     function testStat() {
 	$this->assert($this->_platform->stat($this->_sourceFile));
     }
-    
+
     function testUnlink() {
 	$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile));
 	$this->assert($this->_platform->unlink($this->_destFile));
     }
-    
+
     function testRmdir() {
 	$this->assert($this->_platform->mkdir($this->_destFile));
 	$this->assert($this->_platform->mkdir($this->_destFile . '/1'));
 
-	// XXX: this generates a PHP error that I can't seem to turn off.
-	// $this->assert(!$this->_platform->rmdir($this->_destFile));
-	
+	/* XXX: this generates a PHP error that I can't seem to turn off. */
+	/* $this->assert(!$this->_platform->rmdir($this->_destFile)); */
+
 	$this->assert($this->_platform->rmdir($this->_destFile . '/1'));
 	$this->assert($this->_platform->rmdir($this->_destFile));
     }
-    
+
     function testRecursiveRmdir() {
 	$this->assert($this->_platform->mkdir($this->_destFile));
 	$this->assert($this->_platform->mkdir($this->_destFile . '/1'));
@@ -178,17 +178,17 @@ class PlatformTest extends GalleryTestCase {
 	$this->assert($this->_platform->mkdir($this->_destFile . '/1/2/3'));
 	$this->assert($this->_platform->recursiveRmdir($this->_destFile));
     }
-    
+
     function testMkdir() {
 	$this->assert($this->_platform->mkdir($this->_destFile));
 	$this->assert($this->_platform->recursiveRmdir($this->_destFile));
     }
-    
+
     function testIsLegalPathComponent() {
 	$this->assert($this->_platform->isLegalPathComponent('TheQuickBrownFox'));
 	$this->assert(!$this->_platform->isLegalPathComponent('The!QuickBrownFox'));
     }
-    
+
     function testgetLegalPathCharacters() {
 	$this->assertEquals('ABCDEFGHIJKLMNOPQRSTUVWXYZ' .
 			    'abcdefghijklmnopqrstuvwxyz' .
@@ -196,7 +196,7 @@ class PlatformTest extends GalleryTestCase {
 			    '# _.-',
 			    $this->_platform->getLegalPathCharacters());
     }
-    
+
     function testLegalizePathComponent() {
 	$this->assertEquals('The_Quick_',
 			    $this->_platform->legalizePathComponent('The!Quick$'));
@@ -206,12 +206,12 @@ class PlatformTest extends GalleryTestCase {
 	$this->assertEquals('test_php',
 			    $this->_platform->legalizePathComponent('test.php'));
     }
-    
+
     function testLegalizePathComponent3() {
 	$this->assertEquals('test_php.jpg',
 			    $this->_platform->legalizePathComponent('test.php.jpg'));
     }
-    
+
     function testExec() {
 	/*
 	 * Make sure executing a bogus path fails.
@@ -222,7 +222,101 @@ class PlatformTest extends GalleryTestCase {
 	$results = $this->_platform->exec(array(array('/bogus/path')));
 	$this->assertEquals(false, $results[0]);
     }
-    
+
+    function testFilePermissions() {
+	global $gallery;
+	if (GalleryUtilities::isA($this->_platform, 'UnixPlatform')) {
+	    /*
+	     * Make sure files are written with correct permissions by
+	     * exec, copy, symlink, atomicWrite; test setFilePermissions
+	     */
+	    list ($ret, $param) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '600');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_platform->_getUmask();
+
+	    $this->_permissionTest(0600, 1, array('exec', 'copy', 'atomicWrite', 'symlink'));
+
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '664');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_platform->_getUmask();
+
+	    $this->_permissionTest(0664, 2, array('copy', 'symlink', 'exec', 'atomicWrite'));
+
+	    $this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile), 'copy');
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', '612');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_platform->_getUmask();
+	    $this->_permissionTest(0612, 3, array('setFilePermissions'));
+
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', $param);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->_platform->_getUmask();
+	}
+    }
+
+    function _permissionTest($permissions, $testNumber, $tests) {
+	global $gallery;
+	foreach ($tests as $test) {
+	    $stat = $debug = '';
+	    switch ($test) {
+	    case 'exec':
+		$gallery->startRecordingDebugSnippet();
+		$results = $this->_platform->exec(
+				   array(array('echo', 'test', '>', $this->_destFile)));
+		$debug = $gallery->stopRecordingDebugSnippet();
+		$this->assert($results[0], "exec $testNumber $debug");
+		$stat = $this->_platform->stat($this->_destFile);
+		break;
+
+	    case 'copy':
+		$this->assert($this->_platform->copy($this->_sourceFile, $this->_destFile),
+			      "copy $testNumber");
+		$stat = $this->_platform->stat($this->_destFile);
+		break;
+
+	    case 'symlink':
+		if (!$this->_platform->isSymlinkSupported()) {
+		    $this->assert(false, 'symlink not supported');
+		    continue 2;
+		}
+		$this->assert($this->_platform->symlink($this->_sourceFile, $this->_destFile),
+			      "symlink $testNumber");
+		$stat = lstat($this->_destFile);
+		break;
+
+	    case 'atomicWrite':
+		$this->assert($this->_platform->atomicWrite($this->_destFile, 'test'),
+			      "atomicWrite $testNumber");
+		$stat = $this->_platform->stat($this->_destFile);
+		break;
+
+	    case 'setFilePermissions':
+		$this->assert($this->_platform->setFilePermissions($this->_destFile),
+			      "setFilePermissions $testNumber");
+		$stat = $this->_platform->stat($this->_destFile);
+	    }
+
+	    $this->assert(!empty($stat), "$test stat $testNumber $debug");
+	    $this->assertEquals(decoct($permissions), decoct($stat[2] & 0777),
+				"$test permissions $testNumber");
+	    $this->assert($this->_platform->unlink($this->_destFile), "$test unlink $testNumber");
+	    $this->_platform->clearstatcache();
+	}
+    }
+
     function testGetDirectorySeparator() {
 	$file = __FILE__;
 	$realSeparator = $file[strlen(dirname(__FILE__))];
@@ -239,9 +333,10 @@ class PlatformTest extends GalleryTestCase {
 	    $realLineEnding = "\r\n";
 	}
 
-	$this->assertEquals($platform->getLineEnding(), $realLineEnding, "Line Endings Don't Match");
+	$this->assertEquals($platform->getLineEnding(), $realLineEnding,
+			    "Line Endings Don't Match");
     }
-    
+
     function testIsRestrictedByOpenBaseDir() {
 	$this->assert(!$this->_platform->isRestrictedByOpenBaseDir(__FILE__));
     }
@@ -267,7 +362,7 @@ class PlatformTest extends GalleryTestCase {
 
 	/* We know this is going to bomb so unset PHPunit's error handler */
 	restore_error_handler();
-	
+
 	$fd = @$platform->fsockopen('www.BOGUSBOGUSBOGUS.com',
 				    $_SERVER['SERVER_PORT'],
 				    $errno, $errstr, 30);
@@ -313,7 +408,7 @@ class PlatformTest extends GalleryTestCase {
 	/* We know this is going to bomb so unset PHPunit's error handler */
 	restore_error_handler();
 
-	/* And suppress warnings when we call fopen */ 
+	/* And suppress warnings when we call fopen */
 	$fd = @$platform->fopen(sprintf('%s_BOGUS_BOGUS', __FILE__), 'rb');
 	$this->assertEquals(false, $fd);
     }
@@ -324,8 +419,8 @@ class PlatformTest extends GalleryTestCase {
 
 	/*
 	 * We should test if our operations are really concurrent-safe,
-         * but we cannot do that without having multiple processes accessing
-         * the same file, which is not possible in our test-framework (yet)
+	 * but we cannot do that without having multiple processes accessing
+	 * the same file, which is not possible in our test-framework (yet)
 	 */
 	$testData1 = "this is a test\nmultiline\ntest";
 	$this->assert($platform->atomicWrite($this->_destFile, $testData1, 'wb'), 'write 1 failed');

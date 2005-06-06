@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -32,7 +32,7 @@ require_once(dirname(__FILE__) . '/../GalleryPlatform.class');
 
 /**
  * An Unix version of the GalleryPlatform class
- * 
+ *
  * @package GalleryCore
  * @subpackage Platform
  * @access public
@@ -52,7 +52,7 @@ class UnixPlatform extends GalleryPlatform {
 	    if (strlen($command)) {
 		$command .= ' | ';
 	    }
-	    
+
 	    foreach ($cmdAndArgs as $arg) {
 		if ($arg === '>') {
 		    $command .= '>';
@@ -70,8 +70,10 @@ class UnixPlatform extends GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
 	}
+	$umask = umask($this->_umask);
 	$results = array();
 	exec($command, $results, $status);
+	umask($umask);
 
 	list ($ret, $expected) =
 	    GalleryCoreApi::getPluginParameter('module', 'core', 'exec.expectedStatus');
@@ -105,17 +107,17 @@ class UnixPlatform extends GalleryPlatform {
 	    foreach ($results as $line) {
 		$gallery->debug($line);
 	    }
-	    
+
 	    $gallery->debug("Error Output:");
 	    foreach ($stderr as $line) {
 		$gallery->debug($line);
 	    }
 	    $gallery->debug("Status: $status (expected $expected)");
 	}
-	
+
 	return array($status == $expected, $results, $stderr);
     }
-    
+
     /**
      * @see GalleryPlatform::isRestrictedByOpenBaseDir
      */
@@ -125,13 +127,13 @@ class UnixPlatform extends GalleryPlatform {
 	if (empty($baseDirArray)) {
 	    return false;
 	}
-	
+
 	foreach ($baseDirArray as $baseDir) {
 	    if (!strncmp($baseDir, $path, strlen($baseDir))) {
 		return false;
 	    }
 	}
-	
+
 	return true;
     }
 
@@ -162,7 +164,7 @@ class UnixPlatform extends GalleryPlatform {
      * @see GalleryPlatform::getLineEnding()
      */
     function getLineEnding() {
-	return "\n";	
+	return "\n";
     }
 }
 ?>

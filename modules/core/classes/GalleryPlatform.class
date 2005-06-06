@@ -51,7 +51,7 @@ class GalleryPlatform {
 	    $gallery->debug("copy($source, $dest)");
 	}
 
-	$umask = umask(0133);
+	$umask = umask($this->_umask);
 	if (is_uploaded_file($source)) {
 	    $results = move_uploaded_file($source, $dest);
 	} else {
@@ -76,7 +76,7 @@ class GalleryPlatform {
 	    $gallery->debug("symlink($source, $dest)");
 	}
 
-	$umask = umask(0133);
+	$umask = umask($this->_umask);
 	$results = symlink($source, $dest);
 	umask($umask);
 
@@ -375,6 +375,7 @@ class GalleryPlatform {
 	$fd = fopen($tempFile, 'wb');
 	$success = false;
 	if ($fd) {
+	    chmod($tempFile, $this->_filePerms);
 	    $bytesWritten = fwrite($fd, $data);
 	    if ($bytesWritten == strlen($data)) {
 		$success = true;
@@ -580,7 +581,6 @@ class GalleryPlatform {
 	}
 
 	$umask = umask(0);
-
 	$results = mkdir($path, $octalPerms);
 	umask($umask);
 	return $results;
@@ -625,7 +625,7 @@ class GalleryPlatform {
      * Remove any illegal characters from the path component.
      */
     function legalizePathComponent($component) {
-        global $gallery;
+	global $gallery;
 	$legal = $this->getLegalPathCharacters();
 
 	/* Scrub out all the illegal characters */
@@ -654,7 +654,7 @@ class GalleryPlatform {
 	list ($ret, $tmp) = GalleryCoreApi::convertExtensionToMime($extension);
 	if ($ret->isError() && $gallery->getDebug()) {
 	    $gallery->debug('Error: convertExtensionToMime in ' .
-            'GalleryPlatform::legalizePathComponent');
+	    'GalleryPlatform::legalizePathComponent');
 	}
 	if (($ret->isError() || $tmp == 'application/unknown') && !empty($extension)) {
 	    $fileBase = $fileBase . '_' . $extension;
@@ -844,9 +844,10 @@ class GalleryPlatform {
 
 	$ret = ftruncate($handle, $size);
 	if ($ret === 1) {
-	    /* Prior to PHP 4.3.3, ftruncate() returns an integer value of 1
-             * on success, instead of boolean TRUE. We correct this here.
-             */
+	    /*
+	     * Prior to PHP 4.3.3, ftruncate() returns an integer value of 1
+	     * on success, instead of boolean TRUE. We correct this here.
+	     */
 	    return true;
 	}
 	return $ret;
@@ -986,8 +987,8 @@ class GalleryPlatform {
      * @access public
      */
     function getLineEnding() {
-        /* This must be implemented in a platform specific way */
-        assert(false);
+	/* This must be implemented in a platform specific way */
+	assert(false);
     }
 
 
@@ -1016,6 +1017,29 @@ class GalleryPlatform {
 	    $gallery->debug("getcwd()");
 	}
 	return getcwd();
+    }
+
+    /**
+     * Set file permissions according to preferences
+     * @param string file path
+     * @return boolean true on success
+     */
+    function setFilePermissions($file) {
+	return chmod($file, $this->_filePerms);
+    }
+
+    /**
+     * Get umask preference
+     * @private
+     */
+    function _getUmask() {
+	$this->_filePerms = 0644;
+	list ($ret, $filePerms) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
+	if ($ret->isSuccess() && !empty($filePerms)) {
+	    $this->_filePerms = octdec($filePerms);
+	}
+	$this->_umask = 0777 - $this->_filePerms;
     }
 }
 ?>

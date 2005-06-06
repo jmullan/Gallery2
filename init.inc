@@ -53,13 +53,13 @@ function GalleryInitFirstPass($params=array()) {
 
     if (strtolower(PHP_OS) == 'winnt') {
 	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/WinNtPlatform.class');
-	$gallery->setPlatform(new WinNtPlatform());
+	$platform = new WinNtPlatform();
     } else {
 	GalleryCoreApi::requireOnce($classDir . 'GalleryPlatform/UnixPlatform.class');
-	$gallery->setPlatform(new UnixPlatform());
+	$platform = new UnixPlatform();
     }
 
-    $platform = $gallery->getPlatform();
+    $gallery->setPlatform($platform);
     $slash = $platform->getDirectorySeparator();
 
     if (isset($params['debug'])) {
@@ -84,6 +84,7 @@ function GalleryInitFirstPass($params=array()) {
 	$dataBase . 'smarty' . $slash . 'templates_c' . $slash);
     $gallery->setConfig('data.gallery.plugins', $dataBase . 'plugins' . $slash);
     $gallery->setConfig('data.gallery.plugins_data', $dataBase . 'plugins_data' . $slash);
+    $platform->_getUmask(); /* Init platform umask */
 
     /* Configure our url Generator */
     if (!isset($params['noDatabase'])) {
