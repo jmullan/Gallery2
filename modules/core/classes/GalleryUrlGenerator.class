@@ -409,6 +409,13 @@ class GalleryUrlGenerator {
 	    $params['navId'] = $this->_navId;
 	}
 
+	/* Replace any known tokens */
+	foreach (array_keys($params) as $key) {
+	    if ($params[$key] == '%CURRENT_URL%') {
+		$params[$key] = $this->getCurrentUrl();
+	    }
+	}
+
 	/* Add parameters to url */
 	$url = GalleryUrlGenerator::appendParamsToUrl($url, $params);
 

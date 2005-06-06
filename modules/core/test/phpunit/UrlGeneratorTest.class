@@ -257,7 +257,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentRequestUri(),
 			    'iis path_info');
     }
-    
+
     function testGetCurrentUrl() {
 	$expected = 'http://example.com/gallery2/phpunit_test.php?foo=bar';
 	$this->assertEquals($expected, $this->_urlGenerator->getCurrentUrl());
@@ -459,6 +459,15 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$params['href'] = 'test/test2.css';
 	$actual = $this->_urlGenerator->generateUrl($params);
 	$this->assertEquals('http://example.com/gallery2/test/local/test2.css' . $qs, $actual);
+    }
+
+    function testCurrentUrlToken() {
+	$_SERVER['REQUEST_URI'] = '/gallery2/phpunit_test.php?a=b';
+
+	$url = $this->_urlGenerator->generateUrl(array('view' => 'foo', 'test' => '%CURRENT_URL%'));
+	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?g2_view=foo&amp;' .
+			    'g2_test=http%3A%2F%2Fexample.com%2Fgallery2%2Fphpunit_test.php%3Fa%3Db',
+			    $url);
     }
 }
 
