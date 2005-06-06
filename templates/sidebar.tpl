@@ -17,7 +17,7 @@
     {/if}
     <ul>
     {foreach from=$layout.systemLinks item=link}
-      <li><a href="{$link.url}">{$link.text}</a></li>
+      <li><a href="{g->url params=$link.params}">{$link.text}</a></li>
     {/foreach}
     </ul>
   </div>
@@ -61,7 +61,7 @@
     <ul>
     {foreach from=$layout.itemLinks item=link}
       <li class="gbAdminLink {g->linkId urlParams=$link.params}">
-	<a href="{$link.url}">{$link.text}</a>
+	<a href="{g->url params=$link.params}">{$link.text}</a>
       </li>
     {/foreach}
     </ul>

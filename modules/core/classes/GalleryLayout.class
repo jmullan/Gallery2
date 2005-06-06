@@ -61,7 +61,7 @@ class GalleryLayout extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 12);
+	return array(1, 0);
     }
 
     /**
@@ -566,9 +566,9 @@ class GalleryLayout extends GalleryPlugin {
      *   peers = array of peer data (first, last and a window of peers around this item),
      *      also set peerIds(of all peers), peerCount(total count),
      *      peerItemIndex(index of this item in peers array)
-     *   systemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
+     *   systemLinks = array of array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *   systemContent = array of moduleId => array(contentId => template file path, ...)
-     *   itemLinks = array of array('text'=>.., 'params'=>.., 'url'=>.., 'moduleId'=>..)
+     *   itemLinks = array of array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *      ^if childIds non-empty also set itemLinks on each child item
      *   itemSummaries = set itemSummaries (array of moduleId => html) on each child item
      *   itemDetailFiles = array of moduleId => template file path
@@ -930,7 +930,6 @@ class GalleryLayout extends GalleryPlugin {
 		    }
 		    /* Add url/moduleId keys.. */
 		    foreach ($links as $link) {
-			$link['url'] = $urlGenerator->generateUrl($link['params']);
 			$link['moduleId'] = $moduleId;
 			$layout['systemLinks'][] = $link;
 		    }
@@ -954,7 +953,6 @@ class GalleryLayout extends GalleryPlugin {
 		    /* Add url/moduleId keys.. */
 		    foreach ($links as $id => $list) {
 			foreach ($list as $link) {
-			    $link['url'] = $urlGenerator->generateUrl($link['params']);
 			    $link['moduleId'] = $moduleId;
 			    $itemLinks[$id][] = $link;
 			}

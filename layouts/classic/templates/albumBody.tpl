@@ -143,7 +143,7 @@
 	    <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
 	    {foreach from=$child.itemLinks item=link}
-	      <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+	      <option label="{$link.text}" value="{g->url param=$link.params}">{$link.text}</option>
 	    {/foreach}
 	  </select>
 	{/if}

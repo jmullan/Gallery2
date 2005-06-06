@@ -233,7 +233,7 @@
 	{if isset($it.itemLinks)}
 	  <span id="links_{$i}" style="display: none">
 	  {foreach from=$it.itemLinks item=link}
-	    <a href="{$link.url}">{$link.text}</a><br/>
+	    <a href="{g->url params=$link.params}">{$link.text}</a><br/>
 	  {/foreach}
 	  </span>
 	{/if}

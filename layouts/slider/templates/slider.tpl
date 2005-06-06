@@ -17,7 +17,7 @@
     <span id="title_{$it.imageIndex}">{$it.title|markup}</span>
     <select id="links_{$it.imageIndex}">
      {foreach from=$it.itemLinks item=link}
-      <option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+      <option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
      {/foreach}
     </select>
   {/if}
@@ -87,7 +87,7 @@
 	{g->text text="&laquo; actions &raquo;"}
       </option>
      {foreach from=$layout.itemLinks item=link}
-	<option label="{$link.text}" value="{$link.url}">{$link.text}</option>
+	<option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
      {/foreach}
     </select>
   </div>
