@@ -56,7 +56,8 @@ class CoreSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
+	list ($ret, $groupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.allUserGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -73,12 +74,13 @@ class CoreSearchTest extends GalleryTestCase {
 	$this->_item = array();
 	for ($i = 0; $i < 4; $i++) {
 	    list ($ret, $this->_item[$i]) =
-		$this->_createRandomDataItem($this->_parentAlbum->getId(),
-					     'application/unknown',
-					     array('title' => 'Title ' . $this->_randomKey,
-						   'description' => 'Description ' . $this->_randomKey,
-						   'summary' => 'Summary ' . $this->_randomKey,
-						   'keywords' => 'Keywords ' . $this->_randomKey));
+		$this->_createRandomDataItem(
+		    $this->_parentAlbum->getId(),
+		    'application/unknown',
+		    array('title' => 'Title ' . $this->_randomKey,
+			  'description' => 'Description ' . $this->_randomKey,
+			  'summary' => 'Summary ' . $this->_randomKey,
+			  'keywords' => 'Keywords ' . $this->_randomKey));
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
@@ -106,7 +108,8 @@ class CoreSearchTest extends GalleryTestCase {
 
 	if (class_exists('GallerySearchInterface_1_0')) {
 	    list ($ret, $this->_coreSearch) =
-		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCoreSearch');
+		GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0',
+						   'GalleryCoreSearch');
 	    if ($ret->isError()) {
 		print $ret->getAsHtml();
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -175,44 +178,48 @@ class CoreSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 	
-	$this->assertEquals(array('start' => 1,
-				  'end' => 3,
-				  'count' => 3,
-				  'results' =>
-				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[3]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[3]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[3]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[3]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[2]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[2]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[2]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[2]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[1]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[1]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[1]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[1]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[1]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 1,
+		  'end' => 3,
+		  'count' => 3,
+		  'results' =>
+		  array(array('itemId' => $this->_item[3]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[3]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[3]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[3]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[3]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[2]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[2]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[2]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[2]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[1]->getId(),
+			      'fields' => 
+			      array(array('key' => $title,
+					  'value' => $this->_item[1]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[1]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[1]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[1]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))))),
+	    $results);
     }
 
     /**
@@ -241,38 +248,39 @@ class CoreSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 	
-	$this->assertEquals(array('start' => 1,
-				  'end' => 3,
-				  'count' => 3,
-				  'results' =>
-				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[3]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[3]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[3]->getKeywords()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[2]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[2]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[2]->getKeywords()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[1]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[1]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[1]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[1]->getKeywords()),
-								array('key' => $owner,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 1,
+		  'end' => 3,
+		  'count' => 3,
+		  'results' =>
+		  array(array('itemId' => $this->_item[3]->getId(),
+			      'fields' => array(array('key' => $title,
+						      'value' => $this->_item[3]->getTitle()),
+						array('key' => $summary,
+						      'value' => $this->_item[3]->getSummary()),
+						array('key' => $keywords,
+						      'value' => $this->_item[3]->getKeywords()),
+						array('key' => $owner,
+						      'value' => $userName))),
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' => array(array('key' => $title,
+						      'value' => $this->_item[2]->getTitle()),
+						array('key' => $summary,
+						      'value' => $this->_item[2]->getSummary()),
+						array('key' => $keywords,
+						      'value' => $this->_item[2]->getKeywords()),
+						array('key' => $owner,
+						      'value' => $userName))),
+			array('itemId' => $this->_item[1]->getId(),
+			      'fields' => array(array('key' => $title,
+						      'value' => $this->_item[1]->getTitle()),
+						array('key' => $summary,
+						      'value' => $this->_item[1]->getSummary()),
+						array('key' => $keywords,
+						      'value' => $this->_item[1]->getKeywords()),
+						array('key' => $owner,
+						      'value' => $userName))))),
+	    $results);
     }
     
     /**
@@ -306,33 +314,36 @@ class CoreSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 	
-	$this->assertEquals(array('start' => 2,
-				  'end' => 3,
-				  'count' => 3,
-				  'results' =>
-				  array(array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[2]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[2]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[2]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[2]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[1]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[1]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[1]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[1]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[1]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 2,
+		  'end' => 3,
+		  'count' => 3,
+		  'results' =>
+		  array(array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[2]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[2]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[2]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[2]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[1]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[1]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[1]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[1]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[1]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))))),
+	    $results);
     }
 
     function testEmptySearch() {
@@ -360,7 +371,8 @@ class CoreSearchTest extends GalleryTestCase {
 	}
 
 	/* Create a link and make sure it shows up in the search results */
-	list ($ret, $linkedItem) = $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
+	list ($ret, $linkedItem) =
+	    $this->_createLinkedItem($this->_parentAlbum->getId(), $this->_item[1]);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -386,55 +398,60 @@ class CoreSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 
-	$this->assertEquals(array('start' => 1,
-				  'end' => 4,
-				  'count' => 4,
-				  'results' =>
-				  array(array('itemId' => $linkedItem->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $linkedItem->getTitle()),
-								array('key' => $summary,
-								      'value' => $linkedItem->getSummary()),
-								array('key' => $keywords,
-								      'value' => $linkedItem->getKeywords()),
-								array('key' => $description,
-								      'value' => $linkedItem->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[3]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[3]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[3]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[3]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))), 
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[2]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[2]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[2]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[2]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[1]->getId(),
-					      'fields' => array(array('key' => $title,
-								      'value' => $this->_item[1]->getTitle()),
-								array('key' => $summary,
-								      'value' => $this->_item[1]->getSummary()),
-								array('key' => $keywords,
-								      'value' => $this->_item[1]->getKeywords()),
-								array('key' => $description,
-								      'value' => $this->_item[1]->getDescription()),
-								array('key' => $owner,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 1,
+		  'end' => 4,
+		  'count' => 4,
+		  'results' =>
+		  array(array('itemId' => $linkedItem->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $linkedItem->getTitle()),
+				    array('key' => $summary,
+					  'value' => $linkedItem->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $linkedItem->getKeywords()),
+				    array('key' => $description,
+					  'value' => $linkedItem->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[3]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[3]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[3]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[3]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[3]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))), 
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[2]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[2]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[2]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[2]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[1]->getId(),
+			      'fields' =>
+			      array(array('key' => $title,
+					  'value' => $this->_item[1]->getTitle()),
+				    array('key' => $summary,
+					  'value' => $this->_item[1]->getSummary()),
+				    array('key' => $keywords,
+					  'value' => $this->_item[1]->getKeywords()),
+				    array('key' => $description,
+					  'value' => $this->_item[1]->getDescription()),
+				    array('key' => $owner,
+					  'value' => $userName))))),
+	    $results);
     }
 }
 
