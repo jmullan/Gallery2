@@ -53,7 +53,8 @@ class CommentSearchTest extends GalleryTestCase {
 	    return $this->assert(false, 'Search module not installed');
 	}
 
-	list ($ret, $groupId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
+	list ($ret, $groupId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.everybodyGroup');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -142,7 +143,8 @@ class CommentSearchTest extends GalleryTestCase {
 	}
 
 	list ($ret, $this->_commentSearch) =
-	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0', 'GalleryCommentSearch');
+	    GalleryCoreApi::newFactoryInstance('GallerySearchInterface_1_0',
+	    				       'GalleryCommentSearch');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -169,8 +171,10 @@ class CommentSearchTest extends GalleryTestCase {
 	$this->assert(isset($info['description']), 'description missing');
 	$this->assert(isset($info['options']), 'options missing');
 	$this->assert(is_array($info['options']), 'options not an array');
-	$this->assert(isset($info['options']['comments']['description']), 'options:comments description missing');
-	$this->assert(!empty($info['options']['comments']['enabled']), 'options:comments not enabled');
+	$this->assert(isset($info['options']['comments']['description']),
+		      'options:comments description missing');
+	$this->assert(!empty($info['options']['comments']['enabled']),
+		      'options:comments not enabled');
     }
 
     function testSearchAll() {
@@ -189,39 +193,44 @@ class CommentSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 	
-	$this->assertEquals(array('start' => 1,
-				  'end' => 4,
-				  'count' => 4,
-				  'results' =>
-				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[3][1]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[3][1]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[3][0]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[3][0]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[2][1]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[2][1]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[2][0]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[2][0]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 1,
+		  'end' => 4,
+		  'count' => 4,
+		  'results' =>
+		  array(array('itemId' => $this->_item[3]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[3][1]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[3][1]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[3]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[3][0]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[3][0]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[2][1]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[2][1]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[2][0]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[2][0]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))))),
+	    $results);
     }
 
     function testLimitedSearch() {
@@ -243,25 +252,28 @@ class CommentSearchTest extends GalleryTestCase {
 	    $userName = $this->_user->getUserName();
 	}
 	
-	$this->assertEquals(array('start' => 2,
-				  'end' => 3,
-				  'count' => 4,
-				  'results' =>
-				  array(array('itemId' => $this->_item[3]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[3][0]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[3][0]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))),
-					array('itemId' => $this->_item[2]->getId(),
-					      'fields' => array(array('key' => $subject,
-								      'value' => $this->_comment[2][1]->getSubject()),
-								array('key' => $comment,
-								      'value' => $this->_comment[2][1]->getComment()),
-								array('key' => $commenter,
-								      'value' => $userName))))),
-			    $results);
+	$this->assertEquals(
+	    array('start' => 2,
+		  'end' => 3,
+		  'count' => 4,
+		  'results' =>
+		  array(array('itemId' => $this->_item[3]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[3][0]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[3][0]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))),
+			array('itemId' => $this->_item[2]->getId(),
+			      'fields' =>
+			      array(array('key' => $subject,
+					  'value' => $this->_comment[2][1]->getSubject()),
+				    array('key' => $comment,
+					  'value' => $this->_comment[2][1]->getComment()),
+				    array('key' => $commenter,
+					  'value' => $userName))))),
+	    $results);
     }
 
     function testEmptySearch() {
