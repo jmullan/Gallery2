@@ -56,10 +56,12 @@ class SimpleCallbackView extends GalleryView {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	header("Content-type: text/plain; charset=UTF-8");
+	if (!headers_sent()) {
+	    header("Content-type: text/plain; charset=UTF-8");
+	}
 
 	switch($command) {
-	case "lookupUsername":
+	case 'lookupUsername':
 	    if ($gallery->getActiveUserId() != $anonymousUserId) {
 		$prefix = GalleryUtilities::getRequestVariables('prefix');
 		list ($ret, $usernames) = GalleryCoreApi::fetchUsernames(10, null, $prefix);
@@ -69,7 +71,7 @@ class SimpleCallbackView extends GalleryView {
 	    }
 	    break;
 
-	case "lookupGroupname":
+	case 'lookupGroupname':
 	    if ($gallery->getActiveUserId() != $anonymousUserId) {
 		$prefix = GalleryUtilities::getRequestVariables('prefix');
 		list ($ret, $usernames) = GalleryCoreApi::fetchGroupNames(10, null, $prefix);
@@ -79,16 +81,22 @@ class SimpleCallbackView extends GalleryView {
 	    }
 	    break;
 
-	case "lookupDirs":
-	    $prefix = GalleryUtilities::getRequestVariables('prefix');
-	    $dirs = $this->_getAllImmediateSubdirs($prefix);
-	    print join("\n", $dirs);
+        case 'lookupDirectories':
+	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret->isSuccess() && $isSiteAdmin) {
+		$prefix = GalleryUtilities::getRequestVariables('prefix');
+		$dirs = $this->_getAllImmediateSubdirs($prefix);
+		print join("\n", $dirs);
+	    }
 	    break;
 
-	case "lookupFiles":
-	    $prefix = GalleryUtilities::getRequestVariables('prefix');
-	    $dirs = $this->_getAllFiles($prefix);
-	    print join("\n", $dirs);
+        case 'lookupFiles':
+	    list ($ret, $isSiteAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
+	    if ($ret->isSuccess() && $isSiteAdmin) {
+		$prefix = GalleryUtilities::getRequestVariables('prefix');
+		$files = $this->_getAllFiles($prefix);
+		print join("\n", $files);
+	    }
 	    break;
 	}
 
@@ -96,66 +104,77 @@ class SimpleCallbackView extends GalleryView {
     }
 
     function _getAllImmediateSubdirs($path) {
-	$dirList = array();
-	if (!file_exists($path) || !is_dir($path)) {
-	    return $dirList;
-	}
+	global $gallery;
+	$platform = $gallery->getPlatform();
 
-	if ($dir = opendir($path)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file == '.' || $file == '..') {
-		    continue;
-		}
+        $dirList = array();
+        if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
+            return $dirList;
+        }
 
-		if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
-		    $file = $path . $file;
-		} else {
-		    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
-		}
+	$slash = $platform->getDirectorySeparator();
+        if ($dir = $platform->opendir($path)) {
+            while (($file = $platform->readdir($dir)) !== false) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
 
-		if (is_dir($file)) {
-		    $dirList[] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
+                if ($path[strlen($path)-1] == $slash) {
+                    $file = $path . $file;
+                } else {
+                    $file = sprintf('%s%s%s', $path, $slash, $file);
+                }
+
+                if ($platform->is_dir($file)) {
+                    $dirList[] = $file;
+                }
+            }
+            $platform->closedir($dir);
+        }
 
 	sort($dirList);
 	return $dirList;
     }
 
     function _getAllFiles($path) {
-	$dirList = array();
-	$fileList = array();
-	if (!file_exists($path) || !is_dir($path)) {
-	    return $dirList;
+	global $gallery;
+	$platform = $gallery->getPlatform();
+
+        $dirList = array();
+        $fileList = array();
+        if (!$platform->file_exists($path) || !$platform->is_dir($path)) {
+            return $dirList;
+        }
+
+	$slash = $platform->getDirectorySeparator();
+        if ($dir = $platform->opendir($path)) {
+            while (($file = $platform->readdir($dir)) !== false) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
+
+                if ($path[strlen($path)-1] == $slash) {
+                    $file = $path . $file;
+                } else {
+                    $file = sprintf('%s%s%s', $path, $slash, $file);
+                }
+
+                if ($platform->is_dir($file)) {
+                    $dirList[] = $file;
+                } else if ($platform->is_file($file)) {
+                    $fileList[] = $file;
+                }
+            }
+            $platform->closedir($dir);
+        }
+
+	$result = $dirList;
+	if (empty($result)) {
+	    $result = $fileList;
+	} else {
+	    $result = array_merge($result, $fileList);
 	}
-
-	if ($dir = opendir($path)) {
-	    while (($file = readdir($dir)) !== false) {
-		if ($file == '.' || $file == '..') {
-		    continue;
-		}
-
-		if ($path[strlen($path)-1] == DIRECTORY_SEPARATOR) {
-		    $file = $path . $file;
-		} else {
-		    $file = sprintf('%s%s%s', $path, DIRECTORY_SEPARATOR, $file);
-		}
-
-		if (is_dir($file)) {
-		    $dirList[] = $file;
-		} else if (is_file($file)) {
-		    $fileList[] = $file;
-		}
-	    }
-	    closedir($dir);
-	}
-
-	sort($dirList);
-	sort($fileList);
-	$result = array_merge($dirList, $fileList);
-	return $result;
+        return $result;
     }
 }
 ?>

@@ -127,7 +127,7 @@
        name="{g->formVar var="form[uploadLocalServer][newDir]"}"
        value="{$form.uploadLocalServer.newDir}"/>
       {g->autoComplete element="newDir"}
-	{g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirs"
+	{g->url arg1="view=core.SimpleCallback" arg2="command=lookupDirectories"
 	 arg3="prefix=__VALUE__" forJavascript="true"}
       {/g->autoComplete}
     </td><td>
