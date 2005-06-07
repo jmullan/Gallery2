@@ -54,24 +54,24 @@ class EventHandlerTest extends GalleryTestCase {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
 	    if ($ret->isError()) {
-		return $ret->wrap(__FILE__, __LINE__);
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	list ($ret, $this->_childAlbum) = $this->_createRandomAlbum($this->_album->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
 
 	GalleryCoreApi::relativeRequireOnce('modules/sizelimit/module.inc');
 	list($ret, $data) = SizeLimitModule::handleEvent($event);
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
 	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters(
 	    'module', 'sizelimit', $this->_album->getId());
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
-	}
+        if ($ret->isError()) {
+            return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+        }
 	$this->assertEquals(array('width' => 768, 'height' => 1024, 'size' => 1000,
 	    'keepOriginal' => 1), $params, 'Copied Album');
     }

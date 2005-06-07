@@ -110,23 +110,25 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 	$ret = SizeLimitHelper::buildDerivativeWithLimits($this->_item, 'test', array(26));
-	$this->assert($ret->isSuccess(), 'buildDerivativeWithLimits');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Check to see if we have a preferred source */
 	list ($ret, $resized) = GalleryCoreApi::fetchPreferredSource($this->_item);
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	if (!GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage')) {
-	    return (GalleryStatus::error(GALLERY_ERROR, __FILE__, __LINE__, get_class($resized)));
-	}
+	$this->assert(GalleryUtilities::isExactlyA($resized, 'GalleryDerivativeImage'),
+		      'not a derivative image');
+
 	$ret = $resized->rebuildCache();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('image/known', $resized->getMimeType(), 'MIME Type');
 	$this->assertEquals('test|26', $resized->getDerivativeOperations(), 'Operations');
@@ -142,14 +144,14 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 	    'size', 1000, $this->_album->getId());
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$ret = SizeLimitHelper::applyLimits($this->_item, 'test', array(26));
 	$this->assert($ret->isSuccess(), 'applyLimits');
 
 	list ($ret, $this->_item) = $this->_item->refresh();
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$this->assertEquals(1000, $this->_item->getSize(), 'Size');
@@ -162,17 +164,18 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'sizelimit',
 		$key, $value, $this->_album->getId());
 	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
 	}
 
 	list ($ret, $module) = GalleryCoreApi::loadPlugin('module', 'sizelimit');
 	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
 	$ret = SizeLimitHelper::applyLimits($this->_itemUnknown, 'test', array(26));
-	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_FILE_TYPE, $ret->getErrorCode(), 'Unknown format');
+	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_FILE_TYPE,
+			    $ret->getErrorCode(), 'Unknown format');
     }
 }
 
