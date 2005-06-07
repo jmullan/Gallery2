@@ -110,7 +110,7 @@
   {foreach from=$AdminCore.localServerDirList key=index item=dir}
   <tr class="{cycle values="gbEven,gbOdd"}">
     <td>
-      {$dir}
+      {$dir|escape}
     </td><td>
       <a href="{g->url arg1="controller=core.AdminCore"
 		       arg2="form[action][removeUploadLocalServerDir]=1"
@@ -143,7 +143,7 @@
   </div>
   {/if}
 
-  {if isset($form.error.uploadLocalServer.newDir.restrictedByOpenBasedir)}
+  {if isset($form.error.uploadLocalServer.newDir.restrictedByOpenBaseDir)}
   <div class="giError">
     {capture name="open_basedir"}
       <a href="http://php.net/ini_set">{g->text text="open_basedir documentation"}</a>

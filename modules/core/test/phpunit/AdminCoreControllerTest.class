@@ -255,6 +255,28 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			    $param['uploadLocalServer.dir.2'], 'new dir');
     }
 
+    function testAddUploadLocalServerDirWithEntity() {
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('realpath', array('/php&unit'), '/php&unit');
+	$platform->setReply('isRestrictedByOpenBaseDir', array('/php&unit'), false);
+	$platform->setReply('is_readable', array('/php&unit'), true);
+	$platform->setReply('is_dir', array('/php&unit'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('form[uploadLocalServer][newDir]', '/php&unit');
+	GalleryUtilities::putRequestVariable('form[action][addUploadLocalServerDir]', 1);
+
+	/* Perform the request and verify that we succeeded */
+	$results = $this->handleRequest();
+	$this->assertEquals(
+	    array('redirect' => array('view' => 'core.SiteAdmin',
+				      'subView' => 'core.AdminCore'),
+		  'status' => array('addedDir' => 1, 'saved' => 1),
+		  'error' => array()),
+	    $results);
+    }
+
     function testRemoveUploadLocalServerDir() {
 	GalleryUtilities::putRequestVariable('form[uploadLocalServer][selectedDir]', '2');
 	GalleryUtilities::putRequestVariable('form[action][removeUploadLocalServerDir]', 1);

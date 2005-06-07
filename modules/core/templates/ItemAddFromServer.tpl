@@ -119,9 +119,9 @@
 
     <ul style="list-style-type: none; margin-bottom: 1em">
       {foreach from=$ItemAddFromServer.localServerDirList item=dir}
-	{capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
+	{capture name="escapedDir"}{$dir|escape|replace:"\\":"\\\\"}{/capture}
 	<li>
-	  <a href="javascript:selectPath('{$smarty.capture.escapedDir}')"> {$dir} </a>
+	  <a href="javascript:selectPath('{$smarty.capture.escapedDir}')"> {$dir|escape} </a>
 	</li>
       {/foreach}
     </ul>
@@ -131,9 +131,9 @@
 
       <ul style="list-style-type: none">
 	{foreach from=$ItemAddFromServer.recentPaths item=dir}
-	  {capture name="escapedDir"}{$dir|replace:"\\":"\\\\"}{/capture}
+	  {capture name="escapedDir"}{$dir|escape|replace:"\\":"\\\\"}{/capture}
 	  <li>
-	  <a href="javascript:selectPath('{$smarty.capture.escapedDir}')"> {$dir} </a>
+	  <a href="javascript:selectPath('{$smarty.capture.escapedDir}')"> {$dir|escape} </a>
 	  </li>
 	{/foreach}
       </ul>

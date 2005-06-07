@@ -58,13 +58,13 @@ class AdminCoreController extends GalleryController {
 	    $canSave = true;
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $platform = $gallery->getPlatform();
-	    $path = $form['uploadLocalServer']['newDir'];
+	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
 	    $realpath = $platform->realpath($path);
 
 	    if (empty($path)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][missing]';
-	    } else if ($platform->isRestrictedByOpenBasedir($realpath)) {
-		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBasedir]';
+	    } else if ($platform->isRestrictedByOpenBaseDir($realpath)) {
+		$error[] = 'form[error][uploadLocalServer][newDir][restrictedByOpenBaseDir]';
 	    } else if (!$platform->is_readable($realpath)) {
 		$error[] = 'form[error][uploadLocalServer][newDir][notReadable]';
 	    } else if (!$platform->is_dir($realpath)) {
