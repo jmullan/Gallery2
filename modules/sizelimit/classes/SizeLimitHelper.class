@@ -116,6 +116,17 @@ class SizeLimitHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
+	/* Make sure we support the given operation */
+	list ($ret, $toolkit) =
+	    GalleryCoreApi::getToolkitByOperation($item->getMimeType(), $operation);
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	if (!isset($toolkit)) {
+	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__),
+			 null, null);
+	}
+
 	/*
 	 * If we don't have derivative preferred (for example, from resize), create one
 	 * Otherwise, just merge operations

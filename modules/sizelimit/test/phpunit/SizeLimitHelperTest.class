@@ -136,6 +136,12 @@ class SizeLimitHelperTest extends GalleryTestCase {
 	$this->assertEquals(1024, $resized->getHeight(), 'Height');
     }
 
+    function testIllegalLimitOperation() {
+	list ($ret, $errors, $warnings) = SizeLimitHelper::buildDerivativeWithLimits(
+	    $this->_item, 'unsupported', array('anything'));
+	$this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE);
+    }
+
     /* change size, replace original */
     function testNoOriginal() {
 	global $gallery;
