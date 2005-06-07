@@ -163,7 +163,8 @@ class NetPbmModule extends GalleryModule {
 	$success = false;
 	foreach ($paths as $path) {
 	    foreach (array('ppmtojpeg', 'pnmtojpeg') as $pnmtojpeg) {
-		if (!$platform->isRestrictedByOpenBasedir($path) && !$platform->file_exists($path)) {
+		if (!$platform->isRestrictedByOpenBaseDir($path) &&
+			!$platform->file_exists($path)) {
 		    continue;
 		}
 
@@ -254,12 +255,12 @@ class NetPbmModule extends GalleryModule {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-        list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('NetPBM');
-        if ($ret->isError()) {
-            return array($ret->wrap(__FILE__, __LINE__), null);
-        }   
-            
-        if (!$priority) {
+	list ($ret, $priority) = GalleryCoreApi::getToolkitPriorityById('NetPBM');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+
+	if (!$priority) {
 	    list ($ret, $priority) = GalleryCoreApi::getMaximumManagedToolkitPriority();
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

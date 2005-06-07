@@ -441,7 +441,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 					       'description' => '(optional) ' .
 					       'target height, defaults to same as width')),
 				   'description' => 'Scale the image to the target size, ' .
-				                    'maintain aspect ratio',
+						    'maintain aspect ratio',
 				   'mimeTypes' => array('image/gif',
 							'image/jpeg',
 							'image/pjpeg',
@@ -456,7 +456,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 						   'description' => '(optional) ' .
 						   'target height, defaults to same as width')),
 				       'description' => 'Scale the image to the target ' .
-				                        'size, maintain aspect ratio',
+							'size, maintain aspect ratio',
 				       'mimeTypes' => array('image/gif',
 							    'image/jpeg',
 							    'image/pjpeg',
@@ -527,7 +527,7 @@ class NetPbmToolkitTest extends GalleryTestCase {
 				      array(array('type' => 'int',
 						  'description' => 'target size in kb')),
 				      'description' => 'Reduce image quality to reach ' .
-				                       'target file size',
+						       'target file size',
 				      'mimeTypes' => array('image/jpeg',
 							   'image/pjpeg'))),
 			    $results['operations']);
@@ -608,13 +608,13 @@ class NetPbmToolkitTestPlatform {
 	GalleryUtilities::putRequestVariable('toolkitCallCount', $toolkitCallCount+1);
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'giftopnm', '--quiet', 'testGetProperties2.gif'),
+		array($this->_netPbmPath . 'giftopnm', '--quiet', 'testGetProperties2.gif'),
 		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 30 by 40  maxval 255'), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'pnmfile', '--allimages', 'testGetProperties3.ppm')))) {
+		array($this->_netPbmPath . 'pnmfile', '--allimages', 'testGetProperties3.ppm')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 50 by 60  maxval 255'), array());
 	}
 
@@ -636,14 +636,14 @@ class NetPbmToolkitTestPlatform {
 
 	/** Operation 2: Resize a JPG */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
+		array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations4.jpg'),
 		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'),
 			 array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-	        array('/usr/local/bin/jhead', '-te', 'testPerformOperations4.jpg', 'TEMPFILE')))) {
+		array('/usr/local/bin/jhead', '-te', 'testPerformOperations4.jpg', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
@@ -656,14 +656,14 @@ class NetPbmToolkitTestPlatform {
 
 	/** Operation 3: Rotate a TIFF */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
+		array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
 		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'),
 			 array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
+		array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations6.tiff'),
 		array($this->_netPbmPath . 'pnmflip', '-cw'),
 		array($this->_netPbmPath . 'pnmtotiff', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
@@ -671,7 +671,7 @@ class NetPbmToolkitTestPlatform {
 
 	/** Operation 3.1: Rotate a BMP */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'bmptopnm', '--quiet', 'testPerformOperationsA.bmp'),
+		array($this->_netPbmPath . 'bmptopnm', '--quiet', 'testPerformOperationsA.bmp'),
 		array($this->_netPbmPath . 'pnmflip', '-r180'),
 		array($this->_netPbmPath . 'ppmquant', 256),
 		array($this->_netPbmPath . 'ppmtobmp', '>', 'TEMPFILE')))) {
@@ -680,51 +680,51 @@ class NetPbmToolkitTestPlatform {
 
 	/** Operation 4: Crop a PNG */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
-	        array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+		array($this->_netPbmPath . 'pnmfile', '--allimages')))) {
 	    return array(1, array('stdin:  Image 0:        PGM raw, 200 by 300  maxval 255'),
 			 array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
-	        array($this->_netPbmPath . 'pnmcut', (float)49, (float)71, (float)103, (float)156),
-	        array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations8.png'),
+		array($this->_netPbmPath . 'pnmcut', (float)49, (float)71, (float)103, (float)156),
+		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'giftopnm', '-alphaout=TEMPFILE',
+		array($this->_netPbmPath . 'giftopnm', '-alphaout=TEMPFILE',
 		      $gallery->getConfig('data.gallery.base') . 'testPerformOperations12.gif',
 		      '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations10.png'),
-	        array($this->_netPbmPath . 'pnmcomp', '-align=right', '-valign=top',
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations10.png'),
+		array($this->_netPbmPath . 'pnmcomp', '-align=right', '-valign=top',
 		    '-alpha=TEMPFILE', 'TEMPFILE'), /* Second TEMPFILE is the overlay file */
-	        array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
+		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations10.png'),
-	        array($this->_netPbmPath . 'pnmcomp', '-xoff=150', '-yoff=150',
+		array($this->_netPbmPath . 'pngtopnm', '--quiet', 'testPerformOperations10.png'),
+		array($this->_netPbmPath . 'pnmcomp', '-xoff=150', '-yoff=150',
 		      '-alpha=TEMPFILE', 'TEMPFILE'), /* Second TEMPFILE is the overlay file */
-	        array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
+		array($this->_netPbmPath . 'pnmtopng', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations13.jpg'),
-	        array($this->_netPbmPath . 'pnmflip', '-cw'),
-	        array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
+		array($this->_netPbmPath . 'jpegtopnm', '--quiet', 'testPerformOperations13.jpg'),
+		array($this->_netPbmPath . 'pnmflip', '-cw'),
+		array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	if (serialize($cmd) == serialize(array(
-                array('/validJheadPath/jhead', '-te', 'testPerformOperations13.jpg', 'TEMPFILE')))) {
+		array('/validJheadPath/jhead', '-te', 'testPerformOperations13.jpg', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
@@ -775,14 +775,14 @@ class NetPbmToolkitTestPlatform {
 
 	/* Convert TIFF to JPEG */
 	if (serialize($cmd) == serialize(array(
-                array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations15.tif'),
-	        array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
+		array($this->_netPbmPath . 'tifftopnm', '--quiet', 'testPerformOperations15.tif'),
+		array($this->_netPbmPath . 'ppmtojpeg', '--quality=75', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
 
 	/* Convert PPM to JPEG */
 	if (serialize($cmd) == serialize(array(
-	        array($this->_netPbmPath . 'ppmtojpeg', '--quality=75',
+		array($this->_netPbmPath . 'ppmtojpeg', '--quality=75',
 		      'testPerformOperations16.ppm', '>', 'TEMPFILE')))) {
 	    return array(1, array(), array());
 	}
@@ -836,7 +836,7 @@ class NetPbmToolkitTestPlatform {
 	return 'TEMPFILE';
     }
 
-    function isRestrictedByOpenBasedir($path) {
+    function isRestrictedByOpenBaseDir($path) {
 	switch($path) {
 	case $this->_netPbmPath:
 	case '/validPath/':

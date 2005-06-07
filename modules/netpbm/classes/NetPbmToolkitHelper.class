@@ -188,7 +188,7 @@ class NetPbmToolkitHelper {
 	 * legal.  Else just hope that it's valid and use it.
 	 */
 	$platform = $gallery->getPlatform();
-	if (!$platform->isRestrictedByOpenBasedir($jheadPath) && !@$platform->is_dir($jheadPath)) {
+	if (!$platform->isRestrictedByOpenBaseDir($jheadPath) && !@$platform->is_dir($jheadPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 	$tests = array();
@@ -197,7 +197,7 @@ class NetPbmToolkitHelper {
 	    $fullPath .= '.exe';
 	}
 
-	if (!$platform->isRestrictedByOpenBasedir($fullPath) &&
+	if (!$platform->isRestrictedByOpenBaseDir($fullPath) &&
 		!$platform->file_exists($fullPath)) {
 	    $success = false;
 	    $results = array('File does not exist');
@@ -205,8 +205,8 @@ class NetPbmToolkitHelper {
 	    list ($success, $results) = $platform->exec(array(array($fullPath, '-V')));
 	}
 	$tests[] = array('name' => 'jhead',
-	                 'success' => $success,
-	                 'message' => $results);
+			 'success' => $success,
+			 'message' => $results);
 
 	return array(GalleryStatus::success(), $tests, array());
     }
@@ -235,7 +235,7 @@ class NetPbmToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($netPbmPath) && !@$platform->is_dir($netPbmPath)) {
+	if (!$platform->isRestrictedByOpenBaseDir($netPbmPath) && !@$platform->is_dir($netPbmPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
 	}
 
@@ -264,7 +264,7 @@ class NetPbmToolkitHelper {
 	    if (GalleryUtilities::isA($platform, 'WinNtPlatform')) {
 		$fullPath .= '.exe';
 	    }
-	    if (!$platform->isRestrictedByOpenBasedir($fullPath) &&
+	    if (!$platform->isRestrictedByOpenBaseDir($fullPath) &&
 		    !$platform->file_exists($fullPath)) {
 		$success = false;
 		$results = array('File does not exist');

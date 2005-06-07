@@ -327,7 +327,7 @@ class ImageMagickToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($imageMagickPath) &&
+	if (!$platform->isRestrictedByOpenBaseDir($imageMagickPath) &&
 		!@$platform->is_dir($imageMagickPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
@@ -363,7 +363,7 @@ class ImageMagickToolkitHelper {
 		    $fullPath .= '.exe';
 		}
 
-		if (!$platform->isRestrictedByOpenBasedir($fullPath)
+		if (!$platform->isRestrictedByOpenBaseDir($fullPath)
 			&& !$platform->file_exists($fullPath)) {
 		    $success = false;
 		    $results = array($module->translate('File does not exist'));
@@ -416,7 +416,7 @@ class ImageMagickToolkitHelper {
 				 null);
 		}
 
-		if (!$platform->isRestrictedByOpenBasedir($fullPath)
+		if (!$platform->isRestrictedByOpenBaseDir($fullPath)
 			&& !$platform->file_exists($fullPath)) {
 		    $success = false;
 		    $results = array($module->translate('File does not exist'));

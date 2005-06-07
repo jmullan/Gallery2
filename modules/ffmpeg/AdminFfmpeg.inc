@@ -58,7 +58,7 @@ class AdminFfmpegController extends GalleryController {
 		/* Verify the path */
 		$platform = $gallery->getPlatform();
 		$slash = $platform->getDirectorySeparator();
-		if (!$platform->isRestrictedByOpenBasedir($form['path'])) {
+		if (!$platform->isRestrictedByOpenBaseDir($form['path'])) {
 		    if ($platform->file_exists($form['path']) && $platform->is_dir($form['path'])) {
 			$form['path'] = trim($form['path']);
 			if (!empty($form['path'])) {

@@ -41,7 +41,7 @@ class ArchiveUploadHelper {
      *
      * @param string path to the unzip we are testing
      * @return array boolean test successful?
-     *	             string error type or null
+     *               string error type or null
      *               string unzip output
      * @static
      */
@@ -53,7 +53,7 @@ class ArchiveUploadHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's legal.
 	 * Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($unzipPath)) {
+	if (!$platform->isRestrictedByOpenBaseDir($unzipPath)) {
 	    if (!$platform->file_exists($unzipPath) || !$platform->is_file($unzipPath)) {
 		return array(false, 'badPath', null);
 	    }

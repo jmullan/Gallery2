@@ -125,7 +125,7 @@ class FfmpegToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($ffmpegPath)) {
+	if (!$platform->isRestrictedByOpenBaseDir($ffmpegPath)) {
 	    if (!$platform->file_exists($ffmpegPath) || !$platform->is_file($ffmpegPath)) {
 		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
 			     null, null, null);

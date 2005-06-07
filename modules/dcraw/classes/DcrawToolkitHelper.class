@@ -69,7 +69,7 @@ class DcrawToolkitHelper {
      *	             array ('name' => string: the name of the binary,
      *		            'success' => boolean: test successful?
      *		            'message' => string: the error message
-     *		           
+     *
      * @static
      */
     function testBinary($dcrawPath) {
@@ -80,8 +80,8 @@ class DcrawToolkitHelper {
 	 * If the path is not restricted by open_basedir, then verify that it's
 	 * legal.  Else just hope that it's valid and use it.
 	 */
-	if (!$platform->isRestrictedByOpenBasedir($dcrawPath) &&
-	        !@$platform->is_file($dcrawPath)) {
+	if (!$platform->isRestrictedByOpenBaseDir($dcrawPath) &&
+		!@$platform->is_file($dcrawPath)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null);
 	}
 
@@ -106,7 +106,7 @@ class DcrawToolkitHelper {
 				     $stdout,
 				     $stderr));
 	}
-	
+
 	return array(GalleryStatus::success(), $testArray);
     }
 }

@@ -377,7 +377,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    
+
 	    $this->assertEquals(
 		array_merge(
 		    array('-quality', 75,
@@ -700,7 +700,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		     as $mimeType) {
 		if (is_int($i = array_search($mimeType, $environment['mimeTypes']))) {
 		    $convertTo = array_merge(
-                        $environment['mimeTypes'], array('image/x-portable-pixmap'));
+			$environment['mimeTypes'], array('image/x-portable-pixmap'));
 		    array_splice($convertTo, $i, 1);
 		    $canConvert['convert-to-' . $mimeType] = array(
 			'params' => array(),
@@ -831,7 +831,7 @@ class ImageMagickToolkitTest extends GalleryTestCase {
 		    'type' => 'int,int',
 		    'description' => 'Get the width and height of the image',
 		    'mimeTypes' => array_merge(
-		        $environment['mimeTypes'], array('image/x-portable-pixmap'))
+			$environment['mimeTypes'], array('image/x-portable-pixmap'))
 		),
 		'page-count' => array(
 		    'type' => 'int',
@@ -948,7 +948,7 @@ class ImageMagickToolkitTestPlatform {
 		 * and a 0x0 pixel image.
 		 *
 		 * I haven't verified that 6.1.3 does this also, but since we don't have a
-		 * 6.1.6 ImEnvironment yet, I'll credit this bug to 6.1.3 for now. 
+		 * 6.1.6 ImEnvironment yet, I'll credit this bug to 6.1.3 for now.
 		 */
 		if ($this->_environment['version'] == '6.1.3' &&
 		    preg_match('/crop.*geometry/', join(' ', $params))) {
@@ -1004,8 +1004,8 @@ class ImageMagickToolkitTestPlatform {
 	return false;
     }
 
-    function isRestrictedByOpenBasedir($path) {
-	/* echo $this->_environment['path'] . ": isRestrictedByOpenBasedir($path)<br>\n"; */
+    function isRestrictedByOpenBaseDir($path) {
+	/* echo $this->_environment['path'] . ": isRestrictedByOpenBaseDir($path)<br>\n"; */
 	return false;
     }
 
