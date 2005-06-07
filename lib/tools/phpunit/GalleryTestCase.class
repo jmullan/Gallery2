@@ -769,6 +769,23 @@ class GalleryTestCase extends TestCase {
 	return array(GalleryStatus::success(), $unusedId);
     }
 
+    function _becomeGuestUser() {
+	global $gallery;
+
+	list ($ret, $anonymousUserId) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->setActiveUser($anonymousUser);
+    }
+
     function DeepCompare($obj1, $obj2, $context=null) {
 	if (gettype($obj1) !== gettype($obj2)) {
 	    return sprintf("[$context] $obj1 type (%s) !== $obj2 type (%s)",
