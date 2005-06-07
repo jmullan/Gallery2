@@ -39,22 +39,21 @@ class SimpleCallbackTest extends GalleryTestCase {
     }
 
     function setUp() {
-	global $gallery;
-
 	parent::setUp();
 
-	$this->_tag = 'SmplCb-' . rand();
+	$this->_tag = 'SmplCb-' . rand(0, 999999);
 	list ($ret, $this->_view) = GalleryView::loadView('core.SimpleCallback');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->_userNames = $this->_groupNames = array();
     }
 
     function _createUser() {
-	list ($ret, $user) = $this->_createRandomUser($this->_tag . '-' . rand());
+	list ($ret, $user) =
+	    $this->_createRandomUser($this->_tag . '-' . count($this->_userNames));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($user);
@@ -63,9 +62,9 @@ class SimpleCallbackTest extends GalleryTestCase {
     }
 
     function _createGroup() {
-	list ($ret, $group) = $this->_createRandomGroup($this->_tag . '-' . rand());
+	list ($ret, $group) =
+	    $this->_createRandomGroup($this->_tag . '-' . count($this->_groupNames));
 	if ($ret->isError()) {
-	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->_markForCleanup($group);
@@ -111,6 +110,21 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assertEquals("", $results);
     }
 
+    function testLookupUsernameWithEntity() {
+	/* We expect user/group names in db to be entitized.. search for < should match &lt; */
+	$search = $this->_tag . '<t';
+	$this->_tag .= '&lt;t';
+	$this->_createUser();
+	$this->_createUser();
+
+	GalleryUtilities::putRequestVariable('command', 'lookupUsername');
+	GalleryUtilities::putRequestVariable('prefix', $search);
+	$results = $this->_runCallback();
+
+	sort($this->_userNames);
+	$this->assertEquals(join("\n", $this->_userNames), $results);
+    }
+
     function testLookupGroupname() {
 	$this->_createGroup();
 	$this->_createGroup();
@@ -138,12 +152,49 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$this->assertEquals('', $results);
     }
 
+    function testLookupGroupnameWithEntity() {
+	/* We expect user/group names in db to be entitized.. search for " should match &quot; */
+	$search = $this->_tag . '"test';
+	$this->_tag .= '&quot;test';
+	$this->_createGroup();
+	$this->_createGroup();
+
+	GalleryUtilities::putRequestVariable('command', 'lookupGroupname');
+	GalleryUtilities::putRequestVariable('prefix', $search);
+	$results = $this->_runCallback();
+
+	sort($this->_groupNames);
+	$this->assertEquals(join("\n", $this->_groupNames), $results);
+    }
+
     function testLookupDirectories() {
 	GalleryUtilities::putRequestVariable('command', 'lookupDirectories');
 	GalleryUtilities::putRequestVariable('prefix', dirname(dirname(__FILE__)));
 	$results = $this->_runCallback();
 
 	$this->assert(strstr($results, dirname(__FILE__)), 'Missing result');
+    }
+
+    function testLookupDirectoriesWithEntity() {
+	/* Filesystem isn't entitized.. search for < should match literal < */
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('/php<unit'), true);
+	$platform->setReply('is_dir', array('/php<unit'), true);
+	$platform->setReply('getDirectorySeparator', array(), '/');
+	$platform->setReply('opendir', array('/php<unit'), 'dh');
+	$platform->setReply('readdir', array('dh'), 'test');
+	$platform->setReply('is_dir', array('/php<unit/test'), true);
+	$platform->setReply('readdir', array('dh'), false);
+	$platform->setReply('closedir', array('dh'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('command', 'lookupDirectories');
+	GalleryUtilities::putRequestVariable('prefix', '/php<unit');
+	$results = $this->_runCallback();
+
+	$this->assertEquals('/php&lt;unit/test', $results, 'results');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function testLookupDirectoriesAsNonSiteAdmin() {
@@ -177,6 +228,32 @@ class SimpleCallbackTest extends GalleryTestCase {
 	$results = $this->_runCallback();
 
 	$this->assert(strstr($results, __FILE__), 'Missing result');
+    }
+
+    function testLookupFilesWithEntity() {
+	/* Filesystem isn't entitized.. search for & should match literal & */
+	global $gallery;
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('/php&unit'), true);
+	$platform->setReply('is_dir', array('/php&unit'), true);
+	$platform->setReply('getDirectorySeparator', array(), '/');
+	$platform->setReply('opendir', array('/php&unit'), 'dh');
+	$platform->setReply('readdir', array('dh'), 'test');
+	$platform->setReply('is_dir', array('/php&unit/test'), false);
+	$platform->setReply('is_file', array('/php&unit/test'), true);
+	$platform->setReply('readdir', array('dh'), 'dir');
+	$platform->setReply('is_dir', array('/php&unit/dir'), true);
+	$platform->setReply('readdir', array('dh'), false);
+	$platform->setReply('closedir', array('dh'), true);
+	$gallery->setPlatform($platform);
+
+	GalleryUtilities::putRequestVariable('command', 'lookupFiles');
+	GalleryUtilities::putRequestVariable('prefix', '/php&unit');
+	$results = $this->_runCallback();
+
+	/* Dirs listed first, results entitized */
+	$this->assertEquals("/php&amp;unit/dir\n/php&amp;unit/test", $results, 'results');
+	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function testLookupFilesAsNonSiteAdmin() {
