@@ -306,4 +306,8 @@ class UnitTestPlatform {
     function getcwd() {
 	return $this->_makeReply('getcwd', array());
     }
+
+    function setFilePermissions($file) {
+	return $this->_makeReply('setFilePermissions', array($file));
+    }
 }
