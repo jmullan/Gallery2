@@ -39,7 +39,7 @@
  *
  * $info = $jpeg->getBasicInfo();
  * echo $info['Width'] . "x" . $info['Height'];
- * 
+ *
  *
  **************************************************************************/
 
@@ -47,7 +47,7 @@
 //require_once 'PEAR.php';
 
 /**
- * 
+ *
  * @TODO: -re- record error reasons (code + message)
  */
 class JPEG // extends PEAR
@@ -84,7 +84,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets the raw EXIF/IPTC information.
-     * 
+     *
      * @return array  An array with all the raw info or false, when parsing failed.
      */
     function & getRawInfo()
@@ -100,7 +100,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets basic information about the file at hand.
-     * 
+     *
      * @return array  An array with basic info or false, when parsing failed.
      */
     function & getBasicInfo()
@@ -151,7 +151,7 @@ class JPEG // extends PEAR
     /**
      * Gets an EXIF field from the file. For a list of valid EXIF field names see
      * _exifNameTags().
-     * 
+     *
      * @param string  The name of the EXIF field.
      * @return mixed  The value of the given field, or false, when parsing failed, or the field
      *                does not exist.
@@ -177,7 +177,7 @@ class JPEG // extends PEAR
     /**
      * Gets an Adobe field from the file. Note, this is NOT XMP data, but file info added by
      * Adobe Photoshop.
-     * 
+     *
      * @param string  The name of the Adobe field.
      * @return mixed  The value of the given field, or false, when parsing failed, or the field
      *                does not exist.
@@ -202,7 +202,7 @@ class JPEG // extends PEAR
     /**
      * Gets an IPTC field from the file. For a list of valid IPTC field names see
      * _iptcNameTags().
-     * 
+     *
      * @param string  The name of the IPTC field.
      * @return mixed  The value of the given field, or false, when parsing failed, or the field
      *                does not exist.
@@ -228,7 +228,7 @@ class JPEG // extends PEAR
     /**
      * Sets the given value for the given EXIF field. For a list of valid EXIF field names see
      * _exifNameTags().
-     * 
+     *
      * @param string  The name of the EXIF field.
      * @param mixed   The value to set.
      * @return  true, to indicate succes, false otherwise.
@@ -257,7 +257,7 @@ class JPEG // extends PEAR
 
     /**
      * Sets the given value for the given Adobe field.
-     * 
+     *
      * @param string  The name of the Adobe field.
      * @param mixed   The value to set.
      * @return  true, to indicate succes, false otherwise.
@@ -286,7 +286,7 @@ class JPEG // extends PEAR
     /**
      * Sets the given value for the given IPTC field. For a list of valid IPTC field names see
      * _iptcNameTags().
-     * 
+     *
      * @param string  The name of the EXIF field.
      * @param mixed   The value to set.
      * @return  true, to indicate succes, false otherwise.
@@ -316,7 +316,7 @@ class JPEG // extends PEAR
     /**
      * Delete the given EXIF field. For a list of valid EXIF field names see
      * _exifNameTags().
-     * 
+     *
      * @param string  The name of the EXIF field.
      * @return  true, to indicate succes, false otherwise.
      * @see _exifNameTags()
@@ -342,7 +342,7 @@ class JPEG // extends PEAR
 
     /**
      * Delete the given Adobe field.
-     * 
+     *
      * @param string  The name of the Adobe field.
      * @return  true, to indicate succes, false otherwise.
      * @see save()
@@ -368,7 +368,7 @@ class JPEG // extends PEAR
     /**
      * Delete the given IPTC field. For a list of valid IPTC field names see
      * _iptcNameTags().
-     * 
+     *
      * @param string  The name of the IPTC field.
      * @return  true, to indicate succes, false otherwise.
      * @see _iptcNameTags()
@@ -394,7 +394,7 @@ class JPEG // extends PEAR
 
     /**
      * Get datetime collected from several EXIF fields.
-     * 
+     *
      * @return array  An array with datetime info.
      */
     function getDates()
@@ -518,7 +518,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets the pixel width of the image.
-     * 
+     *
      * @return mixed  The integer pixel width, when it could be determined, false otherwise.
      */
     function getWidth()
@@ -548,7 +548,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets the pixel height of the image.
-     * 
+     *
      * @return mixed  The integer pixel height, when it could be determined, false otherwise.
      */
     function getHeight()
@@ -578,7 +578,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets width and height of the image as a string.
-     * 
+     *
      * @return mixed  A string with the dimensions, false, when parsing failed.
      */
     function getDimStr()
@@ -596,14 +596,14 @@ class JPEG // extends PEAR
     /**
      * Checks for existence of a thumbnail image in the JPEG. Thumbnails may be in the EXIF data
      * or the Adobe specific data or both.
-     * 
+     *
      * @param string  Flag indicating in which section should be looked for the thumbnail, one
      *                of 'any', 'exif' or 'adobe'.
      * @return mixed  String indicating, where the thumbnail was found, 'exif' or 'adobe'.
      *                False, if there is no thumbnail or parsing failed.
      * @TODO: -re- 'any' should check in adobe too!
      * @TODO: -re- when found in adobe, 'adobe' should be returned!
-     * @TODO: -re- define integer constants instead of using strings! 
+     * @TODO: -re- define integer constants instead of using strings!
      */
     function hasThumbnail($which = 'any')
     {
@@ -645,12 +645,12 @@ class JPEG // extends PEAR
     /**
      * Sends the thumbnail to stdout/browser. The thumbnail image data is prefixed by a
      * "Content-type: image/jpeg" header.
-     * 
+     *
      * @param string  Flag indicating in which section should be looked for the thumbnail, one
      *                of 'any', 'exif' or 'adobe'.
      * @return boolean  True, if thumbnail data was spit out,false, if there is no thumbnail
      *                  or parsing failed.
-     * @TODO: -re- define integer constants instead of using strings! 
+     * @TODO: -re- define integer constants instead of using strings!
      */
     function sendThumbnail($which = 'any')
     {
@@ -700,7 +700,7 @@ class JPEG // extends PEAR
     /**
      * Saves the potentially changed JPEG to the given file name path. If no filename is given,
      * the current filename is used and thus the original file is overwritten.
-     * 
+     *
      * @param string  The filename to write the JPEG to. This may not be an URL.
      * @TODO: -re- indicate success/failure on return
      */
@@ -715,14 +715,14 @@ class JPEG // extends PEAR
         $this->_writeJPEG($fileName);
       }
     }
-    
+
     /*************************************************************/
     /* PRIVATE FUNCTIONS (Internal Use Only!)                    */
     /*************************************************************/
 
     /**
      * Disposes all allocated resources.
-     * 
+     *
      * @access private
      * @TODO: -re- hmm, requiered by PEAR?
      */
@@ -842,7 +842,11 @@ class JPEG // extends PEAR
             $this->_markers[$count]['length'] = $length;
 
             if ($capture) {
-                $this->_markers[$count]['data'] =& fread($this->_fp, $length);
+                if ($length > 0) {
+		    $this->_markers[$count]['data'] =& fread($this->_fp, $length);
+		} else {
+		    $this->_markers[$count]['data'] = '';
+		}
             }
             elseif (!$done) {
                 $result = @fseek($this->_fp, $length, SEEK_CUR);
@@ -866,7 +870,7 @@ class JPEG // extends PEAR
 
     /**
      * Parses all meta data from the JPEG file.
-     * 
+     *
      * @return boolean  A flag indicating success.
      */
     function _parseAll()
@@ -1083,7 +1087,7 @@ class JPEG // extends PEAR
      * Puts basic file information into the internal array _info['file'].
      * Keys are 'Name', 'Size', 'NiceSize', 'UnixTime' and 'Url'. If the file is remote (an url)
      * then only 'Name' and 'Url' are set, local files have no 'Url' key.
-     * 
+     *
      * @return boolean  True
      * @access private
      * @TODO: -re- have a valid 'Url' even for local files?
@@ -1187,7 +1191,7 @@ class JPEG // extends PEAR
 
     /**
      * Parses SOF (Start Of Frame) JPEG/EXIF info.
-     * 
+     *
      * @return boolean  true, when parsing succeded and SOF data was found, false otherwise.
      */
     function _parseMarkerSOF()
@@ -2097,11 +2101,11 @@ class JPEG // extends PEAR
     /**
      * Parses IPTC data from the given data fragment starting at the given position into some
      * internal structure.
-     * 
+     *
      * @param string  the data to read
      * @param int     the position/offset into the data
      * @return int    the position/offset after the parsing, may be unchanged compared to the given
-     *                position, if there is no IPTC data present 
+     *                position, if there is no IPTC data present
      */
     function _readIPTC(&$data, $pos = 0)
     {
@@ -2186,7 +2190,7 @@ class JPEG // extends PEAR
     }
 
     /*************************************************************/
-    function _write8BIM(&$data, $pos, $type, $header, &$value) 
+    function _write8BIM(&$data, $pos, $type, $header, &$value)
     {
         $signature = "8BIM";
 
@@ -2261,22 +2265,22 @@ class JPEG // extends PEAR
     /**
      * Returns an array of known EXIF tag codes and their associated names
      * for the given mode/section.
-     * 
+     *
      * EXIF builds upon the TIFF/JPEG specifications and extends them. TIFF/JPEG/EXIF
      * allow for different sections, which must be given as input to this method.
-     * 
+     *
      * ifd0    => Metadata for the primary image
      * ifd1    => Metadata for the secondary image (a thumbnail)
      * exif    => Camera meta data for the image
      * interop => Minmal metadata for interoperability
      * gps     => Metadata gained from a Global Positioning System
-     * 
+     *
      * ifd0 and ifd1 are defined by the TIFF specifiction. They often have the very same name,
      * only describing a property of the primary image vs. the same property of the thumbnail.
-     * 
+     *
      * Note, that currently the thumbnail metadata is prefixed wrongly with 'TIFF', this might
      * change in a future version (ifd0 data is also TIFF data).
-     * 
+     *
      * @param string  the EXIF section to return
      * @return array  an array with known tags; key is the tag number, value is the tag name
      */
@@ -2590,9 +2594,9 @@ class JPEG // extends PEAR
     /**
      * Returns an array of known EXIF tag names and their associated codes
      * for the given mode/section.
-     * 
+     *
      * See _exifTagNames() for explanation.
-     * 
+     *
      * @param string  the EXIF section to return
      * @return array  an array with known tags; key is the tag name, value is the tag number/code
      */
@@ -2604,7 +2608,7 @@ class JPEG // extends PEAR
 
     /**
      * Returns an array of known IPTC tag codes and their associated names.
-     * 
+     *
      * @return array  an array with known tags; key is the tag number, value is the tag name
      */
     function _iptcTagNames()
@@ -2663,7 +2667,7 @@ class JPEG // extends PEAR
 
     /**
      * Returns an array of known IPTC tag names and their associated codes.
-     * 
+     *
      * @return array  an array with known tags; key is the tag name, value is the tag code
      */
     function & _iptcNameTags()
@@ -2675,10 +2679,10 @@ class JPEG // extends PEAR
     /**
      * Exchanges key and value in an associative array. The resulting array will be in the
      * same order as the given array.
-     * 
+     *
      * Note, that the values in the given array should be unique, else the returend array
      * will miss some entries.
-     * 
+     *
      * @param array  An associative array
      * @return array  The array with key/values flipped.
      */
@@ -2695,7 +2699,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets a byte out of the given data at the given position.
-     * 
+     *
      * @param string  the data to process
      * @param int     the offset of the byte to extract
      * @return int    the byte value
@@ -2706,8 +2710,8 @@ class JPEG // extends PEAR
     }
 
     /**
-     * Sets a byte of the given data at the given position to the given value. 
-     * 
+     * Sets a byte of the given data at the given position to the given value.
+     *
      * @param string  the data to process
      * @param int     the offset of the byte to write
      * @param int     the byte value to set into the data
@@ -2724,7 +2728,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets a short (2 bytes) out of the given data at the given position.
-     * 
+     *
      * @param string  the data to process
      * @param int     the offset of the short to extract
      * @param boolean flag indicating big endianess
@@ -2743,8 +2747,8 @@ class JPEG // extends PEAR
     }
 
     /**
-     * Sets a short (2 bytes) of the given data at the given position to the given value. 
-     * 
+     * Sets a short (2 bytes) of the given data at the given position to the given value.
+     *
      * @param string  the data to process
      * @param int     the offset of the short to write
      * @param int     the short value to set into the data
@@ -2769,7 +2773,7 @@ class JPEG // extends PEAR
 
     /**
      * Gets a long (4 bytes) out of the given data at the given position.
-     * 
+     *
      * @param string  the data to process
      * @param int     the offset of the long to extract
      * @param boolean flag indicating big endianess
@@ -2790,8 +2794,8 @@ class JPEG // extends PEAR
     }
 
     /**
-     * Sets a long (4 bytes) of the given data at the given position to the given value. 
-     * 
+     * Sets a long (4 bytes) of the given data at the given position to the given value.
+     *
      * @param string  the data to process
      * @param int     the offset of the long to write
      * @param int     the long value to set into the data
@@ -2840,7 +2844,7 @@ class JPEG // extends PEAR
     /**
      * Gets the given lenght string/bytes out of the given data starting at the given position.
      * If a length isn't given all available data is returned.
-     * 
+     *
      * @param string  the data to extract part of
      * @param int     the start position of extraction
      * @param int     the length of the string to extract
