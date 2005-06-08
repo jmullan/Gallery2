@@ -346,6 +346,9 @@ class GalleryTestCase extends TestCase {
 
 	$eventListener =& $this->getTestEventListener();
 	$eventListener->reset();
+
+	/* Clean out any saved state in the platform */
+	$gallery->_platform->resetPlatform();
     }
 
     function _getRootId() {

@@ -70,6 +70,9 @@ class UnixPlatform extends GalleryPlatform {
 	if ($gallery->getDebug()) {
 	    $gallery->debug("Executing: $command");
 	}
+	if (!isset($this->_umask)) {
+	    $this->_calculateUmaskAndFilePerms();
+	}
 	$umask = umask($this->_umask);
 	$results = array();
 	exec($command, $results, $status);

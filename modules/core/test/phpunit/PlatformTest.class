@@ -239,7 +239,8 @@ class PlatformTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->_platform->_getUmask();
+	    $this->_platform->resetPlatform();
+	    $this->_platform->_calculateUmaskAndFilePerms();
 
 	    $this->_permissionTest(0600, 1, array('exec', 'copy', 'atomicWrite', 'symlink'));
 
@@ -247,7 +248,8 @@ class PlatformTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->_platform->_getUmask();
+	    $this->_platform->resetPlatform();
+	    $this->_platform->_calculateUmaskAndFilePerms();
 
 	    $this->_permissionTest(0664, 2, array('copy', 'symlink', 'exec', 'atomicWrite'));
 
@@ -256,20 +258,23 @@ class PlatformTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->_platform->_getUmask();
+	    $this->_platform->resetPlatform();
+	    $this->_platform->_calculateUmaskAndFilePerms();
 	    $this->_permissionTest(0612, 3, array('setFilePermissions'));
 
 	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'permissions.file', $param);
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    $this->_platform->_getUmask();
+	    $this->_platform->resetPlatform();
+	    $this->_platform->_calculateUmaskAndFilePerms();
 	}
     }
 
-    function _permissionTest($permissions, $testNumber, $tests) {
+    function _permissionTest($origExpectedPermissions, $testNumber, $tests) {
 	global $gallery;
 	foreach ($tests as $test) {
+	    $expectedPermissions = $origExpectedPermissions;
 	    $stat = $debug = '';
 	    switch ($test) {
 	    case 'exec':
@@ -295,6 +300,9 @@ class PlatformTest extends GalleryTestCase {
 		$this->assert($this->_platform->symlink($this->_sourceFile, $this->_destFile),
 			      "symlink $testNumber");
 		$stat = lstat($this->_destFile);
+
+		/* symlinks are always 777, set expectations accordingly */
+		$expectedPermissions = octdec(777);
 		break;
 
 	    case 'atomicWrite':
@@ -310,7 +318,7 @@ class PlatformTest extends GalleryTestCase {
 	    }
 
 	    $this->assert(!empty($stat), "$test stat $testNumber $debug");
-	    $this->assertEquals(decoct($permissions), decoct($stat[2] & 0777),
+	    $this->assertEquals(decoct($expectedPermissions), decoct($stat[2] & 0777),
 				"$test permissions $testNumber");
 	    $this->assert($this->_platform->unlink($this->_destFile), "$test unlink $testNumber");
 	    $this->_platform->clearstatcache();

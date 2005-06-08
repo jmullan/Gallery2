@@ -51,6 +51,9 @@ class GalleryPlatform {
 	    $gallery->debug("copy($source, $dest)");
 	}
 
+	if (!isset($this->_umask)) {
+	    $this->_calculateUmaskAndFilePerms();
+	}
 	$umask = umask($this->_umask);
 	if (is_uploaded_file($source)) {
 	    $results = move_uploaded_file($source, $dest);
@@ -76,6 +79,9 @@ class GalleryPlatform {
 	    $gallery->debug("symlink($source, $dest)");
 	}
 
+	if (!isset($this->_umask)) {
+	    $this->_calculateUmaskAndFilePerms();
+	}
 	$umask = umask($this->_umask);
 	$results = symlink($source, $dest);
 	umask($umask);
@@ -375,6 +381,9 @@ class GalleryPlatform {
 	$fd = fopen($tempFile, 'wb');
 	$success = false;
 	if ($fd) {
+	    if (!isset($this->_filePerms)) {
+		$this->_calculateUmaskAndFilePerms();
+	    }
 	    chmod($tempFile, $this->_filePerms);
 	    $bytesWritten = fwrite($fd, $data);
 	    if ($bytesWritten == strlen($data)) {
@@ -1025,6 +1034,9 @@ class GalleryPlatform {
      * @return boolean true on success
      */
     function setFilePermissions($file) {
+	if (!isset($this->_filePerms)) {
+	    $this->_calculateUmaskAndFilePerms();
+	}
 	return chmod($file, $this->_filePerms);
     }
 
@@ -1032,14 +1044,26 @@ class GalleryPlatform {
      * Get umask preference
      * @private
      */
-    function _getUmask() {
-	$this->_filePerms = 0644;
-	list ($ret, $filePerms) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
-	if ($ret->isSuccess() && !empty($filePerms)) {
-	    $this->_filePerms = octdec($filePerms);
+    function _calculateUmaskAndFilePerms() {
+	if (!isset($this->_umask) || !isset($this->_filePerms)) {
+	    $this->_filePerms = 0644;
+	    list ($ret, $filePerms) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'permissions.file');
+	    if ($ret->isSuccess() && !empty($filePerms)) {
+		$this->_filePerms = octdec($filePerms);
+	    }
+	    $this->_umask = 0777 - $this->_filePerms;
 	}
-	$this->_umask = 0777 - $this->_filePerms;
+
+	return $this->_umask;
+    }
+
+    /**
+     * Clear any cached saved state in this platform.
+     */
+    function resetPlatform() {
+	unset($this->_umask);
+	unset($this->_filePerms);
     }
 }
 ?>
