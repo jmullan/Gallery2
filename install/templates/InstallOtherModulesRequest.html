@@ -45,33 +45,35 @@
 	  <?php $counter = 0; ?>
 	  <?php foreach ($modules as $id => $module): ?>
 	  <?php $isInstalled = $templateData['moduleInstalled'][$id]; ?>
+	  <?php $isInvalid = $templateData['moduleInvalid'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background-color: #eee"' ?>>
 	    <td>
 	      <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
 		<?php if ($module->isRecommendedDuringInstall() || $isInstalled): ?>
 		  checked="checked"
 		<?php endif; ?>
-		<?php if ($isInstalled): ?>
+		<?php if ($isInstalled || $isInvalid): ?>
 		  disabled="disabled"
 		<?php endif; ?>
 	      />
 	    </td>
 	    <td>
-	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if ($isInstalled || $isInvalid): ?> <span class="disabled"> <?php endif; ?>
 	      <label for="module_<?php print $id ?>">
 		<?php print $module->getName() ?>
 	      </label>
-	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
+	      <?php if ($isInstalled || $isInvalid): ?> </span> <?php endif; ?>
 	    </td>
 	    <td>
-	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if ($isInstalled || $isInvalid): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getVersion() ?>
-	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
+	      <?php if ($isInstalled || $isInvalid): ?> </span> <?php endif; ?>
 	    </td>
 	    <td>
-	      <?php if ($isInstalled): ?> <span class="disabled"> <?php endif; ?>
+	      <?php if ($isInstalled || $isInvalid): ?> <span class="disabled"> <?php endif; ?>
 	      <?php print $module->getDescription() ?>
-	      <?php if ($isInstalled): ?> </span> <?php endif; ?>
+	      <?php if ($isInvalid) print '<br/>' . _('(Incompatible with this Gallery version)') ?>
+	      <?php if ($isInstalled || $isInvalid): ?> </span> <?php endif; ?>
 	    </td>
 	  </tr>
 	  <?php $counter++; ?>

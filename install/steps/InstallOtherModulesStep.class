@@ -44,7 +44,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['stackTrace'] = $ret->getAsHtml();
 	}
 
-	$groupedModules = $groupLabel = $moduleInstalled = array();
+	$groupedModules = $groupLabel = $moduleInstalled = $moduleInvalid = array();
 
 	if (empty($templateData['errors'])) {
 	    list ($ret, $moduleList) = GalleryCoreApi::fetchPluginStatus('module', true);
@@ -59,7 +59,7 @@ class InstallOtherModulesStep extends InstallStep {
 		list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId);
 		if ($ret->isError()) {
 		    $this->resetL10Domain();
-		    $templateData['errors'][] =
+		    $templateData['warnings'][] =
 			sprintf(_('Unable to load the %s module'), $moduleId);
 		    $templateData['stackTrace'] = $ret->getAsHtml();
 		} else {
@@ -75,6 +75,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    foreach (array_keys($modules) as $moduleId) {
 		$moduleInstalled[$moduleId] = !empty($moduleList[$moduleId]['version']);
 		$module =& $modules[$moduleId];
+		$moduleInvalid[$moduleId] = !GalleryCoreApi::isPluginCompatibleWithApis($module);
 		if (isset($_REQUEST['activate']) &&
 		      isset($_REQUEST['module'][$moduleId]) &&
 		      !$moduleInstalled[$moduleId]) {
@@ -138,6 +139,7 @@ class InstallOtherModulesStep extends InstallStep {
 	    $templateData['groupedModules'] =& $groupedModules;
 	    $templateData['groupLabel'] = $groupLabel;
 	    $templateData['moduleInstalled'] = $moduleInstalled;
+	    $templateData['moduleInvalid'] = $moduleInvalid;
 	    $templateData['bodyFile'] = 'InstallOtherModulesRequest.html';
 	}
 	$templateData['anyInstallable'] = false;
