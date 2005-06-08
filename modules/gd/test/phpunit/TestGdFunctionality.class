@@ -392,7 +392,8 @@ class TestGdFunctionality {
 	return GalleryStatus::success();
     }
 
-    function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
+    function imageCopyResampled($dstRes, $srcRes, $dstX, $dstY, $srcX,
+				$srcY, $dstW, $dstH, $srcW, $srcH) {
 	if (! $this->functionExists('imageCopyResampled')) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					'Environment: ' . $this->getEnvironmentName());
@@ -403,7 +404,8 @@ class TestGdFunctionality {
 	return GalleryStatus::success();
     }
 
-    function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX, $srcY, $dstW, $dstH, $srcW, $srcH) {
+    function imageCopyResized($dstRes, $srcRes, $dstX, $dstY, $srcX,
+			      $srcY, $dstW, $dstH, $srcW, $srcH) {
 	if (! $this->functionExists('imageCopyResized')) {
 	    return GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					'Environment: ' . $this->getEnvironmentName());
@@ -434,7 +436,11 @@ class TestGdFunctionality {
 	    return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	}
 
-	$this->setResourceData($dstRes, 'other', array('copy' => array($this->getResourceData($srcRes, 'filename'), $dstX, $dstY, $srcX, $srcY, $srcW, $srcH)));
+	$this->setResourceData(
+	    $dstRes, 'other',
+	    array('copy' => array(
+		      $this->getResourceData($srcRes, 'filename'),
+		      $dstX, $dstY, $srcX, $srcY, $srcW, $srcH)));
 	return GalleryStatus::success();
     }
 
