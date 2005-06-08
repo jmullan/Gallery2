@@ -4,7 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>
+<div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}{if
+ isset($main.userAgent)} class="{$main.userAgent}"{/if}>
   {* Content that G2 wants to display inside the <body> element *}
   {include file="gallery:`$main.viewBodyFile`" l10Domain=$main.viewL10Domain}
 

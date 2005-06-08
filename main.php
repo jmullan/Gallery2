@@ -392,12 +392,21 @@ function _GalleryMain_setupMain(&$main, $urlGenerator=null, $version=null) {
     list ($ret, $markup) = GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
     if ($ret->isError()) {
 	$error = $ret->wrap(__FILE__, __LINE__);
-	$markupType = 'none';
+	$markup = 'none';
     }
     $main['markupType'] = $markup;
 
     $translator =& $gallery->getTranslator();
     $main['isRightToLeft'] = $translator->isRightToLeft();
+
+    $userAgent = strtolower(GalleryUtilities::getServerVar('HTTP_USER_AGENT'));
+    if (strpos($userAgent, 'safari') !== false) {
+	$main['userAgent'] = 'safari';
+    } else if (strpos($userAgent, 'opera') !== false) {
+	$main['userAgent'] = 'opera';
+    } else if (strpos($userAgent, 'msie') !== false) {
+	$main['userAgent'] = 'IE';
+    }
 
     if ($gallery->getConfig('allowSessionAccess')) {
 	/* Calculate a URI that we can use for the validation link */

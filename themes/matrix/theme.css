@@ -278,7 +278,13 @@ ul.gbTabBar li.giSelected span {
 }
 
 #giFormPassword {
-    background: url('images/key7-16-bw.gif') no-repeat 0 1px;
+    background: url('../matrix/images/key7-16-bw.gif') no-repeat 0 1px;
     padding-left: 17px;
+}
+
+/* Opera ignores padding in form inputs; put icons on right side instead */
+#gallery.opera #giFormUsername, #gallery.opera .giFormUsername,
+#gallery.opera #giFormGroupname, #gallery.opera #giFormPassword {
+    background-position: right center;
 }
 

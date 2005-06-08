@@ -23,7 +23,8 @@
     {g->head}
   </head>
   <body class="gallery">
-    <div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}>
+    <div id="gallery"{if $main.isRightToLeft} style="direction:rtl"{/if}{if
+     isset($main.userAgent)} class="{$main.userAgent}"{/if}>
       <div id="gsHeader">
         <img src="{g->url href="images/galleryLogo_sm.gif"}" alt=""/>
       </div>
