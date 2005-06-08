@@ -21,7 +21,7 @@
   <?php if (!empty($templateData['groupedModules'])): ?>
     <form method="post" action="">
       <table class="modules">
-	<tr style="background: #ccc;">
+	<tr style="background-color: #ccc">
 	  <th>
 	    &nbsp;
 	  </th>
@@ -39,13 +39,13 @@
 	  </th>
 	</tr>
 	<?php foreach ($templateData['groupedModules'] as $group => $modules): ?>
-	  <tr style="background:#ffff">
+	  <tr style="background-color: #fff">
 	    <td colspan="4"><h3><?php print $templateData['groupLabel'][$group] ?></h3></td>
 	  </tr>
 	  <?php $counter = 0; ?>
 	  <?php foreach ($modules as $id => $module): ?>
 	  <?php $isUpgradeable = $templateData['moduleIsUpgradeable'][$id]; ?>
-	  <tr<?php if ($counter % 2 == 0) print ' style="background-color:#eee;"' ?>>
+	  <tr<?php if ($counter % 2 == 0) print ' style="background-color: #eee"' ?>>
 	    <td>
 	      <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
 		<?php if ($isUpgradeable): ?>
@@ -56,7 +56,7 @@
 		<?php endif; ?>
 	      />
 	    </td>
-	    <td class="modules">
+	    <td>
 	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
 	      <label for="module_<?php print $id ?>">
 		<?php print $module->getName() ?>
@@ -83,7 +83,7 @@
 	  <?php endforeach; ?>
 	<?php endforeach; ?>
 	<?php if ($templateData['anyUpgradeable']): ?>
-	<tr style="background: #ccc;">
+	<tr style="background-color: #ccc">
 	  <td>
 	    <input type="checkbox" onclick="checkAll(this.checked);" checked="checked"/>
 	  </td>

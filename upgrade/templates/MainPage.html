@@ -9,56 +9,54 @@
 
   <body<?php global $translator; if (isset($translator)
 		 && $translator->isRightToLeft()) print ' style="direction:rtl"' ?>>
-    <div id="box">
-      <div id="header">
+    <table id="box" cellspacing="0">
+      <tr><td id="header" colspan="2">
 	<img src="<?php generateUrl('images/g2Logo_upgrade_head.png') ?>" alt="Gallery Upgrader"/>
-      </div>
-      <div id="navbar">
-	<h2><?php print _('Upgrade Steps') ?></h2>
-	<ol>
-	  <?php for ($i = 0; $i < sizeof($steps); $i++): ?>
-	  <li class="navitem">
-	    <span class="nav_num">
-	      <?php if ($i <= $currentStep->getStepNumber()
-		    && ($steps[$i]->isComplete() || $steps[$i]->isOptional())): ?>
+      </td></tr>
+      <tr><td id="navbar"><div>
+	<table cellspacing="0">
+	  <tr><td class="heading" colspan="2">
+	    <?php print _('Upgrade Steps') ?>
+	  </td></tr>
+	  <?php for ($i = 0; $i < count($steps); $i++): ?>
+	  <tr><td class="navnum">
+	    <?php if ($i <= $currentStep->getStepNumber()
+		  && ($steps[$i]->isComplete() || $steps[$i]->isOptional())): ?>
 	      <span class="success">&radic;</span>
-	      <?php elseif ($steps[$i]->isInError()): ?>
+	    <?php elseif ($steps[$i]->isInError()): ?>
 	      <span class="error">&#10007;</span>
-	      <?php else: ?>
-	      <?php print $i?>
-	      <?php endif; ?>
-	    </span>
-
-	    <span class="nav_text">
-	      <?php
-	      if ($i == 0 ||
-                  ($i <= $currentStep->getStepNumber()+1 &&
-                   ($steps[$i-1]->isComplete() ||
-                    $steps[$i-1]->isOptional()))) {
-	          $linkable = true;
-	      } else {
-	          $linkable = false;
-	      }
-	      ?>
-	      <?php if ($linkable): ?>
+	    <?php else: ?>
+	      <?php print $i ?>
+	    <?php endif; ?>
+	  </td><td class="navtext">
+	    <?php $linkable = ($i == 0 ||
+		    ($i <= $currentStep->getStepNumber() + 1 &&
+			($steps[$i-1]->isComplete() || $steps[$i-1]->isOptional())));
+	    ?>
+	    <?php if ($linkable): ?>
 	      <a href="<?php generateUrl('index.php?step=' . $i) ?>">
-		<?php endif; ?>
-		<?php print $steps[$i]->stepName(); ?>
-		<?php if ($linkable): ?>
+	    <?php endif; ?>
+	    <?php print $steps[$i]->stepName(); ?>
+	    <?php if ($linkable): ?>
 	      </a>
-	      <?php endif; ?>
-	    </span>
-	  </li>
+	    <?php endif; ?>
+	  </td></tr>
 	  <?php endfor; ?>
-	</ol>
-	<ul>
-	  <li><span class="helpBox">?</span><a href="<?php generateUrl('../README.html') ?>"
-	   target="_blank"><?php print _('Upgrader Help'); ?></a>
-          </li>
-	  <li><span class="helpBox">X</span><a href="<?php generateUrl('index.php?startOver=1') ?>"><?php print _('Start Over'); ?></a></li>
-	</ul>
-      </div>
-      <div id="main">
+	  <tr class="help"><td>
+	    <span class="helpBox">?</span>
+	  </td><td>
+	    <a href="<?php generateUrl('../README.html') ?>" target="_blank"><?php
+		print _('Upgrader Help'); ?></a>
+	  </td></tr>
+	  <tr><td>
+	    <span class="helpBox">X</span>
+	  </td><td>
+	    <a href="<?php generateUrl('index.php?startOver=1') ?>"><?php
+		print _('Start Over'); ?></a>
+	  </td></tr>
+	</table>
+      </div></td>
+      <td id="main">
 <?php endif; ?>
 <?php if (isset($templateData['MainPage']['showStatusBlock'])): ?>
 <script type="text/javascript">
@@ -112,7 +110,7 @@
 	<?php if (!empty($templateData['errors'])): ?>
 	<h2 class="error">
 	  <?php foreach ($templateData['errors'] as $error): ?>
-	  <?php print $error ?> <br />
+	  <?php print $error ?> <br/>
 	  <?php endforeach; ?>
 	</h2>
 	<?php endif; ?>
@@ -120,7 +118,7 @@
 	<?php if (!empty($templateData['warnings'])): ?>
 	<h2 class="warning">
 	  <?php foreach ($templateData['warnings'] as $warning): ?>
-	  <?php print $warning ?> <br />
+	  <?php print $warning ?> <br/>
 	  <?php endforeach; ?>
 	</h2>
 	<?php endif; ?>
@@ -145,35 +143,27 @@
 	  </span>
 	</div>
 	<?php endif; ?>
-      </div>
-
-      <div id="bottom">
-	<table class="statusTable" cellspacing="0">
-	  <tr>
-	    <td colspan="2">
-	      <h4><?php print _('Upgrade Status'); ?></h4>
-	    </td>
-	  </tr>
-
+      </td></tr>
+      <tr><td id="bottom" colspan="2">
+	<h3><?php print _('Upgrade Status') ?></h3>
+	<table id="statusTable" cellspacing="0">
 	  <tr>
 	    <?php if ($templateData['percentComplete'] != 0): ?>
-	    <td class="progressMade" style="width:<?php print $templateData['percentComplete'] ?>%">&nbsp;</td>
+	    <td class="progressMade"
+		style="width:<?php print $templateData['percentComplete'] ?>%"><h3>&nbsp;</h3></td>
 	    <?php endif; ?>
 
 	    <?php if ($templateData['percentComplete'] != 100): ?>
-	    <td class="progressToGo" style="width:<?php print (100 - $templateData['percentComplete']) . '%' . (($templateData['percentComplete'] == 0) ? '' : ';border-left:none') ?>">&nbsp;</td>
+	    <td class="progressToGo"
+		style="width:<?php print (100 - $templateData['percentComplete']) . '%' .
+		  (($templateData['percentComplete'] == 0) ? '' : ';border-left:none')
+		?>"><h3>&nbsp;</h3></td>
 	    <?php endif; ?>
 	  </tr>
-	  <tr>
-	    <td <?php print ($templateData['percentComplete'] != 0 && $templateData['percentComplete'] != 100) ? 'colspan="2"' : '';?> >
-	      <span class="statusLine">
-		<?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']) ?>
-	      </span>
-	    </td>
-	  </tr>
 	</table>
-      </div>
-    </div>
+	<?php printf(_('Upgrade %d%% complete'), $templateData['percentComplete']) ?>
+      </td></tr>
+    </table>
     <div id="footer">
       <?php print _('Gallery: <strong>your photos</strong> on <strong>your website</strong>') ?>
       &raquo; <a target="_blank" href="http://gallery.sourceforge.net/">gallery.sourceforge.net</a>

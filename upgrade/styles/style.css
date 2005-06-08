@@ -39,8 +39,12 @@ p {
   margin: 1.0em 0;
 }
 
+table {
+  border-spacing: 0;
+}
+
 td {
-  font-size: small;
+  padding: 0;
 }
 
 tt {
@@ -58,121 +62,89 @@ a:hover {
   color: #fd6704;
 }
 
-/*      layout  */
+/*  layout  */
 
 #box {
-  width: 720px;
+  width: 760px;
   text-align: left;
-  border: thin solid #999;
+  border: 1px solid #999;
   background-color: #fff;
   margin: 0 auto;
-  margin-top: 0;
 }
 
-#box:after {
-  content: ".";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+#header img {
+  margin-left: 14px;
 }
-
-/* Hides from IE-mac \*/
-* html #box { height: 1%; }
-/* End hide from IE-mac */
-
-#top {
-  float: left;
-  width: 100%;
-  border-bottom: thin solid #ddd;
-}
-
-#header {
-  float: left;
-}
-
-#header img { margin-left: 18px; }
 
 #navbar {
   font-family: Verdana, "Lucida Grande", Arial, sans-serif;
-  width: 160px;
-  float: left;
-  clear: both;
-  background-color: rgb(209,224,238);
-  border-right: thin solid #ddd;
-  border-bottom: thin solid #ddd;
-  padding: 16px 0;
+  width: 140px;
+  vertical-align: top;
 }
 
-#help {
-  float: right;
-  background-color: rgb(209,224,238);
-  vertical-align: bottom;
-  border: thin solid #ddd;
-  padding: 16px;
+#navbar div {
+  background-color: #d1e0ee;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0 10px 10px;
 }
 
-#navbar h2 {
+#navbar td.heading {
   font-size: 1.4em;
-  margin-left: 20px;
-  margin-bottom: 0.5em;
+  font-weight: bold;
+  font-family: "Gill Sans", Verdana, Arial, sans-serif;
+  border-style: none;
+  padding: 3px;
 }
 
-#navbar ol {
-  list-style-type: none;
-  margin: 0;
-  padding: 0 0 0 16px;
+#navbar td {
+  border-bottom: 1px solid #ecf2f8;
+  padding: 8px 2px;
 }
 
-#navbar ul {
-  list-style-type: none;
-  margin: 16px 0 0 0;
-  padding: 0 0 0 16px;
-}
-
-#navbar li {
-  display: block;
-  border-bottom: thin solid rgb(236,242,248);
-  margin: 0 0 0 4px;
-  padding: 8px 0;
+#navbar tr.help td {
+  padding-top: 22px;
 }
 
 #navbar .helpBox {
   font-weight: bold;
   color: #eee;
   background-color: #ae0000;
-  border: thin solid #ae0000;
-  margin: 0 4px 0 0;
-  padding: 2px 4px;
+  border: 1px solid #ae0000;
+  margin-right: 6px;
+  padding: 2px 3px;
 }
 
 #main {
-  width: 518px;
-  float: left;
-  padding: 16px;
-  padding-right: 24px;
+  vertical-align: top;
+  padding: 14px 22px 8px 14px;
 }
 
 #main h1 { font-size: 1.4em; }
 #main h2 { font-size: 1.2em; margin: 0 0 0.8em 0; }
-#main h3 { font-size: 1.2em; }
+#main h3, #bottom h3 { font-size: 1.2em; }
+#main td { font-size: small; }
+#main table { border-spacing: 4px; }
 
 #bottom {
-  clear: both;
-  border-top: thin solid #ddd;
-  padding: 8px 24px;
+  border-top: 1px solid #ddd;
+  padding: 8px 20px;
+}
+
+#statusTable {
+  width: 100%;
+  margin: 2px 0;
 }
 
 #footer {
-  width: 672px;
+  width: 720px;
   font-size: 0.9em;
   text-align: left;
   margin: 0 auto;
-  margin-top: 0;
   padding: 8px 24px;
 }
 
-/*      classes */
+/*  classes  */
 
 .bold {
   font-weight: bold;
@@ -200,41 +172,17 @@ a:hover {
   font-weight: bold;
   font-size: 1.2em;
   background-color: #eee;
-  border: thin solid #ddd;
+  border: 1px solid #ddd;
   margin: 8px 0 8px -4px;
   padding: 4px;
 }
 
-.go:after {
-  content: ".";
-  display: block;
-  height: 0;
-  clear: both;
-  visibility: hidden;
+.goToNext {
 }
-
-/* Hides from IE-mac \*/
-* html .go { height: 1%; }
-/* End hide from IE-mac */
-
-.goToNext { float: left; }
 
 .goToNextL {
-  float: left;
   margin-left: 3.0em;
 }
-
-.statusTable {
-  width: 100%;
-  margin: 0 0 0 -6px;
-  padding: 0;
-}
-
-.statusTable h4 {
-  font-size: 0.9em;
-}
-
-.statusLine { font-size: 0.8em; }
 
 .small {
   font-size: 69%;
@@ -252,53 +200,39 @@ a:hover {
 .adminForm input {
   font-size: 0.9em;
   background-color: #eee;
-  border: thin solid #ddd;
+  border: 1px solid #ddd;
   padding: 2px 4px;
 }
 
 .adminForm select {
   font-size: 0.9em;
   background-color: #eee;
-  border: thin solid #ddd;
+  border: 1px solid #ddd;
   padding: 0;
 }
 
-.navitem {
-  margin: 0;
-  padding: 0;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-.nav_num {
+.navnum {
   color: #555;
   font-weight: 800;
-  margin: 0 6px 0 0;
+  text-align: center;
+  vertical-align: top;
+  padding-right: 6px !important;
 }
 
-.nav_arrow {
-  border-bottom: thin solid #fff;
-  margin: 0;
-  padding: 2px;
-  font-size: x-small;
-  float: left;
-}
-
-.nav_text {
-  margin: 0;
-  padding: 2px;
+.navtext {
+  padding-right: 4px !important;
 }
 
 .stack_trace {
   background-color: #eee;
-  border: thin solid #999;
+  border: 1px solid #999;
   margin: 15px 15px 0 15px;
   padding: 5px;
 }
 
 .debug {
   background-color: #eee;
-  border: thin solid #999;
+  border: 1px solid #999;
   margin: 15px 15px 0 15px;
   padding: 5px;
 }
@@ -311,7 +245,7 @@ a:hover {
 
 .example {
   background-color: #eee;
-  border: thin solid #999;
+  border: 1px solid #999;
   margin: 15px 15px 0 15px;
   padding: 5px;
 }
@@ -323,9 +257,9 @@ a:hover {
 }
 
 .modules td {
-  font-size: 1.1em;
-  line-height: 1.4em;
-  margin: 1.0em 0;
+  font-size: 1.1em !important;
+  line-height: 1.3em;
+  padding: 3px 2px 1px 3px;
 }
 
 .disabled {
@@ -337,20 +271,21 @@ a:hover {
   width: 100%;
 }
 
-.systemChecks table tr td {
-  line-height: 1.4em;
+.systemChecks td {
+  line-height: 1.2em;
 }
 
-.systemChecks table tr td.notice {
+.systemChecks td.notice {
   margin-left: 10px;
-  border: thin solid #999;
+  border: 1px solid #999;
   padding: 5px;
+  line-height: 1.3em;
 }
 
 .showHideToggle {
   padding-left: 0.3em;
   padding-right: 0.3em;
-  border: thin solid #a6caf0;
+  border: 1px solid #a6caf0;
   background-color: #eee;
 }
 
@@ -360,10 +295,11 @@ a:hover {
 
 .progressMade {
   background-color: #fd6704;
-  border: thin solid #ddd;
+  border: 1px solid #ddd;
 }
 
 .progressToGo {
   background-color: #eee;
-  border: thin solid #ddd;
+  border: 1px solid #ddd;
 }
+
