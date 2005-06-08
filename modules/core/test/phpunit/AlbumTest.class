@@ -361,6 +361,32 @@ class AlbumTest extends GalleryTestCase {
 	$this->assertEquals($expected, $actual);
     }
 
+    function testFetchParentsWithPermission() {
+	list ($ret, $album) = $this->_createRandomAlbum($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $subalbum) = $this->_createRandomAlbum($album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_parentAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $root) = GalleryCoreApi::loadEntitiesById($this->_getRootId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $actual) = GalleryCoreApi::fetchParents($subalbum, 'core.view');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($root, $album), $actual);
+    }
+
     /**
      * Create a parent, a child, verify that fetchChildren on the parent
      * returns the child, delete both.

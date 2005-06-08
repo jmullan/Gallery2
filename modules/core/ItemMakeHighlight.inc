@@ -99,21 +99,13 @@ class ItemMakeHighlightView extends GalleryView {
 	    $form['formName'] = 'ItemMakeHighlight';
 	}
 
-	list ($ret, $parents) = GalleryCoreApi::fetchParents($item);
+	list ($ret, $parents) = GalleryCoreApi::fetchParents($item, 'core.edit');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$parentList = array();
 	foreach (array_reverse($parents) as $parent) {
-	    list ($ret, $canEdit) =
-		GalleryCoreApi::hasItemPermission($parent->getId(), 'core.edit');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    if (!$canEdit) {
-		break;
-	    }
 	    $parentList[] = $parent->getMemberData();
 	}
 

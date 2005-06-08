@@ -336,11 +336,12 @@ class GalleryChildEntityHelper_simple {
      * Load all the ancestors of this item
      *
      * @param object GalleryItem an item
+     * @param string (optional) only return ancestors with this permission
      * @return array object GalleryStatus a status code
      *               array of GalleryItem, from top level to parent item
      * @static
      */
-    function fetchParents($item) {
+    function fetchParents($item, $permission=null) {
 	global $gallery;
 
 	if (GalleryUtilities::isA($item, 'GalleryAlbumItem')) {
@@ -355,14 +356,29 @@ class GalleryChildEntityHelper_simple {
 	    }
 	    array_push($parentIds, $item->getParentId());
 	}
+	if (empty($parentIds)) {
+	    return array(GalleryStatus::success(), array());
+	}
 
-	if (!empty($parentIds)) {
-	    list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
+	if (isset($permission)) {
+	    $ret = GalleryCoreApi::studyPermissions($parentIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	} else {
-	    $parents = array();
+	    foreach ($parentIds as $i => $id) {
+		list ($ret, $hasPermission) = GalleryCoreApi::hasItemPermission($id, $permission);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+		if (!$hasPermission) {
+		    unset($parentIds[$i]);
+		}
+	    }
+	}
+
+	list ($ret, $parents) = GalleryCoreApi::loadEntitiesById($parentIds);
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	return array(GalleryStatus::success(), $parents);

@@ -127,15 +127,14 @@ class NewAlbumView extends GalleryView {
 	}
 
 	/* Load the item's parents */
-	list($ret, $parents) = GalleryCoreApi::fetchParents($parent);
+	list($ret, $parents) = GalleryCoreApi::fetchParents($parent, 'core.view');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	} else {
-	    for ($i = 0; $i < sizeof($parents); $i ++) {
-		$parents[$i] = $parents[$i]->getMemberData();
-	    }
-	    $parents[sizeof($parents)] = $parent->getMemberData();
 	}
+	for ($i = 0; $i < sizeof($parents); $i ++) {
+	    $parents[$i] = $parents[$i]->getMemberData();
+	}
+	$parents[] = $parent->getMemberData();
 
 	$NewAlbum = array();
 	$NewAlbum['parents'] = $parents;
