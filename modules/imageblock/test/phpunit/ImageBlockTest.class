@@ -239,7 +239,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 1');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'One block');
 	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
@@ -256,7 +256,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 2');
 	$this->assertEquals(6, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'All blocks');
 	$gotAlbum = $gotPhoto = 0;
@@ -341,7 +341,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 1');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'One block');
 	$itemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
@@ -352,7 +352,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 2');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'One block');
 	$nextItemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
@@ -374,7 +374,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 3');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'One block');
 	$itemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
@@ -386,7 +386,7 @@ class ImageBlockTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(count($tpl) > 0, 'A template should have been returned');
+	$this->assert(count($tpl) > 0, 'A template should have been returned 4');
 	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
 			    'One block');
 	$nextItemId = $this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
@@ -394,19 +394,68 @@ class ImageBlockTest extends GalleryTestCase {
     }
 
     function testPeriodicPermission() {
-	/* Ensure periodic blocks only pick from publically visible items */
 	global $gallery;
-
-	list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
-	foreach (array_keys($groupIds) as $groupId) {
-	    $ret = GalleryCoreApi::removeGroupPermission(
-		$this->_album->getId(), $groupId, 'core.view', true);
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
+	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	list ($ret, $external) = GalleryView::loadView('imageblock.External');
+	/* Ensure block will repick if current value is found to no longer be accessible */
+	list ($ret, $goodAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $tmp) = $this->_createDerivative(
+	    $goodAlbum, $this->_photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $badAlbum) = $this->_createRandomAlbum($this->_album->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($badAlbum->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $tmp) = $this->_createDerivative(
+	    $badAlbum, $this->_photo->getId(), DERIVATIVE_TYPE_IMAGE_THUMBNAIL);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$now = localtime();
+	$ret = $this->_module->setParameter('monthlyAlbum', $badAlbum->getId() . '|' . $now[4]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	GalleryUtilities::putRequestVariable('blocks', 'monthlyAlbum');
+	GalleryUtilities::putRequestVariable('itemId', $this->_album->getId());
+
+	$template = new ImageBlockDummyGalleryTemplate();
+	list ($ret, $tpl) = $external->loadTemplate($template, $form);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(array('html' => 'modules/imageblock/templates/ImageBlock.tpl'), $tpl);
+	$this->assertEquals(1, count($template->data['ImageBlockSystemContent']['blocks']),
+			    'One block');
+	$this->assertBlock($template->data['ImageBlockSystemContent']['blocks'][0]);
+	$this->assertEquals($goodAlbum->getId(),
+	    $template->data['ImageBlockSystemContent']['blocks'][0]['id'], 'Album id');
+
+	/* Ensure periodic blocks only pick from publically visible items */
+	$ret = GalleryCoreApi::removeItemPermissions($this->_photo->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_photo->getId(), $gallery->getActiveUserId(), 'core.viewAll');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removePluginParameter('module', 'imageblock', 'weeklyImage');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

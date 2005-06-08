@@ -135,6 +135,11 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	    if (!isset($parentId)) {
 		return GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__);
 	    }
+	    $ret = GalleryCoreApi::assertHasItemPermission($parentId, 'core.view');
+	    if ($ret->isError()) {
+		/* Ignore permission error.. just don't add a block */
+		return GalleryStatus::success();
+	    }
 	    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($parentId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -171,12 +176,15 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 		}
 	    }
 	    if (isset($itemId)) {
-		list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
-		if ($ret->isSuccess()) {
+		$ret = GalleryCoreApi::assertHasItemPermission($itemId, 'core.view');
+		if ($ret->isError()) {
+		    /* Just pick a new item if this one is inaccessible or missing */
+		} else {
+		    list ($ret, $item) = GalleryCoreApi::loadEntitiesById($itemId);
+		    if ($ret->isError()) {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
 		    break;
-		} else if (!($ret->getErrorCode() & ERROR_MISSING_OBJECT)) {
-		    return $ret->wrap(__FILE__, __LINE__);
-		    /* Just pick a new item if this one is missing */
 		}
 	    }
 	    /* Set random selection for anonymous user */
@@ -197,11 +205,6 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	}
 
 	if (isset($item)) {
-	    $ret = GalleryCoreApi::assertHasItemPermission($item->getId(), 'core.view');
-	    if ($ret->isError()) {
-		/* Ignore permission error.. just don't add a block */
-		return GalleryStatus::success();
-	    }
 	    $id = $item->getId();
 	    $data = array('id' => $id);
 	    list ($ret, $data['viewCount']) = GalleryCoreApi::fetchItemViewCount($item->getId());
@@ -422,8 +425,7 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	global $gallery;
 	$storage =& $gallery->getStorage();
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
@@ -443,8 +445,8 @@ class ImageBlockHelper /* extends GalleryEventListener */ {
 	  [GalleryEntity::entityType] = ?
 	  AND
 	  [GalleryAccessSubscriberMap::itemId] = [GalleryEntity::id]
-          AND
-          [GalleryAccessSubscriberMap::accessListId] IN (%s)
+	  AND
+	  [GalleryAccessSubscriberMap::accessListId] IN (%s)
 	  AND
 	  [GalleryChildEntity::parentId] = [GalleryEntity::id]
 	  AND
