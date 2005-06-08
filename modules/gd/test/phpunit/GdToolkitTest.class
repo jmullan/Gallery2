@@ -94,9 +94,7 @@ class GdToolkitTest extends GalleryTestCase {
 
     function testPerformOperations() {
 	foreach ($this->_gdEnvironments as $environment) {
-	    /*
-	     * Test each PHP environment we know
-	     */
+	    /* Test each PHP environment we know */
 	    $this->_gdFunctionality->setEnvironment($environment);
 	    $this->_toolkit->setGdFunctionality($this->_gdFunctionality);
 	    $gd =& $this->_gdFunctionality;
@@ -105,7 +103,7 @@ class GdToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    if (! $isSupported) {
+	    if (!$isSupported) {
 		continue;
 	    }
 
@@ -262,7 +260,7 @@ class GdToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    if (! $isSupported) {
+	    if (!$isSupported) {
 		continue;
 	    }
 
@@ -387,7 +385,7 @@ class GdToolkitTest extends GalleryTestCase {
 	    if ($ret->isError()) {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	    }
-	    if (! $isSupported) {
+	    if (!$isSupported) {
 		/* No support, so the function should return empty maps */
 		$this->assertEquals(
 		    array(), $results['operations'], 'Environment ' . $environment['name']);
