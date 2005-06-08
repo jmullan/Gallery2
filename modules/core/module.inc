@@ -44,7 +44,7 @@ class CoreModule extends GalleryModule {
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|loadSystemContent|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(6, 0));
+	$this->setRequiredCoreApi(array(6, 1));
 	$this->setRequiredModuleApi(array(0, 12));
     }
 
