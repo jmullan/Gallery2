@@ -209,21 +209,25 @@ class ItemAddFromServer extends ItemAddPlugin {
 	}
 
 	/* Look into the directory, add anything we find */
+	$dirList = array();
 	$handle = $this->_platform->opendir($path);
-
 	while (($fileName = $this->_platform->readdir($handle)) !== false) {
-	    $gallery->guaranteeTimeLimit(30);
 	    if ($fileName == '.' || $fileName == '..' || $fileName == 'CVS') {
 		continue;
 	    }
+	    $dirList[] = $fileName;
+	}
+	$this->_platform->closedir($handle);
+	sort($dirList);
 
+	foreach ($dirList as $fileName) {
+	    $gallery->guaranteeTimeLimit(30);
 	    $filePath = $path . $this->_dirSep . $fileName;
 	    if ($this->_platform->is_readable($filePath)) {
 		if ($this->_platform->is_dir($filePath)) {
 		    $ret = $this->addDirectory($albumId, $filePath, $useSymlink,
 					       $textFields, $status, $error);
 		    if ($ret->isError()) {
-			$this->_platform->closedir($handle);
 			GalleryCoreApi::releaseLocks($lockId);
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -231,7 +235,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 		    $ret = $this->addItem($albumId, $filePath, $useSymlink,
 					  $textFields, $status, $error);
 		    if ($ret->isError()) {
-			$this->_platform->closedir($handle);
 			GalleryCoreApi::releaseLocks($lockId);
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -242,7 +245,6 @@ class ItemAddFromServer extends ItemAddPlugin {
 		}
 	    }
 	}
-	$this->_platform->closedir($handle);
 
 	$ret = GalleryCoreApi::releaseLocks($lockId);
 	if ($ret->isError()) {
