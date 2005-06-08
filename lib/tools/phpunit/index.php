@@ -2,7 +2,7 @@
 /**
  * @package Gallery
  * @subpackage PHPUnit
- */   
+ */
 include('../security.inc');
 include('../../../bootstrap.inc');
 require_once('../../../init.inc');
@@ -49,7 +49,7 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
     }
 
     if ($isSiteAdmin) {
-    
+
 	/*
 	 * Load the test cases for every active module.
 	 */
@@ -65,7 +65,7 @@ function PhpUnitGalleryMain(&$testSuite, $filter) {
 	    if (empty($moduleStatus['active'])) {
 		continue;
 	    }
-	
+
 	    $testDir = $modulesDir . $moduleId . '/test/phpunit';
 
 	    if ($platform->file_exists($testDir) &&
@@ -144,7 +144,7 @@ if (isset($_GET['filter'])) {
 	} else if ($j == 0) {
             $displayFilter .= sprintf(':%d-%d,', $range[$j][0], $range[$j][1]);
         } else if ($j == (count($range)-1)) {
-            $displayFilter .= sprintf('%d-%d', $range[$j][0], $range[$j][1]);	
+            $displayFilter .= sprintf('%d-%d', $range[$j][0], $range[$j][1]);
 	} else {
             $displayFilter .= sprintf('%d-%d,', $range[$j][0], $range[$j][1]);
 	}
@@ -183,11 +183,28 @@ if ($ret->isError()) {
     return;
 }
 
-/* Uncomment this to see debug output before tests run
+/* Check that our dev environment is correct */
+$incorrectDevEnv = array();
+foreach (array('error_reporting' => array(2047),
+	       'short_open_tag' => array('off', 0),
+	       'magic_quotes_gpc' => array('on', 1),
+	       'allow_call_time_pass_reference' => array('off', 0),
+	       'register_globals' => array('off', 0),
+	       'display_errors' => array('on', 1),
+	       'allow_url_fopen' => array('off', 0),
+	       'include_path' => array('/bogus')) as $key => $expected) {
+    $actual = ini_get($key);
+    if (!in_array($actual, $expected)) {
+	$incorrectDevEnv[$key] = array($expected, $actual);
+    }
+}
+
+/*
+ * Uncomment this to see debug output before tests run
 print "<pre>";
 print $gallery->getDebugBuffer();
 print "</pre>";
-*/
+ */
 include(dirname(__FILE__) . '/index.tpl');
 
 /* Compact any ACLs that were created during this test run */

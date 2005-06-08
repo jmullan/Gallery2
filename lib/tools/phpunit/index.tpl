@@ -79,6 +79,30 @@
       }
     </script>
 
+    <?php if (sizeof($incorrectDevEnv) > 0): ?>
+    <div style="float: right; width: 500px; border: 2px solid red; padding: 3px">
+      <h2 style="margin: 0px"> Development Environment Warning </h2>
+      <div style="margin-left: 5px">
+        The following settings in your development environment are not correct.  See the <a href="http://gallery.menalto.com/modules.php?op=modload&name=phpWiki&file=index&pagename=Development%20Environment">G2 Development Environment</a> page for more information
+      </div>
+      <br/>
+      <table border="0" class="details">
+        <tr>
+          <th> PHP Setting </th>
+          <th> Actual Value </th>
+          <th> Expected Value(s) </th>
+        </tr>
+        <?php foreach (array_keys($incorrectDevEnv) as $key): ?>
+        <tr>
+          <td> <?php print $key ?> </td>
+          <td> <?php print $incorrectDevEnv[$key][1] ?> </td>
+          <td> <?php print join(' <b>or</b> ', $incorrectDevEnv[$key][0]) ?> </td>
+        </tr>
+        <?php endforeach; ?>
+      </table>
+    </div>
+    <?php endif; ?>
+
     <h2>Filter</h2>
     <div class="section">
       <form>
