@@ -160,6 +160,9 @@ class ConfirmImportController extends GalleryController {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'migrate.SelectGallery';
 	} else if (isset($form['action']['import'])) {
+
+	    $storage = $gallery->getStorage();
+
 	    /* We reuse this instance all the way through */
 	    list ($ret, $immediateView) = $this->getImmediateStatusView();
 	    if ($ret->isError()) {
@@ -283,6 +286,12 @@ class ConfirmImportController extends GalleryController {
 		}
 		$uid = null;
 		$numberOfUsersImported++;
+	    }
+
+	    /* Checkpoint to ensure users are saved to the DB in case of a later failure */
+	    $ret = $storage->checkPoint();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $immediateView->resetTimingStats();
@@ -1148,6 +1157,13 @@ class ConfirmImportController extends GalleryController {
 		    $i++;
 		}
 	    }
+
+	    /* Checkpoint to ensure items are saved to the DB in case of a later failure */
+	    $ret = $storage->checkPoint();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    //$albumHighlight[$newAlbumInstanceId]=$importAlbumItem->isAlbumName;
 	    //$finishedAlbums[$album['name']] = $newAlbumInstanceId;
 	    foreach ($albumHighlight as $highlightRecipientId => $nameOfAlbumToHighlight) {
@@ -1167,6 +1183,12 @@ class ConfirmImportController extends GalleryController {
 			return array($ret->wrap(__FILE__, __LINE__), null);
 		    }
 		}
+	    }
+
+	    /* Checkpoint to ensure highlights are saved to the DB in case of a later failure */
+	    $ret = $storage->checkPoint();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $immediateView->resetTimingStats();
@@ -1207,6 +1229,12 @@ class ConfirmImportController extends GalleryController {
 		    }
 		    GalleryDataCache::reset();
 		}
+	    }
+
+	    /* Checkpoint to ensure thumbnails are saved to the DB in case of a later failure */
+	    $ret = $storage->checkPoint();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
 	    }
 
 	    $ret = $immediateView->renderStatusMessage(
