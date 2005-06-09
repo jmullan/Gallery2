@@ -4,9 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<!-- Load up the WZ_DragDrop library -->
-<script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}">
-</script>
+{* Load up the WZ_DragDrop library *}
+<script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}"></script>
 
 <script type="text/javascript">
   // <![CDATA[
@@ -110,7 +109,7 @@
    style="width: 400px; height: 300px; border-width: 1px; margin: 5px 0 10px 5px">
     <img name="floater"
      src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$watermark.id`"}"
-     width="{$watermark.width}" height="{$watermark.height}" alt=""/>
+     width="{$watermark.width}" height="{$watermark.height}" alt="" style="position: absolute"/>
   </div>
 
   <input type="hidden" id="xPercentage"
@@ -151,17 +150,12 @@
    name="{g->formVar var="form[action][cancel]"}" value="{g->text text="Cancel"}"/>
 </div>
 
+{capture name=$footer}
 <script type="text/javascript">{literal}
 // <![CDATA[
 SET_DHTML("background"+NO_DRAG, "floater"+CURSOR_MOVE);
-function watermarkInit() {
-  moveToOriginalLocation();
-  verifyBounds();
-}
-if (window.attachEvent) { /* IE */
-  window.attachEvent("onload", watermarkInit);
-} else {
-  watermarkInit();
-}
+moveToOriginalLocation();
+verifyBounds();
 // ]]>
 {/literal}</script>
+{/capture}

@@ -4,9 +4,8 @@
  * may overwrite it.  Instead, copy it into a new directory called "local" and edit that
  * version.  Gallery will look for that file first and use it if it exists.
  *}
-<!-- Load up the WZ_DragDrop library -->
-<script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}">
-</script>
+{* Load up the WZ_DragDrop library *}
+<script type="text/javascript" src="{g->url href="lib/wz_dragdrop/wz_dragdrop.js"}"></script>
 
 <script type="text/javascript">
   // <![CDATA[
@@ -114,11 +113,9 @@
 <div class="gbBlock">
   <h3> {g->text text="Step 2.  Place the watermark on your image."} </h3>
 
-  <div id="watermark_div">
-    {g->image id="watermark_original" maxSize=400 style="display: block"
-	      item=$ItemEditWatermark.item
-	      image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
-  </div>
+  {g->image name="watermark_original" maxSize=400 style="display: block"
+	    item=$ItemEditWatermark.item
+	    image=$ItemEditWatermark.derivative|default:$ItemEditWatermark.item}
   <img name="watermark_floater"
    src="{g->url arg1="view=core.DownloadItem" arg2="itemId=`$form.watermarkId`"}"
    width="{$ItemEditWatermark.watermarks[$form.watermarkId].width}"
@@ -163,26 +160,15 @@
 <input type="hidden" id="yPercent"
  name="{g->formVar var="form[yPercent]"}" value="{$form.yPercent}"/>
 
+{capture name="ItemAdmin_footer"}
 <script type="text/javascript">{literal}
 // <![CDATA[
-function watermarkInit() {
-  dd.elements.watermark_floater.moveTo(dd.elements.watermark_original.x,
-				       dd.elements.watermark_original.y);
-  dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
-  chooseWatermark(document.getElementById("watermarkList").value);
-}
-if (window.attachEvent) { /* IE - dragdrop over div not img*/
-  var img = document.getElementById("watermark_original"),
-      div = document.getElementById("watermark_div");
-  img.id = "unused";
-  div.id = "watermark_original";
-}
-SET_DHTML("watermark_original"+NO_DRAG, "watermark_floater");
-if (window.attachEvent) { /* IE */
-  window.attachEvent("onload", watermarkInit);
-} else {
-  watermarkInit();
-}
+SET_DHTML("watermark_original"+NO_DRAG, "watermark_floater"+CURSOR_MOVE);
+dd.elements.watermark_floater.moveTo(dd.elements.watermark_original.x,
+				     dd.elements.watermark_original.y);
+dd.elements.watermark_floater.setZ(dd.elements.watermark_original.z+1);
+chooseWatermark(document.getElementById("watermarkList").value);
 // ]]>
 {/literal}</script>
+{/capture}
 {/if}

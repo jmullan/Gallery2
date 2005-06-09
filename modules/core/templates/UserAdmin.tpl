@@ -81,3 +81,5 @@
     </td>
   </tr></table>
 </form>
+{* Content subView wants to display outside main form/table: *}
+{if isset($smarty.capture.UserAdmin_footer)} {$smarty.capture.UserAdmin_footer} {/if}

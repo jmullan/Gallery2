@@ -5,4 +5,4 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 {include file="gallery:modules/watermark/templates/WatermarkEdit.tpl"
-	 watermark=$WatermarkSiteAdminEdit.watermark}
+	 watermark=$WatermarkSiteAdminEdit.watermark footer="SiteAdmin_footer"}
