@@ -121,7 +121,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
-						    array('fileName' => 'foo',
+						    array('fileName' => 'foo-1',
 							  'id' => $item->getId(),
 							  'warnings' => array()))),
 				  'error' => array()),
@@ -145,7 +145,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
-						    array('fileName' => 'foo',
+						    array('fileName' => 'foo-1',
 							  'id' => $item->getId(),
 							  'warnings' => array('a warning')))),
 				  'error' => array('an error')),
@@ -156,9 +156,13 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$sortAddedFilesFunc = 
 	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
 
-	list ($ret, $item) = GalleryTestCase::_createRandomDataItem(
+	list ($ret, $archive) = $this->_createRandomDataItem(
 	    $this->_album->getId(), 'test/archive',
 	    array('pathComponent' => 'foo.zip', 'title' => 'foo', 'summary' => 'hoho'));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $item) = GalleryTestCase::_createRandomDataItem($this->_album->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
@@ -174,8 +178,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 					    'subView' => 'core.ItemAddConfirmation',
 					    'itemId' => $this->_album->getId()),
 			    $results['redirect'], 'redirect');
-	$this->assertEquals(array('an error', 'an error'), $results['error'], 'error');
-	$this->assertEquals(2, count($results['status']['addedFiles']), 'added 2 items');
+	$this->assertEquals(array('an error', 'an error', 'an error', 'an error'),
+			    $results['error'], 'error');
+	$this->assertEquals(4, count($results['status']['addedFiles']), 'added 4 items');
 	$addedFiles = $results['status']['addedFiles'];
 
 	/* 
@@ -184,23 +189,27 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	 */
 	usort($addedFiles, $sortAddedFilesFunc);
 
-	$this->assertEquals(array('bar.ext', 'foo.ext'),
-			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName']), 'files');
+	$this->assertEquals(array('bar.ext', 'blah.ext', 'foo-2', 'foo.ext'),
+			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName'],
+				  $addedFiles[2]['fileName'], $addedFiles[3]['fileName']), 'files');
 	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
 	$this->assertEquals(array('a warning'), $addedFiles[1]['warnings'], 'warning 2');
+	$this->assertEquals(array('a warning'), $addedFiles[2]['warnings'], 'warning 3');
+	$this->assertEquals(array('a warning'), $addedFiles[3]['warnings'], 'warning 4');
 
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_album);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assert(!in_array($item->getId(), $childIds), 'archive item has been deleted');
+	$this->assert(!in_array($archive->getId(), $childIds), 'archive item has been deleted');
 
 	list ($ret, $item) = GalleryCoreApi::loadEntitiesById($addedFiles[1]['id']);
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('foo', $item->getTitle(), 'title set with base filename');
+	$this->assertEquals('blah', $item->getTitle(), 'title set with base filename');
 	$this->assertEquals('hoho', $item->getSummary(), 'summary set from archive');
+	$this->assert($item->getParentId() != $this->_album->getId(), 'should be in subalbum');
     }
 
     function testHandleRequestWithErrors() {
@@ -244,15 +253,18 @@ class ItemAddControllerTestPluginSuccess {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null, null);
 	}
 
-	/* Pretend we just added an item that is already there */
+	/* Pretend we just added item(s) that are already there */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
+	$i = 1;
+	$addedFiles = array();
+	foreach ($childIds as $id) {
+	    $addedFiles[] = array('fileName' => 'foo-' . $i++, 'id' => $id, 'warnings' => array());
+	}
 
-	return array(GalleryStatus::success(), array(),
-	    array('addedFiles' => array(array('fileName' => 'foo', 'id' => array_shift($childIds),
-					      'warnings' => array()))));
+	return array(GalleryStatus::success(), array(), array('addedFiles' => $addedFiles));
     }
 }
 
@@ -317,6 +329,8 @@ class ItemAddControllerTestToolkit extends GalleryToolkit {
 
 	$platform->copy(__FILE__, $destFilename . '/foo.ext');
 	$platform->copy(__FILE__, $destFilename . '/bar.ext');
+	$platform->mkdir($destFilename . '/subdir');
+	$platform->copy(__FILE__, $destFilename . '/subdir/blah.ext');
 
 	return array(GalleryStatus::success(), $mimeType, $context);
     }
