@@ -47,8 +47,7 @@ class GalleryPermissionHelper_simple {
 
 	$cacheKey = "GalleryPermissionHelper::fetchAccessListIds($permission, $userId)";
 	if (!GalleryDataCache::containsKey($cacheKey)) {
-	    list ($ret, $groupIds) =
-		GalleryCoreApi::fetchGroupsForUser($gallery->getActiveUserId());
+	    list ($ret, $groupIds) = GalleryCoreApi::fetchGroupsForUser($userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -66,7 +65,7 @@ class GalleryPermissionHelper_simple {
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
-	    
+
 	    $query = sprintf('
 	    SELECT DISTINCT
 	      [GalleryAccessMap::accessListId]
