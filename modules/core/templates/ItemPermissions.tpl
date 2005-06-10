@@ -47,7 +47,7 @@
      name="{g->formVar var="form[action][changeOwner]"}" value="{g->text text="Change"}"/>
     <p class="giDescription">
     <input type="checkbox" checked="checked"
-      name="{g->formVar var="form[applyOwnerToSubItems]"}" 
+      name="{g->formVar var="form[applyOwnerToSubItems]"}"
       value="{g->text text="Apply new owner to sub-items"}"/>
       {g->text text="Apply new owner to sub-items"}
     </p>
@@ -70,7 +70,7 @@
   <h3> {g->text text="Apply changes"} </h3>
 
   <p class="giDescription">
-    {g->text text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many of sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible. Changes are applied to sub-albums by default."}
+    {g->text text="This item has sub-items.  The changes you make here can be applied to just this item, or you can apply them to all sub-items.  Note that applying changes to sub-items will merge your change into the existing permissions of the sub-items and may be very time consuming if you have many sub-items.  It's more efficient to grant permissions to groups and then add and remove users from groups whenever possible. Changes are applied to sub-items by default."}
   </p>
 
   <input type="checkbox" checked="checked"
