@@ -137,7 +137,7 @@ class SizeLimitHelperTest extends GalleryTestCase {
     }
 
     function testIllegalLimitOperation() {
-	list ($ret, $errors, $warnings) = SizeLimitHelper::buildDerivativeWithLimits(
+	$ret = SizeLimitHelper::buildDerivativeWithLimits(
 	    $this->_item, 'unsupported', array('anything'));
 	$this->assert($ret->getErrorCode() & ERROR_UNSUPPORTED_FILE_TYPE);
     }
