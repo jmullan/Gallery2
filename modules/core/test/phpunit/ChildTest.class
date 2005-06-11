@@ -43,8 +43,8 @@ class ChildTest extends GalleryTestCase {
 	parent::setUp();
 
 	/* Create a little tree of mixed items/entities */
-	list ($ret, $this->_root) = $this->_createRandomAlbum($this->_getRootId(),
-							      array('orderBy' => 'orderWeight'));
+	list ($ret, $this->_root) =
+	    $this->_createRandomAlbum($this->_getRootId(), array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -80,7 +80,7 @@ class ChildTest extends GalleryTestCase {
 	$this->assertEquals(array($this->_child[0]->getId(),
 				  $this->_child[1]->getId()),
 			    $childIds,
-			    "root children");
+			    'root children');
 
 	/* Make sure only items appear from fetchChildItemIds */
 	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($this->_child[0]);
@@ -88,6 +88,42 @@ class ChildTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals(array(), $childIds, "child 0's children");
+    }
+
+    function testFetchChildItemIdsDifferentUser() {
+	/* Create a new user and give him limited view permissions on our tree */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	/* Create a new user and give him limited view permissions on our tree */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	for ($i = 0; $i < 2; $i++) {
+	    $ret = GalleryCoreApi::removeItemPermissions($this->_child[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_child[0]->getId(), $user->getId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $childIds) =
+	    GalleryCoreApi::fetchChildItemIds($this->_root, null, null, $user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_child[0]->getId()), $childIds, 'root children');
     }
 
     function testFetchChildDataItemIds() {
@@ -110,7 +146,7 @@ class ChildTest extends GalleryTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	$this->assertEquals(array($this->_child[0]->getId(), $this->_child[1]->getId()), 
+	$this->assertEquals(array($this->_child[0]->getId(), $this->_child[1]->getId()),
         $childIds, "root sub-albums");
     }
 
@@ -177,7 +213,7 @@ class ChildTest extends GalleryTestCase {
 		  $child[0]->getId()),
 	    $childIds);
     }
-    
+
     function testDescendentItemIds() {
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
         if ($ret->isError()) {
@@ -195,7 +231,7 @@ class ChildTest extends GalleryTestCase {
         foreach ($items as $item) {
             $itemIds[] = $item->getId();
         }
-        
+
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root);
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -203,7 +239,7 @@ class ChildTest extends GalleryTestCase {
         sort($childIds);
         $this->assertEquals($itemIds, $childIds, 'descendents');
     }
-    
+
     function testDescendentItemIdsNoItem() {
         list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_child[0]);
         if ($ret->isError()) {
@@ -211,10 +247,10 @@ class ChildTest extends GalleryTestCase {
         }
         $this->assertEquals(array(), $childIds, 'empty descendents');
     }
-    
+
     function testDescendentItemIdsInadequatePermissions() {
         global $gallery;
-        
+
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -234,18 +270,18 @@ class ChildTest extends GalleryTestCase {
         }
         $this->_markForCleanup($user);
         $gallery->setActiveUser($user);
-        
-        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, null, 
+
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, null,
             null, 'core.edit');
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
         $this->assertEquals(array(), $childIds, 'inadequate permissions');
      }
-    
+
     function testDescendentItemIdsNoPermissions() {
         global $gallery;
-        
+
         list ($ret, $items[]) = $this->_createRandomDataItem($this->_root->getId());
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -263,12 +299,12 @@ class ChildTest extends GalleryTestCase {
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
         }
-        
+
         $this->_markForCleanup($user);
         $gallery->setActiveUser($user);
 
         /* the goal here is to test for the permissions that "everyone" doesn't have */
-        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root, 
+        list ($ret, $childIds) = GalleryCoreApi::fetchDescendentItemIds($this->_root,
             null, null, 'core.all');
         if ($ret->isError()) {
             return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));

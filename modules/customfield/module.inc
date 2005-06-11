@@ -40,12 +40,12 @@ class CustomFieldModule extends GalleryModule {
 	$this->setId('customfield');
 	$this->setName($gallery->i18n('Custom Fields'));
 	$this->setDescription($gallery->i18n('Create custom data fields for Gallery items'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getSiteAdminViews|getItemSummaries|loadItemDetails');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -83,8 +83,8 @@ class CustomFieldModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries()
      */
-    function getItemSummaries($items) {
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+    function getItemSummaries($items, $permissions) {
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
 	$summaries = array();
 	foreach ($items as $item) {
 	    list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'summary');
@@ -103,8 +103,8 @@ class CustomFieldModule extends GalleryModule {
     /**
      * @see GalleryModule::loadItemDetails()
      */
-    function loadItemDetails(&$template, $item) {
-	require_once(dirname(__FILE__) . '/classes/CustomFieldHelper.class');
+    function loadItemDetails(&$template, $item, $permissions) {
+	GalleryCoreApi::relativeRequireOnce('modules/customfield/classes/CustomFieldHelper.class');
 	list ($ret, $fields) = CustomFieldHelper::fetchFieldValues($item, 'detail');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

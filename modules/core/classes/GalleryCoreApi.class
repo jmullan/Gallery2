@@ -54,7 +54,7 @@ class GalleryCoreApi {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(6, 1);
+	return array(6, 2);
     }
 
     /**
@@ -439,13 +439,14 @@ class GalleryCoreApi {
      *
      * @param int item id
      * @param string permission id
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      * @static
      */
-    function hasItemPermission($itemId, $permission) {
+    function hasItemPermission($itemId, $permission, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryUserHelper_simple.class');
-	return GalleryUserHelper_simple::hasItemPermission($itemId, $permission);
+	return GalleryUserHelper_simple::hasItemPermission($itemId, $permission, $userId);
     }
 
     /**
@@ -599,7 +600,7 @@ class GalleryCoreApi {
      *               array (id => array(array(permission.id => 1, ...), ...)
      * @static
      */
-    function fetchPermissionsForItems($itemIds, $userId = null) {
+    function fetchPermissionsForItems($itemIds, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
 	return GalleryPermissionHelper_medium::fetchPermissionsForItems($itemIds, $userId);
     }
@@ -608,26 +609,27 @@ class GalleryCoreApi {
      * Return all the permissions that the given user has for the given item.
      *
      * @param int item id
+     * @param int an optional user id (default is current user)
      * @return array object GalleryStatus a status code
      *               array (perm1, perm2)
      * @static
      */
-    function getPermissions($itemId) {
+    function getPermissions($itemId, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::getPermissions($itemId);
+	return GalleryPermissionHelper_medium::getPermissions($itemId, $userId);
     }
 
     /**
      * Study the permissions for all items (for the given user)
      *
      * @param array GalleryItem ids
-     * @param int a user id
+     * @param int an optional user id (default is current user)
      * @return object GalleryStatus a status code
      * @static
      */
-    function studyPermissions($itemIds) {
+    function studyPermissions($itemIds, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryPermissionHelper_medium.class');
-	return GalleryPermissionHelper_medium::studyPermissions($itemIds);
+	return GalleryPermissionHelper_medium::studyPermissions($itemIds, $userId);
     }
 
     /**
@@ -1299,26 +1301,28 @@ class GalleryCoreApi {
      *
      * @access public
      * @param array item ids
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      * @static
      */
-    function fetchChildCounts($itemIds) {
+    function fetchChildCounts($itemIds, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchChildCounts($itemIds);
+	return GalleryItemHelper_simple::fetchChildCounts($itemIds, $userId);
     }
 
     /**
      * Fetch the breakdown of descendents for a given item
      *
      * @param int the item id
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               array(id => ##, id => ##)
      * @static
      */
-    function fetchDescendentCounts($itemIds) {
+    function fetchDescendentCounts($itemIds, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryItemHelper_simple.class');
-	return GalleryItemHelper_simple::fetchDescendentCounts($itemIds);
+	return GalleryItemHelper_simple::fetchDescendentCounts($itemIds, $userId);
     }
 
     /**
@@ -2238,15 +2242,16 @@ class GalleryCoreApi {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      *
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @static
      */
-    function fetchChildItemIds($item, $offset=null, $count=null) {
+    function fetchChildItemIds($item, $offset=null, $count=null, $userId=null) {
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/helpers/GalleryChildEntityHelper_simple.class');
-	return GalleryChildEntityHelper_simple::fetchChildItemIds($item, $offset, $count);
+	return GalleryChildEntityHelper_simple::fetchChildItemIds($item, $offset, $count, $userId);
     }
 
     /**

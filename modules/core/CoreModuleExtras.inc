@@ -745,6 +745,8 @@ class CoreModuleExtras {
 	    /* Change view/controller separator: core:ShowItem -> core.ShowItem */
 	case '0.9.21':
 	    /* Session cookie change, requires new config.php variable */
+	case '0.9.22':
+	    /* GalleryModule::getItemLinks API change (GalleryModule API bumped to 0.13) */
 
 	case 'end of upgrade path':
 	    /*
@@ -878,23 +880,25 @@ $gallery->setConfig(\'galleryBaseUrl\', \'\');
 	    /* Note: srand() is required for php versions < 4.2  */
 	    srand(100000 * ((float)$usec + (float)$sec));
 	    $cookieId = substr(md5(rand()), 0, 6);
-	    
+
 	    $add[] =
 '
-/* 
- * Set the name for G2 session cookies. The name of the session cookie is 
- * a concatenation of \'GALLERYSID_\' and cookieId, which is randomly generated 
+/*
+ * Set the name for G2 session cookies. The name of the session cookie is
+ * a concatenation of \'GALLERYSID_\' and cookieId, which is randomly generated
  * at Gallery installation time. You can change cookieId at any time, but if
  * you change it be aware of two things:
  * 1. Users have to login again after the change. They lose their old session.
- * 2. If multiple G2 installs are running on the same domain (in different paths or 
+ * 2. If multiple G2 installs are running on the same domain (in different paths or
  *    different subdomains) choose cookieId such that it is different for all G2
  *    installs on the same domain.
  */
 $gallery->setConfig(\'cookieId\', \'' . $cookieId . '\');
 ';
 	    $configChanges[] = array('remove' => array(), 'add' => $add);
-	  
+
+	case '0.9.22':
+
 	case 'end of upgrade path':
 	    /*
 	     * Leave this bogus case at the end of the legitimate case statements so that we

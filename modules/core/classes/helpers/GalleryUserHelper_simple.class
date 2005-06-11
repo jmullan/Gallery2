@@ -75,19 +75,22 @@ class GalleryUserHelper_simple {
      *
      * @param int item id
      * @param string permission id
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               boolean true if yes
      * @static
      */
-    function hasItemPermission($itemId, $permission) {
+    function hasItemPermission($itemId, $permission, $userId=null) {
 	global $gallery;
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	if (GalleryDataCache::hasPermission($itemId, $permission)) {
 	    return array(GalleryStatus::success(), true);
 	}
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds($permission, $gallery->getActiveUserId());
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds($permission, $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}

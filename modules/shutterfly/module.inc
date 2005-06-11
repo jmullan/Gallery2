@@ -38,11 +38,11 @@ class ShutterflyModule extends GalleryModule {
 	$this->setId('shutterfly');
 	$this->setName($gallery->i18n('Shutterfly'));
 	$this->setDescription($gallery->i18n('Shutterfly Photo Printing Module'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -77,16 +77,20 @@ class ShutterflyModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
+
 	foreach ($items as $item) {
-	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$params['view'] = 'shutterfly.PrintPhotos';
-		$params['itemId'] = $item->getId();
-		$params['return'] = 1;
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('print on shutterfly.com'),
-			  'params' => $params);
+	    $itemId = $item->getId();
+	    if (isset($wantsDetailedLinks[$itemId])) {
+		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		    $params['view'] = 'shutterfly.PrintPhotos';
+		    $params['itemId'] = $itemId;
+		    $params['return'] = 1;
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('print on shutterfly.com'),
+			      'params' => $params);
+		}
 	    }
 	}
 

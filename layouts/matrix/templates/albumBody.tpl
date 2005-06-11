@@ -95,15 +95,21 @@
 	{/if}
 	</div>
 
-	{if !empty($child.itemLinks)}
-	  <select onchange="{literal}if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
-	    <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
+ 	{if !empty($child.itemLinks)}
+        {* if we have more than one link, use a dropdown *}
+        {if count($child.itemLinks) > 1}
+ 	<select onchange="{literal}if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
+ 	  <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
-	    {foreach from=$child.itemLinks item=link}
-	      <option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
-	    {/foreach}
-	  </select>
-	{/if}
+ 	  {foreach from=$child.itemLinks item=link}
+ 	    <option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
+ 	  {/foreach}
+ 	</select>
+        {else}
+        {* one link, just show it as a link *}
+        <a href="{g->url params=$child.itemLinks.0.params}" class="gbAdminLink {g->linkid urlParams=$child.itemLinks.0.params}">{$child.itemLinks.0.text}</a>
+        {/if}
+ 	{/if}
 
         {if !empty($child.title)}
           <p class="giTitle">
@@ -172,6 +178,8 @@
     {/if}
 
     {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+
+    {include file="gallery:layouts/matrix/templates/guestPreviewModeSwitch.tpl"}
 
     {if !empty($layout.jumpRange)}
     <div id="gsPages" class="gbBlock gcBackground1">

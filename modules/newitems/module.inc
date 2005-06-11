@@ -40,11 +40,11 @@ class NewItemsModule extends GalleryModule {
 	$this->setId('newitems');
 	$this->setName($gallery->i18n('New Items'));
 	$this->setDescription($gallery->i18n('Highlight new/updated Gallery items'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemSummaries');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -133,13 +133,14 @@ class NewItemsModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries()
      */
-    function getItemSummaries($items) {
+    function getItemSummaries($items, $permissions) {
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'newitems');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-	$newTime = time() - $param['days.new'] * 86400;
-	$updatedTime = time() - $param['days.updated'] * 86400;
+	$time = time();
+	$newTime = $time - $param['days.new'] * 86400;
+	$updatedTime = $time - $param['days.updated'] * 86400;
 
 	$newString = $this->translate('New');
 	$updatedString = $this->translate('Updated');

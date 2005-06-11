@@ -41,11 +41,11 @@ class ExifModule extends GalleryModule {
 	$this->setId('exif');
 	$this->setName($gallery->i18n('EXIF/IPTC'));
 	$this->setDescription($gallery->i18n('Extract EXIF/IPTC data from JPEG photos'));
-	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.5'); /* Update upgrade() function below too */
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('loadItemDetails|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -117,6 +117,7 @@ class ExifModule extends GalleryModule {
 
 	    case '0.9.2':
 	    case '0.9.3':
+	    case '0.9.4':
 
 	    case 'end of upgrade path':
 		/*
@@ -203,10 +204,10 @@ class ExifModule extends GalleryModule {
     /**
      * @see GalleryModule::loadItemDetails()
      */
-    function loadItemDetails(&$template, $item) {
+    function loadItemDetails(&$template, $item, $permissions) {
 	global $gallery;
 
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/classes/ExifHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/exif/classes/ExifHelper.class');
 
 	/* We only work on data items */
 	if (!GalleryUtilities::isA($item, 'GalleryDataItem')) {

@@ -81,15 +81,20 @@ class GalleryItemHelper_simple {
      *
      * @access public
      * @param array item ids
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               int a count
      * @static
      */
-    function fetchChildCounts($itemIds) {
+    function fetchChildCounts($itemIds, $userId=null) {
 	global $gallery;
 
 	if (empty($itemIds)) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
+	}
+
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
 	}
 
 	$counts = $missing = array();
@@ -107,8 +112,7 @@ class GalleryItemHelper_simple {
 	}
 	$parentIdMarkers = GalleryUtilities::makeMarkers(count($missing));
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -151,15 +155,17 @@ class GalleryItemHelper_simple {
      * Get any descendent counts that we can from the cache, and then failing that
      * recalculate them using fetchUncachedDescendentCounts and cache the new values
      *
-     *
      * @param int the item ids
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               array(id => ##, id => ##)
      * @static
      */
-    function fetchDescendentCounts($itemIds) {
+    function fetchDescendentCounts($itemIds, $userId=null) {
 	global $gallery;
-	$activeUserId = $gallery->getActiveUserId();
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryDescendentCountsMap.class');
 	$query = sprintf('
@@ -174,7 +180,7 @@ class GalleryItemHelper_simple {
         ', GalleryUtilities::makeMarkers(sizeof($itemIds)));
 
 	$data = array();
-	$data[] = $activeUserId;
+	$data[] = $userId;
 	array_splice($data, sizeof($data), 0, $itemIds);
 
 	list ($ret, $searchResults) = $gallery->search($query, $data);
@@ -197,16 +203,15 @@ class GalleryItemHelper_simple {
 
 	if (!empty($remaining)) {
 	    list ($ret, $results) =
-		GalleryItemHelper_simple::fetchUncachedDescendentCounts($remaining);
+		GalleryItemHelper_simple::fetchUncachedDescendentCounts($remaining, $userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
 	    /* Update the cache */
 	    foreach ($results as $itemId => $count) {
-		$ret = GalleryDescendentCountsMap::addMapEntry(array('userId' => $activeUserId,
-								     'itemId' => $itemId,
-								     'descendentCount' => $count));
+		$ret = GalleryDescendentCountsMap::addMapEntry(
+		    array('userId' => $userId, 'itemId' => $itemId, 'descendentCount' => $count));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -228,15 +233,19 @@ class GalleryItemHelper_simple {
      * Fetch the number of descendents for a given item
      *
      * @param int the item id
+     * @param int an optional user id (default is the current user)
      * @return array object GalleryStatus a status code
      *               array(id => ##, id => ##)
      * @static
      */
-    function fetchUncachedDescendentCounts($itemIds) {
+    function fetchUncachedDescendentCounts($itemIds, $userId) {
 	global $gallery;
 
-	list ($ret, $aclIds) =
-	    GalleryCoreApi::fetchAccessListIds('core.view', $gallery->getActiveUserId());
+	if (!isset($userId)) {
+	    $userId = $gallery->getActiveUserId();
+	}
+
+	list ($ret, $aclIds) = GalleryCoreApi::fetchAccessListIds('core.view', $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -244,7 +253,7 @@ class GalleryItemHelper_simple {
 	if (empty($aclIds)) {
 	    return array(GalleryStatus::success(), array());
 	}
-	
+
 	$aclMarkers = GalleryUtilities::makeMarkers(count($aclIds));
 	$itemMarkers = GalleryUtilities::makeMarkers(count($itemIds));
 
@@ -353,7 +362,7 @@ class GalleryItemHelper_simple {
 	    } else {
 		$count = 0;
 	    }
-		
+
 	    GalleryDataCache::put($cacheKey, $count);
 	}
 

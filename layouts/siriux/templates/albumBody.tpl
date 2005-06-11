@@ -89,4 +89,5 @@
 {/if}
 
 {* Item Links *}
-{include file="gallery:layouts/siriux/templates/itemLinks.tpl"}
+{include file="gallery:layouts/siriux/templates/itemLinks.tpl" showDetail="false"}
+{include file="gallery:layouts/siriux/templates/guestPreviewModeSwitch.tpl"}

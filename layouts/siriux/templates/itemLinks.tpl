@@ -9,9 +9,9 @@
 
   {* Item Links *}
   <ul>
-    {foreach from=$layout.itemLinks item=item}
+    {foreach from=$layout.itemLinks item=link}
       <li>
-        <a href="{g->url params=$item.params}"> {$item.text} </a>
+        <a href="{g->url params=$link.params}"> {$link.text} </a>
       </li>
     {/foreach}
   </ul>

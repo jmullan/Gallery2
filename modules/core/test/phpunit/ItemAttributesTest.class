@@ -4,17 +4,17 @@
  *
  * Gallery - a web based photo album viewer and editor
  * Copyright (C) 2000-2005 Bharat Mediratta
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -215,7 +215,7 @@ class ItemAttributesTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	
+
 	list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($item->getId());
 	$this->assertEquals(array($this->_getRootId(),
 				  $this->_parentItem->getId(),
@@ -289,6 +289,63 @@ class ItemAttributesTest extends GalleryTestCase {
 	/* Verify our counts */
 	list ($ret, $counts) = GalleryCoreApi::fetchDescendentCounts(
 	    array($this->_parentItem->getId(), $album->getId()));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assertEquals(array($this->_parentItem->getId() => 5,
+				  $album->getId() => 2),
+			    $counts);
+    }
+
+    function testFetchDescendentCountsDifferentUser() {
+	global $gallery;
+
+	list($ret, $album) = $this->_createRandomAlbum($this->_childItems[1]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Create a new target user */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	for ($i = 0; $i < 3; $i++) {
+	    list($ret, $item[$i]) = $this->_createRandomDataItem($album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Drop perms for one item and one album */
+	$ret = GalleryCoreApi::removeItemPermissions($item[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::removeItemPermissions($this->_childItems[0]->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Add perms back for the active user, but not our target user */
+	$ret = GalleryCoreApi::addUserPermission(
+	    $item[0]->getId(), $gallery->getActiveUserId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $this->_childItems[0]->getId(), $gallery->getActiveUserId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* Verify that the target user can't see the item (even though the active user can) */
+	list ($ret, $counts) = GalleryCoreApi::fetchDescendentCounts(
+	    array($this->_parentItem->getId(), $album->getId()),
+	    $user->getId());
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}

@@ -116,7 +116,7 @@ class GallerySession {
      */
     function init() {
 	global $gallery;
-	
+
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
@@ -240,7 +240,7 @@ class GallerySession {
 		$expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
 		$cookie .= '; expires=' . $expirationDate;
 	    }
-	    
+
 	    /*
 	     * Set the cookie path always to '/'.
 	     * Reason: The cookie should be visible to G2 even if G2 is embedded.
@@ -285,7 +285,7 @@ class GallerySession {
 	    if (!empty($this->_cookieDomain)) {
 		$cookie .= '; domain=' . $this->_cookieDomain;
 	    }
-	    
+
 	    /*
 	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
 	     * with this in it from being visible to JavaScript, which mitigates
@@ -400,9 +400,11 @@ class GallerySession {
 	$replace = $key . $this->getId();
 
 	if (GalleryUtilities::hasRequestVariable('return')) {
-	    GalleryUtilities::putRequestVariable('return',
-		preg_replace($match, $replace,
-			     GalleryUtilities::getRequestVariables('return')));
+	    foreach (array('return', 'formUrl') as $key) {
+		GalleryUtilities::putRequestVariable(
+		    $key,
+		    preg_replace($match, $replace, GalleryUtilities::getRequestVariables($key)));
+	    }
 	}
 
 	if ($this->exists('core.navigation')) {
@@ -493,7 +495,7 @@ class GallerySession {
      *   For host = user:pass@www.example.com:80, return .example.com
      *   For host = 127.0.0.1:80, return ''
      *
-     * Explanation: 
+     * Explanation:
      * - Differentiate domain name based from numeric (IPv4/v6) based host strings.
      * - Don't verify the validity of the host string
      *
@@ -508,16 +510,16 @@ class GallerySession {
 	if (isset($this->_cookieDomain)) {
 	    return $this->_cookieDomain;
 	}
-	
+
 	/* Get the complete host part, including port if present */
 	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryUrlGenerator.class');
 	$host = GalleryUrlGenerator::getCurrentDomain();
-	
+
 	/* Remove user:password@ if present */
 	if ($at = strpos($host, '@')) {
 	    $host = substr($host, $at+1);
 	}
-	
+
 	/* Detect IPv6/hexademical format: such an address has at least 2 colons */
 	if (substr_count($host, ':') >= 2) {
 	    return $this->_cookieDomain = '';
@@ -527,9 +529,9 @@ class GallerySession {
 		$host = substr($host, 0, $colon);
 	    }
 	}
-	
+
 	/* At this point, $host is either an IP in dotted-decimal format or a domain name */
-	
+
 	/* As the name implies, only decimal (no hexadecimal) numeric IPs are allowed in
 	 * the dotted format. To detect IPs, we can apply a simple regexp check.
 	 * Theoretically (although very uncommon), IPv6 addresses can also be written in
@@ -538,7 +540,7 @@ class GallerySession {
 	if (preg_match('|^(\d+\.){3,}\d+$|', $host)) {
 	    return $this->_cookieDomain = '';
 	}
-	
+
 	/* It's a domain name based host string.
 	 * We set the cookie path to second-level dot top-level domain
 	 * and omit any other parts */
@@ -546,10 +548,10 @@ class GallerySession {
 	if (($nr = count($parts)) < 2) {
 	    return $this->_cookieDomain = '';
 	}
-	
+
 	return $this->_cookieDomain = '.' . $parts[$nr-2] . '.' . $parts[$nr-1];
     }
-    
+
     /**
      * The path used by our cookie
      * @return string a server path (like /gallery2)
@@ -814,7 +816,7 @@ class GallerySession {
     function getNavigation($navId) {
 	$navigation = $this->get('core.navigation');
 	$navigationData = array();
-	if ($navigation != null && isset($navigation[$navId])) {
+	if ($navigation != null && isset($navigation[$navId]['data'])) {
 	    $navigationData[] = $navigation[$navId]['data'];
 	    /* Add data from our predecessors, if available */
 	    while (isset($navigation[$navId]['data']['returnNavId'])

@@ -38,14 +38,14 @@ class CoreModule extends GalleryModule {
 	$this->setId('core');
 	$this->setName($gallery->i18n('Core'));
 	$this->setGalleryVersion('2.0-beta-3+');
-	$this->setVersion('0.9.22'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
+	$this->setVersion('0.9.23'); /*Update CoreModuleExtras::upgrade,_prepareConfigUpgrade too!*/
 	$this->setDescription($gallery->i18n('Gallery 2 Core Module'));
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('registerEventListeners|' .
 			    'getItemLinks|getSystemLinks|loadSystemContent|' .
 			    'getSiteAdminViews|getUserAdminViews|getItemAdminViews');
-	$this->setRequiredCoreApi(array(6, 1));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredCoreApi(array(6, 2));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -63,9 +63,7 @@ class CoreModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items) {
-	global $gallery;
-
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	list ($ret, $rootId) = GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -76,6 +74,13 @@ class CoreModule extends GalleryModule {
 	foreach ($items as $item) {
 	    $itemIds[] = $item->getId();
 	}
+
+	/*
+	 * We're not doing this as the acting user id, but that's ok because we're not displaying
+	 * the result; we're only using it as a gating factor for whether or not we show a link,
+	 * and that'll also be gated by the permissions we receive which *will* be for the acting
+	 * user.
+	 */
 	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -90,13 +95,8 @@ class CoreModule extends GalleryModule {
 
 	$links = array();
 	foreach ($items as $item) {
-	    /* Permissions for this item */
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    $isRoot = ($item->getId() == $rootId);
+	    $itemId = $item->getId();
+	    $isRoot = ($itemId == $rootId);
 	    $isAlbum = $item->getCanContainChildren();
 
 	    /* Permissions for its parent */
@@ -105,27 +105,30 @@ class CoreModule extends GalleryModule {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if ($isAlbum && isset($permissions['core.addDataItem'])) {
-		$links[$item->getId()][] =
+	    if (isset($wantsDetailedLinks[$itemId]) && $isAlbum &&
+		    isset($permissions[$itemId]['core.addDataItem'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('add items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAdd',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
 	    $itemTypeNames = $item->itemTypeName();
-	    if (isset($permissions['core.edit'])) {
-		$links[$item->getId()][] =
+	    if (isset($permissions[$itemId]['core.edit'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate(array('text' => 'edit %s',
 							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEdit',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if (isset($permissions['core.viewSource']) && GalleryCapabilities::can('link')) {
+	    if (isset($wantsDetailedLinks[$itemId]) &&
+		    isset($permissions[$itemId]['core.viewSource']) &&
+		    GalleryCapabilities::can('link')) {
 		if ($item->getIsLinkable()) {
 		    if ($isAlbum) {
 			list ($ret, $count) = GalleryCoreApi::fetchItemIdCount(
@@ -142,86 +145,89 @@ class CoreModule extends GalleryModule {
 		    }
 
 		    if ($count > 0) {
-			$links[$item->getId()][] =
+			$links[$itemId][] =
 			    array('text' => $this->translate('create link'),
 				  'params' => array('view' => 'core.ItemAdmin',
 						    'subView' => 'core.ItemCreateLink',
 						    'itemId' => $item->getParentId(),
-						    'selectedId' => $item->getId(),
+						    'selectedId' => $itemId,
 						    'return' => 1));
 		    }
 		}
 	    }
 
-	    if ($isAlbum && isset($permissions['core.addAlbumItem'])) {
-		$links[$item->getId()][] =
+	    if (isset($wantsDetailedLinks[$itemId]) &&
+		    $isAlbum && isset($permissions[$itemId]['core.addAlbumItem'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('add album'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemAddAlbum',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if (isset($permissions['core.changePermissions'])) {
-		$links[$item->getId()][] =
+	    if (isset($permissions[$itemId]['core.changePermissions'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('edit permissions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemPermissions',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if (!$isRoot && isset($permissions['core.delete'])) {
-		$links[$item->getId()][] =
+	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate(array('text' => 'delete %s',
 							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemDelete',
 					    'itemId' => $item->getParentId(),
-					    'selectedId' => $item->getId(),
+					    'selectedId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if (!$isRoot && isset($permissions['core.delete'])) {
-		$links[$item->getId()][] =
+	    if (!$isRoot && isset($permissions[$itemId]['core.delete'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate(array('text' => 'move %s',
 							   'arg1' => $itemTypeNames[1])),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMove',
 					    'itemId' => $item->getParentId(),
-					    'selectedId' => $item->getId(),
+					    'selectedId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if ($isAlbum && isset($permissions['core.edit']) &&
-		    !empty($childCounts[$item->getId()]) &&
-		    $childCounts[$item->getId()] > 0) {
-		$links[$item->getId()][] =
+	    if (isset($wantsDetailedLinks[$itemId]) &&
+		    $isAlbum &&
+		    isset($permissions[$itemId]['core.edit']) &&
+		    !empty($childCounts[$itemId]) &&
+		    $childCounts[$itemId] > 0) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('edit captions'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemEditCaptions',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if (!$isRoot && isset($thumbTable[$item->getId()]) &&
-		    isset($permissions['core.edit'])) {
-		$links[$item->getId()][] =
+	    if (!$isRoot && isset($thumbTable[$itemId]) &&
+		    isset($permissions[$itemId]['core.edit'])) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('make highlight'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemMakeHighlight',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 
-	    if ($isAlbum && isset($permissions['core.edit']) &&
-		    !empty($childCounts[$item->getId()]) &&
-		    $childCounts[$item->getId()] > 1) {
-		$links[$item->getId()][] =
+	    if ($isAlbum && isset($permissions[$itemId]['core.edit']) &&
+		    !empty($childCounts[$itemId]) &&
+		    $childCounts[$itemId] > 1) {
+		$links[$itemId][] =
 		    array('text' => $this->translate('reorder items'),
 			  'params' => array('view' => 'core.ItemAdmin',
 					    'subView' => 'core.ItemReorder',
-					    'itemId' => $item->getId(),
+					    'itemId' => $itemId,
 					    'return' => 1));
 	    }
 	}
@@ -357,8 +363,6 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getUserAdminViews();
      */
     function getUserAdminViews($user) {
-	global $gallery;
-
 	$views = array();
 
 	if (GalleryCapabilities::can('login')) {
@@ -385,8 +389,6 @@ class CoreModule extends GalleryModule {
      * @see GalleryModule::getItemAdminViews();
      */
     function getItemAdminViews($item) {
-	global $gallery;
-
 	$views = array();
 	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
 	if ($ret->isError()) {

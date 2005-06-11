@@ -27,6 +27,32 @@
  * @author Bharat Mediratta <bharat@menalto.com>
  */
 
+class ShowItemController extends GalleryController {
+
+    /**
+     * @see GalleryController::handleRequest
+     */
+    function handleRequest($form) {
+	global $gallery;
+
+	/*
+	 * Note that this always changes user preview mode; if we add management of other
+	 * variables to this controller then we should guard this properly.  (Maybe delete this
+	 * comment after writing the unit test that verifies it).
+	 */
+	$guestPreviewMode = GalleryUtilities::getRequestVariables('guestPreviewMode');
+	if ($guestPreviewMode != null) {
+	    $session =& $gallery->getSession();
+	    $session->put('layout.guestPreviewMode', $guestPreviewMode ? 1 : 0);
+	}
+
+	return array(GalleryStatus::success(),
+		     array('return' => 1,
+			   'status' => array(),
+			   'error' => array()));
+    }
+}
+
 /**
  * This controller will handle the rendering of an album or item.
  *
@@ -208,11 +234,9 @@ class ShowItemView extends GalleryView {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	if (isset($results['redirect'])) {
-	    return array(GalleryStatus::success(), $results);
-	}
-
-	if (isset($results['html'])) {
+	if (isset($results['redirect']) ||
+	        isset($results['redirectUrl']) ||
+	        isset($results['html'])) {
 	    return array(GalleryStatus::success(), $results);
 	}
 

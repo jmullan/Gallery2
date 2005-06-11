@@ -42,7 +42,7 @@ class GalleryPermissionHelper_medium {
      *               array (id => array(array(permission.id => 1, ...), ...)
      * @static
      */
-    function fetchPermissionsForItems($itemIds, $userId = null) {
+    function fetchPermissionsForItems($itemIds, $userId=null) {
 	global $gallery;
 
 	if (!is_array($itemIds) || empty($itemIds)) {
@@ -218,19 +218,20 @@ class GalleryPermissionHelper_medium {
      * Study the permissions for all items (for the given user)
      *
      * @param array GalleryItem ids
+     * @param int an optional user id (default is current user)
      * @return object GalleryStatus a status code
      * @static
      */
-    function studyPermissions($itemIds) {
+    function studyPermissions($itemIds, $userId=null) {
 
-	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems($itemIds);
+	list ($ret, $permissionsTable) = GalleryCoreApi::fetchPermissionsForItems($itemIds, $userId);
 	if ($ret->isError()) {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 
 	/* Cache the permissions */
 	foreach ($permissionsTable as $itemId => $permissions) {
-	    $cacheKey = "GalleryPermissionHelper::getPermissions($itemId)";
+	    $cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
 	    GalleryDataCache::put($cacheKey, $permissions);
 	}
 
@@ -241,17 +242,18 @@ class GalleryPermissionHelper_medium {
      * Return all the permissions that the given user has for the given item.
      *
      * @param int item id
+     * @param int an optional user id (default is current user)
      * @return array object GalleryStatus a status code
      *               array (perm1, perm2)
      * @static
      */
-    function getPermissions($itemId) {
-	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId)";
+    function getPermissions($itemId, $userId=null) {
+	$cacheKey = "GalleryPermissionHelper::getPermissions($itemId,$userId)";
 	if (GalleryDataCache::containsKey($cacheKey)) {
 	    $permissions = GalleryDataCache::get($cacheKey);
 	} else {
 	    list ($ret, $permissionsTable) =
-		GalleryCoreApi::fetchPermissionsForItems(array($itemId));
+		GalleryCoreApi::fetchPermissionsForItems(array($itemId), $userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -259,7 +261,7 @@ class GalleryPermissionHelper_medium {
 	    if (isset($permissionsTable[$itemId])) {
 		$permissions = $permissionsTable[$itemId];
 	    } else {
-		$permissions = null;
+		$permissions = array();
 	    }
 	    GalleryDataCache::put($cacheKey, $permissions);
 	}

@@ -37,11 +37,11 @@ class SlideshowModule extends GalleryModule {
 	$this->setId('slideshow');
 	$this->setName($gallery->i18n('Slideshow'));
 	$this->setDescription($gallery->i18n('Slideshow'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -76,15 +76,17 @@ class SlideshowModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
-	global $gallery;
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    $links[$item->getId()][] =
-		array('text' => $this->translate('view slideshow'),
-		      'params' => array(
-			'view' => 'slideshow.Slideshow',
-			'itemId' => $item->getId()));
+	    $itemId = $item->getId();
+	    if (isset($wantsDetailedLinks[$itemId])) {
+		$links[$itemId][] =
+		    array('text' => $this->translate('view slideshow'),
+			  'params' => array(
+			      'view' => 'slideshow.Slideshow',
+			      'itemId' => $itemId));
+	    }
 	}
 	return array(GalleryStatus::success(), $links);
     }

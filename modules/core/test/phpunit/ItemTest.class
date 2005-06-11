@@ -238,6 +238,58 @@ class ItemTest extends GalleryTestCase {
 	$this->assertEquals(array($this->_album->getId() => 2), $counts);
     }
 
+    function testGetChildCountsDifferentUser() {
+	global $gallery;
+
+	/* Create a new user and give him limited view permissions on our tree */
+	list ($ret, $user) = $this->_createRandomUser();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->_markForCleanup($user);
+
+	for ($i = 0; $i < 3; $i++) {
+	    list ($ret, $child[$i]) = $this->_createRandomAlbum($this->_album->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Remove all permissions */
+	    $ret = GalleryCoreApi::removeItemPermissions($child[$i]->getId());
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+
+	    /* Add back admin permission */
+	    $ret = GalleryCoreApi::addUserPermission(
+		$child[$i]->getId(), $gallery->getActiveUserId(), 'core.view', false);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	}
+
+	/* Set permissions */
+	$ret = GalleryCoreApi::addUserPermission(
+	    $child[0]->getId(), $user->getId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::addUserPermission(
+	    $child[1]->getId(), $user->getId(), 'core.view', false);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $counts) =
+	    GalleryCoreApi::fetchChildCounts(array($this->_album->getId()), $user->getId());
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	/* We can view child[0] and child[1] */
+	$this->assertEquals(array($this->_album->getId() => 2), $counts);
+    }
+
     function testFetchChildItemIdsWithPermission() {
 	for ($i = 0; $i < 3; $i++) {
 	    list ($ret, $child[$i]) = $this->_createRandomAlbum($this->_album->getId());
@@ -983,18 +1035,7 @@ class ItemTest extends GalleryTestCase {
 	global $gallery;
 
 	/* Switch to the anonymous user id so that this returns false */
-	list ($ret, $anonymousUserId) =
-	    GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	list ($ret, $anonymousUser) = GalleryCoreApi::loadEntitiesById($anonymousUserId);
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-
-	$gallery->setActiveUser($anonymousUser);
+	$this->_becomeGuestUser();
 
 	list ($ret, $count) =
 	    GalleryCoreApi::fetchItemIdCount('GalleryAlbumItem', 'core.changePermissions');

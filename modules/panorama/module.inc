@@ -40,11 +40,11 @@ class PanoramaModule extends GalleryModule {
 	$this->setId('panorama');
 	$this->setName($gallery->i18n('Panorama'));
 	$this->setDescription($gallery->i18n('View wide jpeg/gif images in a java applet viewer'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('display', $this->translate('Display'));
 	$this->setCallbacks('getSiteAdminViews|getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -152,35 +152,43 @@ class PanoramaModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
+
 	list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters('module', 'panorama');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 	if ($param['itemLink']) {
-	    require_once(dirname(__FILE__) . '/classes/PanoramaHelper.class');
+	    GalleryCoreApi::relativeRequireOnce('modules/panorama/classes/PanoramaHelper.class');
+
+	    /*
+	     * This won't obey the acting user id, but that's ok because it's only used to
+	     * determine if a panorama is even possible.  We'll still also gate on the acting
+	     * user's permissions that we receive.
+	     */
 	    list ($ret, $images) = PanoramaHelper::fetchViewableImages($items);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 	    foreach ($items as $item) {
-		if (!isset($images[$item->getId()])) {
+		$itemId = $item->getId();
+		if (!isset($wantsDetailedLinks[$itemId]) || !isset($images[$itemId])) {
 		    continue;
 		}
-		$image = $images[$item->getId()];
+		$image = $images[$itemId];
 		$mimeType = $item->getMimeType();
 		$width = $image->getWidth();
 		/* Applet supports jpeg and gif images */
 		if (GalleryUtilities::isA($item, 'GalleryPhotoItem') &&
-			!GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
-			preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
-			$width > $param['width'] &&
-			($image->getHeight() / $width < 0.6)) {
-		    $links[$item->getId()][] =
+		    !GalleryUtilities::isA($item, 'PanoramaPhotoItem') &&
+		    preg_match(':^image/(gif|p?jpeg)$:', $mimeType) &&
+		    $width > $param['width'] &&
+		    ($image->getHeight() / $width < 0.6)) {
+		    $links[$itemId][] =
 			array('text' => $this->translate('view panorama'),
 			      'params' => array('view' => 'panorama.Panorama',
-						'itemId' => $item->getId()));
+						'itemId' => $itemId));
 		}
 	    }
 	}

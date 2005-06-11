@@ -43,9 +43,9 @@ class ClassicLayout extends GalleryLayout {
 	$this->setName($gallery->i18n('Classic'));
 	$this->setDescription(
 	    $gallery->i18n('Columns for thumbnails, item info and links to subalbums'));
-	$this->setVersion('0.9.5');
+	$this->setVersion('0.9.6');
 	$this->setL10Domain('layouts_classic');
-	$this->setRequiredLayoutApi(array(1, 0));
+	$this->setRequiredLayoutApi(array(1, 1));
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setStandardSettings(
 	    array('rows' => 10, 'columns' => 1,

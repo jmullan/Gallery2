@@ -68,5 +68,6 @@
 
 {include file="gallery:layouts/siriux/templates/itemNavigator.tpl"}
 
-{include file="gallery:layouts/siriux/templates/itemLinks.tpl"}
+{include file="gallery:layouts/siriux/templates/itemLinks.tpl" showDetail="true"}
+{include file="gallery:layouts/siriux/templates/guestPreviewModeSwitch.tpl"}
 

@@ -40,11 +40,11 @@ class DebugModule extends GalleryModule {
 	$this->setId('debug');
 	$this->setName($gallery->i18n('Debugging'));
 	$this->setDescription($gallery->i18n('Debugging and Developer Tools'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -58,19 +58,24 @@ class DebugModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
+	$links = array();
+
+	/* This doesn't obey the acting user id.  That's acceptable for a debug link */
 	list ($ret, $isAdmin) = GalleryCoreApi::isUserInSiteAdminGroup();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	$links = array();
 	if ($isAdmin) {
 	    foreach ($items as $item) {
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('show debug tree'),
-			  'params' => array('view' => 'debug.ShowTree',
-					    'itemId' => $item->getId()));
+		$itemId = $item->getId();
+		if (isset($wantsDetailedLinks[$itemId])) {
+		    $links[$itemId][] =
+			array('text' => $this->translate('show debug tree'),
+			      'params' => array('view' => 'debug.ShowTree',
+						'itemId' => $itemId));
+		}
 	    }
 	}
 

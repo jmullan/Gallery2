@@ -208,6 +208,7 @@ class RewriteModuleExtras {
 	case '0.9.6':
 	case '0.9.7':
 	case '0.9.8':
+	case '0.9.9':
 
 	case 'end of upgrade path':
 	    break;

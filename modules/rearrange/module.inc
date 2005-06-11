@@ -37,11 +37,11 @@ class RearrangeModule extends GalleryModule {
 	$this->setId('rearrange');
 	$this->setName($gallery->i18n('Rearrange'));
 	$this->setDescription($gallery->i18n('Rearrange the order of album items all at once'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getItemLinks|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -62,7 +62,7 @@ class RearrangeModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 
 	$itemIds = array();
@@ -71,28 +71,28 @@ class RearrangeModule extends GalleryModule {
 		$itemIds[] = $item->getId();
 	    }
 	}
-	if (empty($itemIds)) {
-	    return array(GalleryStatus::success(), $links);
-	}
-
-	list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	foreach ($itemIds as $itemId) {
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
+	if (!empty($itemIds)) {
+	    /*
+	     * This doesn't obey the acting user id, but that's ok because we only use it to
+	     * determine if the link has children.  We're still gated on the acting user id's
+	     * permissions.
+	     */
+	    list ($ret, $childCounts) = GalleryCoreApi::fetchChildCounts($itemIds);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
-	    if (isset($permissions['core.edit']) &&
-		    !empty($childCounts[$itemId]) && $childCounts[$itemId] > 1) {
-		$links[$itemId][] =
-		    array('text' => $this->translate('rearrange items'),
-			  'params' => array('view' => 'core.ItemAdmin',
-					    'subView' => 'rearrange.RearrangeItems',
-					    'itemId' => $itemId, 'return' => 1));
+	    foreach ($itemIds as $itemId) {
+		if (isset($wantsDetailedLinks[$itemId])) {
+		    if (isset($permissions[$itemId]['core.edit']) &&
+			!empty($childCounts[$itemId]) && $childCounts[$itemId] > 1) {
+			$links[$itemId][] =
+			    array('text' => $this->translate('rearrange items'),
+				  'params' => array('view' => 'core.ItemAdmin',
+						    'subView' => 'rearrange.RearrangeItems',
+						    'itemId' => $itemId, 'return' => 1));
+		    }
+		}
 	    }
 	}
 

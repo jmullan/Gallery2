@@ -130,6 +130,7 @@
     {/if}
 
     {include file="gallery:layouts/matrix/templates/itemNavigator.tpl"}
+    {include file="gallery:layouts/matrix/templates/guestPreviewModeSwitch.tpl"}
   </div>
   </td></tr>
 </table>

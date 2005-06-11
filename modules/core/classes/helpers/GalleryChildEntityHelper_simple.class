@@ -54,9 +54,8 @@ class GalleryChildEntityHelper_simple {
 	}
 
 	if ($item->getCanContainChildren()) {
-	    list ($ret, $ids) =
-		GalleryChildEntityHelper_simple::_fetchChildItemIds($item, null, null,
-								    'GalleryItem', $permissionId);
+	    list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
+		$item, null, null, 'GalleryItem', $permissionId, false, null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -88,7 +87,7 @@ class GalleryChildEntityHelper_simple {
 
 	if ($item->getCanContainChildren()) {
 	    list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-		$item, null, null, 'GalleryItem', $permissionId, true);
+		$item, null, null, 'GalleryItem', $permissionId, true, null);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -107,15 +106,16 @@ class GalleryChildEntityHelper_simple {
      * @param object GalleryItem an item
      * @param int where to start
      * @param int how many to return
+     * @param int optional user id.  Defaults to current user id
      *
      * @access public
      * @return array object GalleryStatus a status code
      *               array integer ids
      * @static
      */
-    function fetchChildItemIds($item, $offset=null, $count=null) {
+    function fetchChildItemIds($item, $offset=null, $count=null, $userId=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryItem');
+	    $item, $offset, $count, 'GalleryItem', null, false, $userId);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -138,7 +138,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildDataItemIds($item, $offset=null, $count=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryDataItem');
+	    $item, $offset, $count, 'GalleryDataItem', null, false, null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -161,7 +161,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildAlbumItemIds($item, $offset=null, $count=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryAlbumItem');
+	    $item, $offset, $count, 'GalleryAlbumItem', null, false, null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -184,7 +184,7 @@ class GalleryChildEntityHelper_simple {
      */
     function fetchChildItemIdsIgnorePermissions($item, $offset=null, $count=null) {
 	list ($ret, $ids) = GalleryChildEntityHelper_simple::_fetchChildItemIds(
-	    $item, $offset, $count, 'GalleryItem', null);
+	    $item, $offset, $count, 'GalleryItem', null, false, null);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -196,12 +196,27 @@ class GalleryChildEntityHelper_simple {
      * bit out of control, but it's got reasonably good unit tests so it's ripe
      * for a refactor.
      *
+     * @param object GalleryItem an item
+     * @param int an offset into the child item list (null for no offset)
+     * @param int a count of how many child items to return (null for unlimited)
+     * @param string a class to restrict children to (eg 'GalleryAlbumItem')
+     * @param string a required permission (defaults to 'core.view')
+     * @param boolean whether to restrict to linkable items only
+     * @param int the userid we're doing this for (defaults to active user id)
+     *
      * @access private
      */
-    function _fetchChildItemIds($item, $offset=null, $count=null, $class,
-				$requiredPermission='core.view', $linkableOnly=false) {
+    function _fetchChildItemIds($item, $offset, $count, $class,
+				$requiredPermission, $linkableOnly, $userId) {
 	global $gallery;
 	$storage =& $gallery->getStorage();
+	if (!isset($requiredPermission)) {
+	    $requiredPermission = 'core.view';
+	}
+
+	if ($userId == null) {
+	    $userId = $gallery->getActiveUserId();
+	}
 
 	if (!GalleryUtilities::isA($item, 'GalleryItem')) {
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
@@ -212,7 +227,7 @@ class GalleryChildEntityHelper_simple {
 
 	if ($requiredPermission) {
 	    list ($ret, $aclIds) =
-		GalleryCoreApi::fetchAccessListIds($requiredPermission, $gallery->getActiveUserId());
+		GalleryCoreApi::fetchAccessListIds($requiredPermission, $userId);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

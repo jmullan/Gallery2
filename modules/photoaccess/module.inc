@@ -38,11 +38,11 @@ class PhotoAccessModule extends GalleryModule {
 	$this->setId('photoaccess');
 	$this->setName($gallery->i18n('PhotoAccess'));
 	$this->setDescription($gallery->i18n('PhotoAccess Photo Printing Module'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -77,19 +77,20 @@ class PhotoAccessModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
-	global $gallery;
-
-	$urlGenerator =& $gallery->getUrlGenerator();
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
+
 	foreach ($items as $item) {
-	    if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
-		$params['controller'] = 'photoaccess.PrintPhoto';
-		$params['itemId'] = $item->getId();
-		$params['returnUrl'] = '%CURRENT_URL%';
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('print on photoaccess.com'),
-			  'params' => $params);
+	    $itemId = $item->getId();
+	    if (isset($wantsDetailedLinks[$itemId])) {
+		if (GalleryUtilities::isA($item, 'GalleryPhotoItem')) {
+		    $params['controller'] = 'photoaccess.PrintPhoto';
+		    $params['itemId'] = $itemId;
+		    $params['returnUrl'] = '%CURRENT_URL%';
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('print on photoaccess.com'),
+			      'params' => $params);
+		}
 	    }
 	}
 

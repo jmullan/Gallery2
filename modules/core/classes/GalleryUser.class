@@ -163,8 +163,7 @@ class GalleryUser_core extends GalleryEntity {
 
 	$result = $results->nextResult();
 	if ($result[0] > 0) {
-	    return GalleryStatus::error(ERROR_COLLISION,
-					__FILE__, __LINE__);
+	    return GalleryStatus::error(ERROR_COLLISION, __FILE__, __LINE__);
 	}
 
 	$ret = parent::create();

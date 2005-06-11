@@ -61,7 +61,7 @@ class GalleryLayout extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(1, 0);
+	return array(1, 1);
     }
 
     /**
@@ -448,9 +448,22 @@ class GalleryLayout extends GalleryPlugin {
 	$layout['layoutUrl'] =
 	    $urlGenerator->generateUrl(array('href' => 'layouts/' . $this->getId()), false);
 
+	$session =& $gallery->getSession();
+
+	if ($session->get('layout.guestPreviewMode')) {
+	    $layout['guestPreviewMode'] = 1;
+	    list ($ret, $layout['actingUserId']) =
+		  GalleryCoreApi::getPluginParameter('module', 'core', 'id.anonymousUser');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	} else {
+	    $layout['guestPreviewMode'] = 0;
+	    $layout['actingUserId'] = $gallery->getActiveUserId();
+	}
+
 	/* Albums have their own settings.  Photos use their parent album's settings */
 	if ($item->getCanContainChildren()) {
-
 	    /* If we care about pagination, then figure out the current page and total pages */
 	    $perPage = $this->getPageSize($params);
 	    if (!empty($perPage)) {
@@ -461,7 +474,8 @@ class GalleryLayout extends GalleryPlugin {
 
 		/* Use the pagination to calculate the child item ids to load */
 		$start = $perPage * ($page - 1);
-		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item, $start, $perPage);
+		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds(
+		    $item, $start, $perPage, $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -492,7 +506,8 @@ class GalleryLayout extends GalleryPlugin {
 		 * No pagination; load all children (this isn't going to scale, but the layout is
 		 * the boss... for now).
 		 */
-		list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($item);
+		list ($ret, $childIds) =
+		    GalleryCoreApi::fetchChildItemIds($item, null, null, $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -568,8 +583,10 @@ class GalleryLayout extends GalleryPlugin {
      *      peerItemIndex(index of this item in peers array)
      *   systemLinks = array of array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *   systemContent = array of moduleId => array(contentId => template file path, ...)
-     *   itemLinks = array of array('text'=>.., 'params'=>.., 'moduleId'=>..)
+     *   itemLinks = array of id => array('text'=>.., 'params'=>.., 'moduleId'=>..)
      *      ^if childIds non-empty also set itemLinks on each child item
+     *   childItemLinksDetailed = boolean.  true if you want detailed item links for children.
+     *                            you always get detailed item links for the current item
      *   itemSummaries = set itemSummaries (array of moduleId => html) on each child item
      *   itemDetailFiles = array of moduleId => template file path
      *   thumbnails = if childIds non-empty then set thumbnail on each child item
@@ -625,7 +642,7 @@ class GalleryLayout extends GalleryPlugin {
 
 	if (!empty($childIds)) {
 	    /* Study all permissions */
-	    $ret = GalleryCoreApi::studyPermissions($childIds);
+	    $ret = GalleryCoreApi::studyPermissions($childIds, $layout['actingUserId']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -651,7 +668,7 @@ class GalleryLayout extends GalleryPlugin {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
 	    if (!empty($parentSequence)) {
-		$ret = GalleryCoreApi::studyPermissions($parentSequence);
+		$ret = GalleryCoreApi::studyPermissions($parentSequence, $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -675,7 +692,8 @@ class GalleryLayout extends GalleryPlugin {
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
-		list ($ret, $peerIds) = GalleryCoreApi::fetchChildItemIds($parent);
+		list ($ret, $peerIds) =
+		    GalleryCoreApi::fetchChildItemIds($parent, null, null, $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -771,7 +789,8 @@ class GalleryLayout extends GalleryPlugin {
 	 * 'childCount'
 	 */
 	if (isset($load['childCount']) && !isset($layout['childCount'])) {
-	    list ($ret, $childCount) = GalleryCoreApi::fetchChildCounts($allAlbumIds);
+	    list ($ret, $childCount) =
+		GalleryCoreApi::fetchChildCounts($allAlbumIds, $layout['actingUserId']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -789,7 +808,8 @@ class GalleryLayout extends GalleryPlugin {
 	 * 'descendentCount'
 	 */
 	if (isset($load['descendentCount'])) {
-	    list ($ret, $descendentCount) = GalleryCoreApi::fetchDescendentCounts($allAlbumIds);
+	    list ($ret, $descendentCount) =
+		GalleryCoreApi::fetchDescendentCounts($allAlbumIds, $layout['actingUserId']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
@@ -810,7 +830,8 @@ class GalleryLayout extends GalleryPlugin {
 	if (isset($load['parents'])) {
 	    $layout['parents'] = array();
 	    foreach ($parentSequence as $id) {
-		list ($ret, $canSee) = GalleryCoreApi::hasItemPermission($id, 'core.view');
+		list ($ret, $canSee) =
+		    GalleryCoreApi::hasItemPermission($id, 'core.view', $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -866,6 +887,12 @@ class GalleryLayout extends GalleryPlugin {
 		|| isset($load['itemDetailFiles'])) {
 	    $urlGenerator =& $gallery->getUrlGenerator();
 
+	    list ($ret, $permissions) =
+		GalleryCoreApi::fetchPermissionsForItems($allItemIds, $layout['actingUserId']);
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+
 	    if (isset($load['systemLinks'])) {
 		$layout['systemLinks'] = array();
 	    }
@@ -892,6 +919,15 @@ class GalleryLayout extends GalleryPlugin {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
+
+	    if (empty($load['childItemLinksDetailed'])) {
+		/* We always want detailed links for the current item */
+		$wantsDetailedLinks = array($item->getId() => 1);
+	    } else {
+		/* We want detailed links for everybody */
+		$wantsDetailedLinks = array_flip($allItemIds);
+	    }
+
 	    foreach ($moduleStatus as $moduleId => $status) {
 		if (empty($status['active'])) {
 		    continue;
@@ -924,6 +960,7 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($load['systemLinks']) && isset($callbacks['getSystemLinks'])) {
+		    /* We don't use the acting user for system links -- it's too confusing */
 		    list ($ret, $links) = $module->getSystemLinks();
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -936,6 +973,7 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($load['systemContent']) && isset($callbacks['loadSystemContent'])) {
+		    /* We don't use the acting user for system content -- it's too confusing */
 		    list ($ret, $content) = $module->loadSystemContent($template);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
@@ -946,10 +984,12 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($itemLinks) && isset($callbacks['getItemLinks'])) {
-		    list ($ret, $links) = $module->getItemLinks($allItems);
+		    list ($ret, $links) = $module->getItemLinks(
+			$allItems, $wantsDetailedLinks, $permissions);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
+
 		    /* Add url/moduleId keys.. */
 		    foreach ($links as $id => $list) {
 			foreach ($list as $link) {
@@ -960,7 +1000,7 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($itemSummaries) && isset($callbacks['getItemSummaries'])) {
-		    list ($ret, $content) = $module->getItemSummaries($childItems);
+		    list ($ret, $content) = $module->getItemSummaries($childItems, $permissions);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -970,7 +1010,8 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($load['itemDetailFiles']) && isset($callbacks['loadItemDetails'])) {
-		    list ($ret, $content) = $module->loadItemDetails($template, $item);
+		    list ($ret, $content) =
+			$module->loadItemDetails($template, $item, $permissions[$item->getId()]);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
@@ -1136,7 +1177,8 @@ class GalleryLayout extends GalleryPlugin {
 	     */
 	    $imageViews = array();
 	    $can = array();
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
+	    list ($ret, $permissions) =
+		GalleryCoreApi::getPermissions($item->getId(), $layout['actingUserId']);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

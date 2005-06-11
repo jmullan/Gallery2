@@ -38,11 +38,11 @@ class CartModule extends GalleryModule {
 	$this->setId('cart');
 	$this->setName($gallery->i18n('Cart'));
 	$this->setDescription($gallery->i18n('Shopping Cart Module'));
-	$this->setVersion('0.9.3'); /* Update upgrade() function below too */
+	$this->setVersion('0.9.4'); /* Update upgrade() function below too */
 	$this->setGroup('commerce', $this->translate('Commerce'));
 	$this->setCallbacks('getItemLinks|loadSystemContent');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -83,6 +83,7 @@ class CartModule extends GalleryModule {
 	    case '0.8.10':
 	    case '0.9.1':
 	    case '0.9.2':
+	    case '0.9.3':
 
 	    case 'end of upgrade path':
 		break;
@@ -114,7 +115,7 @@ class CartModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
 	    $itemTypeNames = $item->itemTypeName();

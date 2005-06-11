@@ -40,12 +40,12 @@ class CommentModule extends GalleryModule {
 	$this->setId('comment');
 	$this->setName($gallery->i18n('Comments'));
 	$this->setDescription($gallery->i18n('User commenting system'));
-	$this->setVersion('0.9.3');
+	$this->setVersion('0.9.4');
 	$this->setGroup('data', $this->translate('Extra Data'));
 	$this->setCallbacks('getItemLinks|getItemSummaries|' .
 			    'loadItemDetails|getItemAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
-	$this->setRequiredModuleApi(array(0, 12));
+	$this->setRequiredModuleApi(array(1, 0));
     }
 
     /**
@@ -119,34 +119,19 @@ class CommentModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemLinks()
      */
-    function getItemLinks($items) {
-	global $gallery;
-
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	$links = array();
 	foreach ($items as $item) {
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (isset($permissions['comment.add'])) {
-		$params['view'] = 'core.ItemAdmin';
-		$params['subView'] = 'comment.AddComment';
-		$params['itemId'] = $item->getId();
-		$params['return'] = 1;
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('add comment'),
-			  'params' => $params);
-	    }
-
-	    if (isset($permissions['comment.view'])) {
-		$params['view'] = 'core.ItemAdmin';
-		$params['subView'] = 'comment.ShowComments';
-		$params['itemId'] = $item->getId();
-		$params['return'] = 1;
-		$links[$item->getId()][] =
-		    array('text' => $this->translate('view comment'),
-			  'params' => $params);
+	    if (isset($wantsDetailedLinks[$item->getId()])) {
+		if (isset($permissions[$item->getId()]['comment.add'])) {
+		    $params['view'] = 'core.ItemAdmin';
+		    $params['subView'] = 'comment.AddComment';
+		    $params['itemId'] = $item->getId();
+		    $params['return'] = 1;
+		    $links[$item->getId()][] =
+			array('text' => $this->translate('add comment'),
+			      'params' => $params);
+		}
 	    }
 	}
 
@@ -156,15 +141,13 @@ class CommentModule extends GalleryModule {
     /**
      * @see GalleryModule::getItemSummaries()
      */
-    function getItemSummaries($items) {
-	global $gallery;
-
+    function getItemSummaries($items, $permissions) {
 	$ids = array();
 	foreach ($items as $item) {
 	    $ids[] = $item->getId();
 	}
 
-	require_once(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
 	list ($ret, $commentCounts) = GalleryCommentHelper::fetchCommentCounts($ids);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
@@ -173,11 +156,6 @@ class CommentModule extends GalleryModule {
 	$summaries = array();
 	foreach ($items as $item) {
 	    $message = array();
-
-	    list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
 
 	    if (isset($permissions['comment.view'])) {
 		if (!empty($commentCounts[$item->getId()])) {
@@ -194,14 +172,7 @@ class CommentModule extends GalleryModule {
     /**
      * @see GalleryModule::loadItemDetails()
      */
-    function loadItemDetails(&$template, $item) {
-	global $gallery;
-
-	list ($ret, $permissions) = GalleryCoreApi::getPermissions($item->getId());
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
+    function loadItemDetails(&$template, $item, $permissions) {
 	if (!isset($permissions['comment.view'])) {
 	    return array(GalleryStatus::success(), null);
 	}
@@ -209,7 +180,7 @@ class CommentModule extends GalleryModule {
 	/* XXX: parameterize this */
 	$viewMax = 3;
 
-	require_once(dirname(__FILE__) . '/classes/GalleryCommentHelper.class');
+	GalleryCoreApi::relativeRequireOnce('modules/comment/classes/GalleryCommentHelper.class');
 	list ($ret, $comments) =
 	    GalleryCommentHelper::fetchComments($item->getId(), $viewMax, ORDER_DESCENDING);
 	if ($ret->isError()) {
@@ -236,7 +207,8 @@ class CommentModule extends GalleryModule {
 
 	    /* Load all the commenters */
 	    if (sizeof($commenters) > 0) {
-		list ($ret, $commentersList) = GalleryCoreApi::loadEntitiesById(array_keys($commenters));
+		list ($ret, $commentersList) =
+		    GalleryCoreApi::loadEntitiesById(array_keys($commenters));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}

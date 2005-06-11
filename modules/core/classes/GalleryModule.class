@@ -83,7 +83,7 @@ class GalleryModule extends GalleryPlugin {
      * @return array major number, minor number
      */
     function getApiVersion() {
-	return array(0, 12);
+	return array(1, 0);
     }
 
     /**
@@ -248,8 +248,6 @@ class GalleryModule extends GalleryPlugin {
      * to installOrUpgrade (see the TODO there).
      */
     function activate() {
-	global $gallery;
-
 	/*
 	 * Make sure that we don't need configuration before we allow
 	 * activation.
@@ -288,8 +286,6 @@ class GalleryModule extends GalleryPlugin {
      *               boolean
      */
     function needsConfiguration() {
-	global $gallery;
-
 	return array(GalleryStatus::success(), false);
     }
 
@@ -414,12 +410,14 @@ class GalleryModule extends GalleryPlugin {
      * comments module uses this to link to the "add comments" view.
      *
      * @param array object GalleryItem
+     * @param array (id => 1, id => 1) we want detailed links for these ids
+     * @param array id => array(permission => 1, ...) of item permissions
      * @return array object GalleryStatus a status code
      *               array(itemId => array(array('text' => 'localized text',
      *                                           'params' => array(key => value, key => value))
      *                                     ...))
      */
-    function getItemLinks($items) {
+    function getItemLinks($items, $wantsDetailedLinks, $permissions) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -427,10 +425,11 @@ class GalleryModule extends GalleryPlugin {
      * Return module-specific summary content about the item
      *
      * @param array object GalleryItem
+     * @param array id => array(permission => 1, ...) of item permissions
      * @return array object GalleryStatus a status code
      *               string HTML content
      */
-    function getItemSummaries($items) {
+    function getItemSummaries($items, $permissions) {
 	return array(GalleryStatus::success(), array());
     }
 
@@ -442,10 +441,11 @@ class GalleryModule extends GalleryPlugin {
      *
      * @param object GalleryTemplate a template
      * @param object GalleryItem
+     * @param array of item permissions
      * @return array object GalleryStatus a status code
      *               string path to template file to include
      */
-    function loadItemDetails(&$template, $item) {
+    function loadItemDetails(&$template, $item, $permissions) {
 	return array(GalleryStatus::success(), null);
     }
 

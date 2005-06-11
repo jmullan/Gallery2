@@ -62,6 +62,7 @@
   </tr>
   {/section}
   </table>
+  {include file="gallery:layouts/tile/templates/guestPreviewModeSwitch.tpl"}
 {else}
   {g->text text="The layout has not been"}
   <a href="{g->url arg1="view=core.ItemAdmin" arg2="subView=core.ItemEdit" arg3="editPlugin=ItemEditLayout" arg4="itemId=`$layout.item.id`"}">

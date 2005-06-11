@@ -49,7 +49,8 @@
       </table>
     </div>
 
-    {include file="gallery:layouts/classic/templates/itemNavigator.tpl" l10Domain="layouts_classic"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl"}
+    {include file="gallery:layouts/matrix/templates/guestPreviewModeSwitch.tpl"}
 
     {if !count($layout.children)}
     <div class="gbBlock giDescription">
@@ -139,6 +140,8 @@
 	</p>
 
 	{if !empty($child.itemLinks)}
+        {* if we have more than one link, use a dropdown *}
+        {if count($child.itemLinks) > 1}
 	  <select onchange="{literal}if (this.value) { newLocation = this.value; this.options[0].selected = true; location.href= newLocation; }{/literal}">
 	    <option label="{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}" value="">{if $child.canContainChildren}{g->text text="&laquo; album actions &raquo;"}{else}{g->text text="&laquo; item actions &raquo;"}{/if}</option>
 
@@ -146,6 +149,10 @@
 	      <option label="{$link.text}" value="{g->url params=$link.params}">{$link.text}</option>
 	    {/foreach}
 	  </select>
+        {else}
+        {* one link, just show it as a link *}
+        <a href="{g->url params=$child.itemLinks.0.params}" class="gbAdminLink {g->linkid urlParams=$child.itemLinks.0.params}">{$child.itemLinks.0.text}</a>
+        {/if}
 	{/if}
       </td>
 
@@ -190,7 +197,7 @@
       {/foreach}
     {/if}
 
-    {include file="gallery:layouts/classic/templates/itemNavigator.tpl" l10Domain="layouts_classic"}
+    {include file="gallery:layouts/classic/templates/itemNavigator.tpl"}
 
     {if !empty($layout.jumprange)}
     <div id="gsPages" class="gbBlock gcBackground1">
