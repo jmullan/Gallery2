@@ -122,9 +122,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
-						    array('fileName' => 'foo-1',
-							  'id' => $item->getId(),
-							  'warnings' => array()))),
+							array('fileName' => 'foo-' . $item->getId(),
+							      'id' => $item->getId(),
+							      'warnings' => array()))),
 				  'error' => array()),
 			    $results);
     }
@@ -146,9 +146,9 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 						      'subView' => 'core.ItemAddConfirmation',
 						      'itemId' => $this->_album->getId()),
 				  'status' => array('addedFiles' => array(
-						    array('fileName' => 'foo-1',
-							  'id' => $item->getId(),
-							  'warnings' => array('a warning')))),
+							array('fileName' => 'foo-' . $item->getId(),
+							      'id' => $item->getId(),
+							      'warnings' => array('a warning')))),
 				  'error' => array('an error')),
 			    $results);
     }
@@ -190,7 +190,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	 */
 	usort($addedFiles, $sortAddedFilesFunc);
 
-	$this->assertEquals(array('bar.ext', 'blah.ext', 'foo-2', 'foo.ext'),
+	$this->assertEquals(array('bar.ext', 'blah.ext', 'foo-' . $item->getId(), 'foo.ext'),
 			    array($addedFiles[0]['fileName'], $addedFiles[1]['fileName'],
 				  $addedFiles[2]['fileName'], $addedFiles[3]['fileName']), 'files');
 	$this->assertEquals(array('a warning'), $addedFiles[0]['warnings'], 'warning 1');
@@ -259,10 +259,9 @@ class ItemAddControllerTestPluginSuccess {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
-	$i = 1;
 	$addedFiles = array();
 	foreach ($childIds as $id) {
-	    $addedFiles[] = array('fileName' => 'foo-' . $i++, 'id' => $id, 'warnings' => array());
+	    $addedFiles[] = array('fileName' => 'foo-' . $id, 'id' => $id, 'warnings' => array());
 	}
 
 	return array(GalleryStatus::success(), array(), array('addedFiles' => $addedFiles));
