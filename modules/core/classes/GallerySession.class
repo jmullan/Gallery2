@@ -155,19 +155,27 @@ class GallerySession {
 
 	/* If we don't have a session id at this point, create one. */
 	if (empty($this->_sessionId)) {
-	    $this->_sessionId = md5(microtime() . rand(1, 32767));
-	}
+	    do {
+		$this->_sessionId = md5(microtime() . rand(1, 32767));
 
-	/*
-	 * Sanitize the session id (which may have come from user input) to
-	 * avoid possibly writing outside the session storage dir.
-	 */
-	$this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
+		$ret = $this->_loadSessionData();
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+		/* Ensure we don't randomly pick an id already in use.. */
+	    } while (!empty($this->_sessionData));
+	} else {
+	    /*
+	     * Sanitize the session id (which may have come from user input) to
+	     * avoid possibly writing outside the session storage dir.
+	     */
+	    $this->_sessionId = preg_replace('/[^a-zA-Z0-9]/', '', $this->_sessionId);
 
-	/* Load session state */
-	$ret = $this->_loadSessionData();
-	if ($ret->isError()) {
-	    return $ret->wrap(__FILE__, __LINE__);
+	    /* Load session state */
+	    $ret = $this->_loadSessionData();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
 	}
 
 	$forceResendCookie = false;

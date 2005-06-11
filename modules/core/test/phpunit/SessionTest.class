@@ -215,7 +215,7 @@ class SessionTest extends GalleryTestCase {
 	$gallery->initSession();
 	$session =& $gallery->getSession();
 
-	$this->assert(! preg_match('#^\.\.#', $session->getSessionId()), 'Dangerous session-id!');
+	$this->assert(!preg_match('#^\.\.#', $session->getSessionId()), 'Dangerous session-id!');
 
 	/* Now test a legal sessionId */
 	$sessionId = md5(rand());
@@ -233,6 +233,33 @@ class SessionTest extends GalleryTestCase {
 
 	/* Restore original session */
 	$gallery->_session =& $saveSession;
+    }
+
+    function testNewSessionCollision() {
+	/* Ensure we don't randomly pick a new sessionid for an existing session */
+	global $gallery;
+	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+
+	/* Mock platform creates sessionid collision for first id picked */
+	$platform = new UnitTestPlatform();
+	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), true);
+	$platform->setReply('fopen', array('fuzzy' => '{.*}', 'rb', 0), 'fh');
+	$platform->setReply('feof', array('fh'), false);
+	$platform->setReply('fread', array('fh', 4096),
+			    serialize(array(123, 'abc', array('session' => 'data'))));
+	$platform->setReply('feof', array('fh'), true);
+	$platform->setReply('fclose', array('fh'), true);
+	$platform->setReply('file_exists', array('fuzzy' => '{.*}'), false);
+	$gallery->setPlatform($platform);
+
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$this->assert($platform->isComplete(), $platform->getRemaining());
     }
 
     function testSessionSaveLoad() {
