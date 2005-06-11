@@ -40,7 +40,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     function setUp() {
 	parent::setUp();
 
-	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId());
+	list ($ret, $this->_album) = $this->_createRandomAlbum($this->_getRootId(),
+							       array('orderBy' => 'orderWeight'));
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -153,7 +154,7 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
     }
 
     function testHandleRequestWithArchiveExtract() {
-	$sortAddedFilesFunc = 
+	$sortAddedFilesFunc =
 	    create_function('$a, $b', 'return strcmp($a[\'fileName\'], $b[\'fileName\']);');
 
 	list ($ret, $archive) = $this->_createRandomDataItem(
@@ -183,8 +184,8 @@ class ItemAddControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals(4, count($results['status']['addedFiles']), 'added 4 items');
 	$addedFiles = $results['status']['addedFiles'];
 
-	/* 
-	 * Sort the added files list by filename because we can't guarantee 
+	/*
+	 * Sort the added files list by filename because we can't guarantee
 	 * the file order across platforms.
 	 */
 	usort($addedFiles, $sortAddedFilesFunc);
@@ -296,7 +297,7 @@ class ItemAddTestOption extends ItemAddOption {
 	$warnings = array();
 	for ($i = 0; $i < count($items); $i++) {
 	    $errors[] = 'an error';
-	    $warnings[$i] = array(); 
+	    $warnings[$i] = array();
 	    $warnings[$i][] = 'a warning';
 	}
 	return array(GalleryStatus::success(), $errors, $warnings);
