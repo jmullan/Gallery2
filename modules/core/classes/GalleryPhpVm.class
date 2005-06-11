@@ -110,5 +110,39 @@ class GalleryPhpVm {
     function setlocale($category, $locale) {
 	return setlocale($category, $locale);
     }
+
+    /**
+     * Send a raw HTTP header
+     *
+     * @param string string
+     * @param [optional boolean replace
+     * @param [optional integer http_response_code]]
+     */
+    function header($string, $replace=null, $http_response_code=null) {
+	return header($string, $replace, $http_response_code);
+    }
+
+    /**
+     * Checks if or where headers have been sent
+     *
+     * The parameters can't be optional if they're references, so even though they're
+     * optional in the php API, they're mandatory in the GalleryPhpVm API
+     *
+     * @param string file
+     * @param integer line
+     * @return boolean whether headers are already sent
+    */
+    function headers_sent(&$file, &$line) {
+	return headers_sent($file, $line);
+    }
+
+    /**
+     * Gets the current configuration setting of magic quotes gpc
+     *
+     * @return integer 0 for off, 1 for on
+     */
+    function get_magic_quotes_gpc() {
+	return get_magic_quotes_gpc();
+    }
 }
 ?>

@@ -90,16 +90,6 @@ class CreateConfigFileStep extends InstallStep {
 		$line = sprintf("\$gallery->setConfig('data.gallery.base', '%s');\n", $tmp);
 	    }
 
-	    if (trim($line) == '$gallery->setConfig(\'cookieId\', \'\');') {
-		/* Generate new cookieId */
-		list($usec, $sec) = explode(" ", microtime());
-		/* Note: srand() is required for php versions < 4.2  */
-		srand(100000 * ((float)$usec + (float)$sec));
-		$galleryStub->setConfig('cookieId', substr(md5(rand()), 0, 6));
-		$tmp = $galleryStub->getConfig('cookieId');
-		$line = sprintf("\$gallery->setConfig('cookieId', '%s');\n", $tmp);
-	    }
-
 	    foreach (array('type', 'hostname', 'database', 'username',
 			   'password', 'tablePrefix', 'columnPrefix') as $key) {
 		if (preg_match("/^.storeConfig\['$key'\] = '.*';/", $line)) {

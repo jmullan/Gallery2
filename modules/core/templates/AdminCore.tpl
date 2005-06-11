@@ -29,6 +29,17 @@
   {g->text text="Error sending test email, see below for details"}
 </h2></div>
 {/if}
+{if isset($form.error.cookie.invalidPath) or isset($form.error.cookie.invalidDomain)}
+<div class="gbBlock">
+<h2 class="giError">
+  {if isset($form.error.cookie.invalidPath)}
+    {g->text text="Invalid cookie path"} <br/>
+  {/if}
+  {if isset($form.error.cookie.invalidDomain)}
+    {g->text text="Invalid cookie domain"} <br/>
+  {/if}
+</h2></div>
+{/if}
 
 <div class="gbBlock">
   <h3> {g->text text="Language Settings"} </h3>
@@ -273,6 +284,40 @@
       <pre>{$status.emailTestDebug}</pre>
     </div>
   {/if}
+</div>
+
+<div class="gbBlock">
+  <h3> 
+    {g->text text="Cookies"}
+    <span id="AdminCore_cookie-toggle"
+     class="giBlockToggle gcBackground1 gcBorder2" style="border-width: 1px"
+     onclick="BlockToggle('AdminCore_cookieDetails', 'AdminCore_cookie-toggle')">+</span>
+  </h3>
+  <p class="giDescription">
+    {g->text text="When Gallery is embedded in another application (portal, CMS, forum, etc.), then you have the choice between two options. Everyone else does not have to care about the cookie settings. Read on for more details."}
+  </p>
+  <p id="AdminCore_cookieDetails" class="gcBorder2"
+   style="display: none; border-width: 1px; border-style: dotted; padding: 4px">
+    {g->text text="If your Gallery is embedded and you leave the following fields empty, then all DownloadItem links (the URLs of the images and other items) in the embedded Gallery have <b>an appended GALLERYSID string</b> in the URL which is <b>a minor security risk</b> when your Gallery users start copy'n'pasting image URLs in forums, guestbooks, etc. The alternative is to set the <b>cookie path</b>. Gallery will then <b>not append the GALLERYSID to the embedded DownloadItem URLs</b>. E.g. when Gallery is reachable at http://www.example.com/application/gallery2/ and the embedding application is at http://www.example.com/application/, then you have to compare the path /application/gallery2/ with /application/. The cookie path is the part of the paths that is equal, in this case it is '/application/'. Most often it is just '/'."}  <br/>
+    {g->text text="The <b>cookie domain</b> is also only needed for embedded Gallery installs and only if you want to get rid of the GALLERYSID string in the embedded DownloadItem URLs. <b>In most cases, the cookie domain can be left blank.</b> Set it only, if Gallery and the embedding application are only reachable with <b>different subdomains</b>. E.g. when Gallery is at http://photos.example.com/ and the application is at http://www.example.com/, then you have to set the cookie domain example.com (the part of the host string that is common to both, Gallery and the embedding application)."} <br/>
+    {g->text text="Once you change the cookie settings, <b>all registered users</b> of your Gallery will <b>have to clear their browser cookie cache</b>. If they do not, they will experience login / logout / lost session problems."} 
+  </p>
+
+  <table class="gbDataTable"><tr>
+    <td>
+      {g->text text="Path"}
+    </td><td>
+      <input type="text" size="20"
+       name="{g->formVar var="form[cookie][path]"}" value="{$form.cookie.path}"/>
+    </td>
+  </tr><tr>
+    <td>
+      {g->text text="Domain"}
+    </td><td>
+      <input type="text" size="20"
+       name="{g->formVar var="form[cookie][domain]"}" value="{$form.cookie.domain}"/>
+    </td>
+  </tr></table>
 </div>
 
 <div class="gbBlock">

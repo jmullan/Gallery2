@@ -28,9 +28,7 @@
 /*
  * Define gallery session key for this install
  */
-global $gallery;
-/* Add @ here in case we haven't yet upgraded config.php to include cookieId */
-define('SESSION_ID_PARAMETER', 'GALLERYSID_' . @$gallery->getConfig('cookieId'));
+define('SESSION_ID_PARAMETER', 'GALLERYSID');
 
 /**
  * Container for session related data
@@ -95,6 +93,14 @@ class GallerySession {
     var $_cookieDomain;
 
     /**
+     * The path for our cookie
+     *
+     * @var string $_cookiePath
+     * @private
+     */
+    var $_cookiePath;
+    
+    /**
      * A set of identifying values that we can use to verify that the session is coming
      * from the same browser as it used to (to prevent session hijacking).
      *
@@ -120,6 +126,9 @@ class GallerySession {
 	/* Check to see if we have an existing session. */
 	$this->_sessionId = null;
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
+	    /* Fix php HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
+	    GalleryUtilities::fixCookieVars();
+	    
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
@@ -179,7 +188,8 @@ class GallerySession {
 	}
 
 	$forceResendCookie = false;
-
+	$forceSessionSave = false;
+	
 	/* Verify the remote address to avoid casual session hijacking */
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
@@ -202,106 +212,165 @@ class GallerySession {
 		$this->_emptySessionData();
 		$this->_sessionId = md5(microtime() . rand(1, 32767));
 		$forceResendCookie = true;
-		$ret = $this->save(true);
+		$forceSessionSave = true;
+	    }
+	}
+
+	/*
+	 * Certain requests should not create a new session in the persistent store / send back a
+	 * cookie. E.g. DownloadItem request, there's no use for cookies there, another case
+	 * is the G1 redirect (modules/migreate/Redirect.inc), because the cookie path it would
+	 * create would be based on the current request-URI which is already mod_rewritten from
+	 * a G1 URI to a G2 URI, i.e. getCurrentUrl(Dir) would return crap.
+	 * Another use case: People link a G2 Download URL in forums / webpages. We don't want to
+	 * create a ton of sessions just for hotlinked G2 items.
+	 */
+	list ($view, $controller) = GalleryUtilities::getRequestVariables('view', 'controller');
+	if ((empty($view) || !in_array($view, array('core.DownloadItem', 'core:DownloadItem'))) &&
+	    (empty($controller) ||
+	     !in_array($controller, array('migrate.Redirect', 'migrate:Redirect')))) {
+
+	    /* It's not one of the special cases, create session / send cookie if necessary */
+	
+	    if ($forceSessionSave) {
+		$ret = $this->save();
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
 	    }
-	}
 
-	if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
+	    /*
+	     * As part of the cookie management, we are forced to append the SID to all DownloadItem
+	     * URLs in embedded G2 if cookie path / domain are not configured
+	     */
+	    list ($ret, $this->_cookieDomain) = GalleryCoreApi::getPluginParameter('module', 'core',
+										   'cookie.domain');
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    list ($ret, $this->_cookiePath) = $urlGenerator->getCookiePath();
+	    if ($ret->isError()) {
+		return $ret->wrap(__FILE__, __LINE__);
+	    }
+	    
+	    if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
 		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
 		$forceResendCookie) {
-	    /*
-	     * Send back a cookie.
-	     *
-	     * TODO: Need to be able to decide for certain that the browser isn't
-	     * accepting cookies so that we can stop sending them.  We can do this
-	     * by recording how many times we've sent a cookie, and how many times
-	     * that we've received one back in return.  Leave that for later.
-	     */
-	    $cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
-
-	    list ($ret, $sessionLifetime) =
-		GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
-	    if ($ret->isError()) {
-		if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
-		    /*
-		     * During installation it's possible that the database isn't around yet.
-		     * Just keep going.
-		     */
-		    $sessionLifetime = 0;
-		} else {
-		    return $ret->wrap(__FILE__, __LINE__);
+		/*
+		 * Send back a cookie.
+		 *
+		 * TODO: Need to be able to decide for certain that the browser isn't
+		 * accepting cookies so that we can stop sending them.  We can do this
+		 * by recording how many times we've sent a cookie, and how many times
+		 * that we've received one back in return.  Leave that for later.
+		 */
+		$cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
+		
+		list ($ret, $sessionLifetime) =
+		    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
+		if ($ret->isError()) {
+		    if ($ret->getErrorCode() & ERROR_STORAGE_FAILURE) {
+			/*
+			 * During installation it's possible that the database isn't around yet.
+			 * Just keep going.
+			 */
+			$sessionLifetime = 0;
+		    } else {
+			return $ret->wrap(__FILE__, __LINE__);
+		    }
+		}
+		
+		if ($sessionLifetime > 0) {
+		    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
+		    $cookie .= '; expires=' . $expirationDate;
+		}
+		
+		/* Because of short urls, the cookie path must always be set explicitly */
+		$cookie .= '; path=' . $this->_cookiePath;
+		
+		/*
+		 * Set the cookie domain only if needed, i.e. embedded multi-subdomain installs
+		 * that is when G2 is installed on a different subdomain than the embedding
+		 * application
+		 *
+		 * Q: Why not set the cookie domain to .example.com (omitting the subdomains) and
+		 * and the cookie path to /?
+		 * A: This is actually a perfect fix (we had it in cvs between beta 3 and beta 4),
+		 * because the case where a browser sends back multiple cookies is completely avoided.
+		 * But it has a major flaw: security! When people share a common domain name, e.g.
+		 * by example.com/~accountName/ or by accountName.example.com, they will all have
+		 * cookies with .example.com and /. To differentiate the cookies, we introduced
+		 * the cookieId, i.e. each G2 install had its own unique cookie name.
+		 * But when a user accessed multiple accounts on this shared domain, the G2 cookie
+		 * is sent to all accounts which opens the door for session hijacking.
+		 * This single reason, security, made us not choose this approach.
+		 *
+		 * Q: Why not set the cookie domain to the actual host string (i.e. .www.example.com
+		 * when G2 is accessed like that or .example.com in other requests, ...)?
+		 * A: Because in RFC 2965, there is no rule in what order the browser should send back
+		 * the cookies. And thus, php/G2 wouldn't know which is the right cookie.
+		 *
+		 * Q: Why not just omit the cookie domain in the set cookie calls?
+		 * A: Actually, this is a good solution. Because if no cookie domain was set, the
+		 * browser sends only cookies back that match the requested domain exactly. So it
+		 * won't return a example.com cookie for www.example.com and the other way around.
+		 * But, and this is a big but, Internet Explorer doesn't conform to the RFC 2965.
+		 * IE sends back example.com and www.example.com cookies when it shouldn't.
+		 * Together with the php bug (least, most specific cookie match in HTTP_COOKIE),
+		 * this results in an unpredictable behavior for various php version / IE
+		 * scenarios.
+		 * Luckily we can fix this manually with fixCookieVars(). That's why we chose this
+		 * approach.
+		 *
+		 * Q: Why append the session id in embedded G2 to all DownloadItem URLs?
+		 * A: In embedded G2, all DownloadItem requests still go directly to G2 and not
+		 * through the emApp for performance reasons. If we set the cookie path in
+		 * embedded G2 to a path that matches embedded and standalone G2, then the
+		 * standalone G2 cookies always have precendence over the cookies from embedded
+		 * G2. This leads to cookie conflicts, if the two cookies correspond to different
+		 * sessions.
+		 * That's why we are forced to append the session id to embedded URLs that require
+		 * session management and go directly to standalone G2. DownloadItem is the only
+		 * request that falls into this category.
+		 *
+		 * Q: Why force the G2 base (standalone) path for java applet cookies?
+		 * A: Because the applets talk to G2 directly. If the cookie path was set to the
+		 * embedded G2 path, then it would not be selected for the HTTP requests of the
+		 * applet to G2, because it wouldn't path-match. 
+		 *
+		 * Therefore we don't set the cookie domain by default and offer the option to set
+		 * it to a configured value if it is required (embedded multi-subdomain G2).
+		 * In embedded G2, we have to append the session id to all DownloadItem unless the
+		 * cookie path is configured such that standalone and embedded G2 set the same
+		 * cookie path.
+		 */
+		if (!empty($this->_cookieDomain)) {
+		    $cookie .= '; domain=' . $this->_cookieDomain;
+		}
+		
+		/*
+		 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
+		 * with this in it from being visible to JavaScript, which mitigates
+		 * XSS attacks.
+		 */
+		$cookie .= '; HttpOnly=1';
+		
+		/*
+		 * Init may be called multiple times (from unit tests) but don't send the headers
+		 * more than once.
+		 */
+		$phpVm = $gallery->getPhpVm();
+		/*
+		 * Use our PhpVm for testability here, ignore $cFile, $cLine, they are just there
+		 * to make it work, i.e. pass something to headers_sent()
+		 */
+		if (!$phpVm->headers_sent($cFile, $cLine)) {
+		    $phpVm->header($cookie);
 		}
 	    }
-
-	    if ($sessionLifetime > 0) {
-		$expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
-		$cookie .= '; expires=' . $expirationDate;
-	    }
-
-	    /*
-	     * Set the cookie path always to '/'.
-	     * Reason: The cookie should be visible to G2 even if G2 is embedded.
-	     * And together with our definition of cookie domain, we guarantee the
-	     * existence of only a single GALLERYSID cookie.
-	     * Q: Why not set the path to the actual G2 path?
-	     * A: Because there is a) a php bug (fixed in 4.3.13 or so) that selects the least
-	     * specific path-matched cookie instead of the most specific cookie.
-	     */
-	    $cookie .= '; path=/';
-
-	    /*
-	     * Set the cookie domain always to .example.com omitting subdomains. And don't set
-	     * the cookie domain for numeric host names (IPs).
-	     * Reason: Multiple subdomains could point to the same G2 install and the embedded
-	     * G2 could be in another subdomain. (www.example.com, example.com,
-	     * photos.example.com, ... )
-	     * If we set the cookie domain to .example.com and the cookie path to /, we
-	     * avoid the case where the browser sends multiple GALLERYSID cookies back to G2
-	     * and thus there's no chance to get problems because one GALLERYSID has a guest
-	     * session and the other has a logged in session.
-	     *
-	     * Q: Why not set the cookie domain to the actual host string (i.e. .www.example.com
-	     * when G2 is accessed like that or .example.com in other requests, ...)?
-	     * A: Because in RFC 2965, there is no rule in what order the browser should send back
-	     * the cookies. And thus, php/G2 wouldn't know which is the right cookie.
-	     *
-	     * Q: Why not just omit the cookie domain in the set cookie calls?
-	     * A: Actually, this is a good solution. Because if no cookie domain was set, the
-	     * browser sends only cookies back that match the requested domain exactly. So it
-	     * won't return a example.com cookie for www.example.com and the other way around.
-	     * But, and this is a big but, Internet Explorer doesn't conform to the RFC 2965.
-	     * IE sends back example.com and www.example.com cookies when it shouldn't.
-	     * Together with the php bug (least, most specific cookie match in HTTP_COOKIE),
-	     * this results in an unpredictable behavior for various php version / IE scenarios.
-	     *
-	     * Therefore we set the cookie domain always to .example.com and the cookie path to /.
-	     * Together with a unique GALLERYSID name (cookieId), we can host multiple G2 installs
-	     * on the same domain (different paths, subdomains) without getting into trouble.
- 	     */
-	    $this->_cookieDomain = $this->getCookieDomain();
-	    if (!empty($this->_cookieDomain)) {
-		$cookie .= '; domain=' . $this->_cookieDomain;
-	    }
-
-	    /*
-	     * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
-	     * with this in it from being visible to JavaScript, which mitigates
-	     * XSS attacks.
-	     */
-	    $cookie .= '; HttpOnly=1';
-
-	    /*
-	     * Init may be called multiple times (from unit tests) but don't send the headers more
-	     * than once.
-	     */
-	    if (!headers_sent()) {
-		header($cookie);
-	    }
 	}
-
+	    
 	return GalleryStatus::success();
     }
 
@@ -488,76 +557,28 @@ class GallerySession {
     }
 
     /*
-     * Returns a string for domain name based host names and '' for IP based host
-     * names. Don't set the cookie domain if '' is returned.
+     * Returns the cookie domain
      *
-     * Examples:
-     *   For host = user:pass@www.example.com:80, return .example.com
-     *   For host = 127.0.0.1:80, return ''
-     *
-     * Explanation:
-     * - Differentiate domain name based from numeric (IPv4/v6) based host strings.
-     * - Don't verify the validity of the host string
-     *
-     * Set cookie domain for domain name based host strings to .example.com
-     * (omitting the subdomains). For numeric host string, don't set the cookie
-     * domain.
+     * By default, don't set the cookie domain. Only set it, if G2 is configured to set it
+     * (e.g. because it is a) embedded AND b) different subdomains are involved)
      *
      * @return string the cookie domain, or '' if no cookie domain should be set
      * @static
      */
     function getCookieDomain() {
-	if (isset($this->_cookieDomain)) {
-	    return $this->_cookieDomain;
-	}
-
-	/* Get the complete host part, including port if present */
-	GalleryCoreApi::requireOnce(dirname(__FILE__) . '/GalleryUrlGenerator.class');
-	$host = GalleryUrlGenerator::getCurrentDomain();
-
-	/* Remove user:password@ if present */
-	if ($at = strpos($host, '@')) {
-	    $host = substr($host, $at+1);
-	}
-
-	/* Detect IPv6/hexademical format: such an address has at least 2 colons */
-	if (substr_count($host, ':') >= 2) {
-	    return $this->_cookieDomain = '';
-	} else {
-	    /* Remove the trailing port number, if present */
-	    if ($colon = strpos($host, ':')) {
-		$host = substr($host, 0, $colon);
-	    }
-	}
-
-	/* At this point, $host is either an IP in dotted-decimal format or a domain name */
-
-	/* As the name implies, only decimal (no hexadecimal) numeric IPs are allowed in
-	 * the dotted format. To detect IPs, we can apply a simple regexp check.
-	 * Theoretically (although very uncommon), IPv6 addresses can also be written in
-	 * dotted-decimal format, so check for at least 3 dots, IPv6 would have 15 dots.
-	 */
-	if (preg_match('|^(\d+\.){3,}\d+$|', $host)) {
-	    return $this->_cookieDomain = '';
-	}
-
-	/* It's a domain name based host string.
-	 * We set the cookie path to second-level dot top-level domain
-	 * and omit any other parts */
-	$parts = explode('.', $host);
-	if (($nr = count($parts)) < 2) {
-	    return $this->_cookieDomain = '';
-	}
-
-	return $this->_cookieDomain = '.' . $parts[$nr-2] . '.' . $parts[$nr-1];
+	return $this->_cookieDomain;
     }
 
     /**
-     * The path used by our cookie
-     * @return string a server path (like /gallery2)
+     * Get cookie path that will encompass G2 (and CMS app if embedded)
+     *
+     * The cookie path must be set because of short urls. The user agent would set the cookie path
+     * too restrictive with short urls enabled.
+     *
+     * @return array (object GalleryStatus a status code, string path)
      */
     function getCookiePath() {
-	return '/';
+	return $this->_cookiePath;
     }
 
     /**

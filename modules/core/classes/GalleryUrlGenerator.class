@@ -365,6 +365,10 @@ class GalleryUrlGenerator {
 	    }
 	} else if (isset($params['view']) && $params['view'] == 'core.DownloadItem') {
 	    $url = $this->getCurrentUrlDir(true) . GALLERY_MAIN_PHP;
+	    /* Check if we are forced to append the session id in embedded G2 */
+	    if ($this->embedForceSessionId($params)) {
+		$forceSessionId = true;
+	    }
 	} else {
 	    $url = $this->_isBaseFullUrl ? $this->_baseFile
 		 : ($this->_isBaseAbsolute ? GalleryUrlGenerator::makeUrl($this->_baseFile)
@@ -374,8 +378,8 @@ class GalleryUrlGenerator {
 
 	/* Decide whether to include session id in the url */
 	if ($session =& $gallery->getSession() &&
-		( (!isset($forceSessionId) && !$session->isUsingCookies()) ||
-		  (isset($forceSessionId) && $forceSessionId === true) )) {
+	        ( (!isset($forceSessionId) && !$session->isUsingCookies()) ||
+		 (isset($forceSessionId) && $forceSessionId === true))) {
 	    if (!empty($this->_embedSessionString) && isset($appSession)) {
 		$embedSessionString = $this->_embedSessionString;
 	    } else {
@@ -427,7 +431,49 @@ class GalleryUrlGenerator {
 	return $url;
     }
 
-
+    /**
+     * Get the cookie path that will encompass G2 (and CMS app if embedded)
+     *
+     * The forceG2Base parameter forces the function to return the path to G2 and not to the
+     * current dir of the URL. This is only relevant when G2 is embedded.
+     * forceG2Base is only used for applets because they talk to G2 directly and not through the
+     * embedding application. If the cookie path wouldn't be set to the G2 base in this case, the
+     * applet wouldn't select the cookie for requests, because it wasn't allowed to (according to
+     * the cookie specs).
+     *
+     * Examples:
+     * Current URL                                 forceG2Base        cookie path
+     * http://example.com/gallery2/main.php        false              /gallery2/
+     * http://example.com/gallery2/main.php        true               /gallery2/
+     * http://example.com/applicationXy/index.php  false              /applicationXy/
+     * http://example.com/applicationXy/index.php  true               /gallery2/
+     *
+     * In the last example we assumed that G2 is installed at that location.
+     *
+     * @param boolean (optional) if true, ensure G2 path of base url is returned
+     *                (different when embedded)
+     * @return array (object Gallery status, string path)
+     */
+    function getCookiePath($forceG2Base=false) {
+	if (!isset($this->_cookiePath[$forceG2Base])) {
+	    /* Return the configured path is it is set */
+	    list ($ret, $path) = GalleryCoreApi::getPluginParameter('module', 'core',
+								    'cookie.path');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    if (empty($path)) {
+		$urlComponents = parse_url($this->getCurrentUrlDir($forceG2Base));
+		$path = $urlComponents['path'];
+	    } else {
+		$this->_cookiePathConfigured = true;
+	    }
+	    $this->_cookiePath[$forceG2Base] = $path;
+	}
+	
+	return array(GalleryStatus::success(), $this->_cookiePath[$forceG2Base]);
+    }
+    
     /**
      * Initialize the navigation branch
      *
@@ -542,8 +588,9 @@ class GalleryUrlGenerator {
      * Get a list of navigation links to go back to where we came from.
      *
      * @param integer set this to get links back to a certain depth
-     * @return array of navigational links: array('url' => ...,
-     *                                            'name' => 'Back to ...')
+     * @return array ( object GalleryStatus a status code,
+                       array of navigational links: array('url' => ...,
+     *                                            'name' => 'Back to ...'))
      */
     function getNavigationLinks($depth = null) {
 	global $gallery;
@@ -580,6 +627,30 @@ class GalleryUrlGenerator {
 	    $links[] = array('url' => $url, 'name' => $name);
 	}
 	return array(GalleryStatus::success(), $links);
+    }
+
+    /**
+     * Decide whether to include session id in the url
+     *
+     * Force the session id in the url for embedded DownloadItem urls if the cookie.path
+     * plugin parameter is not set. See GallerySession::init() for details.
+     *
+     * @param array params (string param)
+     * @return boolean forceSessionId
+     * @access protected
+     */
+    function embedForceSessionId($params) {
+	if (isset($params['view']) && $params['view'] == 'core.DownloadItem' &&
+	        GalleryUtilities::isEmbedded() &&
+	        (!isset($this->_cookiePathConfigured) || $this->_cookiePathConfigured != true)) {
+	    /*
+	     * It is assumed that the G2 session is initiated before generateUrl() is called
+	     * for the first time.
+	     */
+	    return true;
+	} else {
+	    return false;
+	}
     }
 }
 ?>

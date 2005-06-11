@@ -48,20 +48,27 @@ class ItemAddUploadApplet extends ItemAddPlugin {
 	    $ItemAddUploadApplet['NoProtocolError'] = 1;
 	} else {
 	    $session =& $gallery->getSession();
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    /*
+	     * Force the use of the G2 base for the url and the cookie path as the applet will
+	     * communicate to G2 directly, even when G2 is embedded
+	     */
+	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
+	    list ($ret, $cookiePath) = $urlGenerator->getCookiePath(true);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
 	    $ItemAddUploadApplet['NoProtocolError'] = 0;
 	    $ItemAddUploadApplet['cookieName'] = $session->getKey();
 	    $ItemAddUploadApplet['cookieValue'] = $session->getId();
 	    $ItemAddUploadApplet['cookieDomain'] = $session->getCookieDomain();
-	    $ItemAddUploadApplet['cookiePath'] = $session->getCookiePath();
+	    $ItemAddUploadApplet['cookiePath'] = $cookiePath;
 	    $ItemAddUploadApplet['album'] = $item->getId();
 	    $ItemAddUploadApplet['defaults'] = array();
 	    $ItemAddUploadApplet['overrides'] = array('toSysOut' => 'true');
 	    $ItemAddUploadApplet['userAgent'] = GalleryUtilities::getServerVar('HTTP_USER_AGENT');
 	    $ItemAddUploadApplet['galleryVersion'] = 2;
 	    $ItemAddUploadApplet['code'] = 'com.gallery.GalleryRemote.ItemAddUploadAppletMini';
-
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $ItemAddUploadApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
 	}
 
 	$template->setVariable('ItemAddUploadApplet', $ItemAddUploadApplet);

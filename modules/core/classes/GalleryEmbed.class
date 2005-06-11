@@ -217,17 +217,26 @@ class GalleryEmbed {
     /**
      * Reset the G2 session.  Do not call init() before this method.
      *
+     * Either specify embedUri or embedPath (or both, but only one is needed).
+     * If you specify embedUri, make sure it's an URI that is present on all URLs where a logout
+     * is possible. E.g. if the embedUri for G2 pages is index.php?mod=gallery2, in most cases, a
+     * logout is also possible on index.php or index.php?mod=anothermodule. So it's better to set
+     * embedUri for the logout call to just index.php. embedPath is the exact same path as in
+     * ::init(). 
+     *
+     * @param array ('embedUri' => string the embedUri (e.g. index.php),
+     *               'embedPath' => string the embedPath (e.g. /cms/))
      * @return object GalleryStatus a status object
      * @static
      */
-    function logout() {
+    function logout($params=array()) {
 	require_once(dirname(__FILE__) . '/GallerySession.class');
 	require_once(dirname(__FILE__) . '/GalleryUtilities.class');
 	$hasSession = GalleryUtilities::getCookieVar(SESSION_ID_PARAMETER);
 	if (empty($hasSession)) {
 	    $hasSession = GalleryUtilities::hasRequestVariable(SESSION_ID_PARAMETER);
 	} else {
-	    $ret = GalleryInitFirstPass();
+	    $ret = GalleryInitFirstPass($params);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }

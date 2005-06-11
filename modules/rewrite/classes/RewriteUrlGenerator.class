@@ -163,6 +163,12 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    }
 
 	    $url = $this->_shortUrls[$index];
+	    
+	    /* Check if we are forced to append the session id in embedded G2 */
+	    if ($this->embedForceSessionId($params)) {
+		$forceSessionId = true;
+	    }
+	    
 	    unset($params['view']);
 	    unset($params['subView']);
 

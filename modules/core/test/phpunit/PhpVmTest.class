@@ -80,5 +80,50 @@ class PhpVmTest extends GalleryTestCase {
 		$this->_phpVm->recode_string('ISO-8859-1..UTF8', 'foo bar'));
 	}
     }
+
+    /*
+     * header() can only be tested with an actual HTTP requests, that's why we added it
+     * to the mock VM
+     */
+    function testHeader() {
+	global $gallery;
+
+	/*
+	 * This test also depends on the G2 Session code as we do an actual HTTP request and
+	 * verify that we received a cookie header. GallerySession uses the $phpVm->header()
+	 * function, thus this covers what we'd like to test (and a little more)
+	 */
+	$session =& $gallery->getSession();
+	$urlGenerator =& $gallery->getUrlGenerator();
+	$url = $urlGenerator->getCurrentUrl();
+	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
+	$url = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
+	list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
+	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
+	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
+	if (isset($headers['Set-Cookie'])) {
+	    $this->assert(strpos($headers['Set-Cookie'], SESSION_ID_PARAMETER) !== false,
+			  'no G2 SessionId found in the cookie header');
+	} else {
+	    $this->assert(false, 'no cookie header found in http response');
+	}
+    }
+
+    /* Check is only rudimentary, omit the optional parameters */
+    function testHeadersSent() {
+	global $gallery;
+	/* When this unit test is executed, we already sent some data to the user agent */
+	$phpVm = $gallery->getPhpVm();
+	$this->assert($phpVm->headers_sent($cFile, $cLine), 'headers are sent at this point, but the vm function ' .
+		      'does not think so');
+
+	/* The other case, $phpVm->headers_sent() == false, is covered by testHeader() */
+    }
+
+    /* This setting can't be changed during runtime */
+    function testGetMagicQuotesGpc() {
+	$this->assertEquals(get_magic_quotes_gpc(), $this->_phpVm->get_magic_quotes_gpc(),
+			    'The Vm function does not return the correct value');
+    }
 }
 ?>

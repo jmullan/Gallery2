@@ -766,6 +766,28 @@ class UtilitiesTest extends GalleryTestCase {
 			    'php version');
     }
 
+    function testIsEmbedded() {
+	$key = 'G2_EMBED';
+	$backupValue = null;
+	if (GalleryDataCache::containsKey($key)) {
+	    $backupValue = GalleryDataCache::get($key);
+	}
+	GalleryDataCache::remove($key);
+	$this->assert(!GalleryDataCache::containsKey($key), 'Could not remove a GDC var');
+	$this->assert(!GalleryUtilities::isEmbedded(), 'Should be not embedded');
+	GalleryDataCache::put($key, 1, true);
+	$this->assert(GalleryDataCache::containsKey($key), 'Could not set a GDC var');
+	$this->assert(GalleryUtilities::isEmbedded(), 'Should be embedded now');
+
+	/* Restore */
+	if ($backupValue) {
+	    GalleryDataCache::put($key, $backupValue, true);
+	} else {
+	    GalleryDataCache::remove($key);
+	    $this->assert(!GalleryDataCache::containsKey($key), 'Could not remove a GDC var');
+	}
+    }
+
     function testGetServerVar() {
 	/* Normal */
 	$_SERVER['foo'] = 'foo';
@@ -785,19 +807,292 @@ class UtilitiesTest extends GalleryTestCase {
 	/* Normal */
 	$key = 'foo' . rand(1,9999);
 	$_COOKIE[$key] = 'foo';
+	$_SERVER['HTTP_COOKIE'] .= !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] .= $key . '=foo';
+	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals('foo', GalleryUtilities::getCookieVar($key));
 
 	/* Missing */
 	unset($_COOKIE[$key]);
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals(null, GalleryUtilities::getCookieVar($key));
 
 	/* Malicious value */
 	$val = '<script>bar</script>';
 	$_COOKIE[$key] = $val;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] .= $key . '=' . urlencode($val);
+	GalleryUtilities::fixCookieVars(false, true);
 	$this->assertEquals('&lt;script&gt;bar&lt;/script&gt;',
 			    GalleryUtilities::getCookieVar($key));
+
+	/* COOKIE has a wrong value, should be fixed automatically */
+	GalleryUtilities::fixCookieVars(false, true);
+	$rand = rand(1,9999);
+	$val1 = 'bar' . $rand;
+	$val2 = 'bar' . ($rand + 3000);
+	$_COOKIE[$key] = $val2;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = $key . '=' . $val1 . ' ; ' . $key .'=' .$val2 . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
+	$this->assertEquals($val1, GalleryUtilities::getCookieVar($key)
+			    , 'combined getCookieVar, fixCookieVars test');
     }
 
+    /* Test if we correctly fix the superglobal $_COOKIE */
+    function testFixCookieVars() {
+	/* Only 1 cookie with the same NAME */
+	$key = 'foo' . rand(1,9999);
+	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] .= "$key=foo";
+	/* Execute our fix */
+	GalleryUtilities::fixCookieVars(true);
+	$this->assertEquals('foo', GalleryUtilities::getCookieVar($key),
+			    'single cookie, getCookieVars');
+	$this->assertEquals('foo', $_COOKIE[$key],
+			    'single cookie, superglobal _COOKIE');
+
+	/* Two cookies with the same name, different paths */
+	$key = 'foo' . rand(1,9999);
+	$rand = rand(1,9999);
+	$val1 = 'bar' . $rand;
+	$val2 = 'bar' . ($rand + 3000);
+	/* Define cookie with $val1 to be the one with higher precedence (more specific path) */
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerHttpCookie;
+	$_COOKIE = $this->_originalCookie;
+	$_SERVER['HTTP_COOKIE'] .= !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] .= "$key=" . urlencode($val1) . '; $key=' . urlencode($val2);
+	/* Set $_COOKIE as php would, with the wrong cookie value for our key */
+	$_COOKIE[$key] = $val2;
+	/* Execute our fix */
+	GalleryUtilities::fixCookieVars(true);
+	$this->assertEquals($val1, GalleryUtilities::getCookieVar($key),
+			    'multiple cookies, getCookieVar');
+	$this->assertEquals($val1, $_COOKIE[$key],
+			    'multiple cookies, superglobal _COOKIE');
+
+	/* Performance check. It shouldn't be executed when it was already executed */
+	$_COOKIE = array();
+	$_SERVER['HTTP_COOKIE'] = '';
+	GalleryUtilities::fixCookieVars(true);
+	$this->assertEquals(0, count($_COOKIE), 'COOKIE was not emptied by fixCookieVars!');
+	$_SERVER['HTTP_COOKIE'] = 'foo=bar';
+	GalleryUtilities::fixCookieVars();
+	$this->assertEquals(false, isset($_COOKIE['foo']),
+			    'fixCookieVars should not run a second time!');
+
+	/*
+	 * Even if we can't live with that case, test what happens if $_SERVER['HTTP_COOKIE']
+	 * does not exist
+	 */
+	$_COOKIE = $this->_originalCookie;
+	unset($_SERVER['HTTP_COOKIE']);
+	GalleryUtilities::fixCookieVars(true);
+	$this->assertEquals($_COOKIE, $this->_originalCookie,
+			    'HTTP_COOKIE unset test: $_COOKIE was modified!');
+
+	/*
+	 * Check if $_SERVER['HTTP_COOKIE'] is set (more as a feedback once we know that there are
+	 * still login / auth problems)
+	 */
+	$this->assertEquals(empty($this->_originalCookie), empty($this->_originalServerHttpCookie),
+			    'HTTP_COOKIE not set although $_COOKIE is nonempty!');
+
+	/*
+	 * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using header()
+	 * instead of setCookie()).
+	 */
+	$key1 = 'foo1';
+	$val1 = '" sdsd , wsdsds ;  wewew"';
+	$key2 = '$Version';
+	$val2 = '1';
+	$key3 = 'foo2';
+	$key4 = 'foo4';
+	$val4 = 'bar';
+	$key5 = 'dontfix[key';
+	$val5 = 'bar2';
+	$key6 = 'foo5';
+	$val6 = '"iui7 asa9a,. \\" a; \\asas, bla"';
+	/* Use one time commas as delimiters, the other time semicolons */
+	foreach(array(',', ';') as $sep) {
+	    /*
+	     * Check for quoted-string cookies (don't urlencode cookie values, e.g. by using header()
+	     * instead of setCookie()).
+	     * And check for ordinary cookies (netscape standard) where values are assumed to be
+	     * urlencoded 
+	     */
+	    foreach (array(true, false) as $urlEncoded) {
+		if ($urlEncoded) {
+		    $_SERVER['HTTP_COOKIE'] = $key1 . '=' . urlencode($val1) . $sep . $key2 . '=' .
+			urlencode($val2) . $sep . $key3 .  $sep . $key4 . '=' . urlencode($val4)
+			. $sep . $key5 . '=' . urlencode($val5) . $sep . $key6 . '= ' . urlencode($val6);
+		} else {
+		    $_SERVER['HTTP_COOKIE'] = $key1 . '=' . $val1 . $sep . $key2 . '=' .
+			$val2 . $sep . $key3 .  $sep . $key4 . '=' . $val4
+			. $sep . $key5 . '=' . $val5 . $sep . $key6 . '= ' . $val6;
+		}
+		    
+		$_COOKIE = array();
+		$_COOKIE['foobar'] = array('foo' => 'bar');
+		/* Execute the fix */
+		GalleryUtilities::fixCookieVars(true);
+		/* Check if the actual response matches the expected response */
+		$kind = $urlEncoded ? 'urlencoded' : 'true';
+		$this->assertEquals(true, isset($_COOKIE[$key1]), $kind .
+				    ' quoted-string cookie 1 not set for delimiter "' . $sep . '"');
+		if (isset($_COOKIE[$key1])) {
+		    $check = get_magic_quotes_gpc() ? addslashes($val1) : $val1;
+		    $this->assertEquals($check, $_COOKIE[$key1], $kind . ' quoted-string cookie ' .
+					'1 incorrect for delimiter "' . $sep . '"');
+		}
+
+		
+		$this->assertEquals(true, isset($_COOKIE[$key6]), $kind . 'quoted-string cookie ' .
+				    '6 not set for delimiter "' . $sep . '"');
+		if (isset($_COOKIE[$key6])) {
+		    $check = get_magic_quotes_gpc() ? addslashes($val6) : $val6;
+		    $this->assertEquals($check, $_COOKIE[$key6], $kind . 'quoted-string cookie ' .
+					'6 incorrect for delimiter "' . $sep . '"');
+		}
+
+		$kind = $urlEncoded ? 'urlencoded' : 'non-urlencoded';
+		$this->assertEquals(false, isset($_COOKIE[$key5]), $kind . ' illegal name cookie ' .
+				    '5  was set for delimiter "' . $sep . '"');
+
+		$this->assertEquals(true, isset($_COOKIE[$key4]), $kind . ' token cookie 4 not ' .
+				    'set for delimiter "' . $sep . '"');
+		if (isset($_COOKIE[$key4])) {
+		    $this->assertEquals($val4, $_COOKIE[$key4], $kind . ' token cookie 4 ' .
+					'incorrect for delimiter "' . $sep . '"');
+		}		
+		
+		$this->assertEquals(false, isset($_COOKIE[$key3]), $kind . ' empty cookie value ' .
+				    'was set for delimiter "' . $sep . '"');
+		$this->assertEquals(false, isset($_COOKIE[$key2]), $kind . ' $Version cookie was ' .
+				    'set for delimiter "' . $sep . '"');
+	    
+		/* Check if the array-cookie is still there */
+		$this->assertEquals(true, isset($_COOKIE['foobar']), $kind . 'array cookie not ' .
+				    'set for separator "' . $sep . '"');
+		if (isset($_COOKIE['foobar'])) {
+		    $this->assertEquals(array('foo' => 'bar'), $_COOKIE['foobar'], $kind .
+					' array cookie value changed for delimiter "' . $sep . '"');
+		}
+	    }
+	}
+    }
+
+    /* Check some edge cases of _registerCookieAttr */
+    function testRegisterCookieAttr() {
+	global $gallery;
+	/* Test cases */
+	$tests = array();
+	/* 1. add one, successfully */
+	$tests[] = array('add' => array('foo=bar'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 2. add something, unsuccessfully */
+	$tests[] = array('add' => array('fo[o=bar'), 'er' => array());
+	/* 3. add key with the same key, no change expected */
+	$tests[] = array('add' => array('foo=bar', 'foo=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 4. add key with another name, successfully */
+	$tests[] = array('add' => array('foo=bar', 'foo2=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'foo2', 'val' => 'bar2')));	
+	/* 5. add attr without value, unsuccessfully */
+	$tests[] = array('add' => array('foo=bar', 'foo2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 6. add something that would be a problem when it was not urlencoded, successfully */
+	$tests[] = array('add' => array('foo=bar', 'fo%26o2=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'fo&o2', 'val' => 'bar2')));
+	/* 7. try zero length key, unsuccessfully */
+	$tests[] = array('add' => array('foo=bar', '=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 8. try key with [ (arrays, ...), unsuccessfully */
+	$tests[] = array('add' => array('foo=bar', 'fo[o2=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	$tests[] = array('add' => array('foo=bar', '[foo2=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	$tests[] = array('add' => array('foo=bar', 'foo2[=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 9. try key with ], unsuccessfully */
+	$tests[] = array('add' => array('foo=bar', 'fo]o2=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	$tests[] = array('add' => array('foo=bar', 'foo2]=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 10. try key with [], unsuccessfully */
+	$tests[] = array('add' => array('foo=bar', 'f[o]o2=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 11. this would be a valid array cookie, but we don't touch them */
+	$tests[] = array('add' => array('foo=bar', 'fo[o2]=>bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 12. try binary unsafe key, successfully, check new key string */
+	$tests[] = array('add' => array('foo=bar', 'fo o2=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'fo_o2', 'val' => 'bar2')));
+	$tests[] = array('add' => array('foo=bar', 'foo2.=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'foo2_', 'val' => 'bar2')));
+	/* 13. try key with leading $ sign,  unsuccessfully*/
+	$tests[] = array('add' => array('foo=bar', '$foo2=bar2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar')));
+	/* 14. try a value that changed with urldecode, successfully */
+	$tests[] = array('add' => array('foo=bar', 'foo2=ba%26r2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'foo2', 'val' => 'ba&r2')));
+	/* 15. try a value that changes with addslashes, successfully */
+	$tests[] = array('add' => array('foo=bar', 'foo2=ba"r2'),
+			 'er' => array(array('key' => 'foo', 'val' => 'bar'),
+				       array('key' => 'foo2', 'val' => 'ba"r2')));
+
+	/* Foreach test case (tC), run the test */
+	foreach (array(true, false) as $addSlashes) {
+	    if ($addSlashes) {
+		$phpVm = new UtilitiesTestAddSlashesPhpVm();
+		$gallery->_phpVm = $phpVm;
+		$addSlashesInfo = 'addslashes, ';
+	    } else {
+		$phpVm = new UtilitiesTestDoNotAddSlashesPhpVm();
+		$gallery->_phpVm = $phpVm;
+		$addSlashesInfo = 'do not addslashes, ';
+	    }
+		
+	    foreach ($tests as $tC) {
+		$_COOKIE = array();
+		$this->assert(!count($_COOKIE), 'Could not reset superglobal $_COOKIE');
+		/* Execute the test */
+		$fixedCookies = array();
+		foreach ($tC['add'] as $attr) {
+		    GalleryUtilities::_registerCookieAttr($attr, $fixedCookies);
+		}
+		/* Test the result */
+		ob_start();
+		var_dump($tC);
+		$debugInfo = ob_get_clean();
+		
+		$this->assertEquals(count($tC['er']), count($_COOKIE), $addSlashesInfo .
+				    'number of registerd keys ' .
+				    'do not match for test case: ' . $debugInfo);
+		foreach ($tC['er'] as $eR) {
+		    if (isset($_COOKIE[$eR['key']])) {
+			/* Check value */
+			$expectedValue = $addSlashes ? addSlashes($eR['val']) : $eR['val'];
+			$this->assertEquals($expectedValue, $_COOKIE[$eR['key']],
+					    $addSlashesInfo . 'value does not match for key ' .
+					    $eR['key'] . ' for test case: ' . $debugInfo);
+		    } else {
+			$this->assert(false, $addSlashesInfo . 'key ' . $eR['key'] .
+				      ' missing for test case: ' . $debugInfo);
+		    }
+		}
+	    }
+	}
+    }
+    
     function testGuaranteeDirExists() {
 	list ($success, $created) = GalleryUtilities::guaranteeDirExists('/test/one/two');
 	$this->assert($success, 'guaranteeDirExists');
@@ -989,6 +1284,18 @@ class UtilitiesTestWinPlatform extends WinNtPlatform {
 
     function getDirectorySeparator() {
 	return '\\';
+    }
+}
+
+/* used for testRegisterCookieAttr */
+class UtilitiesTestAddSlashesPhpVm extends GalleryPhpVm {
+    function get_magic_quotes_gpc() {
+	return true;
+    }
+}
+class UtilitiesTestDoNotAddSlashesPhpVm extends GalleryPhpVm {
+    function get_magic_quotes_gpc() {
+	return false;
     }
 }
 ?>

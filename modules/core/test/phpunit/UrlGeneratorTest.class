@@ -50,23 +50,49 @@ class UrlGeneratorTest extends GalleryTestCase {
 	/* PHP/CGI sets PATH_INFO, but we don't want that for our tests */
 	unset($_SERVER['PATH_INFO']);
 
-	global $gallery;
-	$this->_savedSession = $gallery->_session;
-
+	/* For the cookie.path */
+	$ret = $this->_markPluginParametersForCleanup('module', 'core');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	
 	$this->_urlGenerator = new GalleryUrlGenerator();
 	$this->_urlGenerator->init('phpunit_test.php');
     }
 
     function tearDown() {
-	global $gallery;
-	$gallery->_session = $this->_savedSession;
-
 	parent::tearDown();
     }
 
     function testGenerateUrl() {
 	global $gallery;
-
+	
+	/*
+	 * Configure to not use a fixed cookie path (append session id to embedded downloaditem
+	 * requests)
+	 */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assert(empty($realValue), 'Could not reset cookie path');
+	/* Let the url generator know of the new cookie.path value */
+	$gallery->setUrlGenerator($this->_urlGenerator);
+	/* Let the session know of the new cookie.path value */
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->_session = $session;
+	
 	$params['a'] = 123;
 	$params['b'] = 'bBbB';
 	$params['c'] = serialize(array(1, 2, 3));
@@ -135,10 +161,96 @@ class UrlGeneratorTest extends GalleryTestCase {
 	    $urlGenerator->generateUrl(array('view' => 'core.DownloadItem', 'itemId' => 12345),
 				       true),
 	    'core.DownloadItem always direct-g2 url, even when embedded');
+
+	/*
+	 * DownloadItem requests in embedded G2 should have the GALLERYSID in the URL if the cookie
+	 * path is not defined, independent of cookieless browsing
+	 */
+	/* Set embedded mode */
+	$key = 'G2_EMBED';
+	$origEmbed = null;
+	if (GalleryDataCache::containsKey($key)) {
+	    $origEmbed = GalleryDataCache::get($key);
+	}
+	GalleryDataCache::put($key, 1, true);
+	/* Define an embedded request environment */
+	$_SERVER['REQUEST_URI'] = '/cms/otherpage?foo=bar';
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '/cms/', '../gallery2/');
+	$gallery->setUrlGenerator($urlGenerator);
+	/* Let the session know of the new cookie.path value */
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->_session = $session;
+	/* Do the actual test */
+	$this->assertEquals('http://example.com/gallery2/main.php?g2_view=' .
+	    urlencode('core.DownloadItem') . '&amp;g2_itemId=12345&amp;' .
+	    GalleryUtilities::prefixFormVariable($session->getKey()) . '=' .
+	    urlencode($session->getId()),
+	    $urlGenerator->generateUrl(array('view' => 'core.DownloadItem', 'itemId' => 12345)),
+	    'embedded G2 DownloadItem URL without fixed cookie path test failed');
+
+	/*
+	 * All embedded G2 requests that do not go to the G2 base directly shouldn't have the
+	 * GALLERYSID in the URLs
+	 */
+	$this->assertEquals('http://example.com/cms/phpunit_test.php?module=gallery2&amp;' .
+	    'g2_view=' . urlencode('core.ShowItem') . '&amp;g2_itemId=12345',
+	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem', 'itemId' => 12345)),
+	    'embedded G2 ShowItem URL without fixed cookie path test failed');
+
+	
+	/* Now test the same with fixed cookie path */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/', $realValue, 'Could not set cookie path');
+	/* Define an embedded request environment */
+	$_SERVER['REQUEST_URI'] = '/cms/otherpage?foo=bar';
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php?module=gallery2', '/cms/', '../gallery2/');
+	$gallery->setUrlGenerator($urlGenerator);
+	/* Let the session know of the new cookie.path value */
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$gallery->_session = $session;
+	/* Do the actual test */
+	$this->assertEquals('http://example.com/gallery2/main.php?g2_view=' .
+	    urlencode('core.DownloadItem') . '&amp;g2_itemId=12345',
+	    $urlGenerator->generateUrl(array('view' => 'core.DownloadItem', 'itemId' => 12345)),
+	    'embedded G2 DownloadItem URL with fixed cookie path test failed');
+
+	/* All other embedded G2 requests should still not have an appended SID */
+	$this->assertEquals('http://example.com/cms/phpunit_test.php?module=gallery2&amp;' .
+	    'g2_view=' . urlencode('core.ShowItem') . '&amp;g2_itemId=12345',
+	    $urlGenerator->generateUrl(array('view' => 'core.ShowItem', 'itemId' => 12345)),
+	    'embedded G2 ShowItem URL without fixed cookie path test failed');
+
+	/* Restore */
+	if ($origEmbed) {
+	    GalleryDataCache::put($key, $origEmbed, true);
+	} else {
+	    GalleryDataCache::remove($key);
+	    $this->assert(!GalleryDataCache::containsKey($key), 'Could not remove a GDC var');
+	}
     }
 
     function testGenerateUrlWithNoSession() {
 	global $gallery;
+	$backup = $gallery->_session;
 	$gallery->_session = null;
 
 	$urlGenerator = new GalleryUrlGenerator();
@@ -146,6 +258,7 @@ class UrlGeneratorTest extends GalleryTestCase {
 
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?g2_view=foo',
 			    $urlGenerator->generateUrl(array('view' => 'foo')));
+	$gallery->_session = $backup;
     }
 
     function testGenerateHref() {
@@ -468,6 +581,148 @@ class UrlGeneratorTest extends GalleryTestCase {
 	$this->assertEquals('http://example.com/gallery2/phpunit_test.php?g2_view=foo&amp;' .
 			    'g2_test=http%3A%2F%2Fexample.com%2Fgallery2%2Fphpunit_test.php%3Fa%3Db',
 			    $url);
+    }
+
+    function testGetCookiePath() {
+	/* First check if the configured value is taken if available */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/bad/', $realValue, 'could not set plugin parameter cookie.path');
+	/* Now do the actual check */
+	$_SERVER['REQUEST_URI'] = '/cms/phpunit_test.php?a=b';
+	$urlGenerator = new GalleryUrlGenerator();
+	$urlGenerator->init('phpunit_test.php', '/cms/', '../gallery2/');
+	list ($ret, $path) = $urlGenerator->getCookiePath();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/bad/', $path, 'test 0');
+	list ($ret, $path) = $urlGenerator->getCookiePath(true);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('/bad/', $path, 'test 0.1');
+
+	/*
+	 * Now reset the cookie path configuration parameter such that the computed value is
+	 * chosen
+	 */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.path');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('', $realValue, 'could not reset plugin parameter cookie.path');
+
+	/* Check the computed cookie path */
+	$tests = array();
+	$tests[] = array('uri' => '/gallery2/phpunit_test.php?foo=bar','base' => 'phpunit_test.php',
+			 'relativeG2Path' => null, 'er' => '/gallery2/', 'force' => false);
+	$tests[] = array('uri' => '/phpunit_test.php?foo=bar','base' => 'phpunit_test.php',
+			 'relativeG2Path' => null, 'er' => '/', 'force' => false);
+	/* relativeG2Path is only relevant if forceG2Path is true */
+	$tests[] = array('uri' => '/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => false,
+			 'relativeG2Path' => '../gallery2/', 'er' => '/cms/');
+	$tests[] = array('uri' => '/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => false,
+			 'relativeG2Path' => 'gallery2/', 'er' => '/');
+	$tests[] = array('uri' => '/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => false,
+			 'relativeG2Path' => 'modules/gallery2/', 'er' => '/cms/');
+	$tests[] = array('uri' => '/apps/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => false,
+			 'relativeG2Path' => '../gallery2/', 'er' => '/apps/cms/');
+	$tests[] = array('uri' => '/apps/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => false,
+			 'relativeG2Path' => '../../gallery2/', 'er' => '/apps/cms/');
+	$tests[] = array('uri' => '/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => true,
+			 'relativeG2Path' => '../gallery2/', 'er' => '/gallery2/');
+	$tests[] = array('uri' => '/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => true,
+			 'relativeG2Path' => 'gallery2/', 'er' => '/gallery2/');
+	$tests[] = array('uri' => '/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => true,
+			 'relativeG2Path' => 'modules/gallery2/', 'er' => '/cms/modules/gallery2/');
+	$tests[] = array('uri' => '/apps/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => true,
+			 'relativeG2Path' => '../gallery2/', 'er' => '/apps/gallery2/');
+	$tests[] = array('uri' => '/apps/cms/index.php?module=gallery2&foo=bar',
+			 'base' => 'index.php?module=gallery2', 'force' => true,
+			 'relativeG2Path' => '../../gallery2/', 'er' => '/gallery2/');
+	
+	$i = 1;
+	foreach ($tests as $testCase) {
+	    $_SERVER['REQUEST_URI'] = $testCase['uri'];
+	    $urlGenerator = new GalleryUrlGenerator();
+	    $urlGenerator->init($testCase['base'], null, $testCase['relativeG2Path']);
+	    list ($ret, $path) = $urlGenerator->getCookiePath($testCase['force']);
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $this->assertEquals($testCase['er'], $path, "test $i");
+	    $i++;
+	}
+    }
+
+    function testEmbedForceSessionId() {
+	$key = 'G2_EMBED';
+	$savedEmbed = null;
+	if (GalleryDataCache::containsKey($key)) {
+	    $savedEmbed = GalleryDataCache::get($key);
+	}
+
+	/* Permute all involved variables, exhaustive test */
+	foreach (array(true, false) as $downloadItemRequest) {
+	    $params = array('view' => 'core.ShowItem');
+	    if ($downloadItemRequest) {
+		$params = array('view' => 'core.DownloadItem');
+	    }
+	    foreach (array(true, false) as $isEmbedded) {
+		GalleryDataCache::put($key, $isEmbedded, true);
+		$this->assertEquals($isEmbedded, GalleryDataCache::get($key),
+				    'Could not set isEmbedded');
+		foreach (array(true, false) as $cookiePathConfigured) {
+		    $this->_urlGenerator->_cookiePathConfigured = $cookiePathConfigured;
+		    /* Execute the test */
+		    $result = $this->_urlGenerator->embedForceSessionId($params);
+		    /* Some debug information */
+		    $debugInfo = 'isEmbedded: ' . intval($isEmbedded) . ', cookiePathConfigured: ' .
+			intval($cookiePathConfigured) . ', downloadItemRequest: ' .
+			intval($downloadItemRequest);
+		    /* Check the result */
+		    if ($isEmbedded && !$cookiePathConfigured && $downloadItemRequest) {
+			$this->assertEquals(true, $result, 'wrong result for test case: ' .
+					    $debugInfo);
+		    } else {
+			$this->assertEquals(false, $result, 'wrong result for test case: ' .
+					    $debugInfo);
+		    }
+		}
+	    }
+	}
+
+	/* Restore */
+	if ($savedEmbed) {
+	    GalleryDataCache::put($key, $savedEmbed, true);
+	} else {
+	    GalleryDataCache::remove($key);
+	    $this->assert(!GalleryDataCache::containsKey($key), 'Could not remove a GDC var');
+	}
     }
 }
 

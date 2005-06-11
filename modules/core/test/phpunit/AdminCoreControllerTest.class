@@ -47,7 +47,15 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	}
     }
 
+    function tearDown() {
+	parent::tearDown();
+    }
+
     function testChangeValues() {
+	global $gallery;
+	/* The AdminCore controller uses the url generator to check the cookie path */
+	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
+	
 	$valueMap = array('permissions.directory' => 'x1',
 			  'permissions.file' => 'x2',
 			  'exec.expectedStatus' => 'x3',
@@ -59,15 +67,17 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 			  'session.lifetime' => 'x9',
 			  'session.inactivityTimeout' => 'x10',
 			  'misc.markup' => 'x11',
+			  'cookie.path' => '/sub/',
+			  'cookie.domain' => '.example.com',
 			  'lock.system' => 'x13');
 
 	/* Change the defaults to something meaningless */
 	foreach ($valueMap as $key => $value) {
 	    list ($outer, $inner) = explode('.', $key);
 	    GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
-	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
 	}
-
+	GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	
 	/* Perform the request and verify that we succeeded */
 	$results = $this->handleRequest();
 	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
@@ -85,6 +95,151 @@ class AdminCoreControllerTest extends GalleryControllerTestCase {
 	    }
 
 	    $this->assertEquals($expectedValue, $realValue, "value mismatch for $key");
+	}
+    }
+
+    /* Test that we don't accept just any cookie path */
+    function testChangeCookiePath() {
+	global $gallery;
+	/* The AdminCore controller uses the url generator to check the cookie path */
+	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
+	/* AdminCore expects all the form vars, even if we test here only the cookie path */
+	$valueMap = array('permissions.directory' => 'IGNORED',
+			  'permissions.file' => 'IGNORED',
+			  'exec.expectedStatus' => 'IGNORED',
+			  'default.orderBy' => 'IGNORED',
+			  'default.orderDirection' => 'IGNORED',
+			  'default.layout' => 'IGNORED',
+			  'default.theme' => 'IGNORED',
+			  'default.language' => 'IGNORED',
+			  'session.lifetime' => 'IGNORED',
+			  'session.inactivityTimeout' => 'IGNORED',
+			  'misc.markup' => 'IGNORED',
+			  /* Set the cookie path in this test, the domain has to be a valid value */
+			  'cookie.domain' => '.example.com',
+			  'lock.system' => 'IGNORED');
+	
+	/* Some test cases */
+	$tests = array();
+	$tests[] = array('path' => '', 'saved' => 1, 'ep' => '');
+	$tests[] = array('path' => '/', 'saved' => 1, 'ep' => '/');
+	$tests[] = array('path' => '/sub/', 'saved' => 1, 'ep' => '/sub/');
+	$tests[] = array('path' => '/sub', 'saved' => 1, 'ep' => '/sub/');
+	$tests[] = array('path' => '/sub/gallery', 'saved' => 0);
+	$tests[] = array('path' => '/sub/application', 'saved' => 0);
+
+	foreach ($tests as $testCase) {
+	    /* Set the cookie path manually to a known value to check later if it was changed */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.path', '/bad/');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    /* Try to change the parameter */
+	    GalleryUtilities::putRequestVariable('form[cookie][path]', $testCase['path']);
+	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
+	    /* Just add the other form vars to the request such that it accepts the save request */
+	    foreach ($valueMap as $key => $value) {
+		list ($outer, $inner) = explode('.', $key);
+		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
+	    }
+	
+	    /* Perform the request and verify that we succeeded */
+	    $results = $this->handleRequest();
+	    $error = $testCase['saved'] ? array() : array('form[error][cookie][invalidPath]');
+	    $status = !$testCase['saved'] ? array() : array('saved' => 1);
+	    $kind = $testCase['saved'] ? 'redirect' : 'delegate';
+	    $this->assertEquals(array($kind => array('view' => 'core.SiteAdmin',
+							  'subView' => 'core.AdminCore'),
+				      'status' => $status,
+				      'error' => $error),
+				$results,
+				'Unexpected result for cookie path \'' . $testCase['path'] . '\'');
+
+	    GalleryDataCache::reset();
+
+	    /* Check if the correct value was stored */
+	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+									 'cookie.path');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $expPath = $testCase['saved'] ? $testCase['ep'] : '/bad/';
+	    $this->assertEquals($expPath, $realValue,
+				'stored path mismatch for "' . $testCase['path'] . '"');
+	}
+    }
+
+    /* Test that we don't accept just any cookie domain */
+    function testChangeCookieDomain() {
+	global $gallery;
+	/* The AdminCore controller uses the url generator to check the cookie domain */
+	$gallery->setUrlGenerator(new AdminCoreControllerTestUrlGenrator());
+	/* AdminCore expects all the form vars, even if we test here only the cookie path */
+	$valueMap = array('permissions.directory' => 'IGNORED',
+			  'permissions.file' => 'IGNORED',
+			  'exec.expectedStatus' => 'IGNORED',
+			  'default.orderBy' => 'IGNORED',
+			  'default.orderDirection' => 'IGNORED',
+			  'default.layout' => 'IGNORED',
+			  'default.theme' => 'IGNORED',
+			  'default.language' => 'IGNORED',
+			  'session.lifetime' => 'IGNORED',
+			  'session.inactivityTimeout' => 'IGNORED',
+			  'misc.markup' => 'IGNORED',
+			  /* Set the cookie domain in this test, set the path to a valid value */
+			  'cookie.path' => '/sub/',
+			  'lock.system' => 'IGNORED');
+	
+	/* Some test cases */
+	$tests = array();
+	$tests[] = array('domain' => '', 'saved' => 1, 'ep' => '');
+	$tests[] = array('domain' => 'example.com', 'saved' => 1, 'ep' => '.example.com');
+	$tests[] = array('domain' => '.example.com', 'saved' => 1, 'ep' => '.example.com');
+	$tests[] = array('domain' => '.www.example.com', 'saved' => 1, 'ep' => '.www.example.com');
+	$tests[] = array('domain' => 'photos.example.com', 'saved' => 0);
+	$tests[] = array('domain' => '.com', 'saved' => 0);
+
+	foreach ($tests as $testCase) {
+	    /* Set the cookie domain manually to a known value to check later if it was changed */
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', 'bad');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    /* Try to change the parameter */
+	    GalleryUtilities::putRequestVariable('form[cookie][domain]', $testCase['domain']);
+	    GalleryUtilities::putRequestVariable('form[action][save]', 1);
+
+	    /* Just add the other form vars to the request such that it accepts the save request */
+	    foreach ($valueMap as $key => $value) {
+		list ($outer, $inner) = explode('.', $key);
+		GalleryUtilities::putRequestVariable('form[' . $outer . '][' . $inner . ']', $value);
+	    }
+	
+	    /* Perform the request and verify that we succeeded */
+	    $results = $this->handleRequest();
+	    $error = $testCase['saved'] ? array() : array('form[error][cookie][invalidDomain]');
+	    $status = !$testCase['saved'] ? array() : array('saved' => 1);
+	    $kind = $testCase['saved'] ? 'redirect' : 'delegate';
+	    $this->assertEquals(array($kind => array('view' => 'core.SiteAdmin',
+							  'subView' => 'core.AdminCore'),
+				      'status' => $status,
+				      'error' => $error),
+				$results, 'Unexpected result for cookie domain \'' .
+				$testCase['domain'] . '\'');
+
+	    GalleryDataCache::reset();
+
+	    /* Check if the correct value was stored */
+	    list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+									 'cookie.domain');
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    $expPath = $testCase['saved'] ? $testCase['ep'] : 'bad';
+	    $this->assertEquals($expPath, $realValue,
+				'stored domain mismatch for "' . $testCase['domain'] . '"');
 	}
     }
 
@@ -425,6 +580,17 @@ class AdminCoreControllerTestWinNtPlatform extends WinNtPlatform {
 
     function mail() {
 	return $this->_succeed;
+    }
+}
+
+/* Small mock url generator for the cookie path test */
+class AdminCoreControllerTestUrlGenrator {
+    function getCurrentUrlDir($forceG2Base=false) {
+	if ($forceG2Base) {
+	    return 'http://www.example.com/sub/gallery2/';
+	} else {
+	    return 'http://www.example.com/sub/application/';
+	}
     }
 }
 ?>

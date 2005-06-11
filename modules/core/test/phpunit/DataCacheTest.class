@@ -56,9 +56,17 @@ class DataCacheTest extends GalleryTestCase {
 	$key = 'test-key';
 	$value = 'test-value';
 	GalleryDataCache::put($key, $value);
-	$this->assert(GalleryDataCache::containsKey($key));
+	$this->assert(GalleryDataCache::containsKey($key), 'Could not put a var to GDC');
+	/* Add a protected var */
+	$pKey = 'prot-test-key';
+	$pValue = 'prot-test-value';
+	GalleryDataCache::put($pKey, $pValue, true);
+	$this->assert(GalleryDataCache::containsKey($pKey), 'Could not put a protected var to GDC');
 	GalleryDataCache::reset();
-	$this->assert(!GalleryDataCache::containsKey($key));
+	$this->assert(!GalleryDataCache::containsKey($key), 'Could not reset GDC');
+	$this->assert(GalleryDataCache::containsKey($pKey), 'Reset GDC deleted a protected var');
+	GalleryDataCache::reset(true);
+	$this->assert(!GalleryDataCache::containsKey($pKey), 'Reset(true) did not delete protected vars');
     }
 
     function testRemoveByPattern() {

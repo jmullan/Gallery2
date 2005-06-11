@@ -55,7 +55,68 @@ class AdminCoreController extends GalleryController {
 	$status = array();
 	$canSave = false;
 	if (isset($form['action']['save'])) {
-	    $canSave = true;
+	    /* Verify cookie domain / path */
+	    $urlGenerator =& $gallery->getUrlGenerator();
+	    $cookiePathValid = false;
+	    if (isset($form['cookie']['path'])) {
+		/* It should either be empty or a substring of the request-URI */
+		if (!empty($form['cookie']['path'])) {
+		    $paths['cookie'] = $form['cookie']['path'];
+		    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir(true));
+		    $paths['standalone'] = $urlComponents['path'];
+		    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir(false));
+		    $paths['embedded'] = $urlComponents['path'];
+		    foreach ($paths as $key => $value) {
+			if ($value{strlen($value)-1} != '/') {
+			    $value .= '/';
+			}
+			if ($value{0} != '/') {
+			    $value = '/' . $value;
+			}
+			$paths[$key] = $value;
+		    }
+		    if (strpos($paths['standalone'], $paths['cookie']) === 0 &&
+			strpos($paths['embedded'], $paths['cookie']) === 0) {
+			$cookiePathValid = true;
+			$form['cookie']['path'] = $paths['cookie'];
+		    } else {
+			$error[] = 'form[error][cookie][invalidPath]';
+		    }
+		} else {
+		    $form['cookie']['path']= '';
+		    $cookiePathValid = true;
+		}
+	    }
+	    $cookieDomainValid = false;
+	    if (isset($form['cookie']['domain'])) {
+		/* It should either be empty or a substring of the request-host */
+		if (!empty($form['cookie']['domain'])) {
+		    $cookieDomain = $form['cookie']['domain'];
+		    if ($cookieDomain{0} != '.') {
+			$cookieDomain = '.' . $cookieDomain;
+		    }
+		    $urlComponents = parse_url($urlGenerator->getCurrentUrlDir());
+		    $currentHost = '.' . $urlComponents['host'];
+		    /*
+		     * The cookie domain should be a substring of the host and contain an embedded
+		     * dot 
+		     */
+		    if (strpos($currentHost, $cookieDomain) !== false
+			    && strpos($cookieDomain, '.', 1)) {
+			$cookieDomainValid = true;
+			$form['cookie']['domain'] = $cookieDomain;
+		    } else {
+			$error[] = 'form[error][cookie][invalidDomain]';
+		    }
+		} else {
+		    $form['cookie']['domain'] = '';
+		    $cookieDomainValid = true;
+		}
+	    }
+
+	    if ($cookieDomainValid && $cookiePathValid) {
+		$canSave = true;
+	    }
 	} else if (isset($form['action']['addUploadLocalServerDir'])) {
 	    $platform = $gallery->getPlatform();
 	    $path = GalleryUtilities::htmlEntityDecode($form['uploadLocalServer']['newDir']);
@@ -141,6 +202,8 @@ class AdminCoreController extends GalleryController {
 			   'smtp.host',
 			   'smtp.from',
 			   'smtp.username',
+			   'cookie.path',
+			   'cookie.domain',
 			   'lock.system') as $key) {
 		list ($outer, $inner) = explode('.', $key);
 		if (isset($form[$outer][$inner])) {
@@ -158,6 +221,7 @@ class AdminCoreController extends GalleryController {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
 	    }
+	    
 	    $status['saved'] = 1;
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'core.AdminCore';
@@ -228,6 +292,8 @@ class AdminCoreView extends GalleryView {
 			   'smtp.from',
 			   'smtp.username',
 			   'smtp.password',
+			   'cookie.path',
+			   'cookie.domain',
 			   'lock.system') as $key) {
 
 		list ($ret, $value) =
@@ -351,6 +417,7 @@ class AdminCoreView extends GalleryView {
 
 	$template->setVariable('controller', 'core.AdminCore');
 	$template->setVariable('AdminCore', $AdminCore);
+	$template->javascript('lib/javascript/BlockToggle.js');
 
 	return array(GalleryStatus::success(),
 		     array('body' => 'modules/core/templates/AdminCore.tpl'));

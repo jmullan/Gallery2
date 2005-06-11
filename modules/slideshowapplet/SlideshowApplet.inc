@@ -66,12 +66,22 @@ class SlideshowAppletView extends GalleryView {
 	if (!isset($modules['remote']['active']) || !$modules['remote']['active']) {
 	    $SlideshowApplet['NoProtocolError'] = 1;
 	} else {
+	    $urlGenerator =& $gallery->getUrlGenerator();
 	    $session =& $gallery->getSession();
+	    /*
+	     * Force the use of the G2 base for the url and the cookie path as the applet will
+	     * communicate to G2 directly, even when G2 is embedded
+	     */
+	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
+	    list ($ret, $cookiePath) = $urlGenerator->getCookiePath(true);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
 	    $SlideshowApplet['NoProtocolError'] = 0;
 	    $SlideshowApplet['cookieName'] = $session->getKey();
 	    $SlideshowApplet['cookieValue'] = $session->getId();
 	    $SlideshowApplet['cookieDomain'] = $session->getCookieDomain();
-	    $SlideshowApplet['cookiePath'] = $session->getCookiePath();
+	    $SlideshowApplet['cookiePath'] = $cookiePath;
 	    $SlideshowApplet['album'] = $item->getId();
 	    $SlideshowApplet['defaults'] = array();
 	    $SlideshowApplet['overrides'] = array('toSysOut' => 'true');
@@ -83,9 +93,6 @@ class SlideshowAppletView extends GalleryView {
 	    	/* format the start_from as album_picture, that's what GR expects */
 	    	$SlideshowApplet['extra']['gr_slideshow_start_from'] = $item->getId().'_'.$startId;
 	    }
-
-	    $urlGenerator =& $gallery->getUrlGenerator();
-	    $SlideshowApplet['g2BaseUrl'] = $urlGenerator->getCurrentUrlDir(true);
 	}
 
 	$form['formName'] = '';

@@ -41,9 +41,13 @@ class SessionTest extends GalleryTestCase {
     function setUp() {
 	parent::setUp();
 
-	$this->_originalCookie = isset($_COOKIE) ? $_COOKIE : null;
-
-	/* Backup things that we will overwrite during the test */
+	global $gallery;
+	$this->_savedSession = $gallery->_session;
+	
+	/*
+	 * Backup things that we will overwrite during the test (original values also needed in the
+	 * tests)
+	 */
 	$this->_originalServerVars = array();
 	foreach (array('HTTP_X_FORWARDED_SERVER', 'HTTP_HOST', 'HTTP_X_FORWARDED_FOR',
 		       'HTTP_COOKIE', 'HTTP_CLIENT_IP', 'HTTP_USER_AGENT', 'REMOTE_ADDR') as $key) {
@@ -52,7 +56,9 @@ class SessionTest extends GalleryTestCase {
     }
 
     function tearDown() {
-	$_COOKIE = $this->_originalCookie;
+	global $gallery;
+	$gallery->_session = $this->_savedSession;
+	
 	foreach ($this->_originalServerVars as $key => $value) {
 	    $_SERVER[$key] = $value;
 	}
@@ -201,11 +207,14 @@ class SessionTest extends GalleryTestCase {
 
     function testIllegalSessionId() {
 	global $gallery;
-	$saveSession = $gallery->_session;
-	$isUsingCookies = $saveSession->isUsingCookies();
+	$session = $gallery->_session;
+	$isUsingCookies = $session->isUsingCookies();
 
 	/* Test an illegal sessionId */
 	$_COOKIE[SESSION_ID_PARAMETER] = '../oops.txt';
+	$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . '../oops.txt' . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER,
 						 $_COOKIE[SESSION_ID_PARAMETER]);
@@ -220,6 +229,10 @@ class SessionTest extends GalleryTestCase {
 	/* Now test a legal sessionId */
 	$sessionId = md5(rand());
 	$_COOKIE[SESSION_ID_PARAMETER] = $sessionId;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerVars['HTTP_COOKIE'];
+	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER,
 						 $_COOKIE[SESSION_ID_PARAMETER]);
@@ -231,8 +244,32 @@ class SessionTest extends GalleryTestCase {
 
 	$this->assertEquals($session->getSessionId(), $_COOKIE[SESSION_ID_PARAMETER]);
 
-	/* Restore original session */
-	$gallery->_session =& $saveSession;
+	/*
+	 * Now test that the right SESSION_ID_PARAMETER cookie is used.
+	 * (When multiple cookies exist with different paths, or in IE)
+	 */
+	GalleryUtilities::fixCookieVars(false, true);
+	$rand = rand();
+	$sessionId = md5($rand);
+	$wrongSessionId = md5($rand + 3000);
+	$_COOKIE[SESSION_ID_PARAMETER] = $wrongSessionId;
+	$_SERVER['HTTP_COOKIE'] = $this->_originalServerVars['HTTP_COOKIE'];
+	$delimiter = !empty($_SERVER['HTTP_COOKIE']) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sessionId . ' ; ' .
+	    SESSION_ID_PARAMETER . '=' . $wrongSessionId . $delimiter . $_SERVER['HTTP_COOKIE'];
+	/* Force the use of cookies */
+	if (!$isUsingCookies) {
+	    GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
+	}
+
+	$gallery->_session = null;
+	$gallery->initSession();
+	$session =& $gallery->getSession();
+
+	$this->assertEquals($sessionId, $session->getSessionId(),
+			    'multiple cookies, not the right one was picked');
+	$this->assertEquals($sessionId, $_COOKIE[SESSION_ID_PARAMETER],
+			    'multiple cookies, not the right one was set/fixed');
     }
 
     function testNewSessionCollision() {
@@ -240,6 +277,7 @@ class SessionTest extends GalleryTestCase {
 	global $gallery;
 	GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTP_COOKIE']);
 
 	/* Mock platform creates sessionid collision for first id picked */
 	$platform = new UnitTestPlatform();
@@ -264,11 +302,14 @@ class SessionTest extends GalleryTestCase {
 
     function testSessionSaveLoad() {
 	global $gallery;
-	$saveSession = $gallery->_session;
-	$isUsingCookies = $saveSession->isUsingCookies();
+	$session = $gallery->_session;
+	$isUsingCookies = $session->isUsingCookies();
 	$sid = md5(rand());
 
 	$_COOKIE[SESSION_ID_PARAMETER] = $sid;
+	$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+	$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=' . $sid . $delimiter .
+	    $_SERVER['HTTP_COOKIE'];
 	if (!$isUsingCookies) {
 	    GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, $sid);
 	}
@@ -282,7 +323,6 @@ class SessionTest extends GalleryTestCase {
 
 	$ret = $session->save();
 	if ($ret->isError()) {
-	    $gallery->_session =& $saveSession;
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -294,7 +334,6 @@ class SessionTest extends GalleryTestCase {
 
 	$ret = $session->save();
 	if ($ret->isError()) {
-	    $gallery->_session =& $saveSession;
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
@@ -305,9 +344,6 @@ class SessionTest extends GalleryTestCase {
 	$session =& $gallery->getSession();
 
 	$this->assertEquals(array('j' => 'b'), $session->getStatus($otherStatusId));
-
-	/* Restore original session */
-	$gallery->_session =& $saveSession;
     }
 
     function testBasicNavigation() {
@@ -406,9 +442,14 @@ class SessionTest extends GalleryTestCase {
 	    if ($type == 'with-cookies') {
 		GalleryUtilities::removeRequestVariable(SESSION_ID_PARAMETER);
 		$_COOKIE[SESSION_ID_PARAMETER] = 'TESTSID';
+		$delimiter = !empty($this->_originalServerHttpCookie) ? ' ; ' : '';
+		$_SERVER['HTTP_COOKIE'] = SESSION_ID_PARAMETER . '=TESTSID' . $delimiter .
+		    $_SERVER['HTTP_COOKIE'];
 	    } else {
 		GalleryUtilities::putRequestVariable(SESSION_ID_PARAMETER, 'TESTSID');
 		unset($_COOKIE[SESSION_ID_PARAMETER]);
+		/* Remove cookies also from HTTP Header */
+		$_SERVER['HTTP_COOKIE'] = '';
 	    }
 	    unset($_SERVER['HTTP_X_FORWARDED_FOR']);
 	    unset($_SERVER['HTTP_CLIENT_IP']);
@@ -564,6 +605,7 @@ class SessionTest extends GalleryTestCase {
 
     function testSearchEngineCrawlerSessions() {
 	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	$_SERVER['HTTP_COOKIE'] = '';
 	$_SERVER['HTTP_USER_AGENT'] = 'Googlebot/2.1 (+http://www.google.com/bot.html)';
 	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
 	$session = new GallerySession();
@@ -595,99 +637,150 @@ class SessionTest extends GalleryTestCase {
      */
     function testSessionCookieHeader() {
 	global $gallery;
-	$session =& $gallery->getSession();
+
 	$urlGenerator =& $gallery->getUrlGenerator();
-	$url = $urlGenerator->getCurrentUrl();
-	/* Strip of the /lib/tools/test/ part to get a valid G2 request uri */
-	$url = preg_replace('|^(.*/)lib/tools/.*$|', '$1', $url);
-	list ($body, $response, $headers) = GalleryCoreApi::fetchWebPage($url);
-	$this->assertEquals($response, 'HTTP/1.1 200 OK', 'Could not retrieve G2 page');
-	$this->assertEquals(true, isset($headers['Set-Cookie']), 'Set-Cookie header not set');
-	if (isset($headers['Set-Cookie'])) {
-	    /* There can be multiple set-cookie headers, find the correct one */
-	    if (!is_array($headers['Set-Cookie'])) {
-		$cookie = $headers['Set-Cookie'];
-	    } else {
-		foreach ($headers['Set-Cookie'] as $setcookie) {
-		    if (strpos($setcookie, SESSION_ID_PARAMETER) !== false) {
-			$cookie = $setcookie;
-			break;
+
+	/* Test cases */
+	$tests = array();
+	/* We don't expect a cookie header when requesting a DownloadItem */
+	$tests[] = array('key' => 'view', 'value' => 'core.DownloadItem', 'er' => false);
+	$tests[] = array('key' => 'view', 'value' => 'core:DownloadItem', 'er' => false);
+	$tests[] = array('key' => 'view', 'value' => 'core.ShowItem', 'er' => true);
+	$tests[] = array('key' => 'controller', 'value' => 'migrate.Redirect', 'er' => false);
+
+	unset($_COOKIE[SESSION_ID_PARAMETER]);
+	unset($_SERVER['HTTP_COOKIE']);
+	
+	foreach ($tests as $testCase) {
+	    /* First replace the phpVm with a mock VM */
+	    unset($_REQUEST['phpVmHeaders']);
+	    $phpVm = new SessionTestPhpVm();
+	    $gallery->_phpVm = $phpVm;
+	    
+	    /* Now set the request variables */
+	    GalleryUtilities::removeRequestVariable('view');
+	    GalleryUtilities::removeRequestVariable('controller');
+	    GalleryUtilities::putRequestVariable($testCase['key'], $testCase['value']);
+	    
+	    $session = new GallerySession();
+	    /* The init call should actually send or not send a cookie */
+	    $ret = $session->init();
+	    if ($ret->isError()) {
+		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	    }
+	    
+	    /*
+	     * And now check the headers (that would have been sent if we didn't use our fantastic
+	     * mock VM :)
+	     */
+	    $headers = $phpVm->headers_sent($cFile, $cLine) ? $_REQUEST['phpVmHeaders'] : array();
+	    ob_start();
+	    var_dump($headers);
+	    $debugHeaders = ob_get_clean();
+	    $this->assertEquals($testCase['er'], isset($headers['Set-Cookie']),
+				'Set-Cookie header not set. These are the headers: ' .
+				$debugHeaders);
+	    if ($testCase['er'] && isset($headers['Set-Cookie'])) {
+		/* Also check if the cookie header is correct */
+		unset($cookie);
+		/* There can be multiple set-cookie headers, find the correct one */
+		if (!is_array($headers['Set-Cookie'])) {
+		    $cookie = $headers['Set-Cookie'];
+		} else {
+		    foreach ($headers['Set-Cookie'] as $setcookie) {
+			if (strpos($setcookie, SESSION_ID_PARAMETER) !== false) {
+			    $cookie = $setcookie;
+			    break;
+			}
 		    }
 		}
-	    }
-	}
-	if (isset($cookie)) {
-	    /* Cookie path should be set to '/' */
-	    $this->assertEquals(1, preg_match('/path=\/(?:[,;].*)?$/i', $cookie),
-				'Wrong cookie path in cookie: "' . $cookie . '"');
-	    /* Cookie domain should be .example.com or not set */
-	    $cookieDomain = $session->getCookieDomain();
-	    if (!empty($cookieDomain)) {
-		/* escape dots in cookieDomain */
-		$cookieDomain = str_replace('.', '\\.', $cookieDomain);
-		$this->assert(preg_match('/domain=' . $cookieDomain . '(?:[,;].*)?$/i', $cookie),
-			      "Missing domain=$cookieDomain in cookie: '$cookie'");
-	    }
-	} else {
-	    $this->assert(0, 'G2 session cookie does not exist!');
+		if (isset($cookie)) {
+		    /* Cookie path should be set */
+		    list ($ret, $expected) = $urlGenerator->getCookiePath();
+		    if ($ret->isError()) {
+			return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+		    }
+		    $this->assertEquals(1, preg_match('{path=' . $expected . '(?:[,;].*)?$}i', $cookie),
+					'Wrong cookie path in cookie: "' . $cookie . '"');
+		    /* Cookie domain should be the configured cookie domain or not set */
+		    $cookieDomain = $session->getCookieDomain();
+		    if (!empty($cookieDomain)) {
+			/* escape dots in cookieDomain */
+			$cookieDomain = str_replace('.', '\\.', $cookieDomain);
+			$this->assert(preg_match('/domain=' . $cookieDomain . '(?:[,;].*)?$/i', $cookie),
+				      "Missing domain=$cookieDomain in cookie: '$cookie'");
+		    }
+		} else {
+		    $this->assert(0, 'G2 session cookie does not exist!');
+		}
+	    }    
 	}
     }
-
-    /*
-     * Test for various host strings if the correct cookie domain is generated.
-     */
+    
+    /* Test configured cookie domain vs. not configured cookie domain */
     function testSessionCookieDomain() {
-	/* Format: host => host for test case x, er => expected result of the test */
-	$testCases = array();
-	$testCases[] = array('host' => 'localhost', 'er' => '');
-	$testCases[] = array('host' => 'localhost:80', 'er' => '');
-	$testCases[] = array('host' => 'user:pass@localhost:80', 'er' => '');
-	$testCases[] = array('host' => 'example.com', 'er' => '.example.com');
-	$testCases[] = array('host' => 'www.example.com', 'er' => '.example.com');
-	$testCases[] = array('host' => 'foo.bar.example.com', 'er' => '.example.com');
-	$testCases[] = array('host' => 'www.example.com:8080', 'er' => '.example.com');
-	$testCases[] = array('host' => 'user:pass@foo.example.com:8080', 'er' => '.example.com');
-	$testCases[] = array('host' => '127.0.0.1', 'er' => '');
-	$testCases[] = array('host' => '127.0.0.1:8080', 'er' => '');
-	$testCases[] = array('host' => 'user:pass@127.0.0.1', 'er' => '');
-
-	/* Backup things that we will overwrite during the test */
-	foreach (array_keys($this->_originalServerVars) as $key) {
-	    unset($_SERVER[$key]);
+	/* First check if the configured value is taken if available */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', 'bad');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-
-	/* Create a test session with cookie support put well known data in it. */
-	$_SERVER['HTTP_USER_AGENT'] = 'TEST_USER_AGENT';
-	$_SERVER['REMOTE_ADDR'] = '1.2.3.4';
-
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.domain');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('bad', $realValue, 'could not set plugin parameter cookie.domain');
+	/* Now do the actual check */
 	$session = new GallerySession();
 	$ret = $session->init();
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	$this->assertEquals('bad', $session->getCookieDomain(),
+			    'configured cookie domain does not work');
 
-	/*
-	 * Generate for each of the test cases the cookie domain and compare it to the expected
-	 * result
-	 */
-	foreach ($testCases as $testCase) {
-	    $_SERVER['HTTP_HOST'] = $testCase['host'];
-
-	    /* Reset session to clear the cached cookieDomain */
-	    $ret = $session->reset();
-	    if ($ret->isError()) {
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-
-	    /* Do the actual test */
-	    $this->assertEquals($testCase['er'], $session->getCookieDomain(),
-				'Failed for host string "' . $testCase['host'] . '"!');
-	}
-
-	$ret = $session->reset();
+	/* Now reset the cookie domain configuration parameter */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'cookie.domain', '');
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
+	/* Check if the correct value was stored */
+	list ($ret, $realValue) = GalleryCoreApi::getPluginParameter('module', 'core',
+								     'cookie.domain');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('', $realValue, 'could not reset plugin parameter cookie.domain');
+
+	/* Now check if it returns an empty string if no cookie domain is configured */
+	$session = new GallerySession();
+	$ret = $session->init();
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('', $session->getCookieDomain(), 'default cookie domain does not work');
+    }
+
+    /* Test configured cookie path vs. not configured cookie path */
+    function testSessionGetCookiePath() {
+	/*
+	 * This is already tested in UrlGeneratorTest
+	 * We have a getCookiePath function in GallerySession to not have to deal with db errors
+	 * when we actually need the cookie path
+	 */
+    }
+}
+
+class SessionTestPhpVm extends GalleryPhpVm {
+    function header($string, $replace=null, $http_response_code=null) {
+	if ($pos = strpos($string, ':')) {
+	    $_REQUEST['phpVmHeaders'][substr($string, 0, $pos)] = substr($string, $pos+1);
+	}
+    }
+
+    function headers_sent(&$file, &$line) {
+	return (isset($_REQUEST['phpVmHeaders']) && !empty($_REQUEST['phpVmHeaders']));
     }
 }
 ?>

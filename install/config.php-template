@@ -145,16 +145,4 @@ $gallery->setConfig('allowSessionAccess', false);
  * URL of Gallery codebase; required only for multisite install.
  */
 $gallery->setConfig('galleryBaseUrl', '');
-
-/* 
- * Set the name for G2 session cookies. The name of the session cookie is 
- * a concatenation of 'GALLERYSID_' and cookieId, which is randomly generated 
- * at Gallery installation time. You can change cookieId at any time, but if
- * you change it be aware of two things:
- * 1. Users have to login again after the change. They lose their old session.
- * 2. If multiple G2 installs are running on the same domain (in different paths or 
- *    different subdomains) choose cookieId such that it is different for all G2
- *    installs on the same domain.
- */
-$gallery->setConfig('cookieId', '');
 ?>
