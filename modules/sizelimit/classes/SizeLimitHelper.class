@@ -123,8 +123,7 @@ class SizeLimitHelper {
 	    return $ret->wrap(__FILE__, __LINE__);
 	}
 	if (!isset($toolkit)) {
-	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__),
-			 null, null);
+	    return GalleryStatus::error(ERROR_UNSUPPORTED_FILE_TYPE, __FILE__, __LINE__);
 	}
 
 	/*
