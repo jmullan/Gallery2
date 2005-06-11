@@ -663,6 +663,10 @@ class GalleryLayout extends GalleryPlugin {
 	    $childOwnerIds = array_keys($childOwnerIds);
 	}
 	if (isset($load['parents'])) {
+	    /*
+	     * TODO: Should we have this obey the acting user permission?  It may make navigation
+	     * strange for the active user.
+	     */
 	    list ($ret, $parentSequence) = GalleryCoreApi::fetchParentSequence($itemId);
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
@@ -681,8 +685,8 @@ class GalleryLayout extends GalleryPlugin {
 	    $peerIds = $peers = array();
 	    $loadPeers = false;
 	    if ($item->getParentId() != null) {
-		list ($ret, $loadPeers) =
-		    GalleryCoreApi::hasItemPermission($item->getParentId(), 'core.view');
+		list ($ret, $loadPeers) = GalleryCoreApi::hasItemPermission(
+		    $item->getParentId(), 'core.view', $layout['actingUserId']);
 		if ($ret->isError()) {
 		    return $ret->wrap(__FILE__, __LINE__);
 		}
@@ -703,27 +707,29 @@ class GalleryLayout extends GalleryPlugin {
 			break;
 		    }
 		}
-		$peerWindowSize = 6;
-		$peerLast = count($peerIds) - 1;
-		$peerNeighborStart = max($peerItemIndex - (int)($peerWindowSize/2), 0);
-		$peerNeighborEnd = min($peerItemIndex + (int)($peerWindowSize/2), $peerLast);
-		/* If the window is pinned to one end, expand it to the entire windowSize */
-		if ($peerNeighborStart == 0) {
-		    $peerNeighborEnd = min($peerLast, $peerWindowSize-1);
-		} else if ($peerNeighborEnd == $peerLast) {
-		    $peerNeighborStart = max($peerLast - $peerWindowSize, 0);
-		}
-		if ($peerNeighborStart > 0) {
-		    $peers[0] = $peerIds[0];
-		}
-		for ($i = $peerNeighborStart; $i <= $peerNeighborEnd; $i++) {
-		    $peers[$i] = $peerIds[$i];
-		}
-		if ($peerNeighborEnd < $peerLast) {
-		    $peers[$peerLast] = $peerIds[$peerLast];
-		}
-		foreach ($peers as $id) {
-		    $ids[$id] = true;
+		if (isset($peerItemIndex)) {
+		    $peerWindowSize = 6;
+		    $peerLast = count($peerIds) - 1;
+		    $peerNeighborStart = max($peerItemIndex - (int)($peerWindowSize/2), 0);
+		    $peerNeighborEnd = min($peerItemIndex + (int)($peerWindowSize/2), $peerLast);
+		    /* If the window is pinned to one end, expand it to the entire windowSize */
+		    if ($peerNeighborStart == 0) {
+			$peerNeighborEnd = min($peerLast, $peerWindowSize-1);
+		    } else if ($peerNeighborEnd == $peerLast) {
+			$peerNeighborStart = max($peerLast - $peerWindowSize, 0);
+		    }
+		    if ($peerNeighborStart > 0) {
+			$peers[0] = $peerIds[0];
+		    }
+		    for ($i = $peerNeighborStart; $i <= $peerNeighborEnd; $i++) {
+			$peers[$i] = $peerIds[$i];
+		    }
+		    if ($peerNeighborEnd < $peerLast) {
+			$peers[$peerLast] = $peerIds[$peerLast];
+		    }
+		    foreach ($peers as $id) {
+			$ids[$id] = true;
+		    }
 		}
 	    }
 	    if (empty($peers)) {
@@ -1010,8 +1016,10 @@ class GalleryLayout extends GalleryPlugin {
 		}
 
 		if (isset($load['itemDetailFiles']) && isset($callbacks['loadItemDetails'])) {
+		    $itemPermissions =
+			empty($permissions[$item->getId()]) ? array() : $permissions[$item->getId()];
 		    list ($ret, $content) =
-			$module->loadItemDetails($template, $item, $permissions[$item->getId()]);
+			$module->loadItemDetails($template, $item, $itemPermissions);
 		    if ($ret->isError()) {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
