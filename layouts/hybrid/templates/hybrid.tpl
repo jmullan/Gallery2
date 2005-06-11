@@ -88,7 +88,7 @@
         {if ($layout.guestPreviewMode)}
         <a href="{g->url arg1="controller=core.ShowItem" arg2="guestPreviewMode=0" arg3="return=1"}">{$user.userName}</a> | {g->text text="guest"}
         {else}
-        {$user.userName} | <a href="{g->url arg1="controller=core.ShowItem" arg2="guestPreviewMode=1" arg3="return=1"}">{g->text text="user"}</a>
+        {$user.userName} | <a href="{g->url arg1="controller=core.ShowItem" arg2="guestPreviewMode=1" arg3="return=1"}">{g->text text="guest"}</a>
         {/if}
       </li>
     </ul>

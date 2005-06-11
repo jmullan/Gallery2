@@ -125,7 +125,9 @@ class HybridLayout extends GalleryLayout {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $childIds) = GalleryCoreApi::fetchChildItemIds($parent);
+	$layout =& $template->getVariableByReference('layout');
+	list ($ret, $childIds) =
+	    GalleryCoreApi::fetchChildItemIds($parent, null, null, $layout['actingUserId']);
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
@@ -136,7 +138,6 @@ class HybridLayout extends GalleryLayout {
 	}
 
 	/* Init view with specific image */
-	$layout =& $template->getVariableByReference('layout');
 	foreach ($layout['children'] as $child) {
 	    if ($child['id'] == $item->getId()) {
 		if (isset($child['imageIndex'])) {
