@@ -271,10 +271,9 @@ class PlatformTest extends GalleryTestCase {
 	}
     }
 
-    function _permissionTest($origExpectedPermissions, $testNumber, $tests) {
+    function _permissionTest($expectedPermissions, $testNumber, $tests) {
 	global $gallery;
 	foreach ($tests as $test) {
-	    $expectedPermissions = $origExpectedPermissions;
 	    $stat = $debug = '';
 	    switch ($test) {
 	    case 'exec':
@@ -300,9 +299,6 @@ class PlatformTest extends GalleryTestCase {
 		$this->assert($this->_platform->symlink($this->_sourceFile, $this->_destFile),
 			      "symlink $testNumber");
 		$stat = lstat($this->_destFile);
-
-		/* symlinks are always 777, set expectations accordingly */
-		$expectedPermissions = octdec(777);
 		break;
 
 	    case 'atomicWrite':
@@ -318,8 +314,16 @@ class PlatformTest extends GalleryTestCase {
 	    }
 
 	    $this->assert(!empty($stat), "$test stat $testNumber $debug");
-	    $this->assertEquals(decoct($expectedPermissions), decoct($stat[2] & 0777),
-				"$test permissions $testNumber");
+	    if ($test == 'symlink') {
+		/* On some systems symlinks always have 777 permissions */
+		$this->assert(($stat[2] & 0777) == $expectedPermissions ||
+			      ($stat[2] & 0777) == 0777,
+		    "$test permissions $testNumber (" . decoct($expectedPermissions) .
+		    ' != ' . decoct($stat[2] & 0777) . ' or 777)');
+	    } else {
+		$this->assertEquals(decoct($expectedPermissions), decoct($stat[2] & 0777),
+				    "$test permissions $testNumber");
+	    }
 	    $this->assert($this->_platform->unlink($this->_destFile), "$test unlink $testNumber");
 	    $this->_platform->clearstatcache();
 	}
