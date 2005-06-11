@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.8'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.9'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -223,7 +223,7 @@ class RewriteModule extends GalleryModule {
 	$rule['pattern'] = 'v/%path%';
 	$rule['keywords'] = array(
 	    'path' => array(
-		'pattern' => '(.+)',
+		'pattern' => '([^?]+)',
 		'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)')));
 	$rules[] = $rule;
 
@@ -247,7 +247,7 @@ class RewriteModule extends GalleryModule {
 	$rule['queryString'] = array('view' => 'rewrite.FileNotFound');
 	$rule['keywords'] = array(
 	    'path' => array(
-		'pattern' => '(.+)'));
+		'pattern' => '([^?]+)'));
 	$rule['locked'] = 1;
 	$rules[] = $rule;
 

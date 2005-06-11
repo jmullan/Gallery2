@@ -164,8 +164,7 @@ class RewriteUrlGeneratorTest extends GalleryTestCase {
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	/* Expect double-urlencoded # -- see comment in RewriteUrlGenerator */
-	$testItemPath = str_replace('%2F', '/', urlencode(str_replace('#', '%23', $testItemPath)));
+	$testItemPath = str_replace('%2F', '/', urlencode($testItemPath));
 
 	$tests = array();
 	/* core.ShowItem on albums have the logical path */

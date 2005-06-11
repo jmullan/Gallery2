@@ -93,6 +93,7 @@ class RewriteHelper {
 		$Htaccess['directory'] = '';
 	    }
 	}
+	$Htaccess['matchBaseFile'] = preg_quote($Htaccess['baseFile']);
 	$Htaccess['baseFile'] .= (strpos($Htaccess['baseFile'], '?') === false) ? '?' : '&';
 
 	$template = new GalleryTemplate(dirname(__FILE__) . '/../templates');
@@ -475,7 +476,7 @@ class RewriteHelper {
 	    }
 
 	    if (!isset($keywords[$keyword]['ignore'])) {
-		$queryString[$keyword] = '$' . $reference;
+		$queryString[$keyword] = '%' . $reference;
 	    }
 	    $reference++;
 	}
@@ -485,11 +486,7 @@ class RewriteHelper {
 	    $args[] = GalleryUtilities::prefixFormVariable($key) . '=' . $value;
 	}
 
-	if ($urlPattern != '.') {
-	    $urlPattern = sprintf('^%s$', $urlPattern);
-	}
-
-	if ($urlPattern != '^$') {
+	if (!empty($urlPattern)) {
 	    $rewriteRules[] = array(
 		    'urlPattern' => $urlPattern,
 		    'queryString' => join('&', $args),
