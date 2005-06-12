@@ -40,12 +40,33 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 
 	$this->setId('squarethumb');
 	$this->setName($gallery->i18n('Square Thumbnails'));
-	$this->setDescription($gallery->i18n('Crop all thumbnails so they are square'));
-	$this->setVersion('0.9.4');
+	$this->setDescription($gallery->i18n('Build all thumbnails so they are square'));
+	$this->setVersion('0.9.5');
 	$this->setGroup('display', $this->translate('Display'));
-	$this->setCallbacks('registerEventListeners');
+	$this->setCallbacks('registerEventListeners|getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
 	$this->setRequiredModuleApi(array(1, 0));
+    }
+
+    /**
+     * @see GalleryModule::upgrade()
+     */
+    function upgrade($currentVersion) {
+	list ($ret, $params) = GalleryCoreApi::fetchAllPluginParameters('module', 'squarethumb');
+	if ($ret->isError()) {
+	    return $ret->wrap(__FILE__, __LINE__);
+	}
+	foreach (array('mode' => 'crop', 'color' => '000000')
+		 as $key => $value) {
+	    if (!isset($params[$key])) {
+		$ret = $this->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+	}
+
+	return GalleryStatus::success();
     }
 
     /**
@@ -79,6 +100,15 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
     }
 
     /**
+     * @see GalleryModule::getSiteAdminViews()
+     */
+    function getSiteAdminViews() {
+	return array(GalleryStatus::success(),
+		     array(array('name' => $this->translate('Square Thumbnails'),
+				 'view' => 'squarethumb.SquareThumbSiteAdmin')));
+    }
+
+    /**
      * @see GalleryModule::activate()
      */
     function activate() {
@@ -88,9 +118,14 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
+								      'convert-to-image/jpeg');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
 
 	/* Register toolkit operation using high priority */
-	if (!empty($mimeTypes)) {
+	if (!empty($mimeTypes) && isset($toolkit)) {
 	    $ret = GalleryCoreApi::registerToolkitOperation('SquareThumb', $mimeTypes, 'thumbnail',
 		array(array('type' => 'int', 'description' => $gallery->i18n('target size')),
 		      array('type' => 'int', 'description' => $gallery->i18n('(optional)'))),
@@ -115,7 +150,7 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 
     /**
      * Find out what mime-types currently have toolkit support for:
-     *    scale, crop, dimensions
+     *    scale, dimensions and [crop or composite]
      *
      * @return array object GalleryStatus a status code
      *               array mime types
@@ -125,14 +160,18 @@ class SquareThumbModule extends GalleryModule /* and GalleryEventListener */ {
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
-
 	list ($ret, $crop) = GalleryCoreApi::getToolkitOperationMimeTypes('crop');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	list ($ret, $composite) = GalleryCoreApi::getToolkitOperationMimeTypes('composite');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
 	$mimeTypes = array();
-	foreach (array_keys(array_merge($scale, $crop)) as $mimeType) {
+	foreach (array_intersect(array_keys(array_merge($crop, $composite)), array_keys($scale))
+		 as $mimeType) {
 	    list ($ret, $properties) = GalleryCoreApi::getToolkitProperties($mimeType);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);

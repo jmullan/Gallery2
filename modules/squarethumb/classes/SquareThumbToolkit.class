@@ -52,11 +52,14 @@ class SquareThumbToolkit extends GalleryToolkit {
 			      $destFilename, $parameters, $context=array()) {
 	global $gallery;
 	$platform = $gallery->getPlatform();
-	$tmpDir = $gallery->getConfig('data.gallery.tmp');
 
 	if ($operationName != 'thumbnail') {
 	    return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 					      "$operationName $mimeType"), null, null);
+	}
+	list ($ret, $square) = GalleryCoreApi::fetchAllPluginParameters('module', 'squarethumb');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null, null);
 	}
 
 	/* Get dimensions */
@@ -79,91 +82,141 @@ class SquareThumbToolkit extends GalleryToolkit {
 	    }
 	    list ($width, $height) = $dimensions;
 	}
-
-	$outputWasGenerated = false;
 	$subContext = array('width' => $width, 'height' => $height);
+
+	/* Try to crop/fit according to param, but fallback to other based on toolkit support */
 	if ($width != $height) {
-	    /* Crop to square */
-	    list ($ret, $toolkit, $nextMime) =
-		GalleryCoreApi::getToolkitByOperation($mimeType, 'crop');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    for ($i = 0; $i < 2; $i++) {
+		$operation = ($square['mode'] == 'fit') ? 'composite' : 'crop';
+		list ($ret, $toolkit, $nextMime) =
+		    GalleryCoreApi::getToolkitByOperation($mimeType, $operation);
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null, null);
+		}
+		if (isset($toolkit)) {
+		    break;
+		}
+		$square['mode'] = ($square['mode'] == 'fit') ? 'crop' : 'fit';
 	    }
+	}
+
+	if ($width != $height && $square['mode'] == 'crop') {
+	    /* Crop to square */
 	    if (!isset($toolkit)) {
 		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 						  "crop $mimeType"), null, null);
 	    }
 	    if ($width > $parameters[0] && $height > $parameters[0]) {
-		$cropFilename = $tmpFilename = $platform->tempnam($tmpDir, 'sqth_');
-		if (empty($tmpFilename)) {
-		    return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__),
-				 null, null);
-		}
 		list ($ret, $nextToolkit) =
 		    GalleryCoreApi::getToolkitByOperation($nextMime, 'scale');
 		if ($ret->isSuccess() && isset($nextToolkit)) {
 		    $subContext['next.toolkit'] = $nextToolkit;
 		    $subContext['next.operation'] = 'scale';
 		}
-	    } else {
-		$cropFilename = $destFilename;
 	    }
 
 	    $args = ($width > $height)
 		  ? array( 100*(1-$height/$width)/2, 0, 100*$height/$width, 100 )
 		  : array( 0, 100*(1-$width/$height)/2, 100, 100*$width/$height );
-	    list ($ret, $mimeType, $subContext) =
-		$toolkit->performOperation($mimeType, 'crop',
-					   $sourceFilename, $cropFilename, $args, $subContext);
+	    list ($ret, $mimeType, $subContext) = $toolkit->performOperation(
+		$mimeType, 'crop', $sourceFilename, $destFilename, $args, $subContext);
 	    if ($ret->isError()) {
-		if (isset($tmpFilename)) {
-		    @$platform->unlink($tmpFilename);
-		}
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    $sourceFilename = $cropFilename;
-	    $outputWasGenerated = true;
+	    $sourceFilename = $destFilename;
 	}
-	if ($width > $parameters[0] && $height > $parameters[0]) {
-	    /*
-	     * Scale to thumb size
-	     */
+
+	if ($subContext['width'] > $parameters[0] || $subContext['height'] > $parameters[0]) {
+	    /* Scale to thumb size */
 	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'scale');
 	    if ($ret->isError()) {
-		if (isset($tmpFilename)) {
-		    @$platform->unlink($tmpFilename);
-		}
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    if (!isset($toolkit)) {
-		if (isset($tmpFilename)) {
-		    @$platform->unlink($tmpFilename);
-		}
 		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
 						  "scale $mimeType"), null, null);
 	    }
-	    $subContext['next.toolkit'] = null;
-	    $subContext['next.operation'] = null;
+	    $subContext['next.toolkit'] = $subContext['next.operation'] = null;
 	    list ($ret, $mimeType, $subContext) =
 		$toolkit->performOperation($mimeType, 'scale', $sourceFilename, $destFilename,
 					   $parameters, $subContext);
 	    if ($ret->isError()) {
-		if (isset($tmpFilename)) {
-		    @$platform->unlink($tmpFilename);
-		}
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
-	    $outputWasGenerated = true;
-	}
-	if (isset($tmpFilename)) {
-	    @$platform->unlink($tmpFilename);
+	    $sourceFilename = $destFilename;
 	}
 
-	if (!$outputWasGenerated && $sourceFilename != $destFilename) {
-	    /*
-	     * The image was square to begin with, and smaller than the scale size.
-	     * This means that we should simply reuse the original.
-	     */
+	if ($subContext['width'] != $subContext['height'] && $square['mode'] == 'fit') {
+	    /* Fit to square */
+	    $size = max($subContext['width'], $subContext['height']);
+
+	    /* Write PPM file with background color and convert to jpeg */
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation('image/x-portable-pixmap',
+									  'convert-to-image/jpeg');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!isset($toolkit)) {
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+		    'convert-to-image/jpeg image/x-portable-pixmap'), null, null);
+	    }
+	    $tmpFilename = $platform->tempnam($gallery->getConfig('data.gallery.tmp'), 'sqth_');
+	    if (empty($tmpFilename)) {
+		return array(GalleryStatus::error(ERROR_BAD_PATH, __FILE__, __LINE__), null, null);
+	    }
+	    if (!$platform->copy($sourceFilename, $tmpFilename)) {
+		@$platform->unlink($tmpFilename);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			     null, null);
+	    }
+	    if (!($fh = $platform->fopen($destFilename, 'w'))) {
+		@$platform->unlink($tmpFilename);
+		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
+			     null, null);
+	    }
+	    $platform->fwrite($fh, "P6\n$size $size\n255\n");
+	    /* Convert RGB hex string to 3 binary bytes */
+	    $row = str_repeat(chr(hexdec(substr($square['color'], 0, 2))) .
+			      chr(hexdec(substr($square['color'], 2, 2))) .
+			      chr(hexdec(substr($square['color'], 4, 2))), $size);
+	    for ($i = 0; $i < $size; $i++) {
+		$platform->fwrite($fh, $row);
+	    }
+	    $platform->fclose($fh);
+	    list ($ret) = $toolkit->performOperation(
+		'image/x-portable-pixmap', 'convert-to-image/jpeg',
+		$destFilename, $destFilename, array());
+	    if ($ret->isError()) {
+		@$platform->unlink($tmpFilename);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+
+	    /* Overlay thumbnail image on square background */
+	    list ($ret, $toolkit) = GalleryCoreApi::getToolkitByOperation($mimeType, 'composite');
+	    if ($ret->isError()) {
+		@$platform->unlink($tmpFilename);
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    if (!isset($toolkit)) {
+		@$platform->unlink($tmpFilename);
+		return array(GalleryStatus::error(ERROR_UNSUPPORTED_OPERATION, __FILE__, __LINE__,
+						  "composite $mimeType"), null, null);
+	    }
+	    $newContext = array('width' => $size, 'height' => $size);
+	    list ($ret, $mimeType, $subContext) = $toolkit->performOperation(
+		'image/jpeg', 'composite', $destFilename, $destFilename,
+		array(substr($tmpFilename, strlen($gallery->getConfig('data.gallery.base'))),
+		      $mimeType, $subContext['width'], $subContext['height'], 'center', 0, 0),
+		$newContext);
+	    @$platform->unlink($tmpFilename);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null, null);
+	    }
+	    $sourceFilename = $destFilename;
+	}
+
+	if ($sourceFilename != $destFilename) {
+	    /* If no work was done (small image, already square) then just copy original */
 	    if (!$platform->copy($sourceFilename, $destFilename)) {
 		return array(GalleryStatus::error(ERROR_PLATFORM_FAILURE, __FILE__, __LINE__),
 			     null, null);

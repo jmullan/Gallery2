@@ -48,6 +48,17 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 
 	parent::setUp();
 
+	$ret = $this->_markPluginParametersForCleanup('module', 'squarethumb');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'crop');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
 	/* Register a dummy toolkit, property and operations */
 	$ret = GalleryCoreApi::registerFactoryImplementation(
 	    'GalleryToolkit', 'SquareThumbTestToolkit', 'SquareThumbTestToolkit',
@@ -60,7 +71,7 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$this->_markToolkitForCleanup('SquareThumbTestToolkit');
 
 	$ret = GalleryCoreApi::registerToolkitProperty('SquareThumbTestToolkit',
-	    array('test/dim', 'test/crop', 'test/scale', 'test/image'),
+	    array('test/dim', 'test/crop', 'test/composite', 'test/scale', 'test/image'),
 	    'dimensions', 'int,int', 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
@@ -72,6 +83,19 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 		  array('type' => 'float', 'description' => 'top edge %'),
 		  array('type' => 'float', 'description' => 'width %'),
 		  array('type' => 'float', 'description' => 'height %')), 'desc');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$ret = GalleryCoreApi::registerToolkitOperation('SquareThumbTestToolkit',
+	    array('test/composite', 'test/image'), 'composite',
+	    array(array('type' => 'string', 'description' => 'path'),
+		  array('type' => 'string', 'description' => 'mime'),
+		  array('type' => 'int', 'description' => 'width'),
+		  array('type' => 'int', 'description' => 'height'),
+		  array('type' => 'string', 'description' => 'align'),
+		  array('type' => 'int', 'description' => 'x%'),
+		  array('type' => 'int', 'description' => 'y%')), 'desc');
 	if ($ret->isError()) {
 	    print $ret->getAsHtml();
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
@@ -89,58 +113,165 @@ class SquareThumbToolkitTest extends GalleryTestCase {
 	$this->_toolkit = new SquareThumbToolkit();
     }
 
-    function testPerformOperations() {
-	global $gallery;
-
-	/* Bad operation */
-	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/nothing', 'crop',
-	      'testPerformOperations1', 'testPerformOperations2', array());
+    function testWrongOperation() {
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/image', 'crop',
+	      'wrongOpSrc', 'wrongOpDest', array());
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected for bad operation');
+    }
 
-	/* No dimensions toolkit */
+    function testNoDimensions() {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/nothing', 'thumbnail',
-	      'testPerformOperations3', 'testPerformOperations4', array(150));
+	      'noDimSrc', 'noDimDest', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing dimensions toolkit');
+    }
 
-	/* No crop toolkit */
+    function testNoCropOrComposite() {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/dim', 'thumbnail',
-	      'testPerformOperations5', 'testPerformOperations6', array(150));
+	      'noCCSrc', 'noCCDest', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing crop toolkit');
 
-	/* No scale toolkit */
+	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'fit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/dim', 'thumbnail',
+	      'noCCSrc', 'noCCDest', array(150));
+	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+			    'Error expected due to missing composite toolkit');
+    }
+
+    function testNoScale() {
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
-	      'testPerformOperations7', 'testPerformOperations8', array(150));
+	      'noScaleSrc', 'noScaleDest', array(150));
 	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
 			    'Error expected due to missing scale toolkit');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'fit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/composite', 'thumbnail',
+	      'noScaleSrc', 'noScaleDest', array(150));
+	$this->assertEquals(GALLERY_ERROR | ERROR_UNSUPPORTED_OPERATION, $ret->getErrorCode(),
+			    'Error expected due to missing scale toolkit 2');
+    }
+
+    function testAlreadySquare() {
+	/* Already square */
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/scale', 'thumbnail',
+	      'squareSrc', 'squareDest', array(150));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/scale', $mimeType, 'Output mime type');
+    }
+
+    function testCrop() {
+	global $gallery;
 
 	/* Valid operation */
 	$gallery->_squareQueue = array();
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/image', 'thumbnail',
-	      'testPerformOperations9', 'testPerformOperations10', array(150));
+	      'cropSrc', 'cropDest', array(150));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('test/image', $mimeType, 'Output mime type');
-	$this->assertEquals(array('crop'), $gallery->_squareQueue, 'queued operation');
-
-	/* Already square */
-	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/scale', 'thumbnail',
-	      'testPerformOperations11', 'testPerformOperations12', array(150));
-	if ($ret->isError()) {
-	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	}
-	$this->assertEquals('test/scale', $mimeType, 'Output mime type 2');
+	$this->assertEquals(array('queue:crop', 'scale'), $gallery->_squareQueue, 'operations');
 
 	/* Already small */
+	$gallery->_squareQueue = array();
 	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
-	      'testPerformOperations13', 'testPerformOperations14', array(700));
+	      'smallCropSrc', 'smallCropDest', array(700));
 	if ($ret->isError()) {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
-	$this->assertEquals('test/crop', $mimeType, 'Output mime type 3');
+	$this->assertEquals('test/crop', $mimeType, 'Output mime type 2');
+	$this->assertEquals(array('crop'), $gallery->_squareQueue, 'operations 2');
+
+	unset($gallery->_squareQueue);
+    }
+
+    function testFit() {
+	global $gallery;
+	$platform = GalleryUtilities::isA('WinNtPlatform', $gallery->getPlatform())
+	    ? new SquareThumbTestWinNtPlatform() : new SquareThumbTestUnixPlatform();
+	$gallery->setPlatform($platform);
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'fit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$destFile = $gallery->getConfig('data.gallery.tmp') . 'squareThumbTestFit';
+
+	/* Valid operation */
+	$gallery->_squareQueue = array();
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/image', 'thumbnail',
+	      'compositeSrc', $destFile, array(300));
+	@$platform->unlink($destFile);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('image/jpeg', $mimeType, 'Output mime type');
+	$this->assertEquals(array('scale', 'composite'), $gallery->_squareQueue, 'operations');
+
+	/* Already small */
+	$gallery->_squareQueue = array();
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/composite', 'thumbnail',
+	      'smallCompositeSrc', $destFile, array(100));
+	@$platform->unlink($destFile);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('image/jpeg', $mimeType, 'Output mime type 2');
+	$this->assertEquals(array('composite'), $gallery->_squareQueue, 'operations 2');
+
+	unset($gallery->_squareQueue);
+    }
+
+    function testFallbackToComposite() {
+	/* Want to crop, but no toolkit support */
+	global $gallery;
+	$platform = GalleryUtilities::isA('WinNtPlatform', $gallery->getPlatform())
+	    ? new SquareThumbTestWinNtPlatform() : new SquareThumbTestUnixPlatform();
+	$gallery->setPlatform($platform);
+	$destFile = $gallery->getConfig('data.gallery.tmp') . 'squareThumbTestFit';
+
+	$gallery->_squareQueue = array();
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/composite', 'thumbnail',
+	      'smallCompositeSrc', $destFile, array(100));
+	@$platform->unlink($destFile);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('image/jpeg', $mimeType, 'Output mime type');
+	$this->assertEquals(array('composite'), $gallery->_squareQueue, 'operations');
+
+	unset($gallery->_squareQueue);
+    }
+
+    function testFallbackToCrop() {
+	/* Want to fit, but no toolkit support */
+	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'squarethumb', 'mode', 'fit');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+
+	$gallery->_squareQueue = array();
+	list ($ret, $mimeType) = $this->_toolkit->performOperation('test/crop', 'thumbnail',
+	      'smallCropSrc', 'smallCropDest', array(700));
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('test/crop', $mimeType, 'Output mime type');
+	$this->assertEquals(array('crop'), $gallery->_squareQueue, 'operations');
 
 	unset($gallery->_squareQueue);
     }
@@ -234,14 +365,17 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 			 null);
 	}
 	switch ($sourceFilename) {
-	case 'testPerformOperations5':
-	case 'testPerformOperations7':
-	case 'testPerformOperations9':
+	case 'noCCSrc':
+	case 'noScaleSrc':
+	case 'cropSrc':
+	case 'compositeSrc':
 	    return array(GalleryStatus::success(), array(800, 600));
-	case 'testPerformOperations11':
+	case 'squareSrc':
 	    return array(GalleryStatus::success(), array(700, 700));
-	case 'testPerformOperations13':
+	case 'smallCropSrc':
 	    return array(GalleryStatus::success(), array(500, 1000));
+	case 'smallCompositeSrc':
+	    return array(GalleryStatus::success(), array(40, 60));
 	default:
 	    return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__), null);
 	}
@@ -249,28 +383,62 @@ class SquareThumbTestToolkit extends GalleryToolkit {
 
     function performOperation($mimeType, $operationName, $sourceFilename,
 			      $destFilename, $parameters, $context=array()) {
+	global $gallery;
 	if (isset($context['next.toolkit']) && $context['next.toolkit'] == $this) {
-	    global $gallery;
+	    $gallery->_squareQueue[] = 'queue:' . $operationName;
+	} else {
 	    $gallery->_squareQueue[] = $operationName;
 	}
 	switch ($operationName) {
 	case 'crop':
 	    switch ($sourceFilename) {
-	    case 'testPerformOperations7':
-	    case 'testPerformOperations9':
-	    case 'testPerformOperations13':
+	    case 'noScaleSrc':
+	    case 'cropSrc':
+	    case 'smallCropSrc':
+		$context['width'] = $context['height'] = min($context['width'], $context['height']);
 		return array(GalleryStatus::success(), $mimeType, $context);
 	    }
 	    break;
 	case 'scale':
-	    if (!strncmp('sqt', basename($sourceFilename), 3) ||
-		$sourceFilename == 'testPerformOperations11') {
+	    if ($sourceFilename == 'squareSrc' || $sourceFilename == 'cropDest' ||
+		    $sourceFilename == 'compositeSrc') {
+		return array(GalleryStatus::success(), $mimeType, $context);
+	    }
+	    break;
+	case 'composite':
+	    if (basename($sourceFilename) == 'squareThumbTestFit') {
 		return array(GalleryStatus::success(), $mimeType, $context);
 	    }
 	    break;
 	}
 	return array(GalleryStatus::error(ERROR_BAD_PARAMETER, __FILE__, __LINE__,
 					  "$operationName $sourceFilename"), null, null);
+    }
+}
+
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/WinNtPlatform.class');
+GalleryCoreApi::relativeRequireOnce('modules/core/classes/GalleryPlatform/UnixPlatform.class');
+
+/**
+ * Test platforms
+ * @package SquareThumb
+ * @subpackage PHPUnit
+ */
+class SquareThumbTestWinNtPlatform extends WinNtPlatform {
+    function copy($src, $dest) {
+	if ($src == 'smallCompositeSrc' || basename($src) == 'squareThumbTestFit') {
+	    return true;
+	}
+	return parent::copy($src, $dest);
+    }
+}
+
+class SquareThumbTestUnixPlatform extends UnixPlatform {
+    function copy($src, $dest) {
+	if ($src == 'smallCompositeSrc' || basename($src) == 'squareThumbTestFit') {
+	    return true;
+	}
+	return parent::copy($src, $dest);
     }
 }
 ?>
