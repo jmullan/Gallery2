@@ -27,7 +27,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
     function processRequest() {
         global $gallery;
-        
+
       	if (!isset($_REQUEST['upgrade'])) {
             return true;
         }
@@ -58,12 +58,12 @@ class UpgradeOtherModulesStep extends UpgradeStep {
                 $gallery->guaranteeTimeLimit(120);
 
                 $module =& $modules[$moduleId];
-                $ret = $template->renderStatusMessage($module->translate('Upgrading modules'),
+                $ret = $template->renderStatusMessage(_('Upgrading modules'),
                     $module->getName(), $currentPlugin / $totalPlugins);
                 if ($ret->isError()) {
                     return $ret->wrap(__FILE__, __LINE__);
                 }
-            
+
                 $ret = $module->installOrUpgrade();
                 $this->resetL10Domain();
                 if ($ret->isError()) {
@@ -103,12 +103,12 @@ class UpgradeOtherModulesStep extends UpgradeStep {
                 }
                 $layout =& $layouts[$layoutId];
 
-                $ret = $template->renderStatusMessage($layoutPlugin->translate('Upgrading layouts'),
+                $ret = $template->renderStatusMessage(_('Upgrading layouts'),
                     $layoutPlugin->getName(), $currentPlugin / $totalPlugins);
                 if ($ret->isError()) {
                     return $ret->wrap(__FILE__, __LINE__);
                 }
-            
+
                 $ret = $layout->installOrUpgrade();
                 $this->resetL10Domain();
                 if ($ret->isError()) {
@@ -201,7 +201,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		}
 	    }
 
-	    ksort($modules);            
+	    ksort($modules);
 	    foreach (array_keys($modules) as $moduleId) {
 		$gallery->guaranteeTimeLimit(120);
 
@@ -273,7 +273,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
     }
-    
+
     function isRedoable() {
 	return false;
     }
