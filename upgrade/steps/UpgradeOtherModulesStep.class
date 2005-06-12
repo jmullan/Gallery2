@@ -103,8 +103,8 @@ class UpgradeOtherModulesStep extends UpgradeStep {
                 }
                 $layout =& $layouts[$layoutId];
 
-                $ret = $template->renderStatusMessage($module->translate('Upgrading layouts'),
-                    $layout-getName(), $currentPlugin / $totalPlugins);
+                $ret = $template->renderStatusMessage($layoutPlugin->translate('Upgrading layouts'),
+                    $layoutPlugin->getName(), $currentPlugin / $totalPlugins);
                 if ($ret->isError()) {
                     return $ret->wrap(__FILE__, __LINE__);
                 }
