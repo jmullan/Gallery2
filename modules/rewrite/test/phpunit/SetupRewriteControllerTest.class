@@ -48,16 +48,6 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 
-	foreach (array('embeddedHtaccess' => '',
-		       'embeddedLocation' => '')
-		as $param => $value) {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', $param, $value);
-	    if ($ret->isError()) {
-		print $ret->getAsHtml();
-		return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
-	    }
-	}
-
 	$this->_platform = new SetupRewriteControllerTestPlatform();
 	$gallery->setPlatform($this->_platform);
     }
@@ -82,6 +72,48 @@ class SetupRewriteControllerTest extends GalleryControllerTestCase {
 				  'status' => array(),
 				  'error' => array()),
 			    $results);
+    }
+
+    function testForce1() {
+	GalleryUtilities::putRequestVariable('form[action][force]', 1);
+	GalleryUtilities::putRequestVariable('form[force][test1]', 'on');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.SetupRewrite'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'request');
+
+	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$status = unserialize($status);
+
+	$this->assertEquals(array('needOptions' => false, 'forced' => 1),
+			    $status, 'status');
+    }
+
+    function testForce2() {
+	GalleryUtilities::putRequestVariable('form[action][force]', 1);
+	GalleryUtilities::putRequestVariable('form[force][test2]', 'on');
+	
+	$results = $this->handleRequest();
+	$this->assertEquals(array('redirect' => array('view' => 'core.SiteAdmin',
+						      'subView' => 'rewrite.SetupRewrite'),
+				  'status' => array(),
+				  'error' => array()),
+			    $results, 'request');
+
+	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$status = unserialize($status);
+
+	$this->assertEquals(array('needOptions' => true, 'forced' => 1),
+			    $status, 'status');
     }
 }
 

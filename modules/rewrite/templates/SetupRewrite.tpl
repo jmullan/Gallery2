@@ -5,115 +5,138 @@
  * version.  Gallery will look for that file first and use it if it exists.
  *}
 <div class="gbBlock gcBackground1">
-  <h2> {g->text text="URL Rewrite Setup"} </h2>
+  <h2> {g->text text="URL Rewrite System Checks"} </h2>
 </div>
 
 <div class="gbBlock">
-  <h3> {g->text text="Configuring your Webserver"} </h3>
+  <table><tr>
+    <td>
+      <h3> {g->text text="Apache mod_rewrite"} </h3>
 
-  <p class="giDescription">
-    {g->text text="Before we configure your Gallery installation to use mod_rewrite, we test to make sure that it will work properly."}
-  </p>
+      {capture name=mod_rewrite_anchor}
+      <a href="http://httpd.apache.org/docs/mod/mod_rewrite.html">mod_rewrite</a>
+      {/capture}
+      <p class="giDescription">
+        {g->text text="In order for this Gallery module to work you need %s enabeled with your Apache server." arg1=$smarty.capture.mod_rewrite_anchor}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $SetupRewrite.apacheCode == REWRITE_STATUS_OK}
+        <h3 class="giSuccess">Success</h3>
+      {else}
+        <h3 class="giWarning">Warning</h3>
+      {/if}
+    </td>
+  {if $SetupRewrite.apacheCode != REWRITE_STATUS_OK}
+  </tr><tr>
+    <td colspan="2">
+      {if $SetupRewrite.apacheCode == REWRITE_STATUS_APACHE_UNABLE_TO_TEST}
+      <div class="gbBlock">
+        <h3> {g->text text="Custom Gallery directory test setup"} </h3>
+        
+        <p class="giDescription">
+          {g->text text="Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"}
+        </p>
+        
+        <p class="giDescription">
+          <b>{$SetupRewrite.customFile}</b><br/>
+          {g->text text="Line 6:"} {$SetupRewrite.customLine}
+        </p>
 
-  {assign var="showTestButton" value=false}
-  {if $SetupRewrite.apacheCode == REWRITE_STATUS_OK}
-    <div class="giSuccess">
-      {g->text text="Apache mod_rewrite is working properly."}
-    </div>
+        <p class="giDescription">
+          <b>{$SetupRewrite.customFileNoOptions}</b><br/>
+          {g->text text="Line 6:"} {$SetupRewrite.customLineNoOptions}
+        </p>
+      </div>
+      {/if}
+
+      <div class="gbBlock">
+        <h3> {g->text text="Test mod_rewrite manually"} </h3>
+        
+        <p class="giDescription">
+        {g->text text="For whatever reason, Gallery did not detect a working mod_rewrite setup. If you are confident that mod_rewrite does work you may override the automatic detection. Please, run these two tests to see for yourself."}
+        </p>
+        
+        <table class="gbDataTable"><tr>
+          <th> {g->text text="Works"} </th>
+          <th> {g->text text="Test"} </th>
+        </tr><tr>
+          <td style="text-align: center;">
+            <input type="checkbox" name="{g->formVar var="form[force][test1]"}"/>
+          </td>
+          <td>
+            <a href="{$SetupRewrite.test1}">{g->text text="Test mod_rewrite"}</a>
+          </td>
+        </tr><tr>
+          <td style="text-align: center;">
+            <input type="checkbox" name="{g->formVar var="form[force][test2]"}"/>
+          </td>
+          <td>
+            <a href="{$SetupRewrite.test2}">{g->text text="Test mod_rewrite with Options directive"}</a>
+          </td>
+        </tr></table>
+        
+        <p class="giDescription">
+          {g->text text="If one of the two tests gives you a page with the text PASS_REWRITE you are good to go."}
+        </p>
+        
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][force]"}" value="{g->text text="Save"}"/>
+      </div>
+      
+      {include file="gallery:modules/rewrite/templates/Troubleshooting.tpl"}
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if ($SetupRewrite.apacheCode == REWRITE_STATUS_APACHE_NO_MOD_REWRITE)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Apache mod_rewrite is not installed or not enabled."}
-    </div>
+  </tr><tr>
+    <td>
+      <h3> {g->text text="Gallery .htaccess file"} </h3>
+      
+      <p class="giDescription">
+        {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted."}
+      </p>
+    </td>
+    <td style="float: right; vertical-align: top;">
+      {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY}
+        <h2 class="giSuccess">Success</h2>
+      {else}
+        <h2 class="giError">Error</h2>
+      {/if}
+    </td>
+  {if $SetupRewrite.htaccessCode != REWRITE_STATUS_HTACCESS_READY}
+  </tr><tr>
+    <td colspan="2">
+      <div class="gbBlock">
+        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING}
+        <h3> {g->text text="Please create a file in you Gallery directory named .htaccess"} </h3>
+        
+        <pre class="giDescription">touch {$SetupRewrite.htaccessPath}<br/>chmod 666 {$SetupRewrite.htaccessPath}</pre>
+        {/if}
+        
+        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ}
+        <h3> {g->text text="Please make sure Gallery can read the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$SetupRewrite.htaccessPath}</pre>
+        {/if}
+        
+        {if $SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_WRITE}
+        <h3> {g->text text="Please make sure Gallery can write to the existing .htaccess file"} </h3>
+        
+        <pre class="giDescription">chmod 666 {$SetupRewrite.htaccessPath}</pre>
+        {/if}
+      </div>
+      
+      <div class="gbBlock">
+        <input type="submit" class="inputTypeSubmit"
+          name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess File Again"}"/>
+      </div>
+    </td>
   {/if}
-
-  {if ($SetupRewrite.apacheCode == REWRITE_STATUS_APACHE_UNABLE_TO_TEST)}
-    {assign var="showTestButton" value=true}
-    {assign var="showConfig" value=true}
-    <div class="giError">
-      {g->text text="We are unable to properly test whether mod_rewrite is properly installed."}
-    </div>
-  {/if}
-
-  {if !empty($showTestButton)}
-    <br/>
-    <input type="submit" class="inputTypeSubmit"
-      name="{g->formVar var="form[action][test]"}" value="{g->text text="Test Webserver Again"}"/>
-    <br/><br/>
-  {/if}
-  
-  {if !empty($showConfig)}
-    <h3>Manual Configuration</h3>
-    
-    <p class="giDescription">
-      {g->text text="Gallery tries to test mod_rewrite in action. For this to work you need to edit each of these two files accordingly:"}<br/>
-    </p>
-    
-    <p class="giDescription">
-      <b>{$SetupRewrite.customFile}</b><br/>
-      {g->text text="Line 6:"} {$SetupRewrite.customLine}
-    </p>
-    
-    <p class="giDescription">
-      <b>{$SetupRewrite.customFileNoOptions}</b><br/>
-      {g->text text="Line 6:"} {$SetupRewrite.customLineNoOptions}
-    </p>
-    
-    <p class="giWarning">
-      {g->text text="If the test still fails chances are slim that this module will work. However, you may procede if you are confident that it will work."}
-    </p>
-    
-    <p class="giDescription">
-      <input type="checkbox" name="{g->formVar var="form[mod_rewrite][force]"}" /> {g->text text="Apache mod_rewrite works."}
-    </p>
-  {/if}
-</div>
-
-{if !empty($showTestButton)}
-  {include file="gallery:modules/rewrite/templates/Troubleshooting.tpl"}
-{/if}
-
-<div class="gbBlock">
-  <h3> {g->text text="Gallery .htaccess file"} </h3>
-
-  <p class="giDescription">
-    {g->text text="Gallery's URL rewriting works by creating a new file in your gallery directory called <b>.htaccess</b> which contains rules for how short urls should be interpreted. Gallery needs write access to this file."}
-  </p>
-
-  {assign var="showTestButton" value=false}
-  {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_READY)}
-    <div class="giSuccess">
-      {g->text text="Gallery can write to the .htaccess file"}
-    </div>
-  {/if}
-
-  {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_WRITE)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Cannot write to the .htaccess file."}
-    </div>
-  {/if}
-
-  {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_MISSING)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="The .htaccess file does not exist."}
-    </div>
-  {/if}
-
-  {if ($SetupRewrite.htaccessCode == REWRITE_STATUS_HTACCESS_CANT_READ)}
-    {assign var="showTestButton" value=true}
-    <div class="giError">
-      {g->text text="Cannot read the .htaccess file."}
-    </div>
-  {/if}
-  
-  {if !empty($showTestButton)}
-    <br/>
-    <input type="submit" class="inputTypeSubmit" name="{g->formVar var="form[action][test]"}" value="{g->text text="Test .htaccess Again"}"/>
-  {/if}
+  </tr></table>
 </div>
 
 <div class="gbBlock gcBackground1">

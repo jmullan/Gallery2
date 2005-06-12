@@ -39,7 +39,7 @@ class RewriteModule extends GalleryModule {
 	$this->setId('rewrite');
 	$this->setName($gallery->i18n('URL Rewrite'));
 	$this->setDescription($gallery->i18n('Enables short URLs using mod_rewrite.'));
-	$this->setVersion('0.9.10'); /* Update RewriteModuleExtras::upgrade also! */
+	$this->setVersion('0.9.11'); /* Update RewriteModuleExtras::upgrade also! */
 	$this->setGroup('gallery', $this->translate('Gallery'));
 	$this->setCallbacks('getSiteAdminViews');
 	$this->setRequiredCoreApi(array(6, 0));
@@ -106,19 +106,6 @@ class RewriteModule extends GalleryModule {
 	list ($ret, $rewriteStatus) = RewriteHelper::checkModRewrite();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-
-	if ($rewriteStatus == REWRITE_STATUS_APACHE_UNABLE_TO_TEST) {
-	    /* Check for an override */
-	    list ($ret, $needOptions) = $this->getParameter('needOptions');
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-
-	    if (!empty($needOptions)) {
-		/* We know everything we need to, so we don't need to test */
-		$rewriteStatus = REWRITE_STATUS_OK;
-	    }
 	}
 
 	list ($ret, $fileStatus) = RewriteHelper::checkFile();

@@ -16,6 +16,7 @@
     <span id="question-0-help" style="display: none;">
       {capture name=url}{g->url href="lib/tools/phpinfo.php"}{/capture}
       {g->text text="Go to the <a href=\"%s\">Gallery phpinfo page</a> and look for Loaded Modules. You should see mod_rewrite in the list if it's loaded." arg1=$smarty.capture.url}
+    </span>
   </p>
   
   <p class="giDescription">
@@ -40,5 +41,6 @@
     <b>{g->text text="My Gallery is password protected using Apache mod_auth. I know mod_rewrite works, why doesnt Gallery detect this?"}</b><br/>
     <span id="question-2-help" style="display: none;">
       {g->text text="Gallery tries to fetch a page from your server and most likely Gallery gets an unauthorized access error. In order to fix this you need to allow requests from the server IP. If you are paranoid you could narrow it down to requests to the gallery2/modules/rewrite/test directory."}
+    </span>
   </p>
 </div>

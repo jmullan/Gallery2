@@ -35,7 +35,7 @@ class RewriteModuleExtras {
 	case null:
 	    /* Initial install */
 	    foreach (array('galleryLocation' => '',
-			   'needOptions' => '',
+			   'status' => serialize(array()),
 			   'embeddedLocation' => '',
 			   'embeddedHtaccess' => '',
 			   'accessList' => serialize(array()))
@@ -209,6 +209,21 @@ class RewriteModuleExtras {
 	case '0.9.7':
 	case '0.9.8':
 	case '0.9.9':
+	case '0.9.10':
+	    foreach (array('needOptions') as $key) {
+		$ret = $module->removeItemParameter($key, 0);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
+
+	    foreach (array('status' => serialize(array()))
+		     as $key => $value) {
+		$ret = $module->setParameter($key, $value);
+		if ($ret->isError()) {
+		    return $ret->wrap(__FILE__, __LINE__);
+		}
+	    }
 
 	case 'end of upgrade path':
 	    break;

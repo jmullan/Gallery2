@@ -70,11 +70,12 @@ class RewriteHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $Htaccess['needOptions']) =
-		GalleryCoreApi::getPluginParameter('module', 'rewrite', 'needOptions');
+	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
+	$status = unserialize($status);
+	$Htaccess['needOptions'] = $status['needOptions'];
 
 	$Htaccess['directory'] = $Htaccess['galleryDirectory'];
 	$Htaccess['rewriteBase'] = $Htaccess['galleryDirectory'];
@@ -141,22 +142,23 @@ class RewriteHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	/* No .htaccess file */
-	if (!$platform->file_exists($file)) {
-	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISSING);
+	if ($platform->file_exists($file)) {
+	    /* Can't read the .htaccess file */
+	    if (!$platform->is_readable($file)) {
+		return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	    }
+
+	    /* Can't write the .htaccess file */
+	    if (!$platform->is_writeable($file)) {
+		return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_WRITE);
+	    }
+	} else {
+	    /* If we have write access to the directory we can create the file */
+	    if (!$platform->is_writeable(dirname($file))) {
+		return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_MISSING);
+	    }
 	}
 
-	/* Can't read the .htaccess file  */
-	if (!$platform->is_readable($file)) {
-	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
-	}
-
-	/* Can't write the .htaccess file  */
-	if (!$platform->is_writeable($file)) {
-	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_WRITE);
-	}
-
-	/* It exists, is writeable, and doesn't contain our rules already */
 	return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_READY);
     }
 
@@ -180,24 +182,23 @@ class RewriteHelper {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
 	}
 
-	list ($ret, $code) = RewriteHelper::checkFile($embedded);
-	if ($ret->isError()) {
-	    return array($ret->wrap(__FILE__, __LINE__), null);
-	}
-	if ($code != REWRITE_STATUS_HTACCESS_READY) {
-	    return array(GalleryStatus::success(), $code);
-	} else {
-	    $oldHtaccess = implode('', $platform->file($file));
+	if ($platform->file_exists($file)) {
+	    if (!$platform->is_readable($file)) {
+		return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_READ);
+	    }
 
-	    /* Strip out the existing section and replace with the new one */
+	    $oldHtaccess = implode('', $platform->file($file));
 	    $newHtaccess = preg_replace(
 		    '/\# BEGIN Url Rewrite section(.+)\# END Url Rewrite section\n/s',
 		    '{gallerySection}', $oldHtaccess);
+
 	    if (strpos($newHtaccess, '{gallerySection}') !== false) {
 		$newHtaccess = str_replace('{gallerySection}', $htaccess, $newHtaccess);
 	    } else {
 		$newHtaccess .= $htaccess;
 	    }
+	} else {
+	    $newHtaccess = $htaccess;
 	}
 
 	/* Write the new file */
@@ -205,7 +206,7 @@ class RewriteHelper {
 	    $platform->fwrite($fd, $newHtaccess);
 	    $platform->fclose($fd);
 	} else {
-	    return array(GalleryStatus::success(), REWRITE_STATUS_CANT_WRITE);
+	    return array(GalleryStatus::success(), REWRITE_STATUS_HTACCESS_CANT_WRITE);
 	}
 
 	return array(GalleryStatus::success(), REWRITE_STATUS_OK);
@@ -223,6 +224,15 @@ class RewriteHelper {
     function checkModRewrite() {
 	global $gallery;
 	$urlGenerator =& $gallery->getUrlGenerator();
+
+	list ($ret, $status) = GalleryCoreApi::getPluginParameter('module', 'rewrite', 'status');
+	if ($ret->isError()) {
+	    return array($ret->wrap(__FILE__, __LINE__), null);
+	}
+	$status = unserialize($status);
+	if (isset($status['forced'])) {
+	    return array(GalleryStatus::success(), REWRITE_STATUS_OK);
+	}
 
 	$baseUrl = $gallery->getConfig('galleryBaseUrl');
 	if (empty($baseUrl)) {
@@ -250,7 +260,8 @@ class RewriteHelper {
 	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'needOptions', 'false');
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'status',
+		serialize(array('needOptions' => false)));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
@@ -266,7 +277,8 @@ class RewriteHelper {
 	list ($body, $headers, $url) = GalleryCoreAPI::fetchWebPage($fetch);
 
 	if ($headers == 'HTTP/1.1 200 OK' && $body == "PASS_REWRITE\n") {
-	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'needOptions', 'true');
+	    $ret = GalleryCoreApi::setPluginParameter('module', 'rewrite', 'status',
+		serialize(array('needOptions' => true)));
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }

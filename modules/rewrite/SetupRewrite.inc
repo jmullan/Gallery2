@@ -54,10 +54,37 @@ class SetupRewriteController extends GalleryController {
 	if (isset($form['action']['test'])) {
 	    $redirect['view'] = 'core.SiteAdmin';
 	    $redirect['subView'] = 'rewrite.SetupRewrite';
-	} else if (isset($form['action']['done'])) {
-	    if (isset($form['mod_rewrite']['force'])) {
+	} else if (isset($form['action']['force'])) {
+	    if (isset($form['force']['test1'])) {
 		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
-							  'needOptions', 'true');
+		    'status', serialize(array('needOptions' => false, 'forced' => 1)));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    if (isset($form['force']['test2'])) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+		    'status', serialize(array('needOptions' => true, 'forced' => 1)));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    $redirect['view'] = 'core.SiteAdmin';
+	    $redirect['subView'] = 'rewrite.SetupRewrite';
+	} else if (isset($form['action']['done'])) {
+	    if (isset($form['force']['test1'])) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+		    'status', serialize(array('needOptions' => false, 'forced' => 1)));
+		if ($ret->isError()) {
+		    return array($ret->wrap(__FILE__, __LINE__), null);
+		}
+	    }
+
+	    if (isset($form['force']['test2'])) {
+		$ret = GalleryCoreApi::setPluginParameter('module', 'rewrite',
+		    'status', serialize(array('needOptions' => true, 'forced' => 1)));
 		if ($ret->isError()) {
 		    return array($ret->wrap(__FILE__, __LINE__), null);
 		}
@@ -106,6 +133,20 @@ class SetupRewriteView extends GalleryView {
 	    '/test/mod_rewrite_no_options/custom/.htaccess';
 	$SetupRewrite['customLineNoOptions'] = 'RewriteBase ' . $baseUrl['path'] .
 	    'mod_rewrite_no_options/custom/';
+
+	if (!strncmp($baseUrl['path'], '/gallery2/', 10)) {
+	    $target = 'gallery2';
+	} else if (!strncmp($baseUrl['path'], '/gallery/', 9)) {
+	    $target = 'gallery';
+	} else {
+	    $target = 'custom';
+	}
+	$SetupRewrite['test1'] = $urlGenerator->generateUrl(
+	    array('href' => 'modules/rewrite/test/mod_rewrite_no_options/'.
+		$target . '/Rewrite.txt'));
+	$SetupRewrite['test2'] = $urlGenerator->generateUrl(
+	    array('href' => 'modules/rewrite/test/mod_rewrite/'.
+		$target . '/Rewrite.txt'));
 
 	list ($ret, $SetupRewrite['htaccessPath']) = RewriteHelper::getHtaccessPath();
 	if ($ret->isError()) {

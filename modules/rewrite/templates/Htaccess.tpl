@@ -7,7 +7,7 @@
 # BEGIN Url Rewrite section
 # (Automatically generated.  Do not edit this section)
 <IfModule mod_rewrite.c>
-{if $Htaccess.needOptions == 'true'}
+{if $Htaccess.needOptions}
     Options +FollowSymlinks
 {/if}
     RewriteEngine On

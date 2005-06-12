@@ -371,7 +371,13 @@ class AdminRewriteControllerTestPlatform extends GalleryPlatform{
 
     function fopen($file, $mode, $useIncludePath=null, $zcontext=null) {
 	if ($file == dirname(dirname(dirname(dirname(dirname(__FILE__))))) . '/.htaccess') {
-	    return '.htaccess';
+	    $isWriteable = GalleryUtilities::getRequestVariables('isWriteable');
+	    if ($isWriteable) {
+		$this->_fileContent = '';
+		return '.htaccess';
+	    } else {
+		return null;
+	    }
 	}
 	
 	return parent::fopen($file, $mode, $useIncludePath, $zcontext);
