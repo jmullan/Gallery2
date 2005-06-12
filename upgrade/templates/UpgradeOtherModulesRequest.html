@@ -47,7 +47,8 @@
 	  <?php $isUpgradeable = $templateData['moduleIsUpgradeable'][$id]; ?>
 	  <tr<?php if ($counter % 2 == 0) print ' style="background-color: #eee"' ?>>
 	    <td>
-	      <input type="checkbox" id="module_<?php print $id ?>" name="module[<?php print $id ?>]"
+	      <input type="checkbox" id="plugin_<?php print $id ?>" 
+                name="<?php print ($templateData['groupType'][$group] . '[' . $id . ']')?>"
 		<?php if ($isUpgradeable): ?>
 		  checked="checked"
 		<?php endif; ?>
@@ -58,7 +59,7 @@
 	    </td>
 	    <td>
 	      <?php if (!$isUpgradeable): ?> <span class="disabled"> <?php endif; ?>
-	      <label for="module_<?php print $id ?>">
+	      <label for="plugin_<?php print $id ?>">
 		<?php print $module->getName() ?>
 	      </label>
 	      <?php if (!$isUpgradeable): ?> </span> <?php endif; ?>
@@ -125,7 +126,7 @@
     </div>
     <?php endif; ?>
 
-    <?php if ($templateData['anyUpgradeable']): ?>
+    <?php if ($templateData['anyUpgradeable']): ?>    
     <div class="go">
       <?php $nextStep = $stepNumber + 1 ?>
       <span class="goToNext">

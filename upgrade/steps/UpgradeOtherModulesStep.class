@@ -25,6 +25,128 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	return _('Upgrade Modules');
     }
 
+    function processRequest() {
+        global $gallery;
+        
+      	if (!isset($_REQUEST['upgrade'])) {
+            return true;
+        }
+
+	$templateData['stackTrace'] = '';
+
+        $template = new StatusTemplate();
+        $template->renderHeader();
+        $template->renderStatusBlock();
+        if (isset($_REQUEST['module'])) {
+            $totalPlugins = count($_REQUEST['module']);
+            $currentPlugin = 0;
+            foreach (array_keys($_REQUEST['module']) as $moduleId) {
+                $currentPlugin++;
+                list ($ret, $modulePlugin) = GalleryCoreApi::loadPlugin('module', $moduleId, true);
+                if ($ret->isError()) {
+                    $this->resetL10Domain();
+                    $templateData['errors'][] =
+                        sprintf(_('Unable to load the %s module'), $moduleId);
+                    $templateData['stackTrace'] .= $ret->getAsHtml();
+                } else {
+                    $modulePlugin->setName($modulePlugin->translate($modulePlugin->getName()));
+                    $modulePlugin->setDescription(
+                        $modulePlugin->translate($modulePlugin->getDescription()));
+                    $modules[$moduleId] = $modulePlugin;
+                    $this->resetL10Domain();
+                }
+                $gallery->guaranteeTimeLimit(120);
+
+                $module =& $modules[$moduleId];
+                $ret = $template->renderStatusMessage($module->translate('Upgrading modules'),
+                    $module->getName(), $currentPlugin / $totalPlugins);
+                if ($ret->isError()) {
+                    return $ret->wrap(__FILE__, __LINE__);
+                }
+            
+                $ret = $module->installOrUpgrade();
+                $this->resetL10Domain();
+                if ($ret->isError()) {
+                    if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
+                        $templateData['needsConfig'][] =
+                            sprintf(_('%s module needs configuration'), $module->getName());
+                        $moduleIsUpgradeable[$moduleId] = false;
+                    } else {
+                        $templateData['errors'][] =
+                            sprintf(_('Unable to upgrade the %s module'), $module->getName());
+                        $templateData['stackTrace'] .= $ret->getAsHtml();
+                    }
+                    continue;
+                }
+                $moduleIsUpgradeable[$moduleId] = false;
+                $templateData['upgradedModule'][$moduleId] = $module->getName();
+            }
+        }
+
+        if (isset($_REQUEST['layout'])) {
+            $totalPlugins = count($_REQUEST['layout']);
+            $currentPlugin = 0;
+            foreach (array_keys($_REQUEST['layout']) as $layoutId) {
+                $currentPlugin++;
+                list ($ret, $layoutPlugin) = GalleryCoreApi::loadPlugin('layout', $layoutId, true);
+                if ($ret->isError()) {
+                    $this->resetL10Domain();
+                    $templateData['errors'][] =
+                        sprintf(_('Unable to load the %s layout'), $layoutId);
+                    $templateData['stackTrace'] .= $ret->getAsHtml();
+                } else {
+                    $layoutPlugin->setName($layoutPlugin->translate($layoutPlugin->getName()));
+                    $layoutPlugin->setDescription(
+                        $layoutPlugin->translate($layoutPlugin->getDescription()));
+                    $layouts[$layoutId] = $layoutPlugin;
+                    $this->resetL10Domain();
+                }
+                $layout =& $layouts[$layoutId];
+
+                $ret = $template->renderStatusMessage($module->translate('Upgrading layouts'),
+                    $layout-getName(), $currentPlugin / $totalPlugins);
+                if ($ret->isError()) {
+                    return $ret->wrap(__FILE__, __LINE__);
+                }
+            
+                $ret = $layout->installOrUpgrade();
+                $this->resetL10Domain();
+                if ($ret->isError()) {
+                    $templateData['errors'][] =
+                        sprintf(_('Unable to upgrade the %s layout'), $layout->getName());
+                    $templateData['stackTrace'] .= $ret->getAsHtml();
+                    continue;
+                }
+                $moduleIsUpgradeable[$layoutId] = false;
+                $templateData['upgradedLayout'][$layoutId] = $layout->getName();
+
+            }
+        }
+        $storage =& $gallery->getStorage();
+        $ret = $storage->commitTransaction();
+        if ($ret->isError()) {
+            $templateData['errors'][] = _('Unable to commit database transaction');
+            $templateData['stackTrace'] .= $ret->getAsHtml();
+        }
+        $templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
+	$templateData['anyUpgradeable'] = false;
+	if (!empty($templateData['errors'])) {
+	    $templateData['debug'] = $gallery->getDebugBuffer();
+	} else if (!empty($moduleIsUpgradeable)) {
+	    foreach ($moduleIsUpgradeable as $tmp) {
+		if ($tmp) {
+		    $templateData['anyUpgradeable'] = true;
+		    break;
+		}
+	    }
+	    if (!$templateData['anyUpgradeable']) {
+		$this->setComplete(true);
+	    }
+	}
+        $template->hideStatusBlock();
+        $template->renderBodyAndFooter($templateData);
+    }
+
     function loadTemplateData(&$templateData) {
 	global $gallery;
 	if (!$gallery->getDebug()) {
@@ -79,7 +201,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		}
 	    }
 
-	    ksort($modules);
+	    ksort($modules);            
 	    foreach (array_keys($modules) as $moduleId) {
 		$gallery->guaranteeTimeLimit(120);
 
@@ -89,33 +211,13 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		    $moduleList[$moduleId]['version'] != $module->getVersion();
 		$currentVersion[$moduleId] = $moduleList[$moduleId]['version'];
 
-		if (isset($_REQUEST['upgrade']) &&
-		      isset($_REQUEST['module'][$moduleId]) &&
-		      $moduleIsUpgradeable[$moduleId]) {
-		    $ret = $module->installOrUpgrade();
-		    $this->resetL10Domain();
-		    if ($ret->isError()) {
-			if ($ret->getErrorCode() & ERROR_CONFIGURATION_REQUIRED) {
-			    $templateData['needsConfig'][] =
-				sprintf(_('%s module needs configuration'), $module->getName());
-			    $moduleIsUpgradeable[$moduleId] = false;
-			} else {
-			    $templateData['errors'][] =
-				sprintf(_('Unable to upgrade the %s module'), $module->getName());
-			    $templateData['stackTrace'] .= $ret->getAsHtml();
-			}
-			continue;
-		    }
-		    $moduleIsUpgradeable[$moduleId] = false;
-		    $templateData['upgradedModule'][$moduleId] = $module->getName();
-		}
-
 		$group = $module->getGroup();
 		if (empty($group)) {
 		    $group = array('group' => 'others', 'groupLabel' => _('Other'));
 		}
 		$groupedModules[$group['group']][$moduleId] =& $module;
 		$groupLabel[$group['group']] = $group['groupLabel'];
+		$groupType[$group['group']] = 'module';
 	    }
 
 	    foreach (array_keys($layoutList) as $layoutId) {
@@ -136,6 +238,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 
 	    ksort($layouts);
 	    $groupLabel['layouts'] = _('Layouts');
+            $groupType['layouts'] = 'layout';
 	    foreach (array_keys($layouts) as $layoutId) {
 		$layout =& $layouts[$layoutId];
 		$moduleIsUpgradeable[$layoutId] =
@@ -143,41 +246,18 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 		    $layoutList[$layoutId]['version'] != $layout->getVersion();
 		$currentVersion[$layoutId] = $layoutList[$layoutId]['version'];
 
-		if (isset($_REQUEST['upgrade']) &&
-		      isset($_REQUEST['module'][$layoutId]) &&
-		      $moduleIsUpgradeable[$layoutId]) {
-		    $ret = $layout->installOrUpgrade();
-		    $this->resetL10Domain();
-		    if ($ret->isError()) {
-			$templateData['errors'][] =
-			    sprintf(_('Unable to upgrade the %s layout'), $layout->getName());
-			$templateData['stackTrace'] .= $ret->getAsHtml();
-			continue;
-		    }
-		    $moduleIsUpgradeable[$layoutId] = false;
-		    $templateData['upgradedLayout'][$layoutId] = $layout->getName();
-		}
-
 		$groupedModules['layouts'][$layoutId] =& $layout;
 	    }
 	    ksort($groupedModules);
-	}
-
-	if (isset($_REQUEST['upgrade'])) {
-	    $storage =& $gallery->getStorage();
-	    $ret = $storage->commitTransaction();
-	    if ($ret->isError()) {
-		$templateData['errors'][] = _('Unable to commit database transaction');
-		$templateData['stackTrace'] .= $ret->getAsHtml();
-	    }
-	    $templateData['bodyFile'] = 'UpgradeOtherModulesSuccess.html';
-	} else {
-	    $templateData['groupedModules'] =& $groupedModules;
-	    $templateData['groupLabel'] = $groupLabel;
-	    $templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
-	    $templateData['currentVersion'] = $currentVersion;
 	    $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	}
+
+        $templateData['groupedModules'] =& $groupedModules;
+        $templateData['groupLabel'] = $groupLabel;
+        $templateData['groupType'] = $groupType;
+        $templateData['moduleIsUpgradeable'] = $moduleIsUpgradeable;
+        $templateData['currentVersion'] = $currentVersion;
+        $templateData['bodyFile'] = 'UpgradeOtherModulesRequest.html';
 	$templateData['anyUpgradeable'] = false;
 	if (!empty($templateData['errors'])) {
 	    $templateData['debug'] = $gallery->getDebugBuffer();
@@ -193,7 +273,7 @@ class UpgradeOtherModulesStep extends UpgradeStep {
 	    }
 	}
     }
-
+    
     function isRedoable() {
 	return false;
     }
