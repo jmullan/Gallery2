@@ -133,10 +133,23 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	/* Comment permissions might be registered in db even though module isn't active: */
 	list ($ret, $bits) = GalleryCoreApi::convertPermissionIdsToBits('comment.all');
 	$this->commentPermissionsExist = $ret->isSuccess();
+
+	list ($ret, $this->_origMarkup) =
+	    GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	if ($ret->isError()) {
+	    print $ret->getAsHtml();
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
     }
 
     function tearDown() {
 	global $gallery;
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core',
+						  'misc.markup', $this->_origMarkup);
+	if ($ret->isError()) {
+	    $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	/* Clean up our test users */
 	list ($ret, $user) = GalleryCoreApi::fetchUserByUsername('phpunit_foobar');
@@ -302,6 +315,11 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][title]', 'caption');
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'filename');
+
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'bbcode');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
 	$results = $this->handleRequest();
 	$this->assertEquals(array('album03', 'album02'),
@@ -650,9 +668,26 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	 *     )
 	 * )
 	 */
+
+	$testAlbumId = $results['status']['albumImportSuccess']['album02'];
+	list ($ret, $testAlbum) = GalleryCoreApi::loadEntitiesById($testAlbumId);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	list ($ret, $ids) = GalleryCoreApi::fetchChildItemIds($testAlbum);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals(5, count($ids), 'number of album02 children');
+	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[3]);
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
+	$this->assertEquals('chile [b]negro[/b]', $testItem->getTitle(),
+			    'bbcode in title, other html stripped out');
     }
 
-    function testImportAlbumAndGenerateThumbnails() {
+    function testImportAlbumAndGenerateThumbnailsNoMarkup() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
@@ -667,8 +702,12 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'caption');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	$results = $this->handleRequest();
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'none');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
+	$results = $this->handleRequest();
 	$this->assertEquals(array('album04'),
 			    array_keys($results['status']['albumImportSuccess']));
 	$this->assertEquals(array('view' => 'core.SiteAdmin',
@@ -712,7 +751,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
 	}
 	$this->assertEquals('head_left', $item->getTitle(), 'title');
-	$this->assertEquals('head left', $item->getSummary(), 'summary');
+	$this->assertEquals('head left', $item->getSummary(), 'summary, html stripped out');
 	$this->assertEquals(null, $item->getDescription(), 'description');
     }
 
@@ -847,7 +886,7 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
      *
      */
 
-    function testImportAlbumPermissions() {
+    function testImportAlbumPermissionsHtmlMarkup() {
 	global $gallery;
 	$platform = $gallery->getPlatform();
 	$slash = $platform->getDirectorySeparator();
@@ -863,8 +902,12 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	GalleryUtilities::putRequestVariable('form[set][summary]', 'blank');
 	GalleryUtilities::putRequestVariable('form[set][description]', 'blank');
 
-	$results = $this->handleRequest();
+	$ret = GalleryCoreApi::setPluginParameter('module', 'core', 'misc.markup', 'html');
+	if ($ret->isError()) {
+	    return $this->failWithStatus($ret->wrap(__FILE__, __LINE__));
+	}
 
+	$results = $this->handleRequest();
 	$this->assertEquals(array('album05'),
 			    array_keys($results['status']['albumImportSuccess']));
 	$this->assertEquals(array('view' => 'core.SiteAdmin',
@@ -991,6 +1034,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals($testUserInstance->getId(),
 			    $testItem->getownerId(),
 			    'item 2');
+	$this->assertEquals('&lt;hr&gt;head &lt;u&gt;left&lt;/u&gt;', $testItem->getTitle(),
+			    'title with html');
 
 	list($ret, $testItem) = GalleryCoreApi::loadEntitiesById($ids[3]);
 	if ($ret->isError()) {
@@ -1574,8 +1619,8 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 			    ConfirmImportController::convertHtmlToBbcode('<i>italic</i>'));
 	$this->assertEquals('[i]italic[/i]',
 			    ConfirmImportController::convertHtmlToBbcode('<em>italic</em>'));
-	$this->assertEquals('[b]italic[/b]',
-			    ConfirmImportController::convertHtmlToBbcode('<strong>italic</strong>'));
+	$this->assertEquals('[b]bold[/b]',
+			    ConfirmImportController::convertHtmlToBbcode('<strong>bold</strong>'));
 	$this->assertEquals("\n",
 			    ConfirmImportController::convertHtmlToBbcode('<br>'));
 	$this->assertEquals("\n",
@@ -1591,11 +1636,12 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 	$this->assertEquals('[img]foo.jpg[/img]',
 			    ConfirmImportController::convertHtmlToBbcode('<img src=foo.jpg>'));
 	$this->assertEquals('[img]foo.jpg[/img]',
-			    ConfirmImportController::convertHtmlToBbcode('<img style=foo src=\'foo.jpg\'>'));
+	    ConfirmImportController::convertHtmlToBbcode('<img style=foo src=\'foo.jpg\'>'));
 	$this->assertEquals('[img]foo.jpg[/img]',
-			    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\' class="bar">'));
+	    ConfirmImportController::convertHtmlToBbcode('<img src=\'foo.jpg\' class="bar">'));
 	$this->assertEquals('[img]foo.jpg[/img]',
-			    ConfirmImportController::convertHtmlToBbcode('<img style="foo" src=\'foo.jpg\' class=\'bar\'>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<img style="foo" src=\'foo.jpg\' class=\'bar\'>'));
 
 	/* List HTML with edge cases */
 	$this->assertEquals('[list][/list]',
@@ -1607,44 +1653,48 @@ class ConfirmImportControllerTest extends GalleryControllerTestCase {
 
 	/* URL HTML with edge cases */
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a>'));
-	$this->assertEquals('[url=http://google.com]Google[/url][url=http://poogle.com]Poogle[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a><a href="http://poogle.com">Poogle</a>'));
+	    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com">Google</a>'));
+	$this->assertEquals(
+	    '[url=http://google.com]Google[/url][url=http://poogle.com]Poogle[/url]',
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a href="http://google.com">Google</a><a href="http://poogle.com">Poogle</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href=\'http://google.com\'>Google</a>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a href=\'http://google.com\'>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a title="foo" href="http://google.com" class="bar">Google</a>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a title="foo" href="http://google.com" class="bar">Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com class=bar>Google</a>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a title=foo href=http://google.com class=bar>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href=http://google.com class=bar>Google</a>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a href=http://google.com class=bar>Google</a>'));
 	$this->assertEquals('[url=http://google.com]Google[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a title=foo href=http://google.com>Google</a>'));
-	$this->assertEquals('[url=http://www.topozone.com/map.asp?z=11&amp;n=4163644&amp;e=275692&amp;s=25&amp;size=m&amp;u=1]Topo[/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
-
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a title=foo href=http://google.com>Google</a>'));
+	$this->assertEquals(
+	  '[url=http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1]Topo[/url]',
+	  ConfirmImportController::convertHtmlToBbcode(
+	    '<a href="http://www.topozone.com/map.asp?z=11&n=4163644&e=275692&s=25&size=m&u=1">Topo</a>'));
 
 
        /* Mixed HTML */
 	$this->assertEquals('[url=http://google.com][i]Google[/i][/url]',
-			    ConfirmImportController::convertHtmlToBbcode('<a href="http://google.com"><i>Google</i></a>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<a href="http://google.com"><i>Google</i></a>'));
 	$this->assertEquals('[b][url=http://google.com]Google[/url][/b]',
-			    ConfirmImportController::convertHtmlToBbcode('<strong><a href="http://google.com">Google</a></strong>'));
+	    ConfirmImportController::convertHtmlToBbcode(
+		'<strong><a href="http://google.com">Google</a></strong>'));
 
 
 	/* Malformed HTML tags should not be turned into BBCode, but we can't stop it */
 	$this->assertEquals('[i][b]interleaved[/i][/b]',
-			    ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
+	    ConfirmImportController::convertHtmlToBbcode('<i><b>interleaved</i></b>'));
 
-       /* Non-supported HTML is stripped completely */
+	/* Non-supported HTML is stripped completely */
 	$this->assertEquals('foo',
-			    ConfirmImportController::convertHtmlToBbcode('<hr><h1 title="foo">foo</h1>'));
-
-	/*
-	 * We don't handle this correctly, yet
-	 * $this->assertEquals('&lt;li&gt;foo',
-	 *     ConfirmImportController::convertHtmlToBbcode('<li>foo'));
-	 */
+	    ConfirmImportController::convertHtmlToBbcode('<hr><h1 title="foo">foo</h1>'));
     }
 }
 

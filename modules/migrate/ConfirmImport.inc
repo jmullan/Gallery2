@@ -180,6 +180,12 @@ class ConfirmImportController extends GalleryController {
 		return array($ret->wrap(__FILE__, __LINE__), null);
 	    }
 
+	    list ($ret, $markupType) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'misc.markup');
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+
 	    $itemsCreated = array();
 
 	    /* Get list of userids in advance */
@@ -262,7 +268,7 @@ class ConfirmImportController extends GalleryController {
 			trim($fields['fullname']), $sourceEncoding);
 		    $fullName = (!empty($fullName)) ? $fullName : $userName;
 		    $user->setFullName($fullName);
-		    
+
 		    /*
 		     * $fields['canCreateAlbums'] if they have that perm, give them
 		     * "core.addAlbumItem" permission on the root album
@@ -486,16 +492,16 @@ class ConfirmImportController extends GalleryController {
 				/* load up the album with metadata from the old album */
 				if (isset($album['title'])) {
 				    $newAlbumInstance->setTitle(
-					$this->convertHtmlToBbcode($album['title'], $sourceEncoding));
+					$this->convertHtml($markupType, $album['title'], $sourceEncoding));
 				}
 				if (isset($album['summary'])) {
 				    $newAlbumInstance->setDescription(
-					$this->convertHtmlToBbcode($album['summary'], $sourceEncoding));
+					$this->convertHtml($markupType, $album['summary'], $sourceEncoding));
 				}
 				$newAlbumInstance->setKeywords('');
 				if (isset($album['description'])) {
 				    $newAlbumInstance->setSummary(
-					$this->convertHtmlToBbcode($album['description'], $sourceEncoding));
+					$this->convertHtml($markupType, $album['description'], $sourceEncoding));
 				}
 				// $newAlbumInstance->settheme
 				if (isset($album['last_mod_time']) && $album['last_mod_time']) {
@@ -821,7 +827,7 @@ class ConfirmImportController extends GalleryController {
 				    return array($ret->wrap(__FILE__, __LINE__), null);
 				}
 
-				$convertedCaption = $this->convertHtmlToBbcode(
+				$convertedCaption = $this->convertHtml($markupType,
 				    $importAlbumItem->caption, $sourceEncoding);
 
 				$data = array('title' => '', 'summary' => '', 'description' => '');
@@ -836,7 +842,7 @@ class ConfirmImportController extends GalleryController {
 				    case 'custom':
 					$customField = $form['customfield'][$field];
 					if (isset($importAlbumItem->extraFields[$customField])) {
-					    $data[$field] = $this->convertHtmlToBbcode(
+					    $data[$field] = $this->convertHtml($markupType,
 						$importAlbumItem->extraFields[$customField],
 						$sourceEncoding);
 					} else if ($field == 'description' &&
@@ -1112,7 +1118,7 @@ class ConfirmImportController extends GalleryController {
 					    $comment->setSubject('');
 					}
 					$comment->setComment(
-					    ConfirmImportController::convertHtmlToBbcode(
+					    ConfirmImportController::convertHtml($markupType,
 						$importComment->commentText, $sourceEncoding));
 					$comment->setDate($importComment->datePosted);
 
@@ -1284,32 +1290,55 @@ class ConfirmImportController extends GalleryController {
     }
 
     /**
-     *
+     * Convert html according to given markup type
+     * @param string markup type (none, bbcode, html)
+     * @param string input string
+     * @return string
+     */
+    function convertHtml($markupType, $item, $sourceEncoding='UTF-8') {
+	$item = GalleryCoreApi::convertToUtf8($item, $sourceEncoding);
+	switch ($markupType) {
+	case 'bbcode':
+	    $item = ConfirmImportController::convertHtmlToBbcode($item);
+	    break;
+
+	case 'html':
+	    break;
+
+	case 'none':
+	default:
+	    $item = strip_tags($item);
+	}
+	GalleryUtilities::sanitizeInputValues($item, false);
+	return $item;
+    }
+
+    /**
      * Converts HTML to BBCode
      *
      * @param string $item item to convert
      * @return string
      */
-    function convertHtmlToBbcode($item, $sourceEncoding='UTF-8') {
-	$item = GalleryCoreApi::convertToUtf8($item, $sourceEncoding);
-	$item = preg_replace('/<br\s*[\/]?>/i', "\n", $item);
-	$item = preg_replace('/<strong>/i', '[b]', $item);
-	$item = preg_replace('/<\/strong>/i', '[/b]', $item);
-	$item = preg_replace('/<em>/i', '[i]', $item);
-	$item = preg_replace('/<\/em>/i', '[/i]', $item);
-	$item = preg_replace('/<b>/i', '[b]', $item);
-	$item = preg_replace('/<\/b>/i', '[/b]', $item);
-	$item = preg_replace('/<i>/i', '[i]', $item);
-	$item = preg_replace('/<\/i>/i', '[/i]', $item);
-	$item = preg_replace('/<ul>/i', '[list]', $item);
-	$item = preg_replace('/<\/ul>/i', '[/list]', $item);
-	$item = preg_replace('/<li>/i', '[*]', $item);
-	$item = preg_replace('/<\/li>/i', '', $item);
-	$item = preg_replace('/<img([^>]*)?\s*src\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>/is', '[img]$2[/img]', $item);
-	$item = preg_replace('/<a([^>]*)?\s*href\s*=\s*["\']{0,1}([^\s\'">]*)["\']{0,1}([^>]*)>(.*?)?<\/a>/is', '[url=$2]$4[/url]', $item);
-	$item = strip_tags($item);
-	GalleryUtilities::sanitizeInputValues($item);
-	return $item;
+    function convertHtmlToBbcode($item) {
+	static $patterns, $match, $replace;
+	if (!isset($patterns)) {
+	    $patterns = array(
+	      '#<br\s*(/?)>#i' => "\n",
+	      '#<(/?)(b|strong)>#i' => '[${1}b]',
+	      '#<(/?)(i|em)>#i' => '[${1}i]',
+	      '#<(/?)ul>#i' => '[${1}list]',
+	      '#<li>#i' => '[*]',
+	      '#</li>#i' => '',
+	      '#<img[^>]*\s+src\s*=\s*["\']{0,1}([^\s"\'>]+)["\']{0,1}[^>]*>#is' => '[img]$1[/img]',
+	      '#<a[^>]*\s+href\s*=\s*["\']{0,1}([^\s"\'>]+)["\']{0,1}[^>]*>\s*(.*?)\s*</a>#is' =>
+										'[url=$1]$2[/url]',
+	    );
+	    $match = array_keys($patterns);
+	    $replace = array_values($patterns);
+	}
+
+	$item = preg_replace($match, $replace, $item);
+	return strip_tags($item);
     }
 
     /**
