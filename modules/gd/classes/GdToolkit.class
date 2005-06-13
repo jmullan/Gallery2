@@ -235,7 +235,7 @@ class GdToolkit extends GalleryToolkit {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
 	    $ret = $gd->imageCopy($destRes, $sourceRes,
-				  0, 0,				          // dst x,y
+				  0, 0,				/* dst x,y */
 				  $pixelX, $pixelY, $pixelWidth, $pixelHeight);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
@@ -270,7 +270,8 @@ class GdToolkit extends GalleryToolkit {
 	    $compositeAlignX = $parameters[5];
 	    $compositeAlignY = $parameters[6];
 
-	    list ($ret, $sourceWidth, $sourceHeight) = $this->_getImageDimensionsForResource($sourceRes);
+	    list ($ret, $sourceWidth, $sourceHeight) =
+		$this->_getImageDimensionsForResource($sourceRes);
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
@@ -322,7 +323,7 @@ class GdToolkit extends GalleryToolkit {
 		break;
 
 	    case 'manual':
-		// Use the alignments we received
+		/* Use the alignments we received */
 		break;
 
 	    default:
@@ -331,11 +332,11 @@ class GdToolkit extends GalleryToolkit {
 			     null, null);
 	    }
 
-	    // Convert from percentages to pixels
-	    $compositeAlignX = (int)($compositeAlignX / 100 * $sourceWidth);
-	    $compositeAlignY = (int)($compositeAlignY / 100 * $sourceHeight);
+	    /* Convert from percentages to pixels */
+	    $compositeAlignX = (int)($compositeAlignX / 100 * ($sourceWidth - $compositeWidth));
+	    $compositeAlignY = (int)($compositeAlignY / 100 * ($sourceHeight - $compositeHeight));
 
-	    // Clip to our bounding box
+	    /* Clip to our bounding box */
 	    $compositeAlignX = min($compositeAlignX, $sourceWidth - $compositeWidth);
 	    $compositeAlignX = max(0, $compositeAlignX);
 	    $compositeAlignY = min($compositeAlignY, $sourceHeight - $compositeHeight);
@@ -362,7 +363,7 @@ class GdToolkit extends GalleryToolkit {
 
 	case 'compress':
 	    $targetSize = $parameters[0];
-	    $fileSize = $gd->filesize($sourceFilename) >> 10; //Size in KB
+	    $fileSize = $gd->filesize($sourceFilename) >> 10; /* Size in KB */
 	    if ($fileSize <= $targetSize) {
 		break;
 	    }
@@ -577,9 +578,9 @@ class GdToolkit extends GalleryToolkit {
 	}
 	$result = false;
 	$ret = $this->_imageCopyResampled($destRes, $sourceRes,
-				 0, 0, 0, 0,    // dst and src X,Y
-				 $destWidth, $destHeight,    // dst W,H
-				 $sourceWidth, $sourceHeight // src W,H
+				 0, 0, 0, 0,    /* dst and src X,Y */
+				 $destWidth, $destHeight,    /* dst W,H */
+				 $sourceWidth, $sourceHeight /* src W,H */
 				 );
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);

@@ -111,7 +111,7 @@ class ImageMagickToolkit extends GalleryToolkit {
 	 * by a -geometry, so if we look ahead and see a -geometry and we have a -crop in our
 	 * queue, then we can't queue the geometry.
 	 */
-	if ($queueIt && 
+	if ($queueIt &&
 	    in_array($context['next.operation'], array('thumbnail', 'scale', 'resize')) &&
 	    ($operationName == 'crop' || in_array('-crop', $transform))) {
 	    $queueIt = false;
@@ -275,8 +275,8 @@ class ImageMagickToolkit extends GalleryToolkit {
 	    }
 
 	    /* Convert from percentages to pixels */
-	    $compositeAlignX = (int)($compositeAlignX / 100 * $width);
-	    $compositeAlignY = (int)($compositeAlignY / 100 * $height);
+	    $compositeAlignX = (int)($compositeAlignX / 100 * ($width - $compositeWidth));
+	    $compositeAlignY = (int)($compositeAlignY / 100 * ($height - $compositeHeight));
 
 	    /* Clip to our bounding box */
 	    $compositeAlignX = min($compositeAlignX, $width - $compositeWidth);
