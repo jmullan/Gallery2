@@ -278,6 +278,11 @@
     </h3>
     <ol id="beta4-list">
       <li>
+	<b> Square Thumbnails </b> - This module now offers a mode to fit thumbnails
+	inside a square with a specified background color instead of cropping the image
+	into a square.
+      </li>
+      <li>
 	<b> Multisite Support </b> - The multisite system has been completely
 	redesigned and is now compatible with both URL Rewrite module and embedded G2.
 	Multisite G2 refers to multiple independent sites using a single codebase.
@@ -1562,6 +1567,26 @@
 	    Note this is the URL for the primary site, not the site you are currently
 	    upgrading.  Save this change and finish the remaining steps of the upgrader.
 	    Make sure this site now works correctly.
+	  </li>
+	</ul>
+      </li>
+      <li>
+	<b>View names</b> - In beta-4 the naming convention for views changed from using
+	a colon separator to a period (core:ShowItem is now core.ShowItem).  All Gallery
+	code has been updated but there are a few places you should check to make sure
+	your site is up to date:
+	<ul>
+	  <li>
+	    Local tpl files: make sure to update all view names in your customized
+	    templates.  Compare to the current version of the default tpls if needed.
+	  </li>
+	  <li>
+	    External imageblock: update imageblock:External to imageblock.External in
+	    any uses of this feature.
+	  </li>
+	  <li>
+	    PublishXP: Select 'add items' / Windows XP and follow the directions to
+	    update your registry so it will reflect the new view name.
 	  </li>
 	</ul>
       </li>
