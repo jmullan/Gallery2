@@ -98,7 +98,7 @@ class SlideshowModule extends GalleryModule {
 	return array(
 	    array('comment' => $this->translate('View Slideshow'),
 		  'match' => array('view' => 'slideshow.Slideshow'),
-		  'pattern' => '%path%/slideshow.html',
+		  'pattern' => 'v/%path%/slideshow.html',
 		  'keywords' => array('path' => array(
 		      'pattern' => '([^?]+)',
 		      'help' => $this->translate('Path to an item (eg, /album/image.jpg.html)'))))
