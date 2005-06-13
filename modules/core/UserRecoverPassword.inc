@@ -126,10 +126,15 @@ class UserRecoverPasswordController extends GalleryController {
 		}
 
 		if (isset($user) && $user->getEmail() != '') {
+		    /* Give the admin user an alternate method for recovery */
+		    if ($user->getUserName() == 'admin') {
+			$status['adminReset'] = 1;
+		    }
+
 		    /* Generate a unique auth string based on userName, time of request and IP */
 		    $authString = $phpVm->md5(
 			$user->getUserName() . time() . GalleryUtilities::getRemoteHostAddress());
-		    
+
 		    /* Generate the request expiration: Now + 7 Days */
 		    $requestExpires = mktime(date('G'), date('i'), date('s'), 
 					     date('m'), date('d')+7, date('Y'));
@@ -156,6 +161,7 @@ class UserRecoverPasswordController extends GalleryController {
 				array('userName' => $user->getUserName()), 
 				array('authString' => $authString,
 				      'requestExpires' => $requestExpires));
+			    $shouldSendEmail = true;		    
 			}
 		    } else {
 			/* 
@@ -169,19 +175,10 @@ class UserRecoverPasswordController extends GalleryController {
 			if ($ret->isError()) {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}
-			$shouldSendEmail = true;
+			$shouldSendEmail = true;		    
 		    }
-		} else if (isset($user) && $user->getEmail() == '')  {
-		    /* Silently succeed; we don't reward phishing attempts */
-		} else if ($user === null) {
-		    /* Silently succeed; we don't reward phishing attempts */
-		}
-		
-		if (empty($error)) {
-		    /* Set the recovered info flag */
-		    $status['requestSent'] = 1;
 
-		    if ($shouldSendEmail) {
+		    if (empty($error) && $shouldSendEmail) {
 			/* Generate baseUrl and recoverUrl for the email template */
 			$generator =& $gallery->getUrlGenerator();
 			$baseUrl = str_replace('&amp;', '&', $generator->generateUrl());
@@ -217,18 +214,35 @@ class UserRecoverPasswordController extends GalleryController {
 			    return array($ret->wrap(__FILE__, __LINE__), null);
 			}		    
 		    }
+
+		    /* Set the recovered info flag */
+		    $status['requestSent'] = 1;
+		} else if (isset($user) && $user->getUserName() == 'admin')  {
+		    /* 
+		     * TODO - We need to be able to support a renamed administrator account
+		     * or, possibly, the recovery of any administrator account.
+		     */
+		    $subView = 'core.UserRecoverPasswordAdmin';
+		} else {
+		    /* Silently succeed; we don't reward phishing attempts */
+		    /* Set the recovered info flag */
+		    $status['requestSent'] = 1;
 		}
 	    }
 	} else if (isset($form['action']['cancel'])) {
 	    $results['return'] = 1;
 	} 
+
+	if (empty($subView)) {
+	    $subView = 'core.UserRecoverPassword';
+	}
 	
 	if (empty($error)) {
 	    $results['redirect']['view'] = 'core.UserAdmin';
-	    $results['redirect']['subView'] = 'core.UserRecoverPassword';
+	    $results['redirect']['subView'] = $subView;
 	} else {
 	    $results['delegate']['view'] = 'core.UserAdmin';
-	    $results['delegate']['subView'] = 'core.UserRecoverPassword';
+	    $results['delegate']['subView'] = $subView;
 	}
 	
 	$results['status'] = $status;

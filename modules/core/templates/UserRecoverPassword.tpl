@@ -23,6 +23,19 @@
     </h2>
   </div>
   {/if}
+  {if isset($status.adminReset)}
+  <div class="gbBlock">
+    <h2>
+      {g->text text="Administrator Recovery"}
+    </h2>
+    <h2>
+      {capture name="adminResetUrl"}
+      <a href='{g->url arg1="view=core.UserAdmin" arg2="subView=core.UserRecoverPasswordAdmin"}'>
+      {/capture}
+      {g->text text="You can use the %sAdministrator Password Recovery%s if you don't receive a recovery email from Gallery." arg1=$smarty.capture.adminResetUrl arg2="</a>"}
+    </h2>
+  </div>
+  {/if}
 
   <h4>{g->text text="Username"}</h4>
 
