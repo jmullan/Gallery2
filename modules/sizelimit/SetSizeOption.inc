@@ -56,11 +56,12 @@ class SetSizeOption extends ItemAddOption {
 	}
 	for ($i = 0; $i < count($items); $i++) {
 	    $warnings[$i] = array();
-	    /* we should come here only if we are adding a photo, not sub-album */
-	    $albumId = $items[$i]->getParentId();
+	    if (!GalleryUtilities::isA($items[$i], 'GalleryDataItem')) {
+		continue;
+	    }
 
 	    list ($ret, $param) = GalleryCoreApi::fetchAllPluginParameters(
-		'module', 'sizelimit', $albumId);
+		'module', 'sizelimit', $items[$i]->getParentId());
 	    if ($ret->isError()) {
 		return array($ret->wrap(__FILE__, __LINE__), null, null);
 	    }
