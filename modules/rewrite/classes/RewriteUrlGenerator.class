@@ -79,7 +79,7 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	    if (GalleryUtilities::isEmbedded() && !empty($this->_embedPath)) {
 		$path = $this->_embedPath;
 	    } else {
-		$location = (GalleryUtilities::isEmbedded()) ? 'embeddedLocation' : 'galleryLocation';
+		$location = GalleryUtilities::isEmbedded() ? 'embeddedLocation' : 'galleryLocation';
 		list ($ret, $path) =
 			GalleryCoreApi::getPluginParameter('module', 'rewrite', $location);
 		if ($ret->isError() || empty($path)) {
@@ -162,54 +162,48 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 		$params['navId'] = $this->_navId;
 	    }
 
-	    $url = $this->_shortUrls[$index];
-	    
 	    /* Check if we are forced to append the session id in embedded G2 */
 	    if ($this->embedForceSessionId($params)) {
 		$forceSessionId = true;
 	    }
-	    
-	    unset($params['view']);
-	    unset($params['subView']);
 
-	    /* Load the entity if we need it later on */
-	    if ((strpos($url, '%path%') !== false || strpos($url, '%fileName%') !== false ||
-		    strpos($url, '%serialNumber%') !== false)) {
-		/* Assume rootAlbum itemId if not specified */
-		if (!isset($params['itemId'])) {
-		    list ($ret, $params['itemId']) =
-			GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
-		    if ($ret->isError()) {
-			unset($params['itemId']);
+	    $url = $this->_shortUrls[$index];
+	    $entity = null;
+	    $itemId = isset($params['itemId']) ? $params['itemId'] : null;
+
+	    preg_match_all('/%([a-z]+)%/i', $url, $regs);
+	    foreach ($regs[1] as $arg) {
+		switch ($arg) {
+		case 'path':
+		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
 			return parent::generateUrl($params, $forceSessionId);
 		    }
-		}
-
-		list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($params['itemId']);
-		if ($ret->isError()) {
-		    return parent::generateUrl($params, $forceSessionId);
-		}
-	    }
-
-	    preg_match_all('/%([^%]+)%/', $url, $regs);
-	    foreach ($regs[1] as $arg) {
-		if ($arg == 'path' && isset($entity)) {
 		    list ($ret, $path) = $entity->fetchLogicalPath();
-		    if ($ret->isSuccess()) {
-			if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
-			    $path .= '.html';
-			}
-			 /* urlencode except for path separators(/) */
-			$url = str_replace('%path%', str_replace('%2F', '/',
-			    urlencode(substr($path, 1))), $url);
-			unset($params['itemId']);
+		    if ($ret->isError()) {
+			return parent::generateUrl($params, $forceSessionId);
 		    }
-		} else if ($arg == 'fileName' && isset($entity)) {
+
+		    if (substr($url, -6) != '%path%') {
+			/* Trim / off end of path if rule has a suffix */
+			$path = rtrim($path, '/');
+		    } else if (!GalleryUtilities::isA($entity, 'GalleryAlbumItem')) {
+			/* Append .html suffix on non-album paths if rule has no suffix */
+			$path .= '.html';
+		    }
+		    /* urlencode except for path separators(/) */
+		    $url = str_replace('%path%',
+			str_replace('%2F', '/', urlencode(substr($path, 1))), $url);
+		    unset($params['itemId']);
+		    break;
+
+		case 'fileName':
+		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
+			return parent::generateUrl($params, $forceSessionId);
+		    }
 		    list ($ret, $pseudoFileName) = GalleryUtilities::getPseudoFileName($entity);
 		    if ($ret->isError()) {
 			return parent::generateUrl($params, $forceSessionId);
 		    }
-
 		    if (strpos($pseudoFileName, '.') === false) {
 			list ($ret, $extensions) =
 			    GalleryCoreApi::convertMimeToExtensions($entity->getMimeType());
@@ -217,16 +211,25 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 			    $pseudoFileName .= '.' . $extensions[0];
 			}
 		    }
-
 		    $url = str_replace('%fileName%', urlencode($pseudoFileName), $url);
-		} else if ($arg == 'serialNumber' && isset($entity)) {
+		    break;
+
+		case 'serialNumber':
+		    if (!isset($entity) && !$this->_loadEntity($itemId, $entity)) {
+			return parent::generateUrl($params, $forceSessionId);
+		    }
 		    $url = str_replace('%serialNumber%', $entity->getSerialNumber(), $url);
 		    unset($params['serialNumber']);
-		} else {
+		    break;
+
+		default:
 		    $url = str_replace('%' . $arg . '%', urlencode($params[$arg]), $url);
 		    unset($params[$arg]);
 		}
 	    }
+
+	    unset($params['view']);
+	    unset($params['subView']);
 
 	    if (empty($url)) {
 		$url = $this->_baseFile;
@@ -236,6 +239,27 @@ class RewriteUrlGenerator extends GalleryUrlGenerator {
 	}
 
 	return parent::generateUrl($params, $forceSessionId);
+    }
+
+    /**
+     * @return boolean true on success
+     * @private
+     */
+    function _loadEntity(&$itemId, &$entity) {
+	/* Assume rootAlbum if itemId not specified */
+	if (empty($itemId)) {
+	    list ($ret, $itemId) =
+		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');
+	    if ($ret->isError()) {
+		return false;
+	    }
+	}
+
+	list ($ret, $entity) = GalleryCoreApi::loadEntitiesById($itemId);
+	if ($ret->isError()) {
+	    return false;
+	}
+	return true;
     }
 }
 ?>

@@ -302,9 +302,22 @@ class GalleryView {
      */
     function _getItem() {
 	global $gallery;
+	list ($itemId, $path) = GalleryUtilities::getRequestVariables('itemId', 'path');
 
-	/* If we don't have an item id, default to the root */
-	$itemId = GalleryUtilities::getRequestVariables('itemId');
+	/* Check for path param if no itemId given */
+	if (empty($itemId) && !empty($path)) {
+	    if (substr($path, -5) == '.html') {
+		$path = substr($path, 0, -5);
+	    }
+
+	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
+	    if ($ret->isError()) {
+		return array($ret->wrap(__FILE__, __LINE__), null);
+	    }
+	    GalleryUtilities::putRequestVariable('itemId', $itemId);
+	}
+
+	/* If we still don't have an itemId, default to the root album */
 	if (empty($itemId)) {
 	    list ($ret, $itemId) =
 		GalleryCoreApi::getPluginParameter('module', 'core', 'id.rootAlbum');

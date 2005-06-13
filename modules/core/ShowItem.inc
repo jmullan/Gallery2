@@ -105,19 +105,6 @@ class ShowItemView extends GalleryView {
     function loadTemplate(&$template, &$form) {
 	global $gallery;
 
-	$path = GalleryUtilities::getRequestVariables('path');
-	if ($path) {
-	    if (substr($path, -5) == '.html') {
-		$path = substr($path, 0, -5);
-	    }
-
-	    list ($ret, $itemId) = GalleryCoreApi::fetchItemIdByPath($path);
-	    if ($ret->isError()) {
-		return array($ret->wrap(__FILE__, __LINE__), null);
-	    }
-	    GalleryUtilities::putRequestVariable('itemId', $itemId);
-	}
-
 	list ($ret, $item) = $this->_getItem();
 	if ($ret->isError()) {
 	    return array($ret->wrap(__FILE__, __LINE__), null);
