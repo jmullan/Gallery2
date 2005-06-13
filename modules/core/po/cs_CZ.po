@@ -799,6 +799,12 @@ msgstr "Zkušební email úspěšně odeslán"
 msgid "Error sending test email, see below for details"
 msgstr "Chyba při odesílání testovacího emailu, další informace níže"
 
+msgid "Invalid cookie path"
+msgstr ""
+
+msgid "Invalid cookie domain"
+msgstr ""
+
 msgid "Language Settings"
 msgstr "Nastavení jazyka"
 
@@ -965,6 +971,50 @@ msgstr "Špatná e-mail adresa"
 
 msgid "Email Test Error"
 msgstr "Chyba při testování mailu"
+
+#, fuzzy
+msgid "Cookies"
+msgstr "Nástroje"
+
+msgid ""
+"When Gallery is embedded in another application (portal, CMS, forum, etc.), "
+"then you have the choice between two options. Everyone else does not have to "
+"care about the cookie settings. Read on for more details."
+msgstr ""
+
+msgid ""
+"If your Gallery is embedded and you leave the following fields empty, then "
+"all DownloadItem links (the URLs of the images and other items) in the "
+"embedded Gallery have <b>an appended GALLERYSID string</b> in the URL which "
+"is <b>a minor security risk</b> when your Gallery users start copy'n'pasting "
+"image URLs in forums, guestbooks, etc. The alternative is to set the "
+"<b>cookie path</b>. Gallery will then <b>not append the GALLERYSID to the "
+"embedded DownloadItem URLs</b>. E.g. when Gallery is reachable at http://www."
+"example.com/application/gallery2/ and the embedding application is at http://"
+"www.example.com/application/, then you have to compare the path /application/"
+"gallery2/ with /application/. The cookie path is the part of the paths that "
+"is equal, in this case it is '/application/'. Most often it is just '/'."
+msgstr ""
+
+msgid ""
+"The <b>cookie domain</b> is also only needed for embedded Gallery installs "
+"and only if you want to get rid of the GALLERYSID string in the embedded "
+"DownloadItem URLs. <b>In most cases, the cookie domain can be left blank.</"
+"b> Set it only, if Gallery and the embedding application are only reachable "
+"with <b>different subdomains</b>. E.g. when Gallery is at http://photos."
+"example.com/ and the application is at http://www.example.com/, then you "
+"have to set the cookie domain example.com (the part of the host string that "
+"is common to both, Gallery and the embedding application)."
+msgstr ""
+
+msgid ""
+"Once you change the cookie settings, <b>all registered users</b> of your "
+"Gallery will <b>have to clear their browser cookie cache</b>. If they do "
+"not, they will experience login / logout / lost session problems."
+msgstr ""
+
+msgid "Domain"
+msgstr ""
 
 msgid "Locking System"
 msgstr "Systém zamykání"
