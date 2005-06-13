@@ -99,7 +99,7 @@ class GallerySession {
      * @private
      */
     var $_cookiePath;
-    
+
     /**
      * A set of identifying values that we can use to verify that the session is coming
      * from the same browser as it used to (to prevent session hijacking).
@@ -128,7 +128,7 @@ class GallerySession {
 	if (!empty($_COOKIE[SESSION_ID_PARAMETER])) {
 	    /* Fix php HTTP_COOKIE header bug http://bugs.php.net/bug.php?id=32802 */
 	    GalleryUtilities::fixCookieVars();
-	    
+
 	    /*
 	     * If we get the id parameter as a cookie, then it also means that
 	     * cookies are functioning.
@@ -189,7 +189,7 @@ class GallerySession {
 
 	$forceResendCookie = false;
 	$forceSessionSave = false;
-	
+
 	/* Verify the remote address to avoid casual session hijacking */
 	$currentRemoteIdentifier = $this->_getRemoteIdentifier();
 
@@ -231,7 +231,7 @@ class GallerySession {
 	     !in_array($controller, array('migrate.Redirect', 'migrate:Redirect')))) {
 
 	    /* It's not one of the special cases, create session / send cookie if necessary */
-	
+
 	    if ($forceSessionSave) {
 		$ret = $this->save();
 		if ($ret->isError()) {
@@ -253,7 +253,7 @@ class GallerySession {
 	    if ($ret->isError()) {
 		return $ret->wrap(__FILE__, __LINE__);
 	    }
-	    
+
 	    if (!isset($_COOKIE[SESSION_ID_PARAMETER]) ||
 		$_COOKIE[SESSION_ID_PARAMETER] != $this->_sessionId ||
 		$forceResendCookie) {
@@ -266,7 +266,7 @@ class GallerySession {
 		 * that we've received one back in return.  Leave that for later.
 		 */
 		$cookie = 'Set-Cookie: ' . SESSION_ID_PARAMETER . '=' . $this->_sessionId;
-		
+
 		list ($ret, $sessionLifetime) =
 		    GalleryCoreApi::getPluginParameter('module', 'core', 'session.lifetime');
 		if ($ret->isError()) {
@@ -280,15 +280,15 @@ class GallerySession {
 			return $ret->wrap(__FILE__, __LINE__);
 		    }
 		}
-		
+
 		if ($sessionLifetime > 0) {
 		    $expirationDate = GalleryUtilities::getHttpDate(time() + $sessionLifetime);
 		    $cookie .= '; expires=' . $expirationDate;
 		}
-		
+
 		/* Because of short urls, the cookie path must always be set explicitly */
 		$cookie .= '; path=' . $this->_cookiePath;
-		
+
 		/*
 		 * Set the cookie domain only if needed, i.e. embedded multi-subdomain installs
 		 * that is when G2 is installed on a different subdomain than the embedding
@@ -337,7 +337,7 @@ class GallerySession {
 		 * Q: Why force the G2 base (standalone) path for java applet cookies?
 		 * A: Because the applets talk to G2 directly. If the cookie path was set to the
 		 * embedded G2 path, then it would not be selected for the HTTP requests of the
-		 * applet to G2, because it wouldn't path-match. 
+		 * applet to G2, because it wouldn't path-match.
 		 *
 		 * Therefore we don't set the cookie domain by default and offer the option to set
 		 * it to a configured value if it is required (embedded multi-subdomain G2).
@@ -348,14 +348,14 @@ class GallerySession {
 		if (!empty($this->_cookieDomain)) {
 		    $cookie .= '; domain=' . $this->_cookieDomain;
 		}
-		
+
 		/*
 		 * Tag on the HttpOnly modifier.  IE 6.0 SP1 will prevent any cookies
 		 * with this in it from being visible to JavaScript, which mitigates
 		 * XSS attacks.
 		 */
 		$cookie .= '; HttpOnly=1';
-		
+
 		/*
 		 * Init may be called multiple times (from unit tests) but don't send the headers
 		 * more than once.
@@ -370,7 +370,7 @@ class GallerySession {
 		}
 	    }
 	}
-	    
+
 	return GalleryStatus::success();
     }
 
@@ -468,10 +468,9 @@ class GallerySession {
 	$match = '/' . $key . '[a-fA-F0-9]+/';
 	$replace = $key . $this->getId();
 
-	if (GalleryUtilities::hasRequestVariable('return')) {
-	    foreach (array('return', 'formUrl') as $key) {
-		GalleryUtilities::putRequestVariable(
-		    $key,
+	foreach (array('return', 'formUrl') as $key) {
+	    if (GalleryUtilities::hasRequestVariable($key)) {
+		GalleryUtilities::putRequestVariable($key,
 		    preg_replace($match, $replace, GalleryUtilities::getRequestVariables($key)));
 	    }
 	}
@@ -837,7 +836,7 @@ class GallerySession {
     function getNavigation($navId) {
 	$navigation = $this->get('core.navigation');
 	$navigationData = array();
-	if ($navigation != null && isset($navigation[$navId]['data'])) {
+	if (isset($navigation[$navId]['data'])) {
 	    $navigationData[] = $navigation[$navId]['data'];
 	    /* Add data from our predecessors, if available */
 	    while (isset($navigation[$navId]['data']['returnNavId'])
